@@ -1,6 +1,13 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import { connectionsFileName, lspDirectory, onStartLanguageServerProtocol, sdkLspServer } from '../../constants';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  connectionsFileName,
+  lspDirectory,
+  onStartLanguageServerProtocol,
+  Platform,
+  sdkLspServer,
+} from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
@@ -9,6 +16,21 @@ import { getWorkspaceFolderPath } from '../commands/workflows/switchDebugMode/sw
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import path from 'path';
 import * as fse from 'fs-extra';
+import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
+
+// Returns the platform-specific SDK LSP executable name, or undefined if unsupported.
+function getSdkLspExecutableName(): string | undefined {
+  switch (process.platform) {
+    case Platform.windows:
+      return 'SdkLspServer_windows.exe';
+    case Platform.linux:
+      return 'SdkLspServer_linux';
+    case Platform.mac:
+      return 'SdkLspServer_mac';
+    default:
+      return undefined; // Unrecognized / unsupported platform
+  }
+}
 
 const getSDKPaths = async (context: IActionContext) => {
   const workspaceFolder = await getWorkspaceFolderPath(context);
@@ -98,3 +120,16 @@ export const startLanguageServerProtocol = async () => {
     initializeServerLanguageClient(context);
   });
 };
+
+export async function installLSPSDK(): Promise<void> {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
+    const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+    const sdkFileName = getSdkLspExecutableName();
+
+    const sdkPath = path.join(__dirname, 'assets', 'LSPServer', sdkFileName);
+    const destinationPath = path.join(targetDirectory, sdkFileName);
+
+    await fse.ensureDir(targetDirectory);
+    await fse.copyFile(sdkPath, destinationPath);
+  });
+}

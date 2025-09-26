@@ -21,7 +21,7 @@ export async function timeout(
   asyncFunc: (...params: any[]) => Promise<void>,
   dependencyName: string,
   timeoutMs: number,
-  helpLink: string,
+  helpLink?: string,
   ...params: any[]
 ): Promise<void> {
   try {
