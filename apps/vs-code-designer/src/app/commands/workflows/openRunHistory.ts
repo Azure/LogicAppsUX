@@ -28,9 +28,9 @@ export async function openRunHistory(
   context: IAzureConnectorsContext,
   node: vscode.Uri | RemoteWorkflowTreeItem | undefined
 ): Promise<void> {
-  let workflowFilePath: string;
-  let workflowName = '';
-  let workflowContent: any;
+  let programFilePath: string;
+  let programFileName = '';
+  let programContenr: any;
   let baseUrl: string;
   let apiVersion: string;
   let accessToken: string;
@@ -45,15 +45,15 @@ export async function openRunHistory(
   const panelGroupKey = ext.webViewKey.runHistory;
 
   if (workflowNode instanceof vscode.Uri) {
-    workflowFilePath = workflowNode.fsPath;
-    workflowName = basename(dirname(workflowFilePath));
-    panelName = `${vscode.workspace.name}-${workflowName}-run-history`;
-    workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
+    programFilePath = workflowNode.fsPath;
+    programFileName = basename(dirname(programFilePath));
+    panelName = `${vscode.workspace.name}-${programFileName}-run-history`;
+    programContenr = readFileSync(programFilePath, 'utf8');
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
-    callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+    // callbackInfo = await getLocalWorkflowCallbackInfo(context, programContenr.definition, baseUrl, programFileName, triggerName, apiVersion);
 
-    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    const projectPath = await getLogicAppProjectRoot(context, programFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
     isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
@@ -75,7 +75,7 @@ export async function openRunHistory(
     enableScripts: true,
     retainContextWhenHidden: true,
   };
-  const { name, kind, operationOptions, statelessRunMode } = getStandardAppData(workflowName, workflowContent);
+  const { name, kind, operationOptions, statelessRunMode } = getStandardAppData(programFileName, programContenr);
   const workflowProps = {
     name,
     stateType: getWorkflowStateType(name, kind, localSettings),
@@ -83,12 +83,12 @@ export async function openRunHistory(
     statelessRunMode,
     callbackInfo,
     triggerName,
-    definition: workflowContent.definition,
+    definition: programContenr.definition,
   };
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel(
     'workflowRunHistory',
-    `${workflowName}-run-history`,
+    `${programFileName}-run-history`,
     vscode.ViewColumn.Active,
     options
   );
@@ -151,18 +151,19 @@ export async function openRunHistory(
   cacheWebviewPanel(panelGroupKey, panelName, panel);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getLocalWorkflowCallbackInfo(
   context: IActionContext,
   definition: LogicAppsV2.WorkflowDefinition,
   baseUrl: string,
-  workflowName: string,
+  programFileName: string,
   triggerName: string,
   apiVersion: string
 ): Promise<ICallbackUrlResponse | undefined> {
   const requestTriggerName = getRequestTriggerName(definition);
   if (requestTriggerName) {
     try {
-      const url = `${baseUrl}/workflows/${workflowName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${apiVersion}`;
+      const url = `${baseUrl}/workflows/${programFileName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${apiVersion}`;
       const response: string = await sendRequest(context, {
         url,
         method: HTTP_METHODS.POST,
@@ -174,14 +175,14 @@ async function getLocalWorkflowCallbackInfo(
     }
   } else {
     return {
-      value: `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+      value: `${baseUrl}/workflows/${programFileName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
       method: HTTP_METHODS.POST,
     };
   }
 }
 
-function getWorkflowStateType(workflowName: string, kind: string, settings: Record<string, string>): string {
-  const settingName = `Workflows.${workflowName}.OperationOptions`;
+function getWorkflowStateType(programFileName: string, kind: string, settings: Record<string, string>): string {
+  const settingName = `Workflows.${programFileName}.OperationOptions`;
   return kind?.toLowerCase() === 'stateful'
     ? localize('logicapps.stateful', 'Stateful')
     : settings[settingName]?.toLowerCase() === 'withstatelessrunhistory'

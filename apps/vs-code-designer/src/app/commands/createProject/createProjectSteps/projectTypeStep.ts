@@ -17,6 +17,7 @@ import { AppNamespaceStep } from '../../createProject/createCustomCodeProjectSte
 import type { AzureWizardExecuteStep, IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import { AgentCodefulFilesStep } from './agentCodefulFilesStep';
+import AdmZip from 'adm-zip';
 
 // TODO(aeldridge): Move subwizard steps here into a separate "SetupProjectStep" or subwizard of LogicAppTemplateStep
 export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -67,8 +68,8 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
    * @param context - Project wizard context containing user selections and settings
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    // TODO(aeldridge): Add support for non-bundle-based project creation here
-    context.workflowProjectType = context.projectType === ProjectType.agentCodeful ? WorkflowProjectType.Nuget : WorkflowProjectType.Bundle;
+    context.workflowProjectType =
+      context.projectType === ProjectType.agentCodeful ? WorkflowProjectType.Nuget : await this.inferWorkflowProjectType(context);
     context.language = context.projectType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript;
     await this.setPaths(context);
   }
@@ -186,5 +187,71 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
         })
       );
     }
+  }
+
+  private async inferWorkflowProjectType(context: IProjectWizardContext): Promise<WorkflowProjectType> {
+    const hostFromPackage = await this.tryReadHostJsonFromPackage(context.packagePath);
+    if (hostFromPackage) {
+      return this.getWorkflowProjectTypeFromHost(hostFromPackage);
+    }
+
+    const hostFromWorkspace = await this.tryReadExistingHostJson(context);
+    if (hostFromWorkspace) {
+      return this.getWorkflowProjectTypeFromHost(hostFromWorkspace);
+    }
+
+    return WorkflowProjectType.Bundle;
+  }
+
+  private getWorkflowProjectTypeFromHost(hostJson: unknown): WorkflowProjectType {
+    if (hostJson && typeof hostJson === 'object') {
+      const host = hostJson as Record<string, unknown>;
+      if ('extensionBundle' in host) {
+        return WorkflowProjectType.Bundle;
+      }
+    }
+
+    return WorkflowProjectType.Functions;
+  }
+
+  private async tryReadHostJsonFromPackage(packagePath: string | undefined): Promise<unknown> {
+    if (!packagePath) {
+      return undefined;
+    }
+
+    try {
+      const zip = new AdmZip(packagePath);
+      const hostEntry = zip.getEntries().find((entry) => entry.entryName.toLowerCase().endsWith('host.json'));
+
+      if (!hostEntry) {
+        return undefined;
+      }
+
+      return JSON.parse(hostEntry.getData().toString('utf8'));
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async tryReadExistingHostJson(context: IProjectWizardContext): Promise<unknown> {
+    const workspacePath = context.workspacePath;
+    if (!workspacePath) {
+      return undefined;
+    }
+
+    const logicAppFolderName = context.logicAppName || 'LogicApp';
+    const candidatePaths = [path.join(workspacePath, logicAppFolderName, 'host.json'), path.join(workspacePath, 'host.json')];
+
+    for (const hostPath of candidatePaths) {
+      try {
+        if (await fs.pathExists(hostPath)) {
+          return await fs.readJSON(hostPath);
+        }
+      } catch {
+        return undefined;
+      }
+    }
+
+    return undefined;
   }
 }
