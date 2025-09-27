@@ -123,25 +123,51 @@ export async function createNewCodeProjectFromCommand(): Promise<void> {
         break;
       }
       case ExtensionCommand.validatePath: {
-        const pathToValidate = message.data?.path;
-        let isValid = false;
+        const { path: pathToValidate, type } = message.data || {};
+        let exists = false;
         try {
           if (pathToValidate && typeof pathToValidate === 'string') {
-            const stats = fs.statSync(pathToValidate);
-            isValid = stats.isDirectory();
+            exists = fs.existsSync(pathToValidate);
+            if (exists) {
+              const stats = fs.statSync(pathToValidate);
+              if (!type) {
+                // For regular path validation, check if it's a directory
+                exists = stats.isDirectory();
+              } else if (type === 'workspace-folder') {
+                // For workspace folder, check if it's a directory
+                exists = stats.isDirectory();
+              } else if (type === 'workspace-file') {
+                // For workspace file, check if it's a file (not a directory)
+                exists = stats.isFile();
+              }
+            }
           }
         } catch (_error) {
-          isValid = false;
+          exists = false;
         }
 
-        panel.webview.postMessage({
-          command: ExtensionCommand.validatePath,
-          data: {
-            project: ProjectName.createWorkspace,
-            path: pathToValidate,
-            isValid: isValid,
-          },
-        });
+        if (type === 'workspace-folder' || type === 'workspace-file') {
+          // Send specific workspace existence result
+          panel.webview.postMessage({
+            command: 'workspaceExistenceResult',
+            data: {
+              project: ProjectName.createWorkspace,
+              workspacePath: pathToValidate,
+              exists: exists,
+              type: type,
+            },
+          });
+        } else {
+          // Send regular path validation result
+          panel.webview.postMessage({
+            command: ExtensionCommand.validatePath,
+            data: {
+              project: ProjectName.createWorkspace,
+              path: pathToValidate,
+              isValid: exists,
+            },
+          });
+        }
         break;
       }
       // case ExtensionCommand.logTelemetry: {

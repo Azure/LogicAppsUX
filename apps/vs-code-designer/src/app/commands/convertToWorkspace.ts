@@ -218,25 +218,51 @@ export async function convertToWorkspace2(context: IActionContext): Promise<bool
                 break;
               }
               case ExtensionCommand.validatePath: {
-                const pathToValidate = message.data?.path;
-                let isValid = false;
+                const { path: pathToValidate, type } = message.data || {};
+                let exists = false;
                 try {
                   if (pathToValidate && typeof pathToValidate === 'string') {
-                    const stats = fs.statSync(pathToValidate);
-                    isValid = stats.isDirectory();
+                    exists = fs.existsSync(pathToValidate);
+                    if (exists) {
+                      const stats = fs.statSync(pathToValidate);
+                      if (!type) {
+                        // For regular path validation, check if it's a directory
+                        exists = stats.isDirectory();
+                      } else if (type === ExtensionCommand.workspace_folder) {
+                        // For workspace folder, check if it's a directory
+                        exists = stats.isDirectory();
+                      } else if (type === ExtensionCommand.workspace_file) {
+                        // For workspace file, check if it's a file (not a directory)
+                        exists = stats.isFile();
+                      }
+                    }
                   }
                 } catch (_error) {
-                  isValid = false;
+                  exists = false;
                 }
 
-                panel.webview.postMessage({
-                  command: ExtensionCommand.validatePath,
-                  data: {
-                    project: ProjectName.createWorkspaceStructure,
-                    path: pathToValidate,
-                    isValid: isValid,
-                  },
-                });
+                if (type === ExtensionCommand.workspace_folder || type === ExtensionCommand.workspace_file) {
+                  // Send specific workspace existence result
+                  panel.webview.postMessage({
+                    command: 'workspaceExistenceResult',
+                    data: {
+                      project: ProjectName.createWorkspaceStructure,
+                      workspacePath: pathToValidate,
+                      exists: exists,
+                      type: type,
+                    },
+                  });
+                } else {
+                  // Send regular path validation result
+                  panel.webview.postMessage({
+                    command: ExtensionCommand.validatePath,
+                    data: {
+                      project: ProjectName.createWorkspaceStructure,
+                      path: pathToValidate,
+                      isValid: exists,
+                    },
+                  });
+                }
                 break;
               }
               // case ExtensionCommand.logTelemetry: {

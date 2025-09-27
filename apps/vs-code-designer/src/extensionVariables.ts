@@ -157,5 +157,7 @@ export const ExtensionCommand = {
   export_package: 'export-package',
   add_status: 'add-status',
   set_final_status: 'set-final-status',
+  workspace_folder: 'workspace-folder',
+  workspace_file: 'workspace-file',
 };
 export type ExtensionCommand = keyof typeof ExtensionCommand;

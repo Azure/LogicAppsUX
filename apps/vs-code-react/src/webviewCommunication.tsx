@@ -61,7 +61,12 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
-import { initializeProject, setProjectPath, setPathValidationResult } from './state/createWorkspace/createWorkspaceSlice';
+import {
+  initializeProject,
+  setProjectPath,
+  setPathValidationResult,
+  setWorkspaceExistenceResult,
+} from './state/createWorkspace/createWorkspaceSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
@@ -100,6 +105,24 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
 
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
+
+    // Handle workspace existence validation results (for any project type)
+    if ((message as any).command === 'workspaceExistenceResult') {
+      const { workspacePath, exists } = (message as any).data;
+      dispatch(setWorkspaceExistenceResult({ workspacePath, exists }));
+      return;
+    }
+
+    // Handle folder selection for create workspace projects
+    if ((message as any).command === 'folder-selected' && (message as any).data?.path) {
+      // Only handle this for create workspace related projects
+      const currentProject = projectState?.project ?? message?.data?.project;
+      if (currentProject === ProjectName.createWorkspace || currentProject === ProjectName.createWorkspaceStructure) {
+        dispatch(setProjectPath((message as any).data.path));
+      }
+      return;
+    }
+
     if (message.command === ExtensionCommand.initialize_frame) {
       dispatch(initialize(message.data.project));
     }

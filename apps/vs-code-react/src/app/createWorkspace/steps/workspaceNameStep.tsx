@@ -23,7 +23,8 @@ export const WorkspaceNameStep: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { workspaceName, workspaceProjectPath, pathValidationResults } = createWorkspaceState;
+  const { workspaceName, workspaceProjectPath, pathValidationResults, workspaceExistenceResults, isValidatingWorkspace } =
+    createWorkspaceState;
   const projectPathInputId = useId();
   const workspaceNameId = useId();
 
@@ -31,32 +32,9 @@ export const WorkspaceNameStep: React.FC = () => {
   const [workspaceNameError, setWorkspaceNameError] = useState<string | undefined>(undefined);
   const [projectPathError, setProjectPathError] = useState<string | undefined>(undefined);
   const [isValidatingPath, setIsValidatingPath] = useState<boolean>(false);
+  const [isValidatingWorkspaceName, setIsValidatingWorkspaceName] = useState<boolean>(false);
 
   const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
-
-  // const inputId = useId();
-
-  // Compute the full path to the .code-workspace folder
-  // const workspaceFolderPath =
-  //   projectPath && workspaceName
-  //     ? (() => {
-  //         // Ensure proper path separator based on the existing path
-  //         const separator = projectPath.includes('/') ? '/' : '\\';
-  //         const normalizedPath = projectPath.endsWith(separator) ? projectPath : `${projectPath}${separator}`;
-  //         return `${normalizedPath}${workspaceName}`;
-  //       })()
-  //     : '';
-
-  // // Compute the full path to the .code-workspace file
-  // const workspaceFilePath =
-  //   projectPath && workspaceName
-  //     ? (() => {
-  //         // Ensure proper path separator based on the existing path
-  //         const separator = projectPath.includes('/') ? '/' : '\\';
-  //         const normalizedPath = projectPath.endsWith(separator) ? projectPath : `${projectPath}${separator}`;
-  //         return `${normalizedPath}${workspaceName}${separator}${workspaceName}.code-workspace`;
-  //       })()
-  //     : '';
 
   const intlText = {
     TITLE: intl.formatMessage({
@@ -69,7 +47,6 @@ export const WorkspaceNameStep: React.FC = () => {
       id: 'JS4ajl',
       description: 'Project setup step description',
     }),
-    // Folder Selection
     PROJECT_PATH_LABEL: intl.formatMessage({
       defaultMessage: 'Workspace Parent Folder Path',
       id: '3KYXwl',
@@ -84,16 +61,6 @@ export const WorkspaceNameStep: React.FC = () => {
       defaultMessage: 'Workspace Name',
       id: 'uNvoPg',
       description: 'Workspace name input label',
-    }),
-    WORKSPACE_FOLDER_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace Folder Location',
-      id: 'gis0SV',
-      description: 'Workspace folder location label',
-    }),
-    WORKSPACE_FILE_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace File Location',
-      id: 'ObsExh',
-      description: 'Workspace file location label',
     }),
   };
 
@@ -114,6 +81,33 @@ export const WorkspaceNameStep: React.FC = () => {
     [pathValidationResults]
   );
 
+  const validateWorkspaceName = useCallback(
+    (name: string) => {
+      if (!name) {
+        return 'The workspace name cannot be empty.';
+      }
+      if (!workspaceNameValidation.test(name)) {
+        return 'Workspace name must start with a letter and can only contain letters, digits, "_" and "-".';
+      }
+
+      // Check if workspace folder or file already exists
+      if (workspaceProjectPath.fsPath && name) {
+        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
+        const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
+
+        if (workspaceExistenceResults[workspaceFolder] === true) {
+          return `A folder named "${name}" already exists in the selected location.`;
+        }
+        if (workspaceExistenceResults[workspaceFile] === true) {
+          return `A workspace file "${name}.code-workspace" already exists.`;
+        }
+      }
+
+      return undefined;
+    },
+    [workspaceProjectPath.fsPath, separator, workspaceExistenceResults]
+  );
+
   // Debounced path validation function
   const validatePathWithExtension = useCallback(
     (path: string, validationResults: Record<string, boolean>) => {
@@ -122,7 +116,7 @@ export const WorkspaceNameStep: React.FC = () => {
           setIsValidatingPath(false);
           const validationError = validateProjectPath(path);
           setProjectPathError(validationError);
-          return; // Don't trigger new validation if we already have results
+          return;
         }
         setIsValidatingPath(true);
         vscode.postMessage({
@@ -134,27 +128,65 @@ export const WorkspaceNameStep: React.FC = () => {
     [vscode, validateProjectPath]
   );
 
+  // Function to validate workspace existence
+  const validateWorkspaceExistence = useCallback(
+    (parentPath: string, name: string, workspaceExistenceResults: Record<string, boolean>) => {
+      if (parentPath && name) {
+        const workspaceFolder = `${parentPath}${separator}${name}`;
+        const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
+
+        // Check if we already have results for these paths
+        if (workspaceFolder in workspaceExistenceResults || workspaceFile in workspaceExistenceResults) {
+          setIsValidatingWorkspaceName(false);
+          const validationError = validateWorkspaceName(name);
+          setWorkspaceNameError(validationError);
+          return;
+        }
+
+        setIsValidatingWorkspaceName(true);
+        // Validate both the workspace folder and file
+        vscode.postMessage({
+          command: ExtensionCommand.validatePath,
+          data: {
+            path: workspaceFolder,
+            type: 'workspace-folder',
+          },
+        });
+        vscode.postMessage({
+          command: ExtensionCommand.validatePath,
+          data: {
+            path: workspaceFile,
+            type: 'workspace-file',
+          },
+        });
+      }
+    },
+    [vscode, separator, validateWorkspaceName]
+  );
+
   // Effect to trigger path validation when path changes
   useEffect(() => {
     if (workspaceProjectPath.fsPath && workspaceProjectPath.fsPath.trim() !== '') {
       const timeoutId = setTimeout(() => {
         validatePathWithExtension(workspaceProjectPath.fsPath, pathValidationResults);
-      }, 500); // Debounce for 500ms
+      }, 500);
 
       return () => clearTimeout(timeoutId);
     }
     return undefined;
   }, [workspaceProjectPath.fsPath, pathValidationResults, validatePathWithExtension]);
 
-  const validateWorkspaceName = (name: string) => {
-    if (!name) {
-      return 'The workspace name cannot be empty.';
-    }
-    if (!workspaceNameValidation.test(name)) {
-      return 'Workspace name must start with a letter and can only contain letters, digits, "_" and "-".';
+  // Effect to validate workspace existence when both path and name are available
+  useEffect(() => {
+    if (workspaceProjectPath.fsPath && workspaceName) {
+      const timeoutId = setTimeout(() => {
+        validateWorkspaceExistence(workspaceProjectPath.fsPath, workspaceName, workspaceExistenceResults);
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
     }
     return undefined;
-  };
+  }, [workspaceProjectPath.fsPath, workspaceName, validateWorkspaceExistence, workspaceExistenceResults]);
 
   const handleProjectPathChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setProjectPath(data.value));
@@ -196,15 +228,20 @@ export const WorkspaceNameStep: React.FC = () => {
               className={styles.inputControl}
               style={{ width: '800px', fontFamily: 'monospace' }}
             />
-            <Button onClick={onOpenExplorer} className={styles.browseButton}>
-              {intlText.BROWSE_BUTTON}
+            <Button onClick={onOpenExplorer} className={styles.browseButton} disabled={isValidatingPath}>
+              {isValidatingPath ? 'Validating...' : intlText.BROWSE_BUTTON}
             </Button>
           </div>
           {workspaceProjectPath.fsPath && (
             <Text
               size={200}
               style={{
-                color: 'var(--colorNeutralForeground2)',
+                color:
+                  pathValidationResults[workspaceProjectPath.fsPath] === true
+                    ? 'var(--colorPaletteGreenForeground1)'
+                    : pathValidationResults[workspaceProjectPath.fsPath] === false
+                      ? 'var(--colorPaletteRedForeground1)'
+                      : 'var(--colorNeutralForeground2)',
                 fontFamily: 'monospace',
                 marginTop: '4px',
                 display: 'block',
@@ -212,19 +249,29 @@ export const WorkspaceNameStep: React.FC = () => {
               }}
             >
               {workspaceProjectPath.fsPath}
+              {pathValidationResults[workspaceProjectPath.fsPath] === true && ' ✓ Valid path'}
+              {pathValidationResults[workspaceProjectPath.fsPath] === false && ' ✗ Invalid path'}
             </Text>
           )}
         </Field>
       </div>
       <div className={styles.fieldContainer}>
-        <Field required validationState={workspaceNameError ? 'error' : undefined} validationMessage={workspaceNameError}>
+        <Field
+          required
+          validationState={workspaceNameError ? 'error' : isValidatingWorkspaceName ? 'warning' : undefined}
+          validationMessage={workspaceNameError || (isValidatingWorkspaceName ? 'Checking workspace availability...' : undefined)}
+        >
           <Label htmlFor={workspaceNameId}>{intlText.WORKSPACE_NAME_LABEL}</Label>
           <Input id={workspaceNameId} value={workspaceName} onChange={handleWorkspaceNameChange} className={styles.inputControl} />
           {workspaceName && workspaceProjectPath.fsPath && (
             <Text
               size={200}
               style={{
-                color: 'var(--colorNeutralForeground2)',
+                color: workspaceNameError
+                  ? 'var(--colorPaletteRedForeground1)'
+                  : pathValidationResults[workspaceProjectPath.fsPath] === true
+                    ? 'var(--colorPaletteGreenForeground1)'
+                    : 'var(--colorNeutralForeground2)',
                 fontFamily: 'monospace',
                 marginTop: '4px',
                 display: 'block',
@@ -232,6 +279,11 @@ export const WorkspaceNameStep: React.FC = () => {
               }}
             >
               {`${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${workspaceName}.code-workspace`}
+              {isValidatingWorkspace && ' (Checking availability...)'}
+              {!workspaceNameError &&
+                !isValidatingWorkspace &&
+                pathValidationResults[workspaceProjectPath.fsPath] === true &&
+                ' ✓ Available'}
             </Text>
           )}
         </Field>

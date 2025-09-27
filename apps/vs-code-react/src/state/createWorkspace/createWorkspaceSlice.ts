@@ -25,6 +25,8 @@ export interface CreateWorkspaceState {
   logicAppsWithoutCustomCode: any | undefined;
   flowType: 'createWorkspace' | 'createLogicApp' | 'convertToWorkspace';
   pathValidationResults: Record<string, boolean>;
+  workspaceExistenceResults: Record<string, boolean>;
+  isValidatingWorkspace: boolean;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -49,6 +51,8 @@ const initialState: CreateWorkspaceState = {
   logicAppsWithoutCustomCode: undefined,
   flowType: 'createWorkspace',
   pathValidationResults: {},
+  workspaceExistenceResults: {},
+  isValidatingWorkspace: false,
 };
 
 export const createWorkspaceSlice: any = createSlice({
@@ -110,6 +114,17 @@ export const createWorkspaceSlice: any = createSlice({
       const { path, isValid } = action.payload;
       state.pathValidationResults[path] = isValid;
     },
+    setWorkspaceExistenceResult: (state, action: PayloadAction<{ workspacePath: string; exists: boolean }>) => {
+      const { workspacePath, exists } = action.payload;
+      state.workspaceExistenceResults[workspacePath] = exists;
+      state.isValidatingWorkspace = false;
+    },
+    setValidatingWorkspace: (state, action: PayloadAction<boolean>) => {
+      state.isValidatingWorkspace = action.payload;
+    },
+    clearWorkspaceExistenceResults: (state) => {
+      state.workspaceExistenceResults = {};
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -150,6 +165,9 @@ export const {
   setOpenBehavior,
   setFlowType,
   setPathValidationResult,
+  setWorkspaceExistenceResult,
+  setValidatingWorkspace,
+  clearWorkspaceExistenceResults,
   setLoading,
   setError,
   setComplete,

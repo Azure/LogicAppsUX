@@ -40,6 +40,7 @@ export const CreateWorkspace: React.FC = () => {
     projectType,
     workspaceFileJson,
     pathValidationResults,
+    workspaceExistenceResults,
   } = createWorkspaceState;
 
   // Set flow type when component mounts
@@ -122,7 +123,12 @@ export const CreateWorkspace: React.FC = () => {
       case 0: {
         // Project Setup - validate all required fields are present AND properly formatted
         const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
-        const workspaceNameValid = workspaceName.trim() !== '' && workspaceNameValidation.test(workspaceName.trim());
+        const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+        const workspaceNameValid =
+          workspaceName.trim() !== '' &&
+          workspaceNameValidation.test(workspaceName.trim()) &&
+          workspaceExistenceResults[workspaceFolder] !== true;
         const logicAppTypeValid = logicAppType !== '';
         const logicAppNameValid =
           logicAppName.trim() !== '' && logicAppNameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
@@ -176,7 +182,12 @@ export const CreateWorkspace: React.FC = () => {
       case 0: {
         // Project Setup step - validate all required fields with regex validation
         const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
-        const workspaceNameValid = workspaceName.trim() !== '' && workspaceNameValidation.test(workspaceName.trim());
+        const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+        const workspaceNameValid =
+          workspaceName.trim() !== '' &&
+          workspaceNameValidation.test(workspaceName.trim()) &&
+          workspaceExistenceResults[workspaceFolder] !== true;
         const logicAppTypeValid = logicAppType !== '';
         const logicAppNameValid =
           logicAppName.trim() !== '' && logicAppNameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
