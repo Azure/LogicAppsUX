@@ -135,10 +135,11 @@ export const createLogicAppFromTemplate = async (
     return id;
   } catch (ex: any) {
     const errorInfo = extractErrorInfo(ex.error ?? ex);
-    const errorMessage = getIntl().formatMessage(
+    const intl = getIntl();
+    const errorMessage = intl.formatMessage(
       {
         defaultMessage: 'An error occurred while submitting the deployment. Details: {errorDetails}',
-        id: '8h1+4D',
+        id: '38leUm',
         description: 'Error message shown when deployment submission fails',
       },
       { errorDetails: errorInfo ? `Code: ${errorInfo.code}, Message: ${errorInfo.message}` : 'Unknown error' }
@@ -177,13 +178,14 @@ export const pollForAppCreateCompletion = async (
     }
 
     const errorInfo = extractErrorInfo(ex.error ?? ex);
+    const intl = getIntl();
     return errorInfo
       ? errorInfo
       : {
           code: 'DeploymentFailed',
-          message: getIntl().formatMessage({
+          message: intl.formatMessage({
             defaultMessage: 'An error occurred while creating the app. Unknown error.',
-            id: '8h1+4D',
+            id: 'k8fofe',
             description: 'Error message shown when app creation fails',
           }),
         };

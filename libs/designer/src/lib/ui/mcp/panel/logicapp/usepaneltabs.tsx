@@ -30,8 +30,8 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
 
   const intlTexts = {
     createButtonText: intl.formatMessage({
-      defaultMessage: 'Review + create',
-      id: 'COKUSs',
+      defaultMessage: 'Create',
+      id: 'zj7R+4',
       description: 'Button text for creating the logic app',
     }),
     validationErrorTitle: intl.formatMessage({
