@@ -28,6 +28,7 @@ export const useCreateDetailsStyles = makeStyles({
 export const useCreatePopupStyles = makeStyles({
   inputSection: {
     padding: '10px 0',
+    width: '300px',
   },
   buttonSection: {
     display: 'flex',
