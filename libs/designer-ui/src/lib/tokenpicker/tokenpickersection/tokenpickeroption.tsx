@@ -1,17 +1,17 @@
 import type { OutputToken } from '..';
 import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
-import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
-import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
+// import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
+// import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { TokenGroup, Token } from '@microsoft/logic-apps-shared';
 import { getReducedTokenList } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon, useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { darken, hex2rgb, lighten, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
-import type { LexicalEditor } from 'lexical';
+// import type { LexicalEditor } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -35,22 +35,22 @@ export const TokenPickerOptions = ({
   section,
   searchQuery,
   index,
-  expressionEditorRef,
-  expression,
-  setExpression,
+  // expressionEditorRef,
+  // expression,
+  // setExpression,
   setTokenLength,
-  getValueSegmentFromToken,
-  tokenClickedCallback,
+  // getValueSegmentFromToken,
+  // tokenClickedCallback,
 }: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
 
-  let editor: LexicalEditor | null;
-  try {
-    [editor] = useLexicalComposerContext();
-  } catch {
-    editor = null;
-  }
+  // let editor: LexicalEditor | null;
+  // try {
+  //   [editor] = useLexicalComposerContext();
+  // } catch {
+  //   editor = null;
+  // }
   const [moreOptions, { toggle: toggleMoreOptions }] = useBoolean(true);
   const [filteredTokens, setFilteredTokens] = useState(section.tokens);
 
@@ -97,75 +97,75 @@ export const TokenPickerOptions = ({
     toggleMoreOptions();
   };
 
-  const handleTokenClicked = (token: OutputToken) => {
-    if (selectedMode === TokenPickerMode.TOKEN) {
-      handleCreateToken(token);
-    } else if (selectedMode === TokenPickerMode.EXPRESSION) {
-      handleExpressionClicked(token);
-    } else if (selectedMode === TokenPickerMode.TOKEN_EXPRESSION) {
-      handleTokenExpressionClicked(token);
-    }
-  };
+  // const handleTokenClicked = (token: OutputToken) => {
+  //   if (selectedMode === TokenPickerMode.TOKEN) {
+  //     handleCreateToken(token);
+  //   } else if (selectedMode === TokenPickerMode.EXPRESSION) {
+  //     handleExpressionClicked(token);
+  //   } else if (selectedMode === TokenPickerMode.TOKEN_EXPRESSION) {
+  //     handleTokenExpressionClicked(token);
+  //   }
+  // };
 
-  const handleTokenExpressionClicked = async (token: OutputToken) => {
-    const expression = (await getValueSegmentFromToken(token, !tokenClickedCallback)).value;
-    insertExpressionText(expression, 0);
-  };
+  // const handleTokenExpressionClicked = async (token: OutputToken) => {
+  //   const expression = (await getValueSegmentFromToken(token, !tokenClickedCallback)).value;
+  //   insertExpressionText(expression, 0);
+  // };
 
-  const handleExpressionClicked = (token: OutputToken) => {
-    const expression = token.key;
-    insertExpressionText(`${expression}()`, -1);
-  };
+  // const handleExpressionClicked = (token: OutputToken) => {
+  //   const expression = token.key;
+  //   insertExpressionText(`${expression}()`, -1);
+  // };
 
-  const insertExpressionText = (text: string, caretOffset: number): void => {
-    if (expressionEditorRef.current) {
-      // gets the original expression
-      const oldExpression = expressionEditorRef.current.getValue();
-      // gets the line number of the current selection
-      const selectionLineNumber = expressionEditorRef.current.getPosition()?.lineNumber ?? 1;
-      // gets the line of the current selection and replaces the text with the new expression
-      const splitOldExpression = oldExpression.split('\r\n');
-      const oldExpressionLineNumber = splitOldExpression[selectionLineNumber - 1];
-      const beforeSelection = oldExpressionLineNumber.substring(0, expression.selectionStart);
-      const afterSelection = oldExpressionLineNumber.substring(expression.selectionEnd);
-      const newExpressionLineNumber = `${beforeSelection}${text}${afterSelection}`;
-      splitOldExpression[selectionLineNumber - 1] = newExpressionLineNumber;
+  // const insertExpressionText = (text: string, caretOffset: number): void => {
+  //   if (expressionEditorRef.current) {
+  //     // gets the original expression
+  //     const oldExpression = expressionEditorRef.current.getValue();
+  //     // gets the line number of the current selection
+  //     const selectionLineNumber = expressionEditorRef.current.getPosition()?.lineNumber ?? 1;
+  //     // gets the line of the current selection and replaces the text with the new expression
+  //     const splitOldExpression = oldExpression.split('\r\n');
+  //     const oldExpressionLineNumber = splitOldExpression[selectionLineNumber - 1];
+  //     const beforeSelection = oldExpressionLineNumber.substring(0, expression.selectionStart);
+  //     const afterSelection = oldExpressionLineNumber.substring(expression.selectionEnd);
+  //     const newExpressionLineNumber = `${beforeSelection}${text}${afterSelection}`;
+  //     splitOldExpression[selectionLineNumber - 1] = newExpressionLineNumber;
 
-      // updates the split text and updates the new expression and selection
-      const newExpression = splitOldExpression.join('\r\n');
-      const newSelection = newExpression.length - afterSelection.length + caretOffset;
-      setExpression({ value: newExpression, selectionStart: newSelection, selectionEnd: newSelection });
+  //     // updates the split text and updates the new expression and selection
+  //     const newExpression = splitOldExpression.join('\r\n');
+  //     const newSelection = newExpression.length - afterSelection.length + caretOffset;
+  //     setExpression({ value: newExpression, selectionStart: newSelection, selectionEnd: newSelection });
 
-      setTimeout(() => {
-        expressionEditorRef.current?.setValue(newExpression);
-        expressionEditorRef.current?.setSelection({
-          startLineNumber: selectionLineNumber,
-          startColumn: newSelection + 1,
-          endLineNumber: selectionLineNumber,
-          endColumn: newSelection + 1,
-        });
-        expressionEditorRef.current?.focus();
-      });
-    }
-  };
+  //     setTimeout(() => {
+  //       expressionEditorRef.current?.setValue(newExpression);
+  //       expressionEditorRef.current?.setSelection({
+  //         startLineNumber: selectionLineNumber,
+  //         startColumn: newSelection + 1,
+  //         endLineNumber: selectionLineNumber,
+  //         endColumn: newSelection + 1,
+  //       });
+  //       expressionEditorRef.current?.focus();
+  //     });
+  //   }
+  // };
 
-  const handleCreateToken = async (token: OutputToken) => {
-    const { brandColor, icon, title, description, value } = token;
-    const segment = await getValueSegmentFromToken(token, !tokenClickedCallback);
-    if (tokenClickedCallback) {
-      tokenClickedCallback(segment);
-    } else {
-      editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
-      editor?.dispatchCommand(INSERT_TOKEN_NODE, {
-        brandColor,
-        description,
-        title,
-        icon,
-        value,
-        data: segment,
-      });
-    }
-  };
+  // const handleCreateToken = async (token: OutputToken) => {
+  //   const { brandColor, icon, title, description, value } = token;
+  //   const segment = await getValueSegmentFromToken(token, !tokenClickedCallback);
+  //   if (tokenClickedCallback) {
+  //     tokenClickedCallback(segment);
+  //   } else {
+  //     editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
+  //     editor?.dispatchCommand(INSERT_TOKEN_NODE, {
+  //       brandColor,
+  //       description,
+  //       title,
+  //       icon,
+  //       value,
+  //       data: segment,
+  //     });
+  //   }
+  // };
 
   const getSectionIcon = (): string | undefined => {
     return section?.tokens[0]?.icon;
@@ -224,7 +224,9 @@ export const TokenPickerOptions = ({
                   className="msla-token-picker-section-option"
                   data-automation-id={`msla-token-picker-section-option-${j}`}
                   key={`token-picker-option-${j}`}
-                  onClick={() => handleTokenClicked(token)}
+                  onClick={() => {
+                    console.log('test');
+                  }}
                 >
                   <div className="msla-token-picker-section-option-text">
                     <div className="msla-token-picker-option-inner">
