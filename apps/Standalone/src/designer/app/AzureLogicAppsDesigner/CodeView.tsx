@@ -1,10 +1,10 @@
 import { useMount } from '@fluentui/react-hooks';
-import type { EditorContentChangedEventArgs } from '@microsoft/designer-ui';
-import { MonacoEditor } from '@microsoft/designer-ui';
-import { serializeBJSWorkflow, store as DesignerStore, setIsWorkflowDirty, useIsWorkflowDirty } from '@microsoft/logic-apps-designer';
-import type { AppDispatch } from '@microsoft/logic-apps-designer';
-import { EditorLanguage, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useDispatch } from 'react-redux';
+// import type { EditorContentChangedEventArgs } from '@microsoft/designer-ui';
+// import { MonacoEditor } from '@microsoft/designer-ui';
+import { serializeBJSWorkflow, store as DesignerStore } from '@microsoft/logic-apps-designer';
+// import type { AppDispatch } from '@microsoft/logic-apps-designer';
+// import { EditorLanguage, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+// import { useDispatch } from 'react-redux';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './Services/ConsumptionSerializationHelpers';
 import { useState, forwardRef, useImperativeHandle } from 'react';
 
@@ -14,10 +14,10 @@ interface CodeViewProps {
 }
 
 const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProps, ref) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const isWorkflowIsDirty = useIsWorkflowDirty();
+  // const dispatch = useDispatch<AppDispatch>();
+  // const isWorkflowIsDirty = useIsWorkflowDirty();
   const [code, setCode] = useState<string | undefined>();
-  const [changesMade, setChangesMade] = useState(false);
+  const [changesMade] = useState(false);
 
   useMount(async () => {
     const serializedWorkflowDefinition = await serializeBJSWorkflow(DesignerStore.getState(), {
@@ -42,15 +42,15 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
     setCode(JSON.stringify(serializedWorkflowDefinition, null, 2));
   });
 
-  const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
-    if (!isWorkflowIsDirty) {
-      dispatch(setIsWorkflowDirty(true));
-    }
-    if (e.value !== undefined) {
-      setCode(e.value);
-      setChangesMade(true);
-    }
-  };
+  // const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
+  //   if (!isWorkflowIsDirty) {
+  //     dispatch(setIsWorkflowDirty(true));
+  //   }
+  //   if (e.value !== undefined) {
+  //     setCode(e.value);
+  //     setChangesMade(true);
+  //   }
+  // };
 
   useImperativeHandle(ref, () => ({
     getValue: () => code,
@@ -59,7 +59,7 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
 
   return (
     <div>
-      {isNullOrUndefined(code) ? null : (
+      {/* {isNullOrUndefined(code) ? null : (
         <MonacoEditor
           height="95vh"
           language={EditorLanguage.json}
@@ -69,7 +69,7 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
           fontSize={13}
           onContentChanged={handleContentChanged}
         />
-      )}
+      )} */}
     </div>
   );
 });

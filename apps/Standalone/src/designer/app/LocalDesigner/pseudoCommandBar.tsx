@@ -2,7 +2,7 @@ import { useShowConnectionsPanel } from '../../state/workflowLoadingSelectors';
 import './pseudoCommandBar.less';
 import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
-import { MonacoEditor } from '@microsoft/designer-ui';
+// import { MonacoEditor } from '@microsoft/designer-ui';
 import type { Workflow, AppDispatch, RootState } from '@microsoft/logic-apps-designer';
 import {
   useIsDesignerDirty,
@@ -15,7 +15,7 @@ import {
   useCanRedo,
   useTotalNumErrors,
 } from '@microsoft/logic-apps-designer';
-import { EditorLanguage, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
+import {  RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -30,7 +30,7 @@ export const PseudoCommandBar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [showSerialization, setShowSeralization] = useState(false);
-  const [serializedWorkflow, setSerializedWorkflow] = useState<Workflow>();
+  const [_serializedWorkflow, setSerializedWorkflow] = useState<Workflow>();
   const serializeCallback = () => {
     serializeWorkflow(state).then((serialized) => setSerializedWorkflow(serialized));
     setShowSeralization(true);
@@ -98,7 +98,7 @@ export const PseudoCommandBar = () => {
       >
         <div style={{ padding: '24px' }}>
           <h1>Serialized Workflow</h1>
-          <MonacoEditor
+          {/* <MonacoEditor
             language={EditorLanguage.json}
             value={JSON.stringify(serializedWorkflow, null, 2)}
             readOnly
@@ -109,7 +109,7 @@ export const PseudoCommandBar = () => {
             wrappingIndent="same"
             height="800px"
             width="800px"
-          />
+          /> */}
         </div>
       </Modal>
     </div>

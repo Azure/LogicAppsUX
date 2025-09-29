@@ -1,12 +1,12 @@
 import { cloneElement, useMemo, useState } from 'react';
-import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { /*EditorLanguage, */ equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { AgentInstructionEditor } from '../../agentinstruction';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
-import { CodeEditor } from '../../code';
-import type { FileNameChangeHandler } from '../../code';
-import { isCustomCode } from '../../code/util';
+// import { CodeEditor } from '../../code';
+// import type { FileNameChangeHandler } from '../../code';
+// import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
 import { DropdownEditor } from '../../dropdown';
 import constants from '../../constants';
@@ -22,7 +22,7 @@ import type {
 } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import type { AgentParameterButtonProps } from '../../editor/base/plugins/tokenpickerbutton/agentParameterButton';
-import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
+import { /*createLiteralValueSegment, */ getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
 import { InitializeVariableEditor } from '../../editor/initializevariable';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
@@ -36,7 +36,7 @@ import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
-import { SchemaEditor } from '../../schemaeditor';
+// import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { TableEditor } from '../../table';
@@ -80,7 +80,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
-  onFileNameChange?: FileNameChangeHandler;
+  // onFileNameChange?: FileNameChangeHandler;
   pickerCallbacks?: PickerCallbackHandlers;
   agentParameterButtonProps?: Partial<AgentParameterButtonProps>;
   tokenpickerButtonProps?: TokenPickerButtonEditorProps;
@@ -193,13 +193,13 @@ export const TokenField = ({
   loadParameterValueFromString,
   onValueChange,
   onComboboxMenuOpen,
-  onFileNameChange,
+  // onFileNameChange,
   hideValidationErrors,
   onCastParameter,
   getTokenPicker,
   hostOptions,
   required,
-  hideTokenPicker,
+  // hideTokenPicker,
 }: TokenFieldProps) => {
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
@@ -277,33 +277,33 @@ export const TokenField = ({
         />
       );
 
-    case constants.PARAMETER.EDITOR.CODE: {
-      const { language = EditorLanguage.javascript } = editorOptions || {};
-      const customCodeEditor = isCustomCode(editor, language);
-      const customCodeData = (() => {
-        const data = editorViewModel?.customCodeData?.fileData ?? '';
-        return typeof data === 'string' ? data : JSON.stringify(data);
-      })();
-      const fileName = editorViewModel?.customCodeData?.fileName;
+    // case constants.PARAMETER.EDITOR.CODE: {
+    //   const { language = EditorLanguage.javascript } = editorOptions || {};
+    //   const customCodeEditor = isCustomCode(editor, language);
+    //   const customCodeData = (() => {
+    //     const data = editorViewModel?.customCodeData?.fileData ?? '';
+    //     return typeof data === 'string' ? data : JSON.stringify(data);
+    //   })();
+    //   const fileName = editorViewModel?.customCodeData?.fileName;
 
-      const initialValue = customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
+    //   const initialValue = customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
 
-      return (
-        <CodeEditor
-          originalFileName={fileName}
-          labelId={labelId}
-          initialValue={initialValue}
-          getTokenPicker={getTokenPicker}
-          onFileNameChange={onFileNameChange}
-          language={language}
-          onChange={onValueChange}
-          readonly={readOnly}
-          placeholder={placeholder}
-          customCodeEditor={customCodeEditor}
-          hideTokenPicker={hideTokenPicker}
-        />
-      );
-    }
+    //   return (
+    //     <CodeEditor
+    //       originalFileName={fileName}
+    //       labelId={labelId}
+    //       initialValue={initialValue}
+    //       getTokenPicker={getTokenPicker}
+    //       onFileNameChange={onFileNameChange}
+    //       language={language}
+    //       onChange={onValueChange}
+    //       readonly={readOnly}
+    //       placeholder={placeholder}
+    //       customCodeEditor={customCodeEditor}
+    //       hideTokenPicker={hideTokenPicker}
+    //     />
+    //   );
+    // }
 
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
@@ -509,8 +509,8 @@ export const TokenField = ({
         />
       );
 
-    case constants.PARAMETER.EDITOR.SCHEMA:
-      return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
+    // case constants.PARAMETER.EDITOR.SCHEMA:
+    //   return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
 
     case constants.PARAMETER.EDITOR.TABLE:
       return (

@@ -1,5 +1,5 @@
-import { MonacoEditor } from '../editor/monaco';
-import { EditorLanguage } from '@microsoft/logic-apps-shared';
+// import { MonacoEditor } from '../editor/monaco';
+// import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { usePeekStyles } from './styles';
 
 export interface PeekProps {
@@ -8,20 +8,21 @@ export interface PeekProps {
 
 export function Peek({ input }: PeekProps): JSX.Element {
   const styles = usePeekStyles();
-  const options = {
-    contextmenu: false,
-    fontSize: 13,
-    lineNumbers: 'off',
-    readOnly: true,
-    scrollBeyondLastLine: false,
-    wordWrap: 'on',
-    defaultValue: '',
-    folding: true,
-  };
+  console.log(input);
+  // const options = {
+  //   contextmenu: false,
+  //   fontSize: 13,
+  //   lineNumbers: 'off',
+  //   readOnly: true,
+  //   scrollBeyondLastLine: false,
+  //   wordWrap: 'on',
+  //   defaultValue: '',
+  //   folding: true,
+  // };
 
   return (
     <div data-automation-id="msla-peek" className={`msla-card-inner-body ${styles.root}`}>
-      <MonacoEditor
+      {/* <MonacoEditor
         className={'msla-monaco-peek'}
         value={input}
         fontSize={options.fontSize}
@@ -29,7 +30,7 @@ export function Peek({ input }: PeekProps): JSX.Element {
         folding={options.folding}
         language={EditorLanguage.json}
         monacoContainerStyle={{ height: '100%' }}
-      />
+      /> */}
     </div>
   );
 }

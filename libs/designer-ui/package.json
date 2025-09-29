@@ -17,13 +17,11 @@
     "@lexical/table": "0.12.6",
     "@lexical/utils": "0.12.6",
     "@microsoft/logic-apps-shared": "workspace:*",
-    "@monaco-editor/react": "4.6.0",
     "@react-hookz/web": "22.0.0",
     "@xyflow/react": "^12.3.5",
     "dompurify": "3.2.4",
     "fuse.js": "6.6.2",
     "lexical": "0.12.6",
-    "monaco-editor": "0.44.0",
     "prism-react-renderer": "2.3.1",
     "react-dnd": "16.0.1",
     "react-infinite-scroll-component": "6.1.0",
@@ -46,7 +44,10 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",

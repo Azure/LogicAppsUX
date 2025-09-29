@@ -4,9 +4,9 @@ import type { RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Stack, StackItem, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import type { MonacoProps } from '@microsoft/designer-ui';
-import { MonacoEditor } from '@microsoft/designer-ui';
-import { EditorLanguage, guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/logic-apps-shared';
+// import type { MonacoProps } from '@microsoft/designer-ui';
+// import { MonacoEditor } from '@microsoft/designer-ui';
+import {  guid, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -22,13 +22,13 @@ const InputDataOptions = {
 } as const;
 export type InputDataOptions = (typeof InputDataOptions)[keyof typeof InputDataOptions];
 
-export const commonCodeEditorProps: Partial<MonacoProps> = {
-  lineNumbers: 'on',
-  scrollbar: { horizontal: 'hidden', vertical: 'auto' },
-  height: '650px',
-  wordWrap: 'on',
-  wrappingIndent: 'same',
-};
+// export const commonCodeEditorProps: Partial<MonacoProps> = {
+//   lineNumbers: 'on',
+//   scrollbar: { horizontal: 'hidden', vertical: 'auto' },
+//   height: '650px',
+//   wordWrap: 'on',
+//   wrappingIndent: 'same',
+// };
 
 const headerTextStyle: React.CSSProperties = {
   display: 'block',
@@ -67,12 +67,12 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
   const currentTheme = useSelector((state: RootState) => state.app.theme);
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
   const fileXslt = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  // const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  // const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const [selectedInputOption, setSelectedInputOption] = useState<InputDataOptions>(InputDataOptions.PasteSample);
   const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);
-  const [testMapInput, setTestMapInput] = useState<string>('');
+  const [testMapInput] = useState<string>('');
   const [testMapResponse, setTestMapResponse] = useState<TestMapResponse | undefined>(undefined);
   const [currentXslt, setCurrentXslt] = useState<string>(fileXslt);
 
@@ -279,14 +279,14 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
             onChange={(_, option) => setSelectedInputOption(option?.key as InputDataOptions)}
           />
 
-          <MonacoEditor
+          {/* <MonacoEditor
             language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
             value={testMapInput}
             onContentChanged={(e) => setTestMapInput(e.value ?? '')}
             className={styles.editorStyle}
             contextMenu={true}
             {...commonCodeEditorProps}
-          />
+          /> */}
         </PivotItem>
 
         <PivotItem headerText={outputLoc} itemKey={PanelPivotItems.Output} className={styles.pivotItem}>
@@ -294,13 +294,13 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
           <Text style={textStyle}>{testMapResponse && `${testMapResponse.statusCode} - ${testMapResponse.statusText}`}</Text>
 
           <Text style={{ ...headerTextStyle, marginTop: 20 }}>{responseBodyLoc}</Text>
-          <MonacoEditor
+          {/* <MonacoEditor
             language={targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
             value={testMapResponse?.outputInstance?.$content ?? ''}
             className={styles.editorStyle}
             {...commonCodeEditorProps}
             readOnly
-          />
+          /> */}
         </PivotItem>
       </Pivot>
     </Panel>

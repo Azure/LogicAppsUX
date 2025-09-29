@@ -11,7 +11,7 @@ import {
   getDropdownOptionsFromOptions,
   HTMLEditor,
   mergeClasses,
-  SchemaEditor,
+  // SchemaEditor,
   StringEditor,
   TableEditor,
 } from '@microsoft/designer-ui';
@@ -238,15 +238,15 @@ export const ParameterEditor = ({
         />
       );
 
-    case constants.EDITOR.SCHEMA:
-      return (
-        <SchemaEditor
-          className={styles.parameterEditor}
-          label={parameter.label}
-          initialValue={parameter.value}
-          onChange={onParameterValueChange}
-        />
-      );
+    // case constants.EDITOR.SCHEMA:
+    //   return (
+    //     <SchemaEditor
+    //       className={styles.parameterEditor}
+    //       label={parameter.label}
+    //       initialValue={parameter.value}
+    //       onChange={onParameterValueChange}
+    //     />
+    //   );
 
     case constants.EDITOR.TABLE:
       return (
