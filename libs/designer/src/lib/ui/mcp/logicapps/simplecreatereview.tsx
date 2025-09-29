@@ -86,7 +86,7 @@ export const SimpleCreateReview = ({
 
   return (
     <div className={styles.container}>
-      {errorInfo ? <ErrorBar title={errorInfo.title} errorMessage={errorInfo.message} messageInNewline={true} /> : null}
+      {errorInfo ? <ErrorBar title={errorInfo.title} errorMessage={errorInfo.message} /> : null}
       {isCreated ? (
         <div>
           <MessageBar intent="success">{intlTexts.createdMessage}</MessageBar>

@@ -59,7 +59,7 @@ export const AppInsightsSelector = ({ selectedResource, setSelectedResource, new
 
 const validateAvailability = async (name: string, subscriptionId: string, resourceGroup: string): Promise<string | undefined> => {
   const resourceIdPrefix = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/components`;
-  const apiVersion = '2018-11-01';
+  const apiVersion = '2020-02-02';
   return validateNameAvailability(name, resourceIdPrefix, apiVersion);
 };
 
