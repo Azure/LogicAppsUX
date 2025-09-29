@@ -11,16 +11,10 @@ exports[`ui/unitTesting/conditionExpression/index > should render without assert
     <ExpressionEditor
       currentHeight={100}
       dragDistance={0}
-      editorRef={
-        {
-          "current": null,
-        }
-      }
       initialValue="@equals(1, 1)"
       isDragging={false}
       isReadOnly={false}
       onBlur={[Function]}
-      onContentChanged={[Function]}
       onFocus={[Function]}
       setCurrentHeight={[Function]}
       setExpressionEditorError={[Function]}
