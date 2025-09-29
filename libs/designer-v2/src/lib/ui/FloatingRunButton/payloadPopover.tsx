@@ -1,6 +1,6 @@
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { Button, Dropdown, Field, Option, Popover, PopoverSurface } from '@fluentui/react-components';
-import { MonacoEditor, SimpleDictionary } from '@microsoft/designer-ui';
+import {  SimpleDictionary } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { usePayloadPopoverStyles } from './styles';
@@ -37,7 +37,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit }: any) => {
     description: 'HTTP queries label',
   });
 
-  const [bodyValue, setBodyValue] = useState<string | undefined>(undefined);
+  const [bodyValue] = useState<string | undefined>(undefined);
   const bodyLabel = intl.formatMessage({
     defaultMessage: 'Body',
     id: 'aFZRms',
@@ -90,7 +90,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit }: any) => {
           </Field>
           {/* Body */}
           <Field label={bodyLabel} className={styles.monacoEditor}>
-            <MonacoEditor
+            {/* <MonacoEditor
               // key={"body-editor"}
               height={'200px'}
               language={'json'}
@@ -98,7 +98,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit }: any) => {
               folding={true}
               onContentChanged={(e) => setBodyValue(e.value)}
               lineNumbersMinChars={3}
-            />
+            /> */}
           </Field>
           <Button appearance={'primary'} onClick={onRunClick} className={styles.runButton}>
             {runButtonText}

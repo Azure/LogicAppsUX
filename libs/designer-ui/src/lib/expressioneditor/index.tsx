@@ -1,9 +1,9 @@
-import type { EditorContentChangedEventArgs } from '../editor/monaco';
-import { MonacoEditor } from '../editor/monaco';
+// import type { EditorContentChangedEventArgs } from '../editor/monaco';
+// import { MonacoEditor } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
-import { EditorLanguage, clamp } from '@microsoft/logic-apps-shared';
-import type { editor } from 'monaco-editor';
-import type { MutableRefObject } from 'react';
+import { /* EditorLanguage,*/ clamp } from '@microsoft/logic-apps-shared';
+// import type { editor } from 'monaco-editor';
+// import type { MutableRefObject } from 'react';
 import { useState, useEffect } from 'react';
 
 export interface ExpressionEditorEvent {
@@ -14,7 +14,7 @@ export interface ExpressionEditorEvent {
 
 export interface ExpressionEditorProps {
   initialValue: string;
-  editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  // editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   isDragging: boolean;
   dragDistance?: number;
   currentHeight: number;
@@ -23,23 +23,23 @@ export interface ExpressionEditorProps {
   setIsDragging: (isDragging: boolean) => void;
   setExpressionEditorError: (error: string) => void;
   onFocus?: () => void;
-  onContentChanged?(e: EditorContentChangedEventArgs): void;
+  // onContentChanged?(e: EditorContentChangedEventArgs): void;
   isReadOnly?: boolean;
 }
 
 export function ExpressionEditor({
-  initialValue,
-  editorRef,
+  // initialValue,
+  // editorRef,
   isDragging,
   dragDistance,
   currentHeight,
   setCurrentHeight,
-  onBlur,
-  onFocus,
+  // onBlur,
+  // onFocus,
   setIsDragging,
-  setExpressionEditorError,
-  onContentChanged,
-  isReadOnly = false,
+  // setExpressionEditorError,
+  // onContentChanged,
+  // isReadOnly = false,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
@@ -49,27 +49,27 @@ export function ExpressionEditor({
     }
   }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight, heightOnMouseDown]);
 
-  const handleBlur = (): void => {
-    if (onBlur && editorRef?.current) {
-      const currentSelection = editorRef.current.getSelection();
-      const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1 - 1;
-      if (currentSelection) {
-        const { startLineNumber, startColumn, endLineNumber, endColumn } = currentSelection;
-        const isValidSelection = startLineNumber === endLineNumber;
-        const selectionStart = isValidSelection ? startColumn - 1 : currentCursorPosition;
-        const selectionEnd = isValidSelection ? endColumn - 1 : currentCursorPosition;
-        onBlur({ value: editorRef.current.getValue(), selectionStart, selectionEnd });
-      }
-    }
-  };
+  // const handleBlur = (): void => {
+  //   if (onBlur && editorRef?.current) {
+  //     const currentSelection = editorRef.current.getSelection();
+  //     const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1 - 1;
+  //     if (currentSelection) {
+  //       const { startLineNumber, startColumn, endLineNumber, endColumn } = currentSelection;
+  //       const isValidSelection = startLineNumber === endLineNumber;
+  //       const selectionStart = isValidSelection ? startColumn - 1 : currentCursorPosition;
+  //       const selectionEnd = isValidSelection ? endColumn - 1 : currentCursorPosition;
+  //       onBlur({ value: editorRef.current.getValue(), selectionStart, selectionEnd });
+  //     }
+  //   }
+  // };
 
-  const handleChangeEvent = (): void => {
-    setExpressionEditorError('');
-  };
+  // const handleChangeEvent = (): void => {
+  //   setExpressionEditorError('');
+  // };
 
   return (
     <div className="msla-expression-editor-container" style={{ height: currentHeight }}>
-      <MonacoEditor
+      {/* <MonacoEditor
         ref={editorRef}
         language={EditorLanguage.templateExpressionLanguage}
         lineNumbers="off"
@@ -90,7 +90,7 @@ export function ExpressionEditor({
         height={`${currentHeight}px`}
         readOnly={isReadOnly}
         tabSize={2}
-      />
+      /> */}
       <div
         className="msla-expression-editor-expand"
         onMouseDown={(e) => {

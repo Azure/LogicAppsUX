@@ -6,15 +6,15 @@ import {
   AccordionItem,
   AccordionPanel,
   Button,
-  makeStyles,
-  shorthands,
+  // makeStyles,
+  // shorthands,
   Tab,
   TabList,
   Text,
   tokens,
 } from '@fluentui/react-components';
-import type { MonacoProps } from '@microsoft/designer-ui';
-import { MonacoEditor } from '@microsoft/designer-ui';
+// import type { MonacoProps } from '@microsoft/designer-ui';
+// import { MonacoEditor } from '@microsoft/designer-ui';
 import {
   convertSchemaToSchemaExtended,
   convertToMapDefinition,
@@ -22,7 +22,7 @@ import {
   loadMapDefinition,
   MapDefinitionDeserializer,
 } from '@microsoft/logic-apps-data-mapper';
-import { EditorLanguage } from '@microsoft/logic-apps-shared';
+// import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -32,30 +32,30 @@ const SerializationTab = {
 } as const;
 type SerializationTab = (typeof SerializationTab)[keyof typeof SerializationTab];
 
-const commonCodeEditorProps: Partial<MonacoProps> = {
-  lineNumbers: 'on',
-  scrollbar: { horizontal: 'auto', vertical: 'auto' },
-  wordWrap: 'on',
-  wrappingIndent: 'same',
-  width: '600px',
-};
+// const commonCodeEditorProps: Partial<MonacoProps> = {
+//   lineNumbers: 'on',
+//   scrollbar: { horizontal: 'auto', vertical: 'auto' },
+//   wordWrap: 'on',
+//   wrappingIndent: 'same',
+//   width: '600px',
+// };
 
-const useStyles = makeStyles({
-  editorStyle: {
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('2px'),
-  },
-});
+// const useStyles = makeStyles({
+//   editorStyle: {
+//     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
+//     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+//     ...shorthands.padding('2px'),
+//   },
+// });
 
 export const DevSerializationTester = () => {
-  const styles = useStyles();
+  // const styles = useStyles();
 
   const [selectedTab, setSelectedTab] = useState<SerializationTab>(SerializationTab.Deserialization);
-  const [inputMapDefinition, setInputMapDefinition] = useState<string>('');
-  const [outputConnections, setOutputConnections] = useState<string>('');
-  const [inputConnections, setInputConnections] = useState<string>('');
-  const [outputMapDefinition, setOutputMapDefinition] = useState<string>('');
+  const [inputMapDefinition] = useState<string>('');
+  const [_outputConnections, setOutputConnections] = useState<string>('');
+  const [inputConnections] = useState<string>('');
+  const [_outputMapDefinition, setOutputMapDefinition] = useState<string>('');
 
   const { fetchedFunctions } = useSelector((state: RootState) => state.dataMapDataLoader);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.schemaDataLoader);
@@ -156,14 +156,14 @@ export const DevSerializationTester = () => {
                     >
                       Map definition
                     </Text>
-                    <MonacoEditor
+                    {/* <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.yaml}
                       value={inputMapDefinition}
                       onContentChanged={(e) => setInputMapDefinition(e.value ?? '')}
                       className={styles.editorStyle}
                       height="400px"
-                    />
+                    /> */}
 
                     <Button onClick={deserializeMapDefinitionIntoConnections}>Deserialize map definition</Button>
                   </Stack>
@@ -179,14 +179,14 @@ export const DevSerializationTester = () => {
                     >
                       Connections
                     </Text>
-                    <MonacoEditor
+                    {/* <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.json}
                       value={outputConnections}
                       className={styles.editorStyle}
                       height="400px"
                       readOnly
-                    />
+                    /> */}
                   </Stack>
                 </>
               )}
@@ -204,14 +204,14 @@ export const DevSerializationTester = () => {
                     >
                       Connections
                     </Text>
-                    <MonacoEditor
+                    {/* <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.json}
                       value={inputConnections}
                       onContentChanged={(e) => setInputConnections(e.value ?? '')}
                       className={styles.editorStyle}
                       height="400px"
-                    />
+                    /> */}
 
                     <Button onClick={serializeConnectionsIntoMapDefinition}>Serialize connections</Button>
                   </Stack>
@@ -227,14 +227,14 @@ export const DevSerializationTester = () => {
                     >
                       Map definition
                     </Text>
-                    <MonacoEditor
+                    {/* <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.json}
                       value={outputMapDefinition}
                       className={styles.editorStyle}
                       height="400px"
                       readOnly
-                    />
+                    /> */}
                   </Stack>
                 </>
               )}

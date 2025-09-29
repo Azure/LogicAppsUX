@@ -1,4 +1,4 @@
-import type { editor } from 'monaco-editor';
+// import type { editor } from 'monaco-editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -9,7 +9,7 @@ import { TokenPickerPivot } from '../../tokenpicker/tokenpickerpivot';
 import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
-import type { EditorContentChangedEventArgs } from '../../editor/monaco';
+// import type { EditorContentChangedEventArgs } from '../../editor/monaco';
 import constants from '../../constants';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { useConditionExpressionStyles } from './conditionExpression.styles';
@@ -47,7 +47,7 @@ export function ConditionExpression({
   tokenGroup,
   expressionGroup,
   getValueSegmentFromToken,
-  onChange,
+  // onChange,
   isReadOnly,
 }: ConditionExpressionProps): JSX.Element {
   const intl = useIntl();
@@ -63,7 +63,7 @@ export function ConditionExpression({
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(TokenPickerMode.EXPRESSION);
 
   const searchBoxRef = useRef<ISearchBox | null>(null);
-  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  // const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
@@ -133,9 +133,9 @@ export function ConditionExpression({
     }
   }, [isCalloutVisible]);
 
-  const onContentChanged = (e: EditorContentChangedEventArgs): void => {
-    onChange(e.value ?? '');
-  };
+  // const onContentChanged = (e: EditorContentChangedEventArgs): void => {
+  //   onChange(e.value ?? '');
+  // };
 
   const handleCloseTokenPicker = () => {
     setIsCalloutVisible(false);
@@ -151,7 +151,7 @@ export function ConditionExpression({
       >
         <ExpressionEditor
           initialValue={expression.value}
-          editorRef={expressionEditorRef}
+          // editorRef={expressionEditorRef}
           onBlur={onExpressionEditorBlur}
           isDragging={isDraggingExpressionEditor}
           dragDistance={expressionEditorDragDistance}
@@ -160,7 +160,7 @@ export function ConditionExpression({
           setCurrentHeight={setExpressionEditorCurrentHeight}
           setExpressionEditorError={setExpressionEditorError}
           onFocus={handleFocusExpression}
-          onContentChanged={onContentChanged}
+          // onContentChanged={onContentChanged}
           isReadOnly={isReadOnly}
         />
       </div>
@@ -212,7 +212,7 @@ export function ConditionExpression({
           <TokenPickerSection
             tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
             expressionGroup={expressionGroup ?? []}
-            expressionEditorRef={expressionEditorRef}
+            // expressionEditorRef={expressionEditorRef}
             selectedMode={selectedKey}
             searchQuery={searchQuery}
             fullScreen={false}

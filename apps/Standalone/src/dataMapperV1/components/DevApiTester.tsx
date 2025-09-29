@@ -5,17 +5,17 @@ import {
   AccordionItem,
   AccordionPanel,
   Button,
-  makeStyles,
-  shorthands,
+  // makeStyles,
+  // shorthands,
   Tab,
   TabList,
   Text,
   tokens,
 } from '@fluentui/react-components';
-import type { MonacoProps } from '@microsoft/designer-ui';
-import { MonacoEditor } from '@microsoft/designer-ui';
+// import type { MonacoProps } from '@microsoft/designer-ui';
+// import { MonacoEditor } from '@microsoft/designer-ui';
 import { generateDataMapXslt, getFunctions, getSelectedSchema, testDataMap } from '@microsoft/logic-apps-data-mapper-v2';
-import { EditorLanguage } from '@microsoft/logic-apps-shared';
+// import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 const RequestTab = {
@@ -25,31 +25,31 @@ const RequestTab = {
   GenerateXslt: 'generateXslt',
 };
 export type RequestTab = (typeof RequestTab)[keyof typeof RequestTab];
-const commonCodeEditorProps: Partial<MonacoProps> = {
-  lineNumbers: 'on',
-  scrollbar: { horizontal: 'auto', vertical: 'auto' },
-  wordWrap: 'on',
-  wrappingIndent: 'same',
-  width: '600px',
-};
+// const commonCodeEditorProps: Partial<MonacoProps> = {
+//   lineNumbers: 'on',
+//   scrollbar: { horizontal: 'auto', vertical: 'auto' },
+//   wordWrap: 'on',
+//   wrappingIndent: 'same',
+//   width: '600px',
+// };
 
-const useStyles = makeStyles({
-  editorStyle: {
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('2px'),
-  },
-});
+// const useStyles = makeStyles({
+//   editorStyle: {
+//     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
+//     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+//     ...shorthands.padding('2px'),
+//   },
+// });
 
 export const DevApiTester = () => {
-  const styles = useStyles();
+  // const styles = useStyles();
 
   const [selectedTab, setSelectedTab] = useState<RequestTab>(Object.values(RequestTab)[0]);
   const [schemaFilename, setSchemaFilename] = useState<string>('');
-  const [testMapInput, setTestMapInput] = useState<string>('');
+  const [testMapInput, _setTestMapInput] = useState<string>('');
   const [xsltFilename, setXsltFilename] = useState<string>('');
-  const [generateXsltInput, setGenerateXsltInput] = useState<string>('');
-  const [apiResponse, setApiResponse] = useState<string>('"Trigger a request to see the response here"');
+  const [generateXsltInput] = useState<string>('');
+  const [_apiResponse, setApiResponse] = useState<string>('"Trigger a request to see the response here"');
 
   const getSchemaTree = async () => {
     try {
@@ -149,14 +149,14 @@ export const DevApiTester = () => {
                       >
                         Input schema value
                       </Text>
-                      <MonacoEditor
+                      {/* <MonacoEditor
                         {...commonCodeEditorProps}
                         language={EditorLanguage.xml}
                         value={testMapInput}
                         onContentChanged={(e) => setTestMapInput(e.value ?? '')}
                         className={styles.editorStyle}
                         height="400px"
-                      />
+                      /> */}
 
                       <Button onClick={testMap}>POST testMap</Button>
                     </Stack>
@@ -174,14 +174,14 @@ export const DevApiTester = () => {
                       >
                         Map definition
                       </Text>
-                      <MonacoEditor
+                      {/* <MonacoEditor
                         {...commonCodeEditorProps}
                         language={EditorLanguage.yaml}
                         value={generateXsltInput}
                         onContentChanged={(e) => setGenerateXsltInput(e.value ?? '')}
                         className={styles.editorStyle}
                         height="400px"
-                      />
+                      /> */}
 
                       <Button onClick={generateXslt}>POST generateXslt</Button>
                     </Stack>
@@ -200,14 +200,14 @@ export const DevApiTester = () => {
                 >
                   Response
                 </Text>
-                <MonacoEditor
+                {/* <MonacoEditor
                   {...commonCodeEditorProps}
                   language={EditorLanguage.json}
                   value={apiResponse}
                   className={styles.editorStyle}
                   height="600px"
                   readOnly
-                />
+                /> */}
               </StackItem>
             </Stack>
           </AccordionPanel>

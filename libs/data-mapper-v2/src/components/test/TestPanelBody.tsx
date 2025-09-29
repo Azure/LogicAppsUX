@@ -1,12 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../../core/state/Store';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../core/state/Store';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody, Spinner } from '@fluentui/react-components';
-import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
-import { EditorLanguage, LogEntryLevel, LoggerService, SchemaFileFormat } from '@microsoft/logic-apps-shared';
-import { updateTestInput } from '../../core/state/PanelSlice';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+// import { updateTestInput } from '../../core/state/PanelSlice';
 import { LogCategory } from '../../utils/Logging.Utils';
 
 const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
@@ -19,11 +18,11 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
   const { loading } = props;
   const intl = useIntl();
   const styles = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const { testMapInput, testMapOutput, testMapOutputError } = useSelector((state: RootState) => state.panel.testPanel);
 
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  // const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  // const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const { isDirty } = useSelector((state: RootState) => state.dataMap.present);
 
@@ -58,36 +57,36 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
     [intl]
   );
 
-  const updatePlaceHolder = useCallback((id: string, value?: string) => {
-    const placeholder = document.getElementById(id);
-    if (placeholder) {
-      placeholder.style.display = value ? 'none' : 'block';
-    }
-  }, []);
+  // const updatePlaceHolder = useCallback((id: string, value?: string) => {
+  //   const placeholder = document.getElementById(id);
+  //   if (placeholder) {
+  //     placeholder.style.display = value ? 'none' : 'block';
+  //   }
+  // }, []);
 
-  const onSampleDataChange = useCallback(
-    (e: EditorContentChangedEventArgs) => {
-      const value = e?.value ?? '';
-      dispatch(updateTestInput(value));
-      updatePlaceHolder(sampleDataPlaceHolderEditorId, value);
-    },
-    [dispatch, updatePlaceHolder]
-  );
+  // const onSampleDataChange = useCallback(
+  //   (e: EditorContentChangedEventArgs) => {
+  //     const value = e?.value ?? '';
+  //     dispatch(updateTestInput(value));
+  //     updatePlaceHolder(sampleDataPlaceHolderEditorId, value);
+  //   },
+  //   [dispatch, updatePlaceHolder]
+  // );
 
-  const onSampleDataEditorLoaded = useCallback(() => {
-    updatePlaceHolder(sampleDataPlaceHolderEditorId, testMapInput);
-  }, [testMapInput, updatePlaceHolder]);
+  // const onSampleDataEditorLoaded = useCallback(() => {
+  //   updatePlaceHolder(sampleDataPlaceHolderEditorId, testMapInput);
+  // }, [testMapInput, updatePlaceHolder]);
 
-  const onResultContentChange = useCallback(
-    (e: EditorContentChangedEventArgs) => {
-      updatePlaceHolder(resultPlaceHolderEditorId, e?.value ?? '');
-    },
-    [updatePlaceHolder]
-  );
+  // const onResultContentChange = useCallback(
+  //   (e: EditorContentChangedEventArgs) => {
+  //     updatePlaceHolder(resultPlaceHolderEditorId, e?.value ?? '');
+  //   },
+  //   [updatePlaceHolder]
+  // );
 
-  const onResultEditorLoaded = useCallback(() => {
-    updatePlaceHolder(resultPlaceHolderEditorId, testMapInput);
-  }, [testMapInput, updatePlaceHolder]);
+  // const onResultEditorLoaded = useCallback(() => {
+  //   updatePlaceHolder(resultPlaceHolderEditorId, testMapInput);
+  // }, [testMapInput, updatePlaceHolder]);
 
   const content = useMemo(() => {
     let content: any;
@@ -136,7 +135,7 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
             {stringResources.SAMPLE_DATA}
           </AccordionHeader>
           <AccordionPanel className={styles.accordianPanel}>
-            <MonacoEditor
+            {/* <MonacoEditor
               language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
               value={testMapInput ?? ''}
               className={styles.editorStyle}
@@ -148,7 +147,7 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
               wrappingIndent="same"
               onContentChanged={onSampleDataChange}
               onEditorLoaded={onSampleDataEditorLoaded}
-            />
+            /> */}
             {!testMapInput && (
               <div id={sampleDataPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
                 {stringResources.SAMPLE_TEST_DATA_PLACEHOLDER}
@@ -162,7 +161,7 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
             {loading && <Spinner className={styles.bodySpinner} size={'tiny'} />}
           </AccordionHeader>
           <AccordionPanel className={styles.accordianPanel}>
-            <MonacoEditor
+            {/* <MonacoEditor
               language={
                 content ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
               }
@@ -176,7 +175,7 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
               onContentChanged={onResultContentChange}
               onEditorLoaded={onResultEditorLoaded}
               readOnly
-            />
+            /> */}
             {!content && (
               <div id={resultPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
                 {stringResources.RESULT_PLACEHOLDER}

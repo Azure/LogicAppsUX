@@ -1,9 +1,9 @@
-import { commonCodeEditorProps } from '../testMapPanel/TestMapPanel';
+// import { commonCodeEditorProps } from '../testMapPanel/TestMapPanel';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
-import { MonacoEditor } from '@microsoft/designer-ui';
-import { EditorLanguage } from '@microsoft/logic-apps-shared';
+// import { MonacoEditor } from '@microsoft/designer-ui';
+// import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -40,10 +40,10 @@ export interface CodeViewProps {
 }
 
 export const CodeView = ({
-  dataMapDefinition,
+  // dataMapDefinition,
   isCodeViewOpen,
   setIsCodeViewOpen,
-  canvasAreaHeight,
+  // canvasAreaHeight,
   centerViewWidth,
   contentWidth,
   setContentWidth,
@@ -107,11 +107,11 @@ export const CodeView = ({
     description: 'Close code view button',
   });
 
-  const noMapDefLoc = intl.formatMessage({
-    defaultMessage: 'Unable to generate data map definition',
-    id: 'sv+IcU',
-    description: `Message to display when the data map definition can't be generated`,
-  });
+  // const noMapDefLoc = intl.formatMessage({
+  //   defaultMessage: 'Unable to generate data map definition',
+  //   id: 'sv+IcU',
+  //   description: `Message to display when the data map definition can't be generated`,
+  // });
 
   return (
     <Stack
@@ -168,14 +168,14 @@ export const CodeView = ({
               flex: '1 1 auto',
             }}
           >
-            <MonacoEditor
+            {/* <MonacoEditor
               language={EditorLanguage.yaml}
               value={dataMapDefinition === '' ? noMapDefLoc : dataMapDefinition}
               className={styles.editorStyle}
               {...commonCodeEditorProps}
               height={`${Math.max(200, canvasAreaHeight - 75)}px`}
               readOnly
-            />
+            /> */}
           </div>
         </Stack>
       </div>

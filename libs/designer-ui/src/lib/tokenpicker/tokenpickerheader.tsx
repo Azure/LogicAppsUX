@@ -25,10 +25,10 @@ interface TokenPickerHeaderProps {
   fullScreen: boolean;
   isExpression: boolean;
   setFullScreen: (fullScreen: boolean) => void;
-  pasteLastUsedExpression?: () => void;
+  // pasteLastUsedExpression?: () => void;
 }
 
-export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, pasteLastUsedExpression }: TokenPickerHeaderProps) {
+export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, /* pasteLastUsedExpression */ }: TokenPickerHeaderProps) {
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -114,15 +114,15 @@ export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, pas
             iconProps={{ iconName: 'Paste' }}
             title={intlText.pasteLastUsedExpressionMessage}
             ariaLabel={intlText.pasteLastUsedExpressionMessage}
-            onClick={() => {
-              pasteLastUsedExpression?.();
-              LoggerService().log({
-                area: 'TokenPickerHeader:onIconButtonClick',
-                args: ['pasteLastUsed', isExpressionString],
-                level: LogEntryLevel.Verbose,
-                message: 'Last used expression pasted into expression editor.',
-              });
-            }}
+            // onClick={() => {
+            //   pasteLastUsedExpression?.();
+            //   LoggerService().log({
+            //     area: 'TokenPickerHeader:onIconButtonClick',
+            //     args: ['pasteLastUsed', isExpressionString],
+            //     level: LogEntryLevel.Verbose,
+            //     message: 'Last used expression pasted into expression editor.',
+            //   });
+            // }}
             styles={buttonStyles}
           />
         </div>

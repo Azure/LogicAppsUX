@@ -6,14 +6,14 @@ import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
 import type { GetValueSegmentHandler } from './tokenpickeroption';
 import { TokenPickerOptions } from './tokenpickeroption';
-import type { editor } from 'monaco-editor';
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+// import type { editor } from 'monaco-editor';
+import type { Dispatch, /*MutableRefObject,*/ SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 
 export interface TokenPickerBaseProps {
   selectedMode: TokenPickerMode;
   searchQuery: string;
-  expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  // expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   getValueSegmentFromToken: GetValueSegmentHandler;

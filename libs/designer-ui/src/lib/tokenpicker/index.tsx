@@ -1,5 +1,4 @@
-// biome-ignore lint/correctness/noUnusedImports: actually is used
-import type { editor } from 'monaco-editor';
+// import type { editor } from 'monaco-editor';
 import { ValueSegmentType, type Token, type ValueSegment } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
@@ -19,7 +18,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getSelection, type LexicalEditor, type NodeKey } from 'lexical';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { escapeString, guid, LOCAL_STORAGE_KEYS, TOKEN_PICKER_OUTPUT_SECTIONS, TokenType } from '@microsoft/logic-apps-shared';
+import { guid, TOKEN_PICKER_OUTPUT_SECTIONS, TokenType } from '@microsoft/logic-apps-shared';
 import {
   CreateAgentParameter,
   generateDefaultAgentParamDescription,
@@ -110,7 +109,7 @@ export function TokenPicker({
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  // const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<HTMLInputElement | null>(null);
   const isExpression = initialMode === TokenPickerMode.EXPRESSION;
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
@@ -143,17 +142,17 @@ export function TokenPicker({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (isExpression) {
-      setTimeout(() => {
-        expressionEditorRef.current?.focus();
-      }, 300);
-    } else {
-      setTimeout(() => {
-        searchBoxRef.current?.focus();
-      }, 0);
-    }
-  }, [isExpression]);
+  // useEffect(() => {
+  //   if (isExpression) {
+  //     setTimeout(() => {
+  //       expressionEditorRef.current?.focus();
+  //     }, 300);
+  //   } else {
+  //     setTimeout(() => {
+  //       searchBoxRef.current?.focus();
+  //     }, 0);
+  //   }
+  // }, [isExpression]);
 
   useEffect(() => {
     editor?.getEditorState().read(() => {
@@ -176,22 +175,22 @@ export function TokenPicker({
     }
   }, [anchorKey, editor, windowDimensions.height]);
 
-  const handleInitializeExpression = (s: string, n: NodeKey) => {
-    const escapedString = escapeString(s);
-    setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
-    setSelectedMode(TokenPickerMode.EXPRESSION);
-    setNodeToBeUpdated(n);
+  // const handleInitializeExpression = (s: string, n: NodeKey) => {
+  //   const escapedString = escapeString(s);
+  //   setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
+  //   setSelectedMode(TokenPickerMode.EXPRESSION);
+  //   setNodeToBeUpdated(n);
 
-    setTimeout(() => {
-      expressionEditorRef.current?.setSelection({
-        startLineNumber: escapedString.length + 1,
-        startColumn: 1,
-        endLineNumber: escapedString.length + 1,
-        endColumn: 1,
-      });
-      expressionEditorRef.current?.focus();
-    }, 100);
-  };
+  //   setTimeout(() => {
+  //     expressionEditorRef.current?.setSelection({
+  //       startLineNumber: escapedString.length + 1,
+  //       startColumn: 1,
+  //       endLineNumber: escapedString.length + 1,
+  //       endColumn: 1,
+  //     });
+  //     expressionEditorRef.current?.focus();
+  //   }, 100);
+  // };
 
   const handleInitializeAgentParameter = (token: Token, n: NodeKey) => {
     setSelectedAgentParameterToken(token);
@@ -224,10 +223,10 @@ export function TokenPicker({
     return false;
   };
 
-  const pasteLastUsedExpression = () => {
-    setExpression({ ...expression, value: window.localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION) ?? expression.value });
-    expressionEditorRef.current?.focus();
-  };
+  // const pasteLastUsedExpression = () => {
+  //   setExpression({ ...expression, value: window.localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION) ?? expression.value });
+  //   expressionEditorRef.current?.focus();
+  // };
 
   const tokenPickerSearchPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
@@ -334,7 +333,7 @@ export function TokenPicker({
                 fullScreen={fullScreen}
                 isExpression={isExpression}
                 setFullScreen={setFullScreen}
-                pasteLastUsedExpression={pasteLastUsedExpression}
+                // pasteLastUsedExpression={pasteLastUsedExpression}
               />
             ) : null}
 
@@ -360,7 +359,7 @@ export function TokenPicker({
                   <div className="msla-token-picker-expression-subheader">
                     <ExpressionEditor
                       initialValue={expression.value}
-                      editorRef={expressionEditorRef}
+                      // editorRef={expressionEditorRef}
                       onBlur={onExpressionEditorBlur}
                       isDragging={isDraggingExpressionEditor}
                       dragDistance={expressionEditorDragDistance}
@@ -387,7 +386,7 @@ export function TokenPicker({
                 <TokenPickerSection
                   tokenGroup={(selectedMode === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
                   expressionGroup={expressionGroup ?? []}
-                  expressionEditorRef={expressionEditorRef}
+                  // expressionEditorRef={expressionEditorRef}
                   selectedMode={selectedMode}
                   searchQuery={searchQuery}
                   fullScreen={fullScreen}
@@ -414,7 +413,15 @@ export function TokenPicker({
           </div>
         </div>
       </Callout>
-      {tokenClickedCallback ? null : <TokenPickerExpressionHandler handleInitializeExpression={handleInitializeExpression} />}
+      {tokenClickedCallback ? null : (
+        <TokenPickerExpressionHandler
+          handleInitializeExpression={
+            /*handleInitializeExpression*/ () => {
+              console.log('test');
+            }
+          }
+        />
+      )}
       {tokenClickedCallback ? null : <UpdateTokenNode />}
       {tokenClickedCallback ? null : <TokenPickerAgentParameterHandler handleInitializeAgentParameter={handleInitializeAgentParameter} />}
     </>
