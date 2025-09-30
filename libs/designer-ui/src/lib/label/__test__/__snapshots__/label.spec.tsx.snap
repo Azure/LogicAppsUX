@@ -2,7 +2,13 @@
 
 exports[`lib/label > className > should set the "class" attribute 1`] = `
 <label
-  className="ms-Label class-name ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
+  className="fui-Label class-name ___vyqcke0_1g0peqo fk6fouc f19n0e5 fy9rknc f1lgtm6f ftgm304 f1a3p1vp f1cmbuwj f1o700av fhx3js9 fhuq1gn f1cxpek8 fp9bwmr futqtb8"
+  style={
+    {
+      "paddingBottom": "2px",
+      "paddingTop": "8px",
+    }
+  }
   title="label text"
 >
   label text
@@ -11,8 +17,14 @@ exports[`lib/label > className > should set the "class" attribute 1`] = `
 
 exports[`lib/label > htmlFor > should set the "for" attribute 1`] = `
 <label
-  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
+  className="fui-Label ___vyqcke0_1g0peqo fk6fouc f19n0e5 fy9rknc f1lgtm6f ftgm304 f1a3p1vp f1cmbuwj f1o700av fhx3js9 fhuq1gn f1cxpek8 fp9bwmr futqtb8"
   htmlFor="an-input"
+  style={
+    {
+      "paddingBottom": "2px",
+      "paddingTop": "8px",
+    }
+  }
   title="label text"
 >
   label text
@@ -21,8 +33,14 @@ exports[`lib/label > htmlFor > should set the "for" attribute 1`] = `
 
 exports[`lib/label > id > should set the "id" attribute 1`] = `
 <label
-  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
+  className="fui-Label ___vyqcke0_1g0peqo fk6fouc f19n0e5 fy9rknc f1lgtm6f ftgm304 f1a3p1vp f1cmbuwj f1o700av fhx3js9 fhuq1gn f1cxpek8 fp9bwmr futqtb8"
   id="label-id"
+  style={
+    {
+      "paddingBottom": "2px",
+      "paddingTop": "8px",
+    }
+  }
   title="label text"
 >
   label text
@@ -31,7 +49,13 @@ exports[`lib/label > id > should set the "id" attribute 1`] = `
 
 exports[`lib/label > isRequiredField > should render the required parameter marker if set 1`] = `
 <label
-  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
+  className="fui-Label ___vyqcke0_1g0peqo fk6fouc f19n0e5 fy9rknc f1lgtm6f ftgm304 f1a3p1vp f1cmbuwj f1o700av fhx3js9 fhuq1gn f1cxpek8 fp9bwmr futqtb8"
+  style={
+    {
+      "paddingBottom": "2px",
+      "paddingTop": "8px",
+    }
+  }
   title="label text"
 >
   <span
@@ -46,7 +70,13 @@ exports[`lib/label > isRequiredField > should render the required parameter mark
 
 exports[`lib/label > should construct 1`] = `
 <label
-  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
+  className="fui-Label ___vyqcke0_1g0peqo fk6fouc f19n0e5 fy9rknc f1lgtm6f ftgm304 f1a3p1vp f1cmbuwj f1o700av fhx3js9 fhuq1gn f1cxpek8 fp9bwmr futqtb8"
+  style={
+    {
+      "paddingBottom": "2px",
+      "paddingTop": "8px",
+    }
+  }
   title="label"
 >
   label
@@ -55,7 +85,13 @@ exports[`lib/label > should construct 1`] = `
 
 exports[`lib/label > tooltip > should set the "title" attribute if tooltip is set 1`] = `
 <label
-  className="ms-Label ___jmchtt0_0000000 ftgm304 f1a3p1vp f1cmbuwj fy9rknc f1lgtm6f f1o700av fhx3js9 fhuq1gn root-109"
+  className="fui-Label ___vyqcke0_1g0peqo fk6fouc f19n0e5 fy9rknc f1lgtm6f ftgm304 f1a3p1vp f1cmbuwj f1o700av fhx3js9 fhuq1gn f1cxpek8 fp9bwmr futqtb8"
+  style={
+    {
+      "paddingBottom": "2px",
+      "paddingTop": "8px",
+    }
+  }
   title="title"
 >
   <span
