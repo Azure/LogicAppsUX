@@ -6,6 +6,5 @@ export { WorkspaceNameStep } from './workspaceNameStep';
 export { LogicAppTypeStep } from './logicAppTypeStep';
 export { DotNetFrameworkStep } from './dotNetFrameworkStep';
 export { WorkflowTypeStep } from './workflowTypeStep';
-export { ProjectTypeStep } from './projectTypeStep';
 export { ReviewCreateStep } from './reviewCreateStep';
 export { ProjectSetupStep } from './projectSetupStep';

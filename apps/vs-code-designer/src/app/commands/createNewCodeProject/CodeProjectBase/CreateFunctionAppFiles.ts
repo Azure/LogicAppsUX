@@ -58,7 +58,7 @@ export class CreateFunctionAppFiles {
     // const funcVersion = context.version ?? (await tryGetLocalFuncVersion());
 
     // Define the functions folder path using the context property of the wizard
-    const functionFolderPath = path.join(context.workspacePath, context.functionAppName);
+    const functionFolderPath = path.join(context.workspacePath, context.functionFolderName);
     await fs.ensureDir(functionFolderPath);
 
     // Define the type of project in the workspace

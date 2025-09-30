@@ -60,6 +60,7 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
+  functionFolderName?: string;
   functionAppNamespace?: string;
   functionAppName?: string;
   customCodeFunctionName?: string;
@@ -99,8 +100,9 @@ export interface IWebviewProjectContext extends IActionContext {
   targetFramework: string;
   workflowName: string;
   workflowType: string;
+  functionFolderName?: string;
   functionName?: string;
-  functionWorkspace?: string;
+  functionNamespace?: string;
   shouldCreateLogicAppProject: boolean;
 }
 

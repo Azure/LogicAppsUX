@@ -8,7 +8,12 @@ import { useState } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspace/createWorkspaceSlice';
-import { setTargetFramework, setFunctionWorkspace, setFunctionName } from '../../../state/createWorkspace/createWorkspaceSlice';
+import {
+  setTargetFramework,
+  setFunctionNamespace,
+  setFunctionName,
+  setFunctionFolderName,
+} from '../../../state/createWorkspace/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -21,14 +26,16 @@ export const DotNetFrameworkStep: React.FC = () => {
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { targetFramework, functionWorkspace, functionName, logicAppType, workspaceFileJson } = createWorkspaceState;
+  const { targetFramework, functionNamespace, functionName, functionFolderName, logicAppType, workspaceFileJson } = createWorkspaceState;
 
-  const functionWorkspaceId = useId();
+  const functionNamespaceId = useId();
   const functionNameId = useId();
+  const functionFolderNameId = useId();
 
   // Validation state
   const [functionNamespaceError, setFunctionNamespaceError] = useState<string | undefined>(undefined);
   const [functionNameError, setFunctionNameError] = useState<string | undefined>(undefined);
+  const [functionFolderNameError, setFunctionFolderNameError] = useState<string | undefined>(undefined);
 
   const intlText = {
     TITLE: intl.formatMessage({
@@ -81,6 +88,16 @@ export const DotNetFrameworkStep: React.FC = () => {
       id: 'q8vsUq',
       description: 'Function name input label',
     }),
+    CUSTOM_CODE_FOLDER_NAME_LABEL: intl.formatMessage({
+      defaultMessage: 'Custom Code Folder Name',
+      id: '6tG5dm',
+      description: 'Custom code folder name input label',
+    }),
+    RULES_ENGINE_FOLDER_NAME_LABEL: intl.formatMessage({
+      defaultMessage: 'Rules Engine Folder Name',
+      id: 'jaa2Wl',
+      description: 'Rules engine folder name input label',
+    }),
   };
 
   const handleDotNetFrameworkChange: DropdownProps['onOptionSelect'] = (event, data) => {
@@ -106,6 +123,16 @@ export const DotNetFrameworkStep: React.FC = () => {
     if (!functionNameValidation.test(name)) {
       return 'Function name must start with a letter and can only contain letters, digits, "_" and "-".';
     }
+    return undefined;
+  };
+
+  const validateFunctionFolderName = (name: string) => {
+    if (!name) {
+      return 'Function folder name cannot be empty.';
+    }
+    if (!functionNameValidation.test(name)) {
+      return 'Function folder name must start with a letter and can only contain letters, digits, "_" and "-".';
+    }
     // Check if the function name already exists in workspace folders
     if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
       return 'A project with this name already exists in the workspace.';
@@ -114,13 +141,18 @@ export const DotNetFrameworkStep: React.FC = () => {
   };
 
   const handleFunctionNamespaceChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
-    dispatch(setFunctionWorkspace(data.value));
+    dispatch(setFunctionNamespace(data.value));
     setFunctionNamespaceError(validateFunctionNamespace(data.value));
   };
 
   const handleFunctionNameChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setFunctionName(data.value));
     setFunctionNameError(validateFunctionName(data.value));
+  };
+
+  const handleFunctionFolderNameChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
+    dispatch(setFunctionFolderName(data.value));
+    setFunctionFolderNameError(validateFunctionFolderName(data.value));
   };
 
   if (logicAppType === 'customCode') {
@@ -164,11 +196,23 @@ export const DotNetFrameworkStep: React.FC = () => {
         </div>
 
         <div className={styles.fieldContainer}>
-          <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
-            <Label htmlFor={functionWorkspaceId}>{intlText.FUNCTION_NAMESPACE_LABEL}</Label>
+          <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
+            <Label htmlFor={functionFolderNameId}>{intlText.CUSTOM_CODE_FOLDER_NAME_LABEL}</Label>
             <Input
-              id={functionWorkspaceId}
-              value={functionWorkspace}
+              id={functionFolderNameId}
+              value={functionFolderName}
+              onChange={handleFunctionFolderNameChange}
+              className={styles.inputControl}
+            />
+          </Field>
+        </div>
+
+        <div className={styles.fieldContainer}>
+          <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
+            <Label htmlFor={functionNamespaceId}>{intlText.FUNCTION_NAMESPACE_LABEL}</Label>
+            <Input
+              id={functionNamespaceId}
+              value={functionNamespace}
               onChange={handleFunctionNamespaceChange}
               className={styles.inputControl}
             />
@@ -192,11 +236,23 @@ export const DotNetFrameworkStep: React.FC = () => {
         </Text>
 
         <div className={styles.fieldContainer}>
-          <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
-            <Label htmlFor={functionWorkspaceId}>{intlText.FUNCTION_NAMESPACE_LABEL}</Label>
+          <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
+            <Label htmlFor={functionFolderNameId}>{intlText.RULES_ENGINE_FOLDER_NAME_LABEL}</Label>
             <Input
-              id={functionWorkspaceId}
-              value={functionWorkspace}
+              id={functionFolderNameId}
+              value={functionFolderName}
+              onChange={handleFunctionFolderNameChange}
+              className={styles.inputControl}
+            />
+          </Field>
+        </div>
+
+        <div className={styles.fieldContainer}>
+          <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
+            <Label htmlFor={functionNamespaceId}>{intlText.FUNCTION_NAMESPACE_LABEL}</Label>
+            <Input
+              id={functionNamespaceId}
+              value={functionNamespace}
               onChange={handleFunctionNamespaceChange}
               className={styles.inputControl}
             />

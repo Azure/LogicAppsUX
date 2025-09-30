@@ -10,8 +10,9 @@ export interface CreateWorkspaceState {
   workspaceProjectPath: ITargetDirectory;
   workspaceName: string;
   logicAppType: string;
-  functionWorkspace: string;
+  functionNamespace: string;
   functionName: string;
+  functionFolderName: string;
   workflowType: string;
   workflowName: string;
   targetFramework: string;
@@ -37,8 +38,9 @@ const initialState: CreateWorkspaceState = {
   },
   workspaceName: '',
   logicAppType: '',
-  functionWorkspace: '',
+  functionNamespace: '',
   functionName: '',
+  functionFolderName: '',
   workflowType: '',
   workflowName: '',
   targetFramework: '',
@@ -83,11 +85,14 @@ export const createWorkspaceSlice: any = createSlice({
     setLogicAppType: (state, action: PayloadAction<string>) => {
       state.logicAppType = action.payload;
     },
-    setFunctionWorkspace: (state, action: PayloadAction<string>) => {
-      state.functionWorkspace = action.payload;
+    setFunctionNamespace: (state, action: PayloadAction<string>) => {
+      state.functionNamespace = action.payload;
     },
     setFunctionName: (state, action: PayloadAction<string>) => {
       state.functionName = action.payload;
+    },
+    setFunctionFolderName: (state, action: PayloadAction<string>) => {
+      state.functionFolderName = action.payload;
     },
     setWorkflowType: (state, action: PayloadAction<string>) => {
       state.workflowType = action.payload;
@@ -155,8 +160,9 @@ export const {
   setProjectPath,
   setWorkspaceName,
   setLogicAppType,
-  setFunctionWorkspace,
+  setFunctionNamespace,
   setFunctionName,
+  setFunctionFolderName,
   setWorkflowType,
   setWorkflowName,
   setTargetFramework,

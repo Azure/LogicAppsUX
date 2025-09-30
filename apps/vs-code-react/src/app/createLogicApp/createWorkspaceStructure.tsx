@@ -30,7 +30,7 @@ export const CreateWorkspaceStructure: React.FC = () => {
     workspaceProjectPath,
     workspaceName,
     logicAppType,
-    functionWorkspace,
+    functionNamespace,
     functionName,
     workflowType,
     workflowName,
@@ -128,24 +128,24 @@ export const CreateWorkspaceStructure: React.FC = () => {
         // If custom code is selected, also validate custom code fields
         if (logicAppType === 'customCode') {
           const targetFrameworkValid = targetFramework !== '';
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid =
             functionName.trim() !== '' &&
             functionNameValidation.test(functionName.trim()) &&
             !isNameAlreadyInWorkspace(functionName.trim());
 
-          return baseFieldsValid && targetFrameworkValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && targetFrameworkValid && functionNamespaceValid && functionNameValid;
         }
 
         // If rules engine is selected, validate function fields but not .NET framework
         if (logicAppType === 'rulesEngine') {
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid =
             functionName.trim() !== '' &&
             functionNameValidation.test(functionName.trim()) &&
             !isNameAlreadyInWorkspace(functionName.trim());
 
-          return baseFieldsValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && functionNamespaceValid && functionNameValid;
         }
 
         return baseFieldsValid;
@@ -175,18 +175,18 @@ export const CreateWorkspaceStructure: React.FC = () => {
         // If custom code is selected, also validate custom code fields
         if (logicAppType === 'customCode') {
           const targetFrameworkValid = targetFramework !== '';
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
-          return baseFieldsValid && targetFrameworkValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && targetFrameworkValid && functionNamespaceValid && functionNameValid;
         }
 
         // If rules engine is selected, validate function fields but not .NET framework
         if (logicAppType === 'rulesEngine') {
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
-          return baseFieldsValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && functionNamespaceValid && functionNameValid;
         }
 
         return baseFieldsValid;
@@ -275,11 +275,11 @@ export const CreateWorkspaceStructure: React.FC = () => {
       targetFramework,
       projectType,
       ...(logicAppType === 'customCode' && {
-        functionWorkspace,
+        functionNamespace,
         functionName,
       }),
       ...(logicAppType === 'rulesEngine' && {
-        functionWorkspace,
+        functionNamespace,
         functionName,
       }),
     };

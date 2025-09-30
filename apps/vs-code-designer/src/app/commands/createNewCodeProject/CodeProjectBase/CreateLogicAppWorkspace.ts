@@ -159,7 +159,7 @@ export async function createWorkspaceStructure(myWebviewProjectContext: IWebview
 
   // push functions folder
   if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
-    workspaceFolders.push({ name: myWebviewProjectContext.functionName, path: `./${myWebviewProjectContext.functionName}` });
+    workspaceFolders.push({ name: myWebviewProjectContext.functionFolderName, path: `./${myWebviewProjectContext.functionFolderName}` });
   }
 
   const workspaceData = {
@@ -185,8 +185,9 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
   mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
+  mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
-  mySubContext.functionAppNamespace = options.functionWorkspace;
+  mySubContext.functionAppNamespace = options.functionNamespace;
   mySubContext.targetFramework = options.targetFramework;
   mySubContext.workspacePath = workspaceFolder;
 

@@ -19,7 +19,8 @@ export const ReviewCreateStep: React.FC = () => {
     workspaceName,
     logicAppType,
     targetFramework,
-    functionWorkspace,
+    functionFolderName,
+    functionNamespace,
     functionName,
     workflowType,
     workflowName,
@@ -98,6 +99,26 @@ export const ReviewCreateStep: React.FC = () => {
       id: 'kv8ROl',
       description: 'Dot net framework label',
     }),
+    CUSTOM_CODE_FOLDER_LABEL: intl.formatMessage({
+      defaultMessage: 'Custom Code Folder',
+      id: 'LltDjL',
+      description: 'Custom code folder label',
+    }),
+    RULES_ENGINE_FOLDER_LABEL: intl.formatMessage({
+      defaultMessage: 'Rules Engine Folder',
+      id: 'VE1WHE',
+      description: 'Rules engine folder label',
+    }),
+    CUSTOM_CODE_LOCATION_LABEL: intl.formatMessage({
+      defaultMessage: 'Custom Code Location',
+      id: 'oOFc/f',
+      description: 'Custom code location path label',
+    }),
+    RULES_ENGINE_LOCATION_LABEL: intl.formatMessage({
+      defaultMessage: 'Rules Engine Location',
+      id: 'YhPs4e',
+      description: 'Rules Engine location path label',
+    }),
     FUNCTION_WORKSPACE_LABEL: intl.formatMessage({
       defaultMessage: 'Function Workspace',
       id: 'aXShs8',
@@ -144,6 +165,13 @@ export const ReviewCreateStep: React.FC = () => {
       return '';
     }
     return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${logicAppName}`;
+  };
+
+  const getFunctionLocationPath = () => {
+    if (!workspaceProjectPath.fsPath || !workspaceName || !functionFolderName) {
+      return '';
+    }
+    return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${functionFolderName}`;
   };
 
   const getDotNetFrameworkDisplay = (framework: string) => {
@@ -229,7 +257,9 @@ export const ReviewCreateStep: React.FC = () => {
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Custom Code Configuration</div>
             {renderSettingRow(intlText.DOTNET_FRAMEWORK_LABEL, getDotNetFrameworkDisplay(targetFramework))}
-            {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionWorkspace)}
+            {renderSettingRow(intlText.CUSTOM_CODE_FOLDER_LABEL, functionFolderName)}
+            {renderSettingRow(intlText.CUSTOM_CODE_LOCATION_LABEL, getFunctionLocationPath())}
+            {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionNamespace)}
             {renderSettingRow(intlText.FUNCTION_NAME_LABEL, functionName)}
           </div>
         )}
@@ -237,7 +267,9 @@ export const ReviewCreateStep: React.FC = () => {
         {needsFunctionConfiguration && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Function Configuration</div>
-            {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionWorkspace)}
+            {renderSettingRow(intlText.RULES_ENGINE_FOLDER_LABEL, functionFolderName)}
+            {renderSettingRow(intlText.RULES_ENGINE_LOCATION_LABEL, getFunctionLocationPath())}
+            {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionNamespace)}
             {renderSettingRow(intlText.FUNCTION_NAME_LABEL, functionName)}
           </div>
         )}

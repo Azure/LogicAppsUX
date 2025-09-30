@@ -31,8 +31,9 @@ export const CreateLogicApp: React.FC = () => {
     workspaceProjectPath,
     workspaceName,
     logicAppType,
-    functionWorkspace,
+    functionNamespace,
     functionName,
+    functionFolderName,
     workflowType,
     workflowName,
     targetFramework,
@@ -156,24 +157,26 @@ export const CreateLogicApp: React.FC = () => {
         // If custom code is selected, also validate custom code fields (required even for existing logic apps)
         if (logicAppType === 'customCode') {
           const targetFrameworkValid = targetFramework !== '';
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid =
             functionName.trim() !== '' &&
             functionNameValidation.test(functionName.trim()) &&
             !isNameAlreadyInWorkspace(functionName.trim());
+          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
 
-          return baseFieldsValid && targetFrameworkValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && targetFrameworkValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
         }
 
         // If rules engine is selected, validate function fields but not .NET framework (required even for existing logic apps)
         if (logicAppType === 'rulesEngine') {
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid =
             functionName.trim() !== '' &&
             functionNameValidation.test(functionName.trim()) &&
             !isNameAlreadyInWorkspace(functionName.trim());
+          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
 
-          return baseFieldsValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
         }
 
         return baseFieldsValid;
@@ -212,18 +215,20 @@ export const CreateLogicApp: React.FC = () => {
         // If custom code is selected, also validate custom code fields (required even for existing logic apps)
         if (logicAppType === 'customCode') {
           const targetFrameworkValid = targetFramework !== '';
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
+          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
 
-          return baseFieldsValid && targetFrameworkValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && targetFrameworkValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
         }
 
         // If rules engine is selected, validate function fields but not .NET framework (required even for existing logic apps)
         if (logicAppType === 'rulesEngine') {
-          const functionWorkspaceValid = functionWorkspace.trim() !== '' && namespaceValidation.test(functionWorkspace.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
           const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
+          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
 
-          return baseFieldsValid && functionWorkspaceValid && functionNameValid;
+          return baseFieldsValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
         }
 
         return baseFieldsValid;
@@ -312,12 +317,14 @@ export const CreateLogicApp: React.FC = () => {
       targetFramework,
       projectType,
       ...(logicAppType === 'customCode' && {
-        functionWorkspace,
+        functionNamespace,
         functionName,
+        functionFolderName,
       }),
       ...(logicAppType === 'rulesEngine' && {
-        functionWorkspace,
+        functionNamespace,
         functionName,
+        functionFolderName,
       }),
     };
     vscode.postMessage({ command: 'createLogicApp', data });

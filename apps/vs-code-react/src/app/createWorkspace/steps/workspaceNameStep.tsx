@@ -149,14 +149,14 @@ export const WorkspaceNameStep: React.FC = () => {
           command: ExtensionCommand.validatePath,
           data: {
             path: workspaceFolder,
-            type: 'workspace-folder',
+            type: ExtensionCommand.workspace_folder,
           },
         });
         vscode.postMessage({
           command: ExtensionCommand.validatePath,
           data: {
             path: workspaceFile,
-            type: 'workspace-file',
+            type: ExtensionCommand.workspace_file,
           },
         });
       }

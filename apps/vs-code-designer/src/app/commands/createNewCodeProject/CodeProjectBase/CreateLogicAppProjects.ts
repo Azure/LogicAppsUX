@@ -286,8 +286,9 @@ export async function createLogicAppProject(context: IActionContext, options: an
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
   mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
+  mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
-  mySubContext.functionAppNamespace = options.functionWorkspace;
+  mySubContext.functionAppNamespace = options.functionNamespace;
   mySubContext.targetFramework = options.targetFramework;
   mySubContext.workspacePath = workspaceFolder;
 

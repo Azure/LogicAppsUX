@@ -133,10 +133,10 @@ export async function createNewCodeProjectFromCommand(): Promise<void> {
               if (!type) {
                 // For regular path validation, check if it's a directory
                 exists = stats.isDirectory();
-              } else if (type === 'workspace-folder') {
+              } else if (type === ExtensionCommand.workspace_folder) {
                 // For workspace folder, check if it's a directory
                 exists = stats.isDirectory();
-              } else if (type === 'workspace-file') {
+              } else if (type === ExtensionCommand.workspace_file) {
                 // For workspace file, check if it's a file (not a directory)
                 exists = stats.isFile();
               }
@@ -146,7 +146,7 @@ export async function createNewCodeProjectFromCommand(): Promise<void> {
           exists = false;
         }
 
-        if (type === 'workspace-folder' || type === 'workspace-file') {
+        if (type === ExtensionCommand.workspace_folder || type === ExtensionCommand.workspace_file) {
           // Send specific workspace existence result
           panel.webview.postMessage({
             command: 'workspaceExistenceResult',
