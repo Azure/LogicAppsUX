@@ -164,5 +164,5 @@ export const isAgentWorkflow = (kind: string): boolean => {
 };
 
 export const shouldClearNodeRunData = (node: NodeMetadata) => {
-  return node?.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION);
+  return node?.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || node.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT);
 };

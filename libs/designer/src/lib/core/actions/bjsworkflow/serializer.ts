@@ -57,6 +57,7 @@ import {
   filterRecord,
   excludePathValueFromTarget,
   getRecordEntry,
+  RunAfterType,
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, UIConstants } from '@microsoft/designer-ui';
@@ -282,7 +283,11 @@ export const serializeOperation = async (
   }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
-  if (OperationManifestService().isSupported(operation.type, operation.kind)) {
+  const isManagedMcpClient = operation.type?.toLowerCase() === 'mcpclienttool' && operation.kind?.toLowerCase() === "managed";
+
+  if (isManagedMcpClient) {
+    serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
+  } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
     switch (operation.type.toLowerCase()) {
@@ -423,7 +428,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
-  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata)
+  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) || manifest.properties.runAfter?.type === RunAfterType.NotSupported
     ? undefined
     : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
@@ -451,6 +456,48 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
     ...serializeSettings(nodeSettings, nodeStaticResults, isTrigger, operationFromWorkflow),
+  };
+};
+
+const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
+  if (!operationInfo) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
+  }
+  const { type, kind, connectorId, operationId } = operationInfo;
+
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, nodeId);
+
+  const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
+  const manifest = await getOperationManifest(nativeMcpOperationInfo);
+  const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
+   
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
+
+  const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
+  const operation = parsedSwagger.getOperationByOperationId(operationId);
+  if (!operation) {
+    throw new Error('APIM Operation not found');
+  }
+  const { path } = operation;
+  const operationPath = removeConnectionPrefix(path);
+
+  const inputs = {
+    connectionReference: {
+      connectionName: getRecordEntry(rootState.connections.connectionsMapping, nodeId),
+    },
+    parameters: {
+      ...inputParameters.parameters,
+      mcpServerPath: operationPath,
+    },
+  };
+
+
+  return {
+    type: type,
+    kind: kind,
+    ...optional('description', operationFromWorkflow.description),
+    ...optional('inputs', inputs),
   };
 };
 
@@ -806,6 +853,12 @@ interface AgentConnectionInfo {
   };
 }
 
+interface McpConnectionInfo {
+  connectionReference: {
+    connectionName: string;
+  }
+}
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -817,6 +870,7 @@ const serializeHost = (
   | ServiceProviderConnectionConfigInfo
   | AgentConnectionInfo
   | HybridTriggerConnectionInfo
+  | McpConnectionInfo
   | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
@@ -885,6 +939,12 @@ const serializeHost = (
           },
         },
       };
+    case ConnectionReferenceKeyFormat.McpConnection:
+      return {
+        connectionReference: {
+          connectionName: referenceKey
+        }
+      };
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
@@ -936,9 +996,36 @@ const serializeNestedOperations = async (
 
   if (subGraphDetails) {
     const subGraphNodes = node.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) ?? [];
+    const operationNodes = node.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
     for (const subGraphLocation of Object.keys(subGraphDetails)) {
       const subGraphDetail = getRecordEntry(subGraphDetails, subGraphLocation);
       const subGraphs = subGraphNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
+
+      if (subGraphDetail?.allowOperations) {
+        const operations = operationNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
+          const nestedOperationsPromises = operations.map((nestedOperation) =>
+            serializeOperation(rootState, nestedOperation.id)
+          ) as Promise<LogicAppsV2.OperationDefinition>[];
+          const nestedOperations = await Promise.all(nestedOperationsPromises);
+          const idReplacements = rootState.workflow.idReplacements;
+
+          const newResult = {};
+          safeSetObjectPropertyValue(
+            newResult,
+            [subGraphLocation],
+            nestedOperations.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
+              if (!isNullOrEmpty(action)) {
+                const actionId = operations[index].id;
+                actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
+                return actions;
+              }
+
+              return actions;
+            }, {})
+          );
+
+          result = merge(result, newResult);
+      }
 
       if (subGraphDetail?.isAdditive) {
         for (const subGraph of subGraphs) {
