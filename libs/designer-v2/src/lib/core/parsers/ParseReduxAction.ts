@@ -271,7 +271,7 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
     }
     sequenceActionsToRemove.add(currentName);
 
-    // If the merged variables exceed 20, don't combine this sequence
+    // If the merged variables exceed the maximum limit, don't combine this sequence
     if (mergedVariables.length > VARIABLE_EDITOR_MAX_VARIABLES) {
       return;
     }
