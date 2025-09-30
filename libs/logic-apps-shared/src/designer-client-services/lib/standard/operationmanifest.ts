@@ -6,6 +6,7 @@ import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjec
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { getClientBuiltInConnectors } from '../base/search';
 import { aiOperationsGroup } from './operations/operationgroups';
+import mcpclient from './manifest/mcpclient';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
@@ -152,6 +153,12 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
           queryParameters,
         });
+      }
+
+      if (connectorId.toLowerCase() === 'agent' && operationId.toLowerCase() === 'mcpclient') {
+        // MCP Client is a special built-in connector whose manifest is not returned by the backend service.
+        // So we return the manifest directly from the client side.
+        return mcpclient;
       }
 
       const {
