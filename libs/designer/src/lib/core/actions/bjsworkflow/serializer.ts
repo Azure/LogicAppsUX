@@ -75,7 +75,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
-import { isA2AWorkflow } from '../../../core/state/workflow/helper';
+import { isA2AWorkflow, isManagedMcpOperation } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -283,7 +283,7 @@ export const serializeOperation = async (
   }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
-  const isManagedMcpClient = operation.type?.toLowerCase() === 'mcpclienttool' && operation.kind?.toLowerCase() === "managed";
+  const isManagedMcpClient = isManagedMcpOperation(operation);
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);

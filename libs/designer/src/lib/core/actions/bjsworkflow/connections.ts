@@ -51,6 +51,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -365,7 +366,7 @@ export const getConnectionMappingForNode = (
         return mapping;
       }
     }
-    if (equals(operation.type, 'McpClientTool') && equals(operation.kind, 'Managed')) {
+    if (isManagedMcpOperation(operation)) {
       const connectionReferenceKey = (operation as any).inputs.connectionReference.connectionName;
       if (connectionReferenceKey !== undefined) {
         const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });

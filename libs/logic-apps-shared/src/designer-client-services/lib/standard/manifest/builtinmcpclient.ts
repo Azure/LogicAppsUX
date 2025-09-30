@@ -59,7 +59,7 @@ export default {
     connection: {
       required: true,
       type: 'mcp',
-      noPreSelection: true,
+      disableAutoSelection: true,
     },
     connectionReference: {
       referenceKeyFormat: 'mcpconnection',

@@ -1,6 +1,6 @@
 import { useScopeFailedRepetitions, type AppDispatch } from '../../../core';
 import { useActionMetadata, useNodeMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
-import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { setRunIndex, setToolRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getLoopsCount } from './helper';
 import { FindPreviousAndNextPage, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
@@ -13,16 +13,20 @@ export interface LoopsPagerProps {
   scopeId: string;
   collapsed: boolean;
   focusElement?: (index: number, nodeId: string) => void;
+  useToolRun?: boolean;
 }
 
-export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: LoopsPagerProps) => {
+export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement, useToolRun }: LoopsPagerProps) => {
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
   const actionMetadata = useActionMetadata(scopeId);
   const normalizedType = useMemo(() => actionMetadata?.type.toLowerCase(), [actionMetadata]);
   const nodeMetadata = useNodeMetadata(scopeId);
-  const currentPage = useMemo(() => nodeMetadata?.runIndex ?? 0, [nodeMetadata]);
-  const loopsCount = useMemo(() => getLoopsCount(metadata?.runData), [metadata?.runData]);
+  const currentPage = useMemo(() => (useToolRun ? nodeMetadata?.toolRunIndex : nodeMetadata?.runIndex) ?? 0, [nodeMetadata, useToolRun]);
+  const loopsCount = useMemo(
+    () => getLoopsCount(useToolRun ? metadata?.toolRunData : metadata?.runData),
+    [metadata?.runData, metadata?.toolRunData, useToolRun]
+  );
   const { isError, isFetching, data: failedRepetitions } = useScopeFailedRepetitions(normalizedType ?? '', scopeId, runInstance?.id);
 
   const findPreviousAndNextFailed = useCallback(
@@ -33,7 +37,11 @@ export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: Loops
   const onPagerChange: PageChangeEventHandler = useCallback(
     (page: PageChangeEventArgs) => {
       const index = page.value - 1;
-      dispatch(setRunIndex({ page: index, nodeId: scopeId }));
+      if (useToolRun) {
+        dispatch(setToolRunIndex({ page: index, nodeId: scopeId }));
+      } else {
+        dispatch(setRunIndex({ page: index, nodeId: scopeId }));
+      }
       focusElement?.(index, scopeId);
     },
     [dispatch, scopeId, focusElement]

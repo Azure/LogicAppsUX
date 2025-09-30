@@ -64,6 +64,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -95,13 +96,11 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (payload.isAddingMcpServer) {
       dispatch(addMcpServer(newPayload as any));
     } else {
-      if (isAddingAgentTool) {
-        if (newToolId && newToolGraphId) {
-          if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
-            initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
-          }
-          dispatch(addAgentTool({ toolId: newToolId, graphId: newToolGraphId }));
+      if (isAddingAgentTool && newToolId && newToolGraphId) {
+        if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
+          initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
         }
+        dispatch(addAgentTool({ toolId: newToolId, graphId: newToolGraphId }));
       }
 
       dispatch(addNode(newPayload as any));
@@ -183,7 +182,7 @@ export const initializeOperationDetails = async (
   let initData: NodeData;
   let swagger: SwaggerParser | undefined = undefined;
   let parsedManifest: ManifestParser | undefined = undefined;
-  const isManagedMcpClient = type?.toLowerCase() === 'mcpclienttool' && kind?.toLowerCase() === "managed";
+  const isManagedMcpClient = isManagedMcpOperation({ type, kind });
 
   if (isManagedMcpClient) {
     // managed mcp client ignores the swagger and uses a fixed set of parameters similar to manifest based native mcp client

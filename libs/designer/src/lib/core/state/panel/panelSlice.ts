@@ -191,6 +191,7 @@ export const panelSlice = createSlice({
         focusReturnElementId?: string;
         isParallelBranch?: boolean;
         isAgentTool?: boolean;
+        isAddingMcpServer?: boolean;
         nodeId: string;
         relationshipIds: RelationshipIds;
       }>
@@ -205,6 +206,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
       state.discoveryContent.isAddingAgentTool = isAgentTool;
+      state.discoveryContent.isAddingMcpServer = action.payload.isAddingMcpServer ?? false;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
