@@ -9,7 +9,7 @@ import { clearPanel, setAlternateSelectedNode } from '../../state/panel/panelSli
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
+import { clearFocusNode, deleteMcpServer, deleteNode } from '../../state/workflow/workflowSlice';
 import { getParameterFromName } from '../../utils/parameters/helper';
 import { updateAllUpstreamNodes } from './initialize';
 import { WORKFLOW_NODE_TYPES, getRecordEntry } from '@microsoft/logic-apps-shared';
@@ -144,6 +144,7 @@ const deletePinnedOperation = (nodeId: string, dispatch: Dispatch, state: RootSt
   }
 };
 
+
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {
   const { graphNode, clearFocus = true } = deletePayload;
 
@@ -166,4 +167,15 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
 
   recursiveGraphDelete(graphNode);
   return;
+});
+
+export const deleteMcpServerNode = createAsyncThunk('deleteMcpServer', async (deletePayload: { agentId: string, toolId: string, clearFocus?: boolean }, { dispatch }) => {
+  const { agentId, toolId, clearFocus = true } = deletePayload;
+
+  if (clearFocus) {
+    dispatch(clearFocusNode());
+    dispatch(clearPanel());
+  }
+
+  dispatch(deleteMcpServer({ agentId, toolId }));
 });

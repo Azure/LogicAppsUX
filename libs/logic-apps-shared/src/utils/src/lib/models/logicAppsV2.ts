@@ -733,6 +733,18 @@ export interface WaitUntil {
   timestamp: string;
 }
 
+export interface McpClient extends Action {
+  inputs: McpClientInputs;
+}
+
+export interface McpClientInputs {
+  connectionReference: McpClientConnectionReference;
+}
+
+export interface McpClientConnectionReference {
+  connectionReferenceName: string;
+}
+
 export interface StaticResults {
   [staticResult: string]: any;
 }
@@ -812,7 +824,7 @@ export interface SwitchAction extends Action {
 }
 
 export interface AgentAction extends TimeoutableAction {
-  tools?: Record<string, AgentCondition>;
+  tools?: Record<string, AgentCondition | McpClient>;
   channels?: AgentChannels;
   deploymentId: string;
   messages: AgentMessage[];

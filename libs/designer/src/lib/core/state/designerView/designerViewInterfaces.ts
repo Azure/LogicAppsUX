@@ -18,4 +18,6 @@ export interface EdgeContextMenuObject {
   isLeaf?: boolean;
   location: { x: number; y: number };
   isHandoff?: boolean;
+  isAgentTool?: boolean;
+  subgraphId?: string;
 }

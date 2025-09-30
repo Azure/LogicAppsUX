@@ -113,6 +113,32 @@ export abstract class BaseSearchService implements ISearchService {
     return requestPage(uri, [], queryParams);
   }
 
+  async getMcpServers(): Promise<DiscoveryOpArray> {
+    const traceId = LoggerService().startTrace({
+      name: 'Get All Managed MCP Servers',
+      action: 'getAllManagedMcpServers',
+      source: 'connection.ts',
+    });
+
+    const {
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+    } = this.options;
+    if (this._isDev) {
+      return Promise.resolve([]);
+    }
+
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      $filter: "mcpOnly eq true",
+    };
+
+    const operations = await this.getAzureResourceRecursive(uri, queryParameters);
+
+    LoggerService().endTrace(traceId, { status: Status.Success });
+    return operations;
+  }
+
   async getAllAzureOperations(): Promise<DiscoveryOpArray> {
     const traceId = LoggerService().startTrace({
       name: 'Get All Azure Operations',

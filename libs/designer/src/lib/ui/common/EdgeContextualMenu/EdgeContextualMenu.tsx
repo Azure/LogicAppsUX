@@ -18,6 +18,7 @@ import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
+import { getOperationManifest } from '../../../core/queries/operation';
 import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
@@ -57,12 +58,14 @@ export const EdgeContextualMenu = () => {
   const menuData = useEdgeContextMenuData();
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow();
+  const subgraphId = useMemo(() => menuData?.subgraphId, [menuData]);
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
   const isHandoff = useMemo(() => menuData?.isHandoff, [menuData]);
+  const isAgentTool = useMemo(() => menuData?.isAgentTool, [menuData]);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -176,6 +179,13 @@ export const EdgeContextualMenu = () => {
   //   );
   // }, [dispatch, parentId, childId]);
 
+  
+  const addMcpServerText = intl.formatMessage({
+    defaultMessage: 'Add an MCP server',
+    id: 'Nl4O59',
+    description: 'Text that explains no tools exist in this agent',
+  });
+
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
     id: 'mCzkXX',
@@ -262,6 +272,36 @@ export const EdgeContextualMenu = () => {
     });
   }, [dispatch, graphId, childId, parentId]);
 
+  const openAddMcpServerPanel = useCallback(() => {
+    const newId = guid();
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = { 
+      graphId,
+      childId,
+      parentId,
+      subgraphId
+    };
+
+    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true, isAddingMcpServer: true }));
+  }, [dispatch, graphId, childId, parentId, subgraphId]);
+
+  const openAddActionAgentToolPanel = useCallback(() => {
+    const newId = guid();
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = { 
+      graphId,
+      childId,
+      parentId,
+      subgraphId
+    };
+
+    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true }));
+  }, [dispatch, graphId, childId, parentId, subgraphId]);
+
   const showParallelBranchButton = !isLeaf && parentId;
 
   const [isPasteEnabled, setIsPasteEnabled] = useState<boolean>(false);
@@ -340,6 +380,18 @@ export const EdgeContextualMenu = () => {
   const addActionMenuItem = (
     <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')} disabled={isAddActionDisabled}>
       {newActionText}
+    </MenuItem>
+  );
+
+  const addActionToolMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={openAddActionAgentToolPanel} data-automation-id={automationId('add-agent-action-tool')}>
+      {newActionText}
+    </MenuItem>
+  );
+
+  const addMcpServerMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={openAddMcpServerPanel} data-automation-id={automationId('add-agent-mcp-server')}>
+      {addMcpServerText}
     </MenuItem>
   );
 
@@ -423,7 +475,12 @@ export const EdgeContextualMenu = () => {
               </>
             ) : (
               <>
-                {isAddActionDisabled ? (
+                {isAgentTool ? (
+                  <>
+                    {addActionToolMenuItem}
+                    {addMcpServerMenuItem}
+                  </>
+                ) : isAddActionDisabled ? (
                   <Tooltip content={a2aAgentLoopDisabledText} relationship="description">
                     {addActionMenuItem}
                   </Tooltip>

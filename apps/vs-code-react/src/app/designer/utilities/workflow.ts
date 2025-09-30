@@ -13,6 +13,7 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
   const connectionReferences = connectionsData.managedApiConnections || {};
   const serviceProviderConnections = connectionsData.serviceProviderConnections || {};
   const agentConnections = connectionsData.agentConnections || {};
+  const agentMcpConnections = connectionsData.agentMcpConnections || {};
 
   for (const connectionReferenceKey of Object.keys(connectionReferences)) {
     const { connection, api, connectionProperties, authentication } = connectionReferences[connectionReferenceKey];
@@ -58,6 +59,15 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
       connection: { id: `/${agentConnectorId}/connections/${connectionKey}` },
       connectionName: connectionKey, // updated to use connectionKey directly
       api: { id: `/${agentConnectorId}` },
+    };
+  }
+
+  const mcpConnectorId = 'connectionProviders/mcpclient';
+  for (const connectionKey of Object.keys(agentMcpConnections)) {
+    references[connectionKey] = {
+      connection: { id: `/${mcpConnectorId}/connections/${connectionKey}` },
+      connectionName: connectionKey,
+      api: { id: mcpConnectorId },
     };
   }
 

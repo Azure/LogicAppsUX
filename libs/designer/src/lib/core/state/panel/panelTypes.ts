@@ -40,6 +40,7 @@ export interface DiscoveryPanelContentState {
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
   isAddingAgentTool?: boolean;
+  isAddingMcpServer?: boolean;
   agentToolMetadata?: { newAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;

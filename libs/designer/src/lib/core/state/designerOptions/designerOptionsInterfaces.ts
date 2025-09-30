@@ -56,6 +56,7 @@ export interface DesignerOptionsState {
   showEdgeDrawing?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
+  mcpClientToolEnabled?: boolean;
 }
 
 export interface ServiceOptions {

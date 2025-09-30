@@ -149,6 +149,31 @@ const useCustomOperationsLazyQuery = () =>
     }
   );
 
+export const useMcpServersQuery = () =>
+  useQuery(
+    ['allOperations', 'mcpServers'],
+    async () => {
+      const searchService = SearchService();
+      if (searchService.getMcpServers) {
+        const data = await searchService.getMcpServers();
+        
+        const processedData = data.map<DiscoveryOpArray>((operation: any) => ({
+          ...operation,
+          properties: {
+            ...operation.properties,
+            operationType: 'McpClientTool',
+            operationKind: 'Managed',
+          }
+        }));
+        
+        return { data: processedData }
+      } else {
+        return { data: [] };
+      }
+    },
+    queryOpts
+  );
+
 const useBuiltInOperationsQuery = () =>
   useQuery(
     ['allOperations', 'builtin'],

@@ -1,12 +1,12 @@
 import type { AppDispatch } from '../../../core';
 import { useNodeMetadata, useNodeDisplayName, storeStateToUndoRedoHistory } from '../../../core';
-import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
+import { deleteOperation, deleteGraphNode, deleteMcpServerNode } from '../../../core/actions/bjsworkflow/delete';
 import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
 import { deleteAgentTool, deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -28,10 +28,20 @@ const DeleteModal = () => {
       return;
     }
     const { type, subGraphLocation } = nodeData;
+    const { subgraphType } = metadata || {};
 
     if (type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {
-      dispatch(storeStateToUndoRedoHistory({ type: deleteOperation.pending }));
-      dispatch(deleteOperation({ nodeId, isTrigger }));
+      if (subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
+        dispatch(
+          deleteMcpServerNode({
+            toolId: nodeId,
+            agentId: graphId,
+          })
+        );
+      } else {
+        dispatch(storeStateToUndoRedoHistory({ type: deleteOperation.pending }));
+        dispatch(deleteOperation({ nodeId, isTrigger }));
+      }
     } else if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE) {
       dispatch(storeStateToUndoRedoHistory({ type: deleteGraphNode.pending }));
       dispatch(

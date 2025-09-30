@@ -59,12 +59,26 @@ export interface AgentConnectionModel {
   displayName?: string;
 }
 
+export interface AgentMcpConnectionModel {
+  displayName?: string;
+  mcpServerUrl?: string;
+  kind: string;
+  api?: {
+    id?: string;
+  };
+  connection?: {
+    id?: string;
+  };
+  authentication?: any;
+}
+
 export interface ConnectionsData {
   functionConnections?: Record<string, FunctionConnectionModel>;
   managedApiConnections?: Record<string, ConnectionReferenceModel>;
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
   agentConnections?: Record<string, AgentConnectionModel>;
+  agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
 }
 
 export interface ConnectionAndSettings {

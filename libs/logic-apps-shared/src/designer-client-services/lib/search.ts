@@ -21,6 +21,7 @@ export interface ISearchService {
   getAgentConnectorOperation?(connectorId: string): Promise<DiscoveryOpArray>;
   getBuiltInOperations(): Promise<DiscoveryOpArray>;
   getOperationsByConnector?(connectorId: string, actionType?: string): Promise<DiscoveryOpArray>;
+  getMcpServers?(): Promise<DiscoveryOpArray>;
 }
 
 let service: ISearchService;
