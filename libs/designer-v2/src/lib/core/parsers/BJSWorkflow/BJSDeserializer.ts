@@ -359,6 +359,14 @@ const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2
   return equals(action?.type, 'if');
 };
 
+const isAgentCondition = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.AgentCondition => {
+  return !action?.type || !equals(action?.type, 'mcpclienttool');
+}
+
+const isMcpClient = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.McpClient => {
+  return equals(action?.type, 'mcpclienttool');
+}
+
 const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
   return equals(action?.type, 'switch');
 };
@@ -701,21 +709,47 @@ export const processScopeActions = (
     };
   } else if (isAgentAction(action)) {
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
-      applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
+      if (isAgentCondition(toolAction)) {
+        applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
 
-      const toolActions = Object.values(toolAction.actions ?? {});
-      // If tool is a handoff tool
-      if (toolActions.length === 1 && equals(toolActions[0]?.type, constants.NODE.TYPE.HANDOFF)) {
-        // Add handoff to metadata for easy access
-        const handoffTarget = (toolActions[0] as any).inputs?.name ?? '';
-        if (handoffTarget !== '') {
-          const existingHandoffs = nodesMetadata[actionName]?.handoffs ?? {};
-          nodesMetadata[actionName] = {
-            ...nodesMetadata[actionName],
-            handoffs: {
-              ...existingHandoffs,
-              [toolName]: handoffTarget,
-            },
+        const toolActions = Object.values(toolAction.actions ?? {});
+        // If tool is a handoff tool
+        if (toolActions.length === 1 && equals(toolActions[0]?.type, constants.NODE.TYPE.HANDOFF)) {
+          // Add handoff to metadata for easy access
+          const handoffTarget = (toolActions[0] as any).inputs?.name ?? '';
+          if (handoffTarget !== '') {
+            const existingHandoffs = nodesMetadata[actionName]?.handoffs ?? {};
+            nodesMetadata[actionName] = {
+              ...nodesMetadata[actionName],
+              handoffs: {
+                ...existingHandoffs,
+                [toolName]: handoffTarget,
+              },
+            };
+          }
+        }
+      } else if (isMcpClient(toolAction)) {
+        const toolNode = createWorkflowNode(
+          toolName,
+          WORKFLOW_NODE_TYPES.OPERATION_NODE
+        );
+        toolNode.subGraphLocation = 'tools';
+
+        nodes.push(toolNode);
+        edges.push(createWorkflowEdge(headerId, toolNode.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+        allActions[toolName] = { ...toolAction };
+
+        nodesMetadata[toolName] = {
+          ...nodesMetadata[toolName],
+          subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+        };
+
+        if (toolAction.metadata) {
+          nodesMetadata[toolName] = {
+            ...nodesMetadata[toolName],
+            actionMetadata: {
+              ...toolAction.metadata
+            }
           };
         }
       }
@@ -921,8 +955,10 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
             if (includeCase) {
               names.push(toolName);
             }
-            if (toolAction.actions) {
-              names.push(...getAllActionNames(toolAction.actions, [], includeCase));
+            if (isAgentCondition(toolAction)) {
+              if (toolAction.actions) {
+                names.push(...getAllActionNames(toolAction.actions, [], includeCase));
+              }
             }
           }
         }

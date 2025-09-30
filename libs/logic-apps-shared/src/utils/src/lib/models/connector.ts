@@ -217,6 +217,7 @@ export interface ConnectorProperty {
   iconUrl?: string;
   runtimeUrls?: string[];
   primaryRuntimeUrl?: string;
+  connectionMode?: string;// XXX
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   operationParameterSets?: Record<string, OperationParameterSetParameter>;

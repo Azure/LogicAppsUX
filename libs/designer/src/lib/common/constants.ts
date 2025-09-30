@@ -817,6 +817,7 @@ export default {
     JOIN: 'Join',
     LIQUID: 'Liquid',
     MANUAL: 'Manual', // 2015-08-01-preview
+    MCP_CLIENT: 'McpClientTool',
     OPEN_API_CONNECTION: 'OpenApiConnection',
     OPEN_API_CONNECTION_WEBHOOK: 'OpenApiConnectionWebhook',
     OPEN_API_CONNECTION_NOTIFICATION: 'OpenApiConnectionNotification',

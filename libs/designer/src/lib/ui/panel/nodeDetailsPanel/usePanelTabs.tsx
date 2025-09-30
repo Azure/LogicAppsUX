@@ -150,6 +150,12 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       return [parametersTabItem];
     }
 
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
+      return [monitoringTabItem, parametersTabItem, codeViewTabItem, aboutTabItem]
+        .filter((a) => !panelTabHideKeys.includes(a.id as any))
+        .filter((a) => a.visible);
+    }
+
     return [
       monitoringTabItem,
       parametersTabItem,

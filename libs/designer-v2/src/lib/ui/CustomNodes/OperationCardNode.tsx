@@ -38,6 +38,7 @@ import {
   useSubgraphRunData,
   useRunIndex,
   useFlowErrorsForNode,
+  useActionMetadata,
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
@@ -55,6 +56,8 @@ import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
 import { ActionCard } from './components/card';
+import { Constants } from 'index';
+import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -91,7 +94,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const toolRunIndex = useRunIndex(graphId);
   const isA2AWorkflow = useIsA2AWorkflow();
-
+  
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView && !!runInstance,
     id,

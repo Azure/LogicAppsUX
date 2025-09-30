@@ -270,3 +270,40 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
     nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
   }
 };
+
+export const addMcpServerToWorkflow = (toolId: string, agentNode: WorkflowNode, nodesMetadata: NodesMetadata, state: WorkflowState, operation?: DiscoveryOperation<DiscoveryResultTypes>) => {
+  // Create a regular operation node for simple agent tools
+  const toolNode = createWorkflowNode(toolId, WORKFLOW_NODE_TYPES.OPERATION_NODE);
+  toolNode.subGraphLocation = 'tools';
+  agentNode.children?.splice(agentNode.children.length - 2, 0, toolNode);
+  
+  // Set metadata for simple agent tool operation
+  nodesMetadata[toolId] = {
+    graphId: agentNode.id,
+    parentNodeId: agentNode.id,
+    subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+    //actionCount: 0,
+  };
+  
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+
+  // Create operation entry following the same pattern as addNodeToWorkflow
+  // This is needed for the connection system to work properly
+  if (operation) {
+    state.operations[toolId] = { ...state.operations[toolId], type: operation.type };
+    state.newlyAddedOperations[toolId] = toolId;
+    state.isDirty = true;
+  }
+
+  // Add Tool to Agent operation data
+  const agentAction = state.operations[agentNode.id] as LogicAppsV2.AgentAction;
+  agentAction.tools = {
+    ...agentAction.tools,
+    [toolId]: { actions: {}, description: '', type: 'Tool' },
+  };
+
+  // Increase action count of graph
+  if (nodesMetadata[agentNode.id]) {
+    nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
+  }
+};
