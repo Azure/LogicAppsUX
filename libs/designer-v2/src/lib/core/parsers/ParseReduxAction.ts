@@ -14,7 +14,13 @@ import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
-import { LOCAL_STORAGE_KEYS, LoggerService, Status, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import {
+  LOCAL_STORAGE_KEYS,
+  LoggerService,
+  Status,
+  VARIABLE_EDITOR_MAX_VARIABLES,
+  WORKFLOW_NODE_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -227,6 +233,7 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
     let currentAction = actionsCopy[currentName] as LogicAppsV2.InitializeVariableAction;
 
     const mergedVariables: any[] = [];
+    const sequenceActionsToRemove = new Set<string>();
     let trackedProperties: Record<string, any> = {};
 
     let topMostRunAfter = currentAction.runAfter;
@@ -252,7 +259,7 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
       }
 
       // Mark for removal and move upwards
-      actionsToRemove.add(currentName);
+      sequenceActionsToRemove.add(currentName);
       currentName = prevActionName;
       currentAction = prevAction as LogicAppsV2.InitializeVariableAction;
       topMostRunAfter = currentAction.runAfter;
@@ -262,7 +269,12 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
     if (currentAction?.inputs?.variables) {
       mergedVariables.unshift(...currentAction.inputs.variables);
     }
-    actionsToRemove.add(currentName);
+    sequenceActionsToRemove.add(currentName);
+
+    // If the merged variables exceed 20, don't combine this sequence
+    if (mergedVariables.length > VARIABLE_EDITOR_MAX_VARIABLES) {
+      return;
+    }
 
     // Store the merged action under the bottom-most action name, so that subsequent runAfters are preserved
     // Eric - I had tried to rename the mergedActionName to something that would combine the names of the actions being merged,
@@ -277,6 +289,9 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
     if (Object.keys(trackedProperties).length > 0) {
       mergedActions[bottomActionName].trackedProperties = trackedProperties;
     }
+
+    // Add this sequence's actions to the global removal set
+    sequenceActionsToRemove.forEach((name) => actionsToRemove.add(name));
   });
 
   // Remove the original sequential actions
