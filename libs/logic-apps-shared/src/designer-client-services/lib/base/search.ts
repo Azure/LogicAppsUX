@@ -353,6 +353,43 @@ export abstract class BaseSearchService implements ISearchService {
     return this.removeUnsupportedOperations(operations);
   }
 
+  /// Fuzzy search ///
+  ///   - This is called when making a fuzzy search with the fuzzySearch=true parameter
+  public async getFuzzySearchOperations?(searchTerm: string, actionType?: string): Promise<DiscoveryOpArray> {
+    const {
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+    } = this.options;
+    if (this._isDev) {
+      // In dev mode, fallback to client-side search would happen in the service layer
+      return Promise.resolve([]);
+    }
+
+    const traceId = LoggerService().startTrace({
+      name: 'Get Fuzzy Search Operations',
+      action: 'getFuzzySearchOperations',
+      source: 'search.ts',
+    });
+
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const filters = [
+      "type eq 'Microsoft.Web/locations/managedApis/apiOperations'",
+      'properties/integrationServiceEnvironmentResourceId eq null',
+      ...(actionType === 'trigger' ? ['properties/trigger ne null'] : []),
+      ...(actionType === 'action' ? ['properties/trigger eq null'] : []),
+    ];
+    const queryParameters: QueryParameters = {
+      $filter: filters.join(' and '),
+      $search: `"${searchTerm}"`,
+      fuzzySearch: 'true',
+      'api-version': apiVersion,
+    };
+
+    const operations = await this.getAzureResourceRecursive(uri, queryParameters);
+
+    LoggerService().endTrace(traceId, { status: Status.Success });
+    return this.removeUnsupportedOperations(operations);
+  }
+
   /// Agent search ///
   ///   - This is called when fetching operations for a given connector
   public async getAgentConnectorOperation?(connectorId: string): Promise<DiscoveryOpArray> {
