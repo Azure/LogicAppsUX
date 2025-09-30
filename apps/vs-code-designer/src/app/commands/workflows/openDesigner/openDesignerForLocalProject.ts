@@ -111,13 +111,17 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     if (isNullOrUndefined(ext.workflowRuntimePort)) {
       // Start runtime api if not already running
-      const logicAppName = path.basename(path.dirname(path.dirname(this.workflowFilePath)));
-      await pickFuncProcess(this.context, {
-        name: `Run/Debug logic app ${logicAppName}`,
-        type: 'coreclr',
-        request: 'attach',
-        processId: '${command:azureLogicAppsStandard.pickProcess}',
-      });
+      // Check if tasks.json exists in .vscode folder
+      const vscodePath = path.join(this.projectPath, '.vscode');
+      const launchJsonPath = path.join(vscodePath, 'launch.json');
+
+      // Read or create tasks.json
+      let launchConfig: any = { version: '2.0.0', configurations: [] };
+      const launchContent = readFileSync(launchJsonPath, 'utf8');
+      launchConfig = JSON.parse(launchContent);
+      const existingConfig = launchConfig.configurations?.[0];
+
+      await pickFuncProcess(this.context, existingConfig);
     }
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
