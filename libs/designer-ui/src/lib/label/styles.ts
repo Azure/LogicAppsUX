@@ -11,6 +11,9 @@ export const useLabelStyles = makeStyles({
     textAlign: 'left',
     wordWrap: 'break-word',
     fontWeight: '600',
+    textTransform: 'none',
+    paddingTop: '8px',
+    paddingBottom: '2px',
   },
   requiredParameterLeft: {
     color: tokens.colorPaletteRedForeground1,
