@@ -185,3 +185,5 @@ export const TOKEN_PICKER_OUTPUT_SECTIONS = {
   WORKFLOW_PARAMETERS: 'workflowparameters',
   VARIABLES: 'variables',
 };
+
+export const VARIABLE_EDITOR_MAX_VARIABLES = 20;

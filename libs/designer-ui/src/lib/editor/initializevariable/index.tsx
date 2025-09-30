@@ -13,9 +13,9 @@ import {
   parseSchemaAsVariableEditorSegments,
   parseVariableEditorSegments,
 } from './util';
-import constants from '../../constants';
 import { Add24Filled, Add24Regular, bundleIcon } from '@fluentui/react-icons';
 import { useInitializeVariableStyles } from './styles';
+import { VARIABLE_EDITOR_MAX_VARIABLES } from '@microsoft/logic-apps-shared';
 
 const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 export interface InitializeVariableProps {
@@ -219,10 +219,10 @@ export const InitializeVariableEditor = ({
             appearance="subtle"
             aria-label={addButtonText}
             onClick={addVariable}
-            disabled={variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly}
+            disabled={variables.length === VARIABLE_EDITOR_MAX_VARIABLES || props.readonly}
             icon={<CreateIcon />}
             style={
-              variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly
+              variables.length === VARIABLE_EDITOR_MAX_VARIABLES || props.readonly
                 ? {}
                 : {
                     color: 'var(--colorBrandForeground1)',
