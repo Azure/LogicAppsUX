@@ -96,18 +96,103 @@ jobs:
           # Extract the body, with fallback for null values
           RELEASE_NOTES=$(echo "$API_RESPONSE" | jq -r '.body // empty')
           
-          # If the API didn't return meaningful notes, generate our own
-          if [ -z "$RELEASE_NOTES" ] || [ "$RELEASE_NOTES" = "null" ]; then
-            echo "API returned empty/null body, generating custom release notes"
+          # Parse and format release notes to match the desired format
+          if [ -n "$RELEASE_NOTES" ] && [ "$RELEASE_NOTES" != "null" ]; then
+            echo "Formatting GitHub API release notes..."
             
-            # Get commit messages between tags
-            COMMITS=$(git log $OLD_TAG..$NEW_TAG --oneline --pretty=format:"* %s (%h)" 2>/dev/null || echo "")
+            # Create a Python script to parse and format the release notes
+            cat > format_release_notes.py << 'EOF'
+          import sys
+          import re
+          
+          def format_release_notes(raw_notes):
+              lines = raw_notes.split('\n')
+              formatted_lines = []
+              
+              for line in lines:
+                  line = line.strip()
+                  
+                  # Skip empty lines and headers we don't want
+                  if not line or line.startswith('##') or line.startswith('**Full Changelog'):
+                      continue
+                  
+                  # Process lines that start with *
+                  if line.startswith('* '):
+                      # Try to match the format: * type(scope): description (#1234) (hash)
+                      match = re.search(r'\* ([^(]*)\(([^)]+)\):\s*([^(]+)\(#(\d+)\)\s*\(([^)]+)\)', line)
+                      if match:
+                          commit_type = match.group(1).strip()  # e.g., "fix"
+                          scope = match.group(2).strip()        # e.g., "vscode"
+                          description = match.group(3).strip()  # e.g., "track and terminate Azure Functions host child processes "
+                          pr_number = match.group(4)           # e.g., "8298"
+                          commit_hash = match.group(5)         # e.g., "c5175da3c"
+                          
+                          # Format as requested: * **scope:** description ([#PR](link)) ([hash](commit_link))
+                          formatted_line = f"* **{scope}:** {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number})) ([{commit_hash}](https://github.com/Azure/LogicAppsUX/commit/{commit_hash}))"
+                          formatted_lines.append(formatted_line)
+                      else:
+                          # Try alternative format: * description by @author in #1234
+                          alt_match = re.search(r'\* (.+?) by @\w+ in #(\d+)', line)
+                          if alt_match:
+                              description = alt_match.group(1).strip()
+                              pr_number = alt_match.group(2)
+                              
+                              # Try to extract scope from description if it follows conventional format
+                              scope_match = re.search(r'^([^(]*)\(([^)]+)\):\s*(.+)', description)
+                              if scope_match:
+                                  scope = scope_match.group(2)
+                                  clean_description = scope_match.group(3)
+                                  formatted_line = f"* **{scope}:** {clean_description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number}))"
+                              else:
+                                  # No scope found, use description as-is
+                                  formatted_line = f"* {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number}))"
+                              formatted_lines.append(formatted_line)
+                          else:
+                              # Keep the line as-is if it doesn't match expected patterns
+                              formatted_lines.append(line)
+                  else:
+                      # Keep non-bullet point lines (section headers, etc.)
+                      formatted_lines.append(line)
+              
+              return '\n'.join(formatted_lines)
+          
+          if __name__ == "__main__":
+              raw_notes = sys.stdin.read()
+              formatted_notes = format_release_notes(raw_notes)
+              print(formatted_notes)
+          EOF
+            
+            # Format the release notes
+            RELEASE_NOTES=$(echo "$RELEASE_NOTES" | python3 format_release_notes.py)
+            
+            # Clean up
+            rm format_release_notes.py
+            
+          else
+            echo "API returned empty/null body, generating custom release notes from git log"
+            
+            # Get commits and format them properly
+            COMMITS=$(git log $OLD_TAG..$NEW_TAG --oneline --pretty=format:"%h|%s" 2>/dev/null || echo "")
             
             if [ -n "$COMMITS" ]; then
+              FORMATTED_COMMITS=""
+              
+              while IFS='|' read -r hash message; do
+                # Try to match conventional commit format: type(scope): description
+                if [[ $message =~ ^([^(]+)\(([^)]+)\):[[:space:]]*(.+) ]]; then
+                  scope="${BASH_REMATCH[2]}"
+                  description="${BASH_REMATCH[3]}"
+                  formatted_message="* **$scope:** $description ([${hash}](https://github.com/${{ github.repository }}/commit/$hash))"
+                else
+                  # No conventional format, use message as-is
+                  formatted_message="* $message ([${hash}](https://github.com/${{ github.repository }}/commit/$hash))"
+                fi
+                FORMATTED_COMMITS="$FORMATTED_COMMITS$formatted_message\n"
+              done <<< "$COMMITS"
+              
               RELEASE_NOTES="## What's Changed
 
-          $COMMITS
-
+          $(echo -e "$FORMATTED_COMMITS")
           **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
             else
               RELEASE_NOTES="## Release $NEW_TAG
