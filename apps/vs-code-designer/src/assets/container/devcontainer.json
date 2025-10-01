@@ -19,13 +19,6 @@
     "ghcr.io/devcontainers/features/powershell:1": {
       "version": "latest",
       "modules": "Az"
-    },
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "17",
-      "jdkDistro": "ms",
-      "gradleVersion": "latest",
-      "mavenVersion": "latest",
-      "installAnt": false
     }
   },
   "customizations": {
