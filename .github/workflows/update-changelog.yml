@@ -1,0 +1,253 @@
+name: Update Changelog
+run-name: Update Changelog - From ${{ github.event.inputs.old_tag }} to ${{ github.event.inputs.new_tag }}
+on:
+  workflow_dispatch:
+    inputs:
+      new_tag:
+        description: 'New version tag (e.g., v5.110.0)'
+        required: true
+        type: string
+      old_tag:
+        description: 'Previous version tag (e.g., v5.109.0)'
+        required: true
+        type: string
+      target_branch:
+        description: 'Target branch for the PR'
+        required: false
+        default: 'main'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 'Set up Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 'Validate Tags'
+        id: validate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_TAG="${{ github.event.inputs.new_tag }}"
+          OLD_TAG="${{ github.event.inputs.old_tag }}"
+          
+          echo "Validating tags..."
+          echo "New tag: $NEW_TAG"
+          echo "Old tag: $OLD_TAG"
+          
+          # Check if tags exist
+          if ! git tag -l | grep -q "^${NEW_TAG}$"; then
+            echo "Error: New tag '$NEW_TAG' does not exist"
+            exit 1
+          fi
+          
+          if ! git tag -l | grep -q "^${OLD_TAG}$"; then
+            echo "Error: Old tag '$OLD_TAG' does not exist"
+            exit 1
+          fi
+          
+          # Check tag chronology
+          NEW_DATE=$(git log -1 --format=%ct "$NEW_TAG")
+          OLD_DATE=$(git log -1 --format=%ct "$OLD_TAG")
+          
+          if [ "$NEW_DATE" -le "$OLD_DATE" ]; then
+            echo "Error: New tag '$NEW_TAG' is not newer than old tag '$OLD_TAG'"
+            exit 1
+          fi
+          
+          echo "Tags validated successfully"
+
+      - name: 'Generate Release Notes'
+        id: generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_TAG="${{ github.event.inputs.new_tag }}"
+          OLD_TAG="${{ github.event.inputs.old_tag }}"
+          
+          echo "Generating release notes between $OLD_TAG and $NEW_TAG..."
+          
+          # Generate release notes using GitHub API
+          API_RESPONSE=$(gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/releases/generate-notes \
+            -f tag_name="$NEW_TAG" \
+            -f target_commitish="${{ github.event.inputs.target_branch }}" \
+            -f previous_tag_name="$OLD_TAG" 2>/dev/null || echo '{"body": null}')
+          
+          echo "API Response received"
+          
+          # Extract the body, with fallback for null values
+          RELEASE_NOTES=$(echo "$API_RESPONSE" | jq -r '.body // empty')
+          
+          # If the API didn't return meaningful notes, generate our own
+          if [ -z "$RELEASE_NOTES" ] || [ "$RELEASE_NOTES" = "null" ]; then
+            echo "API returned empty/null body, generating custom release notes"
+            
+            # Get commit messages between tags
+            COMMITS=$(git log $OLD_TAG..$NEW_TAG --oneline --pretty=format:"* %s (%h)" 2>/dev/null || echo "")
+            
+            if [ -n "$COMMITS" ]; then
+              RELEASE_NOTES="## What's Changed
+
+          $COMMITS
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
+            else
+              RELEASE_NOTES="## Release $NEW_TAG
+
+          This release includes updates and improvements.
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
+            fi
+          fi
+          
+          echo "Generated release notes:"
+          echo "$RELEASE_NOTES"
+          
+          # Save to file to handle multi-line content
+          echo "$RELEASE_NOTES" > release-notes.md
+          
+          # Extract version number from tag (remove 'v' prefix if present)
+          VERSION_NUMBER=$(echo "$NEW_TAG" | sed 's/^v//')
+          echo "VERSION_NUMBER=$VERSION_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: 'Update Changelog'
+        id: update-changelog
+        run: |
+          NEW_TAG="${{ github.event.inputs.new_tag }}"
+          OLD_TAG="${{ github.event.inputs.old_tag }}"
+          VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
+          
+          echo "Updating CHANGELOG.md..."
+          
+          # Read the generated release notes
+          RELEASE_NOTES=$(cat release-notes.md)
+          
+          # Create the new changelog entry
+          NEW_ENTRY="# Logic Apps Designer
+          ## [$VERSION_NUMBER](https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG) ($(date '+%Y-%m-%d'))
+
+          $RELEASE_NOTES
+
+          "
+          
+          # Check if CHANGELOG.md exists
+          if [ ! -f "CHANGELOG.md" ]; then
+            echo "Creating new CHANGELOG.md file"
+            echo "$NEW_ENTRY" > CHANGELOG.md
+          else
+            echo "Updating existing CHANGELOG.md file"
+            # Create a temporary file with the new entry at the top
+            echo "$NEW_ENTRY" > temp_changelog.md
+            # Skip the first line of the original changelog (the main title) and append the rest
+            tail -n +2 CHANGELOG.md >> temp_changelog.md
+            # Replace the original file
+            mv temp_changelog.md CHANGELOG.md
+          fi
+          
+          echo "Changelog updated successfully"
+          
+          # Check if there are changes to commit
+          if git diff --quiet CHANGELOG.md; then
+            echo "No changes detected in CHANGELOG.md"
+            echo "HAS_CHANGES=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in CHANGELOG.md"
+            echo "HAS_CHANGES=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 'Create Pull Request'
+        if: steps.update-changelog.outputs.HAS_CHANGES == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_TAG="${{ github.event.inputs.new_tag }}"
+          OLD_TAG="${{ github.event.inputs.old_tag }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
+          
+          # Create a new branch for the PR
+          BRANCH_NAME="changelog/update-$VERSION_NUMBER-$(date +%s)"
+          
+          echo "Creating branch: $BRANCH_NAME"
+          git checkout -b "$BRANCH_NAME"
+          
+          # Configure Git
+          git config --global user.name "changelog-automation-${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          
+          # Stage and commit changes
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog for release $NEW_TAG
+
+          - Added release notes for version $VERSION_NUMBER
+          - Generated from changes between $OLD_TAG and $NEW_TAG
+          - Auto-generated by changelog workflow"
+          
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR title and body
+          PR_TITLE="docs: Update changelog for release $NEW_TAG"
+          PR_BODY="## Summary
+          This PR updates the CHANGELOG.md with release notes for version $VERSION_NUMBER.
+
+          ## Changes
+          - Added changelog entry for release $NEW_TAG
+          - Includes all changes from $OLD_TAG to $NEW_TAG
+          - Generated using GitHub's release notes API
+
+          ## Metadata
+          - **From Tag**: $OLD_TAG
+          - **To Tag**: $NEW_TAG  
+          - **Version**: $VERSION_NUMBER
+          - **Generated**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+          
+          ---
+          *This PR was automatically generated by the changelog workflow*"
+          
+          # Create the pull request
+          PR_URL=$(gh pr create \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+            --base "$TARGET_BRANCH" \
+            --head "$BRANCH_NAME" \
+            --label "documentation" \
+            --label "changelog")
+          
+          echo "Pull request created: $PR_URL"
+          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
+
+      - name: 'Summary'
+        if: always()
+        run: |
+          if [ "${{ steps.update-changelog.outputs.HAS_CHANGES }}" = "true" ]; then
+            echo "✅ Changelog updated successfully"
+            echo "📋 Pull request created: ${{ steps.update-changelog.outputs.PR_URL || 'Check previous step for URL' }}"
+          else
+            echo "ℹ️ No changes were needed in the changelog"
+          fi
+          
+          echo ""
+          echo "📊 Workflow Summary:"
+          echo "- New Tag: ${{ github.event.inputs.new_tag }}"
+          echo "- Old Tag: ${{ github.event.inputs.old_tag }}"
+          echo "- Target Branch: ${{ github.event.inputs.target_branch }}"
+          echo "- Changes Made: ${{ steps.update-changelog.outputs.HAS_CHANGES || 'N/A' }}"
