@@ -67,7 +67,7 @@ const initialState: WorkflowLoadingState = {
     displayRuntimeInfo: true,
     maxStateHistorySize: 0,
     collapseGraphsByDefault: false,
-    enableMultiVariable: false,
+    enableMultiVariable: true,
   },
   showPerformanceDebug: false,
   runFiles: [],
