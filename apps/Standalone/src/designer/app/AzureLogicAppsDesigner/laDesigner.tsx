@@ -462,7 +462,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
-            isMultiVariableEnabled={hostOptions.enableMultiVariable}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable && !isMonitoringView}
           >
             <div
               style={{
