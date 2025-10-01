@@ -88,16 +88,11 @@ async function deploy(
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
 
-  try {
-    if (!isNullOrUndefined(workspaceFolder)) {
-      const logicAppNode = workspaceFolder.uri;
-      // Only build custom code projects on open designer if custom code binaries don't already exist in the logic app folder
-      if (!(await fse.pathExists(path.join(logicAppNode.fsPath, 'lib', 'custom')))) {
-        await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
-      }
+  if (!isNullOrUndefined(workspaceFolder)) {
+    const logicAppNode = workspaceFolder.uri;
+    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, 'lib', 'custom')))) {
+      await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
     }
-  } catch {
-    // Ignore error if thrown, forego building custom code project
   }
 
   ext.deploymentFolderPath = originalDeployFsPath;
