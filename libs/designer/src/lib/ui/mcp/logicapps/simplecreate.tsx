@@ -33,8 +33,8 @@ export const SimpleCreate = ({ showValidationErrors }: { showValidationErrors: b
       description: 'Title for the default settings section',
     }),
     detailsSectionTitle: intl.formatMessage({
-      defaultMessage: 'Logic app details',
-      id: '7l+m8P',
+      defaultMessage: 'Details',
+      id: '1Orv4i',
       description: 'Title for the details section',
     }),
     errorTitle: intl.formatMessage({
@@ -83,9 +83,9 @@ const useDetailsSectionItems = () => {
   const intl = useIntl();
   const intlTexts = {
     nameLabel: intl.formatMessage({
-      defaultMessage: 'Name',
-      id: 'ZRKh2Q',
-      description: 'Label for the name field',
+      defaultMessage: 'Logic app name',
+      id: 'JKQuh+',
+      description: 'Label for the logic app name field',
     }),
     appServicePlanLabel: intl.formatMessage({
       defaultMessage: 'App Service plan',
@@ -98,8 +98,8 @@ const useDetailsSectionItems = () => {
       description: 'Label for the storage account field',
     }),
     appInsightsLabel: intl.formatMessage({
-      defaultMessage: 'Application Insights workspace',
-      id: 'J1rO4z',
+      defaultMessage: 'Application Insights',
+      id: 'EqNkZN',
       description: 'Label for the Application Insights field',
     }),
     networkLabel: intl.formatMessage({
