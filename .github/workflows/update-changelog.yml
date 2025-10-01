@@ -118,21 +118,20 @@ jobs:
                   
                   # Process lines that start with *
                   if line.startswith('* '):
-                      # Try to match the format: * type(scope): description (#1234) (hash)
-                      match = re.search(r'\* ([^(]*)\(([^)]+)\):\s*([^(]+)\(#(\d+)\)\s*\(([^)]+)\)', line)
+                      # Match the actual GitHub API format: * type(scope): description by @author in https://github.com/Azure/LogicAppsUX/pull/1234
+                      match = re.search(r'\* ([^(]*)\(([^)]+)\):\s*(.+?) by @\w+ in https://github\.com/[^/]+/[^/]+/pull/(\d+)', line)
                       if match:
                           commit_type = match.group(1).strip()  # e.g., "fix"
-                          scope = match.group(2).strip()        # e.g., "vscode"
-                          description = match.group(3).strip()  # e.g., "track and terminate Azure Functions host child processes "
-                          pr_number = match.group(4)           # e.g., "8298"
-                          commit_hash = match.group(5)         # e.g., "c5175da3c"
+                          scope = match.group(2).strip()        # e.g., "Designer", "vscode"
+                          description = match.group(3).strip()  # e.g., "Fixed root node run-after setting in scopes (5.165)"
+                          pr_number = match.group(4)           # e.g., "8113"
                           
-                          # Format as requested: * **scope:** description ([#PR](link)) ([hash](commit_link))
-                          formatted_line = f"* **{scope}:** {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number})) ([{commit_hash}](https://github.com/Azure/LogicAppsUX/commit/{commit_hash}))"
+                          # Format as requested: * **scope:** description ([#PR](link))
+                          formatted_line = f"* **{scope}:** {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number}))"
                           formatted_lines.append(formatted_line)
                       else:
-                          # Try alternative format: * description by @author in #1234
-                          alt_match = re.search(r'\* (.+?) by @\w+ in #(\d+)', line)
+                          # Try simpler format: * description by @author in #1234
+                          alt_match = re.search(r'\* (.+?) by @\w+ in .*?/pull/(\d+)', line)
                           if alt_match:
                               description = alt_match.group(1).strip()
                               pr_number = alt_match.group(2)
