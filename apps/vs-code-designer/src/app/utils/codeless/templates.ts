@@ -11,7 +11,12 @@ import { equals } from '@microsoft/logic-apps-shared';
  * @param {string} [functionName] - The name of the function to be invoked (custom code and rules engine only).
  * @returns {StandardApp} - The codeless workflow template.
  */
-export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowType: WorkflowType, functionName?: string): StandardApp {
+export function getCodelessWorkflowTemplate(
+  projectType: ProjectType,
+  workflowType: WorkflowType,
+  functionName?: string,
+  isConsumption?: boolean
+): StandardApp {
   const workflowKind = getWorkflowStateType(workflowType);
 
   if (projectType === ProjectType.customCode) {
@@ -54,6 +59,80 @@ export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowTy
       },
       kind: workflowKind,
     };
+  }
+
+  if (projectType === ProjectType.logicApp && isConsumption && workflowType === WorkflowType.agentic) {
+    return {
+      definition: {
+        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+        contentVersion: '1.0.0.0',
+        actions: {
+          Agent_1: {
+            type: 'Agent',
+            runAfter: {},
+            tools: {},
+            inputs: {
+              parameters: {
+                modelId: '',
+                systemInstructions: '',
+                userInstructions: [],
+                agentHistoryReductionType: 'tokenCountReduction',
+                maximumTokenCount: 128000,
+              },
+            },
+          },
+        },
+        triggers: {
+          manual: {
+            type: 'Request',
+            kind: 'Button',
+            inputs: {},
+          },
+        },
+        outputs: {},
+      },
+      kind: workflowKind,
+      metadata: { AgentType: 'Autonomous' },
+    } as any;
+  }
+
+  if (projectType === ProjectType.logicApp && isConsumption && workflowType === WorkflowType.agent) {
+    return {
+      definition: {
+        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+        contentVersion: '1.0.0.0',
+        actions: {
+          Agent_1: {
+            type: 'Agent',
+            runAfter: {
+              When_a_new_chat_session_started: ['Succeeded'],
+            },
+            tools: {},
+            inputs: {
+              parameters: {
+                modelId: '',
+                systemInstructions: '',
+                userInstructions: [],
+                agentHistoryReductionType: 'tokenCountReduction',
+                maximumTokenCount: 128000,
+              },
+            },
+          },
+        },
+        triggers: {
+          When_a_new_chat_session_started: {
+            type: 'Request',
+            kind: 'Agent',
+            inputs: {},
+            // Add a custom property to mark as undeletable
+            metadata: { undeletable: true },
+          },
+        },
+        outputs: {},
+      },
+      kind: workflowKind,
+      metadata: { AgentType: 'Conversational' },
+    } as any;
   }
 
   if (projectType === ProjectType.rulesEngine) {

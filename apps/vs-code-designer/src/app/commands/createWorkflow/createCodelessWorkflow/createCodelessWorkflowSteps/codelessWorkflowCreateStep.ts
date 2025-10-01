@@ -54,6 +54,15 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       context.functionAppName
     );
 
+    const isConsumption = context.workflowProjectType === WorkflowProjectType.Bundle;
+    if (isConsumption) {
+      if (template?.id === 'agentic') {
+        (workflowDefinition as any).metadata = { AgentType: 'Autonomous' };
+      } else if (template?.id === 'agent') {
+        (workflowDefinition as any).metadata = { AgentType: 'Conversational' };
+      }
+    }
+
     await fse.ensureDir(workflowFolderPath);
     await writeFormattedJson(workflowFilePath, workflowDefinition);
 

@@ -93,7 +93,13 @@ export type DiscoveryResultTypes = SomeKindOfAzureOperationDiscovery | BuiltInOp
 export interface DiscoveryWorkflow {
   [key: string]: any;
   id: string;
-  definition: any;
+  definition: {
+    metadata?: {
+      AgentType: 'autonomous' | 'conversational';
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
   parameters: any;
   state: string;
   createdTime: string;
