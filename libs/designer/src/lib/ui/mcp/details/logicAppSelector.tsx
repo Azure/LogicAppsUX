@@ -14,13 +14,16 @@ const NO_ITEM_VALUE = 'NO_ITEM_VALUE';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails } = useSelector((state: RootState) => ({
-    subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
-    resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
-    location: state.mcpOptions.resourceDetails?.location,
-    logicAppName: state.resource.logicAppName,
-    newLogicAppDetails: state.resource.newLogicAppDetails,
-  }));
+  const { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails, disableSelector } = useSelector(
+    (state: RootState) => ({
+      subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
+      resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
+      location: state.mcpOptions.resourceDetails?.location,
+      logicAppName: state.resource.logicAppName,
+      newLogicAppDetails: state.resource.newLogicAppDetails,
+      disableSelector: state.mcpSelection.disableLogicAppSelection,
+    })
+  );
   const { data: logicApps, isLoading: isLogicAppsLoading } = useEmptyLogicApps(subscriptionId ?? '');
 
   const intl = useIntl();
@@ -67,7 +70,9 @@ export const LogicAppSelector = () => {
     [intl]
   );
 
-  const [selectedResource, setSelectedResource] = useState<string>('');
+  const [selectedResource, setSelectedResource] = useState<string>(
+    logicAppName && disableSelector ? getLogicAppId(subscriptionId as string, resourceGroup as string, logicAppName) : ''
+  );
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -163,7 +168,7 @@ export const LogicAppSelector = () => {
           <div className={styles.comboboxContainer}>
             <Combobox
               className={styles.combobox}
-              disabled={isLogicAppsLoading}
+              disabled={isLogicAppsLoading || disableSelector}
               value={controlValue}
               selectedOptions={selectedResource ? [selectedResource] : []}
               placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
@@ -190,7 +195,7 @@ export const LogicAppSelector = () => {
               )}
             </Combobox>
           </div>
-          <Link className={styles.linkSection} disabled={!!newLogicAppDetails?.appName} onClick={handleNewAppCreate}>
+          <Link className={styles.linkSection} disabled={disableSelector || !!newLogicAppDetails?.appName} onClick={handleNewAppCreate}>
             {intlText.CREATE_NEW}
           </Link>
         </Field>

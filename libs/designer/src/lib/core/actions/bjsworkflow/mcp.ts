@@ -47,6 +47,7 @@ import { tryGetMostRecentlyUsedConnectionId } from './add';
 import { isConnectionValid } from '../../utils/connectors/connections';
 import { updateMcpConnection } from './connections';
 import { getConnector } from '../../queries/operation';
+import { MCP_ConnectionKey } from '../../../ui/mcp/panel/connector/usePanelTabs';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;
@@ -62,19 +63,35 @@ export interface McpServiceOptions {
   hostService?: any; // Placeholder for IHostService, not used in this context
 }
 
-export const initializeMcpServices = createAsyncThunk('initializeMcpServices', async (services: McpServiceOptions) => {
-  initializeServices(services);
-  const loggerServices: ILoggerService[] = [];
-  if (services.loggerService) {
-    loggerServices.push(services.loggerService);
+export const initializeMcpData = createAsyncThunk(
+  'initializeMcpData',
+  async (
+    {
+      connectorId,
+      services,
+    }: {
+      services: McpServiceOptions;
+      connectorId?: string;
+    },
+    { dispatch }
+  ) => {
+    if (connectorId) {
+      dispatch(initEmptyConnectionMap([MCP_ConnectionKey]));
+    }
+
+    initializeServices(services);
+    const loggerServices: ILoggerService[] = [];
+    if (services.loggerService) {
+      loggerServices.push(services.loggerService);
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      loggerServices.push(new DevLogger());
+    }
+    InitLoggerService(loggerServices);
+    InitHostService(services.hostService);
+    return true;
   }
-  if (process.env.NODE_ENV !== 'production') {
-    loggerServices.push(new DevLogger());
-  }
-  InitLoggerService(loggerServices);
-  InitHostService(services.hostService);
-  return true;
-});
+);
 
 export const resetMcpStateOnResourceChange = createAsyncThunk(
   'resetMcpStateOnResourceChange',
