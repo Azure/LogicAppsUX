@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
-import { pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcessInternal } from '../pickCustomCodeNetHostProcess';
+import { pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcessInternal } from '../pickCustomCodeWorkerProcess';
 import * as validatePreDebug from '../../debug/validatePreDebug';
 import { IRunningFuncTask, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
 import * as pickFuncProcessModule from '../pickFuncProcess';
@@ -124,10 +124,11 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
     runningFuncTaskMap.clear();
   });
 
-  it('should throw an error when no child dotnet process exists on the logic app functions host', async () => {
+  it('should return undefined when no child dotnet process exists on the logic app functions host', async () => {
     runningFuncTaskMap.set(testLogicAppWorkspaceFolder, testFuncTask);
-    await expect(pickCustomCodeNetHostProcessInternal(testActionContext, testLogicAppWorkspaceFolder, testLogicAppPath)).rejects.toThrow();
-    expect(testActionContext.telemetry.properties.result).toBe('Failed');
+    await expect(
+      pickCustomCodeNetHostProcessInternal(testActionContext, testLogicAppWorkspaceFolder, testLogicAppPath)
+    ).resolves.toBeUndefined();
     expect(testActionContext.telemetry.properties.lastStep).toBe('pickNetHostChildProcess');
   });
 
@@ -140,7 +141,7 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
   });
 });
 
-describe('pickNetHostChildProcess', async () => {
+describe('pickCustomCodeWorkerChildProcess', async () => {
   const testFuncPid = 12345;
   const testDotnetPid = 67890;
   const testLogicAppName = 'LogicApp';
@@ -151,9 +152,6 @@ describe('pickNetHostChildProcess', async () => {
     name: testLogicAppName,
     index: 0,
   };
-  const testActionContext = {
-    telemetry: { properties: {} },
-  } as IActionContext;
   const testFuncTask: IRunningFuncTask = {
     startTime: Date.now(),
     processId: Number(testFuncPid),
@@ -179,8 +177,8 @@ describe('pickNetHostChildProcess', async () => {
     ]);
 
     // Re-import to get the mocked version
-    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
-    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
+    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
     expect(result).toBe(testDotnetPid.toString());
   });
 
@@ -192,8 +190,8 @@ describe('pickNetHostChildProcess', async () => {
       { command: 'other2', pid: 11112 },
     ]);
 
-    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
-    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
+    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
     expect(result).toBe(testDotnetPid.toString());
   });
 
@@ -204,15 +202,15 @@ describe('pickNetHostChildProcess', async () => {
       { command: 'other', pid: 11111 },
     ]);
 
-    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
-    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
+    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
     expect(result).toBe(testDotnetPid.toString());
   });
 
   it('should return undefined if no matching child process is found', async () => {
     vi.stubGlobal('process', { platform: 'win32' });
-    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
-    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
+    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
     expect(result).toBeUndefined();
   });
 
@@ -222,8 +220,8 @@ describe('pickNetHostChildProcess', async () => {
     const getUnixChildren = vi.fn();
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(undefined as any);
 
-    const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
-    const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
+    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
+    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
     expect(result).toBeUndefined();
   });
 });
