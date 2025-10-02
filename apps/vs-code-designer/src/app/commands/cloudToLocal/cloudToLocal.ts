@@ -11,64 +11,6 @@ import * as fs from 'fs';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { createLogicAppWorkspaceFromPackage } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 
-// const openFolder = true;
-
-// export async function cloudToLocal(
-//   context: IActionContext,
-//   options: ICreateFunctionOptions = {
-//     folderPath: undefined,
-//     language: undefined,
-//     version: undefined,
-//     templateId: undefined,
-//     functionName: undefined,
-//     functionSettings: undefined,
-//     suppressOpenFolder: !openFolder,
-//   }
-// ): Promise<void> {
-//   addLocalFuncTelemetry(context);
-
-//   const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
-//   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
-//   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
-//   const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {
-//     language,
-//     version: tryParseFuncVersion(version),
-//     projectTemplateKey,
-//     projectPath: options.folderPath,
-//   });
-
-//   if (options.suppressOpenFolder) {
-//     wizardContext.openBehavior = OpenBehavior.dontOpen;
-//   } else if (!wizardContext.openBehavior) {
-//     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
-//     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
-//   }
-
-//   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-//     title: localize('createLogicAppWorkspaceFromPackage', 'Create new logic app workspace from package'),
-//     promptSteps: [
-//       new SelectPackageStep(),
-//       // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
-//       new SelectFolderForNewWorkspaceStep(),
-//       new WorkspaceNameStep(),
-//       new LogicAppNameStep(),
-//       await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
-//       new WorkspaceSettingsStep(),
-//       new ExtractPackageStep(),
-//       new OpenBehaviorStep(),
-//     ],
-//     executeSteps: [new ProcessPackageStep(), new OpenFolderStep()],
-//     hideStepCount: true,
-//   });
-//   try {
-//     await wizard.prompt();
-//     await wizard.execute();
-//   } catch (error) {
-//     context.telemetry.properties.error = error.message;
-//     console.error('Error during wizard execution:', error);
-//   }
-// }
-
 const packageDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,
   defaultUri: vscode.Uri.file(path.join(os.homedir(), 'Downloads')),

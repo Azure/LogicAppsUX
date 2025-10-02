@@ -1,6 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
-import { runPostExtractStepsFromCache } from './app/commands/cloudToLocal/cloudToLocalSteps/processPackageStep';
+import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import {
   supportedDataMapDefinitionFileExts,
   supportedDataMapperFolders,
@@ -29,7 +29,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { convertToWorkspace2 } from './app/commands/convertToWorkspace';
+import { convertToWorkspace } from './app/commands/convertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
@@ -114,7 +114,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostExtractStepsFromCache();
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      await convertToWorkspace2(activateContext);
+      await convertToWorkspace(activateContext);
     }
 
     downloadExtensionBundle(activateContext);

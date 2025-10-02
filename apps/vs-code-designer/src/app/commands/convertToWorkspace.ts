@@ -1,23 +1,13 @@
 import { extensionCommand } from '../../constants';
 import { localize } from '../../localize';
 import { addLocalFuncTelemetry } from '../utils/funcCoreTools/funcVersion';
-import { WorkspaceFolderStep } from './createWorkspace/createWorkspaceSteps/workspaceFolderStep';
-import { OpenFolderStep } from './createWorkspace/createWorkspaceSteps/openFolderStep';
-import { AzureWizard, callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, type IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { window } from 'vscode';
-import {
-  getWorkspaceFile,
-  getWorkspaceFileInParentDirectory,
-  getWorkspaceFolder,
-  getWorkspaceFolder2,
-  getWorkspaceRoot,
-} from '../utils/workspace';
-import { WorkspaceNameStep } from './createWorkspace/createWorkspaceSteps/workspaceNameStep';
-import { WorkspaceFileStep } from './createWorkspace/createWorkspaceSteps/workspaceFileStep';
+import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder2, getWorkspaceRoot } from '../utils/workspace';
 import { isLogicAppProjectInRoot } from '../utils/verifyIsProject';
 import { createWorkspaceFile } from './createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { ext } from '../../extensionVariables';
@@ -25,75 +15,6 @@ import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } fr
 import path from 'path';
 import { getWebViewHTML } from '../utils/codeless/getWebViewHTML';
 
-export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
-  const convertToWorkspaceStartTime = Date.now();
-  const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
-  if (await isLogicAppProjectInRoot(workspaceFolder)) {
-    addLocalFuncTelemetry(context);
-
-    const wizardContext = context as Partial<IFunctionWizardContext> & IActionContext;
-    context.telemetry.properties.isWorkspace = 'false';
-    wizardContext.workspaceFilePath = (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
-    // save uri variable for open project folder command
-    wizardContext.workspacePath = await getWorkspaceRoot(wizardContext);
-    if (wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
-      const openWorkspaceMessage = localize(
-        'openContainingWorkspace',
-        `You must open your workspace to use the full functionality in the Azure Logic Apps (Standard) extension. You can find the workspace with your logic app project at the following location: ${wizardContext.workspaceFilePath}. Do you want to open this workspace now?`
-      );
-      const shouldOpenWorkspace = await vscode.window.showInformationMessage(
-        openWorkspaceMessage,
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.no
-      );
-      if (shouldOpenWorkspace === DialogResponses.yes) {
-        await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
-        context.telemetry.properties.openContainingWorkspace = 'true';
-        context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
-        return true;
-      }
-      context.telemetry.properties.openContainingWorkspace = 'false';
-      context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
-      return false;
-    }
-
-    if (!wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
-      const createWorkspaceMessage = localize(
-        'createContainingWorkspace',
-        'Your logic app projects must exist inside a workspace to use the full functionality in the Azure Logic Apps (Standard) extension. Visual Studio Code will copy your projects to a new workspace. Do you want to create the workspace now?'
-      );
-      const shouldCreateWorkspace = await vscode.window.showInformationMessage(
-        createWorkspaceMessage,
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.no
-      );
-      if (shouldCreateWorkspace === DialogResponses.yes) {
-        const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-          title: localize('convertToWorkspace', 'Convert to workspace'),
-          promptSteps: [new WorkspaceFolderStep(), new WorkspaceNameStep(), new WorkspaceFileStep()],
-          executeSteps: [new OpenFolderStep()],
-        });
-
-        await workspaceWizard.prompt();
-        await workspaceWizard.execute();
-        context.telemetry.properties.createContainingWorkspace = 'true';
-        context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
-        window.showInformationMessage(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
-        return true;
-      }
-
-      context.telemetry.properties.createContainingWorkspace = 'false';
-      context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
-      return false;
-    }
-
-    context.telemetry.properties.isWorkspace = 'true';
-    context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
-    return true;
-  }
-}
 const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,
   openLabel: localize('selectWorkspaceParentFolder', 'Select workspace parent folder'),
@@ -101,7 +22,7 @@ const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
   canSelectFolders: true,
 };
 
-export async function convertToWorkspace2(context: IActionContext): Promise<boolean> {
+export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
   const workspaceFolder = await getWorkspaceFolder2();
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
@@ -287,19 +208,6 @@ export async function convertToWorkspace2(context: IActionContext): Promise<bool
           );
           cacheWebviewPanel(panelGroupKey, panelName, panel);
         });
-
-        // const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-        //   title: localize('convertToWorkspace', 'Convert to workspace'),
-        //   promptSteps: [new FolderListStep(), new WorkspaceNameStep(), new WorkspaceContentsStep()],
-        //   executeSteps: [new OpenFolderStepCodeProject()],
-        // });
-
-        // await workspaceWizard.prompt();
-        // await workspaceWizard.execute();
-
-        // context.telemetry.properties.createContainingWorkspace = 'true';
-        // window.showInformationMessage(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
-        // return true;
       }
       context.telemetry.properties.createContainingWorkspace = 'false';
       return false;

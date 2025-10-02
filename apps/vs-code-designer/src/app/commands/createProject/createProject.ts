@@ -5,7 +5,7 @@
 
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace2 } from '../convertToWorkspace';
+import { convertToWorkspace } from '../convertToWorkspace';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
@@ -36,7 +36,7 @@ export async function createNewProjectFromCommand(context: IActionContext): Prom
   } else {
     // Fall back to the newly created workspace folder if not in a workspace
     // vscode.window.showErrorMessage(localize('notInWorkspace', 'Please open an existing logic app workspace before trying to add a new logic app project.'));
-    await convertToWorkspace2(context);
+    await convertToWorkspace(context);
 
     return;
   }

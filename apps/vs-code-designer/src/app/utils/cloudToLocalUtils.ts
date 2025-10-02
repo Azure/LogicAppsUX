@@ -392,6 +392,17 @@ export async function getPackageEntries(zipFilePath: string) {
   return zip.getEntries();
 }
 
+export function runPostExtractStepsFromCache(): void {
+  const cachedDocument: ICachedTextDocument | undefined = ext.context.globalState.get(cacheKey);
+  if (cachedDocument) {
+    try {
+      runPostExtractSteps(cachedDocument);
+    } finally {
+      ext.context.globalState.update(cacheKey, undefined);
+    }
+  }
+}
+
 function runPostExtractSteps(cache: ICachedTextDocument): void {
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
