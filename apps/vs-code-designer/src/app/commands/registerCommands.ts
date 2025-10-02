@@ -69,7 +69,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
-import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
+import { pickCustomCodeNetHostProcess } from './pickCustomCodeWorkerProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/getDebugSymbolDll';
