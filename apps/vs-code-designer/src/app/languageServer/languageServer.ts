@@ -6,7 +6,6 @@ import {
   lspDirectory,
   onStartLanguageServerProtocol,
   Platform,
-  sdkLspServer,
 } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
@@ -36,7 +35,9 @@ const getSDKPaths = async (context: IActionContext) => {
   const workspaceFolder = await getWorkspaceFolderPath(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
   const sdkFolderPath = path.join(projectPath, lspDirectory);
-  const lspServerPath = path.join(sdkFolderPath, sdkLspServer); // configuration.get<string>('azureLogicAppsStandard.languageServerDLLPath') || '';
+  const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+
+  const lspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
   const files = await fse.readdir(sdkFolderPath);
   const sdkNupkgFile = files.find((file) => {
     return file.startsWith('Microsoft.Azure.Workflows.Agents.Sdk.') && file.endsWith('.nupkg');
