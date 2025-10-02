@@ -1,5 +1,5 @@
 name: Update Changelog
-run-name: Update Changelog - From ${{ github.event.inputs.old_tag }} to ${{ github.event.inputs.new_tag }}
+run-name: Update Changelog - From ${{ github.event.inputs.old_tag }} to head of ${{ github.event.inputs.target_branch }}
 on:
   workflow_dispatch:
     inputs:
@@ -37,39 +37,49 @@ jobs:
         with:
           node-version: 20
 
-      - name: 'Validate Tags'
+      - name: 'Validate Inputs'
         id: validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
-          
-          echo "Validating tags..."
-          echo "New tag: $NEW_TAG"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+
+          echo "Validating inputs..."
           echo "Old tag: $OLD_TAG"
-          
-          # Check if tags exist
-          if ! git tag -l | grep -q "^${NEW_TAG}$"; then
-            echo "Error: New tag '$NEW_TAG' does not exist"
-            exit 1
-          fi
-          
+          echo "Upcoming tag: $NEW_TAG"
+          echo "Target branch: $TARGET_BRANCH"
+
+          # Check if old tag exists
           if ! git tag -l | grep -q "^${OLD_TAG}$"; then
             echo "Error: Old tag '$OLD_TAG' does not exist"
             exit 1
           fi
-          
-          # Check tag chronology
-          NEW_DATE=$(git log -1 --format=%ct "$NEW_TAG")
-          OLD_DATE=$(git log -1 --format=%ct "$OLD_TAG")
-          
-          if [ "$NEW_DATE" -le "$OLD_DATE" ]; then
-            echo "Error: New tag '$NEW_TAG' is not newer than old tag '$OLD_TAG'"
+
+          echo "Fetching latest commit for $TARGET_BRANCH..."
+          if ! git fetch origin "$TARGET_BRANCH" --depth=1 >/dev/null 2>&1; then
+            echo "Error: Unable to fetch target branch '$TARGET_BRANCH'"
             exit 1
           fi
-          
-          echo "Tags validated successfully"
+
+          if ! git rev-parse --verify "origin/$TARGET_BRANCH" >/dev/null 2>&1; then
+            echo "Error: Target branch '$TARGET_BRANCH' does not exist on origin"
+            exit 1
+          fi
+
+          TARGET_COMMIT=$(git rev-parse "origin/$TARGET_BRANCH")
+          if [ -z "$TARGET_COMMIT" ]; then
+            echo "Error: Unable to resolve latest commit for '$TARGET_BRANCH'"
+            exit 1
+          fi
+          SHORT_TARGET_COMMIT=$(git rev-parse --short "$TARGET_COMMIT")
+
+          echo "Latest commit on $TARGET_BRANCH: $TARGET_COMMIT"
+          echo "Inputs validated successfully"
+
+          echo "TARGET_COMMIT=$TARGET_COMMIT" >> $GITHUB_OUTPUT
+          echo "SHORT_TARGET_COMMIT=$SHORT_TARGET_COMMIT" >> $GITHUB_OUTPUT
 
       - name: 'Generate Release Notes'
         id: generate-notes
@@ -78,9 +88,12 @@ jobs:
         run: |
           NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
-          
-          echo "Generating release notes between $OLD_TAG and $NEW_TAG..."
-          
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          TARGET_COMMIT="${{ steps.validate.outputs.TARGET_COMMIT }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
+
+          echo "Generating release notes between $OLD_TAG and $TARGET_BRANCH ($SHORT_TARGET_COMMIT)..."
+
           # Generate release notes using GitHub API
           API_RESPONSE=$(gh api \
             --method POST \
@@ -88,7 +101,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ github.repository }}/releases/generate-notes \
             -f tag_name="$NEW_TAG" \
-            -f target_commitish="${{ github.event.inputs.target_branch }}" \
+            -f target_commitish="$TARGET_COMMIT" \
             -f previous_tag_name="$OLD_TAG" 2>/dev/null || echo '{"body": null}')
           
           echo "API Response received"
@@ -193,7 +206,7 @@ jobs:
             echo "API returned empty/null body, generating custom release notes from git log"
             
             # Get commits and categorize them properly
-            COMMITS=$(git log $OLD_TAG..$NEW_TAG --oneline --pretty=format:"%h|%s" 2>/dev/null || echo "")
+            COMMITS=$(git log "$OLD_TAG..$TARGET_COMMIT" --oneline --pretty=format:"%h|%s" 2>/dev/null || echo "")
             
             if [ -n "$COMMITS" ]; then
               FEATURES=""
@@ -235,13 +248,13 @@ jobs:
               
               RELEASE_NOTES="$(echo -e "$CATEGORIZED_NOTES")
 
-          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$TARGET_COMMIT"
             else
               RELEASE_NOTES="## Release $NEW_TAG
 
           This release includes updates and improvements.
 
-          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$TARGET_COMMIT"
             fi
           fi
           
@@ -261,6 +274,9 @@ jobs:
           NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
           VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          TARGET_COMMIT="${{ steps.validate.outputs.TARGET_COMMIT }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
           
           echo "Updating CHANGELOG.md..."
           
@@ -269,7 +285,9 @@ jobs:
           
           # Create the new changelog entry
           NEW_ENTRY="# Logic Apps Designer
-          ## [$VERSION_NUMBER](https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG) ($(date '+%Y-%m-%d'))
+          ## [$VERSION_NUMBER](https://github.com/${{ github.repository }}/compare/$OLD_TAG...$TARGET_COMMIT) ($(date '+%Y-%m-%d'))
+
+          _Compared against $TARGET_BRANCH ($SHORT_TARGET_COMMIT)_
 
           $RELEASE_NOTES
 
@@ -306,11 +324,14 @@ jobs:
         run: |
           # Create a new branch for the PR
           VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          TARGET_COMMIT="${{ steps.validate.outputs.TARGET_COMMIT }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
           BRANCH_NAME="changelog/update-$VERSION_NUMBER-$(date +%s)"
-          
-          echo "Creating branch: $BRANCH_NAME from ${{ github.event.inputs.target_branch }}"
-          git checkout -b "$BRANCH_NAME"
-          
+
+          echo "Creating branch: $BRANCH_NAME from $TARGET_BRANCH ($SHORT_TARGET_COMMIT)"
+          git checkout -b "$BRANCH_NAME" "$TARGET_COMMIT"
+
           # Configure Git
           git config --global user.name "changelog-automation-${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
@@ -320,7 +341,7 @@ jobs:
           git commit -m "docs: update changelog for release ${{ github.event.inputs.new_tag }}
 
           - Added release notes for version $VERSION_NUMBER
-          - Generated from changes between ${{ github.event.inputs.old_tag }} and ${{ github.event.inputs.new_tag }}
+          - Generated from changes between ${{ github.event.inputs.old_tag }} and $TARGET_BRANCH ($SHORT_TARGET_COMMIT)
           - Auto-generated by changelog workflow"
           
           # Push the new branch
@@ -332,10 +353,13 @@ jobs:
       - name: 'Create Pull Request'
         if: steps.update-changelog.outputs.HAS_CHANGES == 'true'
         run: |
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
+
           gh pr create \
             --title "docs: update changelog for release ${{ github.event.inputs.new_tag }}" \
-            --body "Automated changelog update from ${{ github.event.inputs.old_tag }} to ${{ github.event.inputs.new_tag }}" \
-            --base "${{ github.event.inputs.target_branch }}" \
+            --body "Automated changelog update from ${{ github.event.inputs.old_tag }} to $TARGET_BRANCH ($SHORT_TARGET_COMMIT)" \
+            --base "$TARGET_BRANCH" \
             --head "${{ steps.create-branch.outputs.BRANCH_NAME }}" \
             --label "documentation" \
             --label "changelog"
@@ -345,6 +369,9 @@ jobs:
       - name: 'Summary'
         if: always()
         run: |
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
+
           if [ "${{ steps.update-changelog.outputs.HAS_CHANGES }}" = "true" ]; then
             echo "✅ Changelog updated successfully"
             echo "📋 Pull request created: ${{ steps.update-changelog.outputs.PR_URL || 'Check previous step for URL' }}"
@@ -356,5 +383,6 @@ jobs:
           echo "📊 Workflow Summary:"
           echo "- New Tag: ${{ github.event.inputs.new_tag }}"
           echo "- Old Tag: ${{ github.event.inputs.old_tag }}"
-          echo "- Target Branch: ${{ github.event.inputs.target_branch }}"
+          echo "- Target Branch: $TARGET_BRANCH"
+          echo "- Target Commit: ${SHORT_TARGET_COMMIT:-N/A}"
           echo "- Changes Made: ${{ steps.update-changelog.outputs.HAS_CHANGES || 'N/A' }}"
