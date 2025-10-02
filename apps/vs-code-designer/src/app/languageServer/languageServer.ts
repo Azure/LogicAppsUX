@@ -1,11 +1,11 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
+  assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   connectionsFileName,
   lspDirectory,
   onStartLanguageServerProtocol,
-  Platform,
 } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
@@ -16,28 +16,16 @@ import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import path from 'path';
 import * as fse from 'fs-extra';
 import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
-
-// Returns the platform-specific SDK LSP executable name, or undefined if unsupported.
-function getSdkLspExecutableName(): string | undefined {
-  switch (process.platform) {
-    case Platform.windows:
-      return 'SdkLspServer_windows.exe';
-    case Platform.linux:
-      return 'SdkLspServer_linux';
-    case Platform.mac:
-      return 'SdkLspServer_mac';
-    default:
-      return undefined; // Unrecognized / unsupported platform
-  }
-}
+import AdmZip from 'adm-zip';
 
 const getSDKPaths = async (context: IActionContext) => {
   const workspaceFolder = await getWorkspaceFolderPath(context);
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-  const sdkFolderPath = path.join(projectPath, lspDirectory);
   const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
 
+  const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
   const lspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
+
   const files = await fse.readdir(sdkFolderPath);
   const sdkNupkgFile = files.find((file) => {
     return file.startsWith('Microsoft.Azure.Workflows.Agents.Sdk.') && file.endsWith('.nupkg');
@@ -125,12 +113,25 @@ export const startLanguageServerProtocol = async () => {
 export async function installLSPSDK(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
     const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-    const sdkFileName = getSdkLspExecutableName();
-
-    const sdkPath = path.join(__dirname, 'assets', 'LSPServer', sdkFileName);
-    const destinationPath = path.join(targetDirectory, sdkFileName);
-
     await fse.ensureDir(targetDirectory);
-    await fse.copyFile(sdkPath, destinationPath);
+
+    const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
+    try {
+      const zip = new AdmZip(serverZipFile);
+      await zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true);
+    } catch (error) {
+      throw new Error(`Error extracting worker isolated: ${error}`);
+    }
+
+    const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Agents.Sdk.1.141.0.7.nupkg');
+    try {
+      const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+      await fse.ensureDir(lspDirectoryPath);
+
+      const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
+      await fse.copyFile(sdkNupkgFile, destinationFile);
+    } catch (error) {
+      throw new Error(`Error copying sdk: ${error}`);
+    }
   });
 }
