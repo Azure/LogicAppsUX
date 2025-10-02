@@ -19,9 +19,11 @@ export const LogicAppTypeStep: React.FC = () => {
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { logicAppType, logicAppName, workspaceName, workspaceProjectPath, workspaceFileJson, logicAppsWithoutCustomCode } =
+  const { logicAppType, logicAppName, workspaceName, workspaceProjectPath, workspaceFileJson, logicAppsWithoutCustomCode, flowType } =
     createWorkspaceState;
   const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+
+  const shouldShowLogicAppSection = flowType === 'createWorkspace' || flowType === 'createLogicApp';
 
   // Validation state
   const [logicAppNameError, setLogicAppNameError] = useState<string | undefined>(undefined);
@@ -196,28 +198,30 @@ export const LogicAppTypeStep: React.FC = () => {
         </Field>
       </div>
 
-      <div>
-        <RadioGroup value={logicAppType} onChange={handleLogicAppTypeChange} className={styles.radioGroup}>
-          <div className={styles.radioOption}>
-            <Radio value="logicApp" label={intlText.STANDARD_LABEL} />
-            <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-              {intlText.STANDARD_DESCRIPTION}
-            </Text>
-          </div>
-          <div className={styles.radioOption}>
-            <Radio value="customCode" label={intlText.CUSTOM_CODE_LABEL} />
-            <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-              {intlText.CUSTOM_CODE_DESCRIPTION}
-            </Text>
-          </div>
-          <div className={styles.radioOption}>
-            <Radio value="rulesEngine" label={intlText.RULES_ENGINE_LABEL} />
-            <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-              {intlText.RULES_ENGINE_DESCRIPTION}
-            </Text>
-          </div>
-        </RadioGroup>
-      </div>
+      {shouldShowLogicAppSection && (
+        <div>
+          <RadioGroup value={logicAppType} onChange={handleLogicAppTypeChange} className={styles.radioGroup}>
+            <div className={styles.radioOption}>
+              <Radio value="logicApp" label={intlText.STANDARD_LABEL} />
+              <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
+                {intlText.STANDARD_DESCRIPTION}
+              </Text>
+            </div>
+            <div className={styles.radioOption}>
+              <Radio value="customCode" label={intlText.CUSTOM_CODE_LABEL} />
+              <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
+                {intlText.CUSTOM_CODE_DESCRIPTION}
+              </Text>
+            </div>
+            <div className={styles.radioOption}>
+              <Radio value="rulesEngine" label={intlText.RULES_ENGINE_LABEL} />
+              <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
+                {intlText.RULES_ENGINE_DESCRIPTION}
+              </Text>
+            </div>
+          </RadioGroup>
+        </div>
+      )}
     </div>
   );
 };

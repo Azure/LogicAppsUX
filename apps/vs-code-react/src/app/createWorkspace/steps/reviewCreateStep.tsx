@@ -15,6 +15,7 @@ export const ReviewCreateStep: React.FC = () => {
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
 
   const {
+    packagePath,
     workspaceProjectPath,
     workspaceName,
     logicAppType,
@@ -39,8 +40,11 @@ export const ReviewCreateStep: React.FC = () => {
     logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === logicAppName);
 
   // Determine what sections to show based on flow type
-  const shouldShowWorkspaceSection = flowType === 'createWorkspace' || flowType === 'convertToWorkspace';
-  const shouldShowLogicAppSection = flowType === 'createWorkspace' || flowType === 'createLogicApp';
+  const shouldShowPackageSection = flowType === 'createWorkspaceFromPackage';
+  const shouldShowWorkspaceSection =
+    flowType === 'createWorkspace' || flowType === 'convertToWorkspace' || flowType === 'createWorkspaceFromPackage';
+  const shouldShowLogicAppSection =
+    flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
 
   const intlText = {
@@ -63,6 +67,16 @@ export const ReviewCreateStep: React.FC = () => {
       defaultMessage: 'Project Path',
       id: 'ff1WLC',
       description: 'Project path label',
+    }),
+    PACKAGE_SETUP: intl.formatMessage({
+      defaultMessage: 'Package Setup',
+      id: '9VC1hu',
+      description: 'Package setup section title',
+    }),
+    PACKAGE_PATH_LABEL: intl.formatMessage({
+      defaultMessage: 'Package Path',
+      id: '5H8ULg',
+      description: 'Package path label',
     }),
     WORKSPACE_NAME_LABEL: intl.formatMessage({
       defaultMessage: 'Workspace Name',
@@ -235,6 +249,13 @@ export const ReviewCreateStep: React.FC = () => {
       </Text>
 
       <div className={styles.reviewContainer}>
+        {shouldShowPackageSection && (
+          <div className={styles.reviewSection}>
+            <div className={styles.reviewSectionTitle}>{intlText.PACKAGE_SETUP}</div>
+            {renderSettingRow(intlText.PACKAGE_PATH_LABEL, packagePath.fsPath)}
+          </div>
+        )}
+
         {shouldShowWorkspaceSection && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>{intlText.PROJECT_SETUP}</div>

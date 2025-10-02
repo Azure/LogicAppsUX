@@ -11,6 +11,7 @@ import { OverviewApp } from '../app/overview/app';
 import { ReviewApp } from '../app/review';
 import { UnitTestResults } from '../app/unitTest';
 import { CreateWorkspace } from '../app/createWorkspace/createWorkspace';
+import { CreateWorkspaceFromPackage } from '../app/createWorkspace/createWorkspaceFromPackage';
 import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -35,6 +36,7 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
         <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
         <Route path={`/${RouteName.createWorkspace}`} element={<CreateWorkspace />} />
+        <Route path={`/${RouteName.createWorkspaceFromPackage}`} element={<CreateWorkspaceFromPackage />} />
         <Route path={`/${RouteName.createLogicApp}`} element={<CreateLogicApp />} />
         <Route path={`/${RouteName.createWorkspaceStructure}`} element={<CreateWorkspaceStructure />} />
       </Routes>

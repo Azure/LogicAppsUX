@@ -7,6 +7,7 @@ import type { ITargetDirectory } from 'run-service';
 
 export interface CreateWorkspaceState {
   currentStep: number;
+  packagePath: ITargetDirectory;
   workspaceProjectPath: ITargetDirectory;
   workspaceName: string;
   logicAppType: string;
@@ -24,14 +25,20 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
-  flowType: 'createWorkspace' | 'createLogicApp' | 'convertToWorkspace';
+  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace';
   pathValidationResults: Record<string, boolean>;
+  packageValidationResults: Record<string, boolean>;
   workspaceExistenceResults: Record<string, boolean>;
   isValidatingWorkspace: boolean;
+  isValidatingPackage: boolean;
 }
 
 const initialState: CreateWorkspaceState = {
   currentStep: 0,
+  packagePath: {
+    fsPath: '',
+    path: '',
+  },
   workspaceProjectPath: {
     fsPath: '',
     path: '',
@@ -53,8 +60,10 @@ const initialState: CreateWorkspaceState = {
   logicAppsWithoutCustomCode: undefined,
   flowType: 'createWorkspace',
   pathValidationResults: {},
+  packageValidationResults: {},
   workspaceExistenceResults: {},
   isValidatingWorkspace: false,
+  isValidatingPackage: false,
 };
 
 export const createWorkspaceSlice: any = createSlice({
@@ -68,6 +77,17 @@ export const createWorkspaceSlice: any = createSlice({
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
+    },
+    setPackagePath: (state, action: PayloadAction<{ targetDirectory: ITargetDirectory } | string>) => {
+      if (typeof action.payload === 'string') {
+        state.packagePath = { path: action.payload, fsPath: action.payload };
+      } else if (action.payload && typeof action.payload === 'object') {
+        const { targetDirectory } = action.payload;
+        state.packagePath = targetDirectory;
+      } else {
+        state.packagePath = { path: '', fsPath: '' };
+      }
+      state.logicAppType = 'logicApp';
     },
     setProjectPath: (state, action: PayloadAction<{ targetDirectory: ITargetDirectory } | string>) => {
       if (typeof action.payload === 'string') {
@@ -119,6 +139,14 @@ export const createWorkspaceSlice: any = createSlice({
       const { path, isValid } = action.payload;
       state.pathValidationResults[path] = isValid;
     },
+    setPackageValidationResult: (state, action: PayloadAction<{ path: string; isValid: boolean }>) => {
+      const { path, isValid } = action.payload;
+      state.packageValidationResults[path] = isValid;
+      state.isValidatingPackage = false;
+    },
+    setValidatingPackage: (state, action: PayloadAction<boolean>) => {
+      state.isValidatingPackage = action.payload;
+    },
     setWorkspaceExistenceResult: (state, action: PayloadAction<{ workspacePath: string; exists: boolean }>) => {
       const { workspacePath, exists } = action.payload;
       state.workspaceExistenceResults[workspacePath] = exists;
@@ -158,6 +186,7 @@ export const {
   initializeProject,
   setCurrentStep,
   setProjectPath,
+  setPackagePath,
   setWorkspaceName,
   setLogicAppType,
   setFunctionNamespace,
@@ -171,6 +200,8 @@ export const {
   setOpenBehavior,
   setFlowType,
   setPathValidationResult,
+  setPackageValidationResult,
+  setValidatingPackage,
   setWorkspaceExistenceResult,
   setValidatingWorkspace,
   clearWorkspaceExistenceResults,

@@ -39,6 +39,10 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.createWorkspace}`, { replace: true });
           break;
         }
+        case ProjectName.createWorkspaceFromPackage: {
+          navigate(`/${ProjectName.createWorkspaceFromPackage}`, { replace: true });
+          break;
+        }
         case ProjectName.createLogicApp: {
           navigate(`/${ProjectName.createLogicApp}`, { replace: true });
           break;

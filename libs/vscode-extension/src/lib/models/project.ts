@@ -14,6 +14,7 @@ export const ProjectName = {
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
   createWorkspace: 'createWorkspace',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   createLogicApp: 'createLogicApp',
   createWorkspaceStructure: 'createWorkspaceStructure',
 } as const;

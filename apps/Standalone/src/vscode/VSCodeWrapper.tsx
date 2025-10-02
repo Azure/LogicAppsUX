@@ -20,6 +20,7 @@ export const VSCodeWrapper = () => {
             <Route path="/createWorkspace" element={<VSCodeCreateWorkspaceWrapper />} />
             <Route path="/createLogicApp" element={<VSCodeCreateLogicAppWrapper />} />
             <Route path="/createWorkspaceStructure" element={<VSCodeCreateWorkspaceStructureWrapper />} />
+            <Route path="/createWorkspaceFromPackage" element={<VSCodeCreateWorkspaceStructureWrapper />} />
             <Route path="*" element={<Navigate to="/vscode/export" replace />} />
           </Routes>
         </div>

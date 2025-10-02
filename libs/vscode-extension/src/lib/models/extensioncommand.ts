@@ -58,8 +58,11 @@ export const ExtensionCommand = {
   validatePath: 'validatePath',
   createLogicApp: 'createLogicApp',
   createWorkspaceStructure: 'createWorkspaceStructure',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   workspace_folder: 'workspace-folder',
   workspace_file: 'workspace-file',
+  update_package_path: 'update-package-path',
+  package_file: 'package-file',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

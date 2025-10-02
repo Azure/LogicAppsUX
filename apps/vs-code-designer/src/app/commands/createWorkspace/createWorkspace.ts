@@ -12,43 +12,6 @@ import path from 'path';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { localize } from '../../../localize';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
-// import { createNewProjectInternalBase } from './CodeProjectBase/CreateNewProjectInternal';
-
-// export async function createNewCodeProjectFromCommand(
-//   context: IActionContext,
-//   folderPath?: string | undefined,
-//   language?: ProjectLanguage,
-//   version?: ProjectVersion,
-//   openFolder = true,
-//   templateId?: string,
-//   functionName?: string,
-//   functionSettings?: { [key: string]: string | undefined }
-// ): Promise<void> {
-//   await createNewProjectInternalBase(
-//     context,
-//     {
-//       folderPath: isString(folderPath) ? folderPath : undefined,
-//       templateId,
-//       functionName,
-//       functionSettings,
-//       suppressOpenFolder: !openFolder,
-//       language,
-//       version,
-//     },
-//     'createNewCodeProject',
-//     'Create new logic app workspace',
-//     [
-//       new FolderListStep(),
-//       new WorkspaceNameStep(),
-//       new LogicAppTypeStep(),
-//       new TargetFrameworkStep(),
-//       new LogicAppNameStep(),
-//       new NewCodeProjectTypeStep(templateId, functionSettings, false),
-//       new WorkspaceSettingsStep(),
-//       new OpenBehaviorStep(),
-//     ]
-//   );
-// }
 
 const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,

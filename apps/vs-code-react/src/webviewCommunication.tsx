@@ -20,6 +20,7 @@ import type {
   GetAvailableCustomXsltPathsMessageV2,
   ResetDesignerDirtyStateMessage,
   UpdateWorkspacePathMessage,
+  UpdateWorkspacePackageMessage,
   ValidateWorkspacePathMessage,
 } from './run-service';
 import {
@@ -66,6 +67,8 @@ import {
   setProjectPath,
   setPathValidationResult,
   setWorkspaceExistenceResult,
+  setPackagePath,
+  setPackageValidationResult,
 } from './state/createWorkspace/createWorkspaceSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
@@ -92,6 +95,7 @@ type WorkflowMessageType =
   | UpdateAccessTokenMessage
   | UpdateExportPathMessage
   | UpdateWorkspacePathMessage
+  | UpdateWorkspacePackageMessage
   | AddStatusMessage
   | SetFinalStatusMessage
   | ValidateWorkspacePathMessage;
@@ -110,6 +114,12 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     if ((message as any).command === 'workspaceExistenceResult') {
       const { workspacePath, exists } = (message as any).data;
       dispatch(setWorkspaceExistenceResult({ workspacePath, exists }));
+      return;
+    }
+
+    if ((message as any).command === 'packageExistenceResult') {
+      const { path, isValid } = (message as any).data;
+      dispatch(setPackageValidationResult({ path, isValid }));
       return;
     }
 
@@ -255,6 +265,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         break;
       }
       case ProjectName.createWorkspace:
+      case ProjectName.createWorkspaceFromPackage:
       case ProjectName.createWorkspaceStructure: {
         switch (message.command) {
           case ExtensionCommand.update_workspace_path: {
@@ -263,6 +274,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.validatePath: {
             dispatch(setPathValidationResult(message.data));
+            break;
+          }
+          case ExtensionCommand.update_package_path: {
+            dispatch(setPackagePath(message.data));
             break;
           }
           default:

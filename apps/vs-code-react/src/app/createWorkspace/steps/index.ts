@@ -8,3 +8,5 @@ export { DotNetFrameworkStep } from './dotNetFrameworkStep';
 export { WorkflowTypeStep } from './workflowTypeStep';
 export { ReviewCreateStep } from './reviewCreateStep';
 export { ProjectSetupStep } from './projectSetupStep';
+export { PackageNameStep } from './packageNameStep';
+export { PackageSetupStep } from './packageSetupStep';

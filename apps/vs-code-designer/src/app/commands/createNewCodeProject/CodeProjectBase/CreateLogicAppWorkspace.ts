@@ -41,6 +41,7 @@ import type {
 } from '@microsoft/vscode-extension-logic-apps';
 import { WorkerRuntime, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
+import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
@@ -211,5 +212,50 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     await createFunctionAppFilesStep.setup(mySubContext);
   }
   vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
+}
+
+export async function createLogicAppWorkspaceFromPackage(context: IActionContext, options: any): Promise<void> {
+  addLocalFuncTelemetry(context);
+
+  const myWebviewProjectContext: IWebviewProjectContext = options;
+
+  await createWorkspaceStructure(myWebviewProjectContext);
+
+  // Create the workspace folder
+  const workspaceFolder = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+  // Path to the logic app folder
+  const logicAppFolderPath = path.join(workspaceFolder, myWebviewProjectContext.logicAppName);
+  const workspaceFilePath = path.join(workspaceFolder, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+
+  const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
+  mySubContext.logicAppName = options.logicAppName;
+  mySubContext.projectPath = logicAppFolderPath;
+  mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
+  mySubContext.functionFolderName = options.functionFolderName;
+  mySubContext.functionAppName = options.functionName;
+  mySubContext.functionAppNamespace = options.functionNamespace;
+  mySubContext.targetFramework = options.targetFramework;
+  mySubContext.workspacePath = workspaceFolder;
+  mySubContext.packagePath = options.packagePath.fsPath;
+
+  await unzipLogicAppPackageIntoWorkspace(mySubContext);
+
+  // .vscode folder
+  await createLogicAppVsCodeContents(myWebviewProjectContext, logicAppFolderPath);
+
+  await createLocalConfigurationFiles(myWebviewProjectContext, logicAppFolderPath);
+
+  if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
+    await gitInit(workspaceFolder);
+  }
+
+  await createArtifactsFolder(mySubContext);
+  await createRulesFiles(mySubContext);
+  await createLibFolder(mySubContext);
+
+  await logicAppPackageProcessing(mySubContext);
+
+  vscode.window.showInformationMessage(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
   await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
 }

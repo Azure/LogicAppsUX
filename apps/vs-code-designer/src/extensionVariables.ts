@@ -93,6 +93,7 @@ export namespace ext {
     overview: 'overview',
     unitTest: 'unitTest',
     createWorkspace: 'createWorkspace',
+    createWorkspaceFromPackage: 'createWorkspaceFromPackage',
     createLogicApp: 'createLogicApp',
     createWorkspaceStructure: 'createWorkspaceStructure',
   } as const;
@@ -104,6 +105,7 @@ export namespace ext {
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
     [webViewKey.createWorkspace]: {},
+    [webViewKey.createWorkspaceFromPackage]: {},
     [webViewKey.createWorkspaceStructure]: {},
     [webViewKey.createLogicApp]: {},
     [webViewKey.overview]: {},
@@ -154,6 +156,7 @@ export const ExtensionCommand = {
   update_access_token: 'update-access-token',
   update_export_path: 'update-export-path',
   update_workspace_path: 'update-workspace-path',
+  update_package_path: 'update-package-path',
   export_package: 'export-package',
   add_status: 'add-status',
   set_final_status: 'set-final-status',

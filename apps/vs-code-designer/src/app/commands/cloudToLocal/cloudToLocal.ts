@@ -1,76 +1,245 @@
-import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
-import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { OpenBehaviorStep } from '../createWorkspace/createWorkspaceSteps/openBehaviorStep';
-import { ProjectTypeStep } from '../createProject/createProjectSteps/projectTypeStep';
-import { SelectPackageStep } from './cloudToLocalSteps/selectPackageStep';
-import { OpenFolderStep } from '../createWorkspace/createWorkspaceSteps/openFolderStep';
-import { LogicAppNameStep } from '../createProject/createProjectSteps/logicAppNameStep';
-import { WorkspaceNameStep } from '../createWorkspace/createWorkspaceSteps/workspaceNameStep';
-import { AzureWizard } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
-import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
-import { ProcessPackageStep } from './cloudToLocalSteps/processPackageStep';
-import { SelectFolderForNewWorkspaceStep } from './cloudToLocalSteps/selectFolderForNewWorkspaceStep';
-import { ExtractPackageStep } from './cloudToLocalSteps/extractPackageStep';
-import { WorkspaceSettingsStep } from '../createWorkspace/createWorkspaceSteps/workspaceSettingsStep';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import * as vscode from 'vscode';
+import * as path from 'path';
+import * as os from 'os';
+import { ext } from '../../../extensionVariables';
+import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
+import * as fs from 'fs';
+import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
+import { createLogicAppWorkspaceFromPackage } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 
-const openFolder = true;
+// const openFolder = true;
 
-export async function cloudToLocal(
-  context: IActionContext,
-  options: ICreateFunctionOptions = {
-    folderPath: undefined,
-    language: undefined,
-    version: undefined,
-    templateId: undefined,
-    functionName: undefined,
-    functionSettings: undefined,
-    suppressOpenFolder: !openFolder,
+// export async function cloudToLocal(
+//   context: IActionContext,
+//   options: ICreateFunctionOptions = {
+//     folderPath: undefined,
+//     language: undefined,
+//     version: undefined,
+//     templateId: undefined,
+//     functionName: undefined,
+//     functionSettings: undefined,
+//     suppressOpenFolder: !openFolder,
+//   }
+// ): Promise<void> {
+//   addLocalFuncTelemetry(context);
+
+//   const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
+//   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
+//   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
+//   const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {
+//     language,
+//     version: tryParseFuncVersion(version),
+//     projectTemplateKey,
+//     projectPath: options.folderPath,
+//   });
+
+//   if (options.suppressOpenFolder) {
+//     wizardContext.openBehavior = OpenBehavior.dontOpen;
+//   } else if (!wizardContext.openBehavior) {
+//     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
+//     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
+//   }
+
+//   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
+//     title: localize('createLogicAppWorkspaceFromPackage', 'Create new logic app workspace from package'),
+//     promptSteps: [
+//       new SelectPackageStep(),
+//       // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
+//       new SelectFolderForNewWorkspaceStep(),
+//       new WorkspaceNameStep(),
+//       new LogicAppNameStep(),
+//       await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
+//       new WorkspaceSettingsStep(),
+//       new ExtractPackageStep(),
+//       new OpenBehaviorStep(),
+//     ],
+//     executeSteps: [new ProcessPackageStep(), new OpenFolderStep()],
+//     hideStepCount: true,
+//   });
+//   try {
+//     await wizard.prompt();
+//     await wizard.execute();
+//   } catch (error) {
+//     context.telemetry.properties.error = error.message;
+//     console.error('Error during wizard execution:', error);
+//   }
+// }
+
+const packageDialogOptions: vscode.OpenDialogOptions = {
+  canSelectMany: false,
+  defaultUri: vscode.Uri.file(path.join(os.homedir(), 'Downloads')),
+  openLabel: localize('selectPackageFile', 'Select package file'),
+  filters: { Packages: ['zip'] },
+};
+
+const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
+  canSelectMany: false,
+  openLabel: localize('selectWorkspaceParentFolder', 'Select workspace parent folder'),
+  canSelectFiles: false,
+  canSelectFolders: true,
+};
+
+export async function cloudToLocal(): Promise<void> {
+  const panelName: string = localize('createWorkspaceFromPackage', 'Create Workspace From Package');
+  const panelGroupKey = ext.webViewKey.createWorkspace;
+  const apiVersion = '2021-03-01';
+  const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
+
+  if (existingPanel) {
+    if (!existingPanel.active) {
+      existingPanel.reveal(vscode.ViewColumn.Active);
+    }
+
+    return;
   }
-): Promise<void> {
-  addLocalFuncTelemetry(context);
 
-  const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
-  const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
-  const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
-  const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {
-    language,
-    version: tryParseFuncVersion(version),
-    projectTemplateKey,
-    projectPath: options.folderPath,
-  });
+  const options: vscode.WebviewOptions & vscode.WebviewPanelOptions = {
+    enableScripts: true,
+    retainContextWhenHidden: true,
+  };
 
-  if (options.suppressOpenFolder) {
-    wizardContext.openBehavior = OpenBehavior.dontOpen;
-  } else if (!wizardContext.openBehavior) {
-    wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
-    context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
-  }
+  const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel('CreateWorkspace', `${panelName}`, vscode.ViewColumn.Active, options);
+  panel.iconPath = {
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'export.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'export.svg')),
+  };
+  panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createLogicAppWorkspaceFromPackage', 'Create new logic app workspace from package'),
-    promptSteps: [
-      new SelectPackageStep(),
-      // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
-      new SelectFolderForNewWorkspaceStep(),
-      new WorkspaceNameStep(),
-      new LogicAppNameStep(),
-      await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
-      new WorkspaceSettingsStep(),
-      new ExtractPackageStep(),
-      new OpenBehaviorStep(),
-    ],
-    executeSteps: [new ProcessPackageStep(), new OpenFolderStep()],
-    hideStepCount: true,
-  });
-  try {
-    await wizard.prompt();
-    await wizard.execute();
-  } catch (error) {
-    context.telemetry.properties.error = error.message;
-    console.error('Error during wizard execution:', error);
-  }
+  let interval: NodeJS.Timeout;
+
+  panel.webview.onDidReceiveMessage(async (message) => {
+    switch (message.command) {
+      case ExtensionCommand.initialize: {
+        panel.webview.postMessage({
+          command: ExtensionCommand.initialize_frame,
+          data: {
+            apiVersion,
+            project: ProjectName.createWorkspaceFromPackage,
+            hostVersion: ext.extensionVersion,
+          },
+        });
+        break;
+      }
+      case ExtensionCommand.createWorkspaceFromPackage: {
+        await callWithTelemetryAndErrorHandling('CreateWorkspaceFromPackage', async (activateContext: IActionContext) => {
+          await createLogicAppWorkspaceFromPackage(activateContext, message.data);
+        });
+        // Close the webview panel after successful creation
+        panel.dispose();
+        break;
+      }
+      case ExtensionCommand.update_package_path: {
+        vscode.window.showOpenDialog(packageDialogOptions).then((fileUri) => {
+          if (fileUri && fileUri[0]) {
+            panel.webview.postMessage({
+              command: ExtensionCommand.update_package_path,
+              data: {
+                targetDirectory: {
+                  fsPath: fileUri[0].fsPath,
+                  path: fileUri[0].path,
+                },
+              },
+            });
+          }
+        });
+        break;
+      }
+      case ExtensionCommand.select_folder: {
+        vscode.window.showOpenDialog(workspaceParentDialogOptions).then((fileUri) => {
+          if (fileUri && fileUri[0]) {
+            panel.webview.postMessage({
+              command: ExtensionCommand.update_workspace_path,
+              data: {
+                targetDirectory: {
+                  fsPath: fileUri[0].fsPath,
+                  path: fileUri[0].path,
+                },
+              },
+            });
+          }
+        });
+        break;
+      }
+      case ExtensionCommand.validatePath: {
+        const { path: pathToValidate, type } = message.data || {};
+        let exists = false;
+        try {
+          if (pathToValidate && typeof pathToValidate === 'string') {
+            exists = fs.existsSync(pathToValidate);
+            if (exists) {
+              const stats = fs.statSync(pathToValidate);
+              if (!type) {
+                // For regular path validation, check if it's a directory
+                exists = stats.isDirectory();
+              } else if (type === ExtensionCommand.workspace_folder) {
+                // For workspace folder, check if it's a directory
+                exists = stats.isDirectory();
+              } else if (type === ExtensionCommand.workspace_file) {
+                // For workspace file, check if it's a file (not a directory)
+                exists = stats.isFile();
+              }
+            }
+          }
+        } catch (_error) {
+          exists = false;
+        }
+
+        if (type === ExtensionCommand.workspace_folder || type === ExtensionCommand.workspace_file) {
+          // Send specific workspace existence result
+          panel.webview.postMessage({
+            command: 'workspaceExistenceResult',
+            data: {
+              project: ProjectName.createWorkspace,
+              workspacePath: pathToValidate,
+              exists: exists,
+              type: type,
+            },
+          });
+        } else if (type === ExtensionCommand.package_file) {
+          // Send specific workspace existence result
+          panel.webview.postMessage({
+            command: 'packageExistenceResult',
+            data: {
+              project: ProjectName.createWorkspaceFromPackage,
+              path: pathToValidate,
+              isValid: exists,
+            },
+          });
+        } else {
+          // Send regular path validation result
+          panel.webview.postMessage({
+            command: ExtensionCommand.validatePath,
+            data: {
+              project: ProjectName.createWorkspace,
+              path: pathToValidate,
+              isValid: exists,
+            },
+          });
+        }
+        break;
+      }
+      // case ExtensionCommand.logTelemetry: {
+      //   const eventName = message.key;
+      //   ext.telemetryReporter.sendTelemetryEvent(eventName, { value: message.value });
+      //   ext.logTelemetry(context, eventName, message.value);
+      //   break;
+      // }
+      default:
+        break;
+    }
+  }, ext.context.subscriptions);
+
+  panel.onDidDispose(
+    () => {
+      removeWebviewPanelFromCache(panelGroupKey, panelName);
+      clearInterval(interval);
+    },
+    null,
+    ext.context.subscriptions
+  );
+  cacheWebviewPanel(panelGroupKey, panelName, panel);
 }
