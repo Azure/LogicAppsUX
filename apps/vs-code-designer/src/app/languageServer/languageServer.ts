@@ -115,23 +115,34 @@ export async function installLSPSDK(): Promise<void> {
     const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     await fse.ensureDir(targetDirectory);
 
-    const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
-    try {
-      const zip = new AdmZip(serverZipFile);
-      await zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true);
-    } catch (error) {
-      throw new Error(`Error extracting worker isolated: ${error}`);
+    // Check if LSPServer folder already exists
+    const lspServerPath = path.join(targetDirectory, 'LSPServer');
+    const shouldExtract = !(await fse.pathExists(lspServerPath));
+
+    if (shouldExtract) {
+      const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
+      try {
+        const zip = new AdmZip(serverZipFile);
+        await zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true);
+      } catch (error) {
+        throw new Error(`Error extracting worker isolated: ${error}`);
+      }
     }
 
-    const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Agents.Sdk.1.141.0.7.nupkg');
-    try {
-      const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-      await fse.ensureDir(lspDirectoryPath);
+    // Check if LanguageServerLogicApps folder already exists
+    const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+    const shouldCopy = !(await fse.pathExists(lspDirectoryPath));
 
-      const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-      await fse.copyFile(sdkNupkgFile, destinationFile);
-    } catch (error) {
-      throw new Error(`Error copying sdk: ${error}`);
+    if (shouldCopy) {
+      const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Agents.Sdk.1.141.0.7.nupkg');
+      try {
+        await fse.ensureDir(lspDirectoryPath);
+
+        const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
+        await fse.copyFile(sdkNupkgFile, destinationFile);
+      } catch (error) {
+        throw new Error(`Error copying sdk: ${error}`);
+      }
     }
   });
 }
