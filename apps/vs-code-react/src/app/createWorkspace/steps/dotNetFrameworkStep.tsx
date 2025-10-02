@@ -26,7 +26,8 @@ export const DotNetFrameworkStep: React.FC = () => {
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { targetFramework, functionNamespace, functionName, functionFolderName, logicAppType, workspaceFileJson } = createWorkspaceState;
+  const { targetFramework, functionNamespace, functionName, functionFolderName, logicAppType, logicAppName, workspaceFileJson } =
+    createWorkspaceState;
 
   const functionNamespaceId = useId();
   const functionNameId = useId();
@@ -132,6 +133,10 @@ export const DotNetFrameworkStep: React.FC = () => {
     }
     if (!functionNameValidation.test(name)) {
       return 'Function folder name must start with a letter and can only contain letters, digits, "_" and "-".';
+    }
+    // Check if function name is the same as logic app name
+    if (logicAppName && name.trim().toLowerCase() === logicAppName.trim().toLowerCase()) {
+      return 'Function name cannot be the same as the logic app name.';
     }
     // Check if the function name already exists in workspace folders
     if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {

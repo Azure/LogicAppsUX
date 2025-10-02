@@ -132,7 +132,10 @@ export const createWorkspaceSlice: any = createSlice({
     setOpenBehavior: (state, action: PayloadAction<string>) => {
       state.openBehavior = action.payload;
     },
-    setFlowType: (state, action: PayloadAction<'createWorkspace' | 'createLogicApp' | 'convertToWorkspace'>) => {
+    setFlowType: (
+      state,
+      action: PayloadAction<'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace'>
+    ) => {
       state.flowType = action.payload;
     },
     setPathValidationResult: (state, action: PayloadAction<{ path: string; isValid: boolean }>) => {

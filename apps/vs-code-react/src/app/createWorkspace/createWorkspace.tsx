@@ -2,7 +2,9 @@ import type { OutletContext } from '../../run-service';
 import { useCreateWorkspaceStyles } from './createWorkspaceStyles';
 import { useIntl } from 'react-intl';
 import { useOutletContext } from 'react-router-dom';
-import { ProjectSetupStep, ReviewCreateStep } from './steps/';
+import { ProjectSetupStep, PackageSetupStep, ReviewCreateStep } from './steps/';
+import { CreateWorkspaceStructSetupStep } from '../createLogicApp/createWorkspaceStructSetupStep';
+import { CreateLogicAppSetupStep } from '../createLogicApp/createLogicAppSetupStep';
 import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
@@ -28,6 +30,8 @@ export const CreateWorkspace: React.FC = () => {
     isLoading,
     isComplete,
     error,
+    flowType,
+    packagePath,
     workspaceProjectPath,
     workspaceName,
     logicAppType,
@@ -42,6 +46,8 @@ export const CreateWorkspace: React.FC = () => {
     workspaceFileJson,
     pathValidationResults,
     workspaceExistenceResults,
+    packageValidationResults,
+    logicAppsWithoutCustomCode,
   } = createWorkspaceState;
 
   // Set flow type when component mounts
@@ -49,27 +55,138 @@ export const CreateWorkspace: React.FC = () => {
     dispatch(setFlowType('createWorkspace'));
   }, [dispatch]);
 
-  // Calculate total steps - now just 2: Project Setup and Review + Create
+  // Calculate total steps - always 2: Setup and Review + Create
   const totalSteps = 2;
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
 
-  const intlText = {
-    CREATE_WORKSPACE: intl.formatMessage({
-      defaultMessage: 'Create logic app workspace',
-      id: 'eagv8j',
-      description: 'Create logic app workspace text.',
-    }),
-    CREATE_BUTTON: intl.formatMessage({
+  // Helper function to get flow-specific messages
+  const getCreateWorkspaceMessage = () => {
+    switch (flowType) {
+      case 'createWorkspaceFromPackage':
+        return intl.formatMessage({
+          defaultMessage: 'Create logic app workspace from package',
+          id: 'RZZxs+',
+          description: 'Create logic app workspace from package text.',
+        });
+      case 'convertToWorkspace':
+        return intl.formatMessage({
+          defaultMessage: 'Create logic app workspace',
+          id: 'eagv8j',
+          description: 'Create logic app workspace text.',
+        });
+      case 'createLogicApp':
+        return intl.formatMessage({
+          defaultMessage: 'Create Project',
+          id: 'RmJRES',
+          description: 'Create logic app project text.',
+        });
+      default:
+        return intl.formatMessage({
+          defaultMessage: 'Create logic app workspace',
+          id: 'eagv8j',
+          description: 'Create logic app workspace text.',
+        });
+    }
+  };
+
+  const getCreateButtonMessage = () => {
+    if (flowType === 'createLogicApp') {
+      return intl.formatMessage({
+        defaultMessage: 'Create project',
+        id: 'u+VFmh',
+        description: 'Create logic app project button',
+      });
+    }
+    return intl.formatMessage({
       defaultMessage: 'Create Workspace',
       id: 'XZfauP',
       description: 'Create workspace button',
-    }),
-    CREATING: intl.formatMessage({
+    });
+  };
+
+  const getCreatingMessage = () => {
+    if (flowType === 'createWorkspaceFromPackage') {
+      return intl.formatMessage({
+        defaultMessage: 'Creating...',
+        id: 'e8iBzO',
+        description: 'Creating workspace from package in progress',
+      });
+    }
+    return intl.formatMessage({
       defaultMessage: 'Creating...',
       id: 'k6MqI+',
       description: 'Creating workspace in progress',
-    }),
+    });
+  };
+
+  const getSuccessTitle = () => {
+    switch (flowType) {
+      case 'createWorkspaceFromPackage':
+        return intl.formatMessage({
+          defaultMessage: 'Workspace From Package Created Successfully!',
+          id: 'vDfUt4',
+          description: 'Workspace from package creation success message',
+        });
+      case 'convertToWorkspace':
+      case 'createLogicApp':
+        return intl.formatMessage({
+          defaultMessage: 'Logic App Created Successfully!',
+          id: '8bXaOe',
+          description: 'Logic app creation success message',
+        });
+      default:
+        return intl.formatMessage({
+          defaultMessage: 'Workspace Created Successfully!',
+          id: '4fdozy',
+          description: 'Workspace creation success message',
+        });
+    }
+  };
+
+  const getSuccessDescription = () => {
+    switch (flowType) {
+      case 'createWorkspaceFromPackage':
+        return intl.formatMessage({
+          defaultMessage: 'Your logic app workspace from package has been created is ready to use.',
+          id: 'rGWwuB',
+          description: 'Workspace package creation success description',
+        });
+      case 'convertToWorkspace':
+      case 'createLogicApp':
+        return intl.formatMessage({
+          defaultMessage: 'Your logic app has been created and is ready to use.',
+          id: 'ECHpxE',
+          description: 'Logic app creation success description',
+        });
+      default:
+        return intl.formatMessage({
+          defaultMessage: 'Your logic app workspace has been created and is ready to use.',
+          id: 'OdrYKo',
+          description: 'Workspace creation success description',
+        });
+    }
+  };
+
+  const getProjectSetupStepLabel = () => {
+    if (flowType === 'convertToWorkspace' || flowType === 'createLogicApp') {
+      return intl.formatMessage({
+        defaultMessage: 'Logic App Setup',
+        id: 'dELTC6',
+        description: 'Logic App setup step label',
+      });
+    }
+    return intl.formatMessage({
+      defaultMessage: 'Project Setup',
+      id: '1d8W/S',
+      description: 'Project setup step label',
+    });
+  };
+
+  const intlText = {
+    CREATE_WORKSPACE: getCreateWorkspaceMessage(),
+    CREATE_BUTTON: getCreateButtonMessage(),
+    CREATING: getCreatingMessage(),
     NEXT: intl.formatMessage({
       defaultMessage: 'Next',
       id: '3Wcqsy',
@@ -91,22 +208,9 @@ export const CreateWorkspace: React.FC = () => {
         total: totalSteps,
       }
     ),
-    WORKSPACE_CREATED: intl.formatMessage({
-      defaultMessage: 'Workspace Created Successfully!',
-      id: '4fdozy',
-      description: 'Workspace creation success message',
-    }),
-    WORKSPACE_CREATED_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Your logic app workspace has been created and is ready to use.',
-      id: 'OdrYKo',
-      description: 'Workspace creation success description',
-    }),
-    // Step labels - only 2 steps now
-    STEP_PROJECT_SETUP: intl.formatMessage({
-      defaultMessage: 'Project Setup',
-      id: '1d8W/S',
-      description: 'Project setup step label',
-    }),
+    SUCCESS_TITLE: getSuccessTitle(),
+    SUCCESS_DESCRIPTION: getSuccessDescription(),
+    STEP_PROJECT_SETUP: getProjectSetupStepLabel(),
     STEP_REVIEW_CREATE: intl.formatMessage({
       defaultMessage: 'Review + Create',
       id: '4dze5/',
@@ -119,53 +223,149 @@ export const CreateWorkspace: React.FC = () => {
     return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
   };
 
+  // Helper function to validate logic app name with support for existing logic apps
+  const validateLogicAppNameForNavigation = (name: string): boolean => {
+    if (!name.trim() || !logicAppNameValidation.test(name.trim())) {
+      return false;
+    }
+
+    // If custom code or rules engine is selected and the name is from the existing logic apps list, it's valid
+    const isCustomCodeOrRulesEngine = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+    const isExistingLogicApp = logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === name);
+
+    if (isCustomCodeOrRulesEngine && isExistingLogicApp) {
+      return true; // Valid - existing logic app for custom code/rules engine
+    }
+
+    // Check for workspace folder collision (only if not using existing logic app)
+    return !isNameAlreadyInWorkspace(name.trim());
+  };
+
+  // Get validation requirements based on flow type
+  const getValidationRequirements = () => {
+    const requirements = {
+      needsPackagePath: flowType === 'createWorkspaceFromPackage',
+      needsWorkspacePath: flowType !== 'createLogicApp',
+      needsWorkspaceName: flowType !== 'createLogicApp',
+      needsLogicAppType: true,
+      needsLogicAppName: true,
+      needsWorkflowFields: flowType === 'createWorkspace' || flowType === 'createLogicApp',
+      needsFunctionFields: logicAppType === 'customCode' || logicAppType === 'rulesEngine',
+    };
+    return requirements;
+  };
+
   const canProceed = () => {
     switch (currentStep) {
       case 0: {
-        // Project Setup - validate all required fields are present AND properly formatted
-        const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
-        const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
-        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-        const workspaceNameValid =
-          workspaceName.trim() !== '' &&
-          workspaceNameValidation.test(workspaceName.trim()) &&
-          workspaceExistenceResults[workspaceFolder] !== true;
-        const logicAppTypeValid = logicAppType !== '';
-        const logicAppNameValid =
-          logicAppName.trim() !== '' && logicAppNameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
-        const workflowTypeValid = workflowType !== '';
-        const workflowNameValid =
-          workflowName.trim() !== '' && workflowNameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim());
+        const requirements = getValidationRequirements();
 
-        const baseFieldsValid =
-          workspacePathValid && workspaceNameValid && logicAppTypeValid && logicAppNameValid && workflowTypeValid && workflowNameValid;
-
-        // If custom code is selected, also validate custom code fields
-        if (logicAppType === 'customCode') {
-          const targetFrameworkValid = targetFramework !== '';
-          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
-          const functionNameValid =
-            functionName.trim() !== '' &&
-            functionNameValidation.test(functionName.trim()) &&
-            !isNameAlreadyInWorkspace(functionName.trim());
-          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
-
-          return baseFieldsValid && targetFrameworkValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
+        // Package path validation (only for createWorkspaceFromPackage)
+        if (requirements.needsPackagePath) {
+          const packagePathValid = packagePath.fsPath !== '' && packageValidationResults[packagePath.fsPath] === true;
+          if (!packagePathValid) {
+            return false;
+          }
         }
 
-        // If rules engine is selected, validate function fields but not .NET framework
-        if (logicAppType === 'rulesEngine') {
-          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
-          const functionNameValid =
-            functionName.trim() !== '' &&
-            functionNameValidation.test(functionName.trim()) &&
-            !isNameAlreadyInWorkspace(functionName.trim());
-          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
-
-          return baseFieldsValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
+        // Workspace path validation (not needed for createLogicApp)
+        if (requirements.needsWorkspacePath) {
+          const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
+          if (!workspacePathValid) {
+            return false;
+          }
         }
 
-        return baseFieldsValid;
+        // Workspace name validation (not needed for createLogicApp)
+        if (requirements.needsWorkspaceName) {
+          const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+          const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+          const workspaceNameValid =
+            workspaceName.trim() !== '' &&
+            workspaceNameValidation.test(workspaceName.trim()) &&
+            workspaceExistenceResults[workspaceFolder] !== true;
+          if (!workspaceNameValid) {
+            return false;
+          }
+        }
+
+        // Logic app type validation
+        if (requirements.needsLogicAppType) {
+          const logicAppTypeValid = logicAppType !== '';
+          if (!logicAppTypeValid) {
+            return false;
+          }
+        }
+
+        // Logic app name validation
+        if (requirements.needsLogicAppName) {
+          const logicAppNameValid =
+            flowType === 'createLogicApp'
+              ? validateLogicAppNameForNavigation(logicAppName)
+              : logicAppName.trim() !== '' &&
+                logicAppNameValidation.test(logicAppName.trim()) &&
+                !isNameAlreadyInWorkspace(logicAppName.trim());
+          if (!logicAppNameValid) {
+            return false;
+          }
+        }
+
+        // Workflow fields validation
+        if (requirements.needsWorkflowFields) {
+          // For createLogicApp, check if using existing logic app
+          if (flowType === 'createLogicApp') {
+            const isCustomCodeOrRulesEngine = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+            const isExistingLogicApp = logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === logicAppName);
+            const usingExistingLogicApp = isCustomCodeOrRulesEngine && isExistingLogicApp;
+
+            if (!usingExistingLogicApp) {
+              const workflowTypeValid = workflowType !== '';
+              const workflowNameValid = workflowName.trim() !== '' && workflowNameValidation.test(workflowName.trim());
+              if (!workflowTypeValid || !workflowNameValid) {
+                return false;
+              }
+            }
+          } else {
+            // For other flows, always validate workflow fields
+            const workflowTypeValid = workflowType !== '';
+            const workflowNameValid =
+              workflowName.trim() !== '' &&
+              workflowNameValidation.test(workflowName.trim()) &&
+              !isNameAlreadyInWorkspace(workflowName.trim());
+            if (!workflowTypeValid || !workflowNameValid) {
+              return false;
+            }
+          }
+        }
+
+        // Function fields validation (for custom code and rules engine)
+        if (requirements.needsFunctionFields) {
+          // Function folder name validation
+          const functionFolderNameValid =
+            functionFolderName.trim() !== '' &&
+            functionNameValidation.test(functionFolderName.trim()) &&
+            !isNameAlreadyInWorkspace(functionFolderName.trim()) &&
+            functionFolderName.trim().toLowerCase() !== logicAppName.trim().toLowerCase();
+          if (!functionFolderNameValid) {
+            return false;
+          }
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
+
+          if (!functionNamespaceValid || !functionNameValid) {
+            return false;
+          }
+
+          // Target framework validation (only for custom code)
+          if (logicAppType === 'customCode') {
+            const targetFrameworkValid = targetFramework !== '';
+            if (!targetFrameworkValid) {
+              return false;
+            }
+          }
+        }
+
+        return true;
       }
       case 1: {
         // Review + Create - all fields should already be validated
@@ -201,29 +401,26 @@ export const CreateWorkspace: React.FC = () => {
         const baseFieldsValid =
           workspacePathValid && workspaceNameValid && logicAppTypeValid && logicAppNameValid && workflowTypeValid && workflowNameValid;
 
-        // If custom code is selected, also validate custom code fields
-        if (logicAppType === 'customCode') {
-          const targetFrameworkValid = targetFramework !== '';
+        // If custom code or rules engine is selected, validate function fields
+        if (logicAppType === 'customCode' || logicAppType === 'rulesEngine') {
+          const functionFolderNameValid =
+            functionFolderName.trim() !== '' &&
+            functionNameValidation.test(functionFolderName.trim()) &&
+            !isNameAlreadyInWorkspace(functionFolderName.trim()) &&
+            functionFolderName.trim().toLowerCase() !== logicAppName.trim().toLowerCase();
           const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
-          const functionNameValid =
-            functionName.trim() !== '' &&
-            functionNameValidation.test(functionName.trim()) &&
-            !isNameAlreadyInWorkspace(functionName.trim());
-          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
+          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
-          return baseFieldsValid && targetFrameworkValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
-        }
+          const functionFieldsValid = functionNamespaceValid && functionNameValid && functionFolderNameValid;
 
-        // If rules engine is selected, validate function fields but not .NET framework
-        if (logicAppType === 'rulesEngine') {
-          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
-          const functionNameValid =
-            functionName.trim() !== '' &&
-            functionNameValidation.test(functionName.trim()) &&
-            !isNameAlreadyInWorkspace(functionName.trim());
-          const functionFolderNameValid = functionFolderName.trim() !== '' && functionNameValidation.test(functionFolderName.trim());
+          // Custom code additionally requires target framework
+          if (logicAppType === 'customCode') {
+            const targetFrameworkValid = targetFramework !== '';
+            return baseFieldsValid && functionFieldsValid && targetFrameworkValid;
+          }
 
-          return baseFieldsValid && functionNamespaceValid && functionNameValid && functionFolderNameValid;
+          // Rules engine doesn't need target framework
+          return baseFieldsValid && functionFieldsValid;
         }
 
         return baseFieldsValid;
@@ -302,37 +499,127 @@ export const CreateWorkspace: React.FC = () => {
   };
 
   const handleCreate = () => {
-    const data = {
+    const baseData = {
       workspaceProjectPath,
       workspaceName,
-      logicAppType,
-      logicAppName,
-      workflowType,
-      workflowName,
-      targetFramework,
       projectType,
-      ...(logicAppType === 'customCode' && {
-        functionFolderName,
-        functionNamespace,
-        functionName,
-      }),
-      ...(logicAppType === 'rulesEngine' && {
-        functionFolderName,
-        functionNamespace,
-        functionName,
-      }),
     };
-    vscode.postMessage({ command: 'createWorkspace', data });
+
+    // Add flow-specific data
+    let data: any = { ...baseData };
+
+    if (flowType === 'createWorkspaceFromPackage') {
+      data = {
+        ...data,
+        packagePath,
+        logicAppType,
+        logicAppName,
+      };
+    } else if (flowType === 'convertToWorkspace') {
+      data = {
+        ...data,
+        logicAppType,
+        logicAppName,
+        workflowType,
+        workflowName,
+        targetFramework,
+        ...(logicAppType === 'customCode' && {
+          functionFolderName,
+          functionNamespace,
+          functionName,
+        }),
+        ...(logicAppType === 'rulesEngine' && {
+          functionFolderName,
+          functionNamespace,
+          functionName,
+        }),
+      };
+    } else if (flowType === 'createLogicApp') {
+      data = {
+        workspaceProjectPath,
+        workspaceName,
+        logicAppType,
+        logicAppName,
+        workflowType,
+        workflowName,
+        targetFramework,
+        projectType,
+        ...(logicAppType === 'customCode' && {
+          functionNamespace,
+          functionName,
+          functionFolderName,
+        }),
+        ...(logicAppType === 'rulesEngine' && {
+          functionNamespace,
+          functionName,
+          functionFolderName,
+        }),
+      };
+    } else {
+      // createWorkspace
+      data = {
+        ...data,
+        logicAppType,
+        logicAppName,
+        workflowType,
+        workflowName,
+        targetFramework,
+        ...(logicAppType === 'customCode' && {
+          functionFolderName,
+          functionNamespace,
+          functionName,
+        }),
+        ...(logicAppType === 'rulesEngine' && {
+          functionFolderName,
+          functionNamespace,
+          functionName,
+        }),
+      };
+    }
+
+    // Send the appropriate command based on flow type
+    const command =
+      flowType === 'createWorkspaceFromPackage'
+        ? 'createWorkspaceFromPackage'
+        : flowType === 'convertToWorkspace'
+          ? 'createWorkspaceStructure'
+          : flowType === 'createLogicApp'
+            ? 'createLogicApp'
+            : 'createWorkspace';
+
+    vscode.postMessage({ command, data });
   };
 
   const renderCurrentStep = () => {
     switch (currentStep) {
-      case 0:
+      case 0: {
+        // Render different setup steps based on flow type
+        if (flowType === 'createWorkspaceFromPackage') {
+          return <PackageSetupStep />;
+        }
+        if (flowType === 'convertToWorkspace') {
+          return <CreateWorkspaceStructSetupStep />;
+        }
+        if (flowType === 'createLogicApp') {
+          return <CreateLogicAppSetupStep />;
+        }
         return <ProjectSetupStep />;
+      }
       case 1:
         return <ReviewCreateStep />;
-      default:
+      default: {
+        // Default to first step based on flow type
+        if (flowType === 'createWorkspaceFromPackage') {
+          return <PackageSetupStep />;
+        }
+        if (flowType === 'convertToWorkspace') {
+          return <CreateWorkspaceStructSetupStep />;
+        }
+        if (flowType === 'createLogicApp') {
+          return <CreateLogicAppSetupStep />;
+        }
         return <ProjectSetupStep />;
+      }
     }
   };
 
@@ -340,8 +627,8 @@ export const CreateWorkspace: React.FC = () => {
     return (
       <div className={styles.createWorkspaceContainer}>
         <div className={styles.completionMessage}>
-          <Text style={{ display: 'block' }}>{intlText.WORKSPACE_CREATED}</Text>
-          <Text style={{ display: 'block' }}>{intlText.WORKSPACE_CREATED_DESCRIPTION}</Text>
+          <Text style={{ display: 'block' }}>{intlText.SUCCESS_TITLE}</Text>
+          <Text style={{ display: 'block' }}>{intlText.SUCCESS_DESCRIPTION}</Text>
         </div>
       </div>
     );
@@ -389,6 +676,37 @@ export const CreateWorkspace: React.FC = () => {
       </div>
     </div>
   );
+};
+
+// Separate components for each flow type that set their flowType
+export const CreateWorkspaceFromPackage: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setFlowType('createWorkspaceFromPackage'));
+  }, [dispatch]);
+
+  return <CreateWorkspace />;
+};
+
+export const CreateWorkspaceStructure: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setFlowType('convertToWorkspace'));
+  }, [dispatch]);
+
+  return <CreateWorkspace />;
+};
+
+export const CreateLogicApp: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setFlowType('createLogicApp'));
+  }, [dispatch]);
+
+  return <CreateWorkspace />;
 };
 
 export function useOutlet() {

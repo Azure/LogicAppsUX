@@ -10,13 +10,15 @@ import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSe
 import { OverviewApp } from '../app/overview/app';
 import { ReviewApp } from '../app/review';
 import { UnitTestResults } from '../app/unitTest';
-import { CreateWorkspace } from '../app/createWorkspace/createWorkspace';
-import { CreateWorkspaceFromPackage } from '../app/createWorkspace/createWorkspaceFromPackage';
+import {
+  CreateWorkspace,
+  CreateWorkspaceFromPackage,
+  CreateLogicApp,
+  CreateWorkspaceStructure,
+} from '../app/createWorkspace/createWorkspace';
 import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { CreateLogicApp } from '../app/createLogicApp/createLogicApp';
-import { CreateWorkspaceStructure } from '../app/createLogicApp/createWorkspaceStructure';
 
 export const Router: React.FC = () => {
   return (
