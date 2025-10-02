@@ -128,7 +128,7 @@ jobs:
                           pr_number = match.group(4)           # e.g., "8113"
                           
                           # Format as requested: * **scope:** description ([#PR](link))
-                          formatted_line = f"* **{scope}:** {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number}))"
+                          formatted_line = f"* **{scope}:** {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/pull/{pr_number}))"
                           
                           # Categorize based on commit type
                           if commit_type.lower() == 'fix':
@@ -148,7 +148,7 @@ jobs:
                                   commit_type = scope_match.group(1).strip()
                                   scope = scope_match.group(2)
                                   clean_description = scope_match.group(3)
-                                  formatted_line = f"* **{scope}:** {clean_description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number}))"
+                                  formatted_line = f"* **{scope}:** {clean_description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/pull/{pr_number}))"
                                   
                                   # Categorize based on commit type
                                   if commit_type.lower() == 'fix':
@@ -157,7 +157,7 @@ jobs:
                                       features.append(formatted_line)
                               else:
                                   # No scope found, use description as-is and put in features by default
-                                  formatted_line = f"* {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/issues/{pr_number}))"
+                                  formatted_line = f"* {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/pull/{pr_number}))"
                                   features.append(formatted_line)
               
               # Build the formatted output with sections
