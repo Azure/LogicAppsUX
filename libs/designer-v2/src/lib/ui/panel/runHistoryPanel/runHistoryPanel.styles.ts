@@ -7,6 +7,13 @@ export const useRunHistoryPanelStyles = makeStyles({
     display: 'block !important',
   },
 
+  flexbox: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '8px',
+  },
+
   runProperty: {
     display: 'flex',
     flexDirection: 'column',
@@ -54,5 +61,46 @@ export const useRunHistoryPanelStyles = makeStyles({
 
   runEntrySelected: {
     backgroundColor: tokens.colorNeutralBackground1Selected,
+  },
+
+  // Resizer styles
+
+  resizer: {
+    zIndex: 3,
+    position: 'absolute',
+    border: 'none',
+    borderRadius: tokens.borderRadiusNone,
+    backgroundColor: 'transparent',
+    width: '24px',
+    height: '100%',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    cursor: 'col-resize',
+    minWidth: 'unset',
+    transform: 'translateX(50%)',
+
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      borderLeft: `1px solid ${tokens.colorNeutralBackground5}`,
+      width: '1px',
+      height: '100%',
+      transform: 'translateX(50%)',
+      right: '50%',
+    },
+    ':hover': {
+      borderLeftWidth: '4px',
+      cursor: 'col-resize',
+      backgroundColor: 'transparent',
+    },
+    ':hover:active': {
+      backgroundColor: 'transparent',
+      cursor: 'col-resize',
+    },
+  },
+  resizerActive: {
+    borderLeftWidth: '4px',
+    borderLeftColor: tokens.colorNeutralBackground5Pressed,
   },
 });

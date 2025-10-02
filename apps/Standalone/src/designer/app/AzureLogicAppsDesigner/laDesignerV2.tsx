@@ -59,13 +59,11 @@ import {
   DesignerProvider,
   BJSWorkflowProvider,
   Designer,
-  DesignerTreeView,
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
   Constants,
   getSKUDefaultHostOptions,
-  RunHistoryPanel,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
@@ -156,6 +154,48 @@ const DesignerEditor = () => {
     setIsDraftMode(draftMode);
   }, []);
 
+  const toggleMonitoringView = useCallback(() => {
+    dispatch(setMonitoringView(!isMonitoringView));
+    dispatch(setReadOnly(!isMonitoringView));
+    dispatch(setRunHistoryEnabled(!isMonitoringView));
+    if (runId) {
+      dispatch(changeRunId(undefined));
+    }
+  }, [dispatch, isMonitoringView, runId]);
+
+  const showMonitoringView = useCallback(() => {
+    if (!isMonitoringView) {
+      setIsDesignerView(false);
+      setIsCodeView(false);
+      toggleMonitoringView();
+    }
+  }, [isMonitoringView, toggleMonitoringView]);
+
+  const hideMonitoringView = useCallback(() => {
+    if (isMonitoringView) {
+      toggleMonitoringView();
+      setWorkflow({
+        ...artifactData?.properties.files[Artifact.WorkflowFile],
+        id: guid(),
+      });
+    }
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
+
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      dispatch(changeRunId(runId));
+    },
+    [dispatch]
+  );
+
+  const onRun = useCallback(
+    (runId: string | undefined) => {
+      showMonitoringView();
+      dispatch(changeRunId(runId));
+    },
+    [dispatch, showMonitoringView]
+  );
+
   const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
     if (!connectionId) {
       return Promise.resolve();
@@ -202,54 +242,11 @@ const DesignerEditor = () => {
         language,
         queryClient,
         settingsData?.properties ?? {},
-        dispatch
+        dispatch,
+        onRunSelected
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
-  );
-
-  // RUN HISTORY
-
-  const toggleMonitoringView = useCallback(() => {
-    dispatch(setMonitoringView(!isMonitoringView));
-    dispatch(setReadOnly(!isMonitoringView));
-    dispatch(setRunHistoryEnabled(!isMonitoringView));
-    if (runId) {
-      dispatch(changeRunId(undefined));
-    }
-  }, [dispatch, isMonitoringView, runId]);
-
-  const showMonitoringView = useCallback(() => {
-    if (!isMonitoringView) {
-      setIsDesignerView(false);
-      setIsCodeView(false);
-      toggleMonitoringView();
-    }
-  }, [isMonitoringView, toggleMonitoringView]);
-
-  const hideMonitoringView = useCallback(() => {
-    if (isMonitoringView) {
-      toggleMonitoringView();
-      setWorkflow({
-        ...artifactData?.properties.files[Artifact.WorkflowFile],
-        id: guid(),
-      });
-    }
-  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
-
-  const onRunSelected = useCallback(
-    (runId: string) => {
-      dispatch(changeRunId(runId));
-    },
-    [dispatch]
-  );
-
-  const onRun = useCallback(
-    (runId: string | undefined) => {
-      showMonitoringView();
-      dispatch(changeRunId(runId));
-    },
-    [dispatch, showMonitoringView]
   );
 
   const originalSettings: Record<string, string> = {
@@ -651,21 +648,9 @@ const DesignerEditor = () => {
                   prodWorkflow={artifactData?.properties.files[Artifact.WorkflowFile]}
                 />
                 {!isCodeView && (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
-                    <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
-                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-											{!isMonitoringView ? (
-												<Designer />
-											) : (
-												<DesignerTreeView />
-											)}
-                    </div>
-										<FloatingRunButton
-											id={workflowId}
-											saveDraftWorkflow={saveWorkflowFromDesigner}
-											onRun={onRun}
-											isDarkMode={isDarkMode}
-										/>
+                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
+                    <Designer />
+                    <FloatingRunButton id={workflowId} saveDraftWorkflow={saveWorkflowFromDesigner} onRun={onRun} isDarkMode={isDarkMode} />
                   </div>
                 )}
                 {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
@@ -694,7 +679,8 @@ const getDesignerServices = (
   locale: string | undefined,
   queryClient: QueryClient,
   appSettings: Record<string, string>,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
+  openRun: (runId: string) => void
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -1000,6 +986,7 @@ const getDesignerServices = (
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
     openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
     openMonitorView: (workflowName: string, runName: string) => console.log('openMonitorView:', workflowName, runName),
+    openRun,
   };
 
   const functionService = new BaseFunctionService({

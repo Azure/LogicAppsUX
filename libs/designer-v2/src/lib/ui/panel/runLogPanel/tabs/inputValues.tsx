@@ -1,21 +1,21 @@
 import { HostService, ContentType, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { SecureDataSection, ValuesPanel } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { RunLogActionValues } from '../runLogActionValues';
+import { SecureDataSection } from '@microsoft/designer-ui';
 
 export interface InputsPanelProps {
-  runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
-  brandColor: string;
+  runMetaData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   nodeId: string;
-  isLoading: boolean;
-  isError: boolean;
+  isLoading?: boolean;
+  error?: any;
 }
 
-export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, isLoading, isError }) => {
+export const InputValues: React.FC<InputsPanelProps> = ({ runMetaData, nodeId, isLoading, error }) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const intl = useIntl();
-  const { inputsLink, inputs } = runMetaData;
+  const { inputsLink, inputs } = runMetaData ?? {};
   const { uri, secureData } = inputsLink ?? {};
   const areInputsSecured = !isNullOrUndefined(secureData);
 
@@ -25,25 +25,10 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
       id: 'PORNMZ',
       description: 'Inputs text',
     }),
-    noInputs: intl.formatMessage({
-      defaultMessage: 'No inputs',
-      id: '7Fyq1F',
-      description: 'No inputs text',
-    }),
     showInputs: intl.formatMessage({
       defaultMessage: 'Show raw inputs',
       id: 'xSMbKr',
       description: 'Show inputs text',
-    }),
-    inputsLoading: intl.formatMessage({
-      defaultMessage: 'Loading inputs',
-      id: 'xwD1VZ',
-      description: 'Loading inputs text',
-    }),
-    inputsError: intl.formatMessage({
-      defaultMessage: 'Error loading inputs',
-      id: '63CC7M',
-      description: 'The text for the loading inputs error.',
     }),
   };
 
@@ -60,16 +45,14 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
   return (
     <>
       {areInputsSecured ? (
-        <SecureDataSection brandColor={brandColor} headerText={intlText.inputs} />
+        <SecureDataSection brandColor={'transparent'} headerText={intlText.inputs} />
       ) : (
-        <ValuesPanel
-          brandColor={brandColor}
-          headerText={intlText.inputs}
+        <RunLogActionValues
           linkText={isNullOrUndefined(inputs) ? '' : intlText.showInputs}
           showLink={!!uri}
           values={inputs ?? {}}
-          labelledBy={`inputs-${nodeId}`}
-          noValuesText={isError ? intlText.inputsError : isLoading ? intlText.inputsLoading : intlText.noInputs}
+          isLoading={isLoading}
+          error={error}
           showMore={showMore}
           onMoreClick={onMoreClick}
           onLinkClick={onSeeRawInputsClick}

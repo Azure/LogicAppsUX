@@ -9,6 +9,8 @@ export const colors = {
 
 export const useCardStyles = makeStyles({
   root: {
+    margin: '0px auto',
+    position: 'relative',
     border: '2px solid transparent',
     boxSizing: 'border-box',
     fontSize: '12px',
@@ -46,6 +48,8 @@ export const useCardStyles = makeStyles({
   },
   selected: {
     border: `2px solid ${colors.brand}`,
+    // outline: `3px solid ${colors.brand}`,
+    // outlineOffset: '4px',
   },
   statusSuccess: {
     border: `2px solid ${colors.success}`,
@@ -73,6 +77,7 @@ export const useCardStyles = makeStyles({
     color: tokens.colorNeutralForeground1,
     lineHeight: '20px',
     flexGrow: 1,
+    wordBreak: 'break-word',
   },
   scopeTitle: {
     color: '#fff',
@@ -81,8 +86,8 @@ export const useCardStyles = makeStyles({
   // Badge
   badge: {
     position: 'absolute',
-    top: '1px',
-    right: '1px',
+    top: '-1px',
+    right: '-1px',
     transform: 'translate(50%, -50%)',
     width: '20px',
     height: '20px',

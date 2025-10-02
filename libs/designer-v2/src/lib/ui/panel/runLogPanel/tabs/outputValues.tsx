@@ -1,21 +1,21 @@
 import { HostService, ContentType, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { ValuesPanel, SecureDataSection } from '@microsoft/designer-ui';
+import { SecureDataSection } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { RunLogActionValues } from '../runLogActionValues';
 
-export interface OutputsPanelProps {
-  runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
-  brandColor: string;
+export interface OutputValuesProps {
+  runMetaData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   nodeId: string;
-  isLoading: boolean;
-  isError: boolean;
+  isLoading?: boolean;
+  error?: any;
 }
 
-export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, isLoading, isError }) => {
+export const OutputValues: React.FC<OutputValuesProps> = ({ runMetaData, nodeId, isLoading, error }) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const intl = useIntl();
-  const { outputsLink, outputs } = runMetaData;
+  const { outputsLink, outputs } = runMetaData ?? {};
   const { uri, secureData } = outputsLink ?? {};
   const areOutputsSecured = !isNullOrUndefined(secureData);
 
@@ -25,25 +25,10 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
       id: '0oebOm',
       description: 'Outputs text',
     }),
-    noOutputs: intl.formatMessage({
-      defaultMessage: 'No outputs',
-      id: '+xXHdp',
-      description: 'No outputs text',
-    }),
     showOutputs: intl.formatMessage({
       defaultMessage: 'Show raw outputs',
       id: '/mjH84',
       description: 'Show outputs text',
-    }),
-    outputsLoading: intl.formatMessage({
-      defaultMessage: 'Loading outputs',
-      id: 'LvLksz',
-      description: 'Loading outputs text',
-    }),
-    outputsError: intl.formatMessage({
-      defaultMessage: 'Error loading outputs',
-      id: 'pcGqoB',
-      description: 'Error loading outputs text',
     }),
   };
 
@@ -60,16 +45,14 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
   return (
     <>
       {areOutputsSecured ? (
-        <SecureDataSection brandColor={brandColor} headerText={intlText.outputs} />
+        <SecureDataSection brandColor={'transparent'} headerText={intlText.outputs} />
       ) : (
-        <ValuesPanel
-          brandColor={brandColor}
-          headerText={intlText.outputs}
+        <RunLogActionValues
           linkText={isNullOrUndefined(outputs) ? '' : intlText.showOutputs}
           showLink={!!uri}
           values={outputs ?? {}}
-          labelledBy={`outputs-${nodeId}`}
-          noValuesText={isError ? intlText.outputsError : isLoading ? intlText.outputsLoading : intlText.noOutputs}
+          isLoading={isLoading}
+          error={error}
           showMore={showMore}
           onMoreClick={onMoreClick}
           onLinkClick={onSeeRawOutputsClick}

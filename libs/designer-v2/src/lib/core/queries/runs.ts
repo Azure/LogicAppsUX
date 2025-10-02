@@ -17,6 +17,7 @@ export const runsQueriesKeys = {
   run: 'run',
   allRuns: 'allRuns',
   useNodeRepetition: 'useNodeRepetition',
+  useNodeRepetitions: 'useNodeRepetitions',
   useScopeFailedRepetitions: 'useScopeFailedRepetitions',
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
@@ -133,10 +134,10 @@ export const getRun = (runId: string) => {
 };
 
 export const useNodeRepetition = (
-  isMonitoringView: boolean,
+  isEnabled: boolean,
   nodeId: string,
   runId: string | undefined,
-  repetitionName: string,
+  repetitionName: string | undefined,
   parentStatus: string | undefined,
   parentRunIndex: number | undefined,
   isWithinAgenticLoop: boolean
@@ -158,12 +159,52 @@ export const useNodeRepetition = (
         };
       }
 
-      return await RunService().getRepetition({ nodeId, runId }, repetitionName);
+      return await RunService().getRepetition({ nodeId, runId }, repetitionName!);
     },
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: parentRunIndex !== undefined && isMonitoringView && !isWithinAgenticLoop,
+      enabled: repetitionName !== undefined && parentRunIndex !== undefined && isEnabled && !isWithinAgenticLoop,
+    }
+  );
+};
+
+export const getRunRepetition = async (nodeId: string, runId: string, repetitionName: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useNodeRepetition, { nodeId, runId, repetitionName }],
+    async () => {
+      return await RunService().getRepetition({ nodeId, runId }, repetitionName);
+    },
+    {
+      ...queryOpts,
+    }
+  );
+};
+
+export const useNodeRepetitions = (isEnabled: boolean, nodeId: string, runId: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useNodeRepetitions, { nodeId, runId }],
+    async () => {
+      return await RunService().getRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isEnabled,
+    }
+  );
+};
+
+export const getNodeRepetitions = async (nodeId: string, runId: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useNodeRepetitions, { nodeId, runId }],
+    async () => {
+      return await RunService().getRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
     }
   );
 };
@@ -198,7 +239,6 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
 
 export const useAgentRepetition = (
   isEnabled: boolean,
-  isAgent: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
@@ -214,6 +254,46 @@ export const useAgentRepetition = (
       ...queryOpts,
       retryOnMount: false,
       enabled: isEnabled,
+    }
+  );
+};
+
+export const getAgentRepetition = async (nodeId: string, runId: string, repetitionName: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId, repetitionName }],
+    async () => {
+      return RunService().getAgentRepetition({ nodeId, runId }, repetitionName);
+    },
+    {
+      ...queryOpts,
+    }
+  );
+};
+
+export const useAgentRepetitions = (isEnabled: boolean, nodeId: string, runId: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId }],
+    async () => {
+      return await RunService().getAgentRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isEnabled,
+    }
+  );
+};
+
+export const getAgentRepetitions = async (nodeId: string, runId: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId }],
+    async () => {
+      return await RunService().getAgentRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
     }
   );
 };
@@ -235,29 +315,46 @@ export const useAgentActionsRepetition = (
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
-  parentStatus: string | undefined,
   runIndex: number | undefined
 ) => {
   return useQuery(
-    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, parentStatus, runIndex }],
-    async () => {
-      const allActions: LogicAppsV2.RunRepetition[] = [];
-      const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
-      allActions.push(...(firstActions?.value ?? []));
-      let nextLink = firstActions.nextLink;
-      while (nextLink) {
-        const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
-        allActions.push(...(moreActions?.value ?? []));
-        nextLink = moreActions?.nextLink;
-      }
-      return allActions;
-    },
+    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, runIndex }],
+    async () => fetchAgentActionsRepetition(nodeId, runId, repetitionName),
     {
       ...queryOpts,
       retryOnMount: false,
       enabled: isEnabled,
     }
   );
+};
+
+export const getAgentActionsRepetition = async (
+  nodeId: string,
+  runId: string | undefined,
+  repetitionName: string,
+  runIndex: number | undefined
+) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, runIndex }],
+    async () => fetchAgentActionsRepetition(nodeId, runId, repetitionName),
+    {
+      ...queryOpts,
+    }
+  );
+};
+
+const fetchAgentActionsRepetition = async (nodeId: string, runId: string | undefined, repetitionName: string) => {
+  const allActions: LogicAppsV2.RunRepetition[] = [];
+  const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
+  allActions.push(...(firstActions?.value ?? []));
+  let nextLink = firstActions.nextLink;
+  while (nextLink) {
+    const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
+    allActions.push(...(moreActions?.value ?? []));
+    nextLink = moreActions?.nextLink;
+  }
+  return allActions;
 };
 
 export const useActionsChatHistory = (nodeIds: string[], runId: string | undefined, isEnabled: boolean) => {
