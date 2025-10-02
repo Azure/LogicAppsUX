@@ -4,9 +4,10 @@ import type { ResourceState } from '../state/mcp/resourceSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/mcp/store';
 import { setInitialData } from '../state/mcp/resourceSlice';
-import { initializeMcpServices, type McpServiceOptions } from '../actions/bjsworkflow/mcp';
+import { initializeMcpData, type McpServiceOptions } from '../actions/bjsworkflow/mcp';
 
 export interface McpDataProviderProps {
+  connectorId?: string;
   resourceDetails: ResourceState;
   services: McpServiceOptions;
   onResourceChange?: () => void;
@@ -17,7 +18,7 @@ const DataProviderInner = ({ children }: { children?: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export const McpDataProvider = ({ resourceDetails, services, onResourceChange, children }: McpDataProviderProps) => {
+export const McpDataProvider = ({ connectorId, resourceDetails, services, onResourceChange, children }: McpDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { logicAppName, servicesInitialized } = useSelector((state: RootState) => ({
@@ -27,9 +28,9 @@ export const McpDataProvider = ({ resourceDetails, services, onResourceChange, c
 
   useEffect(() => {
     if (!servicesInitialized && services) {
-      dispatch(initializeMcpServices(services));
+      dispatch(initializeMcpData({ services, connectorId }));
     }
-  }, [dispatch, servicesInitialized, services]);
+  }, [dispatch, servicesInitialized, services, connectorId]);
 
   useEffect(() => {
     dispatch(
@@ -37,9 +38,11 @@ export const McpDataProvider = ({ resourceDetails, services, onResourceChange, c
         subscriptionId: resourceDetails.subscriptionId,
         resourceGroup: resourceDetails.resourceGroup,
         location: resourceDetails.location,
+        logicAppName: resourceDetails.logicAppName,
+        connectorId,
       })
     );
-  }, [dispatch, resourceDetails]);
+  }, [connectorId, dispatch, resourceDetails]);
 
   useEffect(() => {
     if (onResourceChange && logicAppName !== undefined) {

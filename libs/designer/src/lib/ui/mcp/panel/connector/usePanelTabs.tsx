@@ -16,6 +16,7 @@ import { getResourceNameFromId, LogEntryLevel, LoggerService } from '@microsoft/
 import constants from '../../../../common/constants';
 import { clearAllSelections } from '../../../../core/state/mcp/mcpselectionslice';
 
+export const MCP_ConnectionKey = 'mcp-placeholder';
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -29,6 +30,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     isInitializingConnections,
     operationInfos,
     operationsError,
+    disableConnectorSelection,
   } = useSelector((state: RootState) => ({
     currentPanelView: state.mcpPanel.currentPanelView,
     selectedConnectorId: state.mcpSelection.selectedConnectorId,
@@ -38,6 +40,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     isInitializingConnections: state.connection.loading.initializeConnectionMappings,
     operationInfos: state.operations.operationInfo,
     operationsError: state.mcpSelection.errors.operations,
+    disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
   }));
 
   const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
@@ -196,24 +199,31 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const connectionsTabItem = useMemo(
     () =>
-      connectionsTab(intl, dispatch, selectedConnectorId as string, selectedOperations, {
-        isTabDisabled: isConnectionsTabDisabled,
-        onTabClick: () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
-        isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
-        onPrimaryButtonClick: () => handleSubmit(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
-        previousTabId: isCreateConnectionView ? undefined : constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
-      }),
+      connectionsTab(
+        intl,
+        dispatch,
+        selectedConnectorId as string,
+        selectedOperations?.length === 0 && disableConnectorSelection ? [MCP_ConnectionKey] : selectedOperations,
+        {
+          isTabDisabled: isConnectionsTabDisabled,
+          onTabClick: () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
+          isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
+          onPrimaryButtonClick: () => handleSubmit(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
+          previousTabId: isCreateConnectionView ? undefined : constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
+        }
+      ),
     [
       intl,
       dispatch,
       selectedConnectorId,
       selectedOperations,
+      disableConnectorSelection,
+      isConnectionsTabDisabled,
       hasValidConnection,
-      handleSubmit,
+      isCreateConnectionView,
       onConnectionsTabNavigation,
       hasSelectConnectorTab,
-      isConnectionsTabDisabled,
-      isCreateConnectionView,
+      handleSubmit,
     ]
   );
 

@@ -3,11 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import { resetMcpState } from '../global';
 import { initializeOperationsMetadata } from '../../../core/actions/bjsworkflow/mcp';
 import { ErrorLevel, updateErrorDetails } from '../operation/operationMetadataSlice';
+import { setInitialData } from './resourceSlice';
 
 export interface McpSelectionState {
   selectedConnectorId: string | undefined;
   selectedOperations: string[];
   selectedOperationId?: string;
+  disableLogicAppSelection?: boolean;
+  disableConnectorSelection?: boolean;
   errors: {
     operations?: string;
     operationDetails?: Record<string, { general?: string; parameters?: string }>;
@@ -22,7 +25,9 @@ const initialSelectionState: McpSelectionState = {
 };
 
 const clearAllSelectionsReducer = (state: typeof initialSelectionState) => {
-  state.selectedConnectorId = undefined;
+  if (!state.disableConnectorSelection) {
+    state.selectedConnectorId = undefined;
+  }
   state.selectedOperations = [];
   state.errors.operations = undefined;
 };
@@ -50,6 +55,17 @@ export const mcpSelectionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialSelectionState);
+    builder.addCase(setInitialData, (state, action) => {
+      if (action.payload.logicAppName) {
+        state.disableLogicAppSelection = true;
+      }
+
+      if (action.payload.connectorId) {
+        state.disableConnectorSelection = true;
+        state.selectedConnectorId = action.payload.connectorId;
+        state.selectedOperations = [];
+      }
+    });
     builder.addCase(initializeOperationsMetadata.fulfilled, clearAllSelectionsReducer);
     builder.addCase(initializeOperationsMetadata.rejected, (state, action) => {
       state.errors.operations = action.error.message ?? 'Failed to initialize operation details.';

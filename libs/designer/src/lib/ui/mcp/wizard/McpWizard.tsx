@@ -22,7 +22,12 @@ import { SuccessToast } from '../logicapps/common';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
-export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: RegisterMcpServerHandler; onClose: () => void }) => {
+interface McpWizardProps {
+  registerMcpServer: RegisterMcpServerHandler;
+  onClose: () => void;
+}
+
+export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useMcpWizardStyles();
@@ -31,9 +36,12 @@ export const McpWizard = ({ registerMcpServer, onClose }: { registerMcpServer: R
     operations,
     resource: { subscriptionId, resourceGroup, location, logicAppName },
     mcpOptions: { disableConfiguration },
+    mcpSelection: { selectedConnectorId, disableConnectorSelection },
   } = useSelector((state: RootState) => state);
 
-  const connectorExists = useMemo(() => Object.keys(operations.operationInfo).length > 0, [operations.operationInfo]);
+  const connectorExists = useMemo(() => {
+    return (disableConnectorSelection && !!selectedConnectorId) || Object.keys(operations.operationInfo).length > 0;
+  }, [disableConnectorSelection, operations.operationInfo, selectedConnectorId]);
   const hasIncompleteOperationConfiguration = useMemo(() => {
     return Object.entries(operations.inputParameters).some(([operationId, nodeInputs]) =>
       operationHasEmptyStaticDependencies(nodeInputs, operations.dependencies[operationId]?.inputs ?? {})
