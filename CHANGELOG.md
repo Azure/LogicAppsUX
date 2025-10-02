@@ -1,33 +1,20 @@
 # Logic Apps Designer
-## [5.185.4](https://github.com/Azure/LogicAppsUX/compare/v5.165.9...c2b31a85ad3cce1d91412520fcc9a6ea08b75fca) (2025-10-02)
+## [5.185.5](https://github.com/Azure/LogicAppsUX/compare/v5.165.9...v5.185.5) (2025-10-02)
 
-_Compared against hotfix/v5.185 (c2b31a85a)_
 
 ### Features
 
-* **standalone:** add theme provider wrapper for VSCode components ([#8106](https://github.com/Azure/LogicAppsUX/pull/8106))
-* **vscode:** First clickstop for E2E testing infrastructure with ExTester and Mocha ([#7774](https://github.com/Azure/LogicAppsUX/pull/7774))
 * **vscode:** Remove codeful workflow creation option ([#8123](https://github.com/Azure/LogicAppsUX/pull/8123))
-* Add single flag to enable/disable Codeful feature in VS Code Designer ([#8126](https://github.com/Azure/LogicAppsUX/pull/8126))
-* **pipeline:** Disable AI checker for 502 failure ([#8138](https://github.com/Azure/LogicAppsUX/pull/8138))
-* **Designer:** Added new `designer-v2` lib ([#8128](https://github.com/Azure/LogicAppsUX/pull/8128))
-* **DesignerV2:** Finished new run-history panel ([#8141](https://github.com/Azure/LogicAppsUX/pull/8141))
 * **vscode:** refactor debug utilities and add comprehensive unit tests ([#8148](https://github.com/Azure/LogicAppsUX/pull/8148))
-* **DesignerV2:** Run history panel improvements ([#8169](https://github.com/Azure/LogicAppsUX/pull/8169))
-* **DesignerV2:** Node + Edge redesign ([#8180](https://github.com/Azure/LogicAppsUX/pull/8180))
 * **VSCode:** VSCode view switching ([#8198](https://github.com/Azure/LogicAppsUX/pull/8198))
 * **Designer:** Run with payload popover ([#8202](https://github.com/Azure/LogicAppsUX/pull/8202))
-* **DesignerV2:** Card error badge, Scope cards ([#8204](https://github.com/Azure/LogicAppsUX/pull/8204))
-* **designer-v2:** add floating chat button with authentication and performance optimizations ([#8205](https://github.com/Azure/LogicAppsUX/pull/8205))
 * **Designer:** Added E2E test to verify auth type switching + params ([#8220](https://github.com/Azure/LogicAppsUX/pull/8220))
-* **designer-v2:** add dark mode support for floating chat button ([#8214](https://github.com/Azure/LogicAppsUX/pull/8214))
 * **Designer:** Added extra telemetry around connection creation ([#8224](https://github.com/Azure/LogicAppsUX/pull/8224))
 * **vscode:** enable MFA via authenticationChallenges; bump engine and deps ([#8183](https://github.com/Azure/LogicAppsUX/pull/8183))
 * **vscode:** add chat button to VS Code designer command bar ([#8236](https://github.com/Azure/LogicAppsUX/pull/8236))
 * **Designer:** Node Details panel - Replaced collapse/expand with close/open ([#8235](https://github.com/Azure/LogicAppsUX/pull/8235))
 * **vscode:** add conversational agent workflow type to VS Code extension ([#8238](https://github.com/Azure/LogicAppsUX/pull/8238))
 * **Designer:** Node Details panel - Replaced collapse/expand with close/open ([#8244](https://github.com/Azure/LogicAppsUX/pull/8244))
-* chore: Update release pipeline to use Github_Token instead of personal PAT ([#8268](https://github.com/Azure/LogicAppsUX/pull/8268))
 * **vscode:** add production signing configuration to pipeline ([#8269](https://github.com/Azure/LogicAppsUX/pull/8269))
 
 ### Bug Fixes
@@ -38,15 +25,12 @@ _Compared against hotfix/v5.185 (c2b31a85a)_
 * **designer:** Enable channels only for agentic wf ([#8109](https://github.com/Azure/LogicAppsUX/pull/8109))
 * **Designer:** Fixed root node run-after setting in scopes ([#8112](https://github.com/Azure/LogicAppsUX/pull/8112))
 * **designer:** Fix agent key expiry and filter connections for Agentic loop in A2A ([#8117](https://github.com/Azure/LogicAppsUX/pull/8117))
-* **mcp/designer:** Adding connection initialization while adding only tools ([#8118](https://github.com/Azure/LogicAppsUX/pull/8118))
 * **Designer:** Removed message param from handoff ([#8133](https://github.com/Azure/LogicAppsUX/pull/8133))
-* **Pipeline:** Fixed issue with response code typing ([#8140](https://github.com/Azure/LogicAppsUX/pull/8140))
 * **designer:** Add sublabel for connections and remove read-only for Deployment model ([#8150](https://github.com/Azure/LogicAppsUX/pull/8150))
 * **designer:** Open chat in a tab if Authentication is enabled ([#8139](https://github.com/Azure/LogicAppsUX/pull/8139))
 * **designer:** Add sublabel for Connections for Agent loop ([#8155](https://github.com/Azure/LogicAppsUX/pull/8155))
 * **designer:** A2A string updates for different scenarios ([#8157](https://github.com/Azure/LogicAppsUX/pull/8157))
 * **designer:** Inline connection fix in v2 ([#8159](https://github.com/Azure/LogicAppsUX/pull/8159))
-* **mcp:** Resetting connection store correctly on logic app change ([#8167](https://github.com/Azure/LogicAppsUX/pull/8167))
 * **designer:** Move description under advanced parameters ([#8176](https://github.com/Azure/LogicAppsUX/pull/8176))
 * **designer:** Add try catch for Easy Auth call ([#8178](https://github.com/Azure/LogicAppsUX/pull/8178))
 * **Designer:** Fixed `Testing` tab visibility ([#8216](https://github.com/Azure/LogicAppsUX/pull/8216))
@@ -54,7 +38,7 @@ _Compared against hotfix/v5.185 (c2b31a85a)_
 * **designer:** Remove all Agentic experiments ([#8237](https://github.com/Azure/LogicAppsUX/pull/8237))
 * **Designer:** Revert Node Details panel - Replaced collapse/expand ([#8240](https://github.com/Azure/LogicAppsUX/pull/8240))
 * **Designer:** [5.185] Modified aioperations operation connector ids for standard ([#8254](https://github.com/Azure/LogicAppsUX/pull/8254))
-* **vs-code:** prevent null error in Logic App AppInsights creation ([#8261](https://github.com/Azure/LogicAppsUX/pull/8261))
+* **vscode:** prevent null error in Logic App AppInsights creation ([#8261](https://github.com/Azure/LogicAppsUX/pull/8261))
 
 
 ## [5.110.0](https://github.com/Azure/LogicAppsUX/compare/v5.109.0...v5.110.0) (2025-05-26)
