@@ -55,7 +55,8 @@ import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
-import { resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
+import { buildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -86,6 +87,13 @@ async function deploy(
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
+
+  if (!isNullOrUndefined(workspaceFolder)) {
+    const logicAppNode = workspaceFolder.uri;
+    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, 'lib', 'custom')))) {
+      await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
+    }
+  }
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
