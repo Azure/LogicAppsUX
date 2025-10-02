@@ -8,10 +8,9 @@ import {
   LoggerService,
   type Resource,
   ResourceService,
-  setObjectPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { LogicAppConfigDetails } from '../../state/mcp/resourceSlice';
-import { getAllAppInsights, getAllWorkspaces, getAppInsightsLocations, getRegionMappings } from './queries';
+import { getAllAppInsights, getAllWorkspaces, getAppInsightsLocations, getLocationNormalized, getRegionMappings } from './queries';
 
 export interface ArmTemplate {
   parameters: Record<string, any>;
@@ -72,22 +71,35 @@ export const validateAndCreateAppPayload = async (
 
   const armTemplate = await generateArmTemplate(details);
   const depName = `MCP-LogicAppCreate-${guid().substring(0, 8)}`;
-  const {
-    properties: { provisioningState },
-  } = await ResourceService().executeResourceAction(
-    `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${depName}/validate`,
-    'POST',
-    { 'api-version': '2022-12-01' },
-    {
-      properties: {
-        debugSetting: { detailLevel: 'none' },
-        mode: 'incremental',
-        template: armTemplate.template,
-        parameters: armTemplate.parameters,
+  try {
+    const {
+      properties: { provisioningState },
+    } = await ResourceService().executeResourceAction(
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${depName}/validate`,
+      'POST',
+      { 'api-version': '2022-12-01' },
+      {
+        properties: {
+          debugSetting: { detailLevel: 'none' },
+          mode: 'incremental',
+          template: armTemplate.template,
+          parameters: armTemplate.parameters,
+        },
+      }
+    );
+    return { isValid: equals(provisioningState, 'Succeeded'), deploymentName: depName, template: armTemplate };
+  } catch (ex: any) {
+    const errorInfo = extractErrorInfo(ex.error ?? ex);
+    const errorMessage = getIntl().formatMessage(
+      {
+        defaultMessage: 'An error occurred while validating the deployment. Details: {errorDetails}',
+        id: '8h1+4D',
+        description: 'Error message shown when deployment validation fails',
       },
-    }
-  );
-  return { isValid: equals(provisioningState, 'Succeeded'), deploymentName: depName, template: armTemplate };
+      { errorDetails: errorInfo ? `Code: ${errorInfo.code}, Message: ${errorInfo.message}` : 'Unknown error' }
+    );
+    return { isValid: false, errorMessage };
+  }
 };
 
 export const createLogicAppFromTemplate = async (
@@ -105,21 +117,36 @@ export const createLogicAppFromTemplate = async (
     providersRegistered = await areProvidersRegistered(subscriptionId);
   }
 
-  const { id } = await ResourceService().executeResourceAction(
-    `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}`,
-    'PUT',
-    { 'api-version': '2022-12-01' },
-    {
-      properties: {
-        debugSetting: { detailLevel: 'none' },
-        mode: 'incremental',
-        template: template.template,
-        parameters: template.parameters,
-        validationLevel: 'Template',
+  try {
+    const { id } = await ResourceService().executeResourceAction(
+      `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}`,
+      'PUT',
+      { 'api-version': '2022-12-01' },
+      {
+        properties: {
+          debugSetting: { detailLevel: 'none' },
+          mode: 'incremental',
+          template: template.template,
+          parameters: template.parameters,
+          validationLevel: 'Template',
+        },
+      }
+    );
+    return id;
+  } catch (ex: any) {
+    const errorInfo = extractErrorInfo(ex.error ?? ex);
+    const intl = getIntl();
+    const errorMessage = intl.formatMessage(
+      {
+        defaultMessage: 'An error occurred while submitting the deployment. Details: {errorDetails}',
+        id: '38leUm',
+        description: 'Error message shown when deployment submission fails',
       },
-    }
-  );
-  return id;
+      { errorDetails: errorInfo ? `Code: ${errorInfo.code}, Message: ${errorInfo.message}` : 'Unknown error' }
+    );
+
+    throw new Error(errorMessage);
+  }
 };
 
 export const pollForAppCreateCompletion = async (
@@ -143,23 +170,25 @@ export const pollForAppCreateCompletion = async (
 
     const response = await pollForDeploymentStatus(deploymentUri);
     return response;
-  } catch (error: any) {
+  } catch (ex: any) {
     for (const key of Object.keys(resourceStatuses)) {
       if (equals(resourceStatuses[key], 'running')) {
         resourceStatuses[key] = 'creating';
       }
     }
 
-    return {
-      code: error?.code ?? 'AppCreateFailed',
-      message:
-        error?.message ??
-        getIntl().formatMessage({
-          defaultMessage: 'An error occurred while creating the app.',
-          id: 'Jm7r7H',
-          description: 'Error message shown when app creation fails',
-        }),
-    };
+    const errorInfo = extractErrorInfo(ex.error ?? ex);
+    const intl = getIntl();
+    return errorInfo
+      ? errorInfo
+      : {
+          code: 'DeploymentFailed',
+          message: intl.formatMessage({
+            defaultMessage: 'An error occurred while creating the app. Unknown error.',
+            id: 'k8fofe',
+            description: 'Error message shown when app creation fails',
+          }),
+        };
   }
 };
 
@@ -200,24 +229,28 @@ const pollForDeploymentStatus = async (deploymentUri: string): Promise<{ code: s
   }
 
   const { properties } = response;
+  const intl = getIntl();
   if (equals(properties.provisioningState, 'Running')) {
     return {
       code: 'DeploymentTimeout',
-      message: getIntl().formatMessage({
+      message: intl.formatMessage({
         defaultMessage: 'The deployment is taking longer than expected. Please check the Azure portal for more details.',
-        id: 'Jm7r7H',
+        id: '80T6Ut',
         description: 'Error message shown when deployment times out',
       }),
     };
   }
 
-  if (equals(properties.provisioningState, 'Failed')) {
-    const { code, message } =
-      properties.error?.details && properties.error.details.length === 1 ? properties.error.details[0] : properties.error;
-    return { code, message };
-  }
-
-  return undefined;
+  return equals(properties.provisioningState, 'Failed')
+    ? (extractErrorInfo(properties.error) ?? {
+        code: 'DeploymentFailed',
+        message: intl.formatMessage({
+          defaultMessage: 'The deployment failed with unknown reason. Please check the Azure portal for more details.',
+          id: 'ammu2x',
+          description: 'Error message shown when deployment fails',
+        }),
+      })
+    : undefined;
 };
 
 const registeredSubscriptions: Record<string, boolean> = {};
@@ -295,6 +328,21 @@ const isDeploymentCompletedForResources = (resources: Record<string, string>): b
   Object.keys(resources).some((resource) => equals(resources[resource], 'failed')) ||
   Object.keys(resources).every((resource) => equals(resources[resource], 'succeeded'));
 
+const extractErrorInfo = (error: any): { message: string; code: string } | undefined => {
+  const hasDetails = (errorInfo: any) => errorInfo?.details && Array.isArray(errorInfo.details);
+  let errorInfo = error;
+
+  while (hasDetails(errorInfo)) {
+    errorInfo = errorInfo.details[0];
+  }
+
+  if (errorInfo?.message) {
+    return { message: errorInfo.message, code: errorInfo.code };
+  }
+
+  return undefined;
+};
+
 const generateArmTemplate = async (details: LogicAppResourceDetails): Promise<ArmTemplate> => {
   const template = clone(armTemplate);
   const { subscriptionId, location, appName, appServicePlan, storageAccount, appInsights } = details;
@@ -336,26 +384,17 @@ const generateArmTemplate = async (details: LogicAppResourceDetails): Promise<Ar
         }
 
         const insightsDetails = getNewAppInsightsDetails(appInsightsName, workspaceInfo);
+        template.template.resources[0].properties.siteConfig.appSettings.push(
+          ...(insightsDetails.appSettings as { name: string; value: any }[])
+        );
         template.template.resources[0].dependsOn?.push(insightsDetails.dependsOn as string);
         template.template.resources.push(...(insightsDetails.resources as ArmTemplateResource[]));
-
-        if (insightsDetails.mainResource) {
-          setObjectPropertyValue(
-            template.template.resources[0] as Record<string, any>,
-            insightsDetails.mainResource.path,
-            insightsDetails.mainResource.value
-          );
-        }
       } else {
         const appInsightsInfo = await getAppInsight(subscriptionId, appInsights.id);
         const insightsDetails = getAppInsightsDetails(appInsightsInfo?.connectionString as string);
-        if (insightsDetails.mainResource) {
-          setObjectPropertyValue(
-            template.template.resources[0] as Record<string, any>,
-            insightsDetails.mainResource.path,
-            insightsDetails.mainResource.value
-          );
-        }
+        template.template.resources[0].properties.siteConfig.appSettings.push(
+          ...(insightsDetails.appSettings as { name: string; value: any }[])
+        );
       }
     }
   }
@@ -616,7 +655,6 @@ const armTemplate: ArmTemplate = {
 
 interface DependentResourceDetails {
   appSettings?: { name: string; value: any }[];
-  mainResource?: { path: string[]; value: any };
   dependsOn?: string;
   resources?: ArmTemplateResource[];
 }
@@ -695,24 +733,22 @@ const getNewAppPlanDetails = (): DependentResourceDetails => ({
 });
 
 const getAppInsightsDetails = (connectionString: string): DependentResourceDetails => ({
-  mainResource: {
-    path: ['properties', 'siteConfig', 'appSettings'],
-    value: {
+  appSettings: [
+    {
       name: 'APPLICATIONINSIGHTS_CONNECTION_STRING',
       value: connectionString,
     },
-  },
+  ],
 });
 
 const getNewAppInsightsDetails = (name: string, workspaceInfo: WorkspaceInfo): DependentResourceDetails => {
   const content: DependentResourceDetails = {
-    mainResource: {
-      path: ['properties', 'siteConfig', 'appSettings'],
-      value: {
+    appSettings: [
+      {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING',
-        value: `[reference('microsoft.insights/components/${name}', '2015-05-01').ConnectionString]`,
+        value: `[reference('microsoft.insights/components/${name}', '2020-02-02').ConnectionString]`,
       },
-    },
+    ],
     dependsOn: `microsoft.insights/components/${name}`,
     resources: [
       {
@@ -771,8 +807,6 @@ const parseArmId = (id: string): { subscriptionId: string; resourceGroup: string
     resourceName: parts[8],
   };
 };
-
-const getLocationNormalized = (location: string): string => location.replace(/ /g, '').toLowerCase();
 
 const hasPermission = async (_resourceId: string, _action?: string): Promise<boolean> => {
   return true;

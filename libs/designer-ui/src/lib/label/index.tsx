@@ -1,4 +1,4 @@
-import { css, Label as FluentLabel, type ILabelStyleProps, type ILabelStyles, type IStyleFunctionOrObject } from '@fluentui/react';
+import { Label as FluentLabel, mergeClasses } from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import { useLabelStyles } from './styles';
@@ -18,7 +18,6 @@ export interface LabelProps {
   tooltip?: string;
   requiredMarkerSide?: RequiredMarkerSide;
   style?: React.CSSProperties;
-  styles?: IStyleFunctionOrObject<ILabelStyleProps, ILabelStyles>;
   disabled?: boolean;
 }
 
@@ -37,20 +36,17 @@ export const Label: React.FC<LabelProps> = ({
   tooltip,
   requiredMarkerSide = RequiredMarkerSide.RIGHT,
   style,
-  styles,
   disabled,
 }) => {
   const classes = useLabelStyles();
-
   return (
     <FluentLabel
-      className={css(className, classes.root)}
+      className={mergeClasses(classes.root, className)}
       htmlFor={htmlFor}
       id={id}
       title={tooltip || text}
       disabled={disabled}
-      style={style}
-      styles={styles}
+      style={{ paddingTop: '8px', paddingBottom: '2px', ...style }}
     >
       {requiredMarkerSide === RequiredMarkerSide.LEFT ? <RequiredParameterMarker isRequiredField={isRequiredField} /> : null}
       {text}
