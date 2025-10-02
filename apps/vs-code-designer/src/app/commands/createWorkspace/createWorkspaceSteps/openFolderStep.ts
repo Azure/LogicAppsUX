@@ -8,7 +8,6 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import { commands, Uri } from 'vscode';
-import { tryReopenInDevContainer } from '../../../utils/devContainer';
 import { extensionCommand } from '../../../../constants';
 
 export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext> {
@@ -29,30 +28,22 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
    * @returns A Promise that resolves to void.
    */
   public async execute(context: IProjectWizardContext): Promise<void> {
-    // Resolve the workspace URI (.code-workspace file if present, else the folder path)
+    let workspaceUri: Uri;
+
+    // Check if .code-workspace file exists in project path
     const workspaceFilePath = context.workspaceFilePath;
     context.workspaceFolder = getContainingWorkspace(workspaceFilePath);
-    const workspaceUri: Uri = fs.existsSync(workspaceFilePath) ? Uri.file(workspaceFilePath) : Uri.file(context.workspacePath);
-
-    // Attempt to open directly in a dev container. Prefer 'remote-containers.openWorkspace' when a .code-workspace file exists.
-    // Fallback: open folder then trigger reopen.
-    try {
-      let succeeded: unknown;
-      if (workspaceUri.fsPath.endsWith('.code-workspace')) {
-        succeeded = await commands.executeCommand('remote-containers.openWorkspace', workspaceUri);
-        if (!succeeded) {
-          throw new Error('remote-containers.openWorkspace returned falsy result');
-        }
-      } else {
-        succeeded = await commands.executeCommand('remote-containers.openFolder', workspaceUri);
-        if (!succeeded) {
-          throw new Error('remote-containers.openFolder returned falsy result');
-        }
-      }
-    } catch (_err) {
-      // Fallback path: open locally then request a reopen.
-      await commands.executeCommand(extensionCommand.vscodeOpenFolder, workspaceUri, false);
-      await tryReopenInDevContainer(context as any);
+    if (fs.existsSync(workspaceFilePath)) {
+      workspaceUri = Uri.file(workspaceFilePath);
+    } else {
+      workspaceUri = Uri.file(context.workspacePath);
     }
+
+    // Open folder using executeCommand method of commands object with vscode.openFolder command
+    await commands.executeCommand(
+      extensionCommand.vscodeOpenFolder,
+      workspaceUri,
+      context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */
+    );
   }
 }

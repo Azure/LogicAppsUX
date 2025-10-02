@@ -87,7 +87,7 @@ export interface IProjectWizardContext extends IActionContext {
 }
 
 export const OpenBehavior = {
-  openInContainer: 'OpenInContainer',
+  openInNewWindow: 'OpenInNewWindow',
   alreadyOpen: 'AlreadyOpen',
 } as const;
 export type OpenBehavior = (typeof OpenBehavior)[keyof typeof OpenBehavior];

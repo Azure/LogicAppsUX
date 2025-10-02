@@ -32,7 +32,7 @@ export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardC
     // Create directories based on user choices
     if (context.workspacePath && context.workspaceFilePath.endsWith('.code-workspace') && fs.existsSync(context.workspaceFilePath)) {
       await this.updateWorkspaceFile(context);
-      context.openBehavior = OpenBehavior.openInContainer;
+      context.openBehavior = OpenBehavior.openInNewWindow;
     } else {
       await this.createWorkspaceFile(context);
     }

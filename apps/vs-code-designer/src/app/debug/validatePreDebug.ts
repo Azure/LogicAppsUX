@@ -38,16 +38,14 @@ export async function preDebugValidate(
   try {
     context.telemetry.properties.lastValidateStep = 'funcInstalled';
 
-    if (shouldContinue) {
-      const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
-      context.telemetry.properties.projectLanguage = projectLanguage;
+    const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
+    context.telemetry.properties.projectLanguage = projectLanguage;
 
-      context.telemetry.properties.lastValidateStep = 'workerRuntime';
-      await validateWorkerRuntime(context, projectLanguage, projectPath);
+    context.telemetry.properties.lastValidateStep = 'workerRuntime';
+    await validateWorkerRuntime(context, projectLanguage, projectPath);
 
-      context.telemetry.properties.lastValidateStep = 'emulatorRunning';
-      shouldContinue = await validateEmulatorIsRunning(context, projectPath);
-    }
+    context.telemetry.properties.lastValidateStep = 'emulatorRunning';
+    shouldContinue = await validateEmulatorIsRunning(context, projectPath);
   } catch (error) {
     if (parseError(error).isUserCancelledError) {
       shouldContinue = false;

@@ -12,7 +12,6 @@ import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder
 import { WorkspaceNameStep } from './createWorkspace/createWorkspaceSteps/workspaceNameStep';
 import { WorkspaceFileStep } from './createWorkspace/createWorkspaceSteps/workspaceFileStep';
 import { isLogicAppProjectInRoot } from '../utils/verifyIsProject';
-import { DevcontainerStep } from './createWorkspace/createWorkspaceSteps/devcontainerStep';
 
 export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
   const convertToWorkspaceStartTime = Date.now();
@@ -61,7 +60,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
       if (shouldCreateWorkspace === DialogResponses.yes) {
         const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
           title: localize('convertToWorkspace', 'Convert to workspace'),
-          promptSteps: [new WorkspaceFolderStep(), new WorkspaceNameStep(), new DevcontainerStep(), new WorkspaceFileStep()],
+          promptSteps: [new WorkspaceFolderStep(), new WorkspaceNameStep(), /*new DevcontainerStep(), */ new WorkspaceFileStep()],
           executeSteps: [new OpenFolderStep()],
         });
 

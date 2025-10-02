@@ -16,7 +16,6 @@ import { ProcessPackageStep } from './cloudToLocalSteps/processPackageStep';
 import { SelectFolderForNewWorkspaceStep } from './cloudToLocalSteps/selectFolderForNewWorkspaceStep';
 import { ExtractPackageStep } from './cloudToLocalSteps/extractPackageStep';
 import { WorkspaceSettingsStep } from '../createWorkspace/createWorkspaceSteps/workspaceSettingsStep';
-import { DevcontainerStep } from '../createWorkspace/createWorkspaceSteps/devcontainerStep';
 
 const openFolder = true;
 
@@ -56,7 +55,7 @@ export async function cloudToLocal(
       // TODO(aeldridge): Can we just use WorkspaceFolderStep instead?
       new SelectFolderForNewWorkspaceStep(),
       new WorkspaceNameStep(),
-      new DevcontainerStep(),
+      // new DevcontainerStep(),
       new LogicAppNameStep(),
       await ProjectTypeStep.create(context, options.templateId, options.functionSettings, true),
       new WorkspaceSettingsStep(),
