@@ -57,6 +57,7 @@ import {
   filterRecord,
   excludePathValueFromTarget,
   getRecordEntry,
+  RunAfterType,
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, UIConstants } from '@microsoft/designer-ui';
@@ -423,7 +424,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
-  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata)
+  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) || manifest.properties.runAfter?.type == RunAfterType.NotSupported
     ? undefined
     : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
@@ -806,6 +807,12 @@ interface AgentConnectionInfo {
   };
 }
 
+interface McpConnectionInfo {
+  connectionReference: {
+    connectionReferenenceName: string;
+  }
+}
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -817,6 +824,7 @@ const serializeHost = (
   | ServiceProviderConnectionConfigInfo
   | AgentConnectionInfo
   | HybridTriggerConnectionInfo
+  | McpConnectionInfo
   | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
@@ -885,6 +893,12 @@ const serializeHost = (
           },
         },
       };
+    case ConnectionReferenceKeyFormat.McpConnection:
+      return {
+        connectionReference: {
+          connectionReferenenceName: referenceKey
+        }
+      };
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
@@ -936,9 +950,36 @@ const serializeNestedOperations = async (
 
   if (subGraphDetails) {
     const subGraphNodes = node.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) ?? [];
+    const operationNodes = node.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
     for (const subGraphLocation of Object.keys(subGraphDetails)) {
       const subGraphDetail = getRecordEntry(subGraphDetails, subGraphLocation);
       const subGraphs = subGraphNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
+
+      if (subGraphDetail?.allowOperations) {
+        const operations = operationNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
+            const nestedOperationsPromises = operations.map((nestedOperation) =>
+              serializeOperation(rootState, nestedOperation.id)
+            ) as Promise<LogicAppsV2.OperationDefinition>[];
+            const nestedOperations = await Promise.all(nestedOperationsPromises);
+            const idReplacements = rootState.workflow.idReplacements;
+
+            const newResult = {};
+            safeSetObjectPropertyValue(
+              newResult,
+              [subGraphLocation],
+              nestedOperations.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
+                if (!isNullOrEmpty(action)) {
+                  const actionId = operations[index].id;
+                  actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
+                  return actions;
+                }
+
+                return actions;
+              }, {})
+            );
+
+          result = merge(result, newResult);
+      }
 
       if (subGraphDetail?.isAdditive) {
         for (const subGraph of subGraphs) {

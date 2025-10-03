@@ -2,11 +2,11 @@ import type { Connector, OperationInfo, OperationManifest } from '../../../utils
 import { ConnectionType, equals } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
-import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import { getBuiltInOperationInfo, isBuiltInOperation, mcpclientConnectorId, supportedBaseManifestObjects } from '../base/operationmanifest';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { getClientBuiltInConnectors } from '../base/search';
 import { aiOperationsGroup } from './operations/operationgroups';
-import mcpclient from './manifest/mcpclient';
+import mcpclienttoolconnector from './manifest/mcpclienttoolconnector';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
@@ -21,6 +21,8 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       result[connector.id.toLowerCase()] = connector;
       return result;
     }, {});
+
+    this.allBuiltInConnectors[mcpclienttoolconnector.id.toLowerCase()] = mcpclienttoolconnector;
   }
 
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -46,6 +48,11 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           return {
             connectorId: aiOperationsGroup.id,
             operationId: 'chunktextwithmetadata',
+          };
+        case 'mcpclienttool':
+          return {
+            connectorId: mcpclientConnectorId,
+            operationId: 'mcpclienttool',
           };
         default:
           return getBuiltInOperationInfo(definition, isTrigger);
@@ -153,12 +160,6 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
           queryParameters,
         });
-      }
-
-      if (connectorId.toLowerCase() === 'agent' && operationId.toLowerCase() === 'mcpclient') {
-        // MCP Client is a special built-in connector whose manifest is not returned by the backend service.
-        // So we return the manifest directly from the client side.
-        return mcpclient;
       }
 
       const {

@@ -6,6 +6,7 @@ import { useConnector, useNodeConnectionId, useSwagger } from '../connection/con
 import type { NodeOperation, OperationMetadataState } from '../operation/operationMetadataSlice';
 import {
   OperationManifestService,
+  SUBGRAPH_TYPES,
   SwaggerParser,
   TryGetOperationManifestService,
   getObjectPropertyValue,
@@ -109,16 +110,36 @@ export const useOperationManifest = (
   );
 };
 
+// Check if a node is a simple agent tool (no operation data, just UI node)
+const useIsSimpleAgentTool = (nodeId: string): boolean => {
+  return useSelector((state: RootState) => {
+    const nodeMetadata = getRecordEntry(state.workflow.nodesMetadata, nodeId);
+    return nodeMetadata?.subgraphType === SUBGRAPH_TYPES.AGENT_TOOL;
+  });
+};
+
 export const useOperationQuery = (nodeId: string) => {
   const operationInfo = useOperationInfo(nodeId);
+  const isSimpleAgentTool = useIsSimpleAgentTool(nodeId);
 
   const operationManifestService = OperationManifestService();
   const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '') || isConnectorNode;
 
-  const manifestQuery = useOperationManifest(operationInfo, useManifest);
+  const manifestQuery = useOperationManifest(operationInfo, useManifest && !isSimpleAgentTool);
 
-  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest && !isConnectorNode);
+  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest && !isConnectorNode && !isSimpleAgentTool);
+
+  // For simple agent tools, return a successful empty result to prevent loading spinner
+  if (isSimpleAgentTool) {
+    return {
+      data: null,
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      error: null,
+    };
+  }
 
   return useManifest ? manifestQuery : connectorQuery;
 };

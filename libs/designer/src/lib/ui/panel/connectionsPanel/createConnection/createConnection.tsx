@@ -13,10 +13,12 @@ import {
   Button,
   Checkbox,
   type CheckboxOnChangeData,
+  Combobox,
   Divider,
   MessageBar,
   MessageBarActions,
   MessageBarBody,
+  Option,
 } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
@@ -113,7 +115,7 @@ export interface CreateConnectionProps {
   workflowKind?: string;
 }
 
-export const CreateConnection = (props: CreateConnectionProps) => {
+export const  CreateConnection = (props: CreateConnectionProps) => {
   const {
     classes,
     createButtonTexts,
@@ -682,6 +684,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
   };
 
+  const isMcp = useMemo(() => connector?.properties?.connectionMode === "mcp", [connector]);
+
   // Connection parameters mapping allows grouping several parameters into one custom editor.
   // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
   const allParameterMappings = new Set<string>();
@@ -812,6 +816,26 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               value={connectionDisplayName}
               onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
             />
+          )}
+
+          {isMcp && (
+            <div className="param-row">
+                  <Label
+                    className="label"
+                    text='MCP Server: '
+                    isRequiredField={true}
+                    //htmlFor={'legacy-connection-param-set-select'}
+                    //disabled={isLoading}
+                  />
+                  <Combobox placeholder="Server URL" className="connection-parameter-input">
+                  <Option key="option1" value="http://githubmcp.com/mcp1)">
+                    githubmcp1 (http://githubmcp.com/mcp1)
+                  </Option>
+                  <Option key="option1" value="http://office.com/mcp1)">
+                    githubmcp2 (http://office.com/mcp1)
+                  </Option>
+                </Combobox>
+            </div>
           )}
 
           {/* Operation Parameters (Linked to operation manifest) */}

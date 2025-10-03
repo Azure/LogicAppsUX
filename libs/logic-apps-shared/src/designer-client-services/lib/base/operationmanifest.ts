@@ -41,10 +41,12 @@ import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
+import mcpClientToolManifest from '../standard/manifest/mcpclienttool';
 import handoffManifest from '../standard/manifest/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
+const mcpclienttool = 'mcpclienttool';
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
 const as2Encode = 'as2encode';
@@ -132,6 +134,7 @@ const parsedocument = 'parsedocument';
 export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 export const chunktextwithmetadata = 'chunktextwithmetadata';
 
+export const mcpclientConnectorId = 'connectionProviders/mcpclient';
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 export const appServiceConnectorId = '/connectionProviders/appService';
@@ -161,6 +164,7 @@ const invokenestedagent = 'invokenestedagent';
 const chunktext = 'chunktext';
 
 export const supportedBaseManifestTypes = [
+  mcpclienttool,
   apimanagement,
   appendtoarrayvariable,
   appendtostringvariable,
@@ -236,6 +240,7 @@ export const builtInConnectorIds = {
   dataOperation: dataOperationConnectorId,
   control: controlConnectorId,
   agent: agentConnectorId,
+  mcpclient: mcpclientConnectorId,
   dateTime: dateTimeConnectorId,
   schedule: scheduleConnectorId,
   http: httpConnectorId,
@@ -367,6 +372,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case chunktext:
     case chunktextwithmetadata:
     case parsedocumentwithmetadata:
+    case mcpclienttool:
       return true;
 
     default:
@@ -775,6 +781,7 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
 };
 
 export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
+  [mcpclienttool, mcpClientToolManifest],
   [appendtoarrayvariable, appendArrayManifest],
   [appendtostringvariable, appendStringManifest],
   [addtotime, addToTimeManifest],

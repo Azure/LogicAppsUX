@@ -25,6 +25,7 @@ export interface ConnectionCreationInfo {
   parameterName?: string;
   appSettings?: Record<string, string>;
   additionalParameterValues?: Record<string, string>;
+  mode?: "native" | "mananged"
 }
 
 export interface ConnectionParametersMetadata {

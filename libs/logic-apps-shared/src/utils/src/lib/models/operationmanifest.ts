@@ -74,6 +74,7 @@ export const ConnectionType = {
   ApiManagement: 'apimanagement',
   ApiConnection: 'apiconnection',
   Agent: 'agent',
+  Mcp: 'mcp',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
@@ -85,6 +86,7 @@ export const ConnectionReferenceKeyFormat = {
   ServiceProvider: 'serviceprovider',
   HybridTrigger: 'hybridtrigger',
   AgentConnection: 'agentconnection',
+  McpConnection: 'mcpconnection',
 };
 export type ConnectionReferenceKeyFormat = (typeof ConnectionReferenceKeyFormat)[keyof typeof ConnectionReferenceKeyFormat];
 
@@ -164,11 +166,21 @@ export interface Documentation {
   url: string;
 }
 
+export const RunAfterType = {
+  NotSupported: 'notsupported'
+};
+export type RunAfterType = (typeof RunAfterType)[keyof typeof RunAfterType];
+
+export interface RunAfterSetting {
+  type: RunAfterType;
+}
+
 export interface SubGraphDetail {
   location?: string[];
   inputs?: SwaggerSchema;
   inputsLocation?: string[];
   isAdditive?: boolean;
+  allowOperations?: boolean;
 }
 
 export interface InputsDependency {
@@ -239,6 +251,8 @@ export interface OperationManifestProperties {
     service?: CustomSwaggerServiceDetails;
   };
 
+  runAfter?: RunAfterSetting;
+
   supportedChannels?: SupportedChannels[];
 
   /*
@@ -279,6 +293,7 @@ export type SubgraphType =
   | 'CONDITIONAL_FALSE'
   | 'SWITCH_CASE'
   | 'AGENT_CONDITION'
+  | 'AGENT_TOOL'
   | 'SWITCH_DEFAULT'
   | 'SWITCH_ADD_CASE'
   | 'AGENT_ADD_CONDITON'
@@ -288,6 +303,7 @@ export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   CONDITIONAL_FALSE: 'CONDITIONAL_FALSE',
   SWITCH_CASE: 'SWITCH_CASE',
   AGENT_CONDITION: 'AGENT_CONDITION',
+  AGENT_TOOL: 'AGENT_TOOL',
   SWITCH_DEFAULT: 'SWITCH_DEFAULT',
   SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
   AGENT_ADD_CONDITON: 'AGENT_ADD_CONDITON',

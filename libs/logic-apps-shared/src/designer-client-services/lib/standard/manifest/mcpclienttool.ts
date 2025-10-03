@@ -1,5 +1,6 @@
 import type { OperationManifest } from '../../../../utils/src';
 import { OperationOptions, SettingScope } from '../../../../utils/src';
+import mcpclienttoolconnector from './mcpclienttoolconnector';
 
 export default {
   properties: {
@@ -10,10 +11,35 @@ export default {
     inputs: {
       type: 'object',
       properties: {
-        operations: {
+        headers: {
+          type: 'object',
+          title: 'Headers',
+          description: 'Enter JSON object of request headers',
+          'x-ms-editor': 'dictionary',
+          'x-ms-editor-options': {
+            valueType: 'string',
+          },
+        },
+        allowedTools: {
           type: 'array',
           items: {
             type: 'string',
+          },
+          title: 'Allowed Tools',
+          'x-ms-editor-options': {
+            multiSelect: true,
+            titleSeparator: ',',
+            serialization: {
+              valueType: 'array'
+            }
+          },
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'gettools',
+            },
+            parameters: {},
+            itemPath: '',
+            itemValuePath: 'Name',
           },
         },
       },
@@ -26,38 +52,18 @@ export default {
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
 
+    runAfter: {
+      type: 'notsupported',
+    },
+
     connection: {
       required: true,
-      type: 'agent',
+      type: 'mcp',
+    },
+    connectionReference: {
+      referenceKeyFormat: 'mcpconnection',
     },
 
-    connector: {
-      id: '/connectionProviders/agent',
-      name: 'Agent',
-      properties: {
-        description: 'Agent operations',
-        displayName: 'Agent',
-      },
-      isSecureByDefault: true,
-    } as any,
-
-    settings: {
-      trackedProperties: {
-        scopes: [SettingScope.Action],
-      },
-      timeout: {
-        scopes: [SettingScope.Action],
-      },
-      count: {
-        scopes: [SettingScope.Action],
-      },
-      retryPolicy: {
-        scopes: [SettingScope.Action],
-      },
-      operationOptions: {
-        scopes: [SettingScope.Action],
-        options: [OperationOptions.FailWhenLimitsReached],
-      },
-    },
-  },
+    connector: mcpclienttoolconnector,
+  }
 } as OperationManifest;

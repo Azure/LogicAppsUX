@@ -55,7 +55,7 @@ import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, SUBGRAPH_TYPES, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -141,6 +141,8 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
+  const isAgentTool = useMemo(() => metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_TOOL, [metadata?.subgraphType]);
+
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -167,7 +169,7 @@ const DefaultNode = ({ id }: NodeProps) => {
         loopSources,
         graphId: metadata?.graphId,
       },
-      canDrag: !readOnly && !isTrigger,
+      canDrag: !readOnly && !isTrigger && !isAgentTool,
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
@@ -183,7 +185,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
-  const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
+  const showLeafComponents = useMemo(() => !readOnly && isLeaf && !isAgentTool, [readOnly, isLeaf, isAgentTool]);
 
   const { brandColor, iconUri } = useOperationVisuals(id);
 
@@ -342,7 +344,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           showStatusPill={isMonitoringView && isCardActive}
           title={label}
           icon={iconUri}
-          draggable={!readOnly && !isTrigger}
+          draggable={!readOnly && !isTrigger && !isAgentTool}
           brandColor={brandColor}
           id={id}
           connectionRequired={isConnectionRequired}

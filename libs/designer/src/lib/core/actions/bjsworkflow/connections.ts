@@ -579,6 +579,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
 
     case ConnectionReferenceKeyFormat.HybridTrigger:
       return getHybridTriggerConnectionReferenceKey((operationDefinition as LogicAppsV2.HybridTriggerOperation).inputs);
+
+    case ConnectionReferenceKeyFormat.McpConnection:
+      return (operationDefinition as any).inputs.connectionReference.connectionReferenenceName;
     default:
       throw Error('No known connection reference key type');
   }

@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow, addSimpleAgentToolToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -572,6 +572,25 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
+    addSimpleAgentTool: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { relationshipIds, nodeId, operation } = action.payload;
+      const agentNode = getWorkflowNodeFromGraphState(state, relationshipIds?.graphId);
+      if (!agentNode) {
+        throw new Error('Agent node not found');
+      }
+
+      addSimpleAgentToolToWorkflow(nodeId, agentNode, state.nodesMetadata, state, operation);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'New Simple Agent Tool Node Added',
+        args: [action.payload],
+      });
+    },
     discardAllChanges: (_state: WorkflowState) => {
       // Will implement later, currently here to test host dispatch
       LoggerService().log({
@@ -814,6 +833,7 @@ export const {
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,
+  addSimpleAgentTool,
   discardAllChanges,
   updateRunAfter,
   addRunAfter,

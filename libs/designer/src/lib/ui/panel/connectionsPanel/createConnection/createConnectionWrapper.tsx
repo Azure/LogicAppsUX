@@ -87,7 +87,7 @@ export const CreateConnectionWrapper = () => {
   );
 
   return (
-    <CreateConnectionInternal
+      <CreateConnectionInternal
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
       existingReferences={existingReferences}

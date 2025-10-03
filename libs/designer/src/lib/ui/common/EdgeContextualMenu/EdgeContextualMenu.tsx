@@ -18,7 +18,8 @@ import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
-import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
+import { getOperationManifest } from '../../../core/queries/operation';
+import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab, addAgentToolMetadata } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
 
@@ -57,12 +58,14 @@ export const EdgeContextualMenu = () => {
   const menuData = useEdgeContextMenuData();
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow();
+  const subgraphId = useMemo(() => menuData?.subgraphId, [menuData]);
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
   const isHandoff = useMemo(() => menuData?.isHandoff, [menuData]);
+  const isAgentTool = useMemo(() => menuData?.isAgentTool, [menuData]);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -176,6 +179,13 @@ export const EdgeContextualMenu = () => {
   //   );
   // }, [dispatch, parentId, childId]);
 
+  
+  const addMcpToolText = intl.formatMessage({
+    defaultMessage: 'Add MCP tool',
+    id: 'Nl4O59',
+    description: 'Text that explains no tools exist in this agent',
+  });
+
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
     id: 'mCzkXX',
@@ -262,6 +272,66 @@ export const EdgeContextualMenu = () => {
     });
   }, [dispatch, graphId, childId, parentId]);
 
+  const openAddActionAgentToolPanel = useCallback(() => {
+    const newId = guid();
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = { 
+      graphId,
+      childId,
+      parentId,
+      subgraphId
+    };
+
+    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true }));
+  }, [dispatch, graphId, childId, parentId, subgraphId]);
+
+  const onAddMcpTool = useCallback(() => {
+
+    const mcpClientToolOperation = {
+      name: 'mcpClientTool',
+      id: 'mcpClientTool',
+      type: 'mcpClientTool',
+      properties: {
+        api: {
+          id: 'connectionProviders/mcpclient',
+          name: 'http',
+          brandColor: '#709727',
+          description: 'All Http operations',
+          displayName: 'HTTP',
+          iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/http.svg',
+        },
+        summary: 'HTTP',
+        description: 'Choose a REST API to invoke.',
+        visibility: 'Important',
+        operationType: 'McpClientTool',
+        brandColor: '#709727',
+        iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/http.svg',
+      },
+    } as const;
+
+    if (!graphId) {
+      return;
+    }
+
+    const relationshipIds = { 
+      graphId,
+      childId,
+      parentId,
+      subgraphId
+    };
+
+    dispatch(addOperation({
+      operation: mcpClientToolOperation,
+      relationshipIds,
+      nodeId: 'MCP_Client_Tool',
+      isParallelBranch: false,
+      isTrigger: false,
+      isAgentTool: true,
+    }));
+  }, [dispatch, graphId, childId, parentId, subgraphId]);
+
   const showParallelBranchButton = !isLeaf && parentId;
 
   const [isPasteEnabled, setIsPasteEnabled] = useState<boolean>(false);
@@ -340,6 +410,18 @@ export const EdgeContextualMenu = () => {
   const addActionMenuItem = (
     <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')} disabled={isAddActionDisabled}>
       {newActionText}
+    </MenuItem>
+  );
+
+  const addActionToolMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={openAddActionAgentToolPanel} data-automation-id={automationId('add-agent-action-tool')}>
+      {newActionText}
+    </MenuItem>
+  );
+
+  const addMcpToolMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={onAddMcpTool} data-automation-id={automationId('add-agent-mcp-tool')}>
+      {addMcpToolText}
     </MenuItem>
   );
 
@@ -423,7 +505,12 @@ export const EdgeContextualMenu = () => {
               </>
             ) : (
               <>
-                {isAddActionDisabled ? (
+                {isAgentTool ? (
+                  <>
+                    {addActionToolMenuItem}
+                    {addMcpToolMenuItem}
+                  </>
+                ) : isAddActionDisabled ? (
                   <Tooltip content={a2aAgentLoopDisabledText} relationship="description">
                     {addActionMenuItem}
                   </Tooltip>

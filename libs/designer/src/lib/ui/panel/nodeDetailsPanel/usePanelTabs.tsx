@@ -150,6 +150,10 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       return [parametersTabItem];
     }
 
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.AGENT_TOOL) {
+      return [parametersTabItem, codeViewTabItem, aboutTabItem];
+    }
+
     return [
       monitoringTabItem,
       parametersTabItem,

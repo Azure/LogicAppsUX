@@ -18,7 +18,7 @@ import { addResultSchema } from '../../state/staticresultschema/staticresultsSli
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { addAgentTool, addSimpleAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
@@ -74,6 +74,7 @@ type AddOperationPayload = {
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
   isAddingHandoff?: boolean;
+  isAgentTool?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
@@ -100,7 +101,11 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
       }
     }
 
-    dispatch(addNode(newPayload as any));
+    if (payload.isAgentTool) {
+      dispatch(addSimpleAgentTool(newPayload as any));
+    } else {
+      dispatch(addNode(newPayload as any));
+    }
 
     const nodeOperationInfo = {
       connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle

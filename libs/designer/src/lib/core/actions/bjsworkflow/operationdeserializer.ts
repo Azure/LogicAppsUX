@@ -330,7 +330,7 @@ const processChildGraphAndItsInputs = (
 
   if (subGraphDetails) {
     for (const subGraphKey of Object.keys(subGraphDetails)) {
-      const { inputs, isAdditive, ...restOfManifest } = subGraphDetails[subGraphKey];
+      const { inputs, isAdditive, operationSupported, ...restOfManifest } = subGraphDetails[subGraphKey];
       const subOperation = getPropertyValue(operation, subGraphKey) ?? {};
       if (inputs) {
         const subManifest = {
@@ -338,6 +338,10 @@ const processChildGraphAndItsInputs = (
         } as OperationManifest;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
+            if (operationSupported) {
+
+            }
+
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
               subNodeKey,
               { type: '', kind: '', connectorId: '', operationId: '' },
