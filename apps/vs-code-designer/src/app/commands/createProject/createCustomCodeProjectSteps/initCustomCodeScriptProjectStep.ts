@@ -2,15 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binariesExist } from '../../../utils/binaries';
-import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
-import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
+import { extInstallTaskName, funcWatchProblemMatcher } from '../../../../constants';
 import { InitCustomCodeProjectStepBase } from './initCustomCodeProjectStepBase';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as semver from 'semver';
 import type { TaskDefinition } from 'vscode';
 
 /**
@@ -26,11 +22,6 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
       if (await fse.pathExists(extensionsCsprojPath)) {
         this.useFuncExtensionsInstall = true;
         context.telemetry.properties.hasExtensionsCsproj = 'true';
-      } else if (context.version === FuncVersion.v2) {
-        // no need to check v1 or v3+
-        const currentVersion: string | null = await getLocalFuncCoreToolsVersion();
-        // Starting after this version, projects can use extension bundle instead of running "func extensions install"
-        this.useFuncExtensionsInstall = !!currentVersion && semver.lte(currentVersion, '2.5.553');
       }
     } catch {
       // use default of false
@@ -48,23 +39,12 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
   }
 
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
     return [
       {
         label: 'func: host start',
-        type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
-        ...binariesOptions,
+        type: 'shell',
+        command: 'func',
+        args: ['host', 'start'],
         problemMatcher: funcWatchProblemMatcher,
         dependsOn: this.useFuncExtensionsInstall ? extInstallTaskName : undefined,
         isBackground: true,

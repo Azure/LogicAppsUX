@@ -24,7 +24,6 @@ import {
   startDesignTimeProcess,
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
-import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as portfinder from 'portfinder';
@@ -75,7 +74,7 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
         );
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${designTimeInst.port}`;
-        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+        startDesignTimeProcess(ext.outputChannel, cwd, 'func', 'host', 'start', portArgs);
 
         await waitForDesignTimeStartUp(context, projectPath, url, true);
       } else {

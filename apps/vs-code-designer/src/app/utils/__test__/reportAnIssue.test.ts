@@ -43,9 +43,6 @@ describe('reportAnIssue', () => {
       get: vi.fn((key: string) => {
         const settings = {
           dataMapperVersion: '1.0.0',
-          validateFuncCoreTools: true,
-          autoRuntimeDependenciesPath: '/path/to/deps',
-          autoRuntimeDependenciesValidationAndInstallation: false,
           parameterizeConnectionsInProjectLoad: true,
         };
         return settings[key as keyof typeof settings];
@@ -189,7 +186,6 @@ describe('reportAnIssue', () => {
       const decodedLink = decodeURIComponent(link);
 
       expect(decodedLink).toContain('Extension version: 1.0.0');
-      expect(decodedLink).toContain('Extension bundle version: 1.2.3');
       expect(decodedLink).toContain('OS: darwin');
       expect(decodedLink).toContain('Product: Visual Studio Code');
       expect(decodedLink).toContain('Product version: 1.85.0');
@@ -222,9 +218,6 @@ describe('reportAnIssue', () => {
 
       expect(decodedLink).toContain('Settings');
       expect(decodedLink).toContain('dataMapperVersion');
-      expect(decodedLink).toContain('validateFuncCoreTools');
-      expect(decodedLink).toContain('autoRuntimeDependenciesPath');
-      expect(decodedLink).toContain('autoRuntimeDependenciesValidationAndInstallation');
       expect(decodedLink).toContain('parameterizeConnectionsInProjectLoad');
     });
 
@@ -356,7 +349,6 @@ describe('reportAnIssue', () => {
 
     test('should handle missing extension versions', async () => {
       const originalExtensionVersion = ext.extensionVersion;
-      const originalBundleVersion = ext.latestBundleVersion;
 
       (ext as any).extensionVersion = undefined;
       (ext as any).latestBundleVersion = undefined;
@@ -365,11 +357,9 @@ describe('reportAnIssue', () => {
       const decodedLink = decodeURIComponent(link);
 
       expect(decodedLink).toContain('Extension version: unknown');
-      expect(decodedLink).toContain('Extension bundle version: unknown');
 
       // Restore original values
       (ext as any).extensionVersion = originalExtensionVersion;
-      (ext as any).latestBundleVersion = originalBundleVersion;
     });
 
     test('should handle different OS platforms', async () => {

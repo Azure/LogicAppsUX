@@ -34,12 +34,6 @@ export interface IBundleMetadata {
   version?: string;
 }
 
-export interface IHostJsonV1 {
-  http?: {
-    routePrefix?: string;
-  };
-}
-
 export interface IParsedHostJson {
   readonly routePrefix: string;
   readonly bundle?: IBundleMetadata;

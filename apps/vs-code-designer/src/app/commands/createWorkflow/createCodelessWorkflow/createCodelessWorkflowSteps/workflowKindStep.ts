@@ -64,7 +64,7 @@ export class WorkflowKindStep extends AzureWizardPromptStep<IFunctionWizardConte
       const title: string = localize('createCodeless', 'Create new {0}', template.name);
 
       promptSteps.push(new WorkflowNameStep());
-      executeSteps.push(await CodelessWorkflowCreateStep.createStep(context));
+      executeSteps.push(await CodelessWorkflowCreateStep.createStep());
 
       for (const key of Object.keys(this.triggerSettings)) {
         context[key.toLowerCase()] = this.triggerSettings[key];

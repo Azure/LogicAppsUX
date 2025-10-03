@@ -17,7 +17,7 @@ import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { parameterizeConnections } from '../../../parameterizeConnections';
 import { FileManagement } from '../../iacGestureHelperFunctions';
-import { deploymentDirectory, managementApiPrefix, workflowFileName } from '../../../../../constants';
+import { deploymentDirectory, EXTENSION_BUNDLE_VERSION, managementApiPrefix, workflowFileName } from '../../../../../constants';
 import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { getAuthorizationToken, getCloudHost } from '../../../../utils/codeless/getAuthorizationToken';
@@ -151,7 +151,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       LogicAppsPinnedBundle: ext.pinnedBundleVersion.has(projectPath) ? ext.pinnedBundleVersion.get(projectPath) : false,
       LogicAppsCurrentBundleVersion: ext.currentBundleVersion.has(projectPath)
         ? ext.currentBundleVersion.get(projectPath)
-        : ext.defaultBundleVersion,
+        : EXTENSION_BUNDLE_VERSION,
     };
 
     if (data.definition.metadata) {
