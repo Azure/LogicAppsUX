@@ -44,9 +44,11 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
 
   const parentRunIndex = useParentRunIndex(id);
   const itemRunIndex = useMemo(() => data.repIndex ?? 0, [data.repIndex]);
-  const selectedRunIndexForItem = useRunIndex(id) ?? 0;
+  const selectedRunIndexForItem = useRunIndex(id);
 
   const subgraphType = useNodeMetadata(id)?.subgraphType;
+
+  const isAgentRepetition = useMemo(() => data?.repetition?.type === 'workflows/runs/actions/agentRepetitions', [data?.repetition?.type]);
 
   const selectedNodeId = useOperationPanelSelectedNodeId();
   const selectedParentRunIndexes = useParentRunIndexes(selectedNodeId);
@@ -55,8 +57,13 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
     if (selectedNodeId !== id) {
       return false;
     }
-    if (subgraphType && itemRunIndex !== selectedRunIndexForItem) {
-      return false;
+    if (itemRunIndex !== selectedRunIndexForItem) {
+      if (subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) {
+        return false;
+      }
+      if (isAgentRepetition) {
+        return false;
+      }
     }
     const itemRunIndexes = data?.repetition?.properties?.repetitionIndexes ?? [];
     for (const { scopeName, itemIndex } of itemRunIndexes) {
@@ -73,6 +80,7 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
     selectedParentRunIndexes,
     selectedRunIndexForItem,
     subgraphType,
+    isAgentRepetition,
   ]);
 
   useEffect(() => {
@@ -108,7 +116,7 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
       dispatch(changePanelNode(id));
       dispatch(setFocusNode(id));
 
-      if (data?.repetition.type === 'workflows/runs/actions/agentRepetitions') {
+      if (isAgentRepetition) {
         // Only update if the repetition index has changed
         if (itemRunIndex !== selectedRunIndexForItem) {
           dispatch(clearAllRepetitionRunData());

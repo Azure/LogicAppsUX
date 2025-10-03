@@ -1,8 +1,8 @@
 import { setLayerHostSelector } from '@fluentui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNodesMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { useRunTreeViewStyles } from './RunTreeView.styles';
-import type { HeadlessFlatTreeItemProps } from '@fluentui/react-components';
+import type { HeadlessFlatTreeItemProps, TreeItemValue, TreeOpenChangeData, TreeOpenChangeEvent } from '@fluentui/react-components';
 import { FlatTree, Spinner, useHeadlessFlatTree_unstable, useRestoreFocusTarget } from '@fluentui/react-components';
 import { useAllIcons } from '../../../core/state/operation/operationSelector';
 import { getAgentActionsRepetition, getAgentRepetitions, getNodeRepetitions } from '../../../core';
@@ -45,14 +45,37 @@ export const RunTreeView = () => {
 
   const { data: agentRepetitionData } = useTimelineRepetitions();
 
-  const [treeItemsRecord, setTreeItemsRecord] = useState<Record<string, FlatItem>>({});
+  const [openItems, setOpenItems] = useState<Set<TreeItemValue>>(new Set());
 
+  const onOpenChange = useCallback((_e: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
+    // Prevent clicks from toggling open state
+    if (data.type === 'Click' || data.type === 'Enter') {
+      _e.preventDefault();
+      _e.stopPropagation();
+      return;
+    }
+    setOpenItems(data.openItems);
+  }, []);
+
+  const [treeItemsRecord, setTreeItemsRecord] = useState<Record<string, FlatItem>>({});
+  const addTreeItem = useCallback((item: FlatItem) => {
+    setOpenItems((prev) => new Set(prev).add(item.parentValue ?? item.value));
+    setTreeItemsRecord((prev) => ({
+      ...prev,
+      [item.value]: item,
+    }));
+  }, []);
+
+  // Reset tree items when run changes
+  useEffect(() => {
+    setTreeItemsRecord({});
+  }, [selectedRun?.id]);
+
+  // Build the tree
   useEffect(() => {
     if (!actions) {
       return;
     }
-
-    // setTreeItemsRecord({});
 
     const countRecord: Record<string, number> = {};
     const getCountRecord = (id: string) => countRecord[id] ?? 0;
@@ -105,10 +128,7 @@ export const RunTreeView = () => {
               },
             };
             addToCountRecord(id);
-            setTreeItemsRecord((prev) => ({
-              ...prev,
-              [newId]: newTreeData,
-            }));
+            addTreeItem(newTreeData);
           });
         });
       } else if ((action?.iterationCount ?? 0) > 0) {
@@ -145,10 +165,7 @@ export const RunTreeView = () => {
               },
             };
             addToCountRecord(id);
-            setTreeItemsRecord((prev) => ({
-              ...prev,
-              [newAgentId]: newTreeData,
-            }));
+            addTreeItem(newTreeData);
 
             // Also add any tools
             const tools = (agentRepetition?.properties as any)?.tools ?? {};
@@ -179,10 +196,7 @@ export const RunTreeView = () => {
                   },
                 };
                 addToCountRecord(toolId);
-                setTreeItemsRecord((prev) => ({
-                  ...prev,
-                  [toolRepetitionId]: newToolTreeData,
-                }));
+                addTreeItem(newToolTreeData);
               }
             });
 
@@ -225,10 +239,7 @@ export const RunTreeView = () => {
                     },
                   };
                   addToCountRecord(actionId);
-                  setTreeItemsRecord((prev) => ({
-                    ...prev,
-                    [newActionId]: newTreeData,
-                  }));
+                  addTreeItem(newTreeData);
                   // Reassign start / end times to the parent tool if needed
                   setTreeItemsRecord((prev) => {
                     const currentParentStartTime = prev[parentRepetitionId]?.data?.startTime ?? 0;
@@ -275,17 +286,15 @@ export const RunTreeView = () => {
           return;
         }
 
-        setTreeItemsRecord((prev) => ({
-          ...prev,
-          [id]: {
-            value: id,
-            ...(parentNodeId !== 'root' ? { parentValue: parentNodeId } : {}),
-            content: id,
-            data: {
-              startTime: action?.startTime,
-            },
+        const newTreeData = {
+          value: id,
+          ...(parentNodeId !== 'root' ? { parentValue: parentNodeId } : {}),
+          content: id,
+          data: {
+            startTime: action?.startTime,
           },
-        }));
+        };
+        addTreeItem(newTreeData);
       }
     });
 
@@ -327,10 +336,7 @@ export const RunTreeView = () => {
                 startTime: action?.startTime,
               },
             };
-            setTreeItemsRecord((prev) => ({
-              ...prev,
-              [newActionId]: newTreeData,
-            }));
+            addTreeItem(newTreeData);
           });
         });
       });
@@ -345,12 +351,9 @@ export const RunTreeView = () => {
           startTime: agentRepetition.properties?.startTime,
         },
       };
-      setTreeItemsRecord((prev) => ({
-        ...prev,
-        [newAgentId]: newTreeData,
-      }));
+      addTreeItem(newTreeData);
     });
-  }, [actions, nodesMetadata, operationsInfo, selectedRun, agentRepetitionData]);
+  }, [actions, nodesMetadata, operationsInfo, selectedRun, agentRepetitionData, addTreeItem]);
 
   const treeItems = useMemo(() => {
     return Object.values(treeItemsRecord).sort((a, b) => {
@@ -359,7 +362,8 @@ export const RunTreeView = () => {
   }, [treeItemsRecord]);
 
   const flatTree = useHeadlessFlatTree_unstable(treeItems, {
-    defaultOpenItems: treeItems.map((item) => item.value),
+    onOpenChange,
+    openItems,
   });
   const focusTargetAttribute = useRestoreFocusTarget();
 
