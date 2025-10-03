@@ -273,9 +273,10 @@ const DesignerEditor = () => {
     [dispatch, showMonitoringView]
   );
 
-  const originalSettings: Record<string, string> = {
-    ...(settingsData?.properties ?? {}),
-  };
+  const originalSettings: Record<string, string> = useMemo(() => {
+    return { ...(settingsData?.properties ?? {}) };
+  }, [settingsData?.properties]);
+
   const originalParametersData: ParametersData = clone(parameters ?? {});
   const originalNotesData: NotesData = clone(notes ?? {});
 
@@ -594,7 +595,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
-            isMultiVariableEnabled={hostOptions.enableMultiVariable}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable && !isMonitoringView}
           >
             <div
               style={{
