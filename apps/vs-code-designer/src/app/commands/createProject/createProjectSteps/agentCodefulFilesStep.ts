@@ -7,7 +7,6 @@ import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import AdmZip from 'adm-zip';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -42,8 +41,6 @@ export class AgentCodefulFilesStep extends AzureWizardPromptStep<IProjectWizardC
 
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(context.projectPath, logicAppName);
-
-    await this.createWorkerIsolated(context.projectPath);
   }
 
   /**
@@ -76,15 +73,5 @@ export class AgentCodefulFilesStep extends AzureWizardPromptStep<IProjectWizardC
     const csprojFilePath = path.join(functionFolderPath, `${logicAppName}.csproj`);
 
     await fs.writeFile(csprojFilePath, templateContent);
-  }
-
-  private async createWorkerIsolated(targetFolder: string): Promise<void> {
-    const zipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'AgentIsolatedWorker.zip');
-    try {
-      const zip = new AdmZip(zipFile);
-      await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
-    } catch (error) {
-      throw new Error(`Error extracting worker isolated: ${error}`);
-    }
   }
 }
