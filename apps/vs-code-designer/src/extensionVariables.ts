@@ -43,6 +43,7 @@ type DesignTimeInstance = {
 export namespace ext {
   export let context: ExtensionContext;
   export let codefulEnabled: boolean;
+  export let useMSI: boolean;
   export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
