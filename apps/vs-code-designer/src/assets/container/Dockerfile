@@ -44,21 +44,22 @@ RUN set -eux; \
 # Download & install Core Tools (func)
 # -----------------------------
 RUN set -eux; \
-    echo "Downloading Azure Functions Core Tools version: ${FUNCTIONS_CORE_TOOLS_VERSION} for ${TARGETOS}/${TARGETARCH}"; \
-    case "${TARGETARCH}" in \
-      amd64) FUNC_ARCH="x64" ;; \
-      arm64) FUNC_ARCH="arm64" ;; \
-      *) echo "Unsupported architecture: ${TARGETARCH}" >&2; exit 1 ;; \
-    esac; \
-    FILENAME="Azure.Functions.Cli.${TARGETOS}-${FUNC_ARCH}.${FUNCTIONS_CORE_TOOLS_VERSION}.zip"; \
+    echo "Downloading Azure Functions Core Tools version: ${FUNCTIONS_CORE_TOOLS_VERSION}"; \
+    FILENAME="Azure.Functions.Cli.${FUNCTIONS_CORE_TOOLS_OS_PLATFORM}-${FUNCTIONS_CORE_TOOLS_ARCH}.${FUNCTIONS_CORE_TOOLS_VERSION}.zip"; \
     wget "https://github.com/Azure/azure-functions-core-tools/releases/download/${FUNCTIONS_CORE_TOOLS_VERSION}/${FILENAME}" -O "/tmp/${FILENAME}"; \
     mkdir -p "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}"; \
     unzip -q "/tmp/${FILENAME}" -d "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}"; \
     rm -f "/tmp/${FILENAME}"; \
     chmod -R a+rX "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}"; \
-    for executable in func gozip in-proc8/func in-proc6/func; do \
-      if [ -f "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/${executable}" ]; then chmod 755 "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/${executable}"; fi; \
-    done; \
+    for executable in \
+      "func" \
+      "gozip" \
+      "in-proc8/func" \
+      "in-proc6/func"; do \
+        if [ -f "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/${executable}" ]; then \
+          chmod 755 "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/${executable}"; \
+        fi; \
+      done; \
     ln -sf "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func" /usr/local/bin/func; \
     ln -sf "/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}/func" /usr/bin/func
 
