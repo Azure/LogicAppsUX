@@ -6,6 +6,33 @@ This directory contains the Docker configuration for the Logic Apps Standard Dev
 
 - **Docker Hub Repository**: `carloscastrotrejo/logicapps-dev`
 - **Public URL**: https://hub.docker.com/r/carloscastrotrejo/logicapps-dev
+- **Supported Platforms**: 
+  - `linux/amd64` (Intel/AMD processors)
+  - `linux/arm64` (Apple Silicon M1/M2/M3, ARM servers)
+
+## 🌐 Multi-Platform Support
+
+The image is built using **Docker buildx** to support multiple architectures in a single image manifest. When users pull the image, Docker automatically downloads the correct architecture for their platform - no manual selection needed!
+
+### Benefits
+
+✅ **Single Image Tag**: One tag (e.g., `v1.0.0`) works for all platforms  
+✅ **Automatic Detection**: Docker automatically pulls the right architecture  
+✅ **Better Performance**: Native execution on both Intel and ARM processors  
+✅ **No Platform Warnings**: Eliminates "platform mismatch" warnings  
+✅ **Future-Proof**: Ready for ARM-based cloud infrastructure
+
+### How It Works
+
+When you run:
+```bash
+docker pull carloscastrotrejo/logicapps-dev:latest
+```
+
+Docker:
+1. Checks your system architecture
+2. Downloads the matching image (amd64 or arm64)
+3. No `--platform` flag needed!
 
 ## 🚀 Quick Start - Build & Push
 
@@ -36,27 +63,43 @@ Use the provided script to build and push in one command:
 The script will:
 1. ✅ Verify Docker is running
 2. ✅ Check Docker Hub authentication
-3. 🔨 Build the Docker image
-4. 🏷️ Tag the image (both version + latest)
-5. 🚀 Push to Docker Hub
+3. � Setup Docker buildx for multi-platform builds
+4. 🔨 Build the image for **both amd64 and arm64** architectures
+5. 🚀 Push to Docker Hub with manifest supporting both platforms
+
+**Note**: Multi-platform builds take longer (several minutes) because they build for multiple architectures.
 
 ## 📝 Manual Build & Push (Alternative)
 
-If you prefer to run commands manually:
+If you prefer to run commands manually with multi-platform support:
 
 ```bash
 # Navigate to the container directory
 cd apps/vs-code-designer/src/assets/container/
 
-# Build the image
-docker build -t carloscastrotrejo/logicapps-dev:v1.0.0 .
+# Create and use buildx builder (first time only)
+docker buildx create --name multiplatform-builder --use
+docker buildx inspect --bootstrap
 
-# Tag as latest
-docker tag carloscastrotrejo/logicapps-dev:v1.0.0 carloscastrotrejo/logicapps-dev:latest
+# Build for multiple platforms and push
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t carloscastrotrejo/logicapps-dev:v1.0.0 \
+  -t carloscastrotrejo/logicapps-dev:latest \
+  --push \
+  .
+```
 
-# Push both tags
-docker push carloscastrotrejo/logicapps-dev:v1.0.0
-docker push carloscastrotrejo/logicapps-dev:latest
+### Single Platform Build (Faster for Testing)
+
+For faster local testing, you can build for just your platform:
+
+```bash
+# Build only for your current platform
+docker build -t carloscastrotrejo/logicapps-dev:test .
+
+# Or specify a platform
+docker build --platform linux/amd64 -t carloscastrotrejo/logicapps-dev:test .
 ```
 
 ## 🔢 Version Management
@@ -87,17 +130,28 @@ When you update versions in the Dockerfile, update the image tag accordingly.
 
 ## 👥 For Team Members - Pulling the Image
 
-Team members can pull and use the image in several ways:
+Team members can pull and use the image in several ways. **Docker automatically detects and pulls the correct architecture** for their platform!
 
 ### Option 1: Pull Directly
 
 ```bash
-# Pull latest version
+# Pull latest version (auto-detects your platform)
 docker pull carloscastrotrejo/logicapps-dev:latest
 
 # Pull specific version
 docker pull carloscastrotrejo/logicapps-dev:v1.0.0
+
+# Verify the platform
+docker image inspect carloscastrotrejo/logicapps-dev:latest | grep Architecture
 ```
+
+### Platform Detection
+
+- **Intel/AMD Macs & PCs**: Automatically pulls `linux/amd64`
+- **Apple Silicon (M1/M2/M3)**: Automatically pulls `linux/arm64`
+- **ARM Servers**: Automatically pulls `linux/arm64`
+
+No need to specify `--platform` - Docker handles it automatically!
 
 ### Option 2: Use in devcontainer.json
 
@@ -149,20 +203,26 @@ services:
 
 ## 🔍 Verify Published Image
 
-Check your image on Docker Hub:
+Check your multi-platform image on Docker Hub:
 
 ```bash
 # View local images
 docker images carloscastrotrejo/logicapps-dev
 
-# Inspect image details
-docker inspect carloscastrotrejo/logicapps-dev:latest
+# Inspect image details (shows supported platforms)
+docker buildx imagetools inspect carloscastrotrejo/logicapps-dev:latest
 
-# View image history
-docker history carloscastrotrejo/logicapps-dev:latest
+# This will show both platforms:
+# - linux/amd64
+# - linux/arm64
+
+# Check what platform you pulled locally
+docker image inspect carloscastrotrejo/logicapps-dev:latest | grep -A 3 "Architecture"
 ```
 
 Or visit: https://hub.docker.com/r/carloscastrotrejo/logicapps-dev/tags
+
+On Docker Hub, you'll see both architectures listed for each tag.
 
 ## 🛠️ Troubleshooting
 
@@ -177,11 +237,20 @@ docker login
 # Check Docker is running
 docker info
 
-# Clean up old images
-docker system prune -a
+# Ensure buildx is available
+docker buildx version
+
+# Clean up and recreate builder
+docker buildx rm multiplatform-builder
+docker buildx create --name multiplatform-builder --use
+docker buildx inspect --bootstrap
 
 # Rebuild without cache
-docker build --no-cache -t carloscastrotrejo/logicapps-dev:v1.0.0 .
+docker buildx build --no-cache \
+  --platform linux/amd64,linux/arm64 \
+  -t carloscastrotrejo/logicapps-dev:v1.0.0 \
+  --push \
+  .
 ```
 
 ### Push Fails
