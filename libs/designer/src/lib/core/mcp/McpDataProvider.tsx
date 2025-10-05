@@ -28,9 +28,9 @@ export const McpDataProvider = ({ connectorId, resourceDetails, services, onReso
 
   useEffect(() => {
     if (!servicesInitialized && services) {
-      dispatch(initializeMcpData({ services, connectorId }));
+      dispatch(initializeMcpData({ services, connectorId, logicAppName: resourceDetails.logicAppName }));
     }
-  }, [dispatch, servicesInitialized, services, connectorId]);
+  }, [dispatch, servicesInitialized, services, connectorId, resourceDetails.logicAppName]);
 
   useEffect(() => {
     dispatch(

@@ -48,9 +48,6 @@ export const mcpSelectionSlice = createSlice({
     selectOperationIdToEdit: (state, action: PayloadAction<string | undefined>) => {
       state.selectedOperationId = action.payload;
     },
-    clearSelectedOperations: (state) => {
-      state.selectedOperations = [];
-    },
     clearAllSelections: clearAllSelectionsReducer,
   },
   extraReducers: (builder) => {
@@ -86,7 +83,6 @@ export const mcpSelectionSlice = createSlice({
   },
 });
 
-export const { selectConnectorId, selectOperations, clearSelectedOperations, clearAllSelections, selectOperationIdToEdit } =
-  mcpSelectionSlice.actions;
+export const { selectConnectorId, selectOperations, clearAllSelections, selectOperationIdToEdit } = mcpSelectionSlice.actions;
 
 export default mcpSelectionSlice.reducer;

@@ -21,9 +21,8 @@ import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcp
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
-import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
+import { deinitializeOperations, MCP_ConnectionKey } from '../../../core/actions/bjsworkflow/mcp';
 import ConnectorIcon from '../../../common/images/mcp/addconnector.svg';
-import { MCP_ConnectionKey } from '../panel/connector/usePanelTabs';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -36,11 +35,12 @@ const lastCellStyles = {
 export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: () => void; addDisabled: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, connectionsMapping, connectionReferences, disableConnectorSelection, connectorId } = useSelector(
+  const { operationInfos, connectionsMapping, connectionReferences, logicAppName, disableConnectorSelection, connectorId } = useSelector(
     (state: RootState) => ({
       operationInfos: state.operations.operationInfo,
       connectionsMapping: state.connection.connectionsMapping,
       connectionReferences: state.connection.connectionReferences,
+      logicAppName: state.resource.logicAppName,
       disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
       connectorId: state.mcpSelection.selectedConnectorId,
     })
@@ -160,6 +160,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
 
+  const shouldDisableEdits = useMemo(() => disableConnectorSelection && !logicAppName, [disableConnectorSelection, logicAppName]);
   const handleEditConnector = useCallback(
     (connectorId: string) => {
       // Get all operations for this specific connector
@@ -233,7 +234,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
                   text: 'msla-template-create-connector-text',
                 }}
                 connectorId={item.connectorId}
-                onNameClick={() => handleEditConnector(item.connectorId)}
+                onNameClick={shouldDisableEdits ? undefined : () => handleEditConnector(item.connectorId)}
               />
             </TableCell>
             <TableCell style={connectorTableCellStyles}>
@@ -253,17 +254,19 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
                 appearance="subtle"
                 size="small"
                 icon={<Edit24Regular />}
+                disabled={shouldDisableEdits}
                 onClick={() => handleEditConnector(item.connectorId)}
                 aria-label={INTL_TEXT.editButtonLabel}
               />
-              <Button
-                appearance="subtle"
-                size="small"
-                icon={<Delete24Regular />}
-                disabled={disableConnectorSelection}
-                onClick={() => handleDeleteConnector(item.connectorId)}
-                aria-label={INTL_TEXT.deleteButtonLabel}
-              />
+              {disableConnectorSelection ? null : (
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Delete24Regular />}
+                  onClick={() => handleDeleteConnector(item.connectorId)}
+                  aria-label={INTL_TEXT.deleteButtonLabel}
+                />
+              )}
             </TableCell>
           </TableRow>
         ))}

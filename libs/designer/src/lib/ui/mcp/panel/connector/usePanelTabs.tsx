@@ -6,6 +6,7 @@ import {
   initializeOperationsMetadata,
   initializeConnectionMappings,
   deinitializeOperations,
+  MCP_ConnectionKey,
 } from '../../../../core/actions/bjsworkflow/mcp';
 import { operationsTab } from './tabs/operationsTab';
 import { useIntl } from 'react-intl';
@@ -16,7 +17,6 @@ import { getResourceNameFromId, LogEntryLevel, LoggerService } from '@microsoft/
 import constants from '../../../../common/constants';
 import { clearAllSelections } from '../../../../core/state/mcp/mcpselectionslice';
 
-export const MCP_ConnectionKey = 'mcp-placeholder';
 export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -46,17 +46,16 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
   const hasSelectConnectorTab = useMemo(() => currentPanelView === McpPanelView.SelectConnector, [currentPanelView]);
   const isUpdateOperationsView = useMemo(() => currentPanelView === McpPanelView.UpdateOperation, [currentPanelView]);
   const isCreateConnectionView = useMemo(() => currentPanelView === McpPanelView.CreateConnection, [currentPanelView]);
-  const hasValidConnection = useMemo(() => {
-    if (!selectedOperations.length) {
-      return false;
-    }
+  const isSetupToolsView = useMemo(() => currentPanelView === McpPanelView.SelectOperation, [currentPanelView]);
 
-    return selectedOperations.some((operationId) => {
+  const hasValidConnection = useMemo(() => {
+    const nodeIds = disableConnectorSelection && selectedOperations.length === 0 ? [MCP_ConnectionKey] : selectedOperations;
+    return nodeIds.some((operationId) => {
       const nodeId = operationId;
       const referenceKey = connectionsMapping[nodeId];
       return referenceKey && connectionReferences[referenceKey];
     });
-  }, [selectedOperations, connectionsMapping, connectionReferences]);
+  }, [disableConnectorSelection, selectedOperations, connectionsMapping, connectionReferences]);
 
   const newlySelectedOperationIds = useMemo(() => {
     return selectedOperations.filter((operationId) => !Object.keys(operationInfos).includes(operationId));
@@ -68,7 +67,10 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
 
   const handleSubmit = useCallback(
     (submitLocation: string) => {
-      if (selectedConnectorId && selectedOperations.length > 0) {
+      if (selectedConnectorId && disableConnectorSelection && selectedOperations.length === 0) {
+        dispatch(closePanel());
+        dispatch(clearAllSelections());
+      } else if (selectedConnectorId && selectedOperations.length > 0) {
         // Deinitializing deselected operations
         if (deselectedOperationIds.length > 0) {
           dispatch(deinitializeOperations({ operationIds: deselectedOperationIds }));
@@ -100,7 +102,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         }
       }
     },
-    [dispatch, selectedConnectorId, selectedOperations, newlySelectedOperationIds, deselectedOperationIds]
+    [selectedConnectorId, disableConnectorSelection, selectedOperations, dispatch, deselectedOperationIds, newlySelectedOperationIds]
   );
 
   const isOperationsTabDisabled = useMemo(() => !selectedConnectorId, [selectedConnectorId]);
@@ -177,7 +179,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         isPrimaryButtonDisabled: isConnectionsTabDisabled,
         onPrimaryButtonClick: isUpdateOperationsView
           ? handleAddActions
-          : () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
+          : () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : isSetupToolsView ? 'SetupTools' : 'EditConnector'),
         isPrimaryButtonLoading: isInitializingConnections,
         previousTabId: hasSelectConnectorTab ? constants.MCP_PANEL_TAB_NAMES.CONNECTORS : undefined,
         tabStatusIcon: operationsError ? 'error' : undefined,
@@ -194,6 +196,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       hasSelectConnectorTab,
       operationsError,
       onConnectionsTabNavigation,
+      isSetupToolsView,
     ]
   );
 
@@ -203,12 +206,16 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         intl,
         dispatch,
         selectedConnectorId as string,
+        // If connector is fixed we use the placeholder key to add the connection, else the operation ids.
         selectedOperations?.length === 0 && disableConnectorSelection ? [MCP_ConnectionKey] : selectedOperations,
         {
           isTabDisabled: isConnectionsTabDisabled,
-          onTabClick: () => onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
-          isPrimaryButtonDisabled: !selectedConnectorId || selectedOperations.length === 0 || !hasValidConnection,
-          onPrimaryButtonClick: () => handleSubmit(hasSelectConnectorTab ? 'AddConnector' : 'EditConnector'),
+          onTabClick: () =>
+            onConnectionsTabNavigation(hasSelectConnectorTab ? 'AddConnector' : isSetupToolsView ? 'SetupTools' : 'EditConnector'),
+          isPrimaryButtonDisabled:
+            !selectedConnectorId || (!disableConnectorSelection && selectedOperations.length === 0) || !hasValidConnection,
+          onPrimaryButtonClick: () =>
+            handleSubmit(hasSelectConnectorTab ? 'AddConnector' : isSetupToolsView ? 'SetupTools' : 'EditConnector'),
           previousTabId: isCreateConnectionView ? undefined : constants.MCP_PANEL_TAB_NAMES.OPERATIONS,
         }
       ),
@@ -223,6 +230,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       isCreateConnectionView,
       onConnectionsTabNavigation,
       hasSelectConnectorTab,
+      isSetupToolsView,
       handleSubmit,
     ]
   );
@@ -232,14 +240,22 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     if (hasSelectConnectorTab) {
       validTabs.push(connectorsTabItem);
     }
-    if (!isCreateConnectionView) {
+    if (!isCreateConnectionView || isSetupToolsView) {
       validTabs.push(operationsTabItem);
     }
-    if (!isUpdateOperationsView) {
+    if (!isUpdateOperationsView || isSetupToolsView) {
       validTabs.push(connectionsTabItem);
     }
     return validTabs;
-  }, [isUpdateOperationsView, isCreateConnectionView, hasSelectConnectorTab, connectorsTabItem, operationsTabItem, connectionsTabItem]);
+  }, [
+    hasSelectConnectorTab,
+    isCreateConnectionView,
+    isSetupToolsView,
+    isUpdateOperationsView,
+    connectorsTabItem,
+    operationsTabItem,
+    connectionsTabItem,
+  ]);
 
   return tabs;
 };

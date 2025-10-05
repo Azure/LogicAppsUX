@@ -48,7 +48,7 @@ export const McpStandard = () => {
       subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
       resourceGroup: 'TestACSRG',
       location: 'westus',
-      logicAppName: 'prititestcreate1',
+      //logicAppName: 'prititestcreate1',
     }),
     []
   );

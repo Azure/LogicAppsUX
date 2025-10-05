@@ -1,8 +1,8 @@
 import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
-import { Add16Regular } from '@fluentui/react-icons';
+import { Add16Regular, Settings16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView, setAutoOpenPanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
@@ -42,6 +42,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
   const connectorExists = useMemo(() => {
     return (disableConnectorSelection && !!selectedConnectorId) || Object.keys(operations.operationInfo).length > 0;
   }, [disableConnectorSelection, operations.operationInfo, selectedConnectorId]);
+
   const hasIncompleteOperationConfiguration = useMemo(() => {
     return Object.entries(operations.inputParameters).some(([operationId, nodeInputs]) =>
       operationHasEmptyStaticDependencies(nodeInputs, operations.dependencies[operationId]?.inputs ?? {})
@@ -83,20 +84,28 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       ],
     });
   }, [logicAppName, resourceGroup, location, subscriptionId, operations.operationInfo]);
-  const handleAddOperations = useCallback(() => {
+
+  const setupConnectorAndOperations = useCallback(() => {
     // Get all operations for this specific connector
     const selectedOperations: string[] = [];
-    let selectedConnectorId: string | undefined;
+    let connectorIdToSet: string | undefined;
     for (const { connectorId, operationId } of Object.values(operations.operationInfo)) {
-      if (!selectedConnectorId) {
-        selectedConnectorId = connectorId;
+      if (!connectorIdToSet) {
+        connectorIdToSet = connectorId;
       }
 
       selectedOperations.push(operationId);
     }
 
-    dispatch(selectConnectorId(selectedConnectorId));
-    dispatch(selectOperations(selectedOperations));
+    if (connectorIdToSet !== undefined) {
+      dispatch(selectConnectorId(connectorIdToSet));
+      dispatch(selectOperations(selectedOperations));
+    }
+  }, [dispatch, operations.operationInfo]);
+
+  const handleAddOperations = useCallback(() => {
+    setupConnectorAndOperations();
+
     dispatch(
       openMcpPanelView({
         panelView: McpPanelView.UpdateOperation,
@@ -109,7 +118,16 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       message: 'Add actions button clicked',
       args: [`connectorId:${selectedConnectorId}`],
     });
-  }, [dispatch, operations.operationInfo]);
+  }, [dispatch, selectedConnectorId, setupConnectorAndOperations]);
+
+  const handleSetup = useCallback(() => {
+    setupConnectorAndOperations();
+    dispatch(
+      openMcpPanelView({
+        panelView: McpPanelView.SelectOperation,
+      })
+    );
+  }, [dispatch, setupConnectorAndOperations]);
 
   const handleRegisterMcpServer = useCallback(async () => {
     try {
@@ -146,7 +164,11 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const handleAppCreate = useCallback(() => {
     setShowSuccessToast(!showSuccessToast);
-  }, [showSuccessToast]);
+
+    if (!logicAppName && disableConnectorSelection) {
+      dispatch(setAutoOpenPanel(true));
+    }
+  }, [disableConnectorSelection, dispatch, logicAppName, showSuccessToast]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -166,8 +188,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Learn more link text.',
     }),
     howToSetup: intl.formatMessage({
-      id: 'sBvjoY',
-      defaultMessage: 'How to set up a logic app?',
+      id: 'bJoBEu',
+      defaultMessage: 'Learn more about how to set up a logic app',
       description: 'Title for the setup instructions link',
     }),
     howToSetupConnectors: intl.formatMessage({
@@ -186,15 +208,15 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
         'Connectors provide actions for you to create tools. Select a connector and the actions you want. Finish by creating any needed connections.',
       description: 'Description for the connectors section',
     }),
-    resourcesTitle: intl.formatMessage({
-      id: 'CaiUX0',
-      defaultMessage: 'Resources',
-      description: 'Title for the resources section',
+    detailsSectionTitle: intl.formatMessage({
+      id: '7pjV7b',
+      defaultMessage: 'Project details',
+      description: 'Title for the details section',
     }),
-    resourcesDescription: intl.formatMessage({
-      id: 'x2Osbf',
-      defaultMessage: 'Select an empty logic app.',
-      description: 'Description for the resources section',
+    detailsSectionDescription: intl.formatMessage({
+      id: 'cguy+s',
+      defaultMessage: 'Choose an empty logic app or create a new logic app.',
+      description: 'Description for the details section',
     }),
     mainSectionDescription: intl.formatMessage({
       id: 'qif1I+',
@@ -231,6 +253,11 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       id: '9III/+',
       defaultMessage: 'Add',
       description: 'Button text to add connector',
+    }),
+    setupButton: intl.formatMessage({
+      id: '90eaja',
+      defaultMessage: 'Setup',
+      description: 'Button text to setup tools',
     }),
     loadingConnectorsText: intl.formatMessage({
       id: 'TWeskw',
@@ -302,26 +329,25 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
 
       <div className={styles.scrollableContent}>
         {/* Details Section */}
-        <div className={styles.mainSection}>
+        <div className={styles.section}>
           <div className={styles.sectionHeader}>
             <Text size={400} weight="bold">
-              {INTL_TEXT.resourcesTitle}
+              {INTL_TEXT.detailsSectionTitle}
             </Text>
           </div>
 
           <DescriptionWithLink
             className={styles.sectionDescription}
-            text={INTL_TEXT.resourcesDescription}
+            text={INTL_TEXT.detailsSectionDescription}
             linkUrl="https://go.microsoft.com/fwlink/?linkid=2330610"
             linkText={INTL_TEXT.howToSetup}
           />
-          <div className={styles.section}>
-            <LogicAppSelector />
-          </div>
+          <br />
+          <LogicAppSelector />
         </div>
 
         {/* Main Section */}
-        <div className={styles.mainSection}>
+        <div style={{ margin: 0 }}>
           <div className={styles.sectionHeader}>
             <Text size={400} weight="bold">
               {intl.formatMessage(
@@ -333,9 +359,19 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
                 { toolsCount }
               )}
             </Text>
+            {disableConnectorSelection ? (
+              <Button
+                appearance="secondary"
+                icon={<Settings16Regular />}
+                onClick={handleSetup}
+                size="small"
+                disabled={disableConfiguration}
+              >
+                {INTL_TEXT.setupButton}
+              </Button>
+            ) : null}
           </div>
           <DescriptionWithLink
-            className={styles.sectionDescription}
             text={INTL_TEXT.mainSectionDescription}
             linkUrl="https://go.microsoft.com/fwlink/?linkid=2330612"
             linkText={INTL_TEXT.howToSetupConnectors}
@@ -346,21 +382,23 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
               <Text size={400} weight="semibold">
                 {INTL_TEXT.connectorsTitle}
               </Text>
-              <Button
-                appearance="secondary"
-                icon={<Add16Regular />}
-                onClick={handleAddConnectors}
-                size="small"
-                disabled={disableConfiguration || connectorExists}
-              >
-                {INTL_TEXT.addConnectorsButton}
-              </Button>
+              {disableConnectorSelection ? null : (
+                <Button
+                  appearance="secondary"
+                  icon={<Add16Regular />}
+                  onClick={handleAddConnectors}
+                  size="small"
+                  disabled={disableConfiguration || connectorExists}
+                >
+                  {INTL_TEXT.addConnectorsButton}
+                </Button>
+              )}
             </div>
             <DescriptionWithLink text={INTL_TEXT.connectorsDescription} />
             <ListConnectors addConnectors={handleAddConnectors} addDisabled={disableConfiguration} />
           </div>
 
-          {connectorExists ? (
+          {connectorExists && !!logicAppName ? (
             <div className={styles.content}>
               {/* Operations Section */}
               <div className={styles.section}>
