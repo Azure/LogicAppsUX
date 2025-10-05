@@ -25,10 +25,10 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
 
   const nodePath = node?.fsPath || workspaceFolderPath;
   if (isNullOrUndefined(nodePath)) {
-    const errorMessage = localize('noProjectPathBuildCustomCode', 'No project path found to build custom code functions project.');
+    const errorMessage = 'No project path found to build custom code functions project.';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage;
-    ext.outputChannel.appendLog(errorMessage);
+    context.telemetry.properties.errorMessage = errorMessage;
+    ext.outputChannel.appendLog(localize('noProjectPathBuildCustomCode', errorMessage));
     return;
   }
 
@@ -40,7 +40,7 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
       context.telemetry.properties.result = 'Succeeded';
     } catch (error) {
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.errorMessage = error.message ?? error;
     }
     return;
   }
@@ -50,7 +50,7 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
   if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
     const errorMessage = 'No custom code functions projects found for the logic app folder "{0}".';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', nodePath);
+    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', nodePath);
     ext.outputChannel.appendLog(localize('azureLogicAppsStandard.noCustomCodeFunctionsProjectsFound', errorMessage, nodePath));
     return;
   }
@@ -61,7 +61,7 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
     context.telemetry.properties.result = 'Succeeded';
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.errorMessage = error.message ?? error;
   }
 }
 
@@ -88,7 +88,7 @@ export async function buildWorkspaceCustomCodeFunctionsProjects(context: IAction
     context.telemetry.properties.result = 'Succeeded';
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.errorMessage = error.message;
   }
 }
 

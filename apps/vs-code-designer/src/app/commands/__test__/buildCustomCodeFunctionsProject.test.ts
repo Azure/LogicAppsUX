@@ -138,6 +138,6 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
     expect(window.showWarningMessage).toHaveBeenCalledWith(testErrorMessage);
     expect(window.showInformationMessage).not.toHaveBeenCalled();
     expect(context.telemetry.properties.result).toBe('Failed');
-    expect(context.telemetry.properties.error).toBeDefined();
+    expect(context.telemetry.properties.errorMessage).toBeDefined();
   });
 });

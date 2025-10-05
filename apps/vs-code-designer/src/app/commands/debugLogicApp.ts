@@ -8,7 +8,7 @@ import * as path from 'path';
 import { pickFuncProcessInternal } from './pickFuncProcess';
 import { localize } from '../../localize';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
-import { pickCustomCodeNetHostProcessInternal } from './pickCustomCodeNetHostProcess';
+import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from './pickCustomCodeWorkerProcess';
 
 export async function debugLogicApp(
   context: IActionContext,
@@ -49,11 +49,12 @@ export async function debugLogicApp(
         processId: customCodeNetHostProcessId,
       };
     } else if (debugConfig.customCodeRuntime === 'clr') {
+      const customCodeNetFxWorkerProcessId = await pickCustomCodeNetFxWorkerProcessInternal(context, workspaceFolder, projectPath);
       functionLaunchConfig = {
         name: localize('attachToFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,
         request: 'attach',
-        processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
+        processId: customCodeNetFxWorkerProcessId,
       };
     } else {
       const errorMessage = 'Unsupported custom code runtime "{0}".';
@@ -62,7 +63,9 @@ export async function debugLogicApp(
       throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
     }
 
-    await vscode.debug.startDebugging(workspaceFolder, functionLaunchConfig);
+    if (functionLaunchConfig?.processId) {
+      await vscode.debug.startDebugging(workspaceFolder, functionLaunchConfig);
+    }
     context.telemetry.properties.result = 'Succeeded';
   }
 }

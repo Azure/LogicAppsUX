@@ -79,10 +79,6 @@ export const BrowseView = (props: BrowseViewProps) => {
     return connector.id !== 'connectionProviders/agent';
   }, []);
 
-  const isACASessionAllowed = useCallback((connector: Connector): boolean => {
-    return connector.id !== '/serviceProviders/acasession';
-  }, []);
-
   const passesRuntimeFilter = useCallback(
     (connector: Connector): boolean => {
       const runtimeFilter = getRecordEntry(filters, 'runtime');
@@ -157,13 +153,12 @@ export const BrowseView = (props: BrowseViewProps) => {
     (connector: Connector): boolean => {
       return (
         isAgentConnectorAllowed(connector) &&
-        isACASessionAllowed(connector) &&
         passesRuntimeFilter(connector) &&
         passesActionTypeFilter(connector) &&
         passesA2AWorkflowFilter(connector)
       );
     },
-    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter, passesA2AWorkflowFilter]
+    [isAgentConnectorAllowed, passesRuntimeFilter, passesActionTypeFilter, passesA2AWorkflowFilter]
   );
 
   const sortedConnectors = useMemo(() => {
