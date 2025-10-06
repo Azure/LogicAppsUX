@@ -494,6 +494,28 @@ export const getNodesWithGraphId = (graphId: string, nodesMetadata: NodesMetadat
   }, {} as NodesMetadata);
 };
 
+export const useParentRunIndexes = (id: string | undefined): Record<string, number> => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) {
+        return {};
+      }
+      const allParents = getAllParentsForNode(id, state.nodesMetadata, true);
+      const parents = allParents.filter((x) => {
+        const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase() ?? '';
+        return (
+          [commonConstants.NODE.TYPE.FOREACH, commonConstants.NODE.TYPE.UNTIL, commonConstants.NODE.TYPE.AGENT].includes(operationType) ||
+          getRecordEntry(state.nodesMetadata, x)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
+        );
+      });
+      return parents.reduce((acc: Record<string, number>, parentId) => {
+        acc[parentId] = getRecordEntry(state.nodesMetadata, parentId)?.runIndex ?? 0;
+        return acc;
+      }, {});
+    })
+  );
+};
+
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {

@@ -16,6 +16,7 @@ export interface IHostService {
   openWorkflowParametersBlade?(): void;
   openConnectionResource?(connectionId: string): void;
   openMonitorView?(resourceId: string, runName: string): void;
+  openRun?(runId: string): void;
 }
 
 let service: IHostService;

@@ -38,18 +38,23 @@ interface InitialResourceState {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
+  logicAppName?: string;
 }
 
 export const resourceSlice = createSlice({
   name: 'resource',
   initialState,
   reducers: {
-    setInitialData: (state, action: PayloadAction<InitialResourceState>) => {
-      const { subscriptionId, resourceGroup, location } = action.payload;
+    setInitialData: (state, action: PayloadAction<InitialResourceState & { connectorId?: string }>) => {
+      const { subscriptionId, resourceGroup, location, logicAppName } = action.payload;
 
       state.subscriptionId = subscriptionId;
       state.resourceGroup = resourceGroup;
       state.location = location;
+
+      if (logicAppName) {
+        state.logicAppName = logicAppName;
+      }
     },
     setLogicApp: (state, action: PayloadAction<{ resourceGroup: string; location: string; logicAppName: string; isNew?: boolean }>) => {
       const { resourceGroup, location, logicAppName, isNew } = action.payload;
