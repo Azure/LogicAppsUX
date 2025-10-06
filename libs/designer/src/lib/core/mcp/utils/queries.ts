@@ -134,7 +134,8 @@ export const getRegionMappings = async (): Promise<Record<string, { geo: string;
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['mcp', 'regionMappings'], async () => {
     try {
-      return ResourceService().executeHttpCall('https://appinsights.azureedge.net/portal/regionMapping.json', 'GET');
+      const result = await ResourceService().executeHttpCall('https://appinsights.azureedge.net/portal/regionMapping.json', 'GET');
+      return result.regions;
     } catch {
       return {};
     }
@@ -145,12 +146,13 @@ export const getAppInsightsLocations = async (subscriptionId: string): Promise<s
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['mcp', 'appInsightsLocations', subscriptionId], async () => {
     try {
-      const result = await ResourceService().executeResourceAction(`/subscriptions/${subscriptionId}/providers/microsoft.insights`, 'GET', {
-        'api-version': '2015-05-01',
+      const result: any = await ResourceService().getResource(`/subscriptions/${subscriptionId}/providers/microsoft.insights`, {
+        'api-version': '2025-04-01',
       });
       return result.resourceTypes
-        ? (result.resourceTypes.find((value: any) => value.resourceType === 'components')?.locations.map((location: string) => location) ??
-            [])
+        ? (result.resourceTypes
+            .find((value: any) => value.resourceType === 'components')
+            ?.locations.map((location: string) => getLocationNormalized(location)) ?? [])
         : [];
     } catch {
       return [];
@@ -171,3 +173,5 @@ export const resetQueriesOnRegisterMcpServer = (subscriptionId: string, resource
   queryClient.invalidateQueries([workflowAppConnectionsKey, resourceId.toLowerCase()]);
   queryClient.invalidateQueries(['mcp', 'logicapps', subscriptionId]);
 };
+
+export const getLocationNormalized = (location: string): string => location.replace(/ /g, '').toLowerCase();

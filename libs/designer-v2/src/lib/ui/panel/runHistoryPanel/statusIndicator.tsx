@@ -54,11 +54,11 @@ const StatusIndicator = (props: { status: string }) => {
   const icon = React.useMemo(() => {
     switch (props.status) {
       case 'Succeeded':
-        return <img src={StatusSucceededIcon} />;
+        return <img src={StatusSucceededIcon} title={text} />;
       case 'Failed':
-        return <img src={StatusFailedIcon} />;
+        return <img src={StatusFailedIcon} title={text} />;
       case 'Cancelled':
-        return <img src={StatusCancelledIcon} />;
+        return <img src={StatusCancelledIcon} title={text} />;
       case 'Running':
       case 'Waiting':
       case 'Resuming':

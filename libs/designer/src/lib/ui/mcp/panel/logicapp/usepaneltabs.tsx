@@ -14,24 +14,28 @@ import {
   validateAndCreateAppPayload,
 } from '../../../../core/mcp/utils/logicapp';
 import { type LogicAppConfigDetails, setLogicApp, setNewLogicAppDetails } from '../../../../core/state/mcp/resourceSlice';
-import { closePanel, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, selectPanelTab, setAutoOpenPanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 
 export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { newLogicAppDetails, subscriptionId, resourceGroup, location } = useSelector((state: RootState) => ({
-    currentPanelView: state.mcpPanel.currentPanelView,
-    subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
-    resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
-    location: state.mcpOptions.resourceDetails?.location,
-    newLogicAppDetails: state.resource.newLogicAppDetails,
-  }));
+  const { newLogicAppDetails, subscriptionId, resourceGroup, location, logicAppName, disableConnectorSelection } = useSelector(
+    (state: RootState) => ({
+      currentPanelView: state.mcpPanel.currentPanelView,
+      subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
+      resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
+      location: state.mcpOptions.resourceDetails?.location,
+      newLogicAppDetails: state.resource.newLogicAppDetails,
+      logicAppName: state.resource.logicAppName,
+      disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
+    })
+  );
 
   const intlTexts = {
     createButtonText: intl.formatMessage({
-      defaultMessage: 'Review + create',
-      id: 'COKUSs',
+      defaultMessage: 'Create',
+      id: 'zj7R+4',
       description: 'Button text for creating the logic app',
     }),
     validationErrorTitle: intl.formatMessage({
@@ -139,60 +143,72 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
       })
     );
 
-    const deploymentUri = await createLogicAppFromTemplate(
-      templatePayload?.deploymentName as string,
-      templatePayload?.template as ArmTemplate,
-      subscriptionId as string,
-      resourceGroup as string
-    );
+    try {
+      const deploymentUri = await createLogicAppFromTemplate(
+        templatePayload?.deploymentName as string,
+        templatePayload?.template as ArmTemplate,
+        subscriptionId as string,
+        resourceGroup as string
+      );
 
-    dispatch(setNewLogicAppDetails({ createStatus: 'inprogress' }));
-    setResourcesStatus(
-      Object.keys(resourcesStatus).reduce((acc: Record<string, string>, resource: string) => {
-        acc[resource] = equals(resourcesStatus[resource], 'notstarted') ? 'running' : resourcesStatus[resource];
-        return acc;
-      }, {})
-    );
-    setCreateButtonText(
-      intl.formatMessage({
-        defaultMessage: 'Creating...',
-        id: 'Cx7E/L',
-        description: 'Button text while creating the logic app.',
-      })
-    );
-
-    const resourcesToBeCreated = Object.values(resourcesStatus).filter(
-      (status) => equals(status, 'notstarted') || equals(status, 'running')
-    ).length;
-    const errorDetails = await pollForAppCreateCompletion(deploymentUri as string, resourcesToBeCreated, updateResourcesStatus);
-
-    if (errorDetails) {
-      dispatch(setNewLogicAppDetails({ createStatus: 'failed' }));
-      setErrorInfo({ title: intlTexts.createErrorTitle, message: errorDetails.message });
-      setIsCreating(false);
-      setCreateButtonText(intlTexts.createButtonText);
-    } else {
-      setIsCreated(true);
-      dispatch(
-        setLogicApp({
-          resourceGroup: resourceGroup as string,
-          location: location as string,
-          logicAppName: newLogicAppDetails?.appName as string,
-          isNew: true,
+      dispatch(setNewLogicAppDetails({ createStatus: 'inprogress' }));
+      setResourcesStatus(
+        Object.keys(resourcesStatus).reduce((acc: Record<string, string>, resource: string) => {
+          acc[resource] = equals(resourcesStatus[resource], 'notstarted') ? 'running' : resourcesStatus[resource];
+          return acc;
+        }, {})
+      );
+      setCreateButtonText(
+        intl.formatMessage({
+          defaultMessage: 'Creating...',
+          id: 'Cx7E/L',
+          description: 'Button text while creating the logic app.',
         })
       );
 
-      await delay(11000); // Delay to let the user see the created status and progress bar completion
+      const resourcesToBeCreated = Object.values(resourcesStatus).filter(
+        (status) => equals(status, 'notstarted') || equals(status, 'running')
+      ).length;
+      const errorDetails = await pollForAppCreateCompletion(deploymentUri as string, resourcesToBeCreated, updateResourcesStatus);
 
-      dispatch(closePanel());
-      onCreateApp();
+      if (errorDetails) {
+        dispatch(setNewLogicAppDetails({ createStatus: 'failed' }));
+        setErrorInfo({ title: intlTexts.createErrorTitle, message: errorDetails.message });
+        setIsCreating(false);
+        setCreateButtonText(intlTexts.createButtonText);
+      } else {
+        setIsCreated(true);
+        if (!logicAppName && disableConnectorSelection) {
+          dispatch(setAutoOpenPanel(true));
+        }
+
+        dispatch(
+          setLogicApp({
+            resourceGroup: resourceGroup as string,
+            location: location as string,
+            logicAppName: newLogicAppDetails?.appName as string,
+            isNew: true,
+          })
+        );
+
+        await delay(11000); // Delay to let the user see the created status and progress bar completion
+
+        dispatch(closePanel());
+        onCreateApp();
+      }
+    } catch (error: any) {
+      setIsCreating(false);
+      setCreateButtonText(intlTexts.createButtonText);
+      setErrorInfo({ title: intlTexts.createErrorTitle, message: error.message });
     }
   }, [
+    disableConnectorSelection,
     dispatch,
     intl,
     intlTexts.createButtonText,
     intlTexts.createErrorTitle,
     location,
+    logicAppName,
     newLogicAppDetails?.appName,
     onCreateApp,
     resourceGroup,

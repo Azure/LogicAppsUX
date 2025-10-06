@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Button, SplitButton } from '@fluentui/react-components';
+import { Button, Spinner, SplitButton } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
 import { canRunBeInvokedWithPayload, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
@@ -153,13 +153,13 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
         <SplitButton
           {...buttonCommonProps}
           primaryActionButton={{
-            icon: <RunIcon />,
+            icon: runIsLoading ? <Spinner size="tiny" /> : <RunIcon />,
             onClick: runMutate,
           }}
           menuButton={
             canBeRunWithPayload
               ? {
-                  icon: <RunWithPayloadIcon />,
+                  icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
                   onClick: () => setPopoverOpen(true),
                   ref: buttonRef,
                 }
