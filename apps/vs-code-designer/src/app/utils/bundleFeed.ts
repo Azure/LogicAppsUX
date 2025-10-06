@@ -14,8 +14,8 @@ import * as vscode from 'vscode';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
-import * as cp from 'child_process';
 import * as fse from 'fs-extra';
+import { executeCommand } from './funcCoreTools/cpUtils';
 /**
  * Gets bundle extension feed.
  * @param {IActionContext} context - Command context.
@@ -327,16 +327,47 @@ export async function getBundleVersionNumber(): Promise<string> {
  * @returns {string} Extension bundle folder path.
  */
 export async function getExtensionBundleFolder(): Promise<string> {
-  const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
+  const command = getFunctionsCommand();
   const outputChannel = ext.outputChannel;
-
-  if (outputChannel) {
-    outputChannel.appendLog(localize('runningCommand', 'Running command: "{0}"...', command));
-  }
+  const workingDirectory = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   let extensionBundlePath = '';
   try {
-    extensionBundlePath = await cp.execSync(command, { encoding: 'utf8' });
+    const stdout = await executeCommand(outputChannel, workingDirectory, command, 'GetExtensionBundlePath');
+
+    // The output contains multiple lines with info messages followed by the actual path
+    // Example output:
+    // "local.settings.json found in root directory (...).\r\nResolving worker runtime to 'dotnet'.\r\nC:\Users\...\ExtensionBundles\Microsoft.Azure.Functions.ExtensionBundle.Workflows\1.138.54\r\n"
+
+    // Split by newlines and find the line that contains the actual path
+    const lines = stdout
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    // The path line should contain "ExtensionBundles" and look like a valid path
+    const pathLine = lines.find(
+      (line) => line.includes('ExtensionBundles') && (line.match(/^[A-Z]:\\/i) || line.startsWith('/')) // Windows or Unix path
+    );
+
+    if (!pathLine) {
+      throw new Error(localize('bundlePathNotFound', 'Could not find extension bundle path in command output.'));
+    }
+
+    // Extract the base path before the version number
+    // Example: C:\Users\...\ExtensionBundles\Microsoft.Azure.Functions.ExtensionBundle.Workflows\1.138.54
+    // We want: C:\Users\...\ExtensionBundles\
+    const bundlePathMatch = pathLine.match(/^(.+?[\\/]ExtensionBundles[/\\])/i);
+    if (bundlePathMatch) {
+      extensionBundlePath = bundlePathMatch[1];
+    } else {
+      const splitIndex = pathLine.lastIndexOf('Microsoft.Azure.Functions.ExtensionBundle');
+      if (splitIndex !== -1) {
+        extensionBundlePath = pathLine.substring(0, splitIndex);
+      } else {
+        throw new Error(localize('bundlePathParseError', 'Could not parse extension bundle path from output.'));
+      }
+    }
   } catch (error) {
     if (outputChannel) {
       outputChannel.appendLog(localize('bundleCommandError', 'Could not find path to extension bundle'));
@@ -344,8 +375,6 @@ export async function getExtensionBundleFolder(): Promise<string> {
     }
     throw new Error(localize('bundlePathError', 'Could not find path to extension bundle.'));
   }
-
-  extensionBundlePath = extensionBundlePath.trim().split('Microsoft.Azure.Functions.ExtensionBundle')[0];
 
   if (outputChannel) {
     outputChannel.appendLog(localize('extensionBundlePath', 'Extension bundle path: "{0}"...', extensionBundlePath));
