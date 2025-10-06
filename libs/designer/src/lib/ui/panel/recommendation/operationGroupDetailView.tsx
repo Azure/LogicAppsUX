@@ -7,7 +7,7 @@ import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSel
 import { useDispatch } from 'react-redux';
 import { addConnectorAsOperation, type AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { useShouldEnableParseDocumentWithMetadata, useShouldHideAgentRequestTrigger } from './hooks';
+import { useShouldEnableParseDocumentWithMetadata, useShouldHideAgentRequestTriggerConsumption } from './hooks';
 import constants from '../../../common/constants';
 
 type OperationGroupDetailViewProps = {
@@ -27,7 +27,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
   const isAgentTool = useIsAddingAgentTool();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const shouldHideAgentRequestTrigger = useShouldHideAgentRequestTrigger();
+  const shouldHideAgentRequestTriggerConsumption = useShouldHideAgentRequestTriggerConsumption();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -58,7 +58,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
         return false;
       }
 
-      if (shouldHideAgentRequestTrigger && data.id === 'a2aRequest' && data.isTrigger) {
+      if (shouldHideAgentRequestTriggerConsumption && data.id === 'a2aRequest' && data.isTrigger) {
         return false;
       }
 
@@ -75,7 +75,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       isRoot,
       isWithinAgenticLoop,
       shouldEnableParseDocWithMetadata,
-      shouldHideAgentRequestTrigger,
+      shouldHideAgentRequestTriggerConsumption,
     ]
   );
   const operationGroupActions: OperationActionData[] = groupOperations
