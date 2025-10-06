@@ -110,6 +110,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     [intl, tabProps, isAgentNode, isA2AWorkflow, isMonitoringView]
   );
 
+  //   const handoffTabItem = useMemo(
+  //   () => ({
+  //     ...handoffTab(intl, tabProps),
+  //     // TEMP: Remove workflow-type filter for testing in Consumption
+  //     visible: isAgentNode && !isMonitoringView,
+  //   }),
+  //   [intl, tabProps, isAgentNode, isMonitoringView]
+  // );
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
 
   const testingTabItem = useMemo(
