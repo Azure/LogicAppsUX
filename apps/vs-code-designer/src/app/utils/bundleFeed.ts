@@ -333,14 +333,10 @@ export async function getExtensionBundleFolder(): Promise<string> {
 
   let extensionBundlePath = '';
   try {
-    const stdout = await executeCommand(outputChannel, workingDirectory, command, 'GetExtensionBundlePath');
-
-    // The output contains multiple lines with info messages followed by the actual path
-    // Example output:
-    // "local.settings.json found in root directory (...).\r\nResolving worker runtime to 'dotnet'.\r\nC:\Users\...\ExtensionBundles\Microsoft.Azure.Functions.ExtensionBundle.Workflows\1.138.54\r\n"
+    const result = await executeCommand(outputChannel, workingDirectory, command, 'GetExtensionBundlePath');
 
     // Split by newlines and find the line that contains the actual path
-    const lines = stdout
+    const lines = result
       .split(/\r?\n/)
       .map((line) => line.trim())
       .filter((line) => line.length > 0);
@@ -351,12 +347,11 @@ export async function getExtensionBundleFolder(): Promise<string> {
     );
 
     if (!pathLine) {
-      throw new Error(localize('bundlePathNotFound', 'Could not find extension bundle path in command output.'));
+      const pathError = new Error('Could not find extension bundle path in command output.');
+      ext.telemetryReporter.sendTelemetryEvent('BundlePathNotFound', { value: pathError.message });
+      throw pathError;
     }
 
-    // Extract the base path before the version number
-    // Example: C:\Users\...\ExtensionBundles\Microsoft.Azure.Functions.ExtensionBundle.Workflows\1.138.54
-    // We want: C:\Users\...\ExtensionBundles\
     const bundlePathMatch = pathLine.match(/^(.+?[\\/]ExtensionBundles[/\\])/i);
     if (bundlePathMatch) {
       extensionBundlePath = bundlePathMatch[1];
