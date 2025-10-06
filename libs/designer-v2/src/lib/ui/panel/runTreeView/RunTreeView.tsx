@@ -7,7 +7,6 @@ import { FlatTree, Spinner, useHeadlessFlatTree_unstable, useRestoreFocusTarget 
 import { useAllIcons } from '../../../core/state/operation/operationSelector';
 import { getAgentActionsRepetition, getAgentRepetitions, getNodeRepetitions } from '../../../core';
 import { equals, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { useAllOperations } from '../../../core/state/selectors/actionMetadataSelector';
 import { useIntl } from 'react-intl';
 import { useTimelineRepetitions } from '../../MonitoringTimeline/hooks';
 import { TreeActionItem } from './TreeActionItem';
@@ -26,7 +25,6 @@ export const RunTreeView = () => {
   const icons = useAllIcons();
 
   const nodesMetadata = useNodesMetadata();
-  const operationsInfo = useAllOperations();
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
 
@@ -431,7 +429,8 @@ export const RunTreeView = () => {
         });
       });
     });
-  }, [actions, nodesMetadata, operationsInfo, selectedRun, agentRepetitionData, addTreeItem, updateToolTimes, isRunning]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actions, selectedRun, agentRepetitionData, addTreeItem, updateToolTimes, isRunning]);
 
   const treeItems = useMemo(
     () =>
