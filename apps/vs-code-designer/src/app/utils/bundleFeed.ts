@@ -360,15 +360,18 @@ export async function getExtensionBundleFolder(): Promise<string> {
       if (splitIndex !== -1) {
         extensionBundlePath = pathLine.substring(0, splitIndex);
       } else {
-        throw new Error(localize('bundlePathParseError', 'Could not parse extension bundle path from output.'));
+        const parseError = new Error('Could not parse extension bundle path from output.');
+        ext.telemetryReporter.sendTelemetryEvent('bundlePathParseError', { value: parseError.message });
       }
     }
   } catch (error) {
+    const bundleCommandError = new Error('Could not find path to extension bundle');
     if (outputChannel) {
-      outputChannel.appendLog(localize('bundleCommandError', 'Could not find path to extension bundle'));
+      outputChannel.appendLog(bundleCommandError.message);
       outputChannel.appendLog(JSON.stringify(error));
+      ext.telemetryReporter.sendTelemetryEvent('bundleCommandError', { value: bundleCommandError.message });
     }
-    throw new Error(localize('bundlePathError', 'Could not find path to extension bundle.'));
+    throw new Error(bundleCommandError.message);
   }
 
   if (outputChannel) {
