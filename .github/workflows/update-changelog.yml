@@ -3,10 +3,6 @@ run-name: Update Changelog - From ${{ github.event.inputs.old_tag }} to head of 
 on:
   workflow_dispatch:
     inputs:
-      new_tag:
-        description: 'New version tag (e.g., v5.110.0)'
-        required: true
-        type: string
       old_tag:
         description: 'Previous version tag (e.g., v5.109.0)'
         required: true
@@ -42,29 +38,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
           TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
 
           echo "Validating inputs..."
           echo "Old tag: $OLD_TAG"
-          echo "Upcoming tag: $NEW_TAG"
           echo "Target branch: $TARGET_BRANCH"
-
-          # Validate tag format (should start with 'v' followed by version number)
-          if ! [[ "$NEW_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Warning: New tag '$NEW_TAG' doesn't match expected format (e.g., v5.110.0)"
-          fi
 
           # Check if old tag exists
           if ! git tag -l | grep -q "^${OLD_TAG}$"; then
             echo "Error: Old tag '$OLD_TAG' does not exist"
             exit 1
-          fi
-
-          # Check if new tag already exists
-          if git tag -l | grep -q "^${NEW_TAG}$"; then
-            echo "Warning: New tag '$NEW_TAG' already exists. This may be a re-run."
           fi
 
           echo "Fetching latest commit for $TARGET_BRANCH..."
@@ -91,18 +75,37 @@ jobs:
           echo "TARGET_COMMIT=$TARGET_COMMIT" >> $GITHUB_OUTPUT
           echo "SHORT_TARGET_COMMIT=$SHORT_TARGET_COMMIT" >> $GITHUB_OUTPUT
 
+      - name: 'Determine Version'
+        id: determine-version
+        run: |
+          # Get version from from old tag
+          if [ -z "$NEW_TAG" ]; then
+            OLD_TAG="${{ github.event.inputs.old_tag }}"
+            # Extract version numbers (remove 'v' prefix)
+            VERSION_NUM=${OLD_TAG#v}
+            # Increment patch version
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
+            PATCH=$((PATCH + 1))
+            NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+            echo "Auto-incremented version from $OLD_TAG to $NEW_TAG"
+          fi
+          
+          echo "Using tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+
       - name: 'Generate Release Notes'
         id: generate-notes
         uses: actions/github-script@v7
         with:
           script: |
-            const newTag = '${{ github.event.inputs.new_tag }}';
+            const newTag = '${{ steps.determine-version.outputs.NEW_TAG }}';
             const oldTag = '${{ github.event.inputs.old_tag }}';
             const targetCommit = '${{ steps.validate.outputs.TARGET_COMMIT }}';
             const targetBranch = '${{ github.event.inputs.target_branch }}';
             const shortTargetCommit = '${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}';
             
             console.log(`Generating release notes between ${oldTag} and ${targetBranch} (${shortTargetCommit})...`);
+            console.log(`Using new tag: ${newTag}`);
             
             let releaseNotes = '';
             
@@ -239,7 +242,7 @@ jobs:
       - name: 'Update Changelog'
         id: update-changelog
         run: |
-          NEW_TAG="${{ github.event.inputs.new_tag }}"
+          NEW_TAG="${{ steps.determine-version.outputs.NEW_TAG }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
           VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
           TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
@@ -297,7 +300,7 @@ jobs:
           
           # Stage and commit changes
           git add CHANGELOG.md
-          git commit -m "docs: update changelog for release ${{ github.event.inputs.new_tag }}
+          git commit -m "docs: update changelog for release ${{ steps.determine-version.outputs.NEW_TAG }}
 
           - Added release notes for version $VERSION_NUMBER
           - Generated from changes between ${{ github.event.inputs.old_tag }} and $TARGET_BRANCH ($SHORT_TARGET_COMMIT)
@@ -330,7 +333,7 @@ jobs:
           
           echo ""
           echo "📊 Workflow Summary:"
-          echo "- New Tag: ${{ github.event.inputs.new_tag }}"
+          echo "- New Version: ${{ steps.determine-version.outputs.NEW_TAG }}"
           echo "- Old Tag: ${{ github.event.inputs.old_tag }}"
           echo "- Target Branch: $TARGET_BRANCH"
           echo "- Target Commit: ${SHORT_TARGET_COMMIT:-N/A}"
