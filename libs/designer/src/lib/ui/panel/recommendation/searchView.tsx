@@ -85,7 +85,6 @@ export const SearchView: FC<SearchViewProps> = ({
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
-
       // Apply A2A workflow filter first
       if (!passesA2AWorkflowFilter(operation)) {
         return false;
@@ -102,7 +101,7 @@ export const SearchView: FC<SearchViewProps> = ({
       }
 
       // Hide Agent Request trigger if the flag is enabled
-      if (shouldHideAgentRequestTrigger && equals(type, constants.NODE.TYPE.AGENT) && id === 'a2aRequest') {
+      if (shouldHideAgentRequestTrigger && equals(type, constants.NODE.TYPE.REQUEST) && id === 'a2aRequest') {
         return false;
       }
 
