@@ -1,8 +1,9 @@
 import * as React from 'react';
-import StatusSucceededIcon from '../../../../lib/common/images/status_success.svg';
-import StatusFailedIcon from '../../../../lib/common/images/status_failure.svg';
-import StatusCancelledIcon from '../../../../lib/common/images/status_cancelled.svg';
-import { Text, Spinner } from '@fluentui/react-components';
+import StatusSucceededIcon from '../../../common/images/status_success_small.svg';
+import StatusFailedIcon from '../../../common/images/status_failure_small.svg';
+import StatusCancelledIcon from '../../../common/images/status_cancelled_small.svg';
+import StatusSkippedIcon from '../../../common/images/status_skipped_small.svg';
+import { Spinner, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 const StatusIndicator = (props: { status: string }) => {
@@ -54,11 +55,13 @@ const StatusIndicator = (props: { status: string }) => {
   const icon = React.useMemo(() => {
     switch (props.status) {
       case 'Succeeded':
-        return <img src={StatusSucceededIcon} title={text} />;
+        return <img src={StatusSucceededIcon} title={''} />;
       case 'Failed':
-        return <img src={StatusFailedIcon} title={text} />;
+        return <img src={StatusFailedIcon} title={''} />;
       case 'Cancelled':
-        return <img src={StatusCancelledIcon} title={text} />;
+        return <img src={StatusCancelledIcon} title={''} />;
+      case 'Skipped':
+        return <img src={StatusSkippedIcon} title={''} />;
       case 'Running':
       case 'Waiting':
       case 'Resuming':
@@ -69,10 +72,9 @@ const StatusIndicator = (props: { status: string }) => {
   }, [props.status]);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+    <Tooltip content={text} relationship="label" positioning={'above'}>
       {icon}
-      <Text>{text}</Text>
-    </div>
+    </Tooltip>
   );
 };
 
