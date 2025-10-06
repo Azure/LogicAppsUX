@@ -60,6 +60,7 @@ export const useRunsInfiniteQuery = (enabled = false) => {
             }
           });
           queryClient.setQueryData([runsQueriesKeys.allRuns], currentRuns);
+          queryClient.invalidateQueries([runsQueriesKeys.allRuns]);
         } catch {
           // best-effort
         }
@@ -196,7 +197,7 @@ export const useNodeRepetitions = (isEnabled: boolean, nodeId: string, runId: st
   );
 };
 
-export const getNodeRepetitions = async (nodeId: string, runId: string) => {
+export const getNodeRepetitions = async (nodeId: string, runId: string, noCache = false) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(
     [runsQueriesKeys.useNodeRepetitions, { nodeId, runId }],
@@ -205,6 +206,7 @@ export const getNodeRepetitions = async (nodeId: string, runId: string) => {
     },
     {
       ...queryOpts,
+      cacheTime: noCache ? 0 : queryOpts.cacheTime,
     }
   );
 };
@@ -285,7 +287,7 @@ export const useAgentRepetitions = (isEnabled: boolean, nodeId: string, runId: s
   );
 };
 
-export const getAgentRepetitions = async (nodeId: string, runId: string) => {
+export const getAgentRepetitions = async (nodeId: string, runId: string, noCache = false) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(
     [runsQueriesKeys.useAgentRepetition, { nodeId, runId }],
@@ -294,6 +296,7 @@ export const getAgentRepetitions = async (nodeId: string, runId: string) => {
     },
     {
       ...queryOpts,
+      cacheTime: noCache ? 0 : queryOpts.cacheTime,
     }
   );
 };
@@ -332,7 +335,8 @@ export const getAgentActionsRepetition = async (
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
-  runIndex: number | undefined
+  runIndex: number | undefined,
+  noCache = false
 ) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(
@@ -340,6 +344,7 @@ export const getAgentActionsRepetition = async (
     async () => fetchAgentActionsRepetition(nodeId, runId, repetitionName),
     {
       ...queryOpts,
+      cacheTime: noCache ? 0 : queryOpts.cacheTime,
     }
   );
 };

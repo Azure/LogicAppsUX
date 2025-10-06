@@ -38,10 +38,16 @@ export const RunTreeView = () => {
     };
   }, [selectedRun?.properties.actions, selectedRun?.properties.trigger]);
 
-  const isRunning =
-    selectedRun?.properties.status === 'Running' ||
-    selectedRun?.properties.status === 'Waiting' ||
-    selectedRun?.properties.status === 'Resuming';
+  const isRunning = useMemo(() => {
+    if (!selectedRun) {
+      return false;
+    }
+    return (
+      selectedRun?.properties.status === 'Running' ||
+      selectedRun?.properties.status === 'Waiting' ||
+      selectedRun?.properties.status === 'Resuming'
+    );
+  }, [selectedRun]);
 
   const { data: agentRepetitionData } = useTimelineRepetitions();
 
@@ -65,6 +71,45 @@ export const RunTreeView = () => {
       [item.value]: item,
     }));
   }, []);
+
+  // Reassign start / end times to tool
+  const updateToolTimes = useCallback(
+    (toolRepetitionId: string, action: any) => {
+      setTreeItemsRecord((prev) => {
+        const currentParentStartTime = prev[toolRepetitionId]?.data?.startTime ?? 0;
+        const currentParentEndTime = prev[toolRepetitionId]?.data?.endTime ?? 0;
+        if (action?.startTime > currentParentStartTime && action?.endTime < currentParentEndTime) {
+          return prev;
+        }
+        const newStartTime =
+          action?.startTime && (!currentParentStartTime || action?.startTime < currentParentStartTime)
+            ? action.startTime
+            : currentParentStartTime;
+        const newEndTime =
+          action?.endTime && (!currentParentEndTime || action?.endTime > currentParentEndTime) ? action.endTime : currentParentEndTime;
+        return {
+          ...prev,
+          [toolRepetitionId]: {
+            ...prev[toolRepetitionId],
+            data: {
+              ...(prev[toolRepetitionId]?.data ?? {}),
+              repetition: {
+                ...(prev[toolRepetitionId]?.data.repetition ?? {}),
+                properties: {
+                  ...(prev[toolRepetitionId]?.data?.repetition?.properties ?? {}),
+                  startTime: newStartTime,
+                  endTime: newEndTime,
+                },
+              },
+              startTime: newStartTime,
+              endTime: newEndTime,
+            },
+          },
+        };
+      });
+    },
+    [setTreeItemsRecord]
+  );
 
   // Reset tree items when run changes
   useEffect(() => {
@@ -96,7 +141,7 @@ export const RunTreeView = () => {
 
       // Normal scopes
       if ((action?.repetitionCount ?? 0) > 0) {
-        getNodeRepetitions(id, selectedRun!.id).then((repetitions) => {
+        getNodeRepetitions(id, selectedRun!.id, isRunning).then((repetitions) => {
           repetitions.forEach((repetition) => {
             if (repetition?.properties.status === 'Skipped') {
               return;
@@ -133,7 +178,7 @@ export const RunTreeView = () => {
         });
       } else if ((action?.iterationCount ?? 0) > 0) {
         // Agent scopes
-        getAgentRepetitions(id, selectedRun!.id).then((repetitions) => {
+        getAgentRepetitions(id, selectedRun!.id, isRunning).then((repetitions) => {
           repetitions.forEach((agentRepetition) => {
             if (agentRepetition?.properties.status === 'Skipped') {
               return;
@@ -201,7 +246,7 @@ export const RunTreeView = () => {
             });
 
             // Get actions within the agent, and place them under tools
-            getAgentActionsRepetition(id, selectedRun!.id, repetitionName, 0).then((actionsRepetition) => {
+            getAgentActionsRepetition(id, selectedRun!.id, repetitionName, 0, isRunning).then((actionsRepetition) => {
               actionsRepetition.forEach((actionRepetition) => {
                 const actions = (actionRepetition.properties as any)?.actionResults ?? [];
                 actions.forEach((action: any) => {
@@ -240,41 +285,8 @@ export const RunTreeView = () => {
                   };
                   addToCountRecord(actionId);
                   addTreeItem(newTreeData);
-                  // Reassign start / end times to the parent tool if needed
-                  setTreeItemsRecord((prev) => {
-                    const currentParentStartTime = prev[parentRepetitionId]?.data?.startTime ?? 0;
-                    const currentParentEndTime = prev[parentRepetitionId]?.data?.endTime ?? 0;
-                    if (action?.startTime > currentParentStartTime && action?.endTime < currentParentEndTime) {
-                      return prev;
-                    }
-                    const newStartTime =
-                      action?.startTime && (!currentParentStartTime || action?.startTime < currentParentStartTime)
-                        ? action.startTime
-                        : currentParentStartTime;
-                    const newEndTime =
-                      action?.endTime && (!currentParentEndTime || action?.endTime > currentParentEndTime)
-                        ? action.endTime
-                        : currentParentEndTime;
-                    return {
-                      ...prev,
-                      [parentRepetitionId]: {
-                        ...prev[parentRepetitionId],
-                        data: {
-                          ...prev[parentRepetitionId].data,
-                          repetition: {
-                            ...prev[parentRepetitionId].data.repetition,
-                            properties: {
-                              ...prev[parentRepetitionId].data.repetition.properties,
-                              startTime: newStartTime,
-                              endTime: newEndTime,
-                            },
-                          },
-                          startTime: newStartTime,
-                          endTime: newEndTime,
-                        },
-                      },
-                    };
-                  });
+
+                  updateToolTimes(parentRepetitionId, action);
                 });
               });
             });
@@ -299,47 +311,14 @@ export const RunTreeView = () => {
     });
 
     // A2A agents
-    (agentRepetitionData ?? []).forEach((agentRepetition, agentIndex: number) => {
+    (agentRepetitionData ?? []).forEach((agentRepetition) => {
       if (agentRepetition?.properties.status === 'Skipped') {
         return;
       }
       const agentName = agentRepetition.properties.agentMetadata?.agentName;
-      const newAgentId = `${agentName}-#${agentRepetition.name}`;
+      const repetitionName = agentRepetition.name;
 
-      getAgentActionsRepetition(agentName, selectedRun!.id, agentRepetition.name, 0).then((actionsRepetition) => {
-        actionsRepetition.forEach((actionRepetition, actionIndex: number) => {
-          const actions = (actionRepetition.properties as any)?.actionResults ?? [];
-          actions.forEach((action: any) => {
-            const actionId = action?.name;
-            const newActionId = `${actionId}-#${repIndexToName(agentIndex)}-${repIndexToName(actionIndex)}`;
-            // Add new repetition node
-            const newTreeData = {
-              value: newActionId,
-              content: actionId ?? '',
-              parentValue: newAgentId,
-              data: {
-                repetition: {
-                  id: newActionId,
-                  name: actionId,
-                  properties: {
-                    ...action,
-                    repetitionIndexes: [
-                      {
-                        scopeName: agentName,
-                        itemIndex: Number(agentRepetition.name),
-                      },
-                    ],
-                  },
-                  type: 'workflows/runs/actions/agentRepetitions/actions',
-                },
-                parentRepetition: agentRepetition,
-                startTime: action?.startTime,
-              },
-            };
-            addTreeItem(newTreeData);
-          });
-        });
-      });
+      const newAgentId = `${agentName}-#${repetitionName}`;
 
       // Add new repetition node
       const newTreeData = {
@@ -352,14 +331,115 @@ export const RunTreeView = () => {
         },
       };
       addTreeItem(newTreeData);
-    });
-  }, [actions, nodesMetadata, operationsInfo, selectedRun, agentRepetitionData, addTreeItem]);
 
-  const treeItems = useMemo(() => {
-    return Object.values(treeItemsRecord).sort((a, b) => {
-      return a.data.startTime && b.data.startTime ? new Date(a.data.startTime).getTime() - new Date(b.data.startTime).getTime() : 0;
+      // Also add any tools
+      const tools = (agentRepetition?.properties as any)?.tools ?? {};
+      Object.entries(tools).forEach(([toolId, toolData]: [string, any]) => {
+        for (let i = 0; i < toolData.iterations; i++) {
+          const toolRepetitionId = `${toolId}-#${repetitionName}`;
+          // Add new repetition node
+          const newToolTreeData = {
+            value: toolRepetitionId,
+            content: toolId,
+            parentValue: newAgentId,
+            data: {
+              repIndex: i,
+              repetition: {
+                id: toolRepetitionId,
+                name: toolId,
+                properties: {
+                  repetitionIndexes: [
+                    {
+                      scopeName: agentName,
+                      itemIndex: Number(repetitionName),
+                    },
+                  ],
+                },
+                type: 'workflows/runs/actions/agentRepetitions/tools',
+              },
+              parentRepetition: agentRepetition,
+            },
+          };
+          addToCountRecord(toolId);
+          addTreeItem(newToolTreeData);
+        }
+      });
+
+      // Get actions within the agent, and place them under tools
+      getAgentActionsRepetition(agentName, selectedRun!.id, repetitionName, 0, isRunning).then((actionsRepetition) => {
+        actionsRepetition.forEach((actionRepetition) => {
+          const actions = (actionRepetition.properties as any)?.actionResults ?? [];
+          actions.forEach((action: any) => {
+            if (action?.status === 'HandedOff') {
+              // Tag the parent tool as a handoff tool
+              const actionId = action?.name;
+              const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
+              const parentRepetitionId = `${parentId}-#${repetitionName}`;
+              setTreeItemsRecord((prev) => {
+                return {
+                  ...prev,
+                  [parentRepetitionId]: {
+                    ...prev[parentRepetitionId],
+                    data: {
+                      ...(prev[parentRepetitionId]?.data ?? {}),
+                      isHandoff: true,
+                    },
+                  },
+                };
+              });
+              return;
+            }
+
+            const actionId = action?.name;
+            // const leafRepetitionIndex = getCountRecord(actionId);
+            const newActionId = `${actionId}-#${repetitionName}`;
+            const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
+            const parentRepetitionId = `${parentId}-#${repetitionName}`;
+            // Add new repetition node
+            const newTreeData = {
+              value: newActionId,
+              content: actionId ?? '',
+              parentValue: parentRepetitionId,
+              data: {
+                repetition: {
+                  id: newActionId,
+                  name: actionId,
+                  properties: {
+                    ...action,
+                    repetitionIndexes: [
+                      {
+                        scopeName: agentName,
+                        itemIndex: Number(repetitionName),
+                      },
+                      {
+                        scopeName: parentId,
+                        itemIndex: 0,
+                      },
+                    ],
+                  },
+                  type: 'workflows/runs/actions/agentRepetitions/actions',
+                },
+                parentRepetition: agentRepetition,
+                startTime: action?.startTime,
+              },
+            };
+            addToCountRecord(actionId);
+            addTreeItem(newTreeData);
+
+            updateToolTimes(parentRepetitionId, action);
+          });
+        });
+      });
     });
-  }, [treeItemsRecord]);
+  }, [actions, nodesMetadata, operationsInfo, selectedRun, agentRepetitionData, addTreeItem, updateToolTimes, isRunning]);
+
+  const treeItems = useMemo(
+    () =>
+      Object.values(treeItemsRecord).sort((a, b) => {
+        return a.data.startTime && b.data.startTime ? new Date(a.data.startTime).getTime() - new Date(b.data.startTime).getTime() : 0;
+      }),
+    [treeItemsRecord]
+  );
 
   const flatTree = useHeadlessFlatTree_unstable(treeItems, {
     onOpenChange,
@@ -375,6 +455,9 @@ export const RunTreeView = () => {
     <>
       <FlatTree {...flatTree.getTreeProps()} aria-label="Flat Tree">
         {Array.from(flatTree.items(), (flatTreeItem) => {
+          if (!flatTreeItem?.value) {
+            return null;
+          }
           const [actionId, repetitionName] = (flatTreeItem.value as string).split('-#');
           return (
             <TreeActionItem
