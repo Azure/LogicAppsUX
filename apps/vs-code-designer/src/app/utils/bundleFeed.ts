@@ -362,6 +362,7 @@ export async function getExtensionBundleFolder(): Promise<string> {
       } else {
         const parseError = new Error('Could not parse extension bundle path from output.');
         ext.telemetryReporter.sendTelemetryEvent('bundlePathParseError', { value: parseError.message });
+        throw parseError;
       }
     }
   } catch (error) {
