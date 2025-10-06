@@ -366,7 +366,7 @@ export async function getExtensionBundleFolder(): Promise<string> {
       }
     }
   } catch (error) {
-    const bundleCommandError = new Error('Could not find path to extension bundle');
+    const bundleCommandError = new Error('Could not find path to extension bundle.');
     if (outputChannel) {
       outputChannel.appendLog(bundleCommandError.message);
       outputChannel.appendLog(JSON.stringify(error));

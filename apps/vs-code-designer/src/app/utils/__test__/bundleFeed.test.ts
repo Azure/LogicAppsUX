@@ -28,6 +28,9 @@ vi.mock('../../../extensionVariables', () => ({
       appendLog: vi.fn(),
       show: vi.fn(),
     },
+    telemetryReporter: {
+      sendTelemetryEvent: vi.fn(),
+    },
   },
 }));
 
@@ -176,7 +179,7 @@ describe('getExtensionBundleFolder', () => {
 
       mockedExecuteCommand.mockResolvedValue(mockOutput);
 
-      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle');
     });
 
     it('should throw error when path line has no ExtensionBundles', async () => {
@@ -184,7 +187,7 @@ describe('getExtensionBundleFolder', () => {
 
       mockedExecuteCommand.mockResolvedValue(mockOutput);
 
-      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle');
     });
 
     it('should throw error when regex and fallback both fail', async () => {
