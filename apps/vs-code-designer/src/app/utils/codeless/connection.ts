@@ -31,6 +31,7 @@ import type {
   Parameter,
   CustomCodeFileNameMapping,
   AllCustomCodeFiles,
+  ConnectionsData,
 } from '@microsoft/vscode-extension-logic-apps';
 import { JwtTokenHelper, JwtTokenConstants } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -41,6 +42,7 @@ import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { ext } from '../../../extensionVariables';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -244,6 +246,40 @@ export async function getConnectionsAndSettingsToUpdate(
   //TODO: Move token generation for AAD Token here in the future
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
+
+    // Handle connection references if using MSI generated from azure identity library for local token credential
+    // In openDesignerForLocalProjects.ts saveWorkflow method, replace the TODO block with:
+
+    // Handle connection references if using MSI generated from azure identity library for local token credential
+    if (connectionReferences && ext.useMSI) {
+      const hasMSIConnections = Object.values(connectionReferences).some(
+        (ref: any) => ref?.authentication?.type === 'ManagedServiceIdentity'
+      );
+      if (hasMSIConnections) {
+        let connectionReferenceMSI: any;
+        try {
+          // Update connection references with MSI configuration
+          connectionReferenceMSI = await updateConnectionReferencesWithMSI(
+            context,
+            connectionReferences,
+            azureTenantId,
+            workflowBaseManagementUri
+          );
+
+          console.log('Connection references updated with MSI configuration:', connectionReferenceMSI);
+
+          context.telemetry.properties.msiConnectionsProcessed = 'true';
+        } catch (error) {
+          const errorMessage = `Failed to configure MSI connections: ${error}`;
+          context.telemetry.properties.msiConfigurationError = errorMessage;
+
+          // Show warning but don't fail the save operation
+          window.showWarningMessage(
+            `Warning: MSI connection configuration failed. Connections may not work properly in local development: ${error}`
+          );
+        }
+      }
+    }
 
     context.telemetry.properties.checkingConnectionKey = `Checking ${referenceKey}-connectionKey validity`;
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
@@ -607,8 +643,6 @@ async function ensureAccessPolicy(
 
   // Create access policy
   // TODO: Pass in something more meaningful for policy name if possible
-  // Create access policy
-  // Create access policy
   const policyName = `local-msi-${objectId.substring(0, 8)}`;
   console.log(policyName);
 
@@ -645,33 +679,24 @@ async function ensureAccessPolicy(
   } catch (error) {
     if (!axios.isAxiosError(error) || error.response?.status !== 409) {
       console.error('Failed to create policy:', error.response?.data || error);
-      throw error; // Only ignore 409 Conflict if you want idempotency
+      throw error; // Only ignore 409 Conflict if you want idempotencu
     }
   }
+}
 
-  // // FIX: Use absolute URL construction
-  // const fullConnectionId = connectionId.startsWith('/') ? connectionId : `/${connectionId}`;
-  // const policyUrl = `https://management.azure.com${fullConnectionId}/accessPolicies/${policyName}?api-version=2018-07-01-preview`;
+/**
+ * Updates authentication directly in connections
+ * Used when parameterization is disabled
+ */
+export function updateAuthenticationInConnections(connectionsData: ConnectionsData, actionContext?: IActionContext): void {
+  const authValue = { type: 'ManagedServiceIdentity' };
+  if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+    for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+      connectionsData.managedApiConnections[referenceKey].authentication = authValue;
 
-  // // try {
-  //   await axios.put(policyUrl, {
-  //     name: policyName,
-  //     type: 'Microsoft.Web/connections/accessPolicy',
-  //     location: location, // <-- FIXED: Added location field
-  //     properties: {
-  //       principal: {
-  //         type: 'ActiveDirectory',
-  //         identity: { objectId, tenantId }
-  //       }
-  //     }
-  //   }, {
-  //     headers: { authorization: accessToken }
-  //   });
-  //   console.log(`Successfully created policy: ${policyName}`);
-  // } catch (error) {
-  //   if (!axios.isAxiosError(error) || error.response?.status !== 409) {
-  //     console.error('Failed to create policy:', error.response?.data || error);
-  //     throw error; // Only ignore 409 Conflict
-  //   }
-  // }
+      if (actionContext) {
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ${authValue.type || 'ManagedServiceIdentity'}`;
+      }
+    }
+  }
 }
