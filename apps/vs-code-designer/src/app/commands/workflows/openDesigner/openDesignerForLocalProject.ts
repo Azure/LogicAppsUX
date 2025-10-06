@@ -20,6 +20,7 @@ import {
   getParametersFromFile,
   saveConnectionReferences,
   saveCustomCodeStandard,
+  updateConnectionReferencesWithMSI,
 } from '../../../utils/codeless/connection';
 import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -335,10 +336,38 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
         workflow.definition = definitionToSave;
         // Handle connection references if using MSI generated from azure identity library for local token credential
-        if (connectionReferences && ext.useMSI && connectionReferences?.authentication?.type === 'ManagedServiceIdentity') {
-          // TODO: Handle user assigned identity for Azure SDK Local Token Credential
-        }
+        // In openDesignerForLocalProjects.ts saveWorkflow method, replace the TODO block with:
 
+        // Handle connection references if using MSI generated from azure identity library for local token credential
+        if (connectionReferences && ext.useMSI) {
+          const hasMSIConnections = Object.values(connectionReferences).some(
+            (ref: any) => ref?.authentication?.type === 'ManagedServiceIdentity'
+          );
+          if (hasMSIConnections) {
+            let connectionReferenceMSI: any;
+            try {
+              // Update connection references with MSI configuration
+              connectionReferenceMSI = await updateConnectionReferencesWithMSI(
+                context,
+                connectionReferences,
+                azureTenantId,
+                workflowBaseManagementUri
+              );
+
+              console.log('Connection references updated with MSI configuration:', connectionReferenceMSI);
+
+              context.telemetry.properties.msiConnectionsProcessed = 'true';
+            } catch (error) {
+              const errorMessage = `Failed to configure MSI connections: ${error}`;
+              context.telemetry.properties.msiConfigurationError = errorMessage;
+
+              // Show warning but don't fail the save operation
+              window.showWarningMessage(
+                `Warning: MSI connection configuration failed. Connections may not work properly in local development: ${error}`
+              );
+            }
+          }
+        }
         if (connectionReferences) {
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
             this.context,

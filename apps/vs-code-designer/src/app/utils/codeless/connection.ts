@@ -241,6 +241,7 @@ export async function getConnectionsAndSettingsToUpdate(
   let accessToken: string | undefined;
   const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
+  //TODO: Move token generation for AAD Token here in the future
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
 
@@ -515,4 +516,162 @@ async function createAccessPolicyInConnection(
     .catch((error) => {
       throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
     });
+}
+
+// Add this function to connections.ts
+
+/**
+ * Updates connection references with MSI authentication for local development.
+ */
+export async function updateConnectionReferencesWithMSI(
+  context: IActionContext,
+  connectionReferences: object,
+  azureTenantId: string,
+  workflowBaseManagementUri: string
+): Promise<any> {
+  const accessToken = await getAuthorizationToken(azureTenantId);
+
+  // Extract user identity from token
+
+  //TODO reterive both object ID and tenant ID from token instead of passing tenant ID as parameter
+  const jwtHelper = JwtTokenHelper.createInstance();
+  const tokenPayload = jwtHelper.extractJwtTokenPayload(accessToken);
+  const objectId = tokenPayload?.oid || tokenPayload?.sub;
+  const tenantId = tokenPayload?.tid;
+
+  if (!objectId || !tenantId) {
+    throw new Error('Unable to retrieve user identity from token');
+  }
+
+  const updatedReferences: any = {};
+
+  for (const [referenceKey, reference] of Object.entries(connectionReferences)) {
+    if (reference?.authentication?.type === 'ManagedServiceIdentity' && reference?.connection?.id?.startsWith('/subscriptions/')) {
+      const connectionId = reference.connection.id;
+
+      // Check and create access policy
+      await ensureAccessPolicy(connectionId, objectId, azureTenantId, accessToken, workflowBaseManagementUri);
+
+      // Update reference - keep existing structure but ensure runtime URL
+      updatedReferences[referenceKey] = reference;
+    } else {
+      updatedReferences[referenceKey] = reference;
+    }
+  }
+
+  return updatedReferences;
+}
+
+// Helper function to ensure access policy exists for one connection
+async function ensureAccessPolicy(
+  connectionId: string,
+  objectId: string,
+  tenantId: string,
+  accessToken: string,
+  baseManagementUri: string
+): Promise<void> {
+  const policiesUrl = `${formatSetting(baseManagementUri)}${connectionId}/accessPolicies?api-version=2018-07-01-preview`;
+
+  // Check existing policies
+  try {
+    const response = await axios.get(policiesUrl, {
+      headers: { authorization: accessToken }, // <-- Changed here
+    });
+
+    const policies = response.data.value || [];
+    if (
+      policies.some(
+        (p: any) => p.properties?.principal?.identity?.objectId === objectId && p.properties?.principal?.identity?.tenantId === tenantId
+      )
+    ) {
+      console.log(policies); // Policy already exists
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    // Continue to create policy
+  }
+
+  // <-- ADDED: Get connection details for location
+  const connectionUrl = `${formatSetting(baseManagementUri)}${connectionId}?api-version=2018-07-01-preview`;
+  let location: string;
+
+  try {
+    const connResponse = await axios.get(connectionUrl, {
+      headers: { authorization: accessToken },
+    });
+    location = connResponse.data.location;
+  } catch (error) {
+    console.error('Failed to get connection details:', error, location);
+    throw new Error(`Unable to retrieve connection location: ${error}`);
+  }
+
+  // Create access policy
+  // TODO: Pass in something more meaningful for policy name if possible
+  // Create access policy
+  // Create access policy
+  const policyName = `local-msi-${objectId.substring(0, 8)}`;
+  console.log(policyName);
+
+  // Create access policy (Bicep-equivalent semantics: child name = principal objectId)
+  const childName = objectId; // Must be the AAD objectId
+  const apiVersion = '2016-06-01'; // Align with stable version used by your working Bicep
+  const base = formatSetting(baseManagementUri); // Use the SAME base you used for GET (cloud-aware)
+  const normalizedConnId = connectionId.startsWith('/') ? connectionId : `/${connectionId}`;
+  const policyUrl = `${base}${normalizedConnId}/accessPolicies/${encodeURIComponent(childName)}?api-version=${apiVersion}`;
+
+  // Ensure Authorization header includes Bearer prefix
+  const authHeader = accessToken;
+
+  try {
+    await axios.put(
+      policyUrl,
+      {
+        // Minimal body; no 'name', no 'type', no 'location'
+        properties: {
+          principal: {
+            type: 'ActiveDirectory',
+            identity: { objectId, tenantId },
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: authHeader,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log(`Successfully created access policy for objectId: ${childName}`);
+  } catch (error) {
+    if (!axios.isAxiosError(error) || error.response?.status !== 409) {
+      console.error('Failed to create policy:', error.response?.data || error);
+      throw error; // Only ignore 409 Conflict if you want idempotency
+    }
+  }
+
+  // // FIX: Use absolute URL construction
+  // const fullConnectionId = connectionId.startsWith('/') ? connectionId : `/${connectionId}`;
+  // const policyUrl = `https://management.azure.com${fullConnectionId}/accessPolicies/${policyName}?api-version=2018-07-01-preview`;
+
+  // // try {
+  //   await axios.put(policyUrl, {
+  //     name: policyName,
+  //     type: 'Microsoft.Web/connections/accessPolicy',
+  //     location: location, // <-- FIXED: Added location field
+  //     properties: {
+  //       principal: {
+  //         type: 'ActiveDirectory',
+  //         identity: { objectId, tenantId }
+  //       }
+  //     }
+  //   }, {
+  //     headers: { authorization: accessToken }
+  //   });
+  //   console.log(`Successfully created policy: ${policyName}`);
+  // } catch (error) {
+  //   if (!axios.isAxiosError(error) || error.response?.status !== 409) {
+  //     console.error('Failed to create policy:', error.response?.data || error);
+  //     throw error; // Only ignore 409 Conflict
+  //   }
+  // }
 }

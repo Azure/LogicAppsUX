@@ -81,7 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   ext.context = context;
-  ext.useMSI = false; // disable MSI by default for all users right now
+  ext.useMSI = true; // disable MSI by default for all users right now
   ext.codefulEnabled = false; // flag that prevents codeful use until public preview
   ext.extensionVersion = getExtensionVersion();
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
