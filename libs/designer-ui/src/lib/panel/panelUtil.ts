@@ -28,7 +28,7 @@ export type PanelSize = (typeof PanelSize)[keyof typeof PanelSize];
 export type PanelTabFn = (intl: IntlShape, props: PanelTabProps) => PanelTab;
 
 export interface PanelTabProps {
-  isPanelPinned: boolean;
+  isPanelPinned?: boolean;
   nodeId: string;
   isAgenticConditionPanel?: boolean;
 }
