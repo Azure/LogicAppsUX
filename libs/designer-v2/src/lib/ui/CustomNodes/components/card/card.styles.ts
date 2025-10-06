@@ -48,8 +48,6 @@ export const useCardStyles = makeStyles({
   },
   selected: {
     border: `2px solid ${colors.brand}`,
-    // outline: `3px solid ${colors.brand}`,
-    // outlineOffset: '4px',
   },
   statusSuccess: {
     border: `2px solid ${colors.success}`,
