@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableParseDocumentWithMetadata } from './hooks';
+import { useShouldEnableParseDocumentWithMetadata, useShouldHideAgentRequestTrigger } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
@@ -45,6 +45,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const shouldHideAgentRequestTrigger = useShouldHideAgentRequestTrigger();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -100,6 +101,11 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
+      // Hide Agent Request trigger if the flag is enabled
+      if (shouldHideAgentRequestTrigger && equals(type, constants.NODE.TYPE.AGENT) && id === 'a2aRequest') {
+        return false;
+      }
+
       // Exclude variable initialization if not at the root
       if (!isRoot && id === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
         return false;
@@ -127,7 +133,7 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
+    [shouldHideAgentRequestTrigger, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
   );
 
   useDebouncedEffect(
