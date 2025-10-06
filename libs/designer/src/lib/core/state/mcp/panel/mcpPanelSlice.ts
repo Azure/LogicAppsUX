@@ -18,6 +18,7 @@ export interface PanelState {
   isOpen: boolean;
   currentPanelView?: ConfigPanelView;
   selectedTabId?: string;
+  autoOpenPanel?: boolean;
 }
 
 const initialState: PanelState = {
@@ -52,6 +53,9 @@ export const mcpPanelSlice = createSlice({
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
     },
+    setAutoOpenPanel: (state, action: PayloadAction<boolean>) => {
+      state.autoOpenPanel = action.payload;
+    },
     closePanel: closePanelReducer,
   },
   extraReducers: (builder) => {
@@ -63,6 +67,6 @@ export const mcpPanelSlice = createSlice({
   },
 });
 
-export const { openMcpPanelView, openOperationPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
+export const { setAutoOpenPanel, openMcpPanelView, openOperationPanelView, selectPanelTab, closePanel } = mcpPanelSlice.actions;
 
 export default mcpPanelSlice.reducer;

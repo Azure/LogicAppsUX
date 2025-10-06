@@ -147,10 +147,12 @@ export const DesignerCommandBar = ({
 }) => {
   const styles = useStyles();
   const [lastSavedTime, setLastSavedTime] = useState<Date>();
+  const [autoSaving, setAutoSaving] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
+    setAutoSaving(autoSave ?? false);
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
@@ -301,22 +303,25 @@ export const DesignerCommandBar = ({
     </Card>
   );
 
-  const SaveButton = () => (
-    <ToolbarButton
-      appearance="primary"
-      disabled={saveIsDisabled}
-      onClick={() => {
-        if (isDesignerView) {
-          saveWorkflowMutate(false);
-        } else {
-          saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
-        }
-      }}
-      icon={isSaving ? <Spinner size={'extra-tiny'} /> : undefined}
-    >
-      {isSaving ? 'Publishing....' : 'Publish'}
-    </ToolbarButton>
-  );
+  const SaveButton = () => {
+    const publishLoading = !autoSaving && isSaving;
+    return (
+      <ToolbarButton
+        appearance="primary"
+        disabled={saveIsDisabled}
+        onClick={() => {
+          if (isDesignerView) {
+            saveWorkflowMutate(false);
+          } else {
+            saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          }
+        }}
+        icon={publishLoading ? <Spinner size={'extra-tiny'} /> : undefined}
+      >
+        {publishLoading ? 'Publishing....' : 'Publish'}
+      </ToolbarButton>
+    );
+  };
 
   const DiscardButton = () => (
     <ToolbarButton
@@ -350,6 +355,7 @@ export const DesignerCommandBar = ({
               Switch to draft version
             </MenuItem>
           )}
+          <MenuDivider />
           <MenuItem
             disabled={saveUnitTestIsDisabled}
             onClick={() => saveUnitTestMutate()}

@@ -395,7 +395,7 @@ export class StandardRunService implements IRunService {
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
    * @param {any} options - Options for the trigger call including headers, queries and body.
    */
-  async runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any> {
+  async runTrigger(callbackInfo: CallbackInfo, options?: any, isDraftMode?: boolean): Promise<any> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
@@ -416,7 +416,7 @@ export class StandardRunService implements IRunService {
       const mergedParams = { ...uriParams, ...(options?.queries ?? {}) };
 
       return await this.getHttpRequestByMethod(httpClient, method, {
-        uri: baseUri,
+        uri: isDraftMode ? `${baseUri}draft` : baseUri,
         noAuth: true,
         returnHeaders: true,
         headers: options?.headers,

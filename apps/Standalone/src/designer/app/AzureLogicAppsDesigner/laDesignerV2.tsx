@@ -119,11 +119,10 @@ const DesignerEditor = () => {
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
+
+  // State props
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>({
-    ...artifactData?.properties.files[Artifact.WorkflowFile],
-    id: guid(),
-  });
+  const [workflow, setWorkflow] = useState<Workflow>(); // Current workflow on the designer
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
   const [isDraftMode, setIsDraftMode] = useState(true);
@@ -134,16 +133,18 @@ const DesignerEditor = () => {
     [artifactData?.properties.files]
   );
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
+  const prodWorkflow = useMemo(() => artifactData?.properties.files[Artifact.WorkflowFile], [artifactData?.properties.files]);
   const draftWorkflow = useMemo(() => customCodeData?.[Artifact.DraftFile], [customCodeData]);
   const parameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
   const notes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
   const queryClient = getReactQueryClient();
   const displayCopilotChatbot = showChatBot && isDesignerView;
-
   const connectionsData = useMemo(
     () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
     [originalConnectionsData, parameters, settingsData?.properties]
   );
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+  const { data: runInstanceData } = useRun(runId);
 
   const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
@@ -153,6 +154,82 @@ const DesignerEditor = () => {
   const switchWorkflowMode = useCallback((draftMode: boolean) => {
     setIsDraftMode(draftMode);
   }, []);
+
+  const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
+    if (!connectionId) {
+      return Promise.resolve();
+    }
+
+    const connectionName = connectionId.split('/').splice(-1)[0];
+    const connectionInfo =
+      connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
+
+    if (connectionInfo) {
+      // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
+      const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData?.properties);
+      delete resolvedConnectionInfo.displayName;
+
+      return {
+        connection: resolvedConnectionInfo,
+      };
+    }
+
+    return undefined;
+  };
+
+  const saveDraftWorkflow = useCallback(
+    (workflow: Workflow) => {
+      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+    },
+    [siteResourceId, workflowName]
+  );
+
+  const resetDraftWorkflow = useCallback(async () => {
+    const response = await saveDraftWorkflow(prodWorkflow);
+
+    if (response.status >= 200 && response.status < 300) {
+      // Draft created successfully
+      customCodeRefetch();
+      return Promise.resolve();
+    }
+    return Promise.reject(`Error resetting draft workflow: ${response.status} - ${response.statusText}`);
+  }, [customCodeRefetch, prodWorkflow, saveDraftWorkflow]);
+
+  const discardAllChanges = useCallback(() => {
+    setDesignerID(guid());
+
+    if (isDraftMode) {
+      // Need to reset draft workflow to Production workflow
+      resetDraftWorkflow();
+    }
+  }, [isDraftMode, resetDraftWorkflow]);
+
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
+  const services = useMemo(
+    () =>
+      getDesignerServices(
+        workflowId,
+        supportsStateful,
+        isHybridLogicApp,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        getConnectionConfiguration,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        queryClient,
+        settingsData?.properties ?? {},
+        dispatch,
+        onRunSelected
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
+  );
+
+  // RUN HISTORY
 
   const toggleMonitoringView = useCallback(() => {
     dispatch(setMonitoringView(!isMonitoringView));
@@ -196,68 +273,12 @@ const DesignerEditor = () => {
     [dispatch, showMonitoringView]
   );
 
-  const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
-    if (!connectionId) {
-      return Promise.resolve();
-    }
+  const originalSettings: Record<string, string> = useMemo(() => {
+    return { ...(settingsData?.properties ?? {}) };
+  }, [settingsData?.properties]);
 
-    const connectionName = connectionId.split('/').splice(-1)[0];
-    const connectionInfo =
-      connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
-
-    if (connectionInfo) {
-      // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-      const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData?.properties);
-      delete resolvedConnectionInfo.displayName;
-
-      return {
-        connection: resolvedConnectionInfo,
-      };
-    }
-
-    return undefined;
-  };
-
-  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
-
-  const discardAllChanges = () => {
-    setDesignerID(guid());
-  };
-
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  const supportsStateful = !equals(workflow?.kind, 'stateless');
-  const services = useMemo(
-    () =>
-      getDesignerServices(
-        workflowId,
-        supportsStateful,
-        isHybridLogicApp,
-        connectionsData ?? {},
-        workflowAppData as WorkflowApp,
-        addConnectionDataInternal,
-        getConnectionConfiguration,
-        tenantId,
-        objectId,
-        canonicalLocation,
-        language,
-        queryClient,
-        settingsData?.properties ?? {},
-        dispatch,
-        onRunSelected
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
-  );
-
-  const originalSettings: Record<string, string> = {
-    ...(settingsData?.properties ?? {}),
-  };
   const originalParametersData: ParametersData = clone(parameters ?? {});
   const originalNotesData: NotesData = clone(notes ?? {});
-
-  if (isError || settingsIsError) {
-    throw error ?? settingsError;
-  }
 
   const saveWorkflowFromDesigner = useCallback(
     async (
@@ -486,20 +507,6 @@ const DesignerEditor = () => {
     }
   };
 
-  const setProdWorkflow = useCallback(() => {
-    const prodWorkflow = artifactData?.properties.files[Artifact.WorkflowFile];
-    if (prodWorkflow) {
-      setWorkflow(prodWorkflow);
-    }
-  }, [artifactData]);
-
-  const saveDraftWorkflow = useCallback(
-    (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
-    },
-    [siteResourceId, workflowName]
-  );
-
   // Our iframe root element is given a strange padding (not in this repo), this removes it
   useEffect(() => {
     const root = document.getElementById('root');
@@ -509,11 +516,13 @@ const DesignerEditor = () => {
     }
   }, []);
 
-  const { data: runInstanceData } = useRun(runId);
-
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow: Workflow) => {
+      setWorkflow((previousWorkflow?: Workflow) => {
+        if (!previousWorkflow) {
+          // Do not update the workflow if previousWorkflow is undefined; return previous value unchanged
+          return previousWorkflow;
+        }
         return {
           ...previousWorkflow,
           definition: (runInstanceData.properties.workflow as any).properties.definition,
@@ -523,45 +532,31 @@ const DesignerEditor = () => {
   }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
-    const prodWorkflow = artifactData?.properties.files[Artifact.WorkflowFile];
-    if (customCodeLoading || artifactsLoading) {
+    if (customCodeLoading || artifactsLoading || !prodWorkflow) {
       return;
     }
 
-    if (draftWorkflow) {
-      setWorkflow(draftWorkflow as any);
-    } else if (prodWorkflow) {
-      // Create default draft from production if draft does not exist
-      saveDraftWorkflow(prodWorkflow).then((response) => {
-        if (response.status >= 200 && response.status < 300) {
-          // Draft created successfully
-          customCodeRefetch();
-        } else {
-          setIsDraftMode(false);
-          // TODO: Handle error
-          setProdWorkflow();
-        }
-      });
-    }
-  }, [
-    artifactData?.properties.files,
-    artifactsLoading,
-    customCodeLoading,
-    customCodeRefetch,
-    draftWorkflow,
-    saveDraftWorkflow,
-    setProdWorkflow,
-  ]);
-
-  useEffect(() => {
     if (isDraftMode) {
       if (draftWorkflow) {
         setWorkflow(draftWorkflow as any);
+      } else {
+        resetDraftWorkflow()
+          .then(() => {
+            // Draft created successfully
+          })
+          .catch((_error) => {
+            setIsDraftMode(false);
+            setWorkflow(prodWorkflow as any);
+          });
       }
     } else {
-      setProdWorkflow();
+      setWorkflow(prodWorkflow as any);
     }
-  }, [draftWorkflow, isDraftMode, setProdWorkflow]);
+  }, [artifactsLoading, customCodeLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
+
+  if (isError || settingsIsError) {
+    throw error ?? settingsError;
+  }
 
   if (artifactsLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -600,7 +595,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
-            isMultiVariableEnabled={hostOptions.enableMultiVariable}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable && !isMonitoringView}
           >
             <div
               style={{
@@ -650,7 +645,13 @@ const DesignerEditor = () => {
                 {!isCodeView && (
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                     <Designer />
-                    <FloatingRunButton id={workflowId} saveDraftWorkflow={saveWorkflowFromDesigner} onRun={onRun} isDarkMode={isDarkMode} />
+                    <FloatingRunButton
+                      id={workflowId}
+                      saveDraftWorkflow={saveWorkflowFromDesigner}
+                      onRun={onRun}
+                      isDarkMode={isDarkMode}
+                      isDraftMode={isDraftMode}
+                    />
                   </div>
                 )}
                 {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
