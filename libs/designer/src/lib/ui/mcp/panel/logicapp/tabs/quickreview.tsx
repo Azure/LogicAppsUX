@@ -15,7 +15,14 @@ export const quickReviewTab = (
     resourcesStatus: Record<string, string>;
     errorInfo?: { title: string; message: string };
   },
-  { isTabDisabled, previousTabId, isPrimaryButtonDisabled, isSecondaryButtonDisabled, onPrimaryButtonClick }: McpCreateAppTabProps
+  {
+    isTabDisabled,
+    onTabClick,
+    previousTabId,
+    isPrimaryButtonDisabled,
+    isSecondaryButtonDisabled,
+    onPrimaryButtonClick,
+  }: McpCreateAppTabProps
 ): McpPanelTabProps => ({
   id: constants.MCP_PANEL_TAB_NAMES.QUICK_REVIEW,
   title: intl.formatMessage({
@@ -25,6 +32,7 @@ export const quickReviewTab = (
   }),
   content: <SimpleCreateReview {...templateDetails} />,
   disabled: isTabDisabled,
+  onTabClick: onTabClick,
   footerContent: {
     buttonContents: templateDetails.isCreated
       ? [

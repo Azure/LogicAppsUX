@@ -12,6 +12,7 @@ import * as path from 'path';
 import { getUnixChildren, getWindowsChildren, pickChildProcess } from './pickFuncProcess';
 import { localize } from '../../localize';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
+import { ext } from '../../extensionVariables';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 
@@ -66,7 +67,7 @@ export async function pickCustomCodeNetHostProcess(
   context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
   let customCodeNetHostProcess: string | undefined;
   for (let i = 0; i < maxRetries; i++) {
-    customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo, debugConfig.isCodeless);
+    customCodeNetHostProcess = await pickCustomCodeWorkerChildProcess(taskInfo, false, debugConfig.isCodeless);
     if (customCodeNetHostProcess) {
       break;
     }
@@ -109,19 +110,59 @@ export async function pickCustomCodeNetHostProcessInternal(
   }
 
   context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
-  const customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo, isCodeless);
+  const customCodeNetHostProcess = await pickCustomCodeWorkerChildProcess(taskInfo, false, isCodeless);
   if (!customCodeNetHostProcess) {
-    const errorMessage = 'Failed to find the .NET host child process for the functions project for logic app "{0}".';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', logicAppName);
-    throw new Error(localize('netHostProcessNotFound', errorMessage, logicAppName));
+    ext.outputChannel.appendLog(
+      localize(
+        'customCodeNet8ChildProcessNotFound',
+        `Failed to find the .NET host child process for the functions project for logic app "${logicAppName}". This may be due to the logic app not having a custom code action.`
+      )
+    );
+    return undefined;
   }
 
   context.telemetry.properties.result = 'Succeeded';
   return customCodeNetHostProcess;
 }
 
-export async function pickNetHostChildProcess(taskInfo: IRunningFuncTask, isCodeless: boolean): Promise<string | undefined> {
+export async function pickCustomCodeNetFxWorkerProcessInternal(
+  context: IActionContext,
+  workspaceFolder: vscode.WorkspaceFolder,
+  projectPath: string
+): Promise<string | undefined> {
+  const logicAppName = path.basename(projectPath);
+
+  context.telemetry.properties.lastStep = 'getRunningFuncTask';
+  const taskInfo = runningFuncTaskMap.get(workspaceFolder);
+  if (!taskInfo) {
+    const errorMessage =
+      'Failed to find a running func task for the logic app "{0}". The logic app must be running to attach the function debugger.';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage.replace('{0}', logicAppName);
+    throw new Error(localize('noFuncTask', errorMessage, logicAppName));
+  }
+
+  context.telemetry.properties.lastStep = 'pickNetFxWorkerChildProcess';
+  const customCodeNetFxWorkerProcess = await pickCustomCodeWorkerChildProcess(taskInfo, true);
+  if (!customCodeNetFxWorkerProcess) {
+    ext.outputChannel.appendLog(
+      localize(
+        'customCodeNetFxChildProcessNotFound',
+        `Failed to find the CustomCodeNetFxWorker process for logic app "${logicAppName}". This may be due to the logic app not having a custom code action.`
+      )
+    );
+    return undefined;
+  }
+
+  context.telemetry.properties.result = 'Succeeded';
+  return customCodeNetFxWorkerProcess;
+}
+
+export async function pickCustomCodeWorkerChildProcess(
+  taskInfo: IRunningFuncTask,
+  isNetFxWorker: boolean,
+  isCodeless = false
+): Promise<string | undefined> {
   const funcPid = Number(await pickChildProcess(taskInfo));
   if (!funcPid) {
     return undefined;
@@ -129,7 +170,7 @@ export async function pickNetHostChildProcess(taskInfo: IRunningFuncTask, isCode
 
   const children: OSAgnosticProcess[] =
     process.platform === Platform.windows ? await getWindowsChildren(funcPid) : await getUnixChildren(funcPid);
-  const childRegex = isCodeless ? /(dotnet)(\.exe|)?$/i : /(func|dotnet)(\.exe|)?$/i;
+  const childRegex = isNetFxWorker ? /(CustomCodeNetFxWorker)(\.exe|)?$/i : isCodeless ? /(dotnet)(\.exe|)?$/i : /(func|dotnet)(\.exe|)?$/i;
   let child: OSAgnosticProcess | undefined = children.reverse().find((c) => childRegex.test(c.command || ''));
 
   // If child is null or undefined, look one level deeper in child processes
