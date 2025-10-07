@@ -11,6 +11,7 @@ import {
   UnsupportedException,
   isNullOrUndefined,
   validateRequiredServiceArguments,
+  isArmResourceId,
 } from '../../../utils/src';
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
@@ -395,8 +396,8 @@ export class StandardRunService implements IRunService {
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
    * @param {any} options - Options for the trigger call including headers, queries and body.
    */
-  async runTrigger(callbackInfo: CallbackInfo, options?: any, isDraftMode?: boolean): Promise<any> {
-    const { httpClient } = this.options;
+  async runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any> {
+    const { httpClient, apiVersion } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
     if (!uri) {
@@ -405,7 +406,7 @@ export class StandardRunService implements IRunService {
 
     try {
       // Parse query params from uri
-      const [baseUri, queryString] = uri.split('?');
+      let [baseUri, queryString] = uri.split('?');
       const urlSearchParams = new URLSearchParams(queryString ?? '');
       const uriParams: Record<string, string> = {};
       urlSearchParams.forEach((value, key) => {
@@ -414,10 +415,16 @@ export class StandardRunService implements IRunService {
 
       // Merge with options?.queries (options take precedence)
       const mergedParams = { ...uriParams, ...(options?.queries ?? {}) };
+      let noAuth = true;
+
+      if (isArmResourceId(baseUri)) {
+        baseUri = `${baseUri}?api-version=${apiVersion}`;
+        noAuth = false;
+      }
 
       return await this.getHttpRequestByMethod(httpClient, method, {
-        uri: isDraftMode ? `${baseUri}draft` : baseUri,
-        noAuth: true,
+        uri: baseUri,
+        noAuth: noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,

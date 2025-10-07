@@ -179,7 +179,7 @@ const DesignerEditor = () => {
 
   const saveDraftWorkflow = useCallback(
     (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+      return deployArtifacts(siteResourceId, workflowName, workflow.definition, undefined, undefined, undefined, true);
     },
     [siteResourceId, workflowName]
   );
@@ -203,6 +203,13 @@ const DesignerEditor = () => {
       resetDraftWorkflow();
     }
   }, [isDraftMode, resetDraftWorkflow]);
+
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      dispatch(changeRunId(runId));
+    },
+    [dispatch]
+  );
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
@@ -257,13 +264,6 @@ const DesignerEditor = () => {
       });
     }
   }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
-
-  const onRunSelected = useCallback(
-    (runId: string) => {
-      dispatch(changeRunId(runId));
-    },
-    [dispatch]
-  );
 
   const onRun = useCallback(
     (runId: string | undefined) => {
@@ -646,7 +646,8 @@ const DesignerEditor = () => {
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                     <Designer />
                     <FloatingRunButton
-                      id={workflowId}
+                      siteResourceId={siteResourceId}
+                      workflowName={workflowName}
                       saveDraftWorkflow={saveWorkflowFromDesigner}
                       onRun={onRun}
                       isDarkMode={isDarkMode}
