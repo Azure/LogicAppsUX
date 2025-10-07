@@ -47,8 +47,8 @@ export async function startRuntimeApi(projectPath: string): Promise<void> {
     }
 
     let isNewRuntimeProcess = false;
-    if (!ext.runtimeInstances.has(this.projectPath)) {
-      ext.runtimeInstances.set(this.projectPath, {
+    if (!ext.runtimeInstances.has(projectPath)) {
+      ext.runtimeInstances.set(projectPath, {
         port: await portfinder.getPortPromise(),
         isStarting: true,
       });
@@ -71,8 +71,7 @@ export async function startRuntimeApi(projectPath: string): Promise<void> {
 
     try {
       ext.outputChannel.appendLog(localize('startingRuntime', 'Starting Runtime API for project: {0}', projectPath));
-
-      startRuntimeProcess(projectPath, getFunctionsCommand());
+      startRuntimeProcess(projectPath, getFunctionsCommand(), 'host', 'start', `--port ${runtimeInst.port}`);
       await waitForRuntimeStartUp(context, projectPath, runtimeInst.port, true);
       context.telemetry.properties.isRuntimeUp = 'true';
     } catch (error) {
