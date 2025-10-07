@@ -27,7 +27,7 @@ import { sendRequest } from '../../../utils/requestUtils';
 import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
-import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
@@ -46,7 +46,9 @@ import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
-import { pickFuncProcess } from '../../pickFuncProcess';
+import { startFuncRuntimeInBackground } from '../../pickFuncProcess';
+import { getContainingWorkspace } from '../../../utils/workspace';
+import { runningFuncTaskMap } from '../../../utils/funcCoreTools/funcHostTask';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -109,15 +111,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await startDesignTimeApi(this.projectPath);
 
-    if (isNullOrUndefined(ext.workflowRuntimePort)) {
+    const workspaceFolder = getContainingWorkspace(this.projectPath);
+    if (!runningFuncTaskMap.has(workspaceFolder)) {
       // Start runtime api if not already running
-      const logicAppName = path.basename(path.dirname(path.dirname(this.workflowFilePath)));
-      await pickFuncProcess(this.context, {
-        name: `Run/Debug logic app ${logicAppName}`,
-        type: 'coreclr',
-        request: 'attach',
-        processId: '${command:azureLogicAppsStandard.pickProcess}',
-      });
+      await startFuncRuntimeInBackground(this.context, workspaceFolder, this.projectPath);
     }
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
@@ -128,7 +125,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${runningFuncTaskMap.get(workspaceFolder).port}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel

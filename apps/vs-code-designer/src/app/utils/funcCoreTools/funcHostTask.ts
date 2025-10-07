@@ -16,6 +16,7 @@ import { delay } from '../delay';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
+  port: number;
 }
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
@@ -44,7 +45,11 @@ export function registerFuncHostTaskEvents(): void {
       context.errorHandling.suppressDisplay = true;
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
-        runningFuncTaskMap.set(e.execution.task.scope, { startTime: Date.now(), processId: e.processId });
+        runningFuncTaskMap.set(e.execution.task.scope, {
+          startTime: Date.now(),
+          processId: e.processId,
+          port: Number(e.execution.task.definition.args[-1]),
+        });
       }
     }
   );
@@ -94,8 +99,8 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
 /**
  * Gets functions port from the task, local.settings.json or the defaultPort.
  * @param {string} context - Command context.
- * @param {string} fsPath - Workflow file path.
- * @param {string} fsPath - Workflow file path.\
+ * @param {vscode.Task | undefined} funcTask - The function host task.
+ * @param {string | vscode.WorkspaceFolder | vscode.TaskScope} projectPathOrTaskScope - The path to the functions project root or the task scope.
  * @returns {vscode.WorkspaceFolder | undefined} Workflow folder.
  */
 export async function getFuncPortFromTaskOrProject(

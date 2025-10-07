@@ -6,7 +6,6 @@ import {
   Platform,
   autoStartAzuriteSetting,
   verifyConnectionKeysSetting,
-  defaultFuncPort,
   hostStartTaskName,
   pickProcessTimeoutSetting,
 } from '../../constants';
@@ -31,13 +30,51 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
-import parser from 'yargs-parser';
+import * as portfinder from 'portfinder';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
+
+export async function startFuncRuntimeInBackground(
+  context: IActionContext,
+  workspaceFolder: vscode.WorkspaceFolder,
+  projectPath: string
+): Promise<void> {
+  if (runningFuncTaskMap.has(workspaceFolder)) {
+    return;
+  }
+
+  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
+      await activateAzurite(context, projectPath);
+    });
+  });
+
+  await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
+      await verifyLocalConnectionKeys(context, projectPath);
+    });
+  });
+
+  const shouldContinue: boolean = await preDebugValidate(context, projectPath);
+  if (!shouldContinue) {
+    throw new UserCancelledError('preDebugValidate');
+  }
+
+  const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
+  const funcTask: vscode.Task | undefined = tasks.find((task) => {
+    return task.scope === workspaceFolder && isFuncHostTask(task);
+  });
+  if (!funcTask) {
+    throw new Error(localize('noFuncTask', 'Failed to find "{0}" task.', hostStartTaskName));
+  }
+
+  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask, true);
+  await pickChildProcess(taskInfo);
+}
 
 /**
  * Starts the function host task and waits for it to be ready, then returns the child func.exe process ID.
@@ -81,8 +118,8 @@ export async function pickFuncProcessInternal(
     });
   });
 
-  const shouldContinue: boolean = await preDebugValidate(context, debugConfig, projectPath);
-
+  context.telemetry.properties.debugType = debugConfig.type;
+  const shouldContinue: boolean = await preDebugValidate(context, projectPath);
   if (!shouldContinue) {
     throw new UserCancelledError('preDebugValidate');
   }
@@ -107,15 +144,11 @@ export async function pickFuncProcessInternal(
     throw new Error(localize('noFuncTask', 'Failed to find "{0}" task.', preLaunchTaskName || hostStartTaskName));
   }
 
-  ext.workflowRuntimePort = getFunctionRuntimePort(funcTask);
-
-  getPickProcessTimeout(context);
-
-  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless)) {
+  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || debugConfig.isCodeless === false)) {
     await startDebugTask(debugTask, workspaceFolder);
   }
 
-  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
+  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask, false);
   return await pickChildProcess(taskInfo);
 }
 
@@ -139,23 +172,6 @@ async function waitForPrevFuncTaskToStop(workspaceFolder: vscode.WorkspaceFolder
       timeoutInSeconds
     )
   );
-}
-
-/**
- * Gets functions runtime port.
- * @param {vscode.Task} funcTask - Function task.
- * @returns {number} Returns specified port in tasks.json or the default function port.
- */
-function getFunctionRuntimePort(funcTask: vscode.Task): number {
-  const { command } = funcTask.definition;
-  try {
-    const args = parser(command);
-    const port = args['port'] || args['p'] || undefined;
-    return port ?? Number(defaultFuncPort);
-  } catch {
-    // Returning the default port in case of error in parsing.
-    return Number(defaultFuncPort);
-  }
 }
 
 /**
@@ -209,11 +225,13 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
  * @param {IActionContext} context - Command context.
  * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
  * @param {vscode.Task} funcTask - Start functions Task.
+ * @param {boolean} isBackgroundTask - Indicates whether the func process is run in the background or attached.
  */
 async function startFuncTask(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder,
-  funcTask: vscode.Task
+  funcTask: vscode.Task,
+  isBackgroundTask = false
 ): Promise<IRunningFuncTask> {
   const funcTaskReadyEmitter = new vscode.EventEmitter<vscode.WorkspaceFolder>();
   const pickProcessTimeout = getPickProcessTimeout(context);
@@ -238,10 +256,26 @@ async function startFuncTask(
   try {
     // The "IfNotActive" part helps when the user starts, stops and restarts debugging quickly in succession. We want to use the already-active task to avoid two func tasks causing a port conflict error
     // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we would've stopped it in `waitForPrevFuncTaskToStop` above
+    const funcPort = isBackgroundTask
+      ? await portfinder.getPortPromise()
+      : Number(await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder));
+
+    if (isBackgroundTask) {
+      const shellExecution = funcTask.execution as vscode.ShellExecution;
+      if (typeof shellExecution.commandLine === 'string') {
+        funcTask.execution = new vscode.ShellExecution(`${shellExecution.commandLine} --port ${funcPort}`);
+      } else if (shellExecution.command) {
+        const args = shellExecution.args || [];
+        funcTask.execution = new vscode.ShellExecution(
+          shellExecution.command,
+          [...args, '--port', funcPort.toString()],
+          shellExecution.options
+        );
+      }
+    }
     await executeIfNotActive(funcTask);
 
     const intervalMs = 500;
-    const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);
     let statusRequestTimeout: number = intervalMs;
     const maxTime: number = Date.now() + pickProcessTimeout * 1000;
     while (Date.now() < maxTime) {
