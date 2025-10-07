@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from 'run-service';
 
 export interface CreateWorkspaceState {
@@ -66,7 +67,7 @@ const initialState: CreateWorkspaceState = {
   isValidatingPackage: false,
 };
 
-export const createWorkspaceSlice: any = createSlice({
+export const createWorkspaceSlice = createSlice({
   name: 'createWorkspace',
   initialState,
   reducers: {
@@ -217,5 +218,3 @@ export const {
 } = createWorkspaceSlice.actions;
 
 export default createWorkspaceSlice.reducer;
-
-export type CreateWorkspaceReducer = ReturnType<typeof createWorkspaceSlice.reducer>;

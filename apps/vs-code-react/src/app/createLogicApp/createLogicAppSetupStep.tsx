@@ -5,7 +5,7 @@
 import type React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../state/store';
-import type { CreateWorkspaceState } from '../../state/createWorkspace/createWorkspaceSlice';
+import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
 import { useCreateWorkspaceStyles } from '../createWorkspace/createWorkspaceStyles';
 import { LogicAppTypeStep } from '../createWorkspace/steps/logicAppTypeStep';
 import { WorkflowTypeStep } from '../createWorkspace/steps/workflowTypeStep';

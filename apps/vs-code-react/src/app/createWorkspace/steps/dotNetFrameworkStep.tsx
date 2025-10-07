@@ -7,13 +7,8 @@ import type { InputOnChangeData, DropdownProps } from '@fluentui/react-component
 import { useState } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
-import type { CreateWorkspaceState } from '../../../state/createWorkspace/createWorkspaceSlice';
-import {
-  setTargetFramework,
-  setFunctionNamespace,
-  setFunctionName,
-  setFunctionFolderName,
-} from '../../../state/createWorkspace/createWorkspaceSlice';
+import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
+import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionFolderName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 

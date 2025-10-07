@@ -7,8 +7,8 @@ import type { DropdownProps } from '@fluentui/react-components';
 import { useState } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
-import type { CreateWorkspaceState } from '../../../state/createWorkspace/createWorkspaceSlice';
-import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspace/createWorkspaceSlice';
+import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
+import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 

@@ -69,7 +69,7 @@ import {
   setWorkspaceExistenceResult,
   setPackagePath,
   setPackageValidationResult,
-} from './state/createWorkspace/createWorkspaceSlice';
+} from './state/createWorkspaceSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);

@@ -6,8 +6,8 @@ import { Button, Text, Field, Input, Label, useId } from '@fluentui/react-compon
 import type { InputOnChangeData } from '@fluentui/react-components';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
-import type { CreateWorkspaceState } from '../../../state/createWorkspace/createWorkspaceSlice';
-import { setPackagePath } from '../../../state/createWorkspace/createWorkspaceSlice';
+import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
+import { setPackagePath } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';

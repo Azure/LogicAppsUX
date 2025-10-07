@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
-import type { CreateWorkspaceState } from '../../../state/createWorkspace/createWorkspaceSlice';
+import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';

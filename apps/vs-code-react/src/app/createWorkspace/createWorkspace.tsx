@@ -8,8 +8,8 @@ import { CreateLogicAppSetupStep } from '../createLogicApp/createLogicAppSetupSt
 import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
-import type { CreateWorkspaceState } from '../../state/createWorkspace/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state/createWorkspace/createWorkspaceSlice';
+import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
+import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
