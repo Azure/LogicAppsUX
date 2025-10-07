@@ -1,7 +1,13 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { equals, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import {
+  a2aRequestOperation,
+  equals,
+  type DiscoveryOpArray,
+  type DiscoveryOperation,
+  type DiscoveryResultTypes,
+} from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
@@ -101,7 +107,7 @@ export const SearchView: FC<SearchViewProps> = ({
       }
 
       // Hide Agent Request trigger if the flag is enabled
-      if (shouldHideAgentRequestTriggerConsumption && equals(type, constants.NODE.TYPE.REQUEST) && id === 'a2aRequest') {
+      if (shouldHideAgentRequestTriggerConsumption && equals(type, constants.NODE.TYPE.REQUEST) && id === a2aRequestOperation.id) {
         return false;
       }
 

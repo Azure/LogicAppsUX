@@ -1,6 +1,6 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
-import { parsedocumentwithmetadata, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { a2aRequestOperation, parsedocumentwithmetadata, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
@@ -58,7 +58,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
         return false;
       }
 
-      if (shouldHideAgentRequestTriggerConsumption && data.id === 'a2aRequest' && data.isTrigger) {
+      if (shouldHideAgentRequestTriggerConsumption && data.id === a2aRequestOperation.id && data.isTrigger) {
         return false;
       }
 
