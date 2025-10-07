@@ -73,6 +73,7 @@ export const initialState: PanelState = {
   operationContent: getInitialOperationContentState(),
   previousPanelMode: undefined,
   workflowParametersContent: getInitialWorkflowParametersContentState(),
+  runHistoryCollapsed: false,
 };
 
 const area = 'Designer:Panel Slice';
@@ -331,6 +332,9 @@ export const panelSlice = createSlice({
         state.isCollapsed = true;
       }
     },
+    setRunHistoryCollapsed: (state, action: PayloadAction<boolean>) => {
+      state.runHistoryCollapsed = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -360,6 +364,7 @@ export const {
   updatePanelLocation,
   initRunInPanel,
   addAgentToolMetadata,
+  setRunHistoryCollapsed,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

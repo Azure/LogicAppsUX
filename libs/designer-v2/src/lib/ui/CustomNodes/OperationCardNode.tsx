@@ -93,7 +93,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const isA2AWorkflow = useIsA2AWorkflow();
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
-    !!isMonitoringView,
+    !!isMonitoringView && !!runInstance,
     id,
     runInstance?.id,
     repetitionName,

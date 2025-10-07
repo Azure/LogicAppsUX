@@ -42,12 +42,13 @@ export const McpStandard = () => {
   }));
 
   const hostingPlan = 'standard';
-
+  const connectorId = '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/westus/managedApis/office365';
   const resourceDetails = useMemo(
     () => ({
       subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
       resourceGroup: 'TestACSRG',
       location: 'westus',
+      //logicAppName: 'prititestcreate1',
     }),
     []
   );
@@ -130,7 +131,12 @@ export const McpStandard = () => {
         <div className={styles.wizardContainer}>
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
-              <McpDataProvider resourceDetails={resourceDetails} onResourceChange={onResourceChange} services={services}>
+              <McpDataProvider
+                connectorId={connectorId}
+                resourceDetails={resourceDetails}
+                onResourceChange={onResourceChange}
+                services={services}
+              >
                 <McpWizard registerMcpServer={onRegisterMcpServer} onClose={onClose} />
                 <div id="mcp-layer-host" className={styles.layerHost} />
               </McpDataProvider>

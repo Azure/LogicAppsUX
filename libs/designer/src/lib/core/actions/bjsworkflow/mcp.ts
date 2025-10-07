@@ -47,6 +47,7 @@ import { tryGetMostRecentlyUsedConnectionId } from './add';
 import { isConnectionValid } from '../../utils/connectors/connections';
 import { updateMcpConnection } from './connections';
 import { getConnector } from '../../queries/operation';
+import { McpPanelView, openMcpPanelView, setAutoOpenPanel } from '../../state/mcp/panel/mcpPanelSlice';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;
@@ -62,19 +63,37 @@ export interface McpServiceOptions {
   hostService?: any; // Placeholder for IHostService, not used in this context
 }
 
-export const initializeMcpServices = createAsyncThunk('initializeMcpServices', async (services: McpServiceOptions) => {
-  initializeServices(services);
-  const loggerServices: ILoggerService[] = [];
-  if (services.loggerService) {
-    loggerServices.push(services.loggerService);
+export const MCP_ConnectionKey = 'mcp-placeholder';
+export const initializeMcpData = createAsyncThunk(
+  'initializeMcpData',
+  async (
+    {
+      connectorId,
+      services,
+    }: {
+      services: McpServiceOptions;
+      connectorId?: string;
+      logicAppName?: string;
+    },
+    { dispatch }
+  ) => {
+    if (connectorId) {
+      dispatch(initEmptyConnectionMap([MCP_ConnectionKey]));
+    }
+
+    initializeServices(services);
+    const loggerServices: ILoggerService[] = [];
+    if (services.loggerService) {
+      loggerServices.push(services.loggerService);
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      loggerServices.push(new DevLogger());
+    }
+    InitLoggerService(loggerServices);
+    InitHostService(services.hostService);
+    return true;
   }
-  if (process.env.NODE_ENV !== 'production') {
-    loggerServices.push(new DevLogger());
-  }
-  InitLoggerService(loggerServices);
-  InitHostService(services.hostService);
-  return true;
-});
+);
 
 export const resetMcpStateOnResourceChange = createAsyncThunk(
   'resetMcpStateOnResourceChange',
@@ -85,6 +104,8 @@ export const resetMcpStateOnResourceChange = createAsyncThunk(
     const {
       resource: { subscriptionId, resourceGroup, logicAppName },
       connection: { connectionsMapping },
+      mcpPanel: { autoOpenPanel },
+      mcpSelection: { disableConnectorSelection, disableLogicAppSelection, selectedConnectorId },
     } = getState() as RootState;
     const connectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, getReactQueryClient());
     const references = convertConnectionsDataToReferences(connectionsData);
@@ -97,6 +118,14 @@ export const resetMcpStateOnResourceChange = createAsyncThunk(
         }, {})
       )
     );
+
+    if (disableConnectorSelection && selectedConnectorId && (disableLogicAppSelection || autoOpenPanel)) {
+      dispatch(openMcpPanelView({ panelView: McpPanelView.SelectOperation }));
+
+      if (!disableLogicAppSelection) {
+        dispatch(setAutoOpenPanel(false));
+      }
+    }
     return true;
   }
 );
@@ -166,29 +195,6 @@ export const initializeOperationsMetadata = createAsyncThunk(
     const allNodeData = results
       .filter((result) => result.status === 'fulfilled' && !!result.value)
       .map((result) => (result as PromiseFulfilledResult<any>).value) as NodeOperationInputsData[];
-    /* const unsupportedOperations = getUnsupportedOperations(allNodeData);
-    if (unsupportedOperations.length > 0) {
-      const errorMessage = intl.formatMessage(
-        {
-          defaultMessage:
-            'The following operations: "{operations}", are unsupported currently, so please unselect these operations and continue with save.',
-          id: 'vXgDEY',
-          description: 'Error message when unsupported operations are selected during initialization.',
-        },
-        {
-          operations: unsupportedOperations.join(', '),
-        }
-      );
-
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: `MCP.${area}.initializeOperationsMetadata`,
-        message: errorMessage,
-        args: [`operationIds:${unsupportedOperations.join(',')}`, `connectorId: ${connectorId}`],
-      });
-
-      throw new Error(errorMessage);
-    } */
 
     dispatch(initializeNodeOperationInputsData(allNodeData));
 

@@ -61,7 +61,7 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
     <>
       {areOutputsSecured ? (
         <SecureDataSection brandColor={brandColor} headerText={intlText.outputs} />
-      ) : outputsLink ? (
+      ) : (
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.outputs}
@@ -76,7 +76,7 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
           isDownload={isNullOrUndefined(outputs)}
           link={uri}
         />
-      ) : null}
+      )}
     </>
   );
 };

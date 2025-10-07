@@ -81,8 +81,8 @@ export async function pickFuncProcessInternal(
     });
   });
 
-  const shouldContinue: boolean = await preDebugValidate(context, debugConfig, projectPath);
-
+  context.telemetry.properties.debugType = debugConfig.type;
+  const shouldContinue: boolean = await preDebugValidate(context, projectPath);
   if (!shouldContinue) {
     throw new UserCancelledError('preDebugValidate');
   }

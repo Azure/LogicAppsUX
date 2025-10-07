@@ -12,17 +12,6 @@ exports[`lib/colorizer > should render 1`] = `
     className="buttons"
   >
     <Tooltip
-      content="Select all text in 'start time'"
-      relationship="label"
-    >
-      <Button
-        appearance="subtle"
-        aria-label="Select all text in 'start time'"
-        icon={<CompoundIcon />}
-        onClick={[Function]}
-      />
-    </Tooltip>
-    <Tooltip
       content="Copy the value of 'start time' to the clipboard"
       relationship="label"
     >
@@ -165,17 +154,6 @@ exports[`lib/colorizer > should render when utc time format props are given 1`] 
       <Button
         appearance="subtle"
         aria-label="Switch 'start time' to the local time"
-        icon={<CompoundIcon />}
-        onClick={[Function]}
-      />
-    </Tooltip>
-    <Tooltip
-      content="Select all text in 'start time'"
-      relationship="label"
-    >
-      <Button
-        appearance="subtle"
-        aria-label="Select all text in 'start time'"
         icon={<CompoundIcon />}
         onClick={[Function]}
       />

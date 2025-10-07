@@ -58,26 +58,26 @@ export const RunMenu = (props: {
 
   const onCopy = useCallback(
     (e: any) => {
-      navigator.clipboard.writeText(runId);
       e.stopPropagation();
+      navigator.clipboard.writeText(runId);
     },
     [runId]
   );
 
   const onResubmit = useCallback(
     async (e: any) => {
+      e.stopPropagation();
       await resubmitRun();
       runsQuery.refetch();
-      e.stopPropagation();
     },
     [resubmitRun, runsQuery]
   );
 
   const onCancel = useCallback(
     async (e: any) => {
+      e.stopPropagation();
       await cancelRun();
       runQuery.refetch();
-      e.stopPropagation();
     },
     [cancelRun, runQuery]
   );
@@ -89,7 +89,14 @@ export const RunMenu = (props: {
   return (
     <Menu positioning={'after'}>
       <MenuTrigger disableButtonEnhancement>
-        <Button icon={<MoreIcon />} appearance={'transparent'} onClick={(e) => e.stopPropagation()} />
+        <Button
+          icon={<MoreIcon />}
+          appearance={'transparent'}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        />
       </MenuTrigger>
 
       <MenuPopover>

@@ -9,3 +9,4 @@ export * from './connectionsPanel/createConnection/custom/acasessionConnector';
 export * from './nodeDetailsPanel/tabs/parametersTab/custom/deploymentModelResource';
 export * from './runHistoryPanel';
 export * from './errorsPanel/tabs/errorsTab.hooks';
+export * from './runTreeView';

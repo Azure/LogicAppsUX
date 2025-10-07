@@ -99,7 +99,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
-    !!isMonitoringView,
+    !!isMonitoringView && !!runInstance,
     scopeId,
     runInstance?.id,
     repetitionName,
@@ -109,8 +109,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   );
 
   const { isFetching: isAgentRepetitionFetching, data: agentRepetitionRunData } = useAgentRepetition(
-    !!isMonitoringView && runIndex !== undefined && isAgent && !isA2AWorkflow,
-    isAgent,
+    !!isMonitoringView && !!runInstance && runIndex !== undefined && isAgent && !isA2AWorkflow,
     scopeId,
     isTimelineRepetitionSelected ? runInstance?.id : undefined,
     scopeRepetitionName,
@@ -123,7 +122,6 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     scopeId,
     runInstance?.id,
     scopeRepetitionName,
-    parentRunData?.status,
     runIndex
   );
 

@@ -92,7 +92,7 @@ const useStyles = makeStyles({
     bottom: '-16px',
     left: '50%',
     transform: 'translate(-50%, 0)',
-    zIndex: 1,
+    zIndex: 10,
   },
   viewButton: {
     padding: '3px 16px',

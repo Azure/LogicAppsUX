@@ -61,7 +61,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     <>
       {areInputsSecured ? (
         <SecureDataSection brandColor={brandColor} headerText={intlText.inputs} />
-      ) : inputsLink ? (
+      ) : (
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.inputs}
@@ -76,7 +76,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           isDownload={isNullOrUndefined(inputs)}
           link={uri}
         />
-      ) : null}
+      )}
     </>
   );
 };

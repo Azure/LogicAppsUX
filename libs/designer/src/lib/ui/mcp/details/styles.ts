@@ -6,7 +6,7 @@ export const useMcpDetailsStyles = makeStyles({
     gap: tokens.spacingHorizontalS,
   },
   labelSection: {
-    minWidth: '120px',
+    minWidth: '100px',
     flex: 1,
   },
   fieldSection: {

@@ -75,7 +75,8 @@ export const getDesignerServices = (
   oauthRedirectUrl: string,
   hostVersion: string,
   queryClient: QueryClient,
-  sendMsgToVsix: (msg: MessageToVsix) => void
+  sendMsgToVsix: (msg: MessageToVsix) => void,
+  setRunId: (runId: string) => void
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -351,6 +352,7 @@ export const getDesignerServices = (
         title,
       });
     },
+    openRun: (runId: string) => setRunId(runId),
   };
 
   const runService = new StandardRunService({

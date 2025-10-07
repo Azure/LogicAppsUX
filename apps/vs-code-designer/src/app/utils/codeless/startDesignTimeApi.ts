@@ -79,7 +79,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     }
 
     try {
-      ext.outputChannel.appendLog('Starting Design Time Api');
+      ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
       const settingsFileContent = getLocalSettingsSchema(true, projectPath);

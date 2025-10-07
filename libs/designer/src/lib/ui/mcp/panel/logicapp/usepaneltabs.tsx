@@ -14,19 +14,23 @@ import {
   validateAndCreateAppPayload,
 } from '../../../../core/mcp/utils/logicapp';
 import { type LogicAppConfigDetails, setLogicApp, setNewLogicAppDetails } from '../../../../core/state/mcp/resourceSlice';
-import { closePanel, selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel, selectPanelTab, setAutoOpenPanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 
 export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { newLogicAppDetails, subscriptionId, resourceGroup, location } = useSelector((state: RootState) => ({
-    currentPanelView: state.mcpPanel.currentPanelView,
-    subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
-    resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
-    location: state.mcpOptions.resourceDetails?.location,
-    newLogicAppDetails: state.resource.newLogicAppDetails,
-  }));
+  const { newLogicAppDetails, subscriptionId, resourceGroup, location, logicAppName, disableConnectorSelection } = useSelector(
+    (state: RootState) => ({
+      currentPanelView: state.mcpPanel.currentPanelView,
+      subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
+      resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
+      location: state.mcpOptions.resourceDetails?.location,
+      newLogicAppDetails: state.resource.newLogicAppDetails,
+      logicAppName: state.resource.logicAppName,
+      disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
+    })
+  );
 
   const intlTexts = {
     createButtonText: intl.formatMessage({
@@ -174,6 +178,10 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
         setCreateButtonText(intlTexts.createButtonText);
       } else {
         setIsCreated(true);
+        if (!logicAppName && disableConnectorSelection) {
+          dispatch(setAutoOpenPanel(true));
+        }
+
         dispatch(
           setLogicApp({
             resourceGroup: resourceGroup as string,
@@ -194,11 +202,13 @@ export const useCreateAppPanelTabs = (onCreateApp: () => void): McpPanelTabProps
       setErrorInfo({ title: intlTexts.createErrorTitle, message: error.message });
     }
   }, [
+    disableConnectorSelection,
     dispatch,
     intl,
     intlTexts.createButtonText,
     intlTexts.createErrorTitle,
     location,
+    logicAppName,
     newLogicAppDetails?.appName,
     onCreateApp,
     resourceGroup,
