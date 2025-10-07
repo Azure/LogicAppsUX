@@ -78,17 +78,15 @@ jobs:
       - name: 'Determine Version'
         id: determine-version
         run: |
-          # Get version from from old tag
-          if [ -z "$NEW_TAG" ]; then
-            OLD_TAG="${{ github.event.inputs.old_tag }}"
-            # Extract version numbers (remove 'v' prefix)
-            VERSION_NUM=${OLD_TAG#v}
-            # Increment patch version
-            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
-            PATCH=$((PATCH + 1))
-            NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
-            echo "Auto-incremented version from $OLD_TAG to $NEW_TAG"
-          fi
+          # Get version from old tag and auto-increment patch version
+          OLD_TAG="${{ github.event.inputs.old_tag }}"
+          # Extract version numbers (remove 'v' prefix)
+          VERSION_NUM=${OLD_TAG#v}
+          # Increment patch version
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
+          PATCH=$((PATCH + 1))
+          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "Auto-incremented version from $OLD_TAG to $NEW_TAG"
           
           echo "Using tag: $NEW_TAG"
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
