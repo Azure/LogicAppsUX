@@ -2,7 +2,6 @@ import { ExperimentationService } from './experimentation';
 
 export const EXP_FLAGS = {
   ENABLE_PARSE_DOCUMENT_WITH_METADATA: 'enable-parse-document-with-metadata',
-  ENABLE_AGENTLOOP_CONSUMPTION: 'enable-agentloop-consumption',
   HIDE_AGENT_REQUEST_TRIGGER_CONSUMPTION: 'hide-agent-request-trigger-consumption',
 };
 
