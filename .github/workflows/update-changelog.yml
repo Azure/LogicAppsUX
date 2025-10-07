@@ -104,115 +104,75 @@ jobs:
             const targetBranch = '${{ github.event.inputs.target_branch }}';
             const shortTargetCommit = '${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}';
             
-            console.log(`Generating release notes between ${oldTag} and ${targetBranch} (${shortTargetCommit})...`);
-            console.log(`Using new tag: ${newTag}`);
+            const { execSync } = require('child_process');
+            const fs = require('fs');
             
-            let releaseNotes = '';
+            // Get all commits with PRs using git log
+            const gitLog = execSync(
+              `git log ${oldTag}..${targetCommit} --oneline --pretty=format:"%s"`,
+              { encoding: 'utf-8' }
+            ).trim();
             
-            try {
-              // Generate release notes using GitHub API
-              const response = await github.rest.repos.generateReleaseNotes({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag_name: newTag,
-                target_commitish: targetCommit,
-                previous_tag_name: oldTag
-              });
+            const commits = gitLog.split('\n').filter(line => line.trim());
+            
+            const features = [];
+            const bugFixes = [];
+            const foundPRs = new Set();
+            
+            // Process each commit
+            for (const commit of commits) {
+              // Extract PR number from commit message
+              const prMatch = commit.match(/\(#(\d+)\)/);
+              if (!prMatch) {
+                continue;
+              }
               
-              console.log('API Response received successfully');
-              const rawNotes = response.data.body;
+              const prNumber = prMatch[1];
+              if (foundPRs.has(prNumber)) {
+                continue;
+              }
+              foundPRs.add(prNumber);
               
-              // Parse and format release notes
-              const lines = rawNotes.split('\n');
-              const features = [];
-              const bugFixes = [];
+              // Parse conventional commit format: type(scope): description (#PR)
+              const conventionalMatch = commit.match(/^([^(]+)\(([^)]+)\):\s*(.+?)\s*\(#\d+\)/);
               
-              for (const line of lines) {
-                const trimmedLine = line.trim();
+              if (conventionalMatch) {
+                const [, commitType, scope, description] = conventionalMatch;
+                const formattedLine = `* **${scope.trim()}:** ${description.trim()} ([#${prNumber}](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${prNumber}))`;
                 
-                // Skip empty lines and unwanted headers
-                if (!trimmedLine || trimmedLine.startsWith('##') || trimmedLine.startsWith('**Full Changelog')) {
-                  continue;
+                if (commitType.trim().toLowerCase() === 'fix') {
+                  bugFixes.push(formattedLine);
+                } else {
+                  features.push(formattedLine);
                 }
-                
-                // Process lines that start with *
-                if (trimmedLine.startsWith('* ')) {
-                  // Match format: * type(scope): description by @author in https://github.com/Azure/LogicAppsUX/pull/1234
-                  const fullMatch = trimmedLine.match(/\* ([^(]*)\(([^)]+)\):\s*(.+?) by @\w+ in https:\/\/github\.com\/[^\/]+\/[^\/]+\/pull\/(\d+)/);
-                  
-                  if (fullMatch) {
-                    const [, commitType, scope, description, prNumber] = fullMatch;
-                    const formattedLine = `* **${scope.trim()}:** ${description.trim()} ([#${prNumber}](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${prNumber}))`;
-                    
-                    if (commitType.trim().toLowerCase() === 'fix') {
-                      bugFixes.push(formattedLine);
-                    } else {
-                      features.push(formattedLine);
-                    }
-                  } else {
-                    // Try simpler format: * description by @author in #1234
-                    const altMatch = trimmedLine.match(/\* (.+?) by @\w+ in .*?\/pull\/(\d+)/);
-                    
-                    if (altMatch) {
-                      const [, description, prNumber] = altMatch;
-                      
-                      // Try to extract scope and type from description
-                      const scopeMatch = description.match(/^([^(]*)\(([^)]+)\):\s*(.+)/);
-                      
-                      if (scopeMatch) {
-                        const [, commitType, scope, cleanDescription] = scopeMatch;
-                        const formattedLine = `* **${scope}:** ${cleanDescription} ([#${prNumber}](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${prNumber}))`;
-                        
-                        if (commitType.trim().toLowerCase() === 'fix') {
-                          bugFixes.push(formattedLine);
-                        } else {
-                          features.push(formattedLine);
-                        }
-                      } else {
-                        // No scope found, use description as-is
-                        const formattedLine = `* ${description.trim()} ([#${prNumber}](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${prNumber}))`;
-                        features.push(formattedLine);
-                      }
-                    }
-                  }
-                }
+              } else {
+                // Fallback: just use the commit message as-is
+                const cleanMessage = commit.replace(/\s*\(#\d+\)$/, '').trim();
+                const formattedLine = `* ${cleanMessage} ([#${prNumber}](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${prNumber}))`;
+                features.push(formattedLine);
               }
-              
-              // Build formatted output
-              const sections = [];
-              
-              if (features.length > 0) {
-                sections.push('### Features\n');
-                sections.push(features.join('\n'));
-                sections.push('');
-              }
-              
-              if (bugFixes.length > 0) {
-                sections.push('### Bug Fixes\n');
-                sections.push(bugFixes.join('\n'));
-                sections.push('');
-              }
-              
-              releaseNotes = sections.join('\n').trim();
-              
-            } catch (error) {
-              console.log(`Warning: GitHub API call failed: ${error.message}`);
-              console.log('Generating custom release notes from git log...');
-              
-              // Fallback: use git log (this would need to be done in a separate script step)
-              // For now, provide a basic message
-              releaseNotes = `### Changes
-
-            See the full changelog for details.
-
-            **Full Changelog**: https://github.com/${context.repo.owner}/${context.repo.repo}/compare/${oldTag}...${targetCommit}`;
             }
             
-            console.log('Generated release notes:');
-            console.log(releaseNotes);
+            // Build formatted output
+            const sections = [];
+            
+            if (features.length > 0) {
+              sections.push('### Features\n');
+              sections.push(features.join('\n'));
+              sections.push('');
+            }
+            
+            if (bugFixes.length > 0) {
+              sections.push('### Bug Fixes\n');
+              sections.push(bugFixes.join('\n'));
+              sections.push('');
+            }
+            
+            const releaseNotes = sections.length > 0 
+              ? sections.join('\n').trim()
+              : `### Changes\n\nNo changes with PR numbers found.\n\n**Full Changelog**: https://github.com/${context.repo.owner}/${context.repo.repo}/compare/${oldTag}...${targetCommit}`;
             
             // Write to file
-            const fs = require('fs');
             fs.writeFileSync('release-notes.md', releaseNotes);
             
             // Extract version number from tag (remove 'v' prefix if present)
