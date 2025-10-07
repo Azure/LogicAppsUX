@@ -26,7 +26,12 @@ import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
 import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTreeItem';
-import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
+import {
+  createAclInConnectionIfNeeded,
+  getConnectionsJson,
+  updateAuthenticationInConnections,
+  updateAuthenticationParameters,
+} from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
@@ -348,24 +353,6 @@ async function getProjectPathToDeploy(
   let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
 
-  function updateAuthenticationParameters(authValue: any): void {
-    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
-      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
-        parametersJson[`${referenceKey}-Authentication`].value = authValue;
-        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}-Authentication" parameter to ManagedServiceIdentity`;
-      }
-    }
-  }
-
-  function updateAuthenticationInConnections(authValue: any): void {
-    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
-      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
-        connectionsData.managedApiConnections[referenceKey].authentication = authValue;
-        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ManagedServiceIdentity`;
-      }
-    }
-  }
-
   try {
     connectionsData = JSON.parse(connectionsJson);
     const authValue = { type: 'ManagedServiceIdentity' };
@@ -380,12 +367,12 @@ async function getProjectPathToDeploy(
 
     if (parameterizeConnectionsSetting) {
       identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationParameters(advancedIdentityAuthValue)
-        : updateAuthenticationParameters(authValue);
+        ? updateAuthenticationParameters(connectionsData, advancedIdentityAuthValue, parametersJson, actionContext)
+        : updateAuthenticationParameters(connectionsData, authValue, parametersJson, actionContext);
     } else {
       identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationInConnections(advancedIdentityAuthValue)
-        : updateAuthenticationInConnections(authValue);
+        ? updateAuthenticationInConnections(connectionsData, advancedIdentityAuthValue, actionContext)
+        : updateAuthenticationInConnections(connectionsData, authValue, actionContext);
     }
 
     resolvedConnections = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
