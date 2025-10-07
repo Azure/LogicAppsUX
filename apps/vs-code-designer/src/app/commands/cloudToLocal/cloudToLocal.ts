@@ -9,7 +9,7 @@ import { ext } from '../../../extensionVariables';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import * as fs from 'fs';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
-import { createLogicAppWorkspaceFromPackage } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
+import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 
 const packageDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,
@@ -27,7 +27,7 @@ const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
 
 export async function cloudToLocal(): Promise<void> {
   const panelName: string = localize('createWorkspaceFromPackage', 'Create Workspace From Package');
-  const panelGroupKey = ext.webViewKey.createWorkspace;
+  const panelGroupKey = ext.webViewKey.createWorkspaceFromPackage;
   const apiVersion = '2021-03-01';
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
@@ -68,7 +68,7 @@ export async function cloudToLocal(): Promise<void> {
       }
       case ExtensionCommand.createWorkspaceFromPackage: {
         await callWithTelemetryAndErrorHandling('CreateWorkspaceFromPackage', async (activateContext: IActionContext) => {
-          await createLogicAppWorkspaceFromPackage(activateContext, message.data);
+          await createLogicAppWorkspace(activateContext, message.data, true);
         });
         // Close the webview panel after successful creation
         panel.dispose();

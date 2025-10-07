@@ -63,7 +63,7 @@ export async function createNewCodeProjectFromCommand(): Promise<void> {
       }
       case ExtensionCommand.createWorkspace: {
         await callWithTelemetryAndErrorHandling('CreateWorkspace', async (activateContext: IActionContext) => {
-          await createLogicAppWorkspace(activateContext, message.data);
+          await createLogicAppWorkspace(activateContext, message.data, false);
         });
         // Close the webview panel after successful creation
         panel.dispose();
