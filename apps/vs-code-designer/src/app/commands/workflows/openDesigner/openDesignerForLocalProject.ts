@@ -1,4 +1,4 @@
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
+import { launchFileName, localSettingsFileName, managementApiPrefix, vscodeFolderName, workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -111,13 +111,19 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     if (isNullOrUndefined(ext.workflowRuntimePort)) {
       // Start runtime api if not already running
-      const logicAppName = path.basename(path.dirname(path.dirname(this.workflowFilePath)));
-      await pickFuncProcess(this.context, {
-        name: `Run/Debug logic app ${logicAppName}`,
-        type: 'coreclr',
-        request: 'attach',
-        processId: '${command:azureLogicAppsStandard.pickProcess}',
-      });
+      try {
+        const launchJsonPath = path.join(this.projectPath, vscodeFolderName, launchFileName);
+        // Read or create tasks.json
+        let launchConfig: any = { version: '2.0.0', configurations: [] };
+        const launchContent = readFileSync(launchJsonPath, 'utf8');
+        launchConfig = JSON.parse(launchContent);
+        const existingConfig = launchConfig.configurations?.[0];
+        await pickFuncProcess(this.context, existingConfig);
+      } catch (error) {
+        this.context.telemetry.properties.errorMessage = 'Unable to pick func process from logic app';
+        this.context.telemetry.properties.error = error;
+        throw new Error('Unable to pick func process from logic app', { cause: error });
+      }
     }
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
