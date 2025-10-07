@@ -5,19 +5,10 @@ import type { UTCDateTimeProps } from '../monitoring/values/types';
 import { type Language, themes, Highlight } from 'prism-react-renderer';
 import { useIntl } from 'react-intl';
 import { useCopyToClipboard } from 'react-use';
-import {
-  CalendarClockFilled,
-  CalendarClockRegular,
-  ScanTextFilled,
-  ScanTextRegular,
-  CopyFilled,
-  CopyRegular,
-  bundleIcon,
-} from '@fluentui/react-icons';
+import { CalendarClockFilled, CalendarClockRegular, CopyFilled, CopyRegular, bundleIcon } from '@fluentui/react-icons';
 import { Button, Tooltip } from '@fluentui/react-components';
 
 const ClockIcon = bundleIcon(CalendarClockFilled, CalendarClockRegular);
-const SelectAllIcon = bundleIcon(ScanTextFilled, ScanTextRegular);
 const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 
 export interface ColorizerProps {
@@ -33,16 +24,6 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
   const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsLight), [isInverted]);
   const elementRef = useRef<HTMLPreElement | null>(null);
   const [_, copyToClipboard] = useCopyToClipboard();
-  const selectText = useCallback(() => {
-    if (!elementRef.current) {
-      return;
-    }
-    const range = document.createRange();
-    range.selectNodeContents(elementRef.current);
-    const sel = window.getSelection();
-    sel?.removeAllRanges();
-    sel?.addRange(range);
-  }, []);
   const copyText = useCallback(() => {
     copyToClipboard(code);
   }, [code, copyToClipboard]);
@@ -78,16 +59,6 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
       label: ariaLabel,
     }
   );
-  const selectAria = intl.formatMessage(
-    {
-      defaultMessage: `Select all text in ''{label}''`,
-      id: 'ZN050N',
-      description: 'Accessibility label for a button to select all text in a value box',
-    },
-    {
-      label: ariaLabel,
-    }
-  );
 
   return (
     <div
@@ -108,9 +79,6 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
             />
           </Tooltip>
         ) : null}
-        <Tooltip content={selectAria} relationship="label">
-          <Button aria-label={selectAria} icon={<SelectAllIcon />} appearance={'subtle'} onClick={selectText} />
-        </Tooltip>
         <Tooltip content={copyAria} relationship="label">
           <Button aria-label={copyAria} icon={<CopyIcon />} appearance={'subtle'} onClick={copyText} />
         </Tooltip>

@@ -60,7 +60,7 @@ export default {
         },
         // TODO: Replace hardcoded model IDs with dynamic values fetched from backend API once available.
         modelId: {
-          title: 'Model',
+          title: 'Model Id',
           description: 'Select the model to use.',
           type: 'string',
           'x-ms-editor': 'dropdown',
@@ -186,7 +186,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'deploymentId', 'modelId', 'messages'],
+      required: ['agentModelType', 'modelId', 'messages'],
     },
     outputs: {
       type: 'object',

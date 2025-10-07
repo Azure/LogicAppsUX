@@ -1,18 +1,29 @@
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Field, Text, Combobox, Option } from '@fluentui/react-components';
+import { Field, Label, Combobox, Option, Link } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { equals } from '@microsoft/logic-apps-shared';
 import { setLogicApp } from '../../../core/state/mcp/resourceSlice';
 import { useEmptyLogicApps } from '../../../core/mcp/utils/queries';
 import { useMcpDetailsStyles } from './styles';
+import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
+import { McpPanelView, openMcpPanelView, setAutoOpenPanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
 
 const NO_ITEM_VALUE = 'NO_ITEM_VALUE';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, logicAppName } = useSelector((state: RootState) => state.resource);
+  const { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails, disableSelector, disableConnectorSelection } =
+    useSelector((state: RootState) => ({
+      subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
+      resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
+      location: state.mcpOptions.resourceDetails?.location,
+      logicAppName: state.resource.logicAppName,
+      newLogicAppDetails: state.resource.newLogicAppDetails,
+      disableSelector: state.mcpSelection.disableLogicAppSelection,
+      disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
+    }));
   const { data: logicApps, isLoading: isLogicAppsLoading } = useEmptyLogicApps(subscriptionId ?? '');
 
   const intl = useIntl();
@@ -24,6 +35,11 @@ export const LogicAppSelector = () => {
         defaultMessage: 'Logic app',
         id: 'BsZRu5',
         description: 'Label field for logic app selector',
+      }),
+      CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Create a logic app',
+        id: '+mNJQl',
+        description: 'Create new logic app link',
       }),
       LOADING: intl.formatMessage({
         defaultMessage: 'Loading logic apps ...',
@@ -55,23 +71,44 @@ export const LogicAppSelector = () => {
   );
 
   const [selectedResource, setSelectedResource] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string | undefined>('');
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
-  const controlValue = useMemo(() => (searchTerm !== undefined ? searchTerm : selectedResource) ?? '', [selectedResource, searchTerm]);
+  useEffect(() => {
+    if (logicAppName && disableSelector) {
+      setSelectedResource(getStandardLogicAppId(subscriptionId as string, resourceGroup as string, logicAppName as string));
+    }
+  }, [disableSelector, logicAppName, resourceGroup, subscriptionId]);
+
+  useEffect(() => {
+    if (equals(logicAppName, newLogicAppDetails?.appName)) {
+      setSelectedResource(getStandardLogicAppId(subscriptionId as string, resourceGroup as string, logicAppName as string));
+    }
+  }, [logicAppName, newLogicAppDetails?.appName, subscriptionId, resourceGroup]);
 
   const resources = useMemo(() => {
-    if (!logicApps?.length) {
-      return [];
-    }
+    const result =
+      newLogicAppDetails?.appName && equals(newLogicAppDetails.createStatus, 'succeeded')
+        ? [
+            {
+              id: getStandardLogicAppId(subscriptionId as string, resourceGroup as string, newLogicAppDetails.appName),
+              name: newLogicAppDetails.appName,
+              displayName: `${newLogicAppDetails.appName} (new)`,
+            },
+          ]
+        : [];
 
-    return logicApps
-      .map((app) => ({
-        id: app.id,
-        name: app.name,
-        displayName: app.name,
-      }))
-      .sort((a, b) => a.displayName.localeCompare(b.displayName));
-  }, [logicApps]);
+    result.push(
+      ...(logicApps ?? [])
+        .map((app) => ({
+          id: app.id,
+          name: app.name,
+          displayName: app.name,
+        }))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName))
+    );
+
+    return result;
+  }, [logicApps, newLogicAppDetails?.appName, newLogicAppDetails?.createStatus, resourceGroup, subscriptionId]);
 
   const filteredResources = useMemo(() => {
     if (!searchTerm?.trim()) {
@@ -81,48 +118,78 @@ export const LogicAppSelector = () => {
     return resources.filter((resource) => resource.displayName.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [resources, searchTerm]);
 
+  const controlValue = useMemo(() => {
+    if (searchTerm !== undefined) {
+      return searchTerm;
+    }
+
+    const selectedResourceInfo = resources.find((r) => equals(r.id, selectedResource));
+    return selectedResourceInfo?.displayName ?? selectedResource;
+  }, [searchTerm, resources, selectedResource]);
+
   const onLogicAppSelect = useCallback(
     (value: string) => {
-      const app = logicApps?.find((app) => equals(app.name, value));
-      if (app) {
-        dispatch(
-          setLogicApp({
-            resourceGroup: app.resourceGroup,
-            location: app.location,
-            logicAppName: app.name,
-          })
-        );
-        setSelectedResource(app.name);
+      if (!logicAppName && disableConnectorSelection) {
+        dispatch(setAutoOpenPanel(true));
+      }
+
+      if (selectedResource !== value) {
+        if (newLogicAppDetails?.appName && equals(resources[0].id, value)) {
+          dispatch(
+            setLogicApp({
+              resourceGroup: resourceGroup as string,
+              location: location as string,
+              logicAppName: newLogicAppDetails.appName,
+            })
+          );
+          setSelectedResource(value);
+          return;
+        }
+
+        const app = logicApps?.find((app) => equals(app.id, value));
+        if (app) {
+          dispatch(
+            setLogicApp({
+              resourceGroup: app.resourceGroup,
+              location: app.location,
+              logicAppName: app.name,
+            })
+          );
+          setSelectedResource(value);
+        }
       }
     },
-    [dispatch, logicApps]
+    [
+      disableConnectorSelection,
+      dispatch,
+      location,
+      logicAppName,
+      logicApps,
+      newLogicAppDetails?.appName,
+      resourceGroup,
+      resources,
+      selectedResource,
+    ]
   );
 
-  useEffect(() => {
-    if (!isLogicAppsLoading) {
-      const resource = resources.find((resource) => equals(resource.name, logicAppName ?? ''))?.displayName;
-      if (!resource && !!logicAppName) {
-        onLogicAppSelect('');
-      }
-
-      if (resource !== selectedResource) {
-        setSelectedResource(resource ?? '');
-      }
-    }
-  }, [resources, logicAppName, isLogicAppsLoading, selectedResource, onLogicAppSelect]);
+  const handleNewAppCreate = useCallback(() => {
+    dispatch(openMcpPanelView({ panelView: McpPanelView.CreateLogicApp }));
+  }, [dispatch]);
 
   return (
     <div className={styles.container}>
       <div className={styles.labelSection}>
-        <Text>{intlText.LOGIC_APP}</Text>
+        <Label required>{intlText.LOGIC_APP}</Label>
       </div>
       <div className={styles.fieldSection}>
         <Field required={true}>
           <div className={styles.comboboxContainer}>
             <Combobox
+              required={true}
               className={styles.combobox}
-              disabled={isLogicAppsLoading}
+              disabled={isLogicAppsLoading || disableSelector}
               value={controlValue}
+              selectedOptions={selectedResource ? [selectedResource] : []}
               placeholder={isLogicAppsLoading ? intlText.LOADING : intlText.SEARCH_PLACEHOLDER}
               onOptionSelect={(_, data) => {
                 if (data.optionValue && data.optionValue !== NO_ITEM_VALUE) {
@@ -140,13 +207,18 @@ export const LogicAppSelector = () => {
                 </Option>
               ) : (
                 filteredResources.map((resource) => (
-                  <Option key={resource.id} value={resource.name}>
+                  <Option key={resource.id} value={resource.id}>
                     {resource.displayName}
                   </Option>
                 ))
               )}
             </Combobox>
           </div>
+          {disableSelector ? null : (
+            <Link className={styles.linkSection} disabled={!!newLogicAppDetails?.appName} onClick={handleNewAppCreate}>
+              {intlText.CREATE_NEW}
+            </Link>
+          )}
         </Field>
       </div>
     </div>

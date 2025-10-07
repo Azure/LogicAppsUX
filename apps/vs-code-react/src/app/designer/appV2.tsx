@@ -13,7 +13,6 @@ import {
   Designer,
   getTheme,
   useThemeObserver,
-  RunHistoryPanel,
   FloatingRunButton,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
@@ -126,7 +125,8 @@ export const DesignerApp = () => {
       oauthRedirectUrl,
       hostVersion,
       queryClient,
-      sendMsgToVsix
+      sendMsgToVsix,
+      setRunId
     );
   }, [
     baseUrl,
@@ -153,7 +153,7 @@ export const DesignerApp = () => {
     [panelMetaData?.extensionBundleVersion]
   );
 
-  const { data: runInstance, refetch: refetchRunInstance, isError: isErrorRunInstance } = useRun(runId);
+  const { data: runInstance, isError: isErrorRunInstance } = useRun(runId);
 
   useEffect(() => {
     if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
@@ -361,24 +361,17 @@ export const DesignerApp = () => {
             />
 
             {!isCodeView && (
-              <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
-                <RunHistoryPanel
-                  collapsed={!isMonitoringView}
-                  onRunSelected={(_id: string) => setRunId(_id)}
-                  onRefresh={() => refetchRunInstance()}
+              <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
+                <Designer />
+                <FloatingRunButton
+                  id={workflowDefinitionId}
+                  saveDraftWorkflow={saveWorkflowFromDesigner}
+                  onRun={(newRunId: string | undefined) => {
+                    switchToMonitoringView();
+                    setRunId(newRunId ?? '');
+                  }}
+                  isDarkMode={theme === Theme.Dark}
                 />
-                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                  <Designer />
-                  <FloatingRunButton
-                    id={workflowDefinitionId}
-                    saveDraftWorkflow={saveWorkflowFromDesigner}
-                    onRun={(newRunId: string | undefined) => {
-                      switchToMonitoringView();
-                      setRunId(newRunId ?? '');
-                    }}
-                    isDarkMode={theme === Theme.Dark}
-                  />
-                </div>
               </div>
             )}
             {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} workflowFile={initialWorkflow} />}
