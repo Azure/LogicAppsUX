@@ -211,31 +211,6 @@ const DesignerEditor = () => {
     [dispatch]
   );
 
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  const supportsStateful = !equals(workflow?.kind, 'stateless');
-  const services = useMemo(
-    () =>
-      getDesignerServices(
-        workflowId,
-        supportsStateful,
-        isHybridLogicApp,
-        connectionsData ?? {},
-        workflowAppData as WorkflowApp,
-        addConnectionDataInternal,
-        getConnectionConfiguration,
-        tenantId,
-        objectId,
-        canonicalLocation,
-        language,
-        queryClient,
-        settingsData?.properties ?? {},
-        dispatch,
-        onRunSelected
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
-  );
-
   // RUN HISTORY
 
   const toggleMonitoringView = useCallback(() => {
@@ -271,6 +246,33 @@ const DesignerEditor = () => {
       dispatch(changeRunId(runId));
     },
     [dispatch, showMonitoringView]
+  );
+
+  // Services
+
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
+  const services = useMemo(
+    () =>
+      getDesignerServices(
+        workflowId,
+        supportsStateful,
+        isHybridLogicApp,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        getConnectionConfiguration,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        queryClient,
+        settingsData?.properties ?? {},
+        dispatch,
+        onRunSelected
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
   const originalSettings: Record<string, string> = useMemo(() => {
