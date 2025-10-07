@@ -1,14 +1,12 @@
 # Logic Apps Designer
-## [5.185.6](https://github.com/Azure/LogicAppsUX/compare/v5.185.5...3398b9388e700912af859fcde3620d4c9a837c98) (2025-10-07)
-
-_Compared against hotfix/v5.185 (3398b9388)_
+## [5.185.7](https://github.com/Azure/LogicAppsUX/compare/v5.185.6...v5.185.7) (2025-10-07)
 
 ### Bug Fixes
 
 * **vscode:** improve extension bundle path parsing for multi-line command output ([#8326](https://github.com/Azure/LogicAppsUX/pull/8326))
 
 
-## [5.185.5](https://github.com/Azure/LogicAppsUX/compare/v5.165.9...v5.185.5) (2025-10-02)
+## [5.185.6](https://github.com/Azure/LogicAppsUX/compare/v5.165.9...v5.185.6) (2025-10-02)
 
 
 ### Features
