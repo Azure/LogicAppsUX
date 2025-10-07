@@ -175,7 +175,9 @@ export const FloatingRunButton = ({
           {...buttonCommonProps}
           primaryActionButton={{
             icon: runIsLoading ? <Spinner size="tiny" /> : <RunIcon />,
-            onClick: runMutate(isDraftMode),
+            onClick: () => {
+              runMutate(isDraftMode);
+            },
           }}
           menuButton={
             canBeRunWithPayload
