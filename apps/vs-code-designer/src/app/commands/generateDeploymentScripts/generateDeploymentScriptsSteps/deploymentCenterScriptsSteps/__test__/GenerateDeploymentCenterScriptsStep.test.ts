@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import * as syncCloudSettings from '../../../../syncCloudSettings';
 import { ext } from '../../../../../../extensionVariables';
 import { IAzureDeploymentScriptsContext } from '../../../generateDeploymentScripts';
-import { assetsFolderName, deploymentDirectory } from '../../../../../../constants';
+import { assetsFolderName, deploymentDirectory, deploymentScriptTemplatesFolderName } from '../../../../../../constants';
 
 describe('GenerateDeploymentCenterScriptsStep', () => {
   let context: IAzureDeploymentScriptsContext;
@@ -28,11 +28,11 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
     const rootDir = path.join(__dirname, '..', '..', '..', '..', '..', '..');
     const assetsFolderPath = path.join(rootDir, assetsFolderName);
-    deploymentScriptTemplatePath = path.join(assetsFolderPath, 'DeploymentScriptTemplates', 'DeploymentCenterScript');
+    deploymentScriptTemplatePath = path.join(assetsFolderPath, deploymentScriptTemplatesFolderName, 'DeploymentCenterScript');
     deploymentScriptTemplate = await realFs.readFile(deploymentScriptTemplatePath, 'utf8');
-    dotDeploymentTemplatePath = path.join(assetsFolderPath, 'DeploymentScriptTemplates', 'dotdeployment');
+    dotDeploymentTemplatePath = path.join(assetsFolderPath, deploymentScriptTemplatesFolderName, 'dotdeployment');
     dotDeploymentContent = await realFs.readFile(dotDeploymentTemplatePath, 'utf8');
-    readmeTemplatePath = path.join(assetsFolderPath, 'DeploymentScriptTemplates', 'DeploymentCenterReadme');
+    readmeTemplatePath = path.join(assetsFolderPath, deploymentScriptTemplatesFolderName, 'DeploymentCenterReadme');
     readmeContent = await realFs.readFile(readmeTemplatePath, 'utf8');
   });
 
