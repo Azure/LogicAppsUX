@@ -11,6 +11,7 @@ import { OpenDesignerForAzureResource } from './openDesignerForAzureResource';
 import OpenDesignerForLocalProject from './openDesignerForLocalProject';
 import { Uri } from 'vscode';
 import { buildCustomCodeFunctionsProject } from '../../buildCustomCodeFunctionsProject';
+import { libDirectory } from '../../../../constants';
 
 export async function openDesigner(context: IAzureConnectorsContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let openDesignerObj: OpenDesignerForLocalProject | OpenDesignerForAzureResource;
@@ -20,7 +21,7 @@ export async function openDesigner(context: IAzureConnectorsContext, node: Uri |
   if (workflowNode instanceof Uri) {
     const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
     // Only build custom code projects on open designer if custom code binaries don't already exist in the logic app folder
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, 'lib', 'custom')))) {
+    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'custom')))) {
       await buildCustomCodeFunctionsProject(context, logicAppNode);
     }
 

@@ -14,7 +14,7 @@ import {
 } from '../customCodeUtils';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { ext } from '../../../extensionVariables';
-import { assetsFolderName } from '../../../constants';
+import { assetsFolderName, hostFileName, localSettingsFileName } from '../../../constants';
 
 vi.mock('fs-extra', () => ({
   statSync: vi.fn(),
@@ -295,7 +295,7 @@ describe('customCodeUtils', () => {
       vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
         if (p === testWorkspacePath) return testWorkspaceSubDirs;
         if (p === path.join(testWorkspacePath, testFuncProject)) return [testFuncProjectCsproj];
-        if (p === path.join(testWorkspacePath, testLAProject)) return ['host.json', 'local.settings.json'];
+        if (p === path.join(testWorkspacePath, testLAProject)) return [hostFileName, localSettingsFileName];
         return [];
       });
       vi.spyOn(fse, 'statSync').mockImplementation((p: string) => {
@@ -319,7 +319,7 @@ describe('customCodeUtils', () => {
       vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
       vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
         if (p === testWorkspacePath) return testWorkspaceSubDirs;
-        if (p === path.join(testWorkspacePath, testLAProject)) return ['host.json'];
+        if (p === path.join(testWorkspacePath, testLAProject)) return [hostFileName];
         return [];
       });
       vi.spyOn(fse, 'statSync').mockImplementation((p: string) => {
@@ -355,7 +355,7 @@ describe('customCodeUtils', () => {
       vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
         if (p === testWorkspacePath) return testWorkspaceSubDirs;
         if (p === path.join(testWorkspacePath, testFuncProject)) return [testFuncProjectCsproj];
-        if (p === path.join(testWorkspacePath, testLAProject)) return ['host.json'];
+        if (p === path.join(testWorkspacePath, testLAProject)) return [hostFileName];
         return [];
       });
       vi.spyOn(fse, 'statSync').mockImplementation((p: string) => {
@@ -379,7 +379,7 @@ describe('customCodeUtils', () => {
       vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
       vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
         if (p === testWorkspacePath) return testWorkspaceSubDirs;
-        if (p === path.join(testWorkspacePath, testLAProject)) return ['host.json'];
+        if (p === path.join(testWorkspacePath, testLAProject)) return [hostFileName];
         return [];
       });
       vi.spyOn(fse, 'statSync').mockImplementation((p: string) => {

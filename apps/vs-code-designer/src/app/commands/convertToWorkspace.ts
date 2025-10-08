@@ -1,19 +1,23 @@
-import { extensionCommand } from '../../constants';
+import { assetsFolderName, extensionCommand } from '../../constants';
 import { localize } from '../../localize';
 import { addLocalFuncTelemetry } from '../utils/funcCoreTools/funcVersion';
 import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ExtensionCommand, ProjectName, type IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import {
+  ExtensionCommand,
+  type IWebviewProjectContext,
+  ProjectName,
+  type IFunctionWizardContext,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { window } from 'vscode';
 import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder2, getWorkspaceRoot } from '../utils/workspace';
-import { isLogicAppProjectInRoot } from '../utils/verifyIsProject';
-import { createWorkspaceFile } from './createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
+import { isLogicAppProject, isLogicAppProjectInRoot } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../utils/codeless/common';
 import path from 'path';
 import { getWebViewHTML } from '../utils/codeless/getWebViewHTML';
+import * as fse from 'fs-extra';
 
 const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,
@@ -21,6 +25,48 @@ const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
   canSelectFiles: false,
   canSelectFolders: true,
 };
+export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
+  addLocalFuncTelemetry(context);
+
+  const myWebviewProjectContext: IWebviewProjectContext = options;
+
+  const workspaceFolderPath = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+
+  await fse.ensureDir(workspaceFolderPath);
+  const workspaceFilePath = path.join(workspaceFolderPath, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+
+  // Start with an empty folders array
+  const workspaceFolders = [];
+  const foldersToAdd = vscode.workspace.workspaceFolders;
+
+  if (foldersToAdd && foldersToAdd.length === 1) {
+    const folder = foldersToAdd[0];
+    const folderPath = folder.uri.fsPath;
+    if (await isLogicAppProject(folderPath)) {
+      const destinationPath = path.join(workspaceFolderPath, folder.name);
+      await fse.copy(folderPath, destinationPath);
+      workspaceFolders.push({ name: folder.name, path: `./${folder.name}` });
+    } else {
+      const subpaths: string[] = await fse.readdir(folderPath);
+      for (const subpath of subpaths) {
+        const fullPath = path.join(folderPath, subpath);
+        const destinationPath = path.join(workspaceFolderPath, subpath);
+        await fse.copy(fullPath, destinationPath);
+        workspaceFolders.push({ name: subpath, path: `./${subpath}` });
+      }
+    }
+  }
+
+  const workspaceData = {
+    folders: workspaceFolders,
+  };
+
+  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
+
+  const uri = vscode.Uri.file(workspaceFilePath);
+
+  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, true /* forceNewWindow */);
+}
 
 export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
   const workspaceFolder = await getWorkspaceFolder2();
@@ -91,8 +137,8 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
           options
         );
         panel.iconPath = {
-          light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'export.svg')),
-          dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'export.svg')),
+          light: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'export.svg')),
+          dark: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'export.svg')),
         };
         panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
@@ -116,7 +162,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
                   await createWorkspaceFile(activateContext, message.data);
                 });
                 context.telemetry.properties.createContainingWorkspace = 'true';
-                window.showInformationMessage(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
+                vscode.window.showInformationMessage(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
                 // Close the webview panel after successful creation
                 panel.dispose();
                 resolve(true); // Only resolve after workspace creation is done

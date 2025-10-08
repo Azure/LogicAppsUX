@@ -1,4 +1,4 @@
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
+import { assetsFolderName, localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -136,8 +136,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       this.getPanelOptions()
     );
     this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
     };
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);

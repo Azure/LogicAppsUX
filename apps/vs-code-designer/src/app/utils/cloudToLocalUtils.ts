@@ -15,7 +15,17 @@ import { areAllConnectionsParameterized, parameterizeConnection } from './codele
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { isCSharpProject } from './detectProjectLanguage';
-import { azureWebJobsStorageKey, parameterizeConnectionsInProjectLoadSetting, parametersFileName } from '../../constants';
+import {
+  assetsFolderName,
+  azureWebJobsStorageKey,
+  connectionsFileName,
+  funcIgnoreFileName,
+  hostFileName,
+  localSettingsFileName,
+  parameterizeConnectionsInProjectLoadSetting,
+  parametersFileName,
+  vscodeFolderName,
+} from '../../constants';
 import { addNewFileInCSharpProject } from './codeless/updateBuildFile';
 import { writeFormattedJson } from './fs';
 import { Uri, window, workspace } from 'vscode';
@@ -67,7 +77,7 @@ export async function extractConnectionDetails(connections: any): Promise<any> {
 
 export async function extractConnectionSettings(context: IFunctionWizardContext): Promise<Record<string, any>> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
-  const localSettingsPath = path.join(logicAppPath, 'local.settings.json');
+  const localSettingsPath = path.join(logicAppPath, localSettingsFileName);
 
   if (logicAppPath) {
     try {
@@ -113,8 +123,8 @@ export async function getParametersArtifactData(projectRoot: string): Promise<st
 
 export async function changeAuthTypeToRaw(context: IFunctionWizardContext, parameterizeConnectionsSetting: any): Promise<any> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
-  const connectionsPath = path.join(logicAppPath, 'connections.json');
-  const parametersPath = path.join(logicAppPath, 'parameters.json');
+  const connectionsPath = path.join(logicAppPath, connectionsFileName);
+  const parametersPath = path.join(logicAppPath, parametersFileName);
   let connectionsData: ConnectionsData = {};
   let parametersJson: ParametersData = {};
 
@@ -271,7 +281,7 @@ export async function parameterizeConnectionsDuringImport(
 
 export async function cleanLocalSettings(context: IFunctionWizardContext): Promise<void> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
-  const localSettingsPath = path.join(logicAppPath, 'local.settings.json');
+  const localSettingsPath = path.join(logicAppPath, localSettingsFileName);
   const localSettings = JSON.parse(fse.readFileSync(localSettingsPath, 'utf8'));
 
   if (localSettings.Values) {
@@ -301,7 +311,7 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
 
     const projectFiles = fse.readdirSync(context.projectPath);
     const filesToExclude = [];
-    const excludedFiles = ['.vscode', 'obj', 'bin', 'local.settings.json', 'host.json', '.funcignore'];
+    const excludedFiles = [vscodeFolderName, 'obj', 'bin', localSettingsFileName, hostFileName, funcIgnoreFileName];
     const excludedExt = ['.csproj'];
 
     projectFiles.forEach((fileName) => {
@@ -322,7 +332,7 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
     });
 
     // Create README.md file
-    const readMePath = path.join(__dirname, 'assets', 'readmes', 'importReadMe.md');
+    const readMePath = path.join(__dirname, assetsFolderName, 'readmes', 'importReadMe.md');
     const readMeContent = fse.readFileSync(readMePath, 'utf8');
     fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
   } catch (error) {
@@ -332,7 +342,7 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
 }
 
 export async function logicAppPackageProcessing(context: IFunctionWizardContext): Promise<void> {
-  const localSettingsPath = path.join(context.projectPath, 'local.settings.json');
+  const localSettingsPath = path.join(context.projectPath, localSettingsFileName);
   const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   let appSettings: ILocalSettingsJson = {};
@@ -345,7 +355,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     // merge the app settings from local.settings.json and the settings from the zip file
     appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
     const zipEntries = await getPackageEntries(context.packagePath);
-    const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === 'local.settings.json');
+    const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === localSettingsFileName);
     if (zipSettingsBuffer) {
       context.telemetry.properties.localSettingsInZip = 'Local settings found in the zip file';
       zipSettings = JSON.parse(zipSettingsBuffer.getData().toString('utf8'));

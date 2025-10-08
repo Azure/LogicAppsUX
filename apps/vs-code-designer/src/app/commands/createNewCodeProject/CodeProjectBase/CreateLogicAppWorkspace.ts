@@ -1,5 +1,7 @@
 import {
   appKindSetting,
+  artifactsDirectory,
+  assetsFolderName,
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
   defaultVersionRange,
@@ -10,11 +12,14 @@ import {
   functionsInprocNet8EnabledTrue,
   gitignoreFileName,
   hostFileName,
+  libDirectory,
   localEmulatorConnectionString,
   localSettingsFileName,
   logicAppKind,
   multiLanguageWorkerSetting,
   ProjectDirectoryPathKey,
+  rulesDirectory,
+  schemasDirectory,
   testsDirectoryName,
   vscodeFolderName,
   workerRuntimeKey,
@@ -44,28 +49,27 @@ import { WorkerRuntime, ProjectType } from '@microsoft/vscode-extension-logic-ap
 import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
-import { commands, Uri } from 'vscode';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
     // SampleRuleSet.xml
-    const sampleRuleSetPath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
-    const sampleRuleSetXMLPath = path.join(context.projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
+    const sampleRuleSetPath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'SampleRuleSet');
+    const sampleRuleSetXMLPath = path.join(context.projectPath, artifactsDirectory, rulesDirectory, 'SampleRuleSet.xml');
     const sampleRuleSetXMLContent = await fse.readFile(sampleRuleSetPath, 'utf-8');
     const sampleRuleSetXMLFileContent = sampleRuleSetXMLContent.replace(/<%= methodName %>/g, context.functionAppName);
     await fse.writeFile(sampleRuleSetXMLPath, sampleRuleSetXMLFileContent);
 
     // SchemaUser.xsd
-    const schemaUserPath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SchemaUser');
-    const schemaUserXSDPath = path.join(context.projectPath, 'Artifacts', 'Schemas', 'SchemaUser.xsd');
+    const schemaUserPath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'SchemaUser');
+    const schemaUserXSDPath = path.join(context.projectPath, artifactsDirectory, schemasDirectory, 'SchemaUser.xsd');
     const schemaUserXSDContent = await fse.readFile(schemaUserPath, 'utf-8');
     await fse.writeFile(schemaUserXSDPath, schemaUserXSDContent);
   }
 }
 
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'JAR'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'net472'), { recursive: true });
 }
 
 export async function getHostContent(): Promise<IHostJsonV2> {
@@ -133,12 +137,10 @@ export async function createLocalConfigurationFiles(
   const gitignore = '';
 
   if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
-    // this.projectPath = projectPath;
     funcignore.push('global.json');
     localSettingsJson.Values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
 
-  // const version: FuncVersion = nonNullProp(context, 'version');
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
   const hostJson: IHostJsonV2 = await getHostContent();
   await writeFormattedJson(hostJsonPath, hostJson);
@@ -159,7 +161,6 @@ export async function createWorkspaceStructure(myWebviewProjectContext: IWebview
   await fse.ensureDir(workspaceFolder);
 
   // Create the workspace .code-workspace file
-  // await this.createWorkspaceFile(context);
   const workspaceFilePath = path.join(workspaceFolder, `${myWebviewProjectContext.workspaceName}.code-workspace`);
   const workspaceFolders = [];
   workspaceFolders.push({ name: myWebviewProjectContext.logicAppName, path: `./${myWebviewProjectContext.logicAppName}` });
@@ -173,49 +174,6 @@ export async function createWorkspaceStructure(myWebviewProjectContext: IWebview
     folders: workspaceFolders,
   };
   await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
-}
-
-export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
-  addLocalFuncTelemetry(context);
-
-  const myWebviewProjectContext: IWebviewProjectContext = options;
-
-  const workspaceFolderPath = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
-
-  await fse.ensureDir(workspaceFolderPath);
-  const workspaceFilePath = path.join(workspaceFolderPath, `${myWebviewProjectContext.workspaceName}.code-workspace`);
-
-  // Start with an empty folders array
-  const workspaceFolders = [];
-  const foldersToAdd = vscode.workspace.workspaceFolders;
-
-  if (foldersToAdd && foldersToAdd.length === 1) {
-    const folder = foldersToAdd[0];
-    const folderPath = folder.uri.fsPath;
-    if (await isLogicAppProject(folderPath)) {
-      const destinationPath = path.join(workspaceFolderPath, folder.name);
-      await fse.copy(folderPath, destinationPath);
-      workspaceFolders.push({ name: folder.name, path: `./${folder.name}` });
-    } else {
-      const subpaths: string[] = await fse.readdir(folderPath);
-      for (const subpath of subpaths) {
-        const fullPath = path.join(folderPath, subpath);
-        const destinationPath = path.join(workspaceFolderPath, subpath);
-        await fse.copy(fullPath, destinationPath);
-        workspaceFolders.push({ name: subpath, path: `./${subpath}` });
-      }
-    }
-  }
-
-  const workspaceData = {
-    folders: workspaceFolders,
-  };
-
-  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
-
-  const uri = Uri.file(workspaceFilePath);
-
-  await commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, true /* forceNewWindow */);
 }
 
 /**

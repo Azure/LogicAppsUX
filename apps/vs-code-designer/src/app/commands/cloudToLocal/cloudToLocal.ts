@@ -10,6 +10,7 @@ import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } fr
 import * as fs from 'fs';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
+import { assetsFolderName } from '../../../constants';
 
 const packageDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,
@@ -46,8 +47,8 @@ export async function cloudToLocal(): Promise<void> {
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel('CreateWorkspace', `${panelName}`, vscode.ViewColumn.Active, options);
   panel.iconPath = {
-    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'export.svg')),
-    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'export.svg')),
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'export.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'export.svg')),
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 

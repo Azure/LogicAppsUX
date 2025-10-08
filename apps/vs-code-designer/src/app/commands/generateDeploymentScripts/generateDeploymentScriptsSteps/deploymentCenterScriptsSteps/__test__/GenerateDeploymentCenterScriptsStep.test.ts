@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import * as syncCloudSettings from '../../../../syncCloudSettings';
 import { ext } from '../../../../../../extensionVariables';
 import { IAzureDeploymentScriptsContext } from '../../../generateDeploymentScripts';
-import { assetsFolderName } from '../../../../../../constants';
+import { assetsFolderName, deploymentDirectory } from '../../../../../../constants';
 
 describe('GenerateDeploymentCenterScriptsStep', () => {
   let context: IAzureDeploymentScriptsContext;
@@ -70,7 +70,7 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('dotdeployment'), 'utf-8');
     expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('DeploymentCenterReadme'), 'utf-8');
 
-    const deploymentDirectoryPath = path.join(context.workspacePath as string, 'deployment');
+    const deploymentDirectoryPath = path.join(context.workspacePath as string, deploymentDirectory);
     expect(fse.ensureDir).toHaveBeenCalledWith(deploymentDirectoryPath);
     expect(writeFileSpy).toHaveBeenCalledWith(path.join(deploymentDirectoryPath, 'deploy.ps1'), expect.any(String));
 

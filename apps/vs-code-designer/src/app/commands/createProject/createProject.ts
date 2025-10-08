@@ -14,6 +14,7 @@ import path from 'path';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { getLogicAppWithoutCustomCodeNew } from '../../utils/workspace';
+import { assetsFolderName } from '../../../constants';
 
 const workspaceParentDialogOptions: vscode.OpenDialogOptions = {
   canSelectMany: false,
@@ -70,8 +71,8 @@ export async function createNewProjectFromCommand(context: IActionContext): Prom
     options
   );
   panel.iconPath = {
-    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'export.svg')),
-    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'export.svg')),
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'export.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'export.svg')),
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
