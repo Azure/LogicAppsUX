@@ -27,7 +27,7 @@ import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
-import agentloopConnector from '../standard/manifest/agentLoopConnector';
+import agentloopConnector from './manifest/agentLoopConnector';
 
 interface ConnectionAcl {
   id: string;

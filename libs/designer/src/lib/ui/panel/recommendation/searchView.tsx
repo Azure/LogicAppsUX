@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableParseDocumentWithMetadata, useShouldHideAgentRequestTriggerConsumption } from './hooks';
+import { useShouldEnableParseDocumentWithMetadata, useShouldShowAgentRequestTriggerConsumption } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
@@ -51,7 +51,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
   const isA2AWorkflow = useIsA2AWorkflow();
-  const shouldHideAgentRequestTriggerConsumption = useShouldHideAgentRequestTriggerConsumption();
+  const shouldShowAgentRequestTriggerConsumption = useShouldShowAgentRequestTriggerConsumption();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -107,7 +107,11 @@ export const SearchView: FC<SearchViewProps> = ({
       }
 
       // Hide Agent Request trigger if the flag is enabled
-      if (shouldHideAgentRequestTriggerConsumption && equals(type, constants.NODE.TYPE.REQUEST) && id === a2aRequestOperation.id) {
+      if (
+        shouldShowAgentRequestTriggerConsumption === false &&
+        equals(type, constants.NODE.TYPE.REQUEST) &&
+        id === a2aRequestOperation.id
+      ) {
         return false;
       }
 
@@ -138,7 +142,7 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [shouldHideAgentRequestTriggerConsumption, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
+    [shouldShowAgentRequestTriggerConsumption, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
   );
 
   useDebouncedEffect(

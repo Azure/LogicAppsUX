@@ -7,7 +7,7 @@ import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
-import { useShouldHideAgentRequestTriggerConsumption } from './hooks';
+import { useShouldShowAgentRequestTriggerConsumption } from './hooks';
 
 const priorityConnectors = [
   'connectionproviders/request',
@@ -71,7 +71,7 @@ export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
-  const shouldHideAgentRequestConnector = useShouldHideAgentRequestTriggerConsumption();
+  const shouldShowAgentRequestConnector = useShouldShowAgentRequestTriggerConsumption();
 
   const dispatch = useDispatch();
 
@@ -153,14 +153,14 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const passesAgentRequestConnector = useCallback(
     (connector: Connector): boolean => {
-      if (!shouldHideAgentRequestConnector) {
+      if (shouldShowAgentRequestConnector) {
         return true;
       }
 
       // Hide Agent Request connector if the flag is enabled
       return connector.id !== 'connectionProviders/a2aconsumption';
     },
-    [shouldHideAgentRequestConnector]
+    [shouldShowAgentRequestConnector]
   );
 
   const filterItems = useCallback(
