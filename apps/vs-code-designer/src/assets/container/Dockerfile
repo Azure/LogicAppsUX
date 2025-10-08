@@ -36,16 +36,23 @@ RUN set -eux; \
 # Install .NET SDK 8.0 and 6.0
 # -----------------------------
 RUN set -eux; \
-    # Add Microsoft package repository
-    wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb; \
-    dpkg -i /tmp/packages-microsoft-prod.deb; \
-    rm /tmp/packages-microsoft-prod.deb; \
-    # Update and install .NET SDKs
-    apt-get update; \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      dotnet-sdk-8.0 \
-      dotnet-sdk-6.0; \
-    rm -rf /var/lib/apt/lists/*; \
+    ARCH="$(dpkg --print-architecture)"; \
+    if [ "$ARCH" = "amd64" ]; then \
+        # AMD64: Use APT packages
+        wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb; \
+        dpkg -i /tmp/packages-microsoft-prod.deb; \
+        rm /tmp/packages-microsoft-prod.deb; \
+        apt-get update; \
+        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+          dotnet-sdk-8.0 \
+          dotnet-sdk-6.0; \
+        rm -rf /var/lib/apt/lists/*; \
+    elif [ "$ARCH" = "arm64" ]; then \
+        # ARM64: Use manual installation script
+        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --install-dir /usr/share/dotnet; \
+        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 6.0 --install-dir /usr/share/dotnet; \
+        ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet; \
+    fi; \
     # Verify installations
     dotnet --version; \
     dotnet --list-sdks
