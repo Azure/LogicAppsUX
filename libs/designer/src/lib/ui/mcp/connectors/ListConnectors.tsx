@@ -21,7 +21,7 @@ import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcp
 import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
-import { deinitializeOperations } from '../../../core/actions/bjsworkflow/mcp';
+import { deinitializeOperations, MCP_ConnectionKey } from '../../../core/actions/bjsworkflow/mcp';
 import ConnectorIcon from '../../../common/images/mcp/addconnector.svg';
 
 const connectorTableCellStyles = {
@@ -35,11 +35,16 @@ const lastCellStyles = {
 export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: () => void; addDisabled: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { operationInfos, connectionsMapping, connectionReferences } = useSelector((state: RootState) => ({
-    operationInfos: state.operations.operationInfo,
-    connectionsMapping: state.connection.connectionsMapping,
-    connectionReferences: state.connection.connectionReferences,
-  }));
+  const { operationInfos, connectionsMapping, connectionReferences, logicAppName, disableConnectorSelection, connectorId } = useSelector(
+    (state: RootState) => ({
+      operationInfos: state.operations.operationInfo,
+      connectionsMapping: state.connection.connectionsMapping,
+      connectionReferences: state.connection.connectionReferences,
+      logicAppName: state.resource.logicAppName,
+      disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
+      connectorId: state.mcpSelection.selectedConnectorId,
+    })
+  );
 
   const INTL_TEXT = {
     addConnector: intl.formatMessage({
@@ -103,8 +108,23 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
 
   const items = useMemo(() => {
     const seen = new Set<string>();
+    const allOperations = Object.values(operationInfos);
 
-    return Object.values(operationInfos).reduce<
+    if (allOperations.length === 0 && disableConnectorSelection && connectorId) {
+      const referenceKey = connectionsMapping[MCP_ConnectionKey];
+      const reference = referenceKey ? connectionReferences[referenceKey] : null;
+
+      const isConnected = !!reference;
+      return [
+        {
+          connectorId,
+          connectionId: reference?.connection?.id ?? '',
+          isConnected,
+        },
+      ];
+    }
+
+    return allOperations.reduce<
       Array<{
         connectorId: string;
         connectionId: string;
@@ -131,7 +151,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
 
       return acc;
     }, []);
-  }, [connectionReferences, connectionsMapping, operationInfos]);
+  }, [connectionReferences, connectionsMapping, connectorId, disableConnectorSelection, operationInfos]);
 
   const columns = [
     { columnKey: 'connector', label: INTL_TEXT.connectorLabel },
@@ -140,6 +160,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
 
+  const shouldDisableEdits = useMemo(() => disableConnectorSelection && !logicAppName, [disableConnectorSelection, logicAppName]);
   const handleEditConnector = useCallback(
     (connectorId: string) => {
       // Get all operations for this specific connector
@@ -213,7 +234,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
                   text: 'msla-template-create-connector-text',
                 }}
                 connectorId={item.connectorId}
-                onNameClick={() => handleEditConnector(item.connectorId)}
+                onNameClick={shouldDisableEdits ? undefined : () => handleEditConnector(item.connectorId)}
               />
             </TableCell>
             <TableCell style={connectorTableCellStyles}>
@@ -233,16 +254,19 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
                 appearance="subtle"
                 size="small"
                 icon={<Edit24Regular />}
+                disabled={shouldDisableEdits}
                 onClick={() => handleEditConnector(item.connectorId)}
                 aria-label={INTL_TEXT.editButtonLabel}
               />
-              <Button
-                appearance="subtle"
-                size="small"
-                icon={<Delete24Regular />}
-                onClick={() => handleDeleteConnector(item.connectorId)}
-                aria-label={INTL_TEXT.deleteButtonLabel}
-              />
+              {disableConnectorSelection ? null : (
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<Delete24Regular />}
+                  onClick={() => handleDeleteConnector(item.connectorId)}
+                  aria-label={INTL_TEXT.deleteButtonLabel}
+                />
+              )}
             </TableCell>
           </TableRow>
         ))}

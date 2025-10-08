@@ -14,6 +14,7 @@ export interface PanelState {
   operationContent: OperationPanelContentState;
   previousPanelMode: PanelMode | undefined;
   workflowParametersContent: WorkflowParametersPanelContentState;
+  runHistoryCollapsed: boolean;
 }
 
 export interface RelationshipIds {

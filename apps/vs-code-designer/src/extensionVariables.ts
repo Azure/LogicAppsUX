@@ -31,7 +31,7 @@ import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresource
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
-type DesignTimeInstance = {
+type FuncInstance = {
   process?: cp.ChildProcess;
   childFuncPid?: string;
   port?: number;
@@ -42,7 +42,8 @@ type DesignTimeInstance = {
 export namespace ext {
   export let context: ExtensionContext;
   export let codefulEnabled: boolean;
-  export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
+  export const designTimeInstances: Map<string, FuncInstance> = new Map();
+  export const runtimeInstances: Map<string, FuncInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let defaultLogicAppPath: string;

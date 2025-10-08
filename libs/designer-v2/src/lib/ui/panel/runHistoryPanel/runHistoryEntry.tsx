@@ -2,7 +2,7 @@ import { Divider, mergeClasses, tokens } from '@fluentui/react-components';
 import { RunMenu } from './runMenu';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useRun } from '../../../core/queries/runs';
 
 const RunHistoryEntry = (props: {
@@ -29,13 +29,21 @@ const RunHistoryEntry = (props: {
     return tokens.colorBrandForeground1;
   }, [run?.properties.status]);
 
+  const ref = useRef<HTMLDivElement>(null);
+  // Scroll into view when selected, this is to handle navigation from other components
+  useEffect(() => {
+    if (isSelected) {
+      ref.current?.scrollIntoView({ behavior: 'instant', block: 'center' });
+    }
+  }, [isSelected]);
+
   if (!run) {
     return null;
   }
 
   return (
     <>
-      <div onClick={() => onRunSelected(run?.name ?? '')} className={rootStyles}>
+      <div ref={ref} className={rootStyles} onClick={() => onRunSelected(run?.name ?? '')}>
         {isSelected && <div className={styles.runEntrySelectedIndicator} style={{ backgroundColor: indicatorColor }} />}
         <RunHistoryEntryInfo run={run} />
         <RunMenu run={run} addFilterCallback={addFilterCallback} />

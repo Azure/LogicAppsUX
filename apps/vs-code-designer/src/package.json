@@ -953,7 +953,6 @@
     "ms-dotnettools.csharp",
     "ms-dotnettools.csdevkit"
   ],
-  "enabledApiProposals": ["authenticationChallenges"],
   "activationEvents": [
     "onView:azureWorkspace",
     "onView:azureResourceGroups",

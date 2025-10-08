@@ -23,17 +23,11 @@ import * as vscode from 'vscode';
 /**
  * Validates functions core tools is installed and azure emulator is running
  * @param {IActionContext} context - Command context.
- * @param {vscode.DebugConfiguration} debugConfig - Workspace debug configuration.
  * @param {string} projectPath - The logic app project path.
  * @returns {boolean} Flag to determine if debug should continue.
  */
-export async function preDebugValidate(
-  context: IActionContext,
-  debugConfig: vscode.DebugConfiguration,
-  projectPath: string
-): Promise<boolean> {
+export async function preDebugValidate(context: IActionContext, projectPath: string): Promise<boolean> {
   let shouldContinue: boolean;
-  context.telemetry.properties.debugType = debugConfig.type;
 
   try {
     context.telemetry.properties.lastValidateStep = 'funcInstalled';

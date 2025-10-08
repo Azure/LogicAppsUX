@@ -1,5 +1,5 @@
 name: Update Changelog
-run-name: Update Changelog - From ${{ github.event.inputs.old_tag }} to ${{ github.event.inputs.new_tag }}
+run-name: Update Changelog - From ${{ github.event.inputs.old_tag }} to head of ${{ github.event.inputs.target_branch }}
 on:
   workflow_dispatch:
     inputs:
@@ -37,39 +37,49 @@ jobs:
         with:
           node-version: 20
 
-      - name: 'Validate Tags'
+      - name: 'Validate Inputs'
         id: validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
-          
-          echo "Validating tags..."
-          echo "New tag: $NEW_TAG"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+
+          echo "Validating inputs..."
           echo "Old tag: $OLD_TAG"
-          
-          # Check if tags exist
-          if ! git tag -l | grep -q "^${NEW_TAG}$"; then
-            echo "Error: New tag '$NEW_TAG' does not exist"
-            exit 1
-          fi
-          
+          echo "Upcoming tag: $NEW_TAG"
+          echo "Target branch: $TARGET_BRANCH"
+
+          # Check if old tag exists
           if ! git tag -l | grep -q "^${OLD_TAG}$"; then
             echo "Error: Old tag '$OLD_TAG' does not exist"
             exit 1
           fi
-          
-          # Check tag chronology
-          NEW_DATE=$(git log -1 --format=%ct "$NEW_TAG")
-          OLD_DATE=$(git log -1 --format=%ct "$OLD_TAG")
-          
-          if [ "$NEW_DATE" -le "$OLD_DATE" ]; then
-            echo "Error: New tag '$NEW_TAG' is not newer than old tag '$OLD_TAG'"
+
+          echo "Fetching latest commit for $TARGET_BRANCH..."
+          if ! git fetch origin "$TARGET_BRANCH" --depth=1 >/dev/null 2>&1; then
+            echo "Error: Unable to fetch target branch '$TARGET_BRANCH'"
             exit 1
           fi
-          
-          echo "Tags validated successfully"
+
+          if ! git rev-parse --verify "origin/$TARGET_BRANCH" >/dev/null 2>&1; then
+            echo "Error: Target branch '$TARGET_BRANCH' does not exist on origin"
+            exit 1
+          fi
+
+          TARGET_COMMIT=$(git rev-parse "origin/$TARGET_BRANCH")
+          if [ -z "$TARGET_COMMIT" ]; then
+            echo "Error: Unable to resolve latest commit for '$TARGET_BRANCH'"
+            exit 1
+          fi
+          SHORT_TARGET_COMMIT=$(git rev-parse --short "$TARGET_COMMIT")
+
+          echo "Latest commit on $TARGET_BRANCH: $TARGET_COMMIT"
+          echo "Inputs validated successfully"
+
+          echo "TARGET_COMMIT=$TARGET_COMMIT" >> $GITHUB_OUTPUT
+          echo "SHORT_TARGET_COMMIT=$SHORT_TARGET_COMMIT" >> $GITHUB_OUTPUT
 
       - name: 'Generate Release Notes'
         id: generate-notes
@@ -78,9 +88,12 @@ jobs:
         run: |
           NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
-          
-          echo "Generating release notes between $OLD_TAG and $NEW_TAG..."
-          
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          TARGET_COMMIT="${{ steps.validate.outputs.TARGET_COMMIT }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
+
+          echo "Generating release notes between $OLD_TAG and $TARGET_BRANCH ($SHORT_TARGET_COMMIT)..."
+
           # Generate release notes using GitHub API
           API_RESPONSE=$(gh api \
             --method POST \
@@ -88,7 +101,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ github.repository }}/releases/generate-notes \
             -f tag_name="$NEW_TAG" \
-            -f target_commitish="${{ github.event.inputs.target_branch }}" \
+            -f target_commitish="$TARGET_COMMIT" \
             -f previous_tag_name="$OLD_TAG" 2>/dev/null || echo '{"body": null}')
           
           echo "API Response received"
@@ -96,25 +109,152 @@ jobs:
           # Extract the body, with fallback for null values
           RELEASE_NOTES=$(echo "$API_RESPONSE" | jq -r '.body // empty')
           
-          # If the API didn't return meaningful notes, generate our own
-          if [ -z "$RELEASE_NOTES" ] || [ "$RELEASE_NOTES" = "null" ]; then
-            echo "API returned empty/null body, generating custom release notes"
+          # Parse and format release notes to match the desired format
+          if [ -n "$RELEASE_NOTES" ] && [ "$RELEASE_NOTES" != "null" ]; then
+            echo "Formatting GitHub API release notes..."
             
-            # Get commit messages between tags
-            COMMITS=$(git log $OLD_TAG..$NEW_TAG --oneline --pretty=format:"* %s (%h)" 2>/dev/null || echo "")
+            # Create a Python script to parse and format the release notes
+            cat > format_release_notes.py << 'EOF'
+          import sys
+          import re
+          
+          def format_release_notes(raw_notes):
+              lines = raw_notes.split('\n')
+              features = []
+              bug_fixes = []
+              
+              for line in lines:
+                  line = line.strip()
+                  
+                  # Skip empty lines and headers we don't want
+                  if not line or line.startswith('##') or line.startswith('**Full Changelog'):
+                      continue
+                  
+                  # Process lines that start with *
+                  if line.startswith('* '):
+                      # Match the actual GitHub API format: * type(scope): description by @author in https://github.com/Azure/LogicAppsUX/pull/1234
+                      match = re.search(r'\* ([^(]*)\(([^)]+)\):\s*(.+?) by @\w+ in https://github\.com/[^/]+/[^/]+/pull/(\d+)', line)
+                      if match:
+                          commit_type = match.group(1).strip()  # e.g., "fix"
+                          scope = match.group(2).strip()        # e.g., "Designer", "vscode"
+                          description = match.group(3).strip()  # e.g., "Fixed root node run-after setting in scopes (5.165)"
+                          pr_number = match.group(4)           # e.g., "8113"
+                          
+                          # Format as requested: * **scope:** description ([#PR](link))
+                          formatted_line = f"* **{scope}:** {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/pull/{pr_number}))"
+                          
+                          # Categorize based on commit type
+                          if commit_type.lower() == 'fix':
+                              bug_fixes.append(formatted_line)
+                          else:
+                              features.append(formatted_line)
+                      else:
+                          # Try simpler format: * description by @author in #1234
+                          alt_match = re.search(r'\* (.+?) by @\w+ in .*?/pull/(\d+)', line)
+                          if alt_match:
+                              description = alt_match.group(1).strip()
+                              pr_number = alt_match.group(2)
+                              
+                              # Try to extract scope and type from description if it follows conventional format
+                              scope_match = re.search(r'^([^(]*)\(([^)]+)\):\s*(.+)', description)
+                              if scope_match:
+                                  commit_type = scope_match.group(1).strip()
+                                  scope = scope_match.group(2)
+                                  clean_description = scope_match.group(3)
+                                  formatted_line = f"* **{scope}:** {clean_description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/pull/{pr_number}))"
+                                  
+                                  # Categorize based on commit type
+                                  if commit_type.lower() == 'fix':
+                                      bug_fixes.append(formatted_line)
+                                  else:
+                                      features.append(formatted_line)
+                              else:
+                                  # No scope found, use description as-is and put in features by default
+                                  formatted_line = f"* {description} ([#{pr_number}](https://github.com/Azure/LogicAppsUX/pull/{pr_number}))"
+                                  features.append(formatted_line)
+              
+              # Build the formatted output with sections
+              formatted_output = []
+              
+              if features:
+                  formatted_output.append("### Features")
+                  formatted_output.append("")
+                  formatted_output.extend(features)
+                  formatted_output.append("")
+              
+              if bug_fixes:
+                  formatted_output.append("### Bug Fixes")
+                  formatted_output.append("")
+                  formatted_output.extend(bug_fixes)
+                  formatted_output.append("")
+              
+              return '\n'.join(formatted_output).strip()
+          
+          if __name__ == "__main__":
+              raw_notes = sys.stdin.read()
+              formatted_notes = format_release_notes(raw_notes)
+              print(formatted_notes)
+          EOF
+            
+            # Format the release notes
+            RELEASE_NOTES=$(echo "$RELEASE_NOTES" | python3 format_release_notes.py)
+            
+            # Clean up
+            rm format_release_notes.py
+            
+          else
+            echo "API returned empty/null body, generating custom release notes from git log"
+            
+            # Get commits and categorize them properly
+            COMMITS=$(git log "$OLD_TAG..$TARGET_COMMIT" --oneline --pretty=format:"%h|%s" 2>/dev/null || echo "")
             
             if [ -n "$COMMITS" ]; then
-              RELEASE_NOTES="## What's Changed
+              FEATURES=""
+              BUG_FIXES=""
+              
+              while IFS='|' read -r hash message; do
+                # Try to match conventional commit format: type(scope): description
+                if [[ $message =~ ^([^(]+)\(([^)]+)\):[[:space:]]*(.+) ]]; then
+                  commit_type="${BASH_REMATCH[1]}"
+                  scope="${BASH_REMATCH[2]}"
+                  description="${BASH_REMATCH[3]}"
+                  formatted_message="* **$scope:** $description ([${hash}](https://github.com/${{ github.repository }}/commit/$hash))"
+                  
+                  # Categorize based on commit type
+                  if [[ $commit_type == "fix" ]]; then
+                    BUG_FIXES="$BUG_FIXES$formatted_message\n"
+                  else
+                    FEATURES="$FEATURES$formatted_message\n"
+                  fi
+                else
+                  # No conventional format, use message as-is and put in features by default
+                  formatted_message="* $message ([${hash}](https://github.com/${{ github.repository }}/commit/$hash))"
+                  FEATURES="$FEATURES$formatted_message\n"
+                fi
+              done <<< "$COMMITS"
+              
+              # Build categorized release notes
+              CATEGORIZED_NOTES=""
+              if [ -n "$FEATURES" ]; then
+                CATEGORIZED_NOTES="### Features\n\n$(echo -e "$FEATURES")"
+              fi
+              if [ -n "$BUG_FIXES" ]; then
+                if [ -n "$CATEGORIZED_NOTES" ]; then
+                  CATEGORIZED_NOTES="$CATEGORIZED_NOTES\n### Bug Fixes\n\n$(echo -e "$BUG_FIXES")"
+                else
+                  CATEGORIZED_NOTES="### Bug Fixes\n\n$(echo -e "$BUG_FIXES")"
+                fi
+              fi
+              
+              RELEASE_NOTES="$(echo -e "$CATEGORIZED_NOTES")
 
-          $COMMITS
-
-          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$TARGET_COMMIT"
             else
               RELEASE_NOTES="## Release $NEW_TAG
 
           This release includes updates and improvements.
 
-          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG"
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$OLD_TAG...$TARGET_COMMIT"
             fi
           fi
           
@@ -134,6 +274,9 @@ jobs:
           NEW_TAG="${{ github.event.inputs.new_tag }}"
           OLD_TAG="${{ github.event.inputs.old_tag }}"
           VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          TARGET_COMMIT="${{ steps.validate.outputs.TARGET_COMMIT }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
           
           echo "Updating CHANGELOG.md..."
           
@@ -142,7 +285,9 @@ jobs:
           
           # Create the new changelog entry
           NEW_ENTRY="# Logic Apps Designer
-          ## [$VERSION_NUMBER](https://github.com/${{ github.repository }}/compare/$OLD_TAG...$NEW_TAG) ($(date '+%Y-%m-%d'))
+          ## [$VERSION_NUMBER](https://github.com/${{ github.repository }}/compare/$OLD_TAG...$TARGET_COMMIT) ($(date '+%Y-%m-%d'))
+
+          _Compared against $TARGET_BRANCH ($SHORT_TARGET_COMMIT)_
 
           $RELEASE_NOTES
 
@@ -173,71 +318,60 @@ jobs:
             echo "HAS_CHANGES=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: 'Create Pull Request'
+      - name: 'Create Branch and Commit Changes'
+        id: create-branch
         if: steps.update-changelog.outputs.HAS_CHANGES == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          NEW_TAG="${{ github.event.inputs.new_tag }}"
-          OLD_TAG="${{ github.event.inputs.old_tag }}"
-          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
-          VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
-          
           # Create a new branch for the PR
+          VERSION_NUMBER="${{ steps.generate-notes.outputs.VERSION_NUMBER }}"
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          TARGET_COMMIT="${{ steps.validate.outputs.TARGET_COMMIT }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
           BRANCH_NAME="changelog/update-$VERSION_NUMBER-$(date +%s)"
-          
-          echo "Creating branch: $BRANCH_NAME"
-          git checkout -b "$BRANCH_NAME"
-          
+
+          echo "Creating branch: $BRANCH_NAME from $TARGET_BRANCH ($SHORT_TARGET_COMMIT)"
+          git checkout -b "$BRANCH_NAME" "$TARGET_COMMIT"
+
           # Configure Git
           git config --global user.name "changelog-automation-${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           
           # Stage and commit changes
           git add CHANGELOG.md
-          git commit -m "docs: update changelog for release $NEW_TAG
+          git commit -m "docs: update changelog for release ${{ github.event.inputs.new_tag }}
 
           - Added release notes for version $VERSION_NUMBER
-          - Generated from changes between $OLD_TAG and $NEW_TAG
+          - Generated from changes between ${{ github.event.inputs.old_tag }} and $TARGET_BRANCH ($SHORT_TARGET_COMMIT)
           - Auto-generated by changelog workflow"
           
-          # Push the branch
+          # Push the new branch
           git push origin "$BRANCH_NAME"
           
-          # Create PR title and body
-          PR_TITLE="docs: Update changelog for release $NEW_TAG"
-          PR_BODY="## Summary
-          This PR updates the CHANGELOG.md with release notes for version $VERSION_NUMBER.
+          # Store branch name for next step
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          ## Changes
-          - Added changelog entry for release $NEW_TAG
-          - Includes all changes from $OLD_TAG to $NEW_TAG
-          - Generated using GitHub's release notes API
+      - name: 'Create Pull Request'
+        if: steps.update-changelog.outputs.HAS_CHANGES == 'true'
+        run: |
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
 
-          ## Metadata
-          - **From Tag**: $OLD_TAG
-          - **To Tag**: $NEW_TAG  
-          - **Version**: $VERSION_NUMBER
-          - **Generated**: $(date '+%Y-%m-%d %H:%M:%S UTC')
-          
-          ---
-          *This PR was automatically generated by the changelog workflow*"
-          
-          # Create the pull request
-          PR_URL=$(gh pr create \
-            --title "$PR_TITLE" \
-            --body "$PR_BODY" \
+          gh pr create \
+            --title "docs: update changelog for release ${{ github.event.inputs.new_tag }}" \
+            --body "Automated changelog update from ${{ github.event.inputs.old_tag }} to $TARGET_BRANCH ($SHORT_TARGET_COMMIT)" \
             --base "$TARGET_BRANCH" \
-            --head "$BRANCH_NAME" \
+            --head "${{ steps.create-branch.outputs.BRANCH_NAME }}" \
             --label "documentation" \
-            --label "changelog")
-          
-          echo "Pull request created: $PR_URL"
-          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
+            --label "changelog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Summary'
         if: always()
         run: |
+          TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          SHORT_TARGET_COMMIT="${{ steps.validate.outputs.SHORT_TARGET_COMMIT }}"
+
           if [ "${{ steps.update-changelog.outputs.HAS_CHANGES }}" = "true" ]; then
             echo "✅ Changelog updated successfully"
             echo "📋 Pull request created: ${{ steps.update-changelog.outputs.PR_URL || 'Check previous step for URL' }}"
@@ -249,5 +383,6 @@ jobs:
           echo "📊 Workflow Summary:"
           echo "- New Tag: ${{ github.event.inputs.new_tag }}"
           echo "- Old Tag: ${{ github.event.inputs.old_tag }}"
-          echo "- Target Branch: ${{ github.event.inputs.target_branch }}"
+          echo "- Target Branch: $TARGET_BRANCH"
+          echo "- Target Commit: ${SHORT_TARGET_COMMIT:-N/A}"
           echo "- Changes Made: ${{ steps.update-changelog.outputs.HAS_CHANGES || 'N/A' }}"
