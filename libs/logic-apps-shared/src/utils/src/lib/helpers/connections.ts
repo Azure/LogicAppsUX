@@ -372,3 +372,7 @@ function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: strin
     return undefined;
   }
 }
+
+export function isAgenticConsumption(connector: Connector): boolean {
+  return connector?.name === 'agent' || connector?.id === '/subscriptions/agentic/connector/agent';
+}
