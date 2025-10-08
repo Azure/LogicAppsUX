@@ -164,7 +164,7 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required>
-            <Label>{intlText.NET_VERSION_LABEL}</Label>
+            <Label required>{intlText.NET_VERSION_LABEL}</Label>
             <Dropdown
               value={targetFramework === 'net472' ? '.NET Framework' : targetFramework === 'net8' ? '.NET 8' : ''}
               selectedOptions={targetFramework ? [targetFramework] : []}
@@ -197,7 +197,9 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
-            <Label htmlFor={functionFolderNameId}>{intlText.CUSTOM_CODE_FOLDER_NAME_LABEL}</Label>
+            <Label required htmlFor={functionFolderNameId}>
+              {intlText.CUSTOM_CODE_FOLDER_NAME_LABEL}
+            </Label>
             <Input
               id={functionFolderNameId}
               value={functionFolderName}
@@ -209,7 +211,9 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
-            <Label htmlFor={functionNamespaceId}>{intlText.FUNCTION_NAMESPACE_LABEL}</Label>
+            <Label required htmlFor={functionNamespaceId}>
+              {intlText.FUNCTION_NAMESPACE_LABEL}
+            </Label>
             <Input
               id={functionNamespaceId}
               value={functionNamespace}
@@ -221,7 +225,9 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
-            <Label htmlFor={functionNameId}>{intlText.FUNCTION_NAME_LABEL}</Label>
+            <Label required htmlFor={functionNameId}>
+              {intlText.FUNCTION_NAME_LABEL}
+            </Label>
             <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
           </Field>
         </div>
@@ -237,7 +243,9 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
-            <Label htmlFor={functionFolderNameId}>{intlText.RULES_ENGINE_FOLDER_NAME_LABEL}</Label>
+            <Label required htmlFor={functionFolderNameId}>
+              {intlText.RULES_ENGINE_FOLDER_NAME_LABEL}
+            </Label>
             <Input
               id={functionFolderNameId}
               value={functionFolderName}
@@ -249,7 +257,9 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
-            <Label htmlFor={functionNamespaceId}>{intlText.FUNCTION_NAMESPACE_LABEL}</Label>
+            <Label required htmlFor={functionNamespaceId}>
+              {intlText.FUNCTION_NAMESPACE_LABEL}
+            </Label>
             <Input
               id={functionNamespaceId}
               value={functionNamespace}
@@ -261,7 +271,9 @@ export const DotNetFrameworkStep: React.FC = () => {
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
-            <Label htmlFor={functionNameId}>{intlText.FUNCTION_NAME_LABEL}</Label>
+            <Label required htmlFor={functionNameId}>
+              {intlText.FUNCTION_NAME_LABEL}
+            </Label>
             <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
           </Field>
         </div>

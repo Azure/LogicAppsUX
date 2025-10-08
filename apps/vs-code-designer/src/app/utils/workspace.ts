@@ -181,10 +181,10 @@ export async function getWorkspaceFolder(
     const folderContents = await fse.readdir(workspaceFolderPath, { withFileTypes: true });
     const subFolders = folderContents.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(workspaceFolderPath, dirent.name));
 
-    return await selectLogicAppWorkspaceFolder(context, subFolders, skipPromptOnMultipleFolders);
+    return await getLogicAppWorkspaceFolder(context, subFolders, skipPromptOnMultipleFolders);
   }
 
-  return await selectLogicAppWorkspaceFolder(context, null, skipPromptOnMultipleFolders);
+  return await getLogicAppWorkspaceFolder(context, null, skipPromptOnMultipleFolders);
 }
 
 /**
@@ -242,7 +242,7 @@ async function logicAppFoundInFolders(subFolders: string[]): Promise<vscode.Work
   return getContainingWorkspace(logicAppProjectRoots[0]);
 }
 
-async function selectLogicAppWorkspaceFolder(
+async function getLogicAppWorkspaceFolder(
   context: IActionContext,
   subFolders: string[],
   skipPromptOnMultipleFolders?: boolean
@@ -372,14 +372,14 @@ export async function getLogicAppWithoutCustomCodeNew(context: IActionContext): 
       const subFolders = folderContents
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => path.join(workspaceFolderPath, dirent.name));
-      return await selectLogicAppWorkspaceFolderWithoutCustomCodeNew(context, false, subFolders);
+      return await getLogicAppWorkspaceFolderWithoutCustomCodeNew(context, false, subFolders);
     }
   }
 
-  return await selectLogicAppWorkspaceFolderWithoutCustomCodeNew(context, true, null);
+  return await getLogicAppWorkspaceFolderWithoutCustomCodeNew(context, true, null);
 }
 
-export async function selectLogicAppWorkspaceFolderWithoutCustomCodeNew(
+export async function getLogicAppWorkspaceFolderWithoutCustomCodeNew(
   context: IActionContext,
   returnsWorkspaceFolder: boolean,
   subFolders: string[]

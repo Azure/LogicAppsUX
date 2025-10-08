@@ -125,7 +125,9 @@ export const PackageNameStep: React.FC = () => {
           validationState={packagePathError ? 'error' : isValidatingPath ? 'warning' : undefined}
           validationMessage={packagePathError || (isValidatingPath ? 'Validating path...' : undefined)}
         >
-          <Label htmlFor={packagePathInputId}>{intlText.PACKAGE_PATH_LABEL}</Label>
+          <Label required htmlFor={packagePathInputId}>
+            {intlText.PACKAGE_PATH_LABEL}
+          </Label>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Input
               id={packagePathInputId}

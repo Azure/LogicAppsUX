@@ -131,7 +131,7 @@ export const WorkflowTypeStep: React.FC = () => {
       </Field>
 
       <Field required>
-        <Label>{intlText.WORKFLOW_TYPE_LABEL}</Label>
+        <Label required>{intlText.WORKFLOW_TYPE_LABEL}</Label>
         <Dropdown
           value={
             workflowType === 'Stateful-Codeless'

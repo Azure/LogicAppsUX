@@ -219,7 +219,9 @@ export const WorkspaceNameStep: React.FC = () => {
           validationState={projectPathError ? 'error' : isValidatingPath ? 'warning' : undefined}
           validationMessage={projectPathError || (isValidatingPath ? 'Validating path...' : undefined)}
         >
-          <Label htmlFor={projectPathInputId}>{intlText.PROJECT_PATH_LABEL}</Label>
+          <Label required htmlFor={projectPathInputId}>
+            {intlText.PROJECT_PATH_LABEL}
+          </Label>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Input
               id={projectPathInputId}
@@ -261,7 +263,9 @@ export const WorkspaceNameStep: React.FC = () => {
           validationState={workspaceNameError ? 'error' : isValidatingWorkspaceName ? 'warning' : undefined}
           validationMessage={workspaceNameError || (isValidatingWorkspaceName ? 'Checking workspace availability...' : undefined)}
         >
-          <Label htmlFor={workspaceNameId}>{intlText.WORKSPACE_NAME_LABEL}</Label>
+          <Label required htmlFor={workspaceNameId}>
+            {intlText.WORKSPACE_NAME_LABEL}
+          </Label>
           <Input id={workspaceNameId} value={workspaceName} onChange={handleWorkspaceNameChange} className={styles.inputControl} />
           {workspaceName && workspaceProjectPath.fsPath && (
             <Text
