@@ -12,7 +12,7 @@ This directory contains the Docker configuration for the Logic Apps Standard Dev
 
 ## 🌐 Multi-Platform Support
 
-The image is built using **Docker buildx** to support multiple architectures in a single image manifest. When users pull the image, Docker automatically downloads the correct architecture for their platform - no manual selection needed!
+The image is built using **Docker buildx** to create multi-platform images that work seamlessly on both Intel/AMD and ARM architectures. When users pull the image, Docker automatically downloads the correct architecture for their platform - no manual selection needed!
 
 ### Benefits
 
@@ -24,15 +24,39 @@ The image is built using **Docker buildx** to support multiple architectures in 
 
 ### How It Works
 
+Docker buildx creates a **manifest list** containing images for multiple architectures:
+
+```
+carloscastrotrejo/logicapps-dev:v2.0.0
+├── linux/amd64
+│   └── [image layers for Intel/AMD]
+└── linux/arm64
+    └── [image layers for ARM]
+```
+
 When you run:
 ```bash
 docker pull carloscastrotrejo/logicapps-dev:latest
 ```
 
 Docker:
-1. Checks your system architecture
-2. Downloads the matching image (amd64 or arm64)
-3. No `--platform` flag needed!
+1. Fetches the manifest list
+2. Identifies your system architecture (e.g., `linux/arm64` on Apple Silicon)
+3. Downloads only the matching architecture
+4. Stores it locally
+
+**The user never needs to specify `--platform`!**
+
+### What Changed from Single Platform?
+
+| Aspect | Before (Single Platform) | After (Multi-Platform) |
+|--------|--------------------------|------------------------|
+| Platforms | Only `linux/amd64` | Both `amd64` + `arm64` |
+| ARM Performance | Emulation (slow) | Native (fast) |
+| Warnings | Platform mismatch warnings | No warnings |
+| Build time | ~2-3 minutes | ~5-8 minutes |
+| Push method | `docker push` | Built into `buildx build --push` |
+| Local testing | Image stored locally | Must pull from registry |
 
 ## 🚀 Quick Start - Build & Push
 
@@ -63,11 +87,26 @@ Use the provided script to build and push in one command:
 The script will:
 1. ✅ Verify Docker is running
 2. ✅ Check Docker Hub authentication
-3. � Setup Docker buildx for multi-platform builds
+3. 🔧 Setup Docker buildx for multi-platform builds
 4. 🔨 Build the image for **both amd64 and arm64** architectures
 5. 🚀 Push to Docker Hub with manifest supporting both platforms
 
-**Note**: Multi-platform builds take longer (several minutes) because they build for multiple architectures.
+**Note**: Multi-platform builds take longer (5-8 minutes) because they build for multiple architectures. First build may take 8-10 minutes while downloading base layers.
+
+### Understanding Docker Buildx
+
+Docker buildx is a CLI plugin that extends Docker's build capabilities with:
+- **Multi-platform image builds** - Build for multiple architectures simultaneously
+- **BuildKit backend** - Improved performance and caching
+- **Manifest lists** - Single tag supports multiple architectures
+
+### Why `--push` is Required
+
+With multi-platform builds:
+- Images are built in the buildx cache, not loaded locally
+- You can't use `docker images` to see them immediately
+- Must push directly to registry with `--push` flag
+- To test locally, pull the image back: `docker pull carloscastrotrejo/logicapps-dev:test`
 
 ## 📝 Manual Build & Push (Alternative)
 
@@ -86,6 +125,28 @@ docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t carloscastrotrejo/logicapps-dev:v1.0.0 \
   -t carloscastrotrejo/logicapps-dev:latest \
+  --push \
+  .
+```
+
+### Build Script Changes Explained
+
+**Old single-platform approach:**
+```bash
+docker build --platform linux/amd64 -t image:tag .
+docker push image:tag
+```
+
+**New multi-platform approach:**
+```bash
+# Setup buildx builder (one-time)
+docker buildx create --name multiplatform-builder --use
+docker buildx inspect --bootstrap
+
+# Build and push for multiple platforms
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t image:tag \
   --push \
   .
 ```
@@ -211,13 +272,32 @@ docker images carloscastrotrejo/logicapps-dev
 
 # Inspect image details (shows supported platforms)
 docker buildx imagetools inspect carloscastrotrejo/logicapps-dev:latest
+```
 
-# This will show both platforms:
-# - linux/amd64
-# - linux/arm64
+**Example output showing both platforms:**
+```
+MediaType: application/vnd.docker.distribution.manifest.list.v2+json
+Digest:    sha256:abc123...
+  
+Manifests:
+  Name:      carloscastrotrejo/logicapps-dev:latest@sha256:xyz789...
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/amd64
+  
+  Name:      carloscastrotrejo/logicapps-dev:latest@sha256:def456...
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/arm64
+```
 
+```bash
 # Check what platform you pulled locally
 docker image inspect carloscastrotrejo/logicapps-dev:latest | grep -A 3 "Architecture"
+```
+
+**Output on Apple Silicon:**
+```json
+"Architecture": "arm64",
+"Os": "linux",
 ```
 
 Or visit: https://hub.docker.com/r/carloscastrotrejo/logicapps-dev/tags
@@ -230,6 +310,12 @@ On Docker Hub, you'll see both architectures listed for each tag.
 ```bash
 docker login
 # Enter your Docker Hub credentials
+```
+
+### "no builder selected" error
+```bash
+docker buildx create --name multiplatform-builder --use
+docker buildx inspect --bootstrap
 ```
 
 ### Build Fails
@@ -253,6 +339,17 @@ docker buildx build --no-cache \
   .
 ```
 
+### Build is Very Slow
+- First build downloads base images for both platforms (8-10 minutes)
+- Subsequent builds use cache (3-5 minutes)
+- Enable Docker BuildKit caching
+- Check internet connection speed
+
+### Can't Find Image Locally After Build
+- Multi-platform builds don't load locally by default
+- Pull the image: `docker pull carloscastrotrejo/logicapps-dev:v2.0.0`
+- Or build single-platform for testing: `docker build -t test .`
+
 ### Push Fails
 ```bash
 # Verify authentication
@@ -264,6 +361,11 @@ docker images carloscastrotrejo/logicapps-dev
 # Try pushing again
 docker push carloscastrotrejo/logicapps-dev:latest
 ```
+
+### Platform Mismatch After Multi-Platform Build
+- Shouldn't happen! The manifest list handles this automatically
+- Verify manifest: `docker buildx imagetools inspect image:tag`
+- Re-pull the image: `docker pull --rm image:tag && docker pull image:tag`
 
 ## 📋 What's Included in the Image
 
@@ -287,12 +389,64 @@ When you need to update the image:
 4. **Update documentation** (this README) with new version numbers
 5. **Notify team** to pull the latest image
 
-## 📊 Image Size Optimization Tips
+## 📊 Image Size & Performance Optimization
 
-- Current build uses multi-stage patterns where possible
-- Cleans up apt cache to reduce size
-- Combines RUN commands to minimize layers
+### Current Optimization
+- Multi-stage build patterns where possible
+- Combined RUN commands to minimize layers
+- Cleaned up apt cache to reduce size
 - Consider using `.dockerignore` if building from a larger context
+
+### Cost Considerations
+
+#### Build Time
+- ~2x longer due to building twice (once per platform)
+- First build: ~8-10 minutes (downloading base layers)
+- Subsequent builds: ~3-5 minutes (with cache)
+- Can be parallelized in CI/CD with separate jobs
+
+#### Storage
+- Docker Hub storage roughly doubles (two platform images)
+- Free tier: 1 private repo + unlimited public repos
+- Public repos have unlimited storage
+
+#### Bandwidth
+- Users only download their platform (same as before)
+- Total registry bandwidth: ~2x (but spread across platforms)
+
+## 🎯 Best Practices
+
+### 1. Always Use Versioned Tags
+```bash
+./build-and-push.sh v2.0.0  # Good - traceable
+./build-and-push.sh 1.131.9 # Good - matches Extension Bundle version
+./build-and-push.sh latest  # OK but less traceable
+```
+
+### 2. Test Both Platforms
+After pushing, test on different architectures:
+```bash
+# On Intel Mac/PC
+docker pull --platform linux/amd64 carloscastrotrejo/logicapps-dev:v2.0.0
+docker run --rm -it carloscastrotrejo/logicapps-dev:v2.0.0 func --version
+
+# On Apple Silicon
+docker pull --platform linux/arm64 carloscastrotrejo/logicapps-dev:v2.0.0
+docker run --rm -it carloscastrotrejo/logicapps-dev:v2.0.0 func --version
+```
+
+### 3. Monitor Build Times
+- Multi-platform builds take longer than single-platform
+- Use BuildKit caching for faster subsequent builds
+- Consider separating test builds from production builds
+
+### 4. Keep Buildx Builder Updated
+Periodically recreate the builder for latest features:
+```bash
+docker buildx rm multiplatform-builder
+docker buildx create --name multiplatform-builder --use
+docker buildx inspect --bootstrap
+```
 
 ## 🔐 Security Notes
 
@@ -300,3 +454,36 @@ When you need to update the image:
 - Uses official Azure Functions Core Tools releases
 - Extension bundles are downloaded from official Azure CDN
 - Keep versions updated for security patches
+
+## 🚀 Advanced: Adding More Platforms
+
+To support additional platforms beyond amd64 and arm64:
+
+```bash
+docker buildx build \
+  --platform linux/amd64,linux/arm64,linux/arm/v7 \
+  -t carloscastrotrejo/logicapps-dev:v2.0.0 \
+  --push \
+  .
+```
+
+### Common Platforms
+
+- `linux/amd64` - Intel/AMD 64-bit (most servers, PCs)
+- `linux/arm64` - ARM 64-bit (Apple Silicon, ARM servers)
+- `linux/arm/v7` - ARM 32-bit (Raspberry Pi, IoT devices)
+- `linux/386` - Intel 32-bit (legacy systems)
+
+## 📚 References
+
+- [Docker Buildx Documentation](https://docs.docker.com/buildx/working-with-buildx/)
+- [Multi-platform Images Guide](https://docs.docker.com/build/building/multi-platform/)
+- [Docker Manifest Lists Specification](https://docs.docker.com/registry/spec/manifest-v2-2/)
+- [BuildKit Documentation](https://github.com/moby/buildkit)
+- [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools)
+
+---
+
+## 📖 Additional Documentation
+
+For more detailed information about the multi-platform implementation, see the original migration notes in git history.
