@@ -243,7 +243,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
                 <Textarea
                   id={`${toolId}-description`}
                   placeholder={intlText.handoffDescriptionPlaceholder}
-                  onChange={(_e, data) => onDescriptionChange(data.value)}
+                  onBlur={(e) => onDescriptionChange(e.target.value)}
                   defaultValue={handoffAction?.toolDescription}
                 />
               </Field>
