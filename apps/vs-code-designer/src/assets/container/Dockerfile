@@ -17,6 +17,12 @@ ARG FUNCTIONS_CORE_TOOLS_ARCH=x64
 ARG FUNCTIONS_CORE_TOOLS_FOLDER_PATH=.azurelogicapps/dependencies/FuncCoreTools
 
 # -----------------------------
+# .NET SDK versions
+# -----------------------------
+ARG DOTNET_VERSION_8=8.0
+ARG DOTNET_VERSION_6=6.0
+
+# -----------------------------
 # OS deps + install everything
 # -----------------------------
 RUN set -eux; \
@@ -25,6 +31,24 @@ RUN set -eux; \
       ca-certificates curl jq gnupg wget unzip \
       libc6 libicu72 libgssapi-krb5-2 libkrb5-3 zlib1g; \
     rm -rf /var/lib/apt/lists/*
+
+# -----------------------------
+# Install .NET SDK 8.0 and 6.0
+# -----------------------------
+RUN set -eux; \
+    # Add Microsoft package repository
+    wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb; \
+    dpkg -i /tmp/packages-microsoft-prod.deb; \
+    rm /tmp/packages-microsoft-prod.deb; \
+    # Update and install .NET SDKs
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      dotnet-sdk-8.0 \
+      dotnet-sdk-6.0; \
+    rm -rf /var/lib/apt/lists/*; \
+    # Verify installations
+    dotnet --version; \
+    dotnet --list-sdks
 
 # -----------------------------
 # Download & unpack extension bundle
@@ -67,12 +91,18 @@ RUN set -eux; \
 # Verify CLI is on PATH (skipped during build due to Rosetta issues on ARM)
 # The func command will work when container runs, just not during build verification
 # -----------------------------
-# RUN set -eux; \
-#     which func; \
-#     func --version
 
-# Ensure Core Tools are discoverable for all users
-ENV PATH=/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}:$PATH
+# -----------------------------
+# Environment variables
+# -----------------------------
+# Ensure Core Tools and .NET are discoverable for all users
+ENV PATH=/${FUNCTIONS_CORE_TOOLS_FOLDER_PATH}:/usr/share/dotnet:$PATH
+
+# Set DOTNET environment variables
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
+    DOTNET_NOLOGO=1 \
+    DOTNET_ROOT=/usr/share/dotnet
 
 # -----------------------------
 # Keep container running

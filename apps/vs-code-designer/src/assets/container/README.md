@@ -1,6 +1,78 @@
-# Docker Container Build & Push Guide
+# Docker Container 
 
 This directory contains the Docker configuration for the Logic Apps Standard Development container.
+
+
+## 🔄 Complete Execution Flow
+
+Understanding how Dockerfile, docker-compose.yml, and devcontainer.json work together:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. BUILD PHASE (One-time or when Dockerfile changes)        │
+└─────────────────────────────────────────────────────────────┘
+    │
+    ├─> Dockerfile executes line by line
+    │   ├─> FROM: Pull base image (Node.js 22 Debian)
+    │   ├─> RUN: Install OS packages
+    │   ├─> RUN: Install .NET SDK 8.0 & 6.0
+    │   ├─> RUN: Download Extension Bundle
+    │   ├─> RUN: Download & install Functions Core Tools
+    │   └─> ENV: Set environment variables (PATH, DOTNET_ROOT)
+    │
+    └─> Output: Docker image ready to use
+        ✅ Node.js 22
+        ✅ .NET SDK 8.0 & 6.0
+        ✅ Functions Core Tools 4.2.2
+        ✅ Extension Bundle 1.131.9
+
+┌─────────────────────────────────────────────────────────────┐
+│ 2. START PHASE (Every time you start the container)         │
+└─────────────────────────────────────────────────────────────┘
+    │
+    ├─> docker-compose.yml executes
+    │   ├─> Create container from image
+    │   ├─> Mount volumes (your code)
+    │   ├─> Setup network with azurite
+    │   └─> Run: sleep infinity (keeps container alive)
+    │
+    └─> Container is running with your workspace mounted
+
+┌─────────────────────────────────────────────────────────────┐
+│ 3. DEVCONTAINER PHASE (When VS Code connects)               │
+└─────────────────────────────────────────────────────────────┘
+    │
+    ├─> devcontainer.json applies
+    │   ├─> Install features (Azure CLI, PowerShell)
+    │   ├─> Install VS Code extensions
+    │   ├─> Apply VS Code settings
+    │   └─> Run postStartCommand (start Azurite)
+    │
+    └─> Development environment ready! 🎉
+        ✅ All tools from Dockerfile (Node, .NET, func)
+        ✅ Azure CLI & PowerShell installed
+        ✅ VS Code extensions loaded
+        ✅ Azurite running
+```
+
+### ⚡ Key Points
+
+- **Dockerfile** = Heavy, slow installations (cached in image)
+- **docker-compose.yml** = Runtime configuration (mounts, networking)
+- **devcontainer.json** = Quick dev tools & VS Code customization
+
+### 📊 What Gets Installed Where
+
+| Component | Where | Why |
+|-----------|-------|-----|
+| **.NET SDK 8.0 & 6.0** | Dockerfile | Slow to install, rarely changes |
+| **Functions Core Tools** | Dockerfile | Core dependency, specific version |
+| **Extension Bundle** | Dockerfile | Large download, rarely changes |
+| **Azure CLI** | devcontainer.json | Quick install, dev-only tool |
+| **PowerShell + Az** | devcontainer.json | Quick install, dev-only tool |
+| **VS Code Extensions** | devcontainer.json | User-specific preferences |
+
+---
 
 ## 📦 Repository Information
 
@@ -447,43 +519,3 @@ docker buildx rm multiplatform-builder
 docker buildx create --name multiplatform-builder --use
 docker buildx inspect --bootstrap
 ```
-
-## 🔐 Security Notes
-
-- Image is based on official Microsoft DevContainer images
-- Uses official Azure Functions Core Tools releases
-- Extension bundles are downloaded from official Azure CDN
-- Keep versions updated for security patches
-
-## 🚀 Advanced: Adding More Platforms
-
-To support additional platforms beyond amd64 and arm64:
-
-```bash
-docker buildx build \
-  --platform linux/amd64,linux/arm64,linux/arm/v7 \
-  -t carloscastrotrejo/logicapps-dev:v2.0.0 \
-  --push \
-  .
-```
-
-### Common Platforms
-
-- `linux/amd64` - Intel/AMD 64-bit (most servers, PCs)
-- `linux/arm64` - ARM 64-bit (Apple Silicon, ARM servers)
-- `linux/arm/v7` - ARM 32-bit (Raspberry Pi, IoT devices)
-- `linux/386` - Intel 32-bit (legacy systems)
-
-## 📚 References
-
-- [Docker Buildx Documentation](https://docs.docker.com/buildx/working-with-buildx/)
-- [Multi-platform Images Guide](https://docs.docker.com/build/building/multi-platform/)
-- [Docker Manifest Lists Specification](https://docs.docker.com/registry/spec/manifest-v2-2/)
-- [BuildKit Documentation](https://github.com/moby/buildkit)
-- [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools)
-
----
-
-## 📖 Additional Documentation
-
-For more detailed information about the multi-platform implementation, see the original migration notes in git history.
