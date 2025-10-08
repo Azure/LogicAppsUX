@@ -365,16 +365,14 @@ async function getProjectPathToDeploy(
       secret: `@appsetting('${workflowAppAADClientSecret}')`,
     };
 
+    const parameterAuthValue = identityWizardContext?.useAdvancedIdentity ? advancedIdentityAuthValue : authValue;
     if (parameterizeConnectionsSetting) {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationParameters(connectionsData, advancedIdentityAuthValue, parametersJson, actionContext)
-        : updateAuthenticationParameters(connectionsData, authValue, parametersJson, actionContext);
+      // Parameterized projects
+      await updateAuthenticationParameters(connectionsData, parameterAuthValue, parametersJson, actionContext);
     } else {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationInConnections(connectionsData, advancedIdentityAuthValue, actionContext)
-        : updateAuthenticationInConnections(connectionsData, authValue, actionContext);
+      // Non-parameterized projects
+      await updateAuthenticationInConnections(connectionsData, parameterAuthValue, actionContext);
     }
-
     resolvedConnections = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
   } catch {
     actionContext.telemetry.properties.noAuthUpdate = 'No authentication update was made';

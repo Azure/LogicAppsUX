@@ -529,8 +529,8 @@ async function createAccessPolicyInConnection(
  */
 export async function updateAuthenticationParameters(
   connectionsData: ConnectionsData,
-  authValue: any,
-  parametersJson: any,
+  authValue: Record<string, any>,
+  parametersJson: Record<string, any>,
   actionContext?: IActionContext
 ): Promise<void> {
   if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
@@ -554,7 +554,7 @@ export async function updateAuthenticationParameters(
  */
 export async function updateAuthenticationInConnections(
   connectionsData: ConnectionsData,
-  authValue: any,
+  authValue: Record<string, any> & { type: string },
   actionContext?: IActionContext
 ): Promise<void> {
   if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
