@@ -104,18 +104,7 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   abstract getConnector(connectorId: string, getCached?: boolean): Promise<Connector>;
 
-  async getConnection(connectionId: string, connector?: Connector): Promise<Connection> {
-    if (!connector || this.isAgenticConsumption(connector)) {
-      return {
-        id: 'agentic-consumption-connection',
-        name: 'Agentic Consumption Connection',
-        properties: {
-          api: { id: connector?.id ?? 'agentic-consumption' },
-          displayName: 'Agentic Consumption Connection',
-        },
-      } as Connection;
-    }
-
+  async getConnection(connectionId: string): Promise<Connection> {
     if (isArmResourceId(connectionId)) {
       return this.getConnectionInApiHub(connectionId);
     }
