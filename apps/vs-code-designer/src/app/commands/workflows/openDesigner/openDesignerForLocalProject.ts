@@ -27,7 +27,7 @@ import { sendRequest } from '../../../utils/requestUtils';
 import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
-import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
@@ -46,7 +46,7 @@ import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
-import { pickFuncProcess } from '../../pickFuncProcess';
+import { startRuntimeApi } from '../../../utils/startRuntimeApi';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -108,17 +108,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
 
     await startDesignTimeApi(this.projectPath);
-
-    if (isNullOrUndefined(ext.workflowRuntimePort)) {
-      // Start runtime api if not already running
-      const logicAppName = path.basename(path.dirname(path.dirname(this.workflowFilePath)));
-      await pickFuncProcess(this.context, {
-        name: `Run/Debug logic app ${logicAppName}`,
-        type: 'coreclr',
-        request: 'attach',
-        processId: '${command:azureLogicAppsStandard.pickProcess}',
-      });
-    }
+    await startRuntimeApi(this.projectPath);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
@@ -127,8 +117,17 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
+
+    if (!ext.runtimeInstances.has(this.projectPath)) {
+      throw new Error(localize('runtimeNotRunning', `Runtime is not running for project ${this.projectPath}.`));
+    }
+    const runtimePort = ext.runtimeInstances.get(this.projectPath).port;
+    if (!runtimePort) {
+      throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
+    }
+
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel

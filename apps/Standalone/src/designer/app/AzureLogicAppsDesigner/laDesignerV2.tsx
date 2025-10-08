@@ -179,7 +179,7 @@ const DesignerEditor = () => {
 
   const saveDraftWorkflow = useCallback(
     (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+      return deployArtifacts(siteResourceId, workflowName, workflow.definition, undefined, undefined, undefined, true);
     },
     [siteResourceId, workflowName]
   );
@@ -204,29 +204,11 @@ const DesignerEditor = () => {
     }
   }, [isDraftMode, resetDraftWorkflow]);
 
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  const supportsStateful = !equals(workflow?.kind, 'stateless');
-  const services = useMemo(
-    () =>
-      getDesignerServices(
-        workflowId,
-        supportsStateful,
-        isHybridLogicApp,
-        connectionsData ?? {},
-        workflowAppData as WorkflowApp,
-        addConnectionDataInternal,
-        getConnectionConfiguration,
-        tenantId,
-        objectId,
-        canonicalLocation,
-        language,
-        queryClient,
-        settingsData?.properties ?? {},
-        dispatch,
-        onRunSelected
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      dispatch(changeRunId(runId));
+    },
+    [dispatch]
   );
 
   // RUN HISTORY
@@ -258,19 +240,39 @@ const DesignerEditor = () => {
     }
   }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
 
-  const onRunSelected = useCallback(
-    (runId: string) => {
-      dispatch(changeRunId(runId));
-    },
-    [dispatch]
-  );
-
   const onRun = useCallback(
     (runId: string | undefined) => {
       showMonitoringView();
       dispatch(changeRunId(runId));
     },
     [dispatch, showMonitoringView]
+  );
+
+  // Services
+
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
+  const services = useMemo(
+    () =>
+      getDesignerServices(
+        workflowId,
+        supportsStateful,
+        isHybridLogicApp,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        getConnectionConfiguration,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        queryClient,
+        settingsData?.properties ?? {},
+        dispatch,
+        onRunSelected
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
   const originalSettings: Record<string, string> = useMemo(() => {
@@ -646,7 +648,8 @@ const DesignerEditor = () => {
                   <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                     <Designer />
                     <FloatingRunButton
-                      id={workflowId}
+                      siteResourceId={siteResourceId}
+                      workflowName={workflowName}
                       saveDraftWorkflow={saveWorkflowFromDesigner}
                       onRun={onRun}
                       isDarkMode={isDarkMode}
