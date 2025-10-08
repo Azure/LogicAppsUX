@@ -46,7 +46,6 @@ import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
-import { startRuntimeApi } from '../../../utils/startRuntimeApi';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -108,7 +107,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
 
     await startDesignTimeApi(this.projectPath);
-    await startRuntimeApi(this.projectPath);
+    // TODO(aeldridge): Temporarily removed starting runtime due to conflicts with debugger launch tasks. Re-add once fixed.
+    // await startRuntimeApi(this.projectPath);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
@@ -118,16 +118,16 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
 
-    if (!ext.runtimeInstances.has(this.projectPath)) {
-      throw new Error(localize('runtimeNotRunning', `Runtime is not running for project ${this.projectPath}.`));
-    }
-    const runtimePort = ext.runtimeInstances.get(this.projectPath).port;
-    if (!runtimePort) {
-      throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
-    }
+    // if (!ext.runtimeInstances.has(this.projectPath)) {
+    //   throw new Error(localize('runtimeNotRunning', `Runtime is not running for project ${this.projectPath}.`));
+    // }
+    // const runtimePort = ext.runtimeInstances.get(this.projectPath).port;
+    // if (!runtimePort) {
+    //   throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
+    // }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
+    // this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -208,17 +208,20 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             runId: this.runId,
           },
         });
-        await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
-          if (!this.isUnitTest) {
-            await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
-          }
-        });
+
+        // TODO(aeldridge): Temporarily removed validation due to 500 responses from validatePartial endpoint. Re-add once fixed.
+        // await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
+        //   if (!this.isUnitTest) {
+        //     await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
+        //   }
+        // });
         break;
       }
       case ExtensionCommand.save: {
         await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
-          const projectPath = await getLogicAppProjectRoot(activateContext, this.workflowFilePath);
-          const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+          // TODO(aeldridge): Temporarily removed validation due to 500 responses from validatePartial endpoint. Re-add once fixed.
+          // const projectPath = await getLogicAppProjectRoot(activateContext, this.workflowFilePath);
+          // const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
           await this.saveWorkflow(
             activateContext,
             this.workflowFilePath,
@@ -228,16 +231,16 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             this.panelMetadata.azureDetails?.tenantId,
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
-          const savedLocalSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
-          let savedWorkflow: any;
+          // const savedLocalSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
+          // let savedWorkflow: any;
 
-          try {
-            savedWorkflow = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-          } catch (error) {
-            window.showErrorMessage(`Failed to parse workflow file as JSON: ${(error as Error).message}`);
-          }
+          // try {
+          //   savedWorkflow = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+          // } catch (error) {
+          //   window.showErrorMessage(`Failed to parse workflow file as JSON: ${(error as Error).message}`);
+          // }
 
-          await this.validateWorkflow(activateContext, savedWorkflow, savedLocalSettingsValues);
+          // await this.validateWorkflow(activateContext, savedWorkflow, savedLocalSettingsValues);
         });
         break;
       }
