@@ -178,7 +178,7 @@ export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
   const [searchError, setSearchError] = useState<string | null>(null);
 
   return (
-    <Drawer open={true} type={'inline'} separator style={{ width: '320px' }}>
+    <Drawer open={true} type={'inline'} separator style={{ width: '100vw' }}>
       <DrawerHeader>
         <DrawerHeaderTitle action={<RefreshButton />}>{title}</DrawerHeaderTitle>
         <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError}>

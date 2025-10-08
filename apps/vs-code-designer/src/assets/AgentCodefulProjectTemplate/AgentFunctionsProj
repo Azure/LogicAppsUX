@@ -13,12 +13,6 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.19.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CustomAgentIsolatedWorker">
-      <HintPath>AgentIsolatedWorker\CustomAgentIsolatedWorker.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Azure.Workflows.Agents.Sdk">
-      <HintPath>AgentIsolatedWorker\Microsoft.Azure.Workflows.Agents.Sdk.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
