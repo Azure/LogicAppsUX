@@ -31,6 +31,7 @@ import type {
   Parameter,
   CustomCodeFileNameMapping,
   AllCustomCodeFiles,
+  ConnectionsData,
 } from '@microsoft/vscode-extension-logic-apps';
 import { JwtTokenHelper, JwtTokenConstants } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -515,4 +516,54 @@ async function createAccessPolicyInConnection(
     .catch((error) => {
       throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
     });
+}
+
+/**
+ * Updates authentication parameters for all managed API connections.
+ * Used when parameterization is enabled (i.e., modifies parameters.json values).
+ *
+ * @param connectionsData - The full connections.json object containing managed API connections.
+ * @param authValue - The authentication object to apply (e.g., { type: 'ManagedServiceIdentity' }).
+ * @param parametersJson - The parameters.json object to update with new authentication values.
+ * @param actionContext - Optional VS Code action context for telemetry tracking.
+ */
+export async function updateAuthenticationParameters(
+  connectionsData: ConnectionsData,
+  authValue: Record<string, any>,
+  parametersJson: Record<string, any>,
+  actionContext?: IActionContext
+): Promise<void> {
+  if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+    for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+      parametersJson[`${referenceKey}-Authentication`].value = authValue;
+
+      if (actionContext) {
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}-Authentication" parameter to ManagedServiceIdentity`;
+      }
+    }
+  }
+}
+
+/**
+ * Updates authentication directly in all managed API connections.
+ * Used when parameterization is disabled (i.e., modifies connections.json directly).
+ *
+ * @param connectionsData - The full connections.json object containing managed API connections.
+ * @param authValue - The authentication object to apply (e.g., { type: 'ManagedServiceIdentity' }).
+ * @param actionContext - Optional VS Code action context for telemetry tracking.
+ */
+export async function updateAuthenticationInConnections(
+  connectionsData: ConnectionsData,
+  authValue: Record<string, any> & { type: string },
+  actionContext?: IActionContext
+): Promise<void> {
+  if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+    for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+      connectionsData.managedApiConnections[referenceKey].authentication = authValue;
+
+      if (actionContext) {
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ManagedServiceIdentity`;
+      }
+    }
+  }
 }
