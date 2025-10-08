@@ -91,6 +91,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
               groupId: ParameterGroupKeys.DEFAULT,
               parameterId: descriptionParameter?.id ?? '',
               propertiesToUpdate: {
+                preservedValue: newDescription,
                 value: [createLiteralValueSegment(newDescription)],
               },
             },
