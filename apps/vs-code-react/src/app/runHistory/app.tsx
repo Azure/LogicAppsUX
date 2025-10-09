@@ -1,10 +1,11 @@
 import type { RootState } from '../../state/store';
 import { InitRunService, StandardRunService } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRunHistoryStyles } from './runHistoryStyles';
 import { RunHistoryPanelInstance } from '@microsoft/logic-apps-designer-v2';
+import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { Dropdown, Option, Title1, useId } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
@@ -18,6 +19,17 @@ export const RunHistoryApp = () => {
   const dropdownId = useId('dropdown-workflows');
   const intl = useIntl();
   const { workflowNames } = workflowState;
+  const [selectedWorkflow, setSelectedWorkflow] = useState('');
+
+  const onOptionSelect = (_ev: SelectionEvents, data: OptionOnSelectData) => {
+    setSelectedWorkflow(data.optionText ?? '');
+  };
+
+  useEffect(() => {
+    if (workflowNames && workflowNames?.length > 0) {
+      setSelectedWorkflow(workflowNames[0]);
+    }
+  }, [workflowNames]);
 
   const intlText = {
     RUN_HISTORY_TITLE: intl.formatMessage({
@@ -48,16 +60,10 @@ export const RunHistoryApp = () => {
     return new StandardRunService({
       baseUrl: workflowState.baseUrl,
       apiVersion: workflowState.apiVersion,
-      workflowName: workflowState.workflowProperties.name,
+      workflowName: selectedWorkflow,
       httpClient,
     });
-  }, [
-    workflowState.baseUrl,
-    workflowState.apiVersion,
-    workflowState.accessToken,
-    workflowState.workflowProperties.name,
-    workflowState.hostVersion,
-  ]);
+  }, [workflowState.accessToken, workflowState.baseUrl, workflowState.hostVersion, workflowState.apiVersion, selectedWorkflow]);
 
   useEffect(() => {
     InitRunService(runService);
@@ -68,7 +74,7 @@ export const RunHistoryApp = () => {
       <Title1 className={styles.runHistoryTitle}>{intlText.RUN_HISTORY_TITLE}</Title1>
       <div className={styles.workflowDropdown}>
         <label htmlFor={dropdownId}>{intlText.WORKFLOW}</label>
-        <Dropdown id={dropdownId} placeholder={intlText.DROPDOWN_PLACEHOLDER}>
+        <Dropdown id={dropdownId} placeholder={intlText.DROPDOWN_PLACEHOLDER} value={selectedWorkflow} onOptionSelect={onOptionSelect}>
           {workflowNames?.map((workflow) => (
             <Option key={workflow}>{workflow}</Option>
           ))}
