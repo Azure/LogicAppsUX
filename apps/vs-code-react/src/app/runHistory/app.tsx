@@ -65,7 +65,7 @@ export const RunHistoryApp = () => {
 
   return (
     <div className={styles.runHistoryContainer}>
-      <Title1>{intlText.RUN_HISTORY_TITLE}</Title1>
+      <Title1 className={styles.runHistoryTitle}>{intlText.RUN_HISTORY_TITLE}</Title1>
       <div className={styles.workflowDropdown}>
         <label htmlFor={dropdownId}>{intlText.WORKFLOW}</label>
         <Dropdown id={dropdownId} placeholder={intlText.DROPDOWN_PLACEHOLDER}>

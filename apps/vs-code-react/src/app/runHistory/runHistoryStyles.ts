@@ -5,6 +5,9 @@ export const useRunHistoryStyles = makeStyles({
     height: '100vh',
     padding: `${tokens.spacingHorizontalXL}`,
   },
+  runHistoryTitle: {
+    margin: `0 ${tokens.spacingHorizontalMNudge}`,
+  },
   workflowDropdown: {
     display: 'grid',
     gridTemplateRows: 'repeat(1fr)',
