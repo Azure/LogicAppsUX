@@ -3,7 +3,6 @@ import {
   Drawer,
   DrawerBody,
   DrawerHeader,
-  DrawerHeaderTitle,
   Field,
   MessageBar,
   MessageBarBody,
@@ -19,12 +18,8 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { useIntl } from 'react-intl';
 import { parseErrorMessage } from '@microsoft/logic-apps-shared';
-
-import { bundleIcon, ArrowClockwiseFilled, ArrowClockwiseRegular } from '@fluentui/react-icons';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
-
-const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
@@ -34,11 +29,9 @@ interface RunHistoryPanelProps {
   onRefresh?: () => void;
 }
 
-export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
+export const RunHistoryPanelInstance = (_props: RunHistoryPanelProps) => {
   const intl = useIntl();
-
   const styles = useRunHistoryPanelStyles();
-
   const runsQuery = useRunsInfiniteQuery(true);
   const runs = useAllRuns();
   const selectedRunInstance = useRunInstance();
@@ -84,14 +77,6 @@ export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
     });
   }, []);
 
-  // //
-
-  const title = intl.formatMessage({
-    defaultMessage: 'Run history',
-    description: 'Run history panel title',
-    id: 'qs+f1b',
-  });
-
   const statusText = intl.formatMessage({
     defaultMessage: 'Status',
     description: 'Status column header',
@@ -108,12 +93,6 @@ export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
     defaultMessage: 'Version',
     description: 'Workflow version filter label',
     id: 'oGINHJ',
-  });
-
-  const refreshAria = intl.formatMessage({
-    defaultMessage: 'Refresh',
-    description: 'Refresh button aria label',
-    id: '0a4IGE',
   });
 
   const noRunsText = intl.formatMessage({
@@ -162,25 +141,11 @@ export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
     [runIdText, statusText, workflowVersionText]
   );
 
-  const RefreshButton = () => (
-    <Button
-      appearance="subtle"
-      disabled={runsQuery.isFetching}
-      onClick={() => {
-        runsQuery.refetch();
-        props.onRefresh?.();
-      }}
-      icon={runsQuery.isRefetching && !runsQuery.isLoading ? <Spinner size={'tiny'} /> : <RefreshIcon />}
-      aria-label={refreshAria}
-    />
-  );
-
   const [searchError, setSearchError] = useState<string | null>(null);
 
   return (
-    <Drawer open={true} type={'inline'} separator style={{ width: '100vw' }}>
-      <DrawerHeader>
-        <DrawerHeaderTitle action={<RefreshButton />}>{title}</DrawerHeaderTitle>
+    <Drawer open={true} type={'inline'} separator style={{ width: '100%' }}>
+      <DrawerHeader style={{ padding: '10px' }}>
         <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError}>
           <SearchBox
             placeholder={searchPlaceholder}

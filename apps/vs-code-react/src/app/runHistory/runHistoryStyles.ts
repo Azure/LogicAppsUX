@@ -3,7 +3,7 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 export const useRunHistoryStyles = makeStyles({
   runHistoryContainer: {
     height: '100vh',
-    padding: `0 ${tokens.spacingHorizontalXL}`,
+    padding: `${tokens.spacingHorizontalXL}`,
   },
   workflowDropdown: {
     display: 'grid',
@@ -11,5 +11,6 @@ export const useRunHistoryStyles = makeStyles({
     justifyItems: 'start',
     gap: '2px',
     maxWidth: '400px',
+    margin: '10px',
   },
 });
