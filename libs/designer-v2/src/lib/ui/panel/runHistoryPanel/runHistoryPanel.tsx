@@ -12,11 +12,12 @@ import {
   MessageBarTitle,
   SearchBox,
   Spinner,
-  Tag,
+  InteractionTag,
   TagGroup,
   Text,
+  InteractionTagPrimary,
 } from '@fluentui/react-components';
-import { HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
+import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -89,12 +90,6 @@ export const RunHistoryPanel = () => {
     );
   }, [filters, runs]);
 
-  const filtersWithoutRunId = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { runId, ...rest } = filters;
-    return rest;
-  }, [filters]);
-
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
       const newFilters = { ...prev };
@@ -106,6 +101,11 @@ export const RunHistoryPanel = () => {
       return newFilters;
     });
   }, []);
+
+  // Clear filters when switching views
+  useEffect(() => {
+    setFilters({});
+  }, [isMonitoringView]);
 
   // //
 
@@ -119,24 +119,6 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Run log',
     description: 'Run log panel title',
     id: 'J4accH',
-  });
-
-  const statusText = intl.formatMessage({
-    defaultMessage: 'Status',
-    description: 'Status column header',
-    id: 'eLQPek',
-  });
-
-  const runIdText = intl.formatMessage({
-    defaultMessage: 'Run ID',
-    description: 'Run ID filter label',
-    id: '4rdY7D',
-  });
-
-  const workflowVersionText = intl.formatMessage({
-    defaultMessage: 'Version',
-    description: 'Workflow version filter label',
-    id: 'oGINHJ',
   });
 
   const refreshAria = intl.formatMessage({
@@ -187,21 +169,13 @@ export const RunHistoryPanel = () => {
     id: 'ob2fSf',
   });
 
-  const getFilterKeyText = useCallback(
-    (key: FilterTypes) => {
-      switch (key) {
-        case 'runId':
-          return runIdText;
-        case 'workflowVersion':
-          return workflowVersionText;
-        case 'status':
-          return statusText;
-        default:
-          return '';
-      }
-    },
-    [runIdText, statusText, workflowVersionText]
-  );
+  const runStatusTexts: Record<string, string> = {
+    All: intl.formatMessage({ defaultMessage: 'All', description: 'All run statuses', id: 'bHpFLq' }),
+    Succeeded: intl.formatMessage({ defaultMessage: 'Succeeded', description: 'Succeeded status', id: 'NIfcbE' }),
+    Running: intl.formatMessage({ defaultMessage: 'Running', description: 'Running status', id: 'GRJfCY' }),
+    Failed: intl.formatMessage({ defaultMessage: 'Failed', description: 'Failed status', id: 'Mrge1g' }),
+    Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
+  };
 
   const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
 
@@ -269,6 +243,29 @@ export const RunHistoryPanel = () => {
     }
   }, [selectedRunInstance]);
 
+  const statusTags = useMemo(
+    () => [
+      { value: 'All', children: runStatusTexts['All'] },
+      { value: 'Succeeded', children: runStatusTexts['Succeeded'] },
+      { value: 'Running', children: runStatusTexts['Running'] },
+      { value: 'Failed', children: runStatusTexts['Failed'] },
+      { value: 'Cancelled', children: runStatusTexts['Cancelled'] },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    ],
+    []
+  );
+
+  const onStatusSelect = useCallback(
+    (value: string) => {
+      if (!value || equals(value, 'All')) {
+        addFilterCallback({ key: 'status', value: undefined });
+      } else {
+        addFilterCallback({ key: 'status', value });
+      }
+    },
+    [addFilterCallback]
+  );
+
   return (
     <Drawer
       ref={sidebarRef}
@@ -305,43 +302,44 @@ export const RunHistoryPanel = () => {
               <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError} style={{ flex: 1 }}>
                 <SearchBox
                   placeholder={searchPlaceholder}
+                  defaultValue={filters['runId'] ?? undefined}
                   onChange={(_e, data) => {
                     addFilterCallback({ key: 'runId', value: undefined });
                     if (data.value === '') {
                       setSearchError(null);
                     } else if (runIdRegex.test(data.value)) {
                       addFilterCallback({ key: 'runId', value: data.value });
-                      HostService().openRun?.(data.value);
                       setSearchError(null);
                     } else {
                       setSearchError(invalidRunId);
+                    }
+                  }}
+                  // When the user presses enter, try to open the run if the runId is valid
+                  onKeyDown={(e: any) => {
+                    if (e.key !== 'Enter') {
+                      return;
+                    }
+                    const value = filters?.['runId'];
+                    if (value && runIdRegex.test(value)) {
+                      HostService().openRun?.(value);
                     }
                   }}
                 />
               </Field>
               <RefreshButton />
             </div>
-            {Object.keys(filtersWithoutRunId).length > 0 ? (
-              <TagGroup
-                onDismiss={(_e, data) => {
-                  addFilterCallback({ key: data.value as FilterTypes, value: undefined });
-                }}
-                style={{ flexWrap: 'wrap', gap: '4px' }}
-              >
-                {Object.entries(filtersWithoutRunId).map(([key, value]) => (
-                  <Tag
-                    dismissible
-                    dismissIcon={{ 'aria-label': 'remove' }}
-                    shape={'circular'}
-                    appearance={'brand'}
-                    key={key}
-                    value={key ?? ''}
-                  >
-                    {getFilterKeyText(key as FilterTypes)}: {value}
-                  </Tag>
-                ))}
-              </TagGroup>
-            ) : null}
+            <TagGroup size="small">
+              {statusTags.map((tag) => (
+                <InteractionTag
+                  key={tag.value}
+                  value={tag.value}
+                  onClick={() => onStatusSelect(tag.value)}
+                  selected={filters?.['status'] === tag.value || (equals(tag.value, 'All') && !filters?.['status'])}
+                >
+                  <InteractionTagPrimary>{tag.children}</InteractionTagPrimary>
+                </InteractionTag>
+              ))}
+            </TagGroup>
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
                 <MessageBarBody>
