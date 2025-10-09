@@ -17,6 +17,7 @@ export const RunHistoryApp = () => {
   const styles = useRunHistoryStyles();
   const dropdownId = useId('dropdown-workflows');
   const intl = useIntl();
+  const { workflowNames } = workflowState;
 
   const intlText = {
     RUN_HISTORY_TITLE: intl.formatMessage({
@@ -35,8 +36,6 @@ export const RunHistoryApp = () => {
       description: 'Text for workflow dropdown placeholder',
     }),
   };
-
-  const options = ['Cat', 'Caterpillar', 'Corgi', 'Chupacabra', 'Dog', 'Ferret', 'Fish', 'Fox', 'Hamster', 'Snake'];
 
   const runService = useMemo(() => {
     const httpClient = new HttpClient({
@@ -70,8 +69,8 @@ export const RunHistoryApp = () => {
       <div className={styles.workflowDropdown}>
         <label htmlFor={dropdownId}>{intlText.WORKFLOW}</label>
         <Dropdown id={dropdownId} placeholder={intlText.DROPDOWN_PLACEHOLDER}>
-          {options.map((option) => (
-            <Option key={option}>{option}</Option>
+          {workflowNames?.map((workflow) => (
+            <Option key={workflow}>{workflow}</Option>
           ))}
         </Dropdown>
       </div>

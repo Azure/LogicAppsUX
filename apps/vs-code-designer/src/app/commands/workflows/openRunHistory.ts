@@ -2,67 +2,39 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { getRequestTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowTenantIdKey } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import { cacheWebviewPanel, getStandardAppData, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
+import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
-import { sendRequest } from '../../utils/requestUtils';
-import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-export async function openRunHistory(
-  context: IAzureConnectorsContext,
-  node: vscode.Uri | RemoteWorkflowTreeItem | undefined
-): Promise<void> {
-  let programFilePath: string;
-  let programFileName = '';
-  let programContenr: any;
-  let baseUrl: string;
-  let apiVersion: string;
-  let accessToken: string;
-  let getAccessToken: () => Promise<string>;
-  let callbackInfo: ICallbackUrlResponse | undefined;
-  let panelName = '';
+export async function openRunHistory(context: IAzureConnectorsContext, workflowNode: vscode.Uri): Promise<void> {
+  const programFilePath: string = workflowNode.fsPath;
+  const programFileName = basename(dirname(programFilePath));
+  const apiVersion = '2019-10-01-edge-preview';
   let corsNotice: string | undefined;
-  let localSettings: Record<string, string> = {};
-  let isWorkflowRuntimeRunning: boolean;
-  let triggerName: string;
-  const workflowNode = getWorkflowNode(node);
+  const projectPath = await getLogicAppProjectRoot(context, programFilePath);
+  const localSettings: Record<string, string> = projectPath
+    ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {}
+    : {};
+  const isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
   const panelGroupKey = ext.webViewKey.runHistory;
-
-  if (workflowNode instanceof vscode.Uri) {
-    programFilePath = workflowNode.fsPath;
-    programFileName = basename(dirname(programFilePath));
-    panelName = `${vscode.workspace.name}-${programFileName}-run-history`;
-    programContenr = readFileSync(programFilePath, 'utf8');
-    baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
-    apiVersion = '2019-10-01-edge-preview';
-    // callbackInfo = await getLocalWorkflowCallbackInfo(context, programContenr.definition, baseUrl, programFileName, triggerName, apiVersion);
-
-    const projectPath = await getLogicAppProjectRoot(context, programFilePath);
-    localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
-    getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
-    isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
-  }
-
-  accessToken = await getAccessToken();
+  const workflowNames = getWorkflowNames(workflowNode.fsPath);
+  const baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+  const panelName = `${vscode.workspace.name}-${programFileName}-run-history`;
+  const getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
+  let accessToken = await getAccessToken();
 
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
-
   if (existingPanel) {
     if (!existingPanel.active) {
       existingPanel.reveal(vscode.ViewColumn.Active);
@@ -74,16 +46,6 @@ export async function openRunHistory(
   const options: vscode.WebviewOptions & vscode.WebviewPanelOptions = {
     enableScripts: true,
     retainContextWhenHidden: true,
-  };
-  const { name, kind, operationOptions, statelessRunMode } = getStandardAppData(programFileName, programContenr);
-  const workflowProps = {
-    name,
-    stateType: getWorkflowStateType(name, kind, localSettings),
-    operationOptions,
-    statelessRunMode,
-    callbackInfo,
-    triggerName,
-    definition: programContenr.definition,
   };
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel(
@@ -111,11 +73,12 @@ export async function openRunHistory(
             baseUrl: baseUrl,
             corsNotice,
             accessToken: accessToken,
-            workflowProperties: workflowProps,
+            workflowProperties: {},
             project: ProjectName.runHistory,
             hostVersion: ext.extensionVersion,
             isLocal: true,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
+            workflowNames,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
@@ -151,41 +114,32 @@ export async function openRunHistory(
   cacheWebviewPanel(panelGroupKey, panelName, panel);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getLocalWorkflowCallbackInfo(
-  context: IActionContext,
-  definition: LogicAppsV2.WorkflowDefinition,
-  baseUrl: string,
-  programFileName: string,
-  triggerName: string,
-  apiVersion: string
-): Promise<ICallbackUrlResponse | undefined> {
-  const requestTriggerName = getRequestTriggerName(definition);
-  if (requestTriggerName) {
-    try {
-      const url = `${baseUrl}/workflows/${programFileName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${apiVersion}`;
-      const response: string = await sendRequest(context, {
-        url,
-        method: HTTP_METHODS.POST,
-      });
-      return JSON.parse(response);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      return undefined;
-    }
-  } else {
-    return {
-      value: `${baseUrl}/workflows/${programFileName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
-      method: HTTP_METHODS.POST,
-    };
-  }
-}
+/**
+ * Extracts workflow names from a C# file by finding CreateWorkflowAgentBuilder calls.
+ * @param filePath - The absolute path to the C# file to parse
+ * @returns An array of workflow names found in the file
+ */
+const getWorkflowNames = (filePath: string): string[] => {
+  try {
+    const fileContent = readFileSync(filePath, 'utf8');
+    const workflowNames: string[] = [];
 
-function getWorkflowStateType(programFileName: string, kind: string, settings: Record<string, string>): string {
-  const settingName = `Workflows.${programFileName}.OperationOptions`;
-  return kind?.toLowerCase() === 'stateful'
-    ? localize('logicapps.stateful', 'Stateful')
-    : settings[settingName]?.toLowerCase() === 'withstatelessrunhistory'
-      ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
-      : localize('logicapps.stateless', 'Stateless');
-}
+    // Regex to match CreateWorkflowAgentBuilder with flowName parameter
+    // Matches patterns like: CreateWorkflowAgentBuilder(flowName: "TestFlow")
+    // Supports both double quotes and single quotes, and handles whitespace variations
+    const regex = /CreateWorkflowAgentBuilder\s*\(\s*flowName\s*:\s*["']([^"']+)["']\s*\)/g;
+
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(fileContent)) !== null) {
+      const flowName = match[1];
+      if (flowName && !workflowNames.includes(flowName)) {
+        workflowNames.push(flowName);
+      }
+    }
+
+    return workflowNames;
+  } catch (error) {
+    console.error(`Error reading workflow names from file ${filePath}:`, error);
+    return [];
+  }
+};
