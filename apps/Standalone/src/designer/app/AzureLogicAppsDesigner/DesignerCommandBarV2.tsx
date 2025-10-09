@@ -421,9 +421,9 @@ export const DesignerCommandBar = ({
         saveWorkflowMutate(true);
       }
     }, 30000); // Auto-save every 30 seconds
-
     return () => clearTimeout(timeoutId);
   }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate]);
+
   return (
     <>
       <Toolbar

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as path from 'path';
-import * as fse from 'fs-extra';
 import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getWorkflowNode } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
@@ -11,7 +10,7 @@ import { OpenDesignerForAzureResource } from './openDesignerForAzureResource';
 import OpenDesignerForLocalProject from './openDesignerForLocalProject';
 import { Uri } from 'vscode';
 import { buildCustomCodeFunctionsProject } from '../../buildCustomCodeFunctionsProject';
-import { libDirectory } from '../../../../constants';
+import { customCodeArtifactsExist } from '../../../utils/customCodeUtils';
 
 export async function openDesigner(context: IAzureConnectorsContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let openDesignerObj: OpenDesignerForLocalProject | OpenDesignerForAzureResource;
@@ -21,7 +20,7 @@ export async function openDesigner(context: IAzureConnectorsContext, node: Uri |
   if (workflowNode instanceof Uri) {
     const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
     // Only build custom code projects on open designer if custom code binaries don't already exist in the logic app folder
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'custom')))) {
+    if (!(await customCodeArtifactsExist(logicAppNode.fsPath))) {
       await buildCustomCodeFunctionsProject(context, logicAppNode);
     }
 
