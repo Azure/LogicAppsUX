@@ -1,7 +1,7 @@
-import { equals, EXP_FLAGS, ExperimentationService } from '@microsoft/logic-apps-shared';
+import { equals, enableAgentConsumption } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export const useShowMinimap = () => {
   return useSelector((state: RootState) => state.designerView.showMinimap);
@@ -23,16 +23,42 @@ export const useEdgeContextMenuData = () => {
   return useSelector((state: RootState) => state.designerView.edgeContextMenuData);
 };
 
-export const useIsAgenticWorkflow = () => {
+export const useIsAgenticWorkflow = (): boolean => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
-  const isEnabledForStateful = useMemo(() => {
-    try {
-      return ExperimentationService().isFeatureEnabled(EXP_FLAGS.ENABLE_AGENTLOOP_STATEFUL);
-    } catch (_e) {
-      return false;
-    }
+  const [isEnabledForConsumption, setIsEnabledForConsumption] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkFeatureFlag = async () => {
+      try {
+        const enabled = await enableAgentConsumption();
+        if (!cancelled) {
+          setIsEnabledForConsumption(enabled);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsEnabledForConsumption(false);
+        }
+      }
+    };
+
+    checkFeatureFlag();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
-  return equals(workflowKind, 'agentic', true) || (equals(workflowKind, 'stateful', true) && isEnabledForStateful);
+
+  const isAgenticOrStateful = useMemo(() => {
+    return equals(workflowKind, 'agentic', true) || equals(workflowKind, 'stateful', true);
+  }, [workflowKind]);
+
+  if (isEnabledForConsumption) {
+    return !workflowKind || isAgenticOrStateful;
+  }
+
+  return isAgenticOrStateful;
 };
 
 // Temporary hook for backwards compatibility with agentic wf, TODO: delete once stateful is merged in

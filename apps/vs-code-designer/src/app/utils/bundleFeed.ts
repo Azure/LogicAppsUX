@@ -14,8 +14,8 @@ import * as vscode from 'vscode';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
-import * as cp from 'child_process';
 import * as fse from 'fs-extra';
+import { executeCommand } from './funcCoreTools/cpUtils';
 /**
  * Gets bundle extension feed.
  * @param {IActionContext} context - Command context.
@@ -161,6 +161,7 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  */
 export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
   try {
+    const downloadExtensionBundleStartTime = Date.now();
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
     if (projectPath) {
@@ -183,6 +184,8 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
       const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
       await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+      context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+      context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
     }
 
@@ -210,9 +213,13 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
         latestFeedBundleVersion
       );
 
+      context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+      context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
     }
 
+    context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+    context.telemetry.properties.didUpdateExtensionBundle = 'false';
     return false;
   } catch (error) {
     const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
@@ -320,25 +327,53 @@ export async function getBundleVersionNumber(): Promise<string> {
  * @returns {string} Extension bundle folder path.
  */
 export async function getExtensionBundleFolder(): Promise<string> {
-  const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
+  const command = getFunctionsCommand();
   const outputChannel = ext.outputChannel;
-
-  if (outputChannel) {
-    outputChannel.appendLog(localize('runningCommand', 'Running command: "{0}"...', command));
-  }
+  const workingDirectory = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   let extensionBundlePath = '';
   try {
-    extensionBundlePath = await cp.execSync(command, { encoding: 'utf8' });
-  } catch (error) {
-    if (outputChannel) {
-      outputChannel.appendLog(localize('bundleCommandError', 'Could not find path to extension bundle'));
-      outputChannel.appendLog(JSON.stringify(error));
-    }
-    throw new Error(localize('bundlePathError', 'Could not find path to extension bundle.'));
-  }
+    const result = await executeCommand(outputChannel, workingDirectory, command, 'GetExtensionBundlePath');
 
-  extensionBundlePath = extensionBundlePath.trim().split('Microsoft.Azure.Functions.ExtensionBundle')[0];
+    // Split by newlines and find the line that contains the actual path
+    const lines = result
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    // The path line should contain "ExtensionBundles" and look like a valid path
+    const pathLine = lines.find(
+      (line) => line.includes('ExtensionBundles') && (line.match(/^[A-Z]:\\/i) || line.startsWith('/')) // Windows or Unix path
+    );
+
+    if (!pathLine) {
+      const pathError = new Error('Could not find extension bundle path in command output.');
+      ext.telemetryReporter.sendTelemetryEvent('BundlePathNotFound', { value: pathError.message });
+      throw pathError;
+    }
+
+    const bundlePathMatch = pathLine.match(/^(.+?[\\/]ExtensionBundles[/\\])/i);
+    if (bundlePathMatch) {
+      extensionBundlePath = bundlePathMatch[1];
+    } else {
+      const splitIndex = pathLine.lastIndexOf('Microsoft.Azure.Functions.ExtensionBundle');
+      if (splitIndex !== -1) {
+        extensionBundlePath = pathLine.substring(0, splitIndex);
+      } else {
+        const parseError = new Error('Could not parse extension bundle path from output.');
+        ext.telemetryReporter.sendTelemetryEvent('bundlePathParseError', { value: parseError.message });
+        throw parseError;
+      }
+    }
+  } catch (error) {
+    const bundleCommandError = new Error('Could not find path to extension bundle.');
+    if (outputChannel) {
+      outputChannel.appendLog(bundleCommandError.message);
+      outputChannel.appendLog(JSON.stringify(error));
+      ext.telemetryReporter.sendTelemetryEvent('bundleCommandError', { value: bundleCommandError.message });
+    }
+    throw new Error(bundleCommandError.message);
+  }
 
   if (outputChannel) {
     outputChannel.appendLog(localize('extensionBundlePath', 'Extension bundle path: "{0}"...', extensionBundlePath));

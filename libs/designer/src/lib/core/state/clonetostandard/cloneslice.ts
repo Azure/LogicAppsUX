@@ -14,10 +14,16 @@ export interface SourceWorkflowState extends WorkflowState {
   targetWorkflowNameValidationError?: string;
 }
 
+export interface TargetWorkflowState extends WorkflowState {
+  location: string;
+}
+
 export interface CloneState {
   sourceApps: SourceWorkflowState[];
-  destinationApp: WorkflowState;
+  destinationApp: TargetWorkflowState;
   errorMessage: string | undefined;
+  showReportErrorButton: boolean;
+  runValidation: boolean;
   isSuccessfullyCloned: boolean;
 }
 
@@ -26,9 +32,12 @@ const initialState: CloneState = {
   destinationApp: {
     subscriptionId: '',
     resourceGroup: '',
+    location: '',
     logicAppName: '',
   },
   errorMessage: undefined,
+  showReportErrorButton: false,
+  runValidation: false,
   isSuccessfullyCloned: false,
 };
 
@@ -52,11 +61,13 @@ export const cloneSlice = createSlice({
     setDestinationResourceGroup: (state, action: PayloadAction<string>) => {
       state.destinationApp.resourceGroup = action.payload;
     },
-    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string }>) => {
+    setDestinationWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
       state.destinationApp.logicAppName = action.payload.name;
+      state.destinationApp.location = action.payload.location;
     },
-    updateErrorMessage: (state, action: PayloadAction<string | undefined>) => {
-      state.errorMessage = action.payload;
+    updateErrorMessage: (state, action: PayloadAction<{ errorMessage: string | undefined; showReportErrorButton: boolean }>) => {
+      state.errorMessage = action.payload.errorMessage;
+      state.showReportErrorButton = action.payload.showReportErrorButton;
     },
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
     updateTargetWorkflowName: (state, action: PayloadAction<string>) => {
@@ -71,6 +82,9 @@ export const cloneSlice = createSlice({
       if (targetWorkflow) {
         targetWorkflow.targetWorkflowNameValidationError = action.payload;
       }
+    },
+    setRunValidation: (state) => {
+      state.runValidation = true;
     },
     // Note: also temporary to indicate shutdown of experience, to-be-changed once design pattern is set with API change
     setSuccessfullyCloned: (state) => {
@@ -87,6 +101,7 @@ export const {
   updateErrorMessage,
   updateTargetWorkflowName,
   updateTargetWorkflowNameValidationError,
+  setRunValidation,
   setSuccessfullyCloned,
 } = cloneSlice.actions;
 export default cloneSlice.reducer;

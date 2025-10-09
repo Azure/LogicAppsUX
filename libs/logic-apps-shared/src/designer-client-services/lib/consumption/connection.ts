@@ -7,6 +7,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
+import agentloopConnector from './manifests/agentLoopConnector';
 
 export interface ConsumptionConnectionServiceOptions extends BaseConnectionServiceOptions {
   getCachedConnector?: (connectorId: string) => Promise<Connector>;
@@ -23,7 +24,10 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     if (getCached && this._options.getCachedConnector) {
       connector = await this._options.getCachedConnector(connectorId);
     }
-
+    const connectorIdKeyword = connectorId.split('/').at(-1);
+    if (connectorIdKeyword === 'agent') {
+      return agentloopConnector;
+    }
     return connector ?? this._getAzureConnector(connectorId);
   }
 
@@ -46,7 +50,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     shouldTestConnection = true
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
-
     const logId = LoggerService().startTrace({
       action: 'createConnection',
       name: 'Creating Connection',
@@ -58,7 +61,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       if (shouldTestConnection) {
         await this.testConnection(connection);
       }
-      LoggerService().endTrace(logId, { status: Status.Success });
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);

@@ -1,7 +1,15 @@
 import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import {
+  agentOperation,
+  containsIdTag,
+  customLengthGuid,
+  guid,
+  removeIdTag,
+  WORKFLOW_NODE_TYPES,
+  type WorkflowNodeType,
+} from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 import { useResizeObserver } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
@@ -9,9 +17,9 @@ import { useIntl } from 'react-intl';
 import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
 import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
-import type { AppDispatch } from '../core';
+import { addOperation, type AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
-import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
+import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
@@ -37,7 +45,7 @@ const DesignerReactFlow = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const isInitialized = useNodesInitialized();
 
-  type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
+  type NodeTypesObj = Partial<Record<WorkflowNodeType, React.ComponentType<any>>>;
   const nodeTypes: NodeTypesObj = {
     OPERATION_NODE: OperationNode,
     GRAPH_NODE: GraphNode,
@@ -62,30 +70,38 @@ const DesignerReactFlow = (props: any) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
+  // Ensure the container dimensions are set
+  useEffect(() => {
+    setContainerDimensions(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+  }, [canvasRef]);
+
   const onInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
   }, []);
 
   const hasFitViewRun = useRef(false);
 
+  // Fit view to nodes on initial load
   useEffect(() => {
+    if (containerDimensions.width === 0 || containerDimensions.height === 0) {
+      return;
+    }
+
     if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const defaultZoom = 1.0;
-          const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+        const defaultZoom = 1.0;
+        const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
 
-          const centerX = containerDimensions.width / 2;
-          const topPadding = 120;
+        const centerX = containerDimensions.width / 2;
+        const topPadding = 120;
 
-          reactFlowInstance.setViewport({
-            x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
-            y: topPadding - topNode.position.y * defaultZoom,
-            zoom: defaultZoom,
-          });
-
-          hasFitViewRun.current = true;
+        reactFlowInstance.setViewport({
+          x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+          y: topPadding - topNode.position.y * defaultZoom,
+          zoom: defaultZoom,
         });
+
+        hasFitViewRun.current = true;
       });
     }
   }, [nodes, reactFlowInstance, isInitialized, containerDimensions]);
@@ -120,6 +136,13 @@ const DesignerReactFlow = (props: any) => {
   const [zoom, setZoom] = useState(1);
 
   const translateExtent = useMemo((): [[number, number], [number, number]] => {
+    if (containerDimensions.width === 0 || containerDimensions.height === 0) {
+      return [
+        [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
+        [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
+      ];
+    }
+
     const padding = DesignerFlowViewPadding;
     const [flowWidth, flowHeight] = flowSize;
 
@@ -174,29 +197,11 @@ const DesignerReactFlow = (props: any) => {
       const parentId = containsIdTag(fromNode?.id) ? removeIdTag(fromNode?.id) : fromNode?.id;
       const targetId = containsIdTag(toNode?.id) ? removeIdTag(toNode?.id) : toNode?.id;
 
+      setIsDraggingConnection(false);
+
       if (parentId === targetId) {
         // Prevent self-connection
-        setIsDraggingConnection(false);
         return;
-      }
-
-      const targetIsPane = event.target.classList.contains('react-flow__pane');
-      if (targetIsPane && parentId) {
-        const newId = guid();
-        const relationshipIds = {
-          graphId: nodesMetadata[parentId]?.graphId ?? '',
-          parentId,
-          childId: undefined,
-        };
-        dispatch(
-          expandDiscoveryPanel({
-            nodeId: newId,
-            relationshipIds,
-            isParallelBranch: true,
-          })
-        );
-      } else {
-        setIsDraggingConnection(false);
       }
 
       if (isValid && parentId && targetId) {
@@ -208,11 +213,52 @@ const DesignerReactFlow = (props: any) => {
               targetId,
             })
           );
+          return;
+        }
+        // Not in A2A, create a run-after edge
+        dispatch(
+          addOperationRunAfter({
+            parentOperationId: parentId,
+            childOperationId: targetId,
+          })
+        );
+        return;
+      }
+
+      const targetIsPane = event.target.classList.contains('react-flow__pane');
+      // Dropping onto pane
+      if (targetIsPane && parentId) {
+        setIsDraggingConnection(true); // Prevent clicks on the pane from clearing the panel
+        const newId = guid();
+        const relationshipIds = {
+          graphId: nodesMetadata[parentId]?.graphId ?? '',
+          parentId,
+          childId: undefined,
+        };
+
+        // Add an agent if connecting from an agent in A2A
+        if (isA2AWorkflow && allAgentIds.includes(parentId)) {
+          const newAgentId = `Agent_${customLengthGuid(4)}`;
+          dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+          // Remove the connecting edge and replace it with a handoff
+          dispatch(
+            removeOperationRunAfter({
+              parentOperationId: parentId,
+              childOperationId: newAgentId,
+            })
+          );
+          dispatch(
+            addAgentHandoff({
+              sourceId: parentId,
+              targetId: newAgentId,
+            })
+          );
         } else {
           dispatch(
-            addOperationRunAfter({
-              parentOperationId: parentId,
-              childOperationId: targetId,
+            expandDiscoveryPanel({
+              nodeId: newId,
+              relationshipIds,
+              isParallelBranch: true,
             })
           );
         }

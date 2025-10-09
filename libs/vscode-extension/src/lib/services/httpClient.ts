@@ -35,12 +35,19 @@ export class HttpClient implements IHttpClient {
         Authorization: `${isArmId ? this._accessToken : ''}`,
       },
     };
-    const responseData = await axios({
+    const response = await axios({
       method: HTTP_METHODS.GET,
       ...request,
     });
 
-    return responseData?.data;
+    if (options.returnHeaders) {
+      return {
+        responseHeaders: response.headers,
+        ...response.data,
+      };
+    }
+
+    return response.data;
   }
 
   async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -57,20 +64,16 @@ export class HttpClient implements IHttpClient {
       data: options.content,
       commandName: 'Designer.httpClient.patch',
     };
-    const responseData = await axios({
+    const response = await axios({
       method: HTTP_METHODS.PATCH,
       ...request,
     });
 
-    if (!isSuccessResponse(responseData.status)) {
-      return Promise.reject(responseData);
+    if (!isSuccessResponse(response.status)) {
+      return Promise.reject(response);
     }
 
-    try {
-      return JSON.parse(responseData.data);
-    } catch {
-      return responseData.data as any;
-    }
+    return parseResponse(response, options);
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -98,15 +101,12 @@ export class HttpClient implements IHttpClient {
         throw response;
       }
 
-      try {
-        return typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-      } catch {
-        return response.data as any;
-      }
+      return parseResponse(response, options);
     } catch (error: any) {
       throw error?.response?.data ?? error?.response ?? error;
     }
   }
+
   async put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     const isArmId = isArmResourceId(options.uri);
     const request = {
@@ -121,22 +121,23 @@ export class HttpClient implements IHttpClient {
       data: options.content,
       commandName: 'Designer.httpClient.put',
     };
-    const responseData = await axios({
+    const response = await axios({
       ...request,
       method: HTTP_METHODS.PUT,
     }).catch((error) => {
-      return { status: error.response.status, ...error.response.data };
+      return {
+        status: error.response.status,
+        responseHeaders: options.returnHeaders ? error.response.headers : undefined,
+        ...error.response.data,
+      };
     });
-    if (!isSuccessResponse(responseData.status)) {
-      return Promise.reject(responseData);
+    if (!isSuccessResponse(response.status)) {
+      return Promise.reject(response);
     }
 
-    try {
-      return JSON.parse(responseData.data);
-    } catch {
-      return responseData.data as any;
-    }
+    return parseResponse(response, options);
   }
+
   async delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
     const request = {
       ...options,
@@ -146,11 +147,19 @@ export class HttpClient implements IHttpClient {
         Authorization: `${this._accessToken}`,
       },
     };
-    const responseData = await axios({
+    const response = await axios({
       method: HTTP_METHODS.DELETE,
       ...request,
     });
-    return responseData.data;
+
+    if (options.returnHeaders) {
+      return {
+        responseHeaders: response.headers,
+        ...response.data,
+      };
+    }
+
+    return response.data;
   }
 
   private getRequestUrl(options: HttpRequestOptions<unknown>): string {
@@ -188,4 +197,22 @@ function isUrl(uri: string): boolean {
 
 export function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
+}
+
+function parseResponse(response: any, options: HttpRequestOptions<any>) {
+  let responseData: any;
+  try {
+    responseData = typeof response?.data === 'string' ? JSON.parse(response?.data) : response?.data;
+  } catch {
+    responseData = { data: response?.data as any };
+  }
+
+  if (options?.returnHeaders) {
+    return {
+      responseHeaders: response?.headers,
+      ...responseData,
+    };
+  }
+
+  return responseData;
 }

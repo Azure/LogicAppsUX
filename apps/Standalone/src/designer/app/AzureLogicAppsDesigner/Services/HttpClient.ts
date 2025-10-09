@@ -28,7 +28,7 @@ export class HttpClient implements IHttpClient {
         ...auth,
       },
     });
-    return response.data;
+    return parseResponse(response, options);
   }
 
   async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -51,7 +51,7 @@ export class HttpClient implements IHttpClient {
         return Promise.reject(response);
       }
 
-      return response.data;
+      return parseResponse(response, options);
     } catch (error: any) {
       throw error?.response?.response?.data ?? error?.response?.data ?? error;
     }
@@ -78,7 +78,7 @@ export class HttpClient implements IHttpClient {
         return Promise.reject(response);
       }
 
-      return response.data;
+      return parseResponse(response, options);
     } catch (error: any) {
       throw error?.response?.data ?? error;
     }
@@ -98,7 +98,7 @@ export class HttpClient implements IHttpClient {
     }
 
     try {
-      return response.data;
+      return parseResponse(response, options);
     } catch {
       return response as any;
     }
@@ -113,7 +113,7 @@ export class HttpClient implements IHttpClient {
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
-    return response.data;
+    return parseResponse(response, options);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -149,4 +149,14 @@ export function getExtraHeaders(): Record<string, string> {
 
 function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
+}
+
+function parseResponse(response: any, options: HttpRequestOptions<any>) {
+  if (options?.returnHeaders) {
+    return {
+      responseHeaders: response?.headers,
+      ...response.data,
+    };
+  }
+  return response.data;
 }

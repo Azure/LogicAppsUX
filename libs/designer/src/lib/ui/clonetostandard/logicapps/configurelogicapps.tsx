@@ -11,7 +11,9 @@ import { updateTargetWorkflowName, updateTargetWorkflowNameValidationError } fro
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNamesOfResource } from '../../../core';
 import { Checkmark16Filled } from '@fluentui/react-icons';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { useSubscriptions } from '../../../core/queries/resource';
+import { useMemo } from 'react';
 
 export const ConfigureLogicApps = () => {
   const { sourceApps } = useSelector((state: RootState) => state.clone);
@@ -60,24 +62,30 @@ export const ConfigureLogicApps = () => {
 };
 
 const useSourceItems = (resourceStrings: Record<string, string>, resources: ResourceState) => {
-  const { subscriptionId, logicAppName } = resources;
+  const { subscriptionId, resourceGroup, logicAppName } = resources;
+  const { data: subscriptions } = useSubscriptions();
+  const subscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => equals(getResourceNameFromId(sub.id), subscriptionId))?.displayName,
+    [subscriptions, subscriptionId]
+  );
+
   const items: TemplatesSectionItem[] = [
     {
       label: resourceStrings.SUBSCRIPTION,
-      value: subscriptionId || '',
+      value: subscriptionDisplayName || '',
+      type: 'textfield',
+      disabled: true,
+      onChange: () => {},
+    },
+    {
+      label: resourceStrings.RESOURCE_GROUP,
+      value: resourceGroup || '',
       type: 'textfield',
       disabled: true,
       onChange: () => {},
     },
     {
       label: resourceStrings.LOGIC_APP,
-      value: logicAppName || '',
-      type: 'textfield',
-      disabled: true,
-      onChange: () => {},
-    },
-    {
-      label: resourceStrings.WORKFLOW_NAME,
       value: logicAppName || '',
       type: 'textfield',
       disabled: true,
@@ -99,7 +107,7 @@ const useCloneWorkflowItem = (resourceStrings: Record<string, string>) => {
   const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(destSubscriptionId, destResourceGroup, destLogicAppName);
 
   const items: TemplatesSectionItem = {
-    label: resourceStrings.newWorkflowName,
+    label: resourceStrings.WORKFLOW_NAME,
     value: sourceApp?.targetWorkflowName || '',
     required: true,
     type: 'textfield',
@@ -120,6 +128,7 @@ const useCloneWorkflowItem = (resourceStrings: Record<string, string>) => {
       sourceApp?.targetWorkflowNameValidationError || isUndefinedOrEmptyString(sourceApp?.targetWorkflowName) ? null : (
         <Checkmark16Filled color={tokens.colorPaletteGreenBackground3} />
       ),
+    description: resourceStrings.newWorkflowNameDescription,
   };
 
   return items;

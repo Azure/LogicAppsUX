@@ -6,8 +6,8 @@ import { equals, getRecordEntry, type Connector } from '@microsoft/logic-apps-sh
 import { BrowseGrid, isBuiltInConnector, isCustomConnector, RuntimeFilterTagList } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useShouldEnableACASession } from './hooks';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
+import { useShouldShowAgentRequestTriggerConsumption } from './hooks';
 
 const priorityConnectors = [
   'connectionproviders/request',
@@ -69,9 +69,9 @@ export interface BrowseViewProps {
 
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, displayRuntimeInfo, setFilters } = props;
-  const shouldEnableACASession = useShouldEnableACASession();
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
+  const shouldShowAgentRequestConnector = useShouldShowAgentRequestTriggerConsumption();
 
   const dispatch = useDispatch();
 
@@ -80,13 +80,6 @@ export const BrowseView = (props: BrowseViewProps) => {
   const isAgentConnectorAllowed = useCallback((connector: Connector): boolean => {
     return connector.id !== 'connectionProviders/agent';
   }, []);
-
-  const isACASessionAllowed = useCallback(
-    (connector: Connector): boolean => {
-      return !(shouldEnableACASession === false && connector.id === '/serviceProviders/acasession');
-    },
-    [shouldEnableACASession]
-  );
 
   const passesRuntimeFilter = useCallback(
     (connector: Connector): boolean => {
@@ -158,17 +151,29 @@ export const BrowseView = (props: BrowseViewProps) => {
     [isA2AWorkflow, isAddingToGraph]
   );
 
+  const passesAgentRequestConnector = useCallback(
+    (connector: Connector): boolean => {
+      if (shouldShowAgentRequestConnector) {
+        return true;
+      }
+
+      // Hide Agent Request connector if the flag is enabled
+      return connector.id !== 'connectionProviders/a2aconsumption';
+    },
+    [shouldShowAgentRequestConnector]
+  );
+
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       return (
         isAgentConnectorAllowed(connector) &&
-        isACASessionAllowed(connector) &&
         passesRuntimeFilter(connector) &&
         passesActionTypeFilter(connector) &&
-        passesA2AWorkflowFilter(connector)
+        passesA2AWorkflowFilter(connector) &&
+        passesAgentRequestConnector(connector)
       );
     },
-    [isAgentConnectorAllowed, isACASessionAllowed, passesRuntimeFilter, passesActionTypeFilter, passesA2AWorkflowFilter]
+    [isAgentConnectorAllowed, passesRuntimeFilter, passesActionTypeFilter, passesA2AWorkflowFilter, passesAgentRequestConnector]
   );
 
   const sortedConnectors = useMemo(() => {

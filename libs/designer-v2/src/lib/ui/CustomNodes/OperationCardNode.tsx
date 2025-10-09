@@ -54,7 +54,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
-import { Card } from './components/card';
+import { ActionCard } from './components/card';
 
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -93,7 +93,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const isA2AWorkflow = useIsA2AWorkflow();
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
-    !!isMonitoringView,
+    !!isMonitoringView && !!runInstance,
     id,
     runInstance?.id,
     repetitionName,
@@ -299,7 +299,7 @@ const DefaultNode = ({ id }: NodeProps) => {
     <>
       <div className="nopan" ref={ref as any}>
         <EdgeDrawTargetHandle />
-        <Card
+        <ActionCard
           id={id}
           active={isCardActive}
           title={label}

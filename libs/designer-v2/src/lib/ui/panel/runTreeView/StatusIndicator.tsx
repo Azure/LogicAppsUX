@@ -1,18 +1,16 @@
 import * as React from 'react';
+import StatusSucceededIcon from '../../../common/images/status_success_small.svg';
+import StatusFailedIcon from '../../../common/images/status_failure_small.svg';
+import StatusCancelledIcon from '../../../common/images/status_cancelled_small.svg';
+import StatusSkippedIcon from '../../../common/images/status_skipped_small.svg';
+import { Spinner, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
-import { useCardStyles } from './card.styles';
-import SuccessIcon from './svgs/success.svg';
-import FailureIcon from './svgs/failure.svg';
-import SkipIcon from './svgs/skip.svg';
 
-export const CardStatusBadge = ({ status, duration }: any) => {
-  const styles = useCardStyles();
-
+const StatusIndicator = (props: { status: string }) => {
   const intl = useIntl();
 
-  const statusText = React.useMemo(() => {
-    switch (status) {
+  const text = React.useMemo(() => {
+    switch (props.status) {
       case 'Succeeded':
         return intl.formatMessage({
           defaultMessage: 'Succeeded',
@@ -50,49 +48,35 @@ export const CardStatusBadge = ({ status, duration }: any) => {
           description: 'Indicates that the run was cancelled',
         });
       default:
-        return status;
+        return props.status;
     }
-  }, [status, intl]);
-
-  const text = React.useMemo(() => `${statusText} • ${duration}`, [statusText, duration]);
+  }, [props.status, intl]);
 
   const icon = React.useMemo(() => {
-    switch (status) {
+    switch (props.status) {
       case 'Succeeded':
-        return <img alt={status} src={SuccessIcon} />;
+        return <img src={StatusSucceededIcon} title={''} />;
       case 'Failed':
-        return <img alt={status} src={FailureIcon} />;
+        return <img src={StatusFailedIcon} title={''} />;
       case 'Cancelled':
-        return <img alt={status} src={FailureIcon} />;
+        return <img src={StatusCancelledIcon} title={''} />;
       case 'Skipped':
-        return <img alt={status} src={SkipIcon} />;
+        return <img src={StatusSkippedIcon} title={''} />;
       case 'Running':
       case 'Waiting':
       case 'Resuming':
-        return <Spinner className={styles.spinner} appearance="inverted" size={'extra-tiny'} />;
+        return <Spinner size={'extra-tiny'} />;
       default:
         return null;
     }
-  }, [status]);
-
-  const color = React.useMemo(() => {
-    switch (status) {
-      case 'Succeeded':
-        return styles.badgeSuccess;
-      case 'Failed':
-        return styles.badgeFailure;
-      case 'Running':
-      case 'Waiting':
-      case 'Resuming':
-        return styles.badgeBrand;
-      default:
-        return styles.badgeNeutral;
-    }
-  }, [status]);
+  }, [props.status]);
 
   return (
-    <Tooltip relationship={'label'} content={text} positioning={'after'}>
-      <div className={mergeClasses(styles.badge, color)}>{icon}</div>
+    <Tooltip content={text} relationship="label" positioning={'above'}>
+      {icon}
     </Tooltip>
   );
 };
+
+StatusIndicator.displayName = 'StatusIndicator';
+export default StatusIndicator;

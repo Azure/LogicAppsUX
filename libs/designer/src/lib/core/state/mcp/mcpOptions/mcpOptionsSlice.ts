@@ -1,12 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setLogicApp } from '../resourceSlice';
+import { setInitialData, setLogicApp } from '../resourceSlice';
 import { resetMcpState } from '../../global';
-import { initializeMcpServices, resetMcpStateOnResourceChange } from '../../../actions/bjsworkflow/mcp';
+import { initializeMcpData, resetMcpStateOnResourceChange } from '../../../actions/bjsworkflow/mcp';
 
 export interface McpOptionsState {
   servicesInitialized: boolean;
   disableConfiguration: boolean;
   reInitializeServices?: boolean;
+  resourceDetails?: {
+    subscriptionId: string;
+    resourceGroup: string;
+    location: string;
+  };
 }
 
 const initialState: McpOptionsState = {
@@ -24,11 +29,22 @@ export const mcpOptionsSlice = createSlice({
       state.reInitializeServices = !action.payload;
       state.disableConfiguration = false;
     });
-    builder.addCase(initializeMcpServices.fulfilled, (state, action) => {
+    builder.addCase(initializeMcpData.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;
     });
     builder.addCase(setLogicApp, (state, action) => {
       state.reInitializeServices = !!action.payload?.logicAppName;
+    });
+    builder.addCase(setInitialData, (state, action) => {
+      state.resourceDetails = {
+        subscriptionId: action.payload.subscriptionId,
+        resourceGroup: action.payload.resourceGroup,
+        location: action.payload.location,
+      };
+
+      if (action.payload.logicAppName) {
+        state.reInitializeServices = true;
+      }
     });
   },
 });

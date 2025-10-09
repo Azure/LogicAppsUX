@@ -24,6 +24,7 @@ export type { SettingTokenFieldProps as SettingTokenTextFieldProps, NewResourceP
 export { SettingDropdown } from './settingdropdown';
 export type { SettingDropdownProps, DropdownSelectionChangeHandler } from './settingdropdown';
 export { toCustomEditorAndOptions, isCustomEditor } from './customTokenField';
+export { SimpleDictionary } from './dictionary/simpledictionary';
 
 export interface SettingProps {
   readOnly?: boolean;

@@ -9,6 +9,8 @@ export const colors = {
 
 export const useCardStyles = makeStyles({
   root: {
+    margin: '0px auto',
+    position: 'relative',
     border: '2px solid transparent',
     boxSizing: 'border-box',
     fontSize: '12px',
@@ -21,14 +23,24 @@ export const useCardStyles = makeStyles({
     cursor: 'default',
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
-    boxShadow: tokens.shadow4,
+    gap: '10px',
+    boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
 
     '&:hover': {
       background: tokens.colorNeutralBackground1Hover,
     },
     '&:active': {
       background: tokens.colorNeutralBackground1Pressed,
+    },
+  },
+  scope: {
+    background: 'var(--action-brand-color)',
+
+    '&:hover': {
+      background: 'color-mix(in hsl, var(--action-brand-color), black 10%)',
+    },
+    '&:active': {
+      background: 'color-mix(in hsl, var(--action-brand-color), black 20%)',
     },
   },
   inactive: {
@@ -62,18 +74,24 @@ export const useCardStyles = makeStyles({
     fontWeight: '600',
     color: tokens.colorNeutralForeground1,
     lineHeight: '20px',
+    flexGrow: 1,
+    wordBreak: 'break-word',
+  },
+  scopeTitle: {
+    color: '#fff',
   },
 
   // Badge
   badge: {
     position: 'absolute',
-    top: '1px',
-    right: '1px',
+    top: '-1px',
+    right: '-1px',
     transform: 'translate(50%, -50%)',
-    width: '16px',
-    height: '16px',
+    width: '20px',
+    height: '20px',
     borderRadius: '50%',
     backgroundColor: colors.neutral,
+    display: 'flex',
 
     '& > img': {
       width: '100%',
@@ -95,9 +113,24 @@ export const useCardStyles = makeStyles({
   },
   spinner: {
     '& > .fui-Spinner__spinner': {
-      width: '12px',
-      height: '12px',
-      margin: '2px',
+      width: '14px',
+      height: '14px',
+      margin: '3px',
     },
+  },
+  badgeText: {
+    color: tokens.colorNeutralForegroundInverted,
+    fontSize: '14px',
+    fontWeight: '600',
+    width: '100%',
+    textAlign: 'center',
+    lineHeight: '20px',
+  },
+  tooltipContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    padding: '4px',
+    maxWidth: '200px',
   },
 });

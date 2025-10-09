@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Divider,
   makeStyles,
   Menu,
   MenuDivider,
@@ -10,11 +11,12 @@ import {
   MenuTrigger,
   mergeClasses,
   Spinner,
+  Text,
   tokens,
   Toolbar,
   ToolbarButton,
 } from '@fluentui/react-components';
-import { isNullOrEmpty, ChatbotService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, ChatbotService } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer-v2';
 import {
   store as DesignerStore,
@@ -41,16 +43,14 @@ import {
   serializeWorkflow,
   getDocumentationMetadata,
   resetDesignerView,
-  getRun,
   downloadDocumentAsFile,
   useNodesAndDynamicDataInitialized,
 } from '@microsoft/logic-apps-designer-v2';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
-import axios from 'axios';
 
 import {
   bundleIcon,
@@ -66,6 +66,10 @@ import {
   LinkRegular,
   ErrorCircleFilled,
   ErrorCircleRegular,
+  DocumentOnePageAddFilled,
+  DocumentOnePageAddRegular,
+  DocumentOnePageColumnsFilled,
+  DocumentOnePageColumnsRegular,
 } from '@fluentui/react-icons';
 
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
@@ -74,6 +78,8 @@ const MoreHorizontalIcon = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegula
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
+const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
+const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
 
 const useStyles = makeStyles({
   viewModeContainer: {
@@ -86,10 +92,11 @@ const useStyles = makeStyles({
     bottom: '-16px',
     left: '50%',
     transform: 'translate(-50%, 0)',
-    zIndex: 1,
+    zIndex: 10,
   },
   viewButton: {
-    padding: '3px 12px',
+    padding: '3px 16px',
+    fontWeight: 600,
   },
   selectedButton: {
     background: `${tokens.colorNeutralForeground1} !important`,
@@ -98,43 +105,54 @@ const useStyles = makeStyles({
 });
 
 export const DesignerCommandBar = ({
-  id,
+  id: _id,
   discard,
   saveWorkflow,
+  saveWorkflowFromCode,
   isDesignerView,
   isMonitoringView,
   isCodeView,
   isDarkMode,
   isUnitTest,
+  isDraftMode,
   enableCopilot,
-  saveWorkflowFromCode,
-  selectRun,
   showMonitoringView,
   showDesignerView,
   showCodeView,
+  switchWorkflowMode,
 }: {
   id: string;
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
+  saveWorkflow: (
+    workflow: Workflow,
+    customCodeData: CustomCodeFileNameMapping | undefined,
+    clearDirtyState: () => void,
+    autoSave?: boolean
+  ) => Promise<void>;
+  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
   isDesignerView?: boolean;
   isMonitoringView?: boolean;
   isCodeView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
+  isDraftMode?: boolean;
+  prodWorkflow?: Workflow;
   enableCopilot?: () => void;
-  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
-  selectRun?: (runId: string) => void;
   showMonitoringView: () => void;
   showDesignerView: () => void;
   showCodeView: () => void;
+  switchWorkflowMode: (draftMode: boolean) => void;
 }) => {
   const styles = useStyles();
+  const [lastSavedTime, setLastSavedTime] = useState<Date>();
+  const [autoSaving, setAutoSaving] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
-  const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
+  const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
+    setAutoSaving(autoSave ?? false);
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
@@ -168,10 +186,13 @@ export const DesignerCommandBar = ({
 
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
-    if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
+    if (!hasParametersErrors || autoSave) {
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
       if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
         updateCallbackUrl(designerState, dispatch);
+      }
+      if (autoSave) {
+        setLastSavedTime(new Date());
       }
     }
   });
@@ -207,21 +228,6 @@ export const DesignerCommandBar = ({
     }
     const queryResponse: string = response.data.properties.response;
     downloadDocumentAsFile(queryResponse);
-  });
-
-  const { isLoading: isRunLoading, mutateAsync: runWorkflow } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
-      ignoreNonCriticalErrors: true,
-    });
-    const triggerId = Object.keys(serializedWorkflow.definition?.triggers ?? {})?.[0];
-    const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
-    const result = await axios.create().request({
-      method: callbackInfo.method,
-      url: callbackInfo.value,
-    });
-    return result;
   });
 
   const designerIsDirty = useIsDesignerDirty();
@@ -297,44 +303,25 @@ export const DesignerCommandBar = ({
     </Card>
   );
 
-  const RunButton = () => (
-    <ToolbarButton
-      appearance="subtle"
-      disabled={isRunLoading}
-      onClick={() => {
-        const asyncOnClick = async () => {
-          const result = await runWorkflow();
-          const runId = result?.headers?.['x-ms-workflow-run-id'];
-          const fullRunId = `${id}/runs/${runId}`;
-          if (fullRunId) {
-            await getRun(fullRunId);
-            selectRun?.(runId);
+  const SaveButton = () => {
+    const publishLoading = !autoSaving && isSaving;
+    return (
+      <ToolbarButton
+        appearance="primary"
+        disabled={saveIsDisabled}
+        onClick={() => {
+          if (isDesignerView) {
+            saveWorkflowMutate(false);
+          } else {
+            saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
           }
-        };
-        asyncOnClick();
-      }}
-      icon={isRunLoading ? <Spinner size={'extra-tiny'} /> : undefined}
-    >
-      Run
-    </ToolbarButton>
-  );
-
-  const SaveButton = () => (
-    <ToolbarButton
-      appearance="primary"
-      disabled={saveIsDisabled}
-      onClick={() => {
-        if (isDesignerView) {
-          saveWorkflowMutate();
-        } else {
-          saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
-        }
-      }}
-      icon={isSaving ? <Spinner size={'extra-tiny'} /> : undefined}
-    >
-      {isSaving ? 'Saving' : 'Save'}
-    </ToolbarButton>
-  );
+        }}
+        icon={publishLoading ? <Spinner size={'extra-tiny'} /> : undefined}
+      >
+        {publishLoading ? 'Publishing....' : 'Publish'}
+      </ToolbarButton>
+    );
+  };
 
   const DiscardButton = () => (
     <ToolbarButton
@@ -345,6 +332,13 @@ export const DesignerCommandBar = ({
     />
   );
 
+  const DraftSaveNotification = () => {
+    if (isDraftMode && lastSavedTime) {
+      return <Text style={{ fontStyle: 'italic' }}>{`Draft auto-saved at: ${lastSavedTime?.toLocaleTimeString()}`}</Text>;
+    }
+    return null;
+  };
+
   const OverflowMenu = () => (
     <Menu>
       <MenuTrigger>
@@ -352,6 +346,16 @@ export const DesignerCommandBar = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
+          {isDraftMode ? (
+            <MenuItem disabled={!isDesignerView} onClick={() => switchWorkflowMode(false)} icon={<DocumentOnePageAddIcon />}>
+              Switch to published version
+            </MenuItem>
+          ) : (
+            <MenuItem disabled={!isDesignerView} onClick={() => switchWorkflowMode(true)} icon={<DocumentOnePageColumnsIcon />}>
+              Switch to draft version
+            </MenuItem>
+          )}
+          <MenuDivider />
           <MenuItem
             disabled={saveUnitTestIsDisabled}
             onClick={() => saveUnitTestMutate()}
@@ -411,6 +415,15 @@ export const DesignerCommandBar = ({
     </Menu>
   );
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (isDraftMode && !isSaving && isDesignerView) {
+        saveWorkflowMutate(true);
+      }
+    }, 30000); // Auto-save every 30 seconds
+    return () => clearTimeout(timeoutId);
+  }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate]);
+
   return (
     <>
       <Toolbar
@@ -423,10 +436,10 @@ export const DesignerCommandBar = ({
       >
         <ViewModeSelect />
         <div style={{ flexGrow: 1 }} />
-        <RunButton />
+        <DraftSaveNotification />
         <SaveButton />
         <DiscardButton />
-        {/* <Divider vertical /> */}
+        <Divider vertical style={{ flexGrow: 0 }} />
         <OverflowMenu />
       </Toolbar>
       <div

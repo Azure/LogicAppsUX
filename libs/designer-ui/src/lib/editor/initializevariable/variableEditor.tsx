@@ -15,7 +15,7 @@ import {
 } from '@fluentui/react-icons';
 import { useState } from 'react';
 import { createEmptyLiteralValueSegment, isSingleLiteralValueSegment } from '../base/utils/helper';
-import { guid, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
+import { capitalizeFirstLetter, guid, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { isEmptySegments } from '../base/utils/parsesegments';
 import { useTheme } from '@fluentui/react';
@@ -126,7 +126,7 @@ const FieldEditor = ({
   return (
     <div className="msla-input-parameter-field">
       <div className="msla-input-parameter-label">
-        <Label id={id} isRequiredField={isRequired} text={label} />
+        <Label id={id} isRequiredField={isRequired} text={capitalizeFirstLetter(label)} />
       </div>
       <EditorComponent key={key} {...restEditorProps} labelId={`${label} - ${index}`} />
       {errorMessage ? <div className="msla-input-parameter-error">{errorMessage}</div> : null}

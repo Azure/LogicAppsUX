@@ -19,8 +19,8 @@ export const reviewTab = (
 ): TemplateTabProps => ({
   id: constants.CLONE_TO_STANDARD_TAB_NAMES.REVIEW,
   title: intl.formatMessage({
-    defaultMessage: 'Review',
-    id: '944VBM',
+    defaultMessage: 'Review + clone',
+    id: 'MKueP6',
     description: 'Tab label for review tab in clone to standard experience',
   }),
   disabled,

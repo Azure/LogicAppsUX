@@ -52,6 +52,7 @@ export const ExtensionCommand = {
   fileABug: 'fileABug',
   resetDesignerDirtyState: 'resetDesignerDirtyState',
   switchToDataMapperV2: 'switchToDataMapperV2',
+  pickProcess: 'pickProcess',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

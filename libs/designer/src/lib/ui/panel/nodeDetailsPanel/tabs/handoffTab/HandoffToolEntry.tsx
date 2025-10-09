@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Button, Tooltip, Divider, Field, Textarea } from '@fluentui/react-components';
+import { Button, Tooltip, Divider, Field, Textarea, Input } from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDown24Filled,
@@ -23,11 +23,13 @@ import type { AppDispatch, RootState } from '../../../../../core';
 import { updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
 import { ParameterGroupKeys } from '../../../../../core/utils/parameters/helper';
 import { useHandoffTabStyles } from './handoffTab.styles';
+import { replaceId } from '../../../../../core/state/workflow/workflowSlice';
 import { useOperationParameterByName } from '../../../../../core/state/operation/operationSelector';
+import constants from '../../../../../common/constants';
 import { removeAgentHandoff } from '../../../../../core/actions/bjsworkflow/handoff';
 import { ParameterSection } from '../parametersTab';
 import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
-import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -51,7 +53,14 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
     return allHandoffActions.find((action) => action.toolId === toolId);
   }, [allHandoffActions, toolId]);
 
+  const defaultToolName = useNodeDisplayName(toolId);
+  const targetAgentName = useNodeDisplayName(handoffAction?.targetId ?? '');
+
+  // Get all workflow operations to check for naming conflicts
+  const workflowOperations = useSelector((state: RootState) => state.workflow.operations);
+
   const [expanded, setExpanded] = useState(true);
+  const [toolNameError, setToolNameError] = useState('');
 
   const handleToggleExpand = () => {
     setExpanded((prev) => !prev);
@@ -82,6 +91,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
               groupId: ParameterGroupKeys.DEFAULT,
               parameterId: descriptionParameter?.id ?? '',
               propertiesToUpdate: {
+                preservedValue: newDescription,
                 value: [createLiteralValueSegment(newDescription)],
               },
             },
@@ -92,8 +102,6 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
     },
     [handoffAction, dispatch, toolId, descriptionParameter?.id]
   );
-
-  const buttonText = useNodeDisplayName(handoffAction?.targetId ?? '');
 
   const intlText = useMemo(
     () => ({
@@ -112,6 +120,26 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
         id: 'pRJny7',
         description: 'Placeholder text for the handoff description input field',
       }),
+      toolNameLabel: intl.formatMessage({
+        defaultMessage: 'Handoff name',
+        id: 'saPM0I',
+        description: 'Label for the handoff tool name input field',
+      }),
+      toolNameRequiredError: intl.formatMessage({
+        defaultMessage: 'Tool name is required',
+        id: 'eDiMaf',
+        description: 'Error message when tool name is empty',
+      }),
+      toolNameLengthError: intl.formatMessage({
+        defaultMessage: 'Tool name cannot exceed maximum characters',
+        id: 'hTjAB+',
+        description: 'Error message when tool name exceeds maximum characters',
+      }),
+      toolNameConflictError: intl.formatMessage({
+        defaultMessage: 'Tool name already exists in the workflow',
+        id: 'xWmpDI',
+        description: 'Error message when tool name conflicts with existing action names',
+      }),
       deleteLabel: intl.formatMessage({
         defaultMessage: 'Delete handoff',
         id: 'RIky6p',
@@ -119,6 +147,42 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
       }),
     }),
     [intl]
+  );
+
+  const onToolNameChange = useCallback(
+    (newToolName: string) => {
+      // Validate tool name
+      if (!newToolName.trim()) {
+        setToolNameError(intlText.toolNameRequiredError);
+        return;
+      }
+      if (newToolName.length > constants.HANDOFF_TOOL_NAME_MAX_LENGTH) {
+        setToolNameError(intlText.toolNameLengthError);
+        return;
+      }
+
+      // Check for naming conflicts with existing workflow operations (case-insensitive)
+      // Exclude the current tool ID from conflict checking
+      const existingOperationIds = Object.keys(workflowOperations).filter((id) => id !== toolId);
+      const hasConflict = existingOperationIds.some((id) => equals(id, newToolName, true));
+      if (hasConflict) {
+        setToolNameError(intlText.toolNameConflictError);
+        return;
+      }
+
+      // Clear error if validation passes
+      setToolNameError('');
+
+      // Update the tool name in the Redux store using replaceId action
+      // This updates the idReplacements mapping which is used by useNodeDisplayName
+      dispatch(
+        replaceId({
+          originalId: toolId,
+          newId: newToolName,
+        })
+      );
+    },
+    [toolId, dispatch, workflowOperations, intlText.toolNameRequiredError, intlText.toolNameLengthError, intlText.toolNameConflictError]
   );
 
   const styles = useHandoffTabStyles();
@@ -150,7 +214,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
           aria-expanded={expanded}
           style={{ justifyContent: 'flex-start', flexGrow: 1 }}
         >
-          {buttonText}
+          {targetAgentName}
         </Button>
         <Tooltip relationship="label" content={intlText.deleteLabel}>
           <Button icon={<DeleteIcon />} appearance="subtle" onClick={removeHandoff} aria-label={intlText.deleteLabel} />
@@ -160,11 +224,27 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
         <>
           <div className={styles.handoffToolEntryBody}>
             <div className={styles.handoffInput}>
+              <Field
+                label={intlText.toolNameLabel}
+                required
+                validationMessage={toolNameError}
+                validationState={toolNameError ? 'error' : 'none'}
+              >
+                <Input
+                  value={defaultToolName}
+                  onChange={(_e, data) => onToolNameChange(data.value)}
+                  disabled={!!isReadOnly}
+                  placeholder="Tool name"
+                  maxLength={constants.HANDOFF_TOOL_NAME_MAX_LENGTH}
+                />
+              </Field>
+            </div>
+            <div className={styles.handoffInput}>
               <Field label={intlText.handoffDescriptionLabel} required>
                 <Textarea
                   id={`${toolId}-description`}
                   placeholder={intlText.handoffDescriptionPlaceholder}
-                  onChange={(_e, data) => onDescriptionChange(data.value)}
+                  onBlur={(e) => onDescriptionChange(e.target.value)}
                   defaultValue={handoffAction?.toolDescription}
                 />
               </Field>

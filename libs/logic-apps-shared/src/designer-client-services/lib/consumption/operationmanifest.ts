@@ -3,6 +3,7 @@ import { ArgumentException, startsWith, UnsupportedException } from '../../../ut
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
+  agentType,
   getBuiltInOperationInfo,
   isBuiltInOperation,
   supportedBaseManifestObjects,
@@ -27,6 +28,8 @@ import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
 import { getBuiltInConnectorsInConsumption } from './search';
+import agentloop from './manifests/agentloop';
+import a2arequestManifest from './manifests/a2arequest';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -226,4 +229,6 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [chunktext, chunkTextManifest],
   [parsedocument, parseDocumentManifest],
   [parsedocumentwithmetadata, parseDocumentWithMetadataManifest],
+  [agentType, agentloop],
+  ['Request', a2arequestManifest],
 ]);

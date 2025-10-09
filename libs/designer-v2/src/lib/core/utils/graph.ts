@@ -42,6 +42,11 @@ export const DEFAULT_NODE_SIZE = {
   height: 40,
 };
 
+export const DEFAULT_NOTE_SIZE = {
+  width: 200,
+  height: 140,
+};
+
 // Creating generic layout nodes and edges below
 
 export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
@@ -149,13 +154,15 @@ const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: 
   return visited;
 };
 
-export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata): string[] => {
-  let currentParent = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
+export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata, useGraphParents = false): string[] => {
+  const { parentNodeId, graphId } = getRecordEntry(nodesMetadata, nodeId) ?? {};
+  let currentParent = useGraphParents ? graphId : parentNodeId;
   const result: string[] = [];
 
   while (currentParent) {
     result.push(currentParent);
-    currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
+    const { parentNodeId, graphId } = getRecordEntry(nodesMetadata, currentParent) ?? {};
+    currentParent = useGraphParents ? graphId : parentNodeId;
   }
 
   // Add any nodes that are a handoff parent of the node

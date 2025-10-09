@@ -1,7 +1,13 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { equals, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import {
+  a2aRequestOperation,
+  equals,
+  type DiscoveryOpArray,
+  type DiscoveryOperation,
+  type DiscoveryResultTypes,
+} from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
@@ -9,7 +15,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableACASession, useShouldEnableNestedAgent, useShouldEnableParseDocumentWithMetadata } from './hooks';
+import { useShouldEnableParseDocumentWithMetadata, useShouldShowAgentRequestTriggerConsumption } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
@@ -40,13 +46,12 @@ export const SearchView: FC<SearchViewProps> = ({
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const shouldEnableACASession = useShouldEnableACASession();
-  const shouldEnableNestedAgent = useShouldEnableNestedAgent();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const shouldShowAgentRequestTriggerConsumption = useShouldShowAgentRequestTriggerConsumption();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -86,7 +91,6 @@ export const SearchView: FC<SearchViewProps> = ({
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
       const { type, id } = operation;
-
       // Apply A2A workflow filter first
       if (!passesA2AWorkflowFilter(operation)) {
         return false;
@@ -99,6 +103,15 @@ export const SearchView: FC<SearchViewProps> = ({
 
       // Exclude agent operations unless it's the root of an agentic workflow
       if ((!isAgenticWorkflow || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
+        return false;
+      }
+
+      // Hide Agent Request trigger if the flag is enabled
+      if (
+        shouldShowAgentRequestTriggerConsumption === false &&
+        equals(type, constants.NODE.TYPE.REQUEST) &&
+        id === a2aRequestOperation.id
+      ) {
         return false;
       }
 
@@ -121,9 +134,6 @@ export const SearchView: FC<SearchViewProps> = ({
       }
 
       if (equals(type, constants.NODE.TYPE.NESTED_AGENT) && id === 'invokeNestedAgent') {
-        if (!shouldEnableNestedAgent) {
-          return false;
-        }
         if (!(isWithinAgenticLoop || isAgentTool)) {
           return false;
         }
@@ -132,15 +142,14 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, shouldEnableNestedAgent, passesA2AWorkflowFilter]
+    [shouldShowAgentRequestTriggerConsumption, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
   );
 
   useDebouncedEffect(
     () => {
       const searchResultsPromise = new DefaultSearchOperationsService(
         allOperations,
-        shouldEnableParseDocWithMetadata ?? false,
-        shouldEnableACASession ?? false
+        shouldEnableParseDocWithMetadata ?? false
       ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
@@ -148,7 +157,7 @@ export const SearchView: FC<SearchViewProps> = ({
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata, shouldEnableACASession],
+    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata],
     200
   );
 

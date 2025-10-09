@@ -238,6 +238,34 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves the agent repetitions for a specific action node and run.
+   * @param action - An object containing the identifier for the action node and the run ID.
+   * @param action.nodeId - The unique identifier for the action node.
+   * @param action.runId - The identifier of the run; can be undefined.
+   * @returns A promise that resolves to an array of agent repetitions.
+   * @throws Will throw an error if the HTTP request fails.
+   */
+  async getAgentRepetitions(action: { nodeId: string; runId: string | undefined }): Promise<LogicAppsV2.RunRepetition[]> {
+    const { nodeId, runId } = action;
+
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions?api-version=${apiVersion}`;
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition[]>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return (response as any).value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Gets an array of scope repetition records for a node with the specified status.
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
    * @param {string} repetitionId - A string with the resource ID of a repetition record
@@ -313,10 +341,33 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Gets all repetitions for the action
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   */
+  async getRepetitions(action: { nodeId: string; runId: string | undefined }): Promise<LogicAppsV2.RunRepetition[]> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { nodeId, runId } = action;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition[]>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return (response as any).value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Triggers a workflow run
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
+   * @param {any} options - Options for the trigger call including headers, queries and body.
    */
-  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+  async runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
@@ -325,7 +376,24 @@ export class ConsumptionRunService implements IRunService {
     }
 
     try {
-      await this.getHttpRequestByMethod(httpClient, method, { uri });
+      // Parse query params from uri
+      const [baseUri, queryString] = uri.split('?');
+      const urlSearchParams = new URLSearchParams(queryString ?? '');
+      const uriParams: Record<string, string> = {};
+      urlSearchParams.forEach((value, key) => {
+        uriParams[key] = value;
+      });
+
+      // Merge with options?.queries (options take precedence)
+      const mergedParams = { ...uriParams, ...(options?.queries ?? {}) };
+
+      return await this.getHttpRequestByMethod(httpClient, method, {
+        uri: baseUri,
+        returnHeaders: true,
+        headers: options?.headers,
+        queryParameters: mergedParams,
+        content: options?.body,
+      });
     } catch (e: any) {
       throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }

@@ -8,6 +8,7 @@ import {
   setSuccessfullyCloned,
   updateTargetWorkflowNameValidationError,
   updateErrorMessage,
+  setRunValidation,
 } from '../../../core/state/clonetostandard/cloneslice';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
@@ -30,9 +31,7 @@ export const useCloneWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    clone: { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned },
-  } = useSelector((state: RootState) => state);
+  const { sourceApps, destinationApp, errorMessage, isSuccessfullyCloned } = useSelector((state: RootState) => state.clone);
 
   const { data: existingWorkflowNames } = useExistingWorkflowNamesOfResource(
     destinationApp.subscriptionId,
@@ -41,6 +40,8 @@ export const useCloneWizardTabs = ({
   );
 
   const handleOnConfigureNext = useCallback(async () => {
+    dispatch(setRunValidation());
+
     // Note: temporary while only supporting single case, to-be-changed once supporting multi.
     const validationError = await validateWorkflowName(sourceApps?.[0]?.targetWorkflowName, false, {
       subscriptionId: sourceApps?.[0]?.subscriptionId,
@@ -60,7 +61,12 @@ export const useCloneWizardTabs = ({
       await onCloneCall(sourceApps, destinationApp);
       dispatch(setSuccessfullyCloned());
     } catch (e: any) {
-      dispatch(updateErrorMessage(e?.response?.data?.message ?? e.message));
+      dispatch(
+        updateErrorMessage({
+          errorMessage: e?.response?.data?.message ?? e?.message?.message ?? e?.message,
+          showReportErrorButton: e?.response?.status && e?.response?.status >= 500,
+        })
+      );
     }
   });
 

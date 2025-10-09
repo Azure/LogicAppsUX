@@ -3,6 +3,7 @@ import { type ChatHistory, isNullOrUndefined, type LogicAppsV2, type Run, RunSer
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
+import { useMemo } from 'react';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 60 * 24,
@@ -14,7 +15,9 @@ const queryOpts = {
 export const runsQueriesKeys = {
   runs: 'runs',
   run: 'run',
+  allRuns: 'allRuns',
   useNodeRepetition: 'useNodeRepetition',
+  useNodeRepetitions: 'useNodeRepetitions',
   useScopeFailedRepetitions: 'useScopeFailedRepetitions',
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
@@ -27,13 +30,15 @@ export const runsQueriesKeys = {
 };
 
 export const useRunsInfiniteQuery = (enabled = false) => {
+  const queryClient = useQueryClient();
+
   return useInfiniteQuery(
     [runsQueriesKeys.runs],
     async ({ pageParam }: { pageParam?: string }) => {
       // pageParam is the nextLink when provided
       if (!pageParam) {
         const firstRuns = await RunService().getRuns();
-        return { runs: firstRuns.runs ?? [], nextLink: firstRuns.nextLink };
+        return { runs: firstRuns.runs ?? [], nextLink: firstRuns?.nextLink };
       }
       const moreRuns = await RunService().getMoreRuns(pageParam);
       return { runs: moreRuns.runs ?? [], nextLink: moreRuns.nextLink };
@@ -46,13 +51,16 @@ export const useRunsInfiniteQuery = (enabled = false) => {
       // them without an extra fetch when available.
       onSuccess: (data) => {
         try {
-          const queryClient = getReactQueryClient();
           const allRuns: Run[] = (data?.pages ?? []).flatMap((p: any) => p.runs ?? []);
+          const currentRuns = (queryClient.getQueryData([runsQueriesKeys.allRuns]) as Record<string, Run> | undefined) ?? {};
           allRuns.forEach((run) => {
-            if (run?.name) {
+            if (run?.id) {
               queryClient.setQueryData([runsQueriesKeys.run, run.id], run);
+              currentRuns[run.id] = run;
             }
           });
+          queryClient.setQueryData([runsQueriesKeys.allRuns], currentRuns);
+          queryClient.invalidateQueries([runsQueriesKeys.allRuns]);
         } catch {
           // best-effort
         }
@@ -62,19 +70,20 @@ export const useRunsInfiniteQuery = (enabled = false) => {
 };
 
 export const useAllRuns = () => {
-  const queryClient = useQueryClient();
-  const queries = queryClient.getQueriesData<Run>([runsQueriesKeys.run]);
-  const runs = queries
-    .map(([_, data]) => data)
-    .filter((run): run is Run => run !== undefined && run !== null)
-    .sort((a, b) => {
-      const toMillis = (v: any) => (typeof v === 'number' ? v : v ? Date.parse(String(v)) : 0);
-      return toMillis(b.properties.startTime) - toMillis(a.properties.startTime);
-    });
-  return runs;
+  const { data: allRuns = {} } = useQuery<Record<string, Run>>([runsQueriesKeys.allRuns]);
+
+  return useMemo(() => {
+    return Object.values(allRuns)
+      .filter((run): run is Run => run !== undefined && run !== null)
+      .sort((a, b) => {
+        const toMillis = (v: any) => (typeof v === 'number' ? v : v ? Date.parse(String(v)) : 0);
+        return toMillis(b.properties.startTime) - toMillis(a.properties.startTime);
+      });
+  }, [allRuns]);
 };
 
 export const useRun = (runId: string | undefined) => {
+  const queryClient = useQueryClient();
   return useQuery(
     [runsQueriesKeys.run, runId],
     async () => {
@@ -85,11 +94,24 @@ export const useRun = (runId: string | undefined) => {
       if (isRunError(fetchedRun)) {
         throw new Error('Run not found');
       }
+      // Set in all runs object
+      queryClient.setQueryData([runsQueriesKeys.allRuns], (old: Record<string, Run> | undefined) => ({
+        ...old,
+        [fetchedRun.id]: fetchedRun,
+      }));
       return fetchedRun;
     },
     {
       ...queryOpts,
       enabled: !!runId,
+      // If the run is running, poll for updates
+      refetchInterval: () => {
+        const run = queryClient.getQueryData<Run>([runsQueriesKeys.run, runId]);
+        if (run && run.properties.status === constants.FLOW_STATUS.RUNNING) {
+          return constants.RUN_POLLING_INTERVAL_IN_MS;
+        }
+        return false;
+      },
     }
   );
 };
@@ -113,10 +135,10 @@ export const getRun = (runId: string) => {
 };
 
 export const useNodeRepetition = (
-  isMonitoringView: boolean,
+  isEnabled: boolean,
   nodeId: string,
   runId: string | undefined,
-  repetitionName: string,
+  repetitionName: string | undefined,
   parentStatus: string | undefined,
   parentRunIndex: number | undefined,
   isWithinAgenticLoop: boolean
@@ -138,12 +160,53 @@ export const useNodeRepetition = (
         };
       }
 
-      return await RunService().getRepetition({ nodeId, runId }, repetitionName);
+      return await RunService().getRepetition({ nodeId, runId }, repetitionName!);
     },
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: parentRunIndex !== undefined && isMonitoringView && !isWithinAgenticLoop,
+      enabled: repetitionName !== undefined && parentRunIndex !== undefined && isEnabled && !isWithinAgenticLoop,
+    }
+  );
+};
+
+export const getRunRepetition = async (nodeId: string, runId: string, repetitionName: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useNodeRepetition, { nodeId, runId, repetitionName }],
+    async () => {
+      return await RunService().getRepetition({ nodeId, runId }, repetitionName);
+    },
+    {
+      ...queryOpts,
+    }
+  );
+};
+
+export const useNodeRepetitions = (isEnabled: boolean, nodeId: string, runId: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useNodeRepetitions, { nodeId, runId }],
+    async () => {
+      return await RunService().getRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isEnabled,
+    }
+  );
+};
+
+export const getNodeRepetitions = async (nodeId: string, runId: string, noCache = false) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useNodeRepetitions, { nodeId, runId }],
+    async () => {
+      return await RunService().getRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
+      cacheTime: noCache ? 0 : queryOpts.cacheTime,
     }
   );
 };
@@ -178,7 +241,6 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
 
 export const useAgentRepetition = (
   isEnabled: boolean,
-  isAgent: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
@@ -194,6 +256,47 @@ export const useAgentRepetition = (
       ...queryOpts,
       retryOnMount: false,
       enabled: isEnabled,
+    }
+  );
+};
+
+export const getAgentRepetition = async (nodeId: string, runId: string, repetitionName: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId, repetitionName }],
+    async () => {
+      return RunService().getAgentRepetition({ nodeId, runId }, repetitionName);
+    },
+    {
+      ...queryOpts,
+    }
+  );
+};
+
+export const useAgentRepetitions = (isEnabled: boolean, nodeId: string, runId: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId }],
+    async () => {
+      return await RunService().getAgentRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isEnabled,
+    }
+  );
+};
+
+export const getAgentRepetitions = async (nodeId: string, runId: string, noCache = false) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId }],
+    async () => {
+      return await RunService().getAgentRepetitions({ nodeId, runId });
+    },
+    {
+      ...queryOpts,
+      cacheTime: noCache ? 0 : queryOpts.cacheTime,
     }
   );
 };
@@ -215,29 +318,48 @@ export const useAgentActionsRepetition = (
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
-  parentStatus: string | undefined,
   runIndex: number | undefined
 ) => {
   return useQuery(
-    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, parentStatus, runIndex }],
-    async () => {
-      const allActions: LogicAppsV2.RunRepetition[] = [];
-      const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
-      allActions.push(...(firstActions?.value ?? []));
-      let nextLink = firstActions.nextLink;
-      while (nextLink) {
-        const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
-        allActions.push(...(moreActions?.value ?? []));
-        nextLink = moreActions?.nextLink;
-      }
-      return allActions;
-    },
+    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, runIndex }],
+    async () => fetchAgentActionsRepetition(nodeId, runId, repetitionName),
     {
       ...queryOpts,
       retryOnMount: false,
       enabled: isEnabled,
     }
   );
+};
+
+export const getAgentActionsRepetition = async (
+  nodeId: string,
+  runId: string | undefined,
+  repetitionName: string,
+  runIndex: number | undefined,
+  noCache = false
+) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, runIndex }],
+    async () => fetchAgentActionsRepetition(nodeId, runId, repetitionName),
+    {
+      ...queryOpts,
+      cacheTime: noCache ? 0 : queryOpts.cacheTime,
+    }
+  );
+};
+
+const fetchAgentActionsRepetition = async (nodeId: string, runId: string | undefined, repetitionName: string) => {
+  const allActions: LogicAppsV2.RunRepetition[] = [];
+  const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
+  allActions.push(...(firstActions?.value ?? []));
+  let nextLink = firstActions.nextLink;
+  while (nextLink) {
+    const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
+    allActions.push(...(moreActions?.value ?? []));
+    nextLink = moreActions?.nextLink;
+  }
+  return allActions;
 };
 
 export const useActionsChatHistory = (nodeIds: string[], runId: string | undefined, isEnabled: boolean) => {

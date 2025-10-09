@@ -27,7 +27,7 @@ import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
-import agentloopConnector from '../standard/manifest/agentLoopConnector';
+import agentloopConnector from './manifest/agentLoopConnector';
 
 interface ConnectionAcl {
   id: string;
@@ -249,7 +249,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
         ? await this._createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
         : await this.createConnectionInLocal(connectionName, connector, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
 
-      LoggerService().endTrace(logId, { status: Status.Success });
+      LoggerService().endTrace(logId, {
+        status: Status.Success,
+        data: {
+          connectorId: connector.id,
+        },
+      });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);
