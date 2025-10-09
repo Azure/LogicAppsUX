@@ -264,9 +264,7 @@ export const RunHistoryPanel = () => {
   const [inRunList, setInRunList] = useState(true);
 
   useEffect(() => {
-    if (selectedRunInstance) {
-      setInRunList(false);
-    }
+    setInRunList(!selectedRunInstance);
   }, [selectedRunInstance]);
 
   return (
