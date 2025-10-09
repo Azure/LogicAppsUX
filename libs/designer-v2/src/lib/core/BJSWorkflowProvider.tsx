@@ -3,7 +3,11 @@ import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { deserializeUnitTestDefinition } from './parsers/BJSWorkflow/BJSDeserializer';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initCustomCode } from './state/customcode/customcodeSlice';
-import { useAreDesignerOptionsInitialized, useAreServicesInitialized } from './state/designerOptions/designerOptionsSelectors';
+import {
+  useAreDesignerOptionsInitialized,
+  useAreServicesInitialized,
+  useMonitoringView,
+} from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
@@ -43,6 +47,8 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const isMonitoringView = useMonitoringView();
+
   useDeepCompareEffect(() => {
     dispatch(clearAllErrors());
     dispatch(initWorkflowSpec('BJS'));
@@ -52,7 +58,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
     dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
-  }, [workflowId, runInstance, workflow, customCode, unitTestDefinition]);
+  }, [workflowId, runInstance, workflow, customCode, unitTestDefinition, isMonitoringView]);
 
   // Store app settings in query to access outside of functional components
   useQuery({
