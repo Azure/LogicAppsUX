@@ -25,7 +25,7 @@ import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
 import { clearFocusElement, setFocusNode, setRunIndex, setTimelineRepetitionIndex } from '../../../core/state/workflow/workflowSlice';
 import { parseChatHistory, useRefreshChatMutation } from '../agentChat/helper';
-import constants from '../../../common/constants';
+// import constants from '../../../common/constants';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 
@@ -60,13 +60,13 @@ export const AgentChatContent = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const rawAgentLastOperations = JSON.stringify(agentLastOperations);
 
-	const showStopButton = useMemo(() => {
-		return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
-	}, [runInstance]);
+	// const showStopButton = useMemo(() => {
+	// 	return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
+	// }, [runInstance]);
 
-	const stopChat = useCallback(() => {
-		setDialogOpen(true);
-	}, []);
+	// const stopChat = useCallback(() => {
+	// 	setDialogOpen(true);
+	// }, []);
 
 	const { mutateAsync: cancelRun } = useCancelRun(runInstance?.id ?? '');
 
