@@ -29,6 +29,9 @@ exports[`CopyTooltip > should position the tooltip based on the provided locatio
     >
       Copied!
     </div>
+    <span
+      hidden=""
+    />
   </div>
 </body>
 `;
@@ -62,6 +65,9 @@ exports[`CopyTooltip > should render the tooltip with the correct content 1`] = 
     >
       Copied!
     </div>
+    <span
+      hidden=""
+    />
   </div>
 </body>
 `;

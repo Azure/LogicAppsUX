@@ -40,7 +40,7 @@ exports[`lib/card > should render 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner rpp59a7 msla-card-header-spinner"
             role="progressbar"
           >
             <span
@@ -107,7 +107,7 @@ exports[`lib/card > should render as cloned 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner rpp59a7 msla-card-header-spinner"
             role="progressbar"
           >
             <span
@@ -187,7 +187,7 @@ exports[`lib/card > should render as draggable 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner rpp59a7 msla-card-header-spinner"
             role="progressbar"
           >
             <span
@@ -254,7 +254,7 @@ exports[`lib/card > should render as inactive 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner rpp59a7 msla-card-header-spinner"
             role="progressbar"
           >
             <span
@@ -321,7 +321,7 @@ exports[`lib/card > should render as pinned 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner rpp59a7 msla-card-header-spinner"
             role="progressbar"
           >
             <span
@@ -388,7 +388,7 @@ exports[`lib/card > should render as selected 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner rpp59a7 msla-card-header-spinner"
             role="progressbar"
           >
             <span

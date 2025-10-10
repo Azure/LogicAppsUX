@@ -17,6 +17,37 @@ export interface CustomCodeFunctionsProjectMetadata {
   namespace: string;
 }
 
+export async function customCodeArtifactsExist(projectPath: string): Promise<boolean> {
+  if (isNullOrUndefined(projectPath)) {
+    return false;
+  }
+
+  const customCodeArtifactsPath = path.join(projectPath, 'lib', 'custom');
+  const customFolderExists = await fse.pathExists(customCodeArtifactsPath);
+  if (!customFolderExists) {
+    return false;
+  }
+
+  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
+  if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
+    return false;
+  }
+  const customCodeProjects = customCodeProjectPaths.map((p) => path.basename(p));
+
+  const customCodeArtifactFiles = await fse.readdir(customCodeArtifactsPath);
+  for (const projectName of customCodeProjects) {
+    if (!customCodeArtifactFiles.includes(projectName)) {
+      return false;
+    }
+
+    if (!fse.pathExistsSync(path.join(customCodeArtifactsPath, projectName, 'function.json'))) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export async function getAllCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {
   const workspaceRoot: string | undefined = await getWorkspaceRoot(context);
 

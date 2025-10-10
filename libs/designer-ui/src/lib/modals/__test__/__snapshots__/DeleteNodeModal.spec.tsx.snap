@@ -19,18 +19,18 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
     >
       <div
         aria-hidden="true"
-        class="fui-DialogSurface__backdrop rsptlh5"
+        class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
         aria-labelledby="dialog-title-r12"
         aria-modal="true"
-        class="fui-DialogSurface rsmdyd3"
+        class="fui-DialogSurface r1u3t6p6"
         data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r11","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
         <div
-          class="fui-DialogBody r1h3qql9"
+          class="fui-DialogBody rhwx3p8"
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
@@ -76,6 +76,9 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
           </div>
         </div>
       </div>
+      <span
+        hidden=""
+      />
     </div>
   </body>,
   "container": <div>
@@ -156,18 +159,18 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
     >
       <div
         aria-hidden="true"
-        class="fui-DialogSurface__backdrop rsptlh5"
+        class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
         aria-labelledby="dialog-title-ru"
         aria-modal="true"
-        class="fui-DialogSurface rsmdyd3"
+        class="fui-DialogSurface r1u3t6p6"
         data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-rt","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
         <div
-          class="fui-DialogBody r1h3qql9"
+          class="fui-DialogBody rhwx3p8"
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
@@ -213,6 +216,9 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
           </div>
         </div>
       </div>
+      <span
+        hidden=""
+      />
     </div>
   </body>,
   "container": <div>
@@ -293,18 +299,18 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
     >
       <div
         aria-hidden="true"
-        class="fui-DialogSurface__backdrop rsptlh5"
+        class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
         aria-labelledby="dialog-title-r1a"
         aria-modal="true"
-        class="fui-DialogSurface rsmdyd3"
+        class="fui-DialogSurface r1u3t6p6"
         data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r19","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
         <div
-          class="fui-DialogBody r1h3qql9"
+          class="fui-DialogBody rhwx3p8"
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
@@ -350,6 +356,9 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
           </div>
         </div>
       </div>
+      <span
+        hidden=""
+      />
     </div>
   </body>,
   "container": <div>
@@ -430,18 +439,18 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
     >
       <div
         aria-hidden="true"
-        class="fui-DialogSurface__backdrop rsptlh5"
+        class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
         aria-labelledby="dialog-title-r16"
         aria-modal="true"
-        class="fui-DialogSurface rsmdyd3"
+        class="fui-DialogSurface r1u3t6p6"
         data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r15","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
         <div
-          class="fui-DialogBody r1h3qql9"
+          class="fui-DialogBody rhwx3p8"
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
@@ -487,6 +496,9 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
           </div>
         </div>
       </div>
+      <span
+        hidden=""
+      />
     </div>
   </body>,
   "container": <div>
@@ -567,18 +579,18 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
     >
       <div
         aria-hidden="true"
-        class="fui-DialogSurface__backdrop rsptlh5"
+        class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
         aria-labelledby="dialog-title-r1e"
         aria-modal="true"
-        class="fui-DialogSurface rsmdyd3"
+        class="fui-DialogSurface r1u3t6p6"
         data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r1d","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
         <div
-          class="fui-DialogBody r1h3qql9"
+          class="fui-DialogBody rhwx3p8"
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
@@ -589,7 +601,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
           >
             <div
               aria-labelledby="spinnerr1f"
-              class="fui-Spinner r82apo5"
+              class="fui-Spinner rpp59a7"
               role="progressbar"
             >
               <span
@@ -631,6 +643,9 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
           </div>
         </div>
       </div>
+      <span
+        hidden=""
+      />
     </div>
   </body>,
   "container": <div>
