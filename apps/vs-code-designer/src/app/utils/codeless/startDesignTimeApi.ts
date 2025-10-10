@@ -24,7 +24,6 @@ import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
-import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
 import { delay } from '../delay';
@@ -48,6 +47,7 @@ import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import pstree from 'ps-tree';
 import find_process from 'find-process';
+import { getPublicUrl } from '../extension';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -64,7 +64,8 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     }
 
     const designTimeInst = ext.designTimeInstances.get(projectPath);
-    const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${designTimeInst.port}`);
+    const url = `${publicUrl}${designerStartApi}`;
     if (designTimeInst.isStarting && !isNewDesignTime) {
       await waitForDesignTimeStartUp(actionContext, projectPath, url);
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
@@ -118,7 +119,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       const cwd: string = designTimeDirectory.fsPath;
       const portArgs = `--port ${designTimeInst.port}`;
 
-      startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+      startDesignTimeProcess(ext.outputChannel, cwd, 'func', 'host', 'start', portArgs);
       await waitForDesignTimeStartUp(actionContext, projectPath, url, true);
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
 
@@ -128,9 +129,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       if (data.extensionBundle) {
         const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
         const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
-        if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
-          ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
-        } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
+        if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
           ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
           ext.pinnedBundleVersion.set(projectPath, true);
         }

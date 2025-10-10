@@ -35,6 +35,7 @@ import parser from 'yargs-parser';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
+import { getPublicUrl } from '../utils/extension';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -252,8 +253,9 @@ async function startFuncTask(
       const taskInfo: IRunningFuncTask | undefined = runningFuncTaskMap.get(workspaceFolder);
       if (taskInfo) {
         for (const scheme of ['http', 'https']) {
+          const publicUrl = await getPublicUrl(`${scheme}://localhost:${funcPort}`);
           const statusRequest: AzExtRequestPrepareOptions = {
-            url: `${scheme}://localhost:${funcPort}/admin/host/status`,
+            url: `${publicUrl}/admin/host/status`,
             method: HTTP_METHODS.GET,
           };
           if (scheme === 'https') {

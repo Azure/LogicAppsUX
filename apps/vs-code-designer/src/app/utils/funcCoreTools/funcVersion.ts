@@ -2,21 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  funcCoreToolsBinaryPathSettingKey,
-  funcDependencyName,
-  funcVersionSetting,
-} from '../../../constants';
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../vsCodeConfig/settings';
+import { funcVersionSetting } from '../../../constants';
+import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as semver from 'semver';
 
 /**
@@ -90,7 +81,7 @@ export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined>
  */
 export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   try {
-    const output: string = await executeCommand(undefined, undefined, `${getFunctionsCommand()}`, '--version');
+    const output: string = await executeCommand(undefined, undefined, 'func', '--version');
     const version: string | null = semver.clean(output);
     if (version) {
       return version;
@@ -126,50 +117,4 @@ export function addLocalFuncTelemetry(context: IActionContext): void {
     .catch(() => {
       context.telemetry.properties.funcCliVersion = 'none';
     });
-}
-
-/**
- * Checks installed functions core tools version is supported.
- * @param {string} version - Placeholder for input.
- */
-export function checkSupportedFuncVersion(version: FuncVersion) {
-  if (version !== FuncVersion.v2 && version !== FuncVersion.v3 && version !== FuncVersion.v4) {
-    throw new Error(
-      localize(
-        'versionNotSupported',
-        'Functions core tools version "{0}" not supported. Only version "{1}" is currently supported for Codeless.',
-        version,
-        FuncVersion.v2
-      )
-    );
-  }
-}
-
-/**
- * Get the functions binaries executable or use the system functions executable.
- */
-export function getFunctionsCommand(): string {
-  const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
-  if (!command) {
-    throw Error('Functions Core Tools Binary Path Setting is empty');
-  }
-  return command;
-}
-
-export async function setFunctionsCommand(): Promise<void> {
-  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
-  const binariesExist = fs.existsSync(funcBinariesPath);
-  let command = ext.funcCliPath;
-  if (binariesExist) {
-    command = path.join(funcBinariesPath, ext.funcCliPath);
-    fs.chmodSync(funcBinariesPath, 0o777);
-
-    const funcExist = await fs.existsSync(command);
-    if (funcExist) {
-      fs.chmodSync(command, 0o777);
-    }
-  }
-
-  await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
 }

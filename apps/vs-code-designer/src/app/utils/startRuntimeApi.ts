@@ -20,7 +20,7 @@ import axios from 'axios';
 import { localize } from '../../localize';
 import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
-import { getFunctionsCommand } from './funcCoreTools/funcVersion';
+import { getPublicUrl } from './extension';
 
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
@@ -71,7 +71,7 @@ export async function startRuntimeApi(projectPath: string): Promise<void> {
 
     try {
       ext.outputChannel.appendLog(localize('startingRuntime', 'Starting Runtime API for project: {0}', projectPath));
-      startRuntimeProcess(projectPath, getFunctionsCommand(), 'host', 'start', `--port ${runtimeInst.port}`);
+      startRuntimeProcess(projectPath, 'func', 'host', 'start', `--port ${runtimeInst.port}`);
       await waitForRuntimeStartUp(context, projectPath, runtimeInst.port, true);
       context.telemetry.properties.isRuntimeUp = 'true';
     } catch (error) {
@@ -117,7 +117,8 @@ async function waitForRuntimeStartUp(context: IActionContext, projectPath: strin
 
 async function isRuntimeUp(port: number): Promise<boolean> {
   try {
-    const url = `http://localhost:${port}${designerStartApi}`;
+    const baseUrl = await getPublicUrl(`http://localhost:${port}`);
+    const url = `${baseUrl}${designerStartApi}`;
     await axios.get(url);
     return Promise.resolve(true);
   } catch {

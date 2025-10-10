@@ -23,3 +23,9 @@ export const getExtensionVersion = (): string => {
 
   return '';
 };
+
+export async function getPublicUrl(url: string) {
+  const local = vscode.Uri.parse(url);
+  const external = await vscode.env.asExternalUri(local);
+  return external.toString(); // use this in webviews, auth callbacks, logs, etc.
+}

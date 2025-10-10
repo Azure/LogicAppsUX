@@ -100,6 +100,7 @@ vi.mock('vscode', () => ({
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
+    parse: vi.fn(),
   },
   commands: {
     executeCommand: vi.fn(),
@@ -117,8 +118,12 @@ vi.mock('vscode', () => ({
     },
     sessionId: 'test-session-id',
     appName: 'Visual Studio Code',
+    asExternalUri: vi.fn(),
   },
   version: '1.85.0',
+  extensions: {
+    getExtension: vi.fn(),
+  },
 }));
 
 vi.mock('./src/extensionVariables', () => ({

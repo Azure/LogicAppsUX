@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { projectTemplateKeySetting } from '../../../../constants';
 import { getProjFiles } from '../../../utils/dotnet/dotnet';
-import { addLocalFuncTelemetry, checkSupportedFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
+import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import { verifyAndPromptToCreateProject } from '../../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../../utils/vsCodeConfig/verifyInitForVSCode';
@@ -54,8 +54,6 @@ export async function createCodelessWorkflow(
   }
 
   [language, version] = await verifyInitForVSCode(context, projectPath, language, version);
-
-  checkSupportedFuncVersion(version);
 
   const projectTemplateKey: string | undefined = getWorkspaceSetting(projectTemplateKeySetting, projectPath);
   const wizardContext: IFunctionWizardContext = Object.assign(context, {

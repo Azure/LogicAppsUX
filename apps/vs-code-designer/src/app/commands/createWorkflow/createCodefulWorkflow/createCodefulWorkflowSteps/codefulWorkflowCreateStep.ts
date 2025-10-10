@@ -28,7 +28,6 @@ import {
   vscodeFolderName,
 } from '../../../../../constants';
 import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../../../utils/appSettings/localSettings';
-import { validateDotnetInstalled } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
 import { switchToDotnetProject } from '../../../workflows/switchToDotnetProject';
 import * as vscode from 'vscode';
 import { createConnectionsJson } from '../../../../utils/codeless/connection';
@@ -39,7 +38,6 @@ import { getDebugConfiguration } from '../../../../utils/debug';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    await validateDotnetInstalled(context);
     const logicAppName = context.logicAppName || 'LogicApp';
     const workflowFolderPath = path.join(context.projectPath, nonNullProp(context, 'functionName'));
     const workflowFilePath = path.join(workflowFolderPath, codefulWorkflowFileName);
@@ -169,7 +167,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
   public async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
     const target = vscode.Uri.file(context.projectPath);
 
-    await switchToDotnetProject(context, target, '8', true);
+    await switchToDotnetProject(context, target, true);
 
     await this.updateHostJson(context, hostFileName);
 
