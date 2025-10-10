@@ -1,7 +1,4 @@
-import type {
-	SelectTabEvent,
-	SelectTabData
-} from '@fluentui/react-components';
+import type { SelectTabEvent, SelectTabData } from '@fluentui/react-components';
 import {
   Button,
   Drawer,
@@ -20,8 +17,8 @@ import {
   TagGroup,
   Text,
   InteractionTagPrimary,
-	TabList,
-	Tab
+  TabList,
+  Tab,
 } from '@fluentui/react-components';
 import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
@@ -44,15 +41,16 @@ import {
   DismissRegular,
   ArrowLeftFilled,
   ArrowLeftRegular,
-	TaskListLtrFilled,
-	TaskListLtrRegular,
-	ChatFilled,
-	ChatRegular,
+  TaskListLtrFilled,
+  TaskListLtrRegular,
+  ChatFilled,
+  ChatRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
 import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
 import { AgentChatContent } from './agentChatContent';
-import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
+
+// MARK: End Imports
 
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
@@ -86,7 +84,7 @@ export const RunHistoryPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMonitoringView, selectedRunInstance]);
 
-  // FILTERING
+  // MARK: Filtering
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
   const filteredRuns = useMemo(() => {
     return (
@@ -122,7 +120,7 @@ export const RunHistoryPanel = () => {
     setFilters({});
   }, [isMonitoringView]);
 
-  // //
+  // MARK: INTL
 
   const runListTitle = intl.formatMessage({
     defaultMessage: 'Run history',
@@ -192,17 +190,19 @@ export const RunHistoryPanel = () => {
     Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
   };
 
-	const treeViewTitle = intl.formatMessage({
-		defaultMessage: 'Action log',
-		description: 'Tree view tab title',
-		id: 'QllS1g',
-	});
-	
-	const chatViewTitle = intl.formatMessage({
-		defaultMessage: 'Chat history',
-		description: 'Chat view tab title',
-		id: '5XK9XY',
-	});
+  const treeViewTitle = intl.formatMessage({
+    defaultMessage: 'Action log',
+    description: 'Tree view tab title',
+    id: 'QllS1g',
+  });
+
+  const chatViewTitle = intl.formatMessage({
+    defaultMessage: 'Chat history',
+    description: 'Chat view tab title',
+    id: '5XK9XY',
+  });
+
+  // MARK: Components
 
   const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
 
@@ -259,14 +259,10 @@ export const RunHistoryPanel = () => {
     };
   }, [resize, stopResizingWidth]);
 
-  // MARK: Rendering
+  // MARK: ----
 
   const isRunHistoryCollapsed = useIsRunHistoryCollapsed();
   const [inRunList, setInRunList] = useState(true);
-
-  useEffect(() => {
-    setInRunList(!selectedRunInstance);
-  }, [selectedRunInstance]);
 
   const statusTags = useMemo(
     () => [
@@ -275,8 +271,8 @@ export const RunHistoryPanel = () => {
       { value: 'Running', children: runStatusTexts['Running'] },
       { value: 'Failed', children: runStatusTexts['Failed'] },
       { value: 'Cancelled', children: runStatusTexts['Cancelled'] },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -291,14 +287,16 @@ export const RunHistoryPanel = () => {
     [addFilterCallback]
   );
 
-	const chatEnabled = useWorkflowHasAgentLoop();
-	const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
+  const chatEnabled = useWorkflowHasAgentLoop();
+  const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
 
-	useEffect(() => {
-		if (!chatEnabled && selectedContentTab === 'chat') {
-			setSelectedContentTab('tree');
-		}
-	}, [chatEnabled, selectedContentTab]);
+  useEffect(() => {
+    if (!chatEnabled && selectedContentTab === 'chat') {
+      setSelectedContentTab('tree');
+    }
+  }, [chatEnabled, selectedContentTab]);
+
+  // MARK: Render
 
   return (
     <Drawer
@@ -384,19 +382,19 @@ export const RunHistoryPanel = () => {
             ) : null}
           </>
         ) : (
-					<TabList
-						selectedValue={selectedContentTab}
-						onTabSelect={(_: SelectTabEvent, data: SelectTabData) => setSelectedContentTab(data.value as 'tree' | 'chat')}
-						style={{ justifyContent: 'center', gap: '16px' }}
-					>
-						<Tab value="tree" icon={<TreeViewIcon />}>
-							{treeViewTitle}
-						</Tab>
-						<Tab value="chat" icon={<ChatIcon />} disabled={!chatEnabled}>
-							{chatViewTitle}
-						</Tab>
-					</TabList>
-				)}
+          <TabList
+            selectedValue={selectedContentTab}
+            onTabSelect={(_: SelectTabEvent, data: SelectTabData) => setSelectedContentTab(data.value as 'tree' | 'chat')}
+            style={{ justifyContent: 'center', gap: '16px' }}
+          >
+            <Tab value="tree" icon={<TreeViewIcon />}>
+              {treeViewTitle}
+            </Tab>
+            <Tab value="chat" icon={<ChatIcon />} disabled={!chatEnabled}>
+              {chatViewTitle}
+            </Tab>
+          </TabList>
+        )}
       </DrawerHeader>
 
       <DrawerBody>
@@ -449,8 +447,8 @@ export const RunHistoryPanel = () => {
             {runQuery.isLoading || runQuery.isFetching ? <Spinner style={{ padding: '16px' }} /> : null}
           </div>
         ) : equals(selectedContentTab, 'chat') ? (
-					<AgentChatContent />
-				)	: null}
+          <AgentChatContent />
+        ) : null}
       </DrawerBody>
     </Drawer>
   );
