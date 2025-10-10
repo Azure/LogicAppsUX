@@ -296,6 +296,12 @@ export const RunHistoryPanel = () => {
     }
   }, [chatEnabled, selectedContentTab]);
 
+  useEffect(() => {
+    if (!isMonitoringView) {
+      setInRunList(true);
+    }
+  }, [isMonitoringView]);
+
   // MARK: Render
 
   return (
