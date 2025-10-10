@@ -18,6 +18,11 @@ vi.mock('axios', async () => {
     isAxiosError: vi.fn(),
   };
 });
+// Mock getPublicUrl from extension utilities to avoid requiring a real VS Code environment
+// Must be declared before importing the module that uses it (`../unitTests`).
+vi.mock('../extension', () => ({
+  getPublicUrl: vi.fn(async (url: string) => url), // no-op passthrough for tests
+}));
 import {
   extractAndValidateRunId,
   validateRunId,
