@@ -13,6 +13,7 @@ import { ext } from '../../../../../extensionVariables';
 import * as ConvertWorkspace from '../../../convertToWorkspace';
 import * as syncCloudSettings from '../../../syncCloudSettings';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { testMockOutputsDirectory, testsDirectoryName } from '../../../../../constants';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -45,8 +46,8 @@ describe('saveBlankUnitTest', () => {
     logicAppName: 'LogicApp1',
     logicAppTestFolderPath: '/fake/project/myLogicApp',
     workflowTestFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName),
-    mocksFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName, 'MockOutputs'),
-    testsDirectory: path.join(dummyProjectPath, 'tests'),
+    mocksFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName, testMockOutputsDirectory),
+    testsDirectory: path.join(dummyProjectPath, testsDirectoryName),
   };
 
   const dummyMockOperations: {

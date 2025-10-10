@@ -12,8 +12,11 @@ import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthor
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import {
   azurePublicBaseUrl,
+  designTimeDirectoryName,
   driveLetterSMBSetting,
   hybridAppApiVersion,
+  localSettingsFileName,
+  vscodeFolderName,
   workflowAppAADClientId,
   workflowAppAADClientSecret,
   workflowAppAADTenantId,
@@ -225,7 +228,7 @@ async function createZipFileOnDisk(sourceDir: string): Promise<string> {
   const zipFile = new yazl.ZipFile();
 
   // List of files and folders to ignore
-  const ignoreList = ['node_modules', '.git', '.env', '.vscode', 'workflow-designtime', 'local.settings.json'];
+  const ignoreList = ['node_modules', '.git', '.env', vscodeFolderName, designTimeDirectoryName, localSettingsFileName];
 
   // Add all files in the directory to the zip
   const addDirectoryToZip = async (dir: string, basePath: string) => {

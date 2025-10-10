@@ -10,6 +10,7 @@ import * as path from 'path';
 import { ext } from '../../../../extensionVariables';
 import { window } from 'vscode';
 import { localize } from '../../../../localize';
+import { assetsFolderName } from '../../../../constants';
 
 /**
  * Sets up a new function in an Azure Functions project.
@@ -61,7 +62,7 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
   ): Promise<void> {
     const customCodeTemplateFolderName = 'FunctionProjectTemplate';
     const templateFile = this.csTemplateFileName[targetFramework];
-    const templatePath = path.join(__dirname, 'assets', customCodeTemplateFolderName, templateFile);
+    const templatePath = path.join(__dirname, assetsFolderName, customCodeTemplateFolderName, templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csFilePath = path.join(functionsFolderPath, `${functionName}.cs`);
