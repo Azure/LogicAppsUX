@@ -6,6 +6,7 @@ import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import * as fs from 'fs-extra';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
+import { ext } from '../../../../extensionVariables';
 
 export class DevcontainerStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -21,7 +22,7 @@ export class DevcontainerStep extends AzureWizardPromptStep<IProjectWizardContex
   private async createDevcontainerFiles(context: IProjectWizardContext): Promise<void> {
     // Resolve source directory with canonical container config. When running from compiled dist the
     // source 'container' folder may live beside 'src' or only within 'src/container'. Try a set of candidates.
-    const candidateDirs: string[] = [path.join(__dirname, 'assets', 'container')];
+    const candidateDirs: string[] = [path.join(ext.context.extensionPath, 'assets', 'container')];
 
     let sourceContainerDir: string | undefined;
     for (const dir of candidateDirs) {
