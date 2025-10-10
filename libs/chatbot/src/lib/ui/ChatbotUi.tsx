@@ -75,8 +75,6 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   const { isInverted } = useTheme();
   const textInputRef = useRef<ITextField>(null);
 
-	console.log('#> messages', messages);
-
   // Styles
   const styles = useChatbotStyles();
   const darkStyles = useChatbotDarkStyles();
