@@ -45,6 +45,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
+import { getPublicUrl } from '../../../utils/extension';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -125,8 +126,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     //   throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
     // }
 
-    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    // this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
+    this.baseUrl = `${publicUrl}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -399,7 +400,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
+    const url = `${publicUrl}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       const headers = createHttpHeaders({
         'Content-Type': 'application/json',

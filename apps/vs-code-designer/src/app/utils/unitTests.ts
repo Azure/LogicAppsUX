@@ -22,6 +22,7 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getWorkflowsInLocalProject } from './codeless/common';
 import { executeCommand } from './funcCoreTools/cpUtils';
+import { getPublicUrl } from './extension';
 
 /**
  * Saves a unit test definition for a workflow to the file system.
@@ -1183,7 +1184,7 @@ export async function getMockableOperationTypes(): Promise<void> {
       localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
     );
   }
-  const baseUrl = `http://localhost:${designTimePort}`;
+  const baseUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
   const listMockableOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
   ext.outputChannel.appendLog(localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableOperationsUrl}`));
   try {
@@ -1218,7 +1219,7 @@ export async function getMockableHttpOperationTypes(): Promise<void> {
       localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
     );
   }
-  const baseUrl = `http://localhost:${designTimePort}`;
+  const baseUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
   const listMockableHttpOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableHttpOperations`;
   ext.outputChannel.appendLog(
     localize('listMockableHttpOperations', `Fetching unit test mockable http operations at ${listMockableHttpOperationsUrl}`)

@@ -32,6 +32,7 @@ import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { getPublicUrl } from '../../utils/extension';
 
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
@@ -56,7 +57,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     workflowName = basename(dirname(workflowFilePath));
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
-    baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${ext.workflowRuntimePort}`);
+    baseUrl = `${publicUrl}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
     isLocal = true;
     triggerName = getTriggerName(workflowContent.definition);

@@ -32,6 +32,7 @@ import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
+import { getPublicUrl } from '../../../utils/extension';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
@@ -74,7 +75,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
-    this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${ext.workflowRuntimePort}`);
+    this.baseUrl = `${publicUrl}${managementApiPrefix}`;
 
     if (this.projectPath) {
       this.localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;

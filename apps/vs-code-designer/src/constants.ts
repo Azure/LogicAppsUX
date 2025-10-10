@@ -113,8 +113,8 @@ export const WorkflowKind = {
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
 // Designer
-export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
-export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
+export const managementApiPrefix = 'runtime/webhooks/workflow/api/management';
+export const designerStartApi = 'runtime/webhooks/workflow/api/management/operationGroups';
 export const designerApiLoadTimeout = 300000;
 
 // Commands

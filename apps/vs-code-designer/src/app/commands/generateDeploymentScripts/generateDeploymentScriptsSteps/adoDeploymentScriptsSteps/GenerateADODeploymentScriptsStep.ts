@@ -22,6 +22,7 @@ import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { getAuthorizationToken, getCloudHost } from '../../../../utils/codeless/getAuthorizationToken';
 import type { IAzureDeploymentScriptsContext } from '../../generateDeploymentScripts';
+import { getPublicUrl } from '../../../../utils/extension';
 
 export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAzureDeploymentScriptsContext> {
   public priority = 250;
@@ -300,7 +301,8 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       if (designTimeInst.port === undefined) {
         throw new Error('Design time port is undefined. Please retry once Azure Functions Core Tools has started.');
       }
-      const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
+      const publicUrl = await getPublicUrl(`http://localhost:${designTimeInst.port}`);
+      const apiUrl = `${publicUrl}${managementApiPrefix}/generateDeploymentArtifacts`;
 
       ext.outputChannel.appendLog(
         localize(

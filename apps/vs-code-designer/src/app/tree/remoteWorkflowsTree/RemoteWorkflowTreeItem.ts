@@ -105,7 +105,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
     const requestTriggerName = getRequestTriggerName(node.workflowFileContent.definition);
     if (requestTriggerName) {
       try {
-        const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
+        const url = `${this.parent.parent.id}/hostruntime/${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
         const response = await sendAzureRequest(url, this.parent._context, HTTP_METHODS.POST, node.subscription);
         return response.parsedBody;
       } catch {

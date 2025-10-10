@@ -47,6 +47,7 @@ import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import pstree from 'ps-tree';
 import find_process from 'find-process';
+import { getPublicUrl } from '../extension';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -63,7 +64,8 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     }
 
     const designTimeInst = ext.designTimeInstances.get(projectPath);
-    const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${designTimeInst.port}`);
+    const url = `${publicUrl}${designerStartApi}`;
     if (designTimeInst.isStarting && !isNewDesignTime) {
       await waitForDesignTimeStartUp(actionContext, projectPath, url);
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
