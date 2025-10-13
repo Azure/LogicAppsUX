@@ -127,7 +127,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     // }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    // this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
