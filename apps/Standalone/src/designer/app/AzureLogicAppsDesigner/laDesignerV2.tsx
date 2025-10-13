@@ -179,7 +179,7 @@ const DesignerEditor = () => {
 
   const saveDraftWorkflow = useCallback(
     (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow.definition, undefined, undefined, undefined, true);
+      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
     },
     [siteResourceId, workflowName]
   );
