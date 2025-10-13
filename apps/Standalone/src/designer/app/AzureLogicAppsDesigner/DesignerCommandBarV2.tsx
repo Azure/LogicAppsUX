@@ -92,7 +92,7 @@ const useStyles = makeStyles({
     bottom: '-16px',
     left: '50%',
     transform: 'translate(-50%, 0)',
-    zIndex: 1,
+    zIndex: 10,
   },
   viewButton: {
     padding: '3px 16px',
@@ -421,9 +421,9 @@ export const DesignerCommandBar = ({
         saveWorkflowMutate(true);
       }
     }, 30000); // Auto-save every 30 seconds
-
     return () => clearTimeout(timeoutId);
   }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate]);
+
   return (
     <>
       <Toolbar

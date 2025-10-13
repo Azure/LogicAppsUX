@@ -64,7 +64,6 @@ import {
   store as DesignerStore,
   Constants,
   getSKUDefaultHostOptions,
-  RunHistoryPanel,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
@@ -180,7 +179,7 @@ const DesignerEditor = () => {
 
   const saveDraftWorkflow = useCallback(
     (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+      return deployArtifacts(siteResourceId, workflowName, workflow.definition, undefined, undefined, undefined, true);
     },
     [siteResourceId, workflowName]
   );
@@ -205,28 +204,11 @@ const DesignerEditor = () => {
     }
   }, [isDraftMode, resetDraftWorkflow]);
 
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  const supportsStateful = !equals(workflow?.kind, 'stateless');
-  const services = useMemo(
-    () =>
-      getDesignerServices(
-        workflowId,
-        supportsStateful,
-        isHybridLogicApp,
-        connectionsData ?? {},
-        workflowAppData as WorkflowApp,
-        addConnectionDataInternal,
-        getConnectionConfiguration,
-        tenantId,
-        objectId,
-        canonicalLocation,
-        language,
-        queryClient,
-        settingsData?.properties ?? {},
-        dispatch
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      dispatch(changeRunId(runId));
+    },
+    [dispatch]
   );
 
   // RUN HISTORY
@@ -258,13 +240,6 @@ const DesignerEditor = () => {
     }
   }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
 
-  const onRunSelected = useCallback(
-    (runId: string) => {
-      dispatch(changeRunId(runId));
-    },
-    [dispatch]
-  );
-
   const onRun = useCallback(
     (runId: string | undefined) => {
       showMonitoringView();
@@ -273,9 +248,37 @@ const DesignerEditor = () => {
     [dispatch, showMonitoringView]
   );
 
-  const originalSettings: Record<string, string> = {
-    ...(settingsData?.properties ?? {}),
-  };
+  // Services
+
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
+  const services = useMemo(
+    () =>
+      getDesignerServices(
+        workflowId,
+        supportsStateful,
+        isHybridLogicApp,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        getConnectionConfiguration,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        queryClient,
+        settingsData?.properties ?? {},
+        dispatch,
+        onRunSelected
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
+  );
+
+  const originalSettings: Record<string, string> = useMemo(() => {
+    return { ...(settingsData?.properties ?? {}) };
+  }, [settingsData?.properties]);
+
   const originalParametersData: ParametersData = clone(parameters ?? {});
   const originalNotesData: NotesData = clone(notes ?? {});
 
@@ -594,7 +597,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
-            isMultiVariableEnabled={hostOptions.enableMultiVariable}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable && !isMonitoringView}
           >
             <div
               style={{
@@ -642,18 +645,16 @@ const DesignerEditor = () => {
                   prodWorkflow={artifactData?.properties.files[Artifact.WorkflowFile]}
                 />
                 {!isCodeView && (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%' }}>
-                    <RunHistoryPanel collapsed={!isMonitoringView} onRunSelected={onRunSelected} />
-                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                      <Designer />
-                      <FloatingRunButton
-                        id={workflowId}
-                        saveDraftWorkflow={saveWorkflowFromDesigner}
-                        onRun={onRun}
-                        isDarkMode={isDarkMode}
-                        isDraftMode={isDraftMode}
-                      />
-                    </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
+                    <Designer />
+                    <FloatingRunButton
+                      siteResourceId={siteResourceId}
+                      workflowName={workflowName}
+                      saveDraftWorkflow={saveWorkflowFromDesigner}
+                      onRun={onRun}
+                      isDarkMode={isDarkMode}
+                      isDraftMode={isDraftMode}
+                    />
                   </div>
                 )}
                 {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
@@ -682,7 +683,8 @@ const getDesignerServices = (
   locale: string | undefined,
   queryClient: QueryClient,
   appSettings: Record<string, string>,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
+  openRun: (runId: string) => void
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -988,6 +990,7 @@ const getDesignerServices = (
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
     openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
     openMonitorView: (workflowName: string, runName: string) => console.log('openMonitorView:', workflowName, runName),
+    openRun,
   };
 
   const functionService = new BaseFunctionService({
