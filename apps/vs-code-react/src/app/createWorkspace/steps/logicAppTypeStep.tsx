@@ -79,6 +79,16 @@ export const LogicAppTypeStep: React.FC = () => {
       id: 'Fsc9ZE',
       description: 'Logic app with rules engine description',
     }),
+    EMPTY_LOGIC_APP_NAME: intl.formatMessage({
+      defaultMessage: 'Logic app name cannot be empty.',
+      id: 'CBcl2V',
+      description: 'Logic app name empty text',
+    }),
+    LOGIC_APP_NAME_VALIDATION_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Logic app name must start with a letter and can only contain letters, digits, "_" and "-".',
+      id: 'az+QCK',
+      description: 'Logic app name validation message text',
+    }),
   };
 
   const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
@@ -91,10 +101,10 @@ export const LogicAppTypeStep: React.FC = () => {
   const validateLogicAppName = useCallback(
     (name: string) => {
       if (!name) {
-        return 'Logic app name cannot be empty.';
+        return intlText.EMPTY_LOGIC_APP_NAME;
       }
       if (!logicAppNameValidation.test(name)) {
-        return 'Logic app name must start with a letter and can only contain letters, digits, "_" and "-".';
+        return intlText.LOGIC_APP_NAME_VALIDATION_MESSAGE;
       }
 
       // If custom code or rules engine is selected and the name is from the existing logic apps list, allow it
