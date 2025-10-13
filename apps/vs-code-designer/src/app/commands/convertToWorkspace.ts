@@ -60,7 +60,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
       if (shouldCreateWorkspace === DialogResponses.yes) {
         const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
           title: localize('convertToWorkspace', 'Convert to workspace'),
-          promptSteps: [new WorkspaceFolderStep(), new WorkspaceNameStep(), new WorkspaceFileStep()],
+          promptSteps: [new WorkspaceFolderStep(), new WorkspaceNameStep(), /*new DevcontainerStep(), */ new WorkspaceFileStep()],
           executeSteps: [new OpenFolderStep()],
         });
 

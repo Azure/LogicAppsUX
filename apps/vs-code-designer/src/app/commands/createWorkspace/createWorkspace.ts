@@ -42,6 +42,7 @@ export async function createWorkspace(
     [
       new WorkspaceFolderStep(),
       new WorkspaceNameStep(),
+      // new DevcontainerStep(),
       new LogicAppTemplateStep(),
       new TargetFrameworkStep(),
       new LogicAppNameStep(),

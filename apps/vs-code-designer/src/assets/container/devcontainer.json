@@ -1,0 +1,31 @@
+{
+  "image": "carloscastrotrejo/logicapps-dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-azurelogicapps",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-docker",
+        "azurite.azurite",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.exclude": {
+          "**/bin": true,
+          "**/obj": true
+        }
+      }
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  },
+  "portsAttributes": {
+    "*": {
+      "visibility": "public"
+    }
+  }
+}

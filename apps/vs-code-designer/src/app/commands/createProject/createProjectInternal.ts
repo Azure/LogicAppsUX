@@ -18,7 +18,7 @@ import { WorkspaceFolderStep } from '../createWorkspace/createWorkspaceSteps/wor
 import { OpenFolderStep } from '../createWorkspace/createWorkspaceSteps/openFolderStep';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { latestGAVersion, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -46,9 +46,7 @@ export async function createProjectInternal(
     WorkspaceFolderStep.setProjectPath(wizardContext, options.folderPath);
   }
 
-  if (options.suppressOpenFolder) {
-    wizardContext.openBehavior = OpenBehavior.dontOpen;
-  } else if (!wizardContext.openBehavior) {
+  if (!wizardContext.openBehavior) {
     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
   }

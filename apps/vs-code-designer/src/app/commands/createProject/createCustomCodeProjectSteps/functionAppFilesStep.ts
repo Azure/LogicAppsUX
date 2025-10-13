@@ -287,7 +287,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
       tasks: [
         {
           label: 'build',
-          command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+          command: 'dotnet',
           type: 'process',
           args: ['build', '${workspaceFolder}'],
           group: {

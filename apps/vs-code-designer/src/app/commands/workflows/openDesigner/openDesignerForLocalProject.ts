@@ -1,4 +1,4 @@
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
+import { EXTENSION_BUNDLE_VERSION, localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -45,7 +45,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
-import { getBundleVersionNumber } from '../../../utils/bundleFeed';
+import { getPublicUrl } from '../../../utils/extension';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -118,17 +118,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
 
-    // if (!ext.runtimeInstances.has(this.projectPath)) {
-    //   throw new Error(localize('runtimeNotRunning', `Runtime is not running for project ${this.projectPath}.`));
-    // }
-    // const runtimePort = ext.runtimeInstances.get(this.projectPath).port;
-    // if (!runtimePort) {
-    //   throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
-    // }
-
-    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    // this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
-
+    this.baseUrl = `http://localhost:${designTimePort}/${managementApiPrefix}`;
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
@@ -400,7 +390,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
+    const url = `${publicUrl}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       const headers = createHttpHeaders({
         'Content-Type': 'application/json',
@@ -533,7 +524,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
-    const bundleVersionNumber = await getBundleVersionNumber();
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
@@ -561,7 +551,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
-      extensionBundleVersion: bundleVersionNumber,
+      extensionBundleVersion: EXTENSION_BUNDLE_VERSION,
     };
   }
 

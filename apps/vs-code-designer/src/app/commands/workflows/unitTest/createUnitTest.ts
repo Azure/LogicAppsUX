@@ -33,6 +33,7 @@ import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 import { syncCloudSettings } from '../../syncCloudSettings';
+import { getPublicUrl } from '../../../utils/extension';
 
 /**
  * Handles the creation of a unit test for a Logic App workflow.
@@ -168,7 +169,7 @@ async function generateUnitTestFromRun(
     }
 
     logTelemetry(context, { runtimePort: ext.workflowRuntimePort.toString() });
-    const baseUrl = `http://localhost:${ext.workflowRuntimePort}`;
+    const baseUrl = await getPublicUrl(`http://localhost:${ext.workflowRuntimePort}`);
     const apiUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
 
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
