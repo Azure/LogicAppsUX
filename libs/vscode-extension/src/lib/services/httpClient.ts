@@ -7,7 +7,6 @@ export interface HttpOptions {
   apiHubBaseUrl?: string;
   accessToken?: string;
   hostVersion?: string;
-  githubToken?: string;
 }
 
 export class HttpClient implements IHttpClient {
@@ -20,7 +19,7 @@ export class HttpClient implements IHttpClient {
     this._baseUrl = options.baseUrl;
     this._accessToken = options.accessToken;
     this._apihubBaseUrl = options.apiHubBaseUrl;
-    this._extraHeaders = getExtraHeaders(options.hostVersion ?? '', options.githubToken);
+    this._extraHeaders = getExtraHeaders(options.hostVersion ?? '');
   }
 
   dispose(): void {}
@@ -33,7 +32,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...(isArmId ? { Authorization: `${this._accessToken}` } : {}),
       },
     };
     const response = await axios({
@@ -59,7 +58,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...(isArmId ? { Authorization: `${this._accessToken}` } : {}),
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -116,7 +115,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...(isArmId ? { Authorization: `${this._accessToken}` } : {}),
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -186,10 +185,9 @@ export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
 }
 
-function getExtraHeaders(hostVersion: string, githubToken: string | undefined): Record<string, string> {
+function getExtraHeaders(hostVersion: string): Record<string, string> {
   return {
     'x-ms-user-agent': `LogicAppsDesigner/(host vscode ${hostVersion})`,
-    ...(githubToken ? { 'X-GitHub-Token': githubToken } : {}),
   };
 }
 

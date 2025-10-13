@@ -155,7 +155,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             hostVersion: ext.extensionVersion,
             isLocal: isLocal,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
-            githubToken: process?.env?.CODESPACES ? process?.env?.GITHUB_TOKEN : undefined,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more

@@ -38,7 +38,6 @@ export const OverviewApp = () => {
       baseUrl: workflowState.baseUrl,
       apiHubBaseUrl: '',
       hostVersion: workflowState.hostVersion,
-      githubToken: workflowState.githubToken,
     });
 
     return new StandardRunService({
@@ -53,7 +52,6 @@ export const OverviewApp = () => {
     workflowState.accessToken,
     workflowState.workflowProperties.name,
     workflowState.hostVersion,
-    workflowState.githubToken,
   ]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
