@@ -118,17 +118,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
 
-    // if (!ext.runtimeInstances.has(this.projectPath)) {
-    //   throw new Error(localize('runtimeNotRunning', `Runtime is not running for project ${this.projectPath}.`));
-    // }
-    // const runtimePort = ext.runtimeInstances.get(this.projectPath).port;
-    // if (!runtimePort) {
-    //   throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
-    // }
-
-    const publicUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
-    this.baseUrl = `${publicUrl}${managementApiPrefix}`;
-
+    this.baseUrl = `http://localhost:${designTimePort}/${managementApiPrefix}`;
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
