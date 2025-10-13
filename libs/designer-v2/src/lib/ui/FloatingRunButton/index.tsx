@@ -85,19 +85,19 @@ export const FloatingRunButton = ({
           serializedWorkflow,
           customCodeData as any,
           () => dispatch(resetDesignerDirtyState(undefined) as any),
-          true
+          isDraftMode
         );
       }
     } catch (error: any) {
       console.error('Error saving workflow:', error);
     }
-  }, [dispatch, saveDraftWorkflow]);
+  }, [dispatch, saveDraftWorkflow, isDraftMode]);
 
   const {
     mutate: runMutate,
     isLoading: runIsLoading,
     // error: runError,
-  } = useMutation(async (isDraftMode?: boolean) => {
+  } = useMutation(async () => {
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];
@@ -181,7 +181,7 @@ export const FloatingRunButton = ({
           primaryActionButton={{
             icon: runIsLoading ? <Spinner size="tiny" /> : <RunIcon />,
             onClick: () => {
-              runMutate(isDraftMode);
+              runMutate();
             },
           }}
           menuButton={
