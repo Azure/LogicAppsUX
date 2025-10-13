@@ -25,7 +25,7 @@ const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular)
 export interface FloatingRunButtonProps {
   siteResourceId?: string;
   workflowName?: string;
-  saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void) => Promise<any>;
+  saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void, isDraftSave?: boolean) => Promise<any>;
   onRun?: (runId: string) => void;
   isDarkMode: boolean;
   isDraftMode?: boolean;
@@ -81,7 +81,12 @@ export const FloatingRunButton = ({
       const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
       if (!hasParametersErrors) {
-        return saveDraftWorkflow(serializedWorkflow, customCodeData as any, () => dispatch(resetDesignerDirtyState(undefined) as any));
+        return saveDraftWorkflow(
+          serializedWorkflow,
+          customCodeData as any,
+          () => dispatch(resetDesignerDirtyState(undefined) as any),
+          true
+        );
       }
     } catch (error: any) {
       console.error('Error saving workflow:', error);
