@@ -94,6 +94,52 @@ export const DotNetFrameworkStep: React.FC = () => {
       id: 'jaa2Wl',
       description: 'Rules engine folder name input label',
     }),
+    NET_VERSION_PLACEHOLDER: intl.formatMessage({
+      defaultMessage: 'Select .NET version',
+      id: 'XEetXV',
+      description: 'Select .NET version placeholder text',
+    }),
+    EMPTY_FUNCTION_NAMESPACE: intl.formatMessage({
+      defaultMessage: 'Function namespace cannot be empty.',
+      id: 'ZY5ygq',
+      description: 'Function namespace empty text',
+    }),
+    FUNCTION_NAMESPACE_VALIDATION_MESSAGE: intl.formatMessage({
+      defaultMessage:
+        'The namespace must start with a letter or underscore, contain only letters, digits, underscores, and periods, and must not end with a period.',
+      id: 'unrpCO',
+      description: 'Function namespace validation message text',
+    }),
+    EMPTY_FUNCTION_NAME: intl.formatMessage({
+      defaultMessage: 'Function name cannot be empty.',
+      id: 'MbFszg',
+      description: 'Function name empty text',
+    }),
+    FUNCTION_NAME_VALIDATION_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Function name must start with a letter and can only contain letters, digits, "_" and "-".',
+      id: 'DdAlJ9',
+      description: 'Function name validation message text',
+    }),
+    EMPTY_FUNCTION_FOLDER_NAME: intl.formatMessage({
+      defaultMessage: 'Function folder name cannot be empty.',
+      id: 'Vk1TBl',
+      description: 'Function folder name empty text',
+    }),
+    FUNCTION_FOLDER_NAME_VALIDATION_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Function folder name must start with a letter and can only contain letters, digits, "_" and "-".',
+      id: 'ZSRPr2',
+      description: 'Function folder name validation message text',
+    }),
+    FUNCTION_FOLDER_NAME_SAME: intl.formatMessage({
+      defaultMessage: 'Function folder name cannot be the same as the logic app name.',
+      id: '/kz09u',
+      description: 'Function folder name same as logic app name text',
+    }),
+    FUNCTION_FOLDER_NAME_EXISTS: intl.formatMessage({
+      defaultMessage: 'A project with this name already exists in the workspace.',
+      id: '7bhWPe',
+      description: 'Function folder name exists in workspace text',
+    }),
   };
 
   const handleDotNetFrameworkChange: DropdownProps['onOptionSelect'] = (event, data) => {
@@ -104,38 +150,38 @@ export const DotNetFrameworkStep: React.FC = () => {
 
   const validateFunctionNamespace = (namespace: string) => {
     if (!namespace) {
-      return 'Function namespace cannot be empty.';
+      return intlText.EMPTY_FUNCTION_NAMESPACE;
     }
     if (!namespaceValidation.test(namespace)) {
-      return 'The namespace must start with a letter or underscore, contain only letters, digits, underscores, and periods, and must not end with a period.';
+      return intlText.FUNCTION_NAMESPACE_VALIDATION_MESSAGE;
     }
     return undefined;
   };
 
   const validateFunctionName = (name: string) => {
     if (!name) {
-      return 'Function name cannot be empty.';
+      return intlText.EMPTY_FUNCTION_NAME;
     }
     if (!functionNameValidation.test(name)) {
-      return 'Function name must start with a letter and can only contain letters, digits, "_" and "-".';
+      return intlText.FUNCTION_NAME_VALIDATION_MESSAGE;
     }
     return undefined;
   };
 
   const validateFunctionFolderName = (name: string) => {
     if (!name) {
-      return 'Function folder name cannot be empty.';
+      return intlText.EMPTY_FUNCTION_FOLDER_NAME;
     }
     if (!functionNameValidation.test(name)) {
-      return 'Function folder name must start with a letter and can only contain letters, digits, "_" and "-".';
+      return intlText.FUNCTION_FOLDER_NAME_VALIDATION_MESSAGE;
     }
-    // Check if function name is the same as logic app name
+    // Check if function folder name is the same as logic app name
     if (logicAppName && name.trim().toLowerCase() === logicAppName.trim().toLowerCase()) {
-      return 'Function name cannot be the same as the logic app name.';
+      return intlText.FUNCTION_FOLDER_NAME_SAME;
     }
     // Check if the function name already exists in workspace folders
     if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
-      return 'A project with this name already exists in the workspace.';
+      return intlText.FUNCTION_FOLDER_NAME_EXISTS;
     }
     return undefined;
   };
@@ -169,7 +215,7 @@ export const DotNetFrameworkStep: React.FC = () => {
               value={targetFramework === 'net472' ? '.NET Framework' : targetFramework === 'net8' ? '.NET 8' : ''}
               selectedOptions={targetFramework ? [targetFramework] : []}
               onOptionSelect={handleDotNetFrameworkChange}
-              placeholder="Select .NET version"
+              placeholder={intlText.NET_VERSION_PLACEHOLDER}
               className={styles.inputControl}
             >
               <Option value="net472" text=".NET Framework">
