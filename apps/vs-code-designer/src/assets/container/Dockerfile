@@ -115,5 +115,5 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 \
 # Keep container running
 # -----------------------------
 # This prevents the container from exiting immediately
-# When used with devcontainers or docker-compose, this will be overridden
+# When used with devcontainers this will be overridden
 CMD ["sleep", "infinity"]

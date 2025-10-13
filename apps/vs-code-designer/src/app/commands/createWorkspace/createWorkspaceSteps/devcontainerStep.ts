@@ -37,7 +37,7 @@ export class DevcontainerStep extends AzureWizardPromptStep<IProjectWizardContex
     await fs.ensureDir(devcontainerPath);
 
     // Files we expect in the source directory
-    const filesToCopy = ['devcontainer.json', 'docker-compose.yml', 'Dockerfile'];
+    const filesToCopy = ['devcontainer.json', 'Dockerfile'];
 
     if (!sourceContainerDir) {
       // Could not locate source directory; create marker file and return gracefully.

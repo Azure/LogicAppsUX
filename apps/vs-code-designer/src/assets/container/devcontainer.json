@@ -1,17 +1,5 @@
 {
-  "name": "Logic Apps Standard Development",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "features": {
-    "ghcr.io/devcontainers/features/azure-cli:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/powershell:1": {
-      "version": "latest",
-      "modules": "Az"
-    }
-  },
+  "image": "carloscastrotrejo/logicapps-dev",
   "customizations": {
     "vscode": {
       "extensions": [

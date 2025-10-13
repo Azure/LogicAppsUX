@@ -20,7 +20,7 @@ This directory contains the Docker configuration for the Logic Apps Standard Dev
 
 ## 🔄 How It Works: Complete Execution Flow
 
-Understanding how Dockerfile, docker-compose.yml, and devcontainer.json work together:
+Understanding how Dockerfile,  and devcontainer.json work together:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -42,19 +42,7 @@ Understanding how Dockerfile, docker-compose.yml, and devcontainer.json work tog
         ✅ Extension Bundle 1.131.9
 
 ┌─────────────────────────────────────────────────────────────┐
-│ 2. START PHASE (Every time you start the container)         │
-└─────────────────────────────────────────────────────────────┘
-    │
-    ├─> docker-compose.yml executes
-    │   ├─> Create container from image
-    │   ├─> Mount volumes (your code)
-    │   ├─> Setup network with azurite
-    │   └─> Run: sleep infinity (keeps container alive)
-    │
-    └─> Container is running with your workspace mounted
-
-┌─────────────────────────────────────────────────────────────┐
-│ 3. DEVCONTAINER PHASE (When VS Code connects)               │
+│ 2. DEVCONTAINER PHASE (When VS Code connects)               │
 └─────────────────────────────────────────────────────────────┘
     │
     ├─> devcontainer.json applies
@@ -73,7 +61,6 @@ Understanding how Dockerfile, docker-compose.yml, and devcontainer.json work tog
 ### ⚡ Key Points
 
 - **Dockerfile** = Heavy, slow installations (cached in image)
-- **docker-compose.yml** = Runtime configuration (mounts, networking)
 - **devcontainer.json** = Quick dev tools & VS Code customization
 
 ### 📊 What Gets Installed Where
@@ -146,20 +133,6 @@ Your `devcontainer.json` is already configured to build locally. To use the pre-
   // ... rest of your config
 }
 ```
-
-Or update `docker-compose.yml`:
-
-```yaml
-services:
-  app:
-    image: carloscastrotrejo/logicapps-dev:latest
-    platform: linux/amd64
-    volumes:
-      - ../..:/workspaces:cached
-    command: sleep infinity
-    network_mode: service:azurite
-```
-
 ---
 
 ## 🛠️ For Maintainers: Building & Publishing
