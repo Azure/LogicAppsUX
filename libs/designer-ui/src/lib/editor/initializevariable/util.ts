@@ -102,13 +102,10 @@ export const parseVariableEditorSegments = (
 
   const nodeMap = new Map<string, ValueSegment>();
   const initialValueString = convertSegmentsToString(initialValue, nodeMap);
-  console.log(initialValueString);
   const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
 
   try {
-    console.log(wrappedValueString);
     const parsedVariables = JSON.parse(wrappedValueString);
-    console.log(parsedVariables);
 
     if (!Array.isArray(parsedVariables)) {
       return [];
