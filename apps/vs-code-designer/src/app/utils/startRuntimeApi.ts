@@ -14,13 +14,13 @@ import * as vscode from 'vscode';
 import * as portfinder from 'portfinder';
 import * as os from 'os';
 import * as cp from 'child_process';
-import pstree from 'ps-tree';
 import find_process from 'find-process';
 import axios from 'axios';
 import { localize } from '../../localize';
 import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
+import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
 
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
@@ -154,12 +154,8 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   if (os.platform() === Platform.windows) {
-    await new Promise<void>((resolve) => {
-      pstree(process.pid, (_err: Error | null, children: Array<{ PID: string; COMMAND?: string; COMM?: string }>) => {
-        correctId = children.some((p) => p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe');
-        resolve();
-      });
-    });
+    const children = await getChildProcessesWithScript(process.pid);
+    correctId = children.some((p) => p.processId.toString() === childFuncPid && p.name === 'func.exe');
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {
