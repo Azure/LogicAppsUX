@@ -115,7 +115,7 @@ export const workflowSlice = createSlice({
       initializedState.hostVersion = hostVersion;
       initializedState.isLocal = isLocal;
       initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
-      initialState.githubToken = githubToken;
+      initializedState.githubToken = githubToken;
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;

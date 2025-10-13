@@ -51,7 +51,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
-  console.log('charlie', process.env.GITHUB_TOKEN);
 
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
