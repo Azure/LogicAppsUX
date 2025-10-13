@@ -7,6 +7,7 @@ export interface HttpOptions {
   apiHubBaseUrl?: string;
   accessToken?: string;
   hostVersion?: string;
+  githubToken?: string;
 }
 
 export class HttpClient implements IHttpClient {
@@ -19,7 +20,7 @@ export class HttpClient implements IHttpClient {
     this._baseUrl = options.baseUrl;
     this._accessToken = options.accessToken;
     this._apihubBaseUrl = options.apiHubBaseUrl;
-    this._extraHeaders = getExtraHeaders(options.hostVersion ?? '');
+    this._extraHeaders = getExtraHeaders(options.hostVersion ?? '', options.githubToken);
   }
 
   dispose(): void {}
@@ -185,9 +186,10 @@ export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
 }
 
-function getExtraHeaders(hostVersion: string): Record<string, string> {
+function getExtraHeaders(hostVersion: string, githubToken: string | undefined): Record<string, string> {
   return {
     'x-ms-user-agent': `LogicAppsDesigner/(host vscode ${hostVersion})`,
+    ...(githubToken ? { 'X-GitHub-Token': githubToken } : {}),
   };
 }
 

@@ -15,6 +15,7 @@ export interface InitializePayload {
   hostVersion?: string;
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
+  githubToken?: string;
 }
 
 export const Status = {
@@ -38,6 +39,7 @@ export interface WorkflowState {
   hostVersion?: string;
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
+  githubToken?: string;
 }
 
 const initialState: WorkflowState = {
@@ -82,6 +84,7 @@ export const workflowSlice = createSlice({
         hostVersion,
         isLocal,
         isWorkflowRuntimeRunning,
+        githubToken,
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -112,6 +115,7 @@ export const workflowSlice = createSlice({
       initializedState.hostVersion = hostVersion;
       initializedState.isLocal = isLocal;
       initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
+      initialState.githubToken = githubToken;
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;

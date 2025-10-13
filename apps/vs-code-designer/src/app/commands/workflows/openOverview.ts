@@ -51,6 +51,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
+  console.log('charlie', process.env.GITHUB_TOKEN);
 
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
@@ -155,6 +156,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             hostVersion: ext.extensionVersion,
             isLocal: isLocal,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
+            githubToken: process?.env?.CODESPACES ? process?.env?.GITHUB_TOKEN : undefined,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
