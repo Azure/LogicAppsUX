@@ -35,14 +35,26 @@ export const useIsAgenticWorkflowOnly = () => {
 
 export const useIsA2AWorkflow = () => {
   return useSelector((state: RootState) => {
-    // Standard SKU: Check workflowKind
-    if (equals(state.workflow.workflowKind, 'agent', false)) {
+    const workflowKind = state.workflow.workflowKind;
+
+    // Standard SKU, kind is agent
+    if (equals(workflowKind, 'agent', false)) {
       return true;
     }
 
-    // Consumption SKU: Check definition metadata for agentType = "conversational"
+    // Standard SKU, kind is not agent
+    if (workflowKind && !equals(workflowKind, 'agent', false)) {
+      return false;
+    }
+
+    // Consumption SKU, check definition metadata
     const agentType = state.workflow.originalDefinition?.metadata?.agentType;
-    return equals(agentType, 'conversational', false);
+    const isConsumptionAgent = equals(agentType, 'conversational', false);
+
+    // Also check if workflow has Agent operations (fallback for Consumption workflows without metadata)
+    const hasAgentOperations = Object.values(state.workflow.operations).some((operation) => equals(operation.type, 'Agent', true));
+
+    return isConsumptionAgent || hasAgentOperations;
   });
 };
 
