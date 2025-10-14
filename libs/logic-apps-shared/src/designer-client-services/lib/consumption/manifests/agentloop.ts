@@ -67,6 +67,7 @@ export default {
           'x-ms-editor-options': {
             options: [{ value: 'gpt-4o-mini', displayName: 'gpt-4o-mini' }],
           },
+          default: 'gpt-4o-mini',
           'x-ms-visibility': 'important',
         },
         deploymentId: {
