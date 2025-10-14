@@ -694,9 +694,8 @@ async function ensureAccessPolicy(
     }
   } catch (error) {
     // If 404, policies don't exist - continue to create
-    if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+    if (error.response?.status !== 404) {
       ext.outputChannel.appendLog(localize('errorCheckingPolicies', 'Error checking existing policies: {0}', error.message));
-      // Continue to attempt creation
     }
   }
 
@@ -726,17 +725,7 @@ async function ensureAccessPolicy(
 
     ext.outputChannel.appendLog(localize('policyCreated', 'Successfully created access policy for objectId: {0}', objectId));
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 409) {
-        // Policy already exists - this is acceptable
-        ext.outputChannel.appendLog(localize('policyAlreadyExists', 'Access policy already exists (409) for objectId: {0}', objectId));
-        return;
-      }
-
-      const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
-      ext.outputChannel.appendLog(localize('policyCreationFailed', 'Failed to create access policy: {0}', errorDetails));
-    }
-
-    throw new Error(`Failed to create access policy for connection ${resolvedConnectionId}: ${error}`);
+    const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+    ext.outputChannel.appendLog(localize('policyCreationFailed', 'Failed to create access policy: {0}', errorDetails));
   }
 }
