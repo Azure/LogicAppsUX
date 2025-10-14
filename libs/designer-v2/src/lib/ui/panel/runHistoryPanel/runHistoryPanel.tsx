@@ -1,3 +1,4 @@
+import type { SelectTabEvent, SelectTabData } from '@fluentui/react-components';
 import {
   Button,
   Drawer,
@@ -12,11 +13,14 @@ import {
   MessageBarTitle,
   SearchBox,
   Spinner,
-  Tag,
+  InteractionTag,
   TagGroup,
   Text,
+  InteractionTagPrimary,
+  TabList,
+  Tab,
 } from '@fluentui/react-components';
-import { HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
+import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -37,12 +41,22 @@ import {
   DismissRegular,
   ArrowLeftFilled,
   ArrowLeftRegular,
+  TaskListLtrFilled,
+  TaskListLtrRegular,
+  ChatFilled,
+  ChatRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
+import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
+import { AgentChatContent } from './agentChatContent';
+
+// MARK: End Imports
 
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
+const TreeViewIcon = bundleIcon(TaskListLtrFilled, TaskListLtrRegular);
+const ChatIcon = bundleIcon(ChatFilled, ChatRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
@@ -70,7 +84,7 @@ export const RunHistoryPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMonitoringView, selectedRunInstance]);
 
-  // FILTERING
+  // MARK: Filtering
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
   const filteredRuns = useMemo(() => {
     return (
@@ -89,12 +103,6 @@ export const RunHistoryPanel = () => {
     );
   }, [filters, runs]);
 
-  const filtersWithoutRunId = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { runId, ...rest } = filters;
-    return rest;
-  }, [filters]);
-
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
       const newFilters = { ...prev };
@@ -107,7 +115,12 @@ export const RunHistoryPanel = () => {
     });
   }, []);
 
-  // //
+  // Clear filters when switching views
+  useEffect(() => {
+    setFilters({});
+  }, [isMonitoringView]);
+
+  // MARK: INTL
 
   const runListTitle = intl.formatMessage({
     defaultMessage: 'Run history',
@@ -119,24 +132,6 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Run log',
     description: 'Run log panel title',
     id: 'J4accH',
-  });
-
-  const statusText = intl.formatMessage({
-    defaultMessage: 'Status',
-    description: 'Status column header',
-    id: 'eLQPek',
-  });
-
-  const runIdText = intl.formatMessage({
-    defaultMessage: 'Run ID',
-    description: 'Run ID filter label',
-    id: '4rdY7D',
-  });
-
-  const workflowVersionText = intl.formatMessage({
-    defaultMessage: 'Version',
-    description: 'Workflow version filter label',
-    id: 'oGINHJ',
   });
 
   const refreshAria = intl.formatMessage({
@@ -187,21 +182,27 @@ export const RunHistoryPanel = () => {
     id: 'ob2fSf',
   });
 
-  const getFilterKeyText = useCallback(
-    (key: FilterTypes) => {
-      switch (key) {
-        case 'runId':
-          return runIdText;
-        case 'workflowVersion':
-          return workflowVersionText;
-        case 'status':
-          return statusText;
-        default:
-          return '';
-      }
-    },
-    [runIdText, statusText, workflowVersionText]
-  );
+  const runStatusTexts: Record<string, string> = {
+    All: intl.formatMessage({ defaultMessage: 'All', description: 'All run statuses', id: 'bHpFLq' }),
+    Succeeded: intl.formatMessage({ defaultMessage: 'Succeeded', description: 'Succeeded status', id: 'NIfcbE' }),
+    Running: intl.formatMessage({ defaultMessage: 'Running', description: 'Running status', id: 'GRJfCY' }),
+    Failed: intl.formatMessage({ defaultMessage: 'Failed', description: 'Failed status', id: 'Mrge1g' }),
+    Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
+  };
+
+  const treeViewTitle = intl.formatMessage({
+    defaultMessage: 'Action log',
+    description: 'Tree view tab title',
+    id: 'QllS1g',
+  });
+
+  const chatViewTitle = intl.formatMessage({
+    defaultMessage: 'Chat history',
+    description: 'Chat view tab title',
+    id: '5XK9XY',
+  });
+
+  // MARK: Components
 
   const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
 
@@ -258,16 +259,50 @@ export const RunHistoryPanel = () => {
     };
   }, [resize, stopResizingWidth]);
 
-  // MARK: Rendering
+  // MARK: ----
 
   const isRunHistoryCollapsed = useIsRunHistoryCollapsed();
   const [inRunList, setInRunList] = useState(true);
 
+  const statusTags = useMemo(
+    () => [
+      { value: 'All', children: runStatusTexts['All'] },
+      { value: 'Succeeded', children: runStatusTexts['Succeeded'] },
+      { value: 'Running', children: runStatusTexts['Running'] },
+      { value: 'Failed', children: runStatusTexts['Failed'] },
+      { value: 'Cancelled', children: runStatusTexts['Cancelled'] },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const onStatusSelect = useCallback(
+    (value: string) => {
+      if (!value || equals(value, 'All')) {
+        addFilterCallback({ key: 'status', value: undefined });
+      } else {
+        addFilterCallback({ key: 'status', value });
+      }
+    },
+    [addFilterCallback]
+  );
+
+  const chatEnabled = useWorkflowHasAgentLoop();
+  const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
+
   useEffect(() => {
-    if (selectedRunInstance) {
-      setInRunList(false);
+    if (!chatEnabled && selectedContentTab === 'chat') {
+      setSelectedContentTab('tree');
     }
-  }, [selectedRunInstance]);
+  }, [chatEnabled, selectedContentTab]);
+
+  useEffect(() => {
+    if (!isMonitoringView) {
+      setInRunList(true);
+    }
+  }, [isMonitoringView]);
+
+  // MARK: Render
 
   return (
     <Drawer
@@ -305,43 +340,44 @@ export const RunHistoryPanel = () => {
               <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError} style={{ flex: 1 }}>
                 <SearchBox
                   placeholder={searchPlaceholder}
+                  defaultValue={filters['runId'] ?? undefined}
                   onChange={(_e, data) => {
                     addFilterCallback({ key: 'runId', value: undefined });
                     if (data.value === '') {
                       setSearchError(null);
                     } else if (runIdRegex.test(data.value)) {
                       addFilterCallback({ key: 'runId', value: data.value });
-                      HostService().openRun?.(data.value);
                       setSearchError(null);
                     } else {
                       setSearchError(invalidRunId);
+                    }
+                  }}
+                  // When the user presses enter, try to open the run if the runId is valid
+                  onKeyDown={(e: any) => {
+                    if (e.key !== 'Enter') {
+                      return;
+                    }
+                    const value = filters?.['runId'];
+                    if (value && runIdRegex.test(value)) {
+                      HostService().openRun?.(value);
                     }
                   }}
                 />
               </Field>
               <RefreshButton />
             </div>
-            {Object.keys(filtersWithoutRunId).length > 0 ? (
-              <TagGroup
-                onDismiss={(_e, data) => {
-                  addFilterCallback({ key: data.value as FilterTypes, value: undefined });
-                }}
-                style={{ flexWrap: 'wrap', gap: '4px' }}
-              >
-                {Object.entries(filtersWithoutRunId).map(([key, value]) => (
-                  <Tag
-                    dismissible
-                    dismissIcon={{ 'aria-label': 'remove' }}
-                    shape={'circular'}
-                    appearance={'brand'}
-                    key={key}
-                    value={key ?? ''}
-                  >
-                    {getFilterKeyText(key as FilterTypes)}: {value}
-                  </Tag>
-                ))}
-              </TagGroup>
-            ) : null}
+            <TagGroup size="small">
+              {statusTags.map((tag) => (
+                <InteractionTag
+                  key={tag.value}
+                  value={tag.value}
+                  onClick={() => onStatusSelect(tag.value)}
+                  selected={filters?.['status'] === tag.value || (equals(tag.value, 'All') && !filters?.['status'])}
+                >
+                  <InteractionTagPrimary>{tag.children}</InteractionTagPrimary>
+                </InteractionTag>
+              ))}
+            </TagGroup>
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
                 <MessageBarBody>
@@ -351,7 +387,20 @@ export const RunHistoryPanel = () => {
               </MessageBar>
             ) : null}
           </>
-        ) : null}
+        ) : (
+          <TabList
+            selectedValue={selectedContentTab}
+            onTabSelect={(_: SelectTabEvent, data: SelectTabData) => setSelectedContentTab(data.value as 'tree' | 'chat')}
+            style={{ justifyContent: 'center', gap: '16px' }}
+          >
+            <Tab value="tree" icon={<TreeViewIcon />}>
+              {treeViewTitle}
+            </Tab>
+            <Tab value="chat" icon={<ChatIcon />} disabled={!chatEnabled}>
+              {chatViewTitle}
+            </Tab>
+          </TabList>
+        )}
       </DrawerHeader>
 
       <DrawerBody>
@@ -398,12 +447,14 @@ export const RunHistoryPanel = () => {
               {parseErrorMessage(runQuery.error)}
             </MessageBarBody>
           </MessageBar>
-        ) : (
+        ) : equals(selectedContentTab, 'tree') ? (
           <div style={{ margin: '16px -16px' }}>
             <RunTreeView />
             {runQuery.isLoading || runQuery.isFetching ? <Spinner style={{ padding: '16px' }} /> : null}
           </div>
-        )}
+        ) : equals(selectedContentTab, 'chat') ? (
+          <AgentChatContent />
+        ) : null}
       </DrawerBody>
     </Drawer>
   );

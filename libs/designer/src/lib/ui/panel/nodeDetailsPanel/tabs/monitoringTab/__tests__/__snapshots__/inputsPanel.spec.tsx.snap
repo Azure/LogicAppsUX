@@ -113,44 +113,6 @@ exports[`InputsPanel > should render error state 1`] = `
               class="buttons"
             >
               <button
-                aria-label="Select all text in ''"
-                class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-                type="button"
-              >
-                <span
-                  class="fui-Button__icon rywnvv2"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </span>
-              </button>
-              <button
                 aria-label="Copy the value of '' to the clipboard"
                 class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                 type="button"
@@ -210,7 +172,7 @@ exports[`InputsPanel > should render error state 1`] = `
     </div>
     <div
       aria-orientation="horizontal"
-      class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+      class="fui-Divider ___14drqcq_z8b5q40 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
       role="separator"
     />
   </div>
@@ -330,44 +292,6 @@ exports[`InputsPanel > should render loading state 1`] = `
               class="buttons"
             >
               <button
-                aria-label="Select all text in ''"
-                class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-                type="button"
-              >
-                <span
-                  class="fui-Button__icon rywnvv2"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </span>
-              </button>
-              <button
                 aria-label="Copy the value of '' to the clipboard"
                 class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                 type="button"
@@ -427,7 +351,7 @@ exports[`InputsPanel > should render loading state 1`] = `
     </div>
     <div
       aria-orientation="horizontal"
-      class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+      class="fui-Divider ___14drqcq_z8b5q40 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
       role="separator"
     />
   </div>
@@ -547,44 +471,6 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
               class="buttons"
             >
               <button
-                aria-label="Select all text in ''"
-                class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-                type="button"
-              >
-                <span
-                  class="fui-Button__icon rywnvv2"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.5 3.5a1 1 0 0 0-1 1v2.25a.75.75 0 0 1-1.5 0V4.5A2.5 2.5 0 0 1 4.5 2h2.25a.75.75 0 0 1 0 1.5H4.5Zm0 13a1 1 0 0 1-1-1v-2.25a.75.75 0 0 0-1.5 0v2.25A2.5 2.5 0 0 0 4.5 18h2.25a.75.75 0 0 0 0-1.5H4.5Zm12-12a1 1 0 0 0-1-1h-2.25a.75.75 0 0 1 0-1.5h2.25A2.5 2.5 0 0 1 18 4.5v2.25a.75.75 0 0 1-1.5 0V4.5Zm-1 12a1 1 0 0 0 1-1v-2.25a.75.75 0 0 1 1.5 0v2.25a2.5 2.5 0 0 1-2.5 2.5h-2.25a.75.75 0 0 1 0-1.5h2.25ZM6 6.75c0-.41.34-.75.75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5ZM6 12.75c0-.41.34-.75.75-.75h3.5a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.5 3C3.67 3 3 3.67 3 4.5v2a.5.5 0 0 1-1 0v-2A2.5 2.5 0 0 1 4.5 2h2a.5.5 0 0 1 0 1h-2Zm0 14A1.5 1.5 0 0 1 3 15.5v-2a.5.5 0 0 0-1 0v2A2.5 2.5 0 0 0 4.5 18h2a.5.5 0 0 0 0-1h-2ZM17 4.5c0-.83-.67-1.5-1.5-1.5h-2a.5.5 0 0 1 0-1h2A2.5 2.5 0 0 1 18 4.5v2a.5.5 0 0 1-1 0v-2ZM15.5 17c.83 0 1.5-.67 1.5-1.5v-2a.5.5 0 0 1 1 0v2a2.5 2.5 0 0 1-2.5 2.5h-2a.5.5 0 0 1 0-1h2Zm-9-11a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7Zm0 3a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7ZM6 12.5c0-.28.22-.5.5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </span>
-              </button>
-              <button
                 aria-label="Copy the value of '' to the clipboard"
                 class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                 type="button"
@@ -644,7 +530,7 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
     </div>
     <div
       aria-orientation="horizontal"
-      class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+      class="fui-Divider ___14drqcq_z8b5q40 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
       role="separator"
     />
   </div>
@@ -723,7 +609,7 @@ exports[`InputsPanel > should render the InputsPanel with no inputs 1`] = `
     </div>
     <div
       aria-orientation="horizontal"
-      class="fui-Divider ___14drqcq_2rxt2r0 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
+      class="fui-Divider ___14drqcq_z8b5q40 f122n59 f1ewtqcl f22iagw f1063pyq fqerorx f10pi13n fk6fouc fy9rknc figsok6 fwrc4pm f17mccla fyl8oag f16vkdww fhsnbul f1gw3sf2 f1ly5f7u f1s3tz6t f1wl9k8s f13zj6fq fkfq4zb f1vccso1 f1geml7w f1r7kh1m fjml6kk f16j7guv fx01ahm fl8d8yv fj1a37q fly5x3f f163fonl f51yk4v f13rof3u f8rth92 f6czdpx f1iyka9k fzynn9s fekrn8e f1kyqvp9 fesgyo"
       role="separator"
     />
   </div>

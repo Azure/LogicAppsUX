@@ -15,8 +15,8 @@ import Constants from '../../../common/constants';
  * Generates a handoff tool name following the pattern: handoff_to_<agent-name>
  * If the name exceeds 64 characters, falls back to the GUID-based pattern
  */
-function generateHandoffToolName(targetId: string): string {
-  const preferredName = `handoff_to_${targetId}`;
+function generateHandoffToolName(targetId: string, sourceId: string): string {
+  const preferredName = `handoff_to_${targetId}_from_${sourceId}`;
 
   if (preferredName.length <= Constants.HANDOFF_TOOL_NAME_MAX_LENGTH) {
     return preferredName;
@@ -41,7 +41,7 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
       operationId: agentOperation.id,
     });
 
-    const newToolId = generateHandoffToolName(targetId);
+    const newToolId = generateHandoffToolName(targetId, sourceId);
     const newHandoffId = `handoff_${customLengthGuid(8)}`;
 
     // Initialize subgraph manifest

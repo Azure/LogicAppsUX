@@ -2,12 +2,12 @@
 
 exports[`lib/ui/menuItems/collapseMenuItem > should render correctly when isCollapsed is false 1`] = `
 <div
-  className="fui-MenuItem r11normc"
+  className="fui-MenuItem rfoezjv"
   data-automation-id="msla-collapse-menu-option"
   onClick={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
-  onMouseEnter={[Function]}
+  onMouseMove={[Function]}
   role="menuitem"
   tabIndex={0}
 >
@@ -53,12 +53,12 @@ exports[`lib/ui/menuItems/collapseMenuItem > should render correctly when isColl
 
 exports[`lib/ui/menuItems/collapseMenuItem > should render correctly when isCollapsed is true 1`] = `
 <div
-  className="fui-MenuItem r11normc"
+  className="fui-MenuItem rfoezjv"
   data-automation-id="msla-collapse-menu-option"
   onClick={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
-  onMouseEnter={[Function]}
+  onMouseMove={[Function]}
   role="menuitem"
   tabIndex={0}
 >
