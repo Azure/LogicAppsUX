@@ -58,15 +58,11 @@ export default {
           type: 'string',
           default: 'AzureOpenAI',
         },
-        // TODO: Replace hardcoded model IDs with dynamic values fetched from backend API once available.
         modelId: {
           title: 'Model Id',
           description: 'Select the model to use.',
           type: 'string',
           'x-ms-editor': 'dropdown',
-          'x-ms-editor-options': {
-            options: [{ value: 'gpt-4o', displayName: 'gpt-4o' }],
-          },
           'x-ms-visibility': 'important',
         },
         deploymentId: {

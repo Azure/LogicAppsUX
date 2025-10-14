@@ -51,7 +51,7 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
+import { Divider, Dropdown, Option, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -77,6 +77,7 @@ import {
 import {
   clone,
   ConnectionService,
+  ConsumptionConnectionService,
   EditorService,
   equals,
   ExtensionProperties,
@@ -85,6 +86,7 @@ import {
   isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
+  httpClient,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
@@ -820,9 +822,37 @@ export const ParameterSection = ({
     }
   };
 
+  const subscriptionId = useSelector((state: RootState) => state.workflow.subscriptionId);
+  const resourceGroup = useSelector((state: RootState) => state.workflow.resourceGroup);
+  const flowName = useSelector((state: RootState) => state.workflow.flowName);
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
+      if (param.parameterName === 'modelId') {
+        return {
+          settingType: 'Custom',
+          settingProp: {
+            component: (
+              <>
+                <label>{param.label}</label>
+                <ModelIdDropdown
+                  subscriptionId={subscriptionId}
+                  resourceGroup={resourceGroup}
+                  flowName={flowName}
+                  value={param.value?.[0]?.value || ''}
+                  disabled={readOnly}
+                  options={{
+                    baseUrl: 'https://management.azure.com',
+                    apiVersion: '2022-09-01-preview',
+                    httpClient: httpClient,
+                  }}
+                />
+              </>
+            ),
+            required: param.required,
+          },
+        };
+      }
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
 
@@ -1049,6 +1079,68 @@ export const getEditorAndOptions = (
   }
 
   return { editor, editorOptions };
+};
+
+console.log('Rendering ModelIdDropdown');
+interface ModelIdDropdownProps {
+  subscriptionId: string;
+  resourceGroup: string;
+  flowName: string;
+  value?: string;
+  disabled?: boolean;
+  options: any; // Replace 'any' with a more specific type if available for serviceOptions
+}
+
+export const ModelIdDropdown: React.FC<ModelIdDropdownProps> = ({
+  subscriptionId,
+  resourceGroup,
+  flowName,
+  value,
+  disabled,
+  options: serviceOptions,
+}) => {
+  const [modelOptions, setModelOptions] = useState<{ key: string; text: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Guard: Only fetch if all params are present
+    if (!subscriptionId || !resourceGroup || !flowName) {
+      setModelOptions([]);
+      return;
+    }
+    setLoading(true);
+    const service = new ConsumptionConnectionService(serviceOptions);
+    service
+      .fetchAgentModels({ subscriptionId, resourceGroup, flowName })
+      .then((models) => {
+        setModelOptions(
+          models.map((model) => ({
+            key: model.name,
+            text: model.name,
+          }))
+        );
+      })
+      .finally(() => setLoading(false));
+  }, [subscriptionId, resourceGroup, flowName, serviceOptions]);
+
+  return (
+    <Dropdown
+      value={value}
+      disabled={disabled}
+      placeholder={loading ? 'Loading models...' : 'Select a model'}
+      onOptionSelect={(_, data) => {
+        if (data.optionValue) {
+          // onChange(data.optionValue);
+        }
+      }}
+    >
+      {modelOptions.map((option) => (
+        <Option key={option.key} value={option.key}>
+          {option.text}
+        </Option>
+      ))}
+    </Dropdown>
+  );
 };
 
 const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {

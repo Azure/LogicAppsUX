@@ -121,6 +121,13 @@ export type Settings = SettingBase &
         settingType: 'SettingDropdown';
         settingProp: SettingDropdownProps;
       }
+    | {
+        settingType: 'Custom';
+        settingProp: {
+          component: JSX.Element;
+          [key: string]: any;
+        };
+      }
   );
 
 type WarningDismissHandler = (key?: string, message?: string) => void;
@@ -333,6 +340,8 @@ const Setting = ({
           return <RunAfter {...settingProp} />;
         case 'SettingDropdown':
           return <SettingDropdown {...settingProp} />;
+        case 'Custom':
+          return settingProp.component;
         default:
           return null;
       }
