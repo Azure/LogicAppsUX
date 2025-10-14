@@ -78,6 +78,7 @@ import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
+import { switchDesignerVersion } from './switchDesignerVersion';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -166,6 +167,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
+  registerCommand(extensionCommand.switchDesignerVersion, switchDesignerVersion);
 
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
     // Suppress "Report an Issue" button for all errors since then we are going to render our custom button

@@ -371,6 +371,11 @@
         "title": "Parameterize connections",
         "category": "Azure Logic Apps",
         "when": "config.myExtension.enableCommand"
+      },
+      {
+        "command": "azureLogicAppsStandard.switchDesignerVersion",
+        "title": "Switch designer version",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -990,6 +995,12 @@
             "type": "boolean",
             "description": "Enable to use SMB deployment for hybrid logic apps.",
             "default": false
+          },
+          "azureLogicAppsStandard.designerVersion": {
+            "type": "string",
+            "enum": ["v1", "v2"],
+            "description": "The default version of workflow designer.",
+            "default":  "v2"
           }
         }
       }
