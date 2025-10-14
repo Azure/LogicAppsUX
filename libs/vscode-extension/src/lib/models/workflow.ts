@@ -124,3 +124,9 @@ export const TargetFramework = {
   Net8: 'net8',
 } as const;
 export type TargetFramework = (typeof TargetFramework)[keyof typeof TargetFramework];
+
+export const DesignerVersion = {
+  v1: 'v1',
+  v2: 'v2',
+} as const;
+export type DesignerVersion = (typeof DesignerVersion)[keyof typeof DesignerVersion];
