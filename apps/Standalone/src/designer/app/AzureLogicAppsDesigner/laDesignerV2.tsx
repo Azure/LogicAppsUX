@@ -287,7 +287,7 @@ const DesignerEditor = () => {
       workflowFromDesigner: Workflow,
       customCode: CustomCodeFileNameMapping | undefined,
       clearDirtyState: () => void,
-      autoSave?: boolean
+      isDraftSave?: boolean
     ): Promise<any> => {
       const { definition, connectionReferences, parameters, notes } = workflowFromDesigner;
       const workflowToSave = {
@@ -401,7 +401,7 @@ const DesignerEditor = () => {
         notesToUpdate,
         clearDirtyState,
         undefined,
-        autoSave
+        isDraftSave
       );
 
       return workflowToSave;
