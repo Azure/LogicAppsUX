@@ -86,6 +86,16 @@ export const WorkflowTypeStep: React.FC = () => {
       id: '+P+nuy',
       description: 'Conversational agents workflow description',
     }),
+    EMPTY_WORKFLOW_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow name cannot be empty.',
+      id: 'jfWu9H',
+      description: 'Workflow name empty text',
+    }),
+    WORKFLOW_NAME_VALIDATION_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".',
+      id: 'V3DWT4',
+      description: 'Workflow name validation message text',
+    }),
   };
 
   const handleWorkflowTypeChange: DropdownProps['onOptionSelect'] = (event, data) => {
@@ -96,10 +106,10 @@ export const WorkflowTypeStep: React.FC = () => {
 
   const validateWorkflowName = (name: string) => {
     if (!name) {
-      return 'The workflow name cannot be empty.';
+      return intlText.EMPTY_WORKFLOW_NAME;
     }
     if (!workflowNameValidation.test(name)) {
-      return 'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".';
+      return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
     }
     return undefined;
   };

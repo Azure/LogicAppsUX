@@ -8,6 +8,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
+import * as path from 'path';
 
 export const ReviewCreateStep: React.FC = () => {
   const intl = useIntl();
@@ -32,7 +33,7 @@ export const ReviewCreateStep: React.FC = () => {
 
   const needsDotNetFrameworkStep = logicAppType === 'customCode';
   const needsFunctionConfiguration = logicAppType === 'rulesEngine';
-  const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+  const separator = path.sep;
 
   // Determine if we're using an existing logic app
   const isUsingExistingLogicApp =

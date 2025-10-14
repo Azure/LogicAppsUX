@@ -10,6 +10,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
+import * as path from 'path';
 
 // Logic App name validation regex
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
@@ -21,7 +22,7 @@ export const LogicAppTypeStep: React.FC = () => {
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const { logicAppType, logicAppName, workspaceName, workspaceProjectPath, workspaceFileJson, logicAppsWithoutCustomCode, flowType } =
     createWorkspaceState;
-  const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+  const separator = path.sep;
 
   const shouldShowLogicAppSection = flowType === 'createWorkspace' || flowType === 'createLogicApp';
 
@@ -89,6 +90,11 @@ export const LogicAppTypeStep: React.FC = () => {
       id: 'az+QCK',
       description: 'Logic app name validation message text',
     }),
+    PROJECT_EXISTS_MESSAGE: intl.formatMessage({
+      defaultMessage: 'A project with this name already exists in the workspace.',
+      id: 'qXL3lS',
+      description: 'A project with name already exists message text',
+    }),
   };
 
   const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
@@ -117,11 +123,18 @@ export const LogicAppTypeStep: React.FC = () => {
 
       // Check if the logic app name already exists in workspace folders (for new names)
       if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
-        return 'A project with this name already exists in the workspace.';
+        return intlText.PROJECT_EXISTS_MESSAGE;
       }
       return undefined;
     },
-    [logicAppType, logicAppsWithoutCustomCode, workspaceFileJson]
+    [
+      intlText.EMPTY_LOGIC_APP_NAME,
+      intlText.LOGIC_APP_NAME_VALIDATION_MESSAGE,
+      intlText.PROJECT_EXISTS_MESSAGE,
+      logicAppType,
+      logicAppsWithoutCustomCode,
+      workspaceFileJson,
+    ]
   );
 
   // Re-validate logic app name when dependencies change

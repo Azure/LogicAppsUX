@@ -17,12 +17,14 @@ import { workspaceNameValidation } from './steps/workspaceNameStep';
 import { logicAppNameValidation } from './steps/logicAppTypeStep';
 import { workflowNameValidation } from './steps/workflowTypeStep';
 import { functionNameValidation, namespaceValidation } from './steps/dotNetFrameworkStep';
+import * as path from 'path';
 
 export const CreateWorkspace: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
+  const separator = path.sep;
 
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const {
@@ -278,7 +280,6 @@ export const CreateWorkspace: React.FC = () => {
 
         // Workspace name validation (not needed for createLogicApp)
         if (requirements.needsWorkspaceName) {
-          const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
           const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
           const workspaceNameValid =
             workspaceName.trim() !== '' &&
@@ -385,7 +386,6 @@ export const CreateWorkspace: React.FC = () => {
       case 0: {
         // Project Setup step - validate all required fields with regex validation
         const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
-        const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
         const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
         const workspaceNameValid =
           workspaceName.trim() !== '' &&

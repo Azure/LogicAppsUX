@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import * as path from 'path';
 
 // Regex validation constants
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
@@ -34,7 +35,7 @@ export const WorkspaceNameStep: React.FC = () => {
   const [isValidatingPath, setIsValidatingPath] = useState<boolean>(false);
   const [isValidatingWorkspaceName, setIsValidatingWorkspaceName] = useState<boolean>(false);
 
-  const separator = workspaceProjectPath.fsPath?.includes('/') ? '/' : '\\';
+  const separator = path.sep;
 
   const intlText = {
     TITLE: intl.formatMessage({
@@ -62,32 +63,51 @@ export const WorkspaceNameStep: React.FC = () => {
       id: 'uNvoPg',
       description: 'Workspace name input label',
     }),
+    WORKSPACE_PARENT_FOLDER_PATH_EMPTY_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Workspace parent folder path cannot be empty.',
+      id: 'VT6UoA',
+      description: 'Workspace parent folder path cannot be empty message text',
+    }),
+    PATH_NOT_EXISTS_MESSAGE: intl.formatMessage({
+      defaultMessage: 'The specified path does not exist or is not accessible.',
+      id: 'LgCmeY',
+      description: 'Specified path does not exist or is not accessible message text',
+    }),
+    EMPTY_WORKSPACE_NAME: intl.formatMessage({
+      defaultMessage: 'Workspace name cannot be empty.',
+      id: 'O2IxHR',
+      description: 'Workspace name empty text',
+    }),
+    WORKSPACE_NAME_VALIDATION_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Workspace name must start with a letter and can only contain letters, digits, "_" and "-".',
+      id: 'RRuHNc',
+      description: 'Workspace name validation message text',
+    }),
   };
 
   const validateProjectPath = useCallback(
     (path: string) => {
       if (!path) {
-        return 'Workspace parent folder path cannot be empty.';
+        return intlText.WORKSPACE_PARENT_FOLDER_PATH_EMPTY_MESSAGE;
       }
-
       // Check if we have a validation result for this path
       const isPathValid = pathValidationResults[path];
       if (isPathValid === false) {
-        return 'The specified path does not exist or is not accessible.';
+        return intlText.PATH_NOT_EXISTS_MESSAGE;
       }
 
       return undefined;
     },
-    [pathValidationResults]
+    [intlText.PATH_NOT_EXISTS_MESSAGE, intlText.WORKSPACE_PARENT_FOLDER_PATH_EMPTY_MESSAGE, pathValidationResults]
   );
 
   const validateWorkspaceName = useCallback(
     (name: string) => {
       if (!name) {
-        return 'The workspace name cannot be empty.';
+        return intlText.EMPTY_WORKSPACE_NAME;
       }
       if (!workspaceNameValidation.test(name)) {
-        return 'Workspace name must start with a letter and can only contain letters, digits, "_" and "-".';
+        return intlText.WORKSPACE_NAME_VALIDATION_MESSAGE;
       }
 
       // Check if workspace folder or file already exists
@@ -95,17 +115,44 @@ export const WorkspaceNameStep: React.FC = () => {
         const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
         const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
 
+        const FOLDER_EXISTS_MESSAGE = intl.formatMessage(
+          {
+            defaultMessage: 'A folder named "{name}" already exists in the selected location.',
+            id: 'Rtnnx8',
+            description: 'Folder already exists in selected location text.',
+          },
+          {
+            name: name,
+          }
+        );
+        const CODE_WORKSPACE_EXISTS_MESSAGE = intl.formatMessage(
+          {
+            defaultMessage: 'A workspace file "{name}.code-workspace" already exists.',
+            id: 'X0a7uc',
+            description: 'Folder already exists in selected location text.',
+          },
+          {
+            name: name,
+          }
+        );
         if (workspaceExistenceResults[workspaceFolder] === true) {
-          return `A folder named "${name}" already exists in the selected location.`;
+          return FOLDER_EXISTS_MESSAGE;
         }
         if (workspaceExistenceResults[workspaceFile] === true) {
-          return `A workspace file "${name}.code-workspace" already exists.`;
+          return CODE_WORKSPACE_EXISTS_MESSAGE;
         }
       }
 
       return undefined;
     },
-    [workspaceProjectPath.fsPath, separator, workspaceExistenceResults]
+    [
+      workspaceProjectPath.fsPath,
+      intlText.EMPTY_WORKSPACE_NAME,
+      intlText.WORKSPACE_NAME_VALIDATION_MESSAGE,
+      separator,
+      intl,
+      workspaceExistenceResults,
+    ]
   );
 
   // Debounced path validation function

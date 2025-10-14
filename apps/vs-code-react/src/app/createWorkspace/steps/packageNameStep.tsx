@@ -48,23 +48,33 @@ export const PackageNameStep: React.FC = () => {
       id: 'cR0MlP',
       description: 'Browse folder button',
     }),
+    PACKAGE_PATH_EMPTY_MESSAGE: intl.formatMessage({
+      defaultMessage: 'Package path cannot be empty.',
+      id: 'pO1Zvz',
+      description: 'Package path cannot be empty message text',
+    }),
+    PACKAGE_PATH_NOT_EXISTS_MESSAGE: intl.formatMessage({
+      defaultMessage: 'The specified path does not exist or is not accessible.',
+      id: 'LgCmeY',
+      description: 'Specified path does not exist or is not accessible message text',
+    }),
   };
 
   const validatePackagePath = useCallback(
     (path: string) => {
       if (!path) {
-        return 'Package path cannot be empty.';
+        return intlText.PACKAGE_PATH_EMPTY_MESSAGE;
       }
 
       // Check if we have a validation result for this path
       const isPathValid = packageValidationResults[path];
       if (isPathValid === false) {
-        return 'The specified path does not exist or is not accessible.';
+        return intlText.PACKAGE_PATH_NOT_EXISTS_MESSAGE;
       }
 
       return undefined;
     },
-    [packageValidationResults]
+    [intlText.PACKAGE_PATH_EMPTY_MESSAGE, intlText.PACKAGE_PATH_NOT_EXISTS_MESSAGE, packageValidationResults]
   );
 
   // Debounced path validation function
