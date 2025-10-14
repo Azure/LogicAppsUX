@@ -13,6 +13,7 @@ import {
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
+  fetchAgentUrlConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
@@ -54,7 +55,6 @@ import {
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import axios from 'axios';
 import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
@@ -116,6 +116,16 @@ const DesignerEditorConsumption = () => {
     setConnectionReferences(_connectionReferences);
     setParameters(_parameters);
   }, [workflowAndArtifactsData]);
+
+  // Update workflow definition when viewing a specific run instance
+  useEffect(() => {
+    if (isMonitoringView && runInstanceData?.properties?.workflow?.properties?.definition) {
+      setWorkflow((previousWorkflow: any) => ({
+        ...previousWorkflow,
+        definition: runInstanceData.properties.workflow.properties.definition,
+      }));
+    }
+  }, [isMonitoringView, runInstanceData]);
 
   const [definition, setDefinition] = useState<any>();
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
@@ -544,61 +554,7 @@ const getDesignerServices = (
     getAgentUrl: async () => {
       // For Consumption workflows, construct agent URL with API key authentication
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
-      if (!accessEndpoint || !workflowName) {
-        return { agentUrl: '', chatUrl: '', hostName: '' };
-      }
-
-      try {
-        // Get the API keys for authentication
-        const currentDate = new Date();
-        const apiKeysResponse = await axios.post(
-          `${baseUrl}${workflowId}/listApiKeys?api-version=2016-10-01`,
-          {
-            expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
-            keyType: 'Primary',
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${environment.armToken}`,
-            },
-          }
-        );
-
-        const apiKey = apiKeysResponse.data?.key;
-        const apiEndpoint = apiKeysResponse.data?.endpoint;
-
-        // Use the endpoint from listApiKeys if available, otherwise fall back to accessEndpoint
-        const endpoint = apiEndpoint || accessEndpoint;
-        const hostName = new URL(endpoint).hostname;
-        const agentBaseUrl = endpoint.startsWith('https://') ? endpoint : `https://${endpoint}`;
-
-        // Construct URLs following the pattern used in Standard SKU
-        // chatUrl is base path, queryParams contains authentication and API version
-        const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-        const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
-        // Always include api-version, include apiKey if available
-        const queryParams = apiKey ? { apiKey, 'api-version': '2016-10-01' } : { 'api-version': '2016-10-01' };
-
-        return {
-          agentUrl,
-          chatUrl,
-          queryParams,
-          hostName,
-        };
-      } catch (_error) {
-        // Fallback if API key fetch fails
-        const hostName = new URL(accessEndpoint).hostname;
-        const agentBaseUrl = `https://${hostName}`;
-        const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-        const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
-
-        return {
-          agentUrl,
-          chatUrl,
-          queryParams: undefined,
-          hostName,
-        };
-      }
+      return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint);
     },
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
