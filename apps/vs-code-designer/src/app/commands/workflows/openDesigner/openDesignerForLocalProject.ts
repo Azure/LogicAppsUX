@@ -334,10 +334,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         const projectPath = await getLogicAppProjectRoot(this.context, filePath);
 
         workflow.definition = definitionToSave;
-        // Handle connection references if using MSI generated from azure identity library for local token credential
-        if (connectionReferences && ext.useMSI && connectionReferences?.authentication?.type === 'ManagedServiceIdentity') {
-          // TODO: Handle user assigned identity for Azure SDK Local Token Credential
-        }
 
         if (connectionReferences) {
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
