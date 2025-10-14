@@ -324,6 +324,26 @@ export async function getConnectionsAndSettingsToUpdate(
     }
   }
 
+  // Update MSI connection permissions if MSI is enabled
+  if (isMSIEnabled()) {
+    try {
+      const updatedReferences = await updateConnectionReferencesWithMSI(
+        context,
+        connectionsData.managedApiConnections,
+        azureTenantId,
+        workflowBaseManagementUri,
+        localSettings
+      );
+      context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
+      console.log(updatedReferences);
+    } catch (error) {
+      context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;
+      window.showErrorMessage(
+        localize('msiPermissionError', 'Failed to configure MSI permissions for connections. Please check your access rights.')
+      );
+    }
+  }
+
   connectionsData.managedApiConnections = referencesToAdd;
 
   if (areKeysRefreshed) {
@@ -540,4 +560,148 @@ async function createAccessPolicyInConnection(
  */
 export function isMSIEnabled(): boolean {
   return ext?.useMSI === true;
+}
+
+async function updateConnectionReferencesWithMSI(
+  context: IActionContext,
+  connectionReferences: object,
+  azureTenantId: string,
+  workflowBaseManagementUri: string,
+  localSettings: ILocalSettingsJson
+): Promise<any> {
+  const accessToken = await getAuthorizationToken(azureTenantId);
+
+  // Extract user identity from token
+
+  //TODO reterive both object ID and tenant ID from token instead of passing tenant ID as parameter
+  const jwtHelper = JwtTokenHelper.createInstance();
+  const tokenPayload = jwtHelper.extractJwtTokenPayload(accessToken);
+  const objectId = tokenPayload?.oid || tokenPayload?.sub;
+  const tenantId = tokenPayload?.tid;
+
+  if (!objectId || !tenantId) {
+    throw new Error('Unable to retrieve user identity from token');
+  }
+
+  const updatedReferences: any = {};
+
+  for (const [referenceKey, reference] of Object.entries(connectionReferences)) {
+    //if (reference?.authentication?.type === 'ManagedServiceIdentity' && reference?.connection?.id?.startsWith('/subscriptions/')) {
+    const connectionId = reference.connection.id;
+
+    // Resolve appsetting placeholders in connection ID
+    //const resolvedConnectionReference = resolveConnectionsReferences(connectionId, undefined, localSettings.Values);
+    //onsole.log(`Processing connection: ${resolvedConnectionReference} for reference key: ${referenceKey}`);
+
+    // Check and create access policy
+    await ensureAccessPolicy(connectionId, objectId, azureTenantId, accessToken, workflowBaseManagementUri, localSettings);
+
+    // Update reference - keep existing structure but ensure runtime URL
+    updatedReferences[referenceKey] = reference;
+    //} else {
+    // updatedReferences[referenceKey] = reference;
+  }
+  return updatedReferences;
+}
+
+async function ensureAccessPolicy(
+  connectionId: string,
+  objectId: string,
+  tenantId: string,
+  accessToken: string,
+  baseManagementUri: string,
+  localSettings: ILocalSettingsJson
+): Promise<void> {
+  // Construct base URL for connection management
+  const subscriptionId = localSettings.Values['WORKFLOWS_SUBSCRIPTION_ID'];
+  const resourceGroup = localSettings.Values['WORKFLOWS_RESOURCE_GROUP_NAME'];
+  // Replace appsetting placeholders with actual values
+  let connectionID = connectionId;
+  if (connectionId.includes('@{appsetting(')) {
+    connectionID = connectionId
+      .replace("@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}", subscriptionId)
+      .replace("@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}", resourceGroup);
+  }
+  console.log(connectionID, connectionId);
+  if (!subscriptionId || !resourceGroup) {
+    throw new Error('Missing AZURE_SUBSCRIPTION_ID or AZURE_RESOURCE_GROUP in local settings');
+  }
+
+  //connectionID = "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/msnweather"
+  const policiesUrl = `${formatSetting(baseManagementUri)}${connectionID}/accessPolicies?api-version=2018-07-01-preview`;
+
+  // Check existing policies
+  try {
+    const response = await axios.get(policiesUrl, {
+      headers: { authorization: accessToken }, // <-- Changed here
+    });
+
+    const policies = response.data.value || [];
+    if (
+      policies.some(
+        (p: any) => p.properties?.principal?.identity?.objectId === objectId && p.properties?.principal?.identity?.tenantId === tenantId
+      )
+    ) {
+      console.log(policies); // Policy already exists
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    console.log('error getting policies'); // Policy already exists
+  }
+
+  // <-- ADDED: Get connection details for location
+  const connectionUrl = `${formatSetting(baseManagementUri)}${connectionID}?api-version=2018-07-01-preview`;
+  let location: string;
+
+  try {
+    const connResponse = await axios.get(connectionUrl, {
+      headers: { authorization: accessToken },
+    });
+    location = connResponse.data.location;
+  } catch (error) {
+    console.error('Failed to get connection details:', error, location);
+    throw new Error(`Unable to retrieve connection location: ${error}`);
+  }
+
+  // Create access policy
+  // TODO: Pass in something more meaningful for policy name if possible
+  const policyName = `local-msi-${objectId.substring(0, 8)}`;
+  console.log(policyName);
+
+  // Create access policy (Bicep-equivalent semantics: child name = principal objectId)
+  const childName = objectId; // Must be the AAD objectId
+  const apiVersion = '2016-06-01'; // Align with stable version used by your working Bicep
+  const base = formatSetting(baseManagementUri); // Use the SAME base you used for GET (cloud-aware)
+  const normalizedConnId = connectionID;
+  const policyUrl = `${base}${normalizedConnId}/accessPolicies/${encodeURIComponent(childName)}?api-version=${apiVersion}`;
+
+  // Ensure Authorization header includes Bearer prefix
+  const authHeader = accessToken;
+
+  try {
+    await axios.put(
+      policyUrl,
+      {
+        // Minimal body; no 'name', no 'type', no 'location'
+        properties: {
+          principal: {
+            type: 'ActiveDirectory',
+            identity: { objectId, tenantId },
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: authHeader,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log(`Successfully created access policy for objectId: ${childName}`);
+  } catch (error) {
+    if (!axios.isAxiosError(error) || error.response?.status !== 409) {
+      console.error('Failed to create policy:', error.response?.data || error);
+      throw error; // Only ignore 409 Conflict if you want idempotencu
+    }
+  }
 }
