@@ -607,7 +607,17 @@ export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, node
       if (parameter && agentUrlInfo) {
         parameter.value = [createLiteralValueSegment(agentUrlInfo.agentUrl)];
         if (agentUrlInfo.queryParams) {
-          parameter.editorOptions = { ...parameter.editorOptions, chatUrl: agentUrlInfo.chatUrl, queryParams: agentUrlInfo.queryParams };
+          parameter.editorOptions = {
+            ...parameter.editorOptions,
+            chatUrl: agentUrlInfo.chatUrl,
+            queryParams: agentUrlInfo.queryParams,
+          };
+        } else {
+          // Even without queryParams, ensure editorOptions preserves showAgentViewer from manifest
+          parameter.editorOptions = {
+            ...parameter.editorOptions,
+            chatUrl: agentUrlInfo.chatUrl,
+          };
         }
         return parameter;
       }
