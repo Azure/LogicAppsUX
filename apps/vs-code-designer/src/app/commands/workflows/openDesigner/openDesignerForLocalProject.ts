@@ -206,6 +206,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             isUnitTest: this.isUnitTest,
             unitTestDefinition: this.unitTestDefinition,
             runId: this.runId,
+            designerVersion: this.designerVersion,
           },
         });
 

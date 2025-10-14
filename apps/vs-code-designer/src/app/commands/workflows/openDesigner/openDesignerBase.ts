@@ -10,6 +10,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
+import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 
 export interface IDesignerOptions {
   references?: any;
@@ -44,6 +45,7 @@ export abstract class OpenDesignerBase {
   protected isUnitTest: boolean;
   protected unitTestDefinition: any;
   protected runId?: string;
+  protected designerVersion: string;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
@@ -65,6 +67,7 @@ export abstract class OpenDesignerBase {
     this.isLocal = isLocal;
     this.isMonitoringView = isMonitoringView;
     this.runId = runId;
+    this.designerVersion = getGlobalSetting('designerVersion');
   }
 
   protected abstract createPanel(): Promise<void>;

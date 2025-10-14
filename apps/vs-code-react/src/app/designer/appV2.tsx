@@ -28,7 +28,7 @@ import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
 
-export const DesignerApp = () => {
+export const DesignerAppV2 = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);

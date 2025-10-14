@@ -26,6 +26,7 @@ export interface DesignerState {
   hostVersion: string;
   isUnitTest: boolean;
   unitTestDefinition: UnitTestDefinition | null;
+  designerVersion?: string;
 }
 
 const initialState: DesignerState = {
@@ -57,13 +58,13 @@ const initialState: DesignerState = {
   hostVersion: '',
   isUnitTest: false,
   unitTestDefinition: null,
+  designerVersion: '',
 };
 
 export const designerSlice = createSlice({
   name: 'designer',
   initialState,
   reducers: {
-    /// TODO(ccastrotrejo): Update missing types
     initializeDesigner: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,
@@ -80,6 +81,7 @@ export const designerSlice = createSlice({
         isUnitTest,
         unitTestDefinition,
         workflowRuntimeBaseUrl,
+        designerVersion,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -96,6 +98,7 @@ export const designerSlice = createSlice({
       state.hostVersion = hostVersion;
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
+      state.designerVersion = designerVersion;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;

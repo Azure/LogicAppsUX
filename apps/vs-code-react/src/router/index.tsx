@@ -13,8 +13,14 @@ import { UnitTestResults } from '../app/unitTest';
 import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type { RootState } from '../state/store';
+import { useSelector } from 'react-redux';
+import { DesignerAppV2 } from '../app/designer/appV2';
+import { DesignerVersion } from '@microsoft/vscode-extension-logic-apps';
 
 export const Router: React.FC = () => {
+  const vscodeState = useSelector((state: RootState) => state.designer);
+  const { designerVersion } = vscodeState;
   return (
     <MemoryRouter>
       <Routes>
@@ -29,7 +35,7 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.review}`} element={<ReviewApp />} />
         <Route path={`/${RouteName.overview}`} element={<OverviewApp />} />
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
-        <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
+        <Route path={`/${RouteName.designer}`} element={designerVersion === DesignerVersion.v1 ? <DesignerApp /> : <DesignerAppV2 />} />
         <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
       </Routes>
     </MemoryRouter>
