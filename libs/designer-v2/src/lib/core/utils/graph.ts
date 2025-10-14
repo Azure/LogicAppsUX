@@ -154,13 +154,15 @@ const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: 
   return visited;
 };
 
-export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata): string[] => {
-  let currentParent = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
+export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata, useGraphParents = false): string[] => {
+  const { parentNodeId, graphId } = getRecordEntry(nodesMetadata, nodeId) ?? {};
+  let currentParent = useGraphParents ? graphId : parentNodeId;
   const result: string[] = [];
 
   while (currentParent) {
     result.push(currentParent);
-    currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
+    const { parentNodeId, graphId } = getRecordEntry(nodesMetadata, currentParent) ?? {};
+    currentParent = useGraphParents ? graphId : parentNodeId;
   }
 
   // Add any nodes that are a handoff parent of the node

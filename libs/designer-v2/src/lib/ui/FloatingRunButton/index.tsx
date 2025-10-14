@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Button, SplitButton } from '@fluentui/react-components';
+import { Button, Spinner, SplitButton } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
-import { canRunBeInvokedWithPayload, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { canRunBeInvokedWithPayload, HTTP_METHODS, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomCodeFilesWithData,
@@ -23,14 +23,22 @@ const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
 
 export interface FloatingRunButtonProps {
-  id?: string;
-  saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void) => Promise<any>;
+  siteResourceId?: string;
+  workflowName?: string;
+  saveDraftWorkflow: (workflowDefinition: Workflow, customCodeData: any, onSuccess: () => void, isDraftSave?: boolean) => Promise<any>;
   onRun?: (runId: string) => void;
   isDarkMode: boolean;
   isDraftMode?: boolean;
 }
 
-export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMode, isDraftMode }: FloatingRunButtonProps) => {
+export const FloatingRunButton = ({
+  siteResourceId,
+  workflowName,
+  saveDraftWorkflow,
+  onRun,
+  isDarkMode,
+  isDraftMode,
+}: FloatingRunButtonProps) => {
   const intl = useIntl();
 
   const dispatch = useDispatch();
@@ -39,7 +47,10 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
 
   const operationState = useSelector((state: RootState) => state.operations);
 
-  const canBeRunWithPayload = useMemo(() => canRunBeInvokedWithPayload(operationState?.operationInfo), [operationState?.operationInfo]);
+  const canBeRunWithPayload = useMemo(
+    () => !isDraftMode && canRunBeInvokedWithPayload(operationState?.operationInfo),
+    [isDraftMode, operationState?.operationInfo]
+  );
 
   const saveWorkflow = useCallback(async () => {
     try {
@@ -70,12 +81,17 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
       const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
       if (!hasParametersErrors) {
-        return saveDraftWorkflow(serializedWorkflow, customCodeData as any, () => dispatch(resetDesignerDirtyState(undefined) as any));
+        return saveDraftWorkflow(
+          serializedWorkflow,
+          customCodeData as any,
+          () => dispatch(resetDesignerDirtyState(undefined) as any),
+          isDraftMode
+        );
       }
     } catch (error: any) {
       console.error('Error saving workflow:', error);
     }
-  }, [dispatch, saveDraftWorkflow]);
+  }, [dispatch, saveDraftWorkflow, isDraftMode]);
 
   const {
     mutate: runMutate,
@@ -91,9 +107,19 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
       callbackInfo.method = method;
+
+      if (isDraftMode) {
+        if (siteResourceId && workflowName) {
+          callbackInfo.value = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/runDraft`;
+          callbackInfo.method = HTTP_METHODS.POST;
+        } else {
+          // TODO: Handle/throw error
+        }
+      }
+
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const runResponse = await RunService().runTrigger(callbackInfo, undefined, isDraftMode);
+      const runResponse = await RunService().runTrigger(callbackInfo, undefined);
       const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
       onRun?.(runId);
     } catch (_error: any) {
@@ -153,13 +179,15 @@ export const FloatingRunButton = ({ id: _id, saveDraftWorkflow, onRun, isDarkMod
         <SplitButton
           {...buttonCommonProps}
           primaryActionButton={{
-            icon: <RunIcon />,
-            onClick: runMutate,
+            icon: runIsLoading ? <Spinner size="tiny" /> : <RunIcon />,
+            onClick: () => {
+              runMutate();
+            },
           }}
           menuButton={
             canBeRunWithPayload
               ? {
-                  icon: <RunWithPayloadIcon />,
+                  icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
                   onClick: () => setPopoverOpen(true),
                   ref: buttonRef,
                 }

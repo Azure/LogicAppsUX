@@ -27,7 +27,7 @@ import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
-import agentloopConnector from '../standard/manifest/agentLoopConnector';
+import agentloopConnector from './manifest/agentLoopConnector';
 
 interface ConnectionAcl {
   id: string;
@@ -244,8 +244,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       source: 'connection.ts',
     });
 
+    const isArmResource = isArmResourceId(connector.id);
+
     try {
-      const connection = isArmResourceId(connector.id)
+      const connection = isArmResource
         ? await this._createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
         : await this.createConnectionInLocal(connectionName, connector, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
 
@@ -257,7 +259,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
       });
       return connection;
     } catch (error) {
-      this.deleteConnection(connectionId);
+      if (isArmResource) {
+        this.deleteConnection(connectionId);
+      }
       const errorMessage = `Failed to create connection: ${this.tryParseErrorMessage(error)}`;
       LoggerService().log({
         level: LogEntryLevel.Error,
