@@ -189,7 +189,7 @@ async function getConnectionReference(
     connectionProperties,
   } = reference;
 
-  const useMsi = ext.useMSI; // Check if MSI is enabled from extension settings
+  const useMsi = ext.useMSI;
 
   return axios
     .post(
