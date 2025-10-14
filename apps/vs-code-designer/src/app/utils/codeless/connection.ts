@@ -31,6 +31,7 @@ import type {
   Parameter,
   CustomCodeFileNameMapping,
   AllCustomCodeFiles,
+  ConnectionsData,
 } from '@microsoft/vscode-extension-logic-apps';
 import { JwtTokenHelper, JwtTokenConstants } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
