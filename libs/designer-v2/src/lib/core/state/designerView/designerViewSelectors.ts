@@ -34,7 +34,16 @@ export const useIsAgenticWorkflowOnly = () => {
 };
 
 export const useIsA2AWorkflow = () => {
-  return useSelector((state: RootState) => equals(state.workflow.workflowKind, 'agent', false));
+  return useSelector((state: RootState) => {
+    // Standard SKU: Check workflowKind
+    if (equals(state.workflow.workflowKind, 'agent', false)) {
+      return true;
+    }
+
+    // Consumption SKU: Check definition metadata for agentType = "conversational"
+    const agentType = state.workflow.originalDefinition?.metadata?.agentType;
+    return equals(agentType, 'conversational', false);
+  });
 };
 
 export const useWorkflowHasAgentLoop = () => {

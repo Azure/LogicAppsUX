@@ -200,12 +200,31 @@ export class ConsumptionRunService implements IRunService {
 
   /**
    * Gets an array of workflow-level action repetitions for a run.
+   * Timeline support was added to Consumption SKU in October 2025.
    * @param {string} runId - The ID of the workflow run.
-   * @returns {Promise<any>}
+   * @returns {Promise<any>} Array of agent repetitions or undefined if not supported
    */
-  async getTimelineRepetitions(_runId: string): Promise<any> {
-    // A2A is not supported in consumption
-    return undefined;
+  async getTimelineRepetitions(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/timeline?api-version=${apiVersion}`;
+
+    try {
+      const response = await httpClient.get<Run>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      // Timeline endpoint may not be available in all regions yet
+      // Return undefined for graceful degradation
+      if (e?.status === 404 || e?.status === 501 || e?.message?.includes('Not Found')) {
+        return undefined;
+      }
+      throw new Error(e.message);
+    }
   }
 
   /**

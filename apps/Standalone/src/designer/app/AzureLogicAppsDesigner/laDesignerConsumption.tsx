@@ -13,7 +13,6 @@ import {
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
-  fetchAgentUrl,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
@@ -104,7 +103,9 @@ const DesignerEditorConsumption = () => {
   const [parameters, setParameters] = useState<Record<string, WorkflowParameter>>({});
 
   useEffect(() => {
-    const data = runInstanceData?.properties.workflow ?? workflowAndArtifactsData;
+    // Always use the original workflow artifacts for metadata preservation
+    // Run instance data is used for execution details, not definition
+    const data = workflowAndArtifactsData;
     if (!data) {
       return;
     }
@@ -113,7 +114,7 @@ const DesignerEditorConsumption = () => {
     setWorkflow(_workflow);
     setConnectionReferences(_connectionReferences);
     setParameters(_parameters);
-  }, [workflowAndArtifactsData, runInstanceData]);
+  }, [workflowAndArtifactsData]);
 
   const [definition, setDefinition] = useState<any>();
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
@@ -125,9 +126,19 @@ const DesignerEditorConsumption = () => {
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = useMemo(
-    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
+    () =>
+      getDesignerServices(
+        workflowId,
+        workflow as any,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        workflowAndArtifactsData,
+        queryClient
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
+    [workflowId, workflow, tenantId, canonicalLocation, designerID, language, workflowAndArtifactsData]
   );
 
   useEffect(() => {
@@ -368,7 +379,7 @@ const getDesignerServices = (
   objectId: string | undefined,
   location: string,
   locale: string | undefined,
-  loggerService?: any,
+  workflowAndArtifactsData: any,
   queryClient?: any
 ): any => {
   const baseUrl = 'https://management.azure.com';
@@ -529,7 +540,28 @@ const getDesignerServices = (
 
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
-    getAgentUrl: () => fetchAgentUrl(workflowId, workflowName, workflow?.properties?.defaultHostName ?? ''),
+    getAgentUrl: async () => {
+      // For Consumption workflows, construct agent URL directly from accessEndpoint
+      const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
+      if (!accessEndpoint || !workflowName) {
+        return { agentUrl: '', chatUrl: '', hostName: '' };
+      }
+
+      try {
+        const hostName = new URL(accessEndpoint).hostname;
+        const agentBaseUrl = `https://${hostName}`;
+        const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
+        const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
+
+        return {
+          agentUrl,
+          chatUrl,
+          hostName,
+        };
+      } catch (_error) {
+        return { agentUrl: '', chatUrl: '', hostName: '' };
+      }
+    },
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
@@ -606,7 +638,7 @@ const getDesignerServices = (
     tenantService,
     operationManifestService,
     searchService,
-    loggerService,
+    loggerService: undefined,
     oAuthService,
     workflowService,
     apimService,
