@@ -324,6 +324,26 @@ export async function getConnectionsAndSettingsToUpdate(
     }
   }
 
+  // Update MSI connection permissions if MSI is enabled
+  if (ext.useMSI) {
+    try {
+      const updatedReferences = await updateConnectionReferencesLocalMSI(
+        context,
+        referencesToAdd,
+        azureTenantId,
+        workflowBaseManagementUri,
+        localSettings
+      );
+      Object.assign(referencesToAdd, updatedReferences);
+      context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
+    } catch (error) {
+      context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;
+      window.showErrorMessage(
+        localize('msiPermissionError', 'Failed to configure MSI permissions for connections. Please check your access rights.')
+      );
+    }
+  }
+
   connectionsData.managedApiConnections = referencesToAdd;
 
   if (areKeysRefreshed) {
@@ -532,4 +552,191 @@ async function createAccessPolicyInConnection(
     .catch((error) => {
       throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
     });
+}
+
+async function updateConnectionReferencesLocalMSI(
+  context: IActionContext,
+  connectionReferences: Record<string, ConnectionReferenceModel>,
+  azureTenantId: string,
+  workflowBaseManagementUri: string,
+  localSettings: ILocalSettingsJson
+): Promise<Record<string, ConnectionReferenceModel>> {
+  const startTime = Date.now();
+  context.telemetry.properties.msiConnectionsCount = Object.keys(connectionReferences).length.toString();
+
+  let accessToken: string;
+  try {
+    accessToken = await getAuthorizationToken(azureTenantId);
+  } catch (error) {
+    context.telemetry.properties.msiTokenError = `Failed to get access token: ${error.message}`;
+    throw new Error(localize('msiTokenError', 'Failed to retrieve access token for MSI configuration'));
+  }
+
+  const jwtHelper = JwtTokenHelper.createInstance();
+  const tokenPayload = jwtHelper.extractJwtTokenPayload(accessToken);
+  const objectId = tokenPayload?.oid || tokenPayload?.sub;
+  const tenantId = tokenPayload?.tid || azureTenantId;
+
+  if (!objectId || !tenantId) {
+    context.telemetry.properties.msiIdentityError = 'Missing objectId or tenantId in token';
+    throw new Error(localize('msiIdentityError', 'Unable to retrieve user identity from access token'));
+  }
+
+  context.telemetry.properties.msiObjectId = objectId;
+  context.telemetry.properties.msiTenantId = tenantId;
+
+  const updatedReferences: Record<string, ConnectionReferenceModel> = {};
+  const errors: Array<{ referenceKey: string; error: string }> = [];
+  let successCount = 0;
+
+  for (const [referenceKey, reference] of Object.entries(connectionReferences)) {
+    const connectionStartTime = Date.now();
+
+    try {
+      const connectionId = reference.connection.id;
+
+      if (!isApiHubConnectionId(connectionId)) {
+        context.telemetry.properties[`msiSkipped_${referenceKey}`] = 'Not an API Hub connection';
+        updatedReferences[referenceKey] = reference;
+        continue;
+      }
+
+      context.telemetry.properties[`msiProcessing_${referenceKey}`] = connectionId;
+
+      await ensureAccessPolicy(connectionId, objectId, tenantId, accessToken, workflowBaseManagementUri, localSettings);
+
+      // Update the reference to use MSI authentication
+      updatedReferences[referenceKey] = {
+        ...reference,
+        authentication: {
+          type: 'ManagedServiceIdentity',
+        },
+      };
+
+      successCount++;
+      context.telemetry.properties[`msiSuccess_${referenceKey}`] = `Completed in ${Date.now() - connectionStartTime}ms`;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      errors.push({ referenceKey, error: errorMessage });
+
+      context.telemetry.properties[`msiError_${referenceKey}`] = errorMessage;
+
+      // Still include the reference but with original authentication
+      updatedReferences[referenceKey] = reference;
+
+      ext.outputChannel.appendLog(
+        localize('msiConnectionError', 'Failed to configure MSI for connection {0}: {1}', referenceKey, errorMessage)
+      );
+    }
+  }
+
+  // Summary telemetry
+  context.telemetry.properties.msiSuccessCount = successCount.toString();
+  context.telemetry.properties.msiErrorCount = errors.length.toString();
+  context.telemetry.properties.msiTotalDuration = `${Date.now() - startTime}ms`;
+
+  if (errors.length > 0) {
+    const errorSummary = errors.map((e) => e.referenceKey).join(', ');
+    context.telemetry.properties.msiFailedConnections = errorSummary;
+
+    // Show warning but don't throw - partial success is acceptable
+    window.showWarningMessage(
+      localize('msiPartialSuccess', 'MSI configuration partially succeeded. Failed for connections: {0}', errorSummary)
+    );
+  }
+
+  return updatedReferences;
+}
+
+async function ensureAccessPolicy(
+  connectionId: string,
+  objectId: string,
+  tenantId: string,
+  accessToken: string,
+  baseManagementUri: string,
+  localSettings: ILocalSettingsJson
+): Promise<void> {
+  const subscriptionId = localSettings.Values['WORKFLOWS_SUBSCRIPTION_ID'];
+  const resourceGroup = localSettings.Values['WORKFLOWS_RESOURCE_GROUP_NAME'];
+
+  if (!subscriptionId || !resourceGroup) {
+    ext.outputChannel.appendLog(
+      localize('missingSettings', 'Missing required settings: WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME')
+    );
+    throw new Error('Missing WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME in local settings');
+  }
+
+  // Resolve connection ID with app settings
+  const resolvedConnectionId = connectionId.includes('@{appsetting(')
+    ? connectionId
+        .replace("@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}", subscriptionId)
+        .replace("@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}", resourceGroup)
+    : connectionId;
+
+  ext.outputChannel.appendLog(localize('resolvingConnection', 'Resolving connection ID: {0} -> {1}', connectionId, resolvedConnectionId));
+
+  const policiesUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies?api-version=2018-07-01-preview`;
+
+  // Check if policy already exists
+  try {
+    const response = await axios.get(policiesUrl, {
+      headers: { authorization: accessToken },
+    });
+
+    const policies = response.data.value || [];
+    const policyExists = policies.some(
+      (p: any) => p.properties?.principal?.identity?.objectId === objectId && p.properties?.principal?.identity?.tenantId === tenantId
+    );
+
+    if (policyExists) {
+      ext.outputChannel.appendLog(localize('policyExists', 'Access policy already exists for objectId: {0}', objectId));
+      return; // Policy already exists, no need to create
+    }
+  } catch (error) {
+    // If 404, policies don't exist - continue to create
+    if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+      ext.outputChannel.appendLog(localize('errorCheckingPolicies', 'Error checking existing policies: {0}', error.message));
+      // Continue to attempt creation
+    }
+  }
+
+  // Create access policy
+  const policyName = objectId; // Using objectId as the policy name
+  const apiVersion = '2016-06-01';
+  const policyUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies/${encodeURIComponent(policyName)}?api-version=${apiVersion}`;
+
+  try {
+    await axios.put(
+      policyUrl,
+      {
+        properties: {
+          principal: {
+            type: 'ActiveDirectory',
+            identity: { objectId, tenantId },
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: accessToken,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    ext.outputChannel.appendLog(localize('policyCreated', 'Successfully created access policy for objectId: {0}', objectId));
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 409) {
+        // Policy already exists - this is acceptable
+        ext.outputChannel.appendLog(localize('policyAlreadyExists', 'Access policy already exists (409) for objectId: {0}', objectId));
+        return;
+      }
+
+      const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+      ext.outputChannel.appendLog(localize('policyCreationFailed', 'Failed to create access policy: {0}', errorDetails));
+    }
+
+    throw new Error(`Failed to create access policy for connection ${resolvedConnectionId}: ${error}`);
+  }
 }
