@@ -124,7 +124,7 @@ export async function getUnitTestInLocalProject(projectPath: string): Promise<Re
       } else if (fileStats.isFile() && fullPath.endsWith(unitTestsFileName)) {
         try {
           const relativePath = path.relative(projectPath, path.dirname(fullPath));
-          const unitTestFileNameWithoutExtension = path.basename(fullPath).replace('.unit-test.json', '');
+          const unitTestFileNameWithoutExtension = path.basename(fullPath).replace(unitTestsFileName, '');
           const fileNameWithSubPath = `${relativePath} - ${unitTestFileNameWithoutExtension}`;
           unitTests[fileNameWithSubPath] = fullPath;
         } catch {

@@ -15,6 +15,7 @@ import {
   extensionsFileName,
   logicAppsStandardExtensionId,
   vscodeFolderName,
+  gitignoreFileName,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
@@ -103,7 +104,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
     await this.writeExtensionsJson(context, vscodePath, language);
 
     // Remove '.vscode' from gitignore if applicable
-    const gitignorePath: string = path.join(context.projectPath, '.gitignore');
+    const gitignorePath: string = path.join(context.projectPath, gitignoreFileName);
     if (await fse.pathExists(gitignorePath)) {
       let gitignoreContents: string = (await fse.readFile(gitignorePath)).toString();
       gitignoreContents = gitignoreContents.replace(/^\.vscode(\/|\\)?\s*$/gm, '');
@@ -116,7 +117,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
    * @param context The project wizard context.
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
-    const tasksJsonPath: string = path.join(context.projectPath, vscodeFolderName, 'Tasks.json');
+    const tasksJsonPath: string = path.join(context.projectPath, vscodeFolderName, tasksFileName);
     const tasksJsonContent = `{
         "version": "2.0.0",
         "tasks": [

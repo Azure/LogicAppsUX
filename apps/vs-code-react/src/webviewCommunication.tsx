@@ -19,6 +19,9 @@ import type {
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
   ResetDesignerDirtyStateMessage,
+  UpdateWorkspacePathMessage,
+  UpdateWorkspacePackageMessage,
+  ValidateWorkspacePathMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -59,6 +62,14 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
+import {
+  initializeProject,
+  setProjectPath,
+  setPathValidationResult,
+  setWorkspaceExistenceResult,
+  setPackagePath,
+  setPackageValidationResult,
+} from './state/createWorkspaceSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
@@ -80,7 +91,14 @@ type DataMapperMessageType =
   | GetConfigurationSettingMessage
   | GetDataMapperVersionMessage
   | GetTestFeatureEnablementStatus;
-type WorkflowMessageType = UpdateAccessTokenMessage | UpdateExportPathMessage | AddStatusMessage | SetFinalStatusMessage;
+type WorkflowMessageType =
+  | UpdateAccessTokenMessage
+  | UpdateExportPathMessage
+  | UpdateWorkspacePathMessage
+  | UpdateWorkspacePackageMessage
+  | AddStatusMessage
+  | SetFinalStatusMessage
+  | ValidateWorkspacePathMessage;
 type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
 
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -91,6 +109,30 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
 
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
+
+    // Handle workspace existence validation results (for any project type)
+    if ((message as any).command === 'workspaceExistenceResult') {
+      const { workspacePath, exists } = (message as any).data;
+      dispatch(setWorkspaceExistenceResult({ workspacePath, exists }));
+      return;
+    }
+
+    if ((message as any).command === 'packageExistenceResult') {
+      const { path, isValid } = (message as any).data;
+      dispatch(setPackageValidationResult({ path, isValid }));
+      return;
+    }
+
+    // Handle folder selection for create workspace projects
+    if ((message as any).command === 'folder-selected' && (message as any).data?.path) {
+      // Only handle this for create workspace related projects
+      const currentProject = projectState?.project ?? message?.data?.project;
+      if (currentProject === ProjectName.createWorkspace || currentProject === ProjectName.createWorkspaceStructure) {
+        dispatch(setProjectPath((message as any).data.path));
+      }
+      return;
+    }
+
     if (message.command === ExtensionCommand.initialize_frame) {
       dispatch(initialize(message.data.project));
     }
@@ -219,6 +261,38 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             default:
               throw new Error('Unknown post message received');
           }
+        }
+        break;
+      }
+      case ProjectName.createWorkspace:
+      case ProjectName.createWorkspaceFromPackage:
+      case ProjectName.createWorkspaceStructure: {
+        switch (message.command) {
+          case ExtensionCommand.update_workspace_path: {
+            dispatch(setProjectPath(message.data));
+            break;
+          }
+          case ExtensionCommand.validatePath: {
+            dispatch(setPathValidationResult(message.data));
+            break;
+          }
+          case ExtensionCommand.update_package_path: {
+            dispatch(setPackagePath(message.data));
+            break;
+          }
+          default:
+            throw new Error('Unknown post message received');
+        }
+        break;
+      }
+      case ProjectName.createLogicApp: {
+        switch (message.command) {
+          case ExtensionCommand.initialize_frame: {
+            dispatch(initializeProject(message.data));
+            break;
+          }
+          default:
+            throw new Error('Unknown post message received');
         }
         break;
       }

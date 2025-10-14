@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { testsDirectoryName, testResultsDirectoryName, workflowFileName } from '../../../../constants';
+import { testsDirectoryName, testResultsDirectoryName, workflowFileName, assetsFolderName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
@@ -109,8 +109,8 @@ async function openResultsWebview(
 
   const panel: WebviewPanel = window.createWebviewPanel('UnitTestsResults', panelName, ViewColumn.Active, webviewOptions);
   panel.iconPath = {
-    light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'Codeless.svg')),
-    dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'Codeless.svg')),
+    light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'Codeless.svg')),
+    dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'Codeless.svg')),
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
