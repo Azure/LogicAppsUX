@@ -65,7 +65,7 @@ export default {
           type: 'string',
           'x-ms-editor': 'dropdown',
           'x-ms-editor-options': {
-            options: [{ value: 'gpt-4o', displayName: 'gpt-4o' }],
+            options: [{ value: 'gpt-4o-mini', displayName: 'gpt-4o-mini' }],
           },
           'x-ms-visibility': 'important',
         },
