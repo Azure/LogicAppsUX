@@ -84,8 +84,12 @@ export const useIsA2AWorkflow = () => {
       if (triggerOperation) {
         const isRequestType = equals(triggerOperation.type, 'Request', true);
         const hasAgentOperations = Object.values(operations).some((operation) => equals(operation.type, 'Agent', true));
+        const hasA2ANamePattern =
+          triggerNodeId.toLowerCase().includes('chat') ||
+          triggerNodeId.toLowerCase().includes('session') ||
+          !triggerNodeId.toLowerCase().includes('http');
 
-        isConsumptionA2A = isRequestType && hasAgentOperations;
+        isConsumptionA2A = isRequestType && hasAgentOperations && hasA2ANamePattern;
       }
     }
 
