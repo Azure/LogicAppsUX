@@ -68,7 +68,29 @@ export const useIsAgenticWorkflowOnly = () => {
 };
 
 export const useIsA2AWorkflow = () => {
-  return useSelector((state: RootState) => equals(state.workflow.workflowKind, 'agent', false));
+  return useSelector((state: RootState) => {
+    const isStandardA2A = equals(state.workflow.workflowKind, 'agent', false);
+    // Check for Consumption A2A workflow - Based on trigger type and agent operations
+    // We can extend the same check for standard also for handoffs removing the Kind, Need to confirm with the UI team)
+    const operations = state.workflow.operations;
+    const nodesMetadata = state.workflow.nodesMetadata;
+
+    const triggerNodeId = Object.keys(nodesMetadata).find((nodeId) => nodesMetadata[nodeId]?.isTrigger === true);
+
+    let isConsumptionA2A = false;
+    if (triggerNodeId) {
+      const triggerOperation = operations[triggerNodeId];
+
+      if (triggerOperation) {
+        const isRequestType = equals(triggerOperation.type, 'Request', true);
+        const hasAgentOperations = Object.values(operations).some((operation) => equals(operation.type, 'Agent', true));
+
+        isConsumptionA2A = isRequestType && hasAgentOperations;
+      }
+    }
+
+    return isStandardA2A || isConsumptionA2A;
+  });
 };
 
 export const useWorkflowHasAgentLoop = () => {
