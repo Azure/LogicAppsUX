@@ -11,9 +11,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-
-// Workflow name validation regex
-export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+import { nameValidation } from '../validation/helper';
 
 export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -108,7 +106,7 @@ export const WorkflowTypeStep: React.FC = () => {
     if (!name) {
       return intlText.EMPTY_WORKFLOW_NAME;
     }
-    if (!workflowNameValidation.test(name)) {
+    if (!nameValidation.test(name)) {
       return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
     }
     return undefined;
@@ -121,9 +119,7 @@ export const WorkflowTypeStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-        {intlText.TITLE}
-      </Text>
+      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
 
       <Field
         label={intlText.WORKFLOW_NAME_LABEL}

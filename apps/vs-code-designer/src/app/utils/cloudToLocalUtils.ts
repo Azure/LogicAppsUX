@@ -326,9 +326,9 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
       }
     });
 
-    filesToExclude.forEach((path) => {
-      fse.removeSync(path);
-      context.telemetry.properties.excludedFile = `Excluded ${path.basename} from package`;
+    filesToExclude.forEach((filePath) => {
+      fse.removeSync(filePath);
+      context.telemetry.properties.excludedFile = `Excluded ${filePath} from package`;
     });
 
     // Create README.md file

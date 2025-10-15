@@ -13,10 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
-
-// Regex validation constants
-export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+import { nameValidation } from '../validation/helper';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,7 +21,7 @@ export const WorkspaceNameStep: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { workspaceName, workspaceProjectPath, pathValidationResults, workspaceExistenceResults, isValidatingWorkspace } =
+  const { workspaceName, workspaceProjectPath, pathValidationResults, workspaceExistenceResults, isValidatingWorkspace, separator } =
     createWorkspaceState;
   const projectPathInputId = useId();
   const workspaceNameId = useId();
@@ -34,8 +31,6 @@ export const WorkspaceNameStep: React.FC = () => {
   const [projectPathError, setProjectPathError] = useState<string | undefined>(undefined);
   const [isValidatingPath, setIsValidatingPath] = useState<boolean>(false);
   const [isValidatingWorkspaceName, setIsValidatingWorkspaceName] = useState<boolean>(false);
-
-  const separator = path.sep;
 
   const intlText = {
     TITLE: intl.formatMessage({
@@ -106,7 +101,7 @@ export const WorkspaceNameStep: React.FC = () => {
       if (!name) {
         return intlText.EMPTY_WORKSPACE_NAME;
       }
-      if (!workspaceNameValidation.test(name)) {
+      if (!nameValidation.test(name)) {
         return intlText.WORKSPACE_NAME_VALIDATION_MESSAGE;
       }
 
@@ -253,12 +248,8 @@ export const WorkspaceNameStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-        {intlText.TITLE}
-      </Text>
-      <Text className={styles.stepDescription} style={{ display: 'block' }}>
-        {intlText.DESCRIPTION}
-      </Text>
+      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
+      <Text className={styles.stepDescription}>{intlText.DESCRIPTION}</Text>
 
       <div className={styles.fieldContainer}>
         <Field

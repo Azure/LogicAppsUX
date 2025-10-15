@@ -13,18 +13,13 @@ import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
-import { workspaceNameValidation } from './steps/workspaceNameStep';
-import { logicAppNameValidation } from './steps/logicAppTypeStep';
-import { workflowNameValidation } from './steps/workflowTypeStep';
-import { functionNameValidation, namespaceValidation } from './steps/dotNetFrameworkStep';
-import * as path from 'path';
+import { nameValidation } from './validation/helper';
 
 export const CreateWorkspace: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
-  const separator = path.sep;
 
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const {
@@ -50,6 +45,7 @@ export const CreateWorkspace: React.FC = () => {
     workspaceExistenceResults,
     packageValidationResults,
     logicAppsWithoutCustomCode,
+    separator,
   } = createWorkspaceState;
 
   // Set flow type when component mounts
@@ -227,7 +223,7 @@ export const CreateWorkspace: React.FC = () => {
 
   // Helper function to validate logic app name with support for existing logic apps
   const validateLogicAppNameForNavigation = (name: string): boolean => {
-    if (!name.trim() || !logicAppNameValidation.test(name.trim())) {
+    if (!name.trim() || !nameValidation.test(name.trim())) {
       return false;
     }
 
@@ -249,11 +245,20 @@ export const CreateWorkspace: React.FC = () => {
       needsPackagePath: flowType === 'createWorkspaceFromPackage',
       needsWorkspacePath: flowType !== 'createLogicApp',
       needsWorkspaceName: flowType !== 'createLogicApp',
-      needsLogicAppType: true,
-      needsLogicAppName: true,
-      needsWorkflowFields: flowType === 'createWorkspace' || flowType === 'createLogicApp',
-      needsFunctionFields: logicAppType === 'customCode' || logicAppType === 'rulesEngine',
+      needsLogicAppType: flowType !== 'convertToWorkspace', // convertToWorkspace doesn't need logic app type
+      needsLogicAppName: flowType !== 'convertToWorkspace', // convertToWorkspace doesn't need logic app name
+      needsWorkflowFields: false, // convertToWorkspace only needs workspace path and name
+      needsFunctionFields: false, // convertToWorkspace doesn't need function fields
     };
+
+    // Override for specific flow types that need more fields
+    if (flowType === 'createWorkspace' || flowType === 'createLogicApp') {
+      requirements.needsLogicAppType = true;
+      requirements.needsLogicAppName = true;
+      requirements.needsWorkflowFields = true;
+      requirements.needsFunctionFields = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+    }
+
     return requirements;
   };
 
@@ -282,9 +287,7 @@ export const CreateWorkspace: React.FC = () => {
         if (requirements.needsWorkspaceName) {
           const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
           const workspaceNameValid =
-            workspaceName.trim() !== '' &&
-            workspaceNameValidation.test(workspaceName.trim()) &&
-            workspaceExistenceResults[workspaceFolder] !== true;
+            workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true;
           if (!workspaceNameValid) {
             return false;
           }
@@ -303,9 +306,7 @@ export const CreateWorkspace: React.FC = () => {
           const logicAppNameValid =
             flowType === 'createLogicApp'
               ? validateLogicAppNameForNavigation(logicAppName)
-              : logicAppName.trim() !== '' &&
-                logicAppNameValidation.test(logicAppName.trim()) &&
-                !isNameAlreadyInWorkspace(logicAppName.trim());
+              : logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
           if (!logicAppNameValid) {
             return false;
           }
@@ -321,7 +322,7 @@ export const CreateWorkspace: React.FC = () => {
 
             if (!usingExistingLogicApp) {
               const workflowTypeValid = workflowType !== '';
-              const workflowNameValid = workflowName.trim() !== '' && workflowNameValidation.test(workflowName.trim());
+              const workflowNameValid = workflowName.trim() !== '' && nameValidation.test(workflowName.trim());
               if (!workflowTypeValid || !workflowNameValid) {
                 return false;
               }
@@ -330,9 +331,7 @@ export const CreateWorkspace: React.FC = () => {
             // For other flows, always validate workflow fields
             const workflowTypeValid = workflowType !== '';
             const workflowNameValid =
-              workflowName.trim() !== '' &&
-              workflowNameValidation.test(workflowName.trim()) &&
-              !isNameAlreadyInWorkspace(workflowName.trim());
+              workflowName.trim() !== '' && nameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim());
             if (!workflowTypeValid || !workflowNameValid) {
               return false;
             }
@@ -344,14 +343,14 @@ export const CreateWorkspace: React.FC = () => {
           // Function folder name validation
           const functionFolderNameValid =
             functionFolderName.trim() !== '' &&
-            functionNameValidation.test(functionFolderName.trim()) &&
+            nameValidation.test(functionFolderName.trim()) &&
             !isNameAlreadyInWorkspace(functionFolderName.trim()) &&
             functionFolderName.trim().toLowerCase() !== logicAppName.trim().toLowerCase();
           if (!functionFolderNameValid) {
             return false;
           }
-          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
-          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && nameValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && nameValidation.test(functionName.trim());
 
           if (!functionNamespaceValid || !functionNameValid) {
             return false;
@@ -384,32 +383,47 @@ export const CreateWorkspace: React.FC = () => {
   const isStepCompleted = (stepIndex: number) => {
     switch (stepIndex) {
       case 0: {
-        // Project Setup step - validate all required fields with regex validation
-        const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
+        // Project Setup step - validate all required fields based on flow type
+        const requirements = getValidationRequirements();
+
+        // For convertToWorkspace, only validate workspace path and name
+        if (flowType === 'convertToWorkspace') {
+          const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
+          const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+          const workspaceNameValid =
+            workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true;
+          return workspacePathValid && workspaceNameValid;
+        }
+
+        // For other flow types, use the full validation
+        const workspacePathValid = requirements.needsWorkspacePath
+          ? workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true
+          : true;
         const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-        const workspaceNameValid =
-          workspaceName.trim() !== '' &&
-          workspaceNameValidation.test(workspaceName.trim()) &&
-          workspaceExistenceResults[workspaceFolder] !== true;
-        const logicAppTypeValid = logicAppType !== '';
-        const logicAppNameValid =
-          logicAppName.trim() !== '' && logicAppNameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
-        const workflowTypeValid = workflowType !== '';
-        const workflowNameValid =
-          workflowName.trim() !== '' && workflowNameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim());
+        const workspaceNameValid = requirements.needsWorkspaceName
+          ? workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true
+          : true;
+        const logicAppTypeValid = requirements.needsLogicAppType ? logicAppType !== '' : true;
+        const logicAppNameValid = requirements.needsLogicAppName
+          ? logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim())
+          : true;
+        const workflowTypeValid = requirements.needsWorkflowFields ? workflowType !== '' : true;
+        const workflowNameValid = requirements.needsWorkflowFields
+          ? workflowName.trim() !== '' && nameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim())
+          : true;
 
         const baseFieldsValid =
           workspacePathValid && workspaceNameValid && logicAppTypeValid && logicAppNameValid && workflowTypeValid && workflowNameValid;
 
-        // If custom code or rules engine is selected, validate function fields
-        if (logicAppType === 'customCode' || logicAppType === 'rulesEngine') {
+        // If function fields are needed, validate them
+        if (requirements.needsFunctionFields) {
           const functionFolderNameValid =
             functionFolderName.trim() !== '' &&
-            functionNameValidation.test(functionFolderName.trim()) &&
+            nameValidation.test(functionFolderName.trim()) &&
             !isNameAlreadyInWorkspace(functionFolderName.trim()) &&
             functionFolderName.trim().toLowerCase() !== logicAppName.trim().toLowerCase();
-          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
-          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && nameValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && nameValidation.test(functionName.trim());
 
           const functionFieldsValid = functionNamespaceValid && functionNameValid && functionFolderNameValid;
 
@@ -636,9 +650,7 @@ export const CreateWorkspace: React.FC = () => {
 
   return (
     <div className={styles.createWorkspaceContainer}>
-      <Text className={styles.createWorkspaceTitle} style={{ display: 'block' }}>
-        {intlText.CREATE_WORKSPACE}
-      </Text>
+      <Text className={styles.createWorkspaceTitle}>{intlText.CREATE_WORKSPACE}</Text>
 
       {renderStepNavigation()}
 

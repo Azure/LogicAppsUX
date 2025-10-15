@@ -4,17 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 import { Text, Dropdown, Option, Field, Input, Label, useId } from '@fluentui/react-components';
 import type { InputOnChangeData, DropdownProps } from '@fluentui/react-components';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionFolderName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-
-// Function name validation regex (similar to logic app name)
-export const functionNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
-export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
+import { nameValidation, namespaceValidation } from '../validation/helper';
 
 export const DotNetFrameworkStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -162,29 +159,45 @@ export const DotNetFrameworkStep: React.FC = () => {
     if (!name) {
       return intlText.EMPTY_FUNCTION_NAME;
     }
-    if (!functionNameValidation.test(name)) {
+    if (!nameValidation.test(name)) {
       return intlText.FUNCTION_NAME_VALIDATION_MESSAGE;
     }
     return undefined;
   };
 
-  const validateFunctionFolderName = (name: string) => {
-    if (!name) {
-      return intlText.EMPTY_FUNCTION_FOLDER_NAME;
+  const validateFunctionFolderName = useCallback(
+    (name: string) => {
+      if (!name) {
+        return intlText.EMPTY_FUNCTION_FOLDER_NAME;
+      }
+      if (!nameValidation.test(name)) {
+        return intlText.FUNCTION_FOLDER_NAME_VALIDATION_MESSAGE;
+      }
+      // Check if function folder name is the same as logic app name
+      if (logicAppName && name.trim().toLowerCase() === logicAppName.trim().toLowerCase()) {
+        return intlText.FUNCTION_FOLDER_NAME_SAME;
+      }
+      // Check if the function name already exists in workspace folders
+      if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
+        return intlText.FUNCTION_FOLDER_NAME_EXISTS;
+      }
+      return undefined;
+    },
+    [
+      intlText.EMPTY_FUNCTION_FOLDER_NAME,
+      intlText.FUNCTION_FOLDER_NAME_EXISTS,
+      intlText.FUNCTION_FOLDER_NAME_SAME,
+      intlText.FUNCTION_FOLDER_NAME_VALIDATION_MESSAGE,
+      logicAppName,
+      workspaceFileJson,
+    ]
+  );
+
+  useEffect(() => {
+    if (functionFolderName) {
+      setFunctionFolderNameError(validateFunctionFolderName(functionFolderName));
     }
-    if (!functionNameValidation.test(name)) {
-      return intlText.FUNCTION_FOLDER_NAME_VALIDATION_MESSAGE;
-    }
-    // Check if function folder name is the same as logic app name
-    if (logicAppName && name.trim().toLowerCase() === logicAppName.trim().toLowerCase()) {
-      return intlText.FUNCTION_FOLDER_NAME_SAME;
-    }
-    // Check if the function name already exists in workspace folders
-    if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
-      return intlText.FUNCTION_FOLDER_NAME_EXISTS;
-    }
-    return undefined;
-  };
+  }, [functionFolderName, validateFunctionFolderName]);
 
   const handleFunctionNamespaceChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setFunctionNamespace(data.value));
@@ -204,9 +217,7 @@ export const DotNetFrameworkStep: React.FC = () => {
   if (logicAppType === 'customCode') {
     return (
       <div className={styles.formSection}>
-        <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-          {intlText.TITLE}
-        </Text>
+        <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
 
         <div className={styles.fieldContainer}>
           <Field required>
@@ -283,9 +294,7 @@ export const DotNetFrameworkStep: React.FC = () => {
   if (logicAppType === 'rulesEngine') {
     return (
       <div className={styles.formSection}>
-        <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-          {intlText.RULES_ENGINE_TITLE}
-        </Text>
+        <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_TITLE}</Text>
 
         <div className={styles.fieldContainer}>
           <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>

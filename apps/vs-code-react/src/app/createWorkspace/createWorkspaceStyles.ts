@@ -17,6 +17,7 @@ export const useCreateWorkspaceStyles = makeStyles({
     padding: '15px 24px',
     flexShrink: 0, // Prevent title from shrinking
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    display: 'block',
   },
 
   stepNavigation: {
@@ -139,6 +140,7 @@ export const useCreateWorkspaceStyles = makeStyles({
     color: tokens.colorNeutralForeground2,
     lineHeight: '1.5',
     fontSize: tokens.fontSizeBase300,
+    display: 'block',
   },
 
   inputField: {
@@ -226,7 +228,6 @@ export const useCreateWorkspaceStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground2,
     border: `1px solid ${tokens.colorNeutralStroke2}`,
     borderRadius: tokens.borderRadiusMedium,
-    fontFamily: 'monospace',
     fontSize: tokens.fontSizeBase200,
     wordBreak: 'break-all',
     overflowWrap: 'break-word',

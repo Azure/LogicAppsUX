@@ -32,6 +32,7 @@ export interface CreateWorkspaceState {
   workspaceExistenceResults: Record<string, boolean>;
   isValidatingWorkspace: boolean;
   isValidatingPackage: boolean;
+  separator: string;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -65,6 +66,7 @@ const initialState: CreateWorkspaceState = {
   workspaceExistenceResults: {},
   isValidatingWorkspace: false,
   isValidatingPackage: false,
+  separator: '/',
 };
 
 export const createWorkspaceSlice = createSlice({
@@ -75,6 +77,10 @@ export const createWorkspaceSlice = createSlice({
       const { workspaceFileJson, logicAppsWithoutCustomCode } = action.payload;
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
+    },
+    initializeWorkspace: (state, action: PayloadAction<any>) => {
+      const { separator } = action.payload;
+      state.separator = separator;
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -129,6 +135,9 @@ export const createWorkspaceSlice = createSlice({
     },
     setProjectType: (state, action: PayloadAction<string>) => {
       state.projectType = action.payload;
+    },
+    setSeparator: (state, action: PayloadAction<string>) => {
+      state.separator = action.payload;
     },
     setOpenBehavior: (state, action: PayloadAction<string>) => {
       state.openBehavior = action.payload;
@@ -188,6 +197,7 @@ export const createWorkspaceSlice = createSlice({
 
 export const {
   initializeProject,
+  initializeWorkspace,
   setCurrentStep,
   setProjectPath,
   setPackagePath,
@@ -201,6 +211,7 @@ export const {
   setTargetFramework,
   setLogicAppName,
   setProjectType,
+  setSeparator,
   setOpenBehavior,
   setFlowType,
   setPathValidationResult,

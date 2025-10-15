@@ -10,19 +10,24 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-import * as path from 'path';
-
-// Logic App name validation regex
-export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+import { nameValidation } from '../validation/helper';
 
 export const LogicAppTypeStep: React.FC = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { logicAppType, logicAppName, workspaceName, workspaceProjectPath, workspaceFileJson, logicAppsWithoutCustomCode, flowType } =
-    createWorkspaceState;
-  const separator = path.sep;
+  const {
+    logicAppType,
+    logicAppName,
+    functionFolderName,
+    workspaceName,
+    workspaceProjectPath,
+    workspaceFileJson,
+    logicAppsWithoutCustomCode,
+    flowType,
+    separator,
+  } = createWorkspaceState;
 
   const shouldShowLogicAppSection = flowType === 'createWorkspace' || flowType === 'createLogicApp';
 
@@ -95,6 +100,11 @@ export const LogicAppTypeStep: React.FC = () => {
       id: 'qXL3lS',
       description: 'A project with name already exists message text',
     }),
+    LOGIC_APP_NAME_SAME: intl.formatMessage({
+      defaultMessage: 'Logic app name cannot be the same as the function folder name.',
+      id: '1jaOSf',
+      description: 'Logic app name same as function folder name text',
+    }),
   };
 
   const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
@@ -109,8 +119,12 @@ export const LogicAppTypeStep: React.FC = () => {
       if (!name) {
         return intlText.EMPTY_LOGIC_APP_NAME;
       }
-      if (!logicAppNameValidation.test(name)) {
+      if (!nameValidation.test(name)) {
         return intlText.LOGIC_APP_NAME_VALIDATION_MESSAGE;
+      }
+      // Check if function folder name is the same as logic app name
+      if (functionFolderName && name.trim().toLowerCase() === functionFolderName.trim().toLowerCase()) {
+        return intlText.LOGIC_APP_NAME_SAME;
       }
 
       // If custom code or rules engine is selected and the name is from the existing logic apps list, allow it
@@ -128,7 +142,9 @@ export const LogicAppTypeStep: React.FC = () => {
       return undefined;
     },
     [
+      functionFolderName,
       intlText.EMPTY_LOGIC_APP_NAME,
+      intlText.LOGIC_APP_NAME_SAME,
       intlText.LOGIC_APP_NAME_VALIDATION_MESSAGE,
       intlText.PROJECT_EXISTS_MESSAGE,
       logicAppType,
@@ -169,9 +185,7 @@ export const LogicAppTypeStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-        {intlText.TITLE}
-      </Text>
+      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
       <Text className={styles.stepDescription}>{intlText.DESCRIPTION}</Text>
 
       <div className={styles.inputField}>

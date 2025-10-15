@@ -63,6 +63,8 @@ export const ExtensionCommand = {
   workspace_file: 'workspace-file',
   update_package_path: 'update-package-path',
   package_file: 'package-file',
+  workspace_existence_result: 'workspace-existence-result',
+  package_existence_result: 'package-existence-result',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

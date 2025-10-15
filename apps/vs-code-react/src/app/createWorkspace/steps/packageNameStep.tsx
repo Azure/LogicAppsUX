@@ -125,9 +125,7 @@ export const PackageNameStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-        {intlText.TITLE}
-      </Text>
+      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
 
       <div className={styles.fieldContainer}>
         <Field

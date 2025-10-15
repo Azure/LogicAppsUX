@@ -24,6 +24,7 @@ import {
   vscodeFolderName,
   workerRuntimeKey,
   workflowFileName,
+  workspaceTemplatesFolderName,
   type WorkflowType,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
@@ -34,7 +35,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { newGetGitIgnoreContent, gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
+import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
@@ -134,7 +135,6 @@ export async function createLocalConfigurationFiles(
       [ProjectDirectoryPathKey]: logicAppFolderPath,
     },
   };
-  const gitignore = '';
 
   if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
@@ -149,7 +149,9 @@ export async function createLocalConfigurationFiles(
   await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
 
   const gitignorePath = path.join(logicAppFolderPath, gitignoreFileName);
-  await fse.writeFile(gitignorePath, gitignore.concat(newGetGitIgnoreContent()));
+  const gitIgnoreFile = 'GitIgnoreFile';
+  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, gitIgnoreFile);
+  await fse.copyFile(templatePath, gitignorePath);
 
   const funcIgnorePath: string = path.join(logicAppFolderPath, funcIgnoreFileName);
   await fse.writeFile(funcIgnorePath, funcignore.sort().join(os.EOL));

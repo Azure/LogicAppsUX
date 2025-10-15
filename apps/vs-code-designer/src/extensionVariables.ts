@@ -163,5 +163,7 @@ export const ExtensionCommand = {
   set_final_status: 'set-final-status',
   workspace_folder: 'workspace-folder',
   workspace_file: 'workspace-file',
+  workspace_existence_result: 'workspace-existence-result',
+  package_existence_result: 'package-existence-result',
 };
 export type ExtensionCommand = keyof typeof ExtensionCommand;

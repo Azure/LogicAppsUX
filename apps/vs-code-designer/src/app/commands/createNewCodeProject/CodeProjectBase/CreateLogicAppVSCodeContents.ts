@@ -1,18 +1,18 @@
 import { latestGAVersion, ProjectLanguage, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
-import type { IExtensionsJson, ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import {
+  assetsFolderName,
   deploySubpathSetting,
   extensionCommand,
   extensionsFileName,
   funcVersionSetting,
   launchFileName,
   launchVersion,
-  logicAppsStandardExtensionId,
-  preDeployTaskSetting,
   projectLanguageSetting,
   settingsFileName,
   tasksFileName,
   vscodeFolderName,
+  workspaceTemplatesFolderName,
 } from '../../../../constants';
 import path from 'path';
 import * as fse from 'fs-extra';
@@ -25,10 +25,10 @@ import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
 
 export async function writeSettingsJson(
   context: IWebviewProjectContext,
-  theseSettings: ISettingToAdd[],
+  additionalSettings: ISettingToAdd[],
   vscodePath: string
 ): Promise<void> {
-  const settings: ISettingToAdd[] = theseSettings.concat(
+  const settings: ISettingToAdd[] = additionalSettings.concat(
     { key: projectLanguageSetting, value: ProjectLanguage.JavaScript },
     { key: funcVersionSetting, value: latestGAVersion },
     // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
@@ -36,17 +36,6 @@ export async function writeSettingsJson(
     { prefix: 'azureFunctions', key: 'suppressProject', value: true }
   );
 
-  if (this.preDeployTask) {
-    settings.push({ key: preDeployTaskSetting, value: this.preDeployTask });
-  }
-
-  // if (context.workspaceFolder) {
-  //   // Use Visual Studio Code API to update config if folder is open
-  //   for (const setting of settings) {
-  //     await updateWorkspaceSetting(setting.key, setting.value, context.workspacePath, setting.prefix);
-  //   }
-  // } else {
-  // otherwise manually edit json
   const settingsJsonPath: string = path.join(vscodePath, settingsFileName);
   await confirmEditJsonFile(context, settingsJsonPath, (data: Record<string, any>): Record<string, any> => {
     for (const setting of settings) {
@@ -55,66 +44,20 @@ export async function writeSettingsJson(
     }
     return data;
   });
-  // }
 }
 
 export async function writeExtensionsJson(context: IActionContext, vscodePath: string): Promise<void> {
   const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
-  await confirmEditJsonFile(context, extensionsJsonPath, (data: IExtensionsJson): Record<string, any> => {
-    const recommendations: string[] = [logicAppsStandardExtensionId];
-    // de-dupe array
-    data.recommendations = recommendations.filter((rec: string, index: number) => recommendations.indexOf(rec) === index);
-    return data;
-  });
+  const extensionsJsonFile = 'ExtensionsJsonFile';
+  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, extensionsJsonFile);
+  await fse.copyFile(templatePath, extensionsJsonPath);
 }
 
 export async function writeTasksJson(context: IActionContext, vscodePath: string): Promise<void> {
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
-  const tasksJsonContent = `{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "generateDebugSymbols",
-      "command": "\${config:azureLogicAppsStandard.dotnetBinaryPath}",
-      "args": [
-        "\${input:getDebugSymbolDll}"
-      ],
-      "type": "process",
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "type": "shell",
-      "command": "\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}",
-      "args": [
-        "host",
-        "start"
-      ],
-      "options": {
-        "env": {
-          "PATH": "\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\DotNetSDK;$env:PATH"
-        }
-      },
-      "problemMatcher": "$func-watch",
-      "isBackground": true,
-      "label": "func: host start",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    }
-  ],
-  "inputs": [
-    {
-      "id": "getDebugSymbolDll",
-      "type": "command",
-      "command": "azureLogicAppsStandard.getDebugSymbolDll"
-    }
-  ]
-}`;
-
-  // if (await confirmOverwriteFile(context, tasksJsonPath)) {
-  await fse.writeFile(tasksJsonPath, tasksJsonContent);
-  // }
+  const tasksJsonFile = 'TasksJsonFile';
+  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, tasksJsonFile);
+  await fse.copyFile(templatePath, tasksJsonPath);
 }
 
 export function getDebugConfiguration(logicAppName: string, customCodeTargetFramework?: TargetFramework): DebugConfiguration {
@@ -170,13 +113,13 @@ export async function createLogicAppVsCodeContents(
   const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
   await fse.ensureDir(vscodePath);
 
-  const theseSettings: ISettingToAdd[] = [];
+  const additionalSettings: ISettingToAdd[] = [];
 
   if (myWebviewProjectContext.logicAppType === ProjectType.logicApp) {
-    theseSettings.push({ key: deploySubpathSetting, value: '.' });
+    additionalSettings.push({ key: deploySubpathSetting, value: '.' });
   }
 
-  await writeSettingsJson(myWebviewProjectContext, theseSettings, vscodePath);
+  await writeSettingsJson(myWebviewProjectContext, additionalSettings, vscodePath);
   await writeExtensionsJson(myWebviewProjectContext, vscodePath);
   await writeTasksJson(myWebviewProjectContext, vscodePath);
   await writeLaunchJson(

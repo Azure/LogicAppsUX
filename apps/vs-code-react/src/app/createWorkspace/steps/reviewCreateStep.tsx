@@ -8,7 +8,6 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
-import * as path from 'path';
 
 export const ReviewCreateStep: React.FC = () => {
   const intl = useIntl();
@@ -29,11 +28,11 @@ export const ReviewCreateStep: React.FC = () => {
     logicAppName,
     flowType,
     logicAppsWithoutCustomCode,
+    separator,
   } = createWorkspaceState;
 
   const needsDotNetFrameworkStep = logicAppType === 'customCode';
   const needsFunctionConfiguration = logicAppType === 'rulesEngine';
-  const separator = path.sep;
 
   // Determine if we're using an existing logic app
   const isUsingExistingLogicApp =
@@ -242,12 +241,8 @@ export const ReviewCreateStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle} style={{ display: 'block' }}>
-        {intlText.TITLE}
-      </Text>
-      <Text className={styles.stepDescription} style={{ display: 'block' }}>
-        {intlText.DESCRIPTION}
-      </Text>
+      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
+      <Text className={styles.stepDescription}>{intlText.DESCRIPTION}</Text>
 
       <div className={styles.reviewContainer}>
         {shouldShowPackageSection && (

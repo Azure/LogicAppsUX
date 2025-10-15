@@ -22,6 +22,8 @@ import type {
   UpdateWorkspacePathMessage,
   UpdateWorkspacePackageMessage,
   ValidateWorkspacePathMessage,
+  WorkspaceExistenceResultMessage,
+  PackageExistenceResultMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -69,6 +71,7 @@ import {
   setWorkspaceExistenceResult,
   setPackagePath,
   setPackageValidationResult,
+  initializeWorkspace,
 } from './state/createWorkspaceSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
@@ -96,6 +99,8 @@ type WorkflowMessageType =
   | UpdateExportPathMessage
   | UpdateWorkspacePathMessage
   | UpdateWorkspacePackageMessage
+  | WorkspaceExistenceResultMessage
+  | PackageExistenceResultMessage
   | AddStatusMessage
   | SetFinalStatusMessage
   | ValidateWorkspacePathMessage;
@@ -110,28 +115,28 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
 
-    // Handle workspace existence validation results (for any project type)
-    if ((message as any).command === 'workspaceExistenceResult') {
-      const { workspacePath, exists } = (message as any).data;
-      dispatch(setWorkspaceExistenceResult({ workspacePath, exists }));
-      return;
-    }
+    // // Handle workspace existence validation results (for any project type)
+    // if ((message as any).command === 'workspaceExistenceResult') {
+    //   const { workspacePath, exists } = (message as any).data;
+    //   dispatch(setWorkspaceExistenceResult({ workspacePath, exists }));
+    //   return;
+    // }
 
-    if ((message as any).command === 'packageExistenceResult') {
-      const { path, isValid } = (message as any).data;
-      dispatch(setPackageValidationResult({ path, isValid }));
-      return;
-    }
+    // if ((message as any).command === 'packageExistenceResult') {
+    //   const { path, isValid } = (message as any).data;
+    //   dispatch(setPackageValidationResult({ path, isValid }));
+    //   return;
+    // }
 
     // Handle folder selection for create workspace projects
-    if ((message as any).command === 'folder-selected' && (message as any).data?.path) {
-      // Only handle this for create workspace related projects
-      const currentProject = projectState?.project ?? message?.data?.project;
-      if (currentProject === ProjectName.createWorkspace || currentProject === ProjectName.createWorkspaceStructure) {
-        dispatch(setProjectPath((message as any).data.path));
-      }
-      return;
-    }
+    // if ((message as any).command === 'folder-selected' && (message as any).data?.path) {
+    //   // Only handle this for create workspace related projects
+    //   const currentProject = projectState?.project ?? message?.data?.project;
+    //   if (currentProject === ProjectName.createWorkspace || currentProject === ProjectName.createWorkspaceStructure) {
+    //     dispatch(setProjectPath((message as any).data.path));
+    //   }
+    //   return;
+    // }
 
     if (message.command === ExtensionCommand.initialize_frame) {
       dispatch(initialize(message.data.project));
@@ -268,6 +273,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       case ProjectName.createWorkspaceFromPackage:
       case ProjectName.createWorkspaceStructure: {
         switch (message.command) {
+          case ExtensionCommand.initialize_frame: {
+            dispatch(initializeWorkspace(message.data));
+            break;
+          }
           case ExtensionCommand.update_workspace_path: {
             dispatch(setProjectPath(message.data));
             break;
@@ -278,6 +287,16 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_package_path: {
             dispatch(setPackagePath(message.data));
+            break;
+          }
+          case ExtensionCommand.workspace_existence_result: {
+            const { workspacePath, exists } = message.data;
+            dispatch(setWorkspaceExistenceResult({ workspacePath, exists }));
+            break;
+          }
+          case ExtensionCommand.package_existence_result: {
+            const { path, isValid } = message.data;
+            dispatch(setPackageValidationResult({ path, isValid }));
             break;
           }
           default:

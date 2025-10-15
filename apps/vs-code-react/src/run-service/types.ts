@@ -333,6 +333,23 @@ export interface ValidateWorkspacePathMessage {
   };
 }
 
+export interface WorkspaceExistenceResultMessage {
+  command: typeof ExtensionCommand.workspace_existence_result;
+  data: {
+    workspacePath: any;
+    exists: boolean;
+    type: any;
+  };
+}
+
+export interface PackageExistenceResultMessage {
+  command: typeof ExtensionCommand.package_existence_result;
+  data: {
+    path: any;
+    isValid: boolean;
+  };
+}
+
 export interface AddStatusMessage {
   command: typeof ExtensionCommand.add_status;
   data: {
