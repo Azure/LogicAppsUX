@@ -372,14 +372,14 @@ export async function getLogicAppWithoutCustomCodeNew(context: IActionContext): 
       const subFolders = folderContents
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => path.join(workspaceFolderPath, dirent.name));
-      return await getLogicAppWorkspaceFolderWithoutCustomCodeNew(context, false, subFolders);
+      return await getLogicAppWorkspaceFolderWithoutCustomCode(context, false, subFolders);
     }
   }
 
-  return await getLogicAppWorkspaceFolderWithoutCustomCodeNew(context, true, null);
+  return await getLogicAppWorkspaceFolderWithoutCustomCode(context, true, null);
 }
 
-export async function getLogicAppWorkspaceFolderWithoutCustomCodeNew(
+export async function getLogicAppWorkspaceFolderWithoutCustomCode(
   context: IActionContext,
   returnsWorkspaceFolder: boolean,
   subFolders: string[]

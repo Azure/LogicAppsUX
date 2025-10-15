@@ -12,7 +12,7 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 import * as vscode from 'vscode';
 import path from 'path';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
-import { getLogicAppWithoutCustomCodeNew } from '../../utils/workspace';
+import { getLogicAppWithoutCustomCode } from '../../utils/workspace';
 
 export async function createNewProjectFromCommand(context: IActionContext): Promise<void> {
   // Determine if in workspace, if not in workspace but there is a logic app project found,
@@ -31,7 +31,7 @@ export async function createNewProjectFromCommand(context: IActionContext): Prom
   // Get workspace data for the webview
   const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.workspace.workspaceFile);
   const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
-  const logicAppsWithoutCustomCode = await getLogicAppWithoutCustomCodeNew(context);
+  const logicAppsWithoutCustomCode = await getLogicAppWithoutCustomCode(context);
 
   await createWorkspaceWebviewCommandHandler({
     panelName: localize('createLogicAppProject', 'Create Project'),

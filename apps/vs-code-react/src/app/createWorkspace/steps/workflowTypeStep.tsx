@@ -39,6 +39,11 @@ export const WorkflowTypeStep: React.FC = () => {
       id: 'JdYNQ+',
       description: 'Workflow type label',
     }),
+    WORKFLOW_TYPE_PLACEHOLDER: intl.formatMessage({
+      defaultMessage: 'Select workflow type',
+      id: '0H5p4k',
+      description: 'Select workflow type placeholder',
+    }),
     WORKFLOW_NAME_PLACEHOLDER: intl.formatMessage({
       defaultMessage: 'Enter workflow name',
       id: 'nVhDGu',
@@ -152,7 +157,7 @@ export const WorkflowTypeStep: React.FC = () => {
           }
           selectedOptions={workflowType ? [workflowType] : []}
           onOptionSelect={handleWorkflowTypeChange}
-          placeholder="Select workflow type"
+          placeholder={intlText.WORKFLOW_TYPE_PLACEHOLDER}
           className={styles.inputControl}
         >
           <Option value="Stateful-Codeless" text="Stateful">
