@@ -822,9 +822,15 @@ export const ParameterSection = ({
     }
   };
 
+  // ...existing code...
+
   const subscriptionId = useSelector((state: RootState) => state.workflow.subscriptionId);
   const resourceGroup = useSelector((state: RootState) => state.workflow.resourceGroup);
   const flowName = useSelector((state: RootState) => state.workflow.flowName);
+
+  // Add debugging logs here
+  console.log('Redux state values:', { subscriptionId, resourceGroup, flowName });
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
@@ -836,9 +842,9 @@ export const ParameterSection = ({
               <>
                 <label>{param.label}</label>
                 <ModelIdDropdown
-                  subscriptionId={subscriptionId}
-                  resourceGroup={resourceGroup}
-                  flowName={flowName}
+                  subscriptionId={subscriptionId || ''}
+                  resourceGroup={resourceGroup || ''}
+                  flowName={flowName || ''}
                   value={param.value?.[0]?.value || ''}
                   disabled={readOnly}
                   options={{
@@ -853,6 +859,7 @@ export const ParameterSection = ({
           },
         };
       }
+      // ...rest of the existing code...
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
 
@@ -1102,23 +1109,34 @@ export const ModelIdDropdown: React.FC<ModelIdDropdownProps> = ({
   const [modelOptions, setModelOptions] = useState<{ key: string; text: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Add debugging logs
+  console.log('ModelIdDropdown props:', { subscriptionId, resourceGroup, flowName, serviceOptions });
+
   useEffect(() => {
     // Guard: Only fetch if all params are present
     if (!subscriptionId || !resourceGroup || !flowName) {
+      console.log('Missing required parameters:', { subscriptionId, resourceGroup, flowName });
       setModelOptions([]);
       return;
     }
+
+    console.log('Fetching models with params:', { subscriptionId, resourceGroup, flowName });
     setLoading(true);
     const service = new ConsumptionConnectionService(serviceOptions);
     service
       .fetchAgentModels({ subscriptionId, resourceGroup, flowName })
       .then((models) => {
+        console.log('Fetched models:', models);
         setModelOptions(
           models.map((model) => ({
             key: model.name,
             text: model.name,
           }))
         );
+      })
+      .catch((error) => {
+        console.error('Error fetching models:', error);
+        setModelOptions([]);
       })
       .finally(() => setLoading(false));
   }, [subscriptionId, resourceGroup, flowName, serviceOptions]);
@@ -1130,6 +1148,7 @@ export const ModelIdDropdown: React.FC<ModelIdDropdownProps> = ({
       placeholder={loading ? 'Loading models...' : 'Select a model'}
       onOptionSelect={(_, data) => {
         if (data.optionValue) {
+          console.log('Model selected:', data.optionValue);
           // onChange(data.optionValue);
         }
       }}

@@ -7,7 +7,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import agentloopconnector from './manifests/agentloopconnector';
+import agentLoopConnector from './manifests/agentLoopConnector';
 
 export interface ConsumptionConnectionServiceOptions extends BaseConnectionServiceOptions {
   getCachedConnector?: (connectorId: string) => Promise<Connector>;
@@ -46,7 +46,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     }
     const connectorIdKeyword = connectorId.split('/').at(-1);
     if (connectorIdKeyword === 'agent') {
-      return agentloopconnector;
+      return agentLoopConnector;
     }
     return connector ?? this._getAzureConnector(connectorId);
   }
