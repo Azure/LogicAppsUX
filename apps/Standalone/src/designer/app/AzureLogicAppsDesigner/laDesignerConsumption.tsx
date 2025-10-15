@@ -104,9 +104,7 @@ const DesignerEditorConsumption = () => {
   const [parameters, setParameters] = useState<Record<string, WorkflowParameter>>({});
 
   useEffect(() => {
-    // Always use the original workflow artifacts for metadata preservation
-    // Run instance data is used for execution details, not definition
-    const data = workflowAndArtifactsData;
+    const data = runInstanceData?.properties.workflow ?? workflowAndArtifactsData;
     if (!data) {
       return;
     }
@@ -115,17 +113,7 @@ const DesignerEditorConsumption = () => {
     setWorkflow(_workflow);
     setConnectionReferences(_connectionReferences);
     setParameters(_parameters);
-  }, [workflowAndArtifactsData]);
-
-  // Update workflow definition when viewing a specific run instance
-  useEffect(() => {
-    if (isMonitoringView && runInstanceData?.properties?.workflow?.properties?.definition) {
-      setWorkflow((previousWorkflow: any) => ({
-        ...previousWorkflow,
-        definition: runInstanceData.properties.workflow.properties.definition,
-      }));
-    }
-  }, [isMonitoringView, runInstanceData]);
+  }, [workflowAndArtifactsData, runInstanceData]);
 
   const [definition, setDefinition] = useState<any>();
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
