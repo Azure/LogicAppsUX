@@ -1,4 +1,4 @@
-import { AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody } from '@fluentui/react-components';
+import { AccordionHeader, AccordionItem, AccordionPanel, Divider, MessageBar, MessageBarBody } from '@fluentui/react-components';
 import { Grid } from '@microsoft/designer-ui';
 import { useOperationsAccordionStyles } from './styles/OperationsAccordion.styles';
 
@@ -25,12 +25,12 @@ export const OperationAccordionItem = ({
 
   return (
     <AccordionItem value={value}>
-      <AccordionHeader className={classes.accordionHeader}>
+      <AccordionHeader>
         {title} ({items.length})
       </AccordionHeader>
       <AccordionPanel className={showMessage ? classes.accordionPanelWithMessage : classes.accordionPanel}>
         {showMessage && messageText && (
-          <MessageBar className={classes.messageBar}>
+          <MessageBar className={classes.messageBar} layout="multiline">
             <MessageBarBody>{messageText}</MessageBarBody>
           </MessageBar>
         )}
@@ -42,6 +42,7 @@ export const OperationAccordionItem = ({
           displayRuntimeInfo={false}
         />
       </AccordionPanel>
+      <Divider />
     </AccordionItem>
   );
 };
