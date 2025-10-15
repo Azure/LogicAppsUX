@@ -604,15 +604,6 @@ async function updateConnectionReferencesLocalMSI(
       context.telemetry.properties[`msiProcessing_${referenceKey}`] = connectionId;
 
       await ensureAccessPolicy(connectionId, objectId, tenantId, accessToken, workflowBaseManagementUri, localSettings);
-
-      // Update the reference to use MSI authentication
-      updatedReferences[referenceKey] = {
-        ...reference,
-        authentication: {
-          type: 'ManagedServiceIdentity',
-        },
-      };
-
       successCount++;
       context.telemetry.properties[`msiSuccess_${referenceKey}`] = `Completed in ${Date.now() - connectionStartTime}ms`;
     } catch (error) {

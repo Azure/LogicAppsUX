@@ -17,8 +17,9 @@ import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { Progress } from 'vscode';
+import { AuthenticationMethodSelectionStep, type IAuthenticationContext } from './authenticationMethodStep';
 
-export interface IAzureConnectorsContext extends IActionContext {
+export interface IAzureConnectorsContext extends IActionContext, IAuthenticationContext {
   credentials: any;
   subscriptionId: any;
   resourceGroup: any;
@@ -29,7 +30,7 @@ export interface IAzureConnectorsContext extends IActionContext {
 
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep(projectPath)],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath), new ConnectorAuthenticationStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
@@ -105,5 +106,12 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
 
   public shouldExecute(context: IAzureConnectorsContext): boolean {
     return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
+  }
+}
+
+//TODO: Update to be in webview after ignite redesign is done
+class ConnectorAuthenticationStep extends AuthenticationMethodSelectionStep<IAzureConnectorsContext> {
+  public shouldPrompt(context: IAzureConnectorsContext): boolean {
+    return context.enabled === true && super.shouldPrompt(context);
   }
 }
