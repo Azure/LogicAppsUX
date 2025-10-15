@@ -336,6 +336,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.validateAndCreateACLs",
+        "title": "Validate and create ACLs",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.validateAndInstallBinaries",
         "title": "Validate and install dependency binaries",
         "category": "Azure Logic Apps"

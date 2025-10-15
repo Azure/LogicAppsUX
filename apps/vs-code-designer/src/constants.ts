@@ -187,6 +187,7 @@ export const extensionCommand = {
   validateLogicAppProjects: 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
+  validateAndCreateACLs: 'azureLogicAppsStandard.validateAndCreateACLs',
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
   disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
