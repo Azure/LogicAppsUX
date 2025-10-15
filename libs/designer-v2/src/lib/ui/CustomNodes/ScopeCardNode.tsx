@@ -439,7 +439,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
           {collapsedText}
         </p>
       ) : null}
-      {isAgent && actionCount === 0 && !graphCollapsed ? (
+      {isAgent && actionCount < 1 && !graphCollapsed ? (
         <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em 0' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
