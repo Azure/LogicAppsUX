@@ -11,7 +11,15 @@ import type {
 } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { containsIdTag, guid, removeIdTag, WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import {
+  agentOperation,
+  containsIdTag,
+  customLengthGuid,
+  guid,
+  removeIdTag,
+  WORKFLOW_NODE_TYPES,
+  type WorkflowNodeType,
+} from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 import { useDebouncedEffect, useResizeObserver } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
@@ -19,13 +27,13 @@ import { useIntl } from 'react-intl';
 import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata } from '../core/state/workflow/workflowSelectors';
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
 import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
-import type { AppDispatch } from '../core';
+import { addOperation, type AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
-import { addOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
+import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
-import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
@@ -245,29 +253,11 @@ const DesignerReactFlow = (props: any) => {
       const parentId = containsIdTag(fromNode?.id) ? removeIdTag(fromNode?.id) : fromNode?.id;
       const targetId = containsIdTag(toNode?.id) ? removeIdTag(toNode?.id) : toNode?.id;
 
+      setIsDraggingConnection(false);
+
       if (parentId === targetId) {
         // Prevent self-connection
-        setIsDraggingConnection(false);
         return;
-      }
-
-      const targetIsPane = event.target.classList.contains('react-flow__pane');
-      if (targetIsPane && parentId) {
-        const newId = guid();
-        const relationshipIds = {
-          graphId: nodesMetadata[parentId]?.graphId ?? '',
-          parentId,
-          childId: undefined,
-        };
-        dispatch(
-          expandDiscoveryPanel({
-            nodeId: newId,
-            relationshipIds,
-            isParallelBranch: true,
-          })
-        );
-      } else {
-        setIsDraggingConnection(false);
       }
 
       if (isValid && parentId && targetId) {
@@ -279,11 +269,52 @@ const DesignerReactFlow = (props: any) => {
               targetId,
             })
           );
+          return;
+        }
+        // Not in A2A, create a run-after edge
+        dispatch(
+          addOperationRunAfter({
+            parentOperationId: parentId,
+            childOperationId: targetId,
+          })
+        );
+        return;
+      }
+
+      const targetIsPane = event.target.classList.contains('react-flow__pane');
+      // Dropping onto pane
+      if (targetIsPane && parentId) {
+        setIsDraggingConnection(true); // Prevent clicks on the pane from clearing the panel
+        const newId = guid();
+        const relationshipIds = {
+          graphId: nodesMetadata[parentId]?.graphId ?? '',
+          parentId,
+          childId: undefined,
+        };
+
+        // Add an agent if connecting from an agent in A2A
+        if (isA2AWorkflow && allAgentIds.includes(parentId)) {
+          const newAgentId = `Agent_${customLengthGuid(4)}`;
+          dispatch(addOperation({ nodeId: newAgentId, relationshipIds, operation: agentOperation }));
+          // Remove the connecting edge and replace it with a handoff
+          dispatch(
+            removeOperationRunAfter({
+              parentOperationId: parentId,
+              childOperationId: newAgentId,
+            })
+          );
+          dispatch(
+            addAgentHandoff({
+              sourceId: parentId,
+              targetId: newAgentId,
+            })
+          );
         } else {
           dispatch(
-            addOperationRunAfter({
-              parentOperationId: parentId,
-              childOperationId: targetId,
+            expandDiscoveryPanel({
+              nodeId: newId,
+              relationshipIds,
+              isParallelBranch: true,
             })
           );
         }
@@ -425,8 +456,11 @@ const DesignerReactFlow = (props: any) => {
     [handSizeChanges, handlePositionChanges]
   );
 
+  const isDarkMode = useIsDarkMode();
+
   return (
     <ReactFlow
+      colorMode={isDarkMode ? 'dark' : 'light'}
       ref={canvasRef}
       onInit={onInit}
       nodeTypes={nodeTypes}

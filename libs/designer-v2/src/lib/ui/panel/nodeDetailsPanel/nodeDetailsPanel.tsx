@@ -65,7 +65,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     };
   });
 
-  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>('480px');
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
 

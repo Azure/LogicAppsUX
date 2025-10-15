@@ -7,7 +7,6 @@ import {
   useIsVSCode,
   useIsDarkMode,
 } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useIsA2AWorkflow, useWorkflowHasAgentLoop } from '../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -31,12 +30,10 @@ import { DesignerContextualMenu } from './common/DesignerContextualMenu/Designer
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
-import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
-import MonitoringTimeline from './MonitoringTimeline';
-import { useRunInstance } from '../core/state/workflow/workflowSelectors';
-import { RunHistoryEntryInfo } from './panel';
+import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
+import { RunDisplay } from './RunDisplay';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -61,8 +58,6 @@ export const Designer = (props: DesignerProps) => {
   const isDarkMode = useIsDarkMode();
 
   const styles = useDesignerStyles();
-
-  const selectedRun = useRunInstance();
 
   const designerContainerRef = useRef<HTMLDivElement>(null);
 
@@ -96,12 +91,6 @@ export const Designer = (props: DesignerProps) => {
   );
 
   const isMonitoringView = useMonitoringView();
-  const workflowHasAgentLoop = useWorkflowHasAgentLoop();
-  const isA2AWorkflow = useIsA2AWorkflow(); // Specifically A2A + Handoffs
-
-  const hasChat = useMemo(() => {
-    return workflowHasAgentLoop && isMonitoringView;
-  }, [isMonitoringView, workflowHasAgentLoop]);
 
   const DND_OPTIONS: any = {
     backends: [
@@ -146,7 +135,8 @@ export const Designer = (props: DesignerProps) => {
         className={mergeClasses('msla-designer-canvas', 'msla-panel-mode', styles.vars, isDarkMode ? styles.darkVars : styles.lightVars)}
       >
         <ReactFlowProvider>
-          <div style={{ flexGrow: 1 }}>
+          <RunHistoryPanel />
+          <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'row', position: 'relative' }} ref={canvasRef}>
             <DesignerReactFlow canvasRef={canvasRef}>
               {backgroundProps ? (
                 <Background {...backgroundProps} />
@@ -163,6 +153,11 @@ export const Designer = (props: DesignerProps) => {
               <DeleteModal />
               <DesignerContextualMenu />
               <EdgeContextualMenu />
+              <RunDisplay />
+              <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
+                <Controls />
+                <Minimap />
+              </div>
             </DesignerReactFlow>
           </div>
           <PanelRoot
@@ -171,15 +166,6 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
-          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-            <Controls />
-            <Minimap />
-          </div>
-          <div className={styles.topLeftContainer}>
-            {selectedRun && <RunHistoryEntryInfo run={selectedRun as any} />}
-            {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}
-          </div>
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
