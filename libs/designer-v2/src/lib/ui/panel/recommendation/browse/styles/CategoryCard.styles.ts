@@ -4,7 +4,7 @@ export const useCategoryCardStyles = makeStyles({
   card: {
     cursor: 'pointer',
     borderRadius: tokens.borderRadiusMedium,
-    backgroundColor: tokens.colorNeutralBackground1,
+    backgroundColor: 'transparent',
     position: 'relative',
     transition: 'all 0.2s ease',
     '&:hover': {
