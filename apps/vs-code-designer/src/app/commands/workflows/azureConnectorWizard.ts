@@ -2,7 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
+import type { Progress } from 'vscode';
 import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
@@ -13,12 +18,9 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import type { Progress } from 'vscode';
+import { AuthenticationMethod, AuthenticationMethodSelectionStep, type IAuthenticationContext } from './authenticationMethodStep';
 
-export interface IAzureConnectorsContext extends IActionContext {
+export interface IAzureConnectorsContext extends IActionContext, IAuthenticationContext, IProjectWizardContext {
   credentials: any;
   subscriptionId: any;
   resourceGroup: any;
@@ -29,7 +31,7 @@ export interface IAzureConnectorsContext extends IActionContext {
 
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep(projectPath)],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath), new ConnectorAuthenticationStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
@@ -105,5 +107,19 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
 
   public shouldExecute(context: IAzureConnectorsContext): boolean {
     return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
+  }
+}
+
+//TODO: Update to be in webview after ignite redesign is done
+
+class ConnectorAuthenticationStep extends AuthenticationMethodSelectionStep<IAzureConnectorsContext> {
+  public async prompt(context: IAzureConnectorsContext): Promise<void> {
+    await super.prompt(context); // Let parent handle selection
+    // Set MSIenabled based on what user selected
+    context.MSIenabled = context.authenticationMethod === AuthenticationMethod.ManagedServiceIdentity;
+  }
+
+  public shouldPrompt(_context: IAzureConnectorsContext): boolean {
+    return true; // Always prompt for authentication method
   }
 }

@@ -41,6 +41,7 @@ import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { ext } from '../../../extensionVariables';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -188,6 +189,8 @@ async function getConnectionReference(
     connectionProperties,
   } = reference;
 
+  const useMsi = ext.useMSI;
+
   return axios
     .post(
       `${formatSetting(workflowBaseManagementUri)}/${formatSetting(connectionId)}/listConnectionKeys?api-version=2018-07-01-preview`,
@@ -195,18 +198,26 @@ async function getConnectionReference(
       { headers: { authorization: accessToken } }
     )
     .then(({ data: response }) => {
-      const appSettingKey = `${referenceKey}-connectionKey`;
-      settingsToAdd[appSettingKey] = response.connectionKey;
+      // Only add connection key to settings if NOT using MSI
+      if (!useMsi) {
+        const appSettingKey = `${referenceKey}-connectionKey`;
+        settingsToAdd[appSettingKey] = response.connectionKey;
+      }
+
+      // Determine authentication based on ext.useMSI
+      const authValue = useMsi
+        ? { type: 'ManagedServiceIdentity' }
+        : {
+            type: 'Raw',
+            scheme: 'Key',
+            parameter: `@appsetting('${referenceKey}-connectionKey')`,
+          };
 
       const connectionReference: ConnectionReferenceModel = {
         api: { id: apiId },
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
-        authentication: {
-          type: 'Raw',
-          scheme: 'Key',
-          parameter: `@appsetting('${appSettingKey}')`,
-        },
+        authentication: authValue,
         connectionProperties,
       };
 
@@ -258,9 +269,14 @@ export async function getConnectionsAndSettingsToUpdate(
         parameterizeConnectionsSetting
       );
 
-      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
-      areKeysGenerated = true;
-    } else if (isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
+      context.telemetry.properties.connectionKeyGenerated = ext.useMSI
+        ? `${referenceKey} configured for MSI authentication`
+        : `${referenceKey}-connectionKey generated and is valid for 7 days`;
+
+      if (!ext.useMSI) {
+        areKeysGenerated = true;
+      }
+    } else if (!ext.useMSI && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
       accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
@@ -280,6 +296,7 @@ export async function getConnectionsAndSettingsToUpdate(
       context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
       areKeysGenerated = true;
     } else if (
+      !ext.useMSI &&
       isApiHubConnectionId(reference.connection.id) &&
       localSettings.Values[`${referenceKey}-connectionKey`] &&
       isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
