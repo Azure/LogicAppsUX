@@ -223,7 +223,6 @@ export const LogicAppTypeStep: React.FC = () => {
               size={200}
               style={{
                 color: 'var(--colorNeutralForeground2)',
-                fontFamily: 'monospace',
                 marginTop: '4px',
                 display: 'block',
                 wordBreak: 'break-all',

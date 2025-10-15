@@ -142,7 +142,7 @@ export const PackageNameStep: React.FC = () => {
               value={packagePath.fsPath ?? ''}
               onChange={handlePackagePathChange}
               className={styles.inputControl}
-              style={{ width: '800px', fontFamily: 'monospace' }}
+              style={{ width: '800px' }}
             />
             <Button onClick={onOpenExplorer} className={styles.browseButton} disabled={isValidatingPath}>
               {isValidatingPath ? 'Validating...' : intlText.BROWSE_BUTTON}
@@ -158,15 +158,13 @@ export const PackageNameStep: React.FC = () => {
                     : packageValidationResults[packagePath.fsPath] === false
                       ? 'var(--colorPaletteRedForeground1)'
                       : 'var(--colorNeutralForeground2)',
-                fontFamily: 'monospace',
                 marginTop: '4px',
                 display: 'block',
                 wordBreak: 'break-all',
               }}
             >
               {packagePath.fsPath}
-              {packageValidationResults[packagePath.fsPath] === true && ' ✓ Valid path'}
-              {packageValidationResults[packagePath.fsPath] === false && ' ✗ Invalid path'}
+              {packageValidationResults[packagePath.fsPath] === true ? ' ✓ Valid path' : ' ✗ Invalid path'}
             </Text>
           )}
         </Field>

@@ -266,7 +266,7 @@ export const WorkspaceNameStep: React.FC = () => {
               value={workspaceProjectPath.fsPath ?? ''}
               onChange={handleProjectPathChange}
               className={styles.inputControl}
-              style={{ width: '800px', fontFamily: 'monospace' }}
+              style={{ width: '800px' }}
             />
             <Button onClick={onOpenExplorer} className={styles.browseButton} disabled={isValidatingPath}>
               {isValidatingPath ? 'Validating...' : intlText.BROWSE_BUTTON}
@@ -282,15 +282,13 @@ export const WorkspaceNameStep: React.FC = () => {
                     : pathValidationResults[workspaceProjectPath.fsPath] === false
                       ? 'var(--colorPaletteRedForeground1)'
                       : 'var(--colorNeutralForeground2)',
-                fontFamily: 'monospace',
                 marginTop: '4px',
                 display: 'block',
                 wordBreak: 'break-all',
               }}
             >
               {workspaceProjectPath.fsPath}
-              {pathValidationResults[workspaceProjectPath.fsPath] === true && ' ✓ Valid path'}
-              {pathValidationResults[workspaceProjectPath.fsPath] === false && ' ✗ Invalid path'}
+              {pathValidationResults[workspaceProjectPath.fsPath] === true ? ' ✓ Valid path' : ' ✗ Invalid path'}
             </Text>
           )}
         </Field>
@@ -314,7 +312,6 @@ export const WorkspaceNameStep: React.FC = () => {
                   : pathValidationResults[workspaceProjectPath.fsPath] === true
                     ? 'var(--colorPaletteGreenForeground1)'
                     : 'var(--colorNeutralForeground2)',
-                fontFamily: 'monospace',
                 marginTop: '4px',
                 display: 'block',
                 wordBreak: 'break-all',
