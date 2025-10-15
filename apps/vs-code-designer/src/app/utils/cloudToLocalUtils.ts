@@ -347,7 +347,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
 
   let appSettings: ILocalSettingsJson = {};
   let zipSettings: ILocalSettingsJson = {};
-  let connectionsData: any = {};
+  let connectionsData: ConnectionsData = {};
 
   try {
     const connectionsString = await getConnectionsJson(context.projectPath);
