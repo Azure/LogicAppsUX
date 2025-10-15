@@ -77,7 +77,7 @@ exports[`lib/monitoring/statuspill/statusicon > renders (status = Failed, has re
 
 exports[`lib/monitoring/statuspill/statusicon > renders (status = Running, has retries = false) 1`] = `
 <div
-  className="fui-Spinner r82apo5"
+  className="fui-Spinner rpp59a7"
   role="progressbar"
 >
   <span
@@ -201,7 +201,7 @@ exports[`lib/monitoring/statuspill/statusicon > renders (status = Unknown, has r
 exports[`lib/monitoring/statuspill/statusicon > renders (status = Waiting, has retries = false) 1`] = `
 <div
   aria-label="Run information loading"
-  className="fui-Spinner r82apo5"
+  className="fui-Spinner rpp59a7"
   role="progressbar"
 >
   <span

@@ -48,13 +48,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
 
   const panelContainerElement = panelContainerRef.current;
 
-  const [width, setWidth] = useState<PanelSize | string>(() =>
-    collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium
-  );
+  const [width, setWidth] = useState<PanelSize | string>(PanelSize.Small);
 
   useEffect(() => {
-    setWidth(collapsed ? PanelSize.Auto : currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium);
-  }, [collapsed, currentPanelMode]);
+    setWidth(PanelSize.Small);
+  }, [currentPanelMode]);
 
   const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
 

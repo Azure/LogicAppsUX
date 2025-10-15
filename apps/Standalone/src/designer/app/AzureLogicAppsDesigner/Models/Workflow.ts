@@ -16,7 +16,7 @@ export const Artifact = {
   ParametersFile: 'parameters.json',
   WorkflowFile: 'workflow.json',
   HostFile: 'host.json',
-  DraftFile: 'draft.json',
+  DraftFile: 'workflow-draft.json',
   DraftConnectionsFile: 'connections-draft.json',
   DraftParametersFile: 'parameters-draft.json',
 } as const;

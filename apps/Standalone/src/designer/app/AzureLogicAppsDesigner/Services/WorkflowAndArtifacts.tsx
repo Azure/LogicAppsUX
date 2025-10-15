@@ -611,13 +611,13 @@ export const saveWorkflowStandard = async (
     skipValidation?: boolean;
     throwError?: boolean;
   },
-  autoSaveDraft?: boolean
+  isDraftSave?: boolean
 ): Promise<any> => {
   const data: any = {
     files: {},
   };
 
-  if (autoSaveDraft) {
+  if (isDraftSave) {
     if (workflows.length > 0) {
       return deployArtifacts(siteResourceId, workflows[0].name, workflows[0].workflow, connectionsData, parametersData, settings, true);
     }
