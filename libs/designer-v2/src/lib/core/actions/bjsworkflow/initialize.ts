@@ -606,9 +606,11 @@ export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, node
       const parameter = getParameterFromName(nodeInputs, 'agentUrl');
       if (parameter && agentUrlInfo) {
         parameter.value = [createLiteralValueSegment(agentUrlInfo.agentUrl)];
-        if (agentUrlInfo.queryParams) {
-          parameter.editorOptions = { ...parameter.editorOptions, chatUrl: agentUrlInfo.chatUrl, queryParams: agentUrlInfo.queryParams };
-        }
+        parameter.editorOptions = {
+          ...parameter.editorOptions,
+          chatUrl: agentUrlInfo.chatUrl,
+          ...(agentUrlInfo.queryParams ? { queryParams: agentUrlInfo.queryParams } : {}),
+        };
         return parameter;
       }
     } catch (error) {
