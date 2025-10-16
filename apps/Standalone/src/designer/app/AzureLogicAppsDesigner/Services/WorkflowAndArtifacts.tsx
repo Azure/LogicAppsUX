@@ -474,8 +474,14 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
       queryParams,
       hostName,
     };
-  } catch (_error) {
+  } catch (error) {
     // Fallback if API key fetch fails
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      message: `Failed to fetch API keys for consumption workflow, falling back to no authentication: ${error}`,
+      area: 'fetchAgentUrlConsumption',
+    });
+
     const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(accessEndpoint);
     const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
 
