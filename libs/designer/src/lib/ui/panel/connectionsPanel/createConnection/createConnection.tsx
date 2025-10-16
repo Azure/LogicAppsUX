@@ -305,9 +305,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isDynamicConnectionOptionValidForConnector = useMemo(() => {
-    // Check if workflow is agent type
-    // For Standard: use workflowKind
-    // For Consumption: check metadata.agentType
+    // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
+    // Standard: check workflowKind
+    // Consumption: check metadata.agentType
     const isAgent = workflowKind ? isAgentWorkflow(workflowKind) : workflowMetadata?.agentType !== undefined;
 
     return isUsingOAuth && connector?.properties?.isDynamicConnectionAllowed && isAgent && (isAgentSubgraph ?? true);
