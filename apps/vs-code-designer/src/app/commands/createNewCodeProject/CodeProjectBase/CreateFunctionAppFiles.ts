@@ -20,7 +20,6 @@ import * as path from 'path';
 import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { localize } from '../../../../localize';
-// import { tryGetLocalFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
 import * as vscode from 'vscode';
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -77,8 +76,7 @@ export class CreateFunctionAppFiles {
     await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
-    // const isNewLogicAppProject = context.shouldCreateLogicAppProject;
-    await this.createVscodeConfigFiles(functionFolderPath, targetFramework /*, funcVersion, logicAppName, isNewLogicAppProject*/);
+    await this.createVscodeConfigFiles(functionFolderPath, targetFramework);
   }
 
   /**
@@ -162,23 +160,12 @@ export class CreateFunctionAppFiles {
    * @param logicAppName The name of the logic app.
    * @param isNewLogicAppProject Indicates if the logic app project is new.
    */
-  private async createVscodeConfigFiles(
-    functionFolderPath: string,
-    targetFramework: TargetFramework
-    // funcVersion: FuncVersion,
-    // logicAppName: string,
-    // isNewLogicAppProject: boolean
-  ): Promise<void> {
+  private async createVscodeConfigFiles(functionFolderPath: string, targetFramework: TargetFramework): Promise<void> {
     await fs.ensureDir(functionFolderPath);
     const vscodePath: string = path.join(functionFolderPath, vscodeFolderName);
     await fs.ensureDir(vscodePath);
 
     await this.generateExtensionsJson(vscodePath);
-
-    // Update launch config for existing logic app project (new projects will be created with the correct config)
-    // if (!isNewLogicAppProject) {
-    //   await this.updateLogicAppLaunchJson(vscodePath, targetFramework, funcVersion, logicAppName);
-    // }
 
     await this.generateSettingsJson(vscodePath, targetFramework);
 
