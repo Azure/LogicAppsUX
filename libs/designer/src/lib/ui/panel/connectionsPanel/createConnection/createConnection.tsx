@@ -310,14 +310,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     // For Consumption: check metadata.agentType
     const isAgent = workflowKind ? isAgentWorkflow(workflowKind) : workflowMetadata?.agentType !== undefined;
 
-    return (
-      isUsingOAuth &&
-      connector?.properties?.isDynamicConnectionAllowed &&
-      isAgent &&
-      // For Standard SKU, also check if node is within agent subgraph
-      // For Consumption SKU, isAgentSubgraph will be null/false, so just check workflow kind
-      (isAgentSubgraph ?? true)
-    );
+    return isUsingOAuth && connector?.properties?.isDynamicConnectionAllowed && isAgent && (isAgentSubgraph ?? true);
   }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);

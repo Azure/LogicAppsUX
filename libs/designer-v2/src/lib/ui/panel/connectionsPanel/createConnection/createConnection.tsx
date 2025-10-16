@@ -111,6 +111,7 @@ export interface CreateConnectionProps {
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
   workflowKind?: string;
+  workflowMetadata?: any;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -140,6 +141,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isAgentSubgraph,
     operationManifest,
     workflowKind,
+    workflowMetadata,
   } = props;
 
   const intl = useIntl();
@@ -302,16 +304,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
-  const isDynamicConnectionOptionValidForConnector = useMemo(
-    () =>
-      isUsingOAuth &&
-      connector?.properties?.isDynamicConnectionAllowed &&
-      isAgentWorkflow(workflowKind ?? '') &&
-      // For Standard SKU, also check if node is within agent subgraph
-      // For Consumption SKU, isAgentSubgraph will be null/false, so just check workflow kind
-      (isAgentSubgraph ?? true),
-    [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind]
-  );
+  const isDynamicConnectionOptionValidForConnector = useMemo(() => {
+    // Support both Standard SKU (workflowKind) and Consumption SKU (metadata fallback)
+    const isAgent = workflowKind ? isAgentWorkflow(workflowKind) : workflowMetadata?.agentType !== undefined;
+
+    return isUsingOAuth && connector?.properties?.isDynamicConnectionAllowed && isAgent && isAgentSubgraph;
+  }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
 
