@@ -2,6 +2,7 @@ import { equals, enableAgentConsumption } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
+import { isA2AWorkflow } from '../workflow/helper';
 
 export const useShowMinimap = () => {
   return useSelector((state: RootState) => state.designerView.showMinimap);
@@ -68,28 +69,7 @@ export const useIsAgenticWorkflowOnly = () => {
 };
 
 export const useIsA2AWorkflow = () => {
-  return useSelector((state: RootState) => {
-    const workflowKind = state.workflow.workflowKind;
-
-    // Standard SKU, kind is agent
-    if (equals(workflowKind, 'agent', false)) {
-      return true;
-    }
-
-    // Standard SKU, kind is not agent
-    if (workflowKind && !equals(workflowKind, 'agent', false)) {
-      return false;
-    }
-
-    // Consumption SKU, check definition metadata
-    const agentType = state.workflow.originalDefinition?.metadata?.agentType;
-    const isConsumptionAgent = equals(agentType, 'conversational', false);
-
-    // Also check if workflow has Agent operations (fallback for Consumption workflows without metadata)
-    const hasAgentOperations = Object.values(state.workflow.operations).some((operation) => equals(operation.type, 'Agent', true));
-
-    return isConsumptionAgent || hasAgentOperations;
-  });
+  return useSelector((state: RootState) => isA2AWorkflow(state.workflow));
 };
 
 export const useWorkflowHasAgentLoop = () => {
