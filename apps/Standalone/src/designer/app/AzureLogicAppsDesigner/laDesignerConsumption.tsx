@@ -13,7 +13,7 @@ import {
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
-  fetchAgentUrl,
+  fetchAgentUrlConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
@@ -125,9 +125,19 @@ const DesignerEditorConsumption = () => {
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = useMemo(
-    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
+    () =>
+      getDesignerServices(
+        workflowId,
+        workflow as any,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        workflowAndArtifactsData,
+        queryClient
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
+    [workflowId, workflow, tenantId, canonicalLocation, designerID, language, workflowAndArtifactsData]
   );
 
   useEffect(() => {
@@ -368,7 +378,7 @@ const getDesignerServices = (
   objectId: string | undefined,
   location: string,
   locale: string | undefined,
-  loggerService?: any,
+  workflowAndArtifactsData: any,
   queryClient?: any
 ): any => {
   const baseUrl = 'https://management.azure.com';
@@ -529,7 +539,11 @@ const getDesignerServices = (
 
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
-    getAgentUrl: () => fetchAgentUrl(workflowId, workflowName, workflow?.properties?.defaultHostName ?? ''),
+    getAgentUrl: async () => {
+      // For Consumption workflows, construct agent URL with API key authentication
+      const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
+      return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint);
+    },
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
@@ -606,7 +620,7 @@ const getDesignerServices = (
     tenantService,
     operationManifestService,
     searchService,
-    loggerService,
+    loggerService: undefined,
     oAuthService,
     workflowService,
     apimService,
