@@ -202,21 +202,21 @@ export class ConsumptionRunService implements IRunService {
    * Gets an array of workflow-level action repetitions for a run.
    * Timeline support was added to Consumption SKU in October 2025.
    * @param {string} runId - The ID of the workflow run.
-   * @returns {Promise<any>} Array of agent repetitions or undefined if not supported
+   * @returns {Promise<LogicAppsV2.RunRepetition[] | undefined>} Array of agent repetitions or undefined if not supported
    */
-  async getTimelineRepetitions(runId: string): Promise<any> {
+  async getTimelineRepetitions(runId: string): Promise<LogicAppsV2.RunRepetition[] | undefined> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}${runId}/timeline?api-version=${apiVersion}`;
 
     try {
-      const response = await httpClient.get<Run>({
+      const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
         uri,
         headers: headers as Record<string, any>,
       });
 
-      return response;
+      return response.value;
     } catch (e: any) {
       // Timeline endpoint may not be available in all regions yet
       // Return undefined for graceful degradation
