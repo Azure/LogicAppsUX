@@ -22,7 +22,6 @@ export const useGridStyles = makeStyles({
   itemWrapper: {
     cursor: 'pointer',
     borderRadius: tokens.borderRadiusMedium,
-    backgroundColor: tokens.colorNeutralBackground1,
     position: 'relative',
     transition: 'all 0.2s ease',
     marginRight: tokens.spacingHorizontalM,
