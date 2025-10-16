@@ -414,76 +414,6 @@ const fetchOBODataConsumption = async (workflowId: string): Promise<string | nul
   }
 };
 
-// Async function to get Agent URL with authentication tokens for Consumption workflows
-export const fetchAgentUrlConsumption = async (workflowId: string, workflowName: string, accessEndpoint: string): Promise<AgentURL> => {
-  if (!accessEndpoint || !workflowName) {
-    return { agentUrl: '', chatUrl: '', hostName: '' };
-  }
-
-  const resolveEndpointParts = (endpoint: string) => {
-    const normalized = endpoint.startsWith('https://') ? endpoint : `https://${endpoint}`;
-    const hostName = new URL(normalized).hostname;
-    return { normalized, hostName };
-  };
-
-  try {
-    // Get the API keys for authentication
-    const currentDate = new Date();
-    const apiKeysResponse = await axios.post(
-      `${baseUrl}${workflowId}/listApiKeys?api-version=${consumptionListApiKeysVersion}`,
-      {
-        expiry: new Date(currentDate.getTime() + apiKeyExpiryMs).toISOString(),
-        keyType: 'Primary',
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      }
-    );
-
-    const apiKey = apiKeysResponse.data?.key;
-    const apiEndpoint = apiKeysResponse.data?.endpoint;
-
-    // Use the endpoint from listApiKeys if available, otherwise fall back to accessEndpoint
-    const endpoint = apiEndpoint || accessEndpoint;
-    const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(endpoint);
-
-    // Construct URLs following the pattern used in Standard SKU
-    // chatUrl is base path, queryParams contains authentication
-    const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-    const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
-
-    // Include apiKey for authentication
-    const queryParams: AgentQueryParams | undefined = apiKey ? { apiKey } : undefined;
-
-    // Get OBO token if available (for dynamic connections)
-    const oboToken = await fetchOBODataConsumption(workflowId);
-    if (oboToken && queryParams) {
-      queryParams.oboUserToken = oboToken;
-    }
-
-    return {
-      agentUrl,
-      chatUrl,
-      queryParams,
-      hostName,
-    };
-  } catch (_error) {
-    // Fallback if API key fetch fails
-    const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(accessEndpoint);
-    const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-    const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
-
-    return {
-      agentUrl,
-      chatUrl,
-      queryParams: undefined,
-      hostName,
-    };
-  }
-};
-
 // Async function to get Agent URL with authentication tokens (uses React Query for memoization)
 export const fetchAgentUrl = (siteResourceId: string, workflowName: string, hostName: string): Promise<AgentURL> => {
   const queryClient = getReactQueryClient();
@@ -535,6 +465,84 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       return { agentUrl: '', chatUrl: '', hostName };
     }
   });
+};
+
+export const fetchAgentUrlConsumption = async (workflowId: string, workflowName: string, accessEndpoint: string): Promise<AgentURL> => {
+  if (!accessEndpoint || !workflowName) {
+    return { agentUrl: '', chatUrl: '', hostName: '' };
+  }
+
+  const resolveEndpointParts = (endpoint: string) => {
+    const normalized = endpoint.startsWith('https://') ? endpoint : `https://${endpoint}`;
+    const hostName = new URL(normalized).hostname;
+    return { normalized, hostName };
+  };
+
+  const buildAgentUrls = (baseUrl: string, workflowName: string) => {
+    return {
+      agentUrl: `${baseUrl}/api/Agents/${workflowName}`,
+      chatUrl: `${baseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`,
+    };
+  };
+
+  try {
+    // Get the API keys for authentication
+    const currentDate = new Date();
+    const apiKeysResponse = await axios.post(
+      `${baseUrl}${workflowId}/listApiKeys?api-version=${consumptionListApiKeysVersion}`,
+      {
+        expiry: new Date(currentDate.getTime() + apiKeyExpiryMs).toISOString(),
+        keyType: 'Primary',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+
+    const apiKey = apiKeysResponse.data?.key;
+    const apiEndpoint = apiKeysResponse.data?.endpoint;
+
+    // Use the endpoint from listApiKeys if available, otherwise fall back to accessEndpoint
+    const endpoint = apiEndpoint || accessEndpoint;
+    const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(endpoint);
+
+    // Construct URLs following the pattern used in Standard SKU
+    // chatUrl is base path, queryParams contains authentication
+    const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
+    const queryParams: AgentQueryParams | undefined = apiKey ? { apiKey } : undefined;
+
+    // Get OBO token if available (for dynamic connections)
+    const oboToken = await fetchOBODataConsumption(workflowId);
+    if (oboToken && queryParams) {
+      queryParams.oboUserToken = oboToken;
+    }
+
+    return {
+      agentUrl,
+      chatUrl,
+      queryParams,
+      hostName,
+    };
+  } catch (error) {
+    // Fallback if API key fetch fails
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      message: `Failed to fetch API keys for consumption workflow, falling back to no authentication: ${error}`,
+      area: 'fetchAgentUrlConsumption',
+    });
+
+    const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(accessEndpoint);
+    const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
+
+    return {
+      agentUrl,
+      chatUrl,
+      queryParams: undefined,
+      hostName,
+    };
+  }
 };
 
 export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes, enabled = true) => {
