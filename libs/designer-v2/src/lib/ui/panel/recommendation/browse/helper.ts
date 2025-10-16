@@ -1,5 +1,5 @@
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { a2aRequestOperation, getIntl, recurrenceOperation, requestOperation } from '@microsoft/logic-apps-shared';
+import { a2aRequestOperation, getIntl, recurrenceOperation, requestOperation, agentOperation } from '@microsoft/logic-apps-shared';
 import React from 'react';
 import {
   BotSparkle24Regular,
@@ -208,10 +208,8 @@ export const getActionCategories = (): BrowseCategoryConfig[] => {
         description: 'AI Agent category description',
       }),
       icon: React.createElement(BotSparkle24Regular),
-      type: BrowseCategoryType.BROWSE,
-      connectorFilters: {
-        name: ['openai', 'azureai', 'cognitiveservices'],
-      },
+      type: BrowseCategoryType.IMMEDIATE,
+      operation: agentOperation,
     },
     {
       key: 'actionInApp',
