@@ -78,6 +78,108 @@ describe('wrapStringifiedTokenSegments', () => {
     const output = wrapStringifiedTokenSegments(input);
     expect(output).toContain('value": "@{a\\\\nb}"');
   });
+
+  it('should handle deeply nested expressions with multiple braces', () => {
+    const input = `[{"name":"test","type":"string","value":"@{split(replace(coalesce(triggerOutputs()['headers']?['Filename'], concat(coalesce(triggerOutputs()['headers']?['Correlation-ID'], guid()), '_rcv_', utcNow('yyyyMMddTHHmmss'), '.xml')), '.xml', ''), '_')[1]}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    // Should successfully parse after wrapping
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('split(replace(coalesce(');
+  });
+
+  it('should escape double quotes in xpath expressions', () => {
+    const input = `[{"name":"test","type":"string","value":"@{xpath(xml(triggerBody()), '/*[local-name()=\\"File\\"]/*[local-name()=\\"FileHeader\\"]/text()')}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('local-name()');
+  });
+
+  it('should handle multi-line formatted JSON with complex expressions', () => {
+    const input = `[
+  {
+    "name": "test",
+    "type": "string",
+    "value": "@{split(replace(coalesce(triggerOutputs()['headers']?['Filename'], concat(coalesce(triggerOutputs()['headers']?['Correlation-ID'], guid()), '_rcv_', utcNow('yyyyMMddTHHmmss'), '.xml')), '.xml', ''), '_')[1]}@{toLower(coalesce(first(xpath(xml(triggerBody()), '/*[local-name()=\\"File\\"]/*[local-name()=\\"FileHeader\\"]/*[local-name()=\\"SourceSystem\\"]/text()')),''))}@{last(split(replace(coalesce(triggerOutputs()['headers']?['Filename'], concat(coalesce(triggerOutputs()['headers']?['Correlation-ID'], guid()), '_rcv_', utcNow('yyyyMMddTHHmmss'), '.xml')), '.xml', ''), '_'))}"
+  },
+  {
+    "name": "test2",
+    "type": "string",
+    "value": "@{split(replace(coalesce(triggerOutputs()['headers']?['Filename'], concat(coalesce(triggerOutputs()['headers']?['Correlation-ID'], guid()), '_rcv_', utcNow('yyyyMMddTHHmmss'), '.xml')), '.xml', ''), '_')[1]}"
+  }
+]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed).toHaveLength(2);
+    expect(parsed[0].name).toBe('test');
+    expect(parsed[1].name).toBe('test2');
+    expect(parsed[0].value).toContain('xpath');
+  });
+
+  it('should handle multiple concatenated tokens in one value', () => {
+    const input = `[{"name":"concat","type":"string","value":"@{first(split())}@{second(split())}@{third(split())}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('@{first(split())}@{second(split())}@{third(split())}');
+  });
+
+  it('should handle tokens with array indexing', () => {
+    const input = `[{"name":"indexed","type":"string","value":"@{variables('array')[0]}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('[0]');
+  });
+
+  it('should handle tokens with property access', () => {
+    const input = `[{"name":"property","type":"string","value":"@{triggerOutputs()['headers']?['Filename']}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain("['headers']");
+  });
+
+  it('should handle empty tokens', () => {
+    const input = `[{"name":"empty","type":"string","value":"@{}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+  });
+
+  it('should preserve already escaped characters', () => {
+    const input = `[{"name":"escaped","type":"string","value":"@{concat('line\\\\nbreak', 'tab\\\\there')}"}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('\\\\');
+  });
+
+  it('should handle unquoted tokens in JSON values', () => {
+    const input = `[{"name":"unquoted","type":"string","value":@{variables('test')}}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('variables');
+  });
+
+  it('should handle tokens at JSON boundaries with commas', () => {
+    const input = `[{"value1":@{token1},"value2":@{token2}}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value1).toContain('token1');
+    expect(parsed[0].value2).toContain('token2');
+  });
+
+  it('should handle tokens at end of array', () => {
+    const input = `[{"value":@{lastToken}}]`;
+    const output = wrapStringifiedTokenSegments(input);
+    expect(() => JSON.parse(output)).not.toThrow();
+    const parsed = JSON.parse(output);
+    expect(parsed[0].value).toContain('lastToken');
+  });
 });
 
 describe('unescapeToken', () => {

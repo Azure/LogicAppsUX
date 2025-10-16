@@ -7,7 +7,6 @@ import {
   useIsVSCode,
   useIsDarkMode,
 } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useWorkflowHasAgentLoop } from '../core/state/designerView/designerViewSelectors';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -31,7 +30,6 @@ import { DesignerContextualMenu } from './common/DesignerContextualMenu/Designer
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
-import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
 import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
@@ -93,11 +91,6 @@ export const Designer = (props: DesignerProps) => {
   );
 
   const isMonitoringView = useMonitoringView();
-  const workflowHasAgentLoop = useWorkflowHasAgentLoop();
-
-  const hasChat = useMemo(() => {
-    return workflowHasAgentLoop && isMonitoringView;
-  }, [isMonitoringView, workflowHasAgentLoop]);
 
   const DND_OPTIONS: any = {
     backends: [
@@ -173,7 +166,6 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
