@@ -303,7 +303,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isDynamicConnectionOptionValidForConnector = useMemo(
-    () => isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgentWorkflow(workflowKind ?? ''),
+    () =>
+      isUsingOAuth &&
+      connector?.properties?.isDynamicConnectionAllowed &&
+      isAgentWorkflow(workflowKind ?? '') &&
+      // For Standard SKU, also check if node is within agent subgraph
+      // For Consumption SKU, isAgentSubgraph will be null/false, so just check workflow kind
+      (isAgentSubgraph ?? true),
     [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind]
   );
 
@@ -493,6 +499,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       isDynamicConnectionOptionValidForConnector ? isUsingDynamicConnection : undefined // NOTE: Pass in the dynamic connection value only if the scenario is valid
     );
   }, [
+    connectorId,
     isMultiAuth,
     parameterValues,
     supportsServicePrincipalConnection,

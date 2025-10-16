@@ -13,7 +13,7 @@ import {
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
-  fetchAgentUrl,
+  fetchAgentUrlConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
@@ -123,7 +123,10 @@ const DesignerEditorConsumption = () => {
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
+  // Remove (stage) suffix from location for API compatibility
+  const rawLocation = workflowAndArtifactsData?.location ?? '';
+  const sanitizedLocation = rawLocation.replace(/\s*\(stage\)\s*/gi, '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(sanitizedLocation);
   const services = useMemo(
     () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -529,7 +532,7 @@ const getDesignerServices = (
 
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
-    getAgentUrl: () => fetchAgentUrl(workflowId, workflowName, workflow?.properties?.defaultHostName ?? ''),
+    getAgentUrl: () => fetchAgentUrlConsumption(workflowId, workflowName, workflow?.properties?.defaultHostName ?? ''),
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {

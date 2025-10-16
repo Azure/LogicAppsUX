@@ -19,6 +19,22 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     this._vVersion = 'V1';
   }
 
+  // Override to use V2 kind for dynamic connections
+  protected override _getRequestForCreateConnection(
+    connectorId: string,
+    connectionName: string,
+    connectionInfo: ConnectionCreationInfo
+  ): any {
+    const request = super._getRequestForCreateConnection(connectorId, connectionName, connectionInfo);
+
+    // Use V2 kind when features are present (dynamic connections)
+    if (connectionInfo?.features) {
+      request.kind = 'V2';
+    }
+
+    return request;
+  }
+
   async getConnector(connectorId: string, getCached = false): Promise<Connector> {
     let connector: Connector | undefined;
     if (getCached && this._options.getCachedConnector) {
