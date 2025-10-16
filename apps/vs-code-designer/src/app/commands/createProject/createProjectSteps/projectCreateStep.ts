@@ -23,7 +23,7 @@ import { ProjectCreateStepBase } from './projectCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -68,6 +68,9 @@ export class ProjectCreateStep extends ProjectCreateStepBase {
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
       this.localSettingsJson.Values[ProjectDirectoryPathKey] = path.join(context.projectPath);
+      if (context.projectType === ProjectType.agentCodeful) {
+        this.localSettingsJson.Values.CODEFUL_AGENT = 'true';
+      }
       await writeFormattedJson(localSettingsJsonPath, this.localSettingsJson);
     }
 

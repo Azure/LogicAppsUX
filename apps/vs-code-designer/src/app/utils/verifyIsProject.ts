@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionBundleId, hostFileName, extensionCommand, workflowFileName, codefulWorkflowFileName } from '../../constants';
+import {
+  extensionBundleId,
+  hostFileName,
+  extensionCommand,
+  workflowFileName,
+  codefulWorkflowFileName,
+  localSettingsFileName,
+} from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -87,19 +94,33 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   );
 
   const hasValidCodefulWorkflow = validCodefulWorkflowChecks.some((valid) => valid);
+  const hasValidCodelessWorkflow = validWorkflowChecks.some((valid) => valid);
+  const isCodefulAgent = await hasCodefulAgent(folderPath);
 
-  if (!(validWorkflowChecks.some((valid) => valid) || hasValidCodefulWorkflow)) {
+  // Only return false if none of the possible validation mechanisms are present
+  if (!(hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodefulAgent)) {
     return false;
   }
 
   try {
     const hostJsonData = await fse.readFile(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
-    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow;
+    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow || isCodefulAgent;
   } catch {
     return false;
   }
 }
+
+const hasCodefulAgent = async (folderPath: string) => {
+  const localSettingsFilePath = path.join(folderPath, localSettingsFileName);
+  if (!(await fse.pathExists(localSettingsFilePath))) {
+    return false;
+  }
+
+  const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
+  const localSettings = JSON.parse(localSettingsData);
+  return localSettings.Values.CODEFUL_AGENT;
+};
 
 /**
  * Checks root folder and subFolders one level down

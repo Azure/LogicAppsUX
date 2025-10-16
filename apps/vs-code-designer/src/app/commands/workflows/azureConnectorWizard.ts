@@ -16,7 +16,6 @@ import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettin
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import type { Progress } from 'vscode';
 
 export interface IAzureConnectorsContext extends IActionContext {
   credentials: any;
@@ -84,10 +83,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
     this._projectPath = projectPath;
   }
 
-  public async execute(
-    context: IAzureConnectorsContext,
-    _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
-  ): Promise<void> {
+  public async execute(context: IAzureConnectorsContext): Promise<void> {
     const valuesToUpdateInSettings: Record<string, string> = {};
     if (context.enabled === false) {
       valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
@@ -98,6 +94,12 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
       valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
       valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
+
+      // Then send notifications for runtime updates
+      ext.languageClient.sendNotification('custom/updateApiConfig', {
+        subscriptionId: subscriptionId,
+        resourceGroup: resourceGroup,
+      });
     }
 
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);

@@ -11,6 +11,7 @@ import {
   settingsFileName,
   tasksFileName,
   extensionCommand,
+  assetsFolderName,
 } from '../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
@@ -103,9 +104,15 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     projectType: ProjectType,
     targetFramework: TargetFramework
   ): Promise<void> {
-    const templateFile =
-      projectType === ProjectType.rulesEngine ? this.csTemplateFileName[ProjectType.rulesEngine] : this.csTemplateFileName[targetFramework];
-    const templatePath = path.join(__dirname, 'assets', this.templateFolderName[projectType], templateFile);
+    let templateFile: string;
+
+    if (projectType === ProjectType.rulesEngine) {
+      templateFile = this.csTemplateFileName[ProjectType.rulesEngine];
+    } else {
+      templateFile = this.csTemplateFileName[targetFramework];
+    }
+
+    const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
@@ -119,7 +126,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
    * @returns A promise that resolves when the rules files are created.
    */
   private async createRulesFiles(functionFolderPath: string): Promise<void> {
-    const csTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'ContosoPurchase');
+    const csTemplatePath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'ContosoPurchase');
     const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
     await fs.copyFile(csTemplatePath, csRuleSetPath);
   }
@@ -138,11 +145,15 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     projectType: ProjectType,
     targetFramework: TargetFramework
   ): Promise<void> {
-    const templateFile =
-      projectType === ProjectType.rulesEngine
-        ? this.csprojTemplateFileName[ProjectType.rulesEngine]
-        : this.csprojTemplateFileName[targetFramework];
-    const templatePath = path.join(__dirname, 'assets', this.templateFolderName[projectType], templateFile);
+    let templateFile: string;
+
+    if (projectType === ProjectType.rulesEngine) {
+      templateFile = this.csprojTemplateFileName[ProjectType.rulesEngine];
+    } else {
+      templateFile = this.csprojTemplateFileName[targetFramework];
+    }
+
+    const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);

@@ -120,3 +120,4 @@ export { setLocation, setSubscription, setResourceGroup } from './state/template
 export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';
 export * from './state/modal/modalSelectors';
 export * from './state/modal/modalSlice';
+export { getReferenceForConnection } from './state/connection/helpers';

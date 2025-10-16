@@ -1,11 +1,10 @@
-import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
+import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type {
   CompleteFileSystemConnectionData,
-  ConnectionsData,
   ICallbackUrlResponse,
   IDesignerPanelMetadata,
 } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DesignerState {
@@ -59,11 +58,10 @@ const initialState: DesignerState = {
   unitTestDefinition: null,
 };
 
-export const designerSlice = createSlice({
+export const designerSlice: Slice<DesignerState> = createSlice({
   name: 'designer',
   initialState,
   reducers: {
-    /// TODO(ccastrotrejo): Update missing types
     initializeDesigner: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,

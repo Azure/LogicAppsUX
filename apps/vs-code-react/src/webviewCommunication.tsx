@@ -59,6 +59,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
+import { initializeLanguageServer } from './state/LanguageServerSlice';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
@@ -92,7 +93,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
     if (message.command === ExtensionCommand.initialize_frame) {
-      dispatch(initialize(message.data.project));
+      dispatch(initialize(message.data));
     }
 
     switch (projectState?.project ?? message?.data?.project) {
@@ -218,6 +219,15 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             }
             default:
               throw new Error('Unknown post message received');
+          }
+        }
+        break;
+      }
+      case ProjectName.languageServer: {
+        switch (message.command) {
+          case ExtensionCommand.initialize_frame: {
+            dispatch(initializeLanguageServer(message.data));
+            break;
           }
         }
         break;

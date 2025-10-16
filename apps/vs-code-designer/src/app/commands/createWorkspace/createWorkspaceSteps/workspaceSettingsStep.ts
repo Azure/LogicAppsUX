@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import { type IProjectWizardContext, ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { type IProjectWizardContext, ProjectLanguage, ProjectType, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import { testsDirectoryName } from '../../../../constants';
@@ -27,7 +27,7 @@ export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardC
   public async prompt(context: IProjectWizardContext): Promise<void> {
     // Set default project type and language
     context.workflowProjectType = WorkflowProjectType.Bundle;
-    context.language = ProjectLanguage.JavaScript;
+    context.language = context.projectType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript;
 
     // Create directories based on user choices
     if (context.workspacePath && context.workspaceFilePath.endsWith('.code-workspace') && fs.existsSync(context.workspaceFilePath)) {

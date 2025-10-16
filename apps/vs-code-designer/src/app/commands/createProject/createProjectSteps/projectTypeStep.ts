@@ -7,15 +7,17 @@ import { WorkflowKindStep } from '../../createWorkflow/createCodelessWorkflow/cr
 import { ProjectCreateStep } from './projectCreateStep';
 import { WorkflowCodeTypeStep } from '../../createWorkflow/createWorkflowSteps/workflowCodeTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/initProjectLanguageStep';
+import { FunctionAppNameStep } from '../../createProject/createCustomCodeProjectSteps/functionAppNameStep';
 import { FunctionAppFilesStep } from '../createCustomCodeProjectSteps/functionAppFilesStep';
-import { FunctionAppNameStep } from '../createCustomCodeProjectSteps/functionAppNameStep';
-import { FunctionAppNamespaceStep } from '../createCustomCodeProjectSteps/functionAppNamespaceStep';
 import { CustomCodeProjectCreateStep } from '../createCustomCodeProjectSteps/customCodeProjectCreateStep';
-import type { AzureWizardExecuteStep, IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { type IProjectWizardContext, ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { type IProjectWizardContext, ProjectLanguage, ProjectType, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { AppNamespaceStep } from '../../createProject/createCustomCodeProjectSteps/AppNamespaceStep';
+import type { AzureWizardExecuteStep, IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
+import { AgentCodefulFilesStep } from './agentCodefulFilesStep';
+import AdmZip from 'adm-zip';
 
 // TODO(aeldridge): Move subwizard steps here into a separate "SetupProjectStep" or subwizard of LogicAppTemplateStep
 export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -66,10 +68,9 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
    * @param context - Project wizard context containing user selections and settings
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    // Set default project type and language
-    // TODO(aeldridge): Add support for non-bundle-based project creation here
-    context.workflowProjectType = WorkflowProjectType.Bundle;
-    context.language = ProjectLanguage.JavaScript;
+    context.workflowProjectType =
+      context.projectType === ProjectType.agentCodeful ? WorkflowProjectType.Nuget : await this.inferWorkflowProjectType(context);
+    context.language = context.projectType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript;
     await this.setPaths(context);
   }
 
@@ -84,9 +85,12 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
 
     if (context.isWorkspaceWithFunctions) {
       await this.setupCustomCodeLogicApp(context, executeSteps, promptSteps);
+    } else if (context.projectType === ProjectType.agentCodeful) {
+      await this.setupAgentCodefulLogicApp(context, executeSteps, promptSteps);
     } else {
       await this.setupLogicApp(context, executeSteps, promptSteps);
     }
+
     return { promptSteps, executeSteps };
   }
 
@@ -116,7 +120,7 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
     executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
     promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
   ): Promise<void> {
-    promptSteps.push(new FunctionAppNameStep(), new FunctionAppNamespaceStep(), new FunctionAppFilesStep());
+    promptSteps.push(new FunctionAppNameStep(), new AppNamespaceStep(), new FunctionAppFilesStep());
 
     if (context.shouldCreateLogicAppProject) {
       context.projectPath = nonNullProp(context, 'logicAppFolderPath');
@@ -128,7 +132,6 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
       } else {
         context.isCodeless = true; // default to codeless workflow, disabling codeful option
       }
-
       promptSteps.push(
         await WorkflowKindStep.create(context, {
           isProjectWizard: true,
@@ -137,6 +140,22 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
         })
       );
     }
+  }
+
+  /**
+   * Configures steps for custom code Logic App
+   * @param context - Project wizard context
+   * @param executeSteps - List of steps to execute
+   * @param promptSteps - List of steps to prompt
+   */
+  private async setupAgentCodefulLogicApp(
+    context: IProjectWizardContext,
+    executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
+    promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
+  ): Promise<void> {
+    executeSteps.push(new ProjectCreateStep());
+    await addInitVSCodeSteps(context, executeSteps, false);
+    promptSteps.push(new AgentCodefulFilesStep());
   }
 
   /**
@@ -168,5 +187,71 @@ export class ProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext
         })
       );
     }
+  }
+
+  private async inferWorkflowProjectType(context: IProjectWizardContext): Promise<WorkflowProjectType> {
+    const hostFromPackage = await this.tryReadHostJsonFromPackage(context.packagePath);
+    if (hostFromPackage) {
+      return this.getWorkflowProjectTypeFromHost(hostFromPackage);
+    }
+
+    const hostFromWorkspace = await this.tryReadExistingHostJson(context);
+    if (hostFromWorkspace) {
+      return this.getWorkflowProjectTypeFromHost(hostFromWorkspace);
+    }
+
+    return WorkflowProjectType.Bundle;
+  }
+
+  private getWorkflowProjectTypeFromHost(hostJson: unknown): WorkflowProjectType {
+    if (hostJson && typeof hostJson === 'object') {
+      const host = hostJson as Record<string, unknown>;
+      if ('extensionBundle' in host) {
+        return WorkflowProjectType.Bundle;
+      }
+    }
+
+    return WorkflowProjectType.Functions;
+  }
+
+  private async tryReadHostJsonFromPackage(packagePath: string | undefined): Promise<unknown> {
+    if (!packagePath) {
+      return undefined;
+    }
+
+    try {
+      const zip = new AdmZip(packagePath);
+      const hostEntry = zip.getEntries().find((entry) => entry.entryName.toLowerCase().endsWith('host.json'));
+
+      if (!hostEntry) {
+        return undefined;
+      }
+
+      return JSON.parse(hostEntry.getData().toString('utf8'));
+    } catch {
+      return undefined;
+    }
+  }
+
+  private async tryReadExistingHostJson(context: IProjectWizardContext): Promise<unknown> {
+    const workspacePath = context.workspacePath;
+    if (!workspacePath) {
+      return undefined;
+    }
+
+    const logicAppFolderName = context.logicAppName || 'LogicApp';
+    const candidatePaths = [path.join(workspacePath, logicAppFolderName, 'host.json'), path.join(workspacePath, 'host.json')];
+
+    for (const hostPath of candidatePaths) {
+      try {
+        if (await fs.pathExists(hostPath)) {
+          return await fs.readJSON(hostPath);
+        }
+      } catch {
+        return undefined;
+      }
+    }
+
+    return undefined;
   }
 }

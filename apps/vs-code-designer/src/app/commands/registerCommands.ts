@@ -69,7 +69,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
-import { pickCustomCodeNetHostProcess } from './pickCustomCodeWorkerProcess';
+import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/debug';
@@ -78,9 +78,12 @@ import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
+import { openLanguageServerConnectionView } from './workflows/languageServer/connectionView';
+import { openRunHistory } from './workflows/openRunHistory';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openRunHistory, openRunHistory);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
   );
@@ -167,6 +170,10 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
 
+  // Language server protocol
+  registerCommand(extensionCommand.openLanguageServerConnectionView, openLanguageServerConnectionView);
+
+  // Error handler
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
     // Suppress "Report an Issue" button for all errors since then we are going to render our custom button
     errorContext.errorHandling.suppressReportIssue = true;

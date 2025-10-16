@@ -22,6 +22,7 @@ export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
+export const sdkLspServer = 'SdkLspServer';
 
 // Directories names
 export const deploymentDirectory = 'deployment';
@@ -33,6 +34,7 @@ export const libDirectory = 'lib';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
+export const lspDirectory = 'LanguageServerLogicApps';
 
 // Extension Id
 // Folder names
@@ -122,6 +124,7 @@ export const designerApiLoadTimeout = 300000;
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',
+  openRunHistory: 'azureLogicAppsStandard.openRunHistory',
   activate: 'azureLogicAppsStandard.activate',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
@@ -205,6 +208,7 @@ export const extensionCommand = {
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
+  openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
@@ -255,6 +259,7 @@ export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
+export const onStartLanguageServerProtocol = 'onStartLanguageServerProtocol';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
