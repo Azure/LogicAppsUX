@@ -433,6 +433,13 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
     return { normalized, hostName };
   };
 
+  const buildAgentUrls = (baseUrl: string, workflowName: string) => {
+    return {
+      agentUrl: `${baseUrl}/api/Agents/${workflowName}`,
+      chatUrl: `${baseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`,
+    };
+  };
+
   try {
     // Get the API keys for authentication
     const currentDate = new Date();
@@ -458,9 +465,7 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
 
     // Construct URLs following the pattern used in Standard SKU
     // chatUrl is base path, queryParams contains authentication
-    const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-    const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
-    // Include apiKey for authentication
+    const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
     const queryParams = apiKey ? { apiKey } : undefined;
 
     return {
@@ -472,8 +477,7 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
   } catch (_error) {
     // Fallback if API key fetch fails
     const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(accessEndpoint);
-    const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-    const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
+    const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
 
     return {
       agentUrl,
