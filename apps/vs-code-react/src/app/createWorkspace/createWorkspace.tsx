@@ -2,8 +2,7 @@ import type { OutletContext } from '../../run-service';
 import { useCreateWorkspaceStyles } from './createWorkspaceStyles';
 import { useIntl } from 'react-intl';
 import { useOutletContext } from 'react-router-dom';
-import { ProjectSetupStep, PackageSetupStep, ReviewCreateStep } from './steps/';
-import { CreateWorkspaceStructSetupStep } from '../createLogicApp/createWorkspaceStructSetupStep';
+import { ProjectSetupStep, PackageSetupStep, ReviewCreateStep, WorkspaceNameStep } from './steps/';
 import { CreateLogicAppSetupStep } from '../createLogicApp/createLogicAppSetupStep';
 import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
@@ -612,7 +611,11 @@ export const CreateWorkspace: React.FC = () => {
           return <PackageSetupStep />;
         }
         if (flowType === 'convertToWorkspace') {
-          return <CreateWorkspaceStructSetupStep />;
+          return (
+            <div className={styles.formSection}>
+              <WorkspaceNameStep />
+            </div>
+          );
         }
         if (flowType === 'createLogicApp') {
           return <CreateLogicAppSetupStep />;
@@ -627,7 +630,11 @@ export const CreateWorkspace: React.FC = () => {
           return <PackageSetupStep />;
         }
         if (flowType === 'convertToWorkspace') {
-          return <CreateWorkspaceStructSetupStep />;
+          return (
+            <div className={styles.formSection}>
+              <WorkspaceNameStep />
+            </div>
+          );
         }
         if (flowType === 'createLogicApp') {
           return <CreateLogicAppSetupStep />;

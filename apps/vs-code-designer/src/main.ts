@@ -36,7 +36,7 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { getWorkspaceFolder2 } from './app/utils/workspace';
+import { getWorkspaceFolderWithoutPrompting } from './app/utils/workspace';
 import { isLogicAppProjectInRoot } from './app/utils/verifyIsProject';
 
 const perfStats = {
@@ -175,7 +175,7 @@ export async function updateLogicAppsContext() {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', false);
   } else {
-    const workspaceFolder = await getWorkspaceFolder2();
+    const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
     const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
     await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', logicAppOpened);
   }

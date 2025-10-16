@@ -10,7 +10,12 @@ import {
   type IFunctionWizardContext,
 } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder2, getWorkspaceRoot } from '../utils/workspace';
+import {
+  getWorkspaceFile,
+  getWorkspaceFileInParentDirectory,
+  getWorkspaceFolderWithoutPrompting,
+  getWorkspaceRoot,
+} from '../utils/workspace';
 import { isLogicAppProject, isLogicAppProjectInRoot } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
@@ -74,7 +79,7 @@ async function createWorkspaceStructureWebview(_context: IActionContext): Promis
 }
 
 export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
-  const workspaceFolder = await getWorkspaceFolder2();
+  const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
 

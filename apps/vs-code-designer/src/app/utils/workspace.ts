@@ -11,7 +11,7 @@ import {
   promptOpenProjectOrWorkspace,
   tryGetAllLogicAppProjectRoots,
   tryGetLogicAppProjectRoot,
-  tryGetLogicAppProjectRoots2,
+  getFirstLogicAppProjectRoot,
 } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
@@ -189,14 +189,9 @@ export async function getWorkspaceFolder(
 
 /**
  * Gets workspace folder of project.
- * @param {IActionContext} context - Command context.
- * @param {string} message - The message to display to the user if workspace is not open.
- * @param {string} skipPromptOnMultipleFolders - The boolean to skip prompt to select logic app folder if there are multiple.
  * @returns {Promise<WorkspaceFolder | string | undefined>} Returns either the new project workspace, the already open workspace or the selected workspace.
  */
-export async function getWorkspaceFolder2(): Promise<vscode.WorkspaceFolder | undefined> {
-  // const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
-
+export async function getWorkspaceFolderWithoutPrompting(): Promise<vscode.WorkspaceFolder | undefined> {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     // there is nothing open so give a warning message
     vscode.window.showErrorMessage(
@@ -228,7 +223,7 @@ export async function getWorkspaceFolder2(): Promise<vscode.WorkspaceFolder | un
 async function logicAppFoundInFolders(subFolders: string[]): Promise<vscode.WorkspaceFolder> {
   const logicAppProjectRoots: string[] = [];
   for (const folder of subFolders ?? vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoots2(folder);
+    const projectRoot = await getFirstLogicAppProjectRoot(folder);
     if (projectRoot) {
       logicAppProjectRoots.push(projectRoot);
     }
@@ -237,7 +232,6 @@ async function logicAppFoundInFolders(subFolders: string[]): Promise<vscode.Work
   if (logicAppProjectRoots.length === 0) {
     return undefined;
   }
-  // return path.dirname(logicAppProjectRoots[0]);
 
   return getContainingWorkspace(logicAppProjectRoots[0]);
 }
@@ -363,7 +357,7 @@ interface FolderPicks {
  * @param {IActionContext} context - Command context.
  * @returns {Promise<WorkspaceFolder | string | undefined>} Returns either the selected logic app or undefined for a new logic app.
  */
-export async function getLogicAppWithoutCustomCodeNew(context: IActionContext): Promise<FolderPicks[] | undefined> {
+export async function getLogicAppWithoutCustomCode(context: IActionContext): Promise<FolderPicks[] | undefined> {
   if (vscode.workspace.workspaceFolders.length === 1) {
     const workspaceFolder = vscode.workspace.workspaceFolders[0];
     const workspaceFolderPath = workspaceFolder.uri.fsPath;

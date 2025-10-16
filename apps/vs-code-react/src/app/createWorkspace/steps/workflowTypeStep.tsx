@@ -11,7 +11,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { nameValidation } from '../validation/helper';
+import { validateWorkflowName } from '../validation/helper';
 
 export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -107,19 +107,9 @@ export const WorkflowTypeStep: React.FC = () => {
     }
   };
 
-  const validateWorkflowName = (name: string) => {
-    if (!name) {
-      return intlText.EMPTY_WORKFLOW_NAME;
-    }
-    if (!nameValidation.test(name)) {
-      return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
-    }
-    return undefined;
-  };
-
   const handleWorkflowNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setWorkflowName(event.target.value));
-    setWorkflowNameError(validateWorkflowName(event.target.value));
+    setWorkflowNameError(validateWorkflowName(event.target.value, intlText));
   };
 
   return (

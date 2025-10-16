@@ -215,35 +215,29 @@ export async function tryGetLogicAppProjectRoot(
  * If multiple projects are found, prompt to pick the project.
  * TODO - this is checking every root folder and subfolders of non-logic app projects in the workspace, can we optimize this?
  */
-export async function tryGetLogicAppProjectRoots2(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string | undefined> {
+export async function getFirstLogicAppProjectRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string | undefined> {
   if (isNullOrUndefined(workspaceFolder)) {
     return undefined;
   }
-  let subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
+
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   if (!(await fse.pathExists(folderPath))) {
     return undefined;
   }
+
   if (await isLogicAppProject(folderPath)) {
     return folderPath;
   }
-  const subpaths: string[] = await fse.readdir(folderPath);
-  const matchingSubpaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      if (await isLogicAppProject(path.join(folderPath, s))) {
-        matchingSubpaths.push(s);
-      }
-    })
-  );
 
-  if (matchingSubpaths.length !== 0) {
-    subpath = matchingSubpaths[0];
-  } else {
-    return undefined;
+  const subpaths: string[] = await fse.readdir(folderPath);
+  for (const subpath of subpaths) {
+    const fullPath = path.join(folderPath, subpath);
+    if (await isLogicAppProject(fullPath)) {
+      return fullPath;
+    }
   }
 
-  return path.join(folderPath, subpath);
+  return undefined;
 }
 
 async function promptForProjectSubpath(context: IActionContext, workspacePath: string, matchingSubpaths: string[]): Promise<string> {

@@ -11,7 +11,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionFolderName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { nameValidation, namespaceValidation } from '../validation/helper';
+import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
 
 export const DotNetFrameworkStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -145,26 +145,6 @@ export const DotNetFrameworkStep: React.FC = () => {
     }
   };
 
-  const validateFunctionNamespace = (namespace: string) => {
-    if (!namespace) {
-      return intlText.EMPTY_FUNCTION_NAMESPACE;
-    }
-    if (!namespaceValidation.test(namespace)) {
-      return intlText.FUNCTION_NAMESPACE_VALIDATION_MESSAGE;
-    }
-    return undefined;
-  };
-
-  const validateFunctionName = (name: string) => {
-    if (!name) {
-      return intlText.EMPTY_FUNCTION_NAME;
-    }
-    if (!nameValidation.test(name)) {
-      return intlText.FUNCTION_NAME_VALIDATION_MESSAGE;
-    }
-    return undefined;
-  };
-
   const validateFunctionFolderName = useCallback(
     (name: string) => {
       if (!name) {
@@ -201,12 +181,12 @@ export const DotNetFrameworkStep: React.FC = () => {
 
   const handleFunctionNamespaceChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setFunctionNamespace(data.value));
-    setFunctionNamespaceError(validateFunctionNamespace(data.value));
+    setFunctionNamespaceError(validateFunctionNamespace(data.value, intlText));
   };
 
   const handleFunctionNameChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setFunctionName(data.value));
-    setFunctionNameError(validateFunctionName(data.value));
+    setFunctionNameError(validateFunctionName(data.value, intlText));
   };
 
   const handleFunctionFolderNameChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
