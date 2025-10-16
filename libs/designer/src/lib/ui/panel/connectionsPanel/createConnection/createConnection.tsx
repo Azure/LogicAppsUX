@@ -111,7 +111,7 @@ export interface CreateConnectionProps {
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
   workflowKind?: string;
-  workflowMetadata?: any;
+  workflowMetadata?: { agentType?: string };
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {

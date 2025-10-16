@@ -45,7 +45,7 @@ export const CreateConnectionInternal = (props: {
   updateOperationParameterValues?: (values?: Record<string, any>) => void;
   operationManifest?: OperationManifest;
   workflowKind?: string;
-  workflowMetadata?: any;
+  workflowMetadata?: { agentType?: string };
 }) => {
   const {
     classes,
