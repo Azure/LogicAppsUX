@@ -23,8 +23,6 @@ import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
-import { createUnitTest } from './unitTest/createUnitTest';
-import { saveBlankUnitTest } from './unitTest/saveBlankUnitTest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -160,15 +158,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
-        break;
-      }
-
-      case ExtensionCommand.createUnitTest: {
-        await createUnitTest(context, workflowNode as vscode.Uri, message.runId);
-        break;
-      }
-      case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.definition);
         break;
       }
       default:
