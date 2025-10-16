@@ -197,7 +197,6 @@ export async function getWorkspaceFolderWithoutPrompting(): Promise<vscode.Works
     vscode.window.showErrorMessage(
       localize('notInWorkspace', 'Please open an existing logic app workspace before trying to add a new logic app project.')
     );
-    // await promptOpenProjectOrWorkspace(context, promptMessage);
     return undefined;
   }
 
