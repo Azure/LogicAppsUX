@@ -12,7 +12,8 @@
       "outFiles": ["${workspaceFolder}/apps/vs-code-designer/dist/*.js"],
       "preLaunchTask": "npm: build:extension",
       "env": {
-        "DEBUGTELEMETRY": "v"
+        "DEBUGTELEMETRY": "v",
+        "LSP_SERVER_DEV_PATH": "/Users/carloscastrotrejo/Documents/static/Agent_C_Sharp_Server/Server/bin/Debug/net8.0/SdkLspServer.dll"
       }
     }
   ]
