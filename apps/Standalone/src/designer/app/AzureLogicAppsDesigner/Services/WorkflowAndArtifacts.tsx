@@ -369,6 +369,51 @@ const fetchOBOData = async (siteResourceId: string) => {
   }
 };
 
+// Helper function to fetch OBO (On-Behalf-Of) data for Consumption workflows
+const fetchOBODataConsumption = async (workflowId: string): Promise<string | null> => {
+  try {
+    // Get the workflow to access its connections
+    const workflowResponse = await axios.get(`${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+
+    // Find dynamic connection in workflow parameters
+    const connections = workflowResponse.data?.properties?.parameters?.$connections?.value ?? {};
+    let connectionId = '';
+
+    for (const key of Object.keys(connections)) {
+      if (equals(connections[key].runtimeSource ?? '', 'Dynamic', true)) {
+        connectionId = connections[key].connectionId;
+        break;
+      }
+    }
+
+    if (connectionId) {
+      const oboResponse = await axios.post(
+        `${baseUrl}${connectionId}/listDynamicConnectionKeys?api-version=${consumptionListApiKeysVersion}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        }
+      );
+      return oboResponse.data?.properties?.key ?? null;
+    }
+    return null;
+  } catch (error) {
+    // OBO is optional, continue without it
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      message: `Failed to get OBO data for Consumption: ${error}`,
+      area: 'fetchOBODataConsumption',
+    });
+    return null;
+  }
+};
+
 // Async function to get Agent URL with authentication tokens (uses React Query for memoization)
 export const fetchAgentUrl = (siteResourceId: string, workflowName: string, hostName: string): Promise<AgentURL> => {
   const queryClient = getReactQueryClient();
@@ -466,7 +511,13 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
     // Construct URLs following the pattern used in Standard SKU
     // chatUrl is base path, queryParams contains authentication
     const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
-    const queryParams = apiKey ? { apiKey } : undefined;
+    const queryParams: AgentQueryParams | undefined = apiKey ? { apiKey } : undefined;
+
+    // Get OBO token if available (for dynamic connections)
+    const oboToken = await fetchOBODataConsumption(workflowId);
+    if (oboToken && queryParams) {
+      queryParams.oboUserToken = oboToken;
+    }
 
     return {
       agentUrl,
