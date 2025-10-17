@@ -12,6 +12,8 @@ import {
   workflowFileName,
   CodefulSDKs,
   CodefulSdkVersions,
+  artifactsDirectory,
+  libDirectory,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
@@ -228,7 +230,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, parametersFile);
   }
 
-  if (projectArtifacts['lib']) {
+  if (projectArtifacts[libDirectory]) {
     xmlBuildFile = addLibToPublishPath(xmlBuildFile);
   }
 
@@ -295,13 +297,13 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
       artifactDict['parameters'].push(parametersFileName);
     }
 
-    if (file === 'Artifacts') {
+    if (file === artifactsDirectory) {
       artifactDict['artifacts'].push(file);
       continue;
     }
 
-    if (file === 'lib') {
-      artifactDict['lib'].push(file);
+    if (file === libDirectory) {
+      artifactDict[libDirectory].push(file);
       continue;
     }
 

@@ -152,6 +152,10 @@ export const RouteName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
+  createWorkspace: 'createWorkspace',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+  createLogicApp: 'createLogicApp',
+  createWorkspaceStructure: 'createWorkspaceStructure',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
@@ -304,6 +308,45 @@ export interface UpdateExportPathMessage {
   command: typeof ExtensionCommand.update_export_path;
   data: {
     targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface UpdateWorkspacePathMessage {
+  command: typeof ExtensionCommand.update_workspace_path;
+  data: {
+    targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface UpdateWorkspacePackageMessage {
+  command: typeof ExtensionCommand.update_package_path;
+  data: {
+    targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface ValidateWorkspacePathMessage {
+  command: typeof ExtensionCommand.validatePath;
+  data: {
+    path: any;
+    isValid: boolean;
+  };
+}
+
+export interface WorkspaceExistenceResultMessage {
+  command: typeof ExtensionCommand.workspace_existence_result;
+  data: {
+    workspacePath: any;
+    exists: boolean;
+    type: any;
+  };
+}
+
+export interface PackageExistenceResultMessage {
+  command: typeof ExtensionCommand.package_existence_result;
+  data: {
+    path: any;
+    isValid: boolean;
   };
 }
 

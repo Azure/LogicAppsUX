@@ -145,7 +145,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   const submitDisabled = answerGenerationInProgress || trimmedLength < QUERY_MIN_LENGTH;
   const resolvedPlaceholder = placeholder ?? intlText.inputPlaceHolder;
 
-	const showFooter = protectedMessage || canSave || canTest || !readOnly;
+  const showFooter = protectedMessage || canSave || canTest || !readOnly;
 
   return (
     <div className={mergeClasses(styles.container, isInverted && darkStyles.container)}>
@@ -159,42 +159,42 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
           <ConversationMessage key={`${index}-${item.id}`} item={item} />
         ))}
       </div>
-			{showFooter ? (
-				<div className={styles.footer}>
-					{protectedMessage ? (
-						<div className={styles.protectedFooter}>
-							<ShieldCheckmarkRegular className={styles.shieldCheckmarkRegular} /> {protectedMessage}
-						</div>
-					) : null}
-					{(canSave || canTest) ? (
-						<ChatSuggestionGroup>
-							{canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
-							{canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={() => test?.()} />}
-						</ChatSuggestionGroup>
-					) : null}
-					{readOnly ? null : (
-						<ChatInput
-							textFieldRef={textInputRef}
-							disabled={inputDisabled}
-							isMultiline
-							maxQueryLength={QUERY_MAX_LENGTH}
-							onQueryChange={(_ev, newValue) => onChange?.(newValue ?? '')}
-							placeholder={resolvedPlaceholder}
-							query={value}
-							showCharCount
-							submitButtonProps={{
-								title: submitString ?? intlText.submitButton,
-								disabled: submitDisabled,
-								iconProps: {
-									iconName: 'Send',
-									styles: submitDisabled ? inputIconButtonStyles.disabled : inputIconButtonStyles.enabled,
-								},
-								onClick: () => onSubmit(value),
-							}}
-						/>
-					)}
-				</div>
-			) : null}
+      {showFooter ? (
+        <div className={styles.footer}>
+          {protectedMessage ? (
+            <div className={styles.protectedFooter}>
+              <ShieldCheckmarkRegular className={styles.shieldCheckmarkRegular} /> {protectedMessage}
+            </div>
+          ) : null}
+          {canSave || canTest ? (
+            <ChatSuggestionGroup>
+              {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
+              {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={() => test?.()} />}
+            </ChatSuggestionGroup>
+          ) : null}
+          {readOnly ? null : (
+            <ChatInput
+              textFieldRef={textInputRef}
+              disabled={inputDisabled}
+              isMultiline
+              maxQueryLength={QUERY_MAX_LENGTH}
+              onQueryChange={(_ev, newValue) => onChange?.(newValue ?? '')}
+              placeholder={resolvedPlaceholder}
+              query={value}
+              showCharCount
+              submitButtonProps={{
+                title: submitString ?? intlText.submitButton,
+                disabled: submitDisabled,
+                iconProps: {
+                  iconName: 'Send',
+                  styles: submitDisabled ? inputIconButtonStyles.disabled : inputIconButtonStyles.enabled,
+                },
+                onClick: () => onSubmit(value),
+              }}
+            />
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };

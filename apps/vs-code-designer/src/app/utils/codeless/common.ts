@@ -12,6 +12,7 @@ import {
   schemasDirectory,
   azurePublicBaseUrl,
   rulesDirectory,
+  funcIgnoreFileName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -99,7 +100,7 @@ export function getWorkflowParameters(parameters: Record<string, Parameter>): Re
 }
 
 export async function updateFuncIgnore(projectPath: string, variables: string[]) {
-  const funcIgnorePath: string = path.join(projectPath, '.funcignore');
+  const funcIgnorePath: string = path.join(projectPath, funcIgnoreFileName);
   let funcIgnoreContents: string | undefined;
   if (await fse.pathExists(funcIgnorePath)) {
     funcIgnoreContents = (await fse.readFile(funcIgnorePath)).toString();

@@ -93,6 +93,10 @@ export namespace ext {
     export: 'export',
     overview: 'overview',
     unitTest: 'unitTest',
+    createWorkspace: 'createWorkspace',
+    createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+    createLogicApp: 'createLogicApp',
+    createWorkspaceStructure: 'createWorkspaceStructure',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
 
@@ -101,6 +105,10 @@ export namespace ext {
     [webViewKey.designerAzure]: {},
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
+    [webViewKey.createWorkspace]: {},
+    [webViewKey.createWorkspaceFromPackage]: {},
+    [webViewKey.createWorkspaceStructure]: {},
+    [webViewKey.createLogicApp]: {},
     [webViewKey.overview]: {},
   };
 
@@ -148,8 +156,14 @@ export const ExtensionCommand = {
   initialize_frame: 'initialize-frame',
   update_access_token: 'update-access-token',
   update_export_path: 'update-export-path',
+  update_workspace_path: 'update-workspace-path',
+  update_package_path: 'update-package-path',
   export_package: 'export-package',
   add_status: 'add-status',
   set_final_status: 'set-final-status',
+  workspace_folder: 'workspace-folder',
+  workspace_file: 'workspace-file',
+  workspace_existence_result: 'workspace-existence-result',
+  package_existence_result: 'package-existence-result',
 };
 export type ExtensionCommand = keyof typeof ExtensionCommand;
