@@ -106,7 +106,7 @@ export const RunMenu = (props: {
           <MenuItem icon={<CopyIcon />} onClick={onCopy}>
             {copyText}
           </MenuItem>
-          {isDraftRun && (
+          {!isDraftRun && (
             <MenuItem icon={<ResubmitIcon />} onClick={onResubmit}>
               {resubmitText}
             </MenuItem>
