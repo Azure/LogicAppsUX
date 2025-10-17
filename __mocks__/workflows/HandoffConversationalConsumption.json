@@ -20,8 +20,8 @@
         "type": "Agent",
         "inputs": {
           "parameters": {
-            "deploymentId": "Gpt-4o",
             "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
             "messages": [
               {
                 "role": "System",
@@ -29,22 +29,14 @@
               }
             ],
             "agentModelSettings": {
-              "agentChatCompletionSettings": {
-                "maxTokens": 3000,
-                "frequencyPenalty": 0.1,
-                "presencePenalty": 0.1,
-                "temperature": 0.1,
-                "topP": 0.1
-              },
+              "maxTokens": 3000,
               "agentHistoryReductionSettings": {
-                "agentHistoryReductionType": "messageCountReduction",
-                "messageCountLimit": 50
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "agentChatCompletionSettings": {
+                "temperature": 0.1
               }
-            }
-          },
-          "modelConfigurations": {
-            "model1": {
-              "referenceName": "agent"
             }
           }
         },
@@ -82,8 +74,8 @@
         "type": "Agent",
         "inputs": {
           "parameters": {
-            "deploymentId": "Gpt-4o",
             "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
             "messages": [
               {
                 "role": "System",
@@ -91,22 +83,14 @@
               }
             ],
             "agentModelSettings": {
-              "agentChatCompletionSettings": {
-                "maxTokens": 3000,
-                "frequencyPenalty": 0.1,
-                "presencePenalty": 0.1,
-                "temperature": 0.1,
-                "topP": 0.1
-              },
+              "maxTokens": 3000,
               "agentHistoryReductionSettings": {
-                "agentHistoryReductionType": "messageCountReduction",
-                "messageCountLimit": 50
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "agentChatCompletionSettings": {
+                "temperature": 0.1
               }
-            }
-          },
-          "modelConfigurations": {
-            "model1": {
-              "referenceName": "agent"
             }
           }
         },
@@ -129,8 +113,8 @@
         "type": "Agent",
         "inputs": {
           "parameters": {
-            "deploymentId": "Gpt-4o",
             "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
             "messages": [
               {
                 "role": "System",
@@ -138,22 +122,14 @@
               }
             ],
             "agentModelSettings": {
-              "agentChatCompletionSettings": {
-                "maxTokens": 3000,
-                "frequencyPenalty": 0.1,
-                "presencePenalty": 0.1,
-                "temperature": 0.1,
-                "topP": 0.1
-              },
+              "maxTokens": 3000,
               "agentHistoryReductionSettings": {
-                "agentHistoryReductionType": "messageCountReduction",
-                "messageCountLimit": 50
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "agentChatCompletionSettings": {
+                "temperature": 0.1
               }
-            }
-          },
-          "modelConfigurations": {
-            "model1": {
-              "referenceName": "agent"
             }
           }
         },
