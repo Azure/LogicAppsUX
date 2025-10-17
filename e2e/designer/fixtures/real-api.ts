@@ -1,7 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import type { APIRequestContext, Page } from '@playwright/test';
 import * as Constants from '../utils/Constants';
-import { connectionsFileName } from '../../../apps/vs-code-designer/src/constants';
 
 export class RealDataApi {
   private workflowName: string;
@@ -117,14 +116,14 @@ export class RealDataApi {
       }
     );
     console.log('getConnectionsJSON response', response.json());
-    return (await response.json()).properties.files[connectionsFileName];
+    return (await response.json()).properties.files['connections.json'];
   }
 
   async deployConnectionsJSON(connectionsData: any) {
     return this.request.post(`${Constants.managementUrl}${this.siteId}/deployWorkflowArtifacts?api-version=${Constants.siteApiVersion}`, {
       data: {
         files: {
-          [connectionsFileName]: connectionsData,
+          ['connections.json']: connectionsData,
         },
       },
       headers: {
