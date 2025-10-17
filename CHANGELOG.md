@@ -1,11 +1,21 @@
 # Logic Apps Designer
-## [5.185.8](https://github.com/Azure/LogicAppsUX/compare/v5.185.7...82a593ca988f0bc26818422035b2f84b40c9ba1a) (2025-10-17)
+## [5.185.10](https://github.com/Azure/LogicAppsUX/compare/v5.185.9...v5.185.10) (2025-10-17)
 
-_Compared against hotfix/v5.185 (82a593ca9)_
+### Bug Fixes
+
+* **vscode:** Migrated from ps-tree to using powershell to find childprocess ([#8395](https://github.com/Azure/LogicAppsUX/pull/8395))
+
+## [5.185.9](https://github.com/Azure/LogicAppsUX/compare/v5.185.8...v5.185.9) (2025-10-07)
 
 ### Bug Fixes
 
 * **vscode:** Temporarily remove validatePartial, startRuntimeApi to mitigate designer issues ([#8352](https://github.com/Azure/LogicAppsUX/pull/8352))
+
+## [5.185.8](https://github.com/Azure/LogicAppsUX/compare/v5.185.7...v5.185.8) (2025-10-07)
+
+### Bug Fixes
+
+* **vscode:**  Start runtime api in background on designer open for each project ([#8346](https://github.com/Azure/LogicAppsUX/pull/8346))
 
 
 ## [5.185.7](https://github.com/Azure/LogicAppsUX/compare/v5.185.6...v5.185.7) (2025-10-07)
