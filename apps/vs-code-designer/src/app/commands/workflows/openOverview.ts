@@ -30,6 +30,7 @@ import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
@@ -52,6 +53,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
     workflowName = basename(dirname(workflowFilePath));
+    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    if (isNullOrUndefined(ext.workflowRuntimePort)) {
+      await launchProjectDebugger(context, projectPath);
+    }
+
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
@@ -60,7 +66,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
 
-    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
     isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
