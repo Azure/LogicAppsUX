@@ -133,7 +133,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     // }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    // this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -249,9 +249,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.saveBlankUnitTest: {
-        await callWithTelemetryAndErrorHandling('SaveBlankUnitTestFromDesigner', async (activateContext: IActionContext) => {
-          await saveBlankUnitTest(activateContext, Uri.file(this.workflowFilePath), msg.definition);
-        });
+        await saveBlankUnitTest(Uri.file(this.workflowFilePath), msg.definition);
         break;
       }
       case ExtensionCommand.saveUnitTest: {

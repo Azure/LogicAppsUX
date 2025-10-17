@@ -31,7 +31,6 @@ import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
-import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
@@ -149,11 +148,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         break;
       }
       case ExtensionCommand.createUnitTest: {
-        await createUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
-        break;
-      }
-      case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.definition);
+        await createUnitTest(vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
         break;
       }
       case ExtensionCommand.fileABug: {

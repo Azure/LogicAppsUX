@@ -50,11 +50,13 @@ export const getParameterValue = (
 };
 
 export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  // Making this so that it doesn't match with {} within the token
-  const tokenRegex = /:\s?("@\{(?:[^{}]|\{[^}]*\})*\}")|:\s?(@\{(?:[^{}]|\{[^}]*\})*\})/gs;
+  // Uses [\s\S]*? for non-greedy matching of any character including newlines
+  // Lookahead (?=\s*[,}\]]) ensures we stop at valid JSON boundaries
+  const tokenRegex = /:\s*("@\{[\s\S]*?\}"(?=\s*[,}\]]))|:\s*(@\{[\s\S]*?\}(?=\s*[,}\]]))/g;
 
   // Normalize newlines and carriage returns inside tokens
-  const normalized = jsonString.replace(/@\{(?:[^{}]|\{[^}]*\})*\}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+  // Updated to use [\s\S]*? to match tokens with arbitrary nesting
+  const normalized = jsonString.replace(/@\{[\s\S]*?\}/g, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
 
   return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
     const token = quotedToken ?? unquotedToken;

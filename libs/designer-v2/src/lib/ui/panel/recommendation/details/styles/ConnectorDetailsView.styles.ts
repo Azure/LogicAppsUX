@@ -4,13 +4,11 @@ export const useConnectorDetailsViewStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
     padding: '0',
   },
   header: {
     padding: '12px',
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    backgroundColor: tokens.colorNeutralBackground2,
     display: 'flex',
     alignItems: 'center',
     gap: '12px',

@@ -179,11 +179,19 @@ const convertDesignerWorkflowToConsumptionWorkflow = (
         workflow.parameters.$connections = { type: 'Object', value: {} };
       }
       Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
+        // For dynamic connections, pull runtimeSource out to root level
+        const runtimeSource = connection?.connectionProperties?.runtimeSource;
+        const remainingConnectionProperties = connection?.connectionProperties
+          ? Object.fromEntries(Object.entries(connection.connectionProperties).filter(([propKey]) => propKey !== 'runtimeSource'))
+          : undefined;
+        const hasRemainingProps = remainingConnectionProperties && Object.keys(remainingConnectionProperties).length > 0;
+
         workflow.parameters.$connections.value[key] = {
           id: connection.api.id,
           connectionId: connection.connection.id,
           connectionName: connection.connectionName,
-          ...(connection?.connectionProperties ? { connectionProperties: connection.connectionProperties } : {}),
+          ...(runtimeSource ? { runtimeSource } : {}),
+          ...(hasRemainingProps ? { connectionProperties: remainingConnectionProperties } : {}),
         };
       });
       delete workflow.connectionReferences;

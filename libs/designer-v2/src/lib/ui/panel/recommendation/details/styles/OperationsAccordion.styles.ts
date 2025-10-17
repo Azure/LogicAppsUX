@@ -1,18 +1,12 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
 
 export const useOperationsAccordionStyles = makeStyles({
   container: {
     flex: '1',
     overflow: 'auto',
   },
-  accordionHeader: {
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    '&[data-expand-state="expanded"]': {
-      borderBottom: 'none',
-    },
-  },
   accordionPanel: {
-    padding: '0',
+    padding: '8px 0px',
     margin: '0',
     borderTop: 'none',
   },
@@ -23,6 +17,5 @@ export const useOperationsAccordionStyles = makeStyles({
   },
   messageBar: {
     marginBottom: '16px',
-    whiteSpace: 'normal',
   },
 });

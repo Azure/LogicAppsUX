@@ -25,7 +25,6 @@ import {
   parseErrorBeforeTelemetry,
   generateCSharpClasses,
   generateClassCode,
-  logTelemetry,
   getOperationMockClassContent,
   buildClassDefinition,
   mapJsonTypeToCSharp,
@@ -561,22 +560,6 @@ describe('unitTests', () => {
       expect(classCode).toContain('public class ChildClass');
       expect(classCode).toContain('public string NestedProperty { get; set; }');
       expect(classCode).toContain('this.NestedProperty = string.Empty;');
-    });
-  });
-
-  describe('logTelemetry function', () => {
-    it('should add properties to context.telemetry.properties', () => {
-      const context = { telemetry: { properties: {} } } as unknown as IActionContext;
-      logTelemetry(context, { key1: 'value1', key2: 'value2' });
-      expect(context.telemetry.properties).toEqual({ key1: 'value1', key2: 'value2' });
-    });
-
-    it('should merge properties when called multiple times', () => {
-      const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IActionContext;
-      logTelemetry(context, { key2: 'value2' });
-      expect(context.telemetry.properties).toEqual({ key1: 'initialValue', key2: 'value2' });
-      logTelemetry(context, { key1: 'updatedValue', key3: 'value3' });
-      expect(context.telemetry.properties).toEqual({ key1: 'updatedValue', key2: 'value2', key3: 'value3' });
     });
   });
 

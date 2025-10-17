@@ -9,7 +9,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
     className="msla-panel-card-header"
   >
     <div
-      className="fui-Spinner r82apo5 msla-card-header-spinner"
+      className="fui-Spinner rpp59a7 msla-card-header-spinner"
       role="progressbar"
     >
       <span
@@ -66,6 +66,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
       onMouseMove={[Function]}
+      onMouseOver={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
       role="button"
@@ -165,7 +166,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       className="msla-panel-card-header"
     >
       <div
-        className="fui-Spinner r82apo5 msla-card-header-spinner"
+        className="fui-Spinner rpp59a7 msla-card-header-spinner"
         role="progressbar"
       >
         <span
@@ -222,6 +223,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
         onMouseMove={[Function]}
+        onMouseOver={[Function]}
         onPointerEnter={[Function]}
         onPointerLeave={[Function]}
         role="button"
@@ -361,7 +363,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
     className="msla-panel-card-header"
   >
     <div
-      className="fui-Spinner r82apo5 msla-card-header-spinner"
+      className="fui-Spinner rpp59a7 msla-card-header-spinner"
       role="progressbar"
     >
       <span
@@ -418,6 +420,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
       onMouseMove={[Function]}
+      onMouseOver={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
       role="button"
@@ -517,7 +520,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       className="msla-panel-card-header"
     >
       <div
-        className="fui-Spinner r82apo5 msla-card-header-spinner"
+        className="fui-Spinner rpp59a7 msla-card-header-spinner"
         role="progressbar"
       >
         <span
@@ -574,6 +577,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
         onMouseMove={[Function]}
+        onMouseOver={[Function]}
         onPointerEnter={[Function]}
         onPointerLeave={[Function]}
         role="button"
