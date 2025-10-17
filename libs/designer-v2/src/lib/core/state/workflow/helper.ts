@@ -153,7 +153,7 @@ export const isA2AWorkflow = (state: WorkflowState): boolean => {
 
   if (triggerNodeId) {
     const triggerOperation = state.operations[triggerNodeId];
-    return equals(triggerOperation?.kind, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+    return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
   }
 
   return false;
