@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useEffect } from 'react';
-import { CreateLogicAppSetupStep } from '../../../../vs-code-react/src/app/createLogicApp/CreateLogicAppSetupStep';
+import { CreateLogicApp } from '../../../../vs-code-react/src/app/createWorkspace/createWorkspace';
 import { useDispatch } from 'react-redux';
 import { initializeWorkflow } from '../../../../vs-code-react/src/state/WorkflowSlice';
 import type { AppDispatch } from '../../../../vs-code-react/src/state/store';
@@ -41,7 +41,7 @@ export const VSCodeCreateLogicAppWrapper: React.FC = () => {
     >
       <ReactQueryProvider>
         <VSCodeContextProvider>
-          <CreateLogicAppSetupStep />
+          <CreateLogicApp />
         </VSCodeContextProvider>
       </ReactQueryProvider>
     </IntlProvider>
