@@ -8,6 +8,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const ReviewCreateStep: React.FC = () => {
   const intl = useIntl();
@@ -31,12 +32,12 @@ export const ReviewCreateStep: React.FC = () => {
     separator,
   } = createWorkspaceState;
 
-  const needsDotNetFrameworkStep = logicAppType === 'customCode';
-  const needsFunctionConfiguration = logicAppType === 'rulesEngine';
+  const needsDotNetFrameworkStep = logicAppType === ProjectType.customCode;
+  const needsFunctionConfiguration = logicAppType === ProjectType.rulesEngine;
 
   // Determine if we're using an existing logic app
   const isUsingExistingLogicApp =
-    (logicAppType === 'customCode' || logicAppType === 'rulesEngine') &&
+    (logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine) &&
     logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === logicAppName);
 
   // Determine what sections to show based on flow type
@@ -158,6 +159,41 @@ export const ReviewCreateStep: React.FC = () => {
       id: 'KJLHaU',
       description: 'Missing value indicator',
     }),
+    STANDARD_LABEL: intl.formatMessage({
+      defaultMessage: 'Logic App (Standard)',
+      id: 'xnJNZH',
+      description: 'Standard logic app option',
+    }),
+    CUSTOM_CODE_LABEL: intl.formatMessage({
+      defaultMessage: 'Logic App with Custom Code',
+      id: '2ivADw',
+      description: 'Logic app with custom code option',
+    }),
+    RULES_ENGINE_LABEL: intl.formatMessage({
+      defaultMessage: 'Logic App with Rules Engine',
+      id: 'yoH8Yw',
+      description: 'Logic app with rules engine option',
+    }),
+    STATEFUL_LABEL: intl.formatMessage({
+      defaultMessage: 'Stateful',
+      id: 'p4Mgce',
+      description: 'Stateful workflow option',
+    }),
+    STATELESS_LABEL: intl.formatMessage({
+      defaultMessage: 'Stateless',
+      id: 'R7gB/3',
+      description: 'Stateless workflow option',
+    }),
+    AUTONOMOUS_LABEL: intl.formatMessage({
+      defaultMessage: 'Autonomous Agents (Preview)',
+      id: 'qs798U',
+      description: 'Autonomous agents workflow option',
+    }),
+    AGENT_LABEL: intl.formatMessage({
+      defaultMessage: 'Conversational Agents',
+      id: 'fg89hL',
+      description: 'Conversational agent workflow option',
+    }),
   };
 
   const getWorkspaceFilePath = () => {
@@ -201,12 +237,12 @@ export const ReviewCreateStep: React.FC = () => {
 
   const getLogicAppTypeDisplay = (type: string) => {
     switch (type) {
-      case 'standard':
-        return 'Standard Logic App';
-      case 'customCode':
-        return 'Logic App with Custom Code';
-      case 'rulesEngine':
-        return 'Logic App with Rules Engine';
+      case ProjectType.logicApp:
+        return intlText.STANDARD_LABEL;
+      case ProjectType.customCode:
+        return intlText.CUSTOM_CODE_LABEL;
+      case ProjectType.rulesEngine:
+        return intlText.RULES_ENGINE_LABEL;
       default:
         return type || intlText.MISSING_VALUE;
     }
@@ -215,13 +251,13 @@ export const ReviewCreateStep: React.FC = () => {
   const getWorkflowTypeDisplay = (type: string) => {
     switch (type) {
       case 'Stateful-Codeless':
-        return 'Stateful';
+        return intlText.STATEFUL_LABEL;
       case 'Stateless-Codeless':
-        return 'Stateless';
+        return intlText.STATELESS_LABEL;
       case 'Agentic-Codeless':
-        return 'Autonomous Agents (Preview)';
+        return intlText.AUTONOMOUS_LABEL;
       case 'Agent-Codeless':
-        return 'Conversational Agents (Preview)';
+        return intlText.AGENT_LABEL;
       default:
         return type || intlText.MISSING_VALUE;
     }

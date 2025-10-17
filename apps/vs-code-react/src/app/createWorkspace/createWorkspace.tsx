@@ -13,6 +13,7 @@ import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { nameValidation } from './validation/helper';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const CreateWorkspace: React.FC = () => {
   const intl = useIntl();
@@ -227,7 +228,7 @@ export const CreateWorkspace: React.FC = () => {
     }
 
     // If custom code or rules engine is selected and the name is from the existing logic apps list, it's valid
-    const isCustomCodeOrRulesEngine = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+    const isCustomCodeOrRulesEngine = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
     const isExistingLogicApp = logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === name);
 
     if (isCustomCodeOrRulesEngine && isExistingLogicApp) {
@@ -255,7 +256,7 @@ export const CreateWorkspace: React.FC = () => {
       requirements.needsLogicAppType = true;
       requirements.needsLogicAppName = true;
       requirements.needsWorkflowFields = true;
-      requirements.needsFunctionFields = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+      requirements.needsFunctionFields = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
     }
 
     return requirements;
@@ -315,7 +316,7 @@ export const CreateWorkspace: React.FC = () => {
         if (requirements.needsWorkflowFields) {
           // For createLogicApp, check if using existing logic app
           if (flowType === 'createLogicApp') {
-            const isCustomCodeOrRulesEngine = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+            const isCustomCodeOrRulesEngine = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
             const isExistingLogicApp = logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === logicAppName);
             const usingExistingLogicApp = isCustomCodeOrRulesEngine && isExistingLogicApp;
 
@@ -356,7 +357,7 @@ export const CreateWorkspace: React.FC = () => {
           }
 
           // Target framework validation (only for custom code)
-          if (logicAppType === 'customCode') {
+          if (logicAppType === ProjectType.customCode) {
             const targetFrameworkValid = targetFramework !== '';
             if (!targetFrameworkValid) {
               return false;
@@ -427,7 +428,7 @@ export const CreateWorkspace: React.FC = () => {
           const functionFieldsValid = functionNamespaceValid && functionNameValid && functionFolderNameValid;
 
           // Custom code additionally requires target framework
-          if (logicAppType === 'customCode') {
+          if (logicAppType === ProjectType.customCode) {
             const targetFrameworkValid = targetFramework !== '';
             return baseFieldsValid && functionFieldsValid && targetFrameworkValid;
           }
@@ -536,12 +537,12 @@ export const CreateWorkspace: React.FC = () => {
         workflowType,
         workflowName,
         targetFramework,
-        ...(logicAppType === 'customCode' && {
+        ...(logicAppType === ProjectType.customCode && {
           functionFolderName,
           functionNamespace,
           functionName,
         }),
-        ...(logicAppType === 'rulesEngine' && {
+        ...(logicAppType === ProjectType.rulesEngine && {
           functionFolderName,
           functionNamespace,
           functionName,
@@ -557,12 +558,12 @@ export const CreateWorkspace: React.FC = () => {
         workflowName,
         targetFramework,
         projectType,
-        ...(logicAppType === 'customCode' && {
+        ...(logicAppType === ProjectType.customCode && {
           functionNamespace,
           functionName,
           functionFolderName,
         }),
-        ...(logicAppType === 'rulesEngine' && {
+        ...(logicAppType === ProjectType.rulesEngine && {
           functionNamespace,
           functionName,
           functionFolderName,
@@ -577,12 +578,12 @@ export const CreateWorkspace: React.FC = () => {
         workflowType,
         workflowName,
         targetFramework,
-        ...(logicAppType === 'customCode' && {
+        ...(logicAppType === ProjectType.customCode && {
           functionFolderName,
           functionNamespace,
           functionName,
         }),
-        ...(logicAppType === 'rulesEngine' && {
+        ...(logicAppType === ProjectType.rulesEngine && {
           functionFolderName,
           functionNamespace,
           functionName,

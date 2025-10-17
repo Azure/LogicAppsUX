@@ -11,6 +11,7 @@ import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../s
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { nameValidation } from '../validation/helper';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const LogicAppTypeStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -128,7 +129,7 @@ export const LogicAppTypeStep: React.FC = () => {
       }
 
       // If custom code or rules engine is selected and the name is from the existing logic apps list, allow it
-      const isCustomCodeOrRulesEngine = logicAppType === 'customCode' || logicAppType === 'rulesEngine';
+      const isCustomCodeOrRulesEngine = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
       const isExistingLogicApp = logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === name);
 
       if (isCustomCodeOrRulesEngine && isExistingLogicApp) {
@@ -179,7 +180,7 @@ export const LogicAppTypeStep: React.FC = () => {
 
   // Determine if we should show combobox (when custom code or rules engine is selected and logicAppsWithoutCustomCode is available)
   const shouldShowCombobox =
-    (logicAppType === 'customCode' || logicAppType === 'rulesEngine') &&
+    (logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine) &&
     logicAppsWithoutCustomCode &&
     logicAppsWithoutCustomCode.length > 0;
 
@@ -238,19 +239,19 @@ export const LogicAppTypeStep: React.FC = () => {
         <div>
           <RadioGroup value={logicAppType} onChange={handleLogicAppTypeChange} className={styles.radioGroup}>
             <div className={styles.radioOption}>
-              <Radio value="logicApp" label={intlText.STANDARD_LABEL} />
+              <Radio value={ProjectType.logicApp} label={intlText.STANDARD_LABEL} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
                 {intlText.STANDARD_DESCRIPTION}
               </Text>
             </div>
             <div className={styles.radioOption}>
-              <Radio value="customCode" label={intlText.CUSTOM_CODE_LABEL} />
+              <Radio value={ProjectType.customCode} label={intlText.CUSTOM_CODE_LABEL} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
                 {intlText.CUSTOM_CODE_DESCRIPTION}
               </Text>
             </div>
             <div className={styles.radioOption}>
-              <Radio value="rulesEngine" label={intlText.RULES_ENGINE_LABEL} />
+              <Radio value={ProjectType.rulesEngine} label={intlText.RULES_ENGINE_LABEL} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
                 {intlText.RULES_ENGINE_DESCRIPTION}
               </Text>

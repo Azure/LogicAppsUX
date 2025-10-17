@@ -10,6 +10,7 @@ import { useCreateWorkspaceStyles } from '../createWorkspace/createWorkspaceStyl
 import { LogicAppTypeStep } from '../createWorkspace/steps/logicAppTypeStep';
 import { WorkflowTypeStep } from '../createWorkspace/steps/workflowTypeStep';
 import { DotNetFrameworkStep } from '../createWorkspace/steps/dotNetFrameworkStep';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const CreateLogicAppSetupStep: React.FC = () => {
   const styles = useCreateWorkspaceStyles();
@@ -18,7 +19,7 @@ export const CreateLogicAppSetupStep: React.FC = () => {
 
   // Check if an existing logic app is selected
   const isExistingLogicApp =
-    (logicAppType === 'customCode' || logicAppType === 'rulesEngine') &&
+    (logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine) &&
     logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === logicAppName);
 
   return (

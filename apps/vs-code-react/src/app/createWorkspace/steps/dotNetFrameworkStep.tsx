@@ -12,6 +12,7 @@ import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionF
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const DotNetFrameworkStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -194,7 +195,7 @@ export const DotNetFrameworkStep: React.FC = () => {
     setFunctionFolderNameError(validateFunctionFolderName(data.value));
   };
 
-  if (logicAppType === 'customCode') {
+  if (logicAppType === ProjectType.customCode) {
     return (
       <div className={styles.formSection}>
         <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
@@ -271,7 +272,7 @@ export const DotNetFrameworkStep: React.FC = () => {
       </div>
     );
   }
-  if (logicAppType === 'rulesEngine') {
+  if (logicAppType === ProjectType.rulesEngine) {
     return (
       <div className={styles.formSection}>
         <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_TITLE}</Text>

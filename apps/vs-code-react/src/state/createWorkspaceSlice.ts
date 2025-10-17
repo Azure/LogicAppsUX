@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from 'run-service';
@@ -94,7 +95,7 @@ export const createWorkspaceSlice = createSlice({
       } else {
         state.packagePath = { path: '', fsPath: '' };
       }
-      state.logicAppType = 'logicApp';
+      state.logicAppType = ProjectType.logicApp;
     },
     setProjectPath: (state, action: PayloadAction<{ targetDirectory: ITargetDirectory } | string>) => {
       if (typeof action.payload === 'string') {
