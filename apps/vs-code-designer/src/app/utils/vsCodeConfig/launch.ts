@@ -106,12 +106,16 @@ export function isDebugConfigEqual(c1: DebugConfiguration, c2: DebugConfiguratio
  * Prompts the user to select a debug configuration.
  * @param {IActionContext} context - The action context.
  * @param {DebugConfiguration[]} debugConfigs - The debug configuration options.
- * @returns {Promise<DebugConfiguration>} - A promise that resolves to the selected debug configuration.
+ * @returns {Promise<DebugConfiguration>} - A promise that resolves to the selected debug configuration or undefined if one couldn't be retrieved.
  */
 async function promptSelectDebugConfig(
   context: IActionContext,
   debugConfigs: DebugConfiguration[]
 ): Promise<DebugConfiguration | undefined> {
+  if (isNullOrUndefined(debugConfigs) || debugConfigs.length === 0) {
+    return undefined;
+  }
+
   const debugConfigPicks = debugConfigs.map((debugConfig) => ({
     label: debugConfig.name,
     data: debugConfig,

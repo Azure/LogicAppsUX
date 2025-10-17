@@ -54,7 +54,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     workflowFilePath = workflowNode.fsPath;
     workflowName = basename(dirname(workflowFilePath));
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
-    if (isNullOrUndefined(ext.workflowRuntimePort)) {
+    if (isNullOrUndefined(ext.workflowRuntimePort) && !isNullOrUndefined(projectPath)) {
       await launchProjectDebugger(context, projectPath);
     }
 
