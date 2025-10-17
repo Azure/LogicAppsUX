@@ -17,6 +17,7 @@ export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
   isRefreshing?: boolean;
+  isAgentOverview?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
   supportsUnitTest?: boolean;
@@ -42,6 +43,7 @@ export const Overview: React.FC<OverviewProps> = ({
   corsNotice,
   errorMessage,
   loading = false,
+  isAgentOverview = false,
   hasMoreRuns = false,
   supportsUnitTest = false,
   runItems,
@@ -122,6 +124,7 @@ export const Overview: React.FC<OverviewProps> = ({
       <OverviewCommandBar
         triggerName={workflowProperties.triggerName}
         isRefreshing={isRefreshing}
+        isAgentOverview={isAgentOverview}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />

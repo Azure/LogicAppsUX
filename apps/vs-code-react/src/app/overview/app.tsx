@@ -4,7 +4,7 @@ import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import type { Runs } from '@microsoft/logic-apps-shared';
+import type { IWorkflowService, ManagedIdentity, Runs } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo } from 'react';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useIntl } from 'react-intl';
 import { useOverviewStyles } from './overviewStyles';
+import { fetchAgentUrl } from 'app/designer/services/workflowService';
 
 export interface CallbackInfo {
   method?: string;
@@ -20,9 +21,22 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { isWorkflowRuntimeRunning } = workflowState;
+  const {
+    apiVersion,
+    baseUrl,
+    accessToken,
+    workflowProperties,
+    hostVersion,
+    isLocal,
+    isWorkflowRuntimeRunning,
+    azureDetails,
+  } = workflowState;
   const intl = useIntl();
   const styles = useOverviewStyles();
+
+  const emptyArmId = '00000000-0000-0000-0000-000000000000';
+  const clientId = azureDetails?.clientId ?? '';
+  const tenantId = azureDetails?.tenantId ?? '';
 
   const intlText = {
     DEBUG_PROJECT_ERROR: intl.formatMessage({
@@ -32,26 +46,62 @@ export const OverviewApp = () => {
     }),
   };
 
-  const runService = useMemo(() => {
-    const httpClient = new HttpClient({
-      accessToken: workflowState.accessToken,
-      baseUrl: workflowState.baseUrl,
+  const httpClient = useMemo(() => {
+    return new HttpClient({
+      accessToken: accessToken,
+      baseUrl: baseUrl,
       apiHubBaseUrl: '',
-      hostVersion: workflowState.hostVersion,
-    });
+      hostVersion: hostVersion,
+    })
+  }, [
+    accessToken,
+    baseUrl,
+    hostVersion,
+  ]);
 
+  const runService = useMemo(() => {
     return new StandardRunService({
-      baseUrl: workflowState.baseUrl,
-      apiVersion: workflowState.apiVersion,
-      workflowName: workflowState.workflowProperties.name,
+      baseUrl: baseUrl,
+      apiVersion: apiVersion,
+      workflowName: workflowProperties.name,
       httpClient,
     });
   }, [
-    workflowState.baseUrl,
-    workflowState.apiVersion,
-    workflowState.accessToken,
-    workflowState.workflowProperties.name,
-    workflowState.hostVersion,
+    baseUrl,
+    apiVersion,
+    workflowProperties.name,
+    httpClient,
+  ]);
+
+  const workflowService: IWorkflowService = useMemo(() => ({
+    getCallbackUrl: async (triggerId: string) => {
+      if (isLocal) {
+        try {
+          const url = `${baseUrl}/workflows/${workflowProperties.name}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
+          return (await httpClient.post({ uri: url })) as any;
+        } catch {
+          return undefined;
+        }
+      }
+      return undefined;
+    },
+    getAppIdentity: () => {
+      return {
+        principalId: emptyArmId,
+        tenantId: emptyArmId,
+        type: 'SystemAssigned',
+      } as ManagedIdentity;
+    },
+    isExplicitAuthRequiredForManagedIdentity: () => true,
+    getAgentUrl: () => fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId),
+  }), [
+    isLocal,
+    baseUrl,
+    workflowProperties.name,
+    apiVersion,
+    httpClient,
+    clientId,
+    tenantId,
   ]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
@@ -127,6 +177,8 @@ export const OverviewApp = () => {
       <Overview
         corsNotice={workflowState.corsNotice}
         errorMessage={errorMessage}
+        // TODO(aeldridge): Check flow kind
+        isAgentOverview={false}
         hasMoreRuns={hasNextPage}
         loading={isLoading || runTriggerLoading}
         runItems={runItems ?? []}

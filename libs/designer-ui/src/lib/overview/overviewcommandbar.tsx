@@ -2,15 +2,18 @@ import type { ButtonProps } from '@fluentui/react-components';
 import { Button, Toolbar } from '@fluentui/react-components';
 import { ArrowClockwiseRegular, PlayRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
+// TODO(aeldridge): We don't take '@microsoft/logic-apps-designer-v2' as a dependency in designer-ui
+import { ChatButton } from '@microsoft/logic-apps-designer-v2';
 
 export interface OverviewCommandBarProps {
   triggerName?: string;
   isRefreshing?: boolean;
+  isAgentOverview?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
 }
 
-export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefreshing, onRefresh, onRunTrigger, triggerName }) => {
+export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefreshing, isAgentOverview, onRefresh, onRunTrigger, triggerName }) => {
   const intl = useIntl();
 
   const Resources = {
@@ -45,6 +48,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefres
 
   return (
     <Toolbar data-testid="msla-overview-command-bar" style={{ padding: '8px 0' }}>
+      {isAgentOverview ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
       {items.map((item, index) => (
         <Button key={index} appearance="transparent" {...item}>
           {item.title}
