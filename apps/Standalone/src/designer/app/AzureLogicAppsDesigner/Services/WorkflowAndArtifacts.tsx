@@ -511,7 +511,9 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
     // Construct URLs following the pattern used in Standard SKU
     // chatUrl is base path, queryParams contains authentication
     const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
-    const queryParams: AgentQueryParams | undefined = apiKey ? { apiKey } : undefined;
+    const queryParams: AgentQueryParams | undefined = apiKey
+      ? { apiKey, 'api-version': consumptionApiVersion }
+      : { 'api-version': consumptionApiVersion };
 
     // Get OBO token if available (for dynamic connections)
     const oboToken = await fetchOBODataConsumption(workflowId);
@@ -539,7 +541,7 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
     return {
       agentUrl,
       chatUrl,
-      queryParams: undefined,
+      queryParams: { 'api-version': consumptionApiVersion },
       hostName,
     };
   }
