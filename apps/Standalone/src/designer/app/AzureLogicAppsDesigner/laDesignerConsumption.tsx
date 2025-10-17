@@ -123,7 +123,10 @@ const DesignerEditorConsumption = () => {
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
+  // Remove (stage) suffix from location for API compatibility
+  const rawLocation = workflowAndArtifactsData?.location ?? '';
+  const sanitizedLocation = rawLocation.replace(/\s*\(stage\)\s*/gi, '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(sanitizedLocation);
   const services = useMemo(
     () =>
       getDesignerServices(

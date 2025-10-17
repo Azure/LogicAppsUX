@@ -67,11 +67,18 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
         workflow.parameters.$connections = { value: {} };
       }
       Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
-        workflow.parameters.$connections.value[key] = {
+        const connectionValue: any = {
           connectionId: connection.connection.id,
           connectionName: connection.connectionName,
           id: connection.api.id,
         };
+
+        // Preserve connectionProperties if present (for dynamic connections)
+        if (connection.connectionProperties) {
+          connectionValue.connectionProperties = connection.connectionProperties;
+        }
+
+        workflow.parameters.$connections.value[key] = connectionValue;
       });
       delete workflow.connectionReferences;
     }

@@ -45,6 +45,7 @@ export const CreateConnectionInternal = (props: {
   updateOperationParameterValues?: (values?: Record<string, any>) => void;
   operationManifest?: OperationManifest;
   workflowKind?: string;
+  workflowMetadata?: { agentType?: string };
 }) => {
   const {
     classes,
@@ -65,6 +66,8 @@ export const CreateConnectionInternal = (props: {
     updateOperationParameterValues,
     isAgentSubgraph,
     operationManifest,
+    workflowKind,
+    workflowMetadata,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -312,7 +315,8 @@ export const CreateConnectionInternal = (props: {
       checkOAuthCallback={needsOAuth}
       resourceSelectorProps={resourceSelectorProps}
       operationManifest={operationManifest}
-      workflowKind={props.workflowKind}
+      workflowKind={workflowKind}
+      workflowMetadata={workflowMetadata}
     />
   );
 };

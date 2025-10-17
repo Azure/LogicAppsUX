@@ -245,9 +245,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.saveBlankUnitTest: {
-        await callWithTelemetryAndErrorHandling('SaveBlankUnitTestFromDesigner', async (activateContext: IActionContext) => {
-          await saveBlankUnitTest(activateContext, Uri.file(this.workflowFilePath), msg.definition);
-        });
+        await saveBlankUnitTest(Uri.file(this.workflowFilePath), msg.definition);
         break;
       }
       case ExtensionCommand.saveUnitTest: {
