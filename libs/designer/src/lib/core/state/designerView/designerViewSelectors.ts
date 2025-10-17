@@ -2,6 +2,7 @@ import { equals, enableAgentConsumption } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
+import { isA2AWorkflow } from '../workflow/helper';
 
 export const useShowMinimap = () => {
   return useSelector((state: RootState) => state.designerView.showMinimap);
@@ -65,6 +66,10 @@ export const useIsAgenticWorkflow = (): boolean => {
 export const useIsAgenticWorkflowOnly = () => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   return equals(workflowKind, 'agentic', true);
+};
+
+export const useIsA2AWorkflow = () => {
+  return useSelector((state: RootState) => isA2AWorkflow(state.workflow));
 };
 
 export const useWorkflowHasAgentLoop = () => {
