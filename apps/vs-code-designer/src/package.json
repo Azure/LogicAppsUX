@@ -716,7 +716,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openRunHistory",
-          "when": "resourceFilename==Program.cs",
+          "when": "resourceFilename==Program.cs && azureLogicAppsStandard.isAgentCodeful == true",
           "group": "navigation@3"
         },
         {

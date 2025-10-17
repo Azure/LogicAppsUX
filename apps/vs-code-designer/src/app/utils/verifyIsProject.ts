@@ -9,6 +9,7 @@ import {
   workflowFileName,
   codefulWorkflowFileName,
   localSettingsFileName,
+  customExtensionContext,
 } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
@@ -97,6 +98,10 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   const hasValidCodelessWorkflow = validWorkflowChecks.some((valid) => valid);
   const isCodefulAgent = await hasCodefulAgent(folderPath);
 
+  if (isCodefulAgent) {
+    vscode.commands.executeCommand('setContext', customExtensionContext.isAgentCodeful, true);
+  }
+
   // Only return false if none of the possible validation mechanisms are present
   if (!(hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodefulAgent)) {
     return false;
@@ -119,7 +124,7 @@ const hasCodefulAgent = async (folderPath: string) => {
 
   const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
   const localSettings = JSON.parse(localSettingsData);
-  return localSettings.Values.CODEFUL_AGENT;
+  return localSettings.Values?.CODEFUL_AGENT === true;
 };
 
 /**

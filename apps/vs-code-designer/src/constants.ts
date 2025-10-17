@@ -212,6 +212,12 @@ export const extensionCommand = {
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
+// Extension context
+export const customExtensionContext = {
+  isAgentCodeful: 'azureLogicAppsStandard.isAgentCodeful',
+} as const;
+export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
+
 // Context
 export const contextValuePrefix = 'azLogicApps';
 

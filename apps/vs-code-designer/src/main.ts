@@ -1,11 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { runPostExtractStepsFromCache } from './app/commands/cloudToLocal/cloudToLocalSteps/processPackageStep';
-import {
-  supportedDataMapDefinitionFileExts,
-  supportedDataMapperFolders,
-  supportedSchemaFileExts,
-} from './app/commands/dataMapper/extensionConfig';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -13,7 +8,7 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
-import { getExtensionVersion } from './app/utils/extension';
+import { getExtensionVersion, initializeCustomExtensionContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
@@ -46,18 +41,7 @@ const perfStats = {
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
-  // Data Mapper context
-  vscode.commands.executeCommand(
-    'setContext',
-    extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
-    supportedDataMapDefinitionFileExts
-  );
-  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedSchemaFileExts, supportedSchemaFileExts);
-  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedFileExts, [
-    ...supportedDataMapDefinitionFileExts,
-    ...supportedSchemaFileExts,
-  ]);
-  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
+  initializeCustomExtensionContext();
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', {
     resolveDebugConfiguration: async (folder, debugConfig) => {
