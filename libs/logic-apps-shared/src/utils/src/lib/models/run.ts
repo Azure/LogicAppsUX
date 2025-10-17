@@ -29,6 +29,7 @@ export interface RunProperties {
   status: string;
   trigger: unknown;
   workflow: unknown;
+  previousRunId?: string;
 }
 
 export interface Runs {

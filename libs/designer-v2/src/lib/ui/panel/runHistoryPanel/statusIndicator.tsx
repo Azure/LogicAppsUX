@@ -5,7 +5,7 @@ import StatusCancelledIcon from '../../../../lib/common/images/status_cancelled.
 import { Text, Spinner } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
-const StatusIndicator = (props: { status: string }) => {
+const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
   const intl = useIntl();
 
   const text = React.useMemo(() => {
@@ -66,7 +66,11 @@ const StatusIndicator = (props: { status: string }) => {
       default:
         return null;
     }
-  }, [props.status]);
+  }, [props.status, text]);
+
+  if (props.onlyIcon) {
+    return icon;
+  }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
