@@ -67,33 +67,6 @@ export const useIsAgenticWorkflowOnly = () => {
   return equals(workflowKind, 'agentic', true);
 };
 
-export const useIsA2AWorkflow = () => {
-  return useSelector((state: RootState) => {
-    const isStandardA2A = equals(state.workflow.workflowKind, 'agent', false);
-    if (isStandardA2A) {
-      return true;
-    }
-    const operations = state.workflow.operations;
-    const nodesMetadata = state.workflow.nodesMetadata;
-
-    const triggerNodeId = Object.keys(nodesMetadata).find((nodeId) => nodesMetadata[nodeId]?.isTrigger === true);
-
-    if (triggerNodeId) {
-      const triggerOperation = operations[triggerNodeId];
-
-      if (triggerOperation) {
-        // For Consumption A2A: Must be Request type AND Agent kind
-        const isRequestType = equals(triggerOperation.type, 'Request', true);
-        const isAgentKind = equals(triggerOperation.kind, 'Agent', true);
-
-        return isRequestType && isAgentKind;
-      }
-    }
-
-    return false;
-  });
-};
-
 export const useWorkflowHasAgentLoop = () => {
   return useSelector((state: RootState) =>
     Object.values(state.workflow.operations).some((operation) => equals(operation.type, 'Agent', true))
