@@ -15,7 +15,7 @@
 
 ### Bug Fixes
 
-* **vscode:**  Start runtime api in background on designer open for each project ([#8346](https://github.com/Azure/LogicAppsUX/pull/8346))
+* **vscode:** Start runtime API in background on designer open for each project ([#8346](https://github.com/Azure/LogicAppsUX/pull/8346))
 
 
 ## [5.185.7](https://github.com/Azure/LogicAppsUX/compare/v5.185.6...v5.185.7) (2025-10-07)
