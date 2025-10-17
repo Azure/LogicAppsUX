@@ -40,6 +40,10 @@ export async function getDebugConfig(
   folder: WorkspaceFolder,
   shouldPromptOnMultipleConfigs = true
 ): Promise<DebugConfiguration | undefined> {
+  if (isNullOrUndefined(folder)) {
+    return undefined;
+  }
+
   const debugConfigs = getDebugConfigs(folder);
   if (debugConfigs.length === 0) {
     return undefined;
