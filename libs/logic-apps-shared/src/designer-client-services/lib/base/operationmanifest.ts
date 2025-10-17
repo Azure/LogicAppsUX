@@ -41,7 +41,7 @@ import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
-import handoffManifest from '../standard/manifest/handoff';
+import handoffManifest from './manifests/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
