@@ -61,15 +61,18 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
     if (!queryParams) {
       return url;
     }
-    // Filter out undefined values before passing to URLSearchParams
-    const filteredParams: Record<string, string> = {};
+
+    // Build query parameters object, filtering out undefined values
+    // URLSearchParams requires Record<string, string> but queryParams allows undefined
+    const definedParams: Record<string, string> = {};
     for (const key in queryParams) {
       const value = queryParams[key];
       if (value !== undefined) {
-        filteredParams[key] = value;
+        definedParams[key] = value;
       }
     }
-    const queryString = new URLSearchParams(filteredParams).toString();
+
+    const queryString = new URLSearchParams(definedParams).toString();
     return queryString ? `${url}?${queryString}` : url;
   }, [url, queryParams]);
 
