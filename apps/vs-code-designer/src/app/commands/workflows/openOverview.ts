@@ -11,6 +11,7 @@ import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWor
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import {
   cacheWebviewPanel,
+  getAzureConnectorDetailsForLocalProject,
   getStandardAppData,
   getWorkflowManagementBaseURI,
   removeWebviewPanelFromCache,
@@ -24,7 +25,7 @@ import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
@@ -47,6 +48,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
   let isWorkflowRuntimeRunning: boolean;
+  let azureDetails: AzureConnectorDetails;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
@@ -70,6 +72,10 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
     isWorkflowRuntimeRunning = await isRuntimeUp(ext.workflowRuntimePort);
+    accessToken = await getAccessToken();
+    if (projectPath) {
+      azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+    }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
     panelName = `${workflowNode.id}-${workflowName}-overview`;
@@ -82,11 +88,19 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isLocal = false;
     isWorkflowRuntimeRunning = true;
+    accessToken = await getAccessToken();
+    azureDetails = {
+      enabled: true,
+      accessToken,
+      subscriptionId: workflowNode?.subscription?.subscriptionId,
+      location: normalizeLocation(workflowNode?.parent?.parent?.site.location),
+      workflowManagementBaseUrl: workflowNode?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+      tenantId: workflowNode?.parent?.subscription?.tenantId,
+      resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
+    }
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
-
-  accessToken = await getAccessToken();
 
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
@@ -147,6 +161,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             hostVersion: ext.extensionVersion,
             isLocal: isLocal,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
+            azureDetails: azureDetails,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
@@ -209,6 +224,13 @@ async function getLocalWorkflowCallbackInfo(
       method: HTTP_METHODS.POST,
     };
   }
+}
+
+function normalizeLocation(location: string): string {
+  if (!location) {
+    return '';
+  }
+  return location.toLowerCase().replace(/ /g, '');
 }
 
 function getWorkflowStateType(workflowName: string, kind: string, settings: Record<string, string>): string {
