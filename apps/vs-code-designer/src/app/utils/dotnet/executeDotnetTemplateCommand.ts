@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { assetsFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { useBinariesDependencies } from '../binaries';
@@ -35,7 +36,7 @@ export async function executeDotnetTemplateCommand(
 ): Promise<string> {
   const framework: string = await getFramework(context, workingDirectory);
   const jsonDllPath: string = ext.context.asAbsolutePath(
-    path.join('assets', 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
+    path.join(assetsFolderName, 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
   );
 
   return await executeCommand(
