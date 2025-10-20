@@ -40,7 +40,7 @@ export const OverviewApp = () => {
   });
 
   const isAgentWorkflow = useMemo(() => {
-    return equals(kind, 'agent', false);
+    return equals(kind, 'agent', true);
   }, [kind]);
 
   const emptyArmId = '00000000-0000-0000-0000-000000000000';

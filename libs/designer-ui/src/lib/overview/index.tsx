@@ -47,7 +47,7 @@ export const Overview: React.FC<OverviewProps> = ({
   errorMessage,
   loading = false,
   isDarkMode,
-  isAgentWorkflow = false,
+  isAgentWorkflow,
   agentUrlLoading,
   agentUrlData,
   hasMoreRuns = false,

@@ -43,13 +43,6 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
 
   const items: ButtonProps[] = [
     {
-      'aria-label': Resources.OVERVIEW_RUN_TRIGGER,
-      icon: <PlayRegular />,
-      title: Resources.OVERVIEW_RUN_TRIGGER,
-      onClick: onRunTrigger,
-      disabled: !triggerName,
-    },
-    {
       'aria-label': Resources.OVERVIEW_REFRESH,
       disabled: isRefreshing,
       icon: <ArrowClockwiseRegular />,
@@ -57,6 +50,16 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       onClick: onRefresh,
     },
   ];
+
+  if (isAgentWorkflow) {
+    items.unshift({
+      'aria-label': Resources.OVERVIEW_RUN_TRIGGER,
+      icon: <PlayRegular />,
+      title: Resources.OVERVIEW_RUN_TRIGGER,
+      onClick: onRunTrigger,
+      disabled: !triggerName,
+    });
+  }
 
   const buttonCommonProps = {
     appearance: 'transparent',
