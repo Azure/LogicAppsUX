@@ -17,6 +17,7 @@ export interface InitializePayload {
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
   azureDetails?: AzureConnectorDetails;
+  kind?: string;
 }
 
 export const Status = {
@@ -41,6 +42,7 @@ export interface WorkflowState {
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
   azureDetails?: AzureConnectorDetails;
+  kind?: string;
 }
 
 const initialState: WorkflowState = {
@@ -86,6 +88,7 @@ export const workflowSlice = createSlice({
         isLocal,
         isWorkflowRuntimeRunning,
         azureDetails,
+        kind,
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -117,6 +120,7 @@ export const workflowSlice = createSlice({
       initializedState.isLocal = isLocal;
       initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
       initializedState.azureDetails = azureDetails;
+      initializedState.kind = kind;
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;

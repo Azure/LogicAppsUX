@@ -2,18 +2,30 @@ import type { ButtonProps } from '@fluentui/react-components';
 import { Button, Toolbar } from '@fluentui/react-components';
 import { ArrowClockwiseRegular, PlayRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-// TODO(aeldridge): We don't take '@microsoft/logic-apps-designer-v2' as a dependency in designer-ui
-import { ChatButton } from '@microsoft/logic-apps-designer-v2';
+import { ChatButton } from './chat';
+import type { AgentURL } from '@microsoft/logic-apps-shared';
 
 export interface OverviewCommandBarProps {
   triggerName?: string;
+  isDarkMode?: boolean;
   isRefreshing?: boolean;
-  isAgentOverview?: boolean;
+  isAgentWorkflow?: boolean;
+  agentUrlLoading?: boolean;
+  agentUrlData?: AgentURL;
   onRefresh(): void;
   onRunTrigger(): void;
 }
 
-export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefreshing, isAgentOverview, onRefresh, onRunTrigger, triggerName }) => {
+export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
+  isRefreshing,
+  isDarkMode,
+  isAgentWorkflow,
+  agentUrlLoading,
+  agentUrlData,
+  onRefresh,
+  onRunTrigger,
+  triggerName,
+}) => {
   const intl = useIntl();
 
   const Resources = {
@@ -46,9 +58,14 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefres
     },
   ];
 
+  const buttonCommonProps = {
+    appearance: 'transparent',
+    isDarkMode: isDarkMode,
+  };
+
   return (
     <Toolbar data-testid="msla-overview-command-bar" style={{ padding: '8px 0' }}>
-      {isAgentOverview ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
+      {isAgentWorkflow ? <ChatButton loading={agentUrlLoading} data={agentUrlData} buttonCommonProps={buttonCommonProps} /> : null}
       {items.map((item, index) => (
         <Button key={index} appearance="transparent" {...item}>
           {item.title}

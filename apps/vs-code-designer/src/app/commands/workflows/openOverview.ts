@@ -97,7 +97,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       workflowManagementBaseUrl: workflowNode?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
       tenantId: workflowNode?.parent?.subscription?.tenantId,
       resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
-    }
+    };
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
@@ -162,6 +162,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             isLocal: isLocal,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
             azureDetails: azureDetails,
+            kind: kind,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
