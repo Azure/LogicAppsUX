@@ -718,47 +718,25 @@ async function ensureAccessPolicyLocalMSI(
 
   ext.outputChannel.appendLog(localize('resolvingConnection', 'Resolving connection ID: {0} -> {1}', connectionId, resolvedConnectionId));
 
-  const policiesUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies?api-version=2018-07-01-preview`;
-
-  try {
-    const response = await axios.get(policiesUrl, {
-      headers: { authorization: accessToken },
-    });
-
-    const policies = response.data.value || [];
-
-    // Check both by exact name match and by objectId/tenantId
-    const policyExists = policies.some((p: any) => {
-      const matchesByIdentity =
-        p.properties?.principal?.identity?.objectId === objectId && p.properties?.principal?.identity?.tenantId === tenantId;
-      const matchesByName = p.name === policyName;
-      return matchesByIdentity || matchesByName;
-    });
-
-    if (policyExists) {
-      ext.outputChannel.appendLog(
-        localize('policyExists', 'Access policy already exists for user: {0} (objectId: {1})', policyNamePrefix, objectId)
-      );
-      return;
-    }
-  } catch (error) {
-    // If 404, policies don't exist - continue to create
-    if (error.response?.status !== 404) {
-      ext.outputChannel.appendLog(localize('errorCheckingPolicies', 'Error checking existing policies: {0}', error.message));
-    }
-  }
-
   // Create access policy
   const objectIdSuffix = objectId.slice(-8);
   const policyName = `${policyNamePrefix}-${objectIdSuffix}`;
+  const policiesUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies?api-version=2018-07-01-preview`;
+
+  // Check if policy already exists with improved logic
+  const policyExists = await checkExistingPolicy(policiesUrl, accessToken, objectId, tenantId, policyName, policyNamePrefix);
+
+  if (policyExists) {
+    return;
+  }
 
   ext.outputChannel.appendLog(localize('policyNameGenerated', 'Generated policy name: {0} for user {1}', policyName, policyNamePrefix));
   const apiVersion = '2016-06-01';
-  const policyUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies/${encodeURIComponent(policyName)}?api-version=${apiVersion}`;
+  const addPolicyUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies/${encodeURIComponent(policyName)}?api-version=${apiVersion}`;
 
   try {
     await axios.put(
-      policyUrl,
+      addPolicyUrl,
       {
         properties: {
           principal: {
@@ -779,5 +757,171 @@ async function ensureAccessPolicyLocalMSI(
   } catch (error) {
     const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
     ext.outputChannel.appendLog(localize('policyCreationFailed', 'Failed to create access policy: {0}', errorDetails));
+  }
+}
+
+/**
+ * Checks if a policy exists for the given identity
+ * @returns true if policy exists and matches, false if it needs to be created
+ */
+async function checkExistingPolicy(
+  policiesUrl: string,
+  accessToken: string,
+  objectId: string,
+  tenantId: string,
+  policyName: string,
+  policyNamePrefix: string
+): Promise<boolean> {
+  try {
+    const response = await axios.get(policiesUrl, {
+      headers: { authorization: accessToken },
+      validateStatus: (status) => status < 500, // Don't throw for 4xx errors
+    });
+
+    // Handle different response statuses
+    if (response.status === 404) {
+      ext.outputChannel.appendLog(localize('noPoliciesFound', 'No access policies found for connection. Creating new policy.'));
+      return false;
+    }
+
+    if (response.status !== 200) {
+      ext.outputChannel.appendLog(
+        localize(
+          'unexpectedStatus',
+          'Unexpected status {0} when checking policies. Response: {1}',
+          response.status,
+          JSON.stringify(response.data)
+        )
+      );
+      return false;
+    }
+
+    const policies = response.data?.value || [];
+
+    // Find matching policies with detailed comparison
+    const matchingPolicies = policies.filter((p: any) => {
+      const principal = p.properties?.principal;
+      if (!principal) {
+        return false;
+      }
+
+      const identity = principal.identity || {};
+      const identityMatches = identity.objectId === objectId && identity.tenantId === tenantId;
+
+      // Check both the policy name and the identity
+      const nameMatches = p.name === policyName;
+
+      // Log detailed info for debugging
+      if (identityMatches || nameMatches) {
+        ext.outputChannel.appendLog(
+          localize(
+            'foundPolicy',
+            'Found policy: name={0}, objectId={1}, tenantId={2}, type={3}',
+            p.name,
+            identity.objectId,
+            identity.tenantId,
+            principal.type
+          )
+        );
+      }
+
+      return identityMatches;
+    });
+
+    if (matchingPolicies.length > 0) {
+      const policy = matchingPolicies[0];
+
+      // Verify the policy has the correct principal type
+      if (policy.properties?.principal?.type !== 'ActiveDirectory') {
+        ext.outputChannel.appendLog(
+          localize('wrongPrincipalType', 'Policy exists but has wrong principal type: {0}. Recreating.', policy.properties?.principal?.type)
+        );
+        return false;
+      }
+
+      ext.outputChannel.appendLog(
+        localize(
+          'policyExists',
+          'Access policy "{0}" already exists for user: {1} (objectId: {2})',
+          policy.name,
+          policyNamePrefix,
+          objectId
+        )
+      );
+      return true;
+    }
+
+    // Check if there's a policy with the same name but different identity (potential conflict)
+    const nameConflict = policies.find((p: any) => p.name === policyName);
+    if (nameConflict) {
+      const conflictIdentity = nameConflict.properties?.principal?.identity;
+      ext.outputChannel.appendLog(
+        localize(
+          'policyNameConflict',
+          'Warning: Policy with name "{0}" exists for different identity (objectId: {1}). Creating with modified name.',
+          policyName,
+          conflictIdentity?.objectId
+        )
+      );
+      // You might want to modify the policy name here or handle this case differently
+      return false;
+    }
+
+    return false;
+  } catch (error) {
+    // Network or other errors
+    if (axios.isAxiosError(error)) {
+      const statusCode = error.response?.status;
+      const errorData = error.response?.data;
+
+      // Special handling for 404 - it's expected when no policies exist
+      if (statusCode === 404) {
+        ext.outputChannel.appendLog(
+          localize('noPoliciesEndpoint', 'Access policies endpoint not found (404). This is normal for new connections.')
+        );
+        return false;
+      }
+
+      // Handle authentication errors specially
+      if (statusCode === 401 || statusCode === 403) {
+        ext.outputChannel.appendLog(
+          localize(
+            'authError',
+            'Authorization error checking policies: {0}. Status: {1}',
+            errorData?.error?.message || error.message,
+            statusCode
+          )
+        );
+        throw new Error(
+          localize(
+            'insufficientPermissions',
+            'Insufficient permissions to manage access policies. Please ensure you have the necessary Azure RBAC roles.'
+          )
+        );
+      }
+
+      // Log other HTTP errors with details
+      ext.outputChannel.appendLog(
+        localize(
+          'httpError',
+          'HTTP error checking policies: Status={0}, Message={1}, Data={2}',
+          statusCode,
+          error.message,
+          JSON.stringify(errorData)
+        )
+      );
+    } else {
+      // Non-Axios errors (network, parsing, etc.)
+      ext.outputChannel.appendLog(
+        localize('generalError', 'Error checking existing policies: {0}', error instanceof Error ? error.message : String(error))
+      );
+    }
+
+    // For non-404 errors, we should probably throw to prevent creating duplicate policies
+    if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+      throw error;
+    }
+
+    return false;
   }
 }

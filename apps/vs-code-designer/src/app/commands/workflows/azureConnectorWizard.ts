@@ -18,7 +18,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { AuthenticationMethod, AuthenticationMethodSelectionStep } from './authenticationMethodStep';
+import { AuthenticationMethodSelectionStep } from './authenticationMethodStep';
 
 export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
   credentials: any;
@@ -33,11 +33,10 @@ export interface IAzureConnectorsContext extends IActionContext, IProjectWizardC
 
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep(projectPath), new ConnectorAuthenticationStep()],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath), createAuthenticationStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
-
 class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsContext> {
   private _projectPath: string;
 
@@ -58,8 +57,9 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
     context.enabled = (await context.ui.showQuickPick(picks, { placeHolder })).data === 'yes';
   }
 
+  //TODO: Review condition
   public shouldPrompt(context: IAzureConnectorsContext): boolean {
-    return context.enabled === undefined;
+    return context.enabled === undefined || true;
   }
 
   public async getSubWizard(context: IAzureConnectorsContext): Promise<IWizardOptions<IAzureConnectorsContext> | undefined> {
@@ -114,14 +114,9 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
 
 //TODO: Update to be in webview after ignite redesign is done
 
-class ConnectorAuthenticationStep extends AuthenticationMethodSelectionStep<IAzureConnectorsContext> {
-  public async prompt(context: IAzureConnectorsContext): Promise<void> {
-    await super.prompt(context); // Let parent handle selection
-    // Set MSIenabled based on what user selected
-    context.MSIenabled = context.authenticationMethod === AuthenticationMethod.ManagedServiceIdentity;
-  }
-
-  public shouldPrompt(_context: IAzureConnectorsContext): boolean {
-    return true; // Always prompt for authentication method
-  }
+/**
+ * Creates an authentication step with MSIenabled setting
+ */
+function createAuthenticationStep(): AuthenticationMethodSelectionStep<IAzureConnectorsContext> {
+  return new AuthenticationMethodSelectionStep<IAzureConnectorsContext>();
 }

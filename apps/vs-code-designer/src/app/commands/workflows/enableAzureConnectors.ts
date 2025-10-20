@@ -14,6 +14,7 @@ import * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { isString } from '@microsoft/logic-apps-shared';
+import { ext } from '../../../extensionVariables';
 
 /**
  * Enables Azure connectors for the project containing workflow node.
@@ -27,7 +28,7 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
   const subscriptionId: string = localSettings.Values[workflowSubscriptionIdKey];
 
-  if (subscriptionId === undefined || subscriptionId === '') {
+  if (subscriptionId === undefined || subscriptionId === '' || !ext.useMSI) {
     const connectorsContext: IAzureConnectorsContext = context as IAzureConnectorsContext;
     const wizard: AzureWizard<IAzureConnectorsContext> = createAzureWizard(connectorsContext, projectPath);
     await wizard.prompt();
