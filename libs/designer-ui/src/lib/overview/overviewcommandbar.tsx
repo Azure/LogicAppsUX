@@ -64,6 +64,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
   const buttonCommonProps = {
     appearance: 'transparent',
     isDarkMode: isDarkMode,
+    disabled: !triggerName,
   };
 
   return (

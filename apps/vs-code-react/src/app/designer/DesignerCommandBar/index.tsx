@@ -445,7 +445,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
-      {shouldRenderChatButton ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
+      {shouldRenderChatButton ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} disabled={true} /> : null}
     </Toolbar>
   );
 };
