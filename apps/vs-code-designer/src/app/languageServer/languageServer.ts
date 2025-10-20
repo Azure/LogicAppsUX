@@ -57,8 +57,9 @@ export default class LogicAppsSeverLanguage {
     // Get initial API config from settings or defaults
     const apiConfig = {
       baseUrl: 'https://management.azure.com',
-      subscription: metaData.azureDetails.subscriptionId,
+      subscriptionId: metaData.azureDetails.subscriptionId,
       resourceGroup: metaData.azureDetails.resourceGroupName,
+      bearerToken: metaData.accessToken,
     };
 
     // Support for debugger wait mode in development

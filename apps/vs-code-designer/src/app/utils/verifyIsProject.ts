@@ -124,7 +124,7 @@ const hasCodefulAgent = async (folderPath: string) => {
 
   const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
   const localSettings = JSON.parse(localSettingsData);
-  return localSettings.Values?.CODEFUL_AGENT === true;
+  return localSettings.Values?.CODEFUL_AGENT;
 };
 
 /**
