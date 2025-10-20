@@ -65,7 +65,7 @@ export default {
         },
         deploymentId: {
           type: 'string',
-          title: 'Deployment model name',
+          title: 'AI model',
           description: 'The deployment name for the model to use.',
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',
