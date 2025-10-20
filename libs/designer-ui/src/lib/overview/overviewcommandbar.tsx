@@ -51,7 +51,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
     },
   ];
 
-  if (isAgentWorkflow) {
+  if (!isAgentWorkflow) {
     items.unshift({
       'aria-label': Resources.OVERVIEW_RUN_TRIGGER,
       icon: <PlayRegular />,
