@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../../src/constants';
+import { localSettingsFileName, workflowAuthenticationMethodKey, workflowSubscriptionIdKey } from '../../../../src/constants';
 import { localize } from '../../../localize';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
@@ -14,7 +14,6 @@ import * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { isString } from '@microsoft/logic-apps-shared';
-import { ext } from '../../../extensionVariables';
 
 /**
  * Enables Azure connectors for the project containing workflow node.
@@ -28,7 +27,7 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
   const subscriptionId: string = localSettings.Values[workflowSubscriptionIdKey];
 
-  if (subscriptionId === undefined || subscriptionId === '' || !ext.useMSI) {
+  if (subscriptionId === undefined || subscriptionId === '' || localSettings.Values[workflowAuthenticationMethodKey] === undefined) {
     const connectorsContext: IAzureConnectorsContext = context as IAzureConnectorsContext;
     const wizard: AzureWizard<IAzureConnectorsContext> = createAzureWizard(connectorsContext, projectPath);
     await wizard.prompt();

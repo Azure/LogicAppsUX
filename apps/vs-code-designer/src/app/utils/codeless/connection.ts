@@ -3,6 +3,7 @@ import {
   connectionsFileName,
   localSettingsFileName,
   parameterizeConnectionsInProjectLoadSetting,
+  workflowAuthenticationMethodKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../detectProjectLanguage';
@@ -42,6 +43,7 @@ import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
+import { AuthenticationMethod } from '../../commands/workflows/authenticationMethodStep';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -181,15 +183,14 @@ async function getConnectionReference(
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>,
   parametersToAdd: any,
-  parameterizeConnectionsSetting: any
+  parameterizeConnectionsSetting: any,
+  useMSI: boolean
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
     connection: { id: connectionId },
     connectionProperties,
   } = reference;
-
-  const useMsi = ext.useMSI;
 
   return axios
     .post(
@@ -199,13 +200,13 @@ async function getConnectionReference(
     )
     .then(({ data: response }) => {
       // Only add connection key to settings if NOT using MSI
-      if (!useMsi) {
+      if (!useMSI) {
         const appSettingKey = `${referenceKey}-connectionKey`;
         settingsToAdd[appSettingKey] = response.connectionKey;
       }
 
       // Determine authentication based on ext.useMSI
-      const authValue = useMsi
+      const authValue = useMSI
         ? { type: 'ManagedServiceIdentity' }
         : {
             type: 'Raw',
@@ -243,6 +244,8 @@ export async function getConnectionsAndSettingsToUpdate(
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const useMsi = await isMSIEnabled(projectPath, context);
+
   let areKeysRefreshed = false;
   let areKeysGenerated = false;
 
@@ -266,17 +269,18 @@ export async function getConnectionsAndSettingsToUpdate(
         workflowBaseManagementUri,
         settingsToAdd,
         parametersFromDefinition,
-        parameterizeConnectionsSetting
+        parameterizeConnectionsSetting,
+        useMsi
       );
 
-      context.telemetry.properties.connectionKeyGenerated = ext.useMSI
+      context.telemetry.properties.connectionKeyGenerated = useMsi
         ? `${referenceKey} configured for MSI authentication`
         : `${referenceKey}-connectionKey generated and is valid for 7 days`;
 
-      if (!ext.useMSI) {
+      if (!useMsi) {
         areKeysGenerated = true;
       }
-    } else if (!ext.useMSI && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
+    } else if (!useMsi && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
       accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
@@ -290,13 +294,14 @@ export async function getConnectionsAndSettingsToUpdate(
         workflowBaseManagementUri,
         settingsToAdd,
         parametersFromDefinition,
-        parameterizeConnectionsSetting
+        parameterizeConnectionsSetting,
+        useMsi
       );
 
       context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
       areKeysGenerated = true;
     } else if (
-      !ext.useMSI &&
+      !useMsi &&
       isApiHubConnectionId(reference.connection.id) &&
       localSettings.Values[`${referenceKey}-connectionKey`] &&
       isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
@@ -314,7 +319,8 @@ export async function getConnectionsAndSettingsToUpdate(
         workflowBaseManagementUri,
         settingsToAdd,
         parametersFromDefinition,
-        parameterizeConnectionsSetting
+        parameterizeConnectionsSetting,
+        useMsi
       );
 
       context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
@@ -325,7 +331,7 @@ export async function getConnectionsAndSettingsToUpdate(
   }
 
   // Update MSI connection permissions if MSI is enabled
-  if (ext.useMSI) {
+  if (useMsi) {
     try {
       const updatedReferences = await updateConnectionReferencesLocalMSI(
         context,
@@ -923,5 +929,23 @@ async function checkExistingPolicy(
     }
 
     return false;
+  }
+}
+
+/**
+ * Checks if Managed Service Identity (MSI) authentication is enabled for a Logic Apps project.
+ *
+ * @param projectPath - The absolute path to the project directory containing the local settings file
+ * @param context - The action context used for reading local settings
+ * @returns A promise that resolves to `true` if MSI authentication is enabled, `false` otherwise.
+ *          Returns `false` if the settings file cannot be read or parsed.
+ */
+async function isMSIEnabled(projectPath: string, context: IActionContext): Promise<boolean> {
+  try {
+    const localSettingsPath = path.join(projectPath, localSettingsFileName);
+    const localSettings = await getLocalSettingsJson(context, localSettingsPath);
+    return localSettings.Values[workflowAuthenticationMethodKey] === AuthenticationMethod.ManagedServiceIdentity;
+  } catch {
+    return false; // Default to raw keys if we can't read settings
   }
 }

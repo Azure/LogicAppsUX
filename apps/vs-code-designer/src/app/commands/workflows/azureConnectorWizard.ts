@@ -9,6 +9,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import * as path from 'path';
 import type { Progress } from 'vscode';
 import {
+  workflowAuthenticationMethodKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
   workflowResourceGroupNameKey,
@@ -57,9 +58,8 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
     context.enabled = (await context.ui.showQuickPick(picks, { placeHolder })).data === 'yes';
   }
 
-  //TODO: Review condition
   public shouldPrompt(context: IAzureConnectorsContext): boolean {
-    return context.enabled === undefined || true;
+    return context.enabled === undefined;
   }
 
   public async getSubWizard(context: IAzureConnectorsContext): Promise<IWizardOptions<IAzureConnectorsContext> | undefined> {
@@ -102,6 +102,10 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
       valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
       valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
+      // Save the authentication method to local settings
+      if (context.authenticationMethod) {
+        valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
+      }
     }
 
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);

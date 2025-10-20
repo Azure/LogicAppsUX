@@ -6,8 +6,6 @@
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
-import { ext } from '../../../extensionVariables';
-
 export class AuthenticationMethod {
   static readonly RawKeys = 'rawKeys';
   static readonly ManagedServiceIdentity = 'managedServiceIdentity';
@@ -56,9 +54,6 @@ export class AuthenticationMethodSelectionStep<
 
     // Store the selection in context
     context.authenticationMethod = selectedMethod.data;
-
-    // Set the global extension variable based on selection
-    ext.useMSI = selectedMethod.data === AuthenticationMethod.ManagedServiceIdentity;
   }
 
   /**
