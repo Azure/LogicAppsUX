@@ -2,9 +2,16 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import { equals, StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import { type AgentURL, type IWorkflowService, type ManagedIdentity, type Runs, Theme } from '@microsoft/logic-apps-shared';
+import {
+  type AgentURL,
+  type IWorkflowService,
+  type ManagedIdentity,
+  type Runs,
+  StandardRunService,
+  Theme,
+  equals,
+} from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query';
@@ -12,8 +19,8 @@ import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useIntl } from 'react-intl';
 import { useOverviewStyles } from './overviewStyles';
-import { fetchAgentUrl } from 'app/designer/services/workflowService';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import { fetchAgentUrl } from './services/workflowService';
 
 export interface CallbackInfo {
   method?: string;
