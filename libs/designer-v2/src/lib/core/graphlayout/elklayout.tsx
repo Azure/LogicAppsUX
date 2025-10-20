@@ -181,8 +181,6 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       return true; // Keep edge if both source and target exist
     }) ?? [];
 
-  console.log('#> Node child types:', { id: node.id, childTypes: node.children?.map((child) => child.type) });
-
   // Child types of nodes like Agent, Switch, Condition
   const nestGraphTypes = [WORKFLOW_NODE_TYPES.SUBGRAPH_NODE, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.HIDDEN_NODE];
 
