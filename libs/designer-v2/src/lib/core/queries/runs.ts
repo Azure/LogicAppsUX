@@ -84,7 +84,7 @@ export const useAllRuns = () => {
   }, [allRuns]);
 };
 
-export const useRun = (runId: string | undefined, enabled?: boolean) => {
+export const useRun = (runId: string | undefined, enabled = true) => {
   const queryClient = useQueryClient();
   return useQuery(
     [runsQueriesKeys.run, runId],
