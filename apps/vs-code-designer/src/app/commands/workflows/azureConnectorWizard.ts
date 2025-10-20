@@ -18,7 +18,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { AuthenticationMethod, AuthenticationMethodSelectionStep } from './authenticationMethodStep';
+import { AuthenticationMethodSelectionStep } from './authenticationMethodStep';
 
 export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
   credentials: any;
@@ -31,36 +31,12 @@ export interface IAzureConnectorsContext extends IActionContext, IProjectWizardC
   MSIenabled?: boolean;
 }
 
-/**
- * Creates an Azure wizard for configuring Azure connectors
- * @param wizardContext - The wizard context containing Azure connection details
- * @param projectPath - The path to the Logic App project
- * @returns A configured Azure wizard instance
- */
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
-  // Create an extended authentication step that sets MSIenabled based on the selection
-  const authenticationStep = new AuthenticationMethodSelectionStep<IAzureConnectorsContext>();
-
-  // Override the prompt method to add MSIenabled setting
-  const originalPrompt = authenticationStep.prompt.bind(authenticationStep);
-  authenticationStep.prompt = async (context: IAzureConnectorsContext): Promise<void> => {
-    await originalPrompt(context);
-    // Set MSIenabled based on what user selected
-    context.MSIenabled = context.authenticationMethod === AuthenticationMethod.ManagedServiceIdentity;
-  };
-
   return new AzureWizard(wizardContext, {
-    promptSteps: [
-      new GetSubscriptionDetailsStep(projectPath),
-      authenticationStep, // Use the authentication step directly
-    ],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath), createAuthenticationStep()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
-
-/**
- * Wizard step for getting Azure subscription details
- */
 class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsContext> {
   private _projectPath: string;
 
@@ -102,9 +78,6 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
   }
 }
 
-/**
- * Wizard step for saving Azure context to local settings
- */
 class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
   public priority = 100;
   private _projectPath: string;
@@ -136,4 +109,13 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
   public shouldExecute(context: IAzureConnectorsContext): boolean {
     return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
   }
+}
+
+//TODO: Update to be in webview after ignite redesign is done
+
+/**
+ * Creates an authentication step with MSIenabled setting
+ */
+function createAuthenticationStep(): AuthenticationMethodSelectionStep<IAzureConnectorsContext> {
+  return new AuthenticationMethodSelectionStep<IAzureConnectorsContext>();
 }
