@@ -216,24 +216,6 @@ export const RunHistoryPanel = () => {
     id: 'YV6qd0',
   });
 
-  // MARK: Components
-
-  const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
-
-  const RefreshButton = () => (
-    <Button
-      appearance="subtle"
-      disabled={runsQuery.isFetching}
-      onClick={() => {
-        runsQuery.refetch();
-        runQuery.refetch();
-      }}
-      icon={runsQuery.isRefetching && !runsQuery.isLoading ? <Spinner size={'tiny'} /> : <RefreshIcon />}
-      aria-label={refreshAria}
-      style={{ marginRight: '-8px' }}
-    />
-  );
-
   const [searchError, setSearchError] = useState<string | null>(null);
 
   // MARK: Drawer resize
@@ -336,6 +318,27 @@ export const RunHistoryPanel = () => {
       setInRunList(true);
     }
   }, [isMonitoringView]);
+
+  // If a runId filter is set, prefetch that run's data
+  const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
+
+  // MARK: Components
+
+  const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
+
+  const RefreshButton = () => (
+    <Button
+      appearance="subtle"
+      disabled={runsQuery.isFetching}
+      onClick={() => {
+        runsQuery.refetch();
+        runQuery.refetch();
+      }}
+      icon={(runsQuery.isRefetching && !runsQuery.isLoading) || isFetchingFilteredRun ? <Spinner size={'tiny'} /> : <RefreshIcon />}
+      aria-label={refreshAria}
+      style={{ marginRight: '-8px' }}
+    />
+  );
 
   // MARK: Render
 
