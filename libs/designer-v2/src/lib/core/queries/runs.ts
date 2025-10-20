@@ -84,7 +84,7 @@ export const useAllRuns = () => {
   }, [allRuns]);
 };
 
-export const useRun = (runId: string | undefined) => {
+export const useRun = (runId: string | undefined, enabled = true) => {
   const queryClient = useQueryClient();
   return useQuery(
     [runsQueriesKeys.run, runId],
@@ -105,7 +105,7 @@ export const useRun = (runId: string | undefined) => {
     },
     {
       ...queryOpts,
-      enabled: !!runId,
+      enabled: !!runId && enabled,
       // If the run is running, poll for updates
       refetchInterval: () => {
         const run = queryClient.getQueryData<Run>([runsQueriesKeys.run, runId]);
