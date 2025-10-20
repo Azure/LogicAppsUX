@@ -1,6 +1,6 @@
 export interface AgentQueryParams {
-  apiKey: string;
-  [key: string]: string;
+  apiKey?: string;
+  [key: string]: string | undefined;
 }
 
 export interface AgentURL {

@@ -18,7 +18,7 @@ import { SearchView } from './searchView';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, FavoriteContext, requestOperation } from '@microsoft/logic-apps-shared';
-import { MediumText, OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
+import { OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
@@ -266,15 +266,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           description: 'Title text for browse/search experience',
         });
 
-  const headingDescription =
-    !isInSubcategory && isTrigger
-      ? intl.formatMessage({
-          defaultMessage: 'A trigger is a step that starts your workflow',
-          id: 'n3V2I2',
-          description: 'Description text for the Trigger page',
-        })
-      : undefined;
-
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
     id: 'yjjXCQ',
@@ -298,7 +289,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             <XLargeText text={headingText} as="h2" style={{ flexGrow: 1 }} />
             <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
           </div>
-          {headingDescription && <MediumText text={headingDescription} className={classes.description} />}
         </div>
         <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
       </div>

@@ -10,14 +10,13 @@ const RunHistoryEntry = (props: {
   isSelected: boolean;
   onRunSelected: (id: string) => void;
   addFilterCallback: (filter: any) => void;
+  size?: 'small' | 'medium';
 }) => {
-  const { runId, isSelected, onRunSelected, addFilterCallback } = props;
+  const { runId, isSelected, onRunSelected, addFilterCallback, size = 'medium' } = props;
 
   const { data: run } = useRun(runId);
 
   const styles = useRunHistoryPanelStyles();
-
-  const rootStyles = mergeClasses(styles.runEntry, isSelected && styles.runEntrySelected);
 
   const indicatorColor = useMemo(() => {
     if (run?.properties.status === 'Succeeded') {
@@ -41,9 +40,30 @@ const RunHistoryEntry = (props: {
     return null;
   }
 
+  if (size === 'small') {
+    return (
+      <>
+        <div
+          ref={ref}
+          className={mergeClasses(styles.runEntry, styles.runEntrySmall, isSelected && styles.runEntrySelected)}
+          onClick={() => onRunSelected(run?.name ?? '')}
+        >
+          {isSelected && <div className={styles.runEntrySelectedIndicator} style={{ backgroundColor: indicatorColor }} />}
+          <RunHistoryEntryInfo run={run} size="small" />
+          <RunMenu run={run} addFilterCallback={addFilterCallback} />
+        </div>
+        <Divider />
+      </>
+    );
+  }
+
   return (
     <>
-      <div ref={ref} className={rootStyles} onClick={() => onRunSelected(run?.name ?? '')}>
+      <div
+        ref={ref}
+        className={mergeClasses(styles.runEntry, isSelected && styles.runEntrySelected)}
+        onClick={() => onRunSelected(run?.name ?? '')}
+      >
         {isSelected && <div className={styles.runEntrySelectedIndicator} style={{ backgroundColor: indicatorColor }} />}
         <RunHistoryEntryInfo run={run} />
         <RunMenu run={run} addFilterCallback={addFilterCallback} />
