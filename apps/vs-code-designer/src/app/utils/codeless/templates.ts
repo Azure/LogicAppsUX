@@ -1,5 +1,5 @@
 import { ProjectType, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowKind, WorkflowType } from '../../../constants';
+import { assetsFolderName, WorkflowKind, WorkflowType } from '../../../constants';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { equals } from '@microsoft/logic-apps-shared';
@@ -170,7 +170,7 @@ export function getCodelessWorkflowTemplate(projectType: ProjectType, workflowTy
  * @returns {Promise<string>} - A promise that resolves to the codeful workflow template string.
  */
 export async function getCodefulWorkflowTemplate(): Promise<string> {
-  const templatePath = path.join(__dirname, 'assets', 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
+  const templatePath = path.join(__dirname, assetsFolderName, 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
   const templateContent = await fs.readFile(templatePath, 'utf-8');
 
   return templateContent;

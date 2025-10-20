@@ -144,12 +144,19 @@ export const isA2AWorkflow = (state: WorkflowState): boolean => {
 
   // Consumption SKU, check definition metadata
   const agentType = state.originalDefinition?.metadata?.agentType;
-  const isConsumptionAgent = equals(agentType, 'conversational', false);
+  if (equals(agentType, 'conversational', false)) {
+    return true;
+  }
 
-  // Also check if workflow has Agent operations (fallback for Consumption workflows without metadata)
-  const hasAgentOperations = Object.values(state.operations).some((operation) => equals(operation.type, 'Agent', true));
+  // Consumption SKU - check for A2A trigger pattern
+  const triggerNodeId = Object.keys(state.nodesMetadata).find((nodeId) => state.nodesMetadata[nodeId]?.isTrigger === true);
 
-  return isConsumptionAgent || hasAgentOperations;
+  if (triggerNodeId) {
+    const triggerOperation = state.operations[triggerNodeId];
+    return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+  }
+
+  return false;
 };
 
 export const isAgentWorkflow = (kind: string): boolean => {

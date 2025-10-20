@@ -67,16 +67,20 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
         workflow.parameters.$connections = { value: {} };
       }
       Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
+        // For dynamic connections, pull runtimeSource out to root level
+        const runtimeSource = connection?.connectionProperties?.runtimeSource;
+        const remainingConnectionProperties = connection?.connectionProperties
+          ? Object.fromEntries(Object.entries(connection.connectionProperties).filter(([propKey]) => propKey !== 'runtimeSource'))
+          : undefined;
+        const hasRemainingProps = remainingConnectionProperties && Object.keys(remainingConnectionProperties).length > 0;
+
         const connectionValue: any = {
           connectionId: connection.connection.id,
           connectionName: connection.connectionName,
           id: connection.api.id,
+          ...(runtimeSource ? { runtimeSource } : {}),
+          ...(hasRemainingProps ? { connectionProperties: remainingConnectionProperties } : {}),
         };
-
-        // Preserve connectionProperties if present (for dynamic connections)
-        if (connection.connectionProperties) {
-          connectionValue.connectionProperties = connection.connectionProperties;
-        }
 
         workflow.parameters.$connections.value[key] = connectionValue;
       });
@@ -96,6 +100,14 @@ const traverseDefinition = (operation: any, callback: (operation: any) => void) 
     ...(operation?.else?.actions ?? {}),
     ...(operation?.default?.actions ?? {}),
     ...(Object.values(operation?.cases ?? {}).reduce((acc: any, curr: any) => {
+      return {
+        // biome-ignore lint/performance/noAccumulatingSpread: There are probably better ways to do this but this is a more complex one to fix
+        ...acc,
+        ...curr.actions,
+      };
+    }, {}) as any),
+    // Also traverse into agent tools actions
+    ...(Object.values(operation?.tools ?? {}).reduce((acc: any, curr: any) => {
       return {
         // biome-ignore lint/performance/noAccumulatingSpread: There are probably better ways to do this but this is a more complex one to fix
         ...acc,

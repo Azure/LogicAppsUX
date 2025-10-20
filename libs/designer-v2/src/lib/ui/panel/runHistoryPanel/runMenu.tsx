@@ -1,5 +1,5 @@
 import { Button, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, Spinner } from '@fluentui/react-components';
-import type { Run } from '@microsoft/logic-apps-shared';
+import { equals, type Run } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 import {
@@ -24,7 +24,7 @@ const MoreIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 
 export const RunMenu = (props: {
   run: Run;
-  addFilterCallback: ({ key, value }: { key: FilterTypes; value: string }) => void;
+  addFilterCallback?: ({ key, value }: { key: FilterTypes; value: string }) => void;
 }) => {
   const { run } = props;
 
@@ -82,6 +82,8 @@ export const RunMenu = (props: {
     [cancelRun, runQuery]
   );
 
+  const isDraftRun = equals((run.properties?.workflow as any)?.mode, 'Draft');
+
   if (runQuery.isFetching) {
     return <Spinner size="extra-tiny" />;
   }
@@ -104,9 +106,11 @@ export const RunMenu = (props: {
           <MenuItem icon={<CopyIcon />} onClick={onCopy}>
             {copyText}
           </MenuItem>
-          <MenuItem icon={<ResubmitIcon />} onClick={onResubmit}>
-            {resubmitText}
-          </MenuItem>
+          {!isDraftRun && (
+            <MenuItem icon={<ResubmitIcon />} onClick={onResubmit}>
+              {resubmitText}
+            </MenuItem>
+          )}
           {run.properties.status === 'Running' ? (
             <MenuItem icon={<CancelIcon />} onClick={onCancel}>
               {cancelText}
