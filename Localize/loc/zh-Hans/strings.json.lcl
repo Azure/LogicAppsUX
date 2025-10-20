@@ -10431,15 +10431,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TxdbTq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select a logic app]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[选择逻辑应用]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";TyFREt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[New Variable]]></Val>
@@ -10606,7 +10597,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Knowledge Sources]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[知识源]]></Val>
+            <Val><![CDATA[知识来源]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
