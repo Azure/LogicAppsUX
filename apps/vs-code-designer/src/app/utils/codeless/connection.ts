@@ -324,6 +324,26 @@ export async function getConnectionsAndSettingsToUpdate(
     }
   }
 
+  // Update MSI connection permissions if MSI is enabled
+  if (ext.useMSI) {
+    try {
+      const updatedReferences = await updateConnectionReferencesLocalMSI(
+        context,
+        referencesToAdd,
+        azureTenantId,
+        workflowBaseManagementUri,
+        localSettings
+      );
+      Object.assign(referencesToAdd, updatedReferences);
+      context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
+    } catch (error) {
+      context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;
+      window.showErrorMessage(
+        localize('msiPermissionError', 'Failed to configure MSI permissions for connections. Please check your access rights.')
+      );
+    }
+  }
+
   connectionsData.managedApiConnections = referencesToAdd;
 
   if (areKeysRefreshed) {
@@ -532,4 +552,232 @@ async function createAccessPolicyInConnection(
     .catch((error) => {
       throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
     });
+}
+
+/**
+ * Updates connection references to use Managed Service Identity (MSI) authentication for local development.
+ * This function processes multiple connection references and configures them to use MSI authentication
+ * by ensuring proper access policies are in place.
+ *
+ * @param context - The action context containing telemetry and other contextual information
+ * @param connectionReferences - A record of connection references to be updated, keyed by reference identifier
+ * @param azureTenantId - The Azure Active Directory tenant ID for authentication
+ * @param workflowBaseManagementUri - The base URI for workflow management operations
+ * @param localSettings - Local settings configuration containing environment-specific parameters
+ *
+ * @returns A promise that resolves to the updated connection references record. Non-API Hub connections
+ *          and connections that failed to update will retain their original configuration.
+ */
+async function updateConnectionReferencesLocalMSI(
+  context: IActionContext,
+  connectionReferences: Record<string, ConnectionReferenceModel>,
+  azureTenantId: string,
+  workflowBaseManagementUri: string,
+  localSettings: ILocalSettingsJson
+): Promise<Record<string, ConnectionReferenceModel>> {
+  const startTime = Date.now();
+  context.telemetry.properties.msiConnectionsCount = Object.keys(connectionReferences).length.toString();
+
+  let accessToken: string;
+  try {
+    accessToken = await getAuthorizationToken(azureTenantId);
+  } catch (error) {
+    context.telemetry.properties.msiTokenError = `Failed to get access token: ${error.message}`;
+    throw new Error(localize('msiTokenError', 'Failed to retrieve access token for MSI configuration'));
+  }
+
+  const jwtHelper = JwtTokenHelper.createInstance();
+  const tokenPayload = jwtHelper.extractJwtTokenPayload(accessToken);
+  const objectId = tokenPayload?.oid;
+  const tenantId = tokenPayload?.tid;
+
+  if (!objectId || !tenantId) {
+    context.telemetry.properties.msiIdentityError = 'Missing objectId or tenantId in token';
+    throw new Error(localize('msiIdentityError', 'Unable to retrieve user identity from access token'));
+  }
+
+  // Extract username from UPN or unique_name
+  const userPrincipalName = tokenPayload?.upn || tokenPayload?.unique_name;
+  let policyNamePrefix: string;
+
+  if (userPrincipalName && userPrincipalName.includes('@')) {
+    // Extract everything before the @ symbol
+    policyNamePrefix = userPrincipalName.split('@')[0];
+  } else {
+    // Fallback to objectId if no UPN available
+    policyNamePrefix = objectId;
+    ext.outputChannel.appendLog(localize('noPrincipalName', 'No user principal name found, using objectId for policy name'));
+  }
+
+  context.telemetry.properties.msiPolicyNamePrefix = policyNamePrefix;
+  context.telemetry.properties.msiUserPrincipalName = userPrincipalName || 'not found';
+  context.telemetry.properties.msiObjectId = objectId;
+  context.telemetry.properties.msiTenantId = tenantId;
+
+  const updatedReferences: Record<string, ConnectionReferenceModel> = {};
+  const errors: Array<{ referenceKey: string; error: string }> = [];
+  let successCount = 0;
+
+  for (const [referenceKey, reference] of Object.entries(connectionReferences)) {
+    const connectionStartTime = Date.now();
+
+    try {
+      const connectionId = reference.connection.id;
+
+      if (!isApiHubConnectionId(connectionId)) {
+        context.telemetry.properties[`msiSkipped_${referenceKey}`] = 'Not an API Hub connection';
+        updatedReferences[referenceKey] = reference;
+        continue;
+      }
+
+      context.telemetry.properties[`msiProcessing_${referenceKey}`] = connectionId;
+
+      await ensureAccessPolicyLocalMSI(
+        connectionId,
+        objectId,
+        tenantId,
+        accessToken,
+        workflowBaseManagementUri,
+        localSettings,
+        policyNamePrefix
+      );
+      successCount++;
+      context.telemetry.properties[`msiSuccess_${referenceKey}`] = `Completed in ${Date.now() - connectionStartTime}ms`;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      errors.push({ referenceKey, error: errorMessage });
+
+      context.telemetry.properties[`msiError_${referenceKey}`] = errorMessage;
+
+      // Still include the reference but with original authentication
+      updatedReferences[referenceKey] = reference;
+
+      ext.outputChannel.appendLog(
+        localize('msiConnectionError', 'Failed to configure MSI for connection {0}: {1}', referenceKey, errorMessage)
+      );
+    }
+  }
+
+  // Summary telemetry
+  context.telemetry.properties.msiSuccessCount = successCount.toString();
+  context.telemetry.properties.msiErrorCount = errors.length.toString();
+  context.telemetry.properties.msiTotalDuration = `${Date.now() - startTime}ms`;
+
+  if (errors.length > 0) {
+    const errorSummary = errors.map((e) => e.referenceKey).join(', ');
+    context.telemetry.properties.msiFailedConnections = errorSummary;
+
+    // Show warning but don't throw - partial success is acceptable
+    window.showWarningMessage(
+      localize('msiPartialSuccess', 'MSI configuration partially succeeded. Failed for connections: {0}', errorSummary)
+    );
+  }
+
+  return updatedReferences;
+}
+
+/**
+ * Ensures that a Managed Service Identity (MSI) has an access policy for a given connection.
+ * Creates the access policy if it doesn't already exist.
+ *
+ * @param connectionId - The ID of the connection, may contain app setting placeholders like @{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}
+ * @param objectId - The object ID of the MSI principal to grant access to
+ * @param tenantId - The tenant ID of the MSI principal
+ * @param accessToken - The authorization token for making API requests
+ * @param baseManagementUri - The base URI for Azure Management API calls
+ * @param localSettings - Local settings containing workflow subscription and resource group information
+ * @param policyNamePrefix - Prefix to be used for the access policy name (currently unused in implementation)
+ * @throws {Error} If required workflow settings (WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME) are missing
+ * @returns {Promise<void>} Resolves when the access policy is ensured to exist
+ */
+async function ensureAccessPolicyLocalMSI(
+  connectionId: string,
+  objectId: string,
+  tenantId: string,
+  accessToken: string,
+  baseManagementUri: string,
+  localSettings: ILocalSettingsJson,
+  policyNamePrefix: string
+): Promise<void> {
+  const subscriptionId = localSettings.Values['WORKFLOWS_SUBSCRIPTION_ID'];
+  const resourceGroup = localSettings.Values['WORKFLOWS_RESOURCE_GROUP_NAME'];
+
+  if (!subscriptionId || !resourceGroup) {
+    ext.outputChannel.appendLog(
+      localize('missingSettings', 'Missing required settings: WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME')
+    );
+    throw new Error('Missing WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME in local settings');
+  }
+
+  // Resolve connection ID with app settings
+  const resolvedConnectionId = connectionId.includes('@{appsetting(')
+    ? connectionId
+        .replace("@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}", subscriptionId)
+        .replace("@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}", resourceGroup)
+    : connectionId;
+
+  ext.outputChannel.appendLog(localize('resolvingConnection', 'Resolving connection ID: {0} -> {1}', connectionId, resolvedConnectionId));
+
+  const policiesUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies?api-version=2018-07-01-preview`;
+
+  try {
+    const response = await axios.get(policiesUrl, {
+      headers: { authorization: accessToken },
+    });
+
+    const policies = response.data.value || [];
+
+    // Check both by exact name match and by objectId/tenantId
+    const policyExists = policies.some((p: any) => {
+      const matchesByIdentity =
+        p.properties?.principal?.identity?.objectId === objectId && p.properties?.principal?.identity?.tenantId === tenantId;
+      const matchesByName = p.name === policyName;
+      return matchesByIdentity || matchesByName;
+    });
+
+    if (policyExists) {
+      ext.outputChannel.appendLog(
+        localize('policyExists', 'Access policy already exists for user: {0} (objectId: {1})', policyNamePrefix, objectId)
+      );
+      return;
+    }
+  } catch (error) {
+    // If 404, policies don't exist - continue to create
+    if (error.response?.status !== 404) {
+      ext.outputChannel.appendLog(localize('errorCheckingPolicies', 'Error checking existing policies: {0}', error.message));
+    }
+  }
+
+  // Create access policy
+  const objectIdSuffix = objectId.slice(-8);
+  const policyName = `${policyNamePrefix}-${objectIdSuffix}`;
+
+  ext.outputChannel.appendLog(localize('policyNameGenerated', 'Generated policy name: {0} for user {1}', policyName, policyNamePrefix));
+  const apiVersion = '2016-06-01';
+  const policyUrl = `${formatSetting(baseManagementUri)}${resolvedConnectionId}/accessPolicies/${encodeURIComponent(policyName)}?api-version=${apiVersion}`;
+
+  try {
+    await axios.put(
+      policyUrl,
+      {
+        properties: {
+          principal: {
+            type: 'ActiveDirectory',
+            identity: { objectId, tenantId },
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: accessToken,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    ext.outputChannel.appendLog(localize('policyCreated', 'Successfully created access policy for objectId: {0}', objectId));
+  } catch (error) {
+    const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+    ext.outputChannel.appendLog(localize('policyCreationFailed', 'Failed to create access policy: {0}', errorDetails));
+  }
 }
