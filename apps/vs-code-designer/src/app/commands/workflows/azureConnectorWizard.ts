@@ -18,15 +18,17 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { AuthenticationMethod, AuthenticationMethodSelectionStep, type IAuthenticationContext } from './authenticationMethodStep';
+import { AuthenticationMethod, AuthenticationMethodSelectionStep } from './authenticationMethodStep';
 
-export interface IAzureConnectorsContext extends IActionContext, IAuthenticationContext, IProjectWizardContext {
+export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
   credentials: any;
   subscriptionId: any;
   resourceGroup: any;
   enabled: boolean;
   tenantId: any;
   environment: any;
+  authenticationMethod?: string;
+  MSIenabled?: boolean;
 }
 
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {

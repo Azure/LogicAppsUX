@@ -14,26 +14,20 @@ export class AuthenticationMethod {
 }
 
 /**
- * Interface for authentication context
- * This is minimal - just tracking what method was selected
- */
-export interface IAuthenticationContext extends IActionContext {
-  authenticationMethod?: AuthenticationMethod;
-}
-
-/**
  * Authentication method selection step
  * This step simply asks the user to choose between MSI and raw keys
  * and sets the ext.useMsi flag accordingly
  */
-export class AuthenticationMethodSelectionStep<T extends IAuthenticationContext> extends AzureWizardPromptStep<T> {
+export class AuthenticationMethodSelectionStep<
+  T extends IActionContext & { authenticationMethod?: string },
+> extends AzureWizardPromptStep<T> {
   /**
    * Prompt the user to select authentication method
    */
   public async prompt(context: T): Promise<void> {
     const placeHolder: string = localize('selectAuthMethod', 'Select authentication method for Azure connectors');
 
-    const picks: IAzureQuickPickItem<AuthenticationMethod>[] = [
+    const picks: IAzureQuickPickItem<string>[] = [
       {
         label: localize('authMethodMSI', '$(shield) Managed Service Identity'),
         description: localize('authMethodMSIDesc', 'Use Azure Managed Identity'),
