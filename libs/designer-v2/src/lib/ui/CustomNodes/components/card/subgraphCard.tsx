@@ -54,9 +54,6 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const styles = useCardStyles();
 
-  const mainKeyboardInteraction = useKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
-  const collapseKeyboardInteraction = useKeyboardInteraction(handleCollapse);
-
   const addCaseLabel = intl.formatMessage({
     defaultMessage: 'Add case',
     id: 'TcU2Gf',
@@ -153,6 +150,9 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const data = useMemo(() => SubgraphTypeData[subgraphType], [SubgraphTypeData, subgraphType]);
 
+  const mainKeyboardInteraction = useKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
+  const collapseKeyboardInteraction = useKeyboardInteraction(handleCollapse);
+
   const cardAltText = useMemo(() => `${data.title} ${data.typeText}`, [data]);
 
   const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
@@ -234,8 +234,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         style={colorVars}
         onClick={(e) => handleCollapse?.(e.shiftKey)}
         onContextMenu={onContextMenu}
-        onKeyDown={collapseKeyboardInteraction.keyUp}
-        onKeyUp={collapseKeyboardInteraction.keyDown}
+        onKeyDown={collapseKeyboardInteraction.keyDown}
+        onKeyUp={collapseKeyboardInteraction.keyUp}
         data-automation-id={`${id}-collapse-toggle-small`}
         tabIndex={nodeIndex}
       >
