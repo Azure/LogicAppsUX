@@ -144,6 +144,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       },
       SWITCH_ADD_CASE: {},
       AGENT_ADD_CONDITON: {},
+      MCP_CLIENT: {},
     }),
     [conditionalTypeText, id, intl, parentId, title]
   );
