@@ -29,6 +29,9 @@
     flex-direction: row;
     display: flex;
     gap: 10px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
   }
 
   .msla-subgraph-title {
@@ -47,13 +50,22 @@
     background-color: var(--brand-color, black);
   }
 
+  .msla-subgraph-title-icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
   .msla-subgraph-title-text {
     display: flex;
     font: 14px/20px normal @semibold-font-family;
-    .msla-subgraph-title-icon {
-      margin-right: 4px;
-      align-self: baseline;
-      margin-top: 3px;
+    flex: 1;
+    min-width: 0;
+
+    span {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
   .msla-panel-card-error-wrapper {

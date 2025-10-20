@@ -41,26 +41,22 @@ import {
   DismissRegular,
   ArrowLeftFilled,
   ArrowLeftRegular,
-  TaskListLtrFilled,
-  TaskListLtrRegular,
-  ChatFilled,
-  ChatRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
 import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
 import { AgentChatContent } from './agentChatContent';
+import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
+import { RunMenu } from './runMenu';
 
 // MARK: End Imports
 
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
-const TreeViewIcon = bundleIcon(TaskListLtrFilled, TaskListLtrRegular);
-const ChatIcon = bundleIcon(ChatFilled, ChatRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
-export type FilterTypes = 'runId' | 'workflowVersion' | 'status';
+export type FilterTypes = 'runId' | 'workflowVersion' | 'status' | 'mode';
 
 export const RunHistoryPanel = () => {
   const intl = useIntl();
@@ -98,6 +94,12 @@ export const RunHistoryPanel = () => {
         if (filters?.['status'] && run.properties.status !== filters['status']) {
           return false;
         }
+        if (filters?.['mode'] === 'Draft' && (run.properties.workflow as any)?.mode !== 'Draft') {
+          return false;
+        }
+        if (filters?.['mode'] === 'Prod' && (run.properties.workflow as any)?.mode !== undefined) {
+          return false;
+        }
         return true;
       }) ?? []
     );
@@ -128,12 +130,6 @@ export const RunHistoryPanel = () => {
     id: 'qs+f1b',
   });
 
-  const runLogTitle = intl.formatMessage({
-    defaultMessage: 'Run log',
-    description: 'Run log panel title',
-    id: 'J4accH',
-  });
-
   const refreshAria = intl.formatMessage({
     defaultMessage: 'Refresh',
     description: 'Refresh button aria label',
@@ -159,9 +155,9 @@ export const RunHistoryPanel = () => {
   });
 
   const searchPlaceholder = intl.formatMessage({
-    defaultMessage: 'Search',
+    defaultMessage: 'Open by run ID',
     description: 'Search by run identifier placeholder',
-    id: '6jJvtY',
+    id: 'iITQXn',
   });
 
   const invalidRunId = intl.formatMessage({
@@ -190,16 +186,22 @@ export const RunHistoryPanel = () => {
     Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
   };
 
+  const modeTexts: Record<string, string> = {
+    All: intl.formatMessage({ defaultMessage: 'All', description: 'All run modes', id: 'cZqrL1' }),
+    Prod: intl.formatMessage({ defaultMessage: 'Production', description: 'Production run mode', id: 'sZw20A' }),
+    Draft: intl.formatMessage({ defaultMessage: 'Draft', description: 'Draft run mode', id: 'YGKVSj' }),
+  };
+
   const treeViewTitle = intl.formatMessage({
-    defaultMessage: 'Action log',
+    defaultMessage: 'Log',
     description: 'Tree view tab title',
-    id: 'QllS1g',
+    id: 'O0HlIg',
   });
 
   const chatViewTitle = intl.formatMessage({
-    defaultMessage: 'Chat history',
+    defaultMessage: 'Agent activity',
     description: 'Chat view tab title',
-    id: '5XK9XY',
+    id: 'YV6qd0',
   });
 
   // MARK: Components
@@ -287,6 +289,27 @@ export const RunHistoryPanel = () => {
     [addFilterCallback]
   );
 
+  const modeTags = useMemo(
+    () => [
+      { value: 'All', children: modeTexts['All'] },
+      { value: 'Prod', children: modeTexts['Prod'] },
+      { value: 'Draft', children: modeTexts['Draft'] },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const onModeSelect = useCallback(
+    (value: string) => {
+      if (!value || equals(value, 'All')) {
+        addFilterCallback({ key: 'mode', value: undefined });
+      } else {
+        addFilterCallback({ key: 'mode', value });
+      }
+    },
+    [addFilterCallback]
+  );
+
   const chatEnabled = useWorkflowHasAgentLoop();
   const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
 
@@ -333,7 +356,14 @@ export const RunHistoryPanel = () => {
           <div style={{ flexGrow: 1 }} />
           <CloseButton />
         </DrawerHeaderNavigation>
-        <DrawerHeaderTitle>{inRunList ? runListTitle : runLogTitle}</DrawerHeaderTitle>
+        {inRunList ? (
+          <DrawerHeaderTitle>{runListTitle}</DrawerHeaderTitle>
+        ) : selectedRunInstance ? (
+          <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <RunHistoryEntryInfo run={selectedRunInstance as any} />
+            <RunMenu run={selectedRunInstance as any} />
+          </div>
+        ) : null}
         {inRunList ? (
           <>
             <div className={styles.flexbox}>
@@ -366,13 +396,25 @@ export const RunHistoryPanel = () => {
               </Field>
               <RefreshButton />
             </div>
-            <TagGroup size="small">
+            <TagGroup size="small" style={{ flexWrap: 'wrap', gap: '6px' }}>
               {statusTags.map((tag) => (
                 <InteractionTag
                   key={tag.value}
                   value={tag.value}
                   onClick={() => onStatusSelect(tag.value)}
                   selected={filters?.['status'] === tag.value || (equals(tag.value, 'All') && !filters?.['status'])}
+                >
+                  <InteractionTagPrimary>{tag.children}</InteractionTagPrimary>
+                </InteractionTag>
+              ))}
+            </TagGroup>
+            <TagGroup size="small" style={{ flexWrap: 'wrap', gap: '6px' }}>
+              {modeTags.map((tag) => (
+                <InteractionTag
+                  key={tag.value}
+                  value={tag.value}
+                  onClick={() => onModeSelect(tag.value)}
+                  selected={filters?.['mode'] === tag.value || (equals(tag.value, 'All') && !filters?.['mode'])}
                 >
                   <InteractionTagPrimary>{tag.children}</InteractionTagPrimary>
                 </InteractionTag>
@@ -391,12 +433,9 @@ export const RunHistoryPanel = () => {
           <TabList
             selectedValue={selectedContentTab}
             onTabSelect={(_: SelectTabEvent, data: SelectTabData) => setSelectedContentTab(data.value as 'tree' | 'chat')}
-            style={{ justifyContent: 'center', gap: '16px' }}
           >
-            <Tab value="tree" icon={<TreeViewIcon />}>
-              {treeViewTitle}
-            </Tab>
-            <Tab value="chat" icon={<ChatIcon />} disabled={!chatEnabled}>
+            <Tab value="tree">{treeViewTitle}</Tab>
+            <Tab value="chat" disabled={!chatEnabled}>
               {chatViewTitle}
             </Tab>
           </TabList>
@@ -422,6 +461,7 @@ export const RunHistoryPanel = () => {
                       setInRunList(false);
                     }}
                     addFilterCallback={addFilterCallback}
+                    size="small"
                   />
                 ))}
                 {!runsQuery.isFetching && runsQuery.hasNextPage && (

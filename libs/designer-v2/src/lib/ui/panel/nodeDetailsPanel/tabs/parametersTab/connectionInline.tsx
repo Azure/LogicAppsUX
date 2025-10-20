@@ -139,7 +139,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
           {intlText.CONNECT}
         </Button>
       )}
-      {/** Teaching popup is only visible is user hasn't created a connection yet*/}
+      {/* Teaching popup is only visible is user hasn't created a connection yet */}
       {shouldDisplayPopup && targetElement ? (
         <TeachingPopup
           targetElement={targetElement}

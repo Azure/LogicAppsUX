@@ -23,8 +23,6 @@ import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
-import { createUnitTest } from './unitTest/createUnitTest';
-import { saveBlankUnitTest } from './unitTest/saveBlankUnitTest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -32,6 +30,8 @@ import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
+import { isRuntimeUp } from '../../utils/startRuntimeApi';
 
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
@@ -54,6 +54,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
     workflowName = basename(dirname(workflowFilePath));
+    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    if (!isNullOrUndefined(projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
+      await launchProjectDebugger(context, projectPath);
+    }
+
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
@@ -62,10 +67,9 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
 
-    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
-    isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
+    isWorkflowRuntimeRunning = await isRuntimeUp(ext.workflowRuntimePort);
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
     panelName = `${workflowNode.id}-${workflowName}-overview`;
@@ -160,15 +164,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
-        break;
-      }
-
-      case ExtensionCommand.createUnitTest: {
-        await createUnitTest(context, workflowNode as vscode.Uri, message.runId);
-        break;
-      }
-      case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.definition);
         break;
       }
       default:

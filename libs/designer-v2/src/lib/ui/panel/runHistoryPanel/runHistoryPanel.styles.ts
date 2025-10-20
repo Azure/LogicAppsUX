@@ -36,6 +36,11 @@ export const useRunHistoryPanelStyles = makeStyles({
     },
   },
 
+  runEntrySmall: {
+    height: '32px',
+    padding: '0px 2px 0px 16px',
+  },
+
   runEntryContent: {
     flexGrow: 1,
     display: 'flex',
@@ -47,6 +52,13 @@ export const useRunHistoryPanelStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
+  },
+
+  runEntryContentSmall: {
+    flexGrow: 1,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
   },
 
   runEntrySelectedIndicator: {
@@ -68,29 +80,19 @@ export const useRunHistoryPanelStyles = makeStyles({
   resizer: {
     zIndex: 3,
     position: 'absolute',
-    border: 'none',
+    border: '0px solid transparent',
     borderRadius: tokens.borderRadiusNone,
     backgroundColor: 'transparent',
-    width: '24px',
+    width: '4px',
+    padding: '0px',
     height: '100%',
     top: 0,
     right: 0,
     bottom: 0,
     cursor: 'col-resize',
     minWidth: 'unset',
-    transform: 'translateX(50%)',
-
-    '&:before': {
-      content: '""',
-      position: 'absolute',
-      borderLeft: `1px solid ${tokens.colorNeutralBackground5}`,
-      width: '1px',
-      height: '100%',
-      transform: 'translateX(50%)',
-      right: '50%',
-    },
     ':hover': {
-      borderLeftWidth: '4px',
+      borderRightWidth: '4px',
       cursor: 'col-resize',
       backgroundColor: 'transparent',
     },
@@ -100,7 +102,7 @@ export const useRunHistoryPanelStyles = makeStyles({
     },
   },
   resizerActive: {
-    borderLeftWidth: '4px',
-    borderLeftColor: tokens.colorNeutralBackground5Pressed,
+    borderRightWidth: '4px',
+    borderRightColor: tokens.colorNeutralBackground5Pressed,
   },
 });
