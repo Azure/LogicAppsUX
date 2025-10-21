@@ -7,7 +7,7 @@ import {
   useAreDesignerOptionsInitialized,
   useAreServicesInitialized,
   useMonitoringView,
-	useReadOnly,
+  useReadOnly,
 } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
@@ -48,7 +48,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-	const isReadOnly = useReadOnly();
+  const isReadOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
   useDeepCompareEffect(() => {
@@ -60,7 +60,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
     dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
-	}, [workflowId, runInstance, workflow, customCode, unitTestDefinition, isReadOnly, isMonitoringView]);
+  }, [workflowId, runInstance, workflow, customCode, unitTestDefinition, isReadOnly, isMonitoringView]);
 
   // Store app settings in query to access outside of functional components
   useQuery({

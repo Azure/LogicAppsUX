@@ -205,7 +205,7 @@ async function getConnectionReference(
         settingsToAdd[appSettingKey] = response.connectionKey;
       }
 
-      // Determine authentication based on useMSI parameter
+      // Determine authentication based on ext.useMSI
       const authValue = useMSI
         ? { type: 'ManagedServiceIdentity' }
         : {
@@ -692,7 +692,7 @@ async function updateConnectionReferencesLocalMSI(
  * @param accessToken - The authorization token for making API requests
  * @param baseManagementUri - The base URI for Azure Management API calls
  * @param localSettings - Local settings containing workflow subscription and resource group information
- * @param policyNamePrefix - Prefix to be used for the access policy name
+ * @param policyNamePrefix - Prefix to be used for the access policy name (currently unused in implementation)
  * @throws {Error} If required workflow settings (WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME) are missing
  * @returns {Promise<void>} Resolves when the access policy is ensured to exist
  */
@@ -856,23 +856,6 @@ async function checkExistingPolicy(
       );
       return true;
     }
-
-    // Check if there's a policy with the same name but different identity (potential conflict)
-    const nameConflict = policies.find((p: any) => p.name === policyName);
-    if (nameConflict) {
-      const conflictIdentity = nameConflict.properties?.principal?.identity;
-      ext.outputChannel.appendLog(
-        localize(
-          'policyNameConflict',
-          'Warning: Policy with name "{0}" exists for different identity (objectId: {1}). Creating with modified name.',
-          policyName,
-          conflictIdentity?.objectId
-        )
-      );
-      // You might want to modify the policy name here or handle this case differently
-      return false;
-    }
-
     return false;
   } catch (error) {
     // Network or other errors

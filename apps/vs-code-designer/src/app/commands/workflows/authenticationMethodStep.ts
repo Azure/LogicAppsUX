@@ -6,6 +6,7 @@
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
+
 export class AuthenticationMethod {
   static readonly RawKeys = 'rawKeys';
   static readonly ManagedServiceIdentity = 'managedServiceIdentity';
