@@ -188,6 +188,7 @@ async function getConnectionReference(
     connectionProperties,
   } = reference;
 
+  delete connectionProperties?.connectionRuntimeUrl;
   return axios
     .post(
       `${formatSetting(workflowBaseManagementUri)}/${formatSetting(connectionId)}/listConnectionKeys?api-version=2018-07-01-preview`,
