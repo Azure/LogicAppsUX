@@ -25,9 +25,12 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   const projectPath = isString(projectRoot) ? projectRoot : projectRoot.uri.fsPath;
   const localSettingsFilePath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
-  const subscriptionId: string = localSettings.Values[workflowSubscriptionIdKey];
 
-  if (subscriptionId === undefined || subscriptionId === '' || localSettings.Values[workflowAuthenticationMethodKey] === undefined) {
+  // Add null check for Values object and safely access properties
+  const subscriptionId: string | undefined = localSettings.Values?.[workflowSubscriptionIdKey];
+  const authenticationMethod: string | undefined = localSettings.Values?.[workflowAuthenticationMethodKey];
+
+  if (!subscriptionId || subscriptionId === '' || !authenticationMethod) {
     const connectorsContext: IAzureConnectorsContext = context as IAzureConnectorsContext;
     const wizard: AzureWizard<IAzureConnectorsContext> = createAzureWizard(connectorsContext, projectPath);
     await wizard.prompt();

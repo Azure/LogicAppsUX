@@ -7,9 +7,13 @@ import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
 
-export class AuthenticationMethod {
-  static readonly RawKeys = 'rawKeys';
-  static readonly ManagedServiceIdentity = 'managedServiceIdentity';
+/**
+ * Enum representing available authentication methods for Azure connectors
+ */
+// eslint-disable-next-line no-restricted-syntax
+export enum AuthenticationMethod {
+  RawKeys = 'rawKeys',
+  ManagedServiceIdentity = 'managedServiceIdentity',
 }
 
 /**

@@ -192,6 +192,8 @@ async function getConnectionReference(
     connectionProperties,
   } = reference;
 
+  delete connectionProperties?.connectionRuntimeUrl;
+
   return axios
     .post(
       `${formatSetting(workflowBaseManagementUri)}/${formatSetting(connectionId)}/listConnectionKeys?api-version=2018-07-01-preview`,
@@ -927,8 +929,17 @@ async function isMSIEnabled(projectPath: string, context: IActionContext): Promi
   try {
     const localSettingsPath = path.join(projectPath, localSettingsFileName);
     const localSettings = await getLocalSettingsJson(context, localSettingsPath);
-    return localSettings.Values[workflowAuthenticationMethodKey] === AuthenticationMethod.ManagedServiceIdentity;
+
+    // Get the authentication method from settings
+    const authMethod = localSettings.Values[workflowAuthenticationMethodKey];
+
+    // Validate it's a valid enum value before comparing
+    if (authMethod && Object.values(AuthenticationMethod).includes(authMethod as AuthenticationMethod)) {
+      return authMethod === AuthenticationMethod.ManagedServiceIdentity;
+    }
+
+    return false; // Invalid or missing authentication method
   } catch {
-    return false; // Default to raw keys if we can't read settings
+    return false; // Default to false if we can't read settings
   }
 }
