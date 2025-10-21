@@ -22,8 +22,8 @@ export function useIsAgentSubGraph(nodeId?: string): boolean | null {
         break;
       }
 
-      const isAgentCondition = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
-      if (isAgentCondition) {
+      const isAgentTool = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+      if (isAgentTool) {
         setIsAgentSubgraph(true);
         break;
       }

@@ -13,12 +13,11 @@ import {
   MessageBarTitle,
   SearchBox,
   Spinner,
-  InteractionTag,
-  TagGroup,
   Text,
-  InteractionTagPrimary,
   TabList,
   Tab,
+  Dropdown,
+  Option,
 } from '@fluentui/react-components';
 import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
@@ -47,6 +46,7 @@ import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/design
 import { AgentChatContent } from './agentChatContent';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
 import { RunMenu } from './runMenu';
+import StatusIndicator from './statusIndicator';
 
 // MARK: End Imports
 
@@ -178,6 +178,18 @@ export const RunHistoryPanel = () => {
     id: 'ob2fSf',
   });
 
+  const statusFilterLabel = intl.formatMessage({
+    defaultMessage: 'Status',
+    description: 'Status filter label',
+    id: 'QxEQwD',
+  });
+
+  const modeFilterLabel = intl.formatMessage({
+    defaultMessage: 'Version',
+    description: 'Mode filter label',
+    id: 'RXZ+9a',
+  });
+
   const runStatusTexts: Record<string, string> = {
     All: intl.formatMessage({ defaultMessage: 'All', description: 'All run statuses', id: 'bHpFLq' }),
     Succeeded: intl.formatMessage({ defaultMessage: 'Succeeded', description: 'Succeeded status', id: 'NIfcbE' }),
@@ -203,24 +215,6 @@ export const RunHistoryPanel = () => {
     description: 'Chat view tab title',
     id: 'YV6qd0',
   });
-
-  // MARK: Components
-
-  const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
-
-  const RefreshButton = () => (
-    <Button
-      appearance="subtle"
-      disabled={runsQuery.isFetching}
-      onClick={() => {
-        runsQuery.refetch();
-        runQuery.refetch();
-      }}
-      icon={runsQuery.isRefetching && !runsQuery.isLoading ? <Spinner size={'tiny'} /> : <RefreshIcon />}
-      aria-label={refreshAria}
-      style={{ marginRight: '-8px' }}
-    />
-  );
 
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -325,6 +319,27 @@ export const RunHistoryPanel = () => {
     }
   }, [isMonitoringView]);
 
+  // If a runId filter is set, prefetch that run's data
+  const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
+
+  // MARK: Components
+
+  const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
+
+  const RefreshButton = () => (
+    <Button
+      appearance="subtle"
+      disabled={runsQuery.isFetching}
+      onClick={() => {
+        runsQuery.refetch();
+        runQuery.refetch();
+      }}
+      icon={(runsQuery.isRefetching && !runsQuery.isLoading) || isFetchingFilteredRun ? <Spinner size={'tiny'} /> : <RefreshIcon />}
+      aria-label={refreshAria}
+      style={{ marginRight: '-8px' }}
+    />
+  );
+
   // MARK: Render
 
   return (
@@ -396,30 +411,44 @@ export const RunHistoryPanel = () => {
               </Field>
               <RefreshButton />
             </div>
-            <TagGroup size="small" style={{ flexWrap: 'wrap', gap: '6px' }}>
-              {statusTags.map((tag) => (
-                <InteractionTag
-                  key={tag.value}
-                  value={tag.value}
-                  onClick={() => onStatusSelect(tag.value)}
-                  selected={filters?.['status'] === tag.value || (equals(tag.value, 'All') && !filters?.['status'])}
+            <div className={styles.flexbox}>
+              <Field label={statusFilterLabel} style={{ flex: 1 }}>
+                <Dropdown
+                  size="small"
+                  value={filters?.['status'] ?? 'All'}
+                  defaultValue={'All'}
+                  defaultSelectedOptions={[filters?.['status'] ?? 'All']}
+                  onActiveOptionChange={(_, data) => {
+                    onStatusSelect(data.nextOption?.value as string);
+                  }}
+                  style={{ minWidth: '0px' }}
                 >
-                  <InteractionTagPrimary>{tag.children}</InteractionTagPrimary>
-                </InteractionTag>
-              ))}
-            </TagGroup>
-            <TagGroup size="small" style={{ flexWrap: 'wrap', gap: '6px' }}>
-              {modeTags.map((tag) => (
-                <InteractionTag
-                  key={tag.value}
-                  value={tag.value}
-                  onClick={() => onModeSelect(tag.value)}
-                  selected={filters?.['mode'] === tag.value || (equals(tag.value, 'All') && !filters?.['mode'])}
+                  {statusTags.map((tag) => (
+                    <Option key={tag.value} value={tag.value} text={tag.children}>
+                      <StatusIndicator status={tag.value} />
+                    </Option>
+                  ))}
+                </Dropdown>
+              </Field>
+              <Field label={modeFilterLabel} style={{ flex: 1 }}>
+                <Dropdown
+                  size="small"
+                  value={filters?.['mode'] ?? 'All'}
+                  defaultValue={'All'}
+                  defaultSelectedOptions={[filters?.['mode'] ?? 'All']}
+                  onActiveOptionChange={(_, data) => {
+                    onModeSelect(data.nextOption?.value as string);
+                  }}
+                  style={{ minWidth: '0px' }}
                 >
-                  <InteractionTagPrimary>{tag.children}</InteractionTagPrimary>
-                </InteractionTag>
-              ))}
-            </TagGroup>
+                  {modeTags.map((tag) => (
+                    <Option key={tag.value} value={tag.value}>
+                      {tag.children}
+                    </Option>
+                  ))}
+                </Dropdown>
+              </Field>
+            </div>
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
                 <MessageBarBody>

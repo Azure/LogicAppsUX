@@ -43,6 +43,10 @@ export const useCardStyles = makeStyles({
       background: 'color-mix(in hsl, var(--action-brand-color), black 20%)',
     },
   },
+  small: {
+    width: '120px',
+    padding: '6px 4px 6px 8px',
+  },
   inactive: {
     opacity: 0.3,
   },
@@ -69,6 +73,11 @@ export const useCardStyles = makeStyles({
       objectFit: 'contain',
     },
   },
+  toolIcon: {
+    padding: '4px',
+    width: '16px',
+    height: '16px',
+  },
   title: {
     fontSize: '14px',
     fontWeight: '600',
@@ -79,6 +88,10 @@ export const useCardStyles = makeStyles({
   },
   scopeTitle: {
     color: '#fff',
+  },
+  smallTitle: {
+    fontSize: '14px',
+    lineHeight: '16px',
   },
 
   // Badge

@@ -1,15 +1,15 @@
-import { ActionButtonV2 } from '../../actionbuttonv2';
-import NodeCollapseToggle from '../../nodeCollapseToggle';
-import { ErrorBanner } from '../errorbanner';
-import { useCardKeyboardInteraction } from '../hooks';
-import type { CardProps } from '..';
-import type { MessageBarType } from '@fluentui/react';
-import { css } from '@fluentui/react';
-import type { SubgraphType } from '@microsoft/logic-apps-shared';
-import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
-import { useIntl } from 'react-intl';
 import type { MouseEventHandler } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useIntl } from 'react-intl';
+import type { SubgraphType } from '@microsoft/logic-apps-shared';
+import { replaceWhiteSpaceWithUnderscore, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { mergeClasses, Spinner, Text, useRestoreFocusTarget } from '@fluentui/react-components';
+
+import { AddButton } from '../../../connections/addButton';
+import { useCardStyles } from './card.styles';
+import { CollapseToggle } from './collapseToggle';
+import { useKeyboardInteraction } from './keyboardInteraction';
+import { CardErrorBadge } from './cardErrorBadge';
 
 interface SubgraphCardProps {
   id: string;
@@ -18,16 +18,17 @@ interface SubgraphCardProps {
   subgraphType: SubgraphType;
   collapsed?: boolean;
   handleCollapse?: (includeNested?: boolean) => void;
-  selectionMode?: CardProps['selectionMode'];
   readOnly?: boolean;
   onClick?(id?: string): void;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   showAddButton?: boolean;
   contextMenuItems?: JSX.Element[];
-  errorLevel?: MessageBarType;
-  errorMessage?: string;
+  errorMessages?: string[];
   nodeIndex?: number;
+  setFocus?: boolean;
+  isLoading?: boolean;
+  isSelected?: boolean;
   active?: boolean;
 }
 
@@ -38,20 +39,20 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   subgraphType,
   collapsed,
   handleCollapse,
-  selectionMode = false,
   readOnly = false,
   onClick,
   onContextMenu,
   onDeleteClick,
-  errorLevel,
-  errorMessage,
+  errorMessages = [],
   nodeIndex,
+  setFocus,
+  isLoading,
+  isSelected,
   active = true,
 }) => {
   const intl = useIntl();
 
-  const mainKeyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
-  const collapseKeyboardInteraction = useCardKeyboardInteraction(handleCollapse);
+  const styles = useCardStyles();
 
   const addCaseLabel = intl.formatMessage({
     defaultMessage: 'Add case',
@@ -150,6 +151,9 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const data = useMemo(() => SubgraphTypeData[subgraphType], [SubgraphTypeData, subgraphType]);
 
+  const mainKeyboardInteraction = useKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
+  const collapseKeyboardInteraction = useKeyboardInteraction(handleCollapse);
+
   const cardAltText = useMemo(() => `${data.title} ${data.typeText}`, [data]);
 
   const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
@@ -157,9 +161,23 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     onClick?.(data.id);
   };
 
+  const focusRef = useRef<HTMLElement | null>(null);
+  const restoreFocusTargetAttribute = useRestoreFocusTarget();
+
+  useEffect(() => {
+    if (setFocus) {
+      focusRef.current?.focus();
+    }
+  }, [setFocus]);
+
   const colorVars = {
-    ['--brand-color' as any]: SubgraphTypeData[subgraphType].color,
+    ['--action-brand-color' as any]: SubgraphTypeData[subgraphType].color,
   };
+
+  const cardIcon = useMemo(
+    () => (isLoading ? <Spinner size={'tiny'} /> : data.iconUri ? <img src={data.iconUri} alt="" /> : null),
+    [isLoading, data.iconUri]
+  );
 
   if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE'] || subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON']) {
     if (readOnly) {
@@ -172,59 +190,58 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           display: 'grid',
           placeItems: 'center',
           width: '100%',
-          height: '100%',
+          height: '44px',
         }}
       >
-        <ActionButtonV2 title={title} onClick={() => onClick?.()} tabIndex={nodeIndex} />
+        <AddButton title={title} onClick={() => onClick?.()} tabIndex={nodeIndex} />
       </div>
     );
   }
 
   if (data.size === 'large') {
     return (
-      <div className={css('msla-subgraph-card', data.size, !active && 'msla-card-inactive')} style={colorVars} tabIndex={-1}>
-        <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
-        <button
-          id={`msla-node-${id}`}
-          className="msla-subgraph-title"
-          aria-label={cardAltText}
-          onClick={handleTitleClick}
-          onContextMenu={onContextMenu}
-          onKeyDown={mainKeyboardInteraction.keyDown}
-          onKeyUp={mainKeyboardInteraction.keyUp}
-          tabIndex={nodeIndex}
-        >
-          <div className="msla-subgraph-title-container">
-            {data.iconUri ? <img className="msla-subgraph-title-icon" src={data.iconUri} alt="" /> : null}
-            <div className="msla-subgraph-title-text">
-              <span>{data.title}</span>
-            </div>
-          </div>
-          {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
-        </button>
-        <NodeCollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
+      <div
+        {...restoreFocusTargetAttribute}
+        ref={(node) => {
+          focusRef.current = node;
+        }}
+        role="button"
+        id={`msla-node-${id}`}
+        aria-label={cardAltText}
+        className={mergeClasses(styles.root, styles.scope, !active && styles.inactive, isSelected && styles.selected)}
+        data-testid={`card-${title}`}
+        data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
+        onClick={handleTitleClick}
+        onContextMenu={onContextMenu}
+        onKeyDown={mainKeyboardInteraction.keyDown}
+        onKeyUp={mainKeyboardInteraction.keyUp}
+        style={colorVars}
+        tabIndex={nodeIndex}
+      >
+        {errorMessages?.length > 0 ? <CardErrorBadge messages={errorMessages} /> : null}
+        {cardIcon ? <div className={mergeClasses(styles.icon, styles.toolIcon)}>{cardIcon}</div> : null}
+        <Text className={mergeClasses(styles.title, styles.scopeTitle)}>{data.title}</Text>
+        {isLoading ? <Spinner size={'extra-tiny'} /> : null}
+        <CollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse!} tabIndex={nodeIndex} />
       </div>
     );
   }
   if (data.size === 'small') {
     return (
-      <div className={css(!active && 'msla-card-inactive')} style={{ width: 200, display: 'grid', placeItems: 'center' }}>
-        <div
-          tabIndex={nodeIndex}
-          role={'button'}
-          aria-label={cardAltText}
-          className={css('msla-subgraph-card', data.size)}
-          style={colorVars}
-          onClick={(e) => handleCollapse?.(e.shiftKey)}
-          onContextMenu={onContextMenu}
-          onKeyDown={collapseKeyboardInteraction.keyUp}
-          onKeyUp={collapseKeyboardInteraction.keyDown}
-          data-automation-id={`${id}-collapse-toggle-small`}
-        >
-          <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
-          <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
-          <NodeCollapseToggle id={id} disabled collapsed={collapsed} onSmallCard />
-        </div>
+      <div
+        role="button"
+        aria-label={cardAltText}
+        className={mergeClasses(styles.root, styles.scope, styles.small, !active && styles.inactive, isSelected && styles.selected)}
+        style={colorVars}
+        onClick={(e) => handleCollapse?.(e.shiftKey)}
+        onContextMenu={onContextMenu}
+        onKeyDown={collapseKeyboardInteraction.keyDown}
+        onKeyUp={collapseKeyboardInteraction.keyUp}
+        data-automation-id={`${id}-collapse-toggle-small`}
+        tabIndex={nodeIndex}
+      >
+        <Text className={mergeClasses(styles.title, styles.scopeTitle, styles.smallTitle)}>{data.title}</Text>
+        <CollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse!} tabIndex={nodeIndex} isSmall />
       </div>
     );
   }
