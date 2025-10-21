@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations, useOperationsByConnector } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useMcpServersQuery, useOperationsByConnector } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -8,6 +8,7 @@ import {
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
+  useIsAddingMcpServer,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -18,8 +19,8 @@ import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
-import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
-import type { CommonPanelProps } from '@microsoft/designer-ui';
+import { OperationSearchHeader, RecommendationPanelCard, XLargeText } from '@microsoft/designer-ui';
+import type { CommonPanelProps, OperationsData } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import { ActionSpotlight } from './actionSpotlight';
 import { BrowseView } from './browseView';
 import { useOnFavoriteClick } from './hooks';
+import { getOperationCardDataFromOperation } from './helpers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -39,15 +41,44 @@ const SELECTION_STATES = {
   CUSTOM_SWAGGER: 'HTTP_SWAGGER',
 };
 
+const builtinMcpServerOperation = {
+  name: 'nativemcpclient',
+  id: 'nativemcpclient',
+  type: 'nativemcpclient',
+  properties: {
+    api: {
+      id: 'connectionProviders/mcpclient',
+      name: 'mcpclient',
+      description: 'MCP Client Operations',
+      displayName: 'Connect your own MCP server',
+      iconUri: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+    },
+    summary: 'Custom MCP server',
+    description: 'Native MCP Client',
+    visibility: 'Important',
+    operationType: 'McpClientTool',
+    operationKind: 'Builtin',
+    brandColor: '#709727',
+    iconUri: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+  },
+} as const;
+
+const builtinMcpServerOperationData: OperationsData = {
+  type: 'Operation',
+  data: getOperationCardDataFromOperation(builtinMcpServerOperation)
+};
+
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
   const { displayRuntimeInfo } = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
+  const isAddingMcpServer = useIsAddingMcpServer();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isTrigger ? 'triggers' : 'actions',
   });
+  const [mcpFilters, setMcpFilters] = useState<Record<string, string>>({});
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOpArray>([]);
 
   const [isGrouped, setIsGrouped] = useState(true);
@@ -66,6 +97,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
+  const { data: mcpServers, isLoading: isLoadingMcpServers } = useMcpServersQuery();
   const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
 
@@ -100,7 +132,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
       });
     },
-    [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations],
+    [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations, isLoadingMcpServers],
     300
   );
 
@@ -153,6 +185,45 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const startSwaggerSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
+
+  const onAddMcpServer = useCallback((id: string, apiId?: string) => {
+    if (id === builtinMcpServerOperationData.data.id) {
+
+      dispatch(addOperation({
+        operation: builtinMcpServerOperation,
+        relationshipIds,
+        nodeId: builtinMcpServerOperation.properties.summary.replaceAll(' ', '_'),
+        isParallelBranch: false,
+        isTrigger: false,
+        isAddingMcpServer: true,
+      }));
+    } else {
+      const searchResultPromise = Promise.resolve(
+        (mcpServers?.data ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
+      );
+
+      searchResultPromise.then((operation) => {
+        if (!operation) {
+          return;
+        }
+        dispatch(selectOperationId(operation.id));
+        setSelectedOperation(operation);
+        dispatch(selectOperationGroupId(''));
+
+        const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
+        dispatch(
+          addOperation({
+            operation,
+            relationshipIds,
+            nodeId: newNodeId,
+            isParallelBranch: false,
+            isTrigger: false,
+            isAddingMcpServer: true,
+          })
+        );
+      });
+    }
+  }, [dispatch, relationshipIds, mcpServers]);
 
   const onOperationClick = useCallback(
     (id: string, apiId?: string) => {
@@ -220,13 +291,19 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Text for the Details page navigation heading',
   });
 
-  const headingText = isTrigger
+  const headingText = isAddingMcpServer
     ? intl.formatMessage({
+      defaultMessage: 'Choose an MCP Server',
+      id: 'dBxX8X',
+      description: 'Text for the "Add an MCP Server" panel header',
+    })
+    : isTrigger
+      ? intl.formatMessage({
         defaultMessage: 'Add a trigger',
         id: 'dBxX0M',
         description: 'Text for the "Add Trigger" page header',
       })
-    : intl.formatMessage({
+      : intl.formatMessage({
         defaultMessage: 'Add an action',
         id: 'EUQDM6',
         description: 'Text for the "Add Action" page header',
@@ -253,61 +330,78 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         </div>
       ) : null}
       {
-        {
-          [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
-          [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
-          [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
-            <OperationGroupDetailView
-              connector={selectedConnector}
-              groupOperations={allOperationsForGroup}
-              filters={filters}
-              onOperationClick={onOperationClick}
-              isLoading={isLoadingOperationsByConnector}
-              ignoreActionsFilter={hideActionTypeFilter}
-            />
-          ) : null,
-          [SELECTION_STATES.SEARCH]: (
-            <>
-              <OperationSearchHeader
-                searchCallback={setSearchTerm}
-                searchTerm={searchTerm}
-                filters={filters}
-                setFilters={setFilters}
-                isTriggerNode={isTrigger}
-              />
-              {searchTerm ? (
-                <SearchView
-                  searchTerm={searchTerm}
-                  allOperations={allOperations ?? []}
-                  isLoadingOperations={isLoadingOperations}
-                  groupByConnector={isGrouped}
-                  setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
-                  isLoading={isLoadingOperations}
+            {
+              [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
+              [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
+              [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
+                <OperationGroupDetailView
+                  connector={selectedConnector}
+                  groupOperations={allOperationsForGroup}
                   filters={filters}
-                  setFilters={setFilters}
                   onOperationClick={onOperationClick}
-                  displayRuntimeInfo={displayRuntimeInfo}
+                  isLoading={isLoadingOperationsByConnector}
+                  ignoreActionsFilter={hideActionTypeFilter}
                 />
-              ) : (
+              ) : null,
+              [SELECTION_STATES.SEARCH]: (
                 <>
-                  <ActionSpotlight
-                    onConnectorSelected={onConnectorCardSelected}
-                    onOperationSelected={onOperationClick}
-                    filters={filters}
-                    allOperations={allOperations}
-                  />
-                  <BrowseView
+                  <OperationSearchHeader
+                    searchCallback={setSearchTerm}
+                    searchTerm={searchTerm}
                     filters={filters}
                     setFilters={setFilters}
-                    onConnectorCardSelected={onConnectorCardSelected}
-                    displayRuntimeInfo={false}
+                    isTriggerNode={isTrigger}
+                    isAddingMcpServer={isAddingMcpServer}
+                    onAddMcpServerClick={() => onAddMcpServer(builtinMcpServerOperationData.data.id)}
                   />
-                  {/* <ScrollToTop scrollToRef={recommendationPanelRef} /> */}
+                  {isAddingMcpServer ? (
+                    <SearchView
+                      searchTerm={searchTerm}
+                      allOperations={mcpServers?.data ?? []}
+                      isLoadingOperations={isLoadingMcpServers}
+                      groupByConnector={false}
+                      setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
+                      isLoading={isLoadingMcpServers}
+                      filters={mcpFilters}
+                      setFilters={setMcpFilters}
+                      onOperationClick={onAddMcpServer}
+                      displayRuntimeInfo={displayRuntimeInfo}
+                      isAddingMcpServer={isAddingMcpServer}
+                    />
+                  ) : 
+                  searchTerm ? (
+                    <SearchView
+                      searchTerm={searchTerm}
+                      allOperations={allOperations ?? []}
+                      isLoadingOperations={isLoadingOperations}
+                      groupByConnector={isGrouped}
+                      setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
+                      isLoading={isLoadingOperations}
+                      filters={filters}
+                      setFilters={setFilters}
+                      onOperationClick={onOperationClick}
+                      displayRuntimeInfo={displayRuntimeInfo}
+                    />
+                  ) : (
+                    <>
+                        <ActionSpotlight
+                          onConnectorSelected={onConnectorCardSelected}
+                          onOperationSelected={onOperationClick}
+                          filters={filters}
+                          allOperations={allOperations}
+                        />
+                      <BrowseView
+                        filters={filters}
+                        setFilters={setFilters}
+                        onConnectorCardSelected={onConnectorCardSelected}
+                        displayRuntimeInfo={false}
+                      />
+                      {/* <ScrollToTop scrollToRef={recommendationPanelRef} /> */}
+                    </>
+                  )}
                 </>
-              )}
-            </>
-          ),
-        }[selectionState ?? '']
+              ),
+            }[selectionState ?? '']
       }
     </FavoriteContext.Provider>
   );

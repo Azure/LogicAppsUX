@@ -20,6 +20,7 @@ import {
   azureWebJobsStorageKey,
   isZipDeployEnabledSetting,
   useSmbDeployment,
+  libDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -95,7 +96,7 @@ async function deploy(
 
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, 'lib', 'custom')))) {
+    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'custom')))) {
       await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
     }
   }

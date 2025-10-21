@@ -45,6 +45,7 @@ import handoffManifest from './manifests/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
+const mcpclienttool = 'mcpclienttool';
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
 const as2Encode = 'as2encode';
@@ -134,6 +135,7 @@ const hl7encode = 'hl7encode';
 export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 export const chunktextwithmetadata = 'chunktextwithmetadata';
 
+export const mcpclientConnectorId = 'connectionProviders/mcpclient';
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 export const appServiceConnectorId = '/connectionProviders/appService';
@@ -241,6 +243,7 @@ export const builtInConnectorIds = {
   dataOperation: dataOperationConnectorId,
   control: controlConnectorId,
   agent: agentConnectorId,
+  mcpclient: mcpclientConnectorId,
   dateTime: dateTimeConnectorId,
   schedule: scheduleConnectorId,
   http: httpConnectorId,
@@ -375,6 +378,9 @@ export function isBuiltInOperation(definition: any): boolean {
     case hl7decode:
     case hl7encode:
       return true;
+
+    case mcpclienttool:
+      return definition?.kind?.toLowerCase() !== "managed";
 
     default:
       return false;

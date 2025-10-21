@@ -106,6 +106,12 @@ export interface AgentConnectionModel {
   resourceId: string;
 }
 
+export interface AgentMcpConnectionModel {
+  displayName?: string;
+  mcpServerUrl: string;
+  authentication?: any;
+}
+
 export interface ConnectionAndAppSetting {
   connectionKey: string;
   connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
@@ -119,6 +125,7 @@ export interface ConnectionsData {
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   agentConnections?: Record<string, AgentConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
+  agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
