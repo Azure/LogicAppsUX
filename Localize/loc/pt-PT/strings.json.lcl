@@ -10627,7 +10627,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Knowledge Sources]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Origens de conhecimento]]></Val>
+            <Val><![CDATA[Fontes de conhecimento]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
