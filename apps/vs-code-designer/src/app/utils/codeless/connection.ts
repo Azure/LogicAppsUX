@@ -205,7 +205,7 @@ async function getConnectionReference(
         settingsToAdd[appSettingKey] = response.connectionKey;
       }
 
-      // Determine authentication based on ext.useMSI
+      // Determine authentication based on useMSI parameter
       const authValue = useMSI
         ? { type: 'ManagedServiceIdentity' }
         : {
