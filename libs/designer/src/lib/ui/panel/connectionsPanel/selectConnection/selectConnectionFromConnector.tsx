@@ -210,6 +210,7 @@ export const SelectConnection = ({
             saveSelectionCallback={saveSelectionCallback}
             cancelSelectionCallback={cancelSelectionCallback}
             isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+            shouldRenderDetails={true}
           />
         </>
       )}

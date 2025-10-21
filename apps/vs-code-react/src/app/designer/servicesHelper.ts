@@ -76,7 +76,7 @@ export const getDesignerServices = (
   hostVersion: string,
   queryClient: QueryClient,
   sendMsgToVsix: (msg: MessageToVsix) => void,
-  setRunId: (runId: string) => void
+  setRunId?: (runId: string) => void
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -352,7 +352,7 @@ export const getDesignerServices = (
         title,
       });
     },
-    openRun: (runId: string) => setRunId(runId),
+    openRun: (runId: string) => setRunId?.(runId),
   };
 
   const runService = new StandardRunService({
