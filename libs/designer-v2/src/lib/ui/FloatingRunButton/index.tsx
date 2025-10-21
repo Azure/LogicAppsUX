@@ -22,6 +22,13 @@ import { ChatButton } from './chat';
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
 
+export type PayloadData = {
+  method?: string;
+  headers?: Record<string, string>;
+  queries?: Record<string, string>;
+  body?: string;
+};
+
 export interface FloatingRunButtonProps {
   siteResourceId?: string;
   workflowName?: string;
@@ -131,7 +138,7 @@ export const FloatingRunButton = ({
     mutate: runWithPayloadMutate,
     isLoading: runWithPayloadIsLoading,
     // error: runWithPayloadError,
-  } = useMutation(async (payload: any) => {
+  } = useMutation(async (payload: PayloadData) => {
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];

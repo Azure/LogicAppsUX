@@ -4,13 +4,7 @@ import { MonacoEditor, SimpleDictionary } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { usePayloadPopoverStyles } from './styles';
-
-type PayloadData = {
-  method?: string;
-  headers?: Record<string, string>;
-  queries?: Record<string, string>;
-  body?: string;
-};
+import type { PayloadData } from './index';
 
 type PayloadPopoverProps = {
   open: boolean;
