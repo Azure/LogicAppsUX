@@ -13,7 +13,7 @@ import isEqual from 'lodash.isequal';
 export const spacing = {
   default: '80',
   readOnly: '40',
-  onlyEdge: '40',
+  onlyEdge: '20',
 };
 
 const defaultLayoutOptions: Record<string, string> = {
@@ -181,6 +181,9 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       return true; // Keep edge if both source and target exist
     }) ?? [];
 
+  // Child types of nodes like Agent, Switch, Condition
+  const nestGraphTypes = [WORKFLOW_NODE_TYPES.SUBGRAPH_NODE, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.HIDDEN_NODE];
+
   return {
     id: node.id,
     height: node.height,
@@ -198,6 +201,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
     layoutOptions: {
       'elk.padding': '[top=0,left=20,bottom=40,right=20]', // allow space for add buttons
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
+      // Set node type for layout
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
       ...(filteredEdges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
         'elk.layered.nodePlacement.strategy': 'SIMPLE',
@@ -205,6 +209,17 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
         'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
         'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
       }),
+      // If graph doesn't need space at the bottom for an add button, reduce padding
+      ...(node.children?.every((child) => nestGraphTypes.includes(child.type)) && {
+        'elk.padding': '[top=0,left=20,bottom=20,right=20]',
+      }),
+      // If graph has no children, make space for the add button
+      ...(node.children?.length === 1 &&
+        (node.children[0].type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE ||
+          node.children[0].type === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE) && {
+          'elk.padding': '[top=0,left=20,bottom=60,right=20]',
+        }),
+      // If graph has a footer, reduce bottom padding further
       ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
         'elk.padding': '[top=0,left=20,bottom=0,right=20]',
       }),

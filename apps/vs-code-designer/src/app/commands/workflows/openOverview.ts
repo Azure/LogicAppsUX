@@ -4,7 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion, workflowTenantIdKey } from '../../../constants';
+import {
+  assetsFolderName,
+  localSettingsFileName,
+  managementApiPrefix,
+  workflowAppApiVersion,
+  workflowTenantIdKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
@@ -121,8 +127,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   );
 
   panel.iconPath = {
-    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'Codeless.svg')),
-    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'Codeless.svg')),
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'Codeless.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'Codeless.svg')),
   };
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
