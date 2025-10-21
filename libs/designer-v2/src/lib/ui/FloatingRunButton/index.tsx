@@ -48,7 +48,7 @@ export const FloatingRunButton = ({
   const operationState = useSelector((state: RootState) => state.operations);
 
   const canBeRunWithPayload = useMemo(
-    () => !isDraftMode && canRunBeInvokedWithPayload(operationState?.operationInfo),
+    () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
     [isDraftMode, operationState?.operationInfo]
   );
 
@@ -140,6 +140,15 @@ export const FloatingRunButton = ({
       }
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       callbackInfo.method = payload?.method;
+
+      if (isDraftMode) {
+        if (siteResourceId && workflowName) {
+          callbackInfo.value = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/runDraftWithPayload`;
+          callbackInfo.method = HTTP_METHODS.POST;
+        } else {
+          // TODO: Handle/throw error
+        }
+      }
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
       const runWithPayloadResponse = await RunService().runTrigger(callbackInfo, payload);
@@ -196,7 +205,13 @@ export const FloatingRunButton = ({
         >
           {runText}
         </SplitButton>
-        <PayloadPopover open={popoverOpen} setOpen={setPopoverOpen} buttonRef={buttonRef} onSubmit={runWithPayloadMutate} />
+        <PayloadPopover
+          isDraftMode={isDraftMode}
+          open={popoverOpen}
+          setOpen={setPopoverOpen}
+          buttonRef={buttonRef}
+          onSubmit={runWithPayloadMutate}
+        />
       </>
     );
   }
