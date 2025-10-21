@@ -19,7 +19,7 @@ import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
-import { OperationSearchHeader, RecommendationPanelCard, XLargeText } from '@microsoft/designer-ui';
+import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps, OperationsData } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
@@ -51,7 +51,8 @@ const builtinMcpServerOperation = {
       name: 'mcpclient',
       description: 'MCP Client Operations',
       displayName: 'Connect your own MCP server',
-      iconUri: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+      iconUri:
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
     },
     summary: 'Custom MCP server',
     description: 'Native MCP Client',
@@ -59,13 +60,14 @@ const builtinMcpServerOperation = {
     operationType: 'McpClientTool',
     operationKind: 'Builtin',
     brandColor: '#709727',
-    iconUri: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+    iconUri:
+      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
   },
 } as const;
 
 const builtinMcpServerOperationData: OperationsData = {
   type: 'Operation',
-  data: getOperationCardDataFromOperation(builtinMcpServerOperation)
+  data: getOperationCardDataFromOperation(builtinMcpServerOperation),
 };
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
@@ -186,44 +188,48 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
-  const onAddMcpServer = useCallback((id: string, apiId?: string) => {
-    if (id === builtinMcpServerOperationData.data.id) {
-
-      dispatch(addOperation({
-        operation: builtinMcpServerOperation,
-        relationshipIds,
-        nodeId: builtinMcpServerOperation.properties.summary.replaceAll(' ', '_'),
-        isParallelBranch: false,
-        isTrigger: false,
-        isAddingMcpServer: true,
-      }));
-    } else {
-      const searchResultPromise = Promise.resolve(
-        (mcpServers?.data ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
-      );
-
-      searchResultPromise.then((operation) => {
-        if (!operation) {
-          return;
-        }
-        dispatch(selectOperationId(operation.id));
-        setSelectedOperation(operation);
-        dispatch(selectOperationGroupId(''));
-
-        const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
+  const onAddMcpServer = useCallback(
+    (id: string, apiId?: string) => {
+      if (id === builtinMcpServerOperationData.data.id) {
         dispatch(
           addOperation({
-            operation,
+            operation: builtinMcpServerOperation,
             relationshipIds,
-            nodeId: newNodeId,
+            nodeId: builtinMcpServerOperation.properties.summary.replaceAll(' ', '_'),
             isParallelBranch: false,
             isTrigger: false,
             isAddingMcpServer: true,
           })
         );
-      });
-    }
-  }, [dispatch, relationshipIds, mcpServers]);
+      } else {
+        const searchResultPromise = Promise.resolve(
+          (mcpServers?.data ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
+        );
+
+        searchResultPromise.then((operation) => {
+          if (!operation) {
+            return;
+          }
+          dispatch(selectOperationId(operation.id));
+          setSelectedOperation(operation);
+          dispatch(selectOperationGroupId(''));
+
+          const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
+          dispatch(
+            addOperation({
+              operation,
+              relationshipIds,
+              nodeId: newNodeId,
+              isParallelBranch: false,
+              isTrigger: false,
+              isAddingMcpServer: true,
+            })
+          );
+        });
+      }
+    },
+    [dispatch, relationshipIds, mcpServers]
+  );
 
   const onOperationClick = useCallback(
     (id: string, apiId?: string) => {
@@ -293,21 +299,27 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const headingText = isAddingMcpServer
     ? intl.formatMessage({
-      defaultMessage: 'Choose an MCP Server',
-      id: 'dBxX8X',
-      description: 'Text for the "Add an MCP Server" panel header',
-    })
+        defaultMessage: 'Choose an MCP Server',
+        id: 'dBxX8X',
+        description: 'Text for the "Add an MCP Server" panel header',
+      })
     : isTrigger
       ? intl.formatMessage({
-        defaultMessage: 'Add a trigger',
-        id: 'dBxX0M',
-        description: 'Text for the "Add Trigger" page header',
-      })
+          defaultMessage: 'Add a trigger',
+          id: 'dBxX0M',
+          description: 'Text for the "Add Trigger" page header',
+        })
       : intl.formatMessage({
-        defaultMessage: 'Add an action',
-        id: 'EUQDM6',
-        description: 'Text for the "Add Action" page header',
-      });
+          defaultMessage: 'Add an action',
+          id: 'EUQDM6',
+          description: 'Text for the "Add Action" page header',
+        });
+
+  const subTitle = intl.formatMessage({
+    defaultMessage: 'Select an existing MCP server or connect your own MCP server.',
+    id: 'Ta9XGH',
+    description: 'sub title for "Add an MCP Server" panel',
+  });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
@@ -321,6 +333,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         <XLargeText text={headingText} as="h2" />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
+      {isAddingMcpServer ? <div className="msla-app-action-subheader">{subTitle}</div> : null}
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -330,78 +343,77 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         </div>
       ) : null}
       {
-            {
-              [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
-              [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
-              [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
-                <OperationGroupDetailView
-                  connector={selectedConnector}
-                  groupOperations={allOperationsForGroup}
-                  filters={filters}
-                  onOperationClick={onOperationClick}
-                  isLoading={isLoadingOperationsByConnector}
-                  ignoreActionsFilter={hideActionTypeFilter}
+        {
+          [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
+          [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
+          [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
+            <OperationGroupDetailView
+              connector={selectedConnector}
+              groupOperations={allOperationsForGroup}
+              filters={filters}
+              onOperationClick={onOperationClick}
+              isLoading={isLoadingOperationsByConnector}
+              ignoreActionsFilter={hideActionTypeFilter}
+            />
+          ) : null,
+          [SELECTION_STATES.SEARCH]: (
+            <>
+              <OperationSearchHeader
+                searchCallback={setSearchTerm}
+                searchTerm={searchTerm}
+                filters={filters}
+                setFilters={setFilters}
+                isTriggerNode={isTrigger}
+                isAddingMcpServer={isAddingMcpServer}
+                onAddMcpServerClick={() => onAddMcpServer(builtinMcpServerOperationData.data.id)}
+              />
+              {isAddingMcpServer ? (
+                <SearchView
+                  searchTerm={searchTerm}
+                  allOperations={mcpServers?.data ?? []}
+                  isLoadingOperations={isLoadingMcpServers}
+                  groupByConnector={false}
+                  setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
+                  isLoading={isLoadingMcpServers}
+                  filters={mcpFilters}
+                  setFilters={setMcpFilters}
+                  onOperationClick={onAddMcpServer}
+                  displayRuntimeInfo={displayRuntimeInfo}
+                  isAddingMcpServer={isAddingMcpServer}
                 />
-              ) : null,
-              [SELECTION_STATES.SEARCH]: (
+              ) : searchTerm ? (
+                <SearchView
+                  searchTerm={searchTerm}
+                  allOperations={allOperations ?? []}
+                  isLoadingOperations={isLoadingOperations}
+                  groupByConnector={isGrouped}
+                  setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
+                  isLoading={isLoadingOperations}
+                  filters={filters}
+                  setFilters={setFilters}
+                  onOperationClick={onOperationClick}
+                  displayRuntimeInfo={displayRuntimeInfo}
+                />
+              ) : (
                 <>
-                  <OperationSearchHeader
-                    searchCallback={setSearchTerm}
-                    searchTerm={searchTerm}
+                  <ActionSpotlight
+                    onConnectorSelected={onConnectorCardSelected}
+                    onOperationSelected={onOperationClick}
+                    filters={filters}
+                    allOperations={allOperations}
+                  />
+                  <BrowseView
                     filters={filters}
                     setFilters={setFilters}
-                    isTriggerNode={isTrigger}
-                    isAddingMcpServer={isAddingMcpServer}
-                    onAddMcpServerClick={() => onAddMcpServer(builtinMcpServerOperationData.data.id)}
+                    onConnectorCardSelected={onConnectorCardSelected}
+                    displayRuntimeInfo={false}
                   />
-                  {isAddingMcpServer ? (
-                    <SearchView
-                      searchTerm={searchTerm}
-                      allOperations={mcpServers?.data ?? []}
-                      isLoadingOperations={isLoadingMcpServers}
-                      groupByConnector={false}
-                      setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
-                      isLoading={isLoadingMcpServers}
-                      filters={mcpFilters}
-                      setFilters={setMcpFilters}
-                      onOperationClick={onAddMcpServer}
-                      displayRuntimeInfo={displayRuntimeInfo}
-                      isAddingMcpServer={isAddingMcpServer}
-                    />
-                  ) : 
-                  searchTerm ? (
-                    <SearchView
-                      searchTerm={searchTerm}
-                      allOperations={allOperations ?? []}
-                      isLoadingOperations={isLoadingOperations}
-                      groupByConnector={isGrouped}
-                      setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
-                      isLoading={isLoadingOperations}
-                      filters={filters}
-                      setFilters={setFilters}
-                      onOperationClick={onOperationClick}
-                      displayRuntimeInfo={displayRuntimeInfo}
-                    />
-                  ) : (
-                    <>
-                        <ActionSpotlight
-                          onConnectorSelected={onConnectorCardSelected}
-                          onOperationSelected={onOperationClick}
-                          filters={filters}
-                          allOperations={allOperations}
-                        />
-                      <BrowseView
-                        filters={filters}
-                        setFilters={setFilters}
-                        onConnectorCardSelected={onConnectorCardSelected}
-                        displayRuntimeInfo={false}
-                      />
-                      {/* <ScrollToTop scrollToRef={recommendationPanelRef} /> */}
-                    </>
-                  )}
+                  {/* <ScrollToTop scrollToRef={recommendationPanelRef} /> */}
                 </>
-              ),
-            }[selectionState ?? '']
+              )}
+            </>
+          ),
+        }[selectionState ?? '']
       }
     </FavoriteContext.Provider>
   );

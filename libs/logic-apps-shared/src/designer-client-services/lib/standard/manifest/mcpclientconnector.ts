@@ -7,7 +7,7 @@ export default {
   properties: {
     displayName: 'MCP Client',
     iconUri:
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIyIiBoZWlnaHQ9IjIyIiByeD0iMiIgZmlsbD0iIzMzNTJCOSIvPgo8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMTA4OF80OTQwMCkiPgo8cGF0aCBkPSJNOC4wMzEzNyAxMC4zODE4QzcuODE5NzggMTAuMzgxOCA3LjYxODc3IDEwLjMzODIgNy40MjgzNCAxMC4yNTA5QzcuMjM3OTEgMTAuMTYzNiA3LjA2ODY0IDEwLjA0MzcgNi45MjA1MyA5Ljg5MDk0QzYuNzcyNDEgOS43MzgyMiA2LjY1NjA0IDkuNTYzNjggNi41NzE0MSA5LjM2NzMzQzYuNDg2NzcgOS4xNzA5OCA2LjQ0MjM0IDguOTYxNTQgNi40MzgxIDguNzM5MDFWNi4xNjAyNkM2LjQzODEgNS45MzMzNyA2LjQ4MjU0IDUuNzIxNzQgNi41NzE0MSA1LjUyNTM5QzYuNjYwMjcgNS4zMjkwNCA2Ljc3ODc2IDUuMTU0NSA2LjkyNjg3IDUuMDAxNzlDNy4wNzQ5OSA0Ljg0OTA3IDcuMjQ2MzcgNC43MzEyNiA3LjQ0MTAzIDQuNjQ4MzVDNy42MzU3IDQuNTY1NDUgNy44NDMwNSA0LjUyMTgyIDguMDYzMSA0LjUxNzQ1SDEwLjA5NDRWNC40MTI3M0MxMC4wOTQ0IDQuMzc3ODMgMTAuMDkyMiA0LjMzODU2IDEwLjA4OCA0LjI5NDkyQzEwLjA4OCA0LjIyMDc0IDEwLjA5MjIgNC4xNDg3NSAxMC4xMDA3IDQuMDc4OTRDMTAuMTA5MiA0LjAwOTEyIDEwLjEyNjEgMy45NDM2NyAxMC4xNTE1IDMuODgyNThDMTAuMTc2OSAzLjgyMTUgMTAuMjE5MiAzLjc3MzUgMTAuMjc4NCAzLjczODU5QzEwLjMzNzcgMy43MDM2OSAxMC40MTE3IDMuNjg0MDUgMTAuNTAwNiAzLjY3OTY5QzEwLjU5MzcgMy42Nzk2OSAxMC42NjU2IDMuNjk3MTQgMTAuNzE2NCAzLjczMjA1QzEwLjc2NzIgMy43NjY5NSAxMC44MDc0IDMuODE0OTUgMTAuODM3IDMuODc2MDRDMTAuODY2NyAzLjkzNzEzIDEwLjg4NTcgNC4wMDI1OCAxMC44OTQyIDQuMDcyMzlDMTAuOTAyNiA0LjE0MjIgMTAuOTA2OSA0LjIxNjM4IDEwLjkwNjkgNC4yOTQ5MlY0LjUxNzQ1SDEyLjk2OThDMTMuMTgxNCA0LjUxNzQ1IDEzLjM4MjQgNC41NjEwOSAxMy41NzI5IDQuNjQ4MzVDMTMuNzYzMyA0LjczNTYyIDEzLjkzMjYgNC44NTU2MSAxNC4wODA3IDUuMDA4MzNDMTQuMjI4OCA1LjE2MTA1IDE0LjM0NTIgNS4zMzU1OCAxNC40Mjk4IDUuNTMxOTRDMTQuNTE0NCA1LjcyODI5IDE0LjU1ODkgNS45Mzc3MyAxNC41NjMxIDYuMTYwMjZWOC43MzkwMUMxNC41NjMxIDguOTU3MTggMTQuNTIwOCA5LjE2NDQ0IDE0LjQzNjIgOS4zNjA3OUMxNC4zNTE1IDkuNTU3MTQgMTQuMjM1MSA5LjczMTY3IDE0LjA4NyA5Ljg4NDM5QzEzLjkzODkgMTAuMDM3MSAxMy43Njk2IDEwLjE1NzEgMTMuNTc5MiAxMC4yNDQ0QzEzLjM4ODggMTAuMzMxNiAxMy4xODU3IDEwLjM3NzUgMTIuOTY5OCAxMC4zODE4SDguMDMxMzdaTTcuMjUwNiA4LjcwNjI4QzcuMjUwNiA4LjgyNDA5IDcuMjcxNzYgOC45MzMxOCA3LjMxNDA4IDkuMDMzNTRDNy4zNTY0IDkuMTMzODkgNy40MTM1MyA5LjIyMzM0IDcuNDg1NDcgOS4zMDE4OEM3LjU1NzQxIDkuMzgwNDIgNy42NDIwNCA5LjQzOTMzIDcuNzM5MzcgOS40Nzg2QzcuODM2NyA5LjUxNzg3IDcuOTQ0NjEgOS41Mzk2OSA4LjA2MzEgOS41NDQwNUgxMi45MzgxQzEzLjA1MjQgOS41NDQwNSAxMy4xNTgyIDkuNTIyMjMgMTMuMjU1NSA5LjQ3ODZDMTMuMzUyOCA5LjQzNDk3IDEzLjQzNzUgOS4zNzYwNiAxMy41MDk0IDkuMzAxODhDMTMuNTgxMyA5LjIyNzcxIDEzLjY0MDYgOS4xMzgyNiAxMy42ODcxIDkuMDMzNTRDMTMuNzMzNyA4LjkyODgxIDEzLjc1NDggOC44MTk3MyAxMy43NTA2IDguNzA2MjhWNi4xOTI5OUMxMy43NTA2IDYuMDc5NTQgMTMuNzI5NCA1Ljk3MjY0IDEzLjY4NzEgNS44NzIyOEMxMy42NDQ4IDUuNzcxOTIgMTMuNTg3NyA1LjY4MjQ3IDEzLjUxNTcgNS42MDM5M0MxMy40NDM4IDUuNTI1MzkgMTMuMzU3IDUuNDY0MyAxMy4yNTU1IDUuNDIwNjdDMTMuMTUzOSA1LjM3NzA0IDEzLjA0ODEgNS4zNTUyMiAxMi45MzgxIDUuMzU1MjJIOC4wNjMxQzcuOTQ4ODUgNS4zNTUyMiA3Ljg0MzA1IDUuMzc3MDQgNy43NDU3MiA1LjQyMDY3QzcuNjQ4MzkgNS40NjQzIDcuNTYzNzYgNS41MjMyMSA3LjQ5MTgyIDUuNTk3MzlDNy40MTk4OCA1LjY3MTU2IDcuMzYwNjMgNS43NjEwMSA3LjMxNDA4IDUuODY1NzNDNy4yNjc1MyA1Ljk3MDQ1IDcuMjQ2MzcgNi4wNzk1NCA3LjI1MDYgNi4xOTI5OVY4LjcwNjI4Wk04LjA2MzEgNy40NDk2M0M4LjA2MzEgNy4zMzE4MiA4LjA4NDI2IDcuMjIyNzQgOC4xMjY1OCA3LjEyMjM4QzguMTY4OSA3LjAyMjAyIDguMjI2MDMgNi45MzQ3NiA4LjI5Nzk3IDYuODYwNThDOC4zNjk5MSA2Ljc4NjQgOC40NTY2NiA2LjcyNTMyIDguNTU4MjIgNi42NzczMkM4LjY1OTc4IDYuNjI5MzIgOC43NjU1OCA2LjYwNzUgOC44NzU2IDYuNjExODdDOC45ODU2MyA2LjYxMTg3IDkuMDg5MzEgNi42MzM2OSA5LjE4NjY0IDYuNjc3MzJDOS4yODM5NyA2LjcyMDk1IDkuMzcwNzIgNi43Nzk4NiA5LjQ0Njg5IDYuODU0MDNDOS41MjMwNyA2LjkyODIxIDkuNTgyMzEgNy4wMTc2NiA5LjYyNDYzIDcuMTIyMzhDOS42NjY5NCA3LjIyNzEgOS42ODgxIDcuMzM2MTkgOS42ODgxIDcuNDQ5NjNDOS42ODgxIDcuNTY3NDUgOS42NjY5NCA3LjY3NjUzIDkuNjI0NjMgNy43NzY4OUM5LjU4MjMxIDcuODc3MjQgOS41MjUxOCA3Ljk2NDUxIDkuNDUzMjQgOC4wMzg2OUM5LjM4MTMgOC4xMTI4NyA5LjI5NDU1IDguMTczOTUgOS4xOTI5OSA4LjIyMTk1QzkuMDkxNDIgOC4yNjk5NSA4Ljk4NTYzIDguMjkxNzYgOC44NzU2IDguMjg3NEM4Ljc2MTM1IDguMjg3NCA4LjY1NTU1IDguMjY1NTggOC41NTgyMiA4LjIyMTk1QzguNDYwODkgOC4xNzgzMiA4LjM3NDE0IDguMTE5NDEgOC4yOTc5NyA4LjA0NTIzQzguMjIxOCA3Ljk3MTA2IDguMTY0NjcgNy44ODM3OSA4LjEyNjU4IDcuNzgzNDNDOC4wODg0OSA3LjY4MzA3IDguMDY3MzQgNy41NzE4MSA4LjA2MzEgNy40NDk2M1pNMTEuMzEzMSA3LjQ0OTYzQzExLjMxMzEgNy4zMzE4MiAxMS4zMzQzIDcuMjIyNzQgMTEuMzc2NiA3LjEyMjM4QzExLjQxODkgNy4wMjIwMiAxMS40NzYgNi45MzQ3NiAxMS41NDggNi44NjA1OEMxMS42MTk5IDYuNzg2NCAxMS43MDY3IDYuNzI1MzIgMTEuODA4MiA2LjY3NzMyQzExLjkwOTggNi42MjkzMiAxMi4wMTU2IDYuNjA3NSAxMi4xMjU2IDYuNjExODdDMTIuMjM1NiA2LjYxMTg3IDEyLjMzOTMgNi42MzM2OSAxMi40MzY2IDYuNjc3MzJDMTIuNTM0IDYuNzIwOTUgMTIuNjIwNyA2Ljc3OTg2IDEyLjY5NjkgNi44NTQwM0MxMi43NzMxIDYuOTI4MjEgMTIuODMyMyA3LjAxNzY2IDEyLjg3NDYgNy4xMjIzOEMxMi45MTY5IDcuMjI3MSAxMi45MzgxIDcuMzM2MTkgMTIuOTM4MSA3LjQ0OTYzQzEyLjkzODEgNy41Njc0NSAxMi45MTY5IDcuNjc2NTMgMTIuODc0NiA3Ljc3Njg5QzEyLjgzMjMgNy44NzcyNCAxMi43NzUyIDcuOTY0NTEgMTIuNzAzMiA4LjAzODY5QzEyLjYzMTMgOC4xMTI4NyAxMi41NDQ1IDguMTczOTUgMTIuNDQzIDguMjIxOTVDMTIuMzQxNCA4LjI2OTk1IDEyLjIzNTYgOC4yOTE3NiAxMi4xMjU2IDguMjg3NEMxMi4wMTEzIDguMjg3NCAxMS45MDU2IDguMjY1NTggMTEuODA4MiA4LjIyMTk1QzExLjcxMDkgOC4xNzgzMiAxMS42MjQxIDguMTE5NDEgMTEuNTQ4IDguMDQ1MjNDMTEuNDcxOCA3Ljk3MTA2IDExLjQxNDcgNy44ODM3OSAxMS4zNzY2IDcuNzgzNDNDMTEuMzM4NSA3LjY4MzA3IDExLjMxNzMgNy41NzE4MSAxMS4zMTMxIDcuNDQ5NjNaTTE0LjU5NDggMTEuMjE5NkMxNC44MDY0IDExLjIxOTYgMTUuMDA3NCAxMS4yNjMyIDE1LjE5NzkgMTEuMzUwNUMxNS4zODgzIDExLjQzNzcgMTUuNTU3NiAxMS41NTc3IDE1LjcwNTcgMTEuNzEwNUMxNS44NTM4IDExLjg2MzIgMTUuOTcwMiAxMi4wMzc3IDE2LjA1NDggMTIuMjM0MUMxNi4xMzk0IDEyLjQzMDQgMTYuMTgzOSAxMi42Mzk5IDE2LjE4ODEgMTIuODYyNEMxNi4xODgxIDEzLjM5NDcgMTYuMTA3NyAxMy44NjgxIDE1Ljk0NjkgMTQuMjgyN0MxNS43ODYxIDE0LjY5NzIgMTUuNTY2IDE1LjA1OTMgMTUuMjg2NyAxNS4zNjkxQzE1LjAwNzQgMTUuNjc4OSAxNC42ODE2IDE1Ljk0NTEgMTQuMzA5MiAxNi4xNjc2QzEzLjkzNjggMTYuMzkwMiAxMy41NDExIDE2LjU2NjkgMTMuMTIyMiAxNi42OTc4QzEyLjcwMzIgMTYuODI4NyAxMi4yNjc0IDE2LjkyNjkgMTEuODE0NiAxNi45OTIzQzExLjM2MTggMTcuMDU3OCAxMC45MjM4IDE3LjA4ODMgMTAuNTAwNiAxNy4wODM5QzEwLjA2OSAxNy4wODM5IDkuNjI4ODYgMTcuMDUzNCA5LjE4MDI5IDE2Ljk5MjNDOC43MzE3MiAxNi45MzEyIDguMjk3OTcgMTYuODMzIDcuODc5MDIgMTYuNjk3OEM3LjQ2MDA4IDE2LjU2MjUgNy4wNjIyOSAxNi4zODU4IDYuNjg1NjYgMTYuMTY3NkM2LjMwOTA0IDE1Ljk0OTUgNS45ODUzMSAxNS42ODMzIDUuNzE0NDcgMTUuMzY5MUM1LjQ0MzY0IDE1LjA1NSA1LjIyMzU5IDE0LjY5MDYgNS4wNTQzMiAxNC4yNzYxQzQuODg1MDQgMTMuODYxNiA0LjgwNDY0IDEzLjM4NiA0LjgxMzEgMTIuODQ5M0M0LjgxMzEgMTIuNjI2OCA0Ljg1NzU0IDEyLjQxNzMgNC45NDY0MSAxMi4yMjFDNS4wMzUyNyAxMi4wMjQ2IDUuMTUzNzYgMTEuODUwMSA1LjMwMTg3IDExLjY5NzRDNS40NDk5OSAxMS41NDQ3IDUuNjIzNDkgMTEuNDI5IDUuODIyMzggMTEuMzUwNUM2LjAyMTI4IDExLjI3MTkgNi4yMjg2MyAxMS4yMjgzIDYuNDQ0NDUgMTEuMjE5NkgxNC41OTQ4Wk0xNS4zNzU2IDEyLjg5NTFDMTUuMzc1NiAxMi43ODE3IDE1LjM1NDQgMTIuNjc0OCAxNS4zMTIxIDEyLjU3NDRDMTUuMjY5OCAxMi40NzQgMTUuMjEyNyAxMi4zODQ2IDE1LjE0MDcgMTIuMzA2MUMxNS4wNjg4IDEyLjIyNzUgMTQuOTgyIDEyLjE2NjQgMTQuODgwNSAxMi4xMjI4QzE0Ljc3ODkgMTIuMDc5MiAxNC42NzMxIDEyLjA1NzMgMTQuNTYzMSAxMi4wNTczSDYuNDQ0NDVDNi4zMzAxOSAxMi4wNTczIDYuMjI0NCAxMi4wNzkyIDYuMTI3MDcgMTIuMTIyOEM2LjAyOTc0IDEyLjE2NjQgNS45NDI5OSAxMi4yMjUzIDUuODY2ODIgMTIuMjk5NUM1Ljc5MDY0IDEyLjM3MzcgNS43MzE0IDEyLjQ2MSA1LjY4OTA4IDEyLjU2MTNDNS42NDY3NiAxMi42NjE3IDUuNjI1NiAxMi43NzI5IDUuNjI1NiAxMi44OTUxQzUuNjI1NiAxMy4zMzE0IDUuNjk3NTQgMTMuNzE3NiA1Ljg0MTQyIDE0LjA1MzZDNS45ODUzMSAxNC4zODk2IDYuMTgyMDggMTQuNjgxOSA2LjQzMTc2IDE0LjkzMDZDNi42ODE0MyAxNS4xNzkzIDYuOTY5MTkgMTUuMzg2NiA3LjI5NTA0IDE1LjU1MjRDNy42MjA4OCAxNS43MTgyIDcuOTYzNjYgMTUuODUzNSA4LjMyMzM2IDE1Ljk1ODJDOC42ODMwNiAxNi4wNjI5IDkuMDUxMjIgMTYuMTM3MSA5LjQyNzg1IDE2LjE4MDdDOS44MDQ0OCAxNi4yMjQ0IDEwLjE2MjEgMTYuMjQ2MiAxMC41MDA2IDE2LjI0NjJDMTAuODQzNCAxNi4yNDYyIDExLjIwMSAxNi4yMjQ0IDExLjU3MzQgMTYuMTgwN0MxMS45NDU4IDE2LjEzNzEgMTIuMzExOCAxNi4wNjUxIDEyLjY3MTUgMTUuOTY0N0MxMy4wMzEyIDE1Ljg2NDQgMTMuMzc2MSAxNS43MjkxIDEzLjcwNjIgMTUuNTU4OUMxNC4wMzYyIDE1LjM4ODggMTQuMzIxOSAxNS4xNzkzIDE0LjU2MzEgMTQuOTMwNkMxNC44MDQzIDE0LjY4MTkgMTUuMDAxMSAxNC4zODk2IDE1LjE1MzQgMTQuMDUzNkMxNS4zMDU4IDEzLjcxNzYgMTUuMzc5OCAxMy4zMzE0IDE1LjM3NTYgMTIuODk1MVoiIGZpbGw9IiNFRUVGRkYiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8xMDg4XzQ5NDAwIj4KPHJlY3QgeD0iNCIgeT0iMy42Nzk2OSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzLjQwNDMiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=',
+      'data:image/svg+xml,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23242424%22%2F%3E%0A%3Cg%20clip-path%3D%22url(%23clip0_1258_56822)%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20transform%3D%22translate(2%202)%22%20fill%3D%22%23242424%22%2F%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M15.0733%203.9524C14.6707%203.56054%2014.131%203.34127%2013.5691%203.34127C13.0073%203.34127%2012.4676%203.56054%2012.065%203.9524L4.04331%2011.8191C3.90907%2011.9495%203.72926%2012.0225%203.54206%2012.0225C3.35486%2012.0225%203.17504%2011.9495%203.04081%2011.8191C2.97509%2011.7552%202.92285%2011.6787%202.88718%2011.5943C2.85151%2011.5098%202.83313%2011.4191%202.83313%2011.3274C2.83313%2011.2357%202.85151%2011.145%202.88718%2011.0605C2.92285%2010.9761%202.97509%2010.8996%203.04081%2010.8357L11.0625%202.96907C11.7335%202.31606%2012.6328%201.95068%2013.5691%201.95068C14.5055%201.95068%2015.4048%202.31606%2016.0758%202.96907C16.4641%203.34665%2016.7574%203.81081%2016.9318%204.32356C17.1062%204.8363%2017.1567%205.38306%2017.0791%205.91907C17.6223%205.84182%2018.1759%205.89031%2018.6973%206.06079C19.2187%206.23128%2019.6941%206.51921%2020.0866%206.9024L20.1283%206.94407C20.4569%207.26363%2020.7181%207.64584%2020.8965%208.06808C21.0748%208.49032%2021.1667%208.94404%2021.1667%209.4024C21.1667%209.86077%2021.0748%2010.3145%2020.8965%2010.7367C20.7181%2011.159%2020.4569%2011.5412%2020.1283%2011.8607L12.8733%2018.9749C12.8514%2018.9962%2012.834%2019.0216%2012.8221%2019.0498C12.8102%2019.0779%2012.8041%2019.1081%2012.8041%2019.1387C12.8041%2019.1692%2012.8102%2019.1994%2012.8221%2019.2275C12.834%2019.2557%2012.8514%2019.2811%2012.8733%2019.3024L14.3633%2020.7641C14.429%2020.828%2014.4813%2020.9044%2014.5169%2020.9889C14.5526%2021.0733%2014.571%2021.1641%2014.571%2021.2557C14.571%2021.3474%2014.5526%2021.4381%2014.5169%2021.5226C14.4813%2021.607%2014.429%2021.6835%2014.3633%2021.7474C14.2291%2021.8779%2014.0493%2021.9509%2013.8621%2021.9509C13.6749%2021.9509%2013.495%2021.8779%2013.3608%2021.7474L11.8708%2020.2866C11.7173%2020.1374%2011.5953%2019.9591%2011.512%2019.762C11.4287%2019.5649%2011.3858%2019.353%2011.3858%2019.1391C11.3858%2018.9251%2011.4287%2018.7133%2011.512%2018.5162C11.5953%2018.3191%2011.7173%2018.1407%2011.8708%2017.9916L19.1258%2010.8766C19.3229%2010.6848%2019.4795%2010.4554%2019.5864%2010.2021C19.6934%209.94875%2019.7485%209.67655%2019.7485%209.40157C19.7485%209.12658%2019.6934%208.85438%2019.5864%208.60104C19.4795%208.34771%2019.3229%208.11837%2019.1258%207.92657L19.0841%207.88573C18.6819%207.49428%2018.143%207.27504%2017.5817%207.27457C17.0205%207.27411%2016.4812%207.49245%2016.0783%207.88323L10.1016%2013.7449L10.1%2013.7466L10.0183%2013.8274C9.88404%2013.9581%209.70404%2014.0313%209.51664%2014.0313C9.32925%2014.0313%209.14925%2013.9581%209.01498%2013.8274C8.94926%2013.7635%208.89702%2013.687%208.86135%2013.6026C8.82568%2013.5182%208.8073%2013.4274%208.8073%2013.3357C8.8073%2013.2441%208.82568%2013.1533%208.86135%2013.0689C8.89702%2012.9844%208.94926%2012.908%209.01498%2012.8441L15.0758%206.8999C15.2723%206.70797%2015.4284%206.47866%2015.5349%206.22546C15.6414%205.97226%2015.6962%205.70031%2015.696%205.42562C15.6957%205.15094%2015.6405%204.87908%2015.5336%204.62606C15.4266%204.37305%2015.2701%204.14399%2015.0733%203.9524Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M14.0708%205.91914C14.1365%205.85522%2014.1887%205.77878%2014.2244%205.69433C14.2601%205.60989%2014.2785%205.51914%2014.2785%205.42747C14.2785%205.3358%2014.2601%205.24505%2014.2244%205.1606C14.1887%205.07616%2014.1365%204.99972%2014.0708%204.9358C13.9365%204.80508%2013.7565%204.73193%2013.5691%204.73193C13.3817%204.73193%2013.2017%204.80508%2013.0675%204.9358L7.13495%2010.7541C6.80636%2011.0737%206.54516%2011.4559%206.36681%2011.8781C6.18845%2012.3004%206.09656%2012.7541%206.09656%2013.2125C6.09656%2013.6708%206.18845%2014.1245%206.36681%2014.5468C6.54516%2014.969%206.80636%2015.3512%207.13495%2015.6708C7.80607%2016.3236%208.70538%2016.6889%209.64162%2016.6889C10.5779%2016.6889%2011.4772%2016.3236%2012.1483%2015.6708L18.0816%209.85247C18.1473%209.78856%2018.1996%209.71212%2018.2352%209.62767C18.2709%209.54322%2018.2893%209.45248%2018.2893%209.3608C18.2893%209.26913%2018.2709%209.17839%2018.2352%209.09394C18.1996%209.00949%2018.1473%208.93305%2018.0816%208.86914C17.9473%208.73841%2017.7674%208.66527%2017.58%208.66527C17.3926%208.66527%2017.2126%208.73841%2017.0783%208.86914L11.1458%2014.6875C10.7431%2015.0793%2010.2035%2015.2986%209.64162%2015.2986C9.07977%2015.2986%208.5401%2015.0793%208.13745%2014.6875C7.9404%2014.4957%207.78377%2014.2663%207.67683%2014.013C7.56988%2013.7597%207.51478%2013.4875%207.51478%2013.2125C7.51478%2012.9375%207.56988%2012.6653%207.67683%2012.4119C7.78377%2012.1586%207.9404%2011.9293%208.13745%2011.7375L14.0708%205.91914Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3Cdefs%3E%0A%3CclipPath%20id%3D%22clip0_1258_56822%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22white%22%20transform%3D%22translate(2%202)%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3C%2Fsvg%3E%0A',
     brandColor: '#268bde',
     description: 'Easily integrate cutting-edge artificial intelligence capabilities into your workflows',
     capabilities: ['actions'],
@@ -15,7 +15,7 @@ export default {
     connectionParameterSets: {
       uiDefinition: {
         displayName: 'Authentication type',
-        description: 'The authentication type to use.'
+        description: 'The authentication type to use.',
       },
       values: [
         {
@@ -55,22 +55,18 @@ export default {
               uiDefinition: {
                 displayName: 'Username',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   required: 'true',
                 },
                 description: 'Username',
-              }
+              },
             },
             password: {
               type: 'securestring',
               uiDefinition: {
                 displayName: 'Password',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   required: 'true',
                 },
                 description: 'Password',
@@ -100,24 +96,20 @@ export default {
                 displayName: 'Pfx',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Client Certificate pfx'
-              }
+                description: 'Client Certificate pfx',
+              },
             },
             password: {
               type: 'securestring',
               uiDefinition: {
                 displayName: 'Password',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Client Certificate password'
-              }
+                description: 'Client Certificate password',
+              },
             },
           },
           uiDefinition: {
@@ -142,12 +134,10 @@ export default {
               uiDefinition: {
                 displayName: 'Authority',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Active Directory authority'
-              }
+                description: 'Active Directory authority',
+              },
             },
             tenant: {
               type: 'string',
@@ -155,12 +145,10 @@ export default {
                 displayName: 'Tenant',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Active Directory tenant'
-              }
+                description: 'Active Directory tenant',
+              },
             },
             audience: {
               type: 'string',
@@ -169,34 +157,30 @@ export default {
                 displayName: 'Audience',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Active Directory audience'
-              }
+                description: 'Active Directory audience',
+              },
             },
             credentialType: {
               type: 'string',
               uiDefinition: {
                 displayName: 'Credential type',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   allowedValues: [
                     {
                       text: 'Certificate',
-                      value: 'Certificate'
+                      value: 'Certificate',
                     },
                     {
                       text: 'Secret',
-                      value: 'Secret'
-                    }
-                  ]
+                      value: 'Secret',
+                    },
+                  ],
                 },
-                description: 'Active Directory credential type'
-              }
+                description: 'Active Directory credential type',
+              },
             },
             clientId: {
               type: 'string',
@@ -204,12 +188,10 @@ export default {
                 displayName: 'Client ID',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Active Directory client ID'
-              }
+                description: 'Active Directory client ID',
+              },
             },
             secret: {
               type: 'securestring',
@@ -217,16 +199,14 @@ export default {
                 displayName: 'Client secret',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   dependentParameter: {
                     parameter: 'CredentialType',
-                    value: 'Secret'
+                    value: 'Secret',
                   },
                 },
-                description: 'Active Directory client secret'
-              }
+                description: 'Active Directory client secret',
+              },
             },
             pfx: {
               type: 'securestring',
@@ -234,16 +214,14 @@ export default {
                 displayName: 'Pfx',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   dependentParameter: {
                     parameter: 'CredentialType',
-                    value: 'Certificate'
+                    value: 'Certificate',
                   },
                 },
-                description: 'Active Directory pfx'
-              }
+                description: 'Active Directory pfx',
+              },
             },
             password: {
               type: 'securestring',
@@ -251,17 +229,15 @@ export default {
                 displayName: 'Password',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   dependentParameter: {
                     parameter: 'CredentialType',
-                    value: 'Certificate'
+                    value: 'Certificate',
                   },
                 },
-                description: 'Active Directory password'
-              }
-            }
+                description: 'Active Directory password',
+              },
+            },
           },
           uiDefinition: {
             displayName: 'Active Directory OAuth',
@@ -285,12 +261,10 @@ export default {
               uiDefinition: {
                 displayName: 'Value',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                   required: 'true',
                 },
-              }
+              },
             },
           },
           uiDefinition: {
@@ -316,31 +290,27 @@ export default {
                 displayName: 'Key',
                 constraints: {
                   required: 'true',
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Key'
-              }
+                description: 'Key',
+              },
             },
             keyHeaderName: {
               type: 'string',
               uiDefinition: {
                 displayName: 'Key Header Name',
                 constraints: {
-                  propertyPath: [
-                    'authentication'
-                  ],
+                  propertyPath: ['authentication'],
                 },
-                description: 'Key header name'
-              }
+                description: 'Key header name',
+              },
             },
           },
           uiDefinition: {
             displayName: 'Key',
           },
         },
-      ]
+      ],
     },
   },
 } as Connector;
