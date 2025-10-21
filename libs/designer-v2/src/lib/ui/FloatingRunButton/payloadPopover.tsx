@@ -5,11 +5,18 @@ import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { usePayloadPopoverStyles } from './styles';
 
+type PayloadData = {
+  method?: string;
+  headers?: Record<string, string>;
+  queries?: Record<string, string>;
+  body?: string;
+};
+
 type PayloadPopoverProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   buttonRef: React.RefObject<HTMLButtonElement>;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: PayloadData) => void;
   isDraftMode?: boolean;
 };
 
