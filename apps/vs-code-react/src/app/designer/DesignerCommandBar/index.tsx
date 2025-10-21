@@ -19,7 +19,7 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Spinner, Toolbar, ToolbarButton } from '@fluentui/react-components';
+import { Spinner, Toolbar, ToolbarButton, Tooltip } from '@fluentui/react-components';
 import {
   SaveRegular,
   ArrowClockwiseRegular,
@@ -233,8 +233,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     }),
     UNIT_TEST_CREATE_BLANK: intl.formatMessage({
       defaultMessage: 'Create unit test',
-      id: 'SUX3dO',
-      description: 'Button test for save blank unit test',
+      id: '6PO8EW',
+      description: 'Button text for save blank unit test',
+    }),
+    CHAT_BUTTON_TOOLTIP_CONTENT: intl.formatMessage({
+      defaultMessage: 'Navigate to the Overview page to access the agent chat.',
+      id: 'DV0Z/L',
+      description: 'Button tooltip text for disabled chat button',
     }),
   };
 
@@ -445,7 +450,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
-      {shouldRenderChatButton ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} disabled={true} /> : null}
+      {shouldRenderChatButton ? (
+        <Tooltip relationship="label" withArrow appearance="inverted" content={Resources.CHAT_BUTTON_TOOLTIP_CONTENT}>
+          <span style={{ display: 'inline-flex' }}>
+            <ChatButton appearance="transparent" isDarkMode={isDarkMode} disabled={true} />
+          </span>
+        </Tooltip>
+      ) : null}
     </Toolbar>
   );
 };
