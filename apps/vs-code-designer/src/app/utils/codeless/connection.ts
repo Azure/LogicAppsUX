@@ -692,7 +692,7 @@ async function updateConnectionReferencesLocalMSI(
  * @param accessToken - The authorization token for making API requests
  * @param baseManagementUri - The base URI for Azure Management API calls
  * @param localSettings - Local settings containing workflow subscription and resource group information
- * @param policyNamePrefix - Prefix to be used for the access policy name (currently unused in implementation)
+ * @param policyNamePrefix - Prefix to be used for the access policy name
  * @throws {Error} If required workflow settings (WORKFLOWS_SUBSCRIPTION_ID or WORKFLOWS_RESOURCE_GROUP_NAME) are missing
  * @returns {Promise<void>} Resolves when the access policy is ensured to exist
  */
