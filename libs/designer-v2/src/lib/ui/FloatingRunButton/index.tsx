@@ -189,6 +189,18 @@ export const FloatingRunButton = ({
 
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  if (isA2AWorkflow) {
+    return (
+      <ChatButton
+        {...buttonCommonProps}
+        isDarkMode={isDarkMode}
+        isDraftMode={isDraftMode}
+        siteResourceId={siteResourceId}
+        workflowName={workflowName}
+      />
+    );
+  }
+
   if (canBeRunWithPayload) {
     return (
       <>
@@ -221,10 +233,6 @@ export const FloatingRunButton = ({
         />
       </>
     );
-  }
-
-  if (isA2AWorkflow) {
-    return <ChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
   }
 
   return (
