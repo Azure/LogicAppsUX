@@ -79,10 +79,14 @@ export default class LogicAppsSeverLanguage {
 
         response.contents = response.contents.map((content) => {
           if (content instanceof MarkdownString) {
+            content.supportHtml = true;
+            content.isTrusted = true;
+            content.supportThemeIcons = true;
             return content;
           }
-          const alteredContent = new MarkdownString(typeof content === 'string' ? content : content.value);
+          const alteredContent = new MarkdownString(typeof content === 'string' ? content : content.value, true);
 
+          alteredContent.supportHtml = true;
           alteredContent.isTrusted = true;
           return alteredContent;
         });
@@ -115,7 +119,11 @@ export default class LogicAppsSeverLanguage {
       initializationOptions: {
         apiConfig: apiConfig,
       },
-      middleware: { ...hoverMiddleware, ...generalMiddleware },
+      middleware: {
+        provideHover: hoverMiddleware.provideHover,
+        sendRequest: generalMiddleware.sendRequest,
+        sendNotification: generalMiddleware.sendNotification,
+      },
     };
 
     // Create the language client and start the client.
