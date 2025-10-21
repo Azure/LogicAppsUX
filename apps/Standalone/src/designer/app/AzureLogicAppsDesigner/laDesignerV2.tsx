@@ -289,10 +289,11 @@ const DesignerEditor = () => {
       clearDirtyState: () => void,
       isDraftSave?: boolean
     ): Promise<any> => {
-      const { definition, connectionReferences, parameters, notes } = workflowFromDesigner;
+      const { definition, connectionReferences, parameters, notes, kind } = workflowFromDesigner;
       const workflowToSave = {
         ...workflow,
         definition,
+        kind,
       };
 
       delete workflowToSave.id;
