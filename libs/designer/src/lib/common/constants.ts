@@ -409,6 +409,7 @@ export default {
       GETPASTTIME: 'getpasttime',
       HTTP: 'http',
       AGENT: 'agent',
+      MANAGED: 'managed',
       JSON_TO_JSON: 'jsontojson',
       JSON_TO_TEXT: 'jsontotext',
       POWERAPP: 'powerapp',

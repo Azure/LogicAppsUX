@@ -1,6 +1,7 @@
 import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 import { WorkflowKind, type NodeMetadata, type WorkflowState } from './workflowInterfaces';
+import Constants from '../../../common/constants';
 
 /**
  * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
@@ -128,6 +129,10 @@ export const collapseFlowTree = (
 
   return { graph: prunedTree, collapsedMapping: collapsedMappingArrays };
 };
+
+export const isManagedMcpOperation = (operation: { type?: string; kind?: string }) => {
+  return equals(operation?.type, Constants.NODE.TYPE.MCP_CLIENT) && equals(operation?.kind, Constants.NODE.KIND.MANAGED);
+}
 
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
   const workflowKind = state.workflowKind;

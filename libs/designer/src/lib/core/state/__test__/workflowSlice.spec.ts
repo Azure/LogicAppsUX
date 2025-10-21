@@ -5,8 +5,9 @@ import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { setStateAfterUndoRedo } from '../global';
 import { WorkflowState, NodeMetadata } from '../workflow/workflowInterfaces';
-import reducer, { addNode, addMcpServer, deleteMcpServer } from '../workflow/workflowSlice';
+import reducer, { addNode, addMcpServer, deleteMcpServer, setToolRunIndex, updateAgenticMetadata } from '../workflow/workflowSlice';
 import { OperationDefinition } from '../../../../../../logic-apps-shared/src/utils/src/lib/models/logicApps';
+import type { UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
@@ -278,6 +279,63 @@ describe('workflow slice reducers', () => {
       // Verify the agent node is still present
       expect(newState.nodesMetadata[mockAgentId]).toBeDefined();
     });
+  });
 
+  it('should set tool run index for existing node', () => {
+    const mockNodeId = 'node-123';
+    const mockPage = 2;
+    const state = { ...initialState };
+    state.nodesMetadata = {
+      [mockNodeId]: {
+        graphId: 'root',
+        subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+      } as NodeMetadata,
+    };
+
+    const newState = reducer(state, setToolRunIndex({ page: mockPage, nodeId: mockNodeId }));
+
+    expect(newState.nodesMetadata[mockNodeId].toolRunIndex).toBe(mockPage);
+  });
+
+  it('should update MCP client tool run data', () => {
+    const mockAgentId = 'agent-123';
+    const mockMcpToolId = 'mcp-tool-456';
+    const mockRegularToolId = 'regular-tool-789';
+    const state = { ...initialState };
+    state.nodesMetadata = {
+      [mockMcpToolId]: {
+        graphId: mockAgentId,
+        isRoot: false,
+        isTrigger: false,
+        subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+      } as NodeMetadata,
+      [mockRegularToolId]: {
+        graphId: mockAgentId,
+        isRoot: false,
+        isTrigger: false,
+        subgraphType: SUBGRAPH_TYPES.UNTIL_SUBGRAPH, // Not MCP_CLIENT
+      } as NodeMetadata,
+    };
+
+    const mockPayload: UpdateAgenticGraphPayload = {
+      nodeId: mockAgentId,
+      scopeRepetitionRunData: {
+        tools: {
+          [mockMcpToolId]: {
+            status: 'Succeeded',
+            iterations: 3,
+          },
+        },
+      },
+    };
+
+    const newState = reducer(state, updateAgenticMetadata(mockPayload));
+
+    const mcpToolMetadata = newState.nodesMetadata[mockMcpToolId];
+    expect(mcpToolMetadata.toolRunData).toEqual({
+      status: 'Succeeded',
+      repetitionCount: 3,
+    });
+    expect(mcpToolMetadata.toolRunIndex).toBe(0);
   });
 });

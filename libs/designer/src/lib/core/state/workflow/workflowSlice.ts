@@ -288,15 +288,29 @@ export const workflowSlice = createSlice({
         if (!nodeMetadata) {
           return;
         }
-        const nodeData = {
-          ...nodeMetadata,
-          runData: {
-            status: tools[toolId].status,
-            repetitionCount: tools[toolId].iterations,
-          },
-          runIndex: 0,
-        };
-        state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+
+        if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
+          // MCP client action does not have a tool, so safe the "tool" runData in a dedicated toolRunData.
+          const nodeData = {
+            ...nodeMetadata,
+            toolRunData: {
+              status: tools[toolId].status,
+              repetitionCount: tools[toolId].iterations,
+            },
+            toolRunIndex: 0,
+          };
+          state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+        } else {
+          const nodeData = {
+            ...nodeMetadata,
+            runData: {
+              status: tools[toolId].status,
+              repetitionCount: tools[toolId].iterations,
+            },
+            runIndex: 0,
+          };
+          state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+        }
       });
 
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -495,6 +509,14 @@ export const workflowSlice = createSlice({
       }
       nodeMetadata.runIndex = page;
     },
+    setToolRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
+      const { page, nodeId } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      nodeMetadata.toolRunIndex = page;
+    },
     setRepetitionRunData: (
       state: WorkflowState,
       action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; isWithinAgentic?: boolean }>
@@ -520,6 +542,8 @@ export const workflowSlice = createSlice({
         if (shouldClearNodeRunData(node)) {
           delete node.runData;
           delete node.runIndex;
+          delete node.toolRunData;
+          delete node.toolRunIndex;
         }
       }
     },
@@ -871,6 +895,7 @@ export const {
   collapseGraphsToShowNode,
   replaceId,
   setRunIndex,
+  setToolRunIndex,
   setRepetitionRunData,
   clearAllRepetitionRunData,
   setSubgraphRunData,
