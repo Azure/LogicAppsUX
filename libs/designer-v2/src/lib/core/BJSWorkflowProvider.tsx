@@ -11,7 +11,7 @@ import {
 } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
-import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
+import { setWorkflowKind, setRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2, UnitTestDefinition } from '@microsoft/logic-apps-shared';
@@ -54,8 +54,8 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   useDeepCompareEffect(() => {
     dispatch(clearAllErrors());
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
-    dispatch(initRunInstance(runInstance ?? null));
+    dispatch(setWorkflowKind(parseWorkflowKind(workflow?.kind)));
+    dispatch(setRunInstance(runInstance ?? null));
     dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
