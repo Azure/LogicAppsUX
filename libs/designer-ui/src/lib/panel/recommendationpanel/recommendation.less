@@ -18,6 +18,19 @@
   justify-content: space-between;
   background-color: #fff;
 }
+.msla-app-action-subheader {
+  margin: 0px -24px;
+  padding: 0px 24px 32px 24px;
+  z-index: 1;
+  position: sticky;
+  top: 0px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+}
 .msla-app-action-header-v2 {
   z-index: 1;
   position: sticky;
@@ -31,6 +44,10 @@
 
 .msla-theme-dark {
   .msla-app-action-header {
+    background-color: @ms-color-secondaryBackground;
+  }
+
+  .msla-app-action-subheader {
     background-color: @ms-color-secondaryBackground;
   }
 }
