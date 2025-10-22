@@ -12,7 +12,7 @@ import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToke
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -115,31 +115,70 @@ export async function openRunHistory(context: IAzureConnectorsContext, workflowN
 }
 
 /**
- * Extracts workflow names from a C# file by finding CreateWorkflowAgentBuilder calls.
+ * Extracts workflow names from a C# file by finding createConversationalWorkflow or createStatefulWorkflow calls.
  * @param filePath - The absolute path to the C# file to parse
  * @returns An array of workflow names found in the file
  */
 const getWorkflowNames = (filePath: string): string[] => {
-  try {
-    const fileContent = readFileSync(filePath, 'utf8');
-    const workflowNames: string[] = [];
+  const workflowNames: string[] = [];
+  const visitedFiles = new Set<string>();
+  const projectDir = dirname(filePath);
 
-    // Regex to match CreateWorkflowAgentBuilder with flowName parameter
-    // Matches patterns like: CreateWorkflowAgentBuilder(flowName: "TestFlow")
-    // Supports both double quotes and single quotes, and handles whitespace variations
-    const regex = /CreateWorkflowAgentBuilder\s*\(\s*flowName\s*:\s*["']([^"']+)["']\s*\)/g;
-
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(fileContent)) !== null) {
-      const flowName = match[1];
-      if (flowName && !workflowNames.includes(flowName)) {
-        workflowNames.push(flowName);
-      }
+  const extractWorkflowsFromFile = (currentFilePath: string): void => {
+    // Prevent circular references and re-processing
+    if (visitedFiles.has(currentFilePath)) {
+      return;
     }
+    visitedFiles.add(currentFilePath);
 
-    return workflowNames;
-  } catch (error) {
-    console.error(`Error reading workflow names from file ${filePath}:`, error);
-    return [];
-  }
+    try {
+      const fileContent = readFileSync(currentFilePath, 'utf8');
+
+      // Regex to match createConversationalWorkflow or createStatefulWorkflow with flowName parameter
+      // Matches patterns like: createConversationalWorkflow(flowName: "TestFlow") or createStatefulWorkflow(flowName: "TestFlow")
+      // Supports both double quotes and single quotes, and handles whitespace variations
+      const workflowRegex = /create(?:Conversational|Stateful)Workflow\s*\(\s*flowName\s*:\s*["']([^"']+)["']\s*\)/g;
+
+      let match: RegExpExecArray | null;
+      while ((match = workflowRegex.exec(fileContent)) !== null) {
+        const flowName = match[1];
+        if (flowName && !workflowNames.includes(flowName)) {
+          workflowNames.push(flowName);
+        }
+      }
+
+      // Find referenced .cs files in the same project
+      // Match patterns like: MethodName() or ClassName.MethodName() that might be in other files
+      // Look for using statements to find referenced files
+      const usingRegex = /using\s+(?:static\s+)?([A-Za-z0-9_.]+)/g;
+      const referencedNamespaces = new Set<string>();
+
+      while ((match = usingRegex.exec(fileContent)) !== null) {
+        referencedNamespaces.add(match[1]);
+      }
+
+      // Search for .cs files in the project directory that might contain workflow initialization
+      const csFilesPattern = /(?:^|\s)(?:public\s+)?(?:static\s+)?(?:void|Task|async\s+Task)\s+\w+\s*\(/g;
+      if (csFilesPattern.test(fileContent)) {
+        // This file has method definitions, look for other .cs files in the directory
+        try {
+          const files = readdirSync(projectDir);
+
+          for (const file of files) {
+            if (file.endsWith('.cs') && file !== basename(currentFilePath)) {
+              const otherFilePath = join(projectDir, file);
+              extractWorkflowsFromFile(otherFilePath);
+            }
+          }
+        } catch (dirError) {
+          console.error(`Error reading directory ${projectDir}:`, dirError);
+        }
+      }
+    } catch (error) {
+      console.error(`Error reading workflow names from file ${currentFilePath}:`, error);
+    }
+  };
+
+  extractWorkflowsFromFile(filePath);
+  return workflowNames;
 };
