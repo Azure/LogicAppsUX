@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import * as copy from 'recursive-copy';
-import * as path from 'path';
+const copy = require('recursive-copy');
+const path = require('path');
 
 const copyDoc = async (projectPath) => {
   await copy('./src', `${projectPath}`, {
