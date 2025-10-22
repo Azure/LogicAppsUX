@@ -139,5 +139,17 @@ vi.mock('./src/extensionVariables', () => ({
     extensionVersion: '1.0.0',
     latestBundleVersion: '1.2.3',
     prefix: 'azureLogicAppsStandard',
+    webViewKey: {
+      designerLocal: 'designerLocal',
+      designerAzure: 'designerAzure',
+      monitoring: 'monitoring',
+      export: 'export',
+      overview: 'overview',
+      unitTest: 'unitTest',
+      createWorkspace: 'createWorkspace',
+      createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+      createLogicApp: 'createLogicApp',
+      createWorkspaceStructure: 'createWorkspaceStructure',
+    },
   },
 }));

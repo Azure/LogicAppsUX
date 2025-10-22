@@ -2,6 +2,7 @@ import { DesignerSearchBox } from '../../../searchbox';
 import { useIntl } from 'react-intl';
 import { OperationTypeFilter } from '../operationTypeFilter';
 import { Button } from '@fluentui/react-components';
+import { AddFilled } from '@fluentui/react-icons';
 
 interface OperationSearchHeaderProps {
   searchCallback: (s: string) => void;
@@ -27,7 +28,7 @@ export const OperationSearchHeader = ({
   const intl = useIntl();
 
   const addMcpText = intl.formatMessage({
-    defaultMessage: 'Add custom MCP',
+    defaultMessage: 'Custom MCP server',
     id: 'Xy40uA',
     description: 'Button text for adding custom MCP server'
   });
@@ -84,7 +85,7 @@ export const OperationSearchHeader = ({
       <div className="msla-sub-heading">
         <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} placeholder={searchPlaceholderText} />
         {isAddingMcpServer
-          ? <Button appearance={'primary'} size="small" onClick={onAddMcpServerClick}>{addMcpText}</Button>
+          ? <Button appearance={'primary'} icon={<AddFilled />} onClick={onAddMcpServerClick} >{addMcpText}</Button>
           : <OperationTypeFilter actionTypeFilters={actionTypeFilters} filters={filters} disabled={isTriggerNode} setFilters={setFilters} />
         }
       </div>
