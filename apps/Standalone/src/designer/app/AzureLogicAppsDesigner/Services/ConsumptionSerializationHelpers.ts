@@ -124,7 +124,6 @@ const traverseDefinition = (operation: any, callback: (operation: any) => void) 
 };
 
 const alterOperationConnectionReference = (operation: any) => {
-  // Handle OpenApi/ApiConnection format (most common for API connections)
   const hostConnection = operation.inputs?.host?.connection;
   if (hostConnection?.referenceName) {
     operation.inputs.host.connection = {
@@ -133,24 +132,13 @@ const alterOperationConnectionReference = (operation: any) => {
     return;
   }
 
-  // Handle Service Provider format
-  const serviceProviderConfig = operation.inputs?.serviceProviderConfiguration;
-  if (serviceProviderConfig?.connectionName) {
-    // Service provider connections already use connectionName, no change needed
-    return;
-  }
-
-  // Handle Function format
   const functionConnection = operation.inputs?.function;
   if (functionConnection?.connectionName) {
-    // Function connections already use connectionName, no change needed
     return;
   }
 
-  // Handle API Management format
   const apiManagementConnection = operation.inputs?.apiManagement?.connection;
   if (apiManagementConnection && typeof apiManagementConnection === 'string') {
-    // API Management connections use a connection string, no change needed
     return;
   }
 };
