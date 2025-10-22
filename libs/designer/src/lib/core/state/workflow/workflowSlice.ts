@@ -2,9 +2,14 @@ import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow } from '../../parsers/addNodeToWorkflow';
+import {
+  addSwitchCaseToWorkflow,
+  addNodeToWorkflow,
+  addAgentToolToWorkflow,
+  addMcpServerToWorkflow,
+} from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
-import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
+import { deleteWorkflowNode, deleteNodeFromWorkflow, deleteMcpServerNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
@@ -34,6 +39,7 @@ import {
   WORKFLOW_NODE_TYPES,
   containsIdTag,
   containsCaseTag,
+  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -287,15 +293,29 @@ export const workflowSlice = createSlice({
         if (!nodeMetadata) {
           return;
         }
-        const nodeData = {
-          ...nodeMetadata,
-          runData: {
-            status: tools[toolId].status,
-            repetitionCount: tools[toolId].iterations,
-          },
-          runIndex: 0,
-        };
-        state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+
+        if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
+          // MCP client action does not have a tool, so safe the "tool" runData in a dedicated toolRunData.
+          const nodeData = {
+            ...nodeMetadata,
+            toolRunData: {
+              status: tools[toolId].status,
+              repetitionCount: tools[toolId].iterations,
+            },
+            toolRunIndex: 0,
+          };
+          state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+        } else {
+          const nodeData = {
+            ...nodeMetadata,
+            runData: {
+              status: tools[toolId].status,
+              repetitionCount: tools[toolId].iterations,
+            },
+            runIndex: 0,
+          };
+          state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+        }
       });
 
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -337,6 +357,27 @@ export const workflowSlice = createSlice({
     deleteAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; agentId: string }>) => {
       const { toolId, agentId } = action.payload;
       delete (getRecordEntry(state.operations, agentId) as any).tools?.[toolId];
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    deleteMcpServer: (state: WorkflowState, action: PayloadAction<{ toolId: string; agentId: string }>) => {
+      const { agentId } = action.payload;
+
+      if (!state.graph) {
+        return; // log exception
+      }
+
+      const graph = getWorkflowNodeFromGraphState(state, agentId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+
+      deleteMcpServerNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -473,6 +514,14 @@ export const workflowSlice = createSlice({
       }
       nodeMetadata.runIndex = page;
     },
+    setToolRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
+      const { page, nodeId } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      nodeMetadata.toolRunIndex = page;
+    },
     setRepetitionRunData: (
       state: WorkflowState,
       action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; isWithinAgentic?: boolean }>
@@ -498,6 +547,8 @@ export const workflowSlice = createSlice({
         if (shouldClearNodeRunData(node)) {
           delete node.runData;
           delete node.runIndex;
+          delete node.toolRunData;
+          delete node.toolRunIndex;
         }
       }
     },
@@ -569,6 +620,25 @@ export const workflowSlice = createSlice({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: action.type,
+        args: [action.payload],
+      });
+    },
+    addMcpServer: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { relationshipIds, nodeId, operation } = action.payload;
+      const agentNode = getWorkflowNodeFromGraphState(state, relationshipIds?.graphId);
+      if (!agentNode) {
+        throw new Error('Agent node not found');
+      }
+
+      addMcpServerToWorkflow(nodeId, agentNode, state.nodesMetadata, state, operation);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'New Simple Agent Tool Node Added',
         args: [action.payload],
       });
     },
@@ -809,11 +879,13 @@ export const {
   deleteNode,
   deleteSwitchCase,
   deleteAgentTool,
+  deleteMcpServer,
   updateNodeSizes,
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,
+  addMcpServer,
   discardAllChanges,
   updateRunAfter,
   addRunAfter,
@@ -828,6 +900,7 @@ export const {
   collapseGraphsToShowNode,
   replaceId,
   setRunIndex,
+  setToolRunIndex,
   setRepetitionRunData,
   clearAllRepetitionRunData,
   setSubgraphRunData,

@@ -33,7 +33,7 @@ import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/b
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
-import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
@@ -360,7 +360,7 @@ const DesignerReactFlow = (props: any) => {
       }
     }
     dispatch(setFlowErrors({ flowErrors: errors }));
-  }, [disconnectedNodes, dispatch]);
+  }, [disconnectedNodeErrorMessage, disconnectedNodes, dispatch]);
 
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {
@@ -370,17 +370,20 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
-  const onPaneContextMenu = useCallback((e: React.MouseEvent | MouseEvent) => {
-    e.preventDefault();
-    dispatch(
-      setNodeContextMenuData({
-        location: {
-          x: e.clientX,
-          y: e.clientY,
-        },
-      })
-    );
-  }, []);
+  const onPaneContextMenu = useCallback(
+    (e: React.MouseEvent | MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch]
+  );
 
   // Handle node changes (position, size)
 
@@ -456,8 +459,11 @@ const DesignerReactFlow = (props: any) => {
     [handSizeChanges, handlePositionChanges]
   );
 
+  const isDarkMode = useIsDarkMode();
+
   return (
     <ReactFlow
+      colorMode={isDarkMode ? 'dark' : 'light'}
       ref={canvasRef}
       onInit={onInit}
       nodeTypes={nodeTypes}

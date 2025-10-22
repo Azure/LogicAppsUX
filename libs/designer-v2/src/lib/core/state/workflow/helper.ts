@@ -130,7 +130,33 @@ export const collapseFlowTree = (
 };
 
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
-  return equals(state.workflowKind, 'agent');
+  const workflowKind = state.workflowKind;
+
+  // Standard SKU, kind is agent
+  if (equals(workflowKind, 'agent', false)) {
+    return true;
+  }
+
+  // Standard SKU, kind is not agent
+  if (workflowKind && !equals(workflowKind, 'agent', false)) {
+    return false;
+  }
+
+  // Consumption SKU, check definition metadata
+  const agentType = state.originalDefinition?.metadata?.agentType;
+  if (equals(agentType, 'conversational', false)) {
+    return true;
+  }
+
+  // Consumption SKU - check for A2A trigger pattern
+  const triggerNodeId = Object.keys(state.nodesMetadata).find((nodeId) => state.nodesMetadata[nodeId]?.isTrigger === true);
+
+  if (triggerNodeId) {
+    const triggerOperation = state.operations[triggerNodeId];
+    return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+  }
+
+  return false;
 };
 
 export const isAgentWorkflow = (kind: string): boolean => {

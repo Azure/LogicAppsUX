@@ -2,10 +2,12 @@ import type { Connector, OperationInfo, OperationManifest } from '../../../utils
 import { ConnectionType, equals } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
-import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import { getBuiltInOperationInfo, isBuiltInOperation, mcpclientConnectorId, supportedBaseManifestObjects } from '../base/operationmanifest';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { getClientBuiltInConnectors } from '../base/search';
 import { aiOperationsGroup } from './operations/operationgroups';
+import mcpclientconnector from './manifest/mcpclientconnector';
+import builtinMcpClientManifest from './manifest/builtinmcpclient';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
@@ -20,6 +22,16 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       result[connector.id.toLowerCase()] = connector;
       return result;
     }, {});
+
+    this.allBuiltInConnectors[mcpclientconnector.id.toLowerCase()] = mcpclientconnector;
+  }
+
+  override isSupported(operationType?: string, operationKind?: string): boolean {
+    if (equals(operationType, 'mcpclienttool') && equals(operationKind, 'builtin')) {
+      return true;
+    }
+
+    return super.isSupported(operationType, operationKind);
   }
 
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -46,6 +58,11 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
             connectorId: aiOperationsGroup.id,
             operationId: 'chunktextwithmetadata',
           };
+        case 'mcpclienttool':
+          return {
+            connectorId: mcpclientConnectorId,
+            operationId: 'nativemcpclient',
+          };
         default:
           return getBuiltInOperationInfo(definition, isTrigger);
       }
@@ -69,6 +86,17 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];
     const operationName = operationId.split('/').slice(-1)[0];
+
+    if (equals(connectorId, mcpclientConnectorId) && equals(operationId, 'nativemcpclient')) {
+      return {
+        properties: {
+          connector: { properties: { displayName: builtinMcpClientManifest.properties.connector?.properties.displayName } },
+          brandColor: builtinMcpClientManifest.properties.brandColor,
+          description: builtinMcpClientManifest.properties.description,
+          iconUri: builtinMcpClientManifest.properties.iconUri,
+        },
+      };
+    }
 
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) {
@@ -127,6 +155,10 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) {
       return supportedManifest;
+    }
+
+    if (equals(connectorId, mcpclientConnectorId) && equals(operationId, 'nativemcpclient')) {
+      return builtinMcpClientManifest;
     }
 
     const { apiVersion, baseUrl, httpClient } = this.options;

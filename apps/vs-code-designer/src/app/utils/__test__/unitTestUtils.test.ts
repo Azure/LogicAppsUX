@@ -25,7 +25,6 @@ import {
   parseErrorBeforeTelemetry,
   generateCSharpClasses,
   generateClassCode,
-  logTelemetry,
   getOperationMockClassContent,
   buildClassDefinition,
   mapJsonTypeToCSharp,
@@ -39,6 +38,7 @@ import {
   validateUnitTestName,
 } from '../unitTests';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { testsDirectoryName, workflowFileName } from '../../../constants';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -560,22 +560,6 @@ describe('unitTests', () => {
       expect(classCode).toContain('public class ChildClass');
       expect(classCode).toContain('public string NestedProperty { get; set; }');
       expect(classCode).toContain('this.NestedProperty = string.Empty;');
-    });
-  });
-
-  describe('logTelemetry function', () => {
-    it('should add properties to context.telemetry.properties', () => {
-      const context = { telemetry: { properties: {} } } as unknown as IActionContext;
-      logTelemetry(context, { key1: 'value1', key2: 'value2' });
-      expect(context.telemetry.properties).toEqual({ key1: 'value1', key2: 'value2' });
-    });
-
-    it('should merge properties when called multiple times', () => {
-      const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IActionContext;
-      logTelemetry(context, { key2: 'value2' });
-      expect(context.telemetry.properties).toEqual({ key1: 'initialValue', key2: 'value2' });
-      logTelemetry(context, { key1: 'updatedValue', key3: 'value3' });
-      expect(context.telemetry.properties).toEqual({ key1: 'updatedValue', key2: 'value2', key3: 'value3' });
     });
   });
 
@@ -1946,7 +1930,7 @@ namespace <%= LogicAppName %>.Tests
     it('should update the solution with the project when solution file exists', async () => {
       pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
 
-      const testsDirectory = path.join(projectPath, 'Tests');
+      const testsDirectory = path.join(projectPath, testsDirectoryName);
       const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
 
       await updateTestsSln(testsDirectory, logicAppCsprojPath);
@@ -1962,7 +1946,7 @@ namespace <%= LogicAppName %>.Tests
     it('should create a new solution file when it does not exist', async () => {
       pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
 
-      const testsDirectory = path.join(projectPath, 'Tests');
+      const testsDirectory = path.join(projectPath, testsDirectoryName);
       const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
 
       await updateTestsSln(testsDirectory, logicAppCsprojPath);
@@ -1979,14 +1963,14 @@ namespace <%= LogicAppName %>.Tests
 
   describe('validateWorkflowPath', () => {
     it('should throw an error if the workflow node is not valid', () => {
-      const invalidWorkflowPath = path.join(projectPath, '..', fakeLogicAppName, 'workflow1', 'workflow.json');
+      const invalidWorkflowPath = path.join(projectPath, '..', fakeLogicAppName, 'workflow1', workflowFileName);
       expect(() => validateWorkflowPath(projectPath, invalidWorkflowPath)).toThrowError(
         "doesn't belong to the Logic Apps Standard Project"
       );
     });
 
     it('should not throw an error if the workflow node is valid', () => {
-      const validWorkflowPath = path.join(projectPath, fakeLogicAppName, 'workflow1', 'workflow.json');
+      const validWorkflowPath = path.join(projectPath, fakeLogicAppName, 'workflow1', workflowFileName);
       expect(() => validateWorkflowPath(projectPath, validWorkflowPath)).not.toThrowError();
     });
   });

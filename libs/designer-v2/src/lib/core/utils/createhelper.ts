@@ -50,6 +50,7 @@ export const getConnectionsToUpdate = (
     originalConnectionsJson.serviceProviderConnections ?? {},
     connectionsJson.serviceProviderConnections ?? {}
   );
+  const hasNewMcpConnectionKeys = hasNewKeys(originalConnectionsJson.agentMcpConnections ?? {}, connectionsJson.agentMcpConnections ?? {});
 
   const hasNewManagedApiConnectionRuntimeUrl = hasNewConnectionRuntimeUrl(
     originalConnectionsJson.managedApiConnections ?? {},
@@ -63,6 +64,7 @@ export const getConnectionsToUpdate = (
     !hasNewFunctionKeys &&
     !hasNewApimKeys &&
     !hasNewManagedApiKeys &&
+    !hasNewMcpConnectionKeys &&
     !hasNewServiceProviderKeys &&
     !hasNewAgentKeys &&
     !hasNewManagedApiConnectionRuntimeUrl
@@ -109,6 +111,13 @@ export const getConnectionsToUpdate = (
   for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
     if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
       (connectionsToUpdate.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
+    }
+  }
+
+  for (const agentMcpConnectionName of Object.keys(connectionsJson.agentMcpConnections ?? {})) {
+    if (originalConnectionsJson.agentMcpConnections?.[agentMcpConnectionName]) {
+      (connectionsToUpdate.agentMcpConnections as any)[agentMcpConnectionName] =
+        originalConnectionsJson.agentMcpConnections[agentMcpConnectionName];
     }
   }
 

@@ -10612,7 +10612,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Knowledge Sources]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tudásforrások]]></Val>
+            <Val><![CDATA[Ismeretforrások]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

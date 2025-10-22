@@ -1,5 +1,4 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
-import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -17,8 +16,8 @@ import { changePanelNode, openPanel, setIsPanelLoading, setAlternateSelectedNode
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { WorkflowKind, type NodesMetadata, type WorkflowState } from '../../state/workflow/workflowInterfaces';
+import { addAgentTool, addNode, setFocusNode, setWorkflowKind } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
@@ -64,6 +63,9 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { isA2AWorkflow } from '../../state/workflow/helper';
+import { openKindChangeDialog } from '../../state/modal/modalSlice';
+import constants from '../../../common/constants';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -78,12 +80,45 @@ type AddOperationPayload = {
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
-    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false } = payload;
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false, isTrigger } = payload;
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
 
     const workflowState = (getState() as RootState).workflow;
+
+    // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
+    if (isTrigger) {
+      const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+      if (isA2AWorkflow(workflowState)) {
+        if (!isA2ATrigger) {
+          const workflowHasHandoffs = Object.values(workflowState.nodesMetadata).some(
+            (node) => Object.values(node?.handoffs ?? {}).length > 0
+          );
+          if (workflowHasHandoffs) {
+            // Can't switch to stateful/stateless if there are handoffs in the workflow
+            dispatch(openKindChangeDialog({ type: 'toStateful' }));
+            return;
+          }
+          dispatch(setWorkflowKind(WorkflowKind.STATEFUL));
+        }
+      } else if (isA2ATrigger) {
+        const allAgentIds = Object.keys(workflowState.operations).filter((id) =>
+          equals(workflowState.operations[id]?.type, constants.NODE.TYPE.AGENT)
+        );
+        const workflowHasActionsAfterAgent = Object.values(workflowState.operations).some((node: any) => {
+          const runningAfter = Object.keys(node?.runAfter ?? {});
+          return runningAfter.some((id) => allAgentIds.includes(id));
+        });
+        if (workflowHasActionsAfterAgent) {
+          // Can't switch to A2A if there are actions after an agent
+          dispatch(openKindChangeDialog({ type: 'toA2A' }));
+          return;
+        }
+        dispatch(setWorkflowKind(WorkflowKind.AGENT));
+      }
+    }
+
     const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAddingAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
@@ -191,7 +226,7 @@ export const initializeOperationDetails = async (
       manifest,
       presetParameterValues
     );
-    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const customCodeParameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
@@ -464,7 +499,7 @@ export const addTokensAndVariables = (
     )
   );
 
-  if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+  if (equals(operationType, constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
     setVariableMetadata(iconUri, brandColor);
 
     const variables = getVariableDeclarations(nodeInputs);
@@ -480,10 +515,10 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
   return operationType
     ? operationType
     : (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
-      ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
+      ? constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-        : Constants.NODE.TYPE.API_CONNECTION;
+        ? constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : constants.NODE.TYPE.API_CONNECTION;
 };
 
 export const getTriggerNodeManifest = async (
