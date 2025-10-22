@@ -43,3 +43,7 @@ export const useShouldPromptForTriggerDescription = (workflowId: string) => {
     return true;
   });
 };
+
+export const useKindChangeDialogType = () => {
+  return useSelector((state: RootState) => state.modal.kindChangeDialogType);
+};

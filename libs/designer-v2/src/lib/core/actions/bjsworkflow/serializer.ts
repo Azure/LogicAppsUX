@@ -179,6 +179,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     connectionReferences,
     parameters,
     notes,
+    kind: rootState.workflow.workflowKind,
   };
 
   const workflowService = WorkflowService();
