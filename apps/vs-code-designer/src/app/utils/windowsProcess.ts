@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
-
-import processTree = require('process-tree');
+import * as processTree from 'process-tree';
 
 /**
  * Gets windows process array with specific pid.

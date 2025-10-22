@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 import { COMMON_ERRORS } from './src/constants';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 // https://testing-library.com/docs/react-testing-library/api#cleanup
 afterEach(() => cleanup());
@@ -29,9 +30,14 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     },
     nonNullProp: vi.fn(),
     nonNullValue: vi.fn(),
-    callWithTelemetryAndErrorHandling: (_key: string, callback: Function) => {
+    callWithTelemetryAndErrorHandling: (_key: string, callback: (context: IActionContext) => any) => {
       // Simply invoke the callback with a fake telemetry context.
-      return callback({ telemetry: { properties: {} } });
+      return callback({
+        telemetry: { properties: {}, measurements: {} },
+        errorHandling: undefined,
+        ui: undefined,
+        valuesToMask: [],
+      });
     },
     parseError: vi.fn(() => {
       return { message: 'error' };

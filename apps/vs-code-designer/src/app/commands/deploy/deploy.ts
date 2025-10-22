@@ -152,7 +152,9 @@ async function deploy(
     }
   }
 
-  identityWizardContext?.useAdvancedIdentity ? await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext) : undefined;
+  if (identityWizardContext?.useAdvancedIdentity) {
+    await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext);
+  }
 
   let isZipDeploy = false;
 
@@ -237,7 +239,7 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
   const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
 
-  let [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
+  const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
   if (!site) {
     if (isAdvance) {
       return await createLogicAppAdvanced(context, sub);
@@ -247,14 +249,17 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
 
   let secrets: ContainerAppSecret[] = [];
 
+  let hybridSite: Site | undefined;
   if (site.id.includes('Microsoft.App')) {
     // NOTE(anandgmenon): Getting latest metadata for hybrid app as the one loaded from the cache can have outdateed definition and cause deployment to fail.
     const clientContainer = await createContainerClient({ ...context, ...sub.subscription });
     const resourceGroup = site.id.split('/')?.[4];
-    site = (await clientContainer.containerApps.get(resourceGroup, site.name)) as undefined as Site;
-    secrets = (await clientContainer.containerApps.listSecrets(resourceGroup, site.name)).value;
+    hybridSite = (await clientContainer.containerApps.get(resourceGroup, site.name)) as undefined as Site;
+    secrets = (await clientContainer.containerApps.listSecrets(resourceGroup, hybridSite.name)).value;
   }
-  const resourceTree = new LogicAppResourceTree(sub.subscription, site, secrets);
+  const resourceTree = hybridSite
+    ? new LogicAppResourceTree(sub.subscription, hybridSite, secrets)
+    : new LogicAppResourceTree(sub.subscription, site, secrets);
 
   return new SlotTreeItem(sub, resourceTree);
 }
@@ -369,24 +374,21 @@ async function getProjectPathToDeploy(
 
   try {
     connectionsData = JSON.parse(connectionsJson);
-    const authValue = { type: 'ManagedServiceIdentity' };
-    const advancedIdentityAuthValue = {
-      type: 'ActiveDirectoryOAuth',
-      audience: 'https://management.core.windows.net/',
-      credentialType: 'Secret',
-      clientId: `@appsetting('${workflowAppAADClientId}')`,
-      tenant: `@appsetting('${workflowAppAADTenantId}')`,
-      secret: `@appsetting('${workflowAppAADClientSecret}')`,
-    };
+    const authValue = identityWizardContext?.useAdvancedIdentity
+      ? {
+          type: 'ActiveDirectoryOAuth',
+          audience: 'https://management.core.windows.net/',
+          credentialType: 'Secret',
+          clientId: `@appsetting('${workflowAppAADClientId}')`,
+          tenant: `@appsetting('${workflowAppAADTenantId}')`,
+          secret: `@appsetting('${workflowAppAADClientSecret}')`,
+        }
+      : { type: 'ManagedServiceIdentity' };
 
     if (parameterizeConnectionsSetting) {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationParameters(advancedIdentityAuthValue)
-        : updateAuthenticationParameters(authValue);
+      updateAuthenticationParameters(authValue);
     } else {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationInConnections(advancedIdentityAuthValue)
-        : updateAuthenticationInConnections(authValue);
+      updateAuthenticationInConnections(authValue);
     }
 
     resolvedConnections = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
