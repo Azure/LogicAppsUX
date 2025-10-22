@@ -511,14 +511,23 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
     // The listApiKeys endpoint returns a full agent URL path, not a base URL
     // Use it directly if available, otherwise construct from accessEndpoint
     if (apiEndpoint) {
-      // apiEndpoint is already the complete agent URL: https://host:port/api/agents/{guid}
+      // apiEndpoint is already the complete agent URL: https://app-XX.region.logic.azure.com/api/agents/{guid}
       const { normalized, hostName: extractedHostName } = resolveEndpointParts(apiEndpoint);
       agentUrl = normalized;
       hostName = extractedHostName;
 
-      // For chat URL, extract base URL and construct chat path
-      const baseUrl = normalized.substring(0, normalized.indexOf('/api/agents/'));
-      chatUrl = `${baseUrl}/api/agentsChat/${workflowName}/AgentChatIFrame`;
+      // Extract flow GUID from agent URL
+      const flowGuid = normalized.split('/api/agents/')[1];
+
+      // Extract scale unit from hostname (e.g., "app-11" -> "CU11")
+      const scaleUnitMatch = extractedHostName.match(/^app-(\d+)\./);
+      const scaleUnit = scaleUnitMatch ? `CU${scaleUnitMatch[1].padStart(2, '0')}` : 'CU00';
+
+      // Construct chat URL with agents.{region}.logic.azure.com domain
+      // Change "app-XX" to "agents" in the hostname
+      const regionAndDomain = extractedHostName.replace(/^app-\d+\./, '');
+      const chatBaseUrl = `https://agents.${regionAndDomain}`;
+      chatUrl = `${chatBaseUrl}/scaleunits/${scaleUnit}/flows/${flowGuid}/agentchat/IFrame`;
     } else {
       // Fallback: construct URLs from accessEndpoint
       const { normalized: agentBaseUrl, hostName: extractedHostName } = resolveEndpointParts(accessEndpoint);
