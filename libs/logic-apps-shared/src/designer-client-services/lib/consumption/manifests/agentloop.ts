@@ -62,7 +62,7 @@ export default {
           title: 'Model Id',
           description: 'Select the model to use.',
           type: 'string',
-          'x-ms-editor': 'dropdown',
+          'x-ms-editor': 'combobox',
           'x-ms-visibility': 'important',
         },
         deploymentId: {

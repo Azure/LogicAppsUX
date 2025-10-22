@@ -11,39 +11,5 @@ export default {
     brandColor: '#268bde',
     description: 'Easily integrate cutting-edge artificial intelligence capabilities into your workflows',
     capabilities: ['actions'],
-    operationParameterSets: {
-      subscriptionId: {
-        name: 'subscriptionId',
-        uiDefinition: {
-          displayName: 'Subscription ID',
-          description: 'Azure subscription ID',
-          constraints: { required: 'true' },
-        },
-      },
-      resourceGroup: {
-        name: 'resourceGroup',
-        uiDefinition: {
-          displayName: 'Resource Group',
-          description: 'Azure resource group name',
-          constraints: { required: 'true' },
-        },
-      },
-      flowName: {
-        name: 'flowName',
-        uiDefinition: {
-          displayName: 'Flow Name',
-          description: 'Logic App workflow name',
-          constraints: { required: 'true' },
-        },
-      },
-      agentModelType: {
-        name: 'agentModelType',
-        uiDefinition: {
-          displayName: 'Agent model type',
-          description: 'Type of agent model to use',
-          constraints: { required: 'true' },
-        },
-      },
-    },
   },
 } as Connector;

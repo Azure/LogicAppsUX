@@ -14,7 +14,14 @@ const getOperationState = (state: RootState) => state.operations;
 
 export const useOperationVisuals = (nodeId: string) =>
   useSelector(
-    createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' })
+    createSelector(
+      getOperationState,
+      (state) =>
+        getRecordEntry(state.operationMetadata, nodeId) ?? {
+          brandColor: '',
+          iconUri: '',
+        }
+    )
   );
 
 export const useOperationsVisuals = (nodesId: string[]) =>
@@ -22,7 +29,10 @@ export const useOperationsVisuals = (nodesId: string[]) =>
     createSelector(getOperationState, (state) => {
       return nodesId.map((nodeId) => {
         return {
-          ...(getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' }),
+          ...(getRecordEntry(state.operationMetadata, nodeId) ?? {
+            brandColor: '',
+            iconUri: '',
+          }),
           id: nodeId,
         };
       });
@@ -273,6 +283,19 @@ export const useBrandColor = (nodeId: string) =>
 
 export const useIconUri = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.iconUri ?? ''));
+
+export const useAllIcons = () =>
+  useSelector(
+    createSelector(getOperationState, (state) => {
+      const icons: Record<string, string> = {};
+      Object.entries(state.operationMetadata).forEach(([nodeId, metadata]) => {
+        if (metadata?.iconUri) {
+          icons[nodeId] = metadata.iconUri;
+        }
+      });
+      return icons;
+    })
+  );
 
 export const useNodeConnectorId = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationInfo, nodeId)?.connectorId));

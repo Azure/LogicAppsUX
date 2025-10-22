@@ -14,6 +14,7 @@ import {
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
   fetchAgentUrl,
+  fetchAgentModelIds,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
@@ -530,6 +531,7 @@ const getDesignerServices = (
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
     getAgentUrl: () => fetchAgentUrl(workflowId, workflowName, workflow?.properties?.defaultHostName ?? ''),
+    getAgentModelId: () => fetchAgentModelIds(workflowId),
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {

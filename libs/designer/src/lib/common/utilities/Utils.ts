@@ -36,4 +36,8 @@ export class AgentUtils {
   public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
     return equals(parameterName ?? '', 'agentModelType', true);
   };
+
+  public static isConsumptionAgentModelTypeParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'modelId', true);
+  };
 }

@@ -39,9 +39,6 @@ export type ErrorMessage = {
 };
 
 export interface WorkflowState {
-  flowName: string;
-  resourceGroup: string;
-  subscriptionId: string;
   workflowSpec?: SpecTypes;
   graph: WorkflowNode | null;
   operations: Operations;

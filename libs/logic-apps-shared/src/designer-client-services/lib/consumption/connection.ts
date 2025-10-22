@@ -19,26 +19,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     this._vVersion = 'V1';
   }
 
-  async fetchAgentModels(params: { subscriptionId: string; resourceGroup: string; flowName: string }): Promise<any[]> {
-    const { baseUrl, httpClient } = this._options;
-
-    // Validate parameters
-    if (!params.subscriptionId || !params.resourceGroup || !params.flowName) {
-      throw new Error(
-        `Missing required parameter(s): subscriptionId=${params.subscriptionId}, resourceGroup=${params.resourceGroup}, flowName=${params.flowName}`
-      );
-    }
-
-    const endpoint = `/api/management/subscriptions/${params.subscriptionId}/resourceGroups/${params.resourceGroup}/providers/Microsoft.Logic/workflows/${params.flowName}/models`;
-
-    const url = `${baseUrl}${endpoint}`;
-    console.log('Model API URL:', url);
-
-    const response = await httpClient.get<any[]>({ uri: url });
-    console.log('API response:', response);
-    return response;
-  }
-
   async getConnector(connectorId: string, getCached = false): Promise<Connector> {
     let connector: Connector | undefined;
     if (getCached && this._options.getCachedConnector) {

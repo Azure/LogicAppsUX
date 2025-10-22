@@ -38,6 +38,11 @@ export interface IWorkflowService {
   getAgentUrl?(): Promise<AgentURL>;
 
   /**
+   * Gets agent model ids for Agent Loop in Consumption.
+   */
+  getAgentModelId?(): Promise<string[]>;
+
+  /**
    * Notifies for callback URL updates.
    */
   notifyCallbackUrlUpdate?(triggerName: string, newTriggerId: string): void;

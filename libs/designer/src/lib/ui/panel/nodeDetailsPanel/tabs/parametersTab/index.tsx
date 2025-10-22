@@ -51,7 +51,7 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { Divider, Dropdown, Option, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
+import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -77,7 +77,6 @@ import {
 import {
   clone,
   ConnectionService,
-  ConsumptionConnectionService,
   EditorService,
   equals,
   ExtensionProperties,
@@ -86,7 +85,7 @@ import {
   isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
-  httpClient,
+  WorkflowService,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
@@ -106,6 +105,7 @@ import {
   getFirstDeploymentModelName,
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
+  isAgentConnectorAndConsumptionAgentModel,
   isAgentConnectorAndDeploymentId,
 } from './helpers';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
@@ -491,7 +491,13 @@ export const ParameterSection = ({
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
         if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue && !isNullOrUndefined(connector)) {
-          dispatch(dynamicallyLoadAgentConnection({ nodeId, connector, modelType: newValue }));
+          dispatch(
+            dynamicallyLoadAgentConnection({
+              nodeId,
+              connector,
+              modelType: newValue,
+            })
+          );
         }
       }
 
@@ -596,6 +602,46 @@ export const ParameterSection = ({
         idReplacements,
         workflowParameters
       );
+    }
+
+    if (isAgentConnectorAndConsumptionAgentModel(operationInfo.connectorId ?? '', parameter?.parameterName ?? '')) {
+      // Fetch agent models for consumption workflows
+      const fetchModels = async () => {
+        try {
+          const models = await WorkflowService()?.getAgentModelId?.();
+
+          if (models && models.length > 0) {
+            // Update the parameter's editor options with the fetched models
+            const modelOptions = models.map((model: string) => ({
+              value: model,
+              displayName: model,
+            }));
+
+            // Update the parameter with the new options
+            dispatch(
+              updateNodeParameters({
+                nodeId,
+                parameters: [
+                  {
+                    groupId: group.id,
+                    parameterId: parameter.id,
+                    propertiesToUpdate: {
+                      editorOptions: {
+                        ...parameter.editorOptions,
+                        options: modelOptions,
+                      },
+                    },
+                  },
+                ],
+              })
+            );
+          }
+        } catch (error) {
+          console.error('Failed to fetch agent models:', error);
+        }
+      };
+
+      fetchModels();
     }
   };
 
@@ -821,44 +867,9 @@ export const ParameterSection = ({
       setSectionExpanded(!sectionExpanded);
     }
   };
-
-  // ...existing code...
-
-  const subscriptionId = useSelector((state: RootState) => state.workflow.subscriptionId);
-  const resourceGroup = useSelector((state: RootState) => state.workflow.resourceGroup);
-  const flowName = useSelector((state: RootState) => state.workflow.flowName);
-
-  // Add debugging logs here
-  console.log('Redux state values:', { subscriptionId, resourceGroup, flowName });
-
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
-      if (param.parameterName === 'modelId') {
-        return {
-          settingType: 'Custom',
-          settingProp: {
-            component: (
-              <>
-                <label>{param.label}</label>
-                <ModelIdDropdown
-                  subscriptionId={subscriptionId || ''}
-                  resourceGroup={resourceGroup || ''}
-                  flowName={flowName || ''}
-                  value={param.value?.[0]?.value || ''}
-                  disabled={readOnly}
-                  options={{
-                    baseUrl: 'https://management.azure.com',
-                    apiVersion: '2022-09-01-preview',
-                    httpClient: httpClient,
-                  }}
-                />
-              </>
-            ),
-            required: param.required,
-          },
-        };
-      }
       // ...rest of the existing code...
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
@@ -1086,80 +1097,6 @@ export const getEditorAndOptions = (
   }
 
   return { editor, editorOptions };
-};
-
-console.log('Rendering ModelIdDropdown');
-interface ModelIdDropdownProps {
-  subscriptionId: string;
-  resourceGroup: string;
-  flowName: string;
-  value?: string;
-  disabled?: boolean;
-  options: any; // Replace 'any' with a more specific type if available for serviceOptions
-}
-
-export const ModelIdDropdown: React.FC<ModelIdDropdownProps> = ({
-  subscriptionId,
-  resourceGroup,
-  flowName,
-  value,
-  disabled,
-  options: serviceOptions,
-}) => {
-  const [modelOptions, setModelOptions] = useState<{ key: string; text: string }[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  // Add debugging logs
-  console.log('ModelIdDropdown props:', { subscriptionId, resourceGroup, flowName, serviceOptions });
-
-  useEffect(() => {
-    // Guard: Only fetch if all params are present
-    if (!subscriptionId || !resourceGroup || !flowName) {
-      console.log('Missing required parameters:', { subscriptionId, resourceGroup, flowName });
-      setModelOptions([]);
-      return;
-    }
-
-    console.log('Fetching models with params:', { subscriptionId, resourceGroup, flowName });
-    setLoading(true);
-    const service = new ConsumptionConnectionService(serviceOptions);
-    service
-      .fetchAgentModels({ subscriptionId, resourceGroup, flowName })
-      .then((models) => {
-        console.log('Fetched models:', models);
-        setModelOptions(
-          models.map((model) => ({
-            key: model.name,
-            text: model.name,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error('Error fetching models:', error);
-        setModelOptions([]);
-      })
-      .finally(() => setLoading(false));
-  }, [subscriptionId, resourceGroup, flowName, serviceOptions]);
-
-  return (
-    <Dropdown
-      value={value}
-      disabled={disabled}
-      placeholder={loading ? 'Loading models...' : 'Select a model'}
-      onOptionSelect={(_, data) => {
-        if (data.optionValue) {
-          console.log('Model selected:', data.optionValue);
-          // onChange(data.optionValue);
-        }
-      }}
-    >
-      {modelOptions.map((option) => (
-        <Option key={option.key} value={option.key}>
-          {option.text}
-        </Option>
-      ))}
-    </Dropdown>
-  );
 };
 
 const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {
