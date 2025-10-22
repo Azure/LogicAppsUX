@@ -107,7 +107,11 @@ export const initializeGraphState = createAsyncThunk<
         const allGraphIds: string[] = [];
         const collapseGraphs = (graph: WorkflowNode) => {
           if (graph.children && graph.type !== WORKFLOW_NODE_TYPES.HIDDEN_NODE) {
-            allGraphIds.push(graph.id);
+            // Don't collapse agent loops - they should always be expanded by default
+            const isAgentLoop = graph.id && deserializedWorkflow.operations[graph.id]?.type?.toLowerCase() === 'agent';
+            if (!isAgentLoop) {
+              allGraphIds.push(graph.id);
+            }
             graph.children.forEach(collapseGraphs);
           }
         };
