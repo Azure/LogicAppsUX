@@ -504,13 +504,39 @@ export const fetchAgentUrlConsumption = async (workflowId: string, workflowName:
     const apiKey = apiKeysResponse.data?.key;
     const apiEndpoint = apiKeysResponse.data?.endpoint;
 
-    // Use the endpoint from listApiKeys if available, otherwise fall back to accessEndpoint
-    const endpoint = apiEndpoint || accessEndpoint;
-    const { normalized: agentBaseUrl, hostName } = resolveEndpointParts(endpoint);
+    let agentUrl: string;
+    let chatUrl: string;
+    let hostName: string;
 
-    // Construct URLs following the pattern used in Standard SKU
-    // chatUrl is base path, queryParams contains authentication
-    const { agentUrl, chatUrl } = buildAgentUrls(agentBaseUrl, workflowName);
+    // The listApiKeys endpoint returns a full agent URL path, not a base URL
+    // Use it directly if available, otherwise construct from accessEndpoint
+    if (apiEndpoint) {
+      // apiEndpoint is already the complete agent URL: https://app-XX.region.logic.azure.com/api/agents/{guid}
+      const { normalized, hostName: extractedHostName } = resolveEndpointParts(apiEndpoint);
+      agentUrl = normalized;
+      hostName = extractedHostName;
+
+      // Extract flow GUID from agent URL
+      const flowGuid = normalized.split('/api/agents/')[1];
+
+      // Extract scale unit from hostname (e.g., "app-11" -> "CU11")
+      const scaleUnitMatch = extractedHostName.match(/^app-(\d+)\./);
+      const scaleUnit = scaleUnitMatch ? `CU${scaleUnitMatch[1].padStart(2, '0')}` : 'CU00';
+
+      // Construct chat URL with agents.{region}.logic.azure.com domain
+      // Change "app-XX" to "agents" in the hostname
+      const regionAndDomain = extractedHostName.replace(/^app-\d+\./, '');
+      const chatBaseUrl = `https://agents.${regionAndDomain}`;
+      chatUrl = `${chatBaseUrl}/scaleunits/${scaleUnit}/flows/${flowGuid}/agentchat/IFrame`;
+    } else {
+      // Fallback: construct URLs from accessEndpoint
+      const { normalized: agentBaseUrl, hostName: extractedHostName } = resolveEndpointParts(accessEndpoint);
+      const urls = buildAgentUrls(agentBaseUrl, workflowName);
+      agentUrl = urls.agentUrl;
+      chatUrl = urls.chatUrl;
+      hostName = extractedHostName;
+    }
+
     const queryParams: AgentQueryParams | undefined = apiKey
       ? { apiKey, 'api-version': consumptionApiVersion }
       : { 'api-version': consumptionApiVersion };
