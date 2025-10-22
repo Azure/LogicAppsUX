@@ -132,6 +132,8 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const readOnly = useReadOnly() || isTabReadOnly;
   const nodesInitialized = useNodesInitialized();
 
+  const [consumptionAgentModels, setConsumptionAgentModels] = useState<string[]>([]);
+
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
@@ -155,6 +157,27 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     description:
       'Descriptive message to show if the connection for an action cannot be changed or edited due to being shown in dual-pane (pinned action) view.',
   });
+
+  // Fetch consumption agent models on component mount for agent connectors
+  useEffect(() => {
+    const fetchConsumptionAgentModels = async () => {
+      try {
+        const models = await WorkflowService()?.getAgentModelId?.();
+        if (models && models.length > 0) {
+          // Ensure gpt-4o-mini is always available as a fallback option
+          const modelsSet = new Set(models);
+          if (!modelsSet.has('gpt-4o-mini')) {
+            modelsSet.add('gpt-4o-mini');
+          }
+          setConsumptionAgentModels(Array.from(modelsSet));
+        }
+      } catch (error) {
+        console.error('Failed to fetch consumption agent models:', error);
+      }
+    };
+
+    fetchConsumptionAgentModels();
+  }, []);
 
   const isLoading = useMemo(() => {
     if (!operationInfo && !nodeMetadata?.subgraphType) {
@@ -229,6 +252,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
             readOnly={readOnly}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}
+            consumptionAgentModels={consumptionAgentModels}
           />
         </div>
       ))}
@@ -351,12 +375,14 @@ export const ParameterSection = ({
   readOnly,
   tokenGroup,
   expressionGroup,
+  consumptionAgentModels = [],
 }: {
   nodeId: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
   expressionGroup: TokenGroup[];
+  consumptionAgentModels?: string[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
@@ -602,46 +628,6 @@ export const ParameterSection = ({
         idReplacements,
         workflowParameters
       );
-    }
-
-    if (isAgentConnectorAndConsumptionAgentModel(operationInfo.connectorId ?? '', parameter?.parameterName ?? '')) {
-      // Fetch agent models for consumption workflows
-      const fetchModels = async () => {
-        try {
-          const models = await WorkflowService()?.getAgentModelId?.();
-
-          if (models && models.length > 0) {
-            // Update the parameter's editor options with the fetched models
-            const modelOptions = models.map((model: string) => ({
-              value: model,
-              displayName: model,
-            }));
-
-            // Update the parameter with the new options
-            dispatch(
-              updateNodeParameters({
-                nodeId,
-                parameters: [
-                  {
-                    groupId: group.id,
-                    parameterId: parameter.id,
-                    propertiesToUpdate: {
-                      editorOptions: {
-                        ...parameter.editorOptions,
-                        options: modelOptions,
-                      },
-                    },
-                  },
-                ],
-              })
-            );
-          }
-        } catch (error) {
-          console.error('Failed to fetch agent models:', error);
-        }
-      };
-
-      fetchModels();
     }
   };
 
@@ -894,7 +880,8 @@ export const ParameterSection = ({
         upstreamNodeIds ?? [],
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
-        isA2AWorkflow
+        isA2AWorkflow,
+        consumptionAgentModels
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -1038,7 +1025,8 @@ export const getEditorAndOptions = (
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
-  isA2AWorkflow?: boolean
+  isA2AWorkflow?: boolean,
+  consumptionAgentModels: string[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1082,6 +1070,23 @@ export const getEditorAndOptions = (
     return {
       editor,
       editorOptions: { options },
+    };
+  }
+
+  // Handle consumption agent connector with agent model type parameter
+  const isConsumptionAgentModel = isAgentConnectorAndConsumptionAgentModel(operationInfo?.connectorId ?? '', parameter.parameterName ?? '');
+  if (equals(editor, 'combobox') && isConsumptionAgentModel && consumptionAgentModels.length > 0) {
+    const options = consumptionAgentModels.map((model) => ({
+      value: model,
+      displayName: model,
+    }));
+
+    return {
+      editor,
+      editorOptions: {
+        ...editorOptions,
+        options,
+      },
     };
   }
 
