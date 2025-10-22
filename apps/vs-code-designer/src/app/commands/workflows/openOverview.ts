@@ -4,13 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion, workflowTenantIdKey } from '../../../constants';
+import {
+  assetsFolderName,
+  localSettingsFileName,
+  managementApiPrefix,
+  workflowAppApiVersion,
+  workflowTenantIdKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import {
   cacheWebviewPanel,
+  getAzureConnectorDetailsForLocalProject,
   getStandardAppData,
   getWorkflowManagementBaseURI,
   removeWebviewPanelFromCache,
@@ -24,12 +31,14 @@ import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
+import { isRuntimeUp } from '../../utils/startRuntimeApi';
 
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
@@ -45,6 +54,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
   let isWorkflowRuntimeRunning: boolean;
+  let azureDetails: AzureConnectorDetails;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
@@ -52,6 +62,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
     workflowName = basename(dirname(workflowFilePath));
+    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    if (!isNullOrUndefined(projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
+      await launchProjectDebugger(context, projectPath);
+    }
+
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
@@ -60,10 +75,13 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
 
-    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
-    isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
+    isWorkflowRuntimeRunning = await isRuntimeUp(ext.workflowRuntimePort);
+    accessToken = await getAccessToken();
+    if (projectPath) {
+      azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+    }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
     panelName = `${workflowNode.id}-${workflowName}-overview`;
@@ -76,11 +94,19 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isLocal = false;
     isWorkflowRuntimeRunning = true;
+    accessToken = await getAccessToken();
+    azureDetails = {
+      enabled: true,
+      accessToken,
+      subscriptionId: workflowNode?.subscription?.subscriptionId,
+      location: normalizeLocation(workflowNode?.parent?.parent?.site.location),
+      workflowManagementBaseUrl: workflowNode?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+      tenantId: workflowNode?.parent?.subscription?.tenantId,
+      resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
+    };
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
-
-  accessToken = await getAccessToken();
 
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
@@ -115,8 +141,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   );
 
   panel.iconPath = {
-    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'Codeless.svg')),
-    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'Codeless.svg')),
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'Codeless.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'Codeless.svg')),
   };
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
@@ -141,6 +167,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             hostVersion: ext.extensionVersion,
             isLocal: isLocal,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
+            azureDetails: azureDetails,
+            kind: kind,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
@@ -203,6 +231,13 @@ async function getLocalWorkflowCallbackInfo(
       method: HTTP_METHODS.POST,
     };
   }
+}
+
+function normalizeLocation(location: string): string {
+  if (!location) {
+    return '';
+  }
+  return location.toLowerCase().replace(/ /g, '');
 }
 
 function getWorkflowStateType(workflowName: string, kind: string, settings: Record<string, string>): string {

@@ -952,7 +952,8 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAgentUrl: () => fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? ''),
+    getAgentUrl: (isDraftMode?: boolean) =>
+      fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? '', isDraftMode),
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,

@@ -11,25 +11,29 @@ interface OperationSearchHeaderProps {
 export const OperationSearchHeaderV2 = ({ searchCallback, searchTerm, isTriggerNode, hideOperations }: OperationSearchHeaderProps) => {
   const intl = useIntl();
 
-  const searchPlaceholderText = intl.formatMessage(
-    hideOperations
-      ? {
-          defaultMessage: 'Search for a connector',
-          id: 'CLJuAQ',
-          description: 'Placeholder text for Connector search bar',
-        }
-      : isTriggerNode
-        ? {
-            defaultMessage: 'Search for a trigger or connector',
-            id: 'CLJuAQ',
-            description: 'Placeholder text for Trigger/Connector search bar',
-          }
-        : {
-            defaultMessage: 'Search for an action or connector',
-            id: 'py9dSW',
-            description: 'Placeholder text for Operation/Connector search bar',
-          }
-  );
+  const connectorSearchPlaceholder = intl.formatMessage({
+    defaultMessage: 'Search for a connector',
+    id: 'tw6oMS',
+    description: 'Placeholder text for Connector search bar',
+  });
+
+  const triggerSearchPlaceholder = intl.formatMessage({
+    defaultMessage: 'Search for a trigger',
+    id: 'TiUE/i',
+    description: 'Placeholder text for Trigger search bar',
+  });
+
+  const actionSearchPlaceholder = intl.formatMessage({
+    defaultMessage: 'Search for an action',
+    id: 'Tzq5ot',
+    description: 'Placeholder text for Action search bar',
+  });
+
+  const searchPlaceholderText = hideOperations
+    ? connectorSearchPlaceholder
+    : isTriggerNode
+      ? triggerSearchPlaceholder
+      : actionSearchPlaceholder;
 
   return (
     <div className="msla-sub-heading-container">

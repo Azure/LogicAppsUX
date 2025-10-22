@@ -9,6 +9,7 @@ import * as parameterUtil from '../../utils/codeless/parameter';
 import * as localSettingsUtil from '../../utils/appSettings/localSettings';
 import * as parameterizerUtil from '../../utils/codeless/parameterizer';
 import * as workspaceUtil from '../../utils/workspace';
+import { localSettingsFileName } from '../../../constants';
 
 describe('parameterizeConnections', () => {
   const testContext: any = {
@@ -85,7 +86,7 @@ describe('parameterizeConnections', () => {
     expect(parameterUtil.getParametersJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(localSettingsUtil.getLocalSettingsJson).toHaveBeenCalledWith(
       testContext,
-      path.join(testLogicAppProjectPath1, 'local.settings.json')
+      path.join(testLogicAppProjectPath1, localSettingsFileName)
     );
     expect(parameterizerUtil.parameterizeConnection).toHaveBeenCalled();
     expect(parameterUtil.saveWorkflowParameter).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, testParametersJson);

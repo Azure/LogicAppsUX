@@ -1,4 +1,4 @@
-import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text, mergeClasses } from '@fluentui/react-components';
+import { MessageBar, MessageBarBody, MessageBarTitle, Text, mergeClasses } from '@fluentui/react-components';
 import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
@@ -33,27 +33,16 @@ export const AgentInstructionEditor = ({
   const { systemMessage, userMessage } = useMemo(() => {
     return parseAgentInstruction(initialValue, setErrorMessage);
   }, [initialValue]);
-  const systemInstructionDescription = intl.formatMessage({
-    defaultMessage:
-      'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
-    description: 'Description for agent instruction editor',
-    id: 'hRLAFg',
-  });
   const userInstructionDescription = intl.formatMessage({
     defaultMessage:
       'Add optional prompts or questions for the agent. For better results, focus each item on a single specific prompt or question.',
     description: 'Description for agent instruction editor',
     id: 'Z3Ak88',
   });
-  const descriptionLink = intl.formatMessage({
-    defaultMessage: 'Tips for writing agent instructions',
-    description: 'Description link for agent instruction editor',
-    id: 'Vp5rnF',
-  });
   const systemPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter the instructions for the agent.',
+    defaultMessage: 'Give the agent context for its role in the workflow',
     description: 'Agent system placeholder',
-    id: 'dlLxEo',
+    id: 'Eaaf3l',
   });
   const userPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter a user prompt or question.',
@@ -66,11 +55,6 @@ export const AgentInstructionEditor = ({
     id: '9Mu4CV',
   });
 
-  const systemPromptLabel = intl.formatMessage({
-    defaultMessage: 'System instructions',
-    description: 'System instructions label',
-    id: 'GcOgsC',
-  });
   const warningInstructionBody = intl.formatMessage({
     defaultMessage: 'This could mean that the instruction schema is set up incorrectly.',
     id: 'hzJxEr',
@@ -86,12 +70,6 @@ export const AgentInstructionEditor = ({
   return (
     <div className="msla-agent-instruction-editor-container">
       <div className={mergeClasses(styles.editors)}>
-        <Label text={systemPromptLabel} isRequiredField />
-        <Text style={{ fontSize: 12 }}>{systemInstructionDescription} </Text>
-        <Link href="https://aka.ms/LogicApps/Agents" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
-          {descriptionLink}
-          <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-        </Link>
         <StringEditor
           {...props}
           className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}

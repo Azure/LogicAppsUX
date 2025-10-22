@@ -93,8 +93,13 @@ export class DefaultSearchOperationsService {
     };
 
     const fuse = new Fuse(this.allOperations, this.searchOptions());
-    return fuse
-      .search(searchTerm, { limit: 100 })
+
+    // If no search term, return all operations (with filters applied)
+    const searchResults = !searchTerm
+      ? this.allOperations.map((item) => ({ item, score: 0, refIndex: 0 }) as Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>)
+      : fuse.search(searchTerm, { limit: 100 })
+
+    return searchResults
       .filter(filterItems)
       .sort(this.compareItems)
       .map((result) => result.item);

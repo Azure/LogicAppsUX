@@ -21,6 +21,7 @@ import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
@@ -115,13 +116,17 @@ async function waitForRuntimeStartUp(context: IActionContext, projectPath: strin
   return Promise.reject();
 }
 
-async function isRuntimeUp(port: number): Promise<boolean> {
+export async function isRuntimeUp(port: number): Promise<boolean> {
+  if (isNullOrUndefined(port)) {
+    return false;
+  }
+
   try {
     const url = `http://localhost:${port}${designerStartApi}`;
     await axios.get(url);
-    return Promise.resolve(true);
+    return true;
   } catch {
-    return Promise.resolve(false);
+    return false;
   }
 }
 

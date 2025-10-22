@@ -51,16 +51,18 @@ export const useRunsInfiniteQuery = (enabled = false) => {
       // them without an extra fetch when available.
       onSuccess: (data) => {
         try {
-          const allRuns: Run[] = (data?.pages ?? []).flatMap((p: any) => p.runs ?? []);
-          const currentRuns = (queryClient.getQueryData([runsQueriesKeys.allRuns]) as Record<string, Run> | undefined) ?? {};
-          allRuns.forEach((run) => {
-            if (run?.id) {
-              queryClient.setQueryData([runsQueriesKeys.run, run.id], run);
-              currentRuns[run.id] = run;
-            }
-          });
-          queryClient.setQueryData([runsQueriesKeys.allRuns], currentRuns);
           queryClient.invalidateQueries([runsQueriesKeys.allRuns]);
+          queryClient.setQueryData([runsQueriesKeys.allRuns], (_currentRuns: Record<string, Run> = {}) => {
+            const allRuns: Run[] = (data?.pages ?? []).flatMap((p: any) => p.runs ?? []);
+            const currentRuns = { ..._currentRuns } as Record<string, Run>;
+            allRuns.forEach((run) => {
+              if (run?.id) {
+                queryClient.setQueryData([runsQueriesKeys.run, run.id], run);
+                currentRuns[run.id] = run;
+              }
+            });
+            return currentRuns;
+          });
         } catch {
           // best-effort
         }
@@ -82,7 +84,7 @@ export const useAllRuns = () => {
   }, [allRuns]);
 };
 
-export const useRun = (runId: string | undefined) => {
+export const useRun = (runId: string | undefined, enabled = true) => {
   const queryClient = useQueryClient();
   return useQuery(
     [runsQueriesKeys.run, runId],
@@ -103,7 +105,7 @@ export const useRun = (runId: string | undefined) => {
     },
     {
       ...queryOpts,
-      enabled: !!runId,
+      enabled: !!runId && enabled,
       // If the run is running, poll for updates
       refetchInterval: () => {
         const run = queryClient.getQueryData<Run>([runsQueriesKeys.run, runId]);
