@@ -22,9 +22,11 @@ export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<
   // https://github.com/Microsoft/vscode-azurefunctions/issues/311
   if (process.platform !== Platform.linux) {
     try {
-      isFuncInstalled
-        ? await executeCommand(undefined, undefined, 'npm', 'ls', '-g', funcPackageName)
-        : await executeCommand(undefined, undefined, 'npm', '--version');
+      if (isFuncInstalled) {
+        await executeCommand(undefined, undefined, 'npm', 'ls', '-g', funcPackageName);
+      } else {
+        await executeCommand(undefined, undefined, 'npm', '--version');
+      }
       result.push(PackageManager.npm);
     } catch {
       // an error indicates no npm
