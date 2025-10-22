@@ -1,6 +1,7 @@
 import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../run-service';
 import { AdvancedOptionsTypes } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
+import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -15,6 +16,8 @@ export interface InitializePayload {
   hostVersion?: string;
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
+  azureDetails?: AzureConnectorDetails;
+  kind?: string;
 }
 
 export const Status = {
@@ -38,6 +41,8 @@ export interface WorkflowState {
   hostVersion?: string;
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
+  azureDetails?: AzureConnectorDetails;
+  kind?: string;
 }
 
 const initialState: WorkflowState = {
@@ -82,6 +87,8 @@ export const workflowSlice = createSlice({
         hostVersion,
         isLocal,
         isWorkflowRuntimeRunning,
+        azureDetails,
+        kind,
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -112,6 +119,8 @@ export const workflowSlice = createSlice({
       initializedState.hostVersion = hostVersion;
       initializedState.isLocal = isLocal;
       initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
+      initializedState.azureDetails = azureDetails;
+      initializedState.kind = kind;
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;

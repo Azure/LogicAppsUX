@@ -85,6 +85,7 @@ import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } 
 import type { Dispatch } from '@reduxjs/toolkit';
 import { operationSupportsSplitOn } from '../../utils/outputs';
 import { initializeConnectorOperationDetails } from './agent';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
@@ -140,7 +141,7 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
 
-    if (equals(operation.type, 'mcpclienttool') && equals(operation.kind, 'managed')) {
+    if (isManagedMcpOperation(operation)) {
       promises.push(initializeOperationDetailsForManagedMcpServer(operationId, operation, references, workflowKind, dispatch));
     } else if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
       promises.push(initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch));

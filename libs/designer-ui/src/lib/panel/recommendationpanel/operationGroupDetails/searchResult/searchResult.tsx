@@ -7,7 +7,7 @@ import { SearchResultSortOptions } from '../../../types';
 import { OperationSearchGroup } from '../../operationSearchGroup';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
-import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -29,6 +29,7 @@ export type SearchResultsGridProps = {
   setGroupByConnector: (groupByConnector: boolean) => void;
   filters: Record<string, string>;
   setFilters: (filters: Record<string, string>) => void;
+  isAddingMcpServer?: boolean;
 };
 
 const maxOperationsToDisplay = RecommendationPanelConstants.SEARCH_VIEW.MAX_OPERATIONS_IN_SEARCH_GROUP;
@@ -45,6 +46,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   displayRuntimeInfo,
   filters,
   setFilters,
+  isAddingMcpServer,
 }: SearchResultsGridProps) => {
   const intl = useIntl();
 
@@ -159,9 +161,11 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
           setFilters={setFilters}
           isSearchResult={true}
           setGroupedByConnector={setGroupByConnector}
-          groupedByConnector={groupByConnector}
+          groupedByConnector={groupByConnector && !isAddingMcpServer}
           resultsSorting={resultsSorting}
           setResultsSorting={setResultsSorting}
+          excludeBuiltin={isAddingMcpServer ? true : false}
+          hideGroupBy={isAddingMcpServer ? true : false}
         />
         <div className="msla-no-results-container">
           <img src={NoResultsSvg} alt={noResultsText?.toString()} />
@@ -178,9 +182,11 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         setFilters={setFilters}
         isSearchResult={true}
         setGroupedByConnector={setGroupByConnector}
-        groupedByConnector={groupByConnector}
+        groupedByConnector={groupByConnector && !isAddingMcpServer}
         resultsSorting={resultsSorting}
         setResultsSorting={setResultsSorting}
+        excludeBuiltin={!!isAddingMcpServer}
+        hideGroupBy={!!isAddingMcpServer}
       />
       {isLoadingMore && (
         <div style={{ marginBottom: '16px' }}>
@@ -202,6 +208,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
             onOperationSelected={onOperationClick}
             showConnectorName={!groupByConnector}
             displayRuntimeInfo={displayRuntimeInfo}
+            hideFavorites={isAddingMcpServer}
           />
         </>
       )}

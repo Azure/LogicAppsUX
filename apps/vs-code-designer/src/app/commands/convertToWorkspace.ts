@@ -100,7 +100,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
         DialogResponses.no
       );
       if (shouldOpenWorkspace === DialogResponses.yes) {
-        await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspacePath));
+        await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
         context.telemetry.properties.openContainingWorkspace = 'true';
         return true;
       }

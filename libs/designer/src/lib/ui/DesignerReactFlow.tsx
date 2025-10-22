@@ -8,6 +8,7 @@ import {
   guid,
   removeIdTag,
   WORKFLOW_NODE_TYPES,
+  SUBGRAPH_TYPES,
   type WorkflowNodeType,
 } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
@@ -45,17 +46,57 @@ const DesignerReactFlow = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const isInitialized = useNodesInitialized();
 
+  const nodesMetadata = useNodesMetadata();
+
+  // Dynamic node type mapping that considers both node type and subgraph type
+  const getNodeComponent = useCallback((nodeType: WorkflowNodeType, nodeId?: string) => {
+    // For SUBGRAPH_NODE, check the subgraph type to determine component
+    if (nodeType === 'SUBGRAPH_NODE' && nodeId) {
+      const nodeMetadata = nodesMetadata[nodeId];
+      const subgraphType = nodeMetadata?.subgraphType;
+      
+      // Use different components based on subgraph type
+      switch (subgraphType) {
+        case SUBGRAPH_TYPES.MCP_CLIENT:
+          return OperationNode;
+        case SUBGRAPH_TYPES.AGENT_CONDITION:
+        default:
+          return GraphNode; // Default subgraph rendering
+      }
+    }
+    
+    // Default static mapping for non-subgraph nodes
+    const staticMapping: Partial<Record<WorkflowNodeType, React.ComponentType<any>>> = {
+      OPERATION_NODE: OperationNode,
+      GRAPH_NODE: GraphNode,
+      SUBGRAPH_NODE: GraphNode, // Fallback, should be handled above
+      SCOPE_CARD_NODE: ScopeCardNode,
+      SUBGRAPH_CARD_NODE: SubgraphCardNode,
+      HIDDEN_NODE: HiddenNode,
+      PLACEHOLDER_NODE: PlaceholderNode,
+      COLLAPSED_NODE: CollapsedNode,
+    };
+    
+    return staticMapping[nodeType];
+  }, [nodesMetadata]);
+
+  // Create nodeTypes object for ReactFlow
   type NodeTypesObj = Partial<Record<WorkflowNodeType, React.ComponentType<any>>>;
-  const nodeTypes: NodeTypesObj = {
-    OPERATION_NODE: OperationNode,
-    GRAPH_NODE: GraphNode,
-    SUBGRAPH_NODE: GraphNode,
-    SCOPE_CARD_NODE: ScopeCardNode,
-    SUBGRAPH_CARD_NODE: SubgraphCardNode,
-    HIDDEN_NODE: HiddenNode,
-    PLACEHOLDER_NODE: PlaceholderNode,
-    COLLAPSED_NODE: CollapsedNode,
-  };
+  const nodeTypes: NodeTypesObj = useMemo(() => {
+    return {
+      OPERATION_NODE: OperationNode,
+      GRAPH_NODE: GraphNode,
+      SUBGRAPH_NODE: (props: any) => {
+        const Component = getNodeComponent('SUBGRAPH_NODE', props.id);
+        return Component ? <Component {...props} /> : <GraphNode {...props} />;
+      },
+      SCOPE_CARD_NODE: ScopeCardNode,
+      SUBGRAPH_CARD_NODE: SubgraphCardNode,
+      HIDDEN_NODE: HiddenNode,
+      PLACEHOLDER_NODE: PlaceholderNode,
+      COLLAPSED_NODE: CollapsedNode,
+    };
+  }, [getNodeComponent]);
 
   const edgeTypes = {
     BUTTON_EDGE: ButtonEdge,
@@ -181,8 +222,6 @@ const DesignerReactFlow = (props: any) => {
       document.removeEventListener('keydown', tabListener);
     }, tabCountTimeout * 1000);
   }, [isInitialized]);
-
-  const nodesMetadata = useNodesMetadata();
 
   const isA2AWorkflow = useIsA2AWorkflow();
   const allAgentIds = useAllAgentIds();

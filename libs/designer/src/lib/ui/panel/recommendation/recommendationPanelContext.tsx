@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations, useOperationsByConnector } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useMcpServersQuery, useOperationsByConnector } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -8,6 +8,7 @@ import {
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
+  useIsAddingMcpServer,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -19,7 +20,7 @@ import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
-import type { CommonPanelProps } from '@microsoft/designer-ui';
+import type { CommonPanelProps, OperationsData } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import { ActionSpotlight } from './actionSpotlight';
 import { BrowseView } from './browseView';
 import { useOnFavoriteClick } from './hooks';
+import { getOperationCardDataFromOperation } from './helpers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -39,15 +41,46 @@ const SELECTION_STATES = {
   CUSTOM_SWAGGER: 'HTTP_SWAGGER',
 };
 
+const builtinMcpServerOperation = {
+  name: 'nativemcpclient',
+  id: 'nativemcpclient',
+  type: 'nativemcpclient',
+  properties: {
+    api: {
+      id: 'connectionProviders/mcpclient',
+      name: 'mcpclient',
+      description: 'MCP Client Operations',
+      displayName: 'Connect your own MCP server',
+      iconUri:
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+    },
+    summary: 'Custom MCP server',
+    description: 'Native MCP Client',
+    visibility: 'Important',
+    operationType: 'McpClientTool',
+    operationKind: 'Builtin',
+    brandColor: '#709727',
+    iconUri:
+      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+  },
+} as const;
+
+const builtinMcpServerOperationData: OperationsData = {
+  type: 'Operation',
+  data: getOperationCardDataFromOperation(builtinMcpServerOperation),
+};
+
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
   const { displayRuntimeInfo } = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
+  const isAddingMcpServer = useIsAddingMcpServer();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isTrigger ? 'triggers' : 'actions',
   });
+  const [mcpFilters, setMcpFilters] = useState<Record<string, string>>({});
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOpArray>([]);
 
   const [isGrouped, setIsGrouped] = useState(true);
@@ -66,6 +99,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
+  const { data: mcpServers, isLoading: isLoadingMcpServers } = useMcpServersQuery();
   const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
 
@@ -100,7 +134,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
       });
     },
-    [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations],
+    [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations, isLoadingMcpServers],
     300
   );
 
@@ -153,6 +187,49 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const startSwaggerSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
+
+  const onAddMcpServer = useCallback(
+    (id: string, apiId?: string) => {
+      if (id === builtinMcpServerOperationData.data.id) {
+        dispatch(
+          addOperation({
+            operation: builtinMcpServerOperation,
+            relationshipIds,
+            nodeId: builtinMcpServerOperation.properties.summary.replaceAll(' ', '_'),
+            isParallelBranch: false,
+            isTrigger: false,
+            isAddingMcpServer: true,
+          })
+        );
+      } else {
+        const searchResultPromise = Promise.resolve(
+          (mcpServers?.data ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
+        );
+
+        searchResultPromise.then((operation) => {
+          if (!operation) {
+            return;
+          }
+          dispatch(selectOperationId(operation.id));
+          setSelectedOperation(operation);
+          dispatch(selectOperationGroupId(''));
+
+          const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
+          dispatch(
+            addOperation({
+              operation,
+              relationshipIds,
+              nodeId: newNodeId,
+              isParallelBranch: false,
+              isTrigger: false,
+              isAddingMcpServer: true,
+            })
+          );
+        });
+      }
+    },
+    [dispatch, relationshipIds, mcpServers]
+  );
 
   const onOperationClick = useCallback(
     (id: string, apiId?: string) => {
@@ -220,17 +297,29 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Text for the Details page navigation heading',
   });
 
-  const headingText = isTrigger
+  const headingText = isAddingMcpServer
     ? intl.formatMessage({
-        defaultMessage: 'Add a trigger',
-        id: 'dBxX0M',
-        description: 'Text for the "Add Trigger" page header',
+        defaultMessage: 'Choose an MCP Server',
+        id: 'dBxX8X',
+        description: 'Text for the "Add an MCP Server" panel header',
       })
-    : intl.formatMessage({
-        defaultMessage: 'Add an action',
-        id: 'EUQDM6',
-        description: 'Text for the "Add Action" page header',
-      });
+    : isTrigger
+      ? intl.formatMessage({
+          defaultMessage: 'Add a trigger',
+          id: 'dBxX0M',
+          description: 'Text for the "Add Trigger" page header',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Add an action',
+          id: 'EUQDM6',
+          description: 'Text for the "Add Action" page header',
+        });
+
+  const subTitle = intl.formatMessage({
+    defaultMessage: 'Select an existing MCP server or connect your own MCP server.',
+    id: 'Ta9XGH',
+    description: 'sub title for "Add an MCP Server" panel',
+  });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
@@ -244,6 +333,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         <XLargeText text={headingText} as="h2" />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
+      {isAddingMcpServer ? <div className="msla-app-action-subheader">{subTitle}</div> : null}
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -274,8 +364,24 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 filters={filters}
                 setFilters={setFilters}
                 isTriggerNode={isTrigger}
+                isAddingMcpServer={isAddingMcpServer}
+                onAddMcpServerClick={() => onAddMcpServer(builtinMcpServerOperationData.data.id)}
               />
-              {searchTerm ? (
+              {isAddingMcpServer ? (
+                <SearchView
+                  searchTerm={searchTerm}
+                  allOperations={mcpServers?.data ?? []}
+                  isLoadingOperations={isLoadingMcpServers}
+                  groupByConnector={false}
+                  setGroupByConnector={(newValue: boolean) => setIsGrouped(newValue)}
+                  isLoading={isLoadingMcpServers}
+                  filters={mcpFilters}
+                  setFilters={setMcpFilters}
+                  onOperationClick={onAddMcpServer}
+                  displayRuntimeInfo={displayRuntimeInfo}
+                  isAddingMcpServer={isAddingMcpServer}
+                />
+              ) : searchTerm ? (
                 <SearchView
                   searchTerm={searchTerm}
                   allOperations={allOperations ?? []}
