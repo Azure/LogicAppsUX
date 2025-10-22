@@ -22,11 +22,11 @@ import { useMemo } from 'react';
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const useAgentUrl = (): UseQueryResult<AgentURL> => {
+export const useAgentUrl = (props: { isDraftMode?: boolean }): UseQueryResult<AgentURL> => {
   return useQuery(
-    ['agentUrl'],
+    ['agentUrl', props.isDraftMode],
     async () => {
-      return WorkflowService().getAgentUrl?.();
+      return WorkflowService().getAgentUrl?.(props.isDraftMode);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
@@ -46,8 +46,8 @@ export type ChatButtonProps = ButtonProps & {
 
 export const ChatButton = (props: ChatButtonProps) => {
   const intl = useIntl();
-  const { isLoading, data } = useAgentUrl();
-  const { isDarkMode, isDraftMode, workflowName, ...buttonProps } = props;
+  const { isDarkMode, isDraftMode, ...buttonProps } = props;
+  const { isLoading, data } = useAgentUrl({ isDraftMode });
 
   const IntlText = useMemo(
     () => ({
@@ -76,27 +76,17 @@ export const ChatButton = (props: ChatButtonProps) => {
     }
 
     const agentChatUrl = data?.chatUrl;
-    let draftAgentCard = '';
-
-    if (agentChatUrl && isDraftMode) {
-      const url = new URL(agentChatUrl);
-      draftAgentCard =
-        url.origin && workflowName
-          ? `${url.origin}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json`
-          : '';
-    }
-
     return (
       <iframe
-        src={`${agentChatUrl}?apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}${draftAgentCard ? `&agentCard=${draftAgentCard}` : ''}`}
+        src={`${agentChatUrl}${agentChatUrl?.includes('?') ? '&' : '?'}apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}`}
         title={IntlText.TITLE}
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [isLoading, data?.chatUrl, data?.queryParams?.apiKey, isDraftMode, isDarkMode, IntlText.TITLE, IntlText.LOADING, workflowName]);
+  }, [isLoading, data?.chatUrl, data?.queryParams?.apiKey, isDarkMode, IntlText.TITLE, IntlText.LOADING]);
 
   return (
-    <Dialog modalType="non-modal" surfaceMotion={null}>
+    <Dialog modalType="modal" surfaceMotion={null}>
       <DialogTrigger disableButtonEnhancement>
         <Button {...buttonProps} icon={<ChatIcon />}>
           {IntlText.CHAT_TEXT}

@@ -292,11 +292,11 @@ export const listCallbackUrl = async (
 };
 
 // Helper function to fetch A2A authentication key
-const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string) => {
+const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isDraftMode?: boolean) => {
   const currentDate: Date = new Date();
 
   const response = await axios.post(
-    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/listApiKeys?api-version=2018-11-01`,
+    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/${isDraftMode ? 'listDraftApiKeys' : 'listApiKeys'}?api-version=2018-11-01`,
     {
       expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
       keyType: 'Primary',
@@ -415,10 +415,10 @@ const fetchOBODataConsumption = async (workflowId: string): Promise<string | nul
 };
 
 // Async function to get Agent URL with authentication tokens (uses React Query for memoization)
-export const fetchAgentUrl = (siteResourceId: string, workflowName: string, hostName: string): Promise<AgentURL> => {
+export const fetchAgentUrl = (siteResourceId: string, workflowName: string, hostName: string, isDraftMode?: boolean): Promise<AgentURL> => {
   const queryClient = getReactQueryClient();
 
-  return queryClient.fetchQuery(['agentUrl', siteResourceId, workflowName, hostName], async (): Promise<AgentURL> => {
+  return queryClient.fetchQuery(['agentUrl', siteResourceId, workflowName, hostName, isDraftMode], async (): Promise<AgentURL> => {
     if (!workflowName || !hostName) {
       return { agentUrl: '', chatUrl: '', hostName: '' };
     }
@@ -426,13 +426,13 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
     try {
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-      const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
+      const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame${isDraftMode ? `?agentCard=${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json` : ''}`;
       let queryParams: AgentQueryParams | undefined = undefined;
       const authentication = await fetchAuthentication(siteResourceId);
 
       if (!authentication?.properties?.enabled) {
         // Get A2A authentication key
-        const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName);
+        const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName, isDraftMode);
 
         // Get OBO data if available
         const oboData = await fetchOBOData(siteResourceId);
