@@ -676,7 +676,7 @@ export const initializeAgentModelIds = async (parameter: ParameterInfo): Promise
 
     const options = Array.from(modelsSet).map((model) => ({
       value: model,
-      displayName: model,
+      displayName: model === 'gpt-4o-mini' ? 'gpt-4o-mini (global)' : model,
     }));
 
     // Mutate the parameter object before it's stored in Redux

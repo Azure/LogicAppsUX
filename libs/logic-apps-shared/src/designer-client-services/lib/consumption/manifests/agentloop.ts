@@ -62,8 +62,9 @@ export default {
           title: 'Model Id',
           description: 'Select the model to use.',
           type: 'string',
-          'x-ms-editor': 'combobox',
+          'x-ms-editor': 'dropdown',
           'x-ms-visibility': 'important',
+          default: 'gpt-4o-mini',
         },
         deploymentId: {
           type: 'string',
