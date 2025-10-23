@@ -8,46 +8,44 @@ import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azex
 import { localize } from '../../../localize';
 
 /**
- * Enum representing available authentication methods for Azure connectors
+ * String literal union for supported authentication methods.
+ * This replaces the enum for simpler runtime footprint.
  */
-// eslint-disable-next-line no-restricted-syntax
-export enum AuthenticationMethod {
-  RawKeys = 'rawKeys',
-  ManagedServiceIdentity = 'managedServiceIdentity',
-}
+export type AuthenticationMethodType = 'managedServiceIdentity' | 'rawKeys';
 
 /**
  * Authentication method selection step
- * This step simply asks the user to choose between MSI and raw keys
- * and sets the ext.useMsi flag accordingly
+ * This step prompts the user to select between MSI and raw keys
+ * and sets the `authenticationMethod` in the context.
  */
 export class AuthenticationMethodSelectionStep<
-  T extends IActionContext & { authenticationMethod?: string },
+  T extends IActionContext & { authenticationMethod?: AuthenticationMethodType },
 > extends AzureWizardPromptStep<T> {
   /**
-   * Prompt the user to select authentication method
+   * Prompts the user to select an authentication method.
+   * The result is stored in `context.authenticationMethod`.
    */
   public async prompt(context: T): Promise<void> {
     const placeHolder: string = localize('selectAuthMethod', 'Select authentication method for Azure connectors');
 
-    const picks: IAzureQuickPickItem<string>[] = [
+    const picks: IAzureQuickPickItem<AuthenticationMethodType>[] = [
       {
         label: localize('authMethodMSI', '$(shield) Managed Service Identity'),
         description: localize('authMethodMSIDesc', 'Use Azure Managed Identity'),
         detail: localize(
           'authMethodMSIDetail',
-          'Authenticate using Azure Managed Service Identity. More secure, no keys stored locally. Requires proper Azure RBAC configuration'
+          'Authenticate using Azure Managed Service Identity. More secure, no keys stored locally. Requires proper Azure RBAC configuration.'
         ),
-        data: AuthenticationMethod.ManagedServiceIdentity,
+        data: 'managedServiceIdentity',
       },
       {
         label: localize('authMethodRawKeys', '$(key) Connection Keys'),
         description: localize('authMethodRawKeysDesc', 'Use connection strings and access keys (traditional method)'),
         detail: localize(
           'authMethodRawKeysDetail',
-          'Authenticate using connection strings, access keys, or API keys that will be configured in your settings'
+          'Authenticate using connection strings, access keys, or API keys configured in your app settings.'
         ),
-        data: AuthenticationMethod.RawKeys,
+        data: 'rawKeys',
       },
     ];
 
@@ -57,12 +55,12 @@ export class AuthenticationMethodSelectionStep<
       ignoreFocusOut: true,
     });
 
-    // Store the selection in context
+    // Save the selected authentication method
     context.authenticationMethod = selectedMethod.data;
   }
 
   /**
-   * Determine if this step should be shown
+   * Determines if this step should prompt again (only if no method is selected yet).
    */
   public shouldPrompt(context: T): boolean {
     return context.authenticationMethod === undefined;
