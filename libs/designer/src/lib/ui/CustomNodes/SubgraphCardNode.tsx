@@ -25,7 +25,7 @@ import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
@@ -97,7 +97,6 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
     [actionCount, intl]
   );
 
-  const subgraphCardRef = useRef<HTMLDivElement>(null);
   const newAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddTool ? stringResources.TOOL : stringResources.CASE);
   const subgraphClick = useCallback(
     async (_id: string, rect: DOMRect) => {
@@ -148,7 +147,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
         dispatch(changePanelNode(_id));
       }
     },
-    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, dispatch, newAdditiveSubgraphId, graphId]
+    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, dispatch, newAdditiveSubgraphId, mcpClientToolEnabled, graphId]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);

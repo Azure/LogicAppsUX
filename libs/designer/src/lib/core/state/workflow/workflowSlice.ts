@@ -2,7 +2,12 @@ import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow, addMcpServerToWorkflow } from '../../parsers/addNodeToWorkflow';
+import {
+  addSwitchCaseToWorkflow,
+  addNodeToWorkflow,
+  addAgentToolToWorkflow,
+  addMcpServerToWorkflow,
+} from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow, deleteMcpServerNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -361,7 +366,7 @@ export const workflowSlice = createSlice({
       });
     },
     deleteMcpServer: (state: WorkflowState, action: PayloadAction<{ toolId: string; agentId: string }>) => {
-      const { toolId, agentId } = action.payload;
+      const { agentId } = action.payload;
 
       if (!state.graph) {
         return; // log exception

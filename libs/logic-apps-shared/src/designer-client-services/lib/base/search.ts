@@ -130,7 +130,7 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
-      $filter: "mcpOnly eq true",
+      $filter: 'mcpOnly eq true',
     };
 
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);

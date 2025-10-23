@@ -271,7 +271,13 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
   }
 };
 
-export const addMcpServerToWorkflow = (toolId: string, agentNode: WorkflowNode, nodesMetadata: NodesMetadata, state: WorkflowState, operation?: DiscoveryOperation<DiscoveryResultTypes>) => {
+export const addMcpServerToWorkflow = (
+  toolId: string,
+  agentNode: WorkflowNode,
+  nodesMetadata: NodesMetadata,
+  state: WorkflowState,
+  operation?: DiscoveryOperation<DiscoveryResultTypes>
+) => {
   const toolNode = createWorkflowNode(toolId, WORKFLOW_NODE_TYPES.OPERATION_NODE);
   toolNode.subGraphLocation = 'tools';
   agentNode.children?.splice(agentNode.children.length - 2, 0, toolNode);

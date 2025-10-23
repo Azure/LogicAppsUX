@@ -22,7 +22,8 @@ export function useIsAgentSubGraph(nodeId?: string): boolean | null {
         break;
       }
 
-      const isAgentTool = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+      const isAgentTool =
+        nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
       if (isAgentTool) {
         setIsAgentSubgraph(true);
         break;

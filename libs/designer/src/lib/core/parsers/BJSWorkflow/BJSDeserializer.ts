@@ -6,6 +6,7 @@ import { type Operations, type NodesMetadata, WorkflowKind } from '../../state/w
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
+import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import {
   LoggerService,
   Status,
@@ -26,7 +27,6 @@ import {
   isEmptyString,
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
-import { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -361,11 +361,11 @@ const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2
 
 const isAgentCondition = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.AgentCondition => {
   return !action?.type || !equals(action?.type, 'mcpclienttool');
-}
+};
 
 const isMcpClient = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.McpClient => {
   return equals(action?.type, 'mcpclienttool');
-}
+};
 
 const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
   return equals(action?.type, 'switch');
@@ -729,10 +729,7 @@ export const processScopeActions = (
           }
         }
       } else if (isMcpClient(toolAction)) {
-        const toolNode = createWorkflowNode(
-          toolName,
-          WORKFLOW_NODE_TYPES.OPERATION_NODE
-        );
+        const toolNode = createWorkflowNode(toolName, WORKFLOW_NODE_TYPES.OPERATION_NODE);
         toolNode.subGraphLocation = 'tools';
 
         nodes.push(toolNode);
@@ -750,8 +747,8 @@ export const processScopeActions = (
           nodesMetadata[toolName] = {
             ...nodesMetadata[toolName],
             actionMetadata: {
-              ...toolAction.metadata
-            }
+              ...toolAction.metadata,
+            },
           };
         }
       }

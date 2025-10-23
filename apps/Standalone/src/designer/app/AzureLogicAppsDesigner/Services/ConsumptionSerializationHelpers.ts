@@ -124,10 +124,21 @@ const traverseDefinition = (operation: any, callback: (operation: any) => void) 
 };
 
 const alterOperationConnectionReference = (operation: any) => {
-  const { referenceName } = operation.inputs?.host?.connection ?? {};
-  if (referenceName) {
+  const hostConnection = operation.inputs?.host?.connection;
+  if (hostConnection?.referenceName) {
     operation.inputs.host.connection = {
-      name: `@parameters('$connections')['${referenceName}']['connectionId']`,
+      name: `@parameters('$connections')['${hostConnection.referenceName}']['connectionId']`,
     };
+    return;
+  }
+
+  const functionConnection = operation.inputs?.function;
+  if (functionConnection?.connectionName) {
+    return;
+  }
+
+  const apiManagementConnection = operation.inputs?.apiManagement?.connection;
+  if (apiManagementConnection && typeof apiManagementConnection === 'string') {
+    return;
   }
 };

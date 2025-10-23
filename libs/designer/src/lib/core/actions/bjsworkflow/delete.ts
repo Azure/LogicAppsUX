@@ -144,7 +144,6 @@ const deletePinnedOperation = (nodeId: string, dispatch: Dispatch, state: RootSt
   }
 };
 
-
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {
   const { graphNode, clearFocus = true } = deletePayload;
 
@@ -169,13 +168,16 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
   return;
 });
 
-export const deleteMcpServerNode = createAsyncThunk('deleteMcpServer', async (deletePayload: { agentId: string, toolId: string, clearFocus?: boolean }, { dispatch }) => {
-  const { agentId, toolId, clearFocus = true } = deletePayload;
+export const deleteMcpServerNode = createAsyncThunk(
+  'deleteMcpServer',
+  async (deletePayload: { agentId: string; toolId: string; clearFocus?: boolean }, { dispatch }) => {
+    const { agentId, toolId, clearFocus = true } = deletePayload;
 
-  if (clearFocus) {
-    dispatch(clearFocusNode());
-    dispatch(clearPanel());
+    if (clearFocus) {
+      dispatch(clearFocusNode());
+      dispatch(clearPanel());
+    }
+
+    dispatch(deleteMcpServer({ agentId, toolId }));
   }
-
-  dispatch(deleteMcpServer({ agentId, toolId }));
-});
+);

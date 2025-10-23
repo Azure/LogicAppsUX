@@ -34,6 +34,7 @@ import DesignerReactFlow from './DesignerReactFlow';
 import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
+import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -170,6 +171,7 @@ export const Designer = (props: DesignerProps) => {
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
           <DragPanMonitor canvasRef={canvasRef} />
+          <KindChangeDialog />
         </ReactFlowProvider>
         <div id={'msla-layer-host'} className={styles.layerHost} />
       </div>

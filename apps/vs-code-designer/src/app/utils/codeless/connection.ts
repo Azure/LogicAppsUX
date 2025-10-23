@@ -18,7 +18,7 @@ import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { ConnectionAndAppSetting } from '@microsoft/logic-apps-shared';
-import { createCopy, HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -43,7 +43,6 @@ import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
-import { AuthenticationMethod } from '../../commands/workflows/authenticationMethodStep';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
