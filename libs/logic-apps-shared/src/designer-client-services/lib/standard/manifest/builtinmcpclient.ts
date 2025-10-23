@@ -24,7 +24,7 @@ export default {
           items: {
             type: 'string',
           },
-          title: 'Allowed Tools',
+          title: 'Allowed tools',
           // 'x-ms-editor-options': {
           //   multiSelect: true,
           //   titleSeparator: ',',
