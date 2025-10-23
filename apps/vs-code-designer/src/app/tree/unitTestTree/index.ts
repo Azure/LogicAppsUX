@@ -26,7 +26,7 @@ import {
   tests,
   TestRunProfileKind,
 } from 'vscode';
-import { getUnitTestName } from '../../utils/unitTests';
+import { getUnitTestName } from '../../utils/unitTests/codelessUnitTests';
 
 export type TestData = TestWorkspace | TestWorkflow | TestFile;
 

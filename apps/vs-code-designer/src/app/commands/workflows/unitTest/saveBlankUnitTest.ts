@@ -10,14 +10,13 @@ import {
   ensureCsproj,
   updateCsprojFile,
   getUnitTestPaths,
-  handleError,
   parseUnitTestOutputs,
   promptForUnitTestName,
-  selectWorkflowNode,
   getOperationMockClassContent,
   updateTestsSln,
   validateWorkflowPath,
-} from '../../../utils/unitTests';
+  selectWorkflowNode,
+} from '../../../utils/unitTests/codefulUnitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
@@ -32,10 +31,10 @@ import { extensionCommand } from '../../../../constants';
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
- * @param {any} unitTestDefinition - The definition of the unit test.
+ * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
-export async function saveBlankUnitTest(node: vscode.Uri | undefined, unitTestDefinition: any): Promise<void> {
+export async function saveBlankUnitTest(node: vscode.Uri | undefined, nodeOutputOperations: any): Promise<void> {
   await callWithTelemetryAndErrorHandling(extensionCommand.saveBlankUnitTest, async (context: IActionContext) => {
     const startTime = Date.now();
 
@@ -85,7 +84,7 @@ export async function saveBlankUnitTest(node: vscode.Uri | undefined, unitTestDe
 
       // Get parsed outputs
       context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
-      const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+      const parsedOutputs = await parseUnitTestOutputs(nodeOutputOperations);
       const operationInfo = parsedOutputs['operationInfo'];
       const outputParameters = parsedOutputs['outputParameters'];
       context.telemetry.properties.operationInfoExists = operationInfo ? 'true' : 'false';
@@ -176,9 +175,13 @@ export async function saveBlankUnitTest(node: vscode.Uri | undefined, unitTestDe
 
       context.telemetry.properties.result = 'Succeeded';
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       context.telemetry.properties.unitTestGenerationStatus = 'Failed';
-      context.telemetry.properties.errorMessage = parseError(error).message;
-      handleError(context, error, 'saveBlankUnitTest');
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
+      context.telemetry.properties['saveBlankUnitTestError'] = errorMessage;
+      vscode.window.showErrorMessage(localize('saveBlankUnitTestError', 'An error occurred: {0}', errorMessage));
+      ext.outputChannel.appendLog(localize('saveBlankUnitTestLog', 'Error in saveBlankUnitTest: {0}', errorMessage));
     }
   });
 }
@@ -265,7 +268,7 @@ async function generateBlankCodefulUnitTest(
 
     // Ensure .csproj file exists
     ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj file exists...'));
-    await ensureCsproj(testsDirectory, logicAppTestFolderPath, logicAppName);
+    await ensureCsproj(logicAppTestFolderPath, logicAppName);
     context.telemetry.properties.csprojValid = 'true';
 
     // Update .csproj file with content include for the workflow

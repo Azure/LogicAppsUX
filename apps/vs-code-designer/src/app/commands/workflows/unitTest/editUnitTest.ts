@@ -5,12 +5,12 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { getUnitTestName, pickUnitTestNode } from '../../../utils/unitTests/codelessUnitTests';
 
 /**
  * Edits a unit test for a Logic App workflow.
@@ -30,8 +30,7 @@ export async function editUnitTest(context: IActionContext, node: vscode.Uri | v
     } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
       unitTestNode = node.uri;
     } else {
-      const unitTest = await pickUnitTest(context, testsDirectory);
-      unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
+      unitTestNode = await pickUnitTestNode(context, testsDirectory);
     }
 
     const projectName = path.relative(testsDirectory, path.dirname(unitTestNode.fsPath));

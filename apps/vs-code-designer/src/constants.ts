@@ -44,6 +44,7 @@ export const vscodeFolderName = '.vscode';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
 export const workspaceTemplatesFolderName = 'WorkspaceTemplates';
+export const unitTestTemplatesFolderName = 'UnitTestTemplates';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 

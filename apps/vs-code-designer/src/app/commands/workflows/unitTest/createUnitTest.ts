@@ -13,15 +13,14 @@ import {
   updateCsprojFile,
   extractAndValidateRunId,
   getUnitTestPaths,
-  handleError,
   parseErrorBeforeTelemetry,
   parseUnitTestOutputs,
   getOperationMockClassContent,
   promptForUnitTestName,
-  selectWorkflowNode,
   updateTestsSln,
   validateWorkflowPath,
-} from '../../../utils/unitTests';
+  selectWorkflowNode,
+} from '../../../utils/unitTests/codefulUnitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
@@ -39,10 +38,10 @@ import { extensionCommand } from '../../../../constants';
  * Validates input, manages workflow node selection, and triggers unit test generation.
  * @param {vscode.Uri | undefined} node - Optional URI of the workflow node.
  * @param {string | undefined} runId - Optional run ID.
- * @param {any} unitTestDefinition - The unit test definition.
+ * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
-export async function createUnitTest(node: vscode.Uri | undefined, runId?: string, unitTestDefinition?: any): Promise<void> {
+export async function createUnitTest(node: vscode.Uri | undefined, runId?: string, nodeOutputOperations?: any): Promise<void> {
   await callWithTelemetryAndErrorHandling(extensionCommand.createUnitTest, async (context: IActionContext) => {
     try {
       // Validate and extract Run ID
@@ -103,10 +102,15 @@ export async function createUnitTest(node: vscode.Uri | undefined, runId?: strin
       });
 
       context.telemetry.properties.lastStep = 'generateUnitTestFromRun';
-      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition, node.fsPath);
+      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, nodeOutputOperations, node.fsPath);
       context.telemetry.properties.result = 'Succeeded';
     } catch (error) {
-      handleError(context, error, 'createUnitTest');
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
+      context.telemetry.properties['createUnitTestError'] = errorMessage;
+      vscode.window.showErrorMessage(localize('createUnitTestError', 'An error occurred: {0}', errorMessage));
+      ext.outputChannel.appendLog(localize('createUnitTestLog', 'Error in createUnitTest: {0}', errorMessage));
     }
   });
 }
@@ -119,7 +123,7 @@ export async function createUnitTest(node: vscode.Uri | undefined, runId?: strin
  * @param {string} workflowName - Name of the workflow.
  * @param {string} unitTestName - Name of the unit test.
  * @param {string} runId - Run ID.
- * @param {any} unitTestDefinition - The unit test definition.
+ * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} Resolves when the unit test has been generated.
  */
 async function generateUnitTestFromRun(
@@ -128,7 +132,7 @@ async function generateUnitTestFromRun(
   workflowName: string,
   unitTestName: string,
   runId: string,
-  unitTestDefinition: any,
+  nodeOutputOperations: any,
   workflowPath: string
 ): Promise<void> {
   // Initialize telemetry properties
@@ -144,7 +148,7 @@ async function generateUnitTestFromRun(
 
   // Get parsed outputs
   context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
-  const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+  const parsedOutputs = await parseUnitTestOutputs(nodeOutputOperations);
   const operationInfo = parsedOutputs['operationInfo'];
   const outputParameters = parsedOutputs['outputParameters'];
   Object.assign(context.telemetry.properties, {
@@ -290,7 +294,7 @@ async function generateUnitTestFromRun(
     }
 
     try {
-      await ensureCsproj(paths.testsDirectory, paths.logicAppTestFolderPath, paths.logicAppName);
+      await ensureCsproj(paths.logicAppTestFolderPath, paths.logicAppName);
       context.telemetry.properties.nugetConfigFileCreated = 'true';
     } catch (nugetError) {
       context.telemetry.properties.nugetConfigFileCreated = 'false';

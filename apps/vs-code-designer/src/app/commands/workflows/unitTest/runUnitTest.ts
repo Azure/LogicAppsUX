@@ -5,7 +5,6 @@
 import { defaultExtensionBundlePathValue, runUnitTestEvent, testResultsDirectoryName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { getLatestUnitTest, getTestsDirectory, getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
@@ -18,6 +17,8 @@ import type { UnitTestExecutionResult } from '@microsoft/vscode-extension-logic-
 import { TestWorkflow } from '../../../tree/unitTestTree/testWorkflow';
 import { TestWorkspace } from '../../../tree/unitTestTree/testWorkspace';
 import { findInitialFiles, getWorkspaceTestPatterns } from '../../../tree/unitTestTree';
+import { getLatestUnitTest, getUnitTestName, pickUnitTestNode } from '../../../utils/unitTests/codelessUnitTests';
+import { getTestsDirectory } from '../../../utils/unitTests/unitTests';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -31,8 +32,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri): Pr
     unitTestPath = node.fsPath;
   } else if (isMultiRootWorkspace()) {
     const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
-    const unitTest = await pickUnitTest(context, testsDirectory.fsPath);
-    unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
+    unitTestPath = (await pickUnitTestNode(context, testsDirectory.fsPath)).fsPath;
   } else {
     throw new Error(localize('expectedWorkspace', 'In order to run unit tests, you must have a workspace open.'));
   }
