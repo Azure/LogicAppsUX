@@ -113,7 +113,7 @@ export default {
             },
           },
           uiDefinition: {
-            displayName: 'ClientCertificate',
+            displayName: 'Client certificate',
           },
         },
         {
@@ -336,7 +336,7 @@ export default {
             },
           },
           uiDefinition: {
-            displayName: 'Managed Identity',
+            displayName: 'Managed identity',
           },
         },
       ],
