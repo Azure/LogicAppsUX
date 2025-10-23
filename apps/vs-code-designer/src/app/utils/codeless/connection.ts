@@ -18,7 +18,7 @@ import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
 import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { ConnectionAndAppSetting } from '@microsoft/logic-apps-shared';
-import { HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
+import { createCopy, HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -43,7 +43,6 @@ import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
-import { AuthenticationMethod } from '../../commands/workflows/authenticationMethodStep';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -342,7 +341,7 @@ export async function getConnectionsAndSettingsToUpdate(
         workflowBaseManagementUri,
         localSettings
       );
-      Object.assign(referencesToAdd, updatedReferences);
+      createCopy(referencesToAdd, updatedReferences);
       context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
     } catch (error) {
       context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;
@@ -786,12 +785,6 @@ async function checkExistingPolicy(
       validateStatus: (status) => status < 500, // Don't throw for 4xx errors
     });
 
-    // Handle different response statuses
-    if (response.status === 404) {
-      ext.outputChannel.appendLog(localize('noPoliciesFound', 'No access policies found for connection. Creating new policy.'));
-      return false;
-    }
-
     if (response.status !== 200) {
       ext.outputChannel.appendLog(
         localize(
@@ -930,16 +923,16 @@ async function isMSIEnabled(projectPath: string, context: IActionContext): Promi
     const localSettingsPath = path.join(projectPath, localSettingsFileName);
     const localSettings = await getLocalSettingsJson(context, localSettingsPath);
 
-    // Get the authentication method from settings
-    const authMethod = localSettings.Values[workflowAuthenticationMethodKey];
+    // Retrieve the configured authentication method
+    const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
 
-    // Validate it's a valid enum value before comparing
-    if (authMethod && Object.values(AuthenticationMethod).includes(authMethod as AuthenticationMethod)) {
-      return authMethod === AuthenticationMethod.ManagedServiceIdentity;
+    // Explicitly check for MSI, using string literal comparison instead of enum
+    if (typeof authMethod === 'string' && authMethod.toLowerCase() === 'managedserviceidentity') {
+      return true;
     }
 
-    return false; // Invalid or missing authentication method
+    return false; // Not MSI or invalid value
   } catch {
-    return false; // Default to false if we can't read settings
+    return false; // Default to false if settings can't be read or parsed
   }
 }

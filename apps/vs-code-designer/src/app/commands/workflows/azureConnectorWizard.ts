@@ -19,7 +19,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { AuthenticationMethodSelectionStep } from './authenticationMethodStep';
+import { AuthenticationMethodSelectionStep, type AuthenticationMethodType } from './authenticationMethodStep';
 
 export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
   credentials: any;
@@ -28,7 +28,7 @@ export interface IAzureConnectorsContext extends IActionContext, IProjectWizardC
   enabled: boolean;
   tenantId: any;
   environment: any;
-  authenticationMethod?: string;
+  authenticationMethod?: AuthenticationMethodType;
   MSIenabled?: boolean;
 }
 
