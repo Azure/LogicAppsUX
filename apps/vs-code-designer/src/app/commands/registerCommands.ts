@@ -68,7 +68,7 @@ import {
   UserCancelledError,
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
-import type { Uri } from 'vscode';
+import * as vscode from 'vscode';
 import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
@@ -206,4 +206,27 @@ export function registerCommands(): void {
     });
   });
   registerReportIssueCommand(extensionCommand.reportIssue);
+
+  // Register LSP custom commands
+  registerCommand(extensionCommand.sdkLspApplyEdits, async (_context: IActionContext, args: any) => {
+    const edits = args?.edits;
+    if (!edits || !Array.isArray(edits)) {
+      return;
+    }
+
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+      return;
+    }
+
+    await activeEditor.edit((editBuilder) => {
+      for (const edit of edits) {
+        const range = new vscode.Range(
+          new vscode.Position(edit.range.start.line, edit.range.start.character),
+          new vscode.Position(edit.range.end.line, edit.range.end.character)
+        );
+        editBuilder.replace(range, edit.newText);
+      }
+    });
+  });
 }

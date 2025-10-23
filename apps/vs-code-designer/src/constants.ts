@@ -209,6 +209,7 @@ export const extensionCommand = {
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
+  sdkLspApplyEdits: 'sdklsp.applyEdits',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
