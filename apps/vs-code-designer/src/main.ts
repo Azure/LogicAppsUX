@@ -126,7 +126,7 @@ export async function activate(context: vscode.ExtensionContext) {
     //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
-    // @ts-ignore
+    // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
     activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
