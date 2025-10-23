@@ -85,7 +85,6 @@ import {
   isNullOrUndefined,
   isRecordNotEmpty,
   SUBGRAPH_TYPES,
-  WorkflowService,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
@@ -105,7 +104,6 @@ import {
   getFirstDeploymentModelName,
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
-  isAgentConnectorAndConsumptionAgentModel,
   isAgentConnectorAndDeploymentId,
 } from './helpers';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
@@ -132,8 +130,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const readOnly = useReadOnly() || isTabReadOnly;
   const nodesInitialized = useNodesInitialized();
 
-  const [consumptionAgentModels, setConsumptionAgentModels] = useState<string[]>([]);
-
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
@@ -157,28 +153,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     description:
       'Descriptive message to show if the connection for an action cannot be changed or edited due to being shown in dual-pane (pinned action) view.',
   });
-
-  // Fetch consumption agent models on component mount for agent connectors
-  useEffect(() => {
-    const fetchConsumptionAgentModels = async () => {
-      try {
-        const models = await WorkflowService()?.getAgentModelId?.();
-        if (models && models.length > 0) {
-          // Ensure gpt-4o-mini is always available as a fallback option
-          const modelsSet = new Set(models);
-          if (!modelsSet.has('gpt-4o-mini')) {
-            modelsSet.add('gpt-4o-mini');
-          }
-          setConsumptionAgentModels(Array.from(modelsSet));
-        }
-      } catch (error) {
-        console.error('Failed to fetch consumption agent models:', error);
-      }
-    };
-
-    fetchConsumptionAgentModels();
-  }, []);
-
   const isLoading = useMemo(() => {
     if (!operationInfo && !nodeMetadata?.subgraphType) {
       return true;
@@ -252,7 +226,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
             readOnly={readOnly}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}
-            consumptionAgentModels={consumptionAgentModels}
           />
         </div>
       ))}
@@ -375,14 +348,12 @@ export const ParameterSection = ({
   readOnly,
   tokenGroup,
   expressionGroup,
-  consumptionAgentModels = [],
 }: {
   nodeId: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
   expressionGroup: TokenGroup[];
-  consumptionAgentModels?: string[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
@@ -856,7 +827,6 @@ export const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
-      // ...rest of the existing code...
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
 
@@ -880,8 +850,7 @@ export const ParameterSection = ({
         upstreamNodeIds ?? [],
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
-        isA2AWorkflow,
-        consumptionAgentModels
+        isA2AWorkflow
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -1025,8 +994,7 @@ export const getEditorAndOptions = (
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
-  isA2AWorkflow?: boolean,
-  consumptionAgentModels: string[] = []
+  isA2AWorkflow?: boolean
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1070,23 +1038,6 @@ export const getEditorAndOptions = (
     return {
       editor,
       editorOptions: { options },
-    };
-  }
-
-  // Handle consumption agent connector with agent model type parameter
-  const isConsumptionAgentModel = isAgentConnectorAndConsumptionAgentModel(operationInfo?.connectorId ?? '', parameter.parameterName ?? '');
-  if (equals(editor, 'combobox') && isConsumptionAgentModel && consumptionAgentModels.length > 0) {
-    const options = consumptionAgentModels.map((model) => ({
-      value: model,
-      displayName: model,
-    }));
-
-    return {
-      editor,
-      editorOptions: {
-        ...editorOptions,
-        options,
-      },
     };
   }
 
