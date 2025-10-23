@@ -30,6 +30,7 @@ import { isConnectionRequiredForOperation, isConnectionAutoSelectionDisabled, up
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  initializeAgentModelIds,
   initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
@@ -65,6 +66,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
 import { isManagedMcpOperation } from '../../state/workflow/helper';
+import { AgentUtils } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -225,7 +227,7 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
-    let updatedOutputs = nodeOutputs;
+    const updatedOutputs = nodeOutputs;
     initData = {
       id: nodeId,
       nodeInputs,
@@ -256,6 +258,15 @@ export const initializeOperationDetails = async (
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
+
+    const agentModelIdParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT);
+    if (
+      agentModelIdParameter &&
+      AgentUtils.isConsumptionAgentModelTypeParameter(operationInfo?.connectorId, agentModelIdParameter.parameterName)
+    ) {
+      await initializeAgentModelIds(agentModelIdParameter);
+    }
+
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       nodeId,
       manifest,
@@ -459,7 +470,7 @@ export const trySetDefaultConnectionForNode = async (
   connector: Connector,
   dispatch: AppDispatch,
   isConnectionRequired: boolean,
-  autoSelectionDisabled?: boolean,
+  autoSelectionDisabled?: boolean
 ) => {
   const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');

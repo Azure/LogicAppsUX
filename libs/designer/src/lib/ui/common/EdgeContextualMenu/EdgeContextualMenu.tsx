@@ -18,7 +18,6 @@ import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
-import { getOperationManifest } from '../../../core/queries/operation';
 import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
@@ -170,19 +169,9 @@ export const EdgeContextualMenu = () => {
     dispatch(removeAgentHandoff({ agentId: parentId ?? '', toolId }));
   }, [handoffActions, dispatch, parentId, childId]);
 
-  // const deleteRunAfter = useCallback(() => {
-  //   dispatch(
-  //     removeOperationRunAfter({
-  //       parentOperationId: parentId ?? '',
-  //       childOperationId: childId ?? '',
-  //     })
-  //   );
-  // }, [dispatch, parentId, childId]);
-
-  
   const addMcpServerText = intl.formatMessage({
     defaultMessage: 'Add an MCP server',
-    id: 'Nl4O59',
+    id: 'JTy5al',
     description: 'Text that explains no tools exist in this agent',
   });
 
@@ -277,11 +266,11 @@ export const EdgeContextualMenu = () => {
     if (!graphId) {
       return;
     }
-    const relationshipIds = { 
+    const relationshipIds = {
       graphId,
       childId,
       parentId,
-      subgraphId
+      subgraphId,
     };
 
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true, isAddingMcpServer: true }));
@@ -292,11 +281,11 @@ export const EdgeContextualMenu = () => {
     if (!graphId) {
       return;
     }
-    const relationshipIds = { 
+    const relationshipIds = {
       graphId,
       childId,
       parentId,
-      subgraphId
+      subgraphId,
     };
 
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true }));

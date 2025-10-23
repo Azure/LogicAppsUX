@@ -44,7 +44,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement, useTool
       }
       focusElement?.(index, scopeId);
     },
-    [dispatch, scopeId, focusElement]
+    [useToolRun, focusElement, scopeId, dispatch]
   );
 
   const onClickNextFailed: PageChangeEventHandler = useCallback(

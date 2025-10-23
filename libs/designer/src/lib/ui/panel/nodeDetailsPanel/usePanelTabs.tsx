@@ -150,20 +150,21 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       return [parametersTabItem];
     }
 
-    const availableTabs = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
-      ? [monitoringTabItem, parametersTabItem, codeViewTabItem, aboutTabItem]
-      : [
-          monitoringTabItem,
-          parametersTabItem,
-          settingsTabItem,
-          channelsTabItem,
-          handoffTabItem,
-          codeViewTabItem,
-          testingTabItem,
-          aboutTabItem,
-          monitorRetryTabItem,
-          scratchTabItem,
-        ];
+    const availableTabs =
+      nodeMetaData?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
+        ? [monitoringTabItem, parametersTabItem, codeViewTabItem, aboutTabItem]
+        : [
+            monitoringTabItem,
+            parametersTabItem,
+            settingsTabItem,
+            channelsTabItem,
+            handoffTabItem,
+            codeViewTabItem,
+            testingTabItem,
+            aboutTabItem,
+            monitorRetryTabItem,
+            scratchTabItem,
+          ];
 
     return availableTabs
       .filter((a) => !panelTabHideKeys.includes(a.id as any))

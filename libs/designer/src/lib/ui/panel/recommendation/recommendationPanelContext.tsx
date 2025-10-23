@@ -300,7 +300,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const headingText = isAddingMcpServer
     ? intl.formatMessage({
         defaultMessage: 'Choose an MCP Server',
-        id: 'dBxX8X',
+        id: '/jXzHx',
         description: 'Text for the "Add an MCP Server" panel header',
       })
     : isTrigger
