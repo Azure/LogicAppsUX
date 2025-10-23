@@ -47,7 +47,7 @@ import { tryGetMostRecentlyUsedConnectionId } from './add';
 import { isConnectionValid } from '../../utils/connectors/connections';
 import { updateMcpConnection } from './connections';
 import { getConnector } from '../../queries/operation';
-import { McpPanelView, openMcpPanelView, setAutoOpenPanel } from '../../state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView } from '../../state/mcp/panel/mcpPanelSlice';
 
 export interface McpServiceOptions {
   connectionService: IConnectionService;
@@ -104,7 +104,6 @@ export const resetMcpStateOnResourceChange = createAsyncThunk(
     const {
       resource: { subscriptionId, resourceGroup, logicAppName },
       connection: { connectionsMapping },
-      mcpPanel: { autoOpenPanel },
       mcpSelection: { disableConnectorSelection, disableLogicAppSelection, selectedConnectorId },
     } = getState() as RootState;
     const connectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, getReactQueryClient());
@@ -119,12 +118,8 @@ export const resetMcpStateOnResourceChange = createAsyncThunk(
       )
     );
 
-    if (disableConnectorSelection && selectedConnectorId && (disableLogicAppSelection || autoOpenPanel)) {
+    if (disableConnectorSelection && selectedConnectorId && disableLogicAppSelection) {
       dispatch(openMcpPanelView({ panelView: McpPanelView.SelectOperation }));
-
-      if (!disableLogicAppSelection) {
-        dispatch(setAutoOpenPanel(false));
-      }
     }
     return true;
   }
