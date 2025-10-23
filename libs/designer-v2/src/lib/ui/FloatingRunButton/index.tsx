@@ -167,6 +167,7 @@ export const FloatingRunButton = ({
   });
 
   const buttonCommonProps: any = {
+    id: 'laux-v2-run-button',
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
