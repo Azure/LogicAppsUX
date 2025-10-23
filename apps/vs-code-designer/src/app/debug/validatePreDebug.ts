@@ -125,7 +125,11 @@ export async function validateEmulatorIsRunning(
       await new Promise<void>((resolve, reject) => {
         // Checking against a common container for functions, but doesn't really matter what call we make here
         client.doesContainerExist('azure-webjob-hosts', (err: Error | undefined) => {
-          err ? reject(err) : resolve();
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
         });
       });
     } catch {
