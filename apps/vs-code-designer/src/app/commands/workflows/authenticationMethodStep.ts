@@ -62,7 +62,7 @@ export class AuthenticationMethodSelectionStep<
   /**
    * Determines if this step should prompt again (only if no method is selected yet).
    */
-  public shouldPrompt(context: T): boolean {
-    return context.authenticationMethod === undefined;
+  public shouldPrompt(): boolean {
+    return true;
   }
 }

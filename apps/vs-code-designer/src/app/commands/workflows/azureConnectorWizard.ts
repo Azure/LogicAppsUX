@@ -32,9 +32,10 @@ export interface IAzureConnectorsContext extends IActionContext, IProjectWizardC
   MSIenabled?: boolean;
 }
 
+//TODO: Update to be in webview after ignite redesign is done
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep(projectPath), createAuthenticationStep()],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath), new AuthenticationMethodSelectionStep<IAzureConnectorsContext>()],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
@@ -114,13 +115,4 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
   public shouldExecute(context: IAzureConnectorsContext): boolean {
     return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
   }
-}
-
-//TODO: Update to be in webview after ignite redesign is done
-
-/**
- * Creates an authentication step with MSIenabled setting
- */
-function createAuthenticationStep(): AuthenticationMethodSelectionStep<IAzureConnectorsContext> {
-  return new AuthenticationMethodSelectionStep<IAzureConnectorsContext>();
 }

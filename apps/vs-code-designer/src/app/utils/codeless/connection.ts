@@ -191,6 +191,8 @@ async function getConnectionReference(
     connectionProperties,
   } = reference;
 
+  // TODO: Fix in designer, this is a workaround to prevent extra runtime URLs to be generated in connection.json
+  // This prevents duplicate URLs that may be returned from the designer
   delete connectionProperties?.connectionRuntimeUrl;
 
   return axios
@@ -766,7 +768,6 @@ async function ensureAccessPolicyLocalMSI(
     ext.outputChannel.appendLog(localize('policyCreationFailed', 'Failed to create access policy: {0}', errorDetails));
   }
 }
-
 /**
  * Checks if a policy exists for the given identity
  * @returns true if policy exists and matches, false if it needs to be created
@@ -807,7 +808,7 @@ async function checkExistingPolicy(
       }
 
       const identity = principal.identity || {};
-      const identityMatches = identity.objectId === objectId && identity.tenantId === tenantId;
+      const identityMatches = identity.objectId === objectId;
 
       // Check both the policy name and the identity
       const nameMatches = p.name === policyName;
