@@ -755,6 +755,42 @@ export const saveNotesStandard = async (notesData?: Record<string, Note>): Promi
   }
 };
 
+export const createMcpServer = async (
+  siteResourceId: string,
+  workflows: {
+    name: string;
+    workflow: any;
+  }[],
+  connectionsData: ConnectionsData | undefined,
+  serverInfo: { name: string; description: string }
+): Promise<{ name: string; description: string; url: string; tools: { name: string }[] }> => {
+  const mcpServers = await listMcpServers(siteResourceId);
+
+  mcpServers.push({ name: serverInfo.name, description: serverInfo.description, tools: workflows.map((wf) => ({ name: wf.name })) });
+
+  try {
+    await saveWorkflowStandard(
+      siteResourceId,
+      workflows,
+      connectionsData,
+      /* parametersData */ undefined,
+      /* settingsProperties */ undefined,
+      /* customCodeData */ undefined,
+      /* notes */ undefined,
+      { mcpServers },
+      /* clearDirtyState */ () => {},
+      { skipValidation: true, throwError: true }
+    );
+
+    const finalServers = await listMcpServers(siteResourceId);
+    const formedServer = finalServers.find((server: any) => server.name === serverInfo.name);
+    return formedServer;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const saveWorkflowStandard = async (
   siteResourceId: string,
   workflows: {
@@ -766,6 +802,7 @@ export const saveWorkflowStandard = async (
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   notesData: Record<string, Note> | undefined,
+  mcpServers: { mcpServers: any[] } | undefined,
   clearDirtyState: () => void,
   options?: {
     skipValidation?: boolean;
@@ -794,6 +831,10 @@ export const saveWorkflowStandard = async (
 
   if (parametersData) {
     data.files['parameters.json'] = parametersData;
+  }
+
+  if (mcpServers) {
+    data.files['mcpservers.json'] = mcpServers;
   }
 
   if (settings) {
@@ -1081,4 +1122,25 @@ export const deployArtifacts = async (
   });
 
   return response;
+};
+
+const listMcpServers = async (siteResourceId: string): Promise<any[]> => {
+  let mcpServers: any[] = [];
+  try {
+    const response = await axios.post(
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`,
+      undefined,
+      {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+    mcpServers = [...(response.data?.value ?? [])];
+  } catch (error: any) {
+    console.error('Error fetching MCP servers:', error);
+
+    mcpServers = [];
+  }
+  return mcpServers;
 };
