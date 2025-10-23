@@ -11,7 +11,7 @@ import { localize } from '../../../localize';
  * String literal union for supported authentication methods.
  * This replaces the enum for simpler runtime footprint.
  */
-type AuthenticationMethodType = 'managedServiceIdentity' | 'rawKeys';
+export type AuthenticationMethodType = 'managedServiceIdentity' | 'rawKeys';
 
 /**
  * Authentication method selection step
