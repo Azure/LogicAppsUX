@@ -77,7 +77,7 @@ const DeleteModal = () => {
     }
 
     onDismiss();
-  }, [nodeData, dispatch, nodeId, isTrigger, graphId, onDismiss]);
+  }, [nodeId, nodeData, metadata, onDismiss, dispatch, graphId, isTrigger]);
 
   return (
     <DeleteNodeModal

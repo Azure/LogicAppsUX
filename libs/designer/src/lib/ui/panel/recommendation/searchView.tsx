@@ -149,12 +149,6 @@ export const SearchView: FC<SearchViewProps> = ({
 
   useDebouncedEffect(
     () => {
-      if (isAddingMcpServer && !searchTerm) {
-        setSearchResults(allOperations);
-        setIsLoadingSearchResults(false);
-        return;
-      }
-
       const searchResultsPromise = new DefaultSearchOperationsService(
         allOperations,
         shouldEnableParseDocWithMetadata ?? false

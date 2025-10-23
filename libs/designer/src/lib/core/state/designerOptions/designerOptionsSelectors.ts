@@ -63,7 +63,7 @@ export const useShowPerformanceDebug = () => {
 };
 
 export const useMcpClientToolEnabled = () => {
-  return useSelector((state: RootState) => state.designerOptions.mcpClientToolEnabled ?? true);
+  return useSelector((state: RootState) => state.designerOptions.mcpClientToolEnabled ?? false);
 };
 
 export const useAreDesignerOptionsInitialized = () => {

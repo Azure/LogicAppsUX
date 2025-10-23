@@ -167,6 +167,7 @@ export const FloatingRunButton = ({
   });
 
   const buttonCommonProps: any = {
+    id: 'laux-v2-run-button',
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
@@ -188,6 +189,18 @@ export const FloatingRunButton = ({
   const buttonRef = useRef(null);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
+
+  if (isA2AWorkflow) {
+    return (
+      <ChatButton
+        {...buttonCommonProps}
+        isDarkMode={isDarkMode}
+        isDraftMode={isDraftMode}
+        siteResourceId={siteResourceId}
+        workflowName={workflowName}
+      />
+    );
+  }
 
   if (canBeRunWithPayload) {
     return (
@@ -221,10 +234,6 @@ export const FloatingRunButton = ({
         />
       </>
     );
-  }
-
-  if (isA2AWorkflow) {
-    return <ChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
   }
 
   return (

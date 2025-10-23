@@ -152,7 +152,9 @@ async function deploy(
     }
   }
 
-  identityWizardContext?.useAdvancedIdentity ? await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext) : undefined;
+  if (identityWizardContext?.useAdvancedIdentity) {
+    await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext);
+  }
 
   let isZipDeploy = false;
 
@@ -237,7 +239,7 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
   const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
 
-  let [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
+  const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
   if (!site) {
     if (isAdvance) {
       return await createLogicAppAdvanced(context, sub);
@@ -247,14 +249,17 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
 
   let secrets: ContainerAppSecret[] = [];
 
+  let hybridSite: Site | undefined;
   if (site.id.includes('Microsoft.App')) {
     // NOTE(anandgmenon): Getting latest metadata for hybrid app as the one loaded from the cache can have outdateed definition and cause deployment to fail.
     const clientContainer = await createContainerClient({ ...context, ...sub.subscription });
     const resourceGroup = site.id.split('/')?.[4];
-    site = (await clientContainer.containerApps.get(resourceGroup, site.name)) as undefined as Site;
-    secrets = (await clientContainer.containerApps.listSecrets(resourceGroup, site.name)).value;
+    hybridSite = (await clientContainer.containerApps.get(resourceGroup, site.name)) as undefined as Site;
+    secrets = (await clientContainer.containerApps.listSecrets(resourceGroup, hybridSite.name)).value;
   }
-  const resourceTree = new LogicAppResourceTree(sub.subscription, site, secrets);
+  const resourceTree = hybridSite
+    ? new LogicAppResourceTree(sub.subscription, hybridSite, secrets)
+    : new LogicAppResourceTree(sub.subscription, site, secrets);
 
   return new SlotTreeItem(sub, resourceTree);
 }
@@ -333,42 +338,6 @@ async function managedApiConnectionsExists(workspaceFolder: WorkspaceFolder): Pr
   return !!connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length > 0;
 }
 
-/**
- * Authentication discriminated-union types used to strongly-type auth payloads
- * written to parameters.json and/or connections.json.
- */
-interface ManagedServiceIdentityAuth {
-  type: 'ManagedServiceIdentity';
-}
-
-interface ActiveDirectoryOAuthAuth {
-  type: 'ActiveDirectoryOAuth';
-  audience: string;
-  credentialType: string;
-  clientId: string;
-  tenant: string;
-  secret: string;
-}
-
-/**
- * Union of supported authentication payloads that can be emitted to either
- * parameters.json (parameterized deployments) or connections.json (direct write).
- */
-type AuthenticationValue = ManagedServiceIdentityAuth | ActiveDirectoryOAuthAuth;
-
-/**
- * Returns a temporary deployable project path after updating connection authentication
- * to either MSI or AAD OAuth depending on identityWizardContext.useAdvancedIdentity and
- * whether the project is parameterized or not.
- *
- * @param node                        The target Function/Workflow site/slot tree item.
- * @param workspaceFolder             The VS Code workspace folder that contains the Logic App project.
- * @param settingsToExclude           A mutable list of app setting names that should be excluded from deployment.
- * @param originalDeployFsPath        The original path being prepared for deployment (copied into a temp folder).
- * @param identityWizardContext       Context that indicates whether to use advanced identity (AAD OAuth) vs MSI.
- * @param actionContext               Action context for telemetry, error tagging, and cancellation.
- * @returns                           The fully prepared temporary deploy path, or undefined if no changes are needed.
- */
 async function getProjectPathToDeploy(
   node: SlotTreeItem,
   workspaceFolder: WorkspaceFolder,
@@ -378,114 +347,74 @@ async function getProjectPathToDeploy(
   actionContext: IActionContext
 ): Promise<string | undefined> {
   const workspaceFolderPath = workspaceFolder.uri.fsPath;
-
-  // Load current project artifacts
   const connectionsJson = await getConnectionsJson(workspaceFolderPath);
   const parametersJson = await getParametersJson(workspaceFolderPath);
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-
-  // Whether the project uses parameterized connections (parameters.json) or writes directly to connections.json
   const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
-
   let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
 
-  /**
-   * Writes the provided AuthenticationValue into parameters.json for each managed API connection.
-   * This is used when the project is parameterized (parameterizeConnectionsSetting = true).
-   *
-   * @param authValue  A discriminated AuthenticationValue (MSI or AAD OAuth).
-   */
-  function updateAuthenticationParameters(authValue: AuthenticationValue): void {
+  function updateAuthenticationParameters(authValue: any): void {
     if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
       for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
-        const paramKey = `${referenceKey}-Authentication`;
-
-        // Ensure parameter record exists to avoid undefined index errors.
-        if (!parametersJson[paramKey]) {
-          parametersJson[paramKey] = {
-            type: 'Object',
-            value: {},
-          };
-        }
-
-        parametersJson[paramKey].value = authValue;
-        actionContext.telemetry.properties.updateAuth = `updated "${paramKey}" parameter to ${authValue.type}`;
+        parametersJson[`${referenceKey}-Authentication`].value = authValue;
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}-Authentication" parameter to ManagedServiceIdentity`;
       }
     }
   }
 
-  /**
-   * Writes the provided AuthenticationValue directly into connections.json for each managed API connection.
-   * This is used when the project is not parameterized (parameterizeConnectionsSetting = false).
-   *
-   * @param authValue  A discriminated AuthenticationValue (MSI or AAD OAuth).
-   */
-  function updateAuthenticationInConnections(authValue: AuthenticationValue): void {
+  function updateAuthenticationInConnections(authValue: any): void {
     if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
       for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
         connectionsData.managedApiConnections[referenceKey].authentication = authValue;
-        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ${authValue.type}`;
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ManagedServiceIdentity`;
       }
     }
   }
 
   try {
-    // Parse connections.json and construct the desired auth payloads with strict typing
-    connectionsData = JSON.parse(connectionsJson) as ConnectionsData;
+    connectionsData = JSON.parse(connectionsJson);
+    const authValue = identityWizardContext?.useAdvancedIdentity
+      ? {
+          type: 'ActiveDirectoryOAuth',
+          audience: 'https://management.core.windows.net/',
+          credentialType: 'Secret',
+          clientId: `@appsetting('${workflowAppAADClientId}')`,
+          tenant: `@appsetting('${workflowAppAADTenantId}')`,
+          secret: `@appsetting('${workflowAppAADClientSecret}')`,
+        }
+      : { type: 'ManagedServiceIdentity' };
 
-    const authValue: ManagedServiceIdentityAuth = { type: 'ManagedServiceIdentity' };
-
-    // These are expected to be available in scope as constants/placeholders resolved at build/deploy time.
-    const advancedIdentityAuthValue: ActiveDirectoryOAuthAuth = {
-      type: 'ActiveDirectoryOAuth',
-      audience: 'https://management.core.windows.net/',
-      credentialType: 'Secret',
-      clientId: `@appsetting('${workflowAppAADClientId}')`,
-      tenant: `@appsetting('${workflowAppAADTenantId}')`,
-      secret: `@appsetting('${workflowAppAADClientSecret}')`,
-    };
-
-    // Choose whether to write into parameters.json (parameterized) or connections.json (direct)
     if (parameterizeConnectionsSetting) {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationParameters(advancedIdentityAuthValue)
-        : updateAuthenticationParameters(authValue);
+      updateAuthenticationParameters(authValue);
     } else {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationInConnections(advancedIdentityAuthValue)
-        : updateAuthenticationInConnections(authValue);
+      updateAuthenticationInConnections(authValue);
     }
 
-    // Resolve references using the updated structures prior to ACL work
     resolvedConnections = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
   } catch {
     actionContext.telemetry.properties.noAuthUpdate = 'No authentication update was made';
     return undefined;
   }
 
-  // If there are managed API connections, prepare a temp deploy folder and perform ACL setup
   if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
     const deployProjectPath = path.join(path.dirname(workspaceFolderPath), `${path.basename(workspaceFolderPath)}-deploytemp`);
     const connectionsFilePathDeploy = path.join(deployProjectPath, connectionsFileName);
     const parametersFilePathDeploy = path.join(deployProjectPath, parametersFileName);
 
-    // Ensure a clean temp folder
     if (await fse.pathExists(deployProjectPath)) {
       await cleanAndRemoveDeployFolder(deployProjectPath);
     }
+
     fse.mkdirSync(deployProjectPath);
 
-    // Copy original deployment payload into the temp folder
     await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true });
 
-    // For each connection, ensure access policies (ACL) exist as needed
     for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
       try {
         const connection = resolvedConnections.managedApiConnections[referenceKey].connection;
         await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node);
 
-        // If deploying to a slot, also set ACL on the parent site
         if (node.site.isSlot) {
           const parentTreeItem = node.parent?.parent as SlotTreeItem;
           await createAclInConnectionIfNeeded(identityWizardContext, connection.id, parentTreeItem);
@@ -494,25 +423,17 @@ async function getProjectPathToDeploy(
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
       }
 
-      // Exclude ephemeral connection keys from app settings deployment
       settingsToExclude.push(`${referenceKey}-connectionKey`);
     }
 
-    // Persist updated artifacts to the temp folder
     await writeFormattedJson(connectionsFilePathDeploy, connectionsData);
     await writeFormattedJson(parametersFilePathDeploy, parametersJson);
 
     return deployProjectPath;
   }
-
   return undefined;
 }
 
-/**
- * Empties and removes the deploy temp folder.
- *
- * @param deployProjectPath  Full path to the temporary deployment folder.
- */
 async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<void> {
   await fse.emptyDir(deployProjectPath);
   fse.rmdirSync(deployProjectPath);

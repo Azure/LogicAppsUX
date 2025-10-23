@@ -34,7 +34,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 
-import AdmZip = require('adm-zip');
+import * as AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
@@ -84,18 +84,20 @@ export async function downloadAndExtractDependency(
       // Extract to targetFolder
       if (dependencyName === dotnetDependencyName) {
         const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-        process.platform === Platform.windows
-          ? await executeCommand(
-              ext.outputChannel,
-              undefined,
-              'powershell -ExecutionPolicy Bypass -File',
-              dependencyFilePath,
-              '-InstallDir',
-              targetFolder,
-              '-Channel',
-              `${version}.0`
-            )
-          : await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+        if (process.platform === Platform.windows) {
+          await executeCommand(
+            ext.outputChannel,
+            undefined,
+            'powershell -ExecutionPolicy Bypass -File',
+            dependencyFilePath,
+            '-InstallDir',
+            targetFolder,
+            '-Channel',
+            `${version}.0`
+          );
+        } else {
+          await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+        }
       } else {
         if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
           stopAllDesignTimeApis();

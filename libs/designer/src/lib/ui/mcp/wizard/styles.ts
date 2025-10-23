@@ -34,6 +34,10 @@ export const useMcpWizardStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
   },
 
+  sectionDisabled: {
+    backgroundColor: tokens.colorNeutralBackgroundDisabled,
+  },
+
   header: {
     display: 'flex',
     alignItems: 'center',
@@ -60,6 +64,10 @@ export const useMcpWizardStyles = makeStyles({
     flexDirection: 'column',
     overflow: 'hidden',
     paddingTop: mainGap,
+  },
+
+  serverSection: {
+    padding: '20px 0 0 0',
   },
 
   footer: {

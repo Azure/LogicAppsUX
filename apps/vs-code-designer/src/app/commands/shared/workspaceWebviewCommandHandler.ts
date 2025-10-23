@@ -14,7 +14,7 @@ import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { assetsFolderName } from '../../../constants';
 import { localize } from '../../../localize';
 
-interface WorkspaceWebviewCommandConfig {
+export interface WorkspaceWebviewCommandConfig {
   panelName: string;
   panelGroupKey: string;
   projectName: string;

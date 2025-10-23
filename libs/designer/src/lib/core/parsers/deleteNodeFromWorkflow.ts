@@ -116,9 +116,6 @@ export const deleteMcpServerNodeFromWorkflow = (
   if (!node) {
     return;
   }
-  
-  const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
-  const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
 
   // Adjust edges
   const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';

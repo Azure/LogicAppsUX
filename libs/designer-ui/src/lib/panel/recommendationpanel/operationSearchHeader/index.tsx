@@ -2,6 +2,7 @@ import { DesignerSearchBox } from '../../../searchbox';
 import { useIntl } from 'react-intl';
 import { OperationTypeFilter } from '../operationTypeFilter';
 import { Button } from '@fluentui/react-components';
+import { AddFilled } from '@fluentui/react-icons';
 
 interface OperationSearchHeaderProps {
   searchCallback: (s: string) => void;
@@ -27,9 +28,9 @@ export const OperationSearchHeader = ({
   const intl = useIntl();
 
   const addMcpText = intl.formatMessage({
-    defaultMessage: 'Add custom MCP',
-    id: 'Xy40uA',
-    description: 'Button text for adding custom MCP server'
+    defaultMessage: 'Custom MCP server',
+    id: 'SrHDqb',
+    description: 'Button text for adding custom MCP server',
   });
 
   const actionTypeFilters = isTriggerNode
@@ -61,32 +62,35 @@ export const OperationSearchHeader = ({
           description: 'Placeholder text for MCP Server search bar',
         }
       : hideOperations
+        ? {
+            defaultMessage: 'Search for a connector',
+            id: 'CLJuAQ',
+            description: 'Placeholder text for Connector search bar',
+          }
+        : isTriggerNode
           ? {
-              defaultMessage: 'Search for a connector',
+              defaultMessage: 'Search for a trigger or connector',
               id: 'CLJuAQ',
-              description: 'Placeholder text for Connector search bar',
+              description: 'Placeholder text for Trigger/Connector search bar',
             }
-          : isTriggerNode
-            ? {
-                defaultMessage: 'Search for a trigger or connector',
-                id: 'CLJuAQ',
-                description: 'Placeholder text for Trigger/Connector search bar',
-              }
-            : {
-                defaultMessage: 'Search for an action or connector',
-                id: 'py9dSW',
-                description: 'Placeholder text for Operation/Connector search bar',
-              }
+          : {
+              defaultMessage: 'Search for an action or connector',
+              id: 'py9dSW',
+              description: 'Placeholder text for Operation/Connector search bar',
+            }
   );
 
   return (
     <div className="msla-sub-heading-container">
       <div className="msla-sub-heading">
         <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} placeholder={searchPlaceholderText} />
-        {isAddingMcpServer
-          ? <Button appearance={'primary'} size="small" onClick={onAddMcpServerClick}>{addMcpText}</Button>
-          : <OperationTypeFilter actionTypeFilters={actionTypeFilters} filters={filters} disabled={isTriggerNode} setFilters={setFilters} />
-        }
+        {isAddingMcpServer ? (
+          <Button appearance={'primary'} icon={<AddFilled />} onClick={onAddMcpServerClick}>
+            {addMcpText}
+          </Button>
+        ) : (
+          <OperationTypeFilter actionTypeFilters={actionTypeFilters} filters={filters} disabled={isTriggerNode} setFilters={setFilters} />
+        )}
       </div>
     </div>
   );

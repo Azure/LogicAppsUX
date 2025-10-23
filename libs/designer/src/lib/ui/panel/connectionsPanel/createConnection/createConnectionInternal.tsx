@@ -17,6 +17,7 @@ import type {
   Connector,
   ManagedIdentity,
   OperationManifest,
+  ConnectionParameterSets,
 } from '@microsoft/logic-apps-shared';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -46,6 +47,7 @@ export const CreateConnectionInternal = (props: {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: { agentType?: string };
+  filterParameterSets?: (parameterSet: ConnectionParameterSet) => boolean;
 }) => {
   const {
     classes,
@@ -67,6 +69,7 @@ export const CreateConnectionInternal = (props: {
     isAgentSubgraph,
     operationManifest,
     workflowMetadata,
+    filterParameterSets,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -269,6 +272,19 @@ export const CreateConnectionInternal = (props: {
     }
   }, [dispatch, onConnectionCancelled]);
 
+  const filterSupportedParameterSets = useCallback(() => {
+    const allParameterSets = getSupportedParameterSets(
+      connector?.properties.connectionParameterSets,
+      operationType,
+      connector?.properties.capabilities
+    );
+
+    const filteredSets = allParameterSets?.values.filter((parameterSet) =>
+      filterParameterSets ? filterParameterSets(parameterSet) : true
+    );
+    return filteredSets && filteredSets.length > 0 ? ({ ...allParameterSets, values: filteredSets } as ConnectionParameterSets) : undefined;
+  }, [connector?.properties.capabilities, connector?.properties.connectionParameterSets, filterParameterSets, operationType]);
+
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
     id: 'faUrud',
@@ -290,11 +306,7 @@ export const CreateConnectionInternal = (props: {
       showActionBar={showActionBar}
       classes={classes}
       connector={connector}
-      connectionParameterSets={getSupportedParameterSets(
-        connector.properties.connectionParameterSets,
-        operationType,
-        connector.properties.capabilities
-      )}
+      connectionParameterSets={filterSupportedParameterSets()}
       operationParameterSets={connector.properties.operationParameterSets}
       isAgentSubgraph={isAgentSubgraph}
       createButtonTexts={createButtonTexts}
