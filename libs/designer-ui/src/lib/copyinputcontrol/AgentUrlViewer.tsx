@@ -58,7 +58,22 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
   };
 
   const linkUrl = useMemo(() => {
-    return url + (queryParams ? `?${new URLSearchParams(queryParams).toString()}` : '');
+    if (!queryParams) {
+      return url;
+    }
+
+    // Build query parameters object, filtering out undefined values
+    // URLSearchParams requires Record<string, string> but queryParams allows undefined
+    const definedParams: Record<string, string> = {};
+    for (const key in queryParams) {
+      const value = queryParams[key];
+      if (value !== undefined) {
+        definedParams[key] = value;
+      }
+    }
+
+    const queryString = new URLSearchParams(definedParams).toString();
+    return queryString ? `${url}?${queryString}` : url;
   }, [url, queryParams]);
 
   const handleOpenInNewTab = () => {

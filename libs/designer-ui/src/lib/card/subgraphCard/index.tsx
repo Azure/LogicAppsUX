@@ -9,7 +9,7 @@ import type { SubgraphType } from '@microsoft/logic-apps-shared';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { MouseEventHandler } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
 interface SubgraphCardProps {
   id: string;
@@ -20,7 +20,7 @@ interface SubgraphCardProps {
   handleCollapse?: (includeNested?: boolean) => void;
   selectionMode?: CardProps['selectionMode'];
   readOnly?: boolean;
-  onClick?(id?: string): void;
+  onClick?(id?: string, rect?: DOMRect): void;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   showAddButton?: boolean;
@@ -49,6 +49,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   active = true,
 }) => {
   const intl = useIntl();
+
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const mainKeyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
   const collapseKeyboardInteraction = useCardKeyboardInteraction(handleCollapse);
@@ -143,6 +145,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       },
       SWITCH_ADD_CASE: {},
       AGENT_ADD_CONDITON: {},
+      MCP_CLIENT: {},
     }),
     [conditionalTypeText, id, intl, parentId, title]
   );
@@ -167,6 +170,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     const title = subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON'] ? addActionLabel : addCaseLabel;
     return (
       <div
+        ref={buttonRef}
         style={{
           display: 'grid',
           placeItems: 'center',
@@ -174,7 +178,11 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           height: '100%',
         }}
       >
-        <ActionButtonV2 title={title} onClick={() => onClick?.()} tabIndex={nodeIndex} />
+        <ActionButtonV2
+          title={title}
+          onClick={() => onClick?.(undefined, buttonRef.current?.getBoundingClientRect())}
+          tabIndex={nodeIndex}
+        />
       </div>
     );
   }

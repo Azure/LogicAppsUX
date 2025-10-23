@@ -22,6 +22,13 @@ import { ChatButton } from './chat';
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
 
+export type PayloadData = {
+  method?: string;
+  headers?: Record<string, string>;
+  queries?: Record<string, string>;
+  body?: string;
+};
+
 export interface FloatingRunButtonProps {
   siteResourceId?: string;
   workflowName?: string;
@@ -48,7 +55,7 @@ export const FloatingRunButton = ({
   const operationState = useSelector((state: RootState) => state.operations);
 
   const canBeRunWithPayload = useMemo(
-    () => !isDraftMode && canRunBeInvokedWithPayload(operationState?.operationInfo),
+    () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
     [isDraftMode, operationState?.operationInfo]
   );
 
@@ -131,7 +138,7 @@ export const FloatingRunButton = ({
     mutate: runWithPayloadMutate,
     isLoading: runWithPayloadIsLoading,
     // error: runWithPayloadError,
-  } = useMutation(async (payload: any) => {
+  } = useMutation(async (payload: PayloadData) => {
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];
@@ -140,6 +147,15 @@ export const FloatingRunButton = ({
       }
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       callbackInfo.method = payload?.method;
+
+      if (isDraftMode) {
+        if (siteResourceId && workflowName) {
+          callbackInfo.value = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/runDraftWithPayload`;
+          callbackInfo.method = HTTP_METHODS.POST;
+        } else {
+          // TODO: Handle/throw error
+        }
+      }
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
       const runWithPayloadResponse = await RunService().runTrigger(callbackInfo, payload);
@@ -151,6 +167,7 @@ export const FloatingRunButton = ({
   });
 
   const buttonCommonProps: any = {
+    id: 'laux-v2-run-button',
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
@@ -172,6 +189,18 @@ export const FloatingRunButton = ({
   const buttonRef = useRef(null);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
+
+  if (isA2AWorkflow) {
+    return (
+      <ChatButton
+        {...buttonCommonProps}
+        isDarkMode={isDarkMode}
+        isDraftMode={isDraftMode}
+        siteResourceId={siteResourceId}
+        workflowName={workflowName}
+      />
+    );
+  }
 
   if (canBeRunWithPayload) {
     return (
@@ -196,13 +225,15 @@ export const FloatingRunButton = ({
         >
           {runText}
         </SplitButton>
-        <PayloadPopover open={popoverOpen} setOpen={setPopoverOpen} buttonRef={buttonRef} onSubmit={runWithPayloadMutate} />
+        <PayloadPopover
+          isDraftMode={isDraftMode}
+          open={popoverOpen}
+          setOpen={setPopoverOpen}
+          buttonRef={buttonRef}
+          onSubmit={runWithPayloadMutate}
+        />
       </>
     );
-  }
-
-  if (isA2AWorkflow) {
-    return <ChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
   }
 
   return (

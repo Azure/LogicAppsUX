@@ -126,7 +126,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
       dispatch(
         initializeConnectionMappings({
           connectorId: selectedConnectorId as string,
-          operations: selectedOperations,
+          operations: [MCP_ConnectionKey, ...selectedOperations],
           area: navigationLocation,
         })
       );
@@ -207,7 +207,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
         dispatch,
         selectedConnectorId as string,
         // If connector is fixed we use the placeholder key to add the connection, else the operation ids.
-        selectedOperations?.length === 0 && disableConnectorSelection ? [MCP_ConnectionKey] : selectedOperations,
+        [MCP_ConnectionKey, ...selectedOperations],
         {
           isTabDisabled: isConnectionsTabDisabled,
           onTabClick: () =>

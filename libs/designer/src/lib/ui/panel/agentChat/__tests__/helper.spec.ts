@@ -60,6 +60,38 @@ describe('parseChatHistory', () => {
     expect(agentCallback).toHaveBeenCalledWith('node1');
   });
 
+  it('should process a mcp tool result message correctly', () => {
+    const timestamp = '2021-02-02T00:00:00Z';
+    const message = {
+      iteration: 2,
+      messageEntryType: AgentMessageEntryType.ToolResult,
+      toolResultsPayload: {
+        toolResult: {
+          subIteration: 1,
+          toolName: 'sampleTool',
+          status: 'completed',
+          mcpToolName: 'samplemcptool',
+        },
+      },
+      timestamp,
+      role: 'Agent',
+    };
+    const chatHistory = [{ nodeId: 'node2', messages: [message] }];
+
+    const result = parseChatHistory(chatHistory, toolResultCallback, toolContentCallback, agentCallback);
+    expect(result.length).toBe(2);
+    const [toolItem] = result as any;
+    expect(toolItem.text).toBe('sampleTool (samplemcptool)');
+    expect(toolItem.type).toBe(ConversationItemType.Tool);
+    expect(toolItem.dataScrollTarget).toBe('node2-2-0');
+    expect(new Date(toolItem.date).toISOString()).toBe(new Date(timestamp).toISOString());
+    expect(typeof toolItem.onClick).toBe('function');
+
+    // Invoke the tool result callback via onClick
+    toolItem.onClick();
+    expect(toolResultCallback).toHaveBeenCalledWith('node2', 'sampleTool', 2, 1, 'samplemcptool');
+  });
+
   it('should process a tool result message correctly', () => {
     const timestamp = '2021-02-02T00:00:00Z';
     const message = {
@@ -88,7 +120,7 @@ describe('parseChatHistory', () => {
 
     // Invoke the tool result callback via onClick
     toolItem.onClick();
-    expect(toolResultCallback).toHaveBeenCalledWith('node2', 'sampleTool', 2, 1);
+    expect(toolResultCallback).toHaveBeenCalledWith('node2', 'sampleTool', 2, 1, undefined);
   });
 
   it('should process multiple messages in the same iteration correctly', () => {

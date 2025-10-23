@@ -649,6 +649,44 @@ export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeI
   }
 };
 
+// this is only for the modelId parameter in Consumption Agents
+export const initializeAgentModelIds = async (parameter: ParameterInfo): Promise<void> => {
+  if (parameter) {
+    let models: string[] = [];
+
+    try {
+      const fetchedModels = await WorkflowService()?.getAgentModelId?.();
+      if (fetchedModels && fetchedModels.length > 0) {
+        models = fetchedModels;
+      }
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'initializeAgentModelIds',
+        message: `Failed to fetch agent models, using default fallback: ${error}`,
+        error: error instanceof Error ? error : undefined,
+      });
+    }
+
+    // Ensure gpt-4o-mini is always available as a fallback option
+    const modelsSet = new Set(models);
+    if (!modelsSet.has('gpt-4o-mini')) {
+      modelsSet.add('gpt-4o-mini');
+    }
+
+    const options = Array.from(modelsSet).map((model) => ({
+      value: model,
+      displayName: model === 'gpt-4o-mini' ? 'gpt-4o-mini (global)' : model,
+    }));
+
+    // Mutate the parameter object before it's stored in Redux
+    parameter.editorOptions = {
+      ...parameter.editorOptions,
+      options,
+    };
+  }
+};
+
 export const updateCustomCodeInInputs = async (parameter: ParameterInfo, customCode: CustomCodeFileNameMapping) => {
   const language: EditorLanguage = parameter?.editorOptions?.language;
   const fileName = getCustomCodeFileNameFromParameter(parameter);

@@ -13,6 +13,7 @@ import {
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
+  fetchAgentModelIds,
   fetchAgentUrlConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
@@ -123,7 +124,10 @@ const DesignerEditorConsumption = () => {
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
+  // Remove (stage) suffix from location for API compatibility
+  const rawLocation = workflowAndArtifactsData?.location ?? '';
+  const sanitizedLocation = rawLocation.replace(/\s*\(stage\)\s*/gi, '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(sanitizedLocation);
   const services = useMemo(
     () =>
       getDesignerServices(
@@ -544,6 +548,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint);
     },
+    getAgentModelId: () => fetchAgentModelIds(workflowId),
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {

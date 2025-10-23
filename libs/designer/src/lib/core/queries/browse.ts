@@ -1,4 +1,4 @@
-import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import type { Connector, DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import {
   SearchService,
   cleanConnectorId,
@@ -147,6 +147,31 @@ const useCustomOperationsLazyQuery = () =>
       ...queryOpts,
       ...pagedOpts,
     }
+  );
+
+export const useMcpServersQuery = () =>
+  useQuery(
+    ['allOperations', 'mcpServers'],
+    async () => {
+      const searchService = SearchService();
+      if (searchService.getMcpServers) {
+        const data = await searchService.getMcpServers();
+
+        const processedData = data.map<DiscoveryOperation<DiscoveryResultTypes>>((operation: any) => ({
+          ...operation,
+          properties: {
+            ...operation.properties,
+            operationType: 'McpClientTool',
+            operationKind: 'Managed',
+          },
+        }));
+
+        return { data: processedData };
+      }
+
+      return { data: [] };
+    },
+    queryOpts
   );
 
 const useBuiltInOperationsQuery = () =>

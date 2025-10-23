@@ -12,6 +12,7 @@ import {
   Spinner,
   tokens,
 } from '@fluentui/react-components';
+import type { ButtonProps } from '@fluentui/react-components';
 
 import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
@@ -21,11 +22,11 @@ import { useMemo } from 'react';
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const useAgentUrl = (): UseQueryResult<AgentURL> => {
+export const useAgentUrl = (props: { isDraftMode?: boolean }): UseQueryResult<AgentURL> => {
   return useQuery(
-    ['agentUrl'],
+    ['agentUrl', props.isDraftMode],
     async () => {
-      return WorkflowService().getAgentUrl?.();
+      return WorkflowService().getAgentUrl?.(props.isDraftMode);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
@@ -36,9 +37,17 @@ export const useAgentUrl = (): UseQueryResult<AgentURL> => {
   );
 };
 
-export const ChatButton = (buttonCommonProps: any) => {
+export type ChatButtonProps = ButtonProps & {
+  isDarkMode: boolean;
+  isDraftMode?: boolean;
+  siteResourceId?: string;
+  workflowName?: string;
+};
+
+export const ChatButton = (props: ChatButtonProps) => {
   const intl = useIntl();
-  const { isLoading, data } = useAgentUrl();
+  const { isDarkMode, isDraftMode, ...buttonProps } = props;
+  const { isLoading, data } = useAgentUrl({ isDraftMode });
 
   const IntlText = useMemo(
     () => ({
@@ -65,19 +74,21 @@ export const ChatButton = (buttonCommonProps: any) => {
     if (isLoading) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
+
+    const agentChatUrl = data?.chatUrl;
     return (
       <iframe
-        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`}
+        src={`${agentChatUrl}${agentChatUrl?.includes('?') ? '&' : '?'}apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}`}
         title={IntlText.TITLE}
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [isLoading, data, IntlText, buttonCommonProps.isDarkMode]);
+  }, [isLoading, data?.chatUrl, data?.queryParams?.apiKey, isDarkMode, IntlText.TITLE, IntlText.LOADING]);
 
   return (
-    <Dialog modalType="non-modal" surfaceMotion={null}>
+    <Dialog modalType="modal" surfaceMotion={null}>
       <DialogTrigger disableButtonEnhancement>
-        <Button {...buttonCommonProps} icon={<ChatIcon />}>
+        <Button {...buttonProps} icon={<ChatIcon />}>
           {IntlText.CHAT_TEXT}
         </Button>
       </DialogTrigger>

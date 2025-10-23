@@ -1,6 +1,7 @@
 import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 import { WorkflowKind, type NodeMetadata, type WorkflowState } from './workflowInterfaces';
+import Constants from '../../../common/constants';
 
 /**
  * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
@@ -129,6 +130,10 @@ export const collapseFlowTree = (
   return { graph: prunedTree, collapsedMapping: collapsedMappingArrays };
 };
 
+export const isManagedMcpOperation = (operation: { type?: string; kind?: string }) => {
+  return equals(operation?.type, Constants.NODE.TYPE.MCP_CLIENT) && equals(operation?.kind, Constants.NODE.KIND.MANAGED);
+};
+
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
   const workflowKind = state.workflowKind;
 
@@ -138,18 +143,25 @@ export const isA2AWorkflow = (state: WorkflowState): boolean => {
   }
 
   // Standard SKU, kind is not agent
-  if (workflowKind && !equals(workflowKind, 'agent', false)) {
+  if (workflowKind && !equals(workflowKind, 'Agent', false)) {
     return false;
   }
 
   // Consumption SKU, check definition metadata
   const agentType = state.originalDefinition?.metadata?.agentType;
-  const isConsumptionAgent = equals(agentType, 'conversational', false);
+  if (equals(agentType, 'conversational', false)) {
+    return true;
+  }
 
-  // Also check if workflow has Agent operations (fallback for Consumption workflows without metadata)
-  const hasAgentOperations = Object.values(state.operations).some((operation) => equals(operation.type, 'Agent', true));
+  // Consumption SKU - check for A2A trigger pattern
+  const triggerNodeId = Object.keys(state.nodesMetadata).find((nodeId) => state.nodesMetadata[nodeId]?.isTrigger === true);
 
-  return isConsumptionAgent || hasAgentOperations;
+  if (triggerNodeId) {
+    const triggerOperation = state.operations[triggerNodeId];
+    return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+  }
+
+  return false;
 };
 
 export const isAgentWorkflow = (kind: string): boolean => {
@@ -157,5 +169,8 @@ export const isAgentWorkflow = (kind: string): boolean => {
 };
 
 export const shouldClearNodeRunData = (node: NodeMetadata) => {
-  return node?.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION);
+  return (
+    node?.runData &&
+    (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || node.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT)
+  );
 };

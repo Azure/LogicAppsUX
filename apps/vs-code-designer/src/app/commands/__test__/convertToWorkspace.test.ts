@@ -7,11 +7,12 @@ import * as funcCoreTools from '../../utils/funcCoreTools/funcVersion';
 import * as settingsUtils from '../../utils/vsCodeConfig/settings';
 import * as path from 'path';
 import * as fse from 'fs-extra';
-import * as azextUtils from '@microsoft/vscode-azext-utils';
+import * as workspaceWebviewCommandHandler from '../shared/workspaceWebviewCommandHandler';
 import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
 import { extensionCommand } from '../../../constants';
+import { WorkspaceWebviewCommandConfig } from '../shared/workspaceWebviewCommandHandler';
 
 class MockDirent {
   constructor(
@@ -27,6 +28,11 @@ vi.mock('../../utils/verifyIsProject', () => ({
   isLogicAppProject: vi.fn(),
   isLogicAppProjectInRoot: vi.fn(),
   tryGetLogicAppProjectRoot: vi.fn(),
+  getFirstLogicAppProjectRoot: vi.fn(),
+}));
+
+vi.mock('../shared/workspaceWebviewCommandHandler', () => ({
+  createWorkspaceWebviewCommandHandler: vi.fn(),
 }));
 
 describe('convertToWorkspace', () => {
@@ -38,10 +44,6 @@ describe('convertToWorkspace', () => {
   };
   const testLogicAppName = 'LogicApp';
   const testWorkspaceFile = path.join(testWorkspaceFolder.uri.fsPath, `${testWorkspaceName}.code-workspace`);
-  const mockAzureWizard = {
-    prompt: vi.fn(),
-    execute: vi.fn(),
-  };
   let context: any;
 
   beforeEach(() => {
@@ -62,14 +64,14 @@ describe('convertToWorkspace', () => {
   });
 
   it('should return undefined when workspace folder is not found', async () => {
-    vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(undefined);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFolderWithoutPrompting').mockResolvedValue(undefined);
 
     const result = await convertToWorkspace(context);
     expect(result).toBeUndefined();
   });
 
   it('should return undefined when project is not in root', async () => {
-    vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(testWorkspaceFolder);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFolderWithoutPrompting').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(verifyProject, 'isLogicAppProjectInRoot').mockResolvedValue(false);
 
     const result = await convertToWorkspace(context);
@@ -77,7 +79,7 @@ describe('convertToWorkspace', () => {
   });
 
   it('should return true when a valid workspace is already opened', async () => {
-    vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(testWorkspaceFolder);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFolderWithoutPrompting').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(verifyProject, 'isLogicAppProjectInRoot').mockResolvedValue(true);
     vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(path.dirname(testWorkspaceFile));
 
@@ -93,13 +95,17 @@ describe('convertToWorkspace', () => {
   });
 
   it('should prompt to create a workspace when no workspace is opened', async () => {
-    vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(testWorkspaceFolder);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFolderWithoutPrompting').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(verifyProject, 'isLogicAppProjectInRoot').mockResolvedValue(true);
     vi.spyOn(workspaceUtils, 'getWorkspaceFile').mockResolvedValue(undefined);
     vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
+    const workspaceWebviewCommandHandlerSpy = vi
+      .spyOn(workspaceWebviewCommandHandler, 'createWorkspaceWebviewCommandHandler')
+      .mockImplementation(async (config: WorkspaceWebviewCommandConfig) => {
+        config.onResolve?.(true);
+      });
 
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
-    vi.spyOn(azextUtils, 'AzureWizard').mockImplementation(() => mockAzureWizard);
 
     const result = await convertToWorkspace(context);
 
@@ -112,9 +118,7 @@ describe('convertToWorkspace', () => {
       DialogResponses.yes,
       DialogResponses.no
     );
-    expect(mockAzureWizard.prompt).toHaveBeenCalledOnce();
-    expect(mockAzureWizard.execute).toHaveBeenCalledOnce();
-    expect(showInfoSpy).toHaveBeenCalledWith(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
+    expect(workspaceWebviewCommandHandlerSpy).toHaveBeenCalledOnce();
     expect(result).toBe(true);
   });
 
@@ -126,11 +130,9 @@ describe('convertToWorkspace', () => {
     vi.spyOn(verifyProject, 'isLogicAppProject').mockImplementation(async (p: string) => {
       return p === testLogicAppChildFolder;
     });
-    vi.spyOn(verifyProject, 'tryGetLogicAppProjectRoot').mockImplementation(
-      async (context: azextUtils.IActionContext, f: vscode.WorkspaceFolder | string | undefined, suppressPrompt: boolean | undefined) => {
-        return f === testLogicAppChildFolder ? testLogicAppChildFolder : undefined;
-      }
-    );
+    vi.spyOn(verifyProject, 'getFirstLogicAppProjectRoot').mockImplementation(async (f: vscode.WorkspaceFolder | string | undefined) => {
+      return f === testLogicAppChildFolder ? testLogicAppChildFolder : undefined;
+    });
     vi.spyOn(fse, 'readdir').mockImplementation(async (p: fse.PathLike) => {
       if (p === testWorkspaceFolder.uri.fsPath) {
         return [new MockDirent(testLogicAppName, true)];

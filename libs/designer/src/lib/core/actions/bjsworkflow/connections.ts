@@ -51,6 +51,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -365,6 +366,13 @@ export const getConnectionMappingForNode = (
         return mapping;
       }
     }
+    if (isManagedMcpOperation(operation)) {
+      const connectionReferenceKey = (operation as any).inputs.connectionReference.connectionName;
+      if (connectionReferenceKey !== undefined) {
+        const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });
+        return mapping;
+      }
+    }
     return Promise.resolve(undefined);
   } catch (error) {
     const errorMessage = `Failed to get connection mapping for node: ${error}`;
@@ -440,6 +448,10 @@ export async function getManifestBasedConnectionMapping(
 
 export function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
   return !!manifest.properties.connection?.required;
+}
+
+export function isConnectionAutoSelectionDisabled(manifest: OperationManifest): boolean {
+  return !!manifest?.properties?.connection?.disableAutoSelection;
 }
 
 export function getConnectionMetadata(manifest?: OperationManifest) {
@@ -579,6 +591,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
 
     case ConnectionReferenceKeyFormat.HybridTrigger:
       return getHybridTriggerConnectionReferenceKey((operationDefinition as LogicAppsV2.HybridTriggerOperation).inputs);
+
+    case ConnectionReferenceKeyFormat.McpConnection:
+      return (operationDefinition as any).inputs.connectionReference.connectionName;
     default:
       throw Error('No known connection reference key type');
   }

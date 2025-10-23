@@ -84,10 +84,10 @@ export const workflowSlice = createSlice({
     initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
     },
-    initWorkflowKind: (state: WorkflowState, action: PayloadAction<WorkflowKind>) => {
+    setWorkflowKind: (state: WorkflowState, action: PayloadAction<WorkflowKind>) => {
       state.workflowKind = action.payload;
     },
-    initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
+    setRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
@@ -799,8 +799,8 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initWorkflowSpec,
-  initWorkflowKind,
-  initRunInstance,
+  setWorkflowKind,
+  setRunInstance,
   addNode,
   addImplicitForeachNode,
   pasteNode,

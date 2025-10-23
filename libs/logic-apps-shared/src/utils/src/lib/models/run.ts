@@ -29,6 +29,7 @@ export interface RunProperties {
   status: string;
   trigger: unknown;
   workflow: unknown;
+  previousRunId?: string;
 }
 
 export interface Runs {
@@ -114,5 +115,6 @@ export interface ToolResultPayload {
     status: 'HandedOff' | 'Success' | 'Error' | 'InProgress';
     toolName: string;
     subIteration: number;
+    mcpToolName?: string;
   };
 }

@@ -202,8 +202,8 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
           className={css('handoff', colorClass)}
           viewBox="0 0 20 20"
           refX="6"
-          refY="5"
-          markerWidth="10"
+          refY="8"
+          markerWidth="12"
           markerHeight="10"
           orient={markerAngle}
         >
