@@ -43,6 +43,7 @@ export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
+export const workspaceTemplatesFolderName = 'WorkspaceTemplates';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
@@ -271,6 +272,9 @@ export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
+export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
+export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
+
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';

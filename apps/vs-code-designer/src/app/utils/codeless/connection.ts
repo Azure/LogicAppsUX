@@ -43,6 +43,7 @@ import { window } from 'vscode';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
+import { AuthenticationMethod } from '../../commands/workflows/authenticationMethodStep';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -341,7 +342,7 @@ export async function getConnectionsAndSettingsToUpdate(
         workflowBaseManagementUri,
         localSettings
       );
-      createCopy(referencesToAdd, updatedReferences);
+      Object.assign(referencesToAdd, updatedReferences);
       context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
     } catch (error) {
       context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;

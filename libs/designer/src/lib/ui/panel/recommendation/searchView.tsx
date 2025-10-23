@@ -31,6 +31,7 @@ type SearchViewProps = {
   setFilters: (filters: Record<string, string>) => void;
   onOperationClick: (id: string, apiId?: string) => void;
   displayRuntimeInfo: boolean;
+  isAddingMcpServer?: boolean;
 };
 
 export const SearchView: FC<SearchViewProps> = ({
@@ -43,6 +44,7 @@ export const SearchView: FC<SearchViewProps> = ({
   setFilters,
   onOperationClick,
   displayRuntimeInfo,
+  isAddingMcpServer,
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
@@ -147,6 +149,12 @@ export const SearchView: FC<SearchViewProps> = ({
 
   useDebouncedEffect(
     () => {
+      if (isAddingMcpServer && !searchTerm) {
+        setSearchResults(allOperations);
+        setIsLoadingSearchResults(false);
+        return;
+      }
+
       const searchResultsPromise = new DefaultSearchOperationsService(
         allOperations,
         shouldEnableParseDocWithMetadata ?? false
@@ -157,7 +165,7 @@ export const SearchView: FC<SearchViewProps> = ({
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata],
+    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata, isAddingMcpServer],
     200
   );
 
@@ -178,6 +186,7 @@ export const SearchView: FC<SearchViewProps> = ({
       filters={filters}
       setFilters={setFilters}
       displayRuntimeInfo={displayRuntimeInfo}
+      isAddingMcpServer={isAddingMcpServer}
     />
   );
 };

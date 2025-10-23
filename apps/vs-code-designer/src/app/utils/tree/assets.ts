@@ -2,6 +2,7 @@ import { ext } from '../../../extensionVariables';
 import { Theme } from '@microsoft/logic-apps-shared';
 import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
+import { assetsFolderName } from '../../../constants';
 
 /**
  * Gets icon path by name.
@@ -29,5 +30,5 @@ export function getThemedIconPath(iconName: string): TreeItemIconPath {
  * @returns {string} assets folder path.
  */
 function getResourcesPath(): string {
-  return ext.context.asAbsolutePath('assets');
+  return ext.context.asAbsolutePath(assetsFolderName);
 }

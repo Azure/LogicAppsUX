@@ -370,6 +370,7 @@ export default {
       JOIN: 'join',
       LIQUID: 'liquid',
       MANUAL: 'manual',
+      MCP_CLIENT: 'mcpclienttool',
       OPEN_API_CONNECTION: 'openapiconnection',
       OPEN_API_CONNECTION_WEBHOOK: 'openapiconnectionwebhook',
       OPEN_API_CONNECTION_NOTIFICATION: 'openapiconnectionnotification',
@@ -408,6 +409,7 @@ export default {
       GETPASTTIME: 'getpasttime',
       HTTP: 'http',
       AGENT: 'agent',
+      MANAGED: 'managed',
       JSON_TO_JSON: 'jsontojson',
       JSON_TO_TEXT: 'jsontotext',
       POWERAPP: 'powerapp',
@@ -817,6 +819,7 @@ export default {
     JOIN: 'Join',
     LIQUID: 'Liquid',
     MANUAL: 'Manual', // 2015-08-01-preview
+    MCP_CLIENT: 'McpClientTool',
     OPEN_API_CONNECTION: 'OpenApiConnection',
     OPEN_API_CONNECTION_WEBHOOK: 'OpenApiConnectionWebhook',
     OPEN_API_CONNECTION_NOTIFICATION: 'OpenApiConnectionNotification',
