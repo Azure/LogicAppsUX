@@ -54,20 +54,7 @@
     align-items: flex-start;
     background-color: var(--brand-color, black);
     width: 80%;
-    position: relative;
     .node-button-interaction();
-
-    &:hover::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.20);
-      pointer-events: none;
-      border-radius: 2px;
-    }
   }
 
   .msla-scope-card-title-box {
@@ -79,8 +66,6 @@
     justify-content: flex-start;
 		box-sizing: border-box;
 		padding-right: 2px;
-    position: relative;
-    z-index: 1;
   }
 
   .panel-card-content-icon-section {
@@ -120,8 +105,6 @@
 
   .msla-panel-card-error-wrapper {
     width: 100%;
-    position: relative;
-    z-index: 1;
   }
 
   .msla-panel-card-error {
