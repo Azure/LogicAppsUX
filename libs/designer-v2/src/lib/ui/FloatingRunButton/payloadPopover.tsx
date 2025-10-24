@@ -1,7 +1,7 @@
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { Button, Dropdown, Field, Option, Popover, PopoverSurface } from '@fluentui/react-components';
 import { MonacoEditor, SimpleDictionary } from '@microsoft/designer-ui';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { usePayloadPopoverStyles } from './styles';
 import type { PayloadData } from './index';
@@ -102,6 +102,11 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     setOpen(false);
   }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen, isDraftMode]);
 
+  const runDisabled = useMemo(
+    () => (isDraftMode ? !bodyValue || bodyValue.trim() === '' || !!jsonError : !method),
+    [jsonError, isDraftMode, bodyValue]
+  );
+
   return (
     <Popover
       onOpenChange={(e, data) => setOpen(data.open)}
@@ -163,7 +168,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
                   lineNumbersMinChars={3}
                 />
               </Field>
-              <Button appearance={'primary'} onClick={onRunClick} className={styles.runButton}>
+              <Button appearance={'primary'} onClick={onRunClick} className={styles.runButton} disabled={runDisabled}>
                 {runButtonText}
               </Button>
             </>

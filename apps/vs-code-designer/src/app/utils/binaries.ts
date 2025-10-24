@@ -34,7 +34,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 
-import * as AdmZip from 'adm-zip';
+import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';

@@ -17,7 +17,7 @@ import type { ButtonProps } from '@fluentui/react-components';
 import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
 import { WorkflowService } from '@microsoft/logic-apps-shared';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -42,12 +42,14 @@ export type ChatButtonProps = ButtonProps & {
   isDraftMode?: boolean;
   siteResourceId?: string;
   workflowName?: string;
+  saveWorkflow: () => Promise<void>;
 };
 
 export const ChatButton = (props: ChatButtonProps) => {
   const intl = useIntl();
-  const { isDarkMode, isDraftMode, ...buttonProps } = props;
+  const { isDarkMode, isDraftMode, saveWorkflow, ...buttonProps } = props;
   const { isLoading, data } = useAgentUrl({ isDraftMode });
+  const [isSaving, setIsSaving] = useState(false);
 
   const IntlText = useMemo(
     () => ({
@@ -70,8 +72,14 @@ export const ChatButton = (props: ChatButtonProps) => {
     [intl]
   );
 
+  const onChatButtonClick = useCallback(async () => {
+    setIsSaving(true);
+    await saveWorkflow();
+    setIsSaving(false);
+  }, [saveWorkflow]);
+
   const chatContent = useMemo(() => {
-    if (isLoading) {
+    if (isLoading || isSaving) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
 
@@ -88,7 +96,7 @@ export const ChatButton = (props: ChatButtonProps) => {
   return (
     <Dialog modalType="modal" surfaceMotion={null}>
       <DialogTrigger disableButtonEnhancement>
-        <Button {...buttonProps} icon={<ChatIcon />}>
+        <Button {...buttonProps} icon={<ChatIcon />} onClick={onChatButtonClick}>
           {IntlText.CHAT_TEXT}
         </Button>
       </DialogTrigger>
