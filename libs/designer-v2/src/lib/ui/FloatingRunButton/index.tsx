@@ -59,6 +59,30 @@ export const FloatingRunButton = ({
     [isDraftMode, operationState?.operationInfo]
   );
 
+  const runDraftWorkflow = useCallback(
+    async (triggerId: string, payload?: PayloadData) => {
+      try {
+        if (siteResourceId && workflowName) {
+          const callbackInfo: any = {
+            value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${payload ? 'runDraftWithPayload' : 'runDraft'}`,
+            method: HTTP_METHODS.POST,
+          };
+
+          // Wait 0.5 seconds, running too fast after saving causes 500 error
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          const runResponse = await RunService().runTrigger(callbackInfo, payload);
+          const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
+          onRun?.(runId);
+        } else {
+          // TODO: Handle/throw error
+        }
+      } catch (error) {
+        console.error('Error running draft workflow:', error);
+      }
+    },
+    [siteResourceId, workflowName, onRun]
+  );
+
   const saveWorkflow = useCallback(async () => {
     try {
       const designerState = store.getState();
@@ -111,18 +135,15 @@ export const FloatingRunButton = ({
       if (!triggerId) {
         return;
       }
+
+      if (isDraftMode) {
+        runDraftWorkflow(triggerId);
+        return;
+      }
+
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
       callbackInfo.method = method;
-
-      if (isDraftMode) {
-        if (siteResourceId && workflowName) {
-          callbackInfo.value = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/runDraft`;
-          callbackInfo.method = HTTP_METHODS.POST;
-        } else {
-          // TODO: Handle/throw error
-        }
-      }
 
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -145,17 +166,15 @@ export const FloatingRunButton = ({
       if (!triggerId) {
         return;
       }
+
+      if (isDraftMode) {
+        runDraftWorkflow(triggerId, payload);
+        return;
+      }
+
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       callbackInfo.method = payload?.method;
 
-      if (isDraftMode) {
-        if (siteResourceId && workflowName) {
-          callbackInfo.value = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/runDraftWithPayload`;
-          callbackInfo.method = HTTP_METHODS.POST;
-        } else {
-          // TODO: Handle/throw error
-        }
-      }
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
       const runWithPayloadResponse = await RunService().runTrigger(callbackInfo, payload);
@@ -197,6 +216,7 @@ export const FloatingRunButton = ({
         isDraftMode={isDraftMode}
         siteResourceId={siteResourceId}
         workflowName={workflowName}
+        saveWorkflow={saveWorkflow}
       />
     );
   }
