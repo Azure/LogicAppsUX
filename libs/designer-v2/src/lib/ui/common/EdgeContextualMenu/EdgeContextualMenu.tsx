@@ -18,7 +18,7 @@ import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
-import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
+import { changePanelNode, openDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
 
@@ -63,6 +63,7 @@ export const EdgeContextualMenu = () => {
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
   const isHandoff = useMemo(() => menuData?.isHandoff, [menuData]);
+  const isAgentTool = useMemo(() => menuData?.isAgentTool, [menuData]);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -98,7 +99,7 @@ export const EdgeContextualMenu = () => {
     }
     const relationshipIds = { graphId, childId: undefined, parentId };
     dispatch(
-      expandDiscoveryPanel({
+      openDiscoveryPanel({
         nodeId: newId,
         relationshipIds,
         isParallelBranch: true,
@@ -176,6 +177,12 @@ export const EdgeContextualMenu = () => {
   //     })
   //   );
   // }, [dispatch, parentId, childId]);
+
+  const addMcpServerText = intl.formatMessage({
+    defaultMessage: 'Add an MCP server',
+    id: 'JTy5al',
+    description: 'Text that explains no tools exist in this agent',
+  });
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
@@ -255,12 +262,40 @@ export const EdgeContextualMenu = () => {
       return;
     }
     const relationshipIds = { graphId, childId, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
+    dispatch(openDiscoveryPanel({ nodeId: newId, relationshipIds }));
     LoggerService().log({
       area: 'DropZone:openAddNodePanel',
       level: LogEntryLevel.Verbose,
       message: 'Side-panel opened to add a new node.',
     });
+  }, [dispatch, graphId, childId, parentId]);
+
+  const openAddMcpServerPanel = useCallback(() => {
+    const newId = guid();
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = {
+      graphId,
+      childId,
+      parentId,
+    };
+
+    dispatch(openDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true, isAddingMcpServer: true }));
+  }, [dispatch, graphId, childId, parentId]);
+
+  const openAddActionAgentToolPanel = useCallback(() => {
+    const newId = guid();
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = {
+      graphId,
+      childId,
+      parentId,
+    };
+
+    dispatch(openDiscoveryPanel({ nodeId: newId, relationshipIds, isAgentTool: true }));
   }, [dispatch, graphId, childId, parentId]);
 
   const showParallelBranchButton = !isLeaf && parentId;
@@ -344,6 +379,18 @@ export const EdgeContextualMenu = () => {
     </MenuItem>
   );
 
+  const addActionToolMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={openAddActionAgentToolPanel} data-automation-id={automationId('add-agent-action-tool')}>
+      {newActionText}
+    </MenuItem>
+  );
+
+  const addMcpServerMenuItem = (
+    <MenuItem icon={<AddIcon />} onClick={openAddMcpServerPanel} data-automation-id={automationId('add-agent-mcp-server')}>
+      {addMcpServerText}
+    </MenuItem>
+  );
+
   const addParallelBranchMenuItem = (
     <MenuItem
       icon={<ParallelIcon />}
@@ -424,7 +471,12 @@ export const EdgeContextualMenu = () => {
               </>
             ) : (
               <>
-                {isAddActionDisabled ? (
+                {isAgentTool ? (
+                  <>
+                    {addActionToolMenuItem}
+                    {addMcpServerMenuItem}
+                  </>
+                ) : isAddActionDisabled ? (
                   <Tooltip content={a2aAgentLoopDisabledText} relationship="description">
                     {addActionMenuItem}
                   </Tooltip>

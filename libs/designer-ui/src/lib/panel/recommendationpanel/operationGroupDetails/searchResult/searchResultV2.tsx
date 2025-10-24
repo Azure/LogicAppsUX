@@ -26,6 +26,7 @@ export type SearchResultsGridV2Props = {
   displayRuntimeInfo: boolean;
   groupByConnector: boolean;
   setGroupByConnector: (groupByConnector: boolean) => void;
+  isAddingMcpServer?: boolean;
 };
 
 const maxOperationsToDisplay = RecommendationPanelConstants.SEARCH_VIEW.MAX_OPERATIONS_IN_SEARCH_GROUP;
@@ -39,6 +40,7 @@ export const SearchResultsGridV2: React.FC<PropsWithChildren<SearchResultsGridV2
   onOperationClick,
   groupByConnector,
   displayRuntimeInfo,
+  isAddingMcpServer,
 }: SearchResultsGridV2Props) => {
   const intl = useIntl();
 

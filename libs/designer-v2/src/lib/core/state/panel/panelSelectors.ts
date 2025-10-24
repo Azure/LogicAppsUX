@@ -90,4 +90,6 @@ export const usePreviousPanelMode = () => useSelector(createSelector(getPanelSta
 
 export const useIsAddingAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingAgentTool));
 
+export const useIsAddingMcpServer = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingMcpServer));
+
 export const useIsRunHistoryCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.runHistoryCollapsed));

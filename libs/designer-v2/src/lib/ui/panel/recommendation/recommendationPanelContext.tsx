@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useMcpServersQuery, useOperationsByConnector } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -9,6 +9,7 @@ import {
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
   useDiscoveryPanelSelectedBrowseCategory,
+  useIsAddingMcpServer,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId, selectBrowseCategory } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -19,7 +20,7 @@ import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, FavoriteContext, requestOperation } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
-import type { CommonPanelProps } from '@microsoft/designer-ui';
+import type { CommonPanelProps, OperationsData } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -29,6 +30,7 @@ import { useOnFavoriteClick } from './hooks';
 import { BrowseView } from './browse/browseView';
 import { useRecommendationPanelContextStyles } from './styles/RecommendationPanelContext.styles';
 import { getNodeId } from './helpers';
+import { getOperationCardDataFromOperation } from './helpers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -40,12 +42,42 @@ const SELECTION_STATES = {
   CUSTOM_SWAGGER: 'HTTP_SWAGGER',
 };
 
+const builtinMcpServerOperation = {
+  name: 'nativemcpclient',
+  id: 'nativemcpclient',
+  type: 'nativemcpclient',
+  properties: {
+    api: {
+      id: 'connectionProviders/mcpclient',
+      name: 'mcpclient',
+      description: 'MCP Client Operations',
+      displayName: 'Connect to an MCP server',
+      iconUri:
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+    },
+    summary: 'MCP server',
+    description: 'Uses an MCP server',
+    visibility: 'Important',
+    operationType: 'McpClientTool',
+    operationKind: 'Builtin',
+    brandColor: '#000000',
+    iconUri:
+      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+  },
+} as const;
+
+const builtinMcpServerOperationData: OperationsData = {
+  type: 'Operation',
+  data: getOperationCardDataFromOperation(builtinMcpServerOperation),
+};
+
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
   const { displayRuntimeInfo } = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
   const classes = useRecommendationPanelContextStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
+  const isAddingMcpServer = useIsAddingMcpServer();
   const [searchTerm, setSearchTerm] = useState('');
 
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
@@ -67,6 +99,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
   const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
+  const { data: mcpServers, isLoading: isLoadingMcpServers } = useMcpServersQuery();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
 
   // Searched terms, so we don't search the same term twice

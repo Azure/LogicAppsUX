@@ -4,10 +4,10 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId, setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
+import { addAgentToolMetadata, changePanelNode, openDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useFlowErrorsForNode,
@@ -24,7 +24,7 @@ import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
@@ -113,17 +113,26 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
     [actionCount, intl]
   );
 
+  const subgraphCardRef = useRef<HTMLDivElement>(null);
   const newAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddTool ? intlText.tool : intlText.case);
   const subgraphClick = useCallback(
-    async (_id: string) => {
+    async (_id?: string, rect?: DOMRect) => {
       if (isAddCase && graphNode) {
         if (isAgentAddTool) {
-          const relationshipIds = {
-            graphId,
-            subgraphId: newAdditiveSubgraphId,
-            parentId: `${newAdditiveSubgraphId}-#subgraph`,
-          };
-          dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
+          // Always show context menu for agent tools to include MCP server option
+          dispatch(
+            setEdgeContextMenuData({
+              graphId,
+              subgraphId: newAdditiveSubgraphId,
+              parentId: `${newAdditiveSubgraphId}-#subgraph`,
+              isLeaf: true,
+              location: {
+                x: rect ? rect.left + rect.width / 2 : window.innerWidth / 2,
+                y: rect ? rect.top + rect.height : window.innerHeight / 2,
+              },
+              isAgentTool: true,
+            })
+          );
         } else {
           dispatch(addSwitchCase({ caseId: newAdditiveSubgraphId, graphId }));
         }
@@ -143,7 +152,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
           dispatch(changePanelNode(newAdditiveSubgraphId));
         }
         dispatch(setFocusNode(newAdditiveSubgraphId));
-      } else {
+      } else if (_id) {
         dispatch(changePanelNode(_id));
       }
     },

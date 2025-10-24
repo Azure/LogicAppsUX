@@ -5,6 +5,31 @@ export const inputsResponse: Record<string, any> = {
   Increment_variable_3: { name: 'var1', value: 1 },
   Increment_variable_4: { name: 'var1', value: 1 },
   Increment_variable_5: { name: 'var1', value: 1 },
+  // MCP Server action inputs
+  McpServerTool: {
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'LogicApps/1.0'
+    },
+    allowedTools: ['weather_tool', 'calculator_tool'],
+    message: 'Get current weather in Seattle',
+    parameters: {
+      location: 'Seattle, WA',
+      units: 'celsius'
+    }
+  },
+  McpClientTool: {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer token123'
+    },
+    allowedTools: ['search_tool', 'summarize_tool'],
+    request: {
+      tool: 'search_tool',
+      query: 'latest AI developments',
+      maxResults: 10
+    }
+  }
 };
 
 export const outputsResponse: Record<string, any> = {

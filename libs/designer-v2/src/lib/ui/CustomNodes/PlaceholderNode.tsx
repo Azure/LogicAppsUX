@@ -2,7 +2,7 @@
 import type { AppDispatch } from '../../core';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
+import { openDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { ADD_CARD_TYPE, NoActionCard, AddActionCardV2 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
@@ -19,7 +19,7 @@ const PlaceholderNode = ({ id }: NodeProps) => {
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId: 'root' };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, addingTrigger: true }));
+    dispatch(openDiscoveryPanel({ nodeId: newId, relationshipIds, addingTrigger: true }));
   }, [dispatch]);
 
   return (

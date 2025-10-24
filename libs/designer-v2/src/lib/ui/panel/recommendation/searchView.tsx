@@ -23,6 +23,7 @@ type SearchViewProps = {
   isLoading: boolean;
   onOperationClick: (id: string, apiId?: string) => void;
   displayRuntimeInfo: boolean;
+  isAddingMcpServer?: boolean;
 };
 
 export const SearchView: FC<SearchViewProps> = ({
@@ -33,6 +34,7 @@ export const SearchView: FC<SearchViewProps> = ({
   isLoading,
   onOperationClick,
   displayRuntimeInfo,
+  isAddingMcpServer,
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
@@ -138,7 +140,7 @@ export const SearchView: FC<SearchViewProps> = ({
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filterAgenticLoops, shouldEnableParseDocWithMetadata],
+    [searchTerm, allOperations, filterAgenticLoops, shouldEnableParseDocWithMetadata, isAddingMcpServer],
     200
   );
 
@@ -157,6 +159,7 @@ export const SearchView: FC<SearchViewProps> = ({
       groupByConnector={groupByConnector}
       setGroupByConnector={setGroupByConnector}
       displayRuntimeInfo={displayRuntimeInfo}
+      isAddingMcpServer={isAddingMcpServer}
     />
   );
 };

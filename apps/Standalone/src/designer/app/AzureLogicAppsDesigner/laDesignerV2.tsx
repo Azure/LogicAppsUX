@@ -583,6 +583,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showPerformanceDebug,
+          mcpClientToolEnabled: true,
         }}
       >
         {workflow?.definition ? (

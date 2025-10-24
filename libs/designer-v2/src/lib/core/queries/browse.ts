@@ -266,6 +266,18 @@ const useBuiltInConnectorsQuery = () =>
     queryOpts
   );
 
+/// MCP Servers ///
+
+export const useMcpServersQuery = () =>
+  useQuery(
+    ['mcpServers'],
+    async () => {
+      const data = await SearchService().getMcpServers?.();
+      return data || [];
+    },
+    queryOpts
+  );
+
 /// Favorites ///
 
 // Returns a map of connectorId to Connector

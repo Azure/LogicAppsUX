@@ -16,6 +16,8 @@ export interface NodeMetadata {
   subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
   runIndex?: number;
   handoffs?: Record<string, string>;
+  toolRunIndex?: number;
+  toolRunData?: LogicAppsV2.WorkflowRunAction;
 }
 export interface NodesMetadata {
   [nodeId: string]: NodeMetadata;

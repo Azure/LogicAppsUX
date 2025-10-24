@@ -41,6 +41,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   panelTabHideKeys: [],
+  mcpClientToolEnabled: false,
   hostOptions: {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
@@ -170,6 +171,7 @@ export const designerOptionsSlice = createSlice({
         ...action.payload.hostOptions,
       };
       state.showPerformanceDebug = action.payload.showPerformanceDebug;
+      state.mcpClientToolEnabled = action.payload.mcpClientToolEnabled;
       state.designerOptionsInitialized = true;
       state.isVSCode = action.payload.isVSCode ?? false;
     },

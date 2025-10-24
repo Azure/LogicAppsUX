@@ -186,18 +186,19 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
-    expandDiscoveryPanel: (
+    openDiscoveryPanel: (
       state,
       action: PayloadAction<{
         addingTrigger?: boolean;
         focusReturnElementId?: string;
         isParallelBranch?: boolean;
         isAgentTool?: boolean;
+        isAddingMcpServer?: boolean;
         nodeId: string;
         relationshipIds: RelationshipIds;
       }>
     ) => {
-      const { addingTrigger, focusReturnElementId, isParallelBranch, nodeId, relationshipIds, isAgentTool } = action.payload;
+      const { addingTrigger, focusReturnElementId, isParallelBranch, nodeId, relationshipIds, isAgentTool, isAddingMcpServer } = action.payload;
 
       state.currentPanelMode = 'Discovery';
       state.focusReturnElementId = focusReturnElementId;
@@ -207,6 +208,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
       state.discoveryContent.isAddingAgentTool = isAgentTool;
+      state.discoveryContent.isAddingMcpServer = isAddingMcpServer ?? false;
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
 
@@ -346,7 +348,7 @@ export const {
   changePanelNode,
   clearPanel,
   collapsePanel,
-  expandDiscoveryPanel,
+  openDiscoveryPanel,
   expandPanel,
   openPanel,
   selectErrorsPanelTab,

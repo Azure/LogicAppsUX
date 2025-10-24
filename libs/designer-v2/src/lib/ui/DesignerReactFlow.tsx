@@ -28,7 +28,7 @@ import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
 import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import { addOperation, type AppDispatch } from '../core';
-import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
+import { clearPanel, openDiscoveryPanel } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
@@ -311,7 +311,7 @@ const DesignerReactFlow = (props: any) => {
           );
         } else {
           dispatch(
-            expandDiscoveryPanel({
+            openDiscoveryPanel({
               nodeId: newId,
               relationshipIds,
               isParallelBranch: true,

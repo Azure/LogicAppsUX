@@ -270,3 +270,27 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
     nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
   }
 };
+
+export const addMcpServerToWorkflow = (toolId: string, agentNode: WorkflowNode, nodesMetadata: NodesMetadata, state: WorkflowState, operation?: DiscoveryOperation<DiscoveryResultTypes>) => {
+  const toolNode = createWorkflowNode(toolId, WORKFLOW_NODE_TYPES.OPERATION_NODE);
+  toolNode.subGraphLocation = 'tools';
+  agentNode.children?.splice(agentNode.children.length - 2, 0, toolNode);
+
+  nodesMetadata[toolId] = {
+    graphId: agentNode.id,
+    parentNodeId: agentNode.id,
+    subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+  };
+
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+
+  if (operation) {
+    state.operations[toolId] = { ...state.operations[toolId], type: operation.type };
+    state.newlyAddedOperations[toolId] = toolId;
+    state.isDirty = true;
+  }
+
+  if (nodesMetadata[agentNode.id]) {
+    nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
+  }
+};
