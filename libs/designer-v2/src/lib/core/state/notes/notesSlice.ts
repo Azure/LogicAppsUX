@@ -62,6 +62,9 @@ const notesSlice = createSlice({
     deleteNote: (state, action: PayloadAction<string>) => {
       delete state.notes[action.payload];
     },
+    resetNoteDirty: (state, action: PayloadAction<boolean>) => {
+      state.isDirty = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -72,5 +75,5 @@ const notesSlice = createSlice({
   },
 });
 
-export const { initializeNotes, addNote, updateNote, deleteNote } = notesSlice.actions;
+export const { initializeNotes, addNote, updateNote, deleteNote, resetNoteDirty } = notesSlice.actions;
 export default notesSlice.reducer;
