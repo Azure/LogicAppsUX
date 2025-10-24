@@ -22,6 +22,15 @@ import constants from './../../common/constants';
 
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
+const AllowedTriggerTypes = [
+  constants.NODE.TYPE.REQUEST,
+  constants.NODE.TYPE.RECURRENCE,
+  constants.NODE.TYPE.API_CONNECTION,
+  constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+  constants.NODE.TYPE.HTTP_WEBHOOK,
+  constants.NODE.TYPE.HTTP,
+  constants.NODE.TYPE.SLIDING_WINDOW,
+];
 
 export type PayloadData = {
   method?: string;
@@ -55,20 +64,6 @@ export const FloatingRunButton = ({
 
   const operationState = useSelector((state: RootState) => state.operations);
 
-  // Trigger types that are allowed to run in DraftMode
-  const allowedTriggerTypes = useMemo(
-    () => [
-      constants.NODE.TYPE.REQUEST,
-      constants.NODE.TYPE.RECURRENCE,
-      constants.NODE.TYPE.API_CONNECTION,
-      constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
-      constants.NODE.TYPE.HTTP_WEBHOOK,
-      constants.NODE.TYPE.HTTP,
-      constants.NODE.TYPE.SLIDING_WINDOW,
-    ],
-    []
-  );
-
   // Check if the trigger type is allowed to run in DraftMode
   const isAllowedTriggerType = useMemo(() => {
     const triggerInfo: Record<string, any> | undefined = operationState?.operationInfo;
@@ -80,8 +75,8 @@ export const FloatingRunButton = ({
       return true; // In non-draft mode, all triggers are allowed
     }
 
-    return triggerInfo.type && allowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
-  }, [isDraftMode, operationState?.operationInfo, allowedTriggerTypes]);
+    return triggerInfo.type && AllowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
+  }, [isDraftMode, operationState?.operationInfo]);
 
   const canBeRunWithPayload = useMemo(
     () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
