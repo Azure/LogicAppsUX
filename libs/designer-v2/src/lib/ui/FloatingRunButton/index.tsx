@@ -71,7 +71,7 @@ export const FloatingRunButton = ({
       return true; // In non-draft mode, all triggers are allowed
     }
 
-    return allowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
+    return triggerInfo.type && allowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
   }, [isDraftMode, operationState?.operationInfo, allowedTriggerTypes]);
 
   const canBeRunWithPayload = useMemo(
