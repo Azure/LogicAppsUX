@@ -1,5 +1,5 @@
 import type { BoundParameters, OperationManifest, OutputParameter, ParameterInfo } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { BindingMode, equals } from '@microsoft/logic-apps-shared';
 import constants from '../../../../common/constants';
 import { ManifestOutputsBinder, DefaultOutputsBinder, ApiConnectionOutputsBinder } from './outputs/index';
 
@@ -27,6 +27,7 @@ export default class OutputsBinder {
     const getBoundParameters = async (output: any): Promise<BoundParameters> => {
       if (
         manifest &&
+        manifest.properties.outputsBindingMode !== BindingMode.Untyped &&
         !equals(type, constants.NODE.TYPE.IF) &&
         !equals(type, constants.NODE.TYPE.FOREACH) &&
         !equals(type, constants.NODE.TYPE.SWITCH) &&

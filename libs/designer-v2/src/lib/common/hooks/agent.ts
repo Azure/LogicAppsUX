@@ -23,7 +23,13 @@ export function isAgentSubgraphFromMetadata(nodeId?: string, nodesMetadata?: Nod
     return false;
   }
 
-  let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+  const metadata = getRecordEntry(nodesMetadata, nodeId);
+  const isMcpClientTool = metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+  if (isMcpClientTool) {
+    return true;
+  }
+
+  let nodeGraphId = metadata?.graphId;
   while (nodeId && nodeGraphId) {
     const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
     if (!nodeMetadata) {

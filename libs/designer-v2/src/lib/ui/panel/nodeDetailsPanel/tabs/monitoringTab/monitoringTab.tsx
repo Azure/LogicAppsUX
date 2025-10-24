@@ -22,6 +22,11 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
+  // Extract stable identifiers to detect when run data actually changes
+  const actionTrackingId = runMetaData?.correlation?.actionTrackingId;
+  const startTime = runMetaData?.startTime;
+  const endTime = runMetaData?.endTime;
+
   const getActionInputsOutputs = useCallback(() => {
     return RunService().getActionLinks(runMetaData, selectedNodeId);
   }, [selectedNodeId, runMetaData]);
@@ -45,7 +50,7 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
     if (!isLoading) {
       dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
     }
-  }, [dispatch, inputOutputs, selectedNodeId, isLoading]);
+  }, [dispatch, inputOutputs, selectedNodeId, isLoading, actionTrackingId, startTime, endTime]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <>
