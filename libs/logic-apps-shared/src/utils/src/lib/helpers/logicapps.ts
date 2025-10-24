@@ -1,5 +1,6 @@
 import { getIntl } from '../../../../intl/src/intl';
 import type { LogicAppsV2 } from '../models';
+import { equals } from './functions';
 
 export function getResourceGroupFromWorkflowId(workflowID: string): string {
   const separators = workflowID.split('/');
@@ -51,7 +52,7 @@ export const canRunBeInvokedWithPayload = (triggers: Record<string, any> | undef
 
   const trigger = triggers[Object.keys(triggers)[0]];
 
-  if (trigger && trigger.type.toUpperCase() === 'REQUEST' && trigger.kind && trigger.kind.toUpperCase() === 'HTTP') {
+  if (trigger && equals(trigger.type, 'REQUEST', true) && trigger.kind && equals(trigger.kind, 'HTTP', true)) {
     return true;
   }
 

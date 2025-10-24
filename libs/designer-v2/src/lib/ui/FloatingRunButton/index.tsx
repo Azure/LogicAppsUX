@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, Spinner, SplitButton } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
-import { canRunBeInvokedWithPayload, HTTP_METHODS, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { canRunBeInvokedWithPayload, equals, HTTP_METHODS, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomCodeFilesWithData,
@@ -53,6 +53,26 @@ export const FloatingRunButton = ({
   const isA2AWorkflow = useIsA2AWorkflow();
 
   const operationState = useSelector((state: RootState) => state.operations);
+
+  // Trigger types that are allowed to run in DraftMode
+  const allowedTriggerTypes = useMemo(
+    () => ['Request', 'Recurrence', 'ApiConnection', 'ApiConnectionNotification', 'HttpWebhook', 'Http', 'SlidingWindow'],
+    []
+  );
+
+  // Check if the trigger type is allowed to run in DraftMode
+  const isAllowedTriggerType = useMemo(() => {
+    const triggerInfo: Record<string, any> | undefined = operationState?.operationInfo;
+    if (!triggerInfo) {
+      return false;
+    }
+
+    if (!isDraftMode) {
+      return true; // In non-draft mode, all triggers are allowed
+    }
+
+    return allowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
+  }, [isDraftMode, operationState?.operationInfo, allowedTriggerTypes]);
 
   const canBeRunWithPayload = useMemo(
     () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
@@ -190,7 +210,7 @@ export const FloatingRunButton = ({
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
-    disabled: runIsLoading || runWithPayloadIsLoading,
+    disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
     style: {
       position: 'absolute',
       bottom: '16px',
@@ -232,16 +252,14 @@ export const FloatingRunButton = ({
             onClick: () => {
               runMutate();
             },
+            disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
           }}
-          menuButton={
-            canBeRunWithPayload
-              ? {
-                  icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
-                  onClick: () => setPopoverOpen(true),
-                  ref: buttonRef,
-                }
-              : undefined
-          }
+          menuButton={{
+            icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
+            onClick: () => setPopoverOpen(true),
+            ref: buttonRef,
+            disabled: runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
+          }}
         >
           {runText}
         </SplitButton>
@@ -257,7 +275,7 @@ export const FloatingRunButton = ({
   }
 
   return (
-    <Button {...buttonCommonProps} icon={<RunIcon />} onClick={runMutate}>
+    <Button {...buttonCommonProps} icon={runIsLoading ? <Spinner size="tiny" /> : <RunIcon />} onClick={runMutate}>
       {runText}
     </Button>
   );
