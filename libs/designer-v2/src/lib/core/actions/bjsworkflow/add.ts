@@ -1,5 +1,4 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
-import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -227,7 +226,7 @@ export const initializeOperationDetails = async (
       manifest,
       presetParameterValues
     );
-    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const customCodeParameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
@@ -500,7 +499,7 @@ export const addTokensAndVariables = (
     )
   );
 
-  if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+  if (equals(operationType, constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
     setVariableMetadata(iconUri, brandColor);
 
     const variables = getVariableDeclarations(nodeInputs);
@@ -516,10 +515,10 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
   return operationType
     ? operationType
     : (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
-      ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
+      ? constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-        : Constants.NODE.TYPE.API_CONNECTION;
+        ? constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : constants.NODE.TYPE.API_CONNECTION;
 };
 
 export const getTriggerNodeManifest = async (

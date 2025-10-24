@@ -6,7 +6,6 @@ import {
   type LogicAppsV2,
   optional,
   type ParameterInfo,
-  UnsupportedException,
   ExtensionProperties,
   deleteObjectProperties,
   clone,
@@ -32,14 +31,16 @@ import { getReactQueryClient } from '../../ReactQueryProvider';
 import { getConnectionsToUpdate, getUpdatedConnectionForManagedApiReference } from '../../utils/createhelper';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import { getStandardLogicAppId } from '../../configuretemplate/utils/helper';
-import { getConnector } from '../../queries/operation';
 
-export interface McpServerCreateData {
-  logicAppId: string;
+export interface McpServerCreateData extends McpServerWorkflowData {
   serverInfo: {
-    displayName: string;
+    name: string;
     description: string;
   };
+}
+
+interface McpServerWorkflowData {
+  logicAppId: string;
   workflows: Record<
     string,
     {
@@ -54,7 +55,7 @@ export const serializeMcpWorkflows = async (
   { subscriptionId, resourceGroup, logicAppName }: { subscriptionId: string; resourceGroup: string; logicAppName: string },
   connectionState: ConnectionsStoreState,
   operationsState: OperationMetadataState
-): Promise<McpServerCreateData> => {
+): Promise<McpServerWorkflowData> => {
   const { operationInfo, inputParameters, settings, operationMetadata } = operationsState;
   const logicAppId = getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName);
   const workflows: Record<string, { definition: LogicAppsV2.WorkflowDefinition; kind: string }> = {};
@@ -73,9 +74,8 @@ export const serializeMcpWorkflows = async (
     workflows[getWorkflowNameFromOperation(operationMetadata[operationId]?.summary, operationId)] = { definition, kind: 'Stateful' };
   }
 
-  const { connectionsData, references } = await getConnectionsDataToSerialize(connectionState, subscriptionId, resourceGroup, logicAppName);
-  const serverInfo = await getMcpServerInfo(connectionState, references);
-  return { logicAppId, workflows, connectionsData, serverInfo };
+  const { connectionsData } = await getConnectionsDataToSerialize(connectionState, subscriptionId, resourceGroup, logicAppName);
+  return { logicAppId, workflows, connectionsData };
 };
 
 const getOperationDefinitionAndTriggerInputs = async (
@@ -257,30 +257,5 @@ const getConnectionsDataToSerialize = async (
   return {
     connectionsData: getConnectionsToUpdate(originalConnectionsData, updatedConnectionsData),
     references: referencesToSerialize,
-  };
-};
-
-const getMcpServerInfo = async (
-  connectionState: ConnectionsStoreState,
-  references: string[]
-): Promise<{ displayName: string; description: string }> => {
-  const { connectionReferences } = connectionState;
-  if (references.length > 1) {
-    throw new UnsupportedException('MCP server information can only be retrieved for a single connector currently.');
-  }
-  if (references.length === 0) {
-    throw new UnsupportedException('MCP server information cannot be retrieved without any connections.');
-  }
-
-  const connectorId = connectionReferences[references[0]]?.api?.id;
-
-  if (!connectorId) {
-    throw new Error('Connector id is not found for retrieving MCP server information.');
-  }
-
-  const connector = await getConnector(connectorId, /* useCachedData */ true);
-  return {
-    displayName: connector.properties?.displayName ?? connector.properties?.generalInformation?.displayName ?? '',
-    description: connector.properties?.description ?? connector.properties?.generalInformation?.description ?? '',
   };
 };

@@ -10,8 +10,8 @@ import {
 import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import {
+  createMcpServer,
   getWorkflowAppFromCache,
-  saveWorkflowStandard,
   useCurrentObjectId,
   useCurrentTenantId,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
@@ -42,13 +42,14 @@ export const McpStandard = () => {
   }));
 
   const hostingPlan = 'standard';
-  const connectorId = '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/westus/managedApis/office365';
+  const connectorId =
+    '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/eastasia/managedApis/servicebus';
   const resourceDetails = useMemo(
     () => ({
       subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
-      resourceGroup: 'TestACSRG',
-      location: 'westus',
-      //logicAppName: 'prititestcreate1',
+      resourceGroup: 'anandgmenon',
+      location: 'eastasia',
+      // logicAppName: 'anand-mcp-server',
     }),
     []
   );
@@ -90,7 +91,7 @@ export const McpStandard = () => {
   }, [objectId, tenantId]);
 
   const onRegisterMcpServer = useCallback(async (createData: McpServerCreateData, onCompleted?: () => void) => {
-    const { logicAppId, workflows, connectionsData } = createData;
+    const { logicAppId, workflows, connectionsData, serverInfo } = createData;
     const workflowsToCreate = Object.keys(workflows).map((key) => ({
       name: key,
       workflow: {
@@ -107,18 +108,10 @@ export const McpStandard = () => {
 
     console.log('Generated server data:', createData);
 
-    await saveWorkflowStandard(
-      logicAppId,
-      workflowsToCreate,
-      connectionsData,
-      /* parametersData */ undefined,
-      /* settingsProperties */ undefined,
-      /* customCodeData */ undefined,
-      /* notes */ undefined,
-      /* clearDirtyState */ () => {},
-      { skipValidation: true, throwError: true }
-    );
+    const response = await createMcpServer(logicAppId, workflowsToCreate, connectionsData, serverInfo);
     onCompleted?.();
+
+    console.log('MCP Server created successfully:', response);
   }, []);
 
   const onClose = useCallback(() => {

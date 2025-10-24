@@ -27,7 +27,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   }
 
   override isSupported(operationType?: string, operationKind?: string): boolean {
-    if (equals(operationType, "mcpclienttool") && equals(operationKind, "builtin")) {
+    if (equals(operationType, 'mcpclienttool') && equals(operationKind, 'builtin')) {
       return true;
     }
 
@@ -87,7 +87,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     const connectorName = connectorId.split('/').slice(-1)[0];
     const operationName = operationId.split('/').slice(-1)[0];
 
-    if (equals(connectorId, mcpclientConnectorId) && equals(operationId, "nativemcpclient")) {
+    if (equals(connectorId, mcpclientConnectorId) && equals(operationId, 'nativemcpclient')) {
       return {
         properties: {
           connector: { properties: { displayName: builtinMcpClientManifest.properties.connector?.properties.displayName } },
@@ -157,7 +157,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       return supportedManifest;
     }
 
-    if (equals(connectorId, mcpclientConnectorId) && equals(operationId, "nativemcpclient")) {
+    if (equals(connectorId, mcpclientConnectorId) && equals(operationId, 'nativemcpclient')) {
       return builtinMcpClientManifest;
     }
 

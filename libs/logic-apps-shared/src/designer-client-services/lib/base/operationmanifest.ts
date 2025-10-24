@@ -380,7 +380,7 @@ export function isBuiltInOperation(definition: any): boolean {
       return true;
 
     case mcpclienttool:
-      return definition?.kind?.toLowerCase() !== "managed";
+      return definition?.kind?.toLowerCase() !== 'managed';
 
     default:
       return false;

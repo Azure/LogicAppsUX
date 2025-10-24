@@ -127,7 +127,7 @@ describe('workflow slice reducers', () => {
 
       // Initialize other required state properties
       state.idReplacements = {};
-      
+
       return state;
     };
 
@@ -148,13 +148,12 @@ describe('workflow slice reducers', () => {
       expect(newState.operations[mockToolId]).toBeUndefined();
     });
 
-
     it('should preserve other tools when deleting specific MCP server', () => {
       const state = createStateWithAgentAndMcpTool();
       const otherToolId = 'other-tool-789';
-      
+
       // Add another tool to the agent's children
-      const agentNode = state.graph?.children?.find(child => child.id === mockAgentId);
+      const agentNode = state.graph?.children?.find((child) => child.id === mockAgentId);
       if (agentNode?.children) {
         agentNode.children.push({
           id: otherToolId,
@@ -163,7 +162,7 @@ describe('workflow slice reducers', () => {
           height: 40,
         });
       }
-      
+
       // Add metadata for the other tool
       state.nodesMetadata[otherToolId] = {
         graphId: mockAgentId,
@@ -188,12 +187,12 @@ describe('workflow slice reducers', () => {
       // Verify the MCP tool is removed
       expect(newState.nodesMetadata[mockToolId]).toBeUndefined();
       expect(newState.operations[mockToolId]).toBeUndefined();
-      
+
       // Verify other nodes are preserved
       expect(newState.nodesMetadata[mockAgentId]).toBeDefined();
       expect(newState.nodesMetadata[otherToolId]).toBeDefined();
       expect(newState.operations[otherToolId]).toBeDefined();
-      
+
       // Verify the other tool is still in the agent's children
       const updatedAgentNode = newState.graph?.children?.find((child: any) => child.id === mockAgentId);
       expect(updatedAgentNode?.children).toHaveLength(1);
@@ -202,7 +201,7 @@ describe('workflow slice reducers', () => {
 
     const createStateWithAgent = () => {
       const state = { ...initialState };
-      
+
       // Set up the main graph with an agent node (without MCP tools)
       state.graph = {
         id: 'root',
@@ -230,12 +229,12 @@ describe('workflow slice reducers', () => {
 
       // Initialize other required state properties
       state.operations = {
-        [mockAgentId]: <unknown>{
-          tools: {}
-        } as OperationDefinition,
+        [mockAgentId]: (<unknown>{
+          tools: {},
+        }) as OperationDefinition,
       };
       state.idReplacements = {};
-      
+
       return state;
     };
 

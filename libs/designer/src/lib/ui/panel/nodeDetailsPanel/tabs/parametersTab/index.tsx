@@ -153,7 +153,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     description:
       'Descriptive message to show if the connection for an action cannot be changed or edited due to being shown in dual-pane (pinned action) view.',
   });
-
   const isLoading = useMemo(() => {
     if (!operationInfo && !nodeMetadata?.subgraphType) {
       return true;
@@ -489,7 +488,13 @@ export const ParameterSection = ({
         const newValue = value.length > 0 ? value[0].value : undefined;
         const oldValue = parameter?.value && parameter.value.length > 0 ? parameter.value[0].value : undefined;
         if (!isNullOrUndefined(newValue) && !isNullOrUndefined(oldValue) && newValue !== oldValue && !isNullOrUndefined(connector)) {
-          dispatch(dynamicallyLoadAgentConnection({ nodeId, connector, modelType: newValue }));
+          dispatch(
+            dynamicallyLoadAgentConnection({
+              nodeId,
+              connector,
+              modelType: newValue,
+            })
+          );
         }
       }
 
@@ -819,7 +824,6 @@ export const ParameterSection = ({
       setSectionExpanded(!sectionExpanded);
     }
   };
-
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {

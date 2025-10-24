@@ -360,7 +360,7 @@ const DesignerReactFlow = (props: any) => {
       }
     }
     dispatch(setFlowErrors({ flowErrors: errors }));
-  }, [disconnectedNodes, dispatch]);
+  }, [disconnectedNodeErrorMessage, disconnectedNodes, dispatch]);
 
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {
@@ -370,17 +370,20 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
-  const onPaneContextMenu = useCallback((e: React.MouseEvent | MouseEvent) => {
-    e.preventDefault();
-    dispatch(
-      setNodeContextMenuData({
-        location: {
-          x: e.clientX,
-          y: e.clientY,
-        },
-      })
-    );
-  }, []);
+  const onPaneContextMenu = useCallback(
+    (e: React.MouseEvent | MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch]
+  );
 
   // Handle node changes (position, size)
 

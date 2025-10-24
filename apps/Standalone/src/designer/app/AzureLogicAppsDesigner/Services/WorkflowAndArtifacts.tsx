@@ -474,6 +474,38 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
   });
 };
 
+// Async function to fetch Agent Model IDs (uses React Query for memoization)
+export const fetchAgentModelIds = (siteResourceId: string): Promise<string[]> => {
+  const queryClient = getReactQueryClient();
+
+  return queryClient.fetchQuery(['agentModelIds', siteResourceId], async (): Promise<string[]> => {
+    try {
+      const endpoint = `${siteResourceId}/models`;
+      const uri = `${baseUrl}${endpoint}`;
+
+      const response = await axios.get(uri, {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+        params: {
+          'api-version': consumptionApiVersion,
+        },
+      });
+
+      // Return the value array if it exists, otherwise return empty array
+      return response?.data ?? [];
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        message: `Failed to fetch agent models: ${error}`,
+        area: 'fetchAgentModelIds',
+        error: error instanceof Error ? error : undefined,
+      });
+      return [];
+    }
+  });
+};
+
 export const fetchAgentUrlConsumption = async (workflowId: string, workflowName: string, accessEndpoint: string): Promise<AgentURL> => {
   if (!accessEndpoint || !workflowName) {
     return { agentUrl: '', chatUrl: '', hostName: '' };
@@ -742,7 +774,11 @@ export const saveNotesStandard = async (notesData?: Record<string, Note>): Promi
     return;
   }
   try {
-    CustomCodeService().uploadCustomCode({ fileName: 'notes.json', fileData: JSON.stringify(notesData), fileExtension: '.json' });
+    CustomCodeService().uploadCustomCode({
+      fileName: 'notes.json',
+      fileData: JSON.stringify(notesData),
+      fileExtension: '.json',
+    });
   } catch (error) {
     const errorMessage = `Failed to save notes: ${error}`;
     LoggerService().log({
@@ -752,6 +788,42 @@ export const saveNotesStandard = async (notesData?: Record<string, Note>): Promi
       error: error instanceof Error ? error : undefined,
     });
     return;
+  }
+};
+
+export const createMcpServer = async (
+  siteResourceId: string,
+  workflows: {
+    name: string;
+    workflow: any;
+  }[],
+  connectionsData: ConnectionsData | undefined,
+  serverInfo: { name: string; description: string }
+): Promise<{ name: string; description: string; url: string; tools: { name: string }[] }> => {
+  const mcpServers = await listMcpServers(siteResourceId);
+
+  mcpServers.push({ name: serverInfo.name, description: serverInfo.description, tools: workflows.map((wf) => ({ name: wf.name })) });
+
+  try {
+    await saveWorkflowStandard(
+      siteResourceId,
+      workflows,
+      connectionsData,
+      /* parametersData */ undefined,
+      /* settingsProperties */ undefined,
+      /* customCodeData */ undefined,
+      /* notes */ undefined,
+      { mcpServers },
+      /* clearDirtyState */ () => {},
+      { skipValidation: true, throwError: true }
+    );
+
+    const finalServers = await listMcpServers(siteResourceId);
+    const formedServer = finalServers.find((server: any) => server.name === serverInfo.name);
+    return formedServer;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 };
 
@@ -766,6 +838,7 @@ export const saveWorkflowStandard = async (
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   notesData: Record<string, Note> | undefined,
+  mcpServers: { mcpServers: any[] } | undefined,
   clearDirtyState: () => void,
   options?: {
     skipValidation?: boolean;
@@ -794,6 +867,10 @@ export const saveWorkflowStandard = async (
 
   if (parametersData) {
     data.files['parameters.json'] = parametersData;
+  }
+
+  if (mcpServers) {
+    data.files['mcpservers.json'] = mcpServers;
   }
 
   if (settings) {
@@ -974,8 +1051,17 @@ export const validateWorkflowConsumption = async (
 };
 
 export const cloneConsumptionToStandard = async (
-  sourceApps: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string }[],
-  destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+  sourceApps: {
+    subscriptionId: string;
+    resourceGroup: string;
+    logicAppName: string;
+    targetWorkflowName: string;
+  }[],
+  destinationApp: {
+    subscriptionId: string;
+    resourceGroup: string;
+    logicAppName: string;
+  }
 ): Promise<any> => {
   try {
     for (const sourceApp of sourceApps) {
@@ -1011,8 +1097,17 @@ export const cloneConsumptionToStandard = async (
 };
 
 export const validateCloneConsumption = async (
-  sourceApp: { subscriptionId: string; resourceGroup: string; logicAppName: string; targetWorkflowName: string },
-  destinationApp: { subscriptionId: string; resourceGroup: string; logicAppName: string }
+  sourceApp: {
+    subscriptionId: string;
+    resourceGroup: string;
+    logicAppName: string;
+    targetWorkflowName: string;
+  },
+  destinationApp: {
+    subscriptionId: string;
+    resourceGroup: string;
+    logicAppName: string;
+  }
 ): Promise<any> => {
   const response = await axios.post(
     `${baseUrl}/subscriptions/${sourceApp.subscriptionId}/resourceGroups/${sourceApp.resourceGroup}/providers/Microsoft.Logic/workflows/${sourceApp.logicAppName}/validateClone?api-version=${consumptionApiVersion}`,
@@ -1081,4 +1176,25 @@ export const deployArtifacts = async (
   });
 
   return response;
+};
+
+const listMcpServers = async (siteResourceId: string): Promise<any[]> => {
+  let mcpServers: any[] = [];
+  try {
+    const response = await axios.post(
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`,
+      undefined,
+      {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+    mcpServers = [...(response.data?.value ?? [])];
+  } catch (error: any) {
+    console.error('Error fetching MCP servers:', error);
+
+    mcpServers = [];
+  }
+  return mcpServers;
 };

@@ -448,6 +448,7 @@ const DesignerEditor = () => {
           showConnectionsPanel,
           showEdgeDrawing,
           showPerformanceDebug,
+          mcpClientToolEnabled: true,
         }}
       >
         {workflow?.definition ? (

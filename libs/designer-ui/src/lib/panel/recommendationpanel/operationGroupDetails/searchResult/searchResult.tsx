@@ -7,7 +7,7 @@ import { SearchResultSortOptions } from '../../../types';
 import { OperationSearchGroup } from '../../operationSearchGroup';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
-import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';

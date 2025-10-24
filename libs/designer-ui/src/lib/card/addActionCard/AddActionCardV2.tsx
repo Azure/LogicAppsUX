@@ -59,7 +59,7 @@ export const AddActionCardV2: React.FC<AddActionCardPropsV2> = ({ addCardType, o
       <div id={tooltipDescriptionId} style={{ display: 'none' }}>
         {tooltipText}
       </div>
-      <div className={classes.root}>
+      <div id={'laux-v2-add-trigger-node'} className={classes.root}>
         <Tooltip relationship="description" showDelay={0} hideDelay={0} withArrow content={tooltipText} positioning="before">
           <div
             aria-label={title}
