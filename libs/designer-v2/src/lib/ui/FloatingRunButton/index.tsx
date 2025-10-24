@@ -18,6 +18,7 @@ import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { ChatButton } from './chat';
+import constants from './../../common/constants';
 
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
@@ -56,7 +57,15 @@ export const FloatingRunButton = ({
 
   // Trigger types that are allowed to run in DraftMode
   const allowedTriggerTypes = useMemo(
-    () => ['Request', 'Recurrence', 'ApiConnection', 'ApiConnectionNotification', 'HttpWebhook', 'Http', 'SlidingWindow'],
+    () => [
+      constants.NODE.TYPE.REQUEST,
+      constants.NODE.TYPE.RECURRENCE,
+      constants.NODE.TYPE.API_CONNECTION,
+      constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+      constants.NODE.TYPE.HTTP_WEBHOOK,
+      constants.NODE.TYPE.HTTP,
+      constants.NODE.TYPE.SLIDING_WINDOW,
+    ],
     []
   );
 
