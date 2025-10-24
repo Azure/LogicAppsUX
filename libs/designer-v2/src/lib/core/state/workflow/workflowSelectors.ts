@@ -484,6 +484,9 @@ export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefi
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));
 
+export const useToolRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.toolRunData));
+
 export const useSubgraphRunData = (id: string): Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }> | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.subgraphRunData));
 
@@ -545,6 +548,17 @@ export const useRunIndex = (id: string | undefined): number | undefined => {
         return undefined;
       }
       return getRecordEntry(state.nodesMetadata, id)?.runIndex ?? undefined;
+    })
+  );
+};
+
+export const useToolRunIndex = (id: string | undefined): number | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) {
+        return undefined;
+      }
+      return getRecordEntry(state.nodesMetadata, id)?.toolRunIndex ?? undefined;
     })
   );
 };
