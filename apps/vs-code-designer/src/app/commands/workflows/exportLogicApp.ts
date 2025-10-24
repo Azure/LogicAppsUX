@@ -25,7 +25,7 @@ import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as AdmZip from 'adm-zip';
+import AdmZip from 'adm-zip';
 import { getSubscriptionContext } from '../../utils/subscription';
 import { delay } from '../../utils/delay';
 
