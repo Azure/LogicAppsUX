@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import axios, { isAxiosError } from 'axios';
 import * as childProcess from 'child_process';
 import * as fse from 'fs-extra';
 import * as util from 'util';
 import path from 'path';
-import * as localizeModule from '../../../localize';
-import * as vscodeConfigSettings from '../../utils/vsCodeConfig/settings';
-import * as cpUtils from '../../utils/funcCoreTools/cpUtils';
-import { ext } from '../../../extensionVariables';
+import * as localizeModule from '../../../../localize';
+import * as vscodeConfigSettings from '../../vsCodeConfig/settings';
+import * as cpUtils from '../../funcCoreTools/cpUtils';
+import { ext } from '../../../../extensionVariables';
 
 // Mock the isAxiosError function
 vi.mock('axios', async () => {
@@ -20,13 +20,12 @@ vi.mock('axios', async () => {
 });
 import {
   extractAndValidateRunId,
-  validateRunId,
   removeInvalidCharacters,
   parseErrorBeforeTelemetry,
   generateCSharpClasses,
-  generateClassCode,
+  generateOutputsClassContent,
   getOperationMockClassContent,
-  buildClassDefinition,
+  buildOutputsClassDefinition,
   mapJsonTypeToCSharp,
   createCsprojFile,
   updateCsprojFile,
@@ -36,9 +35,8 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   validateUnitTestName,
-} from '../unitTests';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { testsDirectoryName, workflowFileName } from '../../../constants';
+} from '../codefulUnitTests';
+import { assetsFolderName, testsDirectoryName, unitTestTemplatesFolderName, workflowFileName } from '../../../../constants';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -97,23 +95,6 @@ describe('unitTests', () => {
       const runId = '   ABC123   ';
       const result = await extractAndValidateRunId(runId);
       expect(result).toBe('ABC123');
-    });
-  });
-
-  describe('validateRunId', () => {
-    it('should resolve for a valid runId', async () => {
-      const runId = 'ABC123';
-      await expect(validateRunId(runId)).resolves.not.toThrow();
-    });
-
-    it('should throw an error for an invalid runId', async () => {
-      const runId = 'abc123';
-      await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
-    });
-
-    it('should throw an error for an empty runId', async () => {
-      const runId = '';
-      await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
     });
   });
 
@@ -253,11 +234,30 @@ describe('unitTests', () => {
   });
 
   describe('generateCSharpClasses - HTTP Action', () => {
-    it('should generate C# class code from a class definition HTTP action', () => {
+    let mockClassTemplatePath: string;
+    let mockClassTemplateContent: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestMockClass');
+      mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('TestMockClass')) return mockClassTemplateContent;
+        throw new Error(`File not found: ${p}`);
+      });
+    });
+
+    it('should generate C# class code from a class definition HTTP action', async () => {
       const workflowName = 'TestWorkflow';
       const mockType = 'Action';
       const mockClassName = 'MockClass';
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'NamespaceName',
         'RootClass',
         workflowName,
@@ -280,11 +280,11 @@ describe('unitTests', () => {
       expect(classCode).toContain('this.Key1 = string.Empty;');
     });
 
-    it('should generate C# class code from a class definition HTTP action with schema', () => {
+    it('should generate C# class code from a class definition HTTP action with schema', async () => {
       const workflowName = 'TestWorkflow';
       const mockType = 'Action';
       const mockClassName = 'MockClass';
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'NamespaceName',
         'RootClass',
         workflowName,
@@ -382,11 +382,30 @@ describe('unitTests', () => {
   });
 
   describe('generateCSharpClasses - non HTTP', () => {
-    it('should generate C# class code from a class definition non HTTP action', () => {
+    let mockClassTemplatePath: string;
+    let mockClassTemplateContent: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestMockClass');
+      mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('TestMockClass')) return mockClassTemplateContent;
+        throw new Error(`File not found: ${p}`);
+      });
+    });
+
+    it('should generate C# class code from a class definition non HTTP action', async () => {
       const workflowName = 'TestWorkflow';
       const mockType = 'Action';
       const mockClassName = 'MockClass';
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'NamespaceName',
         'RootClass',
         workflowName,
@@ -409,7 +428,7 @@ describe('unitTests', () => {
       expect(classCode).toContain('this.Key1 = string.Empty;');
     });
 
-    it('should not have StatusCode property from the generated class definition', () => {
+    it('should not have StatusCode property from the generated class definition', async () => {
       // Simulate JSON output with a redundant StatusCode property.
       const dataWithStatusCode = {
         nestedTypeProperty: 'object',
@@ -417,7 +436,7 @@ describe('unitTests', () => {
         StatusCode: { nestedTypeProperty: 'integer', description: 'The status code' },
       };
 
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'TestNamespace',
         'TestClass',
         'WorkflowName',
@@ -435,13 +454,13 @@ describe('unitTests', () => {
       expect(classCode).toContain('public JObject Body { get; set; }');
     });
 
-    it('should not remove properties other than StatusCode', () => {
+    it('should not remove properties other than StatusCode', async () => {
       const dataWithoutStatusCode = {
         nestedTypeProperty: 'object',
         Key1: { nestedTypeProperty: 'string', description: 'Test key description' },
       };
 
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'TestNamespace',
         'TestClass',
         'WorkflowName',
@@ -459,7 +478,26 @@ describe('unitTests', () => {
   });
 
   describe('generateCSharpClasses - Naming and Namespace Validation', () => {
-    it('should generate a C# class with a valid class name and namespace structure', () => {
+    let mockClassTemplatePath: string;
+    let mockClassTemplateContent: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestMockClass');
+      mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('TestMockClass')) return mockClassTemplateContent;
+        throw new Error(`File not found: ${p}`);
+      });
+    });
+
+    it('should generate a C# class with a valid class name and namespace structure', async () => {
       const namespaceName = 'MyLogicApp';
       const rootClassName = 'SomeOperationMockOutput';
       const workflowName = 'TestWorkflow';
@@ -469,7 +507,7 @@ describe('unitTests', () => {
         nestedTypeProperty: 'object',
         key: { nestedTypeProperty: 'string', description: 'test key' },
       };
-      const classCode = generateCSharpClasses(namespaceName, rootClassName, workflowName, mockType, mockClassName, data, false);
+      const classCode = await generateCSharpClasses(namespaceName, rootClassName, workflowName, mockType, mockClassName, data, false);
 
       expect(classCode).toContain('using Newtonsoft.Json.Linq;');
       expect(classCode).toContain('using System.Collections.Generic;');
@@ -495,7 +533,7 @@ describe('unitTests', () => {
         children: [],
         inheritsFrom: 'MockOutput',
       };
-      const classCode = generateClassCode(classDef, false);
+      const classCode = generateOutputsClassContent(classDef, false);
       expect(classCode).toContain('public class TestClass');
       expect(classCode).toContain('public string Property1 { get; set; }');
       expect(classCode).toContain('public int Property2 { get; set; }');
@@ -521,7 +559,7 @@ describe('unitTests', () => {
         children: [],
         inheritsFrom: 'MockOutput',
       };
-      const classCode = generateClassCode(classDef, true);
+      const classCode = generateOutputsClassContent(classDef, true);
       expect(classCode).toContain('public class TestClass');
       expect(classCode).toContain('public HttpStatusCode StatusCode {get; set;}');
       expect(classCode).toContain('public string Property1 { get; set; }');
@@ -552,7 +590,7 @@ describe('unitTests', () => {
         inheritsFrom: 'MockOutput',
       };
 
-      const classCode = generateClassCode(classDef);
+      const classCode = generateOutputsClassContent(classDef);
       expect(classCode).toContain('public class ParentClass');
       expect(classCode).toContain('public ChildClass Child { get; set; }');
       const setChildOccurrences = classCode.split('this.Child = new ChildClass();').length - 1;
@@ -861,7 +899,7 @@ describe('unitTests', () => {
 
   describe('buildClassDefinition', () => {
     it('should build a class definition for an object', () => {
-      const classDef = buildClassDefinition('RootClass', {
+      const classDef = buildOutputsClassDefinition('RootClass', {
         nestedTypeProperty: 'object',
         '@key1~1description': { nestedTypeProperty: 'string', description: 'Key 1 description', title: 'Key 1 Description' },
         nested: {
@@ -923,6 +961,7 @@ describe('unitTests', () => {
     });
   });
 
+  // TODO(aeldridge): Replace with ensureCsproj tests
   describe('createCsprojFile', () => {
     const testProjectFileTemplate = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project Sdk="Microsoft.NET.Sdk">

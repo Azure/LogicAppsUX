@@ -1,0 +1,29 @@
+/// <summary>
+/// The <see cref="<%= MockClassName %>"/> class.
+/// </summary>
+public class <%= MockClassName %> : <%= MockType %>
+{
+  /// <summary>
+  /// Creates a mocked instance for  <see cref="<%= MockClassName %>"/> with static outputs.
+  /// </summary>
+  public <%= MockClassName %>(TestWorkflowStatus status = TestWorkflowStatus.Succeeded, string name = null, <%= OutputsClassName %> outputs = null)
+        : base(status: status, name: name, outputs: outputs ?? new <%= OutputsClassName %>())
+    {
+    }
+
+    /// <summary>
+    /// Creates a mocked instance for  <see cref="<%= MockClassName %>"/> with static error info.
+    /// </summary>
+    public <%= MockClassName %>(TestWorkflowStatus status, string name = null, TestErrorInfo error = null)
+        : base(status: status, name: name, error: error)
+    {
+    }
+
+    /// <summary>
+    /// Creates a mocked instance for <see cref="<%= MockClassName %>"/> with a callback function for dynamic outputs.
+    /// </summary>
+    public <%= MockClassName %>(Func<TestExecutionContext, <%= MockClassName %>> onGet<%= MockType %>, string name = null)
+        : base(onGet<%= MockType %>: onGet<%= MockType %>, name: name)
+    {
+    }
+}
