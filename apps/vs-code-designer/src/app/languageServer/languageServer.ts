@@ -20,6 +20,7 @@ import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
 import AdmZip from 'adm-zip';
 import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
+import * as vscode from 'vscode';
 
 export default class LogicAppsSeverLanguage {
   protected lspServerPath: string;
@@ -51,8 +52,11 @@ export default class LogicAppsSeverLanguage {
       return;
     }
 
-    // Build server arguments
-    const serverArgs = [this.lspServerPath, '--sdk', this.sdkNupkgPath, '--connections', metaData.connectionFilePath];
+    // Build server arguments (removed --connections)
+    const serverArgs = [this.lspServerPath, '--sdk', this.sdkNupkgPath];
+
+    // Load connections from file
+    const connections = await this.loadConnectionsFromFile(metaData.connectionFilePath);
 
     // Get initial API config from settings or defaults
     const apiConfig = {
@@ -69,6 +73,19 @@ export default class LogicAppsSeverLanguage {
     }
 
     const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.cs');
+
+    // Watch connections.json for changes
+    const connectionsWatcher = workspace.createFileSystemWatcher(metaData.connectionFilePath);
+    connectionsWatcher.onDidChange(async () => {
+      const updatedConnections = await this.loadConnectionsFromFile(metaData.connectionFilePath);
+      if (ext.languageClient && updatedConnections) {
+        try {
+          await ext.languageClient.sendNotification('custom/updateConnections', updatedConnections);
+        } catch (error) {
+          console.error('[LSP] Failed to send connections update:', error);
+        }
+      }
+    });
 
     const hoverMiddleware: HoverMiddleware = {
       provideHover: async (document, position, token, next) => {
@@ -118,6 +135,13 @@ export default class LogicAppsSeverLanguage {
       },
       initializationOptions: {
         apiConfig: apiConfig,
+        connections: connections,
+        telemetry: {
+          connectionString: this.getTelemetryConnectionString(),
+          enabled: this.getTelemetryConnectionString() ? true : false,
+          samplingRate: 100,
+          sessionId: vscode.env.sessionId,
+        },
       },
       middleware: {
         provideHover: hoverMiddleware.provideHover,
@@ -169,6 +193,47 @@ export default class LogicAppsSeverLanguage {
       azureDetails,
       accessToken: azureDetails.accessToken,
     };
+  }
+
+  /**
+   * Loads connections from a JSON file.
+   * Returns the parsed connections object or null if the file doesn't exist or can't be parsed.
+   */
+  private async loadConnectionsFromFile(filePath: string): Promise<any | null> {
+    try {
+      if (!(await fse.pathExists(filePath))) {
+        return null;
+      }
+
+      const fileContent = await fse.readFile(filePath, 'utf-8');
+      const connections = JSON.parse(fileContent);
+      return connections;
+    } catch (error) {
+      window.showErrorMessage(`Failed to load connections.json: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Gets the Application Insights connection string for telemetry.
+   * Priority: DEBUGTELEMETRY env variable > ext.telemetryString
+   */
+  private getTelemetryConnectionString(): string | undefined {
+    // Check if DEBUGTELEMETRY is set (for local debugging)
+    const debugTelemetry = process?.env?.DEBUGTELEMETRY;
+    if (debugTelemetry === 'v') {
+      console.log('[LSP] Debug telemetry mode enabled - telemetry will be logged locally');
+      return 'debug'; // Special value to indicate debug mode
+    }
+
+    // Use production telemetry string from extension variables
+    if (ext.telemetryString && ext.telemetryString !== 'setInGitHubBuild') {
+      console.log('[LSP] Using production telemetry connection string');
+      return ext.telemetryString;
+    }
+
+    console.log('[LSP] No telemetry connection string configured');
+    return undefined;
   }
 }
 

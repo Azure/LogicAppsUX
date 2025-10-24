@@ -142,6 +142,7 @@ export namespace ext {
   export const testRuns = new Map<string, any>();
   // Telemetry
   export let telemetryReporter: TelemetryReporter;
+  export const telemetryString = 'setInGitHubBuild';
 
   // Language server protocol
   export let languageClient: LanguageClient | undefined;
