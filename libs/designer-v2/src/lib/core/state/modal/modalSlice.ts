@@ -5,11 +5,13 @@ export interface ModalState {
   isCombineVariableOpen: boolean;
   resolveCombineVariable?: (useCombined: boolean) => void;
   isTriggerDescriptionOpen: boolean;
+  kindChangeDialogType?: string;
 }
 
 const initialState: ModalState = {
   isCombineVariableOpen: false,
   isTriggerDescriptionOpen: false,
+  kindChangeDialogType: undefined,
 };
 
 const modalSlice = createSlice({
@@ -33,9 +35,21 @@ const modalSlice = createSlice({
     closeTriggerDescriptionModal: (state) => {
       state.isTriggerDescriptionOpen = false;
     },
+    openKindChangeDialog: (state, action: PayloadAction<{ type: string }>) => {
+      state.kindChangeDialogType = action.payload.type;
+    },
+    closeKindChangeDialog: (state) => {
+      state.kindChangeDialogType = undefined;
+    },
   },
 });
 
-export const { openCombineVariableModal, closeCombineVariableModal, openTriggerDescriptionModal, closeTriggerDescriptionModal } =
-  modalSlice.actions;
+export const {
+  openCombineVariableModal,
+  closeCombineVariableModal,
+  openTriggerDescriptionModal,
+  closeTriggerDescriptionModal,
+  openKindChangeDialog,
+  closeKindChangeDialog,
+} = modalSlice.actions;
 export default modalSlice.reducer;

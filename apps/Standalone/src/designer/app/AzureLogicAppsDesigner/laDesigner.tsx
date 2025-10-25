@@ -448,6 +448,7 @@ const DesignerEditor = () => {
           showConnectionsPanel,
           showEdgeDrawing,
           showPerformanceDebug,
+          mcpClientToolEnabled: true,
         }}
       >
         {workflow?.definition ? (
@@ -953,6 +954,7 @@ const getConnectionsToUpdate = (
     originalConnectionsJson.serviceProviderConnections ?? {},
     connectionsJson.serviceProviderConnections ?? {}
   );
+  const hasNewMcpConnectionKeys = hasNewKeys(originalConnectionsJson.agentMcpConnections ?? {}, connectionsJson.agentMcpConnections ?? {});
 
   const hasNewManagedApiConnectionRuntimeUrl = hasNewConnectionRuntimeUrl(
     originalConnectionsJson.managedApiConnections ?? {},
@@ -961,7 +963,14 @@ const getConnectionsToUpdate = (
 
   const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
-  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
+  if (
+    !hasNewFunctionKeys &&
+    !hasNewApimKeys &&
+    !hasNewManagedApiKeys &&
+    !hasNewServiceProviderKeys &&
+    !hasNewAgentKeys &&
+    !hasNewMcpConnectionKeys
+  ) {
     return undefined;
   }
 
@@ -1016,6 +1025,15 @@ const getConnectionsToUpdate = (
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
         // eslint-disable-next-line no-param-reassign
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
+      }
+    }
+  }
+
+  if (hasNewMcpConnectionKeys) {
+    for (const agentMcpConnectionName of Object.keys(connectionsJson.agentMcpConnections ?? {})) {
+      if (originalConnectionsJson.agentMcpConnections?.[agentMcpConnectionName]) {
+        (connectionsToUpdate.agentMcpConnections as any)[agentMcpConnectionName] =
+          originalConnectionsJson.agentMcpConnections[agentMcpConnectionName];
       }
     }
   }

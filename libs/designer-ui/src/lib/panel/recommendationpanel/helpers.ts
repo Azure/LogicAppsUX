@@ -4,7 +4,7 @@ import { getConnectorCategoryString } from '../../utils';
 import { isBuiltInConnector, isCustomConnector } from '../../connectors';
 import type { OperationActionData } from './interfaces';
 
-export const getDefaultRuntimeCategories = (): OperationRuntimeCategory[] => {
+export const getDefaultRuntimeCategories = (excludeBuiltin?: boolean): OperationRuntimeCategory[] => {
   const intl = getIntl();
 
   const all = intl.formatMessage({
@@ -36,10 +36,14 @@ export const getDefaultRuntimeCategories = (): OperationRuntimeCategory[] => {
       key: 'all',
       text: all,
     },
-    {
-      key: 'inapp',
-      text: builtIn,
-    },
+    ...(excludeBuiltin
+      ? []
+      : [
+          {
+            key: 'inapp',
+            text: builtIn,
+          },
+        ]),
     {
       key: 'shared',
       text: shared,

@@ -115,5 +115,6 @@ export interface ToolResultPayload {
     status: 'HandedOff' | 'Success' | 'Error' | 'InProgress';
     toolName: string;
     subIteration: number;
+    mcpToolName?: string;
   };
 }

@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, Spinner, SplitButton } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
-import { canRunBeInvokedWithPayload, HTTP_METHODS, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { canRunBeInvokedWithPayload, equals, HTTP_METHODS, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomCodeFilesWithData,
@@ -18,9 +18,26 @@ import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { ChatButton } from './chat';
+import constants from './../../common/constants';
 
 const RunIcon = bundleIcon(FlashFilled, FlashRegular);
 const RunWithPayloadIcon = bundleIcon(FlashSettingsFilled, FlashSettingsRegular);
+const AllowedTriggerTypes = [
+  constants.NODE.TYPE.REQUEST,
+  constants.NODE.TYPE.RECURRENCE,
+  constants.NODE.TYPE.API_CONNECTION,
+  constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+  constants.NODE.TYPE.HTTP_WEBHOOK,
+  constants.NODE.TYPE.HTTP,
+  constants.NODE.TYPE.SLIDING_WINDOW,
+];
+
+export type PayloadData = {
+  method?: string;
+  headers?: Record<string, string>;
+  queries?: Record<string, string>;
+  body?: string;
+};
 
 export interface FloatingRunButtonProps {
   siteResourceId?: string;
@@ -47,9 +64,47 @@ export const FloatingRunButton = ({
 
   const operationState = useSelector((state: RootState) => state.operations);
 
+  // Check if the trigger type is allowed to run in DraftMode
+  const isAllowedTriggerType = useMemo(() => {
+    const triggerInfo: Record<string, any> | undefined = operationState?.operationInfo;
+    if (!triggerInfo) {
+      return false;
+    }
+
+    if (!isDraftMode) {
+      return true; // In non-draft mode, all triggers are allowed
+    }
+
+    return triggerInfo.type && AllowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
+  }, [isDraftMode, operationState?.operationInfo]);
+
   const canBeRunWithPayload = useMemo(
-    () => !isDraftMode && canRunBeInvokedWithPayload(operationState?.operationInfo),
+    () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
     [isDraftMode, operationState?.operationInfo]
+  );
+
+  const runDraftWorkflow = useCallback(
+    async (triggerId: string, payload?: PayloadData) => {
+      try {
+        if (siteResourceId && workflowName) {
+          const callbackInfo: any = {
+            value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${payload ? 'runDraftWithPayload' : 'runDraft'}`,
+            method: HTTP_METHODS.POST,
+          };
+
+          // Wait 0.5 seconds, running too fast after saving causes 500 error
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          const runResponse = await RunService().runTrigger(callbackInfo, payload);
+          const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
+          onRun?.(runId);
+        } else {
+          // TODO: Handle/throw error
+        }
+      } catch (error) {
+        console.error('Error running draft workflow:', error);
+      }
+    },
+    [siteResourceId, workflowName, onRun]
   );
 
   const saveWorkflow = useCallback(async () => {
@@ -104,18 +159,15 @@ export const FloatingRunButton = ({
       if (!triggerId) {
         return;
       }
+
+      if (isDraftMode) {
+        runDraftWorkflow(triggerId);
+        return;
+      }
+
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       const method = saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
       callbackInfo.method = method;
-
-      if (isDraftMode) {
-        if (siteResourceId && workflowName) {
-          callbackInfo.value = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/runDraft`;
-          callbackInfo.method = HTTP_METHODS.POST;
-        } else {
-          // TODO: Handle/throw error
-        }
-      }
 
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -131,15 +183,22 @@ export const FloatingRunButton = ({
     mutate: runWithPayloadMutate,
     isLoading: runWithPayloadIsLoading,
     // error: runWithPayloadError,
-  } = useMutation(async (payload: any) => {
+  } = useMutation(async (payload: PayloadData) => {
     try {
       const saveResponse = await saveWorkflow();
       const triggerId = Object.keys(saveResponse?.definition?.triggers || {})?.[0];
       if (!triggerId) {
         return;
       }
+
+      if (isDraftMode) {
+        runDraftWorkflow(triggerId, payload);
+        return;
+      }
+
       const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
       callbackInfo.method = payload?.method;
+
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
       const runWithPayloadResponse = await RunService().runTrigger(callbackInfo, payload);
@@ -151,10 +210,11 @@ export const FloatingRunButton = ({
   });
 
   const buttonCommonProps: any = {
+    id: 'laux-v2-run-button',
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
-    disabled: runIsLoading || runWithPayloadIsLoading,
+    disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
     style: {
       position: 'absolute',
       bottom: '16px',
@@ -173,6 +233,19 @@ export const FloatingRunButton = ({
 
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  if (isA2AWorkflow) {
+    return (
+      <ChatButton
+        {...buttonCommonProps}
+        isDarkMode={isDarkMode}
+        isDraftMode={isDraftMode}
+        siteResourceId={siteResourceId}
+        workflowName={workflowName}
+        saveWorkflow={saveWorkflow}
+      />
+    );
+  }
+
   if (canBeRunWithPayload) {
     return (
       <>
@@ -183,30 +256,30 @@ export const FloatingRunButton = ({
             onClick: () => {
               runMutate();
             },
+            disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
           }}
-          menuButton={
-            canBeRunWithPayload
-              ? {
-                  icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
-                  onClick: () => setPopoverOpen(true),
-                  ref: buttonRef,
-                }
-              : undefined
-          }
+          menuButton={{
+            icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
+            onClick: () => setPopoverOpen(true),
+            ref: buttonRef,
+            disabled: runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
+          }}
         >
           {runText}
         </SplitButton>
-        <PayloadPopover open={popoverOpen} setOpen={setPopoverOpen} buttonRef={buttonRef} onSubmit={runWithPayloadMutate} />
+        <PayloadPopover
+          isDraftMode={isDraftMode}
+          open={popoverOpen}
+          setOpen={setPopoverOpen}
+          buttonRef={buttonRef}
+          onSubmit={runWithPayloadMutate}
+        />
       </>
     );
   }
 
-  if (isA2AWorkflow) {
-    return <ChatButton {...buttonCommonProps} isDarkMode={isDarkMode} />;
-  }
-
   return (
-    <Button {...buttonCommonProps} icon={<RunIcon />} onClick={runMutate}>
+    <Button {...buttonCommonProps} icon={runIsLoading ? <Spinner size="tiny" /> : <RunIcon />} onClick={runMutate}>
       {runText}
     </Button>
   );

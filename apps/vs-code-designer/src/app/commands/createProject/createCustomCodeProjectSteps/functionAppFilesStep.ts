@@ -104,14 +104,8 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     projectType: ProjectType,
     targetFramework: TargetFramework
   ): Promise<void> {
-    let templateFile: string;
-
-    if (projectType === ProjectType.rulesEngine) {
-      templateFile = this.csTemplateFileName[ProjectType.rulesEngine];
-    } else {
-      templateFile = this.csTemplateFileName[targetFramework];
-    }
-
+    const templateFile =
+      projectType === ProjectType.rulesEngine ? this.csTemplateFileName[ProjectType.rulesEngine] : this.csTemplateFileName[targetFramework];
     const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
@@ -145,14 +139,10 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     projectType: ProjectType,
     targetFramework: TargetFramework
   ): Promise<void> {
-    let templateFile: string;
-
-    if (projectType === ProjectType.rulesEngine) {
-      templateFile = this.csprojTemplateFileName[ProjectType.rulesEngine];
-    } else {
-      templateFile = this.csprojTemplateFileName[targetFramework];
-    }
-
+    const templateFile =
+      projectType === ProjectType.rulesEngine
+        ? this.csprojTemplateFileName[ProjectType.rulesEngine]
+        : this.csprojTemplateFileName[targetFramework];
     const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 

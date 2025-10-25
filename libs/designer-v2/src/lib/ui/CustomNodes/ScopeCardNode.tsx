@@ -172,7 +172,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
       return;
     }
     dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
-  }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
+  }, [dispatch, isMonitoringView, isTimelineRepetitionSelected, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(

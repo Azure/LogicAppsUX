@@ -9,6 +9,8 @@ import {
   supportedDataMapperFolders,
   supportedSchemaFileExts,
 } from '../commands/dataMapper/extensionConfig';
+import { getWorkspaceFolderWithoutPrompting } from './workspace';
+import { isLogicAppProjectInRoot } from './verifyIsProject';
 
 /**
  * Gets extension version from the package.json version.
@@ -43,3 +45,13 @@ export const initializeCustomExtensionContext = () => {
   ]);
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 };
+
+export async function updateLogicAppsContext() {
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', false);
+  } else {
+    const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
+    const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
+    await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', logicAppOpened);
+  }
+}

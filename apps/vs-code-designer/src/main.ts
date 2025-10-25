@@ -1,6 +1,5 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
-import { runPostExtractStepsFromCache } from './app/commands/cloudToLocal/cloudToLocalSteps/processPackageStep';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -8,7 +7,7 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
-import { getExtensionVersion, initializeCustomExtensionContext } from './app/utils/extension';
+import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
@@ -32,6 +31,7 @@ import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import { startLanguageServerProtocol } from './app/languageServer/languageServer';
+import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -42,6 +42,12 @@ const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
   initializeCustomExtensionContext();
+  await updateLogicAppsContext();
+
+  const workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(() => {
+    updateLogicAppsContext();
+  });
+  context.subscriptions.push(workspaceWatcher);
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', {
     resolveDebugConfiguration: async (folder, debugConfig) => {
@@ -106,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext) {
     //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
-    // @ts-ignore
+    // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
     activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';

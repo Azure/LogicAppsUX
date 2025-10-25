@@ -55,6 +55,18 @@ export const ExtensionCommand = {
   close_panel: 'close-panel',
   insert_connection: 'insert-connection',
   pickProcess: 'pickProcess',
+  createWorkspace: 'createWorkspace',
+  update_workspace_path: 'update-workspace-path',
+  validatePath: 'validatePath',
+  createLogicApp: 'createLogicApp',
+  createWorkspaceStructure: 'createWorkspaceStructure',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+  workspace_folder: 'workspace-folder',
+  workspace_file: 'workspace-file',
+  update_package_path: 'update-package-path',
+  package_file: 'package-file',
+  workspace_existence_result: 'workspace-existence-result',
+  package_existence_result: 'package-existence-result',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

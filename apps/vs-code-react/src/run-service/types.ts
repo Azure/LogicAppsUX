@@ -292,6 +292,45 @@ export interface UpdateExportPathMessage {
   };
 }
 
+export interface UpdateWorkspacePathMessage {
+  command: typeof ExtensionCommand.update_workspace_path;
+  data: {
+    targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface UpdateWorkspacePackageMessage {
+  command: typeof ExtensionCommand.update_package_path;
+  data: {
+    targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface ValidateWorkspacePathMessage {
+  command: typeof ExtensionCommand.validatePath;
+  data: {
+    path: any;
+    isValid: boolean;
+  };
+}
+
+export interface WorkspaceExistenceResultMessage {
+  command: typeof ExtensionCommand.workspace_existence_result;
+  data: {
+    workspacePath: any;
+    exists: boolean;
+    type: any;
+  };
+}
+
+export interface PackageExistenceResultMessage {
+  command: typeof ExtensionCommand.package_existence_result;
+  data: {
+    path: any;
+    isValid: boolean;
+  };
+}
+
 export interface AddStatusMessage {
   command: typeof ExtensionCommand.add_status;
   data: {

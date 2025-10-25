@@ -15,6 +15,10 @@ export const ProjectName = {
   unitTest: 'unitTest',
   runHistory: 'runHistory',
   languageServer: 'languageServer',
+  createWorkspace: 'createWorkspace',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+  createLogicApp: 'createLogicApp',
+  createWorkspaceStructure: 'createWorkspaceStructure',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
@@ -59,6 +63,7 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
+  functionFolderName?: string;
   functionAppNamespace?: string;
   functionAppName?: string;
   customCodeFunctionName?: string;
@@ -86,6 +91,23 @@ export interface IProjectWizardContext extends IActionContext {
   logicAppName?: string;
   packagePath?: string;
   deploymentScriptType?: DeploymentScriptType;
+  MSIenabled?: boolean;
+}
+
+export interface IWebviewProjectContext extends IActionContext {
+  workspaceFilePath: string;
+  workspaceProjectPath: ITargetDirectory;
+  workspaceName: string;
+  logicAppName: string;
+  logicAppType: string;
+  projectType: string;
+  targetFramework: string;
+  workflowName: string;
+  workflowType: string;
+  functionFolderName?: string;
+  functionName?: string;
+  functionNamespace?: string;
+  shouldCreateLogicAppProject: boolean;
 }
 
 export const OpenBehavior = {
@@ -126,6 +148,14 @@ export const RouteName = {
   unitTest: 'unitTest',
   languageServer: 'languageServer',
   connectionView: 'connectionView',
+  createWorkspace: 'createWorkspace',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+  createLogicApp: 'createLogicApp',
+  createWorkspaceStructure: 'createWorkspaceStructure',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
+export interface ITargetDirectory {
+  fsPath: string;
+  path: string;
+}

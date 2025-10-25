@@ -89,6 +89,7 @@ const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
           aria-label={typeof item.label === 'string' ? item.label : undefined}
           value={item.value}
           disabled={item.disabled}
+          placeholder={item.placeholder}
           onChange={(_event, data) => item.onChange(data.value ?? '')}
           onBlur={item.onBlur}
           contentAfter={item.contentAfter}

@@ -11,6 +11,12 @@ import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSe
 import { OverviewApp } from '../app/overview/app';
 import { ReviewApp } from '../app/review';
 import { UnitTestResults } from '../app/unitTest';
+import {
+  CreateWorkspace,
+  CreateWorkspaceFromPackage,
+  CreateLogicApp,
+  CreateWorkspaceStructure,
+} from '../app/createWorkspace/createWorkspace';
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { RouteName } from '@microsoft/vscode-extension-logic-apps';
@@ -37,6 +43,10 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.languageServer}`} element={<LanguageServerConnectionView />}>
           <Route path={`${RouteName.connectionView}`} element={<LanguageServerConnectionView />} />
         </Route>
+        <Route path={`/${RouteName.createWorkspace}`} element={<CreateWorkspace />} />
+        <Route path={`/${RouteName.createWorkspaceFromPackage}`} element={<CreateWorkspaceFromPackage />} />
+        <Route path={`/${RouteName.createLogicApp}`} element={<CreateLogicApp />} />
+        <Route path={`/${RouteName.createWorkspaceStructure}`} element={<CreateWorkspaceStructure />} />
       </Routes>
     </MemoryRouter>
   );
