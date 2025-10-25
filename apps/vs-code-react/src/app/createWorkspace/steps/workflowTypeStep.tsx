@@ -7,17 +7,16 @@ import type { DropdownProps } from '@fluentui/react-components';
 import { useState } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
-import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { validateWorkflowName } from '../validation/helper';
+import { validateWorkflowName } from '../utils/validation';
 
 export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
-  const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
+  const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace);
   const { workflowType, workflowName } = createWorkspaceState;
 
   // Validation state

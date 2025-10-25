@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from 'run-service';
 
@@ -70,7 +70,7 @@ const initialState: CreateWorkspaceState = {
   separator: '/',
 };
 
-export const createWorkspaceSlice = createSlice({
+export const createWorkspaceSlice: Slice<CreateWorkspaceState> = createSlice({
   name: 'createWorkspace',
   initialState,
   reducers: {

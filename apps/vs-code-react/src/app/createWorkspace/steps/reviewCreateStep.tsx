@@ -46,12 +46,15 @@ export const ReviewCreateStep: React.FC = () => {
     flowType === 'createWorkspace' || flowType === 'convertToWorkspace' || flowType === 'createWorkspaceFromPackage';
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
-  const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
+  const shouldShowWorkflowSection =
+    (flowType === 'createWorkspace' || flowType === 'createLogicApp') &&
+    !isUsingExistingLogicApp &&
+    logicAppType !== ProjectType.agentCodeful;
 
   const intlText = {
     TITLE: intl.formatMessage({
-      defaultMessage: 'Review + Create',
-      id: 'GH0CLv',
+      defaultMessage: 'Review + create',
+      id: 'JqiwYx',
       description: 'Review and create step title',
     }),
     DESCRIPTION: intl.formatMessage({
@@ -60,13 +63,13 @@ export const ReviewCreateStep: React.FC = () => {
       description: 'Review step description',
     }),
     PROJECT_SETUP: intl.formatMessage({
-      defaultMessage: 'Project Setup',
-      id: 'mAeD3g',
+      defaultMessage: 'Project setup',
+      id: 'j6RrLt',
       description: 'Project setup section title',
     }),
     PROJECT_PATH_LABEL: intl.formatMessage({
-      defaultMessage: 'Project Path',
-      id: 'ff1WLC',
+      defaultMessage: 'Project path',
+      id: 'VSeZW4',
       description: 'Project path label',
     }),
     PACKAGE_SETUP: intl.formatMessage({
@@ -75,8 +78,8 @@ export const ReviewCreateStep: React.FC = () => {
       description: 'Package setup section title',
     }),
     PACKAGE_PATH_LABEL: intl.formatMessage({
-      defaultMessage: 'Package Path',
-      id: '5H8ULg',
+      defaultMessage: 'Package path',
+      id: 'U16F4a',
       description: 'Package path label',
     }),
     WORKSPACE_NAME_LABEL: intl.formatMessage({
@@ -160,18 +163,18 @@ export const ReviewCreateStep: React.FC = () => {
       description: 'Missing value indicator',
     }),
     STANDARD_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App (Standard)',
-      id: 'xnJNZH',
+      defaultMessage: 'Logic app (standard)',
+      id: 'vgmZW+',
       description: 'Standard logic app option',
     }),
     CUSTOM_CODE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App with Custom Code',
-      id: '2ivADw',
+      defaultMessage: 'Logic app with Custom Code',
+      id: 'CZuM0p',
       description: 'Logic app with custom code option',
     }),
     RULES_ENGINE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App with Rules Engine',
-      id: 'yoH8Yw',
+      defaultMessage: 'Logic app with Rules Engine',
+      id: '/pkdF3',
       description: 'Logic app with rules engine option',
     }),
     STATEFUL_LABEL: intl.formatMessage({
@@ -193,6 +196,11 @@ export const ReviewCreateStep: React.FC = () => {
       defaultMessage: 'Conversational Agents',
       id: 'fg89hL',
       description: 'Conversational agent workflow option',
+    }),
+    LOGIC_APPS_DETAILS: intl.formatMessage({
+      defaultMessage: 'Logic app details',
+      id: 'VGAj7/',
+      description: 'Logic app details section title',
     }),
   };
 
@@ -299,7 +307,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {shouldShowLogicAppSection && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Logic App Details</div>
+            <div className={styles.reviewSectionTitle}>{intlText.LOGIC_APPS_DETAILS}</div>
             {renderSettingRow(intlText.LOGIC_APP_NAME_LABEL, logicAppName)}
             {flowType !== 'createLogicApp' && renderSettingRow(intlText.LOGIC_APP_LOCATION_LABEL, getLogicAppLocationPath())}
             {renderSettingRow(intlText.LOGIC_APP_TYPE_LABEL, getLogicAppTypeDisplay(logicAppType))}
@@ -308,7 +316,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {needsDotNetFrameworkStep && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Custom Code Configuration</div>
+            <div className={styles.reviewSectionTitle}>Custom code configuration</div>
             {renderSettingRow(intlText.DOTNET_FRAMEWORK_LABEL, getDotNetFrameworkDisplay(targetFramework))}
             {renderSettingRow(intlText.CUSTOM_CODE_FOLDER_LABEL, functionFolderName)}
             {renderSettingRow(intlText.CUSTOM_CODE_LOCATION_LABEL, getFunctionLocationPath())}
@@ -319,7 +327,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {needsFunctionConfiguration && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Function Configuration</div>
+            <div className={styles.reviewSectionTitle}>Function configuration</div>
             {renderSettingRow(intlText.RULES_ENGINE_FOLDER_LABEL, functionFolderName)}
             {renderSettingRow(intlText.RULES_ENGINE_LOCATION_LABEL, getFunctionLocationPath())}
             {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionNamespace)}
@@ -329,7 +337,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {shouldShowWorkflowSection && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Workflow Configuration</div>
+            <div className={styles.reviewSectionTitle}>Workflow configuration</div>
             {renderSettingRow(intlText.WORKFLOW_NAME_LABEL, workflowName)}
             {renderSettingRow(intlText.WORKFLOW_TYPE_LABEL, getWorkflowTypeDisplay(workflowType))}
           </div>

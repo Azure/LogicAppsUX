@@ -12,8 +12,8 @@ import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
-import { nameValidation } from './validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { getValidationRequirements, nameValidation } from './utils/validation';
 
 export const CreateWorkspace: React.FC = () => {
   const intl = useIntl();
@@ -239,33 +239,10 @@ export const CreateWorkspace: React.FC = () => {
     return !isNameAlreadyInWorkspace(name.trim());
   };
 
-  // Get validation requirements based on flow type
-  const getValidationRequirements = () => {
-    const requirements = {
-      needsPackagePath: flowType === 'createWorkspaceFromPackage',
-      needsWorkspacePath: flowType !== 'createLogicApp',
-      needsWorkspaceName: flowType !== 'createLogicApp',
-      needsLogicAppType: flowType !== 'convertToWorkspace', // convertToWorkspace doesn't need logic app type
-      needsLogicAppName: flowType !== 'convertToWorkspace', // convertToWorkspace doesn't need logic app name
-      needsWorkflowFields: false, // convertToWorkspace only needs workspace path and name
-      needsFunctionFields: false, // convertToWorkspace doesn't need function fields
-    };
-
-    // Override for specific flow types that need more fields
-    if (flowType === 'createWorkspace' || flowType === 'createLogicApp') {
-      requirements.needsLogicAppType = true;
-      requirements.needsLogicAppName = true;
-      requirements.needsWorkflowFields = true;
-      requirements.needsFunctionFields = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
-    }
-
-    return requirements;
-  };
-
   const canProceed = () => {
     switch (currentStep) {
       case 0: {
-        const requirements = getValidationRequirements();
+        const requirements = getValidationRequirements(flowType, logicAppType);
 
         // Package path validation (only for createWorkspaceFromPackage)
         if (requirements.needsPackagePath) {
@@ -384,7 +361,7 @@ export const CreateWorkspace: React.FC = () => {
     switch (stepIndex) {
       case 0: {
         // Project Setup step - validate all required fields based on flow type
-        const requirements = getValidationRequirements();
+        const requirements = getValidationRequirements(flowType, logicAppType);
 
         // For convertToWorkspace, only validate workspace path and name
         if (flowType === 'convertToWorkspace') {

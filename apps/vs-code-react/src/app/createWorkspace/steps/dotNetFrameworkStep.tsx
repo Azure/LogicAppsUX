@@ -11,8 +11,8 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionFolderName } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../utils/validation';
 
 export const DotNetFrameworkStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -272,49 +272,46 @@ export const DotNetFrameworkStep: React.FC = () => {
       </div>
     );
   }
-  if (logicAppType === ProjectType.rulesEngine) {
-    return (
-      <div className={styles.formSection}>
-        <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_TITLE}</Text>
+  return (
+    <div className={styles.formSection}>
+      <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_TITLE}</Text>
 
-        <div className={styles.fieldContainer}>
-          <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
-            <Label required htmlFor={functionFolderNameId}>
-              {intlText.RULES_ENGINE_FOLDER_NAME_LABEL}
-            </Label>
-            <Input
-              id={functionFolderNameId}
-              value={functionFolderName}
-              onChange={handleFunctionFolderNameChange}
-              className={styles.inputControl}
-            />
-          </Field>
-        </div>
-
-        <div className={styles.fieldContainer}>
-          <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
-            <Label required htmlFor={functionNamespaceId}>
-              {intlText.FUNCTION_NAMESPACE_LABEL}
-            </Label>
-            <Input
-              id={functionNamespaceId}
-              value={functionNamespace}
-              onChange={handleFunctionNamespaceChange}
-              className={styles.inputControl}
-            />
-          </Field>
-        </div>
-
-        <div className={styles.fieldContainer}>
-          <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
-            <Label required htmlFor={functionNameId}>
-              {intlText.FUNCTION_NAME_LABEL}
-            </Label>
-            <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
-          </Field>
-        </div>
+      <div className={styles.fieldContainer}>
+        <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
+          <Label required htmlFor={functionFolderNameId}>
+            {intlText.RULES_ENGINE_FOLDER_NAME_LABEL}
+          </Label>
+          <Input
+            id={functionFolderNameId}
+            value={functionFolderName}
+            onChange={handleFunctionFolderNameChange}
+            className={styles.inputControl}
+          />
+        </Field>
       </div>
-    );
-  }
-  return null;
+
+      <div className={styles.fieldContainer}>
+        <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
+          <Label required htmlFor={functionNamespaceId}>
+            {intlText.FUNCTION_NAMESPACE_LABEL}
+          </Label>
+          <Input
+            id={functionNamespaceId}
+            value={functionNamespace}
+            onChange={handleFunctionNamespaceChange}
+            className={styles.inputControl}
+          />
+        </Field>
+      </div>
+
+      <div className={styles.fieldContainer}>
+        <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
+          <Label required htmlFor={functionNameId}>
+            {intlText.FUNCTION_NAME_LABEL}
+          </Label>
+          <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
+        </Field>
+      </div>
+    </div>
+  );
 };

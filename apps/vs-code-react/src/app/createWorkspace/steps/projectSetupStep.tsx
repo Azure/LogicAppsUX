@@ -8,16 +8,30 @@ import { LogicAppTypeStep } from './logicAppTypeStep';
 import { WorkflowTypeStep } from './workflowTypeStep';
 import { DotNetFrameworkStep } from './dotNetFrameworkStep';
 import { WorkspaceNameStep } from './workspaceNameStep';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../state/store';
+import { useMemo } from 'react';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const ProjectSetupStep: React.FC = () => {
   const styles = useCreateWorkspaceStyles();
+  const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace);
+  const { logicAppType } = createWorkspaceState;
+
+  const shouldRenderDotnetStep = useMemo(() => {
+    return logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
+  }, [logicAppType]);
+
+  const shouldRenderWorkflowTypeStep = useMemo(() => {
+    return logicAppType !== ProjectType.agentCodeful;
+  }, [logicAppType]);
 
   return (
     <div className={styles.formSection}>
       <WorkspaceNameStep />
       <LogicAppTypeStep />
-      <DotNetFrameworkStep />
-      <WorkflowTypeStep />
+      {shouldRenderDotnetStep ? <DotNetFrameworkStep /> : null}
+      {shouldRenderWorkflowTypeStep ? <WorkflowTypeStep /> : null}
     </div>
   );
 };

@@ -10,8 +10,8 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../state/createWorkspaceSlice';
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { nameValidation } from '../validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { nameValidation } from '../utils/validation';
 
 export const LogicAppTypeStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -37,8 +37,8 @@ export const LogicAppTypeStep: React.FC = () => {
 
   const intlText = {
     TITLE: intl.formatMessage({
-      defaultMessage: 'Logic App Details',
-      id: 'XJ1S7E',
+      defaultMessage: 'Logic app details',
+      id: 'Vecdzb',
       description: 'Logic app details step title',
     }),
     DESCRIPTION: intl.formatMessage({
@@ -47,8 +47,8 @@ export const LogicAppTypeStep: React.FC = () => {
       description: 'Logic app details step description',
     }),
     LOGIC_APP_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App Name',
-      id: 'JS7xBY',
+      defaultMessage: 'Logic app name',
+      id: 'fuBVBE',
       description: 'Logic app name field label',
     }),
     LOGIC_APP_NAME_PLACEHOLDER: intl.formatMessage({
@@ -57,8 +57,8 @@ export const LogicAppTypeStep: React.FC = () => {
       description: 'Logic app name field placeholder',
     }),
     STANDARD_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App (Standard)',
-      id: 'xnJNZH',
+      defaultMessage: 'Logic app (standard)',
+      id: 'vgmZW+',
       description: 'Standard logic app option',
     }),
     STANDARD_DESCRIPTION: intl.formatMessage({
@@ -66,9 +66,19 @@ export const LogicAppTypeStep: React.FC = () => {
       id: 'CfXSvL',
       description: 'Standard logic app description',
     }),
+    CODEFUL_LABEL: intl.formatMessage({
+      defaultMessage: 'Codeful agent logic app',
+      id: 'XUY2KS',
+      description: 'Logic app codeful agent option',
+    }),
+    CODEFUL_DESCRIPTION: intl.formatMessage({
+      defaultMessage: 'Codeful logic app with agent',
+      id: 'oYesEg',
+      description: 'Standard logic app description',
+    }),
     CUSTOM_CODE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App with Custom Code',
-      id: '2ivADw',
+      defaultMessage: 'Logic App with custom code',
+      id: '9hPy3K',
       description: 'Logic app with custom code option',
     }),
     CUSTOM_CODE_DESCRIPTION: intl.formatMessage({
@@ -77,8 +87,8 @@ export const LogicAppTypeStep: React.FC = () => {
       description: 'Logic app with custom code description',
     }),
     RULES_ENGINE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App with Rules Engine',
-      id: 'yoH8Yw',
+      defaultMessage: 'Logic app with rules engine',
+      id: 'sXNnlg',
       description: 'Logic app with rules engine option',
     }),
     RULES_ENGINE_DESCRIPTION: intl.formatMessage({
@@ -108,7 +118,7 @@ export const LogicAppTypeStep: React.FC = () => {
     }),
   };
 
-  const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
+  const handleLogicAppTypeChange = (_event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
     dispatch(setLogicAppType(data.value));
     if (data.value === 'rulesEngine') {
       dispatch(setTargetFramework('net472'));
@@ -242,6 +252,12 @@ export const LogicAppTypeStep: React.FC = () => {
               <Radio value={ProjectType.logicApp} label={intlText.STANDARD_LABEL} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
                 {intlText.STANDARD_DESCRIPTION}
+              </Text>
+            </div>
+            <div className={styles.radioOption}>
+              <Radio value={ProjectType.agentCodeful} label={intlText.CODEFUL_LABEL} />
+              <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
+                {intlText.CUSTOM_CODE_LABEL}
               </Text>
             </div>
             <div className={styles.radioOption}>
