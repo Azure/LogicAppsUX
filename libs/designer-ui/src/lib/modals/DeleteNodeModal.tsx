@@ -10,7 +10,7 @@ import {
   Spinner,
 } from '@fluentui/react-components';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { equals, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useModalStyles } from './styles';
@@ -19,6 +19,8 @@ export interface DeleteNodeModalProps {
   nodeId: string;
   nodeName: string;
   nodeType?: WorkflowNodeType;
+  subgraphType?: string;
+  operationType?: string;
   isOpen: boolean;
   isLoading?: boolean;
   onDismiss: () => void;
@@ -26,10 +28,12 @@ export interface DeleteNodeModalProps {
 }
 
 export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
-  const { nodeId, nodeName, nodeType, isOpen, onDismiss, onConfirm } = props;
+  const { nodeId, nodeName, nodeType, subgraphType, operationType, isOpen, onDismiss, onConfirm } = props;
   const styles = useModalStyles();
 
   const intl = useIntl();
+
+  const isAgentNode = equals(operationType, 'Agent');
 
   const deleteLoadingMessage = intl.formatMessage({
     defaultMessage: 'Deleting...',
@@ -57,10 +61,22 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     description: 'Title for graph node',
   });
 
+  const agentNodeTitle = intl.formatMessage({
+    defaultMessage: 'Delete agentic loop',
+    id: 'VVp8sL',
+    description: 'Title for agentic loop node',
+  });
+
   const switchCaseTitle = intl.formatMessage({
     defaultMessage: 'Delete switch case',
     id: 'oPKLDZ',
     description: 'Title for switch case',
+  });
+
+  const agentToolTitle = intl.formatMessage({
+    defaultMessage: 'Delete agentic loop tool',
+    id: 'BwwhOM',
+    description: 'Title for agent tool',
   });
 
   const otherNodeTitle = intl.formatMessage({
@@ -73,14 +89,18 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE']
       ? operationNodeTitle
       : nodeType === WORKFLOW_NODE_TYPES['GRAPH_NODE']
-        ? graphNodeTitle
+        ? isAgentNode
+          ? agentNodeTitle
+          : graphNodeTitle
         : nodeType === WORKFLOW_NODE_TYPES['SUBGRAPH_NODE'] // This is only for switch cases
-          ? switchCaseTitle
+          ? subgraphType === SUBGRAPH_TYPES['AGENT_CONDITION']
+            ? agentToolTitle
+            : switchCaseTitle
           : otherNodeTitle;
 
   const confirmText = intl.formatMessage({
-    defaultMessage: 'OK',
-    id: 'O9ZExg',
+    defaultMessage: 'Delete',
+    id: '+iPg27',
     description: 'Confirmation text for delete button',
   });
 
@@ -111,7 +131,20 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     description: 'Text for delete node modal body',
   });
 
-  const bodyMessage = nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE'] ? operationBodyMessage : graphBodyMessage;
+  const agentBodyMessage = intl.formatMessage({
+    defaultMessage: "This will also delete the agent's tools and actions.",
+    id: '4gOrfY',
+    description: 'Text for delete agentic loop modal body',
+  });
+
+  const bodyMessage =
+    nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE']
+      ? operationBodyMessage
+      : nodeType === WORKFLOW_NODE_TYPES['GRAPH_NODE']
+        ? isAgentNode
+          ? agentBodyMessage
+          : graphBodyMessage
+        : graphBodyMessage;
 
   const onClosing = useCallback(() => {
     setSpinnerText(closingLoadingMessage);
