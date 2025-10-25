@@ -77,7 +77,7 @@ export const FloatingRunButton = ({
     const trigger = info[triggerId];
 
     return trigger.type && AllowedTriggerTypes.some((allowedType) => equals(trigger.type, allowedType, true));
-  }, [isDraftMode, operationState?.operationInfo]);
+  }, [isDraftMode, operationState?.operationInfo, workflow]);
 
   const canBeRunWithPayload = useMemo(
     () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
