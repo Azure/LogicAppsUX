@@ -60,10 +60,10 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     description: 'add a case to switch statement',
   });
 
-  const addActionLabel = intl.formatMessage({
-    defaultMessage: 'Add an action',
-    id: 'PNzj7r',
-    description: 'Add action to the loop, this adds a tool by default',
+  const addToolLabel = intl.formatMessage({
+    defaultMessage: 'Add tool',
+    id: 'xX0Xvc',
+    description: 'add a tool to agentic loop',
   });
 
   const conditionalTypeText = intl.formatMessage({
@@ -183,7 +183,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     if (readOnly) {
       return null;
     }
-    const title = subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON'] ? addActionLabel : addCaseLabel;
+    const title = subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON'] ? addToolLabel : addCaseLabel;
     return (
       <div
         style={{

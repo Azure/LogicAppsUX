@@ -9,24 +9,36 @@ export const KindChangeDialog = () => {
 
   const kindChangeDialogType = useKindChangeDialogType();
 
-  const titleText = intl.formatMessage({
-    defaultMessage: 'Kind change',
-    id: 'PCNZxg',
+  const defaultTitleText = intl.formatMessage({
+    defaultMessage: 'Update workflow before using this trigger',
+    id: 'EE1vyH',
     description: 'Title for dialog that appears when changing the kind of a node',
   });
 
   const toA2ADescription = intl.formatMessage({
     defaultMessage:
-      'This operation will change the workflow to be a conversational (A2A) workflow. In the current preview, conversational workflows are unable to have workflow actions running after an agent. Please esure that your agent does not have any actions after it and try this operation again.',
-    id: 'KZZ69j',
+      "Using a chat message trigger means your workflow will be conversational, which doesn't support actions running after an agentic loop. Delete any actions running after an agent to use this trigger.",
+    id: '+jvca5',
     description: 'Description for dialog that appears when changing the kind of a node',
   });
 
   const toStatefulDescription = intl.formatMessage({
     defaultMessage:
-      'This operation will change the workflow to be a stateful workflow. Stateful workflows do not support agent handoffs. Please remove any agent handoffs from your workflow and try this operation again.',
-    id: 'FAgEpx',
+      'Using this trigger changes your workflow to a type that doesn’t support handoffs. Delete any handoffs to use this trigger.',
+    id: 'vz+t4/',
     description: 'Description for dialog that appears when changing the kind of a node to a stateful kind',
+  });
+
+  const statelessTitleText = intl.formatMessage({
+    defaultMessage: 'Invalid trigger for stateless workflow',
+    id: 'QmhiIM',
+    description: 'Title for dialog that appears when changing the kind of a node to stateless',
+  });
+
+  const fromStatelessDescription = intl.formatMessage({
+    defaultMessage: 'This preview version of logic apps does not yet support stateless logic apps using the chat message trigger.',
+    id: 'jDYilS',
+    description: 'Description for dialog that appears when changing the kind of a node from stateless',
   });
 
   const closeText = intl.formatMessage({
@@ -35,7 +47,16 @@ export const KindChangeDialog = () => {
     description: 'Label for the close button in the kind change dialog',
   });
 
-  const descriptionText = kindChangeDialogType === 'toA2A' ? toA2ADescription : toStatefulDescription;
+  const titleText = kindChangeDialogType === 'fromStateless' ? statelessTitleText : defaultTitleText;
+
+  const descriptionText =
+    kindChangeDialogType === 'toA2A'
+      ? toA2ADescription
+      : kindChangeDialogType === 'toStateful'
+        ? toStatefulDescription
+        : kindChangeDialogType === 'fromStateless'
+          ? fromStatelessDescription
+          : null;
 
   const closeCallback = () => {
     dispatch(closeKindChangeDialog());

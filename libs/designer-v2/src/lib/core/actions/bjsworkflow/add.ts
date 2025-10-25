@@ -87,9 +87,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
 
     const workflowState = (getState() as RootState).workflow;
 
-    // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
     if (isTrigger) {
       const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+      if (equals(workflowState.workflowKind, WorkflowKind.STATELESS) && isA2ATrigger) {
+        // Can't switch to A2A if the workflow is stateless
+        dispatch(openKindChangeDialog({ type: 'fromStateless' }));
+        return;
+      }
+
+      // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
       if (isA2AWorkflow(workflowState)) {
         if (!isA2ATrigger) {
           const workflowHasHandoffs = Object.values(workflowState.nodesMetadata).some(
