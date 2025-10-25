@@ -8,6 +8,7 @@ import { canRunBeInvokedWithPayload, equals, HTTP_METHODS, isNullOrEmpty, RunSer
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomCodeFilesWithData,
+  getTriggerNodeId,
   resetDesignerDirtyState,
   store,
   updateParameterValidation,
@@ -57,17 +58,15 @@ export const FloatingRunButton = ({
   isDraftMode,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
-
   const dispatch = useDispatch();
-
   const isA2AWorkflow = useIsA2AWorkflow();
-
-  const operationState = useSelector((state: RootState) => state.operations);
+  const { operations: operationState, workflow } = useSelector((state: RootState) => state);
 
   // Check if the trigger type is allowed to run in DraftMode
   const isAllowedTriggerType = useMemo(() => {
-    const triggerInfo: Record<string, any> | undefined = operationState?.operationInfo;
-    if (!triggerInfo) {
+    const triggerId = getTriggerNodeId(workflow);
+    const info: Record<string, any> | undefined = operationState?.operationInfo;
+    if (!triggerId || !info || !info[triggerId]) {
       return false;
     }
 
@@ -75,7 +74,9 @@ export const FloatingRunButton = ({
       return true; // In non-draft mode, all triggers are allowed
     }
 
-    return triggerInfo.type && AllowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
+    const trigger = info[triggerId];
+
+    return trigger.type && AllowedTriggerTypes.some((allowedType) => equals(trigger.type, allowedType, true));
   }, [isDraftMode, operationState?.operationInfo]);
 
   const canBeRunWithPayload = useMemo(
