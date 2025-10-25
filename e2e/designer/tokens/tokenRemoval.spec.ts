@@ -17,7 +17,7 @@ test.describe(
         button: 'right',
       });
       await page.getByText('Delete', { exact: true }).click();
-      await page.getByRole('button', { name: 'OK' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
       const serializedNew: any = await getSerializedWorkflowFromState(page);
       expect(serializedNew.definition.actions.Filter_array.inputs.from).toEqual('test');
       expect(JSON.stringify(serializedNew)).not.toContain("@body('Parse_JSON')");
@@ -36,7 +36,7 @@ test.describe(
         button: 'right',
       });
       await page.getByText('Delete', { exact: true }).click();
-      await page.getByRole('button', { name: 'OK' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
       const serializedNew: any = await getSerializedWorkflowFromState(page);
       expect(serializedNew.definition.actions.Parse_JSON.inputs.content).toEqual(
         "@{triggerBody()?['string']}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
@@ -60,7 +60,7 @@ test.describe(
         button: 'right',
       });
       await page.getByText('Delete', { exact: true }).click();
-      await page.getByRole('button', { name: 'OK' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
       const serializedNew: any = await getSerializedWorkflowFromState(page);
       expect(serializedNew.definition.actions.Parse_JSON.inputs.content).toEqual(
         "@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
@@ -114,7 +114,7 @@ test.describe(
         button: 'right',
       });
       await page.getByText('Delete', { exact: true }).click();
-      await page.getByRole('button', { name: 'OK' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
       const serializedNew: any = await getSerializedWorkflowFromState(page);
       expect(serializedNew.definition.actions.Parse_JSON.inputs.content).toEqual("@triggerBody()?['string']");
       expect(JSON.stringify(serializedNew)).not.toContain("@variables('ArrayVariable')");
