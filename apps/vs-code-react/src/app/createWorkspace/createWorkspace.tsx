@@ -97,8 +97,8 @@ export const CreateWorkspace: React.FC = () => {
       });
     }
     return intl.formatMessage({
-      defaultMessage: 'Create Workspace',
-      id: 'XZfauP',
+      defaultMessage: 'Create workspace',
+      id: '+u2tgz',
       description: 'Create workspace button',
     });
   };

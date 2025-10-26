@@ -68,7 +68,7 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
 async function createWorkspaceStructureWebview(_context: IActionContext): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     createWorkspaceWebviewCommandHandler({
-      panelName: localize('createWorkspaceStructure', 'Create Workspace Structure'),
+      panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
       panelGroupKey: ext.webViewKey.createWorkspaceStructure,
       projectName: ProjectName.createWorkspaceStructure,
       createCommand: ExtensionCommand.createWorkspaceStructure,

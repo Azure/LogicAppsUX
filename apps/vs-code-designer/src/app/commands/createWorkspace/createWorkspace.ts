@@ -11,7 +11,7 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 
 export async function createNewCodeProjectFromCommand(): Promise<void> {
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createWorkspace', 'Create Workspace'),
+    panelName: localize('createWorkspace', 'Create workspace'),
     panelGroupKey: ext.webViewKey.createWorkspace,
     projectName: ProjectName.createWorkspace,
     createCommand: ExtensionCommand.createWorkspace,

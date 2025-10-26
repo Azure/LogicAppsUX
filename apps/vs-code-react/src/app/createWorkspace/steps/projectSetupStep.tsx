@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../../state/store';
 import { useMemo } from 'react';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 
 export const ProjectSetupStep: React.FC = () => {
   const styles = useCreateWorkspaceStyles();
@@ -23,7 +24,7 @@ export const ProjectSetupStep: React.FC = () => {
   }, [logicAppType]);
 
   const shouldRenderWorkflowTypeStep = useMemo(() => {
-    return logicAppType !== ProjectType.agentCodeful;
+    return !isEmptyString(logicAppType) && logicAppType !== ProjectType.agentCodeful;
   }, [logicAppType]);
 
   return (
