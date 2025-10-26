@@ -24,7 +24,7 @@ export const isTriggerNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
 
 export const getTriggerNode = (state: WorkflowState): WorkflowNode => {
   const rootGraph = state.graph as WorkflowNode;
-  const rootNode = rootGraph.children?.find((child) => isTriggerNode(child.id, state.nodesMetadata)) as WorkflowNode;
+  const rootNode = rootGraph?.children?.find((child) => isTriggerNode(child.id, state.nodesMetadata)) as WorkflowNode;
   return rootNode;
 };
 
