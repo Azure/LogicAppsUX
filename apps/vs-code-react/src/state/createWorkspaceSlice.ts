@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction, Slice } from '@reduxjs/toolkit';
+import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { ITargetDirectory } from 'run-service';
+import type { ITargetDirectory } from '../run-service';
 
 export interface CreateWorkspaceState {
   currentStep: number;
@@ -70,7 +70,7 @@ const initialState: CreateWorkspaceState = {
   separator: '/',
 };
 
-export const createWorkspaceSlice: Slice<CreateWorkspaceState> = createSlice({
+export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
   name: 'createWorkspace',
   initialState,
   reducers: {
@@ -225,8 +225,9 @@ export const {
   setError,
   setComplete,
   resetState,
-  nextStep,
-  previousStep,
 } = createWorkspaceSlice.actions;
+
+export const nextStep = createWorkspaceSlice.actions.nextStep as () => { type: string; payload: undefined };
+export const previousStep = createWorkspaceSlice.actions.previousStep as () => { type: string; payload: undefined };
 
 export default createWorkspaceSlice.reducer;
