@@ -62,7 +62,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
               tabindex="0"
               type="button"
             >
-              OK
+              Delete
             </button>
             <button
               class="fui-Button r1alrhcs"
@@ -202,7 +202,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
               tabindex="0"
               type="button"
             >
-              OK
+              Delete
             </button>
             <button
               class="fui-Button r1alrhcs"
@@ -342,7 +342,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
               tabindex="0"
               type="button"
             >
-              OK
+              Delete
             </button>
             <button
               class="fui-Button r1alrhcs"
@@ -482,7 +482,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
               tabindex="0"
               type="button"
             >
-              OK
+              Delete
             </button>
             <button
               class="fui-Button r1alrhcs"
@@ -629,7 +629,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
               tabindex="0"
               type="button"
             >
-              OK
+              Delete
             </button>
             <button
               class="fui-Button r1alrhcs"

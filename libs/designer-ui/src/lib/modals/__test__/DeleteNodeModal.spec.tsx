@@ -33,7 +33,7 @@ describe('DeleteNodeModal', () => {
     const onConfirm = vi.fn();
     renderComponent({ onConfirm });
 
-    fireEvent.click(screen.getByText('OK'));
+    fireEvent.click(screen.getByText('Delete'));
     expect(onConfirm).toHaveBeenCalled();
   });
 

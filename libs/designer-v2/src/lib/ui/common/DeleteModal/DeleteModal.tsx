@@ -3,7 +3,7 @@ import { useNodeMetadata, useNodeDisplayName, storeStateToUndoRedoHistory } from
 import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
 import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
 import { deleteAgentTool, deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
@@ -17,6 +17,7 @@ const DeleteModal = () => {
   const nodeName = useNodeDisplayName(nodeId);
   const nodeData = useWorkflowNode(nodeId);
   const metadata = useNodeMetadata(nodeId);
+  const operationMetadata = useActionMetadata(nodeId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
 
   const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
@@ -74,6 +75,8 @@ const DeleteModal = () => {
       nodeId={nodeId ?? ''}
       nodeName={nodeName}
       nodeType={nodeData?.type}
+      subgraphType={metadata?.subgraphType}
+      operationType={operationMetadata?.type}
       isOpen={!!nodeId}
       onDismiss={onDismiss}
       onConfirm={handleDelete}
