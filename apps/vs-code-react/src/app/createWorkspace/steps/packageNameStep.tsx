@@ -8,15 +8,14 @@ import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setPackagePath } from '../../../state/createWorkspaceSlice';
-import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import { useIntlMessages, workspaceMessages } from '../../../intl';
 
 export const PackageNameStep: React.FC = () => {
   const dispatch = useDispatch();
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
@@ -27,38 +26,7 @@ export const PackageNameStep: React.FC = () => {
   const [packagePathError, setPackagePathError] = useState<string | undefined>(undefined);
   const [isValidatingPath, setIsValidatingPath] = useState<boolean>(false);
 
-  const intlText = {
-    TITLE: intl.formatMessage({
-      defaultMessage: 'Package Setup',
-      id: 'Wxhsgj',
-      description: 'Package setup step title',
-    }),
-    DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Package',
-      id: 'aExfWG',
-      description: 'Package setup step description',
-    }),
-    PACKAGE_PATH_LABEL: intl.formatMessage({
-      defaultMessage: 'Package Path',
-      id: 'pyYxP0',
-      description: 'Package path input label',
-    }),
-    BROWSE_BUTTON: intl.formatMessage({
-      defaultMessage: 'Browse...',
-      id: 'cR0MlP',
-      description: 'Browse folder button',
-    }),
-    PACKAGE_PATH_EMPTY_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Package path cannot be empty.',
-      id: 'pO1Zvz',
-      description: 'Package path cannot be empty message text',
-    }),
-    PACKAGE_PATH_NOT_EXISTS_MESSAGE: intl.formatMessage({
-      defaultMessage: 'The specified path does not exist or is not accessible.',
-      id: 'LgCmeY',
-      description: 'Specified path does not exist or is not accessible message text',
-    }),
-  };
+  const intlText = useIntlMessages(workspaceMessages);
 
   const validatePackagePath = useCallback(
     (path: string) => {
@@ -69,12 +37,12 @@ export const PackageNameStep: React.FC = () => {
       // Check if we have a validation result for this path
       const isPathValid = packageValidationResults[path];
       if (isPathValid === false) {
-        return intlText.PACKAGE_PATH_NOT_EXISTS_MESSAGE;
+        return intlText.PATH_NOT_EXISTS;
       }
 
       return undefined;
     },
-    [intlText.PACKAGE_PATH_EMPTY_MESSAGE, intlText.PACKAGE_PATH_NOT_EXISTS_MESSAGE, packageValidationResults]
+    [intlText.PACKAGE_PATH_EMPTY_MESSAGE, intlText.PATH_NOT_EXISTS, packageValidationResults]
   );
 
   // Debounced path validation function
@@ -125,7 +93,7 @@ export const PackageNameStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
+      <Text className={styles.sectionTitle}>{intlText.PACKAGE_SETUP}</Text>
 
       <div className={styles.fieldContainer}>
         <Field

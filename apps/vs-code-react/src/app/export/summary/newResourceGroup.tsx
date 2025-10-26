@@ -4,8 +4,8 @@ import type { IDropdownOption } from '../../components/searchableDropdown';
 import { useBoolean } from '@fluentui/react-hooks';
 import { MediumText } from '@microsoft/designer-ui';
 import { useState, useMemo } from 'react';
-import type { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
+import type { ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import { useExportStyles } from '../exportStyles';
 import type { InputOnChangeData } from '@fluentui/react-components';
@@ -17,7 +17,6 @@ interface INewResourceGroupProps {
 }
 
 export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewResourceGroup, resourceGroups }) => {
-  const intl = useIntl();
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [name, setName] = useState<string>('');
   const styles = useExportStyles();
@@ -25,6 +24,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
   const { location } = exportData;
+  const intl = useIntl();
 
   const intlText = useMemo(
     () => ({

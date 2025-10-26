@@ -5,11 +5,13 @@ import { ThemeProvider } from './themeProvider';
 import { WebViewCommunication } from './webviewCommunication';
 import { initializeIcons } from '@fluentui/react';
 import { getReactQueryClient } from '@microsoft/logic-apps-designer';
+import { IntlGlobalProvider } from '@microsoft/logic-apps-shared';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IntlProvider } from 'react-intl';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
+import messages from '../../../libs/logic-apps-shared/src/intl/compiled-lang/strings.json';
 
 initializeIcons();
 
@@ -25,6 +27,7 @@ root.render(
           <IntlProvider
             defaultLocale="en"
             locale="en-US"
+            messages={messages}
             onError={(err) => {
               if (err.code === 'MISSING_TRANSLATION') {
                 return;
@@ -32,9 +35,11 @@ root.render(
               throw err;
             }}
           >
-            <WebViewCommunication>
-              <Router />
-            </WebViewCommunication>
+            <IntlGlobalProvider>
+              <WebViewCommunication>
+                <Router />
+              </WebViewCommunication>
+            </IntlGlobalProvider>
           </IntlProvider>
         </QueryClientProvider>
       </Provider>

@@ -2,7 +2,7 @@ import type { WorkflowsList } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import { LargeText, MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useSelector } from 'react-redux';
 import { useExportStyles } from '../exportStyles';
 import { Button, Skeleton, SkeletonItem } from '@fluentui/react-components';
@@ -16,29 +16,12 @@ export interface ISelectedListProps {
 const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 
 export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselectWorkflow }) => {
-  const intl = useIntl();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const styles = useExportStyles();
   const { exportData } = workflowState;
   const { selectedWorkflows } = exportData;
 
-  const intlText = {
-    SELECTED_APPS: intl.formatMessage({
-      defaultMessage: 'Selected logic apps',
-      id: 'fDpDnc',
-      description: 'Selected logic apps title',
-    }),
-    SHIMMER_LABEL: intl.formatMessage({
-      defaultMessage: 'Loading selected logic apps',
-      id: '0KDnLw',
-      description: 'Shimmer label for loading selected logic apps',
-    }),
-    CANCEL_LABEL: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      id: '0GT0SI',
-      description: 'Cancel button label',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   const shimmerList = useMemo(() => {
     return (

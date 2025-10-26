@@ -21,7 +21,6 @@ import {
 import { isNullOrEmpty, type Workflow } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
 import {
   Button,
@@ -61,6 +60,7 @@ import {
 } from '@fluentui/react-icons';
 import { useCommandBarStyles } from './styles';
 import { useSelector } from 'react-redux';
+import { useIntlMessages, designerMessages } from '../../../intl';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
@@ -108,11 +108,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToCodeView,
   switchToMonitoringView,
 }) => {
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
 
   const styles = useCommandBarStyles();
+  const intlText = useIntlMessages(designerMessages);
 
   const designerIsDirty = useIsDesignerDirty();
 
@@ -200,74 +200,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   };
 
   /////////////////////////////////////////////////////////////////////////////
-
-  const Resources = {
-    FILE_A_BUG: intl.formatMessage({
-      defaultMessage: 'File a bug',
-      id: '1PQFOA',
-      description: 'Button text for file a bug',
-    }),
-    DESIGNER_SAVE: intl.formatMessage({
-      defaultMessage: 'Save',
-      id: 'ZvAp7m',
-      description: 'Button text for save',
-    }),
-    DESIGNER_DISCARD: intl.formatMessage({
-      defaultMessage: 'Discard',
-      id: 'zU5AVD',
-      description: 'Button text for discard changes',
-    }),
-    DESIGNER_PARAMETERS: intl.formatMessage({
-      defaultMessage: 'Parameters',
-      id: '+0ua83',
-      description: 'Button text for parameters',
-    }),
-    DESIGNER_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Connections',
-      id: 'm/GihH',
-      description: 'Button text for connections',
-    }),
-    DESIGNER_ERRORS: intl.formatMessage({
-      defaultMessage: 'Errors',
-      id: 'ohOaXj',
-      description: 'Button text for errors',
-    }),
-    MONITORING_VIEW_REFRESH: intl.formatMessage({
-      defaultMessage: 'Refresh',
-      id: 'pr9GwA',
-      description: 'Button text for refresh',
-    }),
-    MONITORING_VIEW_RESUBMIT: intl.formatMessage({
-      defaultMessage: 'Resubmit',
-      id: 'sOnphB',
-      description: 'Button text for resubmit',
-    }),
-    COMMAND_BAR_ARIA: intl.formatMessage({
-      defaultMessage: 'Use left and right arrow keys to navigate between commands',
-      id: 'rd6fai',
-      description: 'Aria describing the way to control the keyboard navigation',
-    }),
-    CREATE_UNIT_TEST: intl.formatMessage({
-      defaultMessage: 'Create unit test from run',
-      id: '4eH9hX',
-      description: 'Button text for create unit test',
-    }),
-    UNIT_TEST_SAVE: intl.formatMessage({
-      defaultMessage: 'Save unit test definition',
-      id: 'QQmbz+',
-      description: 'Button text for save unit test definition',
-    }),
-    UNIT_TEST_ASSERTIONS: intl.formatMessage({
-      defaultMessage: 'Assertions',
-      id: 'LxRzQm',
-      description: 'Button text for unit test asssertions',
-    }),
-    UNIT_TEST_CREATE_BLANK: intl.formatMessage({
-      defaultMessage: 'Create unit test',
-      id: 'SUX3dO',
-      description: 'Button test for save blank unit test',
-    }),
-  };
 
   const inputParameterErrors = useSelector((state: RootState) => state.workflow?.operations?.inputParameters ?? {});
 
@@ -367,7 +299,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
 
   const DiscardButton = () => (
     <ToolbarButton
-      aria-label={Resources.DESIGNER_DISCARD}
+      aria-label={intlText.DISCARD}
       icon={<DiscardIcon />}
       onClick={discard}
       disabled={isSaving || isMonitoringView || !designerIsDirty}
@@ -380,25 +312,25 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         key="save-unit-test"
         disabled={isSaveUnitTestDisabled}
         onClick={() => saveUnitTestMutate()}
-        aria-label={Resources.UNIT_TEST_SAVE}
+        aria-label={intlText.SAVE_UNIT_TEST}
         icon={isSavingUnitTest ? <Spinner size={'extra-tiny'} /> : <SaveIcon />}
       >
-        {Resources.UNIT_TEST_SAVE}
+        {intlText.SAVE_UNIT_TEST}
       </MenuItem>
       <MenuItem
         disabled={isSaveBlankUnitTestDisabled}
         onClick={() => saveBlankUnitTestMutate()}
-        aria-label={Resources.UNIT_TEST_CREATE_BLANK}
+        aria-label={intlText.CREATE_UNIT_TEST}
         icon={isSavingBlankUnitTest ? <Spinner size={'extra-tiny'} /> : <SaveRegular />}
       >
-        {Resources.UNIT_TEST_CREATE_BLANK}
+        {intlText.CREATE_UNIT_TEST}
       </MenuItem>
       <MenuItem
         onClick={() => dispatch(openPanel({ panelMode: 'Assertions' }))}
-        aria-label={Resources.UNIT_TEST_ASSERTIONS}
+        aria-label={intlText.UNIT_TEST_ASSERTIONS}
         icon={<AssertionsIcon />}
       >
-        {Resources.UNIT_TEST_ASSERTIONS}
+        {intlText.UNIT_TEST_ASSERTIONS}
       </MenuItem>
       <MenuDivider />
     </>
@@ -411,13 +343,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         onClick={() => dispatch(openPanel({ panelMode: 'WorkflowParameters' }))}
         icon={<ParametersIcon />}
       >
-        {Resources.DESIGNER_PARAMETERS}
+        {intlText.PARAMETERS}
       </MenuItem>
       <MenuItem disabled={!isDesignerView} onClick={() => dispatch(openPanel({ panelMode: 'Connection' }))} icon={<ConnectionsIcon />}>
-        {Resources.DESIGNER_CONNECTIONS}
+        {intlText.CONNECTIONS}
       </MenuItem>
       <MenuItem disabled={!isDesignerView || !haveErrors} onClick={() => dispatch(openPanel({ panelMode: 'Error' }))} icon={<ErrorsIcon />}>
-        {Resources.DESIGNER_ERRORS}
+        {intlText.ERRORS}
       </MenuItem>
     </>
   );
@@ -431,7 +363,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         <MenuList>
           {isLocal && (
             <MenuItem key={'create-unit-test'} onClick={onCreateUnitTest} icon={<SaveBlankUnitTestIcon />}>
-              {Resources.CREATE_UNIT_TEST}
+              {intlText.CREATE_UNIT_TEST}
             </MenuItem>
           )}
           {isUnitTest && <UnitTestItems />}
@@ -446,7 +378,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
               });
             }}
           >
-            {Resources.FILE_A_BUG}
+            {intlText.FILE_BUG}
           </MenuItem>
         </MenuList>
       </MenuPopover>

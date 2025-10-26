@@ -29,8 +29,8 @@ export const OperationSearchHeader = ({
 
   const addMcpText = intl.formatMessage({
     defaultMessage: 'Add your MCP server',
-    id: 'Xy40uA',
-    description: 'Button text for adding custom MCP server'
+    id: 'Rlfs4q',
+    description: 'Button text for adding custom MCP server',
   });
 
   const actionTypeFilters = isTriggerNode

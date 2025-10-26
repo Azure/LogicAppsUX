@@ -1,6 +1,5 @@
 import type { OutletContext } from '../../run-service';
 import { useCreateWorkspaceStyles } from './createWorkspaceStyles';
-import { useIntl } from 'react-intl';
 import { useOutletContext } from 'react-router-dom';
 import { ProjectSetupStep, PackageSetupStep, ReviewCreateStep, WorkspaceNameStep } from './steps/';
 import { CreateLogicAppSetupStep } from '../createLogicApp/createLogicAppSetupStep';
@@ -14,12 +13,15 @@ import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { nameValidation } from './validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { useIntl } from 'react-intl';
+import { useIntlMessages, workspaceMessages } from '../../intl';
 
 export const CreateWorkspace: React.FC = () => {
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
+  const intl = useIntl();
+  const intlText = useIntlMessages(workspaceMessages);
 
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const {
@@ -181,7 +183,7 @@ export const CreateWorkspace: React.FC = () => {
     });
   };
 
-  const intlText = {
+  const intlMessages = {
     CREATE_WORKSPACE: getCreateWorkspaceMessage(),
     CREATE_BUTTON: getCreateButtonMessage(),
     CREATING: getCreatingMessage(),
@@ -377,10 +379,10 @@ export const CreateWorkspace: React.FC = () => {
   };
 
   const getStepLabels = () => {
-    return [intlText.STEP_PROJECT_SETUP, intlText.STEP_REVIEW_CREATE];
+    return [intlText.PROJECT_SETUP_LABEL, intlText.REVIEW_CREATE_LABEL];
   };
 
-  const isStepCompleted = (stepIndex: number) => {
+  const isStepCompleted = (stepIndex: number): boolean => {
     switch (stepIndex) {
       case 0: {
         // Project Setup step - validate all required fields based on flow type
@@ -649,8 +651,8 @@ export const CreateWorkspace: React.FC = () => {
     return (
       <div className={styles.createWorkspaceContainer}>
         <div className={styles.completionMessage}>
-          <Text style={{ display: 'block' }}>{intlText.SUCCESS_TITLE}</Text>
-          <Text style={{ display: 'block' }}>{intlText.SUCCESS_DESCRIPTION}</Text>
+          <Text style={{ display: 'block' }}>{intlMessages.SUCCESS_TITLE}</Text>
+          <Text style={{ display: 'block' }}>{intlMessages.SUCCESS_DESCRIPTION}</Text>
         </div>
       </div>
     );
@@ -658,7 +660,7 @@ export const CreateWorkspace: React.FC = () => {
 
   return (
     <div className={styles.createWorkspaceContainer}>
-      <Text className={styles.createWorkspaceTitle}>{intlText.CREATE_WORKSPACE}</Text>
+      <Text className={styles.createWorkspaceTitle}>{intlMessages.CREATE_WORKSPACE}</Text>
 
       {renderStepNavigation()}
 
@@ -670,26 +672,26 @@ export const CreateWorkspace: React.FC = () => {
 
       <div className={styles.navigationContainer}>
         <div className={styles.navigationLeft}>
-          <span className={styles.stepIndicator}>{intlText.STEP_INDICATOR}</span>
+          <span className={styles.stepIndicator}>{intlMessages.STEP_INDICATOR}</span>
         </div>
         <div className={styles.navigationRight}>
           <Button appearance="secondary" onClick={handleBack} disabled={isFirstStep || isLoading}>
-            {intlText.BACK}
+            {intlMessages.BACK}
           </Button>
           {isLastStep ? (
             <Button appearance="primary" onClick={handleCreate} disabled={!canProceed() || isLoading}>
               {isLoading ? (
                 <div className={styles.loadingSpinner}>
                   <Spinner size="tiny" />
-                  {intlText.CREATING}
+                  {intlMessages.CREATING}
                 </div>
               ) : (
-                intlText.CREATE_BUTTON
+                intlMessages.CREATE_BUTTON
               )}
             </Button>
           ) : (
             <Button appearance="primary" onClick={handleNext} disabled={!canProceed() || isLoading}>
-              {intlText.NEXT}
+              {intlMessages.NEXT}
             </Button>
           )}
         </div>
