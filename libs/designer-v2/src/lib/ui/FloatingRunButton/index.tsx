@@ -47,6 +47,7 @@ export interface FloatingRunButtonProps {
   onRun?: (runId: string) => void;
   isDarkMode: boolean;
   isDraftMode?: boolean;
+  isDisabled?: boolean;
 }
 
 export const FloatingRunButton = ({
@@ -56,6 +57,7 @@ export const FloatingRunButton = ({
   onRun,
   isDarkMode,
   isDraftMode,
+  isDisabled,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -215,7 +217,7 @@ export const FloatingRunButton = ({
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
-    disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
+    disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
     style: {
       position: 'absolute',
       bottom: '16px',
@@ -257,13 +259,13 @@ export const FloatingRunButton = ({
             onClick: () => {
               runMutate();
             },
-            disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
+            disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
           }}
           menuButton={{
             icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
             onClick: () => setPopoverOpen(true),
             ref: buttonRef,
-            disabled: runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
+            disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
           }}
         >
           {runText}
