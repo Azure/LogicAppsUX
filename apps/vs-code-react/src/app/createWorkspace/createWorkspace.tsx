@@ -554,7 +554,7 @@ export const CreateWorkspace: React.FC = () => {
         logicAppName,
         workflowType,
         workflowName,
-        targetFramework,
+        targetFramework: logicAppType === ProjectType.agentCodeful ? 'net8' : targetFramework,
         ...(logicAppType === ProjectType.customCode && {
           functionFolderName,
           functionNamespace,
