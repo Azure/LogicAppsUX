@@ -58,11 +58,7 @@ export const useEmptyLogicApps = (subscriptionId: string): UseQueryResult<LogicA
   return useQuery(
     ['mcp', 'logicapps', subscriptionId],
     async () => {
-      return ResourceService().listLogicApps(
-        subscriptionId,
-        /* resourceGroup */ undefined,
-        ` | join kind=leftouter (appserviceresources | where type contains "/sites/workflows" | extend appName = tostring(split(name, "/")[0]) | distinct appName) on $left.name == $right.appName | where appName == "" | distinct id, location, name, resourceGroup`
-      );
+      return ResourceService().listLogicApps(subscriptionId, /* resourceGroup */ undefined);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,

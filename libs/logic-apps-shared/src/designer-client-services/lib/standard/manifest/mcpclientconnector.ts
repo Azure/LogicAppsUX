@@ -113,7 +113,7 @@ export default {
             },
           },
           uiDefinition: {
-            displayName: 'ClientCertificate',
+            displayName: 'Client certificate',
           },
         },
         {
@@ -308,6 +308,35 @@ export default {
           },
           uiDefinition: {
             displayName: 'Key',
+          },
+        },
+        {
+          name: 'ManagedServiceIdentity',
+          parameters: {
+            serverUrl: {
+              type: 'string',
+              uiDefinition: {
+                displayName: 'Server URL',
+                constraints: {
+                  required: 'true',
+                },
+                description: 'Server URL',
+              },
+            },
+            audience: {
+              type: 'string',
+              uiDefinition: {
+                displayName: 'Audience',
+                constraints: {
+                  required: 'true',
+                  propertyPath: ['authentication'],
+                },
+                description: 'The audience',
+              },
+            },
+          },
+          uiDefinition: {
+            displayName: 'Managed identity',
           },
         },
       ],

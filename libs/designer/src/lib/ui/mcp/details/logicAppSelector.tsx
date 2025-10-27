@@ -1,29 +1,29 @@
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Field, Label, Combobox, Option, Link } from '@fluentui/react-components';
+import { Field, Combobox, Option, Link } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { equals } from '@microsoft/logic-apps-shared';
 import { setLogicApp } from '../../../core/state/mcp/resourceSlice';
 import { useEmptyLogicApps } from '../../../core/mcp/utils/queries';
 import { useMcpDetailsStyles } from './styles';
 import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
-import { McpPanelView, openMcpPanelView, setAutoOpenPanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 
 const NO_ITEM_VALUE = 'NO_ITEM_VALUE';
 
 export const LogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails, disableSelector, disableConnectorSelection } =
-    useSelector((state: RootState) => ({
+  const { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails, disableSelector } = useSelector(
+    (state: RootState) => ({
       subscriptionId: state.mcpOptions.resourceDetails?.subscriptionId,
       resourceGroup: state.mcpOptions.resourceDetails?.resourceGroup,
       location: state.mcpOptions.resourceDetails?.location,
       logicAppName: state.resource.logicAppName,
       newLogicAppDetails: state.resource.newLogicAppDetails,
       disableSelector: state.mcpSelection.disableLogicAppSelection,
-      disableConnectorSelection: state.mcpSelection.disableConnectorSelection,
-    }));
+    })
+  );
   const { data: logicApps, isLoading: isLogicAppsLoading } = useEmptyLogicApps(subscriptionId ?? '');
 
   const intl = useIntl();
@@ -129,10 +129,6 @@ export const LogicAppSelector = () => {
 
   const onLogicAppSelect = useCallback(
     (value: string) => {
-      if (!logicAppName && disableConnectorSelection) {
-        dispatch(setAutoOpenPanel(true));
-      }
-
       if (selectedResource !== value) {
         if (newLogicAppDetails?.appName && equals(resources[0].id, value)) {
           dispatch(
@@ -159,17 +155,7 @@ export const LogicAppSelector = () => {
         }
       }
     },
-    [
-      disableConnectorSelection,
-      dispatch,
-      location,
-      logicAppName,
-      logicApps,
-      newLogicAppDetails?.appName,
-      resourceGroup,
-      resources,
-      selectedResource,
-    ]
+    [dispatch, location, logicApps, newLogicAppDetails?.appName, resourceGroup, resources, selectedResource]
   );
 
   const handleNewAppCreate = useCallback(() => {
@@ -178,9 +164,6 @@ export const LogicAppSelector = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.labelSection}>
-        <Label required>{intlText.LOGIC_APP}</Label>
-      </div>
       <div className={styles.fieldSection}>
         <Field required={true}>
           <div className={styles.comboboxContainer}>

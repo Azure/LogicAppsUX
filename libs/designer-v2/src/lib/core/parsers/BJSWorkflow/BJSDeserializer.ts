@@ -361,11 +361,11 @@ const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2
 
 const isAgentCondition = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.AgentCondition => {
   return !isMcpClient(action);
-}
+};
 
 const isMcpClient = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.McpClient => {
   return equals(action?.type, 'mcpclienttool');
-}
+};
 
 const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
   return equals(action?.type, 'switch');
@@ -729,10 +729,7 @@ export const processScopeActions = (
           }
         }
       } else if (isMcpClient(toolAction)) {
-        const toolNode = createWorkflowNode(
-          toolName,
-          WORKFLOW_NODE_TYPES.OPERATION_NODE
-        );
+        const toolNode = createWorkflowNode(toolName, WORKFLOW_NODE_TYPES.OPERATION_NODE);
         toolNode.subGraphLocation = 'tools';
 
         nodes.push(toolNode);
@@ -748,8 +745,8 @@ export const processScopeActions = (
           nodesMetadata[toolName] = {
             ...nodesMetadata[toolName],
             actionMetadata: {
-              ...toolAction.metadata
-            }
+              ...toolAction.metadata,
+            },
           };
         }
       }

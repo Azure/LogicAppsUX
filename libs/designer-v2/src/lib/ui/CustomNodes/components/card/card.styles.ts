@@ -37,10 +37,10 @@ export const useCardStyles = makeStyles({
     background: 'var(--action-brand-color)',
 
     '&:hover': {
-      background: 'color-mix(in hsl, var(--action-brand-color), black 10%)',
+      background: 'color-mix(in hsl, var(--action-brand-color), black 25%)',
     },
     '&:active': {
-      background: 'color-mix(in hsl, var(--action-brand-color), black 20%)',
+      background: 'color-mix(in hsl, var(--action-brand-color), black 35%)',
     },
   },
   small: {

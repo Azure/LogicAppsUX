@@ -1,5 +1,4 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
-import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -88,9 +87,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
 
     const workflowState = (getState() as RootState).workflow;
 
-    // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
     if (isTrigger) {
       const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+      if (equals(workflowState.workflowKind, WorkflowKind.STATELESS) && isA2ATrigger) {
+        // Can't switch to A2A if the workflow is stateless
+        dispatch(openKindChangeDialog({ type: 'fromStateless' }));
+        return;
+      }
+
+      // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
       if (isA2AWorkflow(workflowState)) {
         if (!isA2ATrigger) {
           const workflowHasHandoffs = Object.values(workflowState.nodesMetadata).some(
@@ -227,7 +232,7 @@ export const initializeOperationDetails = async (
       manifest,
       presetParameterValues
     );
-    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const customCodeParameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
@@ -500,7 +505,7 @@ export const addTokensAndVariables = (
     )
   );
 
-  if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+  if (equals(operationType, constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
     setVariableMetadata(iconUri, brandColor);
 
     const variables = getVariableDeclarations(nodeInputs);
@@ -516,10 +521,10 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
   return operationType
     ? operationType
     : (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
-      ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
+      ? constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-        : Constants.NODE.TYPE.API_CONNECTION;
+        ? constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : constants.NODE.TYPE.API_CONNECTION;
 };
 
 export const getTriggerNodeManifest = async (

@@ -19,7 +19,7 @@ import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, LoggerService, LogEntryLevel, FavoriteContext } from '@microsoft/logic-apps-shared';
-import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
+import { OperationSearchHeader, XLargeText, NavigateIcon } from '@microsoft/designer-ui';
 import type { CommonPanelProps, OperationsData } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
@@ -299,7 +299,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const headingText = isAddingMcpServer
     ? intl.formatMessage({
-        defaultMessage: 'Choose an MCP Server',
+        defaultMessage: 'Choose an MCP server',
         id: 'dBxX8X',
         description: 'Text for the "Add an MCP Server" panel header',
       })
@@ -320,6 +320,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     id: 'Ta9XGH',
     description: 'sub title for "Add an MCP Server" panel',
   });
+  const linkMessage = intl.formatMessage({
+    defaultMessage: 'How to use MCP server?',
+    id: 'Vy2G4C',
+    description: 'Text for the learn more link',
+  });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
@@ -333,7 +338,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         <XLargeText text={headingText} as="h2" />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
-      {isAddingMcpServer ? <div className="msla-app-action-subheader">{subTitle}</div> : null}
+      {isAddingMcpServer ? (
+        <div className="msla-app-action-subheader">
+          <span>{subTitle}</span>
+          <Link href="https://go.microsoft.com/fwlink/?linkid=2339343" target="_blank" style={{ paddingLeft: '1ch' }}>
+            {linkMessage}
+            <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+          </Link>
+        </div>
+      ) : null}
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

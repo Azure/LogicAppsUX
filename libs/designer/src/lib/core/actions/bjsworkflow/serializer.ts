@@ -428,9 +428,10 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
-  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) || manifest.properties.runAfter?.type === RunAfterType.NotSupported
-    ? undefined
-    : getRunAfter(operationFromWorkflow, idReplacements);
+  const runAfter =
+    isRootNode(operationId, rootState.workflow.nodesMetadata) || manifest.properties.runAfter?.type === RunAfterType.NotSupported
+      ? undefined
+      : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
       ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, false /* encodePathComponents */)
@@ -471,7 +472,7 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
   const manifest = await getOperationManifest(nativeMcpOperationInfo);
   const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
-   
+
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
   const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -491,7 +492,6 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
       mcpServerPath: operationPath,
     },
   };
-
 
   return {
     type: type,
@@ -856,7 +856,7 @@ interface AgentConnectionInfo {
 interface McpConnectionInfo {
   connectionReference: {
     connectionName: string;
-  }
+  };
 }
 
 const serializeHost = (
@@ -942,8 +942,8 @@ const serializeHost = (
     case ConnectionReferenceKeyFormat.McpConnection:
       return {
         connectionReference: {
-          connectionName: referenceKey
-        }
+          connectionName: referenceKey,
+        },
       };
     default:
       throw new AssertionException(
@@ -1003,28 +1003,28 @@ const serializeNestedOperations = async (
 
       if (subGraphDetail?.allowOperations) {
         const operations = operationNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
-          const nestedOperationsPromises = operations.map((nestedOperation) =>
-            serializeOperation(rootState, nestedOperation.id)
-          ) as Promise<LogicAppsV2.OperationDefinition>[];
-          const nestedOperations = await Promise.all(nestedOperationsPromises);
-          const idReplacements = rootState.workflow.idReplacements;
+        const nestedOperationsPromises = operations.map((nestedOperation) =>
+          serializeOperation(rootState, nestedOperation.id)
+        ) as Promise<LogicAppsV2.OperationDefinition>[];
+        const nestedOperations = await Promise.all(nestedOperationsPromises);
+        const idReplacements = rootState.workflow.idReplacements;
 
-          const newResult = {};
-          safeSetObjectPropertyValue(
-            newResult,
-            [subGraphLocation],
-            nestedOperations.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
-              if (!isNullOrEmpty(action)) {
-                const actionId = operations[index].id;
-                actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
-                return actions;
-              }
-
+        const newResult = {};
+        safeSetObjectPropertyValue(
+          newResult,
+          [subGraphLocation],
+          nestedOperations.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
+            if (!isNullOrEmpty(action)) {
+              const actionId = operations[index].id;
+              actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
               return actions;
-            }, {})
-          );
+            }
 
-          result = merge(result, newResult);
+            return actions;
+          }, {})
+        );
+
+        result = merge(result, newResult);
       }
 
       if (subGraphDetail?.isAdditive) {

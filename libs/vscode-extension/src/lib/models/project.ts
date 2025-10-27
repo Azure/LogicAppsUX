@@ -89,6 +89,7 @@ export interface IProjectWizardContext extends IActionContext {
   logicAppName?: string;
   packagePath?: string;
   deploymentScriptType?: DeploymentScriptType;
+  MSIenabled?: boolean;
 }
 
 export interface IWebviewProjectContext extends IActionContext {

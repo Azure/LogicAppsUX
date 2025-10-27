@@ -132,7 +132,7 @@ export const collapseFlowTree = (
 
 export const isManagedMcpOperation = (operation: { type?: string; kind?: string }) => {
   return equals(operation?.type, Constants.NODE.TYPE.MCP_CLIENT) && equals(operation?.kind, Constants.NODE.KIND.MANAGED);
-}
+};
 
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
   const workflowKind = state.workflowKind;
@@ -169,5 +169,8 @@ export const isAgentWorkflow = (kind: string): boolean => {
 };
 
 export const shouldClearNodeRunData = (node: NodeMetadata) => {
-  return node?.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || node.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT);
+  return (
+    node?.runData &&
+    (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || node.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT)
+  );
 };

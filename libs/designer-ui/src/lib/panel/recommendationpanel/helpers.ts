@@ -36,10 +36,14 @@ export const getDefaultRuntimeCategories = (excludeBuiltin?: boolean): Operation
       key: 'all',
       text: all,
     },
-    ... excludeBuiltin ? [] : [{
-      key: 'inapp',
-      text: builtIn,
-    }],
+    ...(excludeBuiltin
+      ? []
+      : [
+          {
+            key: 'inapp',
+            text: builtIn,
+          },
+        ]),
     {
       key: 'shared',
       text: shared,
