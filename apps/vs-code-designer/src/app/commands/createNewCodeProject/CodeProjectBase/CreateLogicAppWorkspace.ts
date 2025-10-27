@@ -92,28 +92,29 @@ export async function getHostContent(): Promise<IHostJsonV2> {
   return hostJson;
 }
 
-export async function createLogicAppAndWorkflow(
-  myWebviewProjectContext: IWebviewProjectContext,
-  logicAppFolderPath: string
-): Promise<void> {
+export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string): Promise<void> {
+  const { logicAppType, workflowType, functionName, workflowName } = webviewProjectContext;
   const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(
-    myWebviewProjectContext.logicAppType as ProjectType,
-    myWebviewProjectContext.workflowType as WorkflowType,
-    myWebviewProjectContext.functionName
+    logicAppType as ProjectType,
+    workflowType as WorkflowType,
+    functionName
   );
 
   await fse.ensureDir(logicAppFolderPath);
-  const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, myWebviewProjectContext.workflowName);
-  await fse.ensureDir(logicAppWorkflowFolderPath);
+  if (logicAppType !== ProjectType.agentCodeful) {
+    const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, workflowName);
+    await fse.ensureDir(logicAppWorkflowFolderPath);
 
-  const workflowJsonFullPath: string = path.join(logicAppWorkflowFolderPath, workflowFileName);
-  await writeFormattedJson(workflowJsonFullPath, codelessDefinition);
+    const workflowJsonFullPath: string = path.join(logicAppWorkflowFolderPath, workflowFileName);
+    await writeFormattedJson(workflowJsonFullPath, codelessDefinition);
+  }
 }
 
 export async function createLocalConfigurationFiles(
-  myWebviewProjectContext: IWebviewProjectContext,
+  webviewProjectContext: IWebviewProjectContext,
   logicAppFolderPath: string
 ): Promise<void> {
+  const { logicAppType } = webviewProjectContext;
   const funcignore: string[] = [
     '__blobstorage__',
     '__queuestorage__',
@@ -136,9 +137,13 @@ export async function createLocalConfigurationFiles(
     },
   };
 
-  if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
+  if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
     localSettingsJson.Values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
+  }
+
+  if (logicAppType === ProjectType.agentCodeful) {
+    localSettingsJson.Values['CODEFUL_AGENT'] = 'true';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
@@ -157,19 +162,21 @@ export async function createLocalConfigurationFiles(
   await fse.writeFile(funcIgnorePath, funcignore.sort().join(os.EOL));
 }
 
-export async function createWorkspaceStructure(myWebviewProjectContext: IWebviewProjectContext): Promise<void> {
+export async function createWorkspaceStructure(webviewProjectContext: IWebviewProjectContext): Promise<void> {
+  const { workspaceProjectPath, workspaceName, logicAppName, functionFolderName, logicAppType } = webviewProjectContext;
+
   //Create the workspace folder
-  const workspaceFolder = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+  const workspaceFolder = path.join(workspaceProjectPath.fsPath, workspaceName);
   await fse.ensureDir(workspaceFolder);
 
   // Create the workspace .code-workspace file
-  const workspaceFilePath = path.join(workspaceFolder, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+  const workspaceFilePath = path.join(workspaceFolder, `${workspaceName}.code-workspace`);
   const workspaceFolders = [];
-  workspaceFolders.push({ name: myWebviewProjectContext.logicAppName, path: `./${myWebviewProjectContext.logicAppName}` });
+  workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
   // push functions folder
-  if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
-    workspaceFolders.push({ name: myWebviewProjectContext.functionFolderName, path: `./${myWebviewProjectContext.functionFolderName}` });
+  if (logicAppType !== ProjectType.logicApp && logicAppType !== ProjectType.agentCodeful) {
+    workspaceFolders.push({ name: functionFolderName, path: `./${functionFolderName}` });
   }
 
   const workspaceData = {
@@ -211,20 +218,20 @@ export async function updateWorkspaceFile(context: IWebviewProjectContext): Prom
 export async function createLogicAppWorkspace(context: IActionContext, options: any, fromPackage: boolean): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  const myWebviewProjectContext: IWebviewProjectContext = options;
+  const webviewProjectContext: IWebviewProjectContext = options;
 
-  await createWorkspaceStructure(myWebviewProjectContext);
+  await createWorkspaceStructure(webviewProjectContext);
 
   // Create the workspace folder
-  const workspaceFolder = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+  const workspaceFolder = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
   // Path to the logic app folder
-  const logicAppFolderPath = path.join(workspaceFolder, myWebviewProjectContext.logicAppName);
-  const workspaceFilePath = path.join(workspaceFolder, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+  const logicAppFolderPath = path.join(workspaceFolder, webviewProjectContext.logicAppName);
+  const workspaceFilePath = path.join(workspaceFolder, `${webviewProjectContext.workspaceName}.code-workspace`);
 
   const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
+  mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
@@ -235,13 +242,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     mySubContext.packagePath = options.packagePath.fsPath;
     await unzipLogicAppPackageIntoWorkspace(mySubContext);
   } else {
-    await createLogicAppAndWorkflow(myWebviewProjectContext, logicAppFolderPath);
+    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath);
   }
 
   // .vscode folder
-  await createLogicAppVsCodeContents(myWebviewProjectContext, logicAppFolderPath);
+  await createLogicAppVsCodeContents(webviewProjectContext, logicAppFolderPath);
 
-  await createLocalConfigurationFiles(myWebviewProjectContext, logicAppFolderPath);
+  await createLocalConfigurationFiles(webviewProjectContext, logicAppFolderPath);
 
   if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
     await gitInit(workspaceFolder);
@@ -255,7 +262,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     await logicAppPackageProcessing(mySubContext);
     vscode.window.showInformationMessage(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
   } else {
-    if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
+    if (webviewProjectContext.logicAppType !== ProjectType.logicApp) {
       const createFunctionAppFilesStep = new CreateFunctionAppFiles();
       await createFunctionAppFilesStep.setup(mySubContext);
     }

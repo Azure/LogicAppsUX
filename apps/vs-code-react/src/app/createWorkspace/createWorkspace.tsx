@@ -12,7 +12,7 @@ import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { getValidationRequirements, nameValidation } from './utils/validation';
 
 export const CreateWorkspace: React.FC = () => {
@@ -576,7 +576,7 @@ export const CreateWorkspace: React.FC = () => {
           ? 'createWorkspaceStructure'
           : flowType === 'createLogicApp'
             ? 'createLogicApp'
-            : 'createWorkspace';
+            : ExtensionCommand.createWorkspace;
 
     vscode.postMessage({ command, data });
   };
