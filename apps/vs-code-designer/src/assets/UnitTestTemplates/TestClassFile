@@ -8,15 +8,15 @@ using Microsoft.Azure.Workflows.UnitTesting.Definitions;
 using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
+using <%= CleanedLogicAppName %>.Tests.Mocks.<%= CleanedWorkflowName %>;
 
-namespace <%= LogicAppName %>.Tests
+namespace <%= CleanedLogicAppName %>.Tests
 {
     /// <summary>
     /// The unit test class.
     /// </summary>
     [TestClass]
-    public class <%= UnitTestName %>
+    public class <%= CleanedUnitTestName %>
     {
         /// <summary>
         /// The unit test executor.
@@ -34,7 +34,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
+        public async Task <%= CleanedWorkflowName %>_<%= CleanedUnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
         {
             // PREPARE Mock
             // Generate mock action and trigger data.
@@ -59,7 +59,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample2()
+        public async Task <%= CleanedWorkflowName %>_<%= CleanedUnitTestName %>_ExecuteWorkflow_SUCCESS_Sample2()
         {
             // PREPARE
             // Generate mock action and trigger data.
@@ -95,7 +95,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
+        public async Task <%= CleanedWorkflowName %>_<%= CleanedUnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
         {
             // PREPARE
             // Generate mock action and trigger data.
@@ -122,7 +122,7 @@ namespace <%= LogicAppName %>.Tests
         /// </summary>
         private TestMockDefinition GetTestMockDefinition()
         {
-            var mockDataPath = Path.Combine(TestExecutor.rootDirectory, "Tests", TestExecutor.logicAppName, TestExecutor.workflow, "<%= UnitTestSubFolder %>", "<%= UnitTestMockJson %>");
+            var mockDataPath = Path.Combine(TestExecutor.rootDirectory, "Tests", TestExecutor.logicAppName, TestExecutor.workflow, "<%= UnitTestName %>", "<%= UnitTestName %>-mock.json");
             return JsonConvert.DeserializeObject<TestMockDefinition>(File.ReadAllText(mockDataPath));
         }
 

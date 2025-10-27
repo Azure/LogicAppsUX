@@ -167,7 +167,6 @@ export async function createTestCsFile(
   cleanedUnitTestName: string,
   workflowName: string,
   cleanedWorkflowName: string,
-  logicAppName: string,
   cleanedLogicAppName: string,
   actionName: string,
   actionOutputClassName: string,
@@ -197,25 +196,16 @@ export async function createTestCsFile(
 
   // TODO(aeldridge): Update templates to reference cleaned names explicitly where needed
   const testCsFileContent = templateContent
-    .replace(/<%= LogicAppName %>\.Tests/g, `${cleanedLogicAppName}.Tests`)
-    .replace(/public class <%= UnitTestName %>/g, `public class ${cleanedUnitTestName}`)
-    .replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${cleanedUnitTestName}" />`)
-    .replace(/public <%= UnitTestName %>\(\)/g, `public ${cleanedUnitTestName}()`)
-    .replace(
-      /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow/g,
-      `public async Task ${cleanedWorkflowName}_${cleanedUnitTestName}_ExecuteWorkflow`
-    )
-    .replace(/<%= LogicAppName %>/g, logicAppName)
-    .replace(/<%= WorkflowName %>/g, workflowName)
+    .replace(/<%= CleanedLogicAppName %>/g, cleanedLogicAppName)
+    .replace(/<%= CleanedUnitTestName %>/g, cleanedUnitTestName)
     .replace(/<%= UnitTestName %>/g, unitTestName)
-    .replace(/<%= SanitizedWorkflowName %>/g, cleanedWorkflowName)
+    .replace(/<%= CleanedWorkflowName %>/g, cleanedWorkflowName)
+    .replace(/<%= WorkflowName %>/g, workflowName)
     .replace(/<%= ActionMockName %>/g, actionName)
     .replace(/<%= ActionMockOutputClassName %>/g, actionOutputClassName)
     .replace(/<%= ActionMockClassName %>/g, actionMockClassName)
     .replace(/<%= TriggerMockOutputClassName %>/g, triggerOutputClassName)
-    .replace(/<%= TriggerMockClassName %>/g, triggerMockClassName)
-    .replace(/<%= UnitTestSubFolder %>/g, unitTestName)
-    .replace(/<%= UnitTestMockJson %>/g, `${unitTestName}-mock.json`);
+    .replace(/<%= TriggerMockClassName %>/g, triggerMockClassName);
 
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fse.writeFile(csFilePath, testCsFileContent);
@@ -807,7 +797,7 @@ export async function generateCSharpClasses(
     'System.Net',
     'System',
   ];
-  const classCode = generateOutputsClassContent(rootOutputsClassDefinition, isMockableHttpType);
+  const classCode = generateMockOutputsClassContent(rootOutputsClassDefinition, isMockableHttpType);
   // wrap it all in the needed "using" statements + namespace.
   return [
     ...requiredNamespaces.map((ns) => `using ${ns};`),
@@ -935,8 +925,8 @@ let mockClassTemplate: string | undefined;
  * @returns {Promise<string>} - A Promise that resolves to the generated mock class definition as a string.
  */
 async function generateMockClassContent(mockType: string, mockClassName: string, outputsClassName: string): Promise<string> {
-  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, 'TestMockClass');
   if (!mockClassTemplate) {
+    const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, 'TestMockClass');
     mockClassTemplate = await fse.readFile(templatePath, 'utf-8');
   }
 
@@ -948,11 +938,12 @@ async function generateMockClassContent(mockType: string, mockClassName: string,
 
 /**
  * Recursively builds a single C# class string from a ClassDefinition and any child classes it might have.
+ * TODO(aeldridge): We should use a templating engine for this and other code generation.
  * @param {ClassDefinition} classDef - The definition of the class to generate.
  * @param {boolean} isMockableHttpType - Determines if the mockable type is http.
  * @returns {string} - The C# code for this class (including any nested classes), as a string.
  */
-export function generateOutputsClassContent(classDef: ClassDefinition, isMockableHttpType: boolean): string {
+export function generateMockOutputsClassContent(classDef: ClassDefinition, isMockableHttpType: boolean): string {
   const sb: string[] = [];
 
   if (classDef.description) {
@@ -1014,7 +1005,7 @@ export function generateOutputsClassContent(classDef: ClassDefinition, isMockabl
   sb.push('');
 
   for (const child of classDef.children) {
-    sb.push(generateOutputsClassContent(child, isMockableHttpType));
+    sb.push(generateMockOutputsClassContent(child, isMockableHttpType));
   }
 
   return sb.join('\n');

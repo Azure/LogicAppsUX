@@ -278,7 +278,6 @@ async function generateUnitTestFromRun(
         cleanedUnitTestName,
         workflowName,
         cleanedWorkflowName,
-        paths.logicAppName,
         cleanedLogicAppName,
         actionName,
         actionOutputClassName,

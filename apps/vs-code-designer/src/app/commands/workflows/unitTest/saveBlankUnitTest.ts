@@ -255,7 +255,6 @@ async function generateBlankCodefulUnitTest(
       cleanedUnitTestName,
       workflowName,
       cleanedWorkflowName,
-      logicAppName,
       cleanedLogicAppName,
       actionName,
       actionOutputClassName,
