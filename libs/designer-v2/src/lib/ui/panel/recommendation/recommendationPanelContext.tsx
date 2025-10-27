@@ -170,7 +170,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           return;
         }
 
-        const shouldAddAsTrigger = forceAsTrigger ?? false;
+        const shouldAddAsTrigger = forceAsTrigger ?? operation?.properties?.trigger !== undefined;
 
         if (shouldAddAsTrigger) {
           // Always add as trigger when explicitly requested (for trigger operations)
