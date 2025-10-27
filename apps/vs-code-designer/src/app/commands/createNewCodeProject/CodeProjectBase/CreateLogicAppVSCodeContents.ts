@@ -4,9 +4,14 @@ import {
   assetsFolderName,
   deploySubpathSetting,
   dotnetExtensionId,
+  dotnetPublishTaskLabel,
   extensionCommand,
   extensionsFileName,
+  func,
+  funcDependencyName,
   funcVersionSetting,
+  funcWatchProblemMatcher,
+  hostStartCommand,
   launchFileName,
   launchVersion,
   projectLanguageSetting,
@@ -23,6 +28,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
 import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
+import { binariesExist } from '../../../utils/binaries';
 
 async function writeSettingsJson(context: IWebviewProjectContext, additionalSettings: ISettingToAdd[], vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
@@ -71,11 +77,92 @@ export async function writeExtensionsJson(webviewProjectContext: IWebviewProject
   await fse.writeJson(extensionsJsonPath, extensionsData, { spaces: 2 });
 }
 
-export async function writeTasksJson(context: IActionContext, vscodePath: string): Promise<void> {
+const getAgentCodedulTasks = (targetFramework: string) => {
+  const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
+  const releaseArgs: string[] = ['--configuration', 'Release'];
+  const funcBinariesExist = binariesExist(funcDependencyName);
+  const debugSubpath = path.posix.join('bin', 'Debug', targetFramework);
+  const binariesOptions = funcBinariesExist
+    ? {
+        options: {
+          cwd: debugSubpath,
+          env: {
+            PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
+          },
+        },
+      }
+    : {};
+  return [
+    {
+      label: 'clean',
+      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+      args: ['clean', ...commonArgs],
+      type: 'process',
+      problemMatcher: '$msCompile',
+    },
+    {
+      label: 'build',
+      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+      args: ['build', ...commonArgs],
+      type: 'process',
+      dependsOn: 'clean',
+      group: {
+        kind: 'build',
+        isDefault: true,
+      },
+      problemMatcher: '$msCompile',
+    },
+    {
+      label: 'clean release',
+      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+      args: ['clean', ...releaseArgs, ...commonArgs],
+      type: 'process',
+      problemMatcher: '$msCompile',
+    },
+    {
+      label: dotnetPublishTaskLabel,
+      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+      args: ['publish', ...releaseArgs, ...commonArgs],
+      type: 'process',
+      dependsOn: 'clean release',
+      problemMatcher: '$msCompile',
+    },
+    {
+      label: 'func: host start',
+      type: funcBinariesExist ? 'shell' : func,
+      dependsOn: 'build',
+      ...binariesOptions,
+      command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+      args: funcBinariesExist ? ['host', 'start'] : undefined,
+      isBackground: true,
+      problemMatcher: funcWatchProblemMatcher,
+    },
+  ];
+};
+
+async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string) {
+  const { targetFramework, logicAppType } = context;
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
   const tasksJsonFile = 'TasksJsonFile';
   const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, tasksJsonFile);
-  await fse.copyFile(templatePath, tasksJsonPath);
+
+  // Read the template file
+  const templateContent = await fse.readFile(templatePath, 'utf8');
+  const tasksData = JSON.parse(templateContent);
+
+  if (logicAppType === ProjectType.agentCodeful && targetFramework) {
+    // Get the agent codeful-specific tasks
+    const agentCodefulTasks = getAgentCodedulTasks(targetFramework);
+
+    // Replace tasks with agent codeful tasks
+    tasksData.tasks = agentCodefulTasks;
+
+    // Write the modified tasks.json file
+    await fse.writeJson(tasksJsonPath, tasksData, { spaces: 2 });
+  } else {
+    // For non-agentCodeful projects, just copy the template
+    await fse.copyFile(templatePath, tasksJsonPath);
+  }
 }
 
 export function getDebugConfiguration(logicAppName: string, customCodeTargetFramework?: TargetFramework): DebugConfiguration {

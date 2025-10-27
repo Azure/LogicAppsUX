@@ -67,7 +67,6 @@
 //   public async prompt(context: IProjectWizardContext): Promise<void> {
 //     context.workflowProjectType =
 //       context.projectType === ProjectType.agentCodeful ? WorkflowProjectType.Nuget : await this.inferWorkflowProjectType(context);
-//     context.language = context.projectType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript;
 //     await this.setPaths(context);
 //   }
 
