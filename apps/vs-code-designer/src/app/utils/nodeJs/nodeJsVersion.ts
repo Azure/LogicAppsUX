@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { Platform, autoRuntimeDependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
+import { autoRuntimeDependenciesPathSettingKey, nodeJsBinaryPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -12,6 +12,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import { isString } from '@microsoft/logic-apps-shared';
 import { binariesExist } from '../binaries';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Executes nodejs version command and gets it from cli.

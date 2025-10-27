@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform } from '../../constants';
 import { getMatchingWorkspaceFolder } from '../debug/validatePreDebug';
 import { runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
@@ -13,6 +12,7 @@ import { getUnixChildren, getWindowsChildren, pickChildProcess } from './pickFun
 import { localize } from '../../localize';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 

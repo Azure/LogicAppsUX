@@ -5,7 +5,6 @@
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
   DotnetVersion,
-  Platform,
   autoRuntimeDependenciesPathSettingKey,
   dotNetBinaryPathSettingKey,
   dotnetDependencyName,
@@ -20,7 +19,7 @@ import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import type { IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
