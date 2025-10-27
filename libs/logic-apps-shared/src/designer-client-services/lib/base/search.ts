@@ -39,6 +39,23 @@ export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
   _isHybridLogicApp = false;
   _unsupportedConnectorIds: string[] = [];
+  // NOTE: temporary workaround to filter out the mcp server until backend does the proper filtering.
+  _unsupportedOperationIds: string[] = [
+    'managedApis/kusto/apiOperations/mcp_KustoQueryManagement',
+    'managedApis/boxmcp/apiOperations/InvokeMCP',
+    'managedApis/draupmcpserver/apiOperations/InvokeMCP',
+    'managedApis/dynamicssmbsaas/apiOperations/InvokeMCP',
+    'managedApis/fabricdataagent/apiOperations/InvokeMCP',
+    'managedApis/gienitsservermcp/apiOperations/GieniTSserver',
+    'managedApis/githubmcp/apiOperations/InvokeMCP',
+    'managedApis/jira/apiOperations/mcp_JiraIssueManagement',
+    'managedApis/microsoftlearndocsmcpserver/apiOperations/microsoft_docs_search',
+    'managedApis/office365/apiOperations/mcp_ContactsManagement',
+    'managedApis/office365/apiOperations/mcp_EmailsManagement',
+    'managedApis/office365/apiOperations/mcp_MeetingManagement',
+    'managedApis/salesforce/apiOperations/mcp_SalesforceManagement',
+    'managedApis/zapiermcp/apiOperations/InvokeServer'
+  ];
 
   constructor(public readonly options: BaseSearchServiceOptions) {
     const { apiHubServiceDetails, isDev, unsupportedConnectorIds } = options;
@@ -300,7 +317,9 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   private removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
-    return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id?.toLowerCase()));
+    return operations
+      .filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id?.toLowerCase()))
+      .filter((operation) => !this._unsupportedOperationIds.some(unsupportedId => operation?.id?.endsWith(unsupportedId)));
   }
 
   private removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
