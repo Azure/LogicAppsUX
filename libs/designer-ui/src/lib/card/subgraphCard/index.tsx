@@ -62,9 +62,9 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   });
 
   const addActionLabel = intl.formatMessage({
-    defaultMessage: 'Add an action',
+    defaultMessage: 'Add tool',
     id: 'PNzj7r',
-    description: 'Add action to the loop, this adds a tool by default',
+    description: 'Add tool to the loop',
   });
 
   const conditionalTypeText = intl.formatMessage({

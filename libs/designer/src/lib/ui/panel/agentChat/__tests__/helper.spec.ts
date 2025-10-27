@@ -70,7 +70,7 @@ describe('parseChatHistory', () => {
           subIteration: 1,
           toolName: 'sampleTool',
           status: 'completed',
-          mcpToolName: 'samplemcptool',
+          mcpServerToolName: 'samplemcptool',
         },
       },
       timestamp,
