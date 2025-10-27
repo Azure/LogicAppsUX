@@ -480,7 +480,7 @@ export const RunTreeView = () => {
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actions, selectedRun, agentRepetitionData, addTreeItem, updateToolTimes, isRunning]);
+  }, [actions, selectedRun, agentRepetitionData, chatHistoryData, addTreeItem, updateToolTimes, isRunning]);
 
   const treeItems = useMemo(
     () =>

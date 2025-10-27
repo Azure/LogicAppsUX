@@ -291,9 +291,8 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
             // align: 'end',
             position: 'after',
           }}
-          withArrow
         >
-          <PopoverSurface style={{ maxWidth: '320px' }}>
+          <PopoverSurface style={{ maxWidth: '320px', maxHeight: '480px', overflow: 'auto' }}>
             <div className={styles.treeItemContent} style={{ marginBottom: '32px' }}>
               <Icon />
               <Text>{content}</Text>
