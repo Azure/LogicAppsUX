@@ -35,7 +35,7 @@ export interface CreateWorkspaceState {
   isValidatingWorkspace: boolean;
   isValidatingPackage: boolean;
   separator: string;
-  platform: Platform;
+  platform: Platform | null;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -70,7 +70,7 @@ const initialState: CreateWorkspaceState = {
   isValidatingWorkspace: false,
   isValidatingPackage: false,
   separator: '/',
-  platform: '',
+  platform: null,
 };
 
 export const createWorkspaceSlice = createSlice({
