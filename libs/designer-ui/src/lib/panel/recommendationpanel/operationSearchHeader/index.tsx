@@ -28,8 +28,8 @@ export const OperationSearchHeader = ({
   const intl = useIntl();
 
   const addMcpText = intl.formatMessage({
-    defaultMessage: 'Add your MCP server',
-    id: 'Rlfs4q',
+    defaultMessage: 'Add MCP server',
+    id: 'DoX1Qb',
     description: 'Button text for adding custom MCP server',
   });
 
