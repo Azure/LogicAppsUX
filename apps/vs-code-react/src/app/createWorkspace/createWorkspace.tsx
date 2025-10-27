@@ -219,12 +219,12 @@ export const CreateWorkspace: React.FC = () => {
   };
 
   // Helper function to check if a name already exists in workspace folders
-  const isNameAlreadyInWorkspace = (name: string): boolean => {
+  const isNameAlreadyInWorkspace = (name: string) => {
     return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
   };
 
   // Helper function to validate logic app name with support for existing logic apps
-  const validateLogicAppNameForNavigation = (name: string): boolean => {
+  const validateLogicAppNameForNavigation = (name: string) => {
     if (!name.trim() || !nameValidation.test(name.trim())) {
       return false;
     }
@@ -382,7 +382,7 @@ export const CreateWorkspace: React.FC = () => {
     return [intlText.PROJECT_SETUP_LABEL, intlText.REVIEW_CREATE_LABEL];
   };
 
-  const isStepCompleted = (stepIndex: number): boolean => {
+  const isStepCompleted = (stepIndex: number) => {
     switch (stepIndex) {
       case 0: {
         // Project Setup step - validate all required fields based on flow type

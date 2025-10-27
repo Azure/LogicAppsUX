@@ -191,7 +191,7 @@ export const DesignerApp = () => {
     setCustomCode(panelMetaData?.customCodeData);
   }, [panelMetaData]);
 
-  const errorApp = <XLargeText text={`${intlText.SOMETHING_WENT_WRONG} `} className={styles.designerError} style={{ display: 'block' }} />;
+  const errorApp = <XLargeText text={`${intlText.SOMETHING_WENT_WRONG}`} className={styles.designerError} style={{ display: 'block' }} />;
 
   const loadingApp = <Spinner className={styles.designerLoading} size="large" label={intlText.LOADING_DESIGNER} />;
 

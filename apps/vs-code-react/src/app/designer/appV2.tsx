@@ -23,7 +23,7 @@ import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'r
 import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { XLargeText } from '@microsoft/designer-ui';
-import { useIntlMessages } from '../../intl';
+import { commonMessages, useIntlMessages } from '../../intl';
 import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
@@ -69,7 +69,7 @@ export const DesignerApp = () => {
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const queryClient = useQueryClient();
 
-  const intlText = useIntlMessages(designerMessages);
+  const commonText = useIntlMessages(commonMessages);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -295,7 +295,7 @@ export const DesignerApp = () => {
   // Rendering
 
   const ErrorComponent = () => (
-    <XLargeText text={`${intlText.SOMETHING_WENT_WRONG} `} className={styles.designerError} style={{ display: 'block' }} />
+    <XLargeText text={`${commonText.SOMETHING_WENT_WRONG} `} className={styles.designerError} style={{ display: 'block' }} />
   );
   if (isErrorRunInstance) {
     return <ErrorComponent />;

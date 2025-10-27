@@ -54,31 +54,31 @@ export const commonMessages = defineMessages({
 
 export const unitTestMessages = defineMessages({
   VIEW_WORKFLOW: {
-    defaultMessage: 'View Workflow',
-    id: 'SQfm69',
+    defaultMessage: 'View workflow',
+    id: '69+CIW',
     description: 'View workflow button text',
   },
   TEST_ICON: {
-    defaultMessage: 'Test Icon',
-    id: 'GdcNCT',
+    defaultMessage: 'Test icon',
+    id: 'BfGFkk',
     description: 'Test icon aria label',
   },
 });
 
 export const workspaceMessages = defineMessages({
   WORKFLOW_CONFIGURATION: {
-    defaultMessage: 'Workflow Configuration',
-    id: '81liT7',
+    defaultMessage: 'Workflow configuration',
+    id: 'LQG4qS',
     description: 'Workflow configuration step title',
   },
   WORKFLOW_NAME: {
-    defaultMessage: 'Workflow Name',
-    id: 'OwjR0o',
+    defaultMessage: 'Workflow name',
+    id: 'zTdffa',
     description: 'Workflow name field label',
   },
   WORKFLOW_TYPE: {
-    defaultMessage: 'Workflow Type',
-    id: 'JdYNQ+',
+    defaultMessage: 'Workflow type',
+    id: 'xBIh0S',
     description: 'Workflow type label',
   },
   SELECT_WORKFLOW_TYPE: {
@@ -92,13 +92,13 @@ export const workspaceMessages = defineMessages({
     description: 'Workflow name field placeholder',
   },
   WORKSPACE_NAME: {
-    defaultMessage: 'Workspace Name',
-    id: '2XYMMp',
+    defaultMessage: 'Workspace name',
+    id: 'WgY5vK',
     description: 'Workspace name field label',
   },
   PACKAGE_PATH: {
-    defaultMessage: 'Package Path',
-    id: 'CG6PPy',
+    defaultMessage: 'Package path',
+    id: 'ntW6su',
     description: 'Package path field label',
   },
   PACKAGE_PATH_EMPTY: {
@@ -112,8 +112,8 @@ export const workspaceMessages = defineMessages({
     description: 'Package path not exists validation message',
   },
   LOGIC_APP_TYPE: {
-    defaultMessage: 'Logic App Type',
-    id: 'n/eWQU',
+    defaultMessage: 'Logic app type',
+    id: '/ld6GS',
     description: 'Logic app type label',
   },
   DOTNET_FRAMEWORK: {
@@ -142,8 +142,8 @@ export const workspaceMessages = defineMessages({
     description: 'Stateless workflow description',
   },
   AUTONOMOUS_TITLE: {
-    defaultMessage: 'Autonomous Agents (Preview)',
-    id: 'qs798U',
+    defaultMessage: 'Autonomous agents (Preview)',
+    id: 'YTj0Xv',
     description: 'Autonomous agents workflow option',
   },
   AUTONOMOUS_DESCRIPTION: {
@@ -152,8 +152,8 @@ export const workspaceMessages = defineMessages({
     description: 'Autonomous agents workflow description',
   },
   AGENT_TITLE: {
-    defaultMessage: 'Conversational Agents',
-    id: 'fg89hL',
+    defaultMessage: 'Conversational agents',
+    id: '6sEsIN',
     description: 'Conversational agent workflow option',
   },
   AGENT_DESCRIPTION: {
@@ -173,8 +173,8 @@ export const workspaceMessages = defineMessages({
   },
   // Package step messages
   PACKAGE_SETUP: {
-    defaultMessage: 'Package Setup',
-    id: 'Wxhsgj',
+    defaultMessage: 'Package setup',
+    id: 'O96/e9',
     description: 'Package setup step title',
   },
   PACKAGE: {
@@ -183,8 +183,8 @@ export const workspaceMessages = defineMessages({
     description: 'Package setup step description',
   },
   PACKAGE_PATH_LABEL: {
-    defaultMessage: 'Package Path',
-    id: 'pyYxP0',
+    defaultMessage: 'Package path',
+    id: 'Yyy/Zl',
     description: 'Package path input label',
   },
   BROWSE_BUTTON: {
@@ -204,8 +204,8 @@ export const workspaceMessages = defineMessages({
   },
   // Project setup messages
   PROJECT_SETUP: {
-    defaultMessage: 'Project Setup',
-    id: 'blShaR',
+    defaultMessage: 'Project setup',
+    id: 'Qd804l',
     description: 'Project setup step title',
   },
   PROJECT_SETUP_DESCRIPTION: {
@@ -214,13 +214,13 @@ export const workspaceMessages = defineMessages({
     description: 'Project setup step description',
   },
   WORKSPACE_PARENT_FOLDER: {
-    defaultMessage: 'Workspace Parent Folder Path',
-    id: '3KYXwl',
+    defaultMessage: 'Workspace parent folder path',
+    id: 'X/QTGw',
     description: 'Workspace Parent Folder path input label',
   },
   WORKSPACE_NAME_LABEL: {
-    defaultMessage: 'Workspace Name',
-    id: 'uNvoPg',
+    defaultMessage: 'Workspace name',
+    id: 'g7eU6A',
     description: 'Workspace name input label',
   },
   WORKSPACE_PARENT_FOLDER_EMPTY: {
@@ -240,8 +240,8 @@ export const workspaceMessages = defineMessages({
   },
   // Logic app details messages
   LOGIC_APP_DETAILS: {
-    defaultMessage: 'Logic App Details',
-    id: 'XJ1S7E',
+    defaultMessage: 'Logic app details',
+    id: 'Vecdzb',
     description: 'Logic app details step title',
   },
   LOGIC_APP_DETAILS_DESCRIPTION: {
@@ -250,8 +250,8 @@ export const workspaceMessages = defineMessages({
     description: 'Logic app details step description',
   },
   LOGIC_APP_NAME: {
-    defaultMessage: 'Logic App Name',
-    id: 'JS7xBY',
+    defaultMessage: 'Logic app name',
+    id: 'fuBVBE',
     description: 'Logic app name field label',
   },
   ENTER_LOGIC_APP_NAME: {
@@ -260,8 +260,8 @@ export const workspaceMessages = defineMessages({
     description: 'Logic app name field placeholder',
   },
   LOGIC_APP_STANDARD: {
-    defaultMessage: 'Logic App (Standard)',
-    id: 'xnJNZH',
+    defaultMessage: 'Logic app (Standard)',
+    id: 'o7s/JG',
     description: 'Standard logic app option',
   },
   LOGIC_APP_STANDARD_DESCRIPTION: {
@@ -270,8 +270,8 @@ export const workspaceMessages = defineMessages({
     description: 'Standard logic app description',
   },
   LOGIC_APP_CUSTOM_CODE: {
-    defaultMessage: 'Logic App with Custom Code',
-    id: '2ivADw',
+    defaultMessage: 'Logic app with custom code',
+    id: 'JeAp3Z',
     description: 'Logic app with custom code option',
   },
   LOGIC_APP_CUSTOM_CODE_DESCRIPTION: {
@@ -280,8 +280,8 @@ export const workspaceMessages = defineMessages({
     description: 'Logic app with custom code description',
   },
   LOGIC_APP_RULES_ENGINE: {
-    defaultMessage: 'Logic App with Rules Engine',
-    id: 'yoH8Yw',
+    defaultMessage: 'Logic app with rules engine',
+    id: 'sXNnlg',
     description: 'Logic app with rules engine option',
   },
   LOGIC_APP_RULES_ENGINE_DESCRIPTION: {
@@ -311,13 +311,13 @@ export const workspaceMessages = defineMessages({
   },
   // .NET Framework step messages
   CUSTOM_CODE_CONFIGURATION: {
-    defaultMessage: 'Custom Code Configuration',
-    id: 'um0VMI',
+    defaultMessage: 'Custom code configuration',
+    id: 'T2zwDL',
     description: 'Custom code configuration step title',
   },
   RULES_ENGINE_CONFIGURATION: {
-    defaultMessage: 'Rules Engine Configuration',
-    id: 'dTzRAM',
+    defaultMessage: 'Rules engine configuration',
+    id: 'CwAnpR',
     description: 'Rules engine configuration step title',
   },
   CUSTOM_CODE_DESCRIPTION: {
@@ -351,23 +351,23 @@ export const workspaceMessages = defineMessages({
     description: '.NET 8 description',
   },
   FUNCTION_NAMESPACE: {
-    defaultMessage: 'Function Namespace',
-    id: '2XLzvL',
+    defaultMessage: 'Function namespace',
+    id: 'mr/BC/',
     description: 'Function namespace input label',
   },
   FUNCTION_NAME: {
-    defaultMessage: 'Function Name',
-    id: 'q8vsUq',
+    defaultMessage: 'Function name',
+    id: 'beWWW0',
     description: 'Function name input label',
   },
   CUSTOM_CODE_FOLDER_NAME: {
-    defaultMessage: 'Custom Code Folder Name',
-    id: '6tG5dm',
+    defaultMessage: 'Custom code folder name',
+    id: 'Ih40n5',
     description: 'Custom code folder name input label',
   },
   RULES_ENGINE_FOLDER_NAME: {
-    defaultMessage: 'Rules Engine Folder Name',
-    id: 'jaa2Wl',
+    defaultMessage: 'Rules engine folder name',
+    id: 'qNh5t2',
     description: 'Rules engine folder name input label',
   },
   SELECT_DOTNET_VERSION: {
@@ -422,53 +422,53 @@ export const workspaceMessages = defineMessages({
     description: 'Review step description',
   },
   PROJECT_SETUP_SECTION: {
-    defaultMessage: 'Project Setup',
-    id: 'mAeD3g',
+    defaultMessage: 'Project setup',
+    id: 'j6RrLt',
     description: 'Project setup section title',
   },
   PROJECT_PATH: {
-    defaultMessage: 'Project Path',
-    id: 'ff1WLC',
+    defaultMessage: 'Project path',
+    id: 'VSeZW4',
     description: 'Project path label',
   },
   PACKAGE_SETUP_SECTION: {
-    defaultMessage: 'Package Setup',
-    id: '9VC1hu',
+    defaultMessage: 'Package setup',
+    id: 'CnRu/U',
     description: 'Package setup section title',
   },
   PACKAGE_PATH_REVIEW: {
-    defaultMessage: 'Package Path',
-    id: '5H8ULg',
+    defaultMessage: 'Package path',
+    id: 'U16F4a',
     description: 'Package path label',
   },
   WORKSPACE_NAME_REVIEW: {
-    defaultMessage: 'Workspace Name',
-    id: 'Jbo5DB',
+    defaultMessage: 'Workspace name',
+    id: 'jheId9',
     description: 'Workspace name label',
   },
   WORKSPACE_FOLDER: {
-    defaultMessage: 'Workspace Folder',
-    id: 'Eu6UGm',
+    defaultMessage: 'Workspace folder',
+    id: 'cWrYnn',
     description: 'Workspace folder path label',
   },
   WORKSPACE_FILE: {
-    defaultMessage: 'Workspace File',
-    id: '+fM/eg',
+    defaultMessage: 'Workspace file',
+    id: 'Oz2Kvh',
     description: 'Workspace file path label',
   },
   LOGIC_APP_TYPE_REVIEW: {
-    defaultMessage: 'Logic App Type',
-    id: 'n/eWQU',
+    defaultMessage: 'Logic app type',
+    id: '/ld6GS',
     description: 'Logic app type label',
   },
   LOGIC_APP_NAME_REVIEW: {
-    defaultMessage: 'Logic App Name',
-    id: 'i9+YCM',
+    defaultMessage: 'Logic app name',
+    id: 'yZ9m4I',
     description: 'Logic app name label',
   },
   LOGIC_APP_LOCATION: {
-    defaultMessage: 'Logic App Location',
-    id: 'zMexS3',
+    defaultMessage: 'Logic app location',
+    id: 'dE23PQ',
     description: 'Logic app location path label',
   },
   DOTNET_FRAMEWORK_REVIEW: {
@@ -477,43 +477,43 @@ export const workspaceMessages = defineMessages({
     description: 'Dot net framework label',
   },
   CUSTOM_CODE_FOLDER: {
-    defaultMessage: 'Custom Code Folder',
-    id: 'LltDjL',
+    defaultMessage: 'Custom code folder',
+    id: 'NqZqpl',
     description: 'Custom code folder label',
   },
   RULES_ENGINE_FOLDER: {
-    defaultMessage: 'Rules Engine Folder',
-    id: 'VE1WHE',
+    defaultMessage: 'Rules engine folder',
+    id: 'qyW34i',
     description: 'Rules engine folder label',
   },
   CUSTOM_CODE_LOCATION: {
-    defaultMessage: 'Custom Code Location',
-    id: 'oOFc/f',
+    defaultMessage: 'Custom code location',
+    id: 'oRm/MY',
     description: 'Custom code location path label',
   },
   RULES_ENGINE_LOCATION: {
-    defaultMessage: 'Rules Engine Location',
-    id: 'YhPs4e',
+    defaultMessage: 'Rules engine location',
+    id: 'DHI56r',
     description: 'Rules Engine location path label',
   },
   FUNCTION_WORKSPACE: {
-    defaultMessage: 'Function Workspace',
-    id: 'aXShs8',
+    defaultMessage: 'Function workspace',
+    id: '5GWxTc',
     description: 'Function workspace label',
   },
   FUNCTION_NAME_REVIEW: {
-    defaultMessage: 'Function Name',
-    id: '6I6s5I',
+    defaultMessage: 'Function name',
+    id: 'I9O2NQ',
     description: 'Function name label',
   },
   WORKFLOW_TYPE_REVIEW: {
-    defaultMessage: 'Workflow Type',
-    id: 'JdYNQ+',
+    defaultMessage: 'Workflow type',
+    id: 'xBIh0S',
     description: 'Workflow type label',
   },
   WORKFLOW_NAME_REVIEW: {
-    defaultMessage: 'Workflow Name',
-    id: 'HC2d/m',
+    defaultMessage: 'Workflow name',
+    id: 'AQqOMB',
     description: 'Workflow name label',
   },
   NOT_SPECIFIED: {
@@ -533,8 +533,8 @@ export const workspaceMessages = defineMessages({
     description: 'Create logic app workspace text.',
   },
   CREATE_PROJECT: {
-    defaultMessage: 'Create Project',
-    id: 'RmJRES',
+    defaultMessage: 'Create project',
+    id: 'Wxan/5',
     description: 'Create logic app project text.',
   },
   CREATE_PROJECT_BUTTON: {
@@ -543,8 +543,8 @@ export const workspaceMessages = defineMessages({
     description: 'Create logic app project button',
   },
   CREATE_WORKSPACE_BUTTON: {
-    defaultMessage: 'Create Workspace',
-    id: 'XZfauP',
+    defaultMessage: 'Create workspace',
+    id: '+u2tgz',
     description: 'Create workspace button',
   },
   CREATING_PACKAGE: {
@@ -558,18 +558,18 @@ export const workspaceMessages = defineMessages({
     description: 'Creating workspace in progress',
   },
   WORKSPACE_PACKAGE_CREATED: {
-    defaultMessage: 'Workspace From Package Created Successfully!',
-    id: 'vDfUt4',
+    defaultMessage: 'Workspace from package created successfully!',
+    id: 'Rb/a5t',
     description: 'Workspace from package creation success message',
   },
   LOGIC_APP_CREATED: {
-    defaultMessage: 'Logic App Created Successfully!',
-    id: '8bXaOe',
+    defaultMessage: 'Logic app created successfully!',
+    id: '8YVpN7',
     description: 'Logic app creation success message',
   },
   WORKSPACE_CREATED: {
-    defaultMessage: 'Workspace Created Successfully!',
-    id: '4fdozy',
+    defaultMessage: 'Workspace created successfully!',
+    id: 'Oku9Tr',
     description: 'Workspace creation success message',
   },
   WORKSPACE_PACKAGE_CREATED_DESCRIPTION: {
@@ -588,13 +588,13 @@ export const workspaceMessages = defineMessages({
     description: 'Workspace creation success description',
   },
   LOGIC_APP_SETUP: {
-    defaultMessage: 'Logic App Setup',
-    id: 'dELTC6',
+    defaultMessage: 'Logic app setup',
+    id: 'iFcpYH',
     description: 'Logic App setup step label',
   },
   PROJECT_SETUP_LABEL: {
-    defaultMessage: 'Project Setup',
-    id: '1d8W/S',
+    defaultMessage: 'Project setup',
+    id: 'Hggv59',
     description: 'Project setup step label',
   },
   REVIEW_CREATE_LABEL: {
@@ -621,13 +621,13 @@ export const exportMessages = defineMessages({
     description: 'Export status title',
   },
   INSTANCE_SELECTION: {
-    defaultMessage: 'Instance Selection',
-    id: 'SqCSry',
+    defaultMessage: 'Instance selection',
+    id: 'ZU4Gis',
     description: 'Instance selection step title',
   },
   WORKFLOWS_SELECTION: {
-    defaultMessage: 'Workflows Selection',
-    id: 'PZP0C6',
+    defaultMessage: 'Workflows selection',
+    id: 'dkgivo',
     description: 'Workflows selection step title',
   },
   VALIDATION: {
@@ -646,19 +646,19 @@ export const exportMessages = defineMessages({
     description: 'Status step title',
   },
   MANAGED_CONNECTIONS: {
-    defaultMessage: 'Managed Connections',
-    id: 'oW5gC2',
+    defaultMessage: 'Managed connections',
+    id: 'QZnOGQ',
     description: 'Managed connections label',
   },
   NEW_RESOURCE_GROUP: {
-    defaultMessage: 'New Resource Group',
-    id: '5VWnyg',
+    defaultMessage: 'New resource group',
+    id: 'NuL2rJ',
     description: 'New resource group label',
   },
   // Instance Selection
   DIVIDER_ISE: {
-    defaultMessage: 'Integration Service Environment',
-    id: '1HWJiJ',
+    defaultMessage: 'Integration service environment',
+    id: '67FI5P',
     description: 'ISE divider label',
   },
   DIVIDER_REGIONS: {
@@ -682,8 +682,8 @@ export const exportMessages = defineMessages({
     description: 'Empty location message',
   },
   SELECT_TITLE: {
-    defaultMessage: 'Select Subscription and Location',
-    id: 'SNZuzc',
+    defaultMessage: 'Select subscription and location',
+    id: 'JO3aZv',
     description: 'Selection title',
   },
   SELECT_DESCRIPTION: {
@@ -734,43 +734,43 @@ export const exportMessages = defineMessages({
   },
   // Summary
   COMPLETE_EXPORT_TITLE: {
-    defaultMessage: 'Complete Export',
-    id: 'NaPoi1',
+    defaultMessage: 'Complete export',
+    id: '0uiwQZ',
     description: 'Complete export title',
   },
   SELECT_LOCATION: {
-    defaultMessage: 'Select Location',
-    id: '3dlAS3',
+    defaultMessage: 'Select location',
+    id: 'PbAuUZ',
     description: 'Select location label',
   },
   OPEN_FILE_EXPLORER: {
-    defaultMessage: 'Open in File Explorer',
-    id: 'Xr3/0R',
+    defaultMessage: 'Open in file explorer',
+    id: 'NBHheX',
     description: 'Open file explorer button',
   },
   EXPORT_LOCATION: {
-    defaultMessage: 'Export Location',
-    id: '2aUXAB',
+    defaultMessage: 'Export location',
+    id: 'vXqIg+',
     description: 'Export location label',
   },
   DEPLOY_MANAGED_CONNECTIONS: {
-    defaultMessage: 'Deploy Managed Connections',
-    id: 'DdGGOf',
+    defaultMessage: 'Deploy managed connections',
+    id: 'UOUMSB',
     description: 'Deploy managed connections label',
   },
   ADDITIONAL_STEPS: {
-    defaultMessage: 'Additional Steps',
-    id: 'ZeKveh',
+    defaultMessage: 'Additional steps',
+    id: '4rIMVu',
     description: 'Additional steps label',
   },
   AFTER_EXPORT: {
-    defaultMessage: 'After Export',
-    id: 'EqEOfJ',
+    defaultMessage: 'After export',
+    id: 'rGQ0Qx',
     description: 'After export label',
   },
   RESOURCE_GROUP: {
-    defaultMessage: 'Resource Group',
-    id: 'MBVt3v',
+    defaultMessage: 'Resource group',
+    id: 'xhJqo7',
     description: 'Resource group label',
   },
   // Validation
@@ -791,13 +791,13 @@ export const exportMessages = defineMessages({
   },
   // Workflows Selection
   ADVANCED_OPTIONS: {
-    defaultMessage: 'Advanced Options',
-    id: 'XWiV58',
+    defaultMessage: 'Advanced options',
+    id: 'Av2j9p',
     description: 'Advanced options label',
   },
   EXPORT_CONNECTION: {
-    defaultMessage: 'Export Connections',
-    id: 'SLqL6b',
+    defaultMessage: 'Export connections',
+    id: 'Lx7xjr',
     description: 'Export connection label',
   },
   EXPORT_CONNECTION_DESCRIPTION: {
@@ -806,38 +806,38 @@ export const exportMessages = defineMessages({
     description: 'Export connection description',
   },
   GENERATE_INFRAESTRUCTURE: {
-    defaultMessage: 'Generate Infrastructure Files',
-    id: 'Aa7uzA',
+    defaultMessage: 'Generate infrastructure files',
+    id: 'vv8WR4',
     description: 'Generate infrastructure label',
   },
   CLONE_CONNECTIONS: {
-    defaultMessage: 'Clone Connections',
-    id: '6GWFpj',
+    defaultMessage: 'Clone connections',
+    id: 'yRZ2Qm',
     description: 'Clone connections label',
   },
   INTEGRATION_ACCOUNT_SOURCE: {
-    defaultMessage: 'Integration Account Source',
-    id: 'thBJtN',
+    defaultMessage: 'Integration account source',
+    id: 'IRW6v7',
     description: 'Integration account source label',
   },
   EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: {
-    defaultMessage: 'Export Custom API Actions to API Management',
-    id: '8lzYOU',
+    defaultMessage: 'Export custom API actions to API management',
+    id: '06T/X8',
     description: 'Export custom API actions label',
   },
   SELECT_WORKFLOW: {
-    defaultMessage: 'Select Workflows',
-    id: 'VSh4X/',
+    defaultMessage: 'Select workflows',
+    id: 'LZYI4N',
     description: 'Select workflow label',
   },
   SELECTED_APPS: {
-    defaultMessage: 'Selected Apps',
-    id: 'lbmbiZ',
+    defaultMessage: 'Selected apps',
+    id: '9z/8Jn',
     description: 'Selected apps label',
   },
   SELECTION_ALL: {
-    defaultMessage: 'Select All',
-    id: 'zEe0+Q',
+    defaultMessage: 'Select all',
+    id: '29Wg4P',
     description: 'Select all label',
   },
   NO_WORKFLOWS: {
@@ -885,22 +885,58 @@ export const exportMessages = defineMessages({
     id: 'MDmYah',
     description: 'Filter resource groups label',
   },
+  // New Resource Group
+  CREATE_NEW: {
+    defaultMessage: 'Create new',
+    id: 'XKQ/Lw',
+    description: 'Create new text',
+  },
+  RESOURCE_GROUP_DESCRIPTION: {
+    defaultMessage: 'A resource group is a container that holds related resources for an Azure solution.',
+    id: 'fKghDg',
+    description: 'Resource group description text',
+  },
+  OK: {
+    defaultMessage: 'OK',
+    id: '70cHmm',
+    description: 'OK button',
+  },
+  INVALID_CHARS: {
+    defaultMessage: 'The name can contain only alphanumeric characters or the following symbols: . _ - ( )',
+    id: '0n/bOI',
+    description: 'Resource group name - invalid characters error',
+  },
+  INVALID_ENDING_CHAR: {
+    defaultMessage: `The name can't end with a period.`,
+    id: 'Pe0eMX',
+    description: 'Resource group name ending error',
+  },
+  INVALID_EXISTING_NAME: {
+    defaultMessage: 'A resource group with the same name already exists in the selected subscription.',
+    id: 'KtGlzI',
+    description: 'Resource group existing name error',
+  },
+  NEW: {
+    defaultMessage: 'New',
+    id: 'm3H+gL',
+    description: 'New text',
+  },
 });
 
 export const designerMessages = defineMessages({
   CODE_VIEW: {
-    defaultMessage: 'Code View',
-    id: 'nlIckx',
+    defaultMessage: 'Code view',
+    id: 'RYUUQU',
     description: 'Code view label',
   },
   DESIGNER_VIEW: {
-    defaultMessage: 'Designer View',
-    id: 'kVs+EH',
+    defaultMessage: 'Designer view',
+    id: '1+JO/G',
     description: 'Designer view label',
   },
   SPLIT_VIEW: {
-    defaultMessage: 'Split View',
-    id: 'QVx5EI',
+    defaultMessage: 'Split view',
+    id: 'edTuPs',
     description: 'Split view label',
   },
   FILE_BUG: {
