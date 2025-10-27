@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { testsDirectoryName, workflowFileName } from '../../../../constants';
-import { localize } from '../../../../localize';
-import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
-import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
+import { testsDirectoryName, workflowFileName } from '../../../../../constants';
+import { localize } from '../../../../../localize';
+import { getWorkflowNode, isMultiRootWorkspace } from '../../../../utils/workspace';
+import OpenDesignerForLocalProject from '../../openDesigner/openDesignerForLocalProject';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { getUnitTestName, pickUnitTestNode } from '../../../utils/unitTests/codelessUnitTests';
+import { getUnitTestName, pickUnitTestNode } from '../../../../utils/unitTest/codelessUnitTest';
 
 /**
  * Edits a unit test for a Logic App workflow.

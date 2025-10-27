@@ -35,7 +35,7 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   validateUnitTestName,
-} from '../codefulUnitTests';
+} from '../codefulUnitTest';
 import { assetsFolderName, testsDirectoryName, unitTestTemplatesFolderName, workflowFileName } from '../../../../constants';
 
 // ============================================================================
@@ -68,7 +68,7 @@ afterEach(() => {
 // Test Suites
 // ============================================================================
 
-describe('unitTests', () => {
+describe('codefulUnitTest', () => {
   describe('extractAndValidateRunId', () => {
     it('should throw an error if runId is undefined', async () => {
       await expect(extractAndValidateRunId(undefined)).rejects.toThrowError('Run ID is required to generate a codeful unit test.');

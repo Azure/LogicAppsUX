@@ -9,7 +9,7 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { localize } from '../../../localize';
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps/src/lib/models/unitTest';
-import { getTestsDirectory } from './unitTests';
+import { getTestsDirectory } from './unitTest';
 
 /**
  * Retrieves the name of the unit test from the given file path.

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { localize } from '../../../../localize';
-import { convertToWorkspace } from '../../convertToWorkspace';
+import { localize } from '../../../../../localize';
+import { convertToWorkspace } from '../../../convertToWorkspace';
 import {
   createTestCsFile,
   createTestExecutorFile,
@@ -20,18 +20,18 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   selectWorkflowNode,
-} from '../../../utils/unitTests/codefulUnitTests';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
+} from '../../../../utils/unitTest/codefulUnitTest';
+import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import axios from 'axios';
-import { ext } from '../../../../extensionVariables';
-import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
-import { syncCloudSettings } from '../../syncCloudSettings';
-import { extensionCommand } from '../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
+import { syncCloudSettings } from '../../../syncCloudSettings';
+import { extensionCommand } from '../../../../../constants';
 
 /**
  * Handles the creation of a unit test for a Logic App workflow.
@@ -41,8 +41,8 @@ import { extensionCommand } from '../../../../constants';
  * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
-export async function createUnitTest(node: vscode.Uri | undefined, runId?: string, nodeOutputOperations?: any): Promise<void> {
-  await callWithTelemetryAndErrorHandling(extensionCommand.createUnitTest, async (context: IActionContext) => {
+export async function createUnitTestFromRun(node: vscode.Uri | undefined, runId?: string, nodeOutputOperations?: any): Promise<void> {
+  await callWithTelemetryAndErrorHandling(extensionCommand.createUnitTestFromRun, async (context: IActionContext) => {
     try {
       // Validate and extract Run ID
       context.telemetry.properties.lastStep = 'extractAndValidateRunId';
@@ -51,7 +51,7 @@ export async function createUnitTest(node: vscode.Uri | undefined, runId?: strin
       context.telemetry.properties.lastStep = 'convertToWorkspace';
       if (!(await convertToWorkspace(context))) {
         ext.outputChannel.appendLog(
-          localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
+          localize('createUnitTestFromRunCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
         );
         context.telemetry.properties.result = 'Canceled';
         return;
@@ -60,7 +60,7 @@ export async function createUnitTest(node: vscode.Uri | undefined, runId?: strin
       Object.assign(context.telemetry.properties, {
         workspaceLocated: 'true',
         projectRootLocated: 'true',
-        userTriggeredCreateUnitTest: 'true',
+        userTriggeredCreateUnitTestRun: 'true',
         runIdProvided: runId ? 'true' : 'false',
         hasNodeUri: node ? 'true' : 'false',
       });
@@ -108,9 +108,9 @@ export async function createUnitTest(node: vscode.Uri | undefined, runId?: strin
       const errorMessage = error instanceof Error ? error.message : String(error);
       context.telemetry.properties.result = 'Failed';
       context.telemetry.properties.errorMessage = errorMessage;
-      context.telemetry.properties['createUnitTestError'] = errorMessage;
-      vscode.window.showErrorMessage(localize('createUnitTestError', 'An error occurred: {0}', errorMessage));
-      ext.outputChannel.appendLog(localize('createUnitTestLog', 'Error in createUnitTest: {0}', errorMessage));
+      context.telemetry.properties['createUnitTestFromRunError'] = errorMessage;
+      vscode.window.showErrorMessage(localize('createUnitTestFromRunError', 'An error occurred: {0}', errorMessage));
+      ext.outputChannel.appendLog(localize('createUnitTestFromRunLog', 'Error in createUnitTestFromRun: {0}', errorMessage));
     }
   });
 }

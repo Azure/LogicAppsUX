@@ -18,10 +18,10 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getWorkflowsInLocalProject } from './../codeless/common';
-import { executeCommand } from './../funcCoreTools/cpUtils';
-import { getGlobalSetting } from './../vsCodeConfig/settings';
-import { getTestsDirectory } from './unitTests';
+import { getWorkflowsInLocalProject } from '../codeless/common';
+import { executeCommand } from '../funcCoreTools/cpUtils';
+import { getGlobalSetting } from '../vsCodeConfig/settings';
+import { getTestsDirectory } from './unitTest';
 
 /**
  * Prompts the user to select a workflow and returns the selected workflow node.

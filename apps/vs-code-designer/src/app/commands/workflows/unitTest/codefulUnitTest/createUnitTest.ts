@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../../../localize';
+import { localize } from '../../../../../localize';
 import {
   createTestCsFile,
   createTestSettingsConfigFile,
@@ -16,17 +16,17 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   selectWorkflowNode,
-} from '../../../utils/unitTests/codefulUnitTests';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
+} from '../../../../utils/unitTest/codefulUnitTest';
+import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
-import { ext } from '../../../../extensionVariables';
-import { convertToWorkspace } from '../../convertToWorkspace';
-import { syncCloudSettings } from '../../syncCloudSettings';
-import { extensionCommand } from '../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import { convertToWorkspace } from '../../../convertToWorkspace';
+import { syncCloudSettings } from '../../../syncCloudSettings';
+import { extensionCommand } from '../../../../../constants';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
@@ -34,8 +34,8 @@ import { extensionCommand } from '../../../../constants';
  * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
-export async function saveBlankUnitTest(node: vscode.Uri | undefined, nodeOutputOperations: any): Promise<void> {
-  await callWithTelemetryAndErrorHandling(extensionCommand.saveBlankUnitTest, async (context: IActionContext) => {
+export async function createUnitTest(node: vscode.Uri | undefined, nodeOutputOperations: any): Promise<void> {
+  await callWithTelemetryAndErrorHandling(extensionCommand.createUnitTest, async (context: IActionContext) => {
     const startTime = Date.now();
 
     // Initialize telemetry properties
@@ -71,7 +71,7 @@ export async function saveBlankUnitTest(node: vscode.Uri | undefined, nodeOutput
       if (!(await convertToWorkspace(context))) {
         context.telemetry.properties.multiRootWorkspaceValid = 'false';
         ext.outputChannel.appendLog(
-          localize('createBlankUnitTestCancelled', 'Exiting blank unit test creation, a workspace is required to create blank unit tests.')
+          localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
         );
         context.telemetry.properties.result = 'Canceled';
         return;
@@ -147,16 +147,8 @@ export async function saveBlankUnitTest(node: vscode.Uri | undefined, nodeOutput
       context.telemetry.properties.unitTestName = unitTestName;
 
       // Save the unit test
-      context.telemetry.properties.lastStep = 'generateBlankCodefulUnitTest';
-      await generateBlankCodefulUnitTest(
-        context,
-        projectPath,
-        workflowName,
-        unitTestName,
-        mockClassContent,
-        foundActionMocks,
-        foundTriggerMocks
-      );
+      context.telemetry.properties.lastStep = 'generateUnitTest';
+      await generateUnitTest(context, projectPath, workflowName, unitTestName, mockClassContent, foundActionMocks, foundTriggerMocks);
       context.telemetry.properties.unitTestSaveStatus = 'Success';
       context.telemetry.properties.unitTestProcessingTimeMs = (Date.now() - startTime).toString();
 
@@ -179,9 +171,9 @@ export async function saveBlankUnitTest(node: vscode.Uri | undefined, nodeOutput
       context.telemetry.properties.unitTestGenerationStatus = 'Failed';
       context.telemetry.properties.result = 'Failed';
       context.telemetry.properties.errorMessage = errorMessage;
-      context.telemetry.properties['saveBlankUnitTestError'] = errorMessage;
-      vscode.window.showErrorMessage(localize('saveBlankUnitTestError', 'An error occurred: {0}', errorMessage));
-      ext.outputChannel.appendLog(localize('saveBlankUnitTestLog', 'Error in saveBlankUnitTest: {0}', errorMessage));
+      context.telemetry.properties['createUnitTestError'] = errorMessage;
+      vscode.window.showErrorMessage(localize('createUnitTestError', 'An error occurred: {0}', errorMessage));
+      ext.outputChannel.appendLog(localize('createUnitTestLog', 'Error in createUnitTest: {0}', errorMessage));
     }
   });
 }
@@ -197,7 +189,7 @@ export async function saveBlankUnitTest(node: vscode.Uri | undefined, nodeOutput
  * @param {Record<string, string>} foundTriggerMocks - The trigger mocks found in the workflow.
  * @returns {Promise<void>} - A promise that resolves when the unit test has been generated.
  */
-async function generateBlankCodefulUnitTest(
+async function generateUnitTest(
   context: IActionContext,
   projectPath: string,
   workflowName: string,
@@ -304,7 +296,7 @@ async function generateBlankCodefulUnitTest(
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = error.message ?? error;
-    context.telemetry.properties.generateBlankCodefulUnitTest = 'Failed';
+    context.telemetry.properties.generateUnitTest = 'Failed';
     const errorMessage = error.message || localize('unknownError', 'An unknown error occurred.');
     ext.outputChannel.appendLog(errorMessage);
     vscode.window.showErrorMessage(errorMessage);
