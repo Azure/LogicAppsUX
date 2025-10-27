@@ -19,10 +19,9 @@ export const DotNetFrameworkStep: React.FC = () => {
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { targetFramework, functionNamespace, functionName, functionFolderName, logicAppType, logicAppName, workspaceFileJson } =
+  const { targetFramework, functionNamespace, functionName, platform, functionFolderName, logicAppType, logicAppName, workspaceFileJson } =
     createWorkspaceState;
 
-  const platform = '' as any;
   const functionNamespaceId = useId();
   const functionNameId = useId();
   const functionFolderNameId = useId();
