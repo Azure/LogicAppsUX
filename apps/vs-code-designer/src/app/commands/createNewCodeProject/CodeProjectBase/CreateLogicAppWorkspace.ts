@@ -93,7 +93,7 @@ export async function getHostContent(): Promise<IHostJsonV2> {
 }
 
 export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string): Promise<void> {
-  const { logicAppType, workflowType, functionName, workflowName } = webviewProjectContext;
+  const { logicAppType, workflowType, functionName, workflowName, logicAppName } = webviewProjectContext;
   const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(
     logicAppType as ProjectType,
     workflowType as WorkflowType,
@@ -101,7 +101,9 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   );
 
   await fse.ensureDir(logicAppFolderPath);
-  if (logicAppType !== ProjectType.agentCodeful) {
+  if (logicAppType === ProjectType.agentCodeful) {
+    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName);
+  } else {
     const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, workflowName);
     await fse.ensureDir(logicAppWorkflowFolderPath);
 
@@ -109,6 +111,25 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
     await writeFormattedJson(workflowJsonFullPath, codelessDefinition);
   }
 }
+
+const createAgentCodefulWorkflowFile = async (logicAppFolderPath: string, logicAppName: string) => {
+  // Set the functionAppName and namespaceName properties from the context wizard
+
+  // Create the .cs file inside the functions folder
+  const templateCSPath = path.join(__dirname, assetsFolderName, 'AgentCodefulProjectTemplate', 'AgentFunctionsFile');
+  const templateCSContent = await fse.readFile(templateCSPath, 'utf-8');
+
+  const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
+  await fse.writeFile(csFilePath, templateCSContent);
+
+  // Create the .csproj file inside the functions folder
+  const templateProjPath = path.join(__dirname, assetsFolderName, 'AgentCodefulProjectTemplate', 'AgentFunctionsProj');
+  const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+
+  const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+
+  await fse.writeFile(csprojFilePath, templateProjContent);
+};
 
 export async function createLocalConfigurationFiles(
   webviewProjectContext: IWebviewProjectContext,
@@ -262,7 +283,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     await logicAppPackageProcessing(mySubContext);
     vscode.window.showInformationMessage(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
   } else {
-    if (webviewProjectContext.logicAppType !== ProjectType.logicApp) {
+    if (webviewProjectContext.logicAppType === ProjectType.customCode || webviewProjectContext.logicAppType === ProjectType.rulesEngine) {
       const createFunctionAppFilesStep = new CreateFunctionAppFiles();
       await createFunctionAppFilesStep.setup(mySubContext);
     }

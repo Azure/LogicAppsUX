@@ -68,9 +68,7 @@
 //     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
 //     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
 //       this.localSettingsJson.Values[ProjectDirectoryPathKey] = path.join(context.projectPath);
-//       if (context.projectType === ProjectType.agentCodeful) {
-//         this.localSettingsJson.Values.CODEFUL_AGENT = 'true';
-//       }
+//
 //       await writeFormattedJson(localSettingsJsonPath, this.localSettingsJson);
 //     }
 

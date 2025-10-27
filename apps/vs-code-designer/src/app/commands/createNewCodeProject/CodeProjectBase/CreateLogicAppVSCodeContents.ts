@@ -3,6 +3,7 @@ import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@micros
 import {
   assetsFolderName,
   deploySubpathSetting,
+  dotnetExtensionId,
   extensionCommand,
   extensionsFileName,
   funcVersionSetting,
@@ -23,13 +24,11 @@ import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
 import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
 
-export async function writeSettingsJson(
-  context: IWebviewProjectContext,
-  additionalSettings: ISettingToAdd[],
-  vscodePath: string
-): Promise<void> {
+async function writeSettingsJson(context: IWebviewProjectContext, additionalSettings: ISettingToAdd[], vscodePath: string): Promise<void> {
+  const { targetFramework, logicAppType } = context;
+
   const settings: ISettingToAdd[] = additionalSettings.concat(
-    { key: projectLanguageSetting, value: ProjectLanguage.JavaScript },
+    { key: projectLanguageSetting, value: logicAppType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript },
     { key: funcVersionSetting, value: latestGAVersion },
     // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
     { prefix: 'debug', key: 'internalConsoleOptions', value: 'neverOpen' },
@@ -37,6 +36,15 @@ export async function writeSettingsJson(
   );
 
   const settingsJsonPath: string = path.join(vscodePath, settingsFileName);
+
+  if (logicAppType === ProjectType.agentCodeful) {
+    const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
+    settings.push(
+      { prefix: 'azureFunctions', key: 'deploySubpath', value: deploySubPathValue },
+      { prefix: 'azureFunctions', key: 'preDeployTask', value: 'publish' },
+      { prefix: 'azureFunctions', key: 'projectSubpath', value: deploySubPathValue }
+    );
+  }
   await confirmEditJsonFile(context, settingsJsonPath, (data: Record<string, any>): Record<string, any> => {
     for (const setting of settings) {
       const key = `${setting.prefix || ext.prefix}.${setting.key}`;
@@ -46,11 +54,21 @@ export async function writeSettingsJson(
   });
 }
 
-export async function writeExtensionsJson(context: IActionContext, vscodePath: string): Promise<void> {
+export async function writeExtensionsJson(webviewProjectContext: IWebviewProjectContext, vscodePath: string): Promise<void> {
+  const { logicAppType } = webviewProjectContext;
   const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
   const extensionsJsonFile = 'ExtensionsJsonFile';
   const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, extensionsJsonFile);
-  await fse.copyFile(templatePath, extensionsJsonPath);
+
+  // Read the template file
+  const templateContent = await fse.readFile(templatePath, 'utf8');
+  const extensionsData = JSON.parse(templateContent);
+
+  if (logicAppType !== ProjectType.logicApp) {
+    extensionsData.recommendations = [...(extensionsData.recommendations || []), ...[dotnetExtensionId]];
+  }
+
+  await fse.writeJson(extensionsJsonPath, extensionsData, { spaces: 2 });
 }
 
 export async function writeTasksJson(context: IActionContext, vscodePath: string): Promise<void> {
@@ -106,26 +124,19 @@ export function insertLaunchConfig(existingConfigs: DebugConfiguration[] | undef
   return existingConfigs;
 }
 
-export async function createLogicAppVsCodeContents(
-  myWebviewProjectContext: IWebviewProjectContext,
-  logicAppFolderPath: string
-): Promise<void> {
+export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
+  const { logicAppType, logicAppName, targetFramework } = webviewProjectContext;
   const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
   await fse.ensureDir(vscodePath);
 
   const additionalSettings: ISettingToAdd[] = [];
 
-  if (myWebviewProjectContext.logicAppType === ProjectType.logicApp) {
+  if (logicAppType === ProjectType.logicApp) {
     additionalSettings.push({ key: deploySubpathSetting, value: '.' });
   }
 
-  await writeSettingsJson(myWebviewProjectContext, additionalSettings, vscodePath);
-  await writeExtensionsJson(myWebviewProjectContext, vscodePath);
-  await writeTasksJson(myWebviewProjectContext, vscodePath);
-  await writeLaunchJson(
-    myWebviewProjectContext,
-    vscodePath,
-    myWebviewProjectContext.logicAppName,
-    myWebviewProjectContext.targetFramework as TargetFramework
-  );
+  await writeSettingsJson(webviewProjectContext, additionalSettings, vscodePath);
+  await writeExtensionsJson(webviewProjectContext, vscodePath);
+  await writeTasksJson(webviewProjectContext, vscodePath);
+  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName, targetFramework as TargetFramework);
 }

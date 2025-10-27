@@ -6,17 +6,14 @@
 // import { WorkflowKindStep } from '../../createWorkflow/createCodelessWorkflow/createCodelessWorkflowSteps/workflowKindStep';
 // import { ProjectCreateStep } from './projectCreateStep';
 // import { WorkflowCodeTypeStep } from '../../createWorkflow/createWorkflowSteps/workflowCodeTypeStep';
-// import { addInitVSCodeSteps } from '../../initProjectForVSCode/initProjectLanguageStep';
 // import { FunctionAppNameStep } from '../../createProject/createCustomCodeProjectSteps/functionAppNameStep';
 // import { FunctionAppFilesStep } from '../createCustomCodeProjectSteps/functionAppFilesStep';
 // import { CustomCodeProjectCreateStep } from '../createCustomCodeProjectSteps/customCodeProjectCreateStep';
-// import { type IProjectWizardContext, ProjectLanguage, ProjectType, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 // import * as fs from 'fs-extra';
 // import * as path from 'path';
 // import { AppNamespaceStep } from '../../createProject/createCustomCodeProjectSteps/AppNamespaceStep';
 // import type { AzureWizardExecuteStep, IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 // import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-// import { AgentCodefulFilesStep } from './agentCodefulFilesStep';
 // import AdmZip from 'adm-zip';
 
 // // TODO(aeldridge): Move subwizard steps here into a separate "SetupProjectStep" or subwizard of LogicAppTemplateStep
