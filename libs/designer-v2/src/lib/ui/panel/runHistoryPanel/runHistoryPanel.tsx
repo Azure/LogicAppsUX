@@ -36,8 +36,8 @@ import {
   bundleIcon,
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
-  DismissFilled,
-  DismissRegular,
+  ChevronDoubleLeftFilled,
+  ChevronDoubleLeftRegular,
   ArrowLeftFilled,
   ArrowLeftRegular,
 } from '@fluentui/react-icons';
@@ -51,7 +51,7 @@ import StatusIndicator from './statusIndicator';
 // MARK: End Imports
 
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
-const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
+const CollapseIcon = bundleIcon(ChevronDoubleLeftFilled, ChevronDoubleLeftRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
@@ -324,7 +324,9 @@ export const RunHistoryPanel = () => {
 
   // MARK: Components
 
-  const CloseButton = () => <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<DismissIcon />} />;
+  const CollapseButton = () => (
+    <Button appearance="subtle" onClick={() => dispatch(setRunHistoryCollapsed(true))} icon={<CollapseIcon />} />
+  );
 
   const RefreshButton = () => (
     <Button
@@ -369,7 +371,7 @@ export const RunHistoryPanel = () => {
             </Button>
           )}
           <div style={{ flexGrow: 1 }} />
-          <CloseButton />
+          <CollapseButton />
         </DrawerHeaderNavigation>
         {inRunList ? (
           <DrawerHeaderTitle>{runListTitle}</DrawerHeaderTitle>
