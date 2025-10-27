@@ -38,7 +38,11 @@ export const useRunTreeViewStyles = makeStyles({
   treeItemToolIcon: {
     width: '16px',
     height: '16px',
+    margin: '4px',
     color: '#3352B9',
+  },
+  userChatIcon: {
+    color: '#808080',
   },
   selectionIndicator: {
     width: '4px',

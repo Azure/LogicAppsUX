@@ -1,15 +1,16 @@
 import { setLayerHostSelector } from '@fluentui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNodesMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useAgentOperations, useNodesMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { useRunTreeViewStyles } from './RunTreeView.styles';
 import type { HeadlessFlatTreeItemProps, TreeItemValue, TreeOpenChangeData, TreeOpenChangeEvent } from '@fluentui/react-components';
 import { FlatTree, Spinner, useHeadlessFlatTree_unstable, useRestoreFocusTarget } from '@fluentui/react-components';
 import { useAllIcons } from '../../../core/state/operation/operationSelector';
-import { getAgentActionsRepetition, getAgentRepetitions, getNodeRepetitions } from '../../../core';
-import { equals, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { getAgentActionsRepetition, getAgentRepetitions, getNodeRepetitions, useChatHistory } from '../../../core';
+import { equals, idDisplayCase, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useTimelineRepetitions } from '../../MonitoringTimeline/hooks';
 import { TreeActionItem } from './TreeActionItem';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 export const RunTreeView = () => {
   const intl = useIntl();
@@ -21,10 +22,26 @@ export const RunTreeView = () => {
     description: 'Text shown when a run is in progress',
   });
 
+  const agentChatItemContent = intl.formatMessage({
+    defaultMessage: 'Sent chat message',
+    id: 'Mf6nZ9',
+    description: 'Text shown for agent chat message items in the run tree view',
+  });
+
+  const userChatItemContent = intl.formatMessage({
+    defaultMessage: 'User chat message',
+    id: '3AxTTb',
+    description: 'Text shown for user chat message items in the run tree view',
+  });
+
   const selectedRun = useRunInstance() as LogicAppsV2.RunInstanceDefinition | undefined;
   const icons = useAllIcons();
 
   const nodesMetadata = useNodesMetadata();
+
+  const agentOperations = useAgentOperations();
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const { data: chatHistoryData } = useChatHistory(true, selectedRun?.id, agentOperations, isA2AWorkflow);
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
 
@@ -163,7 +180,7 @@ export const RunTreeView = () => {
             const newTreeData = {
               value: newId,
               ...(parentId !== 'root' ? { parentValue: parentId } : {}),
-              content: id,
+              content: idDisplayCase(id),
               data: {
                 repIndex: Number(repetitionName),
                 repetition,
@@ -200,7 +217,7 @@ export const RunTreeView = () => {
             const newTreeData = {
               value: newAgentId,
               ...(parentNodeId !== 'root' ? { parentValue: parentId } : {}),
-              content: id,
+              content: idDisplayCase(id),
               data: {
                 repIndex: Number(repetitionName),
                 repetition: agentRepetition,
@@ -218,7 +235,7 @@ export const RunTreeView = () => {
                 // Add new repetition node
                 const newToolTreeData = {
                   value: toolRepetitionId,
-                  content: toolId,
+                  content: idDisplayCase(toolId),
                   parentValue: newAgentId,
                   data: {
                     repIndex: i,
@@ -256,7 +273,7 @@ export const RunTreeView = () => {
                   // Add new repetition node
                   const newTreeData = {
                     value: newActionId,
-                    content: actionId ?? '',
+                    content: idDisplayCase(actionId ?? ''),
                     parentValue: parentRepetitionId,
                     data: {
                       repetition: {
@@ -299,7 +316,7 @@ export const RunTreeView = () => {
         const newTreeData = {
           value: id,
           ...(parentNodeId !== 'root' ? { parentValue: parentNodeId } : {}),
-          content: id,
+          content: idDisplayCase(id),
           data: {
             startTime: action?.startTime,
           },
@@ -321,7 +338,7 @@ export const RunTreeView = () => {
       // Add new repetition node
       const newTreeData = {
         value: newAgentId,
-        content: agentName ?? '',
+        content: idDisplayCase(agentName ?? ''),
         data: {
           repIndex: Number(agentRepetition.name),
           repetition: agentRepetition,
@@ -338,7 +355,7 @@ export const RunTreeView = () => {
           // Add new repetition node
           const newToolTreeData = {
             value: toolRepetitionId,
-            content: toolId,
+            content: idDisplayCase(toolId),
             parentValue: newAgentId,
             data: {
               repIndex: i,
@@ -396,7 +413,7 @@ export const RunTreeView = () => {
             // Add new repetition node
             const newTreeData = {
               value: newActionId,
-              content: actionId ?? '',
+              content: idDisplayCase(actionId ?? ''),
               parentValue: parentRepetitionId,
               data: {
                 repetition: {
@@ -429,13 +446,49 @@ export const RunTreeView = () => {
         });
       });
     });
+
+    // Append chat messages as tree entries
+    chatHistoryData?.[0].messages?.forEach((chatMessage, index: number) => {
+      if (chatMessage?.messageEntryType !== 'Content') {
+        return;
+      }
+
+      const chatId = `chatMessage-${index}`;
+      if (chatMessage?.role === 'Assistant') {
+        const newTreeData = {
+          value: chatId,
+          content: agentChatItemContent,
+          parentValue: `${chatMessage?.agentMetadata?.agentName}-#${repIndexToName(chatMessage?.iteration ?? 0)}`,
+          data: {
+            startTime: chatMessage?.timestamp,
+            chatMessage: chatMessage?.messageEntryPayload?.content ?? '',
+            chatRole: 'Assistant',
+          },
+        };
+        addTreeItem(newTreeData);
+      } else if (chatMessage?.role === 'User') {
+        const newTreeData = {
+          value: chatId,
+          content: userChatItemContent,
+          data: {
+            startTime: chatMessage?.timestamp,
+            chatMessage: chatMessage?.messageEntryPayload?.content ?? '',
+            chatRole: 'User',
+          },
+        };
+        addTreeItem(newTreeData);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actions, selectedRun, agentRepetitionData, addTreeItem, updateToolTimes, isRunning]);
+  }, [actions, selectedRun, agentRepetitionData, chatHistoryData, addTreeItem, updateToolTimes, isRunning]);
 
   const treeItems = useMemo(
     () =>
       Object.values(treeItemsRecord).sort((a, b) => {
-        return a.data.startTime && b.data.startTime ? new Date(a.data.startTime).getTime() - new Date(b.data.startTime).getTime() : 0;
+        if (!a.data?.startTime || !b.data?.startTime) {
+          return 0;
+        }
+        return new Date(a.data.startTime).getTime() - new Date(b.data.startTime).getTime();
       }),
     [treeItemsRecord]
   );
@@ -470,6 +523,7 @@ export const RunTreeView = () => {
               action={actions[actionId]}
               icon={icons[actionId]}
               data={treeItemsRecord[flatTreeItem.value]?.data}
+              content={treeItemsRecord[flatTreeItem.value]?.content}
             />
           );
         })}

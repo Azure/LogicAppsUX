@@ -300,7 +300,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const headingText = isAddingMcpServer
     ? intl.formatMessage({
         defaultMessage: 'Choose an MCP server',
-        id: 'dBxX8X',
+        id: 'NFndch',
         description: 'Text for the "Add an MCP Server" panel header',
       })
     : isTrigger
@@ -322,7 +322,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
   const linkMessage = intl.formatMessage({
     defaultMessage: 'How to use MCP server?',
-    id: 'Vy2G4C',
+    id: 'IhVOVF',
     description: 'Text for the learn more link',
   });
 
