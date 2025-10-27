@@ -602,6 +602,21 @@ export const workspaceMessages = defineMessages({
     id: '4dze5/',
     description: 'Review and create step label',
   },
+  NEXT_BUTTON: {
+    defaultMessage: 'Next',
+    id: '3Wcqsy',
+    description: 'Next button',
+  },
+  BACK_BUTTON: {
+    defaultMessage: 'Back',
+    id: '2XH9oW',
+    description: 'Back button',
+  },
+  STEP_INDICATOR: {
+    defaultMessage: 'Step {current} of {total}',
+    id: '4IV3/7',
+    description: 'Step indicator text',
+  },
 });
 
 export const exportMessages = defineMessages({

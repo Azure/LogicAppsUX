@@ -64,139 +64,67 @@ export const CreateWorkspace: React.FC = () => {
   const getCreateWorkspaceMessage = () => {
     switch (flowType) {
       case 'createWorkspaceFromPackage':
-        return intl.formatMessage({
-          defaultMessage: 'Create logic app workspace from package',
-          id: 'RZZxs+',
-          description: 'Create logic app workspace from package text.',
-        });
+        return intlText.CREATE_WORKSPACE_FROM_PACKAGE;
       case 'convertToWorkspace':
-        return intl.formatMessage({
-          defaultMessage: 'Create logic app workspace',
-          id: 'eagv8j',
-          description: 'Create logic app workspace text.',
-        });
+        return intlText.CREATE_WORKSPACE;
       case 'createLogicApp':
-        return intl.formatMessage({
-          defaultMessage: 'Create Project',
-          id: 'RmJRES',
-          description: 'Create logic app project text.',
-        });
+        return intlText.CREATE_PROJECT;
       default:
-        return intl.formatMessage({
-          defaultMessage: 'Create logic app workspace',
-          id: 'eagv8j',
-          description: 'Create logic app workspace text.',
-        });
+        return intlText.CREATE_WORKSPACE;
     }
   };
 
   const getCreateButtonMessage = () => {
     if (flowType === 'createLogicApp') {
-      return intl.formatMessage({
-        defaultMessage: 'Create project',
-        id: 'u+VFmh',
-        description: 'Create logic app project button',
-      });
+      return intlText.CREATE_PROJECT_BUTTON;
     }
-    return intl.formatMessage({
-      defaultMessage: 'Create Workspace',
-      id: 'XZfauP',
-      description: 'Create workspace button',
-    });
+    return intlText.CREATE_WORKSPACE_BUTTON;
   };
 
   const getCreatingMessage = () => {
     if (flowType === 'createWorkspaceFromPackage') {
-      return intl.formatMessage({
-        defaultMessage: 'Creating...',
-        id: 'e8iBzO',
-        description: 'Creating workspace from package in progress',
-      });
+      return intlText.CREATING_PACKAGE;
     }
-    return intl.formatMessage({
-      defaultMessage: 'Creating...',
-      id: 'k6MqI+',
-      description: 'Creating workspace in progress',
-    });
+    return intlText.CREATING_WORKSPACE;
   };
 
   const getSuccessTitle = () => {
     switch (flowType) {
       case 'createWorkspaceFromPackage':
-        return intl.formatMessage({
-          defaultMessage: 'Workspace From Package Created Successfully!',
-          id: 'vDfUt4',
-          description: 'Workspace from package creation success message',
-        });
+        return intlText.WORKSPACE_PACKAGE_CREATED;
       case 'convertToWorkspace':
       case 'createLogicApp':
-        return intl.formatMessage({
-          defaultMessage: 'Logic App Created Successfully!',
-          id: '8bXaOe',
-          description: 'Logic app creation success message',
-        });
+        return intlText.LOGIC_APP_CREATED;
       default:
-        return intl.formatMessage({
-          defaultMessage: 'Workspace Created Successfully!',
-          id: '4fdozy',
-          description: 'Workspace creation success message',
-        });
+        return intlText.WORKSPACE_CREATED;
     }
   };
 
   const getSuccessDescription = () => {
     switch (flowType) {
       case 'createWorkspaceFromPackage':
-        return intl.formatMessage({
-          defaultMessage: 'Your logic app workspace from package has been created is ready to use.',
-          id: 'rGWwuB',
-          description: 'Workspace package creation success description',
-        });
+        return intlText.WORKSPACE_PACKAGE_CREATED_DESCRIPTION;
       case 'convertToWorkspace':
       case 'createLogicApp':
-        return intl.formatMessage({
-          defaultMessage: 'Your logic app has been created and is ready to use.',
-          id: 'ECHpxE',
-          description: 'Logic app creation success description',
-        });
+        return intlText.LOGIC_APP_CREATED_DESCRIPTION;
       default:
-        return intl.formatMessage({
-          defaultMessage: 'Your logic app workspace has been created and is ready to use.',
-          id: 'OdrYKo',
-          description: 'Workspace creation success description',
-        });
+        return intlText.WORKSPACE_CREATED_DESCRIPTION;
     }
   };
 
   const getProjectSetupStepLabel = () => {
     if (flowType === 'convertToWorkspace' || flowType === 'createLogicApp') {
-      return intl.formatMessage({
-        defaultMessage: 'Logic App Setup',
-        id: 'dELTC6',
-        description: 'Logic App setup step label',
-      });
+      return intlText.LOGIC_APP_SETUP;
     }
-    return intl.formatMessage({
-      defaultMessage: 'Project Setup',
-      id: '1d8W/S',
-      description: 'Project setup step label',
-    });
+    return intlText.PROJECT_SETUP_LABEL;
   };
 
   const intlMessages = {
     CREATE_WORKSPACE: getCreateWorkspaceMessage(),
     CREATE_BUTTON: getCreateButtonMessage(),
     CREATING: getCreatingMessage(),
-    NEXT: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '3Wcqsy',
-      description: 'Next button',
-    }),
-    BACK: intl.formatMessage({
-      defaultMessage: 'Back',
-      id: '2XH9oW',
-      description: 'Back button',
-    }),
+    NEXT: intlText.NEXT_BUTTON,
+    BACK: intlText.BACK_BUTTON,
     STEP_INDICATOR: intl.formatMessage(
       {
         defaultMessage: 'Step {current} of {total}',
@@ -211,11 +139,7 @@ export const CreateWorkspace: React.FC = () => {
     SUCCESS_TITLE: getSuccessTitle(),
     SUCCESS_DESCRIPTION: getSuccessDescription(),
     STEP_PROJECT_SETUP: getProjectSetupStepLabel(),
-    STEP_REVIEW_CREATE: intl.formatMessage({
-      defaultMessage: 'Review + Create',
-      id: '4dze5/',
-      description: 'Review and create step label',
-    }),
+    STEP_REVIEW_CREATE: intlText.REVIEW_CREATE_LABEL,
   };
 
   // Helper function to check if a name already exists in workspace folders
