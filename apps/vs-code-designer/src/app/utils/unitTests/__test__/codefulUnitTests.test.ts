@@ -961,27 +961,20 @@ describe('unitTests', () => {
     });
   });
 
-  // TODO(aeldridge): Replace with ensureCsproj tests
   describe('createCsprojFile', () => {
-    const testProjectFileTemplate = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Tests.Extension" Version="1.0.0-preview" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2" />
-  </ItemGroup>
-</Project>`;
     const csprojFilePath: string = 'dummy.csproj';
     let writeFileSpy: any;
     let readFileSpy: any;
+    let testProjectFileTemplatePath: string;
+    let testProjectFileTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      testProjectFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestProjectFile');
+      testProjectFileTemplate = await realFs.readFile(testProjectFileTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
@@ -1381,68 +1374,20 @@ describe('unitTests', () => {
   });
 
   describe('createTestExecutorFile', () => {
-    const testExecutorFileTemplate = `using Microsoft.Azure.Workflows.UnitTesting;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
-
-namespace <%= LogicAppName %>.Tests
-{
-    public class TestExecutor
-    {
-        /// <summary>
-        /// The root directory.
-        /// </summary>
-        public string rootDirectory;
-        
-        /// <summary>
-        /// The logic app name.
-        /// </summary>
-        public string logicAppName;
-
-        /// <summary>
-        /// The workflow name.
-        /// </summary>
-        public string workflow;
-
-        public TestExecutor(string configPath)
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddXmlFile(configPath, optional: false, reloadOnChange: true)
-                .Build();
-
-            this.rootDirectory = configuration["TestSettings:WorkspacePath"];
-            this.logicAppName = configuration["TestSettings:LogicAppName"];
-            this.workflow = configuration["TestSettings:WorkflowName"];
-        }
-
-        #region Unit test executor
-
-        public UnitTestExecutor Create()
-        {
-            // Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
-            var workflowDefinitionPath = Path.Combine(this.rootDirectory, this.logicAppName, this.workflow, "workflow.json");
-            var connectionsPath = Path.Combine(this.rootDirectory, this.logicAppName, "connections.json");
-            var parametersPath = Path.Combine(this.rootDirectory, this.logicAppName, "parameters.json");
-            var localSettingsPath = Path.Combine(this.rootDirectory, this.logicAppName, "local.settings.json");
-            
-            return new UnitTestExecutor(
-                workflowFilePath: workflowDefinitionPath,
-                connectionsFilePath: connectionsPath,
-                parametersFilePath: parametersPath,
-                localSettingsFilePath: localSettingsPath
-            );
-        }
-
-        #endregion
-
-    }
-}`;
     const logicAppName: string = 'My-LogicApp';
     const unitTestFolderPath: string = 'unitTestFolderPath';
     let readFileSpy: any;
     let writeFileSpy: any;
+    let testExecutorFileTemplatePath: string;
+    let testExecutorFileTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      testExecutorFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestExecutorFile');
+      testExecutorFileTemplate = await realFs.readFile(testExecutorFileTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
@@ -1484,19 +1429,21 @@ namespace <%= LogicAppName %>.Tests
   });
 
   describe('createTestSettingsConfig', () => {
-    const testSettingsConfigFileTemplate = `<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-    <TestSettings>
-        <WorkspacePath>%WorkspacePath%</WorkspacePath>
-        <LogicAppName>%LogicAppName%</LogicAppName>
-        <WorkflowName>%WorkflowName%</WorkflowName>
-    </TestSettings>
-</configuration>`;
     const unitTestFolderPath: string = 'unitTestFolderPath';
     const logicAppName: string = 'MyLogicApp';
     const workflowName: string = 'MyWorkflow';
     let readFileSpy: any;
     let writeFileSpy: any;
+    let testSettingsConfigFileTemplatePath: string;
+    let testSettingsConfigFileTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      testSettingsConfigFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestSettingsConfigFile');
+      testSettingsConfigFileTemplate = await realFs.readFile(testSettingsConfigFileTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
