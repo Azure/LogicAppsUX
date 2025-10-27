@@ -287,12 +287,13 @@ const DesignerEditor = () => {
       workflowFromDesigner: Workflow,
       customCode: CustomCodeFileNameMapping | undefined,
       clearDirtyState: () => void,
-      autoSave?: boolean
+      isDraftSave?: boolean
     ): Promise<any> => {
-      const { definition, connectionReferences, parameters, notes } = workflowFromDesigner;
+      const { definition, connectionReferences, parameters, notes, kind } = workflowFromDesigner;
       const workflowToSave = {
         ...workflow,
         definition,
+        kind,
       };
 
       delete workflowToSave.id;
@@ -401,7 +402,7 @@ const DesignerEditor = () => {
         notesToUpdate,
         clearDirtyState,
         undefined,
-        autoSave
+        isDraftSave
       );
 
       return workflowToSave;
@@ -952,7 +953,8 @@ const getDesignerServices = (
 
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAgentUrl: () => fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? ''),
+    getAgentUrl: (isDraftMode?: boolean) =>
+      fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? '', isDraftMode),
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,

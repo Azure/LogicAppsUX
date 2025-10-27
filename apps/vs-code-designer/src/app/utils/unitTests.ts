@@ -124,7 +124,7 @@ export async function getUnitTestInLocalProject(projectPath: string): Promise<Re
       } else if (fileStats.isFile() && fullPath.endsWith(unitTestsFileName)) {
         try {
           const relativePath = path.relative(projectPath, path.dirname(fullPath));
-          const unitTestFileNameWithoutExtension = path.basename(fullPath).replace('.unit-test.json', '');
+          const unitTestFileNameWithoutExtension = path.basename(fullPath).replace(unitTestsFileName, '');
           const fileNameWithSubPath = `${relativePath} - ${unitTestFileNameWithoutExtension}`;
           unitTests[fileNameWithSubPath] = fullPath;
         } catch {
@@ -490,17 +490,6 @@ export async function validateRunId(runId: string): Promise<void> {
 }
 
 /**
- * Logs messages and telemetry for successful operations.
- * @param {IActionContext} context - The action context.
- * @param {string} property - The property name for telemetry.
- * @param {string} message - The message to log.
- */
-export function logSuccess(context: IActionContext, property: string, message: string): void {
-  context.telemetry.properties[property] = 'Success';
-  ext.outputChannel.appendLog(message);
-}
-
-/**
  * Logs errors and telemetry for failed operations.
  * @param {IActionContext} context - The action context.
  * @param {Error} error - The error to log.
@@ -601,15 +590,6 @@ export const validateUnitTestName = async (
 
   return undefined;
 };
-
-/**
- * Logs telemetry properties for unit test creation.
- * @param {IActionContext} context - The action context.
- * @param {Record<string, string | undefined>} properties - Telemetry properties.
- */
-export function logTelemetry(context: IActionContext, properties: Record<string, string | undefined>): void {
-  Object.assign(context.telemetry.properties, properties);
-}
 
 /**
  * Handles errors by logging them and displaying user-facing messages.
@@ -1329,16 +1309,10 @@ export async function updateTestsSln(testsDirectory: string, logicAppCsprojPath:
  * Logs telemetry if the workflow is not within the project folder and throws an error.
  * @param projectPath - The absolute file system path of the project.
  * @param workflowPath - The workflow file path.
- * @param telemetryContext - (Optional) The telemetry or action context for logging events.
  * @throws {Error} Throws an error if the workflow file is not inside the project folder.
  */
-export function validateWorkflowPath(projectPath: string, workflowPath: string, telemetryContext?: any): void {
+export function validateWorkflowPath(projectPath: string, workflowPath: string): void {
   if (!workflowPath) {
-    if (telemetryContext) {
-      logTelemetry(telemetryContext, {
-        validationError: 'undefinedWorkflowPath',
-      });
-    }
     throw new Error(localize('error.undefinedWorkflowPath', 'The provided workflow path is undefined.'));
   }
 
@@ -1351,14 +1325,6 @@ export function validateWorkflowPath(projectPath: string, workflowPath: string, 
 
   // If 'relativePath' suggests the file is outside of 'projectPath'...
   if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-    // Log telemetry if provided.
-    if (telemetryContext) {
-      logTelemetry(telemetryContext, {
-        validationError: 'wrongWorkspace',
-        expectedProjectPath: normalizedProjectPath,
-        actualWorkflowPath: normalizedWorkflowPath,
-      });
-    }
     throw new Error(
       localize(
         'error.wrongWorkspace',

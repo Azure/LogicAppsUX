@@ -67,6 +67,7 @@ const fileOptions = [
   { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
   { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
   { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
+  { key: 'HandoffConversationalConsumption.json', text: 'Handoff Conversational Consumption' },
 
   // Monitoring View scenarios
   { key: 'divider_6', text: '-', itemType: DropdownMenuItemType.Divider },

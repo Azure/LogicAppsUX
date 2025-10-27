@@ -15,6 +15,8 @@ interface RuntimeFilterTagListProperties {
   setGroupedByConnector?: (newValue: boolean) => void;
   resultsSorting?: SearchResultSortOption;
   setResultsSorting?: (newValue: SearchResultSortOption) => void;
+  excludeBuiltin?: boolean;
+  hideGroupBy?: boolean;
 }
 
 export const RuntimeFilterTagList = ({
@@ -25,10 +27,12 @@ export const RuntimeFilterTagList = ({
   setFilters,
   setResultsSorting,
   setGroupedByConnector,
+  excludeBuiltin,
+  hideGroupBy,
 }: RuntimeFilterTagListProperties) => {
   const intl = useIntl();
 
-  const runtimeFilters = getDefaultRuntimeCategories().map((category) => ({
+  const runtimeFilters = getDefaultRuntimeCategories(excludeBuiltin).map((category) => ({
     key: `runtime-${category.key}`,
     text: category.text,
     value: category.key,
@@ -102,14 +106,16 @@ export const RuntimeFilterTagList = ({
                 checked={resultsSorting !== SearchResultSortOptions.unsorted}
               />
             </Tooltip>
-            <Tooltip content={groupByConnectorTooltipText} relationship="label">
-              <ToggleButton
-                appearance="subtle"
-                icon={groupedByConnector ? <GridFilled /> : <GridRegular />}
-                checked={groupedByConnector}
-                onClick={handleGroupByConnectorClick}
-              />
-            </Tooltip>
+            {!hideGroupBy && (
+              <Tooltip content={groupByConnectorTooltipText} relationship="label">
+                <ToggleButton
+                  appearance="subtle"
+                  icon={groupedByConnector ? <GridFilled /> : <GridRegular />}
+                  checked={groupedByConnector}
+                  onClick={handleGroupByConnectorClick}
+                />
+              </Tooltip>
+            )}
           </div>
         ) : null}
       </div>

@@ -111,6 +111,7 @@ export interface CreateConnectionProps {
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
   workflowKind?: string;
+  workflowMetadata?: { agentType?: string };
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -140,6 +141,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isAgentSubgraph,
     operationManifest,
     workflowKind,
+    workflowMetadata,
   } = props;
 
   const intl = useIntl();
@@ -302,10 +304,14 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
-  const isDynamicConnectionOptionValidForConnector = useMemo(
-    () => isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgentWorkflow(workflowKind ?? ''),
-    [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind]
-  );
+  const isDynamicConnectionOptionValidForConnector = useMemo(() => {
+    // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
+    // Standard: check workflowKind
+    // Consumption: check metadata.agentType
+    const isAgent = workflowKind ? isAgentWorkflow(workflowKind) : workflowMetadata?.agentType !== undefined;
+
+    return isUsingOAuth && connector?.properties?.isDynamicConnectionAllowed && isAgent && isAgentSubgraph;
+  }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
 
@@ -493,6 +499,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       isDynamicConnectionOptionValidForConnector ? isUsingDynamicConnection : undefined // NOTE: Pass in the dynamic connection value only if the scenario is valid
     );
   }, [
+    connectorId,
     isMultiAuth,
     parameterValues,
     supportsServicePrincipalConnection,
@@ -604,8 +611,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const stringResources = useMemo(
     () => ({
       USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
-        defaultMessage: 'Create as per-user connection?',
-        id: '7Jw4KB',
+        defaultMessage: 'Create as per-user connection? (requires Managed Service Identity to be enabled)',
+        id: 'swl4az',
         description: 'Dynamic connection checkbox text',
       }),
     }),

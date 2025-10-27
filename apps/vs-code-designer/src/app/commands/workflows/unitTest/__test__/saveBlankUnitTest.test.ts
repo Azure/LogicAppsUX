@@ -13,6 +13,7 @@ import { ext } from '../../../../../extensionVariables';
 import * as ConvertWorkspace from '../../../convertToWorkspace';
 import * as syncCloudSettings from '../../../syncCloudSettings';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { testMockOutputsDirectory, testsDirectoryName } from '../../../../../constants';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -45,8 +46,8 @@ describe('saveBlankUnitTest', () => {
     logicAppName: 'LogicApp1',
     logicAppTestFolderPath: '/fake/project/myLogicApp',
     workflowTestFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName),
-    mocksFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName, 'MockOutputs'),
-    testsDirectory: path.join(dummyProjectPath, 'tests'),
+    mocksFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName, testMockOutputsDirectory),
+    testsDirectory: path.join(dummyProjectPath, testsDirectoryName),
   };
 
   const dummyMockOperations: {
@@ -85,11 +86,6 @@ describe('saveBlankUnitTest', () => {
     // Stub directory creation
     vi.spyOn(fs, 'ensureDir').mockResolvedValue();
 
-    // Stub telemetry logging functions
-    vi.spyOn(unitTestUtils, 'logTelemetry').mockImplementation(() => {});
-    vi.spyOn(unitTestUtils, 'logError').mockImplementation(() => {});
-    vi.spyOn(unitTestUtils, 'logSuccess').mockImplementation(() => {});
-
     // Stub isMultiRootWorkspace to simulate a valid multi-root environment
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(true);
     vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(true);
@@ -117,9 +113,9 @@ describe('saveBlankUnitTest', () => {
   });
 
   test('should successfully create a blank unit test', async () => {
-    await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
+    await saveBlankUnitTest(dummyNode, dummyUnitTestDefinition);
 
-    expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ unitTestSaveStatus: 'Success' }));
+    expect(dummyContext.telemetry.properties.unitTestSaveStatus).toBe('Success');
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
     expect(fs.ensureDir).toHaveBeenCalled();
 
@@ -133,10 +129,10 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
     vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(false);
 
-    await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
+    await saveBlankUnitTest(dummyNode, dummyUnitTestDefinition);
 
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
-    expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ multiRootWorkspaceValid: 'false' }));
+    expect(dummyContext.telemetry.properties.multiRootWorkspaceValid).toBe('false');
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
     expect(dummyContext.telemetry.properties.result).toBe('Canceled');
   });
@@ -145,7 +141,7 @@ describe('saveBlankUnitTest', () => {
     const testError = new Error('Test error');
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockRejectedValueOnce(testError);
 
-    await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
+    await saveBlankUnitTest(dummyNode, dummyUnitTestDefinition);
 
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
     expect(dummyContext.telemetry.properties.result).toBe('Failed');

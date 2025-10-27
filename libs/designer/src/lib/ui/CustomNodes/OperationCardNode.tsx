@@ -1,4 +1,5 @@
 import { getMonitoringError } from '../../common/utilities/error';
+import Constants from '../../common/constants';
 import { useNodeRepetition, type AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
@@ -48,6 +49,8 @@ import {
   useSubgraphRunData,
   useRunIndex,
   useFlowErrorsForNode,
+  useToolRunIndex,
+  useActionMetadata,
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
@@ -55,7 +58,7 @@ import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, SUBGRAPH_TYPES, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -66,6 +69,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { EdgeDrawSourceHandle } from './handles/EdgeDrawSourceHandle';
 import { EdgeDrawTargetHandle } from './handles/EdgeDrawTargetHandle';
+import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -102,6 +106,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const selfRunData = useRunData(id);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const toolRunIndex = useRunIndex(graphId);
+  const mcpToolRunIndex = useToolRunIndex(id);
   const isA2AWorkflow = useIsA2AWorkflow();
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
@@ -114,6 +119,14 @@ const DefaultNode = ({ id }: NodeProps) => {
     isWithinAgenticLoop
   );
 
+  const parentActionMetadata = useActionMetadata(parentNodeId);
+
+  const shouldShowPager = useMemo(() => {
+    const isParentAgent = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
+    const isMcpClient = metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+    return isMonitoringView && isParentAgent && isMcpClient && (metadata?.toolRunData?.repetitionCount ?? 0) > 1;
+  }, [metadata?.toolRunData?.repetitionCount, metadata?.subgraphType, parentActionMetadata?.type, isMonitoringView]);
+
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
       if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
@@ -124,9 +137,14 @@ const DefaultNode = ({ id }: NodeProps) => {
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
+  const actualToolRunIndex = useMemo(
+    () => (metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? mcpToolRunIndex : toolRunIndex),
+    [metadata, toolRunIndex, mcpToolRunIndex]
+  );
+
   useEffect(() => {
-    if (isWithinAgenticLoop && !isNullOrUndefined(toolRunIndex)) {
-      const subgraphRunData = parentSubgraphRunData?.[id]?.actionResults?.[toolRunIndex];
+    if (isWithinAgenticLoop && !isNullOrUndefined(actualToolRunIndex)) {
+      const subgraphRunData = parentSubgraphRunData?.[id]?.actionResults?.[actualToolRunIndex];
       if (subgraphRunData) {
         dispatch(
           setRepetitionRunData({
@@ -137,9 +155,11 @@ const DefaultNode = ({ id }: NodeProps) => {
         );
       }
     }
-  }, [isWithinAgenticLoop, id, dispatch, toolRunIndex, parentSubgraphRunData]);
+  }, [isWithinAgenticLoop, id, dispatch, actualToolRunIndex, parentSubgraphRunData]);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
+
+  const isAgentTool = useMemo(() => metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT, [metadata?.subgraphType]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -167,7 +187,7 @@ const DefaultNode = ({ id }: NodeProps) => {
         loopSources,
         graphId: metadata?.graphId,
       },
-      canDrag: !readOnly && !isTrigger,
+      canDrag: !readOnly && !isTrigger && !isAgentTool,
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
@@ -183,7 +203,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
-  const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
+  const showLeafComponents = useMemo(() => !readOnly && isLeaf && !isAgentTool, [readOnly, isLeaf, isAgentTool]);
 
   const { brandColor, iconUri } = useOperationVisuals(id);
 
@@ -342,7 +362,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           showStatusPill={isMonitoringView && isCardActive}
           title={label}
           icon={iconUri}
-          draggable={!readOnly && !isTrigger}
+          draggable={!readOnly && !isTrigger && !isAgentTool}
           brandColor={brandColor}
           id={id}
           connectionRequired={isConnectionRequired}
@@ -372,6 +392,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           nodeIndex={nodeIndex}
           subtleBackground={isA2AWorkflow && isTrigger}
         />
+        {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} /> : null}
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <EdgeDrawSourceHandle />
       </div>

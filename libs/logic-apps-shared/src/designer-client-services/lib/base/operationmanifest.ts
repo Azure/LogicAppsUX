@@ -41,10 +41,11 @@ import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
-import handoffManifest from '../standard/manifest/handoff';
+import handoffManifest from './manifests/handoff';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
+const mcpclienttool = 'mcpclienttool';
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
 const as2Encode = 'as2encode';
@@ -129,9 +130,12 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
+const hl7decode = 'hl7decode';
+const hl7encode = 'hl7encode';
 export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 export const chunktextwithmetadata = 'chunktextwithmetadata';
 
+export const mcpclientConnectorId = 'connectionProviders/mcpclient';
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 export const appServiceConnectorId = '/connectionProviders/appService';
@@ -151,6 +155,7 @@ const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 const x12ConnectorId = 'connectionProviders/x12Operations';
 const xmlOperationsConnectionId = 'connectionProviders/xmlOperations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
+const hl7ConnectorId = 'connectionProviders/hl7Operations';
 export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
 
 const azurefunction = 'azurefunction';
@@ -230,12 +235,15 @@ export const supportedBaseManifestTypes = [
   parsedocument,
   parsedocumentwithmetadata,
   chunktextwithmetadata,
+  hl7decode,
+  hl7encode,
 ];
 
 export const builtInConnectorIds = {
   dataOperation: dataOperationConnectorId,
   control: controlConnectorId,
   agent: agentConnectorId,
+  mcpclient: mcpclientConnectorId,
   dateTime: dateTimeConnectorId,
   schedule: scheduleConnectorId,
   http: httpConnectorId,
@@ -367,7 +375,12 @@ export function isBuiltInOperation(definition: any): boolean {
     case chunktext:
     case chunktextwithmetadata:
     case parsedocumentwithmetadata:
+    case hl7decode:
+    case hl7encode:
       return true;
+
+    case mcpclienttool:
+      return definition?.kind?.toLowerCase() !== 'managed';
 
     default:
       return false;
@@ -771,6 +784,14 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [chunktextwithmetadata]: {
     connectorId: dataOperationConnectorId,
     operationId: chunktextwithmetadata,
+  },
+  [hl7decode]: {
+    connectorId: hl7ConnectorId,
+    operationId: hl7decode,
+  },
+  [hl7encode]: {
+    connectorId: hl7ConnectorId,
+    operationId: hl7encode,
   },
 };
 

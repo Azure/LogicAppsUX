@@ -200,7 +200,9 @@ export const DesignerContextualMenu = () => {
 
   const subgraphMenuItems: JSX.Element[] = useMemo(
     () => [
-      ...(metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE || metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
+      ...(metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ||
+      metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ||
+      metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
         ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
         : []),
     ],
@@ -222,7 +224,7 @@ export const DesignerContextualMenu = () => {
       items.push(...(metadata?.subgraphType ? subgraphMenuItems : actionContextMenuItems));
     }
 
-    if (metadata?.subgraphType || isScopeNode) {
+    if ((metadata?.subgraphType && metadata?.subgraphType !== SUBGRAPH_TYPES.MCP_CLIENT) || isScopeNode) {
       // For subgraphs and scope nodes, we show graph context menu items
       items.push(...graphMenuItems);
     }

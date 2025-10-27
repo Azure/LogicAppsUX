@@ -1,5 +1,5 @@
-import { Subtitle2, Caption1, Text } from '@fluentui/react-components';
-import { toFriendlyDurationString, type Run } from '@microsoft/logic-apps-shared';
+import { Subtitle2, Caption1Strong, Text, Badge, Tag } from '@fluentui/react-components';
+import { equals, toFriendlyDurationString, type Run } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import StatusIndicator from './statusIndicator';
 import { useIntl } from 'react-intl';
@@ -7,11 +7,15 @@ import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 import { useIntervalEffect } from '@react-hookz/web';
 import { getRun } from '../../../core';
 
+import { ArrowRedoFilled as RetryIcon, FlashFilled as DraftIcon } from '@fluentui/react-icons';
+
 export const RunHistoryEntryInfo = (props: {
   run: Run;
   showId?: boolean;
+  showVersion?: boolean;
+  size?: 'small' | 'medium';
 }) => {
-  const { run, showId = false } = props;
+  const { run, showId = false, showVersion = false, size = 'medium' } = props;
 
   const intl = useIntl();
 
@@ -71,18 +75,74 @@ export const RunHistoryEntryInfo = (props: {
     }
   );
 
+  const retryText = intl.formatMessage({
+    defaultMessage: 'Resubmission',
+    id: 'FFpPcf',
+    description: 'Text for retry run badge',
+  });
+
+  const draftText = intl.formatMessage({
+    defaultMessage: 'Draft',
+    id: '+RrvZW',
+    description: 'Text for draft run badge',
+  });
+
+  const isRetry = !!run.properties?.previousRunId;
+  const isDraftRun = equals((run.properties?.workflow as any)?.mode, 'Draft');
+
+  if (size === 'small') {
+    return (
+      <div className={styles.runEntryContentSmall}>
+        <StatusIndicator status={run.properties.status} onlyIcon />
+        <Caption1Strong>{startTimeString}</Caption1Strong>
+        {isRetry && (
+          <Badge icon={<RetryIcon />} size="medium" color="severe" appearance="ghost">
+            {retryText}
+          </Badge>
+        )}
+        {isDraftRun && (
+          <Badge icon={<DraftIcon />} size="medium" color="brand" appearance="ghost">
+            {draftText}
+          </Badge>
+        )}
+        <div style={{ flexGrow: 1 }} />
+        {durationString && (
+          <Badge size="small" color="informative" appearance="ghost">
+            {durationString}
+          </Badge>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.runEntryContent}>
-      <Subtitle2>{startTimeString}</Subtitle2>
+      <div className={styles.runEntrySubtext}>
+        <Subtitle2>{startTimeString}</Subtitle2>
+        {isRetry && (
+          <Badge icon={<RetryIcon />} size="medium" color="severe" appearance="ghost">
+            {retryText}
+          </Badge>
+        )}
+        {isDraftRun && (
+          <Badge icon={<DraftIcon />} size="medium" color="brand" appearance="ghost">
+            {draftText}
+          </Badge>
+        )}
+      </div>
       <div className={styles.runEntrySubtext}>
         <StatusIndicator status={run.properties.status} />
         {durationString && <Text> • {durationString}</Text>}
       </div>
       {showId && (
-        <>
-          <Caption1>{runIdLabel}</Caption1>
-          <Caption1>{versionLabel}</Caption1>
-        </>
+        <Tag size="small" color="informative">
+          {runIdLabel}
+        </Tag>
+      )}
+      {showVersion && (
+        <Tag size="small" color="informative">
+          {versionLabel}
+        </Tag>
       )}
     </div>
   );

@@ -1,10 +1,14 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "**/node_modules/**", "**/build/**", "**/__test__/**", "**/__tests__/**"],
+  "ignorePatterns": ["!**/*", "**/node_modules/**", "**/build/**", "**/__test__/**", "**/__tests__/**", "**/test/**"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-namespace": "off"
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],
@@ -14,7 +18,9 @@
     },
     {
       "files": ["*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
     }
   ]
 }

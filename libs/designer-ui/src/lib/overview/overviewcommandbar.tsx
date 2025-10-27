@@ -2,15 +2,30 @@ import type { ButtonProps } from '@fluentui/react-components';
 import { Button, Toolbar } from '@fluentui/react-components';
 import { ArrowClockwiseRegular, PlayRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
+import { ChatButton } from './chat';
+import type { AgentURL } from '@microsoft/logic-apps-shared';
 
 export interface OverviewCommandBarProps {
   triggerName?: string;
+  isDarkMode?: boolean;
   isRefreshing?: boolean;
+  isAgentWorkflow?: boolean;
+  agentUrlLoading?: boolean;
+  agentUrlData?: AgentURL;
   onRefresh(): void;
   onRunTrigger(): void;
 }
 
-export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefreshing, onRefresh, onRunTrigger, triggerName }) => {
+export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
+  isRefreshing,
+  isDarkMode,
+  isAgentWorkflow,
+  agentUrlLoading,
+  agentUrlData,
+  onRefresh,
+  onRunTrigger,
+  triggerName,
+}) => {
   const intl = useIntl();
 
   const Resources = {
@@ -28,13 +43,6 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefres
 
   const items: ButtonProps[] = [
     {
-      'aria-label': Resources.OVERVIEW_RUN_TRIGGER,
-      icon: <PlayRegular />,
-      title: Resources.OVERVIEW_RUN_TRIGGER,
-      onClick: onRunTrigger,
-      disabled: !triggerName,
-    },
-    {
       'aria-label': Resources.OVERVIEW_REFRESH,
       disabled: isRefreshing,
       icon: <ArrowClockwiseRegular />,
@@ -43,8 +51,25 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefres
     },
   ];
 
+  if (!isAgentWorkflow) {
+    items.unshift({
+      'aria-label': Resources.OVERVIEW_RUN_TRIGGER,
+      icon: <PlayRegular />,
+      title: Resources.OVERVIEW_RUN_TRIGGER,
+      onClick: onRunTrigger,
+      disabled: !triggerName,
+    });
+  }
+
+  const buttonCommonProps = {
+    appearance: 'transparent',
+    isDarkMode: isDarkMode,
+    disabled: !triggerName,
+  };
+
   return (
     <Toolbar data-testid="msla-overview-command-bar" style={{ padding: '8px 0' }}>
+      {isAgentWorkflow ? <ChatButton loading={agentUrlLoading} data={agentUrlData} buttonCommonProps={buttonCommonProps} /> : null}
       {items.map((item, index) => (
         <Button key={index} appearance="transparent" {...item}>
           {item.title}
