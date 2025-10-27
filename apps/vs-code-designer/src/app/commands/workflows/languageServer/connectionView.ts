@@ -46,8 +46,17 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private readonly connectorName: string;
   private readonly range: Range;
   private readonly connectorType: string;
+  private readonly currentConnectionId: string;
 
-  constructor(context: IActionContext, filePath: string, methodName: string, connectorName: string, connectorType: string, range: Range) {
+  constructor(
+    context: IActionContext,
+    filePath: string,
+    methodName: string,
+    connectorName: string,
+    connectorType: string,
+    range: Range,
+    currentConnectionId: string
+  ) {
     const panelName: string = `Connection view - ${connectorName} - ${methodName}`;
     const panelGroupKey = ext.webViewKey.languageServer;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
@@ -56,6 +65,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
     this.range = range;
     this.connectorName = connectorName;
     this.connectorType = connectorType;
+    this.currentConnectionId = currentConnectionId;
   }
 
   public async createPanel(): Promise<void> {
@@ -149,6 +159,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
             connector: {
               name: this.connectorName,
               type: this.connectorType,
+              currentConnectionId: this.currentConnectionId,
             },
           },
         });
@@ -355,8 +366,17 @@ export async function openLanguageServerConnectionView(
   methodName: string,
   connectorName: string,
   connectorType: string,
-  range: Range
+  range: Range,
+  currentConnectionId: string
 ): Promise<void> {
-  const connectionViewObj: OpenConnectionView = new OpenConnectionView(context, filePath, methodName, connectorName, connectorType, range);
+  const connectionViewObj: OpenConnectionView = new OpenConnectionView(
+    context,
+    filePath,
+    methodName,
+    connectorName,
+    connectorType,
+    range,
+    currentConnectionId
+  );
   await connectionViewObj.createPanel();
 }

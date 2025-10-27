@@ -20,7 +20,11 @@ import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vsco
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
 
-const ConnectionView = ({ connectorName, connectorType }: { connectorName: string; connectorType: string }) => {
+const ConnectionView = ({
+  connectorName,
+  connectorType,
+  currentConnectionId,
+}: { connectorName: string; connectorType: string; currentConnectionId: string }) => {
   const vscode = useContext(VSCodeContext);
   const sendMsgToVsix = useCallback(
     (msg: any) => {
@@ -36,6 +40,7 @@ const ConnectionView = ({ connectorName, connectorType }: { connectorName: strin
   const onConnectionSuccessful = (connection: Connection) => {
     const designerState = DesignerStore.getState();
     const { connectionsMapping, connectionReferences: referencesObject } = designerState.connections;
+    console.log('charlie', connectionsMapping, referencesObject);
     const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
       const referenceKey = getRecordEntry(connectionsMapping, nodeId);
       if (!referenceKey || !referencesObject[referenceKey]) {
@@ -54,6 +59,7 @@ const ConnectionView = ({ connectorName, connectorType }: { connectorName: strin
       closeView={closeView}
       connectorName={connectorName}
       connectorType={connectorType}
+      currentConnectionId={currentConnectionId}
       onConnectionSuccessful={onConnectionSuccessful}
     />
   );
@@ -77,7 +83,7 @@ export const LanguageServerConnectionView = () => {
     connector,
   } = vscodeDesigner;
 
-  const { name: connectorName, type: connectorType } = connector;
+  const { name: connectorName, type: connectorType, currentConnectionId } = connector;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   useThemeObserver(document.body, theme, setTheme, {
@@ -162,7 +168,7 @@ export const LanguageServerConnectionView = () => {
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          <ConnectionView connectorName={connectorName} connectorType={connectorType} />
+          <ConnectionView connectorName={connectorName} connectorType={connectorType} currentConnectionId={currentConnectionId} />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>

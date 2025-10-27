@@ -17,6 +17,7 @@ export interface LanguageServerState {
   connector: {
     name: string;
     type: string;
+    currentConnectionId: string;
   };
 }
 
@@ -42,6 +43,7 @@ const initialState: LanguageServerState = {
   connector: {
     name: '',
     type: '',
+    currentConnectionId: '',
   },
 };
 

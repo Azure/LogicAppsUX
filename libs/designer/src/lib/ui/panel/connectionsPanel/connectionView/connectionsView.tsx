@@ -21,12 +21,13 @@ interface ConnectionsViewProps {
   closeView: () => void;
   connectorName: string;
   connectorType: string;
+  currentConnectionId: string;
   onConnectionSuccessful: (connection: Connection) => void;
 }
 
 export const ConnectionsView = (props: ConnectionsViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { connectorName, connectorType } = props;
+  const { connectorName, connectorType, currentConnectionId } = props;
 
   const styles = useConnectionViewStyles();
 
@@ -89,6 +90,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
         return (
           <SelectConnectionWrapper
             connectorId={connectorId}
+            currentConnectionId={currentConnectionId}
             connectorName={connectorName}
             onConnectionSuccessful={props.onConnectionSuccessful}
             onConnectionClose={props.closeView}
@@ -103,7 +105,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
           />
         );
     }
-  }, [connectorId, panelStatus, connectorName, connectorType, props.closeView, props.onConnectionSuccessful]);
+  }, [connectorId, panelStatus, connectorName, currentConnectionId, connectorType, props.closeView, props.onConnectionSuccessful]);
 
   return (
     <div style={{ padding: '0 10px', overflowY: 'auto' }}>

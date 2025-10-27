@@ -23,9 +23,11 @@ export const SelectConnectionWrapper = ({
   connectorName,
   onConnectionSuccessful,
   onConnectionClose,
+  currentConnectionId,
 }: {
   connectorId: string;
   connectorName: string;
+  currentConnectionId: string;
   onConnectionSuccessful: (connection: Connection) => void;
   onConnectionClose: () => void;
 }) => {
@@ -120,7 +122,7 @@ export const SelectConnectionWrapper = ({
   return (
     <SelectConnection
       connections={connections}
-      currentConnectionId={undefined}
+      currentConnectionId={currentConnectionId}
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={onConnectionClose}
       isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
