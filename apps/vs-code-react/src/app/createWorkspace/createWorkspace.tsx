@@ -13,15 +13,14 @@ import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { nameValidation } from './validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { useIntl } from 'react-intl';
-import { useIntlMessages, workspaceMessages } from '../../intl';
+import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 
 export const CreateWorkspace: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
-  const intl = useIntl();
   const intlText = useIntlMessages(workspaceMessages);
+  const format = useIntlFormatters(workspaceMessages);
 
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const {
@@ -125,17 +124,10 @@ export const CreateWorkspace: React.FC = () => {
     CREATING: getCreatingMessage(),
     NEXT: intlText.NEXT_BUTTON,
     BACK: intlText.BACK_BUTTON,
-    STEP_INDICATOR: intl.formatMessage(
-      {
-        defaultMessage: 'Step {current} of {total}',
-        id: '4IV3/7',
-        description: 'Step indicator text',
-      },
-      {
-        current: currentStep + 1,
-        total: totalSteps,
-      }
-    ),
+    STEP_INDICATOR: format.STEP_INDICATOR({
+      current: currentStep + 1,
+      total: totalSteps,
+    }),
     SUCCESS_TITLE: getSuccessTitle(),
     SUCCESS_DESCRIPTION: getSuccessDescription(),
     STEP_PROJECT_SETUP: getProjectSetupStepLabel(),

@@ -8,16 +8,20 @@
  *
  * Usage:
  * 1. Import the hook and messages in your component:
- *    import { useIntlMessages, commonMessages } from '../intl';
+ *    import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../intl';
  *
  * 2. Use the hook to get formatted messages:
- *    const intlText = useIntlMessages(commonMessages);
+ *    const intlText = useIntlMessages(workspaceMessages);
  *
  * 3. Access the formatted strings:
  *    <div>{intlText.LOADING}</div>
+ *
+ * 4. For parameterized messages, use useIntlFormatters:
+ *    const format = useIntlFormatters(workspaceMessages);
+ *    <div>{format.STEP_INDICATOR({ current: 1, total: 3 })}</div>
  */
 
-export { useIntlMessages } from './useIntlMessages';
+export { useIntlMessages, useIntlFormatters } from './useIntlMessages';
 export {
   commonMessages,
   unitTestMessages,

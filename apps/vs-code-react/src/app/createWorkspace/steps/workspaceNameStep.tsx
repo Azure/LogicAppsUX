@@ -8,8 +8,7 @@ import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setProjectPath, setWorkspaceName } from '../../../state/createWorkspaceSlice';
-import { useIntl } from 'react-intl';
-import { useIntlMessages, workspaceMessages } from '../../../intl';
+import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
@@ -18,8 +17,8 @@ import { nameValidation } from '../validation/helper';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
-  const intl = useIntl();
   const intlText = useIntlMessages(workspaceMessages);
+  const format = useIntlFormatters(workspaceMessages);
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
@@ -64,31 +63,11 @@ export const WorkspaceNameStep: React.FC = () => {
         const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
         const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
 
-        const FOLDER_EXISTS_MESSAGE = intl.formatMessage(
-          {
-            defaultMessage: 'A folder named "{name}" already exists in the selected location.',
-            id: 'Rtnnx8',
-            description: 'Folder already exists in selected location text.',
-          },
-          {
-            name: name,
-          }
-        );
-        const CODE_WORKSPACE_EXISTS_MESSAGE = intl.formatMessage(
-          {
-            defaultMessage: 'A workspace file "{name}.code-workspace" already exists.',
-            id: 'X0a7uc',
-            description: 'Folder already exists in selected location text.',
-          },
-          {
-            name: name,
-          }
-        );
         if (workspaceExistenceResults[workspaceFolder] === true) {
-          return FOLDER_EXISTS_MESSAGE;
+          return format.FOLDER_EXISTS_MESSAGE({ name });
         }
         if (workspaceExistenceResults[workspaceFile] === true) {
-          return CODE_WORKSPACE_EXISTS_MESSAGE;
+          return format.CODE_WORKSPACE_EXISTS_MESSAGE({ name });
         }
       }
 
@@ -98,8 +77,9 @@ export const WorkspaceNameStep: React.FC = () => {
       workspaceProjectPath.fsPath,
       intlText.WORKSPACE_NAME_EMPTY,
       intlText.WORKSPACE_NAME_VALIDATION,
+      format.FOLDER_EXISTS_MESSAGE,
+      format.CODE_WORKSPACE_EXISTS_MESSAGE,
       separator,
-      intl,
       workspaceExistenceResults,
     ]
   );

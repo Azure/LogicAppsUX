@@ -617,6 +617,16 @@ export const workspaceMessages = defineMessages({
     id: '4IV3/7',
     description: 'Step indicator text',
   },
+  FOLDER_EXISTS_MESSAGE: {
+    defaultMessage: 'A folder named "{name}" already exists in the selected location.',
+    id: 'Rtnnx8',
+    description: 'Folder already exists in selected location text.',
+  },
+  CODE_WORKSPACE_EXISTS_MESSAGE: {
+    defaultMessage: 'A workspace file "{name}.code-workspace" already exists.',
+    id: 'mbQ+Js',
+    description: 'Workspace file already exists text.',
+  },
 });
 
 export const exportMessages = defineMessages({
