@@ -105,13 +105,13 @@ export const AgentChat = ({
   }, []);
 
   const toolResultCallback = useCallback(
-    (agentName: string, toolName: string, iteration: number, subIteration: number, mcpToolName?: string) => {
+    (agentName: string, toolName: string, iteration: number, subIteration: number, mcpServerToolName?: string) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
       } else {
         dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-        if (mcpToolName) {
+        if (mcpServerToolName) {
           dispatch(setToolRunIndex({ page: subIteration, nodeId: toolName }));
         } else {
           dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
