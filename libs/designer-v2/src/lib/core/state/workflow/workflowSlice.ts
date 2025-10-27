@@ -117,6 +117,7 @@ export const workflowSlice = createSlice({
           graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
               // eslint-disable-next-line no-param-reassign
+              edge.id = `${action.payload.nodeId}-${edge.target}`;
               edge.source = action.payload.nodeId;
             }
             return edge;
@@ -582,9 +583,8 @@ export const workflowSlice = createSlice({
     },
     removeRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
-      const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
-      if (!parentOperation || !childOperation) {
+      if (!childOperation) {
         return;
       }
       delete childOperation.runAfter?.[parentOperationId];
