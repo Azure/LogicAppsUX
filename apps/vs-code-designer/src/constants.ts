@@ -343,13 +343,6 @@ export const PackageManager = {
   brew: 'brew',
 } as const;
 export type PackageManager = (typeof PackageManager)[keyof typeof PackageManager];
-// Operating System Platforms
-export const Platform = {
-  windows: 'win32',
-  mac: 'darwin',
-  linux: 'linux',
-} as const;
-export type Platform = (typeof Platform)[keyof typeof Platform];
 
 // Resources
 export const kubernetesKind = 'kubernetes';

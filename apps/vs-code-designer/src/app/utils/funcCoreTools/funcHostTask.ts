@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, localSettingsFileName, Platform, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
@@ -14,6 +14,7 @@ import * as vscode from 'vscode';
 import { delay } from '../delay';
 import * as cp from 'child_process';
 import * as os from 'os';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
