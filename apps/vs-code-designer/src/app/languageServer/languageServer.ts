@@ -176,7 +176,7 @@ export default class LogicAppsSeverLanguage {
     const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
     const files = await fse.readdir(sdkFolderPath);
     const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Agents.Sdk.') && file.endsWith('.nupkg');
+      return file.startsWith('Microsoft.Azure.Workflows.Sdk.Agents.') && file.endsWith('.nupkg');
     });
 
     const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
@@ -268,7 +268,7 @@ export async function installLSPSDK(): Promise<void> {
     const shouldCopy = !(await fse.pathExists(lspDirectoryPath));
 
     if (shouldCopy) {
-      const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Agents.Sdk.1.141.0.7.nupkg');
+      const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.Agents.1.141.0.9.nupkg');
       try {
         await fse.ensureDir(lspDirectoryPath);
 
