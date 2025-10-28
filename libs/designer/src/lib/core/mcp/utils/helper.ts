@@ -216,16 +216,16 @@ export const validateMcpServerName = (serverName: string): string | undefined =>
 
   if (isNullOrEmpty(serverName)) {
     return intl.formatMessage({
-      defaultMessage: 'Server name must not be empty.',
-      id: 'XXUvLB',
+      defaultMessage: 'Server name is required.',
+      id: 'bNReSA',
       description: 'Error message when the server name is empty.',
     });
   }
 
   if (equals(serverName, 'default')) {
     return intl.formatMessage({
-      defaultMessage: 'Server name cannot be "default". Please choose a different name.',
-      id: '8u5yNl',
+      defaultMessage: `Can't use "default" as the server name.`,
+      id: 'tZT3Wl',
       description: 'Error message when the server name is "default".',
     });
   }
@@ -234,15 +234,15 @@ export const validateMcpServerName = (serverName: string): string | undefined =>
   if (!regex.test(serverName)) {
     if (serverName.length > 80) {
       return intl.formatMessage({
-        defaultMessage: 'Server name must not exceed 80 characters.',
-        id: 'JthsNB',
+        defaultMessage: 'Server name must be less than 80 characters.',
+        id: 'RM72rC',
         description: 'Error message when the server name exceeds maximum length.',
       });
     }
 
     return intl.formatMessage({
-      defaultMessage: 'Provide a unique name with only letters and numbers. No spaces or special characters are allowed.',
-      id: 'utSzxG',
+      defaultMessage: 'Enter a unique name under 80 characters with only letters and numbers.',
+      id: 'PXn/Tl',
       description: 'Error message when the server name is invalid regex.',
     });
   }
@@ -255,16 +255,16 @@ export const validateMcpServerDescription = (description: string): string | unde
 
   if (isNullOrEmpty(description)) {
     return intl.formatMessage({
-      defaultMessage: 'Description must not be empty.',
-      id: 'SiGVz1',
+      defaultMessage: 'Description is required.',
+      id: 'UTo47U',
       description: 'Error message when the server description is empty.',
     });
   }
 
   if (description.length > 1024) {
     return intl.formatMessage({
-      defaultMessage: 'Description must not exceed 1024 characters.',
-      id: '8eOFy9',
+      defaultMessage: 'Description must be less than 1024 characters.',
+      id: 'NE9wXx',
       description: 'Error message when the server description exceeds maximum length.',
     });
   }
