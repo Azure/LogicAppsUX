@@ -22,6 +22,8 @@ test.describe(
       var nameInput = await page.getByTestId('connection-display-name-input');
       nameInput.clear();
       nameInput.fill(connectionName);
+      // Select "Select existing" entry mode (default is selected, but we'll ensure it's clicked)
+      await page.getByLabel('Select existing').click();
       // Select the subscription
       var subscriptionCombobox = await page.getByTestId('subscription-combobox');
       await subscriptionCombobox.getByRole('button').click();
@@ -97,6 +99,51 @@ test.describe(
 
       // Verify MSI warning is shown
       await expect(page.getByText('Missing role write permissions')).toBeVisible();
+    });
+
+    test('Can enter connection details manually', async ({ page, realDataApi }) => {
+      await page.goto('/');
+      await realDataApi.goToWorkflow();
+
+      // Click on the agent action
+      await expect(page.getByLabel('Default Agent operation')).toBeVisible();
+      await page.getByLabel('Default Agent operation').click();
+
+      // Open the connection submenu
+      await page.getByTestId('Default_Agent-connection-submenu').click();
+      await page.getByTestId('Default_Agent-create-connection-button').click();
+
+      // Expect to see the connection components
+      await expect(page.getByText('Create a new connection')).toBeVisible();
+
+      // Give connection a name
+      var connectionName = `E2E_Manual_${new Date().toISOString()}`;
+      var nameInput = await page.getByTestId('connection-display-name-input');
+      nameInput.clear();
+      nameInput.fill(connectionName);
+
+      // Select "Enter manually" mode
+      await page.getByLabel('Enter manually').click();
+
+      // Verify subscription dropdown is hidden
+      await expect(page.getByTestId('subscription-combobox')).not.toBeVisible();
+
+      // Verify manual input fields are enabled and visible
+      const endpointInput = page.locator('input[id*="openAIEndpoint"]').first();
+      await expect(endpointInput).toBeVisible();
+      await expect(endpointInput).toBeEnabled();
+
+      // Fill in manual values
+      await endpointInput.fill('https://test-endpoint.openai.azure.com/');
+
+      // Fill in API key
+      const keyInput = page.locator('input[id*="openAIKey"]').first();
+      await expect(keyInput).toBeVisible();
+      await keyInput.fill('test-api-key-12345');
+
+      // Verify create button is enabled
+      var createButton = await page.getByTestId('create-connection-button');
+      await expect(createButton).toBeEnabled();
     });
   }
 );
