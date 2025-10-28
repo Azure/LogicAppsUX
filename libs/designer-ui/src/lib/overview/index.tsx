@@ -31,7 +31,7 @@ export interface OverviewProps {
   onOpenRun(run: RunDisplayItem): void;
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError>;
-  onCreateUnitTest?(run: RunDisplayItem): void;
+  onCreateUnitTestFromRun?(run: RunDisplayItem): void;
 }
 
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
@@ -60,7 +60,7 @@ export const Overview: React.FC<OverviewProps> = ({
   onOpenRun,
   onRunTrigger,
   onVerifyRunId,
-  onCreateUnitTest,
+  onCreateUnitTestFromRun,
 }: OverviewProps) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -173,7 +173,7 @@ export const Overview: React.FC<OverviewProps> = ({
               items={runItems}
               loading={loading}
               onOpenRun={onOpenRun}
-              onCreateUnitTest={onCreateUnitTest}
+              onCreateUnitTestFromRun={onCreateUnitTestFromRun}
               supportsUnitTest={supportsUnitTest}
             />
           </InfiniteScroll>
