@@ -37,12 +37,25 @@ export function getConnectionId(state: ConnectionsStoreState, nodeId: string): s
 
 export function getConnectionReference(state: ConnectionsStoreState, nodeId: string): ConnectionReference {
   const { connectionsMapping, connectionReferences } = state;
-  return getRecordEntry(connectionReferences, getRecordEntry(connectionsMapping, nodeId) ?? '') ?? mockConnectionReference;
+  const mappedConnectionReference = getRecordEntry(connectionsMapping, nodeId);
+  if (!mappedConnectionReference) {
+    return mockEmptyConnectionReference;
+  }
+  const connectionReference = getRecordEntry(connectionReferences, mappedConnectionReference);
+  if (!connectionReference) {
+    return mockInvalidConnectionReference;
+  }
+  return connectionReference;
 }
 
-export const mockConnectionReference: ConnectionReference = {
-  api: { id: 'apiId' },
-  connection: { id: 'connectionId' },
+export const mockInvalidConnectionReference: ConnectionReference = {
+  api: { id: '__MOCK_INVALID_CONNECTION_REFERENCE__' },
+  connection: { id: '__MOCK_INVALID_CONNECTION_REFERENCE__' },
+};
+
+export const mockEmptyConnectionReference: ConnectionReference = {
+  api: { id: '__MOCK_EMPTY_CONNECTION_REFERENCE__' },
+  connection: { id: '__MOCK_EMPTY_CONNECTION_REFERENCE__' },
 };
 
 export function isConnectionValid(connection: Connection): boolean {
