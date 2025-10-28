@@ -10,6 +10,8 @@ import {
   type ConnectionsData,
   getIntl,
   ResourceService,
+  isNullOrEmpty,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
@@ -207,4 +209,65 @@ export const validateNameAvailability = async (name: string, resourceIdPrefix: s
     }
     return error.message ?? generalErrorMessage;
   }
+};
+
+export const validateMcpServerName = (serverName: string): string | undefined => {
+  const intl = getIntl();
+
+  if (isNullOrEmpty(serverName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Server name must not be empty.',
+      id: 'XXUvLB',
+      description: 'Error message when the server name is empty.',
+    });
+  }
+
+  if (equals(serverName, 'default')) {
+    return intl.formatMessage({
+      defaultMessage: 'Server name cannot be "default". Please choose a different name.',
+      id: '8u5yNl',
+      description: 'Error message when the server name is "default".',
+    });
+  }
+
+  const regex = /^[a-zA-Z0-9]{1,80}$/;
+  if (!regex.test(serverName)) {
+    if (serverName.length > 80) {
+      return intl.formatMessage({
+        defaultMessage: 'Server name must not exceed 80 characters.',
+        id: 'JthsNB',
+        description: 'Error message when the server name exceeds maximum length.',
+      });
+    }
+
+    return intl.formatMessage({
+      defaultMessage: 'Provide a unique name with only letters and numbers. No spaces or special characters are allowed.',
+      id: 'utSzxG',
+      description: 'Error message when the server name is invalid regex.',
+    });
+  }
+
+  return undefined;
+};
+
+export const validateMcpServerDescription = (description: string): string | undefined => {
+  const intl = getIntl();
+
+  if (isNullOrEmpty(description)) {
+    return intl.formatMessage({
+      defaultMessage: 'Description must not be empty.',
+      id: 'SiGVz1',
+      description: 'Error message when the server description is empty.',
+    });
+  }
+
+  if (description.length > 1024) {
+    return intl.formatMessage({
+      defaultMessage: 'Description must not exceed 1024 characters.',
+      id: '8eOFy9',
+      description: 'Error message when the server description exceeds maximum length.',
+    });
+  }
+
+  return undefined;
 };

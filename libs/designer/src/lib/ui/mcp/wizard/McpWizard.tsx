@@ -15,7 +15,7 @@ import { TemplatesPanelFooter, TemplatesSection } from '@microsoft/designer-ui';
 import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
+import { operationHasEmptyStaticDependencies, validateMcpServerDescription, validateMcpServerName } from '../../../core/mcp/utils/helper';
 import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { SuccessToast } from '../logicapps/common';
@@ -42,6 +42,9 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
 
   const [serverName, setServerName] = useState('');
   const [serverDescription, setServerDescription] = useState('');
+  const [serverNameError, setServerNameError] = useState<string | undefined>(undefined);
+  const [serverDescriptionError, setServerDescriptionError] = useState<string | undefined>(undefined);
+
   const connectorExists = useMemo(() => {
     return (disableConnectorSelection && !!selectedConnectorId) || Object.keys(operations.operationInfo).length > 0;
   }, [disableConnectorSelection, operations.operationInfo, selectedConnectorId]);
@@ -196,19 +199,19 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Title for the MCP server registration wizard',
     }),
     description: intl.formatMessage({
-      id: 'xPO/1M',
+      id: 'ifZ8ok',
       defaultMessage:
-        'Register an MCP server that you create, starting with an empty logic app. Create tools that run connector actions so your server can perform tasks. Available logic apps depend on the Azure subscription for your API Center resource.',
+        'Register an MCP server that you create, starting with a logic app. Create tools that run connector actions so your server can perform tasks. Available logic apps depend on your current Azure subscription.',
       description: 'Description for the MCP server registration wizard',
     }),
     learnMore: intl.formatMessage({
-      id: 'JJGVdl',
-      defaultMessage: 'Learn more',
+      id: 'nwZ0IY',
+      defaultMessage: 'Learn about logic apps',
       description: 'Learn more link text.',
     }),
     howToSetup: intl.formatMessage({
-      id: 'bJoBEu',
-      defaultMessage: 'Learn more about how to set up a logic app',
+      id: 'ZmSjQV',
+      defaultMessage: 'Learn how to set up a logic app',
       description: 'Title for the setup instructions link',
     }),
     howToSetupConnectors: intl.formatMessage({
@@ -233,8 +236,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Title for the details section',
     }),
     detailsSectionDescription: intl.formatMessage({
-      id: 'cguy+s',
-      defaultMessage: 'Choose an empty logic app or create a new logic app.',
+      id: 'PFjaC0',
+      defaultMessage: 'Select an existing logic app or create a new logic app.',
       description: 'Description for the details section',
     }),
     mainSectionDescription: intl.formatMessage({
@@ -299,8 +302,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Button text to add connector',
     }),
     setupButton: intl.formatMessage({
-      id: '90eaja',
-      defaultMessage: 'Setup',
+      id: 'sNWUvE',
+      defaultMessage: 'Set up',
       description: 'Button text to setup tools',
     }),
     loadingConnectorsText: intl.formatMessage({
@@ -309,6 +312,18 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Loading message for connectors',
     }),
   };
+
+  const setMcpServerName = useCallback((value: string) => {
+    setServerName(value);
+    const errorMessage = validateMcpServerName(value);
+    setServerNameError(errorMessage);
+  }, []);
+
+  const setMcpServerDescription = useCallback((value: string) => {
+    setServerDescription(value);
+    const errorMessage = validateMcpServerDescription(value);
+    setServerDescriptionError(errorMessage);
+  }, []);
 
   const serverFields = useMemo(
     () =>
@@ -319,7 +334,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
           type: 'textfield',
           placeholder: INTL_TEXT.serverNamePlaceholder,
           required: true,
-          onChange: (value: string) => setServerName(value),
+          onChange: setMcpServerName,
+          errorMessage: serverNameError,
         },
         {
           label: INTL_TEXT.serverDescriptionLabel,
@@ -327,7 +343,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
           type: 'textfield',
           placeholder: INTL_TEXT.serverDescriptionPlaceholder,
           required: true,
-          onChange: (value: string) => setServerDescription(value),
+          onChange: setMcpServerDescription,
+          errorMessage: serverDescriptionError,
         },
         {
           label: INTL_TEXT.logicAppLabel,
@@ -345,7 +362,11 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       INTL_TEXT.serverNamePlaceholder,
       logicAppName,
       serverDescription,
+      serverDescriptionError,
       serverName,
+      serverNameError,
+      setMcpServerDescription,
+      setMcpServerName,
     ]
   );
 
@@ -367,7 +388,9 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
           },
           disabled:
             !serverName ||
+            !!serverNameError ||
             !serverDescription ||
+            !!serverDescriptionError ||
             !logicAppName ||
             !subscriptionId ||
             !resourceGroup ||
@@ -390,7 +413,9 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
   }, [
     intl,
     serverName,
+    serverNameError,
     serverDescription,
+    serverDescriptionError,
     logicAppName,
     subscriptionId,
     resourceGroup,
