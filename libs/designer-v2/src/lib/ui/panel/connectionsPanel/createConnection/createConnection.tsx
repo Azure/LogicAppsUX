@@ -610,7 +610,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   // Determine if this is a consumption workflow (v1) or standard workflow (v2)
   // Consumption uses workflowMetadata.agentType, Standard uses workflowKind
-  const isConsumptionWorkflow = !workflowKind && workflowMetadata?.agentType !== undefined;
+  const isConsumptionWorkflow = useMemo(
+    () => !workflowKind && workflowMetadata?.agentType !== undefined,
+    [workflowKind, workflowMetadata?.agentType]
+  );
 
   const stringResources = useMemo(
     () => ({
