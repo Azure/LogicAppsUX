@@ -12,7 +12,15 @@ import { toPascalCase } from '@microsoft/logic-apps-shared';
 import {
   assetsFolderName,
   dotNetBinaryPathSettingKey,
+  testClassFileFromRunNoActionsTemplateName,
+  testClassFileFromRunTemplateName,
+  testClassFileNoActionsTemplateName,
+  testClassFileTemplateName,
+  testCsprojFileTemplateName,
+  testExecutorFileTemplateName,
+  testMockClassTemplateName,
   testMockOutputsDirectory,
+  testSettingsConfigFileTemplateName,
   unitTestTemplatesFolderName,
   workflowFileName,
 } from '../../../constants';
@@ -84,8 +92,7 @@ export async function createCsprojFile(csprojFilePath: string): Promise<void> {
     ext.outputChannel.appendLog(localize('csprojFileExists', '.csproj file already exists at: {0}', csprojFilePath));
     return;
   }
-  const csprojTemplateFileName = 'TestProjectFile';
-  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, csprojTemplateFileName);
+  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testCsprojFileTemplateName);
   const templateContent = await fse.readFile(templatePath, 'utf-8');
   await fse.writeFile(csprojFilePath, templateContent);
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
@@ -179,23 +186,21 @@ export async function createTestCsFile(
   if (actionOutputClassName) {
     // workflow has actions, use templates with action examples
     if (isBlank) {
-      csTemplateFileName = 'TestBlankClassFile';
+      csTemplateFileName = testClassFileTemplateName;
     } else {
-      csTemplateFileName = 'TestClassFile';
+      csTemplateFileName = testClassFileFromRunTemplateName;
     }
   } else if (isBlank) {
     // workflow has no actions, use templates with trigger examples
-    csTemplateFileName = 'TestBlankClassFileWithoutActions';
+    csTemplateFileName = testClassFileNoActionsTemplateName;
   } else {
-    csTemplateFileName = 'TestClassFileWithoutActions';
+    csTemplateFileName = testClassFileFromRunNoActionsTemplateName;
   }
 
-  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, csTemplateFileName);
+  const testClassFileTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, csTemplateFileName);
+  const testClassFileTemplate = await fse.readFile(testClassFileTemplatePath, 'utf-8');
 
-  const templateContent = await fse.readFile(templatePath, 'utf-8');
-
-  // TODO(aeldridge): Update templates to reference cleaned names explicitly where needed
-  const testCsFileContent = templateContent
+  const testCsFileContent = testClassFileTemplate
     .replace(/<%= CleanedLogicAppName %>/g, cleanedLogicAppName)
     .replace(/<%= CleanedUnitTestName %>/g, cleanedUnitTestName)
     .replace(/<%= UnitTestName %>/g, unitTestName)
@@ -220,19 +225,17 @@ export async function createTestCsFile(
  * @param {string} cleanedLogicAppName - The cleaned name of the logic app.
  */
 export async function createTestExecutorFile(logicAppTestFolderPath: string, cleanedLogicAppName: string): Promise<void> {
-  const executorTemplateFileName = 'TestExecutorFile';
-  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, executorTemplateFileName);
+  const testExecutorFileTemplatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testExecutorFileTemplateName);
+  const testExecutorFilePath = path.join(logicAppTestFolderPath, 'TestExecutor.cs');
 
-  const csFilePath = path.join(logicAppTestFolderPath, 'TestExecutor.cs');
-
-  if (await fse.pathExists(csFilePath)) {
+  if (await fse.pathExists(testExecutorFilePath)) {
     return;
   }
 
-  let templateContent = await fse.readFile(templatePath, 'utf-8');
-  templateContent = templateContent.replace(/<%= LogicAppName %>/g, cleanedLogicAppName);
+  const testExecutorFileTemplate = await fse.readFile(testExecutorFileTemplatePath, 'utf-8');
+  const testExecutorFileContent = testExecutorFileTemplate.replace(/<%= LogicAppName %>/g, cleanedLogicAppName);
 
-  await fse.writeFile(csFilePath, templateContent);
+  await fse.writeFile(testExecutorFilePath, testExecutorFileContent);
 }
 
 /**
@@ -242,8 +245,7 @@ export async function createTestExecutorFile(logicAppTestFolderPath: string, cle
  * @param {string} logicAppName - The name of the logic app.
  */
 export async function createTestSettingsConfigFile(unitTestFolderPath: string, workflowName: string, logicAppName: string): Promise<void> {
-  const configTemplateFileName = 'TestSettingsConfigFile';
-  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, configTemplateFileName);
+  const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testSettingsConfigFileTemplateName);
   const csFilePath = path.join(unitTestFolderPath, 'testSettings.config');
 
   if (await fse.pathExists(csFilePath)) {
@@ -926,7 +928,7 @@ let mockClassTemplate: string | undefined;
  */
 async function generateMockClassContent(mockType: string, mockClassName: string, outputsClassName: string): Promise<string> {
   if (!mockClassTemplate) {
-    const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, 'TestMockClass');
+    const templatePath = path.join(__dirname, assetsFolderName, unitTestTemplatesFolderName, testMockClassTemplateName);
     mockClassTemplate = await fse.readFile(templatePath, 'utf-8');
   }
 

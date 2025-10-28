@@ -36,7 +36,20 @@ import {
   validateWorkflowPath,
   validateUnitTestName,
 } from '../codefulUnitTest';
-import { assetsFolderName, testsDirectoryName, unitTestTemplatesFolderName, workflowFileName } from '../../../../constants';
+import {
+  assetsFolderName,
+  testClassFileFromRunNoActionsTemplateName,
+  testClassFileFromRunTemplateName,
+  testClassFileNoActionsTemplateName,
+  testClassFileTemplateName,
+  testCsprojFileTemplateName,
+  testExecutorFileTemplateName,
+  testMockClassTemplateName,
+  testsDirectoryName,
+  testSettingsConfigFileTemplateName,
+  unitTestTemplatesFolderName,
+  workflowFileName,
+} from '../../../../constants';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -234,14 +247,13 @@ describe('codefulUnitTest', () => {
   });
 
   describe('generateCSharpClasses - HTTP Action', () => {
-    let mockClassTemplatePath: string;
     let mockClassTemplateContent: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestMockClass');
+      const mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testMockClassTemplateName);
       mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
     });
 
@@ -382,14 +394,13 @@ describe('codefulUnitTest', () => {
   });
 
   describe('generateCSharpClasses - non HTTP', () => {
-    let mockClassTemplatePath: string;
     let mockClassTemplateContent: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestMockClass');
+      const mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testMockClassTemplateName);
       mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
     });
 
@@ -478,14 +489,13 @@ describe('codefulUnitTest', () => {
   });
 
   describe('generateCSharpClasses - Naming and Namespace Validation', () => {
-    let mockClassTemplatePath: string;
     let mockClassTemplateContent: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestMockClass');
+      const mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testMockClassTemplateName);
       mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
     });
 
@@ -965,15 +975,14 @@ describe('codefulUnitTest', () => {
     const csprojFilePath: string = 'dummy.csproj';
     let writeFileSpy: any;
     let readFileSpy: any;
-    let testProjectFileTemplatePath: string;
-    let testProjectFileTemplate: string;
+    let testCsprojFileTemplate: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      testProjectFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestProjectFile');
-      testProjectFileTemplate = await realFs.readFile(testProjectFileTemplatePath, 'utf8');
+      const testCsprojFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testCsprojFileTemplateName);
+      testCsprojFileTemplate = await realFs.readFile(testCsprojFileTemplatePath, 'utf8');
     });
 
     beforeEach(() => {
@@ -981,7 +990,7 @@ describe('codefulUnitTest', () => {
       vi.spyOn(console, 'log').mockImplementation(() => {});
       vi.spyOn(console, 'error').mockImplementation(() => {});
       writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
-      readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testProjectFileTemplate);
+      readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testCsprojFileTemplate);
     });
 
     afterEach(() => {
@@ -995,7 +1004,7 @@ describe('codefulUnitTest', () => {
 
       expect(pathExistsSpy).toHaveBeenCalledWith(csprojFilePath);
       expect(readFileSpy).toHaveBeenCalledTimes(1);
-      expect(writeFileSpy).toHaveBeenCalledWith(csprojFilePath, testProjectFileTemplate);
+      expect(writeFileSpy).toHaveBeenCalledWith(csprojFilePath, testCsprojFileTemplate);
     });
 
     it('should not overwrite an existing C# project file', async () => {
@@ -1140,31 +1149,35 @@ describe('codefulUnitTest', () => {
     const triggerOutputClassName: string = 'MyTriggerMockOutput';
     const triggerMockClassName: string = 'MyTriggerMock';
     let writeFileSpy: any;
-    let testBlankClassFileTemplatePath: string;
-    let testBlankClassFileTemplate: string;
-    let testClassFileTemplatePath: string;
     let testClassFileTemplate: string;
-    let testBlankClassFileWithoutActionsTemplatePath: string;
-    let testBlankClassFileWithoutActionsTemplate: string;
-    let testClassFileWithoutActionsTemplatePath: string;
-    let testClassFileWithoutActionsTemplate: string;
+    let testClassFileFromRunTemplate: string;
+    let testClassFileNoActionsTemplate: string;
+    let testClassFileFromRunNoActionsTemplate: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      testBlankClassFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestBlankClassFile');
-      testBlankClassFileTemplate = await realFs.readFile(testBlankClassFileTemplatePath, 'utf8');
-      testClassFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestClassFile');
+
+      const testClassFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testClassFileTemplateName);
       testClassFileTemplate = await realFs.readFile(testClassFileTemplatePath, 'utf8');
-      testBlankClassFileWithoutActionsTemplatePath = path.join(
+
+      const testClassFileFromRunTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testClassFileFromRunTemplateName);
+      testClassFileFromRunTemplate = await realFs.readFile(testClassFileFromRunTemplatePath, 'utf8');
+
+      const testClassFileNoActionsTemplatePath = path.join(
         assetsFolderPath,
         unitTestTemplatesFolderName,
-        'TestBlankClassFileWithoutActions'
+        testClassFileNoActionsTemplateName
       );
-      testBlankClassFileWithoutActionsTemplate = await realFs.readFile(testBlankClassFileWithoutActionsTemplatePath, 'utf8');
-      testClassFileWithoutActionsTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestClassFileWithoutActions');
-      testClassFileWithoutActionsTemplate = await realFs.readFile(testClassFileWithoutActionsTemplatePath, 'utf8');
+      testClassFileNoActionsTemplate = await realFs.readFile(testClassFileNoActionsTemplatePath, 'utf8');
+
+      const testClassFileFromRunNoActionsTemplatePath = path.join(
+        assetsFolderPath,
+        unitTestTemplatesFolderName,
+        testClassFileFromRunNoActionsTemplateName
+      );
+      testClassFileFromRunNoActionsTemplate = await realFs.readFile(testClassFileFromRunNoActionsTemplatePath, 'utf8');
     });
 
     beforeEach(() => {
@@ -1178,8 +1191,8 @@ describe('codefulUnitTest', () => {
       vi.restoreAllMocks();
     });
 
-    it('should create a C# file using the TestBlankClassFile template when creating from scratch', async () => {
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testBlankClassFileTemplate);
+    it('should create a C# file using the TestClassFile template when creating from scratch', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1221,8 +1234,8 @@ describe('codefulUnitTest', () => {
       );
     });
 
-    it('should create a C# file using the TestClassFile template when creating from run', async () => {
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileTemplate);
+    it('should create a C# file using the TestClassFileFromRun template when creating from run', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileFromRunTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1272,8 +1285,8 @@ describe('codefulUnitTest', () => {
       );
     });
 
-    it('should create a C# file using the TestBlankClassFileWithoutActions template when creating from scratch using a workflow without actions', async () => {
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testBlankClassFileWithoutActionsTemplate);
+    it('should create a C# file using the TestClassFileNoActions template when creating from scratch using a workflow without actions', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileNoActionsTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1315,8 +1328,8 @@ describe('codefulUnitTest', () => {
       );
     });
 
-    it('should create a C# file using the TestClassFileWithoutActions template when creating from run using a workflow without actions', async () => {
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileWithoutActionsTemplate);
+    it('should create a C# file using the TestClassFileFromRunNoActions template when creating from run using a workflow without actions', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileFromRunNoActionsTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1378,14 +1391,13 @@ describe('codefulUnitTest', () => {
     const unitTestFolderPath: string = 'unitTestFolderPath';
     let readFileSpy: any;
     let writeFileSpy: any;
-    let testExecutorFileTemplatePath: string;
     let testExecutorFileTemplate: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      testExecutorFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestExecutorFile');
+      const testExecutorFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testExecutorFileTemplateName);
       testExecutorFileTemplate = await realFs.readFile(testExecutorFileTemplatePath, 'utf8');
     });
 
@@ -1434,14 +1446,17 @@ describe('codefulUnitTest', () => {
     const workflowName: string = 'MyWorkflow';
     let readFileSpy: any;
     let writeFileSpy: any;
-    let testSettingsConfigFileTemplatePath: string;
     let testSettingsConfigFileTemplate: string;
 
     beforeAll(async () => {
       const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
       const rootDir = path.join(__dirname, '..', '..', '..', '..');
       const assetsFolderPath = path.join(rootDir, assetsFolderName);
-      testSettingsConfigFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, 'TestSettingsConfigFile');
+      const testSettingsConfigFileTemplatePath = path.join(
+        assetsFolderPath,
+        unitTestTemplatesFolderName,
+        testSettingsConfigFileTemplateName
+      );
       testSettingsConfigFileTemplate = await realFs.readFile(testSettingsConfigFileTemplatePath, 'utf8');
     });
 
