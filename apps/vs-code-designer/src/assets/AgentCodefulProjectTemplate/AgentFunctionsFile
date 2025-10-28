@@ -26,7 +26,7 @@ public class Program
             .Build();
 
         // Create a workflow agent builder for the "TestFlow" workflow.
-        var builder = WorkflowAgentBuilderFactory.CreateWorkflowAgentBuilder(flowName: "TestFlow");
+        var builder = WorkflowAgentBuilderFactory.CreateWorkflowAgentBuilder(flowName: <%= flowName %>);
 
         #region agent configuration
         var agent = new AgentBuilder

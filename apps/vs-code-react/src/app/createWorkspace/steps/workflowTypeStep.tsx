@@ -11,13 +11,14 @@ import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspace
 import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { validateWorkflowName } from '../utils/validation';
+import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace);
-  const { workflowType, workflowName } = createWorkspaceState;
+  const { workflowType, workflowName, logicAppType } = createWorkspaceState;
 
   // Validation state
   const [workflowNameError, setWorkflowNameError] = useState<string | undefined>(undefined);
@@ -111,10 +112,13 @@ export const WorkflowTypeStep: React.FC = () => {
     setWorkflowNameError(validateWorkflowName(event.target.value, intlText));
   };
 
+  const supportsStateless = logicAppType !== ProjectType.agentCodeful;
+
+  console.log('charlie', supportsStateless, logicAppType);
+
   return (
     <div className={styles.formSection}>
       <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
-
       <Field
         label={intlText.WORKFLOW_NAME_LABEL}
         className={styles.workflowNameField}
@@ -129,7 +133,6 @@ export const WorkflowTypeStep: React.FC = () => {
           className={styles.inputControl}
         />
       </Field>
-
       <Field required>
         <Label required>{intlText.WORKFLOW_TYPE_LABEL}</Label>
         <Dropdown
@@ -150,16 +153,18 @@ export const WorkflowTypeStep: React.FC = () => {
           className={styles.inputControl}
         >
           <Option value="Stateful-Codeless" text="Stateful">
-            Stateful
+            {intlText.STATEFUL_TITLE}
           </Option>
-          <Option value="Stateless-Codeless" text="Stateless">
-            Stateless
-          </Option>
+          {supportsStateless ? (
+            <Option value="Stateless-Codeless" text="Stateless">
+              {intlText.STATELESS_TITLE}
+            </Option>
+          ) : null}
           <Option value="Agentic-Codeless" text="Autonomous Agents (Preview)">
-            Autonomous Agents (Preview)
+            {intlText.AUTONOMOUS_TITLE}
           </Option>
           <Option value="Agent-Codeless" text="Conversational Agents">
-            Conversational Agents
+            {intlText.AGENT_TITLE}
           </Option>
         </Dropdown>
         {workflowType && (

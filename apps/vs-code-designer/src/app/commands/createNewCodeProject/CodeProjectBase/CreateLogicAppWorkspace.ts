@@ -92,7 +92,7 @@ export async function getHostContent(): Promise<IHostJsonV2> {
   return hostJson;
 }
 
-export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string): Promise<void> {
+export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
   const { logicAppType, workflowType, functionName, workflowName, logicAppName } = webviewProjectContext;
   const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(
     logicAppType as ProjectType,
@@ -102,7 +102,7 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
 
   await fse.ensureDir(logicAppFolderPath);
   if (logicAppType === ProjectType.agentCodeful) {
-    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName);
+    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName);
   } else {
     const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, workflowName);
     await fse.ensureDir(logicAppWorkflowFolderPath);
@@ -112,12 +112,12 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   }
 }
 
-const createAgentCodefulWorkflowFile = async (logicAppFolderPath: string, logicAppName: string) => {
+const createAgentCodefulWorkflowFile = async (logicAppFolderPath: string, logicAppName: string, workflowName: string) => {
   // Set the functionAppName and namespaceName properties from the context wizard
 
   // Create the .cs file inside the functions folder
   const templateCSPath = path.join(__dirname, assetsFolderName, 'AgentCodefulProjectTemplate', 'AgentFunctionsFile');
-  const templateCSContent = await fse.readFile(templateCSPath, 'utf-8');
+  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8')).replace(/<%= flowName %>/g, `"${workflowName}"`);
 
   const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
   await fse.writeFile(csFilePath, templateCSContent);

@@ -49,7 +49,7 @@ export const getValidationRequirements = (flowType: string, logicAppType: string
   if (flowType === 'createWorkspace' || flowType === 'createLogicApp') {
     requirements.needsLogicAppType = true;
     requirements.needsLogicAppName = true;
-    requirements.needsWorkflowFields = logicAppType !== ProjectType.agentCodeful;
+    requirements.needsWorkflowFields = true;
     requirements.needsFunctionFields = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
   }
 

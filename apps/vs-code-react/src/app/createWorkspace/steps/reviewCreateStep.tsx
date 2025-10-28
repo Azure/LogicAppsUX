@@ -46,10 +46,7 @@ export const ReviewCreateStep: React.FC = () => {
     flowType === 'createWorkspace' || flowType === 'convertToWorkspace' || flowType === 'createWorkspaceFromPackage';
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
-  const shouldShowWorkflowSection =
-    (flowType === 'createWorkspace' || flowType === 'createLogicApp') &&
-    !isUsingExistingLogicApp &&
-    logicAppType !== ProjectType.agentCodeful;
+  const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
 
   const intlText = {
     TITLE: intl.formatMessage({

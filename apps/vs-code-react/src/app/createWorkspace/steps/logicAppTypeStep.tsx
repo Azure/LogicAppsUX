@@ -67,13 +67,13 @@ export const LogicAppTypeStep: React.FC = () => {
       description: 'Standard logic app description',
     }),
     CODEFUL_LABEL: intl.formatMessage({
-      defaultMessage: 'Codeful agent logic app',
-      id: 'XUY2KS',
-      description: 'Logic app codeful agent option',
+      defaultMessage: 'Logic app (codeful)',
+      id: 'mjCsxB',
+      description: 'Logic app codeful option',
     }),
     CODEFUL_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Codeful logic app with agent',
-      id: 'oYesEg',
+      defaultMessage: 'Standard logic app codeful with built-in connectors and triggers',
+      id: 'qZPmZV',
       description: 'Standard logic app description',
     }),
     CUSTOM_CODE_LABEL: intl.formatMessage({
@@ -257,7 +257,7 @@ export const LogicAppTypeStep: React.FC = () => {
             <div className={styles.radioOption}>
               <Radio value={ProjectType.agentCodeful} label={intlText.CODEFUL_LABEL} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-                {intlText.CUSTOM_CODE_LABEL}
+                {intlText.CODEFUL_DESCRIPTION}
               </Text>
             </div>
             <div className={styles.radioOption}>
