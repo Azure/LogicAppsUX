@@ -27,7 +27,13 @@ import {
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import { clearFocusElement, setFocusNode, setRunIndex, setTimelineRepetitionIndex, setToolRunIndex } from '../../../core/state/workflow/workflowSlice';
+import {
+  clearFocusElement,
+  setFocusNode,
+  setRunIndex,
+  setTimelineRepetitionIndex,
+  setToolRunIndex,
+} from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory, useRefreshChatMutation } from './helper';
 import constants from '../../../common/constants';
@@ -99,13 +105,13 @@ export const AgentChat = ({
   }, []);
 
   const toolResultCallback = useCallback(
-    (agentName: string, toolName: string, iteration: number, subIteration: number, mcpToolName?: string) => {
+    (agentName: string, toolName: string, iteration: number, subIteration: number, mcpServerToolName?: string) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
       } else {
         dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-        if (mcpToolName) {
+        if (mcpServerToolName) {
           dispatch(setToolRunIndex({ page: subIteration, nodeId: toolName }));
         } else {
           dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));

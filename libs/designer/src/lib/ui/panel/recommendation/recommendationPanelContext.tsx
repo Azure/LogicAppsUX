@@ -50,16 +50,16 @@ const builtinMcpServerOperation = {
       id: 'connectionProviders/mcpclient',
       name: 'mcpclient',
       description: 'MCP Client Operations',
-      displayName: 'Connect your own MCP server',
+      displayName: 'Connect to an MCP server',
       iconUri:
         'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
     },
-    summary: 'Custom MCP server',
-    description: 'Native MCP Client',
+    summary: 'MCP server',
+    description: 'Uses an MCP server',
     visibility: 'Important',
     operationType: 'McpClientTool',
     operationKind: 'Builtin',
-    brandColor: '#709727',
+    brandColor: '#000000',
     iconUri:
       'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
   },
@@ -300,7 +300,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const headingText = isAddingMcpServer
     ? intl.formatMessage({
         defaultMessage: 'Choose an MCP server',
-        id: 'dBxX8X',
+        id: 'NFndch',
         description: 'Text for the "Add an MCP Server" panel header',
       })
     : isTrigger
@@ -322,7 +322,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
   const linkMessage = intl.formatMessage({
     defaultMessage: 'How to use MCP server?',
-    id: 'Vy2G4C',
+    id: 'IhVOVF',
     description: 'Text for the learn more link',
   });
 

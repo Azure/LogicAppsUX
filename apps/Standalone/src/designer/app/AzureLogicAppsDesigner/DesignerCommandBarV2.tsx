@@ -417,12 +417,12 @@ export const DesignerCommandBar = ({
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (isDraftMode && !isSaving && isDesignerView) {
+      if (isDraftMode && !isSaving && isDesignerView && !isMonitoringView) {
         saveWorkflowMutate(true);
       }
     }, 30000); // Auto-save every 30 seconds
     return () => clearTimeout(timeoutId);
-  }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate]);
+  }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate, isMonitoringView]);
 
   return (
     <>

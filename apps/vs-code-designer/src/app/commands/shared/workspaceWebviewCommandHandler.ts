@@ -76,6 +76,7 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
           project: projectName,
           hostVersion: ext.extensionVersion,
           separator: path.sep,
+          platform: os.platform(),
           ...extraInitializeData,
         },
       });
