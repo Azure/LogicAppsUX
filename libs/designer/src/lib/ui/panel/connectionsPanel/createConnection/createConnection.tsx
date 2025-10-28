@@ -608,15 +608,25 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     description: 'Dropdown text for legacy managed identity connection',
   });
 
+  // Determine if this is a consumption workflow (v1) or standard workflow (v2)
+  // Consumption uses workflowMetadata.agentType, Standard uses workflowKind
+  const isConsumptionWorkflow = !workflowKind && workflowMetadata?.agentType !== undefined;
+
   const stringResources = useMemo(
     () => ({
-      USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
-        defaultMessage: 'Create as per-user connection? (requires Managed Service Identity to be enabled)',
-        id: 'swl4az',
-        description: 'Dynamic connection checkbox text',
-      }),
+      USE_DYNAMIC_CONNECTIONS: isConsumptionWorkflow
+        ? intl.formatMessage({
+            defaultMessage: 'Create as per-user connection?',
+            id: '9yq5lv',
+            description: 'Dynamic connection checkbox text for consumption SKU',
+          })
+        : intl.formatMessage({
+            defaultMessage: 'Create as per-user connection? (requires Managed Service Identity to be enabled)',
+            id: 'c+01Fk',
+            description: 'Dynamic connection checkbox text for standard SKU',
+          }),
     }),
-    [intl]
+    [intl, isConsumptionWorkflow]
   );
 
   const connectorDescription = useMemo(() => {
