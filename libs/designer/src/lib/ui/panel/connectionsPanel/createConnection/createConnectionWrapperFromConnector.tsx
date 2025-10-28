@@ -1,7 +1,6 @@
 import type { AppDispatch, RootState } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
-import { useConnectionPanelSelectedNodeIds } from '../../../../core/state/panel/panelSelectors';
 import { getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
@@ -17,7 +16,6 @@ export const CreateConnectionWrapper = ({
 }: { connectorId: string; connectorType: string; onConnectionSuccessful: (connection: Connection) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isAgentSubgraph = false;
-  const nodeIds = useConnectionPanelSelectedNodeIds();
   const { data: connector } = useConnector(connectorId);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
@@ -27,11 +25,11 @@ export const CreateConnectionWrapper = ({
 
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
-      for (const nodeId of nodeIds) {
+      for (const nodeId of ['temp-node-id']) {
         dispatch(updateNodeConnection({ ...payload, nodeId }));
       }
     },
-    [dispatch, nodeIds]
+    [dispatch]
   );
 
   return (
@@ -40,7 +38,6 @@ export const CreateConnectionWrapper = ({
       operationType={connectorType}
       existingReferences={existingReferences}
       isAgentSubgraph={isAgentSubgraph ?? false}
-      nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       showActionBar={true}
       hideCancelButton={!hasExistingConnection}
