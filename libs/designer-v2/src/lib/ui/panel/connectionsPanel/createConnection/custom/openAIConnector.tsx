@@ -355,21 +355,18 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const roleMessageContainerStyle = useMemo(() => ({ flexGrow: 1 }), []);
 
   // Memoize component instances
-  const CreateNewButton = useMemo(
-    () =>
-      // eslint-disable-next-line react/display-name
-      ({ href }: { href: string }) => (
-        <Link className={styles.createNewButton} target="_blank" href={href}>
-          {stringResources.CREATE_NEW}
-          <NavigateIcon style={navigateIconStyle} />
-        </Link>
-      ),
+  const CreateNewButton = useCallback(
+    ({ href }: { href: string }) => (
+      <Link className={styles.createNewButton} target="_blank" href={href}>
+        {stringResources.CREATE_NEW}
+        <NavigateIcon style={navigateIconStyle} />
+      </Link>
+    ),
     [stringResources.CREATE_NEW, styles.createNewButton, navigateIconStyle]
   );
 
-  const RoleMessages = useMemo(
+  const RoleMessages = useCallback(
     () => (
-      // eslint-disable-next-line react/display-name
       <div style={roleMessageContainerStyle}>
         {isFetchingRoleWritePermission || isFetchingRequiredRoles ? (
           <Field
