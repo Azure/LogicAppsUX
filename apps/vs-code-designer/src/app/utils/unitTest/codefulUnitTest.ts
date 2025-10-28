@@ -1002,9 +1002,7 @@ export function generateMockOutputsClassContent(classDef: ClassDefinition, isMoc
   }
 
   sb.push('        }');
-  sb.push('');
   sb.push('    }');
-  sb.push('');
 
   for (const child of classDef.children) {
     sb.push(generateMockOutputsClassContent(child, isMockableHttpType));
