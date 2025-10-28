@@ -445,7 +445,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
-          description: loadingAccountDetails ? stringResources.FETCHING : parameter.uiDefinition?.description,
+          description:
+            entryMode === 'select' ? (loadingAccountDetails ? stringResources.FETCHING : parameter.uiDefinition?.description) : '',
         },
       },
     }),

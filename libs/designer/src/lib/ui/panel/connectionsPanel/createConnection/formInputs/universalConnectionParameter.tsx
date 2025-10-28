@@ -170,7 +170,6 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
           disabled={isLoading}
           ariaLabel={description}
           placeholder={description}
-          required={constraints?.required === 'true'}
           options={dropdownOptions}
         />
       );
