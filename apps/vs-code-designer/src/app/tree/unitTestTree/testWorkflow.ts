@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
-import { getUnitTestName } from '../../utils/unitTests';
+import { getUnitTestName } from '../../utils/unitTest/codelessUnitTest';
 import { TestFile } from './testFile';
 import * as path from 'path';
 import type { TestController, TestItem, Uri } from 'vscode';
