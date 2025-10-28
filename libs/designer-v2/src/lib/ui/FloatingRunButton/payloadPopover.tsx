@@ -157,7 +157,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
               lineNumbersMinChars={3}
             />
           </Field>
-          <Button appearance={'primary'} onClick={onRunClick} className={styles.runButton} disabled={!!jsonError || runDisabled}>
+          <Button appearance={'primary'} onClick={onRunClick} className={styles.runButton} disabled={runDisabled}>
             {runButtonText}
           </Button>
         </div>
