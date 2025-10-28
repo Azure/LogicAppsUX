@@ -16,6 +16,8 @@ import {
   Spinner,
   type OptionOnSelectData,
   Text,
+  Radio,
+  RadioGroup,
 } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
@@ -35,6 +37,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const [cognitiveServiceAccountId, setCognitiveServiceAccountId] = useState<string>('');
   const [selectedCognitiveServiceProject, setSelectedCognitiveServiceProject] = useState<string>('');
+  const [entryMode, setEntryMode] = useState<'select' | 'manual'>('select');
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
   const isAgentServiceConnection = useMemo(
@@ -143,6 +146,21 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Fetching resource details...',
         id: 'EXxdfo',
         description: 'Message displayed while fetching resource details',
+      }),
+      ENTRY_MODE_LABEL: intl.formatMessage({
+        defaultMessage: 'Connection setup mode',
+        id: 'pr76XB',
+        description: 'Label for entry mode selection',
+      }),
+      SELECT_EXISTING: intl.formatMessage({
+        defaultMessage: 'Select existing',
+        id: 'ik2PNG',
+        description: 'Option to select existing resources from subscription',
+      }),
+      ENTER_MANUALLY: intl.formatMessage({
+        defaultMessage: 'Enter manually',
+        id: '90oyiw',
+        description: 'Option to manually enter connection details',
       }),
     }),
     [intl]
@@ -269,205 +287,286 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameterValue, validRoleState]);
 
-  const CreateNewButton = (props: { href: string }) => (
-    <Link className={styles.createNewButton} target="_blank" href={props.href}>
-      {stringResources.CREATE_NEW}
-      <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-    </Link>
+  // Memoize callback handlers
+  const onEntryModeChange = useCallback(
+    (_e: any, data: any) => {
+      const newMode = data.value as 'select' | 'manual';
+      setEntryMode(newMode);
+      // Reset values when switching modes
+      setSelectedSubscriptionId('');
+      setCognitiveServiceAccountId('');
+      setSelectedCognitiveServiceProject('');
+      setParameterValue('');
+      // Clear openAI endpoint and key
+      setKeyValue?.('openAIEndpoint', '');
+      setKeyValue?.('openAIKey', '');
+    },
+    [setKeyValue]
   );
 
-  const RoleMessages = () => (
-    <div style={{ flexGrow: 1 }}>
-      {isFetchingRoleWritePermission || isFetchingRequiredRoles ? (
-        <Field
-          validationState="warning"
-          validationMessageIcon={<SpinnerFUI9 size="extra-tiny" />}
-          validationMessage={stringResources.FETCHING_RESOURCE_DETAILS}
-        />
-      ) : hasRequiredRoles || hasRoleWritePermission ? null : (
-        <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
-      )}
-    </div>
+  const onSubscriptionChange = useCallback((id: string) => {
+    setSelectedSubscriptionId(id);
+    // Reset account and project selections when subscription changes
+    setCognitiveServiceAccountId('');
+    setSelectedCognitiveServiceProject('');
+    setParameterValue('');
+  }, []);
+
+  const onProjectSelect = useCallback(
+    async (_e: any, option?: OptionOnSelectData) => {
+      if (option?.optionValue) {
+        const serviceProjectId = option?.optionValue as string;
+        const idSplitValues = serviceProjectId.split('/');
+        const splitLength = idSplitValues.length;
+
+        // Id is of the form - /sub/<>/resourceGroups/<>/providers/Microsoft.CognitiveServices/accounts/<>/projects/<>
+        const serviceProjectName = idSplitValues[splitLength - 1];
+        const cognitiveServiceAccountName = splitLength >= 3 ? idSplitValues[splitLength - 3] : '';
+        const openAIEndpoint = `https://${cognitiveServiceAccountName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
+
+        // Set all the relevant values
+        setSelectedCognitiveServiceProject(serviceProjectId);
+        setParameterValue(serviceProjectId);
+        setKeyValue?.('openAIEndpoint', openAIEndpoint);
+      }
+    },
+    [setKeyValue]
   );
 
-  if (parameterKey === 'cognitiveServiceAccountId') {
-    return (
-      <>
-        <SubscriptionDropdown
-          subscriptions={subscriptions}
-          isFetchingSubscriptions={isFetchingSubscription}
-          setSelectedSubscriptionId={(id) => {
-            setSelectedSubscriptionId(id);
-            // Reset account and project selections when subscription changes
-            setCognitiveServiceAccountId('');
-            setSelectedCognitiveServiceProject('');
-            setParameterValue('');
-          }}
-          selectedSubscriptionId={selectedSubscriptionId}
-          title={stringResources.SELECT_SUBSCRIPTION}
-        />
+  const onAccountSelect = useCallback(
+    async (_e: any, option?: OptionOnSelectData) => {
+      if (option?.optionValue) {
+        const cognitiveServiceKey = option?.optionValue as string;
+        setCognitiveServiceAccountId(cognitiveServiceKey);
+        setSelectedCognitiveServiceProject(''); // Reset project selection when account changes
+        setParameterValue(cognitiveServiceKey);
+        if (!isAgentServiceConnection) {
+          onSetOpenAIValues(cognitiveServiceKey);
+        }
+      }
+    },
+    [isAgentServiceConnection, onSetOpenAIValues]
+  );
 
-        {isAgentServiceConnection ? (
-          <ConnectionParameterRow parameterKey={'cognitive-service-project-name'} displayName={stringResources.PROJECT} required={true}>
-            <div className={styles.openAIContainer}>
-              <div className={styles.comboxbox}>
-                <Combobox
-                  data-automation-id="openai-project-combobox"
-                  required={true}
-                  disabled={serviceProjectsComboBoxDisabled}
-                  placeholder={
-                    isFetchingCognitiveServiceProjects ? stringResources.LOADING_PROJECT : stringResources.SELECT_COGNITIVE_SERVICE_PROJECT
-                  }
-                  value={
-                    isUndefinedOrEmptyString(selectedCognitiveServiceProject) ? undefined : selectedCognitiveServiceProject.split('/').pop()
-                  }
-                  className={styles.openAICombobox}
-                  onOptionSelect={async (_e, option?: OptionOnSelectData) => {
-                    if (option?.optionValue) {
-                      const serviceProjectId = option?.optionValue as string;
-                      const idSplitValues = serviceProjectId.split('/');
-                      const splitLength = idSplitValues.length;
+  // Memoize inline styles (declare before components that use them)
+  const spinnerStyle = useMemo(() => ({ position: 'absolute' as const, bottom: '6px', left: '8px' }), []);
+  const refreshButtonStyle = useMemo(() => ({ margin: '0 4px', height: '100%' }), []);
+  const navigateIconStyle = useMemo(() => ({ position: 'relative' as const, top: '2px', left: '2px' }), []);
+  const roleMessageContainerStyle = useMemo(() => ({ flexGrow: 1 }), []);
 
-                      // Id is of the form - /sub/<>/resourceGroups/<>/providers/Microsoft.CognitiveServices/accounts/<>/projects/<>
-                      const serviceProjectName = idSplitValues[splitLength - 1];
-                      const cognitiveServiceAccountName = splitLength >= 3 ? idSplitValues[splitLength - 3] : '';
-                      const openAIEndpoint = `https://${cognitiveServiceAccountName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
+  // Memoize component instances
+  const CreateNewButton = useMemo(
+    () =>
+      // eslint-disable-next-line react/display-name
+      ({ href }: { href: string }) => (
+        <Link className={styles.createNewButton} target="_blank" href={href}>
+          {stringResources.CREATE_NEW}
+          <NavigateIcon style={navigateIconStyle} />
+        </Link>
+      ),
+    [stringResources.CREATE_NEW, styles.createNewButton, navigateIconStyle]
+  );
 
-                      // Set all the relevant values
-                      setSelectedCognitiveServiceProject(serviceProjectId);
-                      setParameterValue(serviceProjectId);
-                      setKeyValue?.('openAIEndpoint', openAIEndpoint);
-                    }
-                  }}
-                >
-                  {isFetchingCognitiveServiceProjects ? (
-                    <Spinner
-                      style={{
-                        position: 'absolute',
-                        bottom: '6px',
-                        left: '8px',
-                      }}
-                      labelPosition="after"
-                      label={stringResources.LOADING_PROJECT}
-                    />
-                  ) : (
-                    Object.keys(cognitiveServiceProjectsAccountMap).map((accountKey) => {
-                      return (
-                        <OptionGroup key={`${accountKey}-optiongroup`} label={accountKey}>
-                          {cognitiveServiceProjectsAccountMap[accountKey].map((project: any) => {
-                            const projectName = project.name?.split?.('/').pop() ?? project.name;
-                            return <Option key={project.id} value={project.id}>{`${projectName} (/${project.resourceGroup})`}</Option>;
-                          })}
-                        </OptionGroup>
-                      );
-                    })
-                  )}
-                </Combobox>
-                <div className={styles.comboboxFooter}>
-                  {requiresRoleAssignments && selectedCognitiveServiceProject ? <RoleMessages /> : null}
-                  <CreateNewButton href="https://aka.ms/openFoundryProjectCreate" />
-                </div>
-              </div>
-              <Button
-                icon={<RefreshIcon />}
-                size="small"
-                appearance="transparent"
-                style={{
-                  margin: '0 4px',
-                  height: '100%',
-                }}
-                disabled={isServiceProjectsRefreshDisabled}
-                onClick={onRefreshServiceProjects}
-              />
-            </div>
-          </ConnectionParameterRow>
-        ) : (
-          <ConnectionParameterRow
-            parameterKey={'cognitive-service-resource-id'}
-            displayName={
-              isAgentServiceConnection ? stringResources.COGNITIVE_SERVICE_AI_RESOURCE : stringResources.COGNITIVE_SERVICE_OPENAI_RESOURCE
-            }
-            required={true}
-            tooltip={
-              <Link href="https://go.microsoft.com/fwlink/?linkid=2189193" target="_blank">
-                {stringResources.LEARN_MORE_CREATE_NEW}
-              </Link>
-            }
-          >
-            <div className={styles.openAIContainer}>
-              <div className={styles.comboxbox}>
-                <Combobox
-                  data-automation-id="openai-combobox"
-                  required={true}
-                  disabled={openAIComboboxDisabled}
-                  placeholder={
-                    isFetchingAccount
-                      ? stringResources.LOADING_ACCOUNTS
-                      : isAgentServiceConnection
-                        ? stringResources.SELECT_COGNITIVE_SERVICE_AI_RESOURCE
-                        : stringResources.SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE
-                  }
-                  value={isUndefinedOrEmptyString(cognitiveServiceAccountId) ? undefined : cognitiveServiceAccountId.split('/').pop()}
-                  className={styles.openAICombobox}
-                  onOptionSelect={async (_e: any, option?: OptionOnSelectData) => {
-                    if (option?.optionValue) {
-                      const cognitiveServiceKey = option?.optionValue as string;
-                      setCognitiveServiceAccountId(cognitiveServiceKey);
-                      setSelectedCognitiveServiceProject(''); // Reset project selection when account changes
-                      setParameterValue(cognitiveServiceKey);
-                      if (!isAgentServiceConnection) {
-                        onSetOpenAIValues(cognitiveServiceKey);
-                      }
-                    }
-                  }}
-                >
-                  {isFetchingAccount ? (
-                    <Spinner
-                      style={{ position: 'absolute', bottom: '6px', left: '8px' }}
-                      labelPosition="after"
-                      label={stringResources.LOADING_ACCOUNTS}
-                    />
-                  ) : (
-                    (allCognitiveServiceAccounts ?? []).map((account: any) => {
-                      return <Option key={account.id} value={account.id}>{`${account.name} (/${account.resourceGroup})`}</Option>;
-                    })
-                  )}
-                </Combobox>
-                <div className={styles.comboboxFooter}>
-                  {requiresRoleAssignments && !isAgentServiceConnection && !!cognitiveServiceAccountId ? <RoleMessages /> : null}
-                  <CreateNewButton href="https://aka.ms/openAICreate" />
-                </div>
-              </div>
-              <Button
-                icon={<RefreshIcon />}
-                size="small"
-                style={{
-                  margin: '0 4px',
-                  height: '100%',
-                }}
-                appearance="transparent"
-                disabled={isOpenAIRefreshDisabled}
-                onClick={onRefreshServiceAccounts}
-              />
-            </div>
-          </ConnectionParameterRow>
+  const RoleMessages = useMemo(
+    () => (
+      // eslint-disable-next-line react/display-name
+      <div style={roleMessageContainerStyle}>
+        {isFetchingRoleWritePermission || isFetchingRequiredRoles ? (
+          <Field
+            validationState="warning"
+            validationMessageIcon={<SpinnerFUI9 size="extra-tiny" />}
+            validationMessage={stringResources.FETCHING_RESOURCE_DETAILS}
+          />
+        ) : hasRequiredRoles || hasRoleWritePermission ? null : (
+          <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
         )}
-        {errorMessage && <Text>{errorMessage}</Text>}
-      </>
-    );
-  }
+      </div>
+    ),
+    [
+      hasRequiredRoles,
+      hasRoleWritePermission,
+      isFetchingRequiredRoles,
+      isFetchingRoleWritePermission,
+      stringResources.FETCHING_RESOURCE_DETAILS,
+      stringResources.MISSING_ROLE_WRITE_PERMISSIONS,
+      roleMessageContainerStyle,
+    ]
+  );
 
-  return (
-    <UniversalConnectionParameter
-      {...props}
-      isLoading={true}
-      parameter={{
+  // Memoize combobox placeholder text
+  const projectComboboxPlaceholder = useMemo(
+    () => (isFetchingCognitiveServiceProjects ? stringResources.LOADING_PROJECT : stringResources.SELECT_COGNITIVE_SERVICE_PROJECT),
+    [isFetchingCognitiveServiceProjects, stringResources.LOADING_PROJECT, stringResources.SELECT_COGNITIVE_SERVICE_PROJECT]
+  );
+
+  const accountComboboxPlaceholder = useMemo(
+    () =>
+      isFetchingAccount
+        ? stringResources.LOADING_ACCOUNTS
+        : isAgentServiceConnection
+          ? stringResources.SELECT_COGNITIVE_SERVICE_AI_RESOURCE
+          : stringResources.SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE,
+    [
+      isFetchingAccount,
+      isAgentServiceConnection,
+      stringResources.LOADING_ACCOUNTS,
+      stringResources.SELECT_COGNITIVE_SERVICE_AI_RESOURCE,
+      stringResources.SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE,
+    ]
+  );
+
+  // Memoize combobox values
+  const projectComboboxValue = useMemo(
+    () => (isUndefinedOrEmptyString(selectedCognitiveServiceProject) ? undefined : selectedCognitiveServiceProject.split('/').pop()),
+    [selectedCognitiveServiceProject]
+  );
+
+  const accountComboboxValue = useMemo(
+    () => (isUndefinedOrEmptyString(cognitiveServiceAccountId) ? undefined : cognitiveServiceAccountId.split('/').pop()),
+    [cognitiveServiceAccountId]
+  );
+
+  // Memoize tooltip component
+  const accountTooltip = useMemo(
+    () => (
+      <Link href="https://go.microsoft.com/fwlink/?linkid=2189193" target="_blank">
+        {stringResources.LEARN_MORE_CREATE_NEW}
+      </Link>
+    ),
+    [stringResources.LEARN_MORE_CREATE_NEW]
+  );
+
+  // Memoize UniversalConnectionParameter props
+  const universalParameterProps = useMemo(
+    () => ({
+      ...props,
+      isLoading: entryMode === 'select',
+      parameter: {
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
           description: loadingAccountDetails ? stringResources.FETCHING : parameter.uiDefinition?.description,
         },
-      }}
-    />
+      },
+    }),
+    [props, entryMode, parameter, loadingAccountDetails, stringResources.FETCHING]
   );
+
+  if (parameterKey === 'cognitiveServiceAccountId') {
+    return (
+      <>
+        <ConnectionParameterRow parameterKey="entry-mode" displayName={stringResources.ENTRY_MODE_LABEL} required={true}>
+          <RadioGroup value={entryMode} onChange={onEntryModeChange} layout="horizontal">
+            <Radio value="select" label={stringResources.SELECT_EXISTING} />
+            <Radio value="manual" label={stringResources.ENTER_MANUALLY} />
+          </RadioGroup>
+        </ConnectionParameterRow>
+
+        {entryMode === 'select' && (
+          <>
+            <SubscriptionDropdown
+              subscriptions={subscriptions}
+              isFetchingSubscriptions={isFetchingSubscription}
+              setSelectedSubscriptionId={onSubscriptionChange}
+              selectedSubscriptionId={selectedSubscriptionId}
+              title={stringResources.SELECT_SUBSCRIPTION}
+            />
+
+            {isAgentServiceConnection ? (
+              <ConnectionParameterRow parameterKey={'cognitive-service-project-name'} displayName={stringResources.PROJECT} required={true}>
+                <div className={styles.openAIContainer}>
+                  <div className={styles.comboxbox}>
+                    <Combobox
+                      data-automation-id="openai-project-combobox"
+                      required={true}
+                      disabled={serviceProjectsComboBoxDisabled}
+                      placeholder={projectComboboxPlaceholder}
+                      value={projectComboboxValue}
+                      className={styles.openAICombobox}
+                      onOptionSelect={onProjectSelect}
+                    >
+                      {isFetchingCognitiveServiceProjects ? (
+                        <Spinner style={spinnerStyle} labelPosition="after" label={stringResources.LOADING_PROJECT} />
+                      ) : (
+                        Object.keys(cognitiveServiceProjectsAccountMap).map((accountKey) => {
+                          return (
+                            <OptionGroup key={`${accountKey}-optiongroup`} label={accountKey}>
+                              {cognitiveServiceProjectsAccountMap[accountKey].map((project: any) => {
+                                const projectName = project.name?.split?.('/').pop() ?? project.name;
+                                return <Option key={project.id} value={project.id}>{`${projectName} (/${project.resourceGroup})`}</Option>;
+                              })}
+                            </OptionGroup>
+                          );
+                        })
+                      )}
+                    </Combobox>
+                    <div className={styles.comboboxFooter}>
+                      {requiresRoleAssignments && selectedCognitiveServiceProject ? <RoleMessages /> : null}
+                      <CreateNewButton href="https://aka.ms/openFoundryProjectCreate" />
+                    </div>
+                  </div>
+                  <Button
+                    icon={<RefreshIcon />}
+                    size="small"
+                    appearance="transparent"
+                    style={refreshButtonStyle}
+                    disabled={isServiceProjectsRefreshDisabled}
+                    onClick={onRefreshServiceProjects}
+                  />
+                </div>
+              </ConnectionParameterRow>
+            ) : (
+              <ConnectionParameterRow
+                parameterKey={'cognitive-service-resource-id'}
+                displayName={
+                  isAgentServiceConnection
+                    ? stringResources.COGNITIVE_SERVICE_AI_RESOURCE
+                    : stringResources.COGNITIVE_SERVICE_OPENAI_RESOURCE
+                }
+                required={true}
+                tooltip={accountTooltip}
+              >
+                <div className={styles.openAIContainer}>
+                  <div className={styles.comboxbox}>
+                    <Combobox
+                      data-automation-id="openai-combobox"
+                      required={true}
+                      disabled={openAIComboboxDisabled}
+                      placeholder={accountComboboxPlaceholder}
+                      value={accountComboboxValue}
+                      className={styles.openAICombobox}
+                      onOptionSelect={onAccountSelect}
+                    >
+                      {isFetchingAccount ? (
+                        <Spinner style={spinnerStyle} labelPosition="after" label={stringResources.LOADING_ACCOUNTS} />
+                      ) : (
+                        (allCognitiveServiceAccounts ?? []).map((account: any) => {
+                          return <Option key={account.id} value={account.id}>{`${account.name} (/${account.resourceGroup})`}</Option>;
+                        })
+                      )}
+                    </Combobox>
+                    <div className={styles.comboboxFooter}>
+                      {requiresRoleAssignments && !isAgentServiceConnection && !!cognitiveServiceAccountId ? <RoleMessages /> : null}
+                      <CreateNewButton href="https://aka.ms/openAICreate" />
+                    </div>
+                  </div>
+                  <Button
+                    icon={<RefreshIcon />}
+                    size="small"
+                    style={refreshButtonStyle}
+                    appearance="transparent"
+                    disabled={isOpenAIRefreshDisabled}
+                    onClick={onRefreshServiceAccounts}
+                  />
+                </div>
+              </ConnectionParameterRow>
+            )}
+            {errorMessage && <Text>{errorMessage}</Text>}
+          </>
+        )}
+      </>
+    );
+  }
+
+  return <UniversalConnectionParameter {...universalParameterProps} />;
 };

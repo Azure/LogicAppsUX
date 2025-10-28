@@ -27,7 +27,7 @@ const AllowedTriggerTypes = [
   constants.NODE.TYPE.REQUEST,
   constants.NODE.TYPE.RECURRENCE,
   constants.NODE.TYPE.API_CONNECTION,
-  constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+  constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
   constants.NODE.TYPE.HTTP_WEBHOOK,
   constants.NODE.TYPE.HTTP,
   constants.NODE.TYPE.SLIDING_WINDOW,

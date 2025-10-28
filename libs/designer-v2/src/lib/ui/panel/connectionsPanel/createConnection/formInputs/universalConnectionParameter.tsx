@@ -13,7 +13,7 @@ import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import constants from '../../../../../common/constants';
 import ClientSecretInput from './clientSecretInput';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 export interface ConnectionParameterProps {
   parameterKey: string;
@@ -47,10 +47,9 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     identity,
   } = props;
 
-  const data = parameter?.uiDefinition;
-  const description = data?.description ?? data?.schema?.description;
-  const constraints = parameter?.uiDefinition?.constraints;
-  let inputComponent = undefined;
+  const data = useMemo(() => parameter?.uiDefinition, [parameter?.uiDefinition]);
+  const description = useMemo(() => data?.description ?? data?.schema?.description, [data?.description, data?.schema?.description]);
+  const constraints = useMemo(() => parameter?.uiDefinition?.constraints, [parameter?.uiDefinition?.constraints]);
 
   // Memoize the selected key lookup for dropdown parameters
   const selectedKey = useMemo(() => {
@@ -59,6 +58,66 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     }
     return constraints?.allowedValues?.findIndex((_value) => _value.value === value) ?? -1;
   }, [constraints?.allowedValues, value]);
+
+  // Memoize dropdown options to prevent recreation on each render
+  const dropdownOptions = useMemo(() => {
+    if ((constraints?.allowedValues?.length ?? 0) === 0) {
+      return [];
+    }
+    return (constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
+      key: index,
+      text: allowedValue?.text ?? allowedValue.value,
+      data: allowedValue.value,
+    }));
+  }, [constraints?.allowedValues]);
+
+  // Memoize text field type and security settings
+  const textFieldConfig = useMemo(() => {
+    const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
+    const type = isSecure ? 'password' : 'text';
+    return { isSecure, type };
+  }, [parameter.type, constraints?.clearText]);
+
+  // Memoize ConnectionParameterRow props
+  const rowProps = useMemo(
+    () => ({
+      displayName: data?.displayName ?? parameterKey,
+      tooltip: data?.tooltip,
+      required: constraints?.required === 'true',
+      disabled: isLoading,
+    }),
+    [data?.displayName, data?.tooltip, parameterKey, constraints?.required, isLoading]
+  );
+
+  // Memoize callback handlers
+  const onManagedIdentityChange = useCallback(
+    (_: any, option?: IDropdownOption<any>) => {
+      const identitySelected = option?.key.toString() !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? option?.key.toString() : undefined;
+      setValue(identitySelected);
+    },
+    [setValue]
+  );
+
+  const onCheckboxChange = useCallback(
+    (_e: any, checked?: boolean) => {
+      setValue(checked);
+    },
+    [setValue]
+  );
+
+  const onDropdownChange = useCallback(
+    (_e: any, newVal?: IDropdownOption) => {
+      setValue(newVal?.data ?? newVal?.text);
+    },
+    [setValue]
+  );
+
+  const onTextFieldChange = useCallback(
+    (_e: any, newVal?: string) => {
+      setValue(newVal);
+    },
+    [setValue]
+  );
 
   // Handle default values in useEffect to avoid setState during render
   useEffect(() => {
@@ -71,69 +130,61 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     }
   }, [parameter?.type, value, constraints?.allowedValues, setValue, selectedKey]);
 
-  // Gateway setting parameter
-  if (parameter?.type === ConnectionParameterTypes.gatewaySetting) {
-    inputComponent = (
-      <GatewayPicker
-        parameterKey={parameterKey}
-        selectedSubscriptionId={selectedSubscriptionId}
-        selectSubscriptionCallback={selectSubscriptionCallback}
-        availableGateways={availableGateways}
-        availableSubscriptions={availableSubscriptions}
-        isSubscriptionDropdownDisabled={isSubscriptionDropdownDisabled}
-        isLoading={isLoading}
-        setValue={setValue}
-        value={value}
-      />
-    );
-  }
+  // Memoize the input component based on parameter type and relevant props
+  const inputComponent = useMemo(() => {
+    // Gateway setting parameter
+    if (parameter?.type === ConnectionParameterTypes.gatewaySetting) {
+      return (
+        <GatewayPicker
+          parameterKey={parameterKey}
+          selectedSubscriptionId={selectedSubscriptionId}
+          selectSubscriptionCallback={selectSubscriptionCallback}
+          availableGateways={availableGateways}
+          availableSubscriptions={availableSubscriptions}
+          isSubscriptionDropdownDisabled={isSubscriptionDropdownDisabled}
+          isLoading={isLoading}
+          setValue={setValue}
+          value={value}
+        />
+      );
+    }
 
-  // Managed Identity picker
-  else if (equals(constraints?.editor, 'identitypicker')) {
-    const onManagedIdentityChange = (_: any, option?: IDropdownOption<any>) => {
-      const identitySelected = option?.key.toString() !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? option?.key.toString() : undefined;
-      setValue(identitySelected);
-    };
-    inputComponent = <LegacyManagedIdentityDropdown identity={identity} onChange={onManagedIdentityChange} disabled={isLoading} />;
-  }
+    // Managed Identity picker
+    if (equals(constraints?.editor, 'identitypicker')) {
+      return <LegacyManagedIdentityDropdown identity={identity} onChange={onManagedIdentityChange} disabled={isLoading} />;
+    }
 
-  // Boolean parameter
-  else if (parameter?.type === ConnectionParameterTypes.bool) {
-    inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
-  }
+    // Boolean parameter
+    if (parameter?.type === ConnectionParameterTypes.bool) {
+      return <Checkbox checked={value} onChange={onCheckboxChange} label={description} />;
+    }
 
-  // Dropdown Parameter
-  else if ((constraints?.allowedValues?.length ?? 0) > 0) {
-    inputComponent = (
-      <Dropdown
-        id={`connection-param-${parameterKey}`}
-        className="connection-parameter-input"
-        selectedKey={selectedKey}
-        onChange={(e: any, newVal?: IDropdownOption) => setValue(newVal?.data ?? newVal?.text)}
-        disabled={isLoading}
-        ariaLabel={description}
-        placeholder={description}
-        required={constraints?.required === 'true'}
-        options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
-          key: index,
-          text: allowedValue?.text ?? allowedValue.value,
-          data: allowedValue.value,
-        }))}
-      />
-    );
-  }
+    // Dropdown Parameter
+    if (dropdownOptions.length > 0) {
+      return (
+        <Dropdown
+          id={`connection-param-${parameterKey}`}
+          className="connection-parameter-input"
+          selectedKey={selectedKey}
+          onChange={onDropdownChange}
+          disabled={isLoading}
+          ariaLabel={description}
+          placeholder={description}
+          required={constraints?.required === 'true'}
+          options={dropdownOptions}
+        />
+      );
+    }
 
-  // Client Certificate Parameter
-  else if (parameter?.type === ConnectionParameterTypes.clientCertificate) {
-    inputComponent = <ClientSecretInput isLoading={isLoading} parameterKey={parameterKey} setValue={setValue} value={value} />;
-  }
+    // Client Certificate Parameter
+    if (parameter?.type === ConnectionParameterTypes.clientCertificate) {
+      return <ClientSecretInput isLoading={isLoading} parameterKey={parameterKey} setValue={setValue} value={value} />;
+    }
 
-  // Text Input Parameter
-  else {
-    const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
-    const type = isSecure ? 'password' : 'text';
+    // Text Input Parameter
+    const { type } = textFieldConfig;
 
-    inputComponent = (
+    return (
       <TextField
         styles={{ fieldGroup: { minHeight: '24px' } }}
         id={parameterKey}
@@ -149,19 +200,35 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         autoAdjustHeight
         resizable={false}
         rows={1}
-        onChange={(e: any, newVal?: string) => setValue(newVal)}
+        onChange={onTextFieldChange}
       />
     );
-  }
+  }, [
+    parameter?.type,
+    parameterKey,
+    selectedSubscriptionId,
+    selectSubscriptionCallback,
+    availableGateways,
+    availableSubscriptions,
+    isSubscriptionDropdownDisabled,
+    isLoading,
+    setValue,
+    value,
+    constraints?.editor,
+    constraints?.required,
+    identity,
+    description,
+    selectedKey,
+    dropdownOptions,
+    textFieldConfig,
+    onManagedIdentityChange,
+    onCheckboxChange,
+    onDropdownChange,
+    onTextFieldChange,
+  ]);
 
   return (
-    <ConnectionParameterRow
-      parameterKey={parameterKey}
-      displayName={data?.displayName ?? parameterKey}
-      tooltip={data?.tooltip}
-      required={constraints?.required === 'true'}
-      disabled={isLoading}
-    >
+    <ConnectionParameterRow parameterKey={parameterKey} {...rowProps}>
       {inputComponent}
     </ConnectionParameterRow>
   );
