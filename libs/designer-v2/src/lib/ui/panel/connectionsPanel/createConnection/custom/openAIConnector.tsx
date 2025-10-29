@@ -3,7 +3,7 @@ import { type ConnectionParameterProps, UniversalConnectionParameter } from '../
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAllCognitiveServiceAccounts, useAllCognitiveServiceProjects } from './useCognitiveService';
+import { useAllAPIMServiceAccounts, useAllCognitiveServiceAccounts, useAllCognitiveServiceProjects } from './useCognitiveService';
 import { useStyles } from './styles';
 import {
   Link,
@@ -22,6 +22,7 @@ import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fl
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
 import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQuery } from '../../../../../core/queries/role';
+import constants from '../../../../../common/constants';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
@@ -42,11 +43,27 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [operationParameterValues]
   );
 
+  const isAzureOpenAI = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'AzureOpenAI', true),
+    [operationParameterValues]
+  );
+
+  const isAPIMGenAIGateway = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'APIMGenAIGateway', true),
+    [operationParameterValues]
+  );
+
   const {
     isFetching: isFetchingAccount,
     data: allCognitiveServiceAccounts,
     refetch: refetchServiceAccounts,
-  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, !isAgentServiceConnection);
+  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI);
+
+  const {
+    isFetching: isFetchingAPIManagementAccounts,
+    data: allAPIMServiceAccounts,
+    refetch: refetchAPIManagementAccounts,
+  } = useAllAPIMServiceAccounts(selectedSubscriptionId, isAPIMGenAIGateway);
 
   const {
     isFetching: isFetchingCognitiveServiceProjects,
@@ -89,6 +106,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'LBcc5u',
         description: 'Azure Cognitive Service AI resource label',
       }),
+      API_MANAGEMENT_SERVICE: intl.formatMessage({
+        defaultMessage: 'Azure API Management Service',
+        id: 'w6LBmz',
+        description: 'Azure API Management Service label',
+      }),
       SELECT_COGNITIVE_SERVICE_AI_RESOURCE: intl.formatMessage({
         defaultMessage: 'Select an Azure AI resource',
         id: 'EPvt2J',
@@ -104,6 +126,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'WBDuOo',
         description: 'Fetching data text',
       }),
+      DEFAULT_PLACEHOLDER: intl.formatMessage({
+        defaultMessage: 'Enter the required information',
+        id: '0vVdXF',
+        description: 'Fetching data text',
+      }),
       SELECT_SUBSCRIPTION: intl.formatMessage({
         defaultMessage: 'Select the subscription for your OpenAI resource',
         id: 'jyyxZo',
@@ -113,6 +140,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Create new',
         id: '+ebtNl',
         description: 'Label to create a new connection',
+      }),
+      LEARN_MORE: intl.formatMessage({
+        defaultMessage: 'Learn more',
+        id: '19gdw8',
+        description: 'Label to learn more about creating a new connection',
       }),
       LEARN_MORE_CREATE_NEW: intl.formatMessage({
         defaultMessage: 'Learn more about creating a new Azure OpenAI resource',
@@ -129,10 +161,20 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'gD+Onr',
         description: 'Loading projects...',
       }),
+      LOADING_APIM: intl.formatMessage({
+        defaultMessage: 'Loading API Management accounts...',
+        id: 'JASGDy',
+        description: 'Loading API Management accounts...',
+      }),
       SELECT_COGNITIVE_SERVICE_PROJECT: intl.formatMessage({
         defaultMessage: 'Select a project',
         id: 'QwAEWd',
         description: 'Select the project to use for this connection',
+      }),
+      SELECT_APIM_ACCOUNT: intl.formatMessage({
+        defaultMessage: 'Select a API Management account',
+        id: 'kab2jl',
+        description: 'Select the API Management account to use for this connection',
       }),
       MISSING_ROLE_WRITE_PERMISSIONS: intl.formatMessage({
         defaultMessage: 'Missing role write permissions',
@@ -196,6 +238,12 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [allCognitiveServiceAccounts, isOpenAIRefreshDisabled]
   );
 
+  const isAPIMAccountsComboboxDisabled = useMemo(
+    () =>
+      isFetchingAPIManagementAccounts || isFetchingSubscription || !selectedSubscriptionId || (allAPIMServiceAccounts ?? []).length === 0,
+    [isFetchingAPIManagementAccounts, isFetchingSubscription, selectedSubscriptionId, allAPIMServiceAccounts]
+  );
+
   const onRefreshServiceAccounts = useCallback(() => {
     refetchServiceAccounts();
   }, [refetchServiceAccounts]);
@@ -213,6 +261,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const onRefreshServiceProjects = useCallback(() => {
     refetchServiceProjects();
   }, [refetchServiceProjects]);
+
+  const onRefreshAPIManagementAccounts = useCallback(() => {
+    refetchAPIManagementAccounts();
+  }, [refetchAPIManagementAccounts]);
 
   const onSetOpenAIValues = useCallback(
     async (newValue: string) => {
@@ -326,9 +378,14 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     if (option?.optionValue) {
                       const serviceProjectId = option?.optionValue as string;
                       const idSplitValues = serviceProjectId.split('/');
-                      const serviceProjectName = idSplitValues[idSplitValues.length - 1];
-                      const cognitiveServiceAccountName = idSplitValues.length >= 3 ? idSplitValues[serviceProjectId.length - 3] : '';
+                      const splitLength = idSplitValues.length;
+
+                      // Id is of the form - /sub/<>/resourceGroups/<>/providers/Microsoft.CognitiveServices/accounts/<>/projects/<>
+                      const serviceProjectName = idSplitValues[splitLength - 1];
+                      const cognitiveServiceAccountName = splitLength >= 3 ? idSplitValues[splitLength - 3] : '';
                       const openAIEndpoint = `https://${cognitiveServiceAccountName}.services.ai.azure.com/api/projects/${serviceProjectName}`;
+
+                      // Set all the relevant values
                       setSelectedCognitiveServiceProject(serviceProjectId);
                       setParameterValue(serviceProjectId);
                       setKeyValue?.('openAIEndpoint', openAIEndpoint);
@@ -373,6 +430,69 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 }}
                 disabled={isServiceProjectsRefreshDisabled}
                 onClick={onRefreshServiceProjects}
+              />
+            </div>
+          </ConnectionParameterRow>
+        ) : isAPIMGenAIGateway ? (
+          <ConnectionParameterRow
+            parameterKey={'apiManagementService'}
+            displayName={stringResources.API_MANAGEMENT_SERVICE}
+            required={true}
+          >
+            <div className={styles.openAIContainer}>
+              <div className={styles.comboxbox}>
+                <Combobox
+                  data-automation-id="apim-account-combobox"
+                  required={true}
+                  disabled={isAPIMAccountsComboboxDisabled}
+                  placeholder={isFetchingAPIManagementAccounts ? stringResources.LOADING_APIM : stringResources.SELECT_APIM_ACCOUNT}
+                  value={isUndefinedOrEmptyString(parameterValue) ? undefined : parameterValue.split('/').pop()}
+                  className={styles.openAICombobox}
+                  onOptionSelect={async (_e, option?: OptionOnSelectData) => {
+                    if (option?.optionValue) {
+                      const resourceId = option?.optionValue as string;
+                      setValue(resourceId);
+                    }
+                  }}
+                >
+                  {isFetchingAPIManagementAccounts ? (
+                    <Spinner
+                      style={{
+                        position: 'absolute',
+                        bottom: '6px',
+                        left: '8px',
+                      }}
+                      labelPosition="after"
+                      label={stringResources.LOADING_APIM}
+                    />
+                  ) : (
+                    (allAPIMServiceAccounts ?? []).map((account: any) => {
+                      return (
+                        <Option
+                          key={account.id}
+                          value={account.id}
+                        >{`${account.name} ${account.location ? `(${account.location})` : ''}`}</Option>
+                      );
+                    })
+                  )}
+                </Combobox>
+                <div className={styles.comboboxFooter}>
+                  <Link className={styles.createNewButton} target="_blank" href={constants.LINKS.APIM_LEARN_MORE}>
+                    {stringResources.LEARN_MORE}
+                    <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+                  </Link>
+                </div>
+              </div>
+              <Button
+                icon={<RefreshIcon />}
+                size="small"
+                appearance="transparent"
+                style={{
+                  margin: '0 4px',
+                  height: '100%',
+                }}
+                disabled={isAPIMAccountsComboboxDisabled}
+                onClick={onRefreshAPIManagementAccounts}
               />
             </div>
           </ConnectionParameterRow>
@@ -455,12 +575,17 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   return (
     <UniversalConnectionParameter
       {...props}
-      isLoading={true}
+      // For APIM Gen AI Gateway, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
+      isLoading={isAPIMGenAIGateway ? false : true}
       parameter={{
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
-          description: loadingAccountDetails ? stringResources.FETCHING : parameter.uiDefinition?.description,
+          description: loadingAccountDetails
+            ? stringResources.FETCHING
+            : isAPIMGenAIGateway
+              ? stringResources.DEFAULT_PLACEHOLDER
+              : parameter.uiDefinition?.description,
         },
       }}
     />
