@@ -27,7 +27,7 @@ const AllowedTriggerTypes = [
   constants.NODE.TYPE.REQUEST,
   constants.NODE.TYPE.RECURRENCE,
   constants.NODE.TYPE.API_CONNECTION,
-  constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+  constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
   constants.NODE.TYPE.HTTP_WEBHOOK,
   constants.NODE.TYPE.HTTP,
   constants.NODE.TYPE.SLIDING_WINDOW,
@@ -88,16 +88,35 @@ export const FloatingRunButton = ({
 
   const runDraftWorkflow = useCallback(
     async (triggerId: string, payload?: PayloadData) => {
+      let contentBody = payload?.body;
+      const headers = payload?.headers ?? {};
+
+      // Try to parse body as JSON
+      try {
+        contentBody = contentBody ? JSON.parse(contentBody) : undefined;
+      } catch (err) {
+        contentBody = payload?.body;
+        console.error('Error parsing JSON body:', err);
+      }
+
+      // Set Content-Type header if body is JSON
+      if (contentBody && typeof contentBody === 'object') {
+        headers['Content-Type'] = 'application/json';
+      }
+
       try {
         if (siteResourceId && workflowName) {
           const callbackInfo: any = {
-            value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${payload ? 'runDraftWithPayload' : 'runDraft'}`,
+            value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`,
             method: HTTP_METHODS.POST,
           };
 
           // Wait 0.5 seconds, running too fast after saving causes 500 error
           await new Promise((resolve) => setTimeout(resolve, 500));
-          const runResponse = await RunService().runTrigger(callbackInfo, payload);
+          const runResponse = await RunService().runTrigger(callbackInfo, {
+            headers,
+            body: contentBody,
+          });
           const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
           onRun?.(runId);
         } else {
