@@ -478,15 +478,13 @@ export const trySetDefaultConnectionForNode = async (
   let connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
 
   // Filter out dynamic connections unless we're in an A2A workflow AND inside an agent loop
-  // Only apply this filter if there are connections with the 'feature' property set
   // Filtering behavior:
   //   - Conversational agent (isA2A=true) + inside loop (isAgentSubgraph=true) → Allow dynamic connections
   //   - Conversational agent (isA2A=true) + outside loop (isAgentSubgraph=false) → Filter out dynamic connections
   //   - Autonomous agent (isA2A=false) + inside loop (isAgentSubgraph=true) → Filter out dynamic connections
   //   - Autonomous agent (isA2A=false) + outside loop (isAgentSubgraph=false) → Filter out dynamic connections
   //   - Regular workflow (isA2A=false) → Filter out dynamic connections
-  const hasDynamicConnections = connections.some((c) => c.properties.features || c.properties.feature);
-  if (hasDynamicConnections && getState) {
+  if (getState) {
     const state = (getState() as RootState).workflow;
     const isA2A = isA2AWorkflow(state);
     const isAgentSubgraph = nodeId ? isNodeInAgentSubgraph(nodeId, state.nodesMetadata) : false;
