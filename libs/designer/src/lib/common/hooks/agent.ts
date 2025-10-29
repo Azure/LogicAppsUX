@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import type { RootState } from '../../core';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import type { RootState } from '../../core';
 import type { NodesMetadata } from '../../core/state/workflow/workflowInterfaces';
 import { getRecordEntry, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 
@@ -42,17 +42,9 @@ export function isNodeInAgentSubgraph(nodeId: string | undefined, nodesMetadata:
  * @param nodeId - The ID of the node to check
  * @returns true if the node is inside an agent loop, false otherwise
  */
-export function useIsAgentSubGraph(nodeId?: string): boolean | null {
-  const [isAgentSubgraph, setIsAgentSubgraph] = useState<boolean>(false);
-  const { nodesMetadata } = useSelector((state: RootState) => {
-    return {
-      nodesMetadata: state.workflow.nodesMetadata,
-    };
-  });
+export function useIsAgentSubGraph(nodeId?: string): boolean {
+  const nodesMetadata = useSelector((state: RootState) => state.workflow.nodesMetadata);
 
-  useEffect(() => {
-    setIsAgentSubgraph(isNodeInAgentSubgraph(nodeId, nodesMetadata));
-  }, [nodeId, nodesMetadata]);
-
-  return isAgentSubgraph;
+  // Memoize the calculation to avoid recalculating on every render
+  return useMemo(() => isNodeInAgentSubgraph(nodeId, nodesMetadata), [nodeId, nodesMetadata]);
 }

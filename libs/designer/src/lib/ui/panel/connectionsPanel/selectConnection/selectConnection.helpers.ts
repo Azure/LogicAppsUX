@@ -33,6 +33,6 @@ export const getSubLabelForConnection = (item: ConnectionProperties): string | u
     item.authenticatedUser?.name ??
     item.accountName ??
     item.connectionParameters?.agentModelType?.type ??
-    (equals(item.feature ?? '', 'DynamicUserInvoked', true) ? 'Dynamic connection' : undefined)
+    (equals(item.features ?? item.feature ?? '', 'DynamicUserInvoked', true) ? 'Dynamic connection' : undefined)
   );
 };

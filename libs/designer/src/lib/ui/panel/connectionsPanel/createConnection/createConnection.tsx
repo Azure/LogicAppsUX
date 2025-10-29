@@ -1,4 +1,5 @@
 import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
+import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -62,7 +63,6 @@ import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useStyles } from './styles';
-import { isAgentWorkflow } from '../../../../core/state/workflow/helper';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -141,7 +141,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isAgentSubgraph,
     operationManifest,
     workflowKind,
-    workflowMetadata,
   } = props;
 
   const intl = useIntl();
@@ -304,14 +303,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
-  const isDynamicConnectionOptionValidForConnector = useMemo(() => {
-    // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
-    // Standard: check workflowKind
-    // Consumption: check metadata.agentType
-    const isAgent = workflowKind ? isAgentWorkflow(workflowKind) : workflowMetadata?.agentType !== undefined;
+  const isA2A = useIsA2AWorkflow();
 
-    return isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgent;
-  }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
+  const isDynamicConnectionOptionValidForConnector = useMemo(() => {
+    // Dynamic connections (OBO) are only supported for conversational agent workflows (not autonomous)
+    // Standard: check workflowKind === 'agent' (conversational only, not 'agentic')
+    // Consumption: check metadata.agentType !== undefined
+    // Also requires: inside agent loop subgraph + OAuth + connector allows dynamic connections
+    return isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isA2A;
+  }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, isA2A]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
 
