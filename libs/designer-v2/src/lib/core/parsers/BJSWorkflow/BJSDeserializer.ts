@@ -60,6 +60,8 @@ export const Deserialize = (
   let nodesMetadata: NodesMetadata = {};
   const allActionNames = getAllActionNames(definition.actions);
 
+  let hasA2ATrigger = false;
+
   if (definition.triggers && !isNullOrEmpty(definition.triggers)) {
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = createWorkflowNode(tID);
@@ -72,6 +74,7 @@ export const Deserialize = (
       ...addTriggerInstanceMetaData(runInstance),
     };
     allActionNames.push(tID);
+    hasA2ATrigger = equals(trigger?.type, 'Request') && equals(trigger?.kind, 'Agent');
   } else {
     // Workflow has no trigger, create a placeholder trigger node to reference during initialization
     const tID = constants.NODE.TYPE.PLACEHOLDER_TRIGGER;
@@ -96,7 +99,7 @@ export const Deserialize = (
     const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
     for (const [key, action] of parentlessChildren) {
       // Don't add root edges for agent actions in A2A
-      if (equals(workflowKind, 'agent') && isAgentAction(action)) {
+      if ((equals(workflowKind, 'agent') || hasA2ATrigger) && isAgentAction(action)) {
         continue;
       }
       rootEdges.push(createWorkflowEdge(triggerNode?.id ?? '', key));
