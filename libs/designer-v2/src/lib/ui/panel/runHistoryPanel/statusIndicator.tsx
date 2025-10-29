@@ -24,9 +24,9 @@ const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
         });
       case 'Running':
         return intl.formatMessage({
-          defaultMessage: 'Running',
-          id: 'Z1fLoJ',
-          description: 'Indicates that the run is currently running',
+          defaultMessage: 'In progress',
+          id: 'XwSnaF',
+          description: 'Indicates that the run is currently in progress',
         });
       case 'Waiting':
         return intl.formatMessage({
@@ -62,7 +62,7 @@ const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
       case 'Running':
       case 'Waiting':
       case 'Resuming':
-        return <Spinner size={'extra-tiny'} />;
+        return <Spinner size={'extra-tiny'} title={text} />;
       default:
         return null;
     }
