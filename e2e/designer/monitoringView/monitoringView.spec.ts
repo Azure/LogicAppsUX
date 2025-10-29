@@ -44,7 +44,7 @@ test.describe(
 
       // Verify loading status for action
       await expect(page.getByTestId('msla-pill-delay_status')).toBeVisible();
-      await expect(page.getByTestId('msla-pill-delay_status')).toHaveAttribute('aria-label', 'Running');
+      await expect(page.getByTestId('msla-pill-delay_status')).toHaveAttribute('aria-label', 'In progress');
 
       // Verify actions below the loading actions are inactive
 
