@@ -113,7 +113,6 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         disabled={isLoading}
         ariaLabel={description}
         placeholder={description}
-        required={constraints?.required === 'true'}
         options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
           key: index,
           text: allowedValue?.text ?? allowedValue.value,
