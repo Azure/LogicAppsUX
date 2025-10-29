@@ -27,6 +27,11 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   isTenantServiceEnabled: () => true,
 }));
 
+// Mock the useIsA2AWorkflow hook to return false by default
+vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
+  useIsA2AWorkflow: () => false,
+}));
+
 describe('ui/createConnection', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
