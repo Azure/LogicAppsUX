@@ -1,4 +1,11 @@
-import { CognitiveServiceService, equals, isUndefinedOrEmptyString, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import {
+  CognitiveServiceService,
+  enableManualEntryInAgentConnector,
+  equals,
+  isUndefinedOrEmptyString,
+  LogEntryLevel,
+  LoggerService,
+} from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
@@ -28,7 +35,7 @@ import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQ
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -37,9 +44,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const [cognitiveServiceAccountId, setCognitiveServiceAccountId] = useState<string>('');
   const [selectedCognitiveServiceProject, setSelectedCognitiveServiceProject] = useState<string>('');
-  const [entryMode, setEntryMode] = useState<'select' | 'manual'>('select');
+  const [isManualEntryEnabled, setIsManualEntryEnabled] = useState<boolean>(false);
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
+  const entryMode = useMemo(() => parameterValues?.['connectionType'], [parameterValues]);
   const isAgentServiceConnection = useMemo(
     () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentService', true),
     [operationParameterValues]
@@ -277,6 +285,37 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     return false; // Does not have required roles or write permission, so not valid
   }, [hasRequiredRoles, hasRoleWritePermission, isFetchingRequiredRoles, isFetchingRoleWritePermission, requiredRoles]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkFeatureFlag = async () => {
+      try {
+        const enabled = await enableManualEntryInAgentConnector();
+        if (!cancelled) {
+          setIsManualEntryEnabled(enabled);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsManualEntryEnabled(false);
+        }
+      }
+    };
+
+    checkFeatureFlag();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setIsManualEntryEnabled]);
+
+  useEffect(() => {
+    const connectionType = parameterValues?.['connectionType'];
+    if (connectionType !== 'select' && connectionType !== 'manual') {
+      setKeyValue?.('connectionType', 'select');
+    } else if (connectionType === 'manual') {
+      setKeyValue?.('cognitiveServiceAccountId', ''); // Temporary placeholder value
+    }
+  }, [parameterValues, setKeyValue]);
   // TODO: Once we find a generalized solution for role management, we can remove this logic
   useEffect(() => {
     if (parameterValue && validRoleState) {
@@ -291,7 +330,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const onEntryModeChange = useCallback(
     (_e: any, data: any) => {
       const newMode = data.value as 'select' | 'manual';
-      setEntryMode(newMode);
+      setKeyValue?.('connectionType', newMode);
       // Reset values when switching modes
       setSelectedSubscriptionId('');
       setCognitiveServiceAccountId('');
@@ -437,13 +476,13 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const universalParameterProps = useMemo(
     () => ({
       ...props,
-      isLoading: entryMode === 'select',
+      isLoading: entryMode !== 'manual',
       parameter: {
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
           description:
-            entryMode === 'select' ? (loadingAccountDetails ? stringResources.FETCHING : parameter.uiDefinition?.description) : '',
+            entryMode !== 'manual' ? (loadingAccountDetails ? stringResources.FETCHING : parameter.uiDefinition?.description) : '',
         },
       },
     }),
@@ -453,12 +492,14 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   if (parameterKey === 'cognitiveServiceAccountId') {
     return (
       <>
-        <ConnectionParameterRow parameterKey="entry-mode" displayName={stringResources.ENTRY_MODE_LABEL} required={true}>
-          <RadioGroup value={entryMode} onChange={onEntryModeChange} layout="horizontal">
-            <Radio value="select" label={stringResources.SELECT_EXISTING} />
-            <Radio value="manual" label={stringResources.ENTER_MANUALLY} />
-          </RadioGroup>
-        </ConnectionParameterRow>
+        {isManualEntryEnabled ? (
+          <ConnectionParameterRow parameterKey="entry-mode" displayName={stringResources.ENTRY_MODE_LABEL} required={true}>
+            <RadioGroup value={entryMode} onChange={onEntryModeChange} layout="horizontal">
+              <Radio value="select" label={stringResources.SELECT_EXISTING} />
+              <Radio value="manual" label={stringResources.ENTER_MANUALLY} />
+            </RadioGroup>
+          </ConnectionParameterRow>
+        ) : null}
 
         {entryMode === 'select' && (
           <>
@@ -469,7 +510,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
               selectedSubscriptionId={selectedSubscriptionId}
               title={stringResources.SELECT_SUBSCRIPTION}
             />
-
             {isAgentServiceConnection ? (
               <ConnectionParameterRow parameterKey={'cognitive-service-project-name'} displayName={stringResources.PROJECT} required={true}>
                 <div className={styles.openAIContainer}>
@@ -564,6 +604,10 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         )}
       </>
     );
+  }
+
+  if (parameterKey === 'connectionType') {
+    return null;
   }
 
   return <UniversalConnectionParameter {...universalParameterProps} />;

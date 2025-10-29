@@ -43,7 +43,18 @@ export default {
                 tooltip: 'Select the Azure Cognitive Service Account to use for this connection',
                 constraints: {
                   clearText: true,
-                  required: 'true',
+                },
+              },
+            },
+            connectionType: {
+              type: 'string',
+              uiDefinition: {
+                displayName: 'Connection mode for Existing or Select New',
+                description: 'Select whether to use an existing connection or create a new one',
+                tooltip: 'Select the connection mode',
+                constraints: {
+                  clearText: true,
+                  default: 'select',
                 },
               },
             },

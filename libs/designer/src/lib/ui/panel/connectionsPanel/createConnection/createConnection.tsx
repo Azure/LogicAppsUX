@@ -675,6 +675,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
       setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
       operationParameterValues: operationParameterValues,
+      parameterValues: parameterValues,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
