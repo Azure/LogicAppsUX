@@ -27,6 +27,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { AgentUtils } from '../../../../common/utilities/Utils';
+import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +35,7 @@ export const SelectConnectionWrapper = () => {
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
   const isA2A = useIsA2AWorkflow();
+  const isAgentSubgraph = useIsAgentSubGraph(selectedNodeIds?.[0]);
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
@@ -76,13 +78,21 @@ export const SelectConnectionWrapper = () => {
       });
     }
 
-    if (!isA2A) {
-      // Filter out dynamic connections
-      return connectionData.filter((c) => !equals(c.properties.feature ?? '', 'DynamicUserInvoked', true));
+    // Dynamic connections are only valid in A2A workflows AND inside agent loop subgraphs
+    // If not both conditions are met, filter out any connections with the 'DynamicUserInvoked' feature
+    // Filtering behavior:
+    //   - Conversational agent (isA2A=true) + inside loop (isAgentSubgraph=true) → Show dynamic connections
+    //   - Conversational agent (isA2A=true) + outside loop (isAgentSubgraph=false) → Hide dynamic connections
+    //   - Autonomous agent (isA2A=false) + inside loop (isAgentSubgraph=true) → Hide dynamic connections
+    //   - Autonomous agent (isA2A=false) + outside loop (isAgentSubgraph=false) → Hide dynamic connections
+    //   - Regular workflow (isA2A=false) → Hide dynamic connections
+    if (!isA2A || !isAgentSubgraph) {
+      // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
+      return connectionData.filter((c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true));
     }
 
     return connectionData;
-  }, [connectionQuery?.data, connector?.id, isA2A, connectionReferencesForConnector]);
+  }, [connectionQuery?.data, connector?.id, isA2A, isAgentSubgraph, connectionReferencesForConnector]);
   const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(

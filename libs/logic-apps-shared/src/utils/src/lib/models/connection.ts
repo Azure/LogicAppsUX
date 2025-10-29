@@ -74,6 +74,7 @@ export interface ConnectionProperties {
   connectionRuntimeUrl?: string;
   dynamicConnectionProxyUrl?: string;
   feature?: ConnectionFeatureType;
+  features?: ConnectionFeatureType; // API returns 'features' (plural) for dynamic connections
 }
 
 export type Connection = ArmResource<ConnectionProperties>;

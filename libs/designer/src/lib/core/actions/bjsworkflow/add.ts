@@ -19,6 +19,7 @@ import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensS
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addAgentTool, addMcpServer, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { isA2AWorkflow, isManagedMcpOperation } from '../../state/workflow/helper';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
@@ -51,6 +52,7 @@ import {
   UserPreferenceService,
   LoggerService,
   LogEntryLevel,
+  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connection,
@@ -65,7 +67,6 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
-import { isManagedMcpOperation } from '../../state/workflow/helper';
 import { AgentUtils } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
@@ -379,7 +380,7 @@ export const initializeOperationDetails = async (
 
   if (isConnectionRequired) {
     try {
-      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired, autoSelectionDisabled);
+      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired, autoSelectionDisabled, getState);
     } catch (e: any) {
       dispatch(
         updateErrorDetails({
@@ -470,10 +471,32 @@ export const trySetDefaultConnectionForNode = async (
   connector: Connector,
   dispatch: AppDispatch,
   isConnectionRequired: boolean,
-  autoSelectionDisabled?: boolean
+  autoSelectionDisabled?: boolean,
+  getState?: () => unknown
 ) => {
   const connectorId = connector.id;
-  const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
+  let connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
+
+  // Filter out dynamic connections unless we're in an A2A workflow AND inside an agent loop
+  // Only apply this filter if there are connections with the 'feature' property set
+  // Filtering behavior:
+  //   - Conversational agent (isA2A=true) + inside loop (isAgentSubgraph=true) → Allow dynamic connections
+  //   - Conversational agent (isA2A=true) + outside loop (isAgentSubgraph=false) → Filter out dynamic connections
+  //   - Autonomous agent (isA2A=false) + inside loop (isAgentSubgraph=true) → Filter out dynamic connections
+  //   - Autonomous agent (isA2A=false) + outside loop (isAgentSubgraph=false) → Filter out dynamic connections
+  //   - Regular workflow (isA2A=false) → Filter out dynamic connections
+  const hasDynamicConnections = connections.some((c) => c.properties.features || c.properties.feature);
+  if (hasDynamicConnections && getState) {
+    const state = (getState() as RootState).workflow;
+    const isA2A = isA2AWorkflow(state);
+    const isAgentSubgraph = nodeId ? checkIsAgentSubgraph(nodeId, state.nodesMetadata) : false;
+
+    if (!isA2A || !isAgentSubgraph) {
+      // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
+      connections = connections.filter((c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true));
+    }
+  }
+
   if (connections.length > 0 && !autoSelectionDisabled) {
     const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
     await ConnectionService().setupConnectionIfNeeded(connection);
@@ -488,6 +511,30 @@ export const trySetDefaultConnectionForNode = async (
       })
     );
   }
+};
+
+// Helper function to check if a node is inside an agent subgraph
+const checkIsAgentSubgraph = (nodeId: string, nodesMetadata: NodesMetadata): boolean => {
+  if (!nodeId || !nodesMetadata) {
+    return false;
+  }
+
+  let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+
+  while (nodeGraphId) {
+    const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
+    if (!nodeMetadata) {
+      return false;
+    }
+
+    if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) {
+      return true;
+    }
+
+    nodeGraphId = nodeMetadata.graphId;
+  }
+
+  return false;
 };
 
 export const addTokensAndVariables = (
