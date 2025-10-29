@@ -141,6 +141,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isAgentSubgraph,
     operationManifest,
     workflowKind,
+    workflowMetadata,
   } = props;
 
   const intl = useIntl();
