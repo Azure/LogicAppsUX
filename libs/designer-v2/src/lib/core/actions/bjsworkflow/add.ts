@@ -27,7 +27,7 @@ import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '.
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
-import { isNodeInAgentSubgraph } from '../../common/hooks/agent';
+import { isNodeInAgentSubgraph } from '../../../common/hooks/agent';
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
