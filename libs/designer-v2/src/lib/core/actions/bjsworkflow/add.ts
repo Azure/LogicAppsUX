@@ -488,7 +488,6 @@ export const trySetDefaultConnectionForNode = async (
 ) => {
   const connectorId = connector.id;
   let connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
-  const totalConnections = connections.length;
 
   // Filter out dynamic connections unless we're in an A2A workflow AND inside an agent loop
   // Filtering behavior:
@@ -503,29 +502,15 @@ export const trySetDefaultConnectionForNode = async (
 
   if (!isA2A || !isAgentSubgraph) {
     // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
-    const beforeFilter = connections.length;
     connections = connections.filter((c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true));
-    console.log(
-      `[Auto-Select Filter] isA2A=${isA2A}, isAgentSubgraph=${isAgentSubgraph} → Filtered out ${beforeFilter - connections.length} dynamic connections (${connections.length} remaining)`
-    );
-  } else {
-    console.log(
-      `[Auto-Select Filter] isA2A=${isA2A}, isAgentSubgraph=${isAgentSubgraph} → Keeping all ${connections.length} connections (including dynamic)`
-    );
   }
 
   if (connections.length > 0) {
     const mruConnection = await tryGetMostRecentlyUsedConnectionId(connectorId, connections);
     const connection = mruConnection ?? connections[0];
-    console.log(
-      `[Auto-Select] Picked connection: ${connection.name} (${mruConnection ? 'MRU' : 'first available'}) from ${connections.length} options`
-    );
     await ConnectionService().setupConnectionIfNeeded(connection);
     dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
-    console.log(
-      `[Auto-Select] No connections available (started with ${totalConnections}, filtered to ${connections.length}) - opening connection panel`
-    );
     dispatch(initEmptyConnectionMap([nodeId]));
     dispatch(
       openPanel({

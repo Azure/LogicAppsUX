@@ -88,18 +88,9 @@ export const SelectConnectionWrapper = () => {
     //   - Regular workflow (isA2A=false) → Hide dynamic connections
     if (!isA2A || !isAgentSubgraph) {
       // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
-      const filtered = connectionData.filter(
-        (c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true)
-      );
-      console.log(
-        `[Dynamic Filter] isA2A=${isA2A}, isAgentSubgraph=${isAgentSubgraph} → Filtering OUT dynamic connections (${connectionData.length - filtered.length} removed, ${filtered.length} remaining)`
-      );
-      return filtered;
+      return connectionData.filter((c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true));
     }
 
-    console.log(
-      `[Dynamic Filter] isA2A=${isA2A}, isAgentSubgraph=${isAgentSubgraph} → Showing ALL connections including dynamic (${connectionData.length} total)`
-    );
     return connectionData;
   }, [connectionQuery?.data, connector?.id, isA2A, isAgentSubgraph, connectionReferencesForConnector]);
   const references = useConnectionRefs();
