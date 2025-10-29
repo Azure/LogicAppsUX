@@ -27,7 +27,7 @@ import constants from '../../../../../common/constants';
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, value } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, value, parameterValues } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -352,6 +352,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             setSelectedSubscriptionId(id);
             // Reset account and project selections when subscription changes
             setCognitiveServiceAccountId('');
+            setValue(undefined);
             setSelectedCognitiveServiceProject('');
             setParameterValue('');
           }}
@@ -576,7 +577,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     <UniversalConnectionParameter
       {...props}
       // For APIM Gen AI Gateway, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
-      isLoading={isAPIMGenAIGateway ? false : true}
+      isLoading={isAPIMGenAIGateway ? !parameterValues?.['cognitiveServiceAccountId'] : true}
       parameter={{
         ...parameter,
         uiDefinition: {
