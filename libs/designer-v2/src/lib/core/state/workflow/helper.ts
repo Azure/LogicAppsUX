@@ -130,6 +130,10 @@ export const collapseFlowTree = (
 };
 
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
+  if (!state) {
+    return false;
+  }
+
   const workflowKind = state.workflowKind;
 
   // Standard SKU, kind is agent
@@ -149,11 +153,13 @@ export const isA2AWorkflow = (state: WorkflowState): boolean => {
   }
 
   // Consumption SKU - check for A2A trigger pattern
-  const triggerNodeId = Object.keys(state.nodesMetadata).find((nodeId) => state.nodesMetadata[nodeId]?.isTrigger === true);
+  if (state.nodesMetadata && state.operations) {
+    const triggerNodeId = Object.keys(state.nodesMetadata).find((nodeId) => state.nodesMetadata[nodeId]?.isTrigger === true);
 
-  if (triggerNodeId) {
-    const triggerOperation = state.operations[triggerNodeId];
-    return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+    if (triggerNodeId) {
+      const triggerOperation = state.operations[triggerNodeId];
+      return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+    }
   }
 
   return false;
