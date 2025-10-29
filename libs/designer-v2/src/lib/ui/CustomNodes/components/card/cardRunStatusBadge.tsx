@@ -27,9 +27,9 @@ export const CardRunStatusBadge = ({ status, duration }: any) => {
         });
       case 'Running':
         return intl.formatMessage({
-          defaultMessage: 'Running',
-          id: 'Z1fLoJ',
-          description: 'Indicates that the run is currently running',
+          defaultMessage: 'In progress',
+          id: 'XwSnaF',
+          description: 'Indicates that the run is currently in progress',
         });
       case 'Waiting':
         return intl.formatMessage({
