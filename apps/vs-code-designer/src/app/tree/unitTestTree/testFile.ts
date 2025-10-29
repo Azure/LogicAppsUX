@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { runUnitTestFromPath } from '../../commands/workflows/unitTest/runUnitTest';
+import { runUnitTestFromPath } from '../../commands/workflows/unitTest/codelessUnitTest/runUnitTest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { TestMessage, type TestItem, type TestRun } from 'vscode';
 

@@ -149,12 +149,12 @@ export const DesignerCommandBar = ({
     alert('Check console for unit test serialization');
   });
 
-  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const operationContents = await getNodeOutputOperations(designerState);
 
     console.log(operationContents);
-    alert('Check console for blank unit test operationContents');
+    alert('Check console for unit test operationContents');
   });
 
   const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
@@ -207,7 +207,7 @@ export const DesignerCommandBar = ({
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
-  const saveBlankUnitTestIsDisabled = !isUnitTest || isSavingBlankUnitTest || haveAssertionErrors;
+  const isCreateUnitTestDisabled = !isUnitTest || isCreatingUnitTest || haveAssertionErrors;
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -327,18 +327,18 @@ export const DesignerCommandBar = ({
         },
       },
       {
-        key: 'saveBlankUnitTest',
-        text: 'Save Blank Unit Test',
-        disabled: saveBlankUnitTestIsDisabled,
+        key: 'createUnitTest',
+        text: 'Create Unit Test',
+        disabled: isCreateUnitTestDisabled,
         onRenderIcon: () => {
-          return isSavingBlankUnitTest ? (
+          return isCreatingUnitTest ? (
             <Spinner size="small" />
           ) : (
             <FontIcon aria-label="Save" iconName="Save" className={classNames.azureBlue} />
           );
         },
         onClick: () => {
-          saveBlankUnitTestMutate();
+          createUnitTestMutate();
         },
       },
       {
@@ -454,7 +454,7 @@ export const DesignerCommandBar = ({
       isSaving,
       saveIsDisabled,
       saveUnitTestIsDisabled,
-      saveBlankUnitTestIsDisabled,
+      isCreateUnitTestDisabled,
       isUnitTest,
       showConnectionsPanel,
       haveErrors,
@@ -472,8 +472,8 @@ export const DesignerCommandBar = ({
       dispatch,
       isSavingUnitTest,
       saveUnitTestMutate,
-      isSavingBlankUnitTest,
-      saveBlankUnitTestMutate,
+      isCreatingUnitTest,
+      createUnitTestMutate,
       discard,
       haveWorkflowParameterErrors,
       haveAssertionErrors,
