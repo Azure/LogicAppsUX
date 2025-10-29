@@ -111,8 +111,8 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
     {
       key: 'workflowExecution',
       text: intl.formatMessage({
-        defaultMessage: 'Triggered from another workflow',
-        id: 'zEJwdD',
+        defaultMessage: 'When triggered by another workflow',
+        id: '810OUB',
         description: 'Workflow execution trigger category',
       }),
       description: intl.formatMessage({
