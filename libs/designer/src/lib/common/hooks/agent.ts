@@ -13,8 +13,14 @@ export function useIsAgentSubGraph(nodeId?: string): boolean | null {
 
   useEffect(() => {
     setIsAgentSubgraph(false);
-    let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+    const metadata = getRecordEntry(nodesMetadata, nodeId);
+    const isMcpClientTool = metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+    if (isMcpClientTool) {
+      setIsAgentSubgraph(true);
+      return;
+    }
 
+    let nodeGraphId = metadata?.graphId;
     while (nodeId && nodeGraphId) {
       const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
       if (!nodeMetadata) {
@@ -22,9 +28,7 @@ export function useIsAgentSubGraph(nodeId?: string): boolean | null {
         break;
       }
 
-      const isAgentTool =
-        nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
-      if (isAgentTool) {
+      if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) {
         setIsAgentSubgraph(true);
         break;
       }
