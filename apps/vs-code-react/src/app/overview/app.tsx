@@ -209,9 +209,9 @@ export const OverviewApp = () => {
         onRunTrigger={runTriggerCall}
         onVerifyRunId={onVerifyRunId}
         supportsUnitTest={workflowState.isLocal}
-        onCreateUnitTest={(run: RunDisplayItem) => {
+        onCreateUnitTestFromRun={(run: RunDisplayItem) => {
           vscode.postMessage({
-            command: ExtensionCommand.createUnitTest,
+            command: ExtensionCommand.createUnitTestFromRun,
             runId: run.id,
           });
         }}

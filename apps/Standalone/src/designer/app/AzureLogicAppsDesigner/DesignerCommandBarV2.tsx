@@ -205,12 +205,12 @@ export const DesignerCommandBar = ({
     alert('Check console for unit test serialization');
   });
 
-  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const operationContents = await getNodeOutputOperations(designerState);
 
     console.log(operationContents);
-    alert('Check console for blank unit test operationContents');
+    alert('Check console for unit test operationContents');
   });
 
   const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
@@ -248,7 +248,7 @@ export const DesignerCommandBar = ({
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
-  const saveBlankUnitTestIsDisabled = !isUnitTest || isSavingBlankUnitTest || haveAssertionErrors;
+  const isCreateUnitTestDisabled = !isUnitTest || isCreatingUnitTest || haveAssertionErrors;
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -364,11 +364,11 @@ export const DesignerCommandBar = ({
             Save unit test
           </MenuItem>
           <MenuItem
-            disabled={saveBlankUnitTestIsDisabled}
-            onClick={() => saveBlankUnitTestMutate()}
-            icon={isSavingBlankUnitTest ? <Spinner size={'extra-tiny'} /> : undefined}
+            disabled={isCreateUnitTestDisabled}
+            onClick={() => createUnitTestMutate()}
+            icon={isCreatingUnitTest ? <Spinner size={'extra-tiny'} /> : undefined}
           >
-            Save blank unit test
+            Create unit test
           </MenuItem>
           <MenuDivider />
           <MenuItem
