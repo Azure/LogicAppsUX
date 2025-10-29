@@ -29,8 +29,18 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, isWorkflowRuntimeRunning, azureDetails, kind } =
-    workflowState;
+  const {
+    apiVersion,
+    baseUrl,
+    accessToken,
+    workflowProperties,
+    hostVersion,
+    isLocal,
+    isWorkflowRuntimeRunning,
+    azureDetails,
+    kind,
+    connectionData,
+  } = workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -46,6 +56,8 @@ export const OverviewApp = () => {
   const emptyArmId = '00000000-0000-0000-0000-000000000000';
   const clientId = azureDetails?.clientId ?? '';
   const tenantId = azureDetails?.tenantId ?? '';
+  const azureSubscriptionId = azureDetails?.subscriptionId ?? '';
+  const resourceGroup = azureDetails?.resourceGroupName ?? '';
 
   const intlText = {
     DEBUG_PROJECT_ERROR: intl.formatMessage({
@@ -137,9 +149,21 @@ export const OverviewApp = () => {
         } as ManagedIdentity;
       },
       isExplicitAuthRequiredForManagedIdentity: () => true,
-      getAgentUrl: () => fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId),
+      getAgentUrl: () =>
+        fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId, connectionData, azureSubscriptionId, resourceGroup),
     }),
-    [isLocal, baseUrl, workflowProperties.name, apiVersion, httpClient, clientId, tenantId]
+    [
+      isLocal,
+      baseUrl,
+      workflowProperties.name,
+      apiVersion,
+      httpClient,
+      clientId,
+      tenantId,
+      connectionData,
+      azureSubscriptionId,
+      resourceGroup,
+    ]
   );
 
   const useAgentUrl = (): UseQueryResult<AgentURL> => {
