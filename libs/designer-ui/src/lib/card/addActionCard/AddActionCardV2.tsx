@@ -1,6 +1,6 @@
 import { useCardKeyboardInteraction } from '../hooks';
-import { Tooltip, mergeClasses } from '@fluentui/react-components';
-import { Add24Regular } from '@fluentui/react-icons';
+import { Text, Tooltip, mergeClasses } from '@fluentui/react-components';
+import { Add24Filled } from '@fluentui/react-icons';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAddActionCardV2Styles } from './addActionCardV2.styles';
@@ -24,8 +24,8 @@ export const AddActionCardV2: React.FC<AddActionCardPropsV2> = ({ addCardType, o
   const keyboardInteraction = useCardKeyboardInteraction(onClick);
 
   const triggerTitle = intl.formatMessage({
-    defaultMessage: 'Add Trigger',
-    id: 'l5bNjT',
+    defaultMessage: 'Add trigger',
+    id: 'vijxB3',
     description: 'Text on example trigger node',
   });
 
@@ -73,10 +73,10 @@ export const AddActionCardV2: React.FC<AddActionCardPropsV2> = ({ addCardType, o
             tabIndex={0}
             role="button"
           >
-            <Add24Regular className={classes.addIcon} />
+            <Add24Filled className={classes.addIcon} />
           </div>
         </Tooltip>
-        <div className={classes.cardTitle}>{title}</div>
+        <Text className={classes.cardTitle}>{title}</Text>
       </div>
     </>
   );
