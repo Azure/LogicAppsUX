@@ -28,6 +28,7 @@ import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '.
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, isConnectionAutoSelectionDisabled, updateNodeConnection } from './connections';
+import { isNodeInAgentSubgraph } from '../../../common/hooks/agent';
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
@@ -52,7 +53,6 @@ import {
   UserPreferenceService,
   LoggerService,
   LogEntryLevel,
-  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connection,
@@ -489,7 +489,7 @@ export const trySetDefaultConnectionForNode = async (
   if (hasDynamicConnections && getState) {
     const state = (getState() as RootState).workflow;
     const isA2A = isA2AWorkflow(state);
-    const isAgentSubgraph = nodeId ? checkIsAgentSubgraph(nodeId, state.nodesMetadata) : false;
+    const isAgentSubgraph = nodeId ? isNodeInAgentSubgraph(nodeId, state.nodesMetadata) : false;
 
     if (!isA2A || !isAgentSubgraph) {
       // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
@@ -511,30 +511,6 @@ export const trySetDefaultConnectionForNode = async (
       })
     );
   }
-};
-
-// Helper function to check if a node is inside an agent subgraph
-const checkIsAgentSubgraph = (nodeId: string, nodesMetadata: NodesMetadata): boolean => {
-  if (!nodeId || !nodesMetadata) {
-    return false;
-  }
-
-  let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
-
-  while (nodeGraphId) {
-    const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
-    if (!nodeMetadata) {
-      return false;
-    }
-
-    if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) {
-      return true;
-    }
-
-    nodeGraphId = nodeMetadata.graphId;
-  }
-
-  return false;
 };
 
 export const addTokensAndVariables = (
