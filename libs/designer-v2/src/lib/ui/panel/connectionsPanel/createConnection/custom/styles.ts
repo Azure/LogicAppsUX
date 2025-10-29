@@ -1,4 +1,4 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   subscriptionCombobox: {
@@ -13,18 +13,18 @@ export const useStyles = makeStyles({
   },
   openAICombobox: {
     height: '25px',
-    fontSize: '13px',
+    fontSize: tokens.fontSizeBase200,
     borderRadius: '0px',
     width: '100%',
     overflow: 'hidden',
-    color: '#323130',
-    ...shorthands.borderColor('#838180'),
+    color: tokens.colorNeutralForeground1,
+    ...shorthands.borderColor(tokens.colorNeutralStroke1),
   },
   createNewButton: {
     float: 'right',
-    fontSize: '12px',
+    fontSize: tokens.fontSizeBase100,
     fontStyle: 'italic',
-    paddingRight: '4px',
+    paddingRight: tokens.spacingHorizontalXS,
   },
   comboxbox: {
     width: '98%',
@@ -32,7 +32,7 @@ export const useStyles = makeStyles({
   comboboxFooter: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: tokens.spacingHorizontalS,
     justifyContent: 'flex-end',
   },
   multilineMessageBar: {
@@ -41,5 +41,22 @@ export const useStyles = makeStyles({
     wordWrap: 'break-word',
     overflowWrap: 'anywhere',
     lineHeight: '1.5',
+  },
+  spinner: {
+    position: 'absolute',
+    bottom: '6px',
+    left: '8px',
+  },
+  refreshButton: {
+    margin: `0 ${tokens.spacingHorizontalXS}`,
+    height: '100%',
+  },
+  navigateIcon: {
+    position: 'relative',
+    top: '2px',
+    left: '2px',
+  },
+  roleMessageContainer: {
+    flexGrow: 1,
   },
 });

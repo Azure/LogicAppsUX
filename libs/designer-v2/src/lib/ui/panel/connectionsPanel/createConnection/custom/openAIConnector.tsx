@@ -387,26 +387,20 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [isAgentServiceConnection, onSetOpenAIValues]
   );
 
-  // Memoize inline styles (declare before components that use them)
-  const spinnerStyle = useMemo(() => ({ position: 'absolute' as const, bottom: '6px', left: '8px' }), []);
-  const refreshButtonStyle = useMemo(() => ({ margin: '0 4px', height: '100%' }), []);
-  const navigateIconStyle = useMemo(() => ({ position: 'relative' as const, top: '2px', left: '2px' }), []);
-  const roleMessageContainerStyle = useMemo(() => ({ flexGrow: 1 }), []);
-
   // Memoize component instances
   const CreateNewButton = useCallback(
     ({ href }: { href: string }) => (
       <Link className={styles.createNewButton} target="_blank" href={href}>
         {stringResources.CREATE_NEW}
-        <NavigateIcon style={navigateIconStyle} />
+        <NavigateIcon className={styles.navigateIcon} />
       </Link>
     ),
-    [stringResources.CREATE_NEW, styles.createNewButton, navigateIconStyle]
+    [stringResources.CREATE_NEW, styles.createNewButton, styles.navigateIcon]
   );
 
   const RoleMessages = useCallback(
     () => (
-      <div style={roleMessageContainerStyle}>
+      <div className={styles.roleMessageContainer}>
         {isFetchingRoleWritePermission || isFetchingRequiredRoles ? (
           <Field
             validationState="warning"
@@ -425,7 +419,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       isFetchingRoleWritePermission,
       stringResources.FETCHING_RESOURCE_DETAILS,
       stringResources.MISSING_ROLE_WRITE_PERMISSIONS,
-      roleMessageContainerStyle,
+      styles.roleMessageContainer,
     ]
   );
 
@@ -525,7 +519,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                       onOptionSelect={onProjectSelect}
                     >
                       {isFetchingCognitiveServiceProjects ? (
-                        <Spinner style={spinnerStyle} labelPosition="after" label={stringResources.LOADING_PROJECT} />
+                        <Spinner className={styles.spinner} labelPosition="after" label={stringResources.LOADING_PROJECT} />
                       ) : (
                         Object.keys(cognitiveServiceProjectsAccountMap).map((accountKey) => {
                           return (
@@ -548,7 +542,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     icon={<RefreshIcon />}
                     size="small"
                     appearance="transparent"
-                    style={refreshButtonStyle}
+                    className={styles.refreshButton}
                     disabled={isServiceProjectsRefreshDisabled}
                     onClick={onRefreshServiceProjects}
                   />
@@ -577,7 +571,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                       onOptionSelect={onAccountSelect}
                     >
                       {isFetchingAccount ? (
-                        <Spinner style={spinnerStyle} labelPosition="after" label={stringResources.LOADING_ACCOUNTS} />
+                        <Spinner className={styles.spinner} labelPosition="after" label={stringResources.LOADING_ACCOUNTS} />
                       ) : (
                         (allCognitiveServiceAccounts ?? []).map((account: any) => {
                           return <Option key={account.id} value={account.id}>{`${account.name} (/${account.resourceGroup})`}</Option>;
@@ -592,7 +586,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   <Button
                     icon={<RefreshIcon />}
                     size="small"
-                    style={refreshButtonStyle}
+                    className={styles.refreshButton}
                     appearance="transparent"
                     disabled={isOpenAIRefreshDisabled}
                     onClick={onRefreshServiceAccounts}
