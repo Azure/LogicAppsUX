@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import axios, { isAxiosError } from 'axios';
 import * as childProcess from 'child_process';
 import * as fse from 'fs-extra';
 import * as util from 'util';
 import path from 'path';
-import * as localizeModule from '../../../localize';
-import * as vscodeConfigSettings from '../../utils/vsCodeConfig/settings';
-import * as cpUtils from '../../utils/funcCoreTools/cpUtils';
-import { ext } from '../../../extensionVariables';
+import * as localizeModule from '../../../../localize';
+import * as vscodeConfigSettings from '../../vsCodeConfig/settings';
+import * as cpUtils from '../../funcCoreTools/cpUtils';
+import { ext } from '../../../../extensionVariables';
 
 // Mock the isAxiosError function
 vi.mock('axios', async () => {
@@ -20,13 +20,12 @@ vi.mock('axios', async () => {
 });
 import {
   extractAndValidateRunId,
-  validateRunId,
   removeInvalidCharacters,
   parseErrorBeforeTelemetry,
   generateCSharpClasses,
-  generateClassCode,
+  generateMockOutputsClassContent,
   getOperationMockClassContent,
-  buildClassDefinition,
+  buildOutputsClassDefinition,
   mapJsonTypeToCSharp,
   createCsprojFile,
   updateCsprojFile,
@@ -36,9 +35,21 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   validateUnitTestName,
-} from '../unitTests';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { testsDirectoryName, workflowFileName } from '../../../constants';
+} from '../codefulUnitTest';
+import {
+  assetsFolderName,
+  testClassFileFromRunNoActionsTemplateName,
+  testClassFileFromRunTemplateName,
+  testClassFileNoActionsTemplateName,
+  testClassFileTemplateName,
+  testCsprojFileTemplateName,
+  testExecutorFileTemplateName,
+  testMockClassTemplateName,
+  testsDirectoryName,
+  testSettingsConfigFileTemplateName,
+  unitTestTemplatesFolderName,
+  workflowFileName,
+} from '../../../../constants';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -70,7 +81,7 @@ afterEach(() => {
 // Test Suites
 // ============================================================================
 
-describe('unitTests', () => {
+describe('codefulUnitTest', () => {
   describe('extractAndValidateRunId', () => {
     it('should throw an error if runId is undefined', async () => {
       await expect(extractAndValidateRunId(undefined)).rejects.toThrowError('Run ID is required to generate a codeful unit test.');
@@ -97,23 +108,6 @@ describe('unitTests', () => {
       const runId = '   ABC123   ';
       const result = await extractAndValidateRunId(runId);
       expect(result).toBe('ABC123');
-    });
-  });
-
-  describe('validateRunId', () => {
-    it('should resolve for a valid runId', async () => {
-      const runId = 'ABC123';
-      await expect(validateRunId(runId)).resolves.not.toThrow();
-    });
-
-    it('should throw an error for an invalid runId', async () => {
-      const runId = 'abc123';
-      await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
-    });
-
-    it('should throw an error for an empty runId', async () => {
-      const runId = '';
-      await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
     });
   });
 
@@ -253,11 +247,29 @@ describe('unitTests', () => {
   });
 
   describe('generateCSharpClasses - HTTP Action', () => {
-    it('should generate C# class code from a class definition HTTP action', () => {
+    let mockClassTemplateContent: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      const mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testMockClassTemplateName);
+      mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('TestMockClass')) return mockClassTemplateContent;
+        throw new Error(`File not found: ${p}`);
+      });
+    });
+
+    it('should generate C# class code from a class definition HTTP action', async () => {
       const workflowName = 'TestWorkflow';
       const mockType = 'Action';
       const mockClassName = 'MockClass';
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'NamespaceName',
         'RootClass',
         workflowName,
@@ -280,11 +292,11 @@ describe('unitTests', () => {
       expect(classCode).toContain('this.Key1 = string.Empty;');
     });
 
-    it('should generate C# class code from a class definition HTTP action with schema', () => {
+    it('should generate C# class code from a class definition HTTP action with schema', async () => {
       const workflowName = 'TestWorkflow';
       const mockType = 'Action';
       const mockClassName = 'MockClass';
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'NamespaceName',
         'RootClass',
         workflowName,
@@ -382,11 +394,29 @@ describe('unitTests', () => {
   });
 
   describe('generateCSharpClasses - non HTTP', () => {
-    it('should generate C# class code from a class definition non HTTP action', () => {
+    let mockClassTemplateContent: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      const mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testMockClassTemplateName);
+      mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('TestMockClass')) return mockClassTemplateContent;
+        throw new Error(`File not found: ${p}`);
+      });
+    });
+
+    it('should generate C# class code from a class definition non HTTP action', async () => {
       const workflowName = 'TestWorkflow';
       const mockType = 'Action';
       const mockClassName = 'MockClass';
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'NamespaceName',
         'RootClass',
         workflowName,
@@ -409,7 +439,7 @@ describe('unitTests', () => {
       expect(classCode).toContain('this.Key1 = string.Empty;');
     });
 
-    it('should not have StatusCode property from the generated class definition', () => {
+    it('should not have StatusCode property from the generated class definition', async () => {
       // Simulate JSON output with a redundant StatusCode property.
       const dataWithStatusCode = {
         nestedTypeProperty: 'object',
@@ -417,7 +447,7 @@ describe('unitTests', () => {
         StatusCode: { nestedTypeProperty: 'integer', description: 'The status code' },
       };
 
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'TestNamespace',
         'TestClass',
         'WorkflowName',
@@ -435,13 +465,13 @@ describe('unitTests', () => {
       expect(classCode).toContain('public JObject Body { get; set; }');
     });
 
-    it('should not remove properties other than StatusCode', () => {
+    it('should not remove properties other than StatusCode', async () => {
       const dataWithoutStatusCode = {
         nestedTypeProperty: 'object',
         Key1: { nestedTypeProperty: 'string', description: 'Test key description' },
       };
 
-      const classCode = generateCSharpClasses(
+      const classCode = await generateCSharpClasses(
         'TestNamespace',
         'TestClass',
         'WorkflowName',
@@ -459,7 +489,25 @@ describe('unitTests', () => {
   });
 
   describe('generateCSharpClasses - Naming and Namespace Validation', () => {
-    it('should generate a C# class with a valid class name and namespace structure', () => {
+    let mockClassTemplateContent: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      const mockClassTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testMockClassTemplateName);
+      mockClassTemplateContent = await realFs.readFile(mockClassTemplatePath, 'utf8');
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('TestMockClass')) return mockClassTemplateContent;
+        throw new Error(`File not found: ${p}`);
+      });
+    });
+
+    it('should generate a C# class with a valid class name and namespace structure', async () => {
       const namespaceName = 'MyLogicApp';
       const rootClassName = 'SomeOperationMockOutput';
       const workflowName = 'TestWorkflow';
@@ -469,7 +517,7 @@ describe('unitTests', () => {
         nestedTypeProperty: 'object',
         key: { nestedTypeProperty: 'string', description: 'test key' },
       };
-      const classCode = generateCSharpClasses(namespaceName, rootClassName, workflowName, mockType, mockClassName, data, false);
+      const classCode = await generateCSharpClasses(namespaceName, rootClassName, workflowName, mockType, mockClassName, data, false);
 
       expect(classCode).toContain('using Newtonsoft.Json.Linq;');
       expect(classCode).toContain('using System.Collections.Generic;');
@@ -495,7 +543,7 @@ describe('unitTests', () => {
         children: [],
         inheritsFrom: 'MockOutput',
       };
-      const classCode = generateClassCode(classDef, false);
+      const classCode = generateMockOutputsClassContent(classDef, false);
       expect(classCode).toContain('public class TestClass');
       expect(classCode).toContain('public string Property1 { get; set; }');
       expect(classCode).toContain('public int Property2 { get; set; }');
@@ -521,7 +569,7 @@ describe('unitTests', () => {
         children: [],
         inheritsFrom: 'MockOutput',
       };
-      const classCode = generateClassCode(classDef, true);
+      const classCode = generateMockOutputsClassContent(classDef, true);
       expect(classCode).toContain('public class TestClass');
       expect(classCode).toContain('public HttpStatusCode StatusCode {get; set;}');
       expect(classCode).toContain('public string Property1 { get; set; }');
@@ -552,7 +600,7 @@ describe('unitTests', () => {
         inheritsFrom: 'MockOutput',
       };
 
-      const classCode = generateClassCode(classDef);
+      const classCode = generateMockOutputsClassContent(classDef);
       expect(classCode).toContain('public class ParentClass');
       expect(classCode).toContain('public ChildClass Child { get; set; }');
       const setChildOccurrences = classCode.split('this.Child = new ChildClass();').length - 1;
@@ -861,7 +909,7 @@ describe('unitTests', () => {
 
   describe('buildClassDefinition', () => {
     it('should build a class definition for an object', () => {
-      const classDef = buildClassDefinition('RootClass', {
+      const classDef = buildOutputsClassDefinition('RootClass', {
         nestedTypeProperty: 'object',
         '@key1~1description': { nestedTypeProperty: 'string', description: 'Key 1 description', title: 'Key 1 Description' },
         nested: {
@@ -924,32 +972,25 @@ describe('unitTests', () => {
   });
 
   describe('createCsprojFile', () => {
-    const testProjectFileTemplate = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Tests.Extension" Version="1.0.0-preview" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2" />
-  </ItemGroup>
-</Project>`;
     const csprojFilePath: string = 'dummy.csproj';
     let writeFileSpy: any;
     let readFileSpy: any;
+    let testCsprojFileTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      const testCsprojFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testCsprojFileTemplateName);
+      testCsprojFileTemplate = await realFs.readFile(testCsprojFileTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
       vi.spyOn(console, 'log').mockImplementation(() => {});
       vi.spyOn(console, 'error').mockImplementation(() => {});
       writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
-      readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testProjectFileTemplate);
+      readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testCsprojFileTemplate);
     });
 
     afterEach(() => {
@@ -963,7 +1004,7 @@ describe('unitTests', () => {
 
       expect(pathExistsSpy).toHaveBeenCalledWith(csprojFilePath);
       expect(readFileSpy).toHaveBeenCalledTimes(1);
-      expect(writeFileSpy).toHaveBeenCalledWith(csprojFilePath, testProjectFileTemplate);
+      expect(writeFileSpy).toHaveBeenCalledWith(csprojFilePath, testCsprojFileTemplate);
     });
 
     it('should not overwrite an existing C# project file', async () => {
@@ -1108,7 +1149,36 @@ describe('unitTests', () => {
     const triggerOutputClassName: string = 'MyTriggerMockOutput';
     const triggerMockClassName: string = 'MyTriggerMock';
     let writeFileSpy: any;
-    let isBlank: boolean;
+    let testClassFileTemplate: string;
+    let testClassFileFromRunTemplate: string;
+    let testClassFileNoActionsTemplate: string;
+    let testClassFileFromRunNoActionsTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+
+      const testClassFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testClassFileTemplateName);
+      testClassFileTemplate = await realFs.readFile(testClassFileTemplatePath, 'utf8');
+
+      const testClassFileFromRunTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testClassFileFromRunTemplateName);
+      testClassFileFromRunTemplate = await realFs.readFile(testClassFileFromRunTemplatePath, 'utf8');
+
+      const testClassFileNoActionsTemplatePath = path.join(
+        assetsFolderPath,
+        unitTestTemplatesFolderName,
+        testClassFileNoActionsTemplateName
+      );
+      testClassFileNoActionsTemplate = await realFs.readFile(testClassFileNoActionsTemplatePath, 'utf8');
+
+      const testClassFileFromRunNoActionsTemplatePath = path.join(
+        assetsFolderPath,
+        unitTestTemplatesFolderName,
+        testClassFileFromRunNoActionsTemplateName
+      );
+      testClassFileFromRunNoActionsTemplate = await realFs.readFile(testClassFileFromRunNoActionsTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
@@ -1121,146 +1191,8 @@ describe('unitTests', () => {
       vi.restoreAllMocks();
     });
 
-    it('should create a C# file using the TestBlankClassFile template when creating from scratch', async () => {
-      isBlank = true;
-
-      const testBlankClassFileTemplate = `using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.Workflows.UnitTesting.Definitions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
-
-namespace <%= LogicAppName %>.Tests
-{
-    /// <summary>
-    /// The unit test class.
-    /// </summary>
-    [TestClass]
-    public class <%= UnitTestName %>
-    {
-        /// <summary>
-        /// The unit test executor.
-        /// </summary>
-        public TestExecutor TestExecutor;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with static mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
-        {
-            // PREPARE Mock
-            // Generate mock trigger data.
-            var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-            // Sample of how to set the properties of the triggerMockOutput
-            // triggerMockOutput.Body.Flag = true;
-            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
-
-            // Generate mock action data.
-            var actionMockOutput = new <%= ActionMockOutputClassName %>();
-            // Sample of how to set the properties of the actionMockOutput
-            // actionMockOutput.Body.Name = "SampleResource";
-            // actionMockOutput.Body.Id = "SampleId";
-            var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", outputs: actionMockOutput);
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-           var testMock = new TestMockDefinition(
-                triggerMock: triggerMock,
-                actionMocks: new Dictionary<string, ActionMock>()
-                {
-                    {actionMock.Name, actionMock}
-                });
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: testMock).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with dynamic mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample2()
-        {
-            // PREPARE
-            // Generate mock trigger data.
-            var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-            // Sample of how to set the properties of the triggerMockOutput
-            // triggerMockOutput.Body.Flag = true;
-            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
-
-            // Generate mock action data.
-            // OPTION 1 : defining a callback function
-            var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
-            // OPTION 2: defining inline using a lambda
-            /*var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
-            {
-                return new <%= ActionMockClassName %>(
-                    status: TestWorkflowStatus.Succeeded,
-                    outputs: new <%= ActionMockOutputClassName %> {
-                        // set the desired properties here
-                        // if this acount contains a JObject Body
-                        // Body = "something".ToJObject()
-                    }
-                );
-            });*/
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testMock = new TestMockDefinition(
-                triggerMock: triggerMock,
-                actionMocks: new Dictionary<string, ActionMock>()
-                {
-                    {actionMock.Name, actionMock}
-                });
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: testMock).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
-        }
-
-        #region Mock generator helpers
-
-        /// <summary>
-        /// The callback method to dynamically generate mocked data for the action named 'actionName'.
-        /// You can modify this method to return different mock status, outputs, and error based on the test scenario.
-        /// </summary>
-        /// <param name="context">The test execution context that contains information about the current test run.</param>
-        public <%= ActionMockClassName %> <%= ActionMockClassName %>OutputCallback(TestExecutionContext context)
-        {
-            // Sample mock data : Modify the existing mocked data dynamically for "actionName".
-            return new <%= ActionMockClassName %>(
-                status: TestWorkflowStatus.Succeeded,
-                outputs: new <%= ActionMockOutputClassName %> {
-                    // set the desired properties here
-                    // if this acount contains a JObject Body
-                    // Body = "something".ToJObject()
-                }
-            );
-        }
-
-        #endregion
-    }
-}`;
-
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testBlankClassFileTemplate);
+    it('should create a C# file using the TestClassFile template when creating from scratch', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1272,14 +1204,13 @@ namespace <%= LogicAppName %>.Tests
         cleanedUnitTestName,
         workflowName,
         cleanedWorkflowName,
-        logicAppName,
         cleanedLogicAppName,
         actionName,
         actionOutputClassName,
         actionMockClassName,
         triggerOutputClassName,
         triggerMockClassName,
-        isBlank
+        true
       );
 
       expect(readFileSpy).toHaveBeenCalledTimes(1);
@@ -1303,160 +1234,8 @@ namespace <%= LogicAppName %>.Tests
       );
     });
 
-    it('should create a C# file using the TestClassFile template when creating from run', async () => {
-      isBlank = false;
-
-      const testClassFileTemplate = `using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.Workflows.Common.ErrorResponses;
-using Microsoft.Azure.Workflows.UnitTesting;
-using Microsoft.Azure.Workflows.UnitTesting.Definitions;
-using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
-
-namespace <%= LogicAppName %>.Tests
-{
-    /// <summary>
-    /// The unit test class.
-    /// </summary>
-    [TestClass]
-    public class <%= UnitTestName %>
-    {
-        /// <summary>
-        /// The unit test executor.
-        /// </summary>
-        public TestExecutor TestExecutor;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with static mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
-        {
-            // PREPARE Mock
-            // Generate mock action and trigger data.
-            var mockData = this.GetTestMockDefinition();
-            var sampleActionMock = mockData.ActionMocks["<%= ActionMockName %>"];
-            // sampleActionMock.Outputs["your-property-name"] = "your-property-value";
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with dynamic mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample2()
-        {
-            // PREPARE
-            // Generate mock action and trigger data.
-            var mockData = this.GetTestMockDefinition();
-            // OPTION 1 : defining a callback function
-            mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
-            // OPTION 2: defining inline using a lambda
-            mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
-            {
-                return new <%= ActionMockClassName %>(
-                    status: TestWorkflowStatus.Succeeded,
-                    outputs: new <%= ActionMockOutputClassName %> {
-                        // set the desired properties here
-                        // if this acount contains a JObject Body
-                        // Body = "something".ToJObject()
-                    }
-                );
-            });
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with failed mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
-        {
-            // PREPARE
-            // Generate mock action and trigger data.
-            var mockData = this.GetTestMockDefinition();
-            var mockError = new TestErrorInfo(code: ErrorResponseCode.BadRequest, message: "Input is invalid.");
-            mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(status: TestWorkflowStatus.Failed, error: mockError);
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Failed, actual: testRun.Status);
-        }
-
-        #region Mock generator helpers
-
-        /// <summary>
-        /// Returns deserialized test mock data.  
-        /// </summary>
-        private TestMockDefinition GetTestMockDefinition()
-        {
-            var mockDataPath = Path.Combine(TestExecutor.rootDirectory, "Tests", TestExecutor.logicAppName, TestExecutor.workflow, "<%= UnitTestSubFolder %>", "<%= UnitTestMockJson %>");
-            return JsonConvert.DeserializeObject<TestMockDefinition>(File.ReadAllText(mockDataPath));
-        }
-
-        /// <summary>
-        /// The callback method to dynamically generate mocked data for the action named 'actionName'.
-        /// You can modify this method to return different mock status, outputs, and error based on the test scenario.
-        /// </summary>
-        /// <param name="context">The test execution context that contains information about the current test run.</param>
-        public <%= ActionMockClassName %> <%= ActionMockClassName %>OutputCallback(TestExecutionContext context)
-        {
-            // Sample mock data : Modify the existing mocked data dynamically for "actionName".
-            return new <%= ActionMockClassName %>(
-                status: TestWorkflowStatus.Succeeded,
-                outputs: new <%= ActionMockOutputClassName %> {
-                    // set the desired properties here
-                    // if this acount contains a JObject Body
-                    // Body = "something".ToJObject()
-                }
-            );
-        }
-
-        #endregion
-    }
-}`;
-
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileTemplate);
+    it('should create a C# file using the TestClassFileFromRun template when creating from run', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileFromRunTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1468,14 +1247,13 @@ namespace <%= LogicAppName %>.Tests
         cleanedUnitTestName,
         workflowName,
         cleanedWorkflowName,
-        logicAppName,
         cleanedLogicAppName,
         actionName,
         actionOutputClassName,
         actionMockClassName,
         triggerOutputClassName,
         triggerMockClassName,
-        isBlank
+        false
       );
 
       expect(readFileSpy).toHaveBeenCalledTimes(1);
@@ -1507,66 +1285,8 @@ namespace <%= LogicAppName %>.Tests
       );
     });
 
-    it('should create a C# file using the TestBlankClassFileWithoutActions template when creating from scratch using a workflow without actions', async () => {
-      isBlank = true;
-
-      const testBlankClassFileWithoutActionsTemplate = `using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.Workflows.UnitTesting.Definitions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
-
-namespace <%= LogicAppName %>.Tests
-{
-    /// <summary>
-    /// The unit test class.
-    /// </summary>
-    [TestClass]
-    public class <%= UnitTestName %>
-    {
-        /// <summary>
-        /// The unit test executor.
-        /// </summary>
-        public TestExecutor TestExecutor;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with static mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
-        {
-            // PREPARE Mock
-            // Generate mock trigger data.
-            var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-            // Sample of how to set the properties of the triggerMockOutput
-            // triggerMockOutput.Body.Flag = true;
-            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testMock = new TestMockDefinition(
-                triggerMock: triggerMock,
-                actionMocks: null);
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: testMock).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
-        }
-    }
-}`;
-
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testBlankClassFileWithoutActionsTemplate);
+    it('should create a C# file using the TestClassFileNoActions template when creating from scratch using a workflow without actions', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileNoActionsTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1578,14 +1298,13 @@ namespace <%= LogicAppName %>.Tests
         cleanedUnitTestName,
         workflowName,
         cleanedWorkflowName,
-        logicAppName,
         cleanedLogicAppName,
         actionName,
         actionOutputClassName,
         actionMockClassName,
         triggerOutputClassName,
         triggerMockClassName,
-        isBlank
+        true
       );
 
       expect(readFileSpy).toHaveBeenCalledTimes(1);
@@ -1609,105 +1328,8 @@ namespace <%= LogicAppName %>.Tests
       );
     });
 
-    it('should create a C# file using the TestClassFileWithoutActions template when creating from run using a workflow without actions', async () => {
-      isBlank = false;
-
-      const testClassFileWithoutActionsTemplate = `using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.Workflows.Common.ErrorResponses;
-using Microsoft.Azure.Workflows.UnitTesting;
-using Microsoft.Azure.Workflows.UnitTesting.Definitions;
-using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
-
-namespace <%= LogicAppName %>.Tests
-{
-    /// <summary>
-    /// The unit test class.
-    /// </summary>
-    [TestClass]
-    public class <%= UnitTestName %>
-    {
-        /// <summary>
-        /// The unit test executor.
-        /// </summary>
-        public TestExecutor TestExecutor;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with static mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
-        {
-            // PREPARE Mock
-            // Generate mock action and trigger data.
-            var mockData = this.GetTestMockDefinition();
-            // mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
-        }
-
-        /// <summary>
-        /// A sample unit test for executing the workflow named <%= WorkflowName %> with failed mocked data.
-        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
-        /// </summary>
-        [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
-        {
-            // PREPARE
-            // Generate mock action and trigger data.
-            var mockData = this.GetTestMockDefinition();
-            var mockError = new TestErrorInfo(code: ErrorResponseCode.BadRequest, message: "Input is invalid.");
-            mockData.TriggerMock = new <%= TriggerMockClassName %>(status: TestWorkflowStatus.Failed, error: mockError);
-
-            // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var testRun = await this.TestExecutor
-                .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
-
-            // ASSERT
-            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(value: testRun);
-            Assert.AreEqual(expected: TestWorkflowStatus.Failed, actual: testRun.Status);
-        }
-
-        #region Mock generator helpers
-
-        /// <summary>
-        /// Returns deserialized test mock data.  
-        /// </summary>
-        private TestMockDefinition GetTestMockDefinition()
-        {
-            var mockDataPath = Path.Combine(TestExecutor.rootDirectory, "Tests", TestExecutor.logicAppName, TestExecutor.workflow, "<%= UnitTestSubFolder %>", "<%= UnitTestMockJson %>");
-            return JsonConvert.DeserializeObject<TestMockDefinition>(File.ReadAllText(mockDataPath));
-        }
-
-        #endregion
-    }
-}`;
-
-      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileWithoutActionsTemplate);
+    it('should create a C# file using the TestClassFileFromRunNoActions template when creating from run using a workflow without actions', async () => {
+      const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileFromRunNoActionsTemplate);
 
       const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
       const cleanedWorkflowName = workflowName.replace(/-/g, '_');
@@ -1719,14 +1341,13 @@ namespace <%= LogicAppName %>.Tests
         cleanedUnitTestName,
         workflowName,
         cleanedWorkflowName,
-        logicAppName,
         cleanedLogicAppName,
         actionName,
         actionOutputClassName,
         actionMockClassName,
         triggerOutputClassName,
         triggerMockClassName,
-        isBlank
+        false
       );
 
       expect(readFileSpy).toHaveBeenCalledTimes(1);
@@ -1766,68 +1387,19 @@ namespace <%= LogicAppName %>.Tests
   });
 
   describe('createTestExecutorFile', () => {
-    const testExecutorFileTemplate = `using Microsoft.Azure.Workflows.UnitTesting;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
-
-namespace <%= LogicAppName %>.Tests
-{
-    public class TestExecutor
-    {
-        /// <summary>
-        /// The root directory.
-        /// </summary>
-        public string rootDirectory;
-        
-        /// <summary>
-        /// The logic app name.
-        /// </summary>
-        public string logicAppName;
-
-        /// <summary>
-        /// The workflow name.
-        /// </summary>
-        public string workflow;
-
-        public TestExecutor(string configPath)
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddXmlFile(configPath, optional: false, reloadOnChange: true)
-                .Build();
-
-            this.rootDirectory = configuration["TestSettings:WorkspacePath"];
-            this.logicAppName = configuration["TestSettings:LogicAppName"];
-            this.workflow = configuration["TestSettings:WorkflowName"];
-        }
-
-        #region Unit test executor
-
-        public UnitTestExecutor Create()
-        {
-            // Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
-            var workflowDefinitionPath = Path.Combine(this.rootDirectory, this.logicAppName, this.workflow, "workflow.json");
-            var connectionsPath = Path.Combine(this.rootDirectory, this.logicAppName, "connections.json");
-            var parametersPath = Path.Combine(this.rootDirectory, this.logicAppName, "parameters.json");
-            var localSettingsPath = Path.Combine(this.rootDirectory, this.logicAppName, "local.settings.json");
-            
-            return new UnitTestExecutor(
-                workflowFilePath: workflowDefinitionPath,
-                connectionsFilePath: connectionsPath,
-                parametersFilePath: parametersPath,
-                localSettingsFilePath: localSettingsPath
-            );
-        }
-
-        #endregion
-
-    }
-}`;
     const logicAppName: string = 'My-LogicApp';
     const unitTestFolderPath: string = 'unitTestFolderPath';
     let readFileSpy: any;
     let writeFileSpy: any;
+    let testExecutorFileTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      const testExecutorFileTemplatePath = path.join(assetsFolderPath, unitTestTemplatesFolderName, testExecutorFileTemplateName);
+      testExecutorFileTemplate = await realFs.readFile(testExecutorFileTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
@@ -1869,19 +1441,24 @@ namespace <%= LogicAppName %>.Tests
   });
 
   describe('createTestSettingsConfig', () => {
-    const testSettingsConfigFileTemplate = `<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-    <TestSettings>
-        <WorkspacePath>%WorkspacePath%</WorkspacePath>
-        <LogicAppName>%LogicAppName%</LogicAppName>
-        <WorkflowName>%WorkflowName%</WorkflowName>
-    </TestSettings>
-</configuration>`;
     const unitTestFolderPath: string = 'unitTestFolderPath';
     const logicAppName: string = 'MyLogicApp';
     const workflowName: string = 'MyWorkflow';
     let readFileSpy: any;
     let writeFileSpy: any;
+    let testSettingsConfigFileTemplate: string;
+
+    beforeAll(async () => {
+      const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+      const rootDir = path.join(__dirname, '..', '..', '..', '..');
+      const assetsFolderPath = path.join(rootDir, assetsFolderName);
+      const testSettingsConfigFileTemplatePath = path.join(
+        assetsFolderPath,
+        unitTestTemplatesFolderName,
+        testSettingsConfigFileTemplateName
+      );
+      testSettingsConfigFileTemplate = await realFs.readFile(testSettingsConfigFileTemplatePath, 'utf8');
+    });
 
     beforeEach(() => {
       vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});

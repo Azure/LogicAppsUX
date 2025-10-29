@@ -4,13 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { testsDirectoryName, testResultsDirectoryName, workflowFileName, assetsFolderName } from '../../../../constants';
-import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
-import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
-import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
-import { getUnitTestName, pickUnitTest, pickUnitTestResult } from '../../../utils/unitTests';
-import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
+import { testsDirectoryName, testResultsDirectoryName, workflowFileName, assetsFolderName } from '../../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import { localize } from '../../../../../localize';
+import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../../utils/codeless/common';
+import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
+import { getWorkflowNode, isMultiRootWorkspace } from '../../../../utils/workspace';
 import * as path from 'path';
 import {
   type TestItem,
@@ -26,6 +25,7 @@ import {
 } from 'vscode';
 import * as fse from 'fs-extra';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { getUnitTestName, pickUnitTestNode, pickUnitTestResult } from '../../../../utils/unitTest/codelessUnitTest';
 
 /**
  * Opens the unit test results for a given context and node.
@@ -47,8 +47,7 @@ export async function openUnitTestResults(context: IActionContext, node: Uri | T
     } else if (node && !(node instanceof Uri) && node.uri instanceof Uri) {
       unitTestNode = node.uri;
     } else {
-      const unitTest = await pickUnitTest(context, testsDirectory);
-      unitTestNode = Uri.file(unitTest.data) as Uri;
+      unitTestNode = await pickUnitTestNode(context, testsDirectory);
     }
 
     const unitTestName = getUnitTestName(unitTestNode.fsPath);
@@ -58,7 +57,7 @@ export async function openUnitTestResults(context: IActionContext, node: Uri | T
     const hasTestResults = await fse.pathExists(testResultsDirectory);
 
     if (hasTestResults) {
-      const testResult: UnitTestResult = (await pickUnitTestResult(context, testResultsDirectory)).data;
+      const testResult = await pickUnitTestResult(context, testResultsDirectory);
       await openResultsWebview(workflowName, unitTestName, path.join(workspacePath, projectName, workflowFileName), testResult);
     } else {
       window.showInformationMessage(

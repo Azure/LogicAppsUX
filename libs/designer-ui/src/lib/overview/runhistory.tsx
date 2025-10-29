@@ -10,12 +10,12 @@ export interface RunHistoryProps {
   loading?: boolean;
   onOpenRun(run: RunDisplayItem): void;
   supportsUnitTest: boolean;
-  onCreateUnitTest?(run: RunDisplayItem): void;
+  onCreateUnitTestFromRun?(run: RunDisplayItem): void;
 }
 
 const ContextMenuKeys = {
   SHOW_RUN: 'SHOW_RUN',
-  CREATE_UNIT_TEST: 'CREATE_UNIT_TEST',
+  CREATE_UNIT_TEST_FROM_RUN: 'CREATE_UNIT_TEST_FROM_RUN',
 } as const;
 type ContextMenuKeys = (typeof ContextMenuKeys)[keyof typeof ContextMenuKeys];
 const RunHistoryColumnKeys = {
@@ -36,7 +36,7 @@ const dateOptions: FormatDateOptions = {
   hour12: true,
 };
 
-export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, onCreateUnitTest }) => {
+export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, onCreateUnitTestFromRun }) => {
   const intl = useIntl();
   const [useUTC, setUseUTC] = useState(false);
 
@@ -60,11 +60,6 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       defaultMessage: 'Show run',
       id: '6jiO7t',
       description: 'Menu item text for show run',
-    }),
-    CREATE_UNIT_TEST: intl.formatMessage({
-      defaultMessage: 'Create unit test',
-      id: 'EINKvY',
-      description: 'Menu item text for create unit test',
     }),
     START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
@@ -136,8 +131,8 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
               onItemClick: (_, menuItem?: IContextualMenuItem) => {
                 if (menuItem?.key === ContextMenuKeys.SHOW_RUN) {
                   onOpenRun(item);
-                } else if (menuItem?.key === ContextMenuKeys.CREATE_UNIT_TEST && onCreateUnitTest) {
-                  onCreateUnitTest(item);
+                } else if (menuItem?.key === ContextMenuKeys.CREATE_UNIT_TEST_FROM_RUN && onCreateUnitTestFromRun) {
+                  onCreateUnitTestFromRun(item);
                 }
               },
             }}

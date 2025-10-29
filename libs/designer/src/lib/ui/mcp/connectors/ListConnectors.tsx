@@ -93,8 +93,8 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
       description: 'Text indicating a connector is disconnected',
     }),
     noConnectionText: intl.formatMessage({
-      defaultMessage: 'No Connection',
-      id: '7kyZuO',
+      defaultMessage: 'No connection',
+      id: 'fCQPmw',
       description: 'Text indicating there is no connection for the connector',
     }),
     loadingConnectorsText: intl.formatMessage({
