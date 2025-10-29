@@ -13,7 +13,7 @@ test.describe(
 
       // Collapse action
       await page.getByText('HTTP', { exact: true }).click({ button: 'right' });
-      expect(await page.getByText('Collapse action', { exact: true })).toBeVisible();
+      await expect(page.getByText('Collapse action', { exact: true })).toBeVisible();
       await page.getByText('Collapse action').click({ force: true });
       await expect(page.getByTestId('msla-collapsed-card-http')).toBeVisible();
       await expect(page.getByLabel('HTTP operation icon')).toBeVisible();
@@ -26,7 +26,7 @@ test.describe(
 
       // Collapse last action
       await page.getByText('Filter array', { exact: true }).click({ button: 'right' });
-      expect(await page.getByText('Filter array', { exact: true })).toBeVisible();
+      await expect(page.getByText('Collapse action', { exact: true })).toBeVisible();
       await page.getByText('Collapse action').click({ force: true });
       await expect(page.getByTestId('msla-collapsed-card-filter_array')).toBeVisible();
       await expect(page.getByLabel('HTTP operation icon')).toBeVisible();
@@ -34,7 +34,7 @@ test.describe(
 
       // Collapse first action
       await page.getByText('Initialize ArrayVariable', { exact: true }).click({ button: 'right' });
-      expect(await page.getByText('Collapse action', { exact: true })).toBeVisible();
+      await expect(page.getByText('Collapse action', { exact: true })).toBeVisible();
       await page.getByText('Collapse action').click({ force: true });
       await expect(page.getByTestId('msla-collapsed-card-initialize_arrayvariable')).toBeVisible();
       await expect(page.getByLabel('Initialize_ArrayVariable operation icon')).toBeVisible();
@@ -45,9 +45,9 @@ test.describe(
 
       // Expand first action
       await page.getByTestId('msla-collapsed-card-initialize_arrayvariable').click({ button: 'right' });
-      expect(await page.getByText('Expand action', { exact: true })).toBeVisible();
+      await expect(page.getByText('Expand action', { exact: true })).toBeVisible();
       await page.getByText('Expand action').click({ force: true });
-      expect(page.getByText('Initialize ArrayVariable', { exact: true })).toBeVisible();
+      await expect(page.getByText('Initialize ArrayVariable', { exact: true })).toBeVisible();
       await expect(page.getByTestId('msla-collapsed-card-filter_array')).toBeVisible();
     });
 
@@ -57,7 +57,7 @@ test.describe(
 
       // Collapse nested scope
       await page.getByText('Scope nested', { exact: true }).click({ button: 'right' });
-      expect(await page.getByText('Collapse action', { exact: true })).toBeVisible();
+      await expect(page.getByText('Collapse action', { exact: true })).toBeVisible();
       await page.getByText('Collapse action').click({ force: true });
       await expect(page.getByTestId('msla-collapsed-card-scope_nested')).toBeVisible();
       await expect(page.getByLabel('Scope_nested operation icon')).toBeVisible();
@@ -67,7 +67,7 @@ test.describe(
 
       // Collapse first action
       await page.getByText('Increment variable 2', { exact: true }).click({ button: 'right' });
-      expect(await page.getByText('Collapse action', { exact: true })).toBeVisible();
+      await expect(page.getByText('Collapse action', { exact: true })).toBeVisible();
       await page.getByText('Collapse action').click({ force: true });
       await expect(page.getByLabel('Increment_variable_2 operation icon')).toBeVisible();
       await expect(page.getByLabel('Increment_variable_3 operation icon')).toBeVisible();
