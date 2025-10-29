@@ -155,9 +155,9 @@ export const RunHistoryPanel = () => {
   });
 
   const searchPlaceholder = intl.formatMessage({
-    defaultMessage: 'Open by run ID',
-    description: 'Search by run identifier placeholder',
-    id: 'iITQXn',
+    defaultMessage: 'Enter run ID',
+    description: 'Open by run identifier placeholder',
+    id: '9/bPKH',
   });
 
   const invalidRunId = intl.formatMessage({
@@ -193,7 +193,7 @@ export const RunHistoryPanel = () => {
   const runStatusTexts: Record<string, string> = {
     All: intl.formatMessage({ defaultMessage: 'All', description: 'All run statuses', id: 'bHpFLq' }),
     Succeeded: intl.formatMessage({ defaultMessage: 'Succeeded', description: 'Succeeded status', id: 'NIfcbE' }),
-    Running: intl.formatMessage({ defaultMessage: 'Running', description: 'Running status', id: 'GRJfCY' }),
+    Running: intl.formatMessage({ defaultMessage: 'In progress', description: 'Running status', id: 'eXcejw' }),
     Failed: intl.formatMessage({ defaultMessage: 'Failed', description: 'Failed status', id: 'Mrge1g' }),
     Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
   };

@@ -17,8 +17,8 @@ export const RunTreeView = () => {
   const styles = useRunTreeViewStyles();
 
   const runningText = intl.formatMessage({
-    defaultMessage: 'Workflow is running',
-    id: 'qaE+ry',
+    defaultMessage: 'Workflow is in progress',
+    id: 'PRaFHG',
     description: 'Text shown when a run is in progress',
   });
 
