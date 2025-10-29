@@ -27,7 +27,7 @@ import constants from '../../../../../common/constants';
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, value } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -446,7 +446,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                   required={true}
                   disabled={isAPIMAccountsComboboxDisabled}
                   placeholder={isFetchingAPIManagementAccounts ? stringResources.LOADING_APIM : stringResources.SELECT_APIM_ACCOUNT}
-                  value={isUndefinedOrEmptyString(parameterValue) ? undefined : parameterValue.split('/').pop()}
+                  value={isUndefinedOrEmptyString(value) ? undefined : value.split('/').pop()}
                   className={styles.openAICombobox}
                   onOptionSelect={async (_e, option?: OptionOnSelectData) => {
                     if (option?.optionValue) {
