@@ -2,22 +2,23 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultExtensionBundlePathValue, runUnitTestEvent, testResultsDirectoryName } from '../../../../constants';
-import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
-import { getLatestUnitTest, getTestsDirectory, getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
+import { defaultExtensionBundlePathValue, runUnitTestEvent, testResultsDirectoryName } from '../../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import { localize } from '../../../../../localize';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
-import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
-import { getLatestBundleVersion } from '../../../utils/bundleFeed';
-import { activateAzurite } from '../../../utils/azurite/activateAzurite';
-import { TestFile } from '../../../tree/unitTestTree/testFile';
+import { getWorkspacePath, isMultiRootWorkspace } from '../../../../utils/workspace';
+import { getLatestBundleVersion } from '../../../../utils/bundleFeed';
+import { activateAzurite } from '../../../../utils/azurite/activateAzurite';
+import { TestFile } from '../../../../tree/unitTestTree/testFile';
 import type { UnitTestExecutionResult } from '@microsoft/vscode-extension-logic-apps';
-import { TestWorkflow } from '../../../tree/unitTestTree/testWorkflow';
-import { TestWorkspace } from '../../../tree/unitTestTree/testWorkspace';
-import { findInitialFiles, getWorkspaceTestPatterns } from '../../../tree/unitTestTree';
+import { TestWorkflow } from '../../../../tree/unitTestTree/testWorkflow';
+import { TestWorkspace } from '../../../../tree/unitTestTree/testWorkspace';
+import { findInitialFiles, getWorkspaceTestPatterns } from '../../../../tree/unitTestTree';
+import { getLatestUnitTest, getUnitTestName, pickUnitTestNode } from '../../../../utils/unitTest/codelessUnitTest';
+import { getTestsDirectory } from '../../../../utils/unitTest/unitTest';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -31,8 +32,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri): Pr
     unitTestPath = node.fsPath;
   } else if (isMultiRootWorkspace()) {
     const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
-    const unitTest = await pickUnitTest(context, testsDirectory.fsPath);
-    unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
+    unitTestPath = (await pickUnitTestNode(context, testsDirectory.fsPath)).fsPath;
   } else {
     throw new Error(localize('expectedWorkspace', 'In order to run unit tests, you must have a workspace open.'));
   }

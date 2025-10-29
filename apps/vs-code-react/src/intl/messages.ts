@@ -1010,9 +1010,14 @@ export const designerMessages = defineMessages({
     description: 'Keyboard navigation hint',
   },
   CREATE_UNIT_TEST: {
-    defaultMessage: 'Create unit test from run',
-    id: '/a0bAT',
+    defaultMessage: 'Create unit test',
+    id: 'O/QVI8',
     description: 'Create unit test button',
+  },
+  CREATE_UNIT_TEST_FROM_RUN: {
+    defaultMessage: 'Create unit test from run',
+    id: 'AmlQmq',
+    description: 'Create unit test from run button',
   },
   SAVE_UNIT_TEST: {
     defaultMessage: 'Save unit test definition',

@@ -17,12 +17,13 @@ import {
   useBinariesDependencies,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
-import { DependencyVersion, Platform } from '../../../constants';
+import { DependencyVersion } from '../../../constants';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { isNodeJsInstalled } from '../../commands/nodeJs/validateNodeJsInstalled';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../funcCoreTools/cpUtils');
 vi.mock('../nodeJs/nodeJsVersion');

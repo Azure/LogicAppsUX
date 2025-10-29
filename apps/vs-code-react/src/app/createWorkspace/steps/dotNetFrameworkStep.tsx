@@ -12,14 +12,14 @@ import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionF
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const DotNetFrameworkStep: React.FC = () => {
   const dispatch = useDispatch();
   const intlText = useIntlMessages(workspaceMessages);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { targetFramework, functionNamespace, functionName, functionFolderName, logicAppType, logicAppName, workspaceFileJson } =
+  const { targetFramework, functionNamespace, functionName, platform, functionFolderName, logicAppType, logicAppName, workspaceFileJson } =
     createWorkspaceState;
 
   const functionNamespaceId = useId();
@@ -101,9 +101,11 @@ export const DotNetFrameworkStep: React.FC = () => {
               placeholder={intlText.SELECT_DOTNET_VERSION}
               className={styles.inputControl}
             >
-              <Option value="net472" text=".NET Framework">
-                .NET Framework
-              </Option>
+              {platform === Platform.windows ? (
+                <Option value="net472" text=".NET Framework">
+                  .NET Framework
+                </Option>
+              ) : null}
               <Option value="net8" text=".NET 8">
                 .NET 8
               </Option>

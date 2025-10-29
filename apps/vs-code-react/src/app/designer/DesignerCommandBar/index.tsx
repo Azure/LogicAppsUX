@@ -48,7 +48,7 @@ import { ChatButton } from '@microsoft/logic-apps-designer-v2';
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
-const SaveBlankUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
+const CreateUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
 
 // Base icons
 const BugIcon = bundleIcon(BugFilled, BugRegular);
@@ -139,17 +139,17 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   });
 
-  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
 
     vscode.postMessage({
       command: ExtensionCommand.logTelemetry,
-      data: { name: 'SaveBlankUnitTest', timestamp: Date.now(), definition: definition },
+      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
     });
 
     await vscode.postMessage({
-      command: ExtensionCommand.saveBlankUnitTest,
+      command: ExtensionCommand.createUnitTest,
       definition,
     });
   });
@@ -160,16 +160,16 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   };
 
-  const onCreateUnitTest = async () => {
+  const onCreateUnitTestFromRun = async () => {
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
     vscode.postMessage({
       command: ExtensionCommand.logTelemetry,
-      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
+      data: { name: 'CreateUnitTestFromRun', timestamp: Date.now(), definition: definition },
     });
 
     vscode.postMessage({
-      command: ExtensionCommand.createUnitTest,
+      command: ExtensionCommand.createUnitTestFromRun,
       runId: runId,
       definition: definition,
     });
@@ -193,9 +193,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isSaveBlankUnitTestDisabled = useMemo(
-    () => isSavingBlankUnitTest || haveAssertionErrors || designerIsDirty,
-    [isSavingBlankUnitTest, haveAssertionErrors, designerIsDirty]
+  const isCreateUnitTestDisabled = useMemo(
+    () => isCreatingUnitTest || haveAssertionErrors || designerIsDirty,
+    [isCreatingUnitTest, haveAssertionErrors, designerIsDirty]
   );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -271,14 +271,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
     {
-      key: 'SaveBlank',
-      disabled: isSaveBlankUnitTestDisabled,
+      key: 'CreateUnitTest',
+      disabled: isCreateUnitTestDisabled,
       text: intlText.CREATE_UNIT_TEST,
       ariaLabel: intlText.CREATE_UNIT_TEST,
-      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveBlankUnitTestIcon />,
+      icon: isCreatingUnitTest ? <Spinner size="extra-small" /> : <CreateUnitTestIcon />,
       renderTextIcon: null,
       onClick: () => {
-        saveBlankUnitTestMutate();
+        createUnitTestMutate();
       },
     },
     ...baseItems,
@@ -308,14 +308,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     ...(isLocal
       ? [
           {
-            key: 'CreateUnitTest',
+            key: 'CreateUnitTestFromRun',
             disabled: isDisabled,
-            ariaLabel: intlText.CREATE_UNIT_TEST,
-            text: intlText.CREATE_UNIT_TEST,
-            icon: <SaveBlankUnitTestIcon />,
+            ariaLabel: intlText.CREATE_UNIT_TEST_FROM_RUN,
+            text: intlText.CREATE_UNIT_TEST_FROM_RUN,
+            icon: <CreateUnitTestIcon />,
             renderTextIcon: null,
             onClick: () => {
-              onCreateUnitTest();
+              onCreateUnitTestFromRun();
             },
           },
         ]
@@ -336,14 +336,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       },
     },
     {
-      key: 'SaveBlank',
-      disabled: isSaveBlankUnitTestDisabled,
+      key: 'CreateUnitTest',
+      disabled: isCreateUnitTestDisabled,
       text: intlText.CREATE_UNIT_TEST,
       ariaLabel: intlText.CREATE_UNIT_TEST,
-      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
+      icon: isCreatingUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
       renderTextIcon: null,
       onClick: () => {
-        saveBlankUnitTestMutate();
+        createUnitTestMutate();
       },
     },
     {

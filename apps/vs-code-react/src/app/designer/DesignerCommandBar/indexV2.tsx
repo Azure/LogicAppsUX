@@ -68,7 +68,7 @@ const DiscardIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
-const SaveBlankUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
+const CreateUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
 
 // Base icons
 const BugIcon = bundleIcon(BugFilled, BugRegular);
@@ -169,37 +169,35 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   });
 
-  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
 
-    vscode.postMessage({
-      command: ExtensionCommand.logTelemetry,
-      data: { name: 'SaveBlankUnitTest', timestamp: Date.now(), definition: definition },
-    });
-
-    await vscode.postMessage({
-      command: ExtensionCommand.saveBlankUnitTest,
-      definition,
-    });
-  });
-
-  const onCreateUnitTest = async () => {
-    const designerState = DesignerStore.getState();
-    const definition = await getNodeOutputOperations(designerState);
     vscode.postMessage({
       command: ExtensionCommand.logTelemetry,
       data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
     });
 
-    vscode.postMessage({
+    await vscode.postMessage({
       command: ExtensionCommand.createUnitTest,
+      definition,
+    });
+  });
+
+  const onCreateUnitTestFromRun = async () => {
+    const designerState = DesignerStore.getState();
+    const definition = await getNodeOutputOperations(designerState);
+    vscode.postMessage({
+      command: ExtensionCommand.logTelemetry,
+      data: { name: 'CreateUnitTestFromRun', timestamp: Date.now(), definition: definition },
+    });
+
+    vscode.postMessage({
+      command: ExtensionCommand.createUnitTestFromRun,
       runId: runId,
       definition: definition,
     });
   };
-
-  /////////////////////////////////////////////////////////////////////////////
 
   const inputParameterErrors = useSelector((state: RootState) => state.workflow?.operations?.inputParameters ?? {});
 
@@ -225,9 +223,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isSaveBlankUnitTestDisabled = useMemo(
-    () => isSavingBlankUnitTest || haveAssertionErrors || designerIsDirty,
-    [isSavingBlankUnitTest, haveAssertionErrors, designerIsDirty]
+  const isCreateUnitTestDisabled = useMemo(
+    () => isCreatingUnitTest || haveAssertionErrors || designerIsDirty,
+    [isCreatingUnitTest, haveAssertionErrors, designerIsDirty]
   );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -318,10 +316,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         {intlText.SAVE_UNIT_TEST}
       </MenuItem>
       <MenuItem
-        disabled={isSaveBlankUnitTestDisabled}
-        onClick={() => saveBlankUnitTestMutate()}
+        disabled={isCreateUnitTestDisabled}
+        onClick={() => createUnitTestMutate()}
         aria-label={intlText.CREATE_UNIT_TEST}
-        icon={isSavingBlankUnitTest ? <Spinner size={'extra-tiny'} /> : <SaveRegular />}
+        icon={isCreatingUnitTest ? <Spinner size={'extra-tiny'} /> : <SaveRegular />}
       >
         {intlText.CREATE_UNIT_TEST}
       </MenuItem>
@@ -354,6 +352,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     </>
   );
 
+  // TODO(aeldridge): Will need to update to support unit test creation from V2 designer
   const OverflowMenu = () => (
     <Menu>
       <MenuTrigger>
@@ -362,8 +361,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       <MenuPopover>
         <MenuList>
           {isLocal && (
-            <MenuItem key={'create-unit-test'} onClick={onCreateUnitTest} icon={<SaveBlankUnitTestIcon />}>
-              {intlText.CREATE_UNIT_TEST}
+            <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
+              {intlText.CREATE_UNIT_TEST_FROM_RUN}
             </MenuItem>
           )}
           {isUnitTest && <UnitTestItems />}

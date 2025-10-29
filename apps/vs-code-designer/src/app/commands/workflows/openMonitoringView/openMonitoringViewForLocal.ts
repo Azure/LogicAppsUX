@@ -19,7 +19,7 @@ import {
   getParametersFromFile,
 } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
-import { createUnitTest } from '../unitTest/createUnitTest';
+import { createUnitTestFromRun } from '../unitTest/codefulUnitTest/createUnitTestFromRun';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -147,8 +147,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
         break;
       }
-      case ExtensionCommand.createUnitTest: {
-        await createUnitTest(vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
+      case ExtensionCommand.createUnitTestFromRun: {
+        await createUnitTestFromRun(vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
         break;
       }
       case ExtensionCommand.fileABug: {
