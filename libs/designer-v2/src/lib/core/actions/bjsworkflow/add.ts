@@ -485,14 +485,14 @@ export const trySetDefaultConnectionForNode = async (
   connector: Connector,
   dispatch: AppDispatch,
   isConnectionRequired: boolean,
-  getState: () => unknown
+  getState: () => RootState
 ) => {
   const connectorId = connector.id;
   let connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
 
   // Determine if dynamic connections should be allowed for this node
   // Only allow in conversational agent workflows (isA2A=true) when inside agent loop (isAgentSubgraph=true)
-  const state = (getState() as RootState).workflow;
+  const state = getState().workflow;
   const isA2A = isA2AWorkflow(state);
   const isAgentSubgraph = nodeId ? isNodeInAgentSubgraph(nodeId, state.nodesMetadata) : false;
   const shouldAllowDynamicConnections = isA2A && isAgentSubgraph;
