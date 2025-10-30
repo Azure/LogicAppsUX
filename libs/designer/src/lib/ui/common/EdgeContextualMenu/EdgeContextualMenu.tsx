@@ -170,7 +170,7 @@ export const EdgeContextualMenu = () => {
   }, [handoffActions, dispatch, parentId, childId]);
 
   const addMcpServerText = intl.formatMessage({
-    defaultMessage: 'Add an MCP server',
+    defaultMessage: 'Add an MCP server (preview)',
     id: 'JTy5al',
     description: 'Text that explains no tools exist in this agent',
   });
