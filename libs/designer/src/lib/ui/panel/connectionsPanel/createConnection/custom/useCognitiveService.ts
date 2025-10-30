@@ -1,5 +1,5 @@
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
+import { ApiManagementService, CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
@@ -16,6 +16,22 @@ export const queryKeys = {
   allCognitiveServiceAccountsDeployments: 'allCognitiveServiceAccountsDeployments',
   allSessionPoolAccounts: 'allSessionPoolAccounts',
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
+  allAPIMServiceAccounts: 'allAPIMServiceAccounts',
+};
+
+export const useAllAPIMServiceAccounts = (subscriptionId: string, enabled = true) => {
+  return useQuery(
+    [queryKeys.allAPIMServiceAccounts, { subscriptionId }],
+    async () => {
+      const allAPIMServiceAccounts = await ApiManagementService().fetchApiManagementInstances(subscriptionId);
+      return allAPIMServiceAccounts ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId && enabled,
+    }
+  );
 };
 
 export const useAllCognitiveServiceAccounts = (subscriptionId: string, enabled = true) => {

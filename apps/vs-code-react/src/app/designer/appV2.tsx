@@ -20,10 +20,10 @@ import { guid, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
-import { useIntl } from 'react-intl';
 import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { XLargeText } from '@microsoft/designer-ui';
+import { commonMessages, useIntlMessages } from '../../intl';
 import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
@@ -67,21 +67,9 @@ export const DesignerApp = () => {
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
-  const intl = useIntl();
   const queryClient = useQueryClient();
 
-  const intlText = {
-    ERROR_APP: intl.formatMessage({
-      defaultMessage: 'Something went wrong',
-      id: 'XtVOMn',
-      description: 'Something went wrong text',
-    }),
-    LOADING_APP: intl.formatMessage({
-      defaultMessage: 'Loading designer',
-      id: 'fZJWBR',
-      description: 'Loading designer text',
-    }),
-  };
+  const commonText = useIntlMessages(commonMessages);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -306,7 +294,9 @@ export const DesignerApp = () => {
   /////////////////////////////////////////////////////////////////////////////
   // Rendering
 
-  const ErrorComponent = () => <XLargeText text={`${intlText.ERROR_APP} `} className={styles.designerError} style={{ display: 'block' }} />;
+  const ErrorComponent = () => (
+    <XLargeText text={`${commonText.SOMETHING_WENT_WRONG} `} className={styles.designerError} style={{ display: 'block' }} />
+  );
   if (isErrorRunInstance) {
     return <ErrorComponent />;
   }

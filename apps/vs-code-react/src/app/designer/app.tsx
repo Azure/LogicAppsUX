@@ -20,12 +20,12 @@ import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-s
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback } from 'react';
-import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { XLargeText } from '@microsoft/designer-ui';
 import { Spinner } from '@fluentui/react-components';
 import { useAppStyles } from './appStyles';
+import { useIntlMessages, commonMessages } from '../../intl';
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
@@ -53,21 +53,9 @@ export const DesignerApp = () => {
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
-  const intl = useIntl();
   const queryClient = useQueryClient();
 
-  const intlText = {
-    ERROR_APP: intl.formatMessage({
-      defaultMessage: 'Something went wrong',
-      id: 'XtVOMn',
-      description: 'Something went wrong text',
-    }),
-    LOADING_APP: intl.formatMessage({
-      defaultMessage: 'Loading designer',
-      id: 'fZJWBR',
-      description: 'Loading designer text',
-    }),
-  };
+  const intlText = useIntlMessages(commonMessages);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -203,9 +191,9 @@ export const DesignerApp = () => {
     setCustomCode(panelMetaData?.customCodeData);
   }, [panelMetaData]);
 
-  const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className={styles.designerError} style={{ display: 'block' }} />;
+  const errorApp = <XLargeText text={`${intlText.SOMETHING_WENT_WRONG}`} className={styles.designerError} style={{ display: 'block' }} />;
 
-  const loadingApp = <Spinner className={styles.designerLoading} size="large" label={intlText.LOADING_APP} />;
+  const loadingApp = <Spinner className={styles.designerLoading} size="large" label={intlText.LOADING_DESIGNER} />;
 
   const designerCommandBar =
     readOnly && !isMonitoringView && !isUnitTest ? null : (

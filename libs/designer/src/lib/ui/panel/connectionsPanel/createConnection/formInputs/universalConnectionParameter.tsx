@@ -30,6 +30,7 @@ export interface ConnectionParameterProps {
   setKeyValue?: (key: string, value: any) => void;
   parameterSet?: ConnectionParameterSet;
   operationParameterValues?: Record<string, any>;
+  parameterValues?: Record<string, any>;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {
@@ -113,7 +114,6 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         disabled={isLoading}
         ariaLabel={description}
         placeholder={description}
-        required={constraints?.required === 'true'}
         options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
           key: index,
           text: allowedValue?.text ?? allowedValue.value,
