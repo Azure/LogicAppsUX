@@ -21,6 +21,7 @@ export default {
             required: 'true',
             notSupportedConnectionParameters: {
               FoundryAgentService: ['Key'],
+              APIMGenAIGateway: ['ManagedServiceIdentity'],
             },
           },
         },

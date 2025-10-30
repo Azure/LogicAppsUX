@@ -1,6 +1,5 @@
 import type { OutletContext } from '../../run-service';
 import { useCreateWorkspaceStyles } from './createWorkspaceStyles';
-import { useIntl } from 'react-intl';
 import { useOutletContext } from 'react-router-dom';
 import { ProjectSetupStep, PackageSetupStep, ReviewCreateStep, WorkspaceNameStep } from './steps/';
 import { CreateLogicAppSetupStep } from '../createLogicApp/createLogicAppSetupStep';
@@ -14,12 +13,14 @@ import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { nameValidation } from './validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 
 export const CreateWorkspace: React.FC = () => {
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
+  const intlText = useIntlMessages(workspaceMessages);
+  const format = useIntlFormatters(workspaceMessages);
 
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const {
@@ -62,167 +63,84 @@ export const CreateWorkspace: React.FC = () => {
   const getCreateWorkspaceMessage = () => {
     switch (flowType) {
       case 'createWorkspaceFromPackage':
-        return intl.formatMessage({
-          defaultMessage: 'Create logic app workspace from package',
-          id: 'RZZxs+',
-          description: 'Create logic app workspace from package text.',
-        });
+        return intlText.CREATE_WORKSPACE_FROM_PACKAGE;
       case 'convertToWorkspace':
-        return intl.formatMessage({
-          defaultMessage: 'Create logic app workspace',
-          id: 'eagv8j',
-          description: 'Create logic app workspace text.',
-        });
+        return intlText.CREATE_WORKSPACE;
       case 'createLogicApp':
-        return intl.formatMessage({
-          defaultMessage: 'Create Project',
-          id: 'RmJRES',
-          description: 'Create logic app project text.',
-        });
+        return intlText.CREATE_PROJECT;
       default:
-        return intl.formatMessage({
-          defaultMessage: 'Create logic app workspace',
-          id: 'eagv8j',
-          description: 'Create logic app workspace text.',
-        });
+        return intlText.CREATE_WORKSPACE;
     }
   };
 
   const getCreateButtonMessage = () => {
     if (flowType === 'createLogicApp') {
-      return intl.formatMessage({
-        defaultMessage: 'Create project',
-        id: 'u+VFmh',
-        description: 'Create logic app project button',
-      });
+      return intlText.CREATE_PROJECT_BUTTON;
     }
-    return intl.formatMessage({
-      defaultMessage: 'Create Workspace',
-      id: 'XZfauP',
-      description: 'Create workspace button',
-    });
+    return intlText.CREATE_WORKSPACE_BUTTON;
   };
 
   const getCreatingMessage = () => {
     if (flowType === 'createWorkspaceFromPackage') {
-      return intl.formatMessage({
-        defaultMessage: 'Creating...',
-        id: 'e8iBzO',
-        description: 'Creating workspace from package in progress',
-      });
+      return intlText.CREATING_PACKAGE;
     }
-    return intl.formatMessage({
-      defaultMessage: 'Creating...',
-      id: 'k6MqI+',
-      description: 'Creating workspace in progress',
-    });
+    return intlText.CREATING_WORKSPACE;
   };
 
   const getSuccessTitle = () => {
     switch (flowType) {
       case 'createWorkspaceFromPackage':
-        return intl.formatMessage({
-          defaultMessage: 'Workspace From Package Created Successfully!',
-          id: 'vDfUt4',
-          description: 'Workspace from package creation success message',
-        });
+        return intlText.WORKSPACE_PACKAGE_CREATED;
       case 'convertToWorkspace':
       case 'createLogicApp':
-        return intl.formatMessage({
-          defaultMessage: 'Logic App Created Successfully!',
-          id: '8bXaOe',
-          description: 'Logic app creation success message',
-        });
+        return intlText.LOGIC_APP_CREATED;
       default:
-        return intl.formatMessage({
-          defaultMessage: 'Workspace Created Successfully!',
-          id: '4fdozy',
-          description: 'Workspace creation success message',
-        });
+        return intlText.WORKSPACE_CREATED;
     }
   };
 
   const getSuccessDescription = () => {
     switch (flowType) {
       case 'createWorkspaceFromPackage':
-        return intl.formatMessage({
-          defaultMessage: 'Your logic app workspace from package has been created is ready to use.',
-          id: 'rGWwuB',
-          description: 'Workspace package creation success description',
-        });
+        return intlText.WORKSPACE_PACKAGE_CREATED_DESCRIPTION;
       case 'convertToWorkspace':
       case 'createLogicApp':
-        return intl.formatMessage({
-          defaultMessage: 'Your logic app has been created and is ready to use.',
-          id: 'ECHpxE',
-          description: 'Logic app creation success description',
-        });
+        return intlText.LOGIC_APP_CREATED_DESCRIPTION;
       default:
-        return intl.formatMessage({
-          defaultMessage: 'Your logic app workspace has been created and is ready to use.',
-          id: 'OdrYKo',
-          description: 'Workspace creation success description',
-        });
+        return intlText.WORKSPACE_CREATED_DESCRIPTION;
     }
   };
 
   const getProjectSetupStepLabel = () => {
     if (flowType === 'convertToWorkspace' || flowType === 'createLogicApp') {
-      return intl.formatMessage({
-        defaultMessage: 'Logic App Setup',
-        id: 'dELTC6',
-        description: 'Logic App setup step label',
-      });
+      return intlText.LOGIC_APP_SETUP;
     }
-    return intl.formatMessage({
-      defaultMessage: 'Project Setup',
-      id: '1d8W/S',
-      description: 'Project setup step label',
-    });
+    return intlText.PROJECT_SETUP_LABEL;
   };
 
-  const intlText = {
+  const intlMessages = {
     CREATE_WORKSPACE: getCreateWorkspaceMessage(),
     CREATE_BUTTON: getCreateButtonMessage(),
     CREATING: getCreatingMessage(),
-    NEXT: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '3Wcqsy',
-      description: 'Next button',
+    NEXT: intlText.NEXT_BUTTON,
+    BACK: intlText.BACK_BUTTON,
+    STEP_INDICATOR: format.STEP_INDICATOR({
+      current: currentStep + 1,
+      total: totalSteps,
     }),
-    BACK: intl.formatMessage({
-      defaultMessage: 'Back',
-      id: '2XH9oW',
-      description: 'Back button',
-    }),
-    STEP_INDICATOR: intl.formatMessage(
-      {
-        defaultMessage: 'Step {current} of {total}',
-        id: '4IV3/7',
-        description: 'Step indicator text',
-      },
-      {
-        current: currentStep + 1,
-        total: totalSteps,
-      }
-    ),
     SUCCESS_TITLE: getSuccessTitle(),
     SUCCESS_DESCRIPTION: getSuccessDescription(),
     STEP_PROJECT_SETUP: getProjectSetupStepLabel(),
-    STEP_REVIEW_CREATE: intl.formatMessage({
-      defaultMessage: 'Review + Create',
-      id: '4dze5/',
-      description: 'Review and create step label',
-    }),
+    STEP_REVIEW_CREATE: intlText.REVIEW_CREATE_LABEL,
   };
 
   // Helper function to check if a name already exists in workspace folders
-  const isNameAlreadyInWorkspace = (name: string): boolean => {
+  const isNameAlreadyInWorkspace = (name: string) => {
     return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
   };
 
   // Helper function to validate logic app name with support for existing logic apps
-  const validateLogicAppNameForNavigation = (name: string): boolean => {
+  const validateLogicAppNameForNavigation = (name: string) => {
     if (!name.trim() || !nameValidation.test(name.trim())) {
       return false;
     }
@@ -377,7 +295,7 @@ export const CreateWorkspace: React.FC = () => {
   };
 
   const getStepLabels = () => {
-    return [intlText.STEP_PROJECT_SETUP, intlText.STEP_REVIEW_CREATE];
+    return [intlText.PROJECT_SETUP_LABEL, intlText.REVIEW_CREATE_LABEL];
   };
 
   const isStepCompleted = (stepIndex: number) => {
@@ -649,8 +567,8 @@ export const CreateWorkspace: React.FC = () => {
     return (
       <div className={styles.createWorkspaceContainer}>
         <div className={styles.completionMessage}>
-          <Text style={{ display: 'block' }}>{intlText.SUCCESS_TITLE}</Text>
-          <Text style={{ display: 'block' }}>{intlText.SUCCESS_DESCRIPTION}</Text>
+          <Text style={{ display: 'block' }}>{intlMessages.SUCCESS_TITLE}</Text>
+          <Text style={{ display: 'block' }}>{intlMessages.SUCCESS_DESCRIPTION}</Text>
         </div>
       </div>
     );
@@ -658,7 +576,7 @@ export const CreateWorkspace: React.FC = () => {
 
   return (
     <div className={styles.createWorkspaceContainer}>
-      <Text className={styles.createWorkspaceTitle}>{intlText.CREATE_WORKSPACE}</Text>
+      <Text className={styles.createWorkspaceTitle}>{intlMessages.CREATE_WORKSPACE}</Text>
 
       {renderStepNavigation()}
 
@@ -670,26 +588,26 @@ export const CreateWorkspace: React.FC = () => {
 
       <div className={styles.navigationContainer}>
         <div className={styles.navigationLeft}>
-          <span className={styles.stepIndicator}>{intlText.STEP_INDICATOR}</span>
+          <span className={styles.stepIndicator}>{intlMessages.STEP_INDICATOR}</span>
         </div>
         <div className={styles.navigationRight}>
           <Button appearance="secondary" onClick={handleBack} disabled={isFirstStep || isLoading}>
-            {intlText.BACK}
+            {intlMessages.BACK}
           </Button>
           {isLastStep ? (
             <Button appearance="primary" onClick={handleCreate} disabled={!canProceed() || isLoading}>
               {isLoading ? (
                 <div className={styles.loadingSpinner}>
                   <Spinner size="tiny" />
-                  {intlText.CREATING}
+                  {intlMessages.CREATING}
                 </div>
               ) : (
-                intlText.CREATE_BUTTON
+                intlMessages.CREATE_BUTTON
               )}
             </Button>
           ) : (
             <Button appearance="primary" onClick={handleNext} disabled={!canProceed() || isLoading}>
-              {intlText.NEXT}
+              {intlMessages.NEXT}
             </Button>
           )}
         </div>

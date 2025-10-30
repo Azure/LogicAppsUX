@@ -39,10 +39,10 @@ export class BaseApiManagementService implements IApiManagementService {
     }
   }
 
-  async fetchApiManagementInstances(): Promise<any> {
-    const { apiVersion, subscriptionId, httpClient } = this.options;
+  async fetchApiManagementInstances(subscriptionId?: string): Promise<any> {
+    const { apiVersion, subscriptionId: defaultSubscriptionId, httpClient } = this.options;
 
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.ApiManagement/service`;
+    const uri = `/subscriptions/${subscriptionId ?? defaultSubscriptionId}/providers/Microsoft.ApiManagement/service`;
     const queryParameters = { 'api-version': apiVersion };
     const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
 

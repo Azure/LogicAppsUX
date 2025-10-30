@@ -9,13 +9,12 @@ import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspaceSlice';
-import { useIntl } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { validateWorkflowName } from '../validation/helper';
+import { useIntlMessages, workspaceMessages } from '../../../intl';
 
 export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
-  const intl = useIntl();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const { workflowType, workflowName } = createWorkspaceState;
@@ -23,83 +22,7 @@ export const WorkflowTypeStep: React.FC = () => {
   // Validation state
   const [workflowNameError, setWorkflowNameError] = useState<string | undefined>(undefined);
 
-  const intlText = {
-    TITLE: intl.formatMessage({
-      defaultMessage: 'Workflow Configuration',
-      id: '81liT7',
-      description: 'Workflow configuration step title',
-    }),
-    WORKFLOW_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Workflow Name',
-      id: 'OwjR0o',
-      description: 'Workflow name field label',
-    }),
-    WORKFLOW_TYPE_LABEL: intl.formatMessage({
-      defaultMessage: 'Workflow Type',
-      id: 'JdYNQ+',
-      description: 'Workflow type label',
-    }),
-    WORKFLOW_TYPE_PLACEHOLDER: intl.formatMessage({
-      defaultMessage: 'Select workflow type',
-      id: '0H5p4k',
-      description: 'Select workflow type placeholder',
-    }),
-    WORKFLOW_NAME_PLACEHOLDER: intl.formatMessage({
-      defaultMessage: 'Enter workflow name',
-      id: 'nVhDGu',
-      description: 'Workflow name field placeholder',
-    }),
-    STATEFUL_TITLE: intl.formatMessage({
-      defaultMessage: 'Stateful',
-      id: 'p4Mgce',
-      description: 'Stateful workflow option',
-    }),
-    STATEFUL_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Optimized for high reliability, ideal for process business transitional data.',
-      id: 'otRX33',
-      description: 'Stateful workflow description',
-    }),
-    STATELESS_TITLE: intl.formatMessage({
-      defaultMessage: 'Stateless',
-      id: 'R7gB/3',
-      description: 'Stateless workflow option',
-    }),
-    STATELESS_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Optimized for low latency, ideal for request-response and processing IoT events.',
-      id: 'b0wO2+',
-      description: 'Stateless workflow description',
-    }),
-    AUTONOMOUS_TITLE: intl.formatMessage({
-      defaultMessage: 'Autonomous Agents (Preview)',
-      id: 'qs798U',
-      description: 'Autonomous agents workflow option',
-    }),
-    AUTONOMOUS_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'All the benefits of Stateful, plus the option to build AI agents in your workflow to automate complex tasks.',
-      id: 'Bft/H3',
-      description: 'Autonomous agents workflow description',
-    }),
-    AGENT_TITLE: intl.formatMessage({
-      defaultMessage: 'Conversational Agents',
-      id: 'fg89hL',
-      description: 'Conversational agent workflow option',
-    }),
-    AGENT_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Workflow that supports natural language, human interaction, and agents connected to LLMs',
-      id: '+P+nuy',
-      description: 'Conversational agents workflow description',
-    }),
-    EMPTY_WORKFLOW_NAME: intl.formatMessage({
-      defaultMessage: 'Workflow name cannot be empty.',
-      id: 'jfWu9H',
-      description: 'Workflow name empty text',
-    }),
-    WORKFLOW_NAME_VALIDATION_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".',
-      id: 'V3DWT4',
-      description: 'Workflow name validation message text',
-    }),
-  };
+  const intlText = useIntlMessages(workspaceMessages);
 
   const handleWorkflowTypeChange: DropdownProps['onOptionSelect'] = (event, data) => {
     if (data.optionValue) {
@@ -114,10 +37,10 @@ export const WorkflowTypeStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
+      <Text className={styles.sectionTitle}>{intlText.WORKFLOW_CONFIGURATION}</Text>
 
       <Field
-        label={intlText.WORKFLOW_NAME_LABEL}
+        label={intlText.WORKFLOW_NAME}
         className={styles.workflowNameField}
         required
         validationState={workflowNameError ? 'error' : undefined}
@@ -126,13 +49,13 @@ export const WorkflowTypeStep: React.FC = () => {
         <Input
           value={workflowName}
           onChange={handleWorkflowNameChange}
-          placeholder={intlText.WORKFLOW_NAME_PLACEHOLDER}
+          placeholder={intlText.ENTER_WORKFLOW_NAME}
           className={styles.inputControl}
         />
       </Field>
 
       <Field required>
-        <Label required>{intlText.WORKFLOW_TYPE_LABEL}</Label>
+        <Label required>{intlText.WORKFLOW_TYPE}</Label>
         <Dropdown
           value={
             workflowType === 'Stateful-Codeless'
@@ -147,7 +70,7 @@ export const WorkflowTypeStep: React.FC = () => {
           }
           selectedOptions={workflowType ? [workflowType] : []}
           onOptionSelect={handleWorkflowTypeChange}
-          placeholder={intlText.WORKFLOW_TYPE_PLACEHOLDER}
+          placeholder={intlText.SELECT_WORKFLOW_TYPE}
           className={styles.inputControl}
         >
           <Option value="Stateful-Codeless" text="Stateful">
