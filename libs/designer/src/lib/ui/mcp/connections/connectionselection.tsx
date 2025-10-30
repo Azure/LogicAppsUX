@@ -3,7 +3,6 @@ import {
   type ConnectionParameterSet,
   ConnectionService,
   type Connector,
-  equals,
   getObjectPropertyValue,
   parseErrorMessage,
 } from '@microsoft/logic-apps-shared';
@@ -21,6 +20,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from '@fluentui/react-components';
 import { useConnectionSelectionStyles } from './styles';
+import { isDynamicConnection } from '../../../common/utilities/Utils';
 
 export const ConnectionSelection = ({ connectorId, operations }: { connectorId: string; operations: string[] }) => {
   const intl = useIntl();
@@ -38,7 +38,7 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
   const validConnections = useMemo(() => {
     const validConnections = (connectionsQuery.data ?? []).filter(isConnectionValid);
     return shouldFilterOBOConnections
-      ? validConnections.filter((connection) => !equals(getObjectPropertyValue(connection.properties, ['features']), 'DynamicUserInvoked'))
+      ? validConnections.filter((connection) => !isDynamicConnection(getObjectPropertyValue(connection.properties, ['features'])))
       : validConnections;
   }, [connectionsQuery.data, shouldFilterOBOConnections]);
   const hasConnections = useMemo(() => validConnections.length > 0, [validConnections]);
