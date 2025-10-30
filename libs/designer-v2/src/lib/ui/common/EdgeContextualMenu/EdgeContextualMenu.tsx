@@ -7,6 +7,7 @@ import {
   UiInteractionsService,
   agentOperation,
   customLengthGuid,
+  equals,
   guid,
   isUiInteractionsServiceEnabled,
   normalizeAutomationId,
@@ -64,6 +65,24 @@ export const EdgeContextualMenu = () => {
   const location = useMemo(() => menuData?.location, [menuData]);
   const isHandoff = useMemo(() => menuData?.isHandoff, [menuData]);
 
+  const [open, setOpen] = useState<boolean>(false);
+  useEffect(() => setOpen(!!menuData), [menuData]);
+
+  useOnViewportChange({
+    onStart: useCallback(() => open && setOpen?.(false), [open, setOpen]),
+  });
+
+  const [copiedNode, setCopiedNode] = useState<any>(null);
+  useEffect(() => {
+    (async () => {
+      if (!open) {
+        return;
+      }
+      const data = await retrieveClipboardData();
+      setCopiedNode(data);
+    })();
+  }, [open]);
+
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
   const newParentId = useMemo(() => {
@@ -75,19 +94,13 @@ export const EdgeContextualMenu = () => {
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
   const upstreamNodesOfParent = useUpstreamNodes(removeIdTag(newParentId ?? ''), graphId, newParentId);
-  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(upstreamNodesOfParent);
+  const hasUpstreamAgenticLoop = useHasUpstreamAgenticLoop(isLeaf ? upstreamNodesOfChild : upstreamNodesOfParent);
 
   const isAddAgentHandoff = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddActionDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
-  const isAddParallelBranchDisabled = isA2AWorkflow && graphId === 'root';
-  const isPasteDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
-
-  const [open, setOpen] = useState<boolean>(false);
-  useEffect(() => setOpen(!!menuData), [menuData]);
-
-  useOnViewportChange({
-    onStart: useCallback(() => open && setOpen?.(false), [open, setOpen]),
-  });
+  const isAddParallelBranchDisabled = (isA2AWorkflow && graphId === 'root') || isLeaf;
+  const isPasteDisabledForUpstreamAgent = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
+  const isPasteDisabledForNonRootAgent = graphId !== 'root' && equals(copiedNode?.serializedOperation?.type, 'agent');
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -271,10 +284,9 @@ export const EdgeContextualMenu = () => {
       if (!open) {
         return;
       }
-      const copiedNode = await retrieveClipboardData();
-      setIsPasteEnabled(!!copiedNode && !isPasteDisabled);
+      setIsPasteEnabled(!(!copiedNode || isPasteDisabledForUpstreamAgent || isPasteDisabledForNonRootAgent));
     })();
-  }, [open, isPasteDisabled]);
+  }, [open, copiedNode, isPasteDisabledForUpstreamAgent, isPasteDisabledForNonRootAgent]);
 
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
   const childName = useNodeDisplayName(childId ?? '');
@@ -293,14 +305,10 @@ export const EdgeContextualMenu = () => {
 
   const handlePasteClicked = useCallback(
     async (isParallelBranch: boolean) => {
-      if (!graphId || isPasteDisabled) {
+      if (!graphId || !isPasteEnabled) {
         return;
       }
       const relationshipIds = { graphId, childId, parentId };
-      const copiedNode = await retrieveClipboardData();
-      if (!copiedNode) {
-        return;
-      }
       if (copiedNode?.isScopeNode) {
         dispatch(
           pasteScopeOperation({
@@ -333,7 +341,7 @@ export const EdgeContextualMenu = () => {
         message: `New ${isParallelBranch ? 'parallel' : ''} node added via paste.`,
       });
     },
-    [graphId, childId, parentId, dispatch, upstreamNodesOfChild, isPasteDisabled]
+    [graphId, childId, parentId, dispatch, isPasteEnabled, upstreamNodesOfChild, copiedNode]
   );
 
   const ref = useRef<HTMLDivElement>(null);
@@ -441,7 +449,7 @@ export const EdgeContextualMenu = () => {
                   ))}
                 {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && addAgentMenuItem}
                 {isPasteEnabled &&
-                  (isPasteDisabled ? (
+                  (isPasteDisabledForUpstreamAgent ? (
                     <Tooltip content={a2aPasteDisabledText} relationship="description">
                       <CustomMenu
                         item={{
@@ -482,6 +490,7 @@ export const EdgeContextualMenu = () => {
                           },
                           {
                             text: pasteParallelFromClipboard,
+                            disabled: isAddParallelBranchDisabled,
                             ariaLabel: pasteParallelFromClipboard,
                             onClick: () => handlePasteClicked(true),
                           },
