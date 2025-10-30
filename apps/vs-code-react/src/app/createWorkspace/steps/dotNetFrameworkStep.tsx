@@ -165,46 +165,48 @@ export const DotNetFrameworkStep: React.FC = () => {
       </div>
     );
   }
-  return (
-    <div className={styles.formSection}>
-      <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_CONFIGURATION}</Text>
+  if (logicAppType === ProjectType.rulesEngine) {
+    return (
+      <div className={styles.formSection}>
+        <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_CONFIGURATION}</Text>
+        <div className={styles.fieldContainer}>
+          <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
+            <Label required htmlFor={functionFolderNameId}>
+              {intlText.RULES_ENGINE_FOLDER_NAME}
+            </Label>
+            <Input
+              id={functionFolderNameId}
+              value={functionFolderName}
+              onChange={handleFunctionFolderNameChange}
+              className={styles.inputControl}
+            />
+          </Field>
+        </div>
 
-      <div className={styles.fieldContainer}>
-        <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
-          <Label required htmlFor={functionFolderNameId}>
-            {intlText.RULES_ENGINE_FOLDER_NAME}
-          </Label>
-          <Input
-            id={functionFolderNameId}
-            value={functionFolderName}
-            onChange={handleFunctionFolderNameChange}
-            className={styles.inputControl}
-          />
-        </Field>
-      </div>
+        <div className={styles.fieldContainer}>
+          <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
+            <Label required htmlFor={functionNamespaceId}>
+              {intlText.FUNCTION_NAMESPACE}
+            </Label>
+            <Input
+              id={functionNamespaceId}
+              value={functionNamespace}
+              onChange={handleFunctionNamespaceChange}
+              className={styles.inputControl}
+            />
+          </Field>
+        </div>
 
-      <div className={styles.fieldContainer}>
-        <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
-          <Label required htmlFor={functionNamespaceId}>
-            {intlText.FUNCTION_NAMESPACE}
-          </Label>
-          <Input
-            id={functionNamespaceId}
-            value={functionNamespace}
-            onChange={handleFunctionNamespaceChange}
-            className={styles.inputControl}
-          />
-        </Field>
+        <div className={styles.fieldContainer}>
+          <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
+            <Label required htmlFor={functionNameId}>
+              {intlText.FUNCTION_NAME}
+            </Label>
+            <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
+          </Field>
+        </div>
       </div>
-
-      <div className={styles.fieldContainer}>
-        <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
-          <Label required htmlFor={functionNameId}>
-            {intlText.FUNCTION_NAME}
-          </Label>
-          <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
-        </Field>
-      </div>
-    </div>
-  );
+    );
+  }
+  return null;
 };
