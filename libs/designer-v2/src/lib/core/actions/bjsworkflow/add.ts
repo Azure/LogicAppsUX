@@ -67,7 +67,7 @@ import { isA2AWorkflow } from '../../state/workflow/helper';
 import { openKindChangeDialog } from '../../state/modal/modalSlice';
 import constants from '../../../common/constants';
 import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
-import { isDynamicConnection } from 'lib/common/utilities/Utils';
+import { isDynamicConnection } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
