@@ -12,7 +12,7 @@ import { ConnectorBrowse } from './connectorBrowse';
 import { useBrowseViewStyles } from './styles/BrowseView.styles';
 import { Favorites } from '../categories/Favorites';
 import type { AppDispatch } from '../../../../core';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import { equals, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { getNodeId } from '../helpers';
 import { getTriggerCategories, getActionCategories, BrowseCategoryType } from './helper';
 
@@ -29,7 +29,9 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
 
-  const categories = isTrigger ? getTriggerCategories() : getActionCategories();
+  const allowAgents = equals(relationshipIds.graphId, 'root');
+
+  const categories = isTrigger ? getTriggerCategories() : getActionCategories(allowAgents);
 
   const addTriggerOperation = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
@@ -100,17 +102,19 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
   // Show category cards when no category is selected
   return (
     <div className={classes.container}>
-      {categories.map((category) => (
-        <CategoryCard
-          key={category.key}
-          categoryKey={category.key}
-          categoryTitle={category.text}
-          categoryDescription={category.description}
-          icon={category.icon}
-          isCategory={category.type !== 'immediate'}
-          onCategoryClick={onCategoryClick}
-        />
-      ))}
+      {categories.map((category) =>
+        category.visible === false ? null : (
+          <CategoryCard
+            key={category.key}
+            categoryKey={category.key}
+            categoryTitle={category.text}
+            categoryDescription={category.description}
+            icon={category.icon}
+            isCategory={category.type !== 'immediate'}
+            onCategoryClick={onCategoryClick}
+          />
+        )
+      )}
     </div>
   );
 };
