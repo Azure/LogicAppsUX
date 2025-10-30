@@ -20,7 +20,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from '@fluentui/react-components';
 import { useConnectionSelectionStyles } from './styles';
-import { isDynamicConnection } from 'lib/common/utilities/Utils';
+import { isDynamicConnection } from '../../../common/utilities/Utils';
 
 export const ConnectionSelection = ({ connectorId, operations }: { connectorId: string; operations: string[] }) => {
   const intl = useIntl();

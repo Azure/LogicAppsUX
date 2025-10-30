@@ -31,7 +31,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { AgentUtils, isDynamicConnection } from '../../../../common/utilities/Utils';
-import { useIsAgentSubGraph } from 'lib/common/hooks/agent';
+import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
