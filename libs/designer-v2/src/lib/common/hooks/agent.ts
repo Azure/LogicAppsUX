@@ -16,7 +16,18 @@ export function isNodeInAgentSubgraph(nodeId: string | undefined, nodesMetadata:
     return false;
   }
 
-  let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+  // First check if the node itself is an agent tool (MCP client case)
+  const currentNodeMetadata = getRecordEntry(nodesMetadata, nodeId);
+  if (currentNodeMetadata) {
+    const isAgentTool =
+      currentNodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || currentNodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+    if (isAgentTool) {
+      return true;
+    }
+  }
+
+  // Then traverse up the graph hierarchy
+  let nodeGraphId = currentNodeMetadata?.graphId;
 
   while (nodeGraphId) {
     const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
