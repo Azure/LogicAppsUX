@@ -186,7 +186,7 @@ export const DotNetFrameworkStep: React.FC = () => {
       <div className={styles.fieldContainer}>
         <Field required validationState={functionNamespaceError ? 'error' : undefined} validationMessage={functionNamespaceError}>
           <Label required htmlFor={functionNamespaceId}>
-            {intlText.FUNCTION_NAMESPACE_LABEL}
+            {intlText.FUNCTION_NAMESPACE}
           </Label>
           <Input
             id={functionNamespaceId}
@@ -200,7 +200,7 @@ export const DotNetFrameworkStep: React.FC = () => {
       <div className={styles.fieldContainer}>
         <Field required validationState={functionNameError ? 'error' : undefined} validationMessage={functionNameError}>
           <Label required htmlFor={functionNameId}>
-            {intlText.FUNCTION_NAME_LABEL}
+            {intlText.FUNCTION_NAME}
           </Label>
           <Input id={functionNameId} value={functionName} onChange={handleFunctionNameChange} className={styles.inputControl} />
         </Field>
