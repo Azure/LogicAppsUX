@@ -47,4 +47,7 @@ export default defineConfig({
       //external: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/react-query-devtools'],
     },
   },
+  optimizeDeps: {
+    exclude: ['node_modules/.cache'],
+  },
 });
