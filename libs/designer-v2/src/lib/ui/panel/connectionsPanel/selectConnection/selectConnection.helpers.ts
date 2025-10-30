@@ -5,12 +5,11 @@ import type { IntlShape } from 'react-intl';
 export type ConnectionWithFlattenedProperties = Omit<Connection, 'properties'> & Connection['properties'] & { invalid: boolean };
 
 /**
- * Checks if a connection is a dynamic (OBO) connection
- * Dynamic connections have 'DynamicUserInvoked' in their features/feature property
+ * Checks if a connection is a dynamic (OBO) connection.
  */
 export const isDynamicConnection = (connection: Connection | ConnectionProperties): boolean => {
   const properties = 'properties' in connection ? connection.properties : connection;
-  return equals(properties.features ?? properties.feature ?? '', 'DynamicUserInvoked', true);
+  return equals(properties.features ?? '', 'DynamicUserInvoked', true);
 };
 
 export const flattenConnection = (connection: Connection): ConnectionWithFlattenedProperties => {
