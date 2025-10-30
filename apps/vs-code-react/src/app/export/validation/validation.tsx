@@ -7,7 +7,7 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
 import { useContext, useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
@@ -21,25 +21,8 @@ export const Validation: React.FC = () => {
   const { selectedWorkflows, location, selectedSubscription, selectedAdvanceOptions } = exportData;
   const styles = useExportStyles();
   const dispatch: AppDispatch = useDispatch();
-  const intl = useIntl();
 
-  const intlText = {
-    WORKFLOW_GROUP_DISPLAY_NAME: intl.formatMessage({
-      defaultMessage: 'Workflow',
-      id: '42jhB0',
-      description: 'Review export status title',
-    }),
-    REVIEW_TITLE: intl.formatMessage({
-      defaultMessage: 'Review export status',
-      id: 'Z1yTm5',
-      description: 'Review export status title',
-    }),
-    REVIEW_DESCRIPTION: intl.formatMessage({
-      defaultMessage: `This section shows the export status for elements in your selected logic apps. For example, some parameters types aren't supported, and some connections might not successfully export. For guidance to resolve these issues, review the following steps.`,
-      id: 'bv6P+5',
-      description: 'Review export description',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   const apiService = useMemo(() => {
     return new ApiService({

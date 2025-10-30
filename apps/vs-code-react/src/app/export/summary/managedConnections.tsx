@@ -7,8 +7,8 @@ import { SearchableDropdown, type IDropdownOption } from '../../components/searc
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
 import type { ChangeEvent } from 'react';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText } from '@microsoft/designer-ui';
@@ -17,7 +17,6 @@ import type { CheckboxOnChangeData } from '@fluentui/react-components';
 import { Checkbox } from '@fluentui/react-components';
 
 export const ManagedConnections: React.FC = () => {
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const styles = useExportStyles();
@@ -27,28 +26,7 @@ export const ManagedConnections: React.FC = () => {
   const { selectedSubscription, managedConnections } = exportData;
   const { isManaged, resourceGroup: selectedResourceGroup, resourceGroupLocation } = managedConnections;
 
-  const intlText = {
-    DEPLOY_MANAGED_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Deploy managed connections',
-      id: 'tyEqTO',
-      description: 'Deploy managed connections text',
-    }),
-    MANAGED_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Deploy managed connections (recommended only for preproduction environments)',
-      id: 'UHWTjU',
-      description: 'Deploy managed connections warning text',
-    }),
-    SELECT_OPTION: intl.formatMessage({
-      defaultMessage: 'Select an option',
-      id: '//Icb/',
-      description: 'Select an option placeholder',
-    }),
-    RESOURCE_GROUP: intl.formatMessage({
-      defaultMessage: 'Resource group',
-      id: 'UKCoay',
-      description: 'Resource group title',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   useEffect(() => {
     dispatch(
