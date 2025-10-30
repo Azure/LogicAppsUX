@@ -272,6 +272,7 @@ export default {
   INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP_ARTIFACT_TYPES: ['Schema', 'Map', 'Partner', 'Agreement'],
   ITEM: 'item()',
   LINKS: {
+    APIM_LEARN_MORE: 'https://aka.ms/logicapps-apimdocs',
     CUSTOM_API: 'http://aka.ms/logicapps-customapi',
     FUNCTION: 'http://aka.ms/logicapps-functions',
     FUNCTION_CONTAINER: 'http://aka.ms/logicapps-containers',

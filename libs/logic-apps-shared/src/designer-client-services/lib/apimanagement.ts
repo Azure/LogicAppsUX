@@ -3,7 +3,7 @@ import { AssertionErrorCode, AssertionException } from '../../utils/src';
 import type { ListDynamicValue } from './connector';
 
 export interface IApiManagementService {
-  fetchApiManagementInstances(): Promise<any>;
+  fetchApiManagementInstances(subscriptionId?: string): Promise<any>;
   fetchApisInApiM(apimInstanceId: string): Promise<any>;
   fetchApiMSwagger(apimApiId: string): Promise<SwaggerParser>;
   getOperations(apimApiId: string): Promise<ListDynamicValue[]>;
