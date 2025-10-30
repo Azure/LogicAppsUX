@@ -256,13 +256,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       }))
     : isTrigger
       ? intl.formatMessage({
-          defaultMessage: 'What triggers this workflow?',
-          id: 'lh6QYl',
+          defaultMessage: 'Add a trigger',
+          id: '89kLK1',
           description: 'Text for the Trigger page header',
         })
       : intl.formatMessage({
-          defaultMessage: 'What happens next?',
-          id: 'bgjUnh',
+          defaultMessage: 'Add an action',
+          id: 'Heod+8',
           description: 'Title text for browse/search experience',
         });
 
