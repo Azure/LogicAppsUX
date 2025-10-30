@@ -31,6 +31,7 @@ export interface ConnectorFilterTypes {
 
 export interface BrowseCategoryConfig {
   key: string;
+  visible?: boolean;
   text: string;
   description: string;
   icon: React.ReactNode;
@@ -176,7 +177,7 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
   ];
 };
 
-export const getActionCategories = (): BrowseCategoryConfig[] => {
+export const getActionCategories = (allowAgents?: boolean): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
   return [
@@ -197,6 +198,7 @@ export const getActionCategories = (): BrowseCategoryConfig[] => {
     },
     {
       key: 'aiAgent',
+      visible: allowAgents,
       text: intl.formatMessage({
         defaultMessage: 'AI Agent',
         id: 'cQ/Ocu',
