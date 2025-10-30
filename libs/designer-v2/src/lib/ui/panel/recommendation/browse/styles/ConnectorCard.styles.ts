@@ -57,6 +57,7 @@ export const useConnectorCardStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     marginBottom: '2px',
+    gap: tokens.spacingHorizontalS,
   },
   title: {
     overflow: 'hidden',
@@ -66,17 +67,6 @@ export const useConnectorCardStyles = makeStyles({
     fontSize: tokens.fontSizeBase300,
     color: tokens.colorNeutralForeground1,
     lineHeight: tokens.lineHeightBase300,
-  },
-  builtInBadge: {
-    marginLeft: tokens.spacingHorizontalS,
-    padding: '2px 6px',
-    backgroundColor: tokens.colorBrandBackground2,
-    borderRadius: '10px',
-    fontSize: '10px',
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorBrandForeground2,
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
   },
   description: {
     fontSize: tokens.fontSizeBase200,
