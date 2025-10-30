@@ -1457,7 +1457,7 @@ exports[`OutputsPanel > Should render OutputsPanel with secured outputs 1`] = `
         >
           <div
             class="msla-trace-inputs-outputs-header-text"
-            style="border-color: rgba(0, 0, 0, 0.7);"
+            style="border-color: #000000b3;"
           >
             Outputs
           </div>
@@ -1487,7 +1487,7 @@ exports[`OutputsPanel > Should render OutputsPanel with secured outputs 1`] = `
       >
         <div
           class="msla-trace-inputs-outputs-header-text"
-          style="border-color: rgba(0, 0, 0, 0.7);"
+          style="border-color: #000000b3;"
         >
           Outputs
         </div>
