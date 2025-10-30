@@ -1,6 +1,6 @@
 import type { Connection, ConnectionProperties } from '@microsoft/logic-apps-shared';
 import { getConnectionErrors } from '@microsoft/logic-apps-shared';
-import { isDynamicConnection } from 'lib/common/utilities/Utils';
+import { isDynamicConnection } from '../../../../common/utilities/Utils';
 
 export type ConnectionWithFlattenedProperties = Omit<Connection, 'properties'> & Connection['properties'] & { invalid: boolean };
 
