@@ -356,8 +356,8 @@ export function getStatusString(status: string | undefined, hasRetries: boolean)
 
     case Constants.STATUS.RUNNING:
       return intl.formatMessage({
-        defaultMessage: 'Running',
-        id: '9dd0/m',
+        defaultMessage: 'In progress',
+        id: 'tq1JKF',
         description: 'The status message to show running in monitoring view.',
       });
 
