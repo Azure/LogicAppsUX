@@ -164,8 +164,12 @@ export const isA2AWorkflow = (state: WorkflowState): boolean => {
   return false;
 };
 
+export const isA2AKind = (kind: string): boolean => {
+  return !!kind && equals(kind, WorkflowKind.AGENT);
+};
+
 export const isAgentWorkflow = (kind: string): boolean => {
-  return equals(kind, WorkflowKind.AGENTIC) || equals(kind, WorkflowKind.AGENT);
+  return equals(kind, WorkflowKind.AGENTIC) || isA2AKind(kind);
 };
 
 export const shouldClearNodeRunData = (node: NodeMetadata) => {
