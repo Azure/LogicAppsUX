@@ -210,18 +210,17 @@ export async function createWorkspaceStructure(webviewProjectContext: IWebviewPr
  * Updates a .code-workspace file to group project directories in VS Code
  * @param context - Project wizard context
  */
-export async function updateWorkspaceFile(context: IWebviewProjectContext): Promise<void> {
-  const workspaceContent = await fse.readJson(context.workspaceFilePath);
-
+export async function updateWorkspaceFile(context: IWebviewProjectContext) {
+  const { workspaceFilePath, logicAppName = 'LogicApp', shouldCreateLogicAppProject, logicAppType, functionFolderName } = context;
+  const workspaceContent = await fse.readJson(workspaceFilePath);
   const workspaceFolders = [];
-  const logicAppName = context.logicAppName || 'LogicApp';
-  if (context.shouldCreateLogicAppProject) {
+
+  if (shouldCreateLogicAppProject) {
     workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
   }
 
-  if (context.logicAppType !== ProjectType.logicApp) {
-    const functionsFolder = context.functionFolderName;
-    workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
+  if (logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine) {
+    workspaceFolders.push({ name: functionFolderName, path: `./${functionFolderName}` });
   }
 
   workspaceContent.folders = [...workspaceContent.folders, ...workspaceFolders];
