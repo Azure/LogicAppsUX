@@ -9,7 +9,11 @@ import {
   useNodeConnectionId,
 } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
+import {
+  useConnectionPanelSelectedNodeIds,
+  useOperationPanelSelectedNodeId,
+  usePreviousPanelMode,
+} from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { ActionList } from '../actionList/actionList';
 import { ConnectionTable, type ConnectionTableProps } from './connectionTable';
@@ -27,6 +31,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { AgentUtils, isDynamicConnection } from '../../../../common/utilities/Utils';
+import { useIsAgentSubGraph } from 'lib/common/hooks/agent';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +39,8 @@ export const SelectConnectionWrapper = () => {
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
   const isA2A = useIsA2AWorkflow();
+  const nodeId: string = useOperationPanelSelectedNodeId();
+  const isAgentSubgraph = useIsAgentSubGraph(nodeId);
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
@@ -53,7 +60,7 @@ export const SelectConnectionWrapper = () => {
   const connections = useMemo(() => {
     const connectionData = connectionQuery?.data ?? [];
 
-    if (!isA2A) {
+    if (!isA2A && !isAgentSubgraph) {
       // Filter out dynamic connections
       return connectionData.filter((c) => !isDynamicConnection(c.properties.feature));
     }
@@ -71,7 +78,7 @@ export const SelectConnectionWrapper = () => {
     }
 
     return connectionData;
-  }, [connectionQuery?.data, connector?.id, isA2A, connectionReferencesForConnector]);
+  }, [connectionQuery?.data, connector?.id, isA2A, connectionReferencesForConnector, isAgentSubgraph]);
   const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(
