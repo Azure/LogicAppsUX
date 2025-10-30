@@ -23,15 +23,13 @@ const createMockStore = (nodesMetadata: NodesMetadata) => {
 
 // Wrapper component for Redux Provider
 const createWrapper = (store: any) => {
-  return ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
-  );
+  return ({ children }: { children: React.ReactNode }) => <Provider store={store}>{children}</Provider>;
 };
 
 describe('useIsAgentSubGraph', () => {
   test('should return true for a node inside an AGENT_CONDITION subgraph', () => {
     const nodesMetadata: NodesMetadata = {
-      'node1': {
+      node1: {
         graphId: 'agent-tool-1',
         parentNodeId: 'agent-tool-1',
         actionCount: 0,
@@ -42,7 +40,7 @@ describe('useIsAgentSubGraph', () => {
         subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
         actionCount: 0,
       },
-      'agent1': {
+      agent1: {
         graphId: 'root',
         parentNodeId: undefined,
         actionCount: 1,
@@ -65,7 +63,7 @@ describe('useIsAgentSubGraph', () => {
         subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
         actionCount: 0,
       },
-      'agent1': {
+      agent1: {
         graphId: 'root',
         parentNodeId: undefined,
         actionCount: 1,
@@ -104,7 +102,7 @@ describe('useIsAgentSubGraph', () => {
         parentNodeId: 'condition1',
         actionCount: 0,
       },
-      'condition1': {
+      condition1: {
         graphId: 'root',
         parentNodeId: undefined,
         subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE,
@@ -127,12 +125,12 @@ describe('useIsAgentSubGraph', () => {
         parentNodeId: 'level1',
         actionCount: 0,
       },
-      'level1': {
+      level1: {
         graphId: 'level2',
         parentNodeId: 'level2',
         actionCount: 0,
       },
-      'level2': {
+      level2: {
         graphId: 'agent-tool',
         parentNodeId: 'agent-tool',
         actionCount: 0,
@@ -143,7 +141,7 @@ describe('useIsAgentSubGraph', () => {
         subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
         actionCount: 0,
       },
-      'agent1': {
+      agent1: {
         graphId: 'root',
         parentNodeId: undefined,
         actionCount: 1,

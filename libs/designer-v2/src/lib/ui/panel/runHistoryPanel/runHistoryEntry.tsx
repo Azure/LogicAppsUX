@@ -32,7 +32,7 @@ const RunHistoryEntry = (props: {
   // Scroll into view when selected, this is to handle navigation from other components
   useEffect(() => {
     if (isSelected) {
-      ref.current?.scrollIntoView({ behavior: 'instant', block: 'center' });
+      ref.current?.scrollIntoView({ behavior: 'instant' as ScrollBehavior, block: 'center' });
     }
   }, [isSelected]);
 

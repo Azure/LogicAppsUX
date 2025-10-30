@@ -54,7 +54,7 @@ export abstract class BaseSearchService implements ISearchService {
     'managedApis/office365/apiOperations/mcp_EmailsManagement',
     'managedApis/office365/apiOperations/mcp_MeetingManagement',
     'managedApis/salesforce/apiOperations/mcp_SalesforceManagement',
-    'managedApis/zapiermcp/apiOperations/InvokeServer'
+    'managedApis/zapiermcp/apiOperations/InvokeServer',
   ];
 
   constructor(public readonly options: BaseSearchServiceOptions) {
@@ -319,7 +319,7 @@ export abstract class BaseSearchService implements ISearchService {
   private removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
     return operations
       .filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id?.toLowerCase()))
-      .filter((operation) => !this._unsupportedOperationIds.some(unsupportedId => operation?.id?.endsWith(unsupportedId)));
+      .filter((operation) => !this._unsupportedOperationIds.some((unsupportedId) => operation?.id?.endsWith(unsupportedId)));
   }
 
   private removeUnsupportedConnectors(connectors: Connector[]): Connector[] {

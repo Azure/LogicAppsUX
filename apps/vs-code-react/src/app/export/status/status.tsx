@@ -2,25 +2,18 @@ import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { Spinner } from '@fluentui/react-components';
 import { MediumText, XLargeText } from '@microsoft/designer-ui';
-import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useExportStyles } from '../exportStyles';
 import { CheckmarkRegular } from '@fluentui/react-icons';
 
 export const Status: React.FC = () => {
-  const intl = useIntl();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const statuses = workflowState.statuses ?? [];
   const finalStatus = workflowState.finalStatus;
   const styles = useExportStyles();
-
-  const intlText = {
-    EXPORT_STATUS_TITLE: intl.formatMessage({
-      defaultMessage: 'Export status',
-      id: '3rpbrs',
-      description: 'Export status title',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   const renderStatus = (status?: string, index?: number): JSX.Element => {
     const icon = index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? <Spinner size={'small'} /> : <CheckmarkRegular />;
@@ -47,10 +40,10 @@ interface FinalStatusGadgetProps {
 }
 
 const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) => {
-  const intl = useIntl();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { targetDirectory } = workflowState.exportData;
   const styles = useExportStyles();
+  const intl = useIntl();
 
   const exportNextStepsPath = intl.formatMessage(
     {
