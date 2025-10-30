@@ -6,6 +6,11 @@ import {
   getSubLabelForConnection,
 } from '../selectConnection.helpers';
 import { Connection, ConnectionProperties } from '@microsoft/logic-apps-shared';
+import type { IntlShape } from 'react-intl';
+
+const mockIntl = {
+  formatMessage: ({ defaultMessage }: { defaultMessage: string }) => defaultMessage,
+} as IntlShape;
 
 const mockApi: Connection['properties']['api'] = {
   brandColor: '#008372',
@@ -116,7 +121,7 @@ describe('selectConnection helpers', () => {
         'jdoe@example.com',
       ],
     ])('should handle "%s" case', (_caseName, properties, expected) => {
-      expect(getSubLabelForConnection(properties)).toBe(expected);
+      expect(getSubLabelForConnection(properties, mockIntl)).toBe(expected);
     });
   });
 });
