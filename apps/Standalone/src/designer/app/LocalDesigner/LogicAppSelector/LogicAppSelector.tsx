@@ -30,6 +30,7 @@ const fileOptions = [
   { key: 'NewA2A.json', text: 'New A2A Agent' },
   { key: 'BasicA2A.json', text: 'Basic A2A' },
   { key: 'HandoffA2A.json', text: 'Handoff A2A' },
+  { key: 'HandoffConversationalConsumption.json', text: 'Handoff A2A Consumption' },
 
   // Scope Nodes
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
@@ -62,12 +63,11 @@ const fileOptions = [
   { key: 'StressTest600.json', text: '600 Nodes' },
   { key: 'StressTest1000.json', text: '1000 Nodes' },
 
-  // Consumption Workflows
+  // Workflow Parameters
   { key: 'divider_5', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
   { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
   { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
-  { key: 'HandoffConversationalConsumption.json', text: 'Handoff Conversational Consumption' },
 
   // Monitoring View scenarios
   { key: 'divider_6', text: '-', itemType: DropdownMenuItemType.Divider },
