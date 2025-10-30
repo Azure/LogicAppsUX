@@ -1,5 +1,4 @@
 import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
-import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -112,6 +111,7 @@ export interface CreateConnectionProps {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: { agentType?: string };
+  isA2AWorkflow?: boolean; // For testing purposes - when undefined, will use Redux hook
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -142,6 +142,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     operationManifest,
     workflowKind,
     workflowMetadata,
+    isA2AWorkflow,
   } = props;
 
   const intl = useIntl();
@@ -304,7 +305,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
-  const isA2A = useIsA2AWorkflow();
+  // Use prop if provided (for testing), otherwise default to false
+  const isA2A = isA2AWorkflow ?? false;
 
   const isDynamicConnectionOptionValidForConnector = useMemo(() => {
     // Dynamic connections (OBO) are only supported for conversational agent workflows (not autonomous)

@@ -27,11 +27,6 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   isTenantServiceEnabled: () => true,
 }));
 
-// Mock the useIsA2AWorkflow hook to return false by default
-vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
-  useIsA2AWorkflow: () => false,
-}));
-
 describe('ui/createConnection', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -84,6 +79,7 @@ describe('ui/createConnection', () => {
     const props: CreateConnectionProps = {
       connector: baseConnector,
       checkOAuthCallback: vi.fn(),
+      isA2AWorkflow: false,
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -105,6 +101,7 @@ describe('ui/createConnection', () => {
     const props: CreateConnectionProps = {
       connector: connectorWithParameters,
       checkOAuthCallback: vi.fn(),
+      isA2AWorkflow: false,
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -136,6 +133,7 @@ describe('ui/createConnection', () => {
         },
       },
       checkOAuthCallback: vi.fn(),
+      isA2AWorkflow: false,
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -156,6 +154,7 @@ describe('ui/createConnection', () => {
       connector: baseConnector,
       connectionParameterSets: mockConnectionParameterSets,
       checkOAuthCallback: vi.fn(),
+      isA2AWorkflow: false,
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -205,6 +204,7 @@ describe('ui/createConnection', () => {
       const props: CreateConnectionProps = {
         connector: connectorWithParameters,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -254,6 +254,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockConnectionParameterSets,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -311,6 +312,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockConnectionParameterSets,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -331,6 +333,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -373,6 +376,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockParameterSetsWithCredentialMapping,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -410,6 +414,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockParameterSetsWithCredentialMapping,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -464,6 +469,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockParameterSetWithOAuth,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
         createConnectionCallback: vi.fn(),
       };
 
@@ -485,6 +491,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockParameterSetWithSPAuth,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
         createConnectionCallback: vi.fn(),
       };
 
@@ -506,6 +513,7 @@ describe('ui/createConnection', () => {
         connector: baseConnector,
         connectionParameterSets: mockParameterSetWithClientCertAuth,
         checkOAuthCallback: vi.fn(),
+        isA2AWorkflow: false,
         createConnectionCallback: vi.fn(),
       };
 

@@ -3,6 +3,7 @@ import type { AppDispatch } from '../../../../core';
 import { getApiHubAuthentication, getConnectionProperties, needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../../../core/queries/connections';
 import { useConnector, useGatewayServiceConfig, useGateways, useSubscriptions } from '../../../../core/state/connection/connectionSelector';
+import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { getConnectionParametersForAzureConnection, getSupportedParameterSets } from '../../../../core/utils/connectors/connections';
 import { CreateConnection, type CreateButtonTexts } from './createConnection';
@@ -83,6 +84,7 @@ export const CreateConnectionInternal = (props: {
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
   const gatewayServiceConfig = useGatewayServiceConfig();
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const [isCreating, setIsCreating] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -328,6 +330,7 @@ export const CreateConnectionInternal = (props: {
       operationManifest={operationManifest}
       workflowKind={props.workflowKind}
       workflowMetadata={workflowMetadata}
+      isA2AWorkflow={isA2AWorkflow}
     />
   );
 };
