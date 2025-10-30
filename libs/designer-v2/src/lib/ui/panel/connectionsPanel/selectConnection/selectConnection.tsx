@@ -26,7 +26,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { AgentUtils } from '../../../../common/utilities/Utils';
+import { AgentUtils, isDynamicConnection } from '../../../../common/utilities/Utils';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -55,7 +55,7 @@ export const SelectConnectionWrapper = () => {
 
     if (!isA2A) {
       // Filter out dynamic connections
-      return connectionData.filter((c) => !equals(c.properties.feature ?? '', 'DynamicUserInvoked', true));
+      return connectionData.filter((c) => !isDynamicConnection(c.properties.feature));
     }
 
     if (isA2A && AgentUtils.isConnector(connector?.id)) {

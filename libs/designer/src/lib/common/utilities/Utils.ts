@@ -41,3 +41,7 @@ export class AgentUtils {
     return equals(operationId, 'connectionProviders/agent', true) && equals(parameterName ?? '', 'modelId', true);
   };
 }
+
+export const isDynamicConnection = (feature?: string): boolean => {
+  return equals(feature ?? '', 'DynamicUserInvoked', true);
+};
