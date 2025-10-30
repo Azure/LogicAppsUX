@@ -62,7 +62,7 @@ import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useStyles } from './styles';
-import { isAgentWorkflow } from '../../../../core/state/workflow/helper';
+import { isA2AKind } from '../../../../core/state/workflow/helper';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -308,7 +308,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
     // Standard: check workflowKind
     // Consumption: check metadata.agentType
-    const isAgent = workflowKind ? isAgentWorkflow(workflowKind) : workflowMetadata?.agentType !== undefined;
+    const isAgent = workflowKind ? isA2AKind(workflowKind) : workflowMetadata?.agentType !== undefined;
 
     return isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgent;
   }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
@@ -608,28 +608,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     description: 'Dropdown text for legacy managed identity connection',
   });
 
-  // Determine if this is a consumption workflow (v1) or standard workflow (v2)
-  // Consumption uses workflowMetadata.agentType, Standard uses workflowKind
-  const isConsumptionWorkflow = useMemo(
-    () => !workflowKind && workflowMetadata?.agentType !== undefined,
-    [workflowKind, workflowMetadata?.agentType]
-  );
-
   const stringResources = useMemo(
     () => ({
-      USE_DYNAMIC_CONNECTIONS: isConsumptionWorkflow
-        ? intl.formatMessage({
-            defaultMessage: 'Create as per-user connection?',
-            id: '9yq5lv',
-            description: 'Dynamic connection checkbox text for consumption SKU',
-          })
-        : intl.formatMessage({
-            defaultMessage: 'Create as per-user connection? (requires Managed Service Identity to be enabled)',
-            id: 'c+01Fk',
-            description: 'Dynamic connection checkbox text for standard SKU',
-          }),
+      USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
+        defaultMessage: 'Create as per-user connection?',
+        id: '9yq5lv',
+        description: 'Dynamic connection checkbox text for consumption SKU',
+      }),
     }),
-    [intl, isConsumptionWorkflow]
+    [intl]
   );
 
   const connectorDescription = useMemo(() => {

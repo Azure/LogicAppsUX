@@ -66,7 +66,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
 import { isManagedMcpOperation } from '../../state/workflow/helper';
-import { AgentUtils } from '../../../common/utilities/Utils';
+import { AgentUtils, isDynamicConnection } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -473,7 +473,10 @@ export const trySetDefaultConnectionForNode = async (
   autoSelectionDisabled?: boolean
 ) => {
   const connectorId = connector.id;
-  const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
+  // Filter out Dynamic Connection while setting default connections
+  const connections = (await getConnectionsForConnector(connectorId)).filter(
+    (c) => c.properties.overallStatus !== 'Error' || !isDynamicConnection(c.properties.feature)
+  );
   if (connections.length > 0 && !autoSelectionDisabled) {
     const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
     await ConnectionService().setupConnectionIfNeeded(connection);
