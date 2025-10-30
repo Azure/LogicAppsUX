@@ -13,6 +13,7 @@ import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../.
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { ActionList } from '../actionList/actionList';
 import { ConnectionTable, type ConnectionTableProps } from './connectionTable';
+import { isDynamicConnection } from './selectConnection.helpers';
 import { Body1Strong, Button, Divider, Spinner, MessageBar, MessageBarTitle, MessageBarBody, Text } from '@fluentui/react-components';
 import {
   ConnectionService,
@@ -88,7 +89,7 @@ export const SelectConnectionWrapper = () => {
     //   - Regular workflow (isA2A=false) → Hide dynamic connections
     if (!isA2A || !isAgentSubgraph) {
       // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
-      return connectionData.filter((c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true));
+      return connectionData.filter((c) => !isDynamicConnection(c));
     }
 
     return connectionData;

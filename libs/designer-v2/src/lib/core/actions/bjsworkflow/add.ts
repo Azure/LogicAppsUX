@@ -28,6 +28,7 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import { isNodeInAgentSubgraph } from '../../../common/hooks/agent';
+import { isDynamicConnection } from '../../../ui/panel/connectionsPanel/selectConnection/selectConnection.helpers';
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
@@ -498,7 +499,7 @@ export const trySetDefaultConnectionForNode = async (
 
   if (!shouldAllowDynamicConnections) {
     // Filter out dynamic connections (check both 'features' and 'feature' for compatibility)
-    connections = connections.filter((c) => !equals(c.properties.features ?? c.properties.feature ?? '', 'DynamicUserInvoked', true));
+    connections = connections.filter((c) => !isDynamicConnection(c));
   }
 
   if (connections.length > 0) {
