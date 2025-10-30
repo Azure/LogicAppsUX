@@ -5,13 +5,13 @@
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const ReviewCreateStep: React.FC = () => {
-  const intl = useIntl();
+  const intlText = useIntlMessages(workspaceMessages);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
 
@@ -47,159 +47,6 @@ export const ReviewCreateStep: React.FC = () => {
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
-
-  const intlText = {
-    TITLE: intl.formatMessage({
-      defaultMessage: 'Review + create',
-      id: 'JqiwYx',
-      description: 'Review and create step title',
-    }),
-    DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Review your configuration and create your Logic App workspace.',
-      id: 'XepQZn',
-      description: 'Review step description',
-    }),
-    PROJECT_SETUP: intl.formatMessage({
-      defaultMessage: 'Project setup',
-      id: 'j6RrLt',
-      description: 'Project setup section title',
-    }),
-    PROJECT_PATH_LABEL: intl.formatMessage({
-      defaultMessage: 'Project path',
-      id: 'VSeZW4',
-      description: 'Project path label',
-    }),
-    PACKAGE_SETUP: intl.formatMessage({
-      defaultMessage: 'Package Setup',
-      id: '9VC1hu',
-      description: 'Package setup section title',
-    }),
-    PACKAGE_PATH_LABEL: intl.formatMessage({
-      defaultMessage: 'Package path',
-      id: 'U16F4a',
-      description: 'Package path label',
-    }),
-    WORKSPACE_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace Name',
-      id: 'Jbo5DB',
-      description: 'Workspace name label',
-    }),
-    WORKSPACE_FOLDER_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace Folder',
-      id: 'Eu6UGm',
-      description: 'Workspace folder path label',
-    }),
-    WORKSPACE_FILE_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace File',
-      id: '+fM/eg',
-      description: 'Workspace file path label',
-    }),
-    LOGIC_APP_TYPE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App Type',
-      id: 'n/eWQU',
-      description: 'Logic app type label',
-    }),
-    LOGIC_APP_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App Name',
-      id: 'i9+YCM',
-      description: 'Logic app name label',
-    }),
-    LOGIC_APP_LOCATION_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App Location',
-      id: 'zMexS3',
-      description: 'Logic app location path label',
-    }),
-    DOTNET_FRAMEWORK_LABEL: intl.formatMessage({
-      defaultMessage: '.NET Framework',
-      id: 'kv8ROl',
-      description: 'Dot net framework label',
-    }),
-    CUSTOM_CODE_FOLDER_LABEL: intl.formatMessage({
-      defaultMessage: 'Custom Code Folder',
-      id: 'LltDjL',
-      description: 'Custom code folder label',
-    }),
-    RULES_ENGINE_FOLDER_LABEL: intl.formatMessage({
-      defaultMessage: 'Rules Engine Folder',
-      id: 'VE1WHE',
-      description: 'Rules engine folder label',
-    }),
-    CUSTOM_CODE_LOCATION_LABEL: intl.formatMessage({
-      defaultMessage: 'Custom Code Location',
-      id: 'oOFc/f',
-      description: 'Custom code location path label',
-    }),
-    RULES_ENGINE_LOCATION_LABEL: intl.formatMessage({
-      defaultMessage: 'Rules Engine Location',
-      id: 'YhPs4e',
-      description: 'Rules Engine location path label',
-    }),
-    FUNCTION_WORKSPACE_LABEL: intl.formatMessage({
-      defaultMessage: 'Function Workspace',
-      id: 'aXShs8',
-      description: 'Function workspace label',
-    }),
-    FUNCTION_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Function Name',
-      id: '6I6s5I',
-      description: 'Function name label',
-    }),
-    WORKFLOW_TYPE_LABEL: intl.formatMessage({
-      defaultMessage: 'Workflow Type',
-      id: 'JdYNQ+',
-      description: 'Workflow type label',
-    }),
-    WORKFLOW_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Workflow Name',
-      id: 'HC2d/m',
-      description: 'Workflow name label',
-    }),
-    MISSING_VALUE: intl.formatMessage({
-      defaultMessage: 'Not specified',
-      id: 'KJLHaU',
-      description: 'Missing value indicator',
-    }),
-    STANDARD_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app (standard)',
-      id: 'vgmZW+',
-      description: 'Standard logic app option',
-    }),
-    CUSTOM_CODE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app with Custom Code',
-      id: 'CZuM0p',
-      description: 'Logic app with custom code option',
-    }),
-    RULES_ENGINE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app with Rules Engine',
-      id: '/pkdF3',
-      description: 'Logic app with rules engine option',
-    }),
-    STATEFUL_LABEL: intl.formatMessage({
-      defaultMessage: 'Stateful',
-      id: 'p4Mgce',
-      description: 'Stateful workflow option',
-    }),
-    STATELESS_LABEL: intl.formatMessage({
-      defaultMessage: 'Stateless',
-      id: 'R7gB/3',
-      description: 'Stateless workflow option',
-    }),
-    AUTONOMOUS_LABEL: intl.formatMessage({
-      defaultMessage: 'Autonomous Agents (Preview)',
-      id: 'qs798U',
-      description: 'Autonomous agents workflow option',
-    }),
-    AGENT_LABEL: intl.formatMessage({
-      defaultMessage: 'Conversational Agents',
-      id: 'fg89hL',
-      description: 'Conversational agent workflow option',
-    }),
-    LOGIC_APPS_DETAILS: intl.formatMessage({
-      defaultMessage: 'Logic app details',
-      id: 'VGAj7/',
-      description: 'Logic app details section title',
-    }),
-  };
 
   const getWorkspaceFilePath = () => {
     if (!workspaceProjectPath.fsPath || !workspaceName) {
@@ -243,33 +90,33 @@ export const ReviewCreateStep: React.FC = () => {
   const getLogicAppTypeDisplay = (type: string) => {
     switch (type) {
       case ProjectType.logicApp:
-        return intlText.STANDARD_LABEL;
+        return intlText.LOGIC_APP_STANDARD;
       case ProjectType.customCode:
-        return intlText.CUSTOM_CODE_LABEL;
+        return intlText.LOGIC_APP_CUSTOM_CODE;
       case ProjectType.rulesEngine:
-        return intlText.RULES_ENGINE_LABEL;
+        return intlText.LOGIC_APP_RULES_ENGINE;
       default:
-        return type || intlText.MISSING_VALUE;
+        return type || intlText.NOT_SPECIFIED;
     }
   };
 
   const getWorkflowTypeDisplay = (type: string) => {
     switch (type) {
       case 'Stateful-Codeless':
-        return intlText.STATEFUL_LABEL;
+        return intlText.STATEFUL_TITLE;
       case 'Stateless-Codeless':
-        return intlText.STATELESS_LABEL;
+        return intlText.STATELESS_TITLE;
       case 'Agentic-Codeless':
-        return intlText.AUTONOMOUS_LABEL;
+        return intlText.AUTONOMOUS_TITLE;
       case 'Agent-Codeless':
-        return intlText.AGENT_LABEL;
+        return intlText.AGENT_TITLE;
       default:
-        return type || intlText.MISSING_VALUE;
+        return type || intlText.NOT_SPECIFIED;
     }
   };
 
   const renderSettingRow = (label: string, value: string, isRequired = true) => {
-    const displayValue = value?.trim() || intlText.MISSING_VALUE;
+    const displayValue = value?.trim() || intlText.NOT_SPECIFIED;
     const isMissing = !value?.trim();
 
     return (
@@ -282,61 +129,61 @@ export const ReviewCreateStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
-      <Text className={styles.stepDescription}>{intlText.DESCRIPTION}</Text>
+      <Text className={styles.sectionTitle}>{intlText.REVIEW_CREATE}</Text>
+      <Text className={styles.stepDescription}>{intlText.REVIEW_DESCRIPTION}</Text>
 
       <div className={styles.reviewContainer}>
         {shouldShowPackageSection && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>{intlText.PACKAGE_SETUP}</div>
-            {renderSettingRow(intlText.PACKAGE_PATH_LABEL, packagePath.fsPath)}
+            {renderSettingRow(intlText.PACKAGE_PATH_REVIEW, packagePath.fsPath)}
           </div>
         )}
 
         {shouldShowWorkspaceSection && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>{intlText.PROJECT_SETUP}</div>
-            {renderSettingRow(intlText.WORKSPACE_NAME_LABEL, workspaceName)}
-            {renderSettingRow(intlText.WORKSPACE_FOLDER_LABEL, getWorkspaceFolderPath())}
-            {renderSettingRow(intlText.WORKSPACE_FILE_LABEL, getWorkspaceFilePath())}
+            {renderSettingRow(intlText.WORKSPACE_NAME_REVIEW, workspaceName)}
+            {renderSettingRow(intlText.WORKSPACE_FOLDER, getWorkspaceFolderPath())}
+            {renderSettingRow(intlText.WORKSPACE_FILE, getWorkspaceFilePath())}
           </div>
         )}
 
         {shouldShowLogicAppSection && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>{intlText.LOGIC_APPS_DETAILS}</div>
-            {renderSettingRow(intlText.LOGIC_APP_NAME_LABEL, logicAppName)}
-            {flowType !== 'createLogicApp' && renderSettingRow(intlText.LOGIC_APP_LOCATION_LABEL, getLogicAppLocationPath())}
-            {renderSettingRow(intlText.LOGIC_APP_TYPE_LABEL, getLogicAppTypeDisplay(logicAppType))}
+            <div className={styles.reviewSectionTitle}>Logic app details</div>
+            {renderSettingRow(intlText.LOGIC_APP_NAME_REVIEW, logicAppName)}
+            {flowType !== 'createLogicApp' && renderSettingRow(intlText.LOGIC_APP_LOCATION, getLogicAppLocationPath())}
+            {renderSettingRow(intlText.LOGIC_APP_TYPE_REVIEW, getLogicAppTypeDisplay(logicAppType))}
           </div>
         )}
 
         {needsDotNetFrameworkStep && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Custom code configuration</div>
-            {renderSettingRow(intlText.DOTNET_FRAMEWORK_LABEL, getDotNetFrameworkDisplay(targetFramework))}
-            {renderSettingRow(intlText.CUSTOM_CODE_FOLDER_LABEL, functionFolderName)}
-            {renderSettingRow(intlText.CUSTOM_CODE_LOCATION_LABEL, getFunctionLocationPath())}
-            {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionNamespace)}
-            {renderSettingRow(intlText.FUNCTION_NAME_LABEL, functionName)}
+            {renderSettingRow(intlText.DOTNET_FRAMEWORK_REVIEW, getDotNetFrameworkDisplay(targetFramework))}
+            {renderSettingRow(intlText.CUSTOM_CODE_FOLDER, functionFolderName)}
+            {renderSettingRow(intlText.CUSTOM_CODE_LOCATION, getFunctionLocationPath())}
+            {renderSettingRow(intlText.FUNCTION_WORKSPACE, functionNamespace)}
+            {renderSettingRow(intlText.FUNCTION_NAME_REVIEW, functionName)}
           </div>
         )}
 
         {needsFunctionConfiguration && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Function configuration</div>
-            {renderSettingRow(intlText.RULES_ENGINE_FOLDER_LABEL, functionFolderName)}
-            {renderSettingRow(intlText.RULES_ENGINE_LOCATION_LABEL, getFunctionLocationPath())}
-            {renderSettingRow(intlText.FUNCTION_WORKSPACE_LABEL, functionNamespace)}
-            {renderSettingRow(intlText.FUNCTION_NAME_LABEL, functionName)}
+            {renderSettingRow(intlText.RULES_ENGINE_FOLDER, functionFolderName)}
+            {renderSettingRow(intlText.RULES_ENGINE_LOCATION, getFunctionLocationPath())}
+            {renderSettingRow(intlText.FUNCTION_WORKSPACE, functionNamespace)}
+            {renderSettingRow(intlText.FUNCTION_NAME_REVIEW, functionName)}
           </div>
         )}
 
         {shouldShowWorkflowSection && (
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Workflow configuration</div>
-            {renderSettingRow(intlText.WORKFLOW_NAME_LABEL, workflowName)}
-            {renderSettingRow(intlText.WORKFLOW_TYPE_LABEL, getWorkflowTypeDisplay(workflowType))}
+            {renderSettingRow(intlText.WORKFLOW_NAME_REVIEW, workflowName)}
+            {renderSettingRow(intlText.WORKFLOW_TYPE_REVIEW, getWorkflowTypeDisplay(workflowType))}
           </div>
         )}
       </div>

@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown, type IDropdownOption } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
 import { useCallback } from 'react';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { useExportStyles } from '../exportStyles';
 
@@ -14,51 +14,9 @@ export const AdvancedOptions: React.FC = () => {
   const { exportData } = workflowState;
   const { selectedAdvanceOptions } = exportData;
   const styles = useExportStyles();
-  const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
-  const intlText = {
-    ADVANCED_OPTIONS: intl.formatMessage({
-      defaultMessage: 'Advanced options',
-      id: 'AANqXs',
-      description: 'Advanced options title',
-    }),
-    EXPORT_CONNECTION: intl.formatMessage({
-      defaultMessage: 'Export connection credentials',
-      id: 'IasIBo',
-      description: 'Export connection credentials title',
-    }),
-    EXPORT_CONNECTION_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Export the connection credentials for each application',
-      id: 'qMrEa5',
-      description: 'Export the connection credentials for each application description',
-    }),
-    OFF: intl.formatMessage({
-      defaultMessage: 'Off',
-      id: 'nwlaY0',
-      description: 'Off text',
-    }),
-    CLONE_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Clone connections credentials',
-      id: 'Okr6Rk',
-      description: 'Clone connections text',
-    }),
-    GENERATE_INFRAESTRUCTURE: intl.formatMessage({
-      defaultMessage: 'Generate infrastructure templates',
-      id: '1ilzLi',
-      description: 'Generate infrastructure templates',
-    }),
-    INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
-      defaultMessage: 'Default to integration account as source for transformations and schema validation',
-      id: 'Wr+bL6',
-      description: 'Default to integration account as source for transformations and schema validation',
-    }),
-    EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
-      defaultMessage: 'Export custom connector actions as API Management actions',
-      id: 'KMOkYN',
-      description: 'Export custom connector actions as API Management actions',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   const advancedOptions: IDropdownOption[] = [
     { key: AdvancedOptionsTypes.generateInfrastructureTemplates, text: intlText.GENERATE_INFRAESTRUCTURE, selected: false },

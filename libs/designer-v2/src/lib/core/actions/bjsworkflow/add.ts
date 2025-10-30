@@ -66,6 +66,7 @@ import { operationSupportsSplitOn } from '../../utils/outputs';
 import { isA2AWorkflow } from '../../state/workflow/helper';
 import { openKindChangeDialog } from '../../state/modal/modalSlice';
 import constants from '../../../common/constants';
+import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -87,9 +88,16 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
 
     const workflowState = (getState() as RootState).workflow;
 
-    // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
+    // Catch workflow kind conflicts before adding node
     if (isTrigger) {
       const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+      if (equals(workflowState.workflowKind, WorkflowKind.STATELESS) && isA2ATrigger) {
+        // Can't switch to A2A if the workflow is stateless
+        dispatch(openKindChangeDialog({ type: 'fromStateless' }));
+        return;
+      }
+
+      // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
       if (isA2AWorkflow(workflowState)) {
         if (!isA2ATrigger) {
           const workflowHasHandoffs = Object.values(workflowState.nodesMetadata).some(
@@ -100,7 +108,6 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
             dispatch(openKindChangeDialog({ type: 'toStateful' }));
             return;
           }
-          dispatch(setWorkflowKind(WorkflowKind.STATEFUL));
         }
       } else if (isA2ATrigger) {
         const allAgentIds = Object.keys(workflowState.operations).filter((id) =>
@@ -115,7 +122,6 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
           dispatch(openKindChangeDialog({ type: 'toA2A' }));
           return;
         }
-        dispatch(setWorkflowKind(WorkflowKind.AGENT));
       }
     }
 
@@ -154,6 +160,50 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
       actionMetadata,
       !isAddingHandoff
     );
+
+    // Adjust workflow for kind change if needed
+    if (isTrigger) {
+      const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+
+      if (isA2AWorkflow(workflowState)) {
+        if (!isA2ATrigger) {
+          dispatch(setWorkflowKind(WorkflowKind.STATEFUL));
+          // If trigger child is agent, agent needs to have its runAfter cleared
+          const edges = workflowState.graph?.edges ?? [];
+          const triggerChildId = edges.find((edge) => edge.source === constants.NODE.TYPE.PLACEHOLDER_TRIGGER)?.target;
+          if (triggerChildId) {
+            const childNodeOperationData = workflowState.operations?.[triggerChildId];
+            const childIsAgent = equals(childNodeOperationData.type, constants.NODE.TYPE.AGENT);
+            const currentRunAfterId = Object.keys((childNodeOperationData as any).runAfter)?.[0];
+            if (childIsAgent && currentRunAfterId) {
+              dispatch(
+                removeOperationRunAfter({
+                  parentOperationId: currentRunAfterId,
+                  childOperationId: triggerChildId,
+                })
+              );
+            }
+          }
+        }
+      } else if (isA2ATrigger) {
+        dispatch(setWorkflowKind(WorkflowKind.AGENT));
+        // If trigger child is agent, agent needs to run after trigger
+        const edges = workflowState.graph?.edges ?? [];
+        const triggerChildId = edges.find((edge) => edge.source === constants.NODE.TYPE.PLACEHOLDER_TRIGGER)?.target;
+        if (triggerChildId) {
+          const childNodeOperationData = workflowState.operations?.[triggerChildId];
+          const childIsAgent = equals(childNodeOperationData.type, constants.NODE.TYPE.AGENT);
+          if (childIsAgent) {
+            dispatch(
+              addOperationRunAfter({
+                parentOperationId: actionId,
+                childOperationId: triggerChildId,
+              })
+            );
+          }
+        }
+      }
+    }
 
     dispatch(setFocusNode(nodeId));
     if (isAddingAgentTool && newToolId) {

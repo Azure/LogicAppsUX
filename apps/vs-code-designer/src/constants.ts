@@ -24,7 +24,7 @@ export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 export const sdkLspServer = 'SdkLspServer';
 
-// Directories names
+// Directory names
 export const deploymentDirectory = 'deployment';
 export const diagnosticsDirectory = 'diagnostics';
 export const locksDirectory = 'locks';
@@ -36,7 +36,6 @@ export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
 export const lspDirectory = 'LanguageServerLogicApps';
 
-// Extension Id
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
@@ -46,7 +45,19 @@ export const vscodeFolderName = '.vscode';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
 export const workspaceTemplatesFolderName = 'WorkspaceTemplates';
+export const unitTestTemplatesFolderName = 'UnitTestTemplates';
 
+// Unit test template names
+export const testClassFileTemplateName = 'TestClassFile';
+export const testClassFileNoActionsTemplateName = 'TestClassFileNoActions';
+export const testClassFileFromRunTemplateName = 'TestClassFileFromRun';
+export const testClassFileFromRunNoActionsTemplateName = 'TestClassFileFromRunNoActions';
+export const testExecutorFileTemplateName = 'TestExecutorFile';
+export const testMockClassTemplateName = 'TestMockClass';
+export const testCsprojFileTemplateName = 'TestCsprojFile';
+export const testSettingsConfigFileTemplateName = 'TestSettingsConfigFile';
+
+// Extension Id
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
 // Azurite
@@ -205,8 +216,8 @@ export const extensionCommand = {
   dataMapSetDmFolders: 'azureLogicAppsStandard.dataMap.setDmFolders',
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
+  createUnitTestFromRun: 'azureLogicAppsStandard.createUnitTestFromRun',
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
-  saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
@@ -355,13 +366,6 @@ export const PackageManager = {
   brew: 'brew',
 } as const;
 export type PackageManager = (typeof PackageManager)[keyof typeof PackageManager];
-// Operating System Platforms
-export const Platform = {
-  windows: 'win32',
-  mac: 'darwin',
-  linux: 'linux',
-} as const;
-export type Platform = (typeof Platform)[keyof typeof Platform];
 
 // Resources
 export const kubernetesKind = 'kubernetes';

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  Platform,
   ProjectDirectoryPathKey,
   autoStartDesignTimeSetting,
   defaultVersionRange,
@@ -36,7 +35,7 @@ import {
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';

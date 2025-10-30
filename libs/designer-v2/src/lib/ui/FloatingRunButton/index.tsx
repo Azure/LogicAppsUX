@@ -8,6 +8,7 @@ import { canRunBeInvokedWithPayload, equals, HTTP_METHODS, isNullOrEmpty, RunSer
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomCodeFilesWithData,
+  getTriggerNodeId,
   resetDesignerDirtyState,
   store,
   updateParameterValidation,
@@ -26,7 +27,7 @@ const AllowedTriggerTypes = [
   constants.NODE.TYPE.REQUEST,
   constants.NODE.TYPE.RECURRENCE,
   constants.NODE.TYPE.API_CONNECTION,
-  constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+  constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
   constants.NODE.TYPE.HTTP_WEBHOOK,
   constants.NODE.TYPE.HTTP,
   constants.NODE.TYPE.SLIDING_WINDOW,
@@ -46,6 +47,7 @@ export interface FloatingRunButtonProps {
   onRun?: (runId: string) => void;
   isDarkMode: boolean;
   isDraftMode?: boolean;
+  isDisabled?: boolean;
 }
 
 export const FloatingRunButton = ({
@@ -55,19 +57,18 @@ export const FloatingRunButton = ({
   onRun,
   isDarkMode,
   isDraftMode,
+  isDisabled,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
-
   const dispatch = useDispatch();
-
   const isA2AWorkflow = useIsA2AWorkflow();
-
-  const operationState = useSelector((state: RootState) => state.operations);
+  const { operations: operationState, workflow } = useSelector((state: RootState) => state);
 
   // Check if the trigger type is allowed to run in DraftMode
   const isAllowedTriggerType = useMemo(() => {
-    const triggerInfo: Record<string, any> | undefined = operationState?.operationInfo;
-    if (!triggerInfo) {
+    const triggerId = getTriggerNodeId(workflow);
+    const info: Record<string, any> | undefined = operationState?.operationInfo;
+    if (!triggerId || !info || !info[triggerId]) {
       return false;
     }
 
@@ -75,8 +76,10 @@ export const FloatingRunButton = ({
       return true; // In non-draft mode, all triggers are allowed
     }
 
-    return triggerInfo.type && AllowedTriggerTypes.some((allowedType) => equals(triggerInfo.type, allowedType, true));
-  }, [isDraftMode, operationState?.operationInfo]);
+    const trigger = info[triggerId];
+
+    return trigger.type && AllowedTriggerTypes.some((allowedType) => equals(trigger.type, allowedType, true));
+  }, [isDraftMode, operationState?.operationInfo, workflow]);
 
   const canBeRunWithPayload = useMemo(
     () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
@@ -85,16 +88,35 @@ export const FloatingRunButton = ({
 
   const runDraftWorkflow = useCallback(
     async (triggerId: string, payload?: PayloadData) => {
+      let contentBody = payload?.body;
+      const headers = payload?.headers ?? {};
+
+      // Try to parse body as JSON
+      try {
+        contentBody = contentBody ? JSON.parse(contentBody) : undefined;
+      } catch (err) {
+        contentBody = payload?.body;
+        console.error('Error parsing JSON body:', err);
+      }
+
+      // Set Content-Type header if body is JSON
+      if (contentBody && typeof contentBody === 'object') {
+        headers['Content-Type'] = 'application/json';
+      }
+
       try {
         if (siteResourceId && workflowName) {
           const callbackInfo: any = {
-            value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${payload ? 'runDraftWithPayload' : 'runDraft'}`,
+            value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`,
             method: HTTP_METHODS.POST,
           };
 
           // Wait 0.5 seconds, running too fast after saving causes 500 error
           await new Promise((resolve) => setTimeout(resolve, 500));
-          const runResponse = await RunService().runTrigger(callbackInfo, payload);
+          const runResponse = await RunService().runTrigger(callbackInfo, {
+            headers,
+            body: contentBody,
+          });
           const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
           onRun?.(runId);
         } else {
@@ -214,7 +236,7 @@ export const FloatingRunButton = ({
     appearance: 'primary',
     shape: 'circular',
     size: 'large',
-    disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
+    disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
     style: {
       position: 'absolute',
       bottom: '16px',
@@ -256,13 +278,13 @@ export const FloatingRunButton = ({
             onClick: () => {
               runMutate();
             },
-            disabled: runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
+            disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
           }}
           menuButton={{
             icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
             onClick: () => setPopoverOpen(true),
             ref: buttonRef,
-            disabled: runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
+            disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
           }}
         >
           {runText}

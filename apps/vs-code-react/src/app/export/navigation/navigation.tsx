@@ -5,13 +5,12 @@ import type { RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { ExtensionCommand, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useExportStyles } from '../exportStyles';
 
 export const Navigation: React.FC = () => {
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,33 +31,7 @@ export const Navigation: React.FC = () => {
   } = exportData;
   const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
 
-  const intlText = {
-    NEXT: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '3Wcqsy',
-      description: 'Next button',
-    }),
-    BACK: intl.formatMessage({
-      defaultMessage: 'Back',
-      id: '2XH9oW',
-      description: 'Back button',
-    }),
-    EXPORT: intl.formatMessage({
-      defaultMessage: 'Export',
-      id: 'wPzyvX',
-      description: 'Export button',
-    }),
-    EXPORT_WITH_WARNINGS: intl.formatMessage({
-      defaultMessage: 'Export with warnings',
-      id: 'pK0Ir8',
-      description: 'Export with warnings button',
-    }),
-    FINISH: intl.formatMessage({
-      defaultMessage: 'finish',
-      id: 'mlxD6R',
-      description: 'Finish  button',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   const onClickBack = () => {
     navigate(-1);

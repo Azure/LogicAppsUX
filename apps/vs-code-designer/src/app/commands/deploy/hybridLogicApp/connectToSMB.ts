@@ -16,12 +16,12 @@ import {
   localSettingsFileName,
   mapsDirectory,
   parametersFileName,
-  Platform,
   rulesDirectory,
   schemasDirectory,
   workflowFileName,
 } from '../../../../constants';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 export async function connectToSMB(context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive: string): Promise<void> {
   const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');

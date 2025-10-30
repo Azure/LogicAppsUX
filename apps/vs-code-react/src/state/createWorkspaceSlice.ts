@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { Platform } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -34,6 +35,7 @@ export interface CreateWorkspaceState {
   isValidatingWorkspace: boolean;
   isValidatingPackage: boolean;
   separator: string;
+  platform: Platform | null;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -68,6 +70,7 @@ const initialState: CreateWorkspaceState = {
   isValidatingWorkspace: false,
   isValidatingPackage: false,
   separator: '/',
+  platform: null,
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -80,8 +83,9 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator } = action.payload;
+      const { separator, platform } = action.payload;
       state.separator = separator;
+      state.platform = platform;
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;

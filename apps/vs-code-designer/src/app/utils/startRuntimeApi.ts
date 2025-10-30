@@ -6,7 +6,7 @@ import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledEr
 import { runWithDurationTelemetry } from './telemetry';
 import { activateAzurite } from './azurite/activateAzurite';
 import { verifyLocalConnectionKeys } from './appSettings/connectionKeys';
-import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, Platform, verifyConnectionKeysSetting } from '../../constants';
+import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, verifyConnectionKeysSetting } from '../../constants';
 import { getContainingWorkspace } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
@@ -22,6 +22,7 @@ import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {

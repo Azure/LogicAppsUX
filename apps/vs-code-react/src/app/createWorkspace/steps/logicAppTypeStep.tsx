@@ -8,14 +8,14 @@ import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../state/createWorkspaceSlice';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { nameValidation } from '../utils/validation';
 
 export const LogicAppTypeStep: React.FC = () => {
   const dispatch = useDispatch();
-  const intl = useIntl();
+  const intlText = useIntlMessages(workspaceMessages);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const {
@@ -35,90 +35,7 @@ export const LogicAppTypeStep: React.FC = () => {
   // Validation state
   const [logicAppNameError, setLogicAppNameError] = useState<string | undefined>(undefined);
 
-  const intlText = {
-    TITLE: intl.formatMessage({
-      defaultMessage: 'Logic app details',
-      id: 'Vecdzb',
-      description: 'Logic app details step title',
-    }),
-    DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Enter the logic app name and select the type of logic app to create',
-      id: 'VPcN7p',
-      description: 'Logic app details step description',
-    }),
-    LOGIC_APP_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app name',
-      id: 'fuBVBE',
-      description: 'Logic app name field label',
-    }),
-    LOGIC_APP_NAME_PLACEHOLDER: intl.formatMessage({
-      defaultMessage: 'Enter logic app name',
-      id: 'ceM0tn',
-      description: 'Logic app name field placeholder',
-    }),
-    STANDARD_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app (standard)',
-      id: 'vgmZW+',
-      description: 'Standard logic app option',
-    }),
-    STANDARD_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Standard logic app with built-in connectors and triggers',
-      id: 'CfXSvL',
-      description: 'Standard logic app description',
-    }),
-    CODEFUL_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app (codeful)',
-      id: 'mjCsxB',
-      description: 'Logic app codeful option',
-    }),
-    CODEFUL_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Standard logic app codeful with built-in connectors and triggers',
-      id: 'qZPmZV',
-      description: 'Standard logic app description',
-    }),
-    CUSTOM_CODE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic App with custom code',
-      id: '9hPy3K',
-      description: 'Logic app with custom code option',
-    }),
-    CUSTOM_CODE_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Logic app that allows custom code integration and advanced scenarios',
-      id: 'kkKTEH',
-      description: 'Logic app with custom code description',
-    }),
-    RULES_ENGINE_LABEL: intl.formatMessage({
-      defaultMessage: 'Logic app with rules engine',
-      id: 'sXNnlg',
-      description: 'Logic app with rules engine option',
-    }),
-    RULES_ENGINE_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Logic app with built-in business rules engine for complex decision logic',
-      id: 'Fsc9ZE',
-      description: 'Logic app with rules engine description',
-    }),
-    EMPTY_LOGIC_APP_NAME: intl.formatMessage({
-      defaultMessage: 'Logic app name cannot be empty.',
-      id: 'CBcl2V',
-      description: 'Logic app name empty text',
-    }),
-    LOGIC_APP_NAME_VALIDATION_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Logic app name must start with a letter and can only contain letters, digits, "_" and "-".',
-      id: 'az+QCK',
-      description: 'Logic app name validation message text',
-    }),
-    PROJECT_EXISTS_MESSAGE: intl.formatMessage({
-      defaultMessage: 'A project with this name already exists in the workspace.',
-      id: 'qXL3lS',
-      description: 'A project with name already exists message text',
-    }),
-    LOGIC_APP_NAME_SAME: intl.formatMessage({
-      defaultMessage: 'Logic app name cannot be the same as the function folder name.',
-      id: '1jaOSf',
-      description: 'Logic app name same as function folder name text',
-    }),
-  };
-
-  const handleLogicAppTypeChange = (_event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
+  const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
     dispatch(setLogicAppType(data.value));
     if (data.value === 'rulesEngine') {
       dispatch(setTargetFramework('net472'));
@@ -128,14 +45,14 @@ export const LogicAppTypeStep: React.FC = () => {
   const validateLogicAppName = useCallback(
     (name: string) => {
       if (!name) {
-        return intlText.EMPTY_LOGIC_APP_NAME;
+        return intlText.LOGIC_APP_NAME_EMPTY;
       }
       if (!nameValidation.test(name)) {
-        return intlText.LOGIC_APP_NAME_VALIDATION_MESSAGE;
+        return intlText.LOGIC_APP_NAME_VALIDATION;
       }
       // Check if function folder name is the same as logic app name
       if (functionFolderName && name.trim().toLowerCase() === functionFolderName.trim().toLowerCase()) {
-        return intlText.LOGIC_APP_NAME_SAME;
+        return intlText.LOGIC_APP_NAME_SAME_AS_FUNCTION;
       }
 
       // If custom code or rules engine is selected and the name is from the existing logic apps list, allow it
@@ -148,16 +65,16 @@ export const LogicAppTypeStep: React.FC = () => {
 
       // Check if the logic app name already exists in workspace folders (for new names)
       if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
-        return intlText.PROJECT_EXISTS_MESSAGE;
+        return intlText.PROJECT_NAME_EXISTS;
       }
       return undefined;
     },
     [
       functionFolderName,
-      intlText.EMPTY_LOGIC_APP_NAME,
-      intlText.LOGIC_APP_NAME_SAME,
-      intlText.LOGIC_APP_NAME_VALIDATION_MESSAGE,
-      intlText.PROJECT_EXISTS_MESSAGE,
+      intlText.LOGIC_APP_NAME_EMPTY,
+      intlText.LOGIC_APP_NAME_SAME_AS_FUNCTION,
+      intlText.LOGIC_APP_NAME_VALIDATION,
+      intlText.PROJECT_NAME_EXISTS,
       logicAppType,
       logicAppsWithoutCustomCode,
       workspaceFileJson,
@@ -196,12 +113,12 @@ export const LogicAppTypeStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
-      <Text className={styles.stepDescription}>{intlText.DESCRIPTION}</Text>
+      <Text className={styles.sectionTitle}>{intlText.LOGIC_APP_DETAILS}</Text>
+      <Text className={styles.stepDescription}>{intlText.LOGIC_APP_DETAILS_DESCRIPTION}</Text>
 
       <div className={styles.inputField}>
         <Field
-          label={intlText.LOGIC_APP_NAME_LABEL}
+          label={intlText.LOGIC_APP_NAME}
           required
           validationState={logicAppNameError ? 'error' : undefined}
           validationMessage={logicAppNameError}
@@ -211,7 +128,7 @@ export const LogicAppTypeStep: React.FC = () => {
               value={logicAppName}
               onOptionSelect={handleComboboxOptionSelect}
               onChange={handleComboboxChange}
-              placeholder={intlText.LOGIC_APP_NAME_PLACEHOLDER}
+              placeholder={intlText.ENTER_LOGIC_APP_NAME}
               className={styles.inputControl}
               freeform
             >
@@ -225,7 +142,7 @@ export const LogicAppTypeStep: React.FC = () => {
             <Input
               value={logicAppName}
               onChange={handleLogicAppNameChange}
-              placeholder={intlText.LOGIC_APP_NAME_PLACEHOLDER}
+              placeholder={intlText.ENTER_LOGIC_APP_NAME}
               className={styles.inputControl}
             />
           )}
@@ -249,9 +166,9 @@ export const LogicAppTypeStep: React.FC = () => {
         <div>
           <RadioGroup value={logicAppType} onChange={handleLogicAppTypeChange} className={styles.radioGroup}>
             <div className={styles.radioOption}>
-              <Radio value={ProjectType.logicApp} label={intlText.STANDARD_LABEL} />
+              <Radio value={ProjectType.logicApp} label={intlText.LOGIC_APP_STANDARD} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-                {intlText.STANDARD_DESCRIPTION}
+                {intlText.LOGIC_APP_STANDARD_DESCRIPTION}
               </Text>
             </div>
             <div className={styles.radioOption}>
@@ -261,15 +178,15 @@ export const LogicAppTypeStep: React.FC = () => {
               </Text>
             </div>
             <div className={styles.radioOption}>
-              <Radio value={ProjectType.customCode} label={intlText.CUSTOM_CODE_LABEL} />
+              <Radio value={ProjectType.customCode} label={intlText.LOGIC_APP_CUSTOM_CODE} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-                {intlText.CUSTOM_CODE_DESCRIPTION}
+                {intlText.LOGIC_APP_CUSTOM_CODE_DESCRIPTION}
               </Text>
             </div>
             <div className={styles.radioOption}>
-              <Radio value={ProjectType.rulesEngine} label={intlText.RULES_ENGINE_LABEL} />
+              <Radio value={ProjectType.rulesEngine} label={intlText.LOGIC_APP_RULES_ENGINE} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
-                {intlText.RULES_ENGINE_DESCRIPTION}
+                {intlText.LOGIC_APP_RULES_ENGINE_DESCRIPTION}
               </Text>
             </div>
           </RadioGroup>

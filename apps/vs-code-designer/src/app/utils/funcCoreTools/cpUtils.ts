@@ -2,11 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform } from '../../../constants';
 import { localize } from '../../../localize';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
-import type { ICommandResult } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, type ICommandResult } from '@microsoft/vscode-extension-logic-apps';
 import * as cp from 'child_process';
 import * as os from 'os';
 

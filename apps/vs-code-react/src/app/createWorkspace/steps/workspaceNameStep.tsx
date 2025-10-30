@@ -8,7 +8,7 @@ import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setProjectPath, setWorkspaceName } from '../../../state/createWorkspaceSlice';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
@@ -17,7 +17,8 @@ import { nameValidation } from '../utils/validation';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
-  const intl = useIntl();
+  const intlText = useIntlMessages(workspaceMessages);
+  const format = useIntlFormatters(workspaceMessages);
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
@@ -32,77 +33,29 @@ export const WorkspaceNameStep: React.FC = () => {
   const [isValidatingPath, setIsValidatingPath] = useState<boolean>(false);
   const [isValidatingWorkspaceName, setIsValidatingWorkspaceName] = useState<boolean>(false);
 
-  const intlText = {
-    TITLE: intl.formatMessage({
-      defaultMessage: 'Project Setup',
-      id: 'blShaR',
-      description: 'Project setup step title',
-    }),
-    DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Configure your logic app workspace settings',
-      id: 'JS4ajl',
-      description: 'Project setup step description',
-    }),
-    PROJECT_PATH_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace Parent Folder Path',
-      id: '3KYXwl',
-      description: 'Workspace Parent Folder path input label',
-    }),
-    BROWSE_BUTTON: intl.formatMessage({
-      defaultMessage: 'Browse...',
-      id: 'cR0MlP',
-      description: 'Browse folder button',
-    }),
-    WORKSPACE_NAME_LABEL: intl.formatMessage({
-      defaultMessage: 'Workspace Name',
-      id: 'uNvoPg',
-      description: 'Workspace name input label',
-    }),
-    WORKSPACE_PARENT_FOLDER_PATH_EMPTY_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Workspace parent folder path cannot be empty.',
-      id: 'VT6UoA',
-      description: 'Workspace parent folder path cannot be empty message text',
-    }),
-    PATH_NOT_EXISTS_MESSAGE: intl.formatMessage({
-      defaultMessage: 'The specified path does not exist or is not accessible.',
-      id: 'LgCmeY',
-      description: 'Specified path does not exist or is not accessible message text',
-    }),
-    EMPTY_WORKSPACE_NAME: intl.formatMessage({
-      defaultMessage: 'Workspace name cannot be empty.',
-      id: 'O2IxHR',
-      description: 'Workspace name empty text',
-    }),
-    WORKSPACE_NAME_VALIDATION_MESSAGE: intl.formatMessage({
-      defaultMessage: 'Workspace name must start with a letter and can only contain letters, digits, "_" and "-".',
-      id: 'RRuHNc',
-      description: 'Workspace name validation message text',
-    }),
-  };
-
   const validateProjectPath = useCallback(
     (path: string) => {
       if (!path) {
-        return intlText.WORKSPACE_PARENT_FOLDER_PATH_EMPTY_MESSAGE;
+        return intlText.WORKSPACE_PARENT_FOLDER_EMPTY;
       }
       // Check if we have a validation result for this path
       const isPathValid = pathValidationResults[path];
       if (isPathValid === false) {
-        return intlText.PATH_NOT_EXISTS_MESSAGE;
+        return intlText.PATH_NOT_EXISTS;
       }
 
       return undefined;
     },
-    [intlText.PATH_NOT_EXISTS_MESSAGE, intlText.WORKSPACE_PARENT_FOLDER_PATH_EMPTY_MESSAGE, pathValidationResults]
+    [intlText.PATH_NOT_EXISTS, intlText.WORKSPACE_PARENT_FOLDER_EMPTY, pathValidationResults]
   );
 
   const validateWorkspaceName = useCallback(
     (name: string) => {
       if (!name) {
-        return intlText.EMPTY_WORKSPACE_NAME;
+        return intlText.WORKSPACE_NAME_EMPTY;
       }
       if (!nameValidation.test(name)) {
-        return intlText.WORKSPACE_NAME_VALIDATION_MESSAGE;
+        return intlText.WORKSPACE_NAME_VALIDATION;
       }
 
       // Check if workspace folder or file already exists
@@ -110,31 +63,11 @@ export const WorkspaceNameStep: React.FC = () => {
         const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
         const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
 
-        const FOLDER_EXISTS_MESSAGE = intl.formatMessage(
-          {
-            defaultMessage: 'A folder named "{name}" already exists in the selected location.',
-            id: 'Rtnnx8',
-            description: 'Folder already exists in selected location text.',
-          },
-          {
-            name: name,
-          }
-        );
-        const CODE_WORKSPACE_EXISTS_MESSAGE = intl.formatMessage(
-          {
-            defaultMessage: 'A workspace file "{name}.code-workspace" already exists.',
-            id: 'X0a7uc',
-            description: 'Folder already exists in selected location text.',
-          },
-          {
-            name: name,
-          }
-        );
         if (workspaceExistenceResults[workspaceFolder] === true) {
-          return FOLDER_EXISTS_MESSAGE;
+          return format.FOLDER_EXISTS_MESSAGE({ name });
         }
         if (workspaceExistenceResults[workspaceFile] === true) {
-          return CODE_WORKSPACE_EXISTS_MESSAGE;
+          return format.CODE_WORKSPACE_EXISTS_MESSAGE({ name });
         }
       }
 
@@ -142,10 +75,11 @@ export const WorkspaceNameStep: React.FC = () => {
     },
     [
       workspaceProjectPath.fsPath,
-      intlText.EMPTY_WORKSPACE_NAME,
-      intlText.WORKSPACE_NAME_VALIDATION_MESSAGE,
+      intlText.WORKSPACE_NAME_EMPTY,
+      intlText.WORKSPACE_NAME_VALIDATION,
+      format.FOLDER_EXISTS_MESSAGE,
+      format.CODE_WORKSPACE_EXISTS_MESSAGE,
       separator,
-      intl,
       workspaceExistenceResults,
     ]
   );
@@ -248,8 +182,8 @@ export const WorkspaceNameStep: React.FC = () => {
 
   return (
     <div className={styles.formSection}>
-      <Text className={styles.sectionTitle}>{intlText.TITLE}</Text>
-      <Text className={styles.stepDescription}>{intlText.DESCRIPTION}</Text>
+      <Text className={styles.sectionTitle}>{intlText.PROJECT_SETUP}</Text>
+      <Text className={styles.stepDescription}>{intlText.PROJECT_SETUP_DESCRIPTION}</Text>
 
       <div className={styles.fieldContainer}>
         <Field
@@ -258,7 +192,7 @@ export const WorkspaceNameStep: React.FC = () => {
           validationMessage={projectPathError || (isValidatingPath ? 'Validating path...' : undefined)}
         >
           <Label required htmlFor={projectPathInputId}>
-            {intlText.PROJECT_PATH_LABEL}
+            {intlText.WORKSPACE_PARENT_FOLDER}
           </Label>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Input

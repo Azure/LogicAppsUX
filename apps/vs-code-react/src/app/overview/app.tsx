@@ -14,10 +14,10 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo, useState } from 'react';
+import { useIntlMessages, overviewMessages } from '../../intl';
 import { useInfiniteQuery, useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
-import { useIntl } from 'react-intl';
 import { useOverviewStyles } from './overviewStyles';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { fetchAgentUrl } from './services/workflowService';
@@ -32,7 +32,6 @@ export const OverviewApp = () => {
   const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, isWorkflowRuntimeRunning, azureDetails, kind } =
     workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
-  const intl = useIntl();
   const styles = useOverviewStyles();
 
   useThemeObserver(document.body, theme, setTheme, {
@@ -47,13 +46,7 @@ export const OverviewApp = () => {
   const clientId = azureDetails?.clientId ?? '';
   const tenantId = azureDetails?.tenantId ?? '';
 
-  const intlText = {
-    DEBUG_PROJECT_ERROR: intl.formatMessage({
-      defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view',
-      id: 'e1gQAz',
-      description: 'Debug logic app project error text',
-    }),
-  };
+  const intlText = useIntlMessages(overviewMessages);
 
   const httpClient = useMemo(() => {
     return new HttpClient({
@@ -209,9 +202,9 @@ export const OverviewApp = () => {
         onRunTrigger={runTriggerCall}
         onVerifyRunId={onVerifyRunId}
         supportsUnitTest={workflowState.isLocal}
-        onCreateUnitTest={(run: RunDisplayItem) => {
+        onCreateUnitTestFromRun={(run: RunDisplayItem) => {
           vscode.postMessage({
-            command: ExtensionCommand.createUnitTest,
+            command: ExtensionCommand.createUnitTestFromRun,
             runId: run.id,
           });
         }}
