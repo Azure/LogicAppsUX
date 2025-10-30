@@ -56,8 +56,12 @@ export default {
               },
               {
                 value: 'FoundryAgentService',
-                displayName: 'Foundry Agent Service',
+                displayName: 'Foundry Agent Service (Preview)',
                 unSupportedWorkflowKind: ['agent'],
+              },
+              {
+                value: 'APIMGenAIGateway',
+                displayName: 'APIM Gen AI Gateway (Preview)',
               },
             ],
           },
