@@ -338,7 +338,16 @@ export const getDesignerServices = (
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
     getAgentUrl: () =>
-      fetchAgentUrl(workflowName, isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl, httpClient, clientId, tenantId),
+      fetchAgentUrl(
+        workflowName,
+        isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
+        httpClient,
+        clientId,
+        tenantId,
+        connectionsData,
+        subscriptionId,
+        resourceGroup
+      ),
   };
 
   const hostService: IHostService = {

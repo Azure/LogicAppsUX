@@ -348,6 +348,7 @@ const fetchOBOData = async (siteResourceId: string) => {
         break;
       }
     }
+    console.log('workflow OBO call from tsx file in fetchOBOData method');
 
     if (connectionId) {
       const oboResponse = await axios.post(`${baseUrl}${connectionId}/listDynamicConnectionKeys?api-version=2015-08-01-preview`, null, {
@@ -390,6 +391,7 @@ const fetchOBODataConsumption = async (workflowId: string): Promise<string | nul
       }
     }
 
+    console.log('workflow OBO call from tsx file in fetchOBODataConsumption method');
     if (connectionId) {
       const oboResponse = await axios.post(
         `${baseUrl}${connectionId}/listDynamicConnectionKeys?api-version=${consumptionListApiKeysVersion}`,

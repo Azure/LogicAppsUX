@@ -33,7 +33,7 @@ import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -56,6 +56,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let isWorkflowRuntimeRunning: boolean;
   let azureDetails: AzureConnectorDetails;
   let triggerName: string;
+  let connectionData: Record<string, any> = {};
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
 
@@ -79,8 +80,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
     isWorkflowRuntimeRunning = await isRuntimeUp(ext.workflowRuntimePort);
     accessToken = await getAccessToken();
+
+    // Read connection.json for local projects
     if (projectPath) {
       azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+      connectionData = await getConnectionData(projectPath);
     }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
@@ -104,6 +108,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       tenantId: workflowNode?.parent?.subscription?.tenantId,
       resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
     };
+    // For remote workflows, connection data would typically come from the API
+    connectionData = {};
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
@@ -169,6 +175,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
             azureDetails: azureDetails,
             kind: kind,
+            connectionData: connectionData,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
@@ -202,6 +209,20 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     ext.context.subscriptions
   );
   cacheWebviewPanel(panelGroupKey, panelName, panel);
+}
+
+async function getConnectionData(projectPath: string): Promise<Record<string, any>> {
+  try {
+    const connectionFilePath = join(projectPath, 'connections.json');
+    if (existsSync(connectionFilePath)) {
+      const connectionContent = readFileSync(connectionFilePath, 'utf8');
+      return JSON.parse(connectionContent);
+    }
+  } catch (error) {
+    // Log error but don't throw to avoid breaking the overview
+    console.warn('Failed to read connection.json:', error);
+  }
+  return {};
 }
 
 async function getLocalWorkflowCallbackInfo(

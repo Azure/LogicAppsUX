@@ -18,6 +18,7 @@ export interface InitializePayload {
   isWorkflowRuntimeRunning?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
+  connectionData?: Record<string, any>; // 👈 UPDATE 1: Add to InitializePayload
 }
 
 export const Status = {
@@ -43,6 +44,7 @@ export interface WorkflowState {
   isWorkflowRuntimeRunning?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
+  connectionData?: Record<string, any>; // 👈 UPDATE 2: Add to WorkflowState
 }
 
 const initialState: WorkflowState = {
@@ -69,6 +71,7 @@ const initialState: WorkflowState = {
     },
     selectedAdvanceOptions: [],
   },
+  connectionData: {}, // 👈 UPDATE 3: Add to initialState
 };
 
 export const workflowSlice = createSlice({
@@ -89,6 +92,7 @@ export const workflowSlice = createSlice({
         isWorkflowRuntimeRunning,
         azureDetails,
         kind,
+        connectionData, // 👈 UPDATE 4: Destructure connectionData
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -121,9 +125,14 @@ export const workflowSlice = createSlice({
       initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
+      initializedState.connectionData = connectionData || {}; // 👈 UPDATE 5: Set connectionData in state
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
+    },
+    // 👈 UPDATE 6: Add new reducer for updating connectionData if needed
+    updateConnectionData: (state: WorkflowState, action: PayloadAction<Record<string, any>>) => {
+      state.connectionData = action.payload;
     },
     updateSelectedWorkFlows: (state: WorkflowState, action: PayloadAction<{ selectedWorkflows: WorkflowsList[] }>) => {
       const { selectedWorkflows } = action.payload;
@@ -186,6 +195,7 @@ export const {
   updateValidationState,
   updateTargetDirectory,
   updatePackageUrl,
+  updateConnectionData, // 👈 UPDATE 7: Export the new action
   updateManagedConnections,
   addStatus,
   setFinalStatus,
