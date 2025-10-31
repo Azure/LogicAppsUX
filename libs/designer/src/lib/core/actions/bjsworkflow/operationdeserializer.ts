@@ -2,6 +2,7 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
+import { AgentUtils } from '../../../common/utilities/Utils';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -28,7 +29,7 @@ import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensS
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations, WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference, isConnectionReferenceValid, mockConnectionReference } from '../../utils/connectors/connections';
+import { getConnectionReference, isConnectionReferenceValid, mockEmptyConnectionReference } from '../../utils/connectors/connections';
 import { isTriggerNode } from '../../utils/graph';
 import { getRepetitionContext } from '../../utils/loops';
 import type { RepetitionContext } from '../../utils/parameters/helper';
@@ -52,6 +53,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   getSupportedChannelsFromManifest,
+  initializeAgentModelIds,
   updateCallbackUrlInInputs,
   updateAgentUrlInInputs,
   updateCustomCodeInInputs,
@@ -76,11 +78,16 @@ import {
   parseErrorMessage,
   cleanResourceId,
   deepCompareObjects,
+  unmap,
+  removeConnectionPrefix,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { operationSupportsSplitOn } from '../../utils/outputs';
 import { initializeConnectorOperationDetails } from './agent';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
@@ -135,7 +142,10 @@ export const initializeOperationMetadata = async (
     if (isTrigger) {
       triggerNodeId = operationId;
     }
-    if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
+
+    if (isManagedMcpOperation(operation)) {
+      promises.push(initializeOperationDetailsForManagedMcpServer(operationId, operation, references, workflowKind, dispatch));
+    } else if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
       promises.push(initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch));
     } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch));
@@ -221,6 +231,122 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
   return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithParsedSwagger[];
 };
 
+export const initializeOperationDetailsForManagedMcpServer = async (
+  nodeId: string,
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  references: ConnectionReferences,
+  workflowKind: WorkflowKind,
+  dispatch: Dispatch
+): Promise<NodeDataWithOperationMetadata[] | undefined> => {
+  try {
+    const referenceName = (operation as any)?.inputs?.connectionReference?.connectionName || '';
+
+    const reference = references[referenceName];
+    if (!reference || !reference.api || !reference.api.id) {
+      throw new Error(`Incomplete information for operation '${nodeId}'`);
+    }
+    const connectorId = cleanResourceId(reference.api.id);
+
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    if (!parsedSwagger) {
+      throw new Error(`Could not fetch swagger for connector - ${connectorId}`);
+    }
+
+    const mcpServerPath = (operation as any).inputs?.parameters?.mcpServerPath;
+    if (!mcpServerPath) {
+      throw new Error('Could not fetch operation input info from swagger and definition');
+    }
+
+    const filteredOperations: any = unmap(parsedSwagger.getOperations())
+      .filter((operation) => equals(removeConnectionPrefix(operation.path), mcpServerPath))
+      .map((operation) => operation.operationId);
+
+    const operationId = filteredOperations && filteredOperations.length > 0 ? filteredOperations[0] : null;
+
+    if (!operationId) {
+      throw new Error('Operation Id cannot be determined from definition and swagger');
+    }
+
+    const builtinMcpServerOperationInfo = {
+      connectorId: 'connectionProviders/mcpclient',
+      operationId: 'nativemcpclient',
+      type: 'McpClientTool',
+      kind: 'Builtin',
+    };
+    const builtinMcpServerManifest = await getOperationManifest(builtinMcpServerOperationInfo);
+
+    const operationInfo = { connectorId, operationId, type: operation.type, kind: operation.kind };
+    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+
+    //const parsedManifest = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(operation.type, operation.kind));
+
+    const operationForParameters = {
+      inputs: {
+        parameters: {
+          ...(operation as any).inputs.parameters,
+        },
+      },
+    };
+    // Remove mcpServerPath from parameters so it's not treated as a user parameter
+    if (operationForParameters.inputs?.parameters?.mcpServerPath) {
+      delete operationForParameters.inputs.parameters.mcpServerPath;
+    }
+
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      builtinMcpServerOperationInfo,
+      builtinMcpServerManifest,
+      /* presetParameterValues */ undefined,
+      /* customSwagger */ undefined,
+      operationForParameters
+    );
+
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
+      builtinMcpServerManifest,
+      /* isTrigger */ false,
+      nodeInputs,
+      builtinMcpServerOperationInfo,
+      dispatch
+    );
+
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+
+    const settings = getOperationSettings(
+      /* isTrigger */ false,
+      builtinMcpServerOperationInfo,
+      builtinMcpServerManifest,
+      undefined /* swagger */,
+      operation,
+      workflowKind
+    );
+
+    return [
+      {
+        id: nodeId,
+        nodeInputs,
+        nodeOutputs,
+        nodeDependencies,
+        operationMetadata: { brandColor: getBrandColorFromConnector(connector), iconUri: getIconUriFromConnector(connector) },
+        settings,
+        staticResult: operation?.runtimeConfiguration?.staticResult,
+      },
+    ];
+  } catch (error: any) {
+    const errorString = parseErrorMessage(error);
+    const message = `Unable to initialize operation details for managed MCP server operation - ${nodeId}. Error details - ${errorString}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message,
+      error,
+    });
+
+    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
+    return;
+  }
+};
+
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
@@ -271,6 +397,14 @@ export const initializeOperationDetailsForManifest = async (
     // Populate Customcode with values gotten from file system
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       updateCustomCodeInInputs(customCodeParameter, customCode);
+    }
+
+    const agentModelIdParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT);
+    if (
+      agentModelIdParameter &&
+      AgentUtils.isConsumptionAgentModelTypeParameter(nodeOperationInfo?.connectorId, agentModelIdParameter.parameterName)
+    ) {
+      await initializeAgentModelIds(agentModelIdParameter);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -611,7 +745,8 @@ export const initializeDynamicDataInNodes = async (
       const isTrigger = isTriggerNode(nodeId, nodesMetadata);
       const connectionReference = getConnectionReference(connections, nodeId);
       const isFreshCreatedAgent =
-        (Object.keys(connections.connectionReferences).length === 0 || deepCompareObjects(connectionReference, mockConnectionReference)) &&
+        (Object.keys(connections.connectionReferences).length === 0 ||
+          deepCompareObjects(connectionReference, mockEmptyConnectionReference)) &&
         equals(operation.type, Constants.NODE.TYPE.AGENT);
 
       return updateDynamicDataForValidConnection(

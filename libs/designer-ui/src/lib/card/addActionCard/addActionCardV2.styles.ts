@@ -8,29 +8,26 @@ export const useAddActionCardV2Styles = makeStyles({
     alignItems: 'center',
   },
   cardContainer: {
-    ...shorthands.border('2px', 'dashed', tokens.colorNeutralStroke2),
+    border: '2px solid transparent',
     boxSizing: 'border-box',
     borderRadius: tokens.borderRadiusLarge,
-    width: '80px',
-    height: '80px',
+    width: '64px',
+    height: '64px',
     WebkitUserSelect: 'none',
     userSelect: 'none',
-    backgroundColor: 'transparent',
+    backgroundColor: tokens.colorNeutralBackground1,
+    boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all 0.2s ease',
-
-    '&:focus': {
-      ...shorthands.outline('2px', 'solid', tokens.colorBrandStroke1),
-      outlineOffset: '2px',
-    },
 
     '&:hover': {
       border: `2px solid ${tokens.colorBrandStroke1}`,
-      backgroundColor: tokens.colorNeutralBackground2,
-      transform: 'scale(1.02)',
+      background: tokens.colorNeutralBackground1Hover,
+    },
+    '&:active': {
+      background: tokens.colorNeutralBackground1Pressed,
     },
   },
   cardContainerSelected: {
@@ -47,10 +44,8 @@ export const useAddActionCardV2Styles = makeStyles({
   },
   cardTitle: {
     fontSize: '12px',
-    fontWeight: tokens.fontWeightRegular,
-    color: tokens.colorNeutralForeground2,
     textAlign: 'center',
-    marginTop: '8px',
+    margin: '8px 0px',
     lineHeight: '16px',
   },
   tooltipContent: {

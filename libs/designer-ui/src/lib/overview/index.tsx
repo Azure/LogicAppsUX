@@ -6,7 +6,7 @@ import type { RunDisplayItem } from './types';
 import { isRunError, mapToRunItem } from './utils';
 import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
-import type { Run, RunError, getCallbackUrl } from '@microsoft/logic-apps-shared';
+import type { AgentURL, Run, RunError, getCallbackUrl } from '@microsoft/logic-apps-shared';
 import { isCallbackInfoWithRelativePath } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -17,6 +17,10 @@ export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
   isRefreshing?: boolean;
+  isDarkMode?: boolean;
+  isAgentWorkflow?: boolean;
+  agentUrlLoading?: boolean;
+  agentUrlData?: AgentURL;
   hasMoreRuns?: boolean;
   loading?: boolean;
   supportsUnitTest?: boolean;
@@ -27,7 +31,7 @@ export interface OverviewProps {
   onOpenRun(run: RunDisplayItem): void;
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError>;
-  onCreateUnitTest?(run: RunDisplayItem): void;
+  onCreateUnitTestFromRun?(run: RunDisplayItem): void;
 }
 
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
@@ -42,6 +46,10 @@ export const Overview: React.FC<OverviewProps> = ({
   corsNotice,
   errorMessage,
   loading = false,
+  isDarkMode,
+  isAgentWorkflow,
+  agentUrlLoading,
+  agentUrlData,
   hasMoreRuns = false,
   supportsUnitTest = false,
   runItems,
@@ -52,7 +60,7 @@ export const Overview: React.FC<OverviewProps> = ({
   onOpenRun,
   onRunTrigger,
   onVerifyRunId,
-  onCreateUnitTest,
+  onCreateUnitTestFromRun,
 }: OverviewProps) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -121,7 +129,11 @@ export const Overview: React.FC<OverviewProps> = ({
     <div>
       <OverviewCommandBar
         triggerName={workflowProperties.triggerName}
+        isDarkMode={isDarkMode}
         isRefreshing={isRefreshing}
+        isAgentWorkflow={isAgentWorkflow}
+        agentUrlLoading={agentUrlLoading}
+        agentUrlData={agentUrlData}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />
@@ -161,7 +173,7 @@ export const Overview: React.FC<OverviewProps> = ({
               items={runItems}
               loading={loading}
               onOpenRun={onOpenRun}
-              onCreateUnitTest={onCreateUnitTest}
+              onCreateUnitTestFromRun={onCreateUnitTestFromRun}
               supportsUnitTest={supportsUnitTest}
             />
           </InfiniteScroll>

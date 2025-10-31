@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  Platform,
   autoStartAzuriteSetting,
   verifyConnectionKeysSetting,
   defaultFuncPort,
@@ -28,7 +27,7 @@ import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureut
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';

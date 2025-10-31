@@ -6,7 +6,7 @@ import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledEr
 import { runWithDurationTelemetry } from './telemetry';
 import { activateAzurite } from './azurite/activateAzurite';
 import { verifyLocalConnectionKeys } from './appSettings/connectionKeys';
-import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, Platform, verifyConnectionKeysSetting } from '../../constants';
+import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, verifyConnectionKeysSetting } from '../../constants';
 import { getContainingWorkspace } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
@@ -14,13 +14,15 @@ import * as vscode from 'vscode';
 import * as portfinder from 'portfinder';
 import * as os from 'os';
 import * as cp from 'child_process';
-import pstree from 'ps-tree';
 import find_process from 'find-process';
 import axios from 'axios';
 import { localize } from '../../localize';
 import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
+import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
@@ -115,13 +117,17 @@ async function waitForRuntimeStartUp(context: IActionContext, projectPath: strin
   return Promise.reject();
 }
 
-async function isRuntimeUp(port: number): Promise<boolean> {
+export async function isRuntimeUp(port: number): Promise<boolean> {
+  if (isNullOrUndefined(port)) {
+    return false;
+  }
+
   try {
     const url = `http://localhost:${port}${designerStartApi}`;
     await axios.get(url);
-    return Promise.resolve(true);
+    return true;
   } catch {
-    return Promise.resolve(false);
+    return false;
   }
 }
 
@@ -154,12 +160,8 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   if (os.platform() === Platform.windows) {
-    await new Promise<void>((resolve) => {
-      pstree(process.pid, (_err: Error | null, children: Array<{ PID: string; COMMAND?: string; COMM?: string }>) => {
-        correctId = children.some((p) => p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe');
-        resolve();
-      });
-    });
+    const children = await getChildProcessesWithScript(process.pid);
+    correctId = children.some((p) => p.processId.toString() === childFuncPid && p.name === 'func.exe');
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {

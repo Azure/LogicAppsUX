@@ -17,9 +17,8 @@ import {
 import { RUN_AFTER_COLORS, equals, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Spinner, Toolbar, ToolbarButton } from '@fluentui/react-components';
+import { Spinner, Toolbar, ToolbarButton, Tooltip } from '@fluentui/react-components';
 import {
   SaveRegular,
   ArrowClockwiseRegular,
@@ -42,13 +41,14 @@ import {
   ReplayFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
+import { useIntlMessages, designerMessages } from '../../../intl';
 import { ChatButton } from '@microsoft/logic-apps-designer-v2';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
-const SaveBlankUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
+const CreateUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
 
 // Base icons
 const BugIcon = bundleIcon(BugFilled, BugRegular);
@@ -80,12 +80,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isLocal,
   runId,
 }) => {
-  const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
   const designerState = DesignerStore.getState();
   const isMonitoringView = designerState.designerOptions.isMonitoringView;
   const designerIsDirty = useIsDesignerDirty();
+  const intlText = useIntlMessages(designerMessages);
 
   const shouldRenderChatButton = useMemo(() => {
     const isA2AWorkflow = equals(designerState.workflow.workflowKind, 'agent', false);
@@ -139,17 +139,17 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   });
 
-  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
 
     vscode.postMessage({
       command: ExtensionCommand.logTelemetry,
-      data: { name: 'SaveBlankUnitTest', timestamp: Date.now(), definition: definition },
+      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
     });
 
     await vscode.postMessage({
-      command: ExtensionCommand.saveBlankUnitTest,
+      command: ExtensionCommand.createUnitTest,
       definition,
     });
   });
@@ -160,82 +160,19 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   };
 
-  const onCreateUnitTest = async () => {
+  const onCreateUnitTestFromRun = async () => {
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
     vscode.postMessage({
       command: ExtensionCommand.logTelemetry,
-      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
+      data: { name: 'CreateUnitTestFromRun', timestamp: Date.now(), definition: definition },
     });
 
     vscode.postMessage({
-      command: ExtensionCommand.createUnitTest,
+      command: ExtensionCommand.createUnitTestFromRun,
       runId: runId,
       definition: definition,
     });
-  };
-
-  const Resources = {
-    FILE_A_BUG: intl.formatMessage({
-      defaultMessage: 'File a bug',
-      id: '1PQFOA',
-      description: 'Button text for file a bug',
-    }),
-    DESIGNER_SAVE: intl.formatMessage({
-      defaultMessage: 'Save',
-      id: 'ZvAp7m',
-      description: 'Button text for save',
-    }),
-    DESIGNER_PARAMETERS: intl.formatMessage({
-      defaultMessage: 'Parameters',
-      id: '+0ua83',
-      description: 'Button text for parameters',
-    }),
-    DESIGNER_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Connections',
-      id: 'm/GihH',
-      description: 'Button text for connections',
-    }),
-    DESIGNER_ERRORS: intl.formatMessage({
-      defaultMessage: 'Errors',
-      id: 'ohOaXj',
-      description: 'Button text for errors',
-    }),
-    MONITORING_VIEW_REFRESH: intl.formatMessage({
-      defaultMessage: 'Refresh',
-      id: 'pr9GwA',
-      description: 'Button text for refresh',
-    }),
-    MONITORING_VIEW_RESUBMIT: intl.formatMessage({
-      defaultMessage: 'Resubmit',
-      id: 'sOnphB',
-      description: 'Button text for resubmit',
-    }),
-    COMMAND_BAR_ARIA: intl.formatMessage({
-      defaultMessage: 'Use left and right arrow keys to navigate between commands',
-      id: 'rd6fai',
-      description: 'Aria describing the way to control the keyboard navigation',
-    }),
-    CREATE_UNIT_TEST: intl.formatMessage({
-      defaultMessage: 'Create unit test from run',
-      id: '4eH9hX',
-      description: 'Button text for create unit test',
-    }),
-    UNIT_TEST_SAVE: intl.formatMessage({
-      defaultMessage: 'Save unit test definition',
-      id: 'QQmbz+',
-      description: 'Button text for save unit test definition',
-    }),
-    UNIT_TEST_ASSERTIONS: intl.formatMessage({
-      defaultMessage: 'Assertions',
-      id: 'LxRzQm',
-      description: 'Button text for unit test asssertions',
-    }),
-    UNIT_TEST_CREATE_BLANK: intl.formatMessage({
-      defaultMessage: 'Create unit test',
-      id: 'SUX3dO',
-      description: 'Button test for save blank unit test',
-    }),
   };
 
   const allInputErrors = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
@@ -256,9 +193,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isSaveBlankUnitTestDisabled = useMemo(
-    () => isSavingBlankUnitTest || haveAssertionErrors || designerIsDirty,
-    [isSavingBlankUnitTest, haveAssertionErrors, designerIsDirty]
+  const isCreateUnitTestDisabled = useMemo(
+    () => isCreatingUnitTest || haveAssertionErrors || designerIsDirty,
+    [isCreatingUnitTest, haveAssertionErrors, designerIsDirty]
   );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -272,8 +209,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       {
         key: 'fileABug',
         disabled: false,
-        ariaLabel: Resources.FILE_A_BUG,
-        text: Resources.FILE_A_BUG,
+        ariaLabel: intlText.FILE_BUG,
+        text: intlText.FILE_BUG,
         icon: <BugIcon />,
         renderTextIcon: null,
         onClick: () => {
@@ -283,15 +220,15 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         },
       },
     ],
-    [Resources.FILE_A_BUG, vscode]
+    [intlText.FILE_BUG, vscode]
   );
 
   const designerItems = [
     {
       key: 'Save',
       disabled: isSaveDisabled,
-      ariaLabel: Resources.DESIGNER_SAVE,
-      text: Resources.DESIGNER_SAVE,
+      ariaLabel: intlText.SAVE,
+      text: intlText.SAVE,
       icon: isSaving ? <Spinner size="extra-small" /> : <SaveIcon />,
       renderTextIcon: null,
       onClick: () => {
@@ -301,8 +238,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'Parameter',
       disabled: false,
-      ariaLabel: Resources.DESIGNER_PARAMETERS,
-      text: Resources.DESIGNER_PARAMETERS,
+      ariaLabel: intlText.PARAMETERS,
+      text: intlText.PARAMETERS,
       icon: <ParametersIcon />,
       renderTextIcon: haveWorkflowParameterErrors ? (
         <div style={{ display: 'inline-block', marginLeft: 8 }}>
@@ -314,8 +251,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'Connections',
       disabled: false,
-      ariaLabel: Resources.DESIGNER_CONNECTIONS,
-      text: Resources.DESIGNER_CONNECTIONS,
+      ariaLabel: intlText.CONNECTIONS,
+      text: intlText.CONNECTIONS,
       icon: <ConnectionsIcon />,
       renderTextIcon: null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
@@ -323,8 +260,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'errors',
       disabled: !haveErrors,
-      ariaLabel: Resources.DESIGNER_ERRORS,
-      text: Resources.DESIGNER_ERRORS,
+      ariaLabel: intlText.ERRORS,
+      text: intlText.ERRORS,
       icon: haveErrors ? (
         <DismissCircleFilled style={{ color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] }} />
       ) : (
@@ -334,14 +271,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
     {
-      key: 'SaveBlank',
-      disabled: isSaveBlankUnitTestDisabled,
-      text: Resources.UNIT_TEST_CREATE_BLANK,
-      ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
-      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveBlankUnitTestIcon />,
+      key: 'CreateUnitTest',
+      disabled: isCreateUnitTestDisabled,
+      text: intlText.CREATE_UNIT_TEST,
+      ariaLabel: intlText.CREATE_UNIT_TEST,
+      icon: isCreatingUnitTest ? <Spinner size="extra-small" /> : <CreateUnitTestIcon />,
       renderTextIcon: null,
       onClick: () => {
-        saveBlankUnitTestMutate();
+        createUnitTestMutate();
       },
     },
     ...baseItems,
@@ -351,8 +288,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'Refresh',
       disabled: isDisabled ? isDisabled : isRefreshing,
-      ariaLabel: Resources.MONITORING_VIEW_REFRESH,
-      text: Resources.MONITORING_VIEW_REFRESH,
+      ariaLabel: intlText.REFRESH,
+      text: intlText.REFRESH,
       icon: <RefreshIcon />,
       renderTextIcon: null,
       onClick: onRefresh,
@@ -360,8 +297,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'Rerun',
       disabled: isDisabled,
-      ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
-      text: Resources.MONITORING_VIEW_RESUBMIT,
+      ariaLabel: intlText.RESUBMIT,
+      text: intlText.RESUBMIT,
       icon: <ResubmitIcon />,
       renderTextIcon: null,
       onClick: () => {
@@ -371,14 +308,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     ...(isLocal
       ? [
           {
-            key: 'CreateUnitTest',
+            key: 'CreateUnitTestFromRun',
             disabled: isDisabled,
-            ariaLabel: Resources.CREATE_UNIT_TEST,
-            text: Resources.CREATE_UNIT_TEST,
-            icon: <SaveBlankUnitTestIcon />,
+            ariaLabel: intlText.CREATE_UNIT_TEST_FROM_RUN,
+            text: intlText.CREATE_UNIT_TEST_FROM_RUN,
+            icon: <CreateUnitTestIcon />,
             renderTextIcon: null,
             onClick: () => {
-              onCreateUnitTest();
+              onCreateUnitTestFromRun();
             },
           },
         ]
@@ -390,8 +327,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'Save',
       disabled: isSaveUnitTestDisabled,
-      text: Resources.UNIT_TEST_SAVE,
-      ariaLabel: Resources.UNIT_TEST_SAVE,
+      text: intlText.SAVE_UNIT_TEST,
+      ariaLabel: intlText.SAVE_UNIT_TEST,
       icon: isSavingUnitTest ? <Spinner size="extra-small" /> : <SaveIcon />,
       renderTextIcon: null,
       onClick: () => {
@@ -399,21 +336,21 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       },
     },
     {
-      key: 'SaveBlank',
-      disabled: isSaveBlankUnitTestDisabled,
-      text: Resources.UNIT_TEST_CREATE_BLANK,
-      ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
-      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
+      key: 'CreateUnitTest',
+      disabled: isCreateUnitTestDisabled,
+      text: intlText.CREATE_UNIT_TEST,
+      ariaLabel: intlText.CREATE_UNIT_TEST,
+      icon: isCreatingUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
       renderTextIcon: null,
       onClick: () => {
-        saveBlankUnitTestMutate();
+        createUnitTestMutate();
       },
     },
     {
       key: 'Assertions',
       disabled: false,
-      text: Resources.UNIT_TEST_ASSERTIONS,
-      ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
+      text: intlText.UNIT_TEST_ASSERTIONS,
+      ariaLabel: intlText.UNIT_TEST_ASSERTIONS,
       icon: <AssertionsIcon />,
       renderTextIcon: haveWorkflowParameterErrors ? (
         <div style={{ display: 'inline-block', marginLeft: 8 }}>
@@ -431,7 +368,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
         padding: '0 20px',
       }}
-      aria-label={Resources.COMMAND_BAR_ARIA}
+      aria-label={intlText.COMMAND_BAR_ARIA}
     >
       {(isUnitTest ? unitTestItems : isMonitoringView ? monitoringViewItems : designerItems).map((buttonProps) => (
         <ToolbarButton
@@ -445,7 +382,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
-      {shouldRenderChatButton ? <ChatButton appearance="transparent" isDarkMode={isDarkMode} /> : null}
+      {shouldRenderChatButton ? (
+        <Tooltip relationship="label" withArrow appearance="inverted" content={intlText.CHAT_BUTTON_TOOLTIP_CONTENT}>
+          <span style={{ display: 'inline-flex' }}>
+            <ChatButton appearance="transparent" isDarkMode={isDarkMode} disabled={true} />
+          </span>
+        </Tooltip>
+      ) : null}
     </Toolbar>
   );
 };

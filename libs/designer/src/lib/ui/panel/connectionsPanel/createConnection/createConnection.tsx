@@ -62,7 +62,7 @@ import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useStyles } from './styles';
-import { isAgentWorkflow } from '../../../../core/state/workflow/helper';
+import { isA2AKind } from '../../../../core/state/workflow/helper';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -111,6 +111,7 @@ export interface CreateConnectionProps {
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
   workflowKind?: string;
+  workflowMetadata?: { agentType?: string };
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -140,6 +141,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isAgentSubgraph,
     operationManifest,
     workflowKind,
+    workflowMetadata,
   } = props;
 
   const intl = useIntl();
@@ -302,10 +304,14 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
   );
 
-  const isDynamicConnectionOptionValidForConnector = useMemo(
-    () => isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgentWorkflow(workflowKind ?? ''),
-    [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind]
-  );
+  const isDynamicConnectionOptionValidForConnector = useMemo(() => {
+    // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
+    // Standard: check workflowKind
+    // Consumption: check metadata.agentType
+    const isAgent = workflowKind ? isA2AKind(workflowKind) : workflowMetadata?.agentType !== undefined;
+
+    return isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgent;
+  }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
 
@@ -493,6 +499,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       isDynamicConnectionOptionValidForConnector ? isUsingDynamicConnection : undefined // NOTE: Pass in the dynamic connection value only if the scenario is valid
     );
   }, [
+    connectorId,
     isMultiAuth,
     parameterValues,
     supportsServicePrincipalConnection,
@@ -605,8 +612,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     () => ({
       USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
         defaultMessage: 'Create as per-user connection?',
-        id: '7Jw4KB',
-        description: 'Dynamic connection checkbox text',
+        id: '9yq5lv',
+        description: 'Dynamic connection checkbox text for consumption SKU',
       }),
     }),
     [intl]
@@ -668,6 +675,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
       setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
       operationParameterValues: operationParameterValues,
+      parameterValues: parameterValues,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({

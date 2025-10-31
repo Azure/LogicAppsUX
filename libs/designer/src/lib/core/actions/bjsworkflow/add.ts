@@ -18,7 +18,7 @@ import { addResultSchema } from '../../state/staticresultschema/staticresultsSli
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { addAgentTool, addMcpServer, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
@@ -26,10 +26,11 @@ import { getParameterFromName, updateDynamicDataInNode } from '../../utils/param
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
+import { isConnectionRequiredForOperation, isConnectionAutoSelectionDisabled, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  initializeAgentModelIds,
   initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
@@ -64,6 +65,8 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
+import { AgentUtils, isDynamicConnection } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -74,6 +77,7 @@ type AddOperationPayload = {
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
   isAddingHandoff?: boolean;
+  isAddingMcpServer?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
@@ -91,16 +95,18 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
     const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
 
-    if (isAddingAgentTool) {
-      if (newToolId && newToolGraphId) {
+    if (payload.isAddingMcpServer) {
+      dispatch(addMcpServer(newPayload as any));
+    } else {
+      if (isAddingAgentTool && newToolId && newToolGraphId) {
         if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
           initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
         }
         dispatch(addAgentTool({ toolId: newToolId, graphId: newToolGraphId }));
       }
-    }
 
-    dispatch(addNode(newPayload as any));
+      dispatch(addNode(newPayload as any));
+    }
 
     const nodeOperationInfo = {
       connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
@@ -121,7 +127,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     );
 
     dispatch(setFocusNode(nodeId));
-    if (isAddingAgentTool && newToolId) {
+    if (isAddingAgentTool && newToolId && !payload.isAddingMcpServer) {
       dispatch(
         setAlternateSelectedNode({
           nodeId: newToolId,
@@ -165,6 +171,7 @@ export const initializeOperationDetails = async (
   const isTrigger = isTriggerNode(nodeId, state.workflow.nodesMetadata);
   const { type, kind, connectorId, operationId } = operationInfo;
   let isConnectionRequired = true;
+  let autoSelectionDisabled = false;
   let connector: Connector | undefined;
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
@@ -175,16 +182,72 @@ export const initializeOperationDetails = async (
   }
 
   let initData: NodeData;
-  let manifest: OperationManifest | undefined = undefined;
   let swagger: SwaggerParser | undefined = undefined;
   let parsedManifest: ManifestParser | undefined = undefined;
-  if (operationManifestService.isSupported(type, kind)) {
-    manifest = await getOperationManifest(operationInfo);
+  const isManagedMcpClient = isManagedMcpOperation({ type, kind });
+
+  if (isManagedMcpClient) {
+    // managed mcp client ignores the swagger and uses a fixed set of parameters similar to manifest based native mcp client
+    const { connector: swaggerConnector } = await getConnectorWithSwagger(connectorId);
+    connector = swaggerConnector;
+    const iconUri = getIconUriFromConnector(connector);
+    const brandColor = getBrandColorFromConnector(connector);
+
+    const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
+    const nativeMcpManifest = await getOperationManifest(nativeMcpOperationInfo);
+    isConnectionRequired = isConnectionRequiredForOperation(nativeMcpManifest);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      operationInfo,
+      nativeMcpManifest,
+      presetParameterValues
+    );
+
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
+      nativeMcpManifest,
+      isTrigger,
+      nodeInputs,
+      operationInfo,
+      dispatch,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(nativeMcpManifest, undefined, undefined, undefined) : undefined
+    );
+    parsedManifest = new ManifestParser(nativeMcpManifest, operationManifestService.isAliasingSupported(type, kind));
+
+    const nodeDependencies = {
+      inputs: inputDependencies,
+      outputs: outputDependencies,
+    };
+    let settings = getOperationSettings(
+      isTrigger,
+      operationInfo,
+      nativeMcpManifest,
+      /* swagger */ undefined,
+      /* operation */ undefined,
+      state.workflow.workflowKind
+    );
+    settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
+    const updatedOutputs = nodeOutputs;
+    initData = {
+      id: nodeId,
+      nodeInputs,
+      nodeOutputs: updatedOutputs,
+      nodeDependencies,
+      settings,
+      operationMetadata: { iconUri, brandColor },
+      actionMetadata,
+    };
+    dispatch(initializeNodes({ nodes: [initData] }));
+    addTokensAndVariables(nodeId, type, initData, state, dispatch);
+  } else if (operationManifestService.isSupported(type, kind)) {
+    const manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
+    autoSelectionDisabled = isConnectionAutoSelectionDisabled(manifest);
     connector = manifest.properties?.connector;
 
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
+
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
       nodeId,
       operationInfo,
@@ -195,6 +258,15 @@ export const initializeOperationDetails = async (
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
+
+    const agentModelIdParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT);
+    if (
+      agentModelIdParameter &&
+      AgentUtils.isConsumptionAgentModelTypeParameter(operationInfo?.connectorId, agentModelIdParameter.parameterName)
+    ) {
+      await initializeAgentModelIds(agentModelIdParameter);
+    }
+
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       nodeId,
       manifest,
@@ -307,7 +379,7 @@ export const initializeOperationDetails = async (
 
   if (isConnectionRequired) {
     try {
-      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired);
+      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired, autoSelectionDisabled);
     } catch (e: any) {
       dispatch(
         updateErrorDetails({
@@ -397,11 +469,15 @@ export const trySetDefaultConnectionForNode = async (
   nodeId: string,
   connector: Connector,
   dispatch: AppDispatch,
-  isConnectionRequired: boolean
+  isConnectionRequired: boolean,
+  autoSelectionDisabled?: boolean
 ) => {
   const connectorId = connector.id;
-  const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
-  if (connections.length > 0) {
+  // Filter out Dynamic Connection while setting default connections
+  const connections = (await getConnectionsForConnector(connectorId)).filter(
+    (c) => c.properties.overallStatus !== 'Error' || !isDynamicConnection(c.properties.feature)
+  );
+  if (connections.length > 0 && !autoSelectionDisabled) {
     const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
     await ConnectionService().setupConnectionIfNeeded(connection);
     dispatch(updateNodeConnection({ nodeId, connection, connector }));

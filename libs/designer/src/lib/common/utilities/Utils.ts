@@ -36,4 +36,12 @@ export class AgentUtils {
   public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
     return equals(parameterName ?? '', 'agentModelType', true);
   };
+
+  public static isConsumptionAgentModelTypeParameter = (operationId: string, parameterName?: string): boolean => {
+    return equals(operationId, 'connectionProviders/agent', true) && equals(parameterName ?? '', 'modelId', true);
+  };
 }
+
+export const isDynamicConnection = (feature?: string): boolean => {
+  return equals(feature ?? '', 'DynamicUserInvoked', true);
+};

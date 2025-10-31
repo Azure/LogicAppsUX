@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform, vscodeFolderName } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -23,7 +23,7 @@ import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, Platform, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import {
   copyFileSync,
   existsSync as fileExistsSync,

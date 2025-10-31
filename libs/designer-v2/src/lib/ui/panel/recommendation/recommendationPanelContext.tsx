@@ -18,7 +18,7 @@ import { SearchView } from './searchView';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, ArrowLeft24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, FavoriteContext, requestOperation } from '@microsoft/logic-apps-shared';
-import { MediumText, OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
+import { OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
@@ -170,7 +170,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           return;
         }
 
-        const shouldAddAsTrigger = forceAsTrigger ?? false;
+        const shouldAddAsTrigger = forceAsTrigger ?? operation?.properties?.trigger !== undefined;
 
         if (shouldAddAsTrigger) {
           // Always add as trigger when explicitly requested (for trigger operations)
@@ -256,24 +256,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       }))
     : isTrigger
       ? intl.formatMessage({
-          defaultMessage: 'What triggers this workflow?',
-          id: 'lh6QYl',
+          defaultMessage: 'Add a trigger',
+          id: '89kLK1',
           description: 'Text for the Trigger page header',
         })
       : intl.formatMessage({
-          defaultMessage: 'What happens next?',
-          id: 'bgjUnh',
+          defaultMessage: 'Add an action',
+          id: 'Heod+8',
           description: 'Title text for browse/search experience',
         });
-
-  const headingDescription =
-    !isInSubcategory && isTrigger
-      ? intl.formatMessage({
-          defaultMessage: 'A trigger is a step that starts your workflow',
-          id: 'n3V2I2',
-          description: 'Description text for the Trigger page',
-        })
-      : undefined;
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
@@ -285,7 +276,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     <FavoriteContext.Provider value={contextValue}>
       <div className={`msla-app-action-header-v2 ${classes.container}`} ref={recommendationPanelRef}>
         <div className={classes.header}>
-          <div className={classes.headerLeft}>
+          <div className={classes.row}>
             {isInSubcategory && (
               <Button
                 aria-label={returnToSearchText}
@@ -295,11 +286,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 className={classes.backButton}
               />
             )}
-            <XLargeText text={headingText} as="h2" />
+            <XLargeText text={headingText} as="h2" style={{ flexGrow: 1 }} />
+            <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
           </div>
-          <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
         </div>
-        {headingDescription && <MediumText text={headingDescription} className={classes.description} />}
         <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
       </div>
       {

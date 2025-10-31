@@ -52,21 +52,23 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
   });
   return (
     <div id={`msla-node-details-panel-${nodeId}`} className="msla-node-details-panel">
-      <Overflow aria-label={overflowLabel}>
-        <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '5px 5px 0px 5px' }}>
-          {tabs.map(({ id, visible, hasErrors, title }) =>
-            visible ? (
-              <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
-                <Tab value={id} role={'tab'}>
-                  {title}
-                  {hasErrors && <Badge size="extra-small" color="danger" style={{ marginLeft: '8px' }} />}
-                </Tab>
-              </OverflowItem>
-            ) : null
-          )}
-          <OverflowMenu tabs={tabs} onTabSelect={selectTab} />
-        </TabList>
-      </Overflow>
+      {tabs.length > 1 ? (
+        <Overflow aria-label={overflowLabel}>
+          <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '5px 5px 0px 5px' }}>
+            {tabs.map(({ id, visible, hasErrors, title }) =>
+              visible ? (
+                <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
+                  <Tab value={id} role={'tab'}>
+                    {title}
+                    {hasErrors && <Badge size="extra-small" color="danger" style={{ marginLeft: '8px' }} />}
+                  </Tab>
+                </OverflowItem>
+              ) : null
+            )}
+            <OverflowMenu tabs={tabs} onTabSelect={selectTab} />
+          </TabList>
+        </Overflow>
+      ) : null}
       <div
         className="msla-panel-content-container"
         tabIndex={selectedTabId === 'ABOUT' ? 0 : undefined}

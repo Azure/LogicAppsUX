@@ -1,6 +1,16 @@
-import { Badge, Text, TreeItem, TreeItemLayout, Tooltip, mergeClasses } from '@fluentui/react-components';
+import {
+  Badge,
+  Text,
+  TreeItem,
+  TreeItemLayout,
+  Tooltip,
+  mergeClasses,
+  Popover,
+  PopoverSurface,
+  type PositioningImperativeRef,
+} from '@fluentui/react-components';
 import { getDurationString } from '@microsoft/designer-ui';
-import { type LogicAppsV2, SUBGRAPH_TYPES, equals, idDisplayCase } from '@microsoft/logic-apps-shared';
+import { type LogicAppsV2, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 import { changePanelNode, setFocusNode, useOperationPanelSelectedNodeId } from '../../../core';
 import {
   useRunData,
@@ -16,16 +26,18 @@ import {
   setRunIndex,
   updateAgenticGraph,
 } from '../../../core/state/workflow/workflowSlice';
-import { useRef, useEffect, useMemo, useCallback } from 'react';
+import { useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useRunTreeViewStyles } from './RunTreeView.styles';
 import StatusIndicator from './StatusIndicator';
-import { WrenchFilled } from '@fluentui/react-icons';
+import { ChatFilled, WrenchFilled } from '@fluentui/react-icons';
 import HandoffIcon from '../../../common/images/handoff_icon.svg';
+import Markdown from 'react-markdown';
 
 export interface TreeActionItemProps {
   id: string;
+  content?: string;
   repetitionName?: string;
   action?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   icon?: string;
@@ -34,7 +46,7 @@ export interface TreeActionItemProps {
   data?: any;
 }
 
-export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }: TreeActionItemProps) => {
+export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProps, data }: TreeActionItemProps) => {
   const dispatch = useDispatch();
   const styles = useRunTreeViewStyles();
   const intl = useIntl();
@@ -94,6 +106,8 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
   const hasRepetitionData = !!data?.repetition;
   const runData = hasRepetitionData ? data?.repetition?.properties : rawRunData;
 
+  const startTime = useMemo(() => runData?.startTime ?? data?.startTime, [runData, data]);
+
   const duration = useMemo(() => {
     if (!runData?.startTime) {
       return null;
@@ -109,6 +123,11 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
 
   const onTreeItemSelect = useCallback(
     (id: string, _repetitionName: string) => {
+      if (data?.chatMessage) {
+        setIsChatPopoverOpen(true);
+        return;
+      }
+
       if (selected) {
         return;
       }
@@ -177,26 +196,27 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
         dispatch(setRunIndex({ nodeId: element.scopeName, page: element.itemIndex }));
       });
     },
-    [itemRunIndex, parentRunIndex, selected, dispatch, data, selectedRunIndexForItem]
+    [itemRunIndex, parentRunIndex, selected, dispatch, data, selectedRunIndexForItem, isAgentRepetition]
   );
 
   const shortTime = useMemo(() => {
-    if (!runData?.startTime) {
+    if (!startTime) {
       return '';
     }
-    return intl.formatDate(new Date(Date.parse(runData.startTime)), {
+    return intl.formatDate(new Date(Date.parse(startTime)), {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
+      // fractionalSecondDigits: 3,
       hour12: false,
     });
-  }, [intl, runData?.startTime]);
+  }, [intl, startTime]);
 
   const longTime = useMemo(() => {
-    if (!runData?.startTime) {
+    if (!startTime) {
       return '';
     }
-    return intl.formatDate(new Date(Date.parse(runData.startTime)), {
+    return intl.formatDate(new Date(Date.parse(startTime)), {
       year: 'numeric',
       month: 'short',
       day: '2-digit',
@@ -207,7 +227,30 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
       hour12: false,
       timeZoneName: 'short',
     });
-  }, [intl, runData?.startTime]);
+  }, [intl, startTime]);
+
+  const Icon = () =>
+    data?.chatMessage ? (
+      <ChatFilled className={mergeClasses(styles.treeItemToolIcon, data?.chatRole === 'User' && styles.userChatIcon)} />
+    ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
+      <WrenchFilled className={styles.treeItemToolIcon} />
+    ) : (hasRepetitionData && !data) || !icon ? (
+      <div className={styles.treeItemIcon} />
+    ) : data?.isHandoff ? (
+      <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
+    ) : (
+      <img src={icon} alt={id} className={styles.treeItemIcon} />
+    );
+
+  const [isChatPopoverOpen, setIsChatPopoverOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const positioningRef = useRef<PositioningImperativeRef>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      positioningRef.current?.setTarget(contentRef.current);
+    }
+  }, [contentRef, positioningRef]);
 
   return (
     <TreeItem
@@ -217,9 +260,10 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
       ref={ref}
     >
       <TreeItemLayout
+        ref={contentRef}
         className={mergeClasses(selected ? styles.treeItemSelected : styles.treeItem)}
         aside={
-          runData?.startTime ? (
+          startTime ? (
             <Tooltip relationship="label" content={longTime}>
               <Badge appearance="ghost" color="informative">
                 {shortTime}
@@ -230,16 +274,8 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
       >
         {selected ? <div className={styles.selectionIndicator} /> : null}
         <div className={styles.treeItemContent}>
-          {(hasRepetitionData && !data) || !icon ? (
-            <div className={styles.treeItemIcon} />
-          ) : data?.isHandoff ? (
-            <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
-          ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
-            <WrenchFilled className={styles.treeItemToolIcon} />
-          ) : (
-            <img src={icon} alt={id} className={styles.treeItemIcon} />
-          )}
-          <Text>{idDisplayCase(id)}</Text>
+          <Icon />
+          <Text>{content}</Text>
           {runData?.status ? <StatusIndicator status={runData.status} /> : undefined}
           {duration ? (
             <Badge appearance="outline" color="informative">
@@ -247,6 +283,25 @@ export const TreeActionItem = ({ id, icon, repetitionName, treeItemProps, data }
             </Badge>
           ) : null}
         </div>
+        <Popover
+          open={isChatPopoverOpen}
+          onOpenChange={(e, data) => setIsChatPopoverOpen(data.open)}
+          positioning={{
+            positioningRef,
+            // align: 'end',
+            position: 'after',
+          }}
+        >
+          <PopoverSurface style={{ maxWidth: '320px', maxHeight: '480px', overflow: 'auto' }}>
+            <div className={styles.treeItemContent} style={{ marginBottom: '32px' }}>
+              <Icon />
+              <Text>{content}</Text>
+            </div>
+            <div style={{ margin: '-16px 0px' }}>
+              <Markdown>{data?.chatMessage}</Markdown>
+            </div>
+          </PopoverSurface>
+        </Popover>
       </TreeItemLayout>
     </TreeItem>
   );

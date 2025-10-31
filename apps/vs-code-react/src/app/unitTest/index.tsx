@@ -3,12 +3,12 @@ import { VSCodeContext } from '../../webviewCommunication';
 import { MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
-import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { CheckmarkCircleFilled, CloudBeakerRegular, DismissCircleFilled } from '@fluentui/react-icons';
 import type { AssertionResults } from '@microsoft/vscode-extension-logic-apps';
 import { Link, tokens } from '@fluentui/react-components';
 import { useUnitTestStyles } from './unitTestStyles';
+import { useIntlMessages, unitTestMessages } from '../../intl';
 
 export const UnitTestResults: React.FC = () => {
   const unitTestState = useSelector((state: RootState) => state.unitTest);
@@ -18,20 +18,7 @@ export const UnitTestResults: React.FC = () => {
 
   const { AssertionResults = [] } = testResult?.Results ?? {};
 
-  const intl = useIntl();
-
-  const intlText = {
-    VIEW_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'View workflow',
-      id: 'v15Fiq',
-      description: 'View workflow text',
-    }),
-    TEST_ICON: intl.formatMessage({
-      defaultMessage: 'Test icon',
-      id: 'qfmSaq',
-      description: 'Test icon text',
-    }),
-  };
+  const intlText = useIntlMessages(unitTestMessages);
 
   const handleViewWorkflow = () => {
     vscode.postMessage({

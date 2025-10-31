@@ -6,7 +6,7 @@ import { getReactQueryClient, runsQueriesKeys } from '../../../core';
 
 export const parseChatHistory = (
   chatHistory: ChatHistory[],
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number, mcpServerToolName?: string) => void,
   toolContentCallback: (agentName: string, iteration: number) => void,
   agentCallback: (agentName: string) => void,
   isA2AWorkflow: boolean
@@ -56,7 +56,7 @@ const parseMessage = (
   message: MessageEntry,
   parentId: string,
   dataScrollTarget: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number, mcpServerToolName?: string) => void,
   toolContentCallback: (agentName: string, iteration: number) => void
 ): ConversationItem => {
   const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
@@ -85,13 +85,14 @@ const parseMessage = (
     case AgentMessageEntryType.ToolResult: {
       const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
+      const mcpServerToolName = message.toolResultsPayload?.toolResult?.mcpServerToolName;
       const status = message.toolResultsPayload?.toolResult?.status;
 
       return {
         id: guid(),
-        text: labelCase(toolName),
+        text: labelCase(toolName) + (mcpServerToolName ? ` (${mcpServerToolName})` : ''),
         type: ConversationItemType.Tool,
-        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
+        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration, mcpServerToolName),
         status,
         date: new Date(timestamp),
         dataScrollTarget,

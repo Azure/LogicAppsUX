@@ -1,5 +1,5 @@
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { a2aRequestOperation, getIntl, recurrenceOperation, requestOperation } from '@microsoft/logic-apps-shared';
+import { a2aRequestOperation, getIntl, recurrenceOperation, requestOperation, agentOperation } from '@microsoft/logic-apps-shared';
 import React from 'react';
 import {
   BotSparkle24Regular,
@@ -31,6 +31,7 @@ export interface ConnectorFilterTypes {
 
 export interface BrowseCategoryConfig {
   key: string;
+  visible?: boolean;
   text: string;
   description: string;
   icon: React.ReactNode;
@@ -46,33 +47,18 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
     {
       key: 'manual',
       text: intl.formatMessage({
-        defaultMessage: 'Trigger manually',
-        id: 'I+jX2I',
+        defaultMessage: 'When an HTTP request is received',
+        id: 'CAsrZ8',
         description: 'Manual trigger category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'Start this workflow manually or via HTTP request',
-        id: '/EOfWd',
+        defaultMessage: 'Get started quickly',
+        id: '4TXvXe',
         description: 'Manual trigger category description',
       }),
       icon: React.createElement(Play24Regular),
       type: BrowseCategoryType.IMMEDIATE,
       operation: requestOperation,
-    },
-    {
-      key: 'appEvent',
-      text: intl.formatMessage({
-        defaultMessage: 'On app event',
-        id: 'jC3F7G',
-        description: 'App event trigger category',
-      }),
-      description: intl.formatMessage({
-        defaultMessage: 'When something happens in another app or service',
-        id: '9jy2+E',
-        description: 'App event trigger category description',
-      }),
-      icon: React.createElement(Apps24Regular),
-      type: BrowseCategoryType.BROWSE,
     },
     {
       key: 'schedule',
@@ -82,8 +68,8 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
         description: 'Schedule trigger category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'Run on a recurring schedule or specific time',
-        id: 'ozLfc+',
+        defaultMessage: 'Run from a recurring or custom schedule',
+        id: 'lzM2NW',
         description: 'Schedule trigger category description',
       }),
       icon: React.createElement(Clock24Regular),
@@ -91,15 +77,30 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
       operation: recurrenceOperation,
     },
     {
+      key: 'appEvent',
+      text: intl.formatMessage({
+        defaultMessage: 'From an app',
+        id: 'wxZy/s',
+        description: 'App event trigger category',
+      }),
+      description: intl.formatMessage({
+        defaultMessage: 'Events from apps or services',
+        id: '5cR2cP',
+        description: 'App event trigger category description',
+      }),
+      icon: React.createElement(Apps24Regular),
+      type: BrowseCategoryType.BROWSE,
+    },
+    {
       key: 'azure',
       text: intl.formatMessage({
-        defaultMessage: 'On Azure events',
-        id: 'iHC7AW',
+        defaultMessage: 'From Azure',
+        id: 'w8dgiQ',
         description: 'Azure events trigger category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'When something happens in Azure services',
-        id: 'HoFPHB',
+        defaultMessage: 'Run based on events in Azure services',
+        id: '/5vL6M',
         description: 'Azure events trigger category description',
       }),
       icon: React.createElement(Cloud24Regular),
@@ -111,13 +112,13 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
     {
       key: 'workflowExecution',
       text: intl.formatMessage({
-        defaultMessage: 'When executed by another workflow',
-        id: '7nbZbY',
+        defaultMessage: 'When triggered by another workflow',
+        id: '810OUB',
         description: 'Workflow execution trigger category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'When this workflow is called by another Logic App',
-        id: 'VIv1T8',
+        defaultMessage: 'When another logic app calls this workflow',
+        id: 'mMysmk',
         description: 'Workflow execution trigger category description',
       }),
       icon: React.createElement(Share24Regular),
@@ -127,13 +128,13 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
     {
       key: 'chatMessage',
       text: intl.formatMessage({
-        defaultMessage: 'On chat message',
-        id: 'Yagnd2',
+        defaultMessage: 'Chat message',
+        id: 'VTMWCv',
         description: 'Chat message trigger category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'When a message is received in Teams or other chat platforms',
-        id: 'ZIAV4u',
+        defaultMessage: 'When a message is received',
+        id: 'YxH2JT',
         description: 'Chat message trigger category description',
       }),
       icon: React.createElement(Chat24Regular),
@@ -148,8 +149,8 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
         description: 'Evaluation trigger category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'When an evaluation or assessment process is triggered',
-        id: 'dZKuKX',
+        defaultMessage: 'When an evaluation or assessment process starts',
+        id: '5wYM6C',
         description: 'Evaluation trigger category description',
       }),
       icon: React.createElement(Target24Regular),
@@ -161,13 +162,13 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
     {
       key: 'otherWays',
       text: intl.formatMessage({
-        defaultMessage: 'Other ways...',
-        id: 'YhGvTz',
+        defaultMessage: 'Other',
+        id: 'TRpUKj',
         description: 'Other trigger methods category',
       }),
       description: intl.formatMessage({
-        defaultMessage: 'Browse all available trigger connectors and services',
-        id: 'sQmZcn',
+        defaultMessage: 'Browse all available triggers',
+        id: 'hh3i/V',
         description: 'Other trigger methods category description',
       }),
       icon: React.createElement(MoreHorizontal24Regular),
@@ -176,7 +177,7 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
   ];
 };
 
-export const getActionCategories = (): BrowseCategoryConfig[] => {
+export const getActionCategories = (allowAgents?: boolean): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
   return [
@@ -197,6 +198,7 @@ export const getActionCategories = (): BrowseCategoryConfig[] => {
     },
     {
       key: 'aiAgent',
+      visible: allowAgents,
       text: intl.formatMessage({
         defaultMessage: 'AI Agent',
         id: 'cQ/Ocu',
@@ -208,10 +210,8 @@ export const getActionCategories = (): BrowseCategoryConfig[] => {
         description: 'AI Agent category description',
       }),
       icon: React.createElement(BotSparkle24Regular),
-      type: BrowseCategoryType.BROWSE,
-      connectorFilters: {
-        name: ['openai', 'azureai', 'cognitiveservices'],
-      },
+      type: BrowseCategoryType.IMMEDIATE,
+      operation: agentOperation,
     },
     {
       key: 'actionInApp',

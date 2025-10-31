@@ -2,16 +2,25 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import type { Runs } from '@microsoft/logic-apps-shared';
+import {
+  type AgentURL,
+  type IWorkflowService,
+  type ManagedIdentity,
+  type Runs,
+  StandardRunService,
+  Theme,
+  equals,
+} from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useCallback, useContext, useMemo } from 'react';
-import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import { useIntlMessages, overviewMessages } from '../../intl';
+import { useInfiniteQuery, useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
-import { useIntl } from 'react-intl';
 import { useOverviewStyles } from './overviewStyles';
+import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import { fetchAgentUrl } from './services/workflowService';
 
 export interface CallbackInfo {
   method?: string;
@@ -20,39 +29,42 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { isWorkflowRuntimeRunning } = workflowState;
-  const intl = useIntl();
+  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, isWorkflowRuntimeRunning, azureDetails, kind } =
+    workflowState;
+  const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const styles = useOverviewStyles();
 
-  const intlText = {
-    DEBUG_PROJECT_ERROR: intl.formatMessage({
-      defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view',
-      id: 'e1gQAz',
-      description: 'Debug logic app project error text',
-    }),
-  };
+  useThemeObserver(document.body, theme, setTheme, {
+    attributes: true,
+  });
+
+  const isAgentWorkflow = useMemo(() => {
+    return equals(kind, 'agent', true);
+  }, [kind]);
+
+  const emptyArmId = '00000000-0000-0000-0000-000000000000';
+  const clientId = azureDetails?.clientId ?? '';
+  const tenantId = azureDetails?.tenantId ?? '';
+
+  const intlText = useIntlMessages(overviewMessages);
+
+  const httpClient = useMemo(() => {
+    return new HttpClient({
+      accessToken: accessToken,
+      baseUrl: baseUrl,
+      apiHubBaseUrl: '',
+      hostVersion: hostVersion,
+    });
+  }, [accessToken, baseUrl, hostVersion]);
 
   const runService = useMemo(() => {
-    const httpClient = new HttpClient({
-      accessToken: workflowState.accessToken,
-      baseUrl: workflowState.baseUrl,
-      apiHubBaseUrl: '',
-      hostVersion: workflowState.hostVersion,
-    });
-
     return new StandardRunService({
-      baseUrl: workflowState.baseUrl,
-      apiVersion: workflowState.apiVersion,
-      workflowName: workflowState.workflowProperties.name,
+      baseUrl: baseUrl,
+      apiVersion: apiVersion,
+      workflowName: workflowProperties.name,
       httpClient,
     });
-  }, [
-    workflowState.baseUrl,
-    workflowState.apiVersion,
-    workflowState.accessToken,
-    workflowState.workflowProperties.name,
-    workflowState.hostVersion,
-  ]);
+  }, [baseUrl, apiVersion, workflowProperties.name, httpClient]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {
@@ -97,6 +109,49 @@ export const OverviewApp = () => {
     [runService]
   );
 
+  const workflowService: IWorkflowService = useMemo(
+    () => ({
+      getCallbackUrl: async (triggerId: string) => {
+        if (isLocal) {
+          try {
+            const url = `${baseUrl}/workflows/${workflowProperties.name}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
+            return (await httpClient.post({ uri: url })) as any;
+          } catch {
+            return undefined;
+          }
+        }
+        return undefined;
+      },
+      getAppIdentity: () => {
+        return {
+          principalId: emptyArmId,
+          tenantId: emptyArmId,
+          type: 'SystemAssigned',
+        } as ManagedIdentity;
+      },
+      isExplicitAuthRequiredForManagedIdentity: () => true,
+      getAgentUrl: () => fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId),
+    }),
+    [isLocal, baseUrl, workflowProperties.name, apiVersion, httpClient, clientId, tenantId]
+  );
+
+  const useAgentUrl = (): UseQueryResult<AgentURL> => {
+    return useQuery(
+      ['agentUrl'],
+      async () => {
+        return workflowService.getAgentUrl?.();
+      },
+      {
+        cacheTime: 1000 * 60 * 60 * 24,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+      }
+    );
+  };
+
+  const { isLoading: agentUrlIsLoading, data: agentUrlData } = useAgentUrl();
+
   const errorMessage = useMemo((): string | undefined => {
     if (!isWorkflowRuntimeRunning) {
       return intlText.DEBUG_PROJECT_ERROR;
@@ -129,6 +184,10 @@ export const OverviewApp = () => {
         errorMessage={errorMessage}
         hasMoreRuns={hasNextPage}
         loading={isLoading || runTriggerLoading}
+        isDarkMode={theme === Theme.Dark}
+        isAgentWorkflow={isAgentWorkflow}
+        agentUrlLoading={agentUrlIsLoading}
+        agentUrlData={agentUrlData}
         runItems={runItems ?? []}
         workflowProperties={workflowState.workflowProperties}
         isRefreshing={isRefetching}
@@ -143,9 +202,9 @@ export const OverviewApp = () => {
         onRunTrigger={runTriggerCall}
         onVerifyRunId={onVerifyRunId}
         supportsUnitTest={workflowState.isLocal}
-        onCreateUnitTest={(run: RunDisplayItem) => {
+        onCreateUnitTestFromRun={(run: RunDisplayItem) => {
           vscode.postMessage({
-            command: ExtensionCommand.createUnitTest,
+            command: ExtensionCommand.createUnitTestFromRun,
             runId: run.id,
           });
         }}

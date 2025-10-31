@@ -36,6 +36,7 @@ export default {
           required: ['description'],
         },
         inputsLocation: [],
+        allowOperations: true,
       },
     },
     inputs: {
@@ -55,8 +56,12 @@ export default {
               },
               {
                 value: 'FoundryAgentService',
-                displayName: 'Foundry Agent Service',
+                displayName: 'Foundry Agent Service (Preview)',
                 unSupportedWorkflowKind: ['agent'],
+              },
+              {
+                value: 'APIMGenAIGateway',
+                displayName: 'APIM Gen AI Gateway (Preview)',
               },
             ],
           },
@@ -65,7 +70,7 @@ export default {
         },
         deploymentId: {
           type: 'string',
-          title: 'Deployment model name',
+          title: 'AI model',
           description: 'The deployment name for the model to use.',
           'x-ms-create-new-resource': true,
           'x-ms-visibility': 'important',

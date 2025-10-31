@@ -3,8 +3,8 @@ import constants from '../../common/constants';
 import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { useMonitoringView, useReadOnly, useMcpClientToolEnabled } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { setNodeContextMenuData, setShowDeleteModalNodeId, setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
@@ -37,6 +37,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
 
   const intl = useIntl();
   const readOnly = useReadOnly();
+  const mcpClientToolEnabled = useMcpClientToolEnabled();
   const dispatch = useDispatch<AppDispatch>();
 
   const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
@@ -98,15 +99,31 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
 
   const newAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddTool ? stringResources.TOOL : stringResources.CASE);
   const subgraphClick = useCallback(
-    async (_id: string) => {
+    async (_id: string, rect: DOMRect) => {
       if (isAddCase && graphNode) {
         if (isAgentAddTool) {
-          const relationshipIds = {
-            graphId,
-            subgraphId: newAdditiveSubgraphId,
-            parentId: `${newAdditiveSubgraphId}-#subgraph`,
-          };
-          dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
+          if (mcpClientToolEnabled) {
+            dispatch(
+              setEdgeContextMenuData({
+                graphId,
+                subgraphId: newAdditiveSubgraphId,
+                parentId: `${newAdditiveSubgraphId}-#subgraph`,
+                isLeaf: true,
+                location: {
+                  x: rect ? rect.left + rect.width / 2 : window.innerWidth / 2,
+                  y: rect ? rect.top + rect.height : window.innerHeight / 2,
+                },
+                isAgentTool: true,
+              })
+            );
+          } else {
+            const relationshipIds = {
+              graphId,
+              subgraphId: newAdditiveSubgraphId,
+              parentId: `${newAdditiveSubgraphId}-#subgraph`,
+            };
+            dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
+          }
         } else {
           dispatch(addSwitchCase({ caseId: newAdditiveSubgraphId, graphId }));
         }
@@ -130,7 +147,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
         dispatch(changePanelNode(_id));
       }
     },
-    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, dispatch, newAdditiveSubgraphId, graphId]
+    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, dispatch, newAdditiveSubgraphId, mcpClientToolEnabled, graphId]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);

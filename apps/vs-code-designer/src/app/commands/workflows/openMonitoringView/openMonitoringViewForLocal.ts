@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
+import { assetsFolderName, localSettingsFileName, managementApiPrefix } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -19,7 +19,7 @@ import {
   getParametersFromFile,
 } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
-import { createUnitTest } from '../unitTest/createUnitTest';
+import { createUnitTestFromRun } from '../unitTest/codefulUnitTest/createUnitTestFromRun';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -31,7 +31,6 @@ import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
-import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
@@ -63,13 +62,13 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       this.getPanelOptions()
     );
     this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
     };
 
     this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
     };
 
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
@@ -148,12 +147,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
         break;
       }
-      case ExtensionCommand.createUnitTest: {
-        await createUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
-        break;
-      }
-      case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.definition);
+      case ExtensionCommand.createUnitTestFromRun: {
+        await createUnitTestFromRun(vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
         break;
       }
       case ExtensionCommand.fileABug: {

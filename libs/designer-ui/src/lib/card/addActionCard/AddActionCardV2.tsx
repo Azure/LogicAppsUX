@@ -1,6 +1,6 @@
 import { useCardKeyboardInteraction } from '../hooks';
-import { Tooltip, mergeClasses } from '@fluentui/react-components';
-import { Add24Regular } from '@fluentui/react-icons';
+import { Text, Tooltip, mergeClasses } from '@fluentui/react-components';
+import { Add24Filled } from '@fluentui/react-icons';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useAddActionCardV2Styles } from './addActionCardV2.styles';
@@ -24,8 +24,8 @@ export const AddActionCardV2: React.FC<AddActionCardPropsV2> = ({ addCardType, o
   const keyboardInteraction = useCardKeyboardInteraction(onClick);
 
   const triggerTitle = intl.formatMessage({
-    defaultMessage: 'Add Trigger',
-    id: 'l5bNjT',
+    defaultMessage: 'Add trigger',
+    id: 'vijxB3',
     description: 'Text on example trigger node',
   });
 
@@ -37,50 +37,30 @@ export const AddActionCardV2: React.FC<AddActionCardPropsV2> = ({ addCardType, o
 
   const title = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTitle : actionTitle;
 
-  const triggerTooltipHeading = intl.formatMessage({
-    defaultMessage: 'Triggers',
-    id: '3GINhd',
-    description: 'Heading for a tooltip explaining Triggers',
+  const triggerTooltip = intl.formatMessage({
+    defaultMessage: 'Add trigger to start your workflow',
+    id: 'WSoSMe',
+    description: 'Tooltip for adding a trigger to the workflow',
   });
 
-  const triggerTooltipBody = intl.formatMessage({
-    defaultMessage: 'Triggers tell your app when to start running. Each workflow needs at least one trigger.',
-    id: 'VbMYd8',
-    description: 'Description of what Triggers are, on a tooltip about Triggers',
-  });
-
-  const actionTooltipHeading = intl.formatMessage({
-    defaultMessage: 'Actions',
-    id: 'MYgKHu',
-    description: 'Heading for a tooltip explaining Actions',
-  });
-
-  const actionTooltipBody = intl.formatMessage({
-    defaultMessage: 'Actions perform operations on data, communicate between systems, or run other tasks.',
-    id: '1dlfUe',
+  const actionTooltip = intl.formatMessage({
+    defaultMessage: 'Add actions to define the steps in your workflow',
+    id: '+oX/2M',
     description: 'Description of what Actions are, on a tooltip about Actions',
   });
 
-  const tooltipHeading = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipHeading : actionTooltipHeading;
-  const tooltipBody = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipBody : actionTooltipBody;
+  const tooltipText = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltip : actionTooltip;
   const tooltipId = `placeholder-node-${addCardType}`;
   const tooltipDescriptionId = `${tooltipId}-description`;
-
-  const tooltipContent = (
-    <div className={classes.tooltipContent}>
-      <h2 className={classes.tooltipHeading}>{tooltipHeading}</h2>
-      <p className={classes.tooltipBody}>{tooltipBody}</p>
-    </div>
-  );
 
   return (
     <>
       {/* Hidden element for screen readers to access tooltip content */}
       <div id={tooltipDescriptionId} style={{ display: 'none' }}>
-        {tooltipHeading}: {tooltipBody}
+        {tooltipText}
       </div>
-      <Tooltip relationship="description" showDelay={0} hideDelay={0} withArrow content={tooltipContent} positioning="after">
-        <div className={classes.root}>
+      <div id={'laux-v2-add-trigger-node'} className={classes.root}>
+        <Tooltip relationship="description" showDelay={0} hideDelay={0} withArrow content={tooltipText} positioning="before">
           <div
             aria-label={title}
             aria-describedby={tooltipDescriptionId}
@@ -93,11 +73,11 @@ export const AddActionCardV2: React.FC<AddActionCardPropsV2> = ({ addCardType, o
             tabIndex={0}
             role="button"
           >
-            <Add24Regular className={classes.addIcon} />
+            <Add24Filled className={classes.addIcon} />
           </div>
-          <div className={classes.cardTitle}>{title}</div>
-        </div>
-      </Tooltip>
+        </Tooltip>
+        <Text className={classes.cardTitle}>{title}</Text>
+      </div>
     </>
   );
 };

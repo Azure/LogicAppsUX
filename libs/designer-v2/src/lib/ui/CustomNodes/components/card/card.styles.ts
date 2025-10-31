@@ -14,7 +14,7 @@ export const useCardStyles = makeStyles({
     border: '2px solid transparent',
     boxSizing: 'border-box',
     fontSize: '12px',
-    borderRadius: '4px',
+    borderRadius: '6px',
     width: '200px',
     padding: '8px 10px',
     webkitUserSelect: 'none',
@@ -37,11 +37,15 @@ export const useCardStyles = makeStyles({
     background: 'var(--action-brand-color)',
 
     '&:hover': {
-      background: 'color-mix(in hsl, var(--action-brand-color), black 10%)',
+      background: 'color-mix(in hsl, var(--action-brand-color), black 25%)',
     },
     '&:active': {
-      background: 'color-mix(in hsl, var(--action-brand-color), black 20%)',
+      background: 'color-mix(in hsl, var(--action-brand-color), black 35%)',
     },
+  },
+  small: {
+    width: '120px',
+    padding: '6px 4px 6px 8px',
   },
   inactive: {
     opacity: 0.3,
@@ -69,6 +73,11 @@ export const useCardStyles = makeStyles({
       objectFit: 'contain',
     },
   },
+  toolIcon: {
+    padding: '4px',
+    width: '16px',
+    height: '16px',
+  },
   title: {
     fontSize: '14px',
     fontWeight: '600',
@@ -79,6 +88,10 @@ export const useCardStyles = makeStyles({
   },
   scopeTitle: {
     color: '#fff',
+  },
+  smallTitle: {
+    fontSize: '14px',
+    lineHeight: '16px',
   },
 
   // Badge

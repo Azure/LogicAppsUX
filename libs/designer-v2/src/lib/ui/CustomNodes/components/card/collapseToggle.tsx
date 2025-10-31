@@ -11,10 +11,11 @@ export interface CollapseToggleProps {
   disabled?: boolean;
   collapsed?: boolean;
   handleCollapse: () => void;
+  isSmall?: boolean;
 }
 
 export const CollapseToggle = (props: CollapseToggleProps) => {
-  const { id, tabIndex, disabled = false, collapsed = false, handleCollapse } = props;
+  const { id, tabIndex, disabled = false, collapsed = false, handleCollapse, isSmall = false } = props;
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
     defaultMessage: 'Expand',
@@ -44,7 +45,10 @@ export const CollapseToggle = (props: CollapseToggleProps) => {
         icon={collapsed ? <ChevronUp /> : <ChevronDown />}
         size={'small'}
         appearance={'transparent'}
-        style={{ color: '#fff' }}
+        style={{
+          color: '#fff',
+          ...(isSmall ? { height: '12px' } : {}),
+        }}
       />
     </Tooltip>
   );

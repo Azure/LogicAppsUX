@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  Platform,
   ProjectDirectoryPathKey,
   autoStartDesignTimeSetting,
   defaultVersionRange,
@@ -36,7 +35,7 @@ import {
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -46,8 +45,8 @@ import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
-import pstree from 'ps-tree';
 import find_process from 'find-process';
+import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -194,12 +193,8 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   if (os.platform() === Platform.windows) {
-    await new Promise<void>((resolve) => {
-      pstree(process.pid, (_err: Error | null, children: Array<{ PID: string; COMMAND?: string; COMM?: string }>) => {
-        correctId = children.some((p) => p.PID === childFuncPid && (p.COMMAND || p.COMM) === 'func.exe');
-        resolve();
-      });
-    });
+    const children = await getChildProcessesWithScript(process.pid);
+    correctId = children.some((p) => p.processId.toString() === childFuncPid && p.name === 'func.exe');
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {

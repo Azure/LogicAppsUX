@@ -1,6 +1,7 @@
 import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 import { WorkflowKind, type NodeMetadata, type WorkflowState } from './workflowInterfaces';
+import Constants from '../../../common/constants';
 
 /**
  * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
@@ -129,14 +130,51 @@ export const collapseFlowTree = (
   return { graph: prunedTree, collapsedMapping: collapsedMappingArrays };
 };
 
+export const isManagedMcpOperation = (operation: { type?: string; kind?: string }) => {
+  return equals(operation?.type, Constants.NODE.TYPE.MCP_CLIENT) && equals(operation?.kind, Constants.NODE.KIND.MANAGED);
+};
+
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
-  return equals(state.workflowKind, 'agent');
+  const workflowKind = state.workflowKind;
+
+  // Standard SKU, kind is agent
+  if (equals(workflowKind, 'agent', false)) {
+    return true;
+  }
+
+  // Standard SKU, kind is not agent
+  if (workflowKind && !equals(workflowKind, 'Agent', false)) {
+    return false;
+  }
+
+  // Consumption SKU, check definition metadata
+  const agentType = state.originalDefinition?.metadata?.agentType;
+  if (equals(agentType, 'conversational', false)) {
+    return true;
+  }
+
+  // Consumption SKU - check for A2A trigger pattern
+  const triggerNodeId = Object.keys(state.nodesMetadata).find((nodeId) => state.nodesMetadata[nodeId]?.isTrigger === true);
+
+  if (triggerNodeId) {
+    const triggerOperation = state.operations[triggerNodeId];
+    return equals(triggerOperation?.type, 'Request', true) && equals(triggerOperation?.kind, 'Agent', true);
+  }
+
+  return false;
+};
+
+export const isA2AKind = (kind: string): boolean => {
+  return !!kind && equals(kind, WorkflowKind.AGENT);
 };
 
 export const isAgentWorkflow = (kind: string): boolean => {
-  return equals(kind, WorkflowKind.AGENTIC) || equals(kind, WorkflowKind.AGENT);
+  return equals(kind, WorkflowKind.AGENTIC) || isA2AKind(kind);
 };
 
 export const shouldClearNodeRunData = (node: NodeMetadata) => {
-  return node?.runData && (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION);
+  return (
+    node?.runData &&
+    (node.graphId !== 'root' || node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || node.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT)
+  );
 };

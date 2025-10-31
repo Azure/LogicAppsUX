@@ -89,6 +89,8 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const label = useNodeDisplayName(scopeId);
   const normalizedType = node?.type.toLowerCase();
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
+  const isSwitch = normalizedType === constants.NODE.TYPE.SWITCH;
+  const isConditional = normalizedType === constants.NODE.TYPE.IF;
   const runIndex = useRunIndex(scopeId);
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
@@ -170,7 +172,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
       return;
     }
     dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
-  }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
+  }, [dispatch, isMonitoringView, isTimelineRepetitionSelected, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -313,6 +315,14 @@ const ScopeCardNode = ({ id }: NodeProps) => {
         },
         { actionCount }
       ),
+      toolString: intl.formatMessage(
+        {
+          defaultMessage: '{actionCount, plural, one {# Tool} =0 {0 Tools} other {# Tools}}',
+          id: 'Fmt/E7',
+          description: 'This is the number of tools to be completed in a group',
+        },
+        { actionCount }
+      ),
       emptyAgent: intl.formatMessage({
         defaultMessage: 'This iteration has completed without any tool execution',
         id: 'w2rxzD',
@@ -389,10 +399,13 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     return null;
   }
 
-  const collapsedText =
-    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF || isAgent
+  const collapsedText = isAgent
+    ? intlText.toolString
+    : isSwitch
       ? intlText.caseString
-      : intlText.actionString;
+      : isConditional
+        ? intlText.caseString
+        : intlText.actionString;
 
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
@@ -439,7 +452,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
           {collapsedText}
         </p>
       ) : null}
-      {isAgent && actionCount === 0 && !graphCollapsed ? (
+      {isAgent && actionCount < 1 && !graphCollapsed ? (
         <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em 0' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>

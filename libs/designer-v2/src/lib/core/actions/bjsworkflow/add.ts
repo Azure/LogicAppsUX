@@ -1,5 +1,4 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
-import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -17,8 +16,8 @@ import { changePanelNode, openPanel, setIsPanelLoading, setAlternateSelectedNode
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { WorkflowKind, type NodesMetadata, type WorkflowState } from '../../state/workflow/workflowInterfaces';
+import { addAgentTool, addNode, setFocusNode, setWorkflowKind } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
@@ -64,6 +63,11 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { isA2AWorkflow } from '../../state/workflow/helper';
+import { openKindChangeDialog } from '../../state/modal/modalSlice';
+import constants from '../../../common/constants';
+import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
+import { isDynamicConnection } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -78,12 +82,50 @@ type AddOperationPayload = {
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
-    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false } = payload;
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false, isTrigger } = payload;
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
 
     const workflowState = (getState() as RootState).workflow;
+
+    // Catch workflow kind conflicts before adding node
+    if (isTrigger) {
+      const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+      if (equals(workflowState.workflowKind, WorkflowKind.STATELESS) && isA2ATrigger) {
+        // Can't switch to A2A if the workflow is stateless
+        dispatch(openKindChangeDialog({ type: 'fromStateless' }));
+        return;
+      }
+
+      // If the workflow is A2A, check to see if the node is a trigger that isn't the chat trigger
+      if (isA2AWorkflow(workflowState)) {
+        if (!isA2ATrigger) {
+          const workflowHasHandoffs = Object.values(workflowState.nodesMetadata).some(
+            (node) => Object.values(node?.handoffs ?? {}).length > 0
+          );
+          if (workflowHasHandoffs) {
+            // Can't switch to stateful/stateless if there are handoffs in the workflow
+            dispatch(openKindChangeDialog({ type: 'toStateful' }));
+            return;
+          }
+        }
+      } else if (isA2ATrigger) {
+        const allAgentIds = Object.keys(workflowState.operations).filter((id) =>
+          equals(workflowState.operations[id]?.type, constants.NODE.TYPE.AGENT)
+        );
+        const workflowHasActionsAfterAgent = Object.values(workflowState.operations).some((node: any) => {
+          const runningAfter = Object.keys(node?.runAfter ?? {});
+          return runningAfter.some((id) => allAgentIds.includes(id));
+        });
+        if (workflowHasActionsAfterAgent) {
+          // Can't switch to A2A if there are actions after an agent
+          dispatch(openKindChangeDialog({ type: 'toA2A' }));
+          return;
+        }
+      }
+    }
+
     const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAddingAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
@@ -119,6 +161,50 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
       actionMetadata,
       !isAddingHandoff
     );
+
+    // Adjust workflow for kind change if needed
+    if (isTrigger) {
+      const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
+
+      if (isA2AWorkflow(workflowState)) {
+        if (!isA2ATrigger) {
+          dispatch(setWorkflowKind(WorkflowKind.STATEFUL));
+          // If trigger child is agent, agent needs to have its runAfter cleared
+          const edges = workflowState.graph?.edges ?? [];
+          const triggerChildId = edges.find((edge) => edge.source === constants.NODE.TYPE.PLACEHOLDER_TRIGGER)?.target;
+          if (triggerChildId) {
+            const childNodeOperationData = workflowState.operations?.[triggerChildId];
+            const childIsAgent = equals(childNodeOperationData.type, constants.NODE.TYPE.AGENT);
+            const currentRunAfterId = Object.keys((childNodeOperationData as any).runAfter)?.[0];
+            if (childIsAgent && currentRunAfterId) {
+              dispatch(
+                removeOperationRunAfter({
+                  parentOperationId: currentRunAfterId,
+                  childOperationId: triggerChildId,
+                })
+              );
+            }
+          }
+        }
+      } else if (isA2ATrigger) {
+        dispatch(setWorkflowKind(WorkflowKind.AGENT));
+        // If trigger child is agent, agent needs to run after trigger
+        const edges = workflowState.graph?.edges ?? [];
+        const triggerChildId = edges.find((edge) => edge.source === constants.NODE.TYPE.PLACEHOLDER_TRIGGER)?.target;
+        if (triggerChildId) {
+          const childNodeOperationData = workflowState.operations?.[triggerChildId];
+          const childIsAgent = equals(childNodeOperationData.type, constants.NODE.TYPE.AGENT);
+          if (childIsAgent) {
+            dispatch(
+              addOperationRunAfter({
+                parentOperationId: actionId,
+                childOperationId: triggerChildId,
+              })
+            );
+          }
+        }
+      }
+    }
 
     dispatch(setFocusNode(nodeId));
     if (isAddingAgentTool && newToolId) {
@@ -191,7 +277,7 @@ export const initializeOperationDetails = async (
       manifest,
       presetParameterValues
     );
-    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const customCodeParameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
@@ -400,7 +486,9 @@ export const trySetDefaultConnectionForNode = async (
   isConnectionRequired: boolean
 ) => {
   const connectorId = connector.id;
-  const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
+  const connections = (await getConnectionsForConnector(connectorId)).filter(
+    (c) => c.properties.overallStatus !== 'Error' || !isDynamicConnection(c.properties.feature)
+  );
   if (connections.length > 0) {
     const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
     await ConnectionService().setupConnectionIfNeeded(connection);
@@ -464,7 +552,7 @@ export const addTokensAndVariables = (
     )
   );
 
-  if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+  if (equals(operationType, constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
     setVariableMetadata(iconUri, brandColor);
 
     const variables = getVariableDeclarations(nodeInputs);
@@ -480,10 +568,10 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
   return operationType
     ? operationType
     : (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
-      ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
+      ? constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-        : Constants.NODE.TYPE.API_CONNECTION;
+        ? constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : constants.NODE.TYPE.API_CONNECTION;
 };
 
 export const getTriggerNodeManifest = async (

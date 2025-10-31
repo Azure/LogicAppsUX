@@ -17,7 +17,7 @@ import {
 } from '../../../utils/src';
 import type { BaseConnectionServiceOptions } from '../base';
 import { BaseConnectionService } from '../base';
-import { agentConnectorId, apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
+import { agentConnectorId, apiManagementConnectorId, azureFunctionConnectorId, mcpclientConnectorId } from '../base/operationmanifest';
 import type { HttpResponse } from '../common/exceptions';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
 import type { IHttpClient } from '../httpClient';
@@ -28,6 +28,7 @@ import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import agentloopConnector from './manifest/agentLoopConnector';
+import mcpclientConnector from './manifest/mcpclientconnector';
 
 interface ConnectionAcl {
   id: string;
@@ -95,18 +96,26 @@ export interface ConnectionAndAppSetting<T> {
   pathLocation: string[];
 }
 
+export interface AgentMcpConnectionModel {
+  displayName?: string;
+  mcpServerUrl: string;
+  authentication?: any;
+}
+
 export interface ConnectionsData {
   managedApiConnections?: any;
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   functionConnections?: Record<string, FunctionsConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
   agentConnections?: Record<string, AgentConnectionModel>;
+  agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
 }
 
 export type LocalConnectionModel =
   | FunctionsConnectionModel
   | ServiceProviderConnectionModel
   | APIManagementConnectionModel
+  | AgentMcpConnectionModel
   | AgentConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
@@ -115,7 +124,9 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
+const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
+export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -172,6 +183,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
       if (connectorIdKeyword === 'agent') {
         return agentloopConnector;
       }
+      if (connectorIdKeyword === 'mcpclient') {
+        return mcpclientConnector;
+      }
       if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
           uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
@@ -202,6 +216,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
     const agentConnections = (localConnections[agentLocation] || {}) as Record<string, AgentConnectionModel>;
+    const agentMcpConnections = (localConnections[mcpLocation] || {}) as Record<string, AgentMcpConnectionModel>;
 
     this._allConnectionsInitialized = true;
     return [
@@ -225,6 +240,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
         this._connections[connection.id] = connection;
         return connection;
       }),
+      ...Object.keys(agentMcpConnections).map((key) => {
+        const connection = convertMcpConnectionDataToConnection(key, agentMcpConnections[key]);
+        this._connections[connection.id] = connection;
+        return connection;
+      }),
       ...apiHubConnections,
     ];
   }
@@ -244,8 +264,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       source: 'connection.ts',
     });
 
+    const isArmResource = isArmResourceId(connector.id);
+
     try {
-      const connection = isArmResourceId(connector.id)
+      const connection = isArmResource
         ? await this._createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
         : await this.createConnectionInLocal(connectionName, connector, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
 
@@ -257,7 +279,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
       });
       return connection;
     } catch (error) {
-      this.deleteConnection(connectionId);
+      if (isArmResource) {
+        this.deleteConnection(connectionId);
+      }
       const errorMessage = `Failed to create connection: ${this.tryParseErrorMessage(error)}`;
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -564,7 +588,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
   }> {
     const connectionType = parametersMetadata?.connectionMetadata?.type;
     let connectionsData: ConnectionAndAppSetting<
-      FunctionsConnectionModel | APIManagementConnectionModel | ServiceProviderConnectionModel | AgentConnectionModel
+      | FunctionsConnectionModel
+      | APIManagementConnectionModel
+      | ServiceProviderConnectionModel
+      | AgentConnectionModel
+      | AgentMcpConnectionModel
     >;
     let connection: Connection;
     switch (connectionType) {
@@ -590,6 +618,14 @@ export class StandardConnectionService extends BaseConnectionService implements 
         connection = convertAgentConnectionDataToConnection(
           connectionsData.connectionKey,
           connectionsData.connectionData as AgentConnectionModel
+        );
+        break;
+      }
+      case ConnectionType.Mcp: {
+        connectionsData = convertToMcpConnectionsData(connectionName, connectionInfo);
+        connection = convertMcpConnectionDataToConnection(
+          connectionsData.connectionKey,
+          connectionsData.connectionData as AgentMcpConnectionModel
         );
         break;
       }
@@ -681,6 +717,25 @@ function convertServiceProviderConnectionDataToConnection(
   };
 }
 
+function convertMcpConnectionDataToConnection(connectionKey: string, connectionData: AgentMcpConnectionModel): Connection {
+  const { displayName } = connectionData;
+
+  return {
+    name: connectionKey,
+    id: `/${mcpclientConnectorId}/connections/${connectionKey}`,
+    type: 'connections',
+    properties: {
+      api: { id: mcpclientConnectorId } as any,
+      createdTime: '',
+      connectionParameters: {},
+      displayName: displayName as string,
+      statuses: [{ status: 'Connected' }],
+      overallStatus: 'Connected',
+      testLinks: [],
+    },
+  };
+}
+
 function convertAgentConnectionDataToConnection(connectionKey: string, connectionData: AgentConnectionModel): Connection {
   const { displayName } = connectionData;
 
@@ -760,10 +815,13 @@ function convertToAgentConnectionsData(
     connectionParameterMetadata
   );
 
+  // TODO: This logic needs to be generalized post Ignite, should come from the manifest
   const cognitiveServiceAccountId = parameterValues?.['cognitiveServiceAccountId'];
   const isFoundryAgentServiceConnection =
     equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
     foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
+  const isAPIMManagementConnection = apimanagementRegex.test(cognitiveServiceAccountId);
+
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
@@ -774,7 +832,7 @@ function convertToAgentConnectionsData(
       },
       endpoint: parameterValues?.['openAIEndpoint'],
       resourceId: cognitiveServiceAccountId,
-      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : 'model',
+      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
     pathLocation: [agentLocation],
@@ -855,6 +913,57 @@ function convertToFunctionsConnectionsData(
     },
     settings,
     pathLocation: [functionsLocation],
+  };
+}
+
+function convertToMcpConnectionsData(
+  connectionKey: string,
+  connectionInfo: ConnectionCreationInfo
+): ConnectionAndAppSetting<AgentMcpConnectionModel> {
+  const settings: any = {};
+  const { displayName, connectionParametersSet } = connectionInfo;
+  let authentication: any = null;
+
+  const processValue = (values: Record<string, { value: any }> | undefined, key: string, inSetting: boolean): any => {
+    if (values && values[key] && values[key].value) {
+      if (!authentication) {
+        authentication = {};
+      }
+
+      if (inSetting) {
+        const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(key)}`;
+        settings[appSettingName] = values[key].value;
+        authentication[key] = `@appsetting('${appSettingName}')`;
+      } else {
+        authentication[key] = values[key].value;
+      }
+    }
+  };
+
+  if (connectionParametersSet?.name && connectionParametersSet?.name !== 'None') {
+    authentication = { type: connectionParametersSet.name };
+    processValue(connectionParametersSet.values, 'username', false);
+    processValue(connectionParametersSet.values, 'password', true);
+    processValue(connectionParametersSet.values, 'pfx', true);
+    processValue(connectionParametersSet.values, 'authority', false);
+    processValue(connectionParametersSet.values, 'tenantId', false);
+    processValue(connectionParametersSet.values, 'audience', false);
+    processValue(connectionParametersSet.values, 'clientId', false);
+    processValue(connectionParametersSet.values, 'secret', true);
+    processValue(connectionParametersSet.values, 'value', true);
+    processValue(connectionParametersSet.values, 'key', true);
+    processValue(connectionParametersSet.values, 'keyHeaderName', false);
+  }
+
+  return {
+    connectionKey,
+    connectionData: {
+      mcpServerUrl: connectionParametersSet?.values?.['serverUrl'].value,
+      displayName,
+      authentication,
+    },
+    settings,
+    pathLocation: [mcpLocation],
   };
 }
 

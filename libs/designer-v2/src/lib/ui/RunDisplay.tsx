@@ -1,12 +1,12 @@
-import { Button, makeStyles } from '@fluentui/react-components';
+import { Button, makeStyles, tokens } from '@fluentui/react-components';
 import { setRunHistoryCollapsed } from '../core/state/panel/panelSlice';
 import { useRunInstance } from '../core/state/workflow/workflowSelectors';
 import { RunHistoryEntryInfo } from './panel';
 import { useIsRunHistoryCollapsed } from '../core/state/panel/panelSelectors';
 import { useDispatch } from 'react-redux';
 
-import { bundleIcon, TaskListLtrFilled, TaskListLtrRegular } from '@fluentui/react-icons';
-const HistoryIcon = bundleIcon(TaskListLtrFilled, TaskListLtrRegular);
+import { bundleIcon, ChevronDoubleRightFilled, ChevronDoubleRightRegular } from '@fluentui/react-icons';
+const ExpandIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
 
 const useRunDisplayStyles = makeStyles({
   root: {
@@ -29,7 +29,7 @@ export const RunDisplay = () => {
 
   const styles = useRunDisplayStyles();
 
-  if (!selectedRun) {
+  if (!selectedRun && !isRunHistoryCollapsed) {
     return null;
   }
 
@@ -37,14 +37,17 @@ export const RunDisplay = () => {
     <div className={styles.root}>
       {isRunHistoryCollapsed ? (
         <Button
-          appearance="outline"
           onClick={() => dispatch(setRunHistoryCollapsed(false))}
-          icon={<HistoryIcon />}
+          icon={<ExpandIcon />}
           size="large"
-          style={{ height: '48px' }}
+          style={{
+            border: 'none',
+            boxShadow: tokens.shadow8,
+            height: '48px',
+          }}
         />
       ) : null}
-      <RunHistoryEntryInfo run={selectedRun as any} />
+      {selectedRun ? <RunHistoryEntryInfo run={selectedRun as any} /> : null}
     </div>
   );
 };

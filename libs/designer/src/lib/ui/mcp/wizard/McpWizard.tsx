@@ -1,8 +1,8 @@
-import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
+import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle, mergeClasses } from '@fluentui/react-components';
 import { Add16Regular, Settings16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { McpPanelView, openMcpPanelView, setAutoOpenPanel } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
@@ -10,15 +10,16 @@ import { type McpServerCreateData, serializeMcpWorkflows } from '../../../core/m
 import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
 import { useMemo, useCallback, useState } from 'react';
-import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
-import { TemplatesPanelFooter } from '@microsoft/designer-ui';
+import type { TemplatePanelFooterProps, TemplatesSectionItem } from '@microsoft/designer-ui';
+import { TemplatesPanelFooter, TemplatesSection } from '@microsoft/designer-ui';
 import { ListOperations } from '../operations/ListOperations';
 import { ListConnectors } from '../connectors/ListConnectors';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { operationHasEmptyStaticDependencies } from '../../../core/mcp/utils/helper';
-import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { operationHasEmptyStaticDependencies, validateMcpServerDescription, validateMcpServerName } from '../../../core/mcp/utils/helper';
+import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { SuccessToast } from '../logicapps/common';
+import { useValidMcpConnection } from '../hooks/connection';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -34,10 +35,15 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
   const {
     connection,
     operations,
-    resource: { subscriptionId, resourceGroup, location, logicAppName },
+    resource: { subscriptionId, resourceGroup, location, logicAppName, newLogicAppDetails },
     mcpOptions: { disableConfiguration },
     mcpSelection: { selectedConnectorId, disableConnectorSelection },
   } = useSelector((state: RootState) => state);
+
+  const [serverName, setServerName] = useState('');
+  const [serverDescription, setServerDescription] = useState('');
+  const [serverNameError, setServerNameError] = useState<string | undefined>(undefined);
+  const [serverDescriptionError, setServerDescriptionError] = useState<string | undefined>(undefined);
 
   const connectorExists = useMemo(() => {
     return (disableConnectorSelection && !!selectedConnectorId) || Object.keys(operations.operationInfo).length > 0;
@@ -129,6 +135,10 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
     );
   }, [dispatch, setupConnectorAndOperations]);
 
+  const isExistingLogicApp = useMemo(() => {
+    return !!newLogicAppDetails?.appName && equals(newLogicAppDetails.appName, logicAppName);
+  }, [newLogicAppDetails, logicAppName]);
+
   const handleRegisterMcpServer = useCallback(async () => {
     try {
       const workflowsData = await serializeMcpWorkflows(
@@ -140,7 +150,9 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
         connection,
         operations
       );
-      await registerMcpServer(workflowsData, () => onRegisterCompleted());
+      await registerMcpServer({ ...workflowsData, serverInfo: { name: serverName, description: serverDescription } }, () =>
+        onRegisterCompleted()
+      );
     } catch (error: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -155,20 +167,30 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
           `operationInfos:${Object.values(operations.operationInfo)
             .map((info) => `${info.connectorId}:${info.operationId}`)
             .join(',')}`,
-          'isExistingLogicApp:false', // TODO: When we support create logic apps, this will need to be dynamic
+          `isExistingLogicApp:${isExistingLogicApp}`,
+          `serverName:${serverName}`,
+          `serverDescription:${serverDescription}`,
         ],
       });
     }
-  }, [connection, logicAppName, operations, registerMcpServer, resourceGroup, location, subscriptionId, onRegisterCompleted]);
+  }, [
+    subscriptionId,
+    resourceGroup,
+    logicAppName,
+    connection,
+    operations,
+    registerMcpServer,
+    serverName,
+    serverDescription,
+    onRegisterCompleted,
+    location,
+    isExistingLogicApp,
+  ]);
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const handleAppCreate = useCallback(() => {
     setShowSuccessToast(!showSuccessToast);
-
-    if (!logicAppName && disableConnectorSelection) {
-      dispatch(setAutoOpenPanel(true));
-    }
-  }, [disableConnectorSelection, dispatch, logicAppName, showSuccessToast]);
+  }, [showSuccessToast]);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -177,19 +199,19 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Title for the MCP server registration wizard',
     }),
     description: intl.formatMessage({
-      id: 'xPO/1M',
+      id: 'ifZ8ok',
       defaultMessage:
-        'Register an MCP server that you create, starting with an empty logic app. Create tools that run connector actions so your server can perform tasks. Available logic apps depend on the Azure subscription for your API Center resource.',
+        'Register an MCP server that you create, starting with a logic app. Create tools that run connector actions so your server can perform tasks. Available logic apps depend on your current Azure subscription.',
       description: 'Description for the MCP server registration wizard',
     }),
     learnMore: intl.formatMessage({
-      id: 'JJGVdl',
-      defaultMessage: 'Learn more',
+      id: 'nwZ0IY',
+      defaultMessage: 'Learn about logic apps',
       description: 'Learn more link text.',
     }),
     howToSetup: intl.formatMessage({
-      id: 'bJoBEu',
-      defaultMessage: 'Learn more about how to set up a logic app',
+      id: 'ZmSjQV',
+      defaultMessage: 'Learn how to set up a logic app',
       description: 'Title for the setup instructions link',
     }),
     howToSetupConnectors: intl.formatMessage({
@@ -214,14 +236,39 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Title for the details section',
     }),
     detailsSectionDescription: intl.formatMessage({
-      id: 'cguy+s',
-      defaultMessage: 'Choose an empty logic app or create a new logic app.',
+      id: 'PFjaC0',
+      defaultMessage: 'Select an existing logic app or create a new logic app.',
       description: 'Description for the details section',
     }),
     mainSectionDescription: intl.formatMessage({
       id: 'qif1I+',
       defaultMessage: 'Build tools for your MCP server by selecting connectors and their actions.',
       description: 'Description for the main section',
+    }),
+    serverNameLabel: intl.formatMessage({
+      id: 'Iov0/J',
+      defaultMessage: 'MCP server name',
+      description: 'Label for the MCP server name field',
+    }),
+    serverNamePlaceholder: intl.formatMessage({
+      id: 'qKVOwV',
+      defaultMessage: 'Enter a name for the MCP server',
+      description: 'Placeholder text for the MCP server name field',
+    }),
+    serverDescriptionLabel: intl.formatMessage({
+      id: '0l+F9w',
+      defaultMessage: 'Description',
+      description: 'Label for the MCP server description field',
+    }),
+    serverDescriptionPlaceholder: intl.formatMessage({
+      id: 'SYDKyg',
+      defaultMessage: 'Enter a description for the MCP server',
+      description: 'Placeholder text for the MCP server description field',
+    }),
+    logicAppLabel: intl.formatMessage({
+      id: 'BsZRu5',
+      defaultMessage: 'Logic app',
+      description: 'Label field for logic app selector',
     }),
     actionsTitle: intl.formatMessage({
       id: 'ao1O9z',
@@ -255,8 +302,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Button text to add connector',
     }),
     setupButton: intl.formatMessage({
-      id: '90eaja',
-      defaultMessage: 'Setup',
+      id: 'sNWUvE',
+      defaultMessage: 'Set up',
       description: 'Button text to setup tools',
     }),
     loadingConnectorsText: intl.formatMessage({
@@ -265,6 +312,65 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       description: 'Loading message for connectors',
     }),
   };
+
+  const setMcpServerName = useCallback((value: string) => {
+    setServerName(value);
+    const errorMessage = validateMcpServerName(value);
+    setServerNameError(errorMessage);
+  }, []);
+
+  const setMcpServerDescription = useCallback((value: string) => {
+    setServerDescription(value);
+    const errorMessage = validateMcpServerDescription(value);
+    setServerDescriptionError(errorMessage);
+  }, []);
+
+  const serverFields = useMemo(
+    () =>
+      [
+        {
+          label: INTL_TEXT.serverNameLabel,
+          value: serverName,
+          type: 'textfield',
+          placeholder: INTL_TEXT.serverNamePlaceholder,
+          required: true,
+          onChange: setMcpServerName,
+          errorMessage: serverNameError,
+        },
+        {
+          label: INTL_TEXT.serverDescriptionLabel,
+          value: serverDescription,
+          type: 'textfield',
+          placeholder: INTL_TEXT.serverDescriptionPlaceholder,
+          required: true,
+          onChange: setMcpServerDescription,
+          errorMessage: serverDescriptionError,
+        },
+        {
+          label: INTL_TEXT.logicAppLabel,
+          value: logicAppName || '',
+          type: 'custom',
+          required: true,
+          onRenderItem: () => <LogicAppSelector />,
+        },
+      ] as TemplatesSectionItem[],
+    [
+      INTL_TEXT.logicAppLabel,
+      INTL_TEXT.serverDescriptionLabel,
+      INTL_TEXT.serverDescriptionPlaceholder,
+      INTL_TEXT.serverNameLabel,
+      INTL_TEXT.serverNamePlaceholder,
+      logicAppName,
+      serverDescription,
+      serverDescriptionError,
+      serverName,
+      serverNameError,
+      setMcpServerDescription,
+      setMcpServerName,
+    ]
+  );
+
+  const hasValidConnection = useValidMcpConnection();
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -281,12 +387,16 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
             handleRegisterMcpServer();
           },
           disabled:
+            !serverName ||
+            !!serverNameError ||
+            !serverDescription ||
+            !!serverDescriptionError ||
             !logicAppName ||
             !subscriptionId ||
             !resourceGroup ||
             !connectorExists ||
-            !connection ||
-            !operations ||
+            !hasValidConnection ||
+            !Object.keys(operations.operationInfo).length ||
             hasIncompleteOperationConfiguration,
         },
         {
@@ -302,12 +412,16 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
     };
   }, [
     intl,
+    serverName,
+    serverNameError,
+    serverDescription,
+    serverDescriptionError,
     logicAppName,
     subscriptionId,
     resourceGroup,
     connectorExists,
-    connection,
-    operations,
+    hasValidConnection,
+    operations.operationInfo,
     hasIncompleteOperationConfiguration,
     onClose,
     handleRegisterMcpServer,
@@ -342,8 +456,8 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
             linkUrl="https://go.microsoft.com/fwlink/?linkid=2330610"
             linkText={INTL_TEXT.howToSetup}
           />
-          <br />
-          <LogicAppSelector />
+
+          <TemplatesSection items={serverFields} cssOverrides={{ sectionItems: styles.serverSection }} />
         </div>
 
         {/* Main Section */}
@@ -377,7 +491,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
             linkText={INTL_TEXT.howToSetupConnectors}
           />
 
-          <div className={styles.section}>
+          <div className={mergeClasses(styles.section, disableConfiguration ? styles.sectionDisabled : '')}>
             <div className={styles.header}>
               <Text size={400} weight="semibold">
                 {INTL_TEXT.connectorsTitle}
@@ -406,7 +520,13 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
                   <Text size={400} weight="semibold">
                     {INTL_TEXT.actionsTitle}
                   </Text>
-                  <Button appearance="secondary" icon={<Add16Regular />} onClick={handleAddOperations} size="small">
+                  <Button
+                    appearance="secondary"
+                    icon={<Add16Regular />}
+                    disabled={!hasValidConnection}
+                    onClick={handleAddOperations}
+                    size="small"
+                  >
                     {INTL_TEXT.addToolsButton}
                   </Button>
                 </div>

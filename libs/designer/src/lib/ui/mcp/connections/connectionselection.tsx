@@ -1,18 +1,26 @@
-import { type Connection, ConnectionService, type Connector, parseErrorMessage } from '@microsoft/logic-apps-shared';
+import {
+  type Connection,
+  type ConnectionParameterSet,
+  ConnectionService,
+  type Connector,
+  getObjectPropertyValue,
+  parseErrorMessage,
+} from '@microsoft/logic-apps-shared';
 import { updateMcpConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { useAllReferenceKeys, useAreMappingsInitialized, useConnectionReference } from '../../../core/state/mcp/selector';
-import type { AppDispatch } from '../../../core/state/mcp/store';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionInternal';
 import type { CreatedConnectionPayload } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
 import { SelectConnection } from '../../panel/connectionsPanel/selectConnection/selectConnection';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from '@fluentui/react-components';
 import { useConnectionSelectionStyles } from './styles';
+import { isDynamicConnection } from '../../../common/utilities/Utils';
 
 export const ConnectionSelection = ({ connectorId, operations }: { connectorId: string; operations: string[] }) => {
   const intl = useIntl();
@@ -23,8 +31,16 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
   const existingReferences = useAllReferenceKeys();
   const reference = useConnectionReference();
   const areMappingsInitialized = useAreMappingsInitialized(operations);
+  const shouldFilterOBOConnections = useSelector(
+    (state: RootState) => state.mcpSelection.disableConnectorSelection && state.mcpSelection.disableLogicAppSelection
+  );
 
-  const validConnections = useMemo(() => (connectionsQuery.data ?? []).filter(isConnectionValid), [connectionsQuery.data]);
+  const validConnections = useMemo(() => {
+    const validConnections = (connectionsQuery.data ?? []).filter(isConnectionValid);
+    return shouldFilterOBOConnections
+      ? validConnections.filter((connection) => !isDynamicConnection(getObjectPropertyValue(connection.properties, ['features'])))
+      : validConnections;
+  }, [connectionsQuery.data, shouldFilterOBOConnections]);
   const hasConnections = useMemo(() => validConnections.length > 0, [validConnections]);
   const [showCreate, setShowCreate] = useState(!hasConnections);
 
@@ -64,6 +80,12 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
     [dispatch, operations]
   );
 
+  const filterOBOConnectionParameterSet = useCallback(
+    (parameterSet: ConnectionParameterSet) =>
+      getObjectPropertyValue(parameterSet.parameters, ['token', 'oauthsettings', 'properties', 'IsOnbehalfofLoginSupported']) !== true,
+    []
+  );
+
   const handleOnAdd = useCallback(() => setShowCreate(true), []);
   const handleCreateComplete = useCallback(() => setShowCreate(false), []);
 
@@ -85,6 +107,7 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
           existingReferences={existingReferences}
           nodeIds={operations}
           showActionBar={false}
+          filterParameterSets={shouldFilterOBOConnections ? filterOBOConnectionParameterSet : undefined}
           hideCancelButton={!hasConnections}
           updateConnectionInState={updateConnectionInState}
           onConnectionCreated={handleCreateComplete}

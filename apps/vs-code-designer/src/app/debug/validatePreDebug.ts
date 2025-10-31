@@ -8,7 +8,6 @@ import {
   localEmulatorConnectionString,
   azureWebJobsStorageKey,
   localSettingsFileName,
-  Platform,
 } from '../../constants';
 import { localize } from '../../localize';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
@@ -17,7 +16,7 @@ import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launc
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, Platform } from '@microsoft/vscode-extension-logic-apps';
 import * as azureStorage from 'azure-storage';
 import * as vscode from 'vscode';
 
@@ -125,7 +124,11 @@ export async function validateEmulatorIsRunning(
       await new Promise<void>((resolve, reject) => {
         // Checking against a common container for functions, but doesn't really matter what call we make here
         client.doesContainerExist('azure-webjob-hosts', (err: Error | undefined) => {
-          err ? reject(err) : resolve();
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
         });
       });
     } catch {

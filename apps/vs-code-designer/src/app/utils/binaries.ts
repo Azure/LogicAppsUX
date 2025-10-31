@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
-  Platform,
   autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
@@ -26,7 +25,7 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -34,7 +33,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 
-import AdmZip = require('adm-zip');
+import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
@@ -84,18 +83,20 @@ export async function downloadAndExtractDependency(
       // Extract to targetFolder
       if (dependencyName === dotnetDependencyName) {
         const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-        process.platform === Platform.windows
-          ? await executeCommand(
-              ext.outputChannel,
-              undefined,
-              'powershell -ExecutionPolicy Bypass -File',
-              dependencyFilePath,
-              '-InstallDir',
-              targetFolder,
-              '-Channel',
-              `${version}.0`
-            )
-          : await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+        if (process.platform === Platform.windows) {
+          await executeCommand(
+            ext.outputChannel,
+            undefined,
+            'powershell -ExecutionPolicy Bypass -File',
+            dependencyFilePath,
+            '-InstallDir',
+            targetFolder,
+            '-Channel',
+            `${version}.0`
+          );
+        } else {
+          await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+        }
       } else {
         if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
           stopAllDesignTimeApis();

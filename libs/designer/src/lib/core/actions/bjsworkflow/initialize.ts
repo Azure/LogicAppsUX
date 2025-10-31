@@ -606,9 +606,11 @@ export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, node
       const parameter = getParameterFromName(nodeInputs, 'agentUrl');
       if (parameter && agentUrlInfo) {
         parameter.value = [createLiteralValueSegment(agentUrlInfo.agentUrl)];
-        if (agentUrlInfo.queryParams) {
-          parameter.editorOptions = { ...parameter.editorOptions, chatUrl: agentUrlInfo.chatUrl, queryParams: agentUrlInfo.queryParams };
-        }
+        parameter.editorOptions = {
+          ...parameter.editorOptions,
+          chatUrl: agentUrlInfo.chatUrl,
+          ...(agentUrlInfo.queryParams ? { queryParams: agentUrlInfo.queryParams } : {}),
+        };
         return parameter;
       }
     } catch (error) {
@@ -644,6 +646,44 @@ export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeI
         })
       );
     }
+  }
+};
+
+// this is only for the modelId parameter in Consumption Agents
+export const initializeAgentModelIds = async (parameter: ParameterInfo): Promise<void> => {
+  if (parameter) {
+    let models: string[] = [];
+
+    try {
+      const fetchedModels = await WorkflowService()?.getAgentModelId?.();
+      if (fetchedModels && fetchedModels.length > 0) {
+        models = fetchedModels;
+      }
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'initializeAgentModelIds',
+        message: `Failed to fetch agent models, using default fallback: ${error}`,
+        error: error instanceof Error ? error : undefined,
+      });
+    }
+
+    // Ensure gpt-4o-mini is always available as a fallback option
+    const modelsSet = new Set(models);
+    if (!modelsSet.has('gpt-4o-mini')) {
+      modelsSet.add('gpt-4o-mini');
+    }
+
+    const options = Array.from(modelsSet).map((model) => ({
+      value: model,
+      displayName: model === 'gpt-4o-mini' ? 'gpt-4o-mini (global)' : model,
+    }));
+
+    // Mutate the parameter object before it's stored in Redux
+    parameter.editorOptions = {
+      ...parameter.editorOptions,
+      options,
+    };
   }
 };
 

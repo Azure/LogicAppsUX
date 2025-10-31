@@ -60,6 +60,8 @@ export const Deserialize = (
   let nodesMetadata: NodesMetadata = {};
   const allActionNames = getAllActionNames(definition.actions);
 
+  let hasA2ATrigger = false;
+
   if (definition.triggers && !isNullOrEmpty(definition.triggers)) {
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = createWorkflowNode(tID);
@@ -72,6 +74,7 @@ export const Deserialize = (
       ...addTriggerInstanceMetaData(runInstance),
     };
     allActionNames.push(tID);
+    hasA2ATrigger = equals(trigger?.type, 'Request') && equals(trigger?.kind, 'Agent');
   } else {
     // Workflow has no trigger, create a placeholder trigger node to reference during initialization
     const tID = constants.NODE.TYPE.PLACEHOLDER_TRIGGER;
@@ -96,7 +99,7 @@ export const Deserialize = (
     const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
     for (const [key, action] of parentlessChildren) {
       // Don't add root edges for agent actions in A2A
-      if (equals(workflowKind, 'agent') && isAgentAction(action)) {
+      if ((equals(workflowKind, 'agent') || hasA2ATrigger) && isAgentAction(action)) {
         continue;
       }
       rootEdges.push(createWorkflowEdge(triggerNode?.id ?? '', key));
@@ -357,6 +360,14 @@ const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicApp
 
 const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.IfAction => {
   return equals(action?.type, 'if');
+};
+
+const isAgentCondition = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.AgentCondition => {
+  return !isMcpClient(action);
+};
+
+const isMcpClient = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.McpClient => {
+  return equals(action?.type, 'mcpclienttool');
 };
 
 const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
@@ -701,20 +712,43 @@ export const processScopeActions = (
     };
   } else if (isAgentAction(action)) {
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
-      applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
+      if (isAgentCondition(toolAction)) {
+        applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
 
-      const toolActions = Object.values(toolAction.actions ?? {});
-      // If tool is a handoff tool
-      if (toolActions.length === 1 && equals(toolActions[0]?.type, constants.NODE.TYPE.HANDOFF)) {
-        // Add handoff to metadata for easy access
-        const handoffTarget = (toolActions[0] as any).inputs?.name ?? '';
-        if (handoffTarget !== '') {
-          const existingHandoffs = nodesMetadata[actionName]?.handoffs ?? {};
-          nodesMetadata[actionName] = {
-            ...nodesMetadata[actionName],
-            handoffs: {
-              ...existingHandoffs,
-              [toolName]: handoffTarget,
+        const toolActions = Object.values(toolAction.actions ?? {});
+        // If tool is a handoff tool
+        if (toolActions.length === 1 && equals(toolActions[0]?.type, constants.NODE.TYPE.HANDOFF)) {
+          // Add handoff to metadata for easy access
+          const handoffTarget = (toolActions[0] as any).inputs?.name ?? '';
+          if (handoffTarget !== '') {
+            const existingHandoffs = nodesMetadata[actionName]?.handoffs ?? {};
+            nodesMetadata[actionName] = {
+              ...nodesMetadata[actionName],
+              handoffs: {
+                ...existingHandoffs,
+                [toolName]: handoffTarget,
+              },
+            };
+          }
+        }
+      } else if (isMcpClient(toolAction)) {
+        const toolNode = createWorkflowNode(toolName, WORKFLOW_NODE_TYPES.OPERATION_NODE);
+        toolNode.subGraphLocation = 'tools';
+
+        nodes.push(toolNode);
+        edges.push(createWorkflowEdge(headerId, toolNode.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+        allActions[toolName] = { ...toolAction };
+
+        nodesMetadata[toolName] = {
+          ...nodesMetadata[toolName],
+          subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+        };
+
+        if (toolAction.metadata) {
+          nodesMetadata[toolName] = {
+            ...nodesMetadata[toolName],
+            actionMetadata: {
+              ...toolAction.metadata,
             },
           };
         }
@@ -921,8 +955,10 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
             if (includeCase) {
               names.push(toolName);
             }
-            if (toolAction.actions) {
-              names.push(...getAllActionNames(toolAction.actions, [], includeCase));
+            if (isAgentCondition(toolAction)) {
+              if (toolAction.actions) {
+                names.push(...getAllActionNames(toolAction.actions, [], includeCase));
+              }
             }
           }
         }

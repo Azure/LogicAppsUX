@@ -84,10 +84,10 @@ export const workflowSlice = createSlice({
     initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
     },
-    initWorkflowKind: (state: WorkflowState, action: PayloadAction<WorkflowKind>) => {
+    setWorkflowKind: (state: WorkflowState, action: PayloadAction<WorkflowKind>) => {
       state.workflowKind = action.payload;
     },
-    initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
+    setRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
@@ -117,6 +117,7 @@ export const workflowSlice = createSlice({
           graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
               // eslint-disable-next-line no-param-reassign
+              edge.id = `${action.payload.nodeId}-${edge.target}`;
               edge.source = action.payload.nodeId;
             }
             return edge;
@@ -582,9 +583,8 @@ export const workflowSlice = createSlice({
     },
     removeRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
-      const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
-      if (!parentOperation || !childOperation) {
+      if (!childOperation) {
         return;
       }
       delete childOperation.runAfter?.[parentOperationId];
@@ -799,8 +799,8 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initWorkflowSpec,
-  initWorkflowKind,
-  initRunInstance,
+  setWorkflowKind,
+  setRunInstance,
   addNode,
   addImplicitForeachNode,
   pasteNode,

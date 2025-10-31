@@ -17,7 +17,7 @@ import {
 import { SelectedList } from './selectedList';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
-import { useIntl } from 'react-intl';
+import { useIntlMessages, exportMessages } from '../../../intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { LargeText, XLargeText } from '@microsoft/designer-ui';
@@ -54,56 +54,9 @@ export const WorkflowsSelection: React.FC = () => {
   const allWorkflows = useRef<WorkflowsList[]>([]);
   const allItemsSelected = useRef<SelectedWorkflowsList[]>(parsePreviousSelectedWorkflows(selectedWorkflows));
 
-  const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
-  const intlText = {
-    SELECT_TITLE: intl.formatMessage({
-      defaultMessage: 'Select logic apps to export',
-      id: 'A5rCk8',
-      description: 'Select apps to export title',
-    }),
-    SELECT_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
-      id: '3rlDsf',
-      description: 'Select logic apps to export description',
-    }),
-    SELECTION: intl.formatMessage({
-      defaultMessage: 'Select',
-      id: 'jcxLyd',
-      description: 'Select logic apps to export description',
-    }),
-    SELECTION_ALL: intl.formatMessage({
-      defaultMessage: 'Select all',
-      id: '9dqnHP',
-      description: 'Select all logic apps to export description',
-    }),
-    SELECT_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Select logic app',
-      id: 'yLua0Y',
-      description: 'Select logic app to export description',
-    }),
-    LIMIT_INFO: intl.formatMessage({
-      defaultMessage: 'Selecting more than 15 logic apps affects the export experience performance.',
-      id: 'CB/Oue',
-      description: 'Limit on selected logic apps warning text',
-    }),
-    NO_WORKFLOWS: intl.formatMessage({
-      defaultMessage: 'No workflows',
-      id: 'MvUPPh',
-      description: 'No workflows text',
-    }),
-    NAME: intl.formatMessage({
-      defaultMessage: 'Resource name',
-      id: 'dr26iH',
-      description: 'Resource name title',
-    }),
-    RESOURCE_GROUP: intl.formatMessage({
-      defaultMessage: 'Resource group',
-      id: 'UKCoay',
-      description: 'Resource group title',
-    }),
-  };
+  const intlText = useIntlMessages(exportMessages);
 
   const apiService = useMemo(() => {
     return new ApiService({

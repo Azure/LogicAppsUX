@@ -1,0 +1,157 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+      "AgentType": "Conversational"
+    },
+    "triggers": {
+      "When_a_new_chat_session_started": {
+        "type": "Request",
+        "kind": "Agent",
+        "inputs": {},
+        "metadata": {
+          "undeletable": true
+        }
+      }
+    },
+    "actions": {
+      "TriageAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
+            "messages": [
+              {
+                "role": "System",
+                "content": "You are a triage agent for ACME Inc who is responsible for deciding which agent should handle a given user message. Invoke the right hand-off tool based on the decision."
+              }
+            ],
+            "agentModelSettings": {
+              "maxTokens": 3000,
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "agentChatCompletionSettings": {
+                "temperature": 0.1
+              }
+            }
+          }
+        },
+        "tools": {
+          "handoff_to_SalesAgent": {
+            "description": "Hand off to sales agent who can fulfill sales requests such as ordering a product.",
+            "actions": {
+              "handoff_to_SalesAgent": {
+                "type": "AgentHandoff",
+                "inputs": {
+                  "name": "SalesAgent"
+                }
+              }
+            }
+          },
+          "handoff_to_RefundAgent": {
+            "description": "Hand off to refund agent who can fulfill refund requests.",
+            "actions": {
+              "handoff_to_RefundAgent": {
+                "type": "AgentHandoff",
+                "inputs": {
+                  "name": "RefundAgent"
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "When_a_new_chat_session_started": [
+            "Succeeded"
+          ]
+        }
+      },
+      "SalesAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
+            "messages": [
+              {
+                "role": "System",
+                "content": "You are a sales agent for ACME Inc. Perform the given task or answer questions. Once the given task is done, call the hand off tool to hand off the control back to the triage agent."
+              }
+            ],
+            "agentModelSettings": {
+              "maxTokens": 3000,
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "agentChatCompletionSettings": {
+                "temperature": 0.1
+              }
+            }
+          }
+        },
+        "tools": {
+          "handoff_to_TriageAgent": {
+            "description": "Hand off to triage agent who can check if there are any further help needed.",
+            "actions": {
+              "handoff_to_TriageAgent": {
+                "type": "AgentHandoff",
+                "inputs": {
+                  "name": "TriageAgent"
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {}
+      },
+      "RefundAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
+            "messages": [
+              {
+                "role": "System",
+                "content": "You are a refund agent for ACME Inc. Perform the given task or answer questions. Once done hand off the control back to the triage agent."
+              }
+            ],
+            "agentModelSettings": {
+              "maxTokens": 3000,
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              },
+              "agentChatCompletionSettings": {
+                "temperature": 0.1
+              }
+            }
+          }
+        },
+        "tools": {
+          "handoff_to_TriageAgent": {
+            "description": "Hand off to triage agent who can check if there are any further help needed.",
+            "actions": {
+              "handoff_to_TriageAgent": {
+                "type": "AgentHandoff",
+                "inputs": {
+                  "name": "TriageAgent"
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "outputs": {}
+  },
+  "metadata": {
+    "AgentType": "Conversational"
+  }
+}

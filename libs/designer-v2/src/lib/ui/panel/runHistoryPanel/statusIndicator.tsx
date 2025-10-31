@@ -5,7 +5,7 @@ import StatusCancelledIcon from '../../../../lib/common/images/status_cancelled.
 import { Text, Spinner } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
-const StatusIndicator = (props: { status: string }) => {
+const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
   const intl = useIntl();
 
   const text = React.useMemo(() => {
@@ -24,9 +24,9 @@ const StatusIndicator = (props: { status: string }) => {
         });
       case 'Running':
         return intl.formatMessage({
-          defaultMessage: 'Running',
-          id: 'Z1fLoJ',
-          description: 'Indicates that the run is currently running',
+          defaultMessage: 'In progress',
+          id: 'XwSnaF',
+          description: 'Indicates that the run is currently in progress',
         });
       case 'Waiting':
         return intl.formatMessage({
@@ -62,11 +62,15 @@ const StatusIndicator = (props: { status: string }) => {
       case 'Running':
       case 'Waiting':
       case 'Resuming':
-        return <Spinner size={'extra-tiny'} />;
+        return <Spinner size={'extra-tiny'} title={text} />;
       default:
         return null;
     }
-  }, [props.status]);
+  }, [props.status, text]);
+
+  if (props.onlyIcon) {
+    return icon;
+  }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

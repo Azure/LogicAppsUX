@@ -1,4 +1,10 @@
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
+import {
+  assetsFolderName,
+  localSettingsFileName,
+  logicAppsStandardExtensionId,
+  managementApiPrefix,
+  workflowAppApiVersion,
+} from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -24,7 +30,6 @@ import {
 import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
-import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
@@ -43,9 +48,10 @@ import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
-import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
+import { createUnitTest } from '../unitTest/codefulUnitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
+import { saveUnitTestDefinition } from '../../../utils/unitTest/codelessUnitTest';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -127,7 +133,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     // }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    // this.workflowRuntimeBaseUrl = `http://localhost:${runtimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -136,15 +142,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       this.getPanelOptions()
     );
     this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
     };
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
-    const callbackUri: Uri = await (env as any).asExternalUri(
-      Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
-    );
+    const callbackUri: Uri = await (env as any).asExternalUri(Uri.parse(`${env.uriScheme}://${logicAppsStandardExtensionId}/authcomplete`));
     this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.oauthRedirectUrl = callbackUri.toString(true);
 
@@ -244,10 +248,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         });
         break;
       }
-      case ExtensionCommand.saveBlankUnitTest: {
-        await callWithTelemetryAndErrorHandling('SaveBlankUnitTestFromDesigner', async (activateContext: IActionContext) => {
-          await saveBlankUnitTest(activateContext, Uri.file(this.workflowFilePath), msg.definition);
-        });
+      case ExtensionCommand.createUnitTest: {
+        await createUnitTest(Uri.file(this.workflowFilePath), msg.definition);
         break;
       }
       case ExtensionCommand.saveUnitTest: {
