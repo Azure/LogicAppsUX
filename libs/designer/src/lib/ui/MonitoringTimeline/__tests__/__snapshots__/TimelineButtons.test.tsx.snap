@@ -177,7 +177,7 @@ exports[`TimelineButtons > should render with disabled buttons when fetching rep
   className="flex-col"
 >
   <button
-    className="fui-Button r1alrhcs nav-button ___2wxle20_kbb1rc0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f4dhi0o fb3rf2x fequ9m0 f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
+    className="fui-Button r1alrhcs nav-button ___1neb2cq_lqsl7t0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -217,7 +217,7 @@ exports[`TimelineButtons > should render with disabled buttons when fetching rep
     Previous task
   </button>
   <button
-    className="fui-Button r1alrhcs nav-button ___2wxle20_kbb1rc0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f4dhi0o fb3rf2x fequ9m0 f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
+    className="fui-Button r1alrhcs nav-button ___1neb2cq_lqsl7t0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -264,7 +264,7 @@ exports[`TimelineButtons > should render with disabled buttons when no repetitio
   className="flex-col"
 >
   <button
-    className="fui-Button r1alrhcs nav-button ___2wxle20_kbb1rc0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f4dhi0o fb3rf2x fequ9m0 f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
+    className="fui-Button r1alrhcs nav-button ___1neb2cq_lqsl7t0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -304,7 +304,7 @@ exports[`TimelineButtons > should render with disabled buttons when no repetitio
     Previous task
   </button>
   <button
-    className="fui-Button r1alrhcs nav-button ___2wxle20_kbb1rc0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f4dhi0o fb3rf2x fequ9m0 f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
+    className="fui-Button r1alrhcs nav-button ___1neb2cq_lqsl7t0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -391,7 +391,7 @@ exports[`TimelineButtons > should render with disabled next button at last task 
     Previous task
   </button>
   <button
-    className="fui-Button r1alrhcs nav-button ___2wxle20_kbb1rc0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f4dhi0o fb3rf2x fequ9m0 f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
+    className="fui-Button r1alrhcs nav-button ___1neb2cq_lqsl7t0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -438,7 +438,7 @@ exports[`TimelineButtons > should render with disabled previous button at first 
   className="flex-col"
 >
   <button
-    className="fui-Button r1alrhcs nav-button ___2wxle20_kbb1rc0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f4dhi0o fb3rf2x fequ9m0 f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
+    className="fui-Button r1alrhcs nav-button ___1neb2cq_lqsl7t0 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f1al02dq f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1dwjv2g f1kc2mi9 f1et0tmh fb3rf2x f1wi8ngl f44lkw9 fdrzuqr f15x8b5r fphbwmw f8w4c43 f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1y0svfh fihuait fnxhupq fx507ft fyd6l6x f1062rbf"
     disabled={true}
     onClick={[Function]}
     type="button"
