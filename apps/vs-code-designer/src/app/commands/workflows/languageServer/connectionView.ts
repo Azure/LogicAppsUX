@@ -6,7 +6,7 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../utils/codeless/common';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -15,6 +15,7 @@ import {
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
+  getParametersFromFile,
   saveConnectionReferences,
 } from '../../../utils/codeless/connection';
 import path from 'path';
@@ -26,6 +27,7 @@ import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
+import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 
 type Range = {
   Start: {
@@ -217,7 +219,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
     workflowBaseManagementUri?: string
   ) {
     const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-    const parametersFromDefinition = this.panelMetadata.parametersData || {};
+    const workflowParameters = this.panelMetadata.parametersData;
+    const parametersFromDefinition = {} as any;
 
     if (connectionReferences) {
       const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
@@ -232,7 +235,39 @@ export default class OpenConnectionView extends OpenDesignerBase {
       await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
     }
 
+    if (parametersFromDefinition) {
+      delete parametersFromDefinition.$connections;
+      for (const parameterKey of Object.keys(parametersFromDefinition)) {
+        const parameter = parametersFromDefinition[parameterKey];
+        parameter.value = parameter.value ?? parameter?.defaultValue;
+        delete parameter.defaultValue;
+      }
+      await this.mergeJsonParameters(this.workflowFilePath, parametersFromDefinition, workflowParameters);
+      await saveWorkflowParameter(this.context, this.workflowFilePath, parametersFromDefinition);
+    }
+
     insertFunctionCallAtLocation(functionName, connection, insertionContext);
+  }
+
+  /**
+   * Merges parameters from JSON.
+   * @param filePath The file path of the parameters JSON file.
+   * @param definitionParameters The parameters from the designer.
+   * @param panelParameterRecord The parameters from the panel
+   * @returns parameters from JSON file and designer.
+   */
+  private async mergeJsonParameters(
+    filePath: string,
+    definitionParameters: any,
+    panelParameterRecord: Record<string, Parameter>
+  ): Promise<void> {
+    const jsonParameters = await getParametersFromFile(this.context, filePath);
+
+    Object.entries(jsonParameters).forEach(([key, parameter]) => {
+      if (!definitionParameters[key] && !panelParameterRecord[key]) {
+        definitionParameters[key] = parameter;
+      }
+    });
   }
 
   private async _getDesignerPanelMetadata(): Promise<any> {
@@ -240,6 +275,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const artifacts = await getArtifactsInLocalProject(projectPath);
     const bundleVersionNumber = await getBundleVersionNumber();
+    const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
@@ -260,6 +296,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
       accessToken: azureDetails.accessToken,
       workflowName: this.workflowName,
       artifacts,
+      parametersData,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
       extensionBundleVersion: bundleVersionNumber,

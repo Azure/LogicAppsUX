@@ -117,7 +117,12 @@ const createAgentCodefulWorkflowFile = async (logicAppFolderPath: string, logicA
 
   // Create the .cs file inside the functions folder
   const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'AgentCodefulFile');
-  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8')).replace(/<%= flowName %>/g, `"${workflowName}"`);
+  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
+    .replace(/<%= flowName %>/g, `"${workflowName}"`)
+    .replace(
+      /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
+      `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
+    );
 
   const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
   await fse.writeFile(csFilePath, templateCSContent);

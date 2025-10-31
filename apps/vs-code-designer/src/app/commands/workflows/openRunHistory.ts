@@ -134,10 +134,10 @@ const getWorkflowNames = (filePath: string): string[] => {
     try {
       const fileContent = readFileSync(currentFilePath, 'utf8');
 
-      // Regex to match createConversationalWorkflow or createStatefulWorkflow with flowName parameter
-      // Matches patterns like: createConversationalWorkflow(flowName: "TestFlow") or createStatefulWorkflow(flowName: "TestFlow")
+      // Regex to match CreateConversationalAgent or createStatefulWorkflow calls
+      // Matches patterns like: CreateConversationalAgent("TestFlow") or createStatefulWorkflow("TestFlow")
       // Supports both double quotes and single quotes, and handles whitespace variations
-      const workflowRegex = /create(?:Conversational|Stateful)Workflow\s*\(\s*flowName\s*:\s*["']([^"']+)["']\s*\)/g;
+      const workflowRegex = /(?:CreateConversationalAgent|createStatefulWorkflow)\s*\(\s*["']([^"']+)["']\s*\)/g;
 
       let match: RegExpExecArray | null;
       while ((match = workflowRegex.exec(fileContent)) !== null) {

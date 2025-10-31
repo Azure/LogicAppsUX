@@ -105,7 +105,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       }
 
       // Then send notifications for runtime updates
-      ext.languageClient.sendNotification('custom/updateApiConfig', {
+      ext?.languageClient?.sendNotification('custom/updateApiConfig', {
         subscriptionId: subscriptionId,
         resourceGroup: resourceGroup,
       });

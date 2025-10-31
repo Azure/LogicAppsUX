@@ -5,13 +5,14 @@
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\..\jk</LogicAppFolderToPublish>
+    <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\..\LogicApp</LogicAppFolderToPublish>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.21.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.19.0" />
+    <PackageReference Include="Microsoft.Azure.Workflows.Sdk.Agents" Version="1.141.0.9"/>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
@@ -36,9 +37,6 @@
       <OutputFile>.\bin\Debug\net8.0\worker.config.json</OutputFile>
     </PropertyGroup>
     <WriteLinesToFile File="$(OutputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('dotnet-isolated','logicappdotnet-isolated'))" Overwrite="true" />
-  </Target>
-  <Target Name="TriggerPublishOnBuild" AfterTargets="Build">
-    <CallTarget Targets="Publish" />
   </Target>
   <Target Name="CopyToCodefulFolder" AfterTargets="Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
     <ItemGroup>

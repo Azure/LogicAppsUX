@@ -22,15 +22,24 @@ public class Program
         // Configure the worker.
         var host = new HostBuilder()
             .ConfigureFunctionsWorkerDefaults()
-            .ConfigureServices(services => WorkflowAgentBuilderFactory.ConfigureServices(services))
+            .ConfigureServices(services => WorkflowBuilderFactory.ConfigureServices(services))
             .Build();
 
-        var builder = WorkflowBuilderFactory.CreateStatefulWorkflow( <%= flowName %>, WorkflowTriggers.BuiltIn.CreateHttpTrigger());
+        var trigger = WorkflowTriggers.Managed.Msnweather("msnweather").WhenOnCurrentWeatherChange(
+                () => "Seattle",
+                () => OnCurrentWeatherChangeMeasureInput.Temperature,
+                () => OnCurrentWeatherChangeWhenInput.IsEqualTo,
+                () => 75d,
+                () => "I"
+            );
+            trigger.WithName("woohoo");
+        var builder = WorkflowBuilderFactory.CreateStatefulWorkflow( <%= flowName %>, trigger);
+
         var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput}");
         builder.AddAction(compose);
 
 
-        WorkflowAgentBuilderFactory.CreateWorkflows();
+        WorkflowBuilderFactory.CreateWorkflows();
         host.Run();
     }
 }

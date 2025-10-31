@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.Azure.Workflows.Sdk.Agents;
+using Microsoft.Azure.Workflows.Sdk.Agents.Connectors;
 using Microsoft.Extensions.Hosting;
 
 namespace AgentCodefulNamespace;
@@ -22,11 +23,11 @@ public class Program
         // Configure the worker.
         var host = new HostBuilder()
             .ConfigureFunctionsWorkerDefaults()
-            .ConfigureServices(services => WorkflowAgentBuilderFactory.ConfigureServices(services))
+            .ConfigureServices(services => WorkflowBuilderFactory.ConfigureServices(services))
             .Build();
 
         // Create a workflow agent builder for the "TestFlow" workflow.
-        var builder = WorkflowAgentBuilderFactory.CreateWorkflowAgentBuilder(flowName: <%= flowName %>);
+        var builder = WorkflowBuilderFactory.CreateConversationalAgent(<%= flowName %>);
 
         #region agent configuration
         var agent = new AgentBuilder
@@ -65,10 +66,9 @@ public class Program
         #region Add tool to the agent
         agent.AddTool(b =>
             {
-                var getCurrentWeatherAction = b.GetManagedConnectors().Msnweather.CurrentWeather(
-                    connectionId: "msnweather",
-                    location: b => $"{b.Parameters.CurrentWeatherLocation}",
-                    units: b1 => "I");
+                var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+                    location: () => "WA",
+                    units: () => "I");
                 b.AddAction(getCurrentWeatherAction);
 
             },
@@ -77,9 +77,8 @@ public class Program
         #endregion
 
         builder.AddAgent(agent);
-        builder.BuildConversationalFlow();
 
-        WorkflowAgentBuilderFactory.CreateWorkflows();
+        WorkflowBuilderFactory.CreateWorkflows();
         host.Run();
     }
 }
