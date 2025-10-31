@@ -21,6 +21,7 @@ import {
   isZipDeployEnabledSetting,
   useSmbDeployment,
   libDirectory,
+  customDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -91,7 +92,7 @@ async function deploy(
 
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'custom')))) {
+    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory)))) {
       await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
     }
   }

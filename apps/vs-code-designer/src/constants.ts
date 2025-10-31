@@ -31,6 +31,7 @@ export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
+export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
