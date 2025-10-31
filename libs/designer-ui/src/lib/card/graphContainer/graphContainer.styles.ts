@@ -8,7 +8,7 @@ export const useGraphContainerStyles = makeStyles({
     position: 'relative',
     backgroundColor: designTokens.colors.scopev2Background, // Automatically handles theme switching
     boxSizing: 'border-box',
-    ...shorthands.borderRadius('8px'),
+    borderRadius: '12px',
     ...shorthands.border('2px', 'solid', tokens.colorNeutralStroke1), // Theme-aware border
   },
   selected: {
