@@ -12,12 +12,12 @@ import { AssertionsPanel } from './assertionsPanel/assertionsPanel';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
-import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
+import { NodeSearchDialog } from './nodeSearchPanel/nodeSearchDialog';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
 import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflowParametersPanelFooter';
 import { Panel, PanelType } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { Dialog, Spinner } from '@fluentui/react-components';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
 import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
 import { PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
@@ -114,6 +114,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
 
   const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions', 'Discovery'], []);
 
+  const dialogModes = useMemo(() => ['NodeSearch'], []);
+
   const isLoadingPanel = useIsPanelLoading();
 
   const LoadingComponent = () => (
@@ -122,8 +124,40 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     </div>
   );
 
+  const Content = () =>
+    isLoadingPanel ? (
+      <LoadingComponent />
+    ) : currentPanelMode === 'WorkflowParameters' ? (
+      <WorkflowParametersPanel {...commonPanelProps} />
+    ) : currentPanelMode === 'Discovery' ? (
+      <RecommendationPanelContext {...commonPanelProps} />
+    ) : currentPanelMode === 'NodeSearch' ? (
+      <NodeSearchDialog {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
+    ) : currentPanelMode === 'Connection' ? (
+      <ConnectionPanel {...commonPanelProps} />
+    ) : currentPanelMode === 'Error' ? (
+      <ErrorsPanel {...commonPanelProps} />
+    ) : currentPanelMode === 'Assertions' ? (
+      <AssertionsPanel {...commonPanelProps} />
+    ) : null; // Caught above
+
   if (isUndefined(currentPanelMode)) {
     return null;
+  }
+
+  if (dialogModes.includes(currentPanelMode)) {
+    return (
+      <Dialog
+        open={true}
+        onOpenChange={(_event, data) => {
+          if (!data.open) {
+            dismissPanel();
+          }
+        }}
+      >
+        <Content />
+      </Dialog>
+    );
   }
 
   return !isLoadingPanel && currentPanelMode === 'Operation' ? (
@@ -179,23 +213,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
       }}
     >
       {isResizeable ? <PanelResizer updatePanelWidth={setWidth} /> : null}
-      {
-        isLoadingPanel ? (
-          <LoadingComponent />
-        ) : currentPanelMode === 'WorkflowParameters' ? (
-          <WorkflowParametersPanel {...commonPanelProps} />
-        ) : currentPanelMode === 'Discovery' ? (
-          <RecommendationPanelContext {...commonPanelProps} />
-        ) : currentPanelMode === 'NodeSearch' ? (
-          <NodeSearchPanel {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
-        ) : currentPanelMode === 'Connection' ? (
-          <ConnectionPanel {...commonPanelProps} />
-        ) : currentPanelMode === 'Error' ? (
-          <ErrorsPanel {...commonPanelProps} />
-        ) : currentPanelMode === 'Assertions' ? (
-          <AssertionsPanel {...commonPanelProps} />
-        ) : null // Caught above
-      }
+      <Content />
     </Panel>
   );
 };
