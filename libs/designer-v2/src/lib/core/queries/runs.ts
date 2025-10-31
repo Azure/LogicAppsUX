@@ -72,7 +72,11 @@ export const useRunsInfiniteQuery = (enabled = false) => {
 };
 
 export const useAllRuns = () => {
-  const { data: allRuns = {} } = useQuery<Record<string, Run>>([runsQueriesKeys.allRuns]);
+  const { data: allRuns = {} } = useQuery<Record<string, Run>>([runsQueriesKeys.allRuns], () => ({}), {
+    ...queryOpts,
+    // This query is populated by useRunsInfiniteQuery, not fetched directly
+    enabled: false,
+  });
 
   return useMemo(() => {
     return Object.values(allRuns)
