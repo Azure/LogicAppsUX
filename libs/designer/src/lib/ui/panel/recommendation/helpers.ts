@@ -40,4 +40,5 @@ export const ALLOWED_A2A_CONNECTOR_NAMES = new Set([
   'inlineCode',
   'as2Operations',
   'datetime',
+  'agent',
 ]);
