@@ -116,14 +116,14 @@ const createAgentCodefulWorkflowFile = async (logicAppFolderPath: string, logicA
   // Set the functionAppName and namespaceName properties from the context wizard
 
   // Create the .cs file inside the functions folder
-  const templateCSPath = path.join(__dirname, assetsFolderName, 'AgentCodefulProjectTemplate', 'AgentFunctionsFile');
+  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'AgentCodefulFile');
   const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8')).replace(/<%= flowName %>/g, `"${workflowName}"`);
 
   const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
   await fse.writeFile(csFilePath, templateCSContent);
 
   // Create the .csproj file inside the functions folder
-  const templateProjPath = path.join(__dirname, assetsFolderName, 'AgentCodefulProjectTemplate', 'AgentFunctionsProj');
+  const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
   const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
 
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
