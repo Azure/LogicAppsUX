@@ -946,7 +946,7 @@ function convertToMcpConnectionsData(
     processValue(connectionParametersSet.values, 'password', true);
     processValue(connectionParametersSet.values, 'pfx', true);
     processValue(connectionParametersSet.values, 'authority', false);
-    processValue(connectionParametersSet.values, 'tenantId', false);
+    processValue(connectionParametersSet.values, 'tenant', false);
     processValue(connectionParametersSet.values, 'audience', false);
     processValue(connectionParametersSet.values, 'clientId', false);
     processValue(connectionParametersSet.values, 'secret', true);
