@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
-import { Text } from '@fluentui/react-components';
+import { Badge, Text } from '@fluentui/react-components';
 import { ChevronRight12Regular } from '@fluentui/react-icons';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import { getDisplayNameFromConnector, getDescriptionFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { isBuiltInConnector } from '@microsoft/designer-ui';
 import { useConnectorCardStyles } from './styles/ConnectorCard.styles';
+import { useIntl } from 'react-intl';
 
 export interface ConnectorCardProps {
   connector: Connector;
@@ -13,6 +14,8 @@ export interface ConnectorCardProps {
 }
 
 export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: ConnectorCardProps) => {
+  const intl = useIntl();
+
   const classes = useConnectorCardStyles();
   const connectorName = getDisplayNameFromConnector(connector);
   const description = getDescriptionFromConnector(connector);
@@ -23,6 +26,12 @@ export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: Connec
     onClick?.(connector.id);
   }, [connector.id, onClick]);
 
+  const builtInLabel = intl.formatMessage({
+    defaultMessage: 'Built-in',
+    id: '+DmIHG',
+    description: 'Label for built-in connectors',
+  });
+
   return (
     <div className={classes.card} onClick={handleClick}>
       <div className={classes.iconContainer}>
@@ -32,7 +41,7 @@ export const ConnectorCard = ({ connector, onClick, displayRuntimeInfo }: Connec
       <div className={classes.content}>
         <div className={classes.titleRow}>
           <Text className={classes.title}>{connectorName}</Text>
-          {displayRuntimeInfo && isBuiltIn && <div className={classes.builtInBadge}>Built-in</div>}
+          {displayRuntimeInfo && isBuiltIn && <Badge appearance="tint">{builtInLabel}</Badge>}
         </div>
         {description && <Text className={classes.description}>{description}</Text>}
       </div>

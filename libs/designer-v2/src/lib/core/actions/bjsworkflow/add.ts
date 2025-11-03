@@ -67,6 +67,7 @@ import { isA2AWorkflow } from '../../state/workflow/helper';
 import { openKindChangeDialog } from '../../state/modal/modalSlice';
 import constants from '../../../common/constants';
 import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
+import { isDynamicConnection } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -485,7 +486,9 @@ export const trySetDefaultConnectionForNode = async (
   isConnectionRequired: boolean
 ) => {
   const connectorId = connector.id;
-  const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
+  const connections = (await getConnectionsForConnector(connectorId)).filter(
+    (c) => c.properties.overallStatus !== 'Error' || !isDynamicConnection(c.properties.feature)
+  );
   if (connections.length > 0) {
     const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
     await ConnectionService().setupConnectionIfNeeded(connection);

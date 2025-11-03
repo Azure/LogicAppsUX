@@ -126,6 +126,7 @@ const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
 const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
+export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -814,10 +815,13 @@ function convertToAgentConnectionsData(
     connectionParameterMetadata
   );
 
+  // TODO: This logic needs to be generalized post Ignite, should come from the manifest
   const cognitiveServiceAccountId = parameterValues?.['cognitiveServiceAccountId'];
   const isFoundryAgentServiceConnection =
     equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
     foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
+  const isAPIMManagementConnection = apimanagementRegex.test(cognitiveServiceAccountId);
+
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
@@ -828,7 +832,7 @@ function convertToAgentConnectionsData(
       },
       endpoint: parameterValues?.['openAIEndpoint'],
       resourceId: cognitiveServiceAccountId,
-      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : 'model',
+      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
     pathLocation: [agentLocation],
@@ -942,7 +946,7 @@ function convertToMcpConnectionsData(
     processValue(connectionParametersSet.values, 'password', true);
     processValue(connectionParametersSet.values, 'pfx', true);
     processValue(connectionParametersSet.values, 'authority', false);
-    processValue(connectionParametersSet.values, 'tenantId', false);
+    processValue(connectionParametersSet.values, 'tenant', false);
     processValue(connectionParametersSet.values, 'audience', false);
     processValue(connectionParametersSet.values, 'clientId', false);
     processValue(connectionParametersSet.values, 'secret', true);

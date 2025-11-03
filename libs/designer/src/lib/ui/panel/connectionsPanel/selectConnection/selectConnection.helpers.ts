@@ -1,5 +1,6 @@
 import type { Connection, ConnectionProperties } from '@microsoft/logic-apps-shared';
-import { equals, getConnectionErrors } from '@microsoft/logic-apps-shared';
+import { getConnectionErrors } from '@microsoft/logic-apps-shared';
+import { isDynamicConnection } from '../../../../common/utilities/Utils';
 
 export type ConnectionWithFlattenedProperties = Omit<Connection, 'properties'> & Connection['properties'] & { invalid: boolean };
 
@@ -33,6 +34,6 @@ export const getSubLabelForConnection = (item: ConnectionProperties): string | u
     item.authenticatedUser?.name ??
     item.accountName ??
     item.connectionParameters?.agentModelType?.type ??
-    (equals(item.feature ?? '', 'DynamicUserInvoked', true) ? 'Dynamic connection' : undefined)
+    (isDynamicConnection(item.feature) ? 'Dynamic connection' : undefined)
   );
 };

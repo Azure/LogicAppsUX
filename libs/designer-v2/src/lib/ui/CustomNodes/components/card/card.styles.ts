@@ -14,7 +14,7 @@ export const useCardStyles = makeStyles({
     border: '2px solid transparent',
     boxSizing: 'border-box',
     fontSize: '12px',
-    borderRadius: '4px',
+    borderRadius: '6px',
     width: '200px',
     padding: '8px 10px',
     webkitUserSelect: 'none',

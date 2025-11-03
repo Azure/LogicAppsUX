@@ -19,7 +19,7 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
     Handle reactflow
   </div>
   <div
-    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+    className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -60,7 +60,7 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
     Handle reactflow
   </div>
   <div
-    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+    className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -102,7 +102,7 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
       Handle reactflow
     </div>
     <div
-      className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+      className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
       data-automation-id="msla-graph-container-mockid"
     />
     <div
@@ -156,7 +156,7 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
     Handle reactflow
   </div>
   <div
-    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+    className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -197,7 +197,7 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
     Handle reactflow
   </div>
   <div
-    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+    className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -238,7 +238,7 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
     Handle reactflow
   </div>
   <div
-    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+    className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div
@@ -271,7 +271,7 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
     Handle reactflow
   </div>
   <div
-    className="___12cglbp_5g59060 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1erghxr f1ehz9de f1spoy8 fmb70yw ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
+    className="___g40ym10_1arimw7 fly5x3f f1l02sjl f10pi13n f1dmdbja f1ewtqcl f1wt32pr ftac7j7 f1w0yd9v fdwcyh7 f1h0xgbp fzkkow9 fcdblym fg706s2 fjik90z fj3muxo f1akhkt f1aperda f1lxtadh"
     data-automation-id="msla-graph-container-mockid"
   />
   <div

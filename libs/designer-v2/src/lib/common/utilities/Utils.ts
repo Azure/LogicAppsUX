@@ -33,3 +33,7 @@ export class AgentUtils {
     return equals(parameterName ?? '', 'agentModelType', true);
   };
 }
+
+export const isDynamicConnection = (feature?: string): boolean => {
+  return equals(feature ?? '', 'DynamicUserInvoked', true);
+};

@@ -103,8 +103,8 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      // Exclude agent operations unless it's the root of an agentic workflow
-      if ((!isAgenticWorkflow || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
+      // Exclude agent operations unless it's the root of an agentic or A2A workflow
+      if (((!isAgenticWorkflow && !isA2AWorkflow) || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
         return false;
       }
 
@@ -144,7 +144,15 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [shouldShowAgentRequestTriggerConsumption, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
+    [
+      passesA2AWorkflowFilter,
+      isAgenticWorkflow,
+      isA2AWorkflow,
+      isRoot,
+      shouldShowAgentRequestTriggerConsumption,
+      isWithinAgenticLoop,
+      isAgentTool,
+    ]
   );
 
   useDebouncedEffect(
