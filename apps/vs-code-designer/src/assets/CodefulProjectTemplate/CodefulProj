@@ -36,7 +36,7 @@
       <InputFile>.\bin\Debug\net8.0\worker.config.json</InputFile>
       <OutputFile>.\bin\Debug\net8.0\worker.config.json</OutputFile>
     </PropertyGroup>
-    <WriteLinesToFile File="$(OutputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('dotnet-isolated','logicappdotnet-isolated'))" Overwrite="true" />
+    <WriteLinesToFile File="$(OutputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('dotnet-isolated','dotnet'))" Overwrite="true" />
   </Target>
   <Target Name="CopyToCodefulFolder" AfterTargets="Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
     <ItemGroup>
