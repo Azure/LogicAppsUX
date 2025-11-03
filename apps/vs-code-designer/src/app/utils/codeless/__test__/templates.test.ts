@@ -1,7 +1,7 @@
-import { type StandardApp, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { type StandardApp, ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { describe, it, expect } from 'vitest';
 import { getCodelessWorkflowTemplate } from '../templates';
-import { WorkflowKind, WorkflowType } from '../../../../constants';
+import { WorkflowKind } from '../../../../constants';
 import { isNullOrEmpty } from '@microsoft/logic-apps-shared';
 
 const functionName = 'testFunction';

@@ -2,7 +2,7 @@ import type { IWorkerRuntime } from './cliFeed';
 import type { FuncVersion } from './functions';
 import type { IParsedHostJson } from './host';
 import type { ProjectLanguage } from './language';
-import type { TargetFramework, WorkflowProjectType } from './workflow';
+import type { TargetFramework, WorkflowProjectType, WorkflowType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
@@ -103,7 +103,7 @@ export interface IWebviewProjectContext extends IActionContext {
   projectType: string;
   targetFramework: string;
   workflowName: string;
-  workflowType: string;
+  workflowType: WorkflowType;
   functionFolderName?: string;
   functionName?: string;
   functionNamespace?: string;

@@ -124,3 +124,15 @@ export const TargetFramework = {
   Net8: 'net8',
 } as const;
 export type TargetFramework = (typeof TargetFramework)[keyof typeof TargetFramework];
+
+export const WorkflowType = {
+  stateful: 'Stateful-Codeless',
+  stateless: 'Stateless-Codeless',
+  agentic: 'Agentic-Codeless',
+  agent: 'Agent-Codeless',
+  statefulCodeful: 'Stateful-Codeful',
+  statelessCodeful: 'Stateless-Codeful',
+  agenticCodeful: 'Agentic-Codeful',
+  agentCodeful: 'Agent-Codeful',
+} as const;
+export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];

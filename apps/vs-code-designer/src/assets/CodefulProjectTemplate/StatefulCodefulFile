@@ -32,7 +32,7 @@ public class Program
                 () => 75d,
                 () => "I"
             );
-            trigger.WithName("woohoo");
+        trigger.WithName("triggerName");
         var builder = WorkflowBuilderFactory.CreateStatefulWorkflow( <%= flowName %>, trigger);
 
         var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput}");

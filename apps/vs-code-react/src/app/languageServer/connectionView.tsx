@@ -40,7 +40,6 @@ const ConnectionView = ({
   const onConnectionSuccessful = (connection: Connection) => {
     const designerState = DesignerStore.getState();
     const { connectionsMapping, connectionReferences: referencesObject } = designerState.connections;
-    console.log('charlie', connectionsMapping, referencesObject);
     const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
       const referenceKey = getRecordEntry(connectionsMapping, nodeId);
       if (!referenceKey || !referencesObject[referenceKey]) {

@@ -25,7 +25,6 @@ import {
   workerRuntimeKey,
   workflowFileName,
   workspaceTemplatesFolderName,
-  type WorkflowType,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
@@ -46,7 +45,7 @@ import type {
   IWebviewProjectContext,
   StandardApp,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkerRuntime, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { WorkerRuntime, ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
@@ -94,16 +93,12 @@ export async function getHostContent(): Promise<IHostJsonV2> {
 
 export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
   const { logicAppType, workflowType, functionName, workflowName, logicAppName } = webviewProjectContext;
-  const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(
-    logicAppType as ProjectType,
-    workflowType as WorkflowType,
-    functionName
-  );
 
   await fse.ensureDir(logicAppFolderPath);
   if (logicAppType === ProjectType.agentCodeful) {
-    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName);
+    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName, workflowType);
   } else {
+    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(logicAppType as ProjectType, workflowType, functionName);
     const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, workflowName);
     await fse.ensureDir(logicAppWorkflowFolderPath);
 
@@ -112,24 +107,27 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   }
 }
 
-const createAgentCodefulWorkflowFile = async (logicAppFolderPath: string, logicAppName: string, workflowName: string) => {
-  // Set the functionAppName and namespaceName properties from the context wizard
+const createAgentCodefulWorkflowFile = async (
+  logicAppFolderPath: string,
+  logicAppName: string,
+  workflowName: string,
+  workflowType: WorkflowType
+) => {
+  const agentFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulFile' : 'AgentCodefulFile';
 
   // Create the .cs file inside the functions folder
-  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'AgentCodefulFile');
-  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
-    .replace(/<%= flowName %>/g, `"${workflowName}"`)
-    .replace(
-      /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
-      `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
-    );
+  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', agentFileName);
+  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8')).replace(/<%= flowName %>/g, `"${workflowName}"`);
 
   const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
   await fse.writeFile(csFilePath, templateCSContent);
 
   // Create the .csproj file inside the functions folder
   const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
-  const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+  const templateProjContent = (await fse.readFile(templateProjPath, 'utf-8')).replace(
+    /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
+    `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
+  );
 
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
 

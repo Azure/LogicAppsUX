@@ -152,8 +152,8 @@ export const workspaceMessages = defineMessages({
     description: 'Autonomous agents workflow description',
   },
   AGENT_TITLE: {
-    defaultMessage: 'Conversational agents',
-    id: '6sEsIN',
+    defaultMessage: 'Conversational agents (Preview)',
+    id: 'M9LjqI',
     description: 'Conversational agent workflow option',
   },
   AGENT_DESCRIPTION: {

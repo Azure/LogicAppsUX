@@ -108,14 +108,6 @@ export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
 
-export const WorkflowType = {
-  stateful: 'Stateful-Codeless',
-  stateless: 'Stateless-Codeless',
-  agentic: 'Agentic-Codeless',
-  agent: 'Agent-Codeless',
-} as const;
-export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
-
 export const workflowCodeType = {
   codeful: 'Codeful',
   codeless: 'Codeless',
