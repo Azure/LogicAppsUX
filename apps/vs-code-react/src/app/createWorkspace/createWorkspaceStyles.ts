@@ -220,6 +220,8 @@ export const useCreateWorkspaceStyles = makeStyles({
 
   browseButton: {
     alignSelf: 'flex-start',
+    flex: '0 0 auto',
+    whiteSpace: 'nowrap',
   },
 
   pathDisplay: {
@@ -243,6 +245,8 @@ export const useCreateWorkspaceStyles = makeStyles({
 
   inputControl: {
     width: '100%',
+    flex: '1 1 200px',
+    minWidth: '200px',
     maxWidth: '800px', // Increased to match the fieldContainer
   },
 
