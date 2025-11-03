@@ -192,6 +192,11 @@ export const workspaceMessages = defineMessages({
     id: 'cR0MlP',
     description: 'Browse folder button',
   },
+  VALIDATING_BROWSE_BUTTON: {
+    defaultMessage: 'Validating...',
+    id: 'A7wxg0',
+    description: 'Validating folder button',
+  },
   PACKAGE_PATH_EMPTY_MESSAGE: {
     defaultMessage: 'Package path cannot be empty.',
     id: 'pO1Zvz',
