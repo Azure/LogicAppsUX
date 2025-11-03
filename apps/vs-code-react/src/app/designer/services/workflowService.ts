@@ -76,7 +76,7 @@ export const fetchAgentUrl = (
         console.log('🗝️ Setting query params with available tokens');
         queryParams = {
           ...(a2aKey && { apiKey: a2aKey }),
-          ...(oboToken && { oboToken }),
+          ...(oboToken && { oboUserToken: oboToken }),
         };
         console.log('🔑 Query params set:', { hasApiKey: !!a2aKey, hasOboToken: !!oboToken });
       } else {

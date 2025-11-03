@@ -86,7 +86,7 @@ export const fetchAgentUrl = (
         console.log('🗝️ Setting query params with available tokens');
         queryParams = {
           ...(a2aKey && { apiKey: a2aKey }),
-          ...(oboToken && { oboToken }),
+          ...(oboToken && { oboUserToken: oboToken }),
         };
         console.log('🔑 Query params set:', { hasApiKey: !!a2aKey, hasOboToken: !!oboToken });
       } else {
@@ -134,7 +134,6 @@ const fetchA2AAuthKey = async (workflowName: string, baseUrl: string, httpClient
 };
 
 // Helper function to fetch OBO (On-Behalf-Of) data
-// Helper function to fetch OBO (On-Behalf-Of) data
 const fetchOBOData = async (
   siteResourceId: string,
   baseUrl: string,
@@ -154,16 +153,6 @@ const fetchOBOData = async (
 
     const connectionsUri = `${armBaseUrl}${siteResourceId}/workflows/configuration/connections?api-version=2018-11-01`;
     console.log('🔗 OBO Connections Request URI:', connectionsUri);
-
-    // const connectionsResponse = await httpClient.get({
-    //   uri: connectionsUri,
-    //   headers: {
-    //     'x-ms-client-object-id': clientId,
-    //     'x-ms-client-tenant-id': tenantId,
-    //   },
-    // });
-
-    // console.log('✅ OBO Connections Response:', connectionsResponse);
 
     // Parse connections data to JSON and print it
     try {
@@ -196,6 +185,10 @@ const fetchOBOData = async (
     const oboResponse = await httpClient.post<any, any>({
       uri: oboKeysUri,
       content: null,
+      headers: {
+        'x-ms-client-object-id': clientId,
+        'x-ms-client-tenant-id': tenantId,
+      },
     });
 
     console.log('✅ OBO Keys Response:', oboResponse);
@@ -211,6 +204,7 @@ const fetchOBOData = async (
     return null;
   }
 };
+
 // Helper function to resolve app settings placeholders in connection IDs
 const resolveConnectionIdPlaceholders = (connectionId: string, subscriptionId: string, resourceGroup: string): string => {
   console.log('🔄 Resolving placeholders in connection ID:', connectionId);

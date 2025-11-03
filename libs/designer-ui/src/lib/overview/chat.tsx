@@ -51,9 +51,14 @@ export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, buttonCom
     if (loading) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
+
+    const chatUrl = `${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${data?.queryParams?.oboUserToken ? `&oboUserToken=${data?.queryParams?.oboUserToken}` : ''}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`;
+    console.log('Chat URL:', chatUrl);
+    console.log('OBO User Token:', data?.queryParams?.['oboUserToken']);
+
     return (
       <iframe
-        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`}
+        src={chatUrl}
         title={IntlText.TITLE}
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
