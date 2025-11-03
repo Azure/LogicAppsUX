@@ -14,6 +14,8 @@ export interface OverviewPropertiesProps {
   stateType: string;
   triggerName?: string;
   definition?: LogicAppsV2.WorkflowDefinition;
+  agentUrl?: string;
+  agentApiKey?: string;
 }
 
 export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
@@ -23,6 +25,8 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   statelessRunMode,
   stateType,
   definition,
+  agentUrl,
+  agentApiKey,
 }) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -36,6 +40,16 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
       defaultMessage: 'Callback URL:',
       id: 'woJQhv',
       description: 'Label text for callback URL',
+    }),
+    AGENT_URL: intl.formatMessage({
+      defaultMessage: 'Agent URL:',
+      id: 'h4Uo8Z',
+      description: 'Label text for agent URL',
+    }),
+    AGENT_API_KEY: intl.formatMessage({
+      defaultMessage: 'Agent Key:',
+      id: 'w0pNyJ',
+      description: 'Label text for agent key',
     }),
     FLOW_STATE_TYPE: intl.formatMessage({
       defaultMessage: 'State type:',
@@ -97,6 +111,22 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
                 </Link>
               </div>
             </Label>
+          ) : null}
+          {agentUrl ? (
+            <>
+              <Label>
+                <Text>{Resources.AGENT_URL}</Text>
+                <div>
+                  <Link as="a" href={agentUrl} rel="noopener" target="_blank">
+                    {agentUrl}
+                  </Link>
+                </div>
+              </Label>
+              <Label>
+                <Text>{Resources.AGENT_API_KEY}</Text>
+                <div style={{ overflow: 'auto' }}>{agentApiKey ?? '--'}</div>
+              </Label>
+            </>
           ) : null}
         </div>
       </PivotItem>

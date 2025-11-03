@@ -137,7 +137,7 @@ export const Overview: React.FC<OverviewProps> = ({
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />
-      <OverviewProperties {...workflowProperties} />
+      <OverviewProperties {...workflowProperties} agentUrl={agentUrlData?.agentUrl} agentApiKey={agentUrlData?.queryParams?.apiKey} />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
           <div className={styles.runHistoryFilter}>

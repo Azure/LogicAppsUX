@@ -241,10 +241,13 @@ function normalizeLocation(location: string): string {
 }
 
 function getWorkflowStateType(workflowName: string, kind: string, settings: Record<string, string>): string {
-  const settingName = `Workflows.${workflowName}.OperationOptions`;
-  return kind?.toLowerCase() === 'stateful'
+  const operationOptionsSetting = `Workflows.${workflowName}.OperationOptions`;
+  const flowKindLower = kind?.toLowerCase();
+  return flowKindLower === 'stateful'
     ? localize('logicapps.stateful', 'Stateful')
-    : settings[settingName]?.toLowerCase() === 'withstatelessrunhistory'
-      ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
-      : localize('logicapps.stateless', 'Stateless');
+    : flowKindLower === 'agent'
+      ? localize('logicapps.agent', 'Agent')
+      : settings[operationOptionsSetting]?.toLowerCase() === 'withstatelessrunhistory'
+        ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
+        : localize('logicapps.stateless', 'Stateless');
 }
