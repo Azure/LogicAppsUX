@@ -417,8 +417,8 @@ export const workspaceMessages = defineMessages({
   },
   // Review step messages
   REVIEW_CREATE: {
-    defaultMessage: 'Review + Create',
-    id: 'GH0CLv',
+    defaultMessage: 'Review + create',
+    id: 'JqiwYx',
     description: 'Review and create step title',
   },
   REVIEW_DESCRIPTION: {
@@ -603,8 +603,8 @@ export const workspaceMessages = defineMessages({
     description: 'Project setup step label',
   },
   REVIEW_CREATE_LABEL: {
-    defaultMessage: 'Review + Create',
-    id: '4dze5/',
+    defaultMessage: 'Review + create',
+    id: '1b4sPR',
     description: 'Review and create step label',
   },
   NEXT_BUTTON: {
