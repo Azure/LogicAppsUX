@@ -42,7 +42,7 @@ export const OverviewApp = () => {
     return equals(kind, 'agent', true);
   }, [kind]);
 
-  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(false);
+  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(true);
   useEffect(() => {
     const pingRuntimeApi = async () => {
       setIsWorkflowRuntimeRunning(await isRuntimeUp(baseUrl));
