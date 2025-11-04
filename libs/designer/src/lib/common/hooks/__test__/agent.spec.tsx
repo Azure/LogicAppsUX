@@ -58,9 +58,15 @@ describe('useIsAgentSubGraph', () => {
   test('should return true for a mcp client node', () => {
     const nodesMetadata: NodesMetadata = {
       'mcp-tool-1': {
+        graphId: 'agent-tool-1',
+        parentNodeId: 'agent-tool-1',
+        subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+        actionCount: 0,
+      },
+      'agent-tool-1': {
         graphId: 'agent1',
         parentNodeId: 'agent1',
-        subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+        subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
         actionCount: 0,
       },
       agent1: {
