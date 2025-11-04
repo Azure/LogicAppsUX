@@ -104,7 +104,7 @@ export const WorkflowTypeStep: React.FC = () => {
               display: 'block',
             }}
           >
-            workflowTypes[workflowType]
+            {workflowTypes[workflowType]}
           </Text>
         )}
       </Field>

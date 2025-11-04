@@ -124,10 +124,7 @@ const createAgentCodefulWorkflowFile = async (
 
   // Create the .csproj file inside the functions folder
   const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
-  const templateProjContent = (await fse.readFile(templateProjPath, 'utf-8')).replace(
-    /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
-    `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
-  );
+  const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
 
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
 

@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\..\LogicApp</LogicAppFolderToPublish>
+    <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\AgentIsolatedWorker</LogicAppFolderToPublish>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -40,8 +40,8 @@
   </Target>
   <Target Name="CopyToCodefulFolder" AfterTargets="Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
     <ItemGroup>
-      <FilesToCopyCodeful Include="$(PublishDir)**\*.*" Exclude="$(PublishDir).azurefunctions\**\*.*;$(PublishDir)extensions.json;$(PublishDir)functions.metadata;$(PublishDir)worker.config.json"/>
+      <FilesToCopyCodeful Include="$(PublishDir)**\*"/>
     </ItemGroup>
-    <Copy SourceFiles="@(FilesToCopyCodeful)" DestinationFolder="$(LogicAppFolderToPublish)\lib\codeful\net8\%(RecursiveDir)" />
-  </Target>
+   <Copy SourceFiles="@(FilesToCopyCodeful)" DestinationFolder="$(LogicAppFolderToPublish)\%(RecursiveDir)"/>                                                                                                                                                                                                                                        
+   </Target>
 </Project>
