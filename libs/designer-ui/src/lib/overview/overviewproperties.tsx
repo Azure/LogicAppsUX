@@ -126,7 +126,7 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
               </Label>
               <Label>
                 <Text>{Resources.AGENT_API_KEY}</Text>
-                <div style={{ overflow: 'auto' }}>{agentApiKey ?? '--'}</div>
+                <Text style={{ overflow: 'auto' }}>{agentApiKey ?? '--'}</Text>
               </Label>
             </>
           ) : null}
