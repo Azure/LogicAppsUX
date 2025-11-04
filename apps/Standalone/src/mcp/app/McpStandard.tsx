@@ -42,8 +42,7 @@ export const McpStandard = () => {
   }));
 
   const hostingPlan = 'standard';
-  const connectorId =
-    '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/eastasia/managedApis/servicebus';
+  const connectorId = ''; // '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/providers/Microsoft.Web/locations/eastasia/managedApis/servicebus';
   const resourceDetails = useMemo(
     () => ({
       subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
