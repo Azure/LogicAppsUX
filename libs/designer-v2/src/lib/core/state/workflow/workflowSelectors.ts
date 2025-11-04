@@ -473,6 +473,9 @@ export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
 export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
 
+export const useRunMode = (): string | null =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance?.properties?.workflow?.mode ?? null));
+
 export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData?.retryHistory));
 

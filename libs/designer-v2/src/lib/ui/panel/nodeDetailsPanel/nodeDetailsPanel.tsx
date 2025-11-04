@@ -12,7 +12,7 @@ import {
 } from '../../../core/state/panel/panelSelectors';
 import { setAlternateSelectedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
-import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useRunData, useRunInstance, useRunMode } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isTriggerNode } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
@@ -51,6 +51,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const selectedNode = useOperationPanelSelectedNodeId();
 
+  const runMode = useRunMode();
   const runData = useRunData(selectedNode);
   const { isTrigger, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
     const isAgent = equals(getRecordEntry(state.workflow.operations, selectedNode)?.type, 'agent');
@@ -244,7 +245,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       alternateSelectedNodePersistence={alternateSelectedNodePersistence}
       alternateSelectedNodeHeaderItems={getHeaderMenuItems(alternateSelectedNodeId)}
       readOnlyMode={readOnly}
-      canResubmit={runData?.canResubmit ?? false}
+      canResubmit={(runData?.canResubmit ?? false) && runMode !== 'Draft'}
       canShowLogicAppRun={canShowLogicAppRun}
       showLogicAppRun={showLogicAppRunClick}
       resubmitOperation={resubmitClick}
