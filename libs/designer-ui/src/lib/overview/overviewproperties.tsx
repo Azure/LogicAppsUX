@@ -16,6 +16,7 @@ export interface OverviewPropertiesProps {
   definition?: LogicAppsV2.WorkflowDefinition;
   agentUrl?: string;
   agentApiKey?: string;
+  isWorkflowRuntimeRunning?: boolean;
 }
 
 export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
@@ -27,6 +28,7 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   definition,
   agentUrl,
   agentApiKey,
+  isWorkflowRuntimeRunning,
 }) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -112,7 +114,7 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
               </div>
             </Label>
           ) : null}
-          {agentUrl ? (
+          {isWorkflowRuntimeRunning && agentUrl ? (
             <>
               <Label>
                 <Text>{Resources.AGENT_URL}</Text>

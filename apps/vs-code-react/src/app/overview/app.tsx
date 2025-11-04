@@ -78,7 +78,7 @@ export const OverviewApp = () => {
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>(
-    [QueryKeys.runsData, isWorkflowRuntimeRunning],
+    [QueryKeys.runsData],
     loadRuns,
     {
       getNextPageParam: (lastPage) => lastPage.nextLink,
