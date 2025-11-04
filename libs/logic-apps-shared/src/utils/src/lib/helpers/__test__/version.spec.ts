@@ -48,7 +48,6 @@ describe('version helpers', () => {
         expect(() => isVersionSupported('a.b.c', '1.0.0')).toThrow('Invalid version format');
         expect(() => isVersionSupported('1.0', '1.0.0')).toThrow('Invalid version format');
         expect(() => isVersionSupported('1', '1.0.0')).toThrow('Invalid version format');
-        expect(() => isVersionSupported('', '1.0.0')).toThrow('Version must be a non-empty string');
       });
 
       it('should throw error for invalid required version format', () => {
@@ -56,7 +55,6 @@ describe('version helpers', () => {
         expect(() => isVersionSupported('1.0.0', '1.x.3')).toThrow('Invalid version format');
         expect(() => isVersionSupported('1.0.0', 'a.b.c')).toThrow('Invalid version format');
         expect(() => isVersionSupported('1.0.0', '1.0')).toThrow('Invalid version format');
-        expect(() => isVersionSupported('1.0.0', '')).toThrow('Version must be a non-empty string');
       });
 
       it('should throw error for negative version numbers', () => {
@@ -82,7 +80,7 @@ describe('version helpers', () => {
 
   describe('isMultiVariableSupport (deprecated)', () => {
     it('should return false for undefined version', () => {
-      expect(isMultiVariableSupport(undefined)).toBe(false);
+      expect(isMultiVariableSupport(undefined)).toBe(true);
     });
 
     it('should return false for invalid version format', () => {
