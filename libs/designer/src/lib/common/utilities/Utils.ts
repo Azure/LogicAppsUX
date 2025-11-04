@@ -1,6 +1,9 @@
 import toTitleCase from 'to-title-case';
 import constants from '../constants';
+import type { Connection } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
+import type { RootState } from '../../core';
+import { isAgentSubgraphFromMetadata } from '../hooks/agent';
 
 export const titleCase = (s: string) => toTitleCase(s);
 
@@ -18,6 +21,10 @@ export const getSKUDefaultHostOptions = (sku: string) => {
     default:
       return {};
   }
+};
+
+export const isDynamicConnection = (feature?: string): boolean => {
+  return equals(feature ?? '', 'DynamicUserInvoked', true);
 };
 
 export class AgentUtils {
@@ -40,8 +47,9 @@ export class AgentUtils {
   public static isConsumptionAgentModelTypeParameter = (operationId: string, parameterName?: string): boolean => {
     return equals(operationId, 'connectionProviders/agent', true) && equals(parameterName ?? '', 'modelId', true);
   };
-}
 
-export const isDynamicConnection = (feature?: string): boolean => {
-  return equals(feature ?? '', 'DynamicUserInvoked', true);
-};
+  public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {
+    const isAgentSubgraph = isAgentSubgraphFromMetadata(nodeId, state?.workflow?.nodesMetadata);
+    return isAgentSubgraph || !isDynamicConnection(connections.properties?.features);
+  };
+}
