@@ -31,12 +31,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="ReplaceLanguageNetCore" AfterTargets="Build">
+  <Target Name="ReplaceLanguageNetCore" AfterTargets="Build;Publish">
     <PropertyGroup>
-      <InputFile>.\bin\Debug\net8.0\worker.config.json</InputFile>
-      <OutputFile>.\bin\Debug\net8.0\worker.config.json</OutputFile>
+      <WorkerConfigPath>$(PublishDir)worker.config.json</WorkerConfigPath>
+      <WorkerConfigPath Condition="!Exists('$(WorkerConfigPath)')">$(OutputPath)worker.config.json</WorkerConfigPath>
     </PropertyGroup>
-    <WriteLinesToFile File="$(OutputFile)" Lines="$([System.IO.File]::ReadAllText($(InputFile)).Replace('dotnet-isolated','dotnet'))" Overwrite="true" />
+    <WriteLinesToFile File="$(WorkerConfigPath)" Lines="$([System.IO.File]::ReadAllText($(WorkerConfigPath)).Replace('dotnet-isolated','dotnet'))" Overwrite="true" Condition="Exists('$(WorkerConfigPath)')"/>
   </Target>
   <Target Name="CopyToCodefulFolder" AfterTargets="Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
     <ItemGroup>
