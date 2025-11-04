@@ -297,6 +297,13 @@ export interface InjectValuesMessage {
   };
 }
 
+export interface UpdateBaseUrlMessage {
+  command: typeof ExtensionCommand.update_base_url;
+  data: {
+    baseUrl?: string;
+  };
+}
+
 export interface UpdateAccessTokenMessage {
   command: typeof ExtensionCommand.update_access_token;
   data: {

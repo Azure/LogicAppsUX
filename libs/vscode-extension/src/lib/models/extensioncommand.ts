@@ -10,6 +10,7 @@ export const ExtensionCommand = {
   getAvailableCustomXsltPathsV2: 'getAvailableCustomXsltPathsV2',
   initialize_frame: 'initialize-frame',
   loadDataMap: 'loadDataMap',
+  update_base_url: 'update-base-url',
   update_access_token: 'update-access-token',
   update_export_path: 'update-export-path',
   update_panel_metadata: 'update-panel-metadata',

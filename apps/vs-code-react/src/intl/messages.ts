@@ -1052,4 +1052,9 @@ export const overviewMessages = defineMessages({
     id: '3H+PIM',
     description: 'Overview page title',
   },
+  DEBUG_PROJECT_ERROR: {
+    defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view.',
+    id: 'VWH06W',
+    description: 'Debug project error message',
+  },
 });

@@ -24,6 +24,7 @@ import type {
   ValidateWorkspacePathMessage,
   WorkspaceExistenceResultMessage,
   PackageExistenceResultMessage,
+  UpdateBaseUrlMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -53,7 +54,14 @@ import {
 } from './state/DataMapSliceV2';
 import { initializeDesigner, updateCallbackUrl, updateFileSystemConnection, updatePanelMetadata } from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
-import { initializeWorkflow, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/WorkflowSlice';
+import {
+  initializeWorkflow,
+  updateAccessToken,
+  updateTargetDirectory,
+  addStatus,
+  setFinalStatus,
+  updateBaseUrl,
+} from './state/WorkflowSlice';
 import { changeDataMapperVersion, initialize } from './state/projectSlice';
 import type { AppDispatch, RootState } from './state/store';
 import { SchemaType } from '@microsoft/logic-apps-shared';
@@ -95,6 +103,7 @@ type DataMapperMessageType =
   | GetDataMapperVersionMessage
   | GetTestFeatureEnablementStatus;
 type WorkflowMessageType =
+  | UpdateBaseUrlMessage
   | UpdateAccessTokenMessage
   | UpdateExportPathMessage
   | UpdateWorkspacePathMessage
@@ -319,6 +328,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {
             dispatch(initializeWorkflow(message.data as InitializePayload));
+            break;
+          }
+          case ExtensionCommand.update_base_url: {
+            dispatch(updateBaseUrl(message.data.baseUrl));
             break;
           }
           case ExtensionCommand.update_access_token: {

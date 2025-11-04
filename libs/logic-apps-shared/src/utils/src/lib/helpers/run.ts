@@ -1,4 +1,5 @@
-import { isObject } from '../helpers';
+import axios from 'axios';
+import { isNullOrUndefined, isObject } from '../helpers';
 import type { CallbackInfo, CallbackInfoWithRelativePath, LogicAppsV2 } from '../models';
 
 export function isCallbackInfoWithRelativePath(value: any): value is CallbackInfoWithRelativePath {
@@ -66,4 +67,23 @@ export function getTriggerName(definition: LogicAppsV2.WorkflowDefinition): stri
   const { triggers = {} } = definition;
   const triggerNames = Object.keys(triggers);
   return triggerNames.length === 1 ? triggerNames[0] : undefined;
+}
+
+/**
+ * Checks if the runtime is running on the specified baseUrl.
+ * @param {string} baseUrl - The base URL to check.
+ * @returns {Promise<boolean>} - A promise that resolves to true if the runtime is up, false otherwise.
+ */
+export async function isRuntimeUp(baseUrl: string): Promise<boolean> {
+  if (isNullOrUndefined(baseUrl)) {
+    return false;
+  }
+
+  try {
+    const url = `${baseUrl}/operationGroups`;
+    await axios.get(url);
+    return true;
+  } catch {
+    return false;
+  }
 }
