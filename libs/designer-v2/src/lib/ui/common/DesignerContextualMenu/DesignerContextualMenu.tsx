@@ -34,6 +34,7 @@ import {
   useNodeMetadata,
   useRunData,
   useRunInstance,
+  useRunMode,
 } from '../../../core/state/workflow/workflowSelectors';
 import {
   useSuppressDefaultNodeSelectFunctionality,
@@ -64,6 +65,7 @@ export const DesignerContextualMenu = () => {
   const alternateSelectedNodeId = useOperationAlternateSelectedNodeId();
 
   const runInstance = useRunInstance();
+  const runMode = useRunMode();
   const runData = useRunData(nodeId);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
@@ -173,7 +175,7 @@ export const DesignerContextualMenu = () => {
         renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,
       },
       { priority: NodeMenuPriorities.Pin, renderCustomComponent: () => <PinMenuItem key={'pin'} nodeId={nodeId} onClick={pinClick} /> },
-      ...(runData?.canResubmit
+      ...(runData?.canResubmit && runMode !== 'Draft'
         ? [
             {
               priority: NodeMenuPriorities.Resubmit,
@@ -207,6 +209,7 @@ export const DesignerContextualMenu = () => {
     pinClick,
     resubmitClick,
     runAfterClick,
+    runMode,
   ]);
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
