@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isMultiVariableSupport, isVersionSupported } from '../version';
+import { isVersionSupported } from '../version';
 
 describe('version helpers', () => {
   describe('isVersionSupported', () => {
@@ -75,41 +75,6 @@ describe('version helpers', () => {
         expect(isVersionSupported('999.999.999', '1.0.0')).toBe(true);
         expect(isVersionSupported('1.0.0', '999.999.999')).toBe(false);
       });
-    });
-  });
-
-  describe('isMultiVariableSupport (deprecated)', () => {
-    it('should return false for undefined version', () => {
-      expect(isMultiVariableSupport(undefined)).toBe(true);
-    });
-
-    it('should return false for invalid version format', () => {
-      expect(isMultiVariableSupport('invalid')).toBe(false);
-      expect(isMultiVariableSupport('1.x.3')).toBe(false);
-      expect(isMultiVariableSupport('a.b.c')).toBe(false);
-    });
-
-    it('should return false for versions before or equal to 1.114.22', () => {
-      expect(isMultiVariableSupport('1.114.22')).toBe(false);
-      expect(isMultiVariableSupport('1.114.21')).toBe(false);
-      expect(isMultiVariableSupport('1.113.25')).toBe(false);
-      expect(isMultiVariableSupport('1.100.0')).toBe(false);
-      expect(isMultiVariableSupport('0.999.999')).toBe(false);
-    });
-
-    it('should return true for versions after 1.114.22', () => {
-      expect(isMultiVariableSupport('1.114.23')).toBe(true);
-      expect(isMultiVariableSupport('1.114.24')).toBe(true);
-      expect(isMultiVariableSupport('1.115.0')).toBe(true);
-      expect(isMultiVariableSupport('1.200.0')).toBe(true);
-      expect(isMultiVariableSupport('2.0.0')).toBe(true);
-      expect(isMultiVariableSupport('2.1.1')).toBe(true);
-    });
-
-    it('should handle edge cases', () => {
-      expect(isMultiVariableSupport('')).toBe(false);
-      expect(isMultiVariableSupport('1')).toBe(false);
-      expect(isMultiVariableSupport('1.114')).toBe(false);
     });
   });
 });

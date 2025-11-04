@@ -69,21 +69,3 @@ export const isVersionSupported = (currentVersion: string, requiredVersion: stri
 
   return comparison >= 0;
 };
-
-/**
- * Checks if the host version supports multiple variable operations.
- * @arg {string | undefined} version - The host version string (e.g., "1.114.23").
- * @return {boolean} - True if the version supports multiple variables (> 1.114.22).
- * @deprecated Use isVersionSupported(version, "1.114.22") instead.
- */
-export const isMultiVariableSupport = (version?: string): boolean => {
-  if (!version) {
-    return false;
-  }
-
-  try {
-    return isVersionSupported(version, '1.114.22') && compareVersions(version, '1.114.22') > 0;
-  } catch {
-    return false;
-  }
-};
