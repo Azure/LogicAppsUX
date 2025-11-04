@@ -2,7 +2,7 @@ import { createFileSystemConnection, updateUnitTestDefinition } from '../../stat
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import { getDesignerServices, isMultiVariableSupport } from './servicesHelper';
+import { getDesignerServices } from './servicesHelper';
 import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -16,7 +16,7 @@ import {
   getReactQueryClient,
   runsQueriesKeys,
 } from '@microsoft/logic-apps-designer';
-import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
+import { isEmptyString, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback } from 'react';
@@ -118,7 +118,7 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const isMultiVariableSupportEnabled = useMemo(
-    () => isMultiVariableSupport(panelMetaData?.extensionBundleVersion),
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', '1.114.22'),
     [panelMetaData?.extensionBundleVersion]
   );
 
