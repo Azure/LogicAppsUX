@@ -83,7 +83,7 @@ export const SelectConnectionWrapper = () => {
       });
     }
 
-    if (!isA2A && !isAgentSubgraph) {
+    if (!isA2A || !isAgentSubgraph) {
       // Filter out dynamic connections
       return connectionData.filter((c) => !isDynamicConnection(c.properties.features));
     }
