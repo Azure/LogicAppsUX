@@ -61,4 +61,10 @@ export const useConnectorSelectionStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground2,
     flexShrink: 0,
   },
+
+  addConnectorIcon: {
+    width: '50px',
+    height: '50px',
+    color: tokens.colorBrandForeground1,
+  },
 });
