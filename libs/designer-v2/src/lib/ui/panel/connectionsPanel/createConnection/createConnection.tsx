@@ -64,6 +64,7 @@ import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useStyles } from './styles';
 import { isA2AKind } from '../../../../core/state/workflow/helper';
+import { useShouldEnableAPIMGatewayConnection } from '../../../../core/utils/experimentation';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -161,7 +162,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
-
+  const enableAPIMGenAIGatewayForAgents = useShouldEnableAPIMGatewayConnection();
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(true);
   const onAuthDropdownChange = useCallback(
@@ -847,6 +848,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                                 (option: any) =>
                                   !((option.unSupportedWorkflowKind ?? []) as string[]).includes((workflowKind ?? '').toLowerCase())
                               )
+                              .filter((option: any) => {
+                                if (option.value === 'APIMGenAIGateway' && !enableAPIMGenAIGatewayForAgents) {
+                                  return false;
+                                }
+                                return true;
+                              })
                               .map((option: any) => ({
                                 value: option.value,
                                 text: option.displayName,
