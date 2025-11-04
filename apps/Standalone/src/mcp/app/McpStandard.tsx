@@ -48,7 +48,7 @@ export const McpStandard = () => {
       subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
       resourceGroup: 'anandgmenon',
       location: 'eastasia',
-      // logicAppName: 'anand-mcp-server',
+      logicAppName: 'anand-mcp-server',
     }),
     []
   );
