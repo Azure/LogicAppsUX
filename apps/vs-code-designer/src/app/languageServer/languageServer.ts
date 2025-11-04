@@ -268,7 +268,7 @@ export async function installLSPSDK(): Promise<void> {
     const shouldCopy = !(await fse.pathExists(lspDirectoryPath));
 
     if (shouldCopy) {
-      const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.Agents.1.141.0.9.nupkg');
+      const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.Agents.1.141.0.10.nupkg');
       try {
         await fse.ensureDir(lspDirectoryPath);
 
