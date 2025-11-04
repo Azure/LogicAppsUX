@@ -109,7 +109,7 @@ describe('ui/templates/workflowconnections', () => {
     InitExperimentationServiceService({
       isFeatureEnabled: (_featureName: string) => Promise.resolve(false),
       getFeatureValue: (_featureName: string) => Promise.resolve(undefined),
-    });
+    } as any);
   });
 
   beforeEach(() => {
