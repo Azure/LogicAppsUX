@@ -199,7 +199,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
   if (!items || items.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <div className={mergeClasses(styles.emptyStateIcon, addDisabled ? styles.emptyStateIconDisabled : '')}>
+        <div className={mergeClasses(styles.emptyStateIcon, addDisabled ? styles.emptyStateDisabled : '')}>
           <AppsRegular aria-label={INTL_TEXT.addConnector} />
         </div>
         <Text size={500}>{INTL_TEXT.addConnector}</Text>
@@ -220,7 +220,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
   return (
     <Table className={styles.tableStyle} aria-label={INTL_TEXT.tableAriaLabel} size="small">
       <TableHeader>
-        <TableRow style={connectorTableCellStyles}>
+        <TableRow className={addDisabled ? styles.emptyStateDisabled : ''} style={connectorTableCellStyles}>
           {columns.map((column, i) => (
             <TableHeaderCell key={column.columnKey} style={i === columns.length - 1 ? lastCellStyles : connectorTableCellStyles}>
               <Text weight="semibold">{column.label}</Text>
@@ -230,7 +230,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
       </TableHeader>
       <TableBody style={connectorTableCellStyles}>
         {items.map((item) => (
-          <TableRow key={item.connectorId} style={connectorTableCellStyles}>
+          <TableRow key={item.connectorId} className={addDisabled ? styles.emptyStateDisabled : ''} style={connectorTableCellStyles}>
             <TableCell className={styles.iconTextCell} style={connectorTableCellStyles}>
               <ConnectorIconWithName
                 classes={{
