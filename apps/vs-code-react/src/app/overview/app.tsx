@@ -11,9 +11,10 @@ import {
   StandardRunService,
   Theme,
   equals,
+  isRuntimeUp,
 } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useIntlMessages, overviewMessages } from '../../intl';
 import { useInfiniteQuery, useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
@@ -29,8 +30,7 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, isWorkflowRuntimeRunning, azureDetails, kind } =
-    workflowState;
+  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, azureDetails, kind } = workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const styles = useOverviewStyles();
 
@@ -41,6 +41,20 @@ export const OverviewApp = () => {
   const isAgentWorkflow = useMemo(() => {
     return equals(kind, 'agent', true);
   }, [kind]);
+
+  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(false);
+  useEffect(() => {
+    const pingRuntimeApi = async () => {
+      setIsWorkflowRuntimeRunning(await isRuntimeUp(baseUrl));
+    };
+
+    pingRuntimeApi();
+    const interval = setInterval(async () => {
+      pingRuntimeApi();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [baseUrl]);
 
   const emptyArmId = '00000000-0000-0000-0000-000000000000';
   const clientId = azureDetails?.clientId ?? '';
@@ -188,6 +202,7 @@ export const OverviewApp = () => {
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlIsLoading}
         agentUrlData={agentUrlData}
+        isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         runItems={runItems ?? []}
         workflowProperties={workflowState.workflowProperties}
         isRefreshing={isRefetching}

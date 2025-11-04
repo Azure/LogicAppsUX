@@ -53,7 +53,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let panelName = '';
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
-  let isWorkflowRuntimeRunning: boolean;
   let azureDetails: AzureConnectorDetails;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
@@ -77,7 +76,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
-    isWorkflowRuntimeRunning = await isRuntimeUp(ext.workflowRuntimePort);
     accessToken = await getAccessToken();
     if (projectPath) {
       azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
@@ -93,7 +91,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isLocal = false;
-    isWorkflowRuntimeRunning = true;
     accessToken = await getAccessToken();
     azureDetails = {
       enabled: true,
@@ -166,7 +163,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
             isLocal: isLocal,
-            isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
             azureDetails: azureDetails,
             kind: kind,
           },

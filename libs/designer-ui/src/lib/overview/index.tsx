@@ -21,6 +21,7 @@ export interface OverviewProps {
   isAgentWorkflow?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
+  isWorkflowRuntimeRunning?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
   supportsUnitTest?: boolean;
@@ -50,6 +51,7 @@ export const Overview: React.FC<OverviewProps> = ({
   isAgentWorkflow,
   agentUrlLoading,
   agentUrlData,
+  isWorkflowRuntimeRunning,
   hasMoreRuns = false,
   supportsUnitTest = false,
   runItems,
@@ -134,6 +136,7 @@ export const Overview: React.FC<OverviewProps> = ({
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlLoading}
         agentUrlData={agentUrlData}
+        isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />

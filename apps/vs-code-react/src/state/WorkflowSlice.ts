@@ -15,7 +15,6 @@ export interface InitializePayload {
   reviewContent?: IValidationData;
   hostVersion?: string;
   isLocal?: boolean;
-  isWorkflowRuntimeRunning?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
 }
@@ -40,7 +39,6 @@ export interface WorkflowState {
   reviewContent?: IValidationData;
   hostVersion?: string;
   isLocal?: boolean;
-  isWorkflowRuntimeRunning?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
 }
@@ -86,7 +84,6 @@ export const workflowSlice = createSlice({
         cloudHost,
         hostVersion,
         isLocal,
-        isWorkflowRuntimeRunning,
         azureDetails,
         kind,
       } = action.payload;
@@ -118,7 +115,6 @@ export const workflowSlice = createSlice({
       };
       initializedState.hostVersion = hostVersion;
       initializedState.isLocal = isLocal;
-      initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
     },
