@@ -36,15 +36,14 @@ export const useMcpWizardStyles = makeStyles({
 
   sectionDisabled: {
     backgroundColor: tokens.colorNeutralBackgroundDisabled,
+    color: tokens.colorNeutralForegroundDisabled,
   },
 
   header: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: '12px',
     position: 'relative',
-    borderBottom: borderStyle,
   },
 
   sectionHeader: {
@@ -52,6 +51,12 @@ export const useMcpWizardStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
     position: 'relative',
+  },
+
+  toolsHeader: {
+    display: 'flex',
+    fontSize: tokens.fontSizeBase400,
+    fontWeight: tokens.fontWeightBold,
   },
 
   sectionDescription: {
@@ -89,15 +94,21 @@ export const useConnectorSectionStyles = makeStyles({
     flex: 1,
     padding: '40px',
     textAlign: 'center',
+    gap: tokens.spacingVerticalM,
   },
 
   emptyStateIcon: {
-    fontSize: '64px',
+    fontSize: '50px',
     color: tokens.colorNeutralForeground3,
-    '& svg': {
-      width: '64px',
-      height: '64px',
-    },
+  },
+
+  emptyStateIconDisabled: {
+    color: tokens.colorNeutralForegroundDisabled,
+  },
+
+  addConnectorButton: {
+    marginTop: tokens.spacingVerticalM,
+    fontSize: tokens.fontSizeBase400,
   },
 
   tableStyle: {
