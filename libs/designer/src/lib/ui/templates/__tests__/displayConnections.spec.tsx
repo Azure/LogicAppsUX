@@ -4,6 +4,7 @@ import { setupStore } from '../../../core/state/templates/store';
 import {
   ConnectionService,
   InitConnectionService,
+  InitExperimentationServiceService,
   InitGatewayService,
   InitOperationManifestService,
   InitWorkflowService,
@@ -105,6 +106,10 @@ describe('ui/templates/workflowconnections', () => {
     InitOperationManifestService({
       isBuiltInConnector: () => false,
     } as any);
+    InitExperimentationServiceService({
+      isFeatureEnabled: (_featureName: string) => Promise.resolve(false),
+      getFeatureValue: (_featureName: string) => Promise.resolve(undefined),
+    });
   });
 
   beforeEach(() => {
