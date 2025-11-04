@@ -62,7 +62,7 @@ export const SelectConnectionWrapper = () => {
 
     if (!isA2A && !isAgentSubgraph) {
       // Filter out dynamic connections
-      return connectionData.filter((c) => !isDynamicConnection(c.properties.feature));
+      return connectionData.filter((c) => !isDynamicConnection(c.properties.features));
     }
 
     if (isA2A && AgentUtils.isConnector(connector?.id)) {

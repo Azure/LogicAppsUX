@@ -50,6 +50,6 @@ export class AgentUtils {
 
   public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {
     const isAgentSubgraph = isAgentSubgraphFromMetadata(nodeId, state?.workflow?.nodesMetadata);
-    return isAgentSubgraph || !isDynamicConnection(connections.properties?.feature);
+    return isAgentSubgraph || !isDynamicConnection(connections.properties?.features);
   };
 }
