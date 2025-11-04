@@ -69,6 +69,32 @@ describe('OutputsBinder', () => {
     expect(result).toEqual([parsedOutputs]);
   });
 
+  it('should bind outputs using DefaultInputsBinder when manifest declares so', async () => {
+    const outputs = [{ outputs: { key: 'value' } }];
+    const type = 'JavaScriptCode';
+    const manifest = {
+      properties: {
+        iconUri: 'https://logicapps.azureedge.net/icons/javascript.svg',
+        brandColor: '#ba5d00',
+        description: 'Execute JavaScript Code',
+        connection: {
+          type: 'NotSpecified',
+          required: false,
+        },
+        inputs: {},
+        outputsBindingMode: 'untyped',
+      },
+    };
+
+    const mockBind = vi.fn().mockResolvedValue(parsedOutputs);
+    vi.spyOn(DefaultOutputsBinder.prototype, 'bind').mockImplementation(mockBind);
+
+    const result = await outputsBinder.bind(outputs, type, outputParametersByName, manifest, nodeParameters, operationMetadata);
+
+    expect(mockBind).toHaveBeenCalled();
+    expect(result).toEqual([parsedOutputs]);
+  });
+
   it('should not bind outputs and return an empty array when outputs is an empty array', async () => {
     const outputs = [];
     const type = constants.NODE.TYPE.FOREACH;
