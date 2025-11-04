@@ -167,7 +167,7 @@ export async function createLocalConfigurationFiles(
   }
 
   if (logicAppType === ProjectType.agentCodeful) {
-    localSettingsJson.Values['CODEFUL_AGENT'] = 'true';
+    localSettingsJson.Values['WORKFLOW_CODEFUL_ENABLED'] = 'true';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);

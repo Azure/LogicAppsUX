@@ -125,7 +125,7 @@ const hasCodefulAgent = async (folderPath: string) => {
   try {
     const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
     const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.CODEFUL_AGENT;
+    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED;
   } catch {
     return false;
   }
