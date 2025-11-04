@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../core/state/mcp/store';
 import { useCallback, useMemo } from 'react';
-import { Add24Regular, CheckmarkCircle20Filled, Delete24Regular, Edit24Regular } from '@fluentui/react-icons';
+import { Add24Regular, CheckmarkCircle20Filled, Delete24Regular, Edit24Regular, AppsRegular } from '@fluentui/react-icons';
 import {
   Text,
   TableCell,
@@ -12,7 +12,7 @@ import {
   Button,
   TableBody,
   tokens,
-  Image,
+  mergeClasses,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useConnectorSectionStyles } from '../wizard/styles';
@@ -22,7 +22,6 @@ import { ConnectorIconWithName } from '../../templates/connections/connector';
 import { useConnectionById } from '../../../core/queries/connections';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { deinitializeOperations, MCP_ConnectionKey } from '../../../core/actions/bjsworkflow/mcp';
-import ConnectorIcon from '../../../common/images/mcp/addconnector.svg';
 
 const connectorTableCellStyles = {
   border: 'none',
@@ -47,6 +46,11 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
   );
 
   const INTL_TEXT = {
+    addButtonLabel: intl.formatMessage({
+      id: 'pSIcsd',
+      defaultMessage: 'Add',
+      description: 'Label for the add connector button',
+    }),
     addConnector: intl.formatMessage({
       id: 'XLhNNP',
       defaultMessage: 'Add connector',
@@ -195,18 +199,19 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
   if (!items || items.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <div className={styles.emptyStateIcon}>
-          <Image src={ConnectorIcon} aria-label={INTL_TEXT.addConnector} width={80} />
+        <div className={mergeClasses(styles.emptyStateIcon, addDisabled ? styles.emptyStateIconDisabled : '')}>
+          <AppsRegular aria-label={INTL_TEXT.addConnector} />
         </div>
+        <Text size={500}>{INTL_TEXT.addConnector}</Text>
         <Button
-          size="large"
-          style={{ fontSize: 20 }}
+          size="medium"
+          className={styles.addConnectorButton}
           icon={<Add24Regular />}
-          appearance="subtle"
+          appearance="secondary"
           onClick={addConnectors}
           disabled={addDisabled}
         >
-          {INTL_TEXT.addConnector}
+          {INTL_TEXT.addButtonLabel}
         </Button>
       </div>
     );
