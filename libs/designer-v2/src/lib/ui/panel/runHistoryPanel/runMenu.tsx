@@ -85,7 +85,7 @@ export const RunMenu = (props: {
   const isDraftRun = equals((run.properties?.workflow as any)?.mode, 'Draft');
 
   if (runQuery.isFetching) {
-    return <Spinner size="extra-tiny" />;
+    return <Spinner size="extra-tiny" style={{ margin: '0 8px' }} />;
   }
 
   return (

@@ -18,13 +18,14 @@ import {
   Tab,
   Dropdown,
   Option,
+	Badge,
 } from '@fluentui/react-components';
 import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { useAllRuns, useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useAllRuns, useResubmitRuns, useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
@@ -40,6 +41,8 @@ import {
   ChevronDoubleLeftRegular,
   ArrowLeftFilled,
   ArrowLeftRegular,
+	SubtractSquareFilled,
+	SubtractSquareRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
 import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
@@ -53,6 +56,7 @@ import StatusIndicator from './statusIndicator';
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const CollapseIcon = bundleIcon(ChevronDoubleLeftFilled, ChevronDoubleLeftRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
+const DeselectMultipleIcon = bundleIcon(SubtractSquareFilled, SubtractSquareRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
@@ -190,6 +194,18 @@ export const RunHistoryPanel = () => {
     id: 'RXZ+9a',
   });
 
+	const copyMultipleText = intl.formatMessage({
+		defaultMessage: 'Copy run IDs',
+		description: 'Copy multiple run identifiers text',
+		id: 'CdNJLW',
+	});
+
+	const retryMultipleText = intl.formatMessage({
+		defaultMessage: 'Retry runs',
+		description: 'Retry multiple runs text',
+		id: 'EVNir3',
+	});
+
   const runStatusTexts: Record<string, string> = {
     All: intl.formatMessage({ defaultMessage: 'All', description: 'All run statuses', id: 'bHpFLq' }),
     Succeeded: intl.formatMessage({ defaultMessage: 'Succeeded', description: 'Succeeded status', id: 'NIfcbE' }),
@@ -322,6 +338,13 @@ export const RunHistoryPanel = () => {
   // If a runId filter is set, prefetch that run's data
   const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
 
+	const [multiSelectedIds, setMultiSelectedIds] = useState<string[]>([]);
+
+	const { 
+		mutateAsync: resubmitRuns,
+		isLoading: isResubmittingRuns,
+	} = useResubmitRuns(multiSelectedIds);
+
   // MARK: Components
 
   const CollapseButton = () => (
@@ -451,6 +474,38 @@ export const RunHistoryPanel = () => {
                 </Dropdown>
               </Field>
             </div>
+						{multiSelectedIds.length > 0 ? (
+							<div className={styles.flexbox}>
+								<Button 
+									icon={<DeselectMultipleIcon />}
+									onClick={() => {
+										setMultiSelectedIds([])
+									}}
+									appearance='transparent'
+									style={{ margin: '0 -15px' }}
+								>
+									{multiSelectedIds.length} selected
+								</Button>
+								<div style={{ flexGrow: 1 }} />
+								<Button size="small" onClick={() => {
+									navigator.clipboard.writeText(multiSelectedIds.join(', '));
+								}}>
+									{copyMultipleText}
+								</Button>
+								<Button 
+									icon={isResubmittingRuns ? <Spinner size="extra-tiny" /> : undefined}
+									disabled={isResubmittingRuns}
+									size="small" 
+									onClick={async () => {
+										await resubmitRuns();
+										setMultiSelectedIds([]);
+										runsQuery.refetch();
+									}}
+								>
+									{retryMultipleText}
+								</Button>
+							</div>
+						) : null}
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
                 <MessageBarBody>
@@ -493,6 +548,15 @@ export const RunHistoryPanel = () => {
                     }}
                     addFilterCallback={addFilterCallback}
                     size="small"
+										isMultiSelected={!!multiSelectedIds.includes(run.id)}
+										multiSelectVisible={multiSelectedIds.length > 0}
+										onMultiSelectChange={(runId, isSelected) => {
+											if (isSelected) {
+												setMultiSelectedIds((prev) => [...prev, runId]);
+											} else {
+												setMultiSelectedIds((prev) => prev.filter((id) => id !== runId));
+											}
+										}}
                   />
                 ))}
                 {!runsQuery.isFetching && runsQuery.hasNextPage && (

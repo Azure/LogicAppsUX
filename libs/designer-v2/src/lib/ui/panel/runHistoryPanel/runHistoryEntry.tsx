@@ -1,8 +1,8 @@
-import { Divider, mergeClasses, tokens } from '@fluentui/react-components';
+import { Checkbox, Divider, mergeClasses, tokens } from '@fluentui/react-components';
 import { RunMenu } from './runMenu';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRun } from '../../../core/queries/runs';
 
 const RunHistoryEntry = (props: {
@@ -11,8 +11,20 @@ const RunHistoryEntry = (props: {
   onRunSelected: (id: string) => void;
   addFilterCallback: (filter: any) => void;
   size?: 'small' | 'medium';
+	multiSelectVisible?: boolean;
+	isMultiSelected?: boolean;
+	onMultiSelectChange?: (runId: string, isSelected: boolean) => void;
 }) => {
-  const { runId, isSelected, onRunSelected, addFilterCallback, size = 'medium' } = props;
+  const { 
+		runId, 
+		isSelected, 
+		onRunSelected, 
+		addFilterCallback, 
+		size = 'medium',
+		multiSelectVisible = false,
+		isMultiSelected = false,
+		onMultiSelectChange,
+	} = props;
 
   const { data: run } = useRun(runId);
 
@@ -36,6 +48,9 @@ const RunHistoryEntry = (props: {
     }
   }, [isSelected]);
 
+	// Hover state for multi-select visibility
+	const [hovering, setHovering] = useState(false);
+
   if (!run) {
     return null;
   }
@@ -47,8 +62,21 @@ const RunHistoryEntry = (props: {
           ref={ref}
           className={mergeClasses(styles.runEntry, styles.runEntrySmall, isSelected && styles.runEntrySelected)}
           onClick={() => onRunSelected(run?.name ?? '')}
+					onMouseEnter={() => setHovering(true)}
+					onMouseLeave={() => setHovering(false)}
         >
-          {isSelected && <div className={styles.runEntrySelectedIndicator} style={{ backgroundColor: indicatorColor }} />}
+					{isSelected ? (
+						<div className={styles.runEntrySelectedIndicator} style={{ backgroundColor: indicatorColor }} />
+					) : null}
+					<Checkbox
+						checked={isMultiSelected}
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							onMultiSelectChange?.(runId, !isMultiSelected);
+						}}
+						style={hovering || multiSelectVisible || isMultiSelected ? {} : { visibility: 'hidden' }}
+					/>
           <RunHistoryEntryInfo run={run} size="small" />
           <RunMenu run={run} addFilterCallback={addFilterCallback} />
         </div>

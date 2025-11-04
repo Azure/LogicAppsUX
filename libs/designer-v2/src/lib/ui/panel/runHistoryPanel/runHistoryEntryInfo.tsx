@@ -1,4 +1,4 @@
-import { Subtitle2, Caption1Strong, Text, Badge, Tag } from '@fluentui/react-components';
+import { Subtitle2, Caption1Strong, Text, Badge, Tag, Tooltip } from '@fluentui/react-components';
 import { equals, toFriendlyDurationString, type Run } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import StatusIndicator from './statusIndicator';
@@ -96,14 +96,14 @@ export const RunHistoryEntryInfo = (props: {
         <StatusIndicator status={run.properties.status} onlyIcon />
         <Caption1Strong>{startTimeString}</Caption1Strong>
         {isRetry && (
-          <Badge icon={<RetryIcon />} size="medium" color="severe" appearance="ghost">
-            {retryText}
-          </Badge>
+					<Tooltip content={retryText} relationship='label'>
+						<Badge icon={<RetryIcon />} size="medium" shape="rounded" color="severe" appearance="tint" />
+					</Tooltip>
         )}
         {isDraftRun && (
-          <Badge icon={<DraftIcon />} size="medium" color="brand" appearance="ghost">
-            {draftText}
-          </Badge>
+					<Tooltip content={draftText} relationship='label'>
+						<Badge icon={<DraftIcon />} size="medium" shape="rounded" color="brand" appearance="tint" />
+					</Tooltip>
         )}
         <div style={{ flexGrow: 1 }} />
         {durationString && (

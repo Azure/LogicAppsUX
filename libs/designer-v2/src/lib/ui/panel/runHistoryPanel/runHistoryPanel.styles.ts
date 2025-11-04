@@ -38,7 +38,7 @@ export const useRunHistoryPanelStyles = makeStyles({
 
   runEntrySmall: {
     height: '32px',
-    padding: '0px 2px 0px 16px',
+    padding: '0px 2px 0px 8px',
   },
 
   runEntryContent: {

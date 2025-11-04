@@ -2,7 +2,7 @@ import * as React from 'react';
 import StatusSucceededIcon from '../../../../lib/common/images/status_success.svg';
 import StatusFailedIcon from '../../../../lib/common/images/status_failure.svg';
 import StatusCancelledIcon from '../../../../lib/common/images/status_cancelled.svg';
-import { Text, Spinner } from '@fluentui/react-components';
+import { Text, Spinner, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
@@ -69,7 +69,11 @@ const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
   }, [props.status, text]);
 
   if (props.onlyIcon) {
-    return icon;
+    return (
+			<Tooltip content={text} relationship='label'>
+				{icon}
+			</Tooltip>
+		);
   }
 
   return (

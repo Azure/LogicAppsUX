@@ -313,6 +313,20 @@ export const useResubmitRun = (runId: string, triggerName: string) => {
   });
 };
 
+export const useResubmitRuns = (runIds: string[]) => {
+	return useMutation([runsQueriesKeys.useResubmitRun, { runIds }], async () => {
+		const resubmitPromises = runIds.map(async (runId) => {
+			const run = await getRun(runId);
+			if (isNullOrUndefined(run)) {
+				throw new Error(`Run with ID ${runId} not found`);
+			}
+			const triggerName = (run.properties.trigger as any)?.name ?? '';
+			return RunService().resubmitRun?.(runId, triggerName);
+		});
+		return Promise.all(resubmitPromises);
+	});
+};
+
 export const useCancelRun = (runId: string) => {
   return useMutation([runsQueriesKeys.useCancelRun, { runId }], async () => {
     return await RunService().cancelRun(runId);
