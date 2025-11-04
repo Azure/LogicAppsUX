@@ -102,7 +102,7 @@ export const useConnectorSectionStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
   },
 
-  emptyStateIconDisabled: {
+  emptyStateDisabled: {
     color: tokens.colorNeutralForegroundDisabled,
   },
 
