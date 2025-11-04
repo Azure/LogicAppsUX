@@ -86,6 +86,42 @@ describe('InputsBinder', () => {
     expect(result).toEqual([parsedInputs]);
   });
 
+  it('should bind inputs using DefaultInputsBinder when manifest declares so', async () => {
+    const inputs = { key: 'value' };
+    const type = 'JavaScriptCode';
+    const operation = undefined;
+    const manifest = {
+      properties: {
+        iconUri: 'https://logicapps.azureedge.net/icons/javascript.svg',
+        brandColor: '#ba5d00',
+        description: 'Execute JavaScript Code',
+        connection: {
+          type: 'NotSpecified',
+          required: false,
+        },
+        inputs: {},
+        inputsBindingMode: 'untyped',
+      },
+    };
+
+    const mockBind = vi.fn().mockResolvedValue(parsedInputs);
+    vi.spyOn(DefaultInputsBinder.prototype, 'bind').mockImplementation(mockBind);
+
+    const result = await inputsBinder.bind(
+      inputs,
+      type,
+      inputParametersByName,
+      operation,
+      manifest,
+      customSwagger,
+      nodeParameters,
+      operationMetadata
+    );
+
+    expect(mockBind).toHaveBeenCalled();
+    expect(result).toEqual([parsedInputs]);
+  });
+
   it('should bind inputs using DefaultInputsBinder when no special conditions are met', async () => {
     const inputs = { key: 'value' };
     const type = constants.NODE.TYPE.INCREMENT_VARIABLE;
