@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Button, Spinner, SplitButton } from '@fluentui/react-components';
+import { Button, Spinner, SplitButton, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular } from '@fluentui/react-icons';
 import type { Workflow } from '@microsoft/logic-apps-shared';
 import { canRunBeInvokedWithPayload, equals, HTTP_METHODS, isNullOrEmpty, RunService, WorkflowService } from '@microsoft/logic-apps-shared';
@@ -63,10 +63,10 @@ export const FloatingRunButton = ({
   const dispatch = useDispatch();
   const isA2AWorkflow = useIsA2AWorkflow();
   const { operations: operationState, workflow } = useSelector((state: RootState) => state);
+  const triggerId = useMemo(() => getTriggerNodeId(workflow), [workflow]);
 
   // Check if the trigger type is allowed to run in DraftMode
   const isAllowedTriggerType = useMemo(() => {
-    const triggerId = getTriggerNodeId(workflow);
     const info: Record<string, any> | undefined = operationState?.operationInfo;
     if (!triggerId || !info || !info[triggerId]) {
       return false;
@@ -79,7 +79,7 @@ export const FloatingRunButton = ({
     const trigger = info[triggerId];
 
     return trigger.type && AllowedTriggerTypes.some((allowedType) => equals(trigger.type, allowedType, true));
-  }, [isDraftMode, operationState?.operationInfo, workflow]);
+  }, [isDraftMode, operationState?.operationInfo, triggerId]);
 
   const canBeRunWithPayload = useMemo(
     () => isDraftMode || canRunBeInvokedWithPayload(operationState?.operationInfo),
@@ -245,11 +245,21 @@ export const FloatingRunButton = ({
     },
   };
 
-  const runText = intl.formatMessage({
-    defaultMessage: 'Run',
-    id: 'd8JU5h',
-    description: 'Run button text',
-  });
+  const strings = useMemo(
+    () => ({
+      RUN_TEXT: intl.formatMessage({
+        defaultMessage: 'Run',
+        id: 'd8JU5h',
+        description: 'Run button text',
+      }),
+      RUN_PAYLOAD_TOOLTIP: intl.formatMessage({
+        defaultMessage: 'Run with payload',
+        id: 'JrAqnE',
+        description: 'Tooltip for Run with payload button',
+      }),
+    }),
+    [intl]
+  );
 
   const buttonRef = useRef(null);
 
@@ -271,24 +281,26 @@ export const FloatingRunButton = ({
   if (canBeRunWithPayload) {
     return (
       <>
-        <SplitButton
-          {...buttonCommonProps}
-          primaryActionButton={{
-            icon: runIsLoading ? <Spinner size="tiny" /> : <RunIcon />,
-            onClick: () => {
-              runMutate();
-            },
-            disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType,
-          }}
-          menuButton={{
-            icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
-            onClick: () => setPopoverOpen(true),
-            ref: buttonRef,
-            disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload,
-          }}
-        >
-          {runText}
-        </SplitButton>
+        <Tooltip positioning={{ target: buttonRef.current }} withArrow content={strings.RUN_PAYLOAD_TOOLTIP} relationship="description">
+          <SplitButton
+            {...buttonCommonProps}
+            primaryActionButton={{
+              icon: runIsLoading ? <Spinner size="tiny" /> : <RunIcon />,
+              onClick: () => {
+                runMutate();
+              },
+              disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !isAllowedTriggerType || !triggerId,
+            }}
+            menuButton={{
+              icon: runWithPayloadIsLoading ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
+              onClick: () => setPopoverOpen(true),
+              ref: buttonRef,
+              disabled: isDisabled || runIsLoading || runWithPayloadIsLoading || !canBeRunWithPayload || !triggerId,
+            }}
+          >
+            {strings.RUN_TEXT}
+          </SplitButton>
+        </Tooltip>
         <PayloadPopover
           isDraftMode={isDraftMode}
           open={popoverOpen}
@@ -302,7 +314,7 @@ export const FloatingRunButton = ({
 
   return (
     <Button {...buttonCommonProps} icon={runIsLoading ? <Spinner size="tiny" /> : <RunIcon />} onClick={runMutate}>
-      {runText}
+      {strings.RUN_TEXT}
     </Button>
   );
 };
