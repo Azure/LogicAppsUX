@@ -3,20 +3,11 @@ import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import {
-  type AgentURL,
-  type IWorkflowService,
-  type ManagedIdentity,
-  type Runs,
-  StandardRunService,
-  Theme,
-  equals,
-  isRuntimeUp,
-} from '@microsoft/logic-apps-shared';
+import { type Runs, StandardRunService, Theme, equals, isRuntimeUp } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useIntlMessages, overviewMessages } from '../../intl';
-import { useInfiniteQuery, useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useOverviewStyles } from './overviewStyles';
@@ -30,7 +21,7 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, azureDetails, kind } = workflowState;
+  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, azureDetails, kind } = workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const styles = useOverviewStyles();
 
@@ -56,7 +47,6 @@ export const OverviewApp = () => {
     return () => clearInterval(interval);
   }, [baseUrl]);
 
-  const emptyArmId = '00000000-0000-0000-0000-000000000000';
   const clientId = azureDetails?.clientId ?? '';
   const tenantId = azureDetails?.tenantId ?? '';
 
@@ -88,7 +78,7 @@ export const OverviewApp = () => {
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>(
-    [QueryKeys.runsData],
+    [QueryKeys.runsData, isWorkflowRuntimeRunning],
     loadRuns,
     {
       getNextPageParam: (lastPage) => lastPage.nextLink,
@@ -123,48 +113,19 @@ export const OverviewApp = () => {
     [runService]
   );
 
-  const workflowService: IWorkflowService = useMemo(
-    () => ({
-      getCallbackUrl: async (triggerId: string) => {
-        if (isLocal) {
-          try {
-            const url = `${baseUrl}/workflows/${workflowProperties.name}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
-            return (await httpClient.post({ uri: url })) as any;
-          } catch {
-            return undefined;
-          }
-        }
-        return undefined;
-      },
-      getAppIdentity: () => {
-        return {
-          principalId: emptyArmId,
-          tenantId: emptyArmId,
-          type: 'SystemAssigned',
-        } as ManagedIdentity;
-      },
-      isExplicitAuthRequiredForManagedIdentity: () => true,
-      getAgentUrl: () => fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId),
-    }),
-    [isLocal, baseUrl, workflowProperties.name, apiVersion, httpClient, clientId, tenantId]
+  const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
+    ['agentUrl', isWorkflowRuntimeRunning, baseUrl],
+    async () => {
+      return fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId);
+    },
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: isWorkflowRuntimeRunning && isAgentWorkflow,
+    }
   );
-
-  const useAgentUrl = (): UseQueryResult<AgentURL> => {
-    return useQuery(
-      ['agentUrl'],
-      async () => {
-        return workflowService.getAgentUrl?.();
-      },
-      {
-        cacheTime: 1000 * 60 * 60 * 24,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      }
-    );
-  };
-
-  const { isLoading: agentUrlIsLoading, data: agentUrlData } = useAgentUrl();
 
   const errorMessage = useMemo((): string | undefined => {
     if (!isWorkflowRuntimeRunning) {

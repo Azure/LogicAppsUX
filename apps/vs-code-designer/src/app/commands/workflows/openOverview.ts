@@ -45,6 +45,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let workflowName = '';
   let workflowContent: any;
   let baseUrl: string;
+  let getBaseUrl: () => string;
   let apiVersion: string;
   let accessToken: string;
   let getAccessToken: () => Promise<string>;
@@ -68,7 +69,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
-    baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    getBaseUrl = () => `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    baseUrl = getBaseUrl();
     apiVersion = '2019-10-01-edge-preview';
     isLocal = true;
     triggerName = getTriggerName(workflowContent.definition);
@@ -85,7 +87,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     panelName = `${workflowNode.id}-${workflowName}-overview`;
     workflowContent = workflowNode.workflowFileContent;
     getAccessToken = async () => await getAuthorizationTokenFromNode(workflowNode);
-    baseUrl = getWorkflowManagementBaseURI(workflowNode);
+    getBaseUrl = () => getWorkflowManagementBaseURI(workflowNode);
+    baseUrl = getBaseUrl();
     apiVersion = workflowAppApiVersion;
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
@@ -144,7 +147,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval: NodeJS.Timeout;
+  let accessTokenInterval: NodeJS.Timeout;
+  let baseUrlInterval: NodeJS.Timeout;
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
       case ExtensionCommand.loadRun: {
@@ -167,9 +171,10 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             kind: kind,
           },
         });
+
         // Just shipping the access Token every 5 seconds is easier and more
         // performant that asking for it every time and waiting.
-        interval = setInterval(async () => {
+        accessTokenInterval = setInterval(async () => {
           const updatedAccessToken = await getAccessToken();
 
           if (updatedAccessToken !== accessToken) {
@@ -182,6 +187,21 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
+
+        baseUrlInterval = setInterval(async () => {
+          const updatedBaseUrl = getBaseUrl();
+
+          if (updatedBaseUrl !== baseUrl) {
+            baseUrl = updatedBaseUrl;
+            panel.webview.postMessage({
+              command: ExtensionCommand.update_base_url,
+              data: {
+                baseUrl,
+              },
+            });
+          }
+        }, 3000);
+
         break;
       }
       default:
@@ -192,7 +212,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   panel.onDidDispose(
     () => {
       removeWebviewPanelFromCache(panelGroupKey, panelName);
-      clearInterval(interval);
+      clearInterval(accessTokenInterval);
+      clearInterval(baseUrlInterval);
     },
     null,
     ext.context.subscriptions

@@ -55,16 +55,16 @@ export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, isWorkflo
   );
 
   const chatContent = useMemo(() => {
-    if (loading) {
-      return <Spinner size="medium" label={IntlText.LOADING} />;
-    }
-
     if (!isWorkflowRuntimeRunning) {
       return (
         <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
           {IntlText.DEBUG_PROJECT_ERROR}
         </MessageBar>
       );
+    }
+
+    if (loading) {
+      return <Spinner size="medium" label={IntlText.LOADING} />;
     }
 
     return (

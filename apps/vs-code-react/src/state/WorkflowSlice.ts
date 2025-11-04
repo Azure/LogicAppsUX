@@ -118,6 +118,9 @@ export const workflowSlice = createSlice({
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
     },
+    updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
+      state.baseUrl = action.payload ?? '';
+    },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
@@ -175,6 +178,7 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initializeWorkflow,
+  updateBaseUrl,
   updateAccessToken,
   updateSelectedWorkFlows,
   updateSelectedSubscripton,
