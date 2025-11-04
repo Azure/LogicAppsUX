@@ -48,3 +48,8 @@ export interface WorkflowParameter {
   description?: string;
   allowedValues?: any[];
 }
+
+export type ConsumptionWorkflowMetadata = {
+  agentType?: string;
+  [key: string]: any;
+};

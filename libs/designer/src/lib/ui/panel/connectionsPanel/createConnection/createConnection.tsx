@@ -52,6 +52,7 @@ import type {
   Connector,
   OperationParameterSetParameter,
   OperationManifest,
+  ConsumptionWorkflowMetadata,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
@@ -111,7 +112,7 @@ export interface CreateConnectionProps {
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
   workflowKind?: string;
-  workflowMetadata?: { agentType?: string };
+  workflowMetadata?: ConsumptionWorkflowMetadata;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -305,12 +306,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isDynamicConnectionOptionValidForConnector = useMemo(() => {
-    // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
-    // Standard: check workflowKind
-    // Consumption: check metadata.agentType
-    const isAgent = workflowKind ? isA2AKind(workflowKind) : workflowMetadata?.agentType !== undefined;
-
-    return isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isAgent;
+    return (
+      isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isA2AKind(workflowKind, workflowMetadata)
+    );
   }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
