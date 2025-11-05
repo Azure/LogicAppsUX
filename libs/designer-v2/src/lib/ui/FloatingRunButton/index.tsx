@@ -60,6 +60,10 @@ export interface FloatingRunButtonProps {
   isDraftMode?: boolean;
   isDisabled?: boolean;
   tooltipOverride?: string;
+  chatProps?: {
+    disabled?: boolean;
+    tooltipText?: string;
+  };
 }
 
 export const FloatingRunButton = ({
@@ -71,6 +75,7 @@ export const FloatingRunButton = ({
   isDraftMode,
   isDisabled,
   tooltipOverride,
+  chatProps,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
@@ -313,8 +318,19 @@ export const FloatingRunButton = ({
           siteResourceId={siteResourceId}
           workflowName={workflowName}
           saveWorkflow={saveWorkflow}
+          tooltipText={tooltipOverride ?? chatProps?.tooltipText}
         />
       </div>
+      <ChatButton
+        {...buttonCommonProps}
+        disabled={buttonCommonProps.disabled || chatProps?.disabled}
+        isDarkMode={isDarkMode}
+        isDraftMode={isDraftMode}
+        siteResourceId={siteResourceId}
+        workflowName={workflowName}
+        saveWorkflow={saveWorkflow}
+        tooltipText={chatProps?.tooltipText}
+      />
     );
   }
 

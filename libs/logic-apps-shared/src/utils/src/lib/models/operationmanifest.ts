@@ -167,6 +167,11 @@ export interface Documentation {
   url: string;
 }
 
+export const BindingMode = {
+  Untyped: 'untyped',
+};
+export type BindingMode = (typeof BindingMode)[keyof typeof BindingMode];
+
 export const RunAfterType = {
   NotSupported: 'notsupported',
 };
@@ -237,11 +242,13 @@ export interface OperationManifestProperties {
 
   recurrence?: RecurrenceSetting;
 
+  inputsBindingMode?: BindingMode;
   inputs?: SwaggerSchema;
   inputsLocation?: string[]; // Note: If not specified, default value is [ 'inputs' ]
   inputsLocationSwapMap?: LocationSwapMap[];
   isInputsOptional?: boolean;
 
+  outputsBindingMode?: BindingMode;
   outputs?: SwaggerSchema;
   outputsSchema?: {
     outputPaths: InputsDependency[];

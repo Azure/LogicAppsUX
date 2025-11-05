@@ -11,6 +11,7 @@ import {
   DialogTrigger,
   Spinner,
   tokens,
+  Tooltip,
 } from '@fluentui/react-components';
 import type { ButtonProps } from '@fluentui/react-components';
 
@@ -42,20 +43,21 @@ export type ChatButtonProps = ButtonProps & {
   isDraftMode?: boolean;
   siteResourceId?: string;
   workflowName?: string;
+  tooltipText?: string;
   saveWorkflow: () => Promise<void>;
 };
 
 export const ChatButton = (props: ChatButtonProps) => {
   const intl = useIntl();
-  const { isDarkMode, isDraftMode, saveWorkflow, ...buttonProps } = props;
+  const { isDarkMode, isDraftMode, saveWorkflow, tooltipText, ...buttonProps } = props;
   const { isLoading, data } = useAgentUrl({ isDraftMode });
   const [isSaving, setIsSaving] = useState(false);
 
   const IntlText = useMemo(
     () => ({
       CHAT_TEXT: intl.formatMessage({
-        defaultMessage: 'Chat (Preview)',
-        id: 'GwuWyK',
+        defaultMessage: 'Chat',
+        id: '9VbsXx',
         description: 'Chat button text',
       }),
       LOADING: intl.formatMessage({
@@ -67,6 +69,11 @@ export const ChatButton = (props: ChatButtonProps) => {
         defaultMessage: 'Agent chat',
         id: 'Xj/wPS',
         description: 'Agent chat title',
+      }),
+      DEFAULT_TOOLTIP: intl.formatMessage({
+        defaultMessage: 'Click here to chat with your workflow',
+        id: 'sBGZCI',
+        description: 'Tooltip for chat button',
       }),
     }),
     [intl]
@@ -96,9 +103,11 @@ export const ChatButton = (props: ChatButtonProps) => {
   return (
     <Dialog modalType="modal" surfaceMotion={null}>
       <DialogTrigger disableButtonEnhancement>
-        <Button {...buttonProps} icon={<ChatIcon />} onClick={onChatButtonClick}>
-          {IntlText.CHAT_TEXT}
-        </Button>
+        <Tooltip content={tooltipText ?? IntlText.DEFAULT_TOOLTIP} relationship="label" withArrow={true}>
+          <Button {...buttonProps} icon={<ChatIcon />} onClick={onChatButtonClick}>
+            {IntlText.CHAT_TEXT}
+          </Button>
+        </Tooltip>
       </DialogTrigger>
       <DialogSurface style={{ width: '70vw', maxWidth: '70vw' }}>
         <DialogBody>
