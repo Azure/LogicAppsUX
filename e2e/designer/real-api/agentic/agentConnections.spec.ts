@@ -35,7 +35,6 @@ test.describe(
     };
 
     test('Can create a valid connection', async ({ page, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow();
 
       // Click on the agent action
@@ -57,7 +56,6 @@ test.describe(
       await realDataApi.saveWorkflow();
 
       // Reload the page and verify the connection is still there
-      await page.reload();
       await realDataApi.goToWorkflow();
       // Click on the agent action
       await expect(page.getByLabel('Default Agent operation')).toBeVisible();
@@ -70,7 +68,6 @@ test.describe(
     });
 
     test('Show MSI warnings', async ({ page, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow();
 
       // Click on the agent action

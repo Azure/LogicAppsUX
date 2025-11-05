@@ -30,10 +30,10 @@ export const LoadRunFile = async (page: Page, runName: string) => {
   await page.getByRole('button', { name: 'Toolbox' }).click();
 };
 
-export const LoadDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard', isLocal = false) => {
-  if (isLocal) {
-    await page.goto(`/?localId=${workflowName}&localRunId=${runName}&plan=${plan}`);
-  } else {
-    await page.goto(`/?id=${workflowName}&runId=${runName}&plan=${plan}`);
-  }
+export const LoadMockDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard') => {
+  await page.goto(`/?localId=${workflowName}&localRunId=${runName}&plan=${plan}`);
+};
+
+export const LoadDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard') => {
+  await page.goto(`/?id=${workflowName}&runId=${runName}&plan=${plan}`);
 };

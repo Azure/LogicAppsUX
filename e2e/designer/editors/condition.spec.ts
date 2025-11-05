@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { LoadMockDirect } from '../utils/GoToWorkflow';
 
 test(
   'condition editor',
@@ -7,9 +7,7 @@ test(
     tag: '@mock',
   },
   async ({ page }) => {
-    await page.goto('/');
-
-    await GoToMockWorkflow(page, 'Conditionals');
+    await LoadMockDirect(page, 'Conditionals.json');
     await expect(page.getByLabel('Condition operation')).toBeVisible();
 
     await page.getByLabel('Condition operation').click();

@@ -6,7 +6,6 @@ test.describe(
   },
   () => {
     test('Sanity check', async ({ page, realDataApi }) => {
-      await page.goto('/');
       const initialName = 'manual';
       const updatedName = 'manualUpdated';
 

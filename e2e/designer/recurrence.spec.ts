@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'Recurrence Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   async () => {
     test.skip('Recurrence should load preview text properly', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Recurrence');
+      await LoadMockDirect(page, 'Recurrence.json');
       await page.getByTestId('card-recurrence').click();
 
       // interval

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 import panelData from '../../__mocks__/workflows/Panel.json' assert { type: 'json' };
 import switchData from '../../__mocks__/workflows/Switch.json' assert { type: 'json' };
@@ -12,9 +12,7 @@ test.describe(
   },
   () => {
     test('Should serialize the workflow after deserializing it and match', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
@@ -26,8 +24,7 @@ test.describe(
     });
 
     test('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Switch');
+      await LoadMockDirect(page, 'Switch.json');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
@@ -37,9 +34,7 @@ test.describe(
     test('Should serialize the workflow after deserializing it and match with some strings and keys containing unicode characters', async ({
       page,
     }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Unicode Keys');
+      await LoadMockDirect(page, 'UnicodeKeys.json');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 

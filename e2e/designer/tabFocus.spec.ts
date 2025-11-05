@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'TabFocus Tests',
@@ -11,8 +11,7 @@ test.describe(
       test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await LoadMockDirect(page, 'AllScopeNodes.json');
 
       // Find element with text 'Recurrence'
       await page.getByText('Recurrence', { exact: true }).click();
@@ -52,8 +51,7 @@ test.describe(
       const tab = async () => page.locator('*:focus').press('Tab');
       const backTab = async () => page.locator('*:focus').press('Shift+Tab');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Find element with text 'manual'
       await page.getByText('manual', { exact: true }).click();

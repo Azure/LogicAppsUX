@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'Collapse actions tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Should collapse actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Collapse action
       await page.getByText('HTTP', { exact: true }).click({ button: 'right' });
@@ -21,8 +20,7 @@ test.describe(
     });
 
     test('Should collapse actions and expand', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Collapse last action
       await page.getByText('Filter array', { exact: true }).click({ button: 'right' });
@@ -52,8 +50,7 @@ test.describe(
     });
 
     test('Should collapse actions within scope', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Scope');
+      await LoadMockDirect(page, 'Scope.json');
 
       // Collapse nested scope
       await page.getByText('Scope nested', { exact: true }).click({ button: 'right' });
