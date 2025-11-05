@@ -12,6 +12,7 @@ import {
   isNullOrUndefined,
   validateRequiredServiceArguments,
   isArmResourceId,
+  parseErrorMessage,
 } from '../../../utils/src';
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
@@ -431,7 +432,7 @@ export class StandardRunService implements IRunService {
         content: options?.body,
       });
     } catch (e: any) {
-      throw new Error(`${e.status} ${e?.data?.error?.message}`);
+      throw new Error(parseErrorMessage(e));
     }
   }
 
