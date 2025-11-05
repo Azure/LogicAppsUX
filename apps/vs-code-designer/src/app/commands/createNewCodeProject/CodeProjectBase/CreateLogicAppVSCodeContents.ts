@@ -77,7 +77,7 @@ export async function writeExtensionsJson(webviewProjectContext: IWebviewProject
   await fse.writeJson(extensionsJsonPath, extensionsData, { spaces: 2 });
 }
 
-const getAgentCodedulTasks = (targetFramework: string) => {
+const getAgentCodefulTasks = (targetFramework: string) => {
   const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
   const releaseArgs: string[] = ['--configuration', 'Release'];
   const funcBinariesExist = binariesExist(funcDependencyName);
@@ -152,7 +152,7 @@ async function writeTasksJson(context: IWebviewProjectContext, vscodePath: strin
 
   if (logicAppType === ProjectType.agentCodeful && targetFramework) {
     // Get the agent codeful-specific tasks
-    const agentCodefulTasks = getAgentCodedulTasks(targetFramework);
+    const agentCodefulTasks = getAgentCodefulTasks(targetFramework);
 
     // Replace tasks with agent codeful tasks
     tasksData.tasks = agentCodefulTasks;
