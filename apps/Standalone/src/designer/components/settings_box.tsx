@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AzureConsumptionLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
 import { AzureStandardLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/LogicAppSelector';
@@ -11,12 +12,25 @@ import { ThemeProvider } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 
+const isLoadingDirect = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('id') !== null || urlParams.get('localId') !== null;
+};
+
 export const SettingsBox = () => {
-  const [active, toggleActive] = useBoolean(true);
+  const [active, toggleActive] = useBoolean(isLoadingDirect());
   const isDark = useIsDarkMode();
   const isLocal = useIsLocal();
   const isConsumption = useHostingPlan() === 'consumption';
   const cs = css(styles.toybox, active && styles.active, isDark && styles.dark);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    // If there is no 'id' param, we are in local mode
+    if (urlParams.get('id') !== null || urlParams.get('localId') !== null) {
+      toggleActive.setFalse();
+    }
+  }, [toggleActive]);
 
   const SettingsSection = (props: any) => {
     const { title, children, startExpanded = true } = props;

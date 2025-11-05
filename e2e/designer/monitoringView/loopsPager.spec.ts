@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow, LoadRunFile } from '../utils/GoToWorkflow';
+import { LoadDirect } from '../utils/GoToWorkflow';
 
 test.describe(
   'Loops pager in monitoring view tests',
@@ -8,10 +8,7 @@ test.describe(
   },
   () => {
     test('Success run check', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Loops pager');
-      await LoadRunFile(page, 'SuccessRun');
+      await LoadDirect(page, 'LoopsPager.json', 'SuccessRun', 'standard', true);
 
       // Verify status for success in previous action
       await expect(page.getByTestId('msla-pill-initialize_variable_status')).toBeVisible();
