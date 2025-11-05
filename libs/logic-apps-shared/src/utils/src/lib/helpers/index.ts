@@ -17,3 +17,4 @@ export * from './stringFunctions';
 export * from './localStorage';
 export * from './useEdgesData';
 export * from './keyboard';
+export * from './version';
