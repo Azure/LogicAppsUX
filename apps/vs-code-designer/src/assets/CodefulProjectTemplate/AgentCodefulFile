@@ -68,7 +68,7 @@ public class Program
             {
                 var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
                     location: () => "WA",
-                    units: () => "I");
+                    units: () => Microsoft.Azure.Workflows.Sdk.Agents.Connectors.Msnweather.CurrentWeatherunitsInput.Imperial);
                 b.AddAction(getCurrentWeatherAction);
 
             },

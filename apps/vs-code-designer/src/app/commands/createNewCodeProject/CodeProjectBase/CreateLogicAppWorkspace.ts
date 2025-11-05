@@ -2,6 +2,7 @@ import {
   appKindSetting,
   artifactsDirectory,
   assetsFolderName,
+  autoRuntimeDependenciesPathSettingKey,
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
   defaultVersionRange,
@@ -16,6 +17,7 @@ import {
   localEmulatorConnectionString,
   localSettingsFileName,
   logicAppKind,
+  lspDirectory,
   multiLanguageWorkerSetting,
   ProjectDirectoryPathKey,
   rulesDirectory,
@@ -49,6 +51,7 @@ import { WorkerRuntime, ProjectType, WorkflowType } from '@microsoft/vscode-exte
 import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
+import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
@@ -114,6 +117,8 @@ const createAgentCodefulWorkflowFile = async (
   workflowType: WorkflowType
 ) => {
   const agentFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulFile' : 'AgentCodefulFile';
+  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
   // Create the .cs file inside the functions folder
   const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', agentFileName);
@@ -129,6 +134,14 @@ const createAgentCodefulWorkflowFile = async (
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
 
   await fse.writeFile(csprojFilePath, templateProjContent);
+
+  // Create nuget.config file
+  // Create the .cs file inside the functions folder
+  const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
+  const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
+
+  const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
+  await fse.writeFile(nugetFilePath, templateNugetContent);
 };
 
 export async function createLocalConfigurationFiles(
