@@ -98,7 +98,7 @@ export const ChatButton = (props: ChatButtonProps) => {
       ),
     }),
     [intl]
-  );
+    [intl, agentChatUrl]
 
   const agentChatUrl = useMemo(() => data?.chatUrl, [data]);
 
