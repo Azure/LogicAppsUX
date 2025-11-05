@@ -53,6 +53,8 @@ export const ChatButton = (props: ChatButtonProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [onDialogOpen, setOnDialogOpen] = useState(false);
 
+  const agentChatUrl = useMemo(() => data?.chatUrl, [data]);
+
   const IntlText = useMemo(
     () => ({
       CHAT_TEXT: intl.formatMessage({
@@ -97,10 +99,8 @@ export const ChatButton = (props: ChatButtonProps) => {
         }
       ),
     }),
-    [intl]
     [intl, agentChatUrl]
-
-  const agentChatUrl = useMemo(() => data?.chatUrl, [data]);
+  );
 
   const onOpenChange = useCallback(
     async (open?: boolean) => {
