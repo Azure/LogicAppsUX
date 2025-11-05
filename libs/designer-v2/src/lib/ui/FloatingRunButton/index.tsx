@@ -301,6 +301,27 @@ export const FloatingRunButton = ({
     [intl]
   );
 
+  const ErrorBadge = () =>
+    runError ? (
+      <Tooltip
+        relationship="description"
+        content={{
+          className: styles.errorTooltip,
+          children: (
+            <MessageBar intent="error" layout="multiline">
+              <MessageBarBody>
+                <MessageBarTitle>{strings.ERROR_BADGE_TITLE}</MessageBarTitle>
+                <br />
+                {parseErrorMessage(runError)}
+              </MessageBarBody>
+            </MessageBar>
+          ),
+        }}
+      >
+        <Badge className={styles.errorBadge} color="danger" icon={<ErrorIcon />} />
+      </Tooltip>
+    ) : null;
+
   const tooltipText = useMemo(
     () => tooltipOverride ?? runStatusMessage ?? (isDraftMode ? strings.NEUTRAL_TOOLTIP_DRAFT : strings.NEUTRAL_TOOLTIP_PUBLISHED),
     [tooltipOverride, runStatusMessage, isDraftMode, strings]
@@ -321,16 +342,6 @@ export const FloatingRunButton = ({
           tooltipText={tooltipOverride ?? chatProps?.tooltipText}
         />
       </div>
-      <ChatButton
-        {...buttonCommonProps}
-        disabled={buttonCommonProps.disabled || chatProps?.disabled}
-        isDarkMode={isDarkMode}
-        isDraftMode={isDraftMode}
-        siteResourceId={siteResourceId}
-        workflowName={workflowName}
-        saveWorkflow={saveWorkflow}
-        tooltipText={chatProps?.tooltipText}
-      />
     );
   }
 
@@ -364,34 +375,19 @@ export const FloatingRunButton = ({
           buttonRef={payloadButtonRef}
           onSubmit={runMutate}
         />
-        {runError ? (
-          <Tooltip
-            relationship="description"
-            content={{
-              className: styles.errorTooltip,
-              children: (
-                <MessageBar intent="error" layout="multiline">
-                  <MessageBarBody>
-                    <MessageBarTitle>{strings.ERROR_BADGE_TITLE}</MessageBarTitle>
-                    <br />
-                    {parseErrorMessage(runError)}
-                  </MessageBarBody>
-                </MessageBar>
-              ),
-            }}
-          >
-            <Badge className={styles.errorBadge} color="danger" icon={<ErrorIcon />} />
-          </Tooltip>
-        ) : null}
+        <ErrorBadge />
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <Button {...buttonCommonProps} icon={runIsLoading ? <Spinner size="tiny" /> : <RunIcon />} onClick={runMutate}>
-        {strings.RUN_TEXT}
-      </Button>
+      <Tooltip withArrow content={tooltipText} relationship="description">
+        <Button {...buttonCommonProps} icon={runIsLoading ? <Spinner size="tiny" /> : <RunIcon />} onClick={runMutate}>
+          {strings.RUN_TEXT}
+        </Button>
+      </Tooltip>
+      <ErrorBadge />
     </div>
   );
 };
