@@ -78,8 +78,8 @@ export const ChatButton = (props: ChatButtonProps) => {
       CHAT_IN_AUTHENTICATION_DRAFT: intl.formatMessage(
         {
           defaultMessage:
-            "In portal chat is not supported when authentication is enabled. Use the production workflow's chat client at - {url} or click the button to access it after publishing.",
-          id: 'efrZO3',
+            'Embedded chat is unavailable with authentication enabled. Publish to access the chat client and click to open in new tab: {url}',
+          id: '3MaYXN',
           description: 'Tooltip for chat button',
         },
         {
@@ -88,9 +88,8 @@ export const ChatButton = (props: ChatButtonProps) => {
       ),
       CHAT_IN_AUTHENTICATION_PROD: intl.formatMessage(
         {
-          defaultMessage:
-            'In portal chat is not supported when authentication is enabled. Use the chat client at - {url} or click the button to access it.',
-          id: 'uxNtmm',
+          defaultMessage: 'Embedded chat is unavailable with authentication enabled. Click to open in new tab: {url}',
+          id: '7rokiZ',
           description: 'Tooltip for chat button',
         },
         {
