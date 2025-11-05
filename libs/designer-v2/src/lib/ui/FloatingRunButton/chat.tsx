@@ -14,10 +14,9 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import type { ButtonProps } from '@fluentui/react-components';
-
-import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import type { AgentURL } from '@microsoft/logic-apps-shared';
 import { WorkflowService } from '@microsoft/logic-apps-shared';
+import type { AgentURL } from '@microsoft/logic-apps-shared';
+import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
@@ -49,9 +48,10 @@ export type ChatButtonProps = ButtonProps & {
 
 export const ChatButton = (props: ChatButtonProps) => {
   const intl = useIntl();
-  const { isDarkMode, isDraftMode, saveWorkflow, tooltipText, ...buttonProps } = props;
+  const { isDarkMode, isDraftMode, saveWorkflow, tooltipText: clientStateTooltipText, ...buttonProps } = props;
   const { isLoading, data } = useAgentUrl({ isDraftMode });
   const [isSaving, setIsSaving] = useState(false);
+  const [onDialogOpen, setOnDialogOpen] = useState(false);
 
   const IntlText = useMemo(
     () => ({
@@ -75,36 +75,97 @@ export const ChatButton = (props: ChatButtonProps) => {
         id: 'sBGZCI',
         description: 'Tooltip for chat button',
       }),
+      CHAT_IN_AUTHENTICATION_DRAFT: intl.formatMessage(
+        {
+          defaultMessage:
+            "In portal chat is not supported when authentication is enabled. Use the production workflow's chat client at - {url} or click the button to access it after publishing.",
+          id: 'efrZO3',
+          description: 'Tooltip for chat button',
+        },
+        {
+          url: agentChatUrl,
+        }
+      ),
+      CHAT_IN_AUTHENTICATION_PROD: intl.formatMessage(
+        {
+          defaultMessage:
+            'In portal chat is not supported when authentication is enabled. Use the chat client at - {url} or click the button to access it.',
+          id: 'uxNtmm',
+          description: 'Tooltip for chat button',
+        },
+        {
+          url: agentChatUrl,
+        }
+      ),
     }),
     [intl]
   );
 
-  const onChatButtonClick = useCallback(async () => {
-    setIsSaving(true);
-    await saveWorkflow();
-    setIsSaving(false);
-  }, [saveWorkflow]);
+  const agentChatUrl = useMemo(() => data?.chatUrl, [data]);
+
+  const onOpenChange = useCallback(
+    async (open?: boolean) => {
+      if (open) {
+        setIsSaving(true);
+        await saveWorkflow();
+        setIsSaving(false);
+        if (data?.authenticationEnabled && agentChatUrl) {
+          window.open(agentChatUrl, '_blank');
+          return;
+        }
+      }
+
+      setOnDialogOpen(!!open);
+    },
+    [saveWorkflow, data?.authenticationEnabled, agentChatUrl]
+  );
+
+  const tooltipText = useMemo(() => {
+    if (buttonProps.disabled) {
+      return clientStateTooltipText ?? IntlText.DEFAULT_TOOLTIP;
+    }
+
+    if (data?.authenticationEnabled && isDraftMode) {
+      return IntlText.CHAT_IN_AUTHENTICATION_DRAFT;
+    }
+
+    if (data?.authenticationEnabled) {
+      return IntlText.CHAT_IN_AUTHENTICATION_PROD;
+    }
+
+    return IntlText.DEFAULT_TOOLTIP;
+  }, [
+    buttonProps.disabled,
+    clientStateTooltipText,
+    data?.authenticationEnabled,
+    isDraftMode,
+    IntlText.CHAT_IN_AUTHENTICATION_DRAFT,
+    IntlText.CHAT_IN_AUTHENTICATION_PROD,
+    IntlText.DEFAULT_TOOLTIP,
+  ]);
 
   const chatContent = useMemo(() => {
     if (isLoading || isSaving) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
 
-    const agentChatUrl = data?.chatUrl;
     return (
       <iframe
         src={`${agentChatUrl}${agentChatUrl?.includes('?') ? '&' : '?'}apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}`}
         title={IntlText.TITLE}
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
+        referrerPolicy="strict-origin-when-cross-origin"
+        loading="eager"
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [isLoading, data?.chatUrl, data?.queryParams?.apiKey, isDarkMode, IntlText.TITLE, IntlText.LOADING]);
+  }, [isLoading, isSaving, agentChatUrl, data?.queryParams?.apiKey, isDarkMode, IntlText.TITLE, IntlText.LOADING]);
 
   return (
-    <Dialog modalType="modal" surfaceMotion={null}>
+    <Dialog modalType="modal" surfaceMotion={null} open={onDialogOpen} onOpenChange={(_, data) => onOpenChange(data.open)}>
       <DialogTrigger disableButtonEnhancement>
-        <Tooltip content={tooltipText ?? IntlText.DEFAULT_TOOLTIP} relationship="label" withArrow={true}>
-          <Button {...buttonProps} icon={<ChatIcon />} onClick={onChatButtonClick}>
+        <Tooltip content={tooltipText} relationship="label" withArrow={true}>
+          <Button {...buttonProps} disabled={buttonProps.disabled || !agentChatUrl || isLoading || isSaving} icon={<ChatIcon />}>
             {IntlText.CHAT_TEXT}
           </Button>
         </Tooltip>
