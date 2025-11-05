@@ -56,8 +56,8 @@ export const ChatButton = (props: ChatButtonProps) => {
   const IntlText = useMemo(
     () => ({
       CHAT_TEXT: intl.formatMessage({
-        defaultMessage: 'Chat',
-        id: '9VbsXx',
+        defaultMessage: 'Chat (Preview)',
+        id: 'GwuWyK',
         description: 'Chat button text',
       }),
       LOADING: intl.formatMessage({

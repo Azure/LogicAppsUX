@@ -280,6 +280,7 @@ export default {
     MANAGED_API_LOGICAPPS: 'https://aka.ms/logicapps-wish',
     USERVOICE: 'http://aka.ms/connectorfeedback',
     WORKFLOW: 'http://aka.ms/logicapps-nesteddoc',
+    APIM_LEARN_MORE: 'https://aka.ms/logicapps-apimdocs',
   },
   LOCATION: {
     australiaeast: 'Australia East',
