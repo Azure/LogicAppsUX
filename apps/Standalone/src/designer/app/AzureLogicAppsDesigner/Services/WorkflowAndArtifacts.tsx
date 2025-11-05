@@ -920,7 +920,7 @@ export const saveWorkflowStandard = async (
       }
       return;
     }
-    clearDirtyState();
+    clearDirtyState?.();
 
     return data;
   } catch (error) {
@@ -960,7 +960,7 @@ export const saveWorkflowConsumption = async (
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
-    clearDirtyState();
+    clearDirtyState?.();
   } catch (error) {
     console.log(error);
     if (options?.throwError) {
