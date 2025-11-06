@@ -238,7 +238,10 @@ export const ChatButton = (props: ChatButtonProps) => {
               primaryActionButton={{
                 disabled: buttonProps.disabled || isSaving || !agentChatUrl,
                 icon: <ChatIcon />,
-                onClick: () => onOpenChange(true),
+                onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation();
+                  setOnDialogOpen(true);
+                },
               }}
               menuButton={{
                 icon: <InfoIcon />,
