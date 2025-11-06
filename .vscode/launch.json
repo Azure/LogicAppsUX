@@ -6,14 +6,18 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"
+      ],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
-      "outFiles": ["${workspaceFolder}/apps/vs-code-designer/dist/*.js"],
+      "outFiles": [
+        "${workspaceFolder}/apps/vs-code-designer/dist/*.js"
+      ],
       "preLaunchTask": "npm: build:extension",
       "env": {
         "DEBUGTELEMETRY": "v",
-        "LSP_SERVER_DEV_PATH": "/Users/carloscastrotrejo/Documents/static/Agent_C_Sharp_Server/Server/bin/Debug/net8.0/SdkLspServer.dll"
+        "LSP_SERVER_DEV_PATH": "/Users/carloscastro/Documents/Dev/Agent_C_Sharp_Server/Server/bin/Debug/net8.0/SdkLspServer.dll"
       }
     }
   ]
