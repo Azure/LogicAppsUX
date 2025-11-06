@@ -107,6 +107,8 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
+// Codeful settings
+export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
 
 export const workflowCodeType = {
   codeful: 'Codeful',

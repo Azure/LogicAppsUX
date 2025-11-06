@@ -28,11 +28,13 @@ interface ConnectionsViewProps {
 export const ConnectionsView = (props: ConnectionsViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { connectorName, connectorType, currentConnectionId } = props;
-
   const styles = useConnectionViewStyles();
 
   // ccastrotrejo - need to check whether its manifest based before this
-  const connectorId = `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
+  const connectorId =
+    connectorName === 'agent'
+      ? '/connectionProviders/agent'
+      : `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
   const { data: connector } = useConnector(connectorId);
   const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');

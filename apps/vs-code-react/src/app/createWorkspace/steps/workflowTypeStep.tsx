@@ -44,7 +44,6 @@ export const WorkflowTypeStep: React.FC = () => {
       },
       [logicAppCodeTypes.CODEFUL]: {
         [WorkflowType.statefulCodeful]: intlText.STATEFUL_TITLE,
-        [WorkflowType.agentic]: intlText.AUTONOMOUS_TITLE,
         [WorkflowType.agentCodeful]: intlText.AGENT_TITLE,
       },
     };

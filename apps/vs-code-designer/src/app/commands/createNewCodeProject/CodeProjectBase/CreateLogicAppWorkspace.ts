@@ -25,6 +25,7 @@ import {
   testsDirectoryName,
   vscodeFolderName,
   workerRuntimeKey,
+  workflowCodefulEnabled,
   workflowFileName,
   workspaceTemplatesFolderName,
 } from '../../../../constants';
@@ -177,7 +178,10 @@ export async function createLocalConfigurationFiles(
   }
 
   if (logicAppType === ProjectType.agentCodeful) {
-    localSettingsJson.Values['WORKFLOW_CODEFUL_ENABLED'] = 'true';
+    localSettingsJson.Values[workflowCodefulEnabled] = 'true';
+    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.141.0.10]';
+    localSettingsJson.Values['FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI'] = 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);

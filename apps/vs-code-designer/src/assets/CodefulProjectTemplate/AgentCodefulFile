@@ -5,6 +5,7 @@
 using System;
 using Microsoft.Azure.Workflows.Sdk.Agents;
 using Microsoft.Azure.Workflows.Sdk.Agents.Connectors;
+using Microsoft.Azure.Workflows.Sdk.Agents.Connectors.Msnweather;
 using Microsoft.Extensions.Hosting;
 
 namespace AgentCodefulNamespace;

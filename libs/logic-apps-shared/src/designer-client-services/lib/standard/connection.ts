@@ -176,6 +176,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
     }
 
     if (!isArmResourceId(connectorId)) {
+      console.log('charlie getting non arm connector', connectorId);
       const { apiVersion, baseUrl, httpClient } = this._options;
 
       let response = null;
@@ -202,6 +203,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
 
       return response;
     }
+    console.log('charlie getting is arm connector', connectorId);
 
     return this._getAzureConnector(connectorId);
   }
