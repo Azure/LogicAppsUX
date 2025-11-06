@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { ApiHubAuthentication } from '../../../../common/models/workflow';
 import { CreateConnectionInternal } from './createConnectionInternal';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
+import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
+import Constants from '../../../../common/constants';
 
 export const CreateConnectionWrapper = ({
   connectorId,
@@ -22,6 +24,12 @@ export const CreateConnectionWrapper = ({
   const hasExistingConnection = connections.length > 0;
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
   const assistedConnectionProps = useMemo(() => (connector ? getAssistedConnectionProps(connector) : undefined), [connector]);
+  const operationInfo = {
+    connectorId: connector?.id,
+    operationId: connector?.name,
+    type: Constants.NODE.TYPE.AGENT,
+  } as any;
+  const { data: operationManifest } = useOperationManifest(operationInfo);
 
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
@@ -43,6 +51,7 @@ export const CreateConnectionWrapper = ({
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={onConnectionSuccessful}
+      operationManifest={operationManifest}
       workflowKind={'stateful'} // TODO (ccastrotrejo) - Need to update this onece its clear
     />
   );
