@@ -31,9 +31,9 @@ export const LoadRunFile = async (page: Page, runName: string) => {
 };
 
 export const LoadMockDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard') => {
-  await page.goto(`/?localId=${workflowName}&localRunId=${runName}&plan=${plan}`);
+  await page.goto(`/?localId=${workflowName}${runName ? `&localRunId=${runName}` : ''}&plan=${plan}`);
 };
 
 export const LoadDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard') => {
-  await page.goto(`/?id=${workflowName}&runId=${runName}&plan=${plan}`);
+  await page.goto(`/?id=${workflowName}${runName ? `&runId=${runName}` : ''}&plan=${plan}`);
 };

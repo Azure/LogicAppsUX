@@ -50,7 +50,7 @@ test.describe(
     });
 
     test('Should collapse actions within scope', async ({ page }) => {
-      await LoadMockDirect(page, 'Scope.json');
+      await LoadMockDirect(page, 'simpleScoped.json');
 
       // Collapse nested scope
       await page.getByText('Scope nested', { exact: true }).click({ button: 'right' });

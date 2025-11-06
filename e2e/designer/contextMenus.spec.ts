@@ -8,7 +8,7 @@ test.describe(
   },
   () => {
     test('Should open node context menus', async ({ page }) => {
-      await LoadMockDirect(page, 'Scope.json');
+      await LoadMockDirect(page, 'simpleScoped.json');
 
       // Open trigger context menu
       await page.getByText('manual', { exact: true }).click({ button: 'right' });
@@ -25,7 +25,7 @@ test.describe(
     });
 
     test('Should open edge context menus', async ({ page }) => {
-      await LoadMockDirect(page, 'Scope.json');
+      await LoadMockDirect(page, 'simpleScoped.json');
 
       // Click first edge button
       await page.getByLabel('Insert a new step between manual and Initialize variable').click();
