@@ -17,6 +17,7 @@ export const queryKeys = {
   allSessionPoolAccounts: 'allSessionPoolAccounts',
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
   allAPIMServiceAccounts: 'allAPIMServiceAccounts',
+  allAPIMServiceAccountApis: 'allAPIMServiceAccountApis',
 };
 
 export const useAllAPIMServiceAccounts = (subscriptionId: string, enabled = true) => {
@@ -30,6 +31,21 @@ export const useAllAPIMServiceAccounts = (subscriptionId: string, enabled = true
       ...queryOpts,
       retryOnMount: true,
       enabled: !!subscriptionId && enabled,
+    }
+  );
+};
+
+export const useAllAPIMServiceAccountsApis = (accountId: string, enabled = true) => {
+  return useQuery(
+    [queryKeys.allAPIMServiceAccountApis, { accountId }],
+    async () => {
+      const allAPIMServiceAccounts = await ApiManagementService().fetchApisInApiM(accountId);
+      return allAPIMServiceAccounts ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!accountId && enabled,
     }
   );
 };
