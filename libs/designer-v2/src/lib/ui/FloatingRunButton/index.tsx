@@ -339,6 +339,7 @@ export const FloatingRunButton = ({
           siteResourceId={siteResourceId}
           workflowName={workflowName}
           saveWorkflow={saveWorkflow}
+          disabled={buttonCommonProps.disabled || chatProps?.disabled}
           tooltipText={tooltipOverride ?? chatProps?.tooltipText}
         />
       </div>

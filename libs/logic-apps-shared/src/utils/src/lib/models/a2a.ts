@@ -7,5 +7,6 @@ export interface AgentURL {
   agentUrl: string;
   chatUrl: string;
   hostName: string;
+  authenticationEnabled?: boolean;
   queryParams?: AgentQueryParams;
 }
