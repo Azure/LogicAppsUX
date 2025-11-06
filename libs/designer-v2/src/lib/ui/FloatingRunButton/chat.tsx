@@ -9,18 +9,30 @@ import {
   DialogSurface,
   DialogTitle,
   DialogTrigger,
+  Link,
   Spinner,
+  SplitButton,
+  Text,
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
 import type { ButtonProps } from '@fluentui/react-components';
 import { WorkflowService } from '@microsoft/logic-apps-shared';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
-import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  bundleIcon,
+  Chat24Filled,
+  Chat24Regular,
+  Dismiss24Filled,
+  Dismiss24Regular,
+  Info24Filled,
+  Info24Regular,
+} from '@fluentui/react-icons';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
+const InfoIcon = bundleIcon(Info24Filled, Info24Regular);
 
 export const useAgentUrl = (props: { isDraftMode?: boolean }): UseQueryResult<AgentURL> => {
   return useQuery(
@@ -52,8 +64,10 @@ export const ChatButton = (props: ChatButtonProps) => {
   const { isLoading, data } = useAgentUrl({ isDraftMode });
   const [isSaving, setIsSaving] = useState(false);
   const [onDialogOpen, setOnDialogOpen] = useState(false);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const infoButtonRef = useRef<HTMLButtonElement>(null);
 
-  const agentChatUrl = useMemo(() => data?.chatUrl, [data]);
+  const agentChatUrl = useMemo(() => data?.chatUrl, [data?.chatUrl]);
 
   const IntlText = useMemo(
     () => ({
@@ -98,6 +112,58 @@ export const ChatButton = (props: ChatButtonProps) => {
           url: agentChatUrl,
         }
       ),
+      INFO_TOOLTIP: intl.formatMessage({
+        defaultMessage: 'Chat availability information',
+        id: 'a1fbm6',
+        description: 'Tooltip for info button',
+      }),
+      INFO_DIALOG_TITLE: intl.formatMessage({
+        defaultMessage: 'Chat availability: Development vs Production',
+        id: 'FiSFtL',
+        description: 'Title for chat info dialog',
+      }),
+      INFO_DIALOG_DEVELOPMENT: intl.formatMessage({
+        defaultMessage: 'Development & Testing',
+        id: '2p9WPX',
+        description: 'Development section header in info dialog',
+      }),
+      INFO_DIALOG_DEVELOPMENT_DESC: intl.formatMessage({
+        defaultMessage:
+          'In-portal chat is available for testing and development purposes. This allows you to test your conversational workflows before deploying to production.',
+        id: 'qIT2h2',
+        description: 'Development section description in info dialog',
+      }),
+      INFO_DIALOG_PRODUCTION: intl.formatMessage({
+        defaultMessage: 'Production',
+        id: 'uG+CHc',
+        description: 'Production section header in info dialog',
+      }),
+      INFO_DIALOG_PRODUCTION_DESC: intl.formatMessage({
+        defaultMessage:
+          'Chat is only available in production when authentication is enabled on the app. This ensures secure access to your workflow.',
+        id: '8lZGy+',
+        description: 'Production section description in info dialog',
+      }),
+      INFO_DIALOG_SETUP: intl.formatMessage({
+        defaultMessage: 'Setting up authentication',
+        id: 'PAkWmu',
+        description: 'Setup section header in info dialog',
+      }),
+      INFO_DIALOG_SETUP_DESC: intl.formatMessage({
+        defaultMessage: 'To enable authentication for production use, follow the authentication setup guide.',
+        id: 'ukB9Bs',
+        description: 'Setup section description in info dialog',
+      }),
+      INFO_DIALOG_LEARN_MORE: intl.formatMessage({
+        defaultMessage: 'Learn more about authentication setup',
+        id: 'DvKGRc',
+        description: 'Link text for authentication setup guide',
+      }),
+      CLOSE: intl.formatMessage({
+        defaultMessage: 'Close',
+        id: '4BH2f8',
+        description: 'Close button text',
+      }),
     }),
     [intl, agentChatUrl]
   );
@@ -161,26 +227,94 @@ export const ChatButton = (props: ChatButtonProps) => {
   }, [isLoading, isSaving, agentChatUrl, data?.queryParams?.apiKey, isDarkMode, IntlText.TITLE, IntlText.LOADING]);
 
   return (
-    <Dialog modalType="modal" surfaceMotion={null} open={onDialogOpen} onOpenChange={(_, data) => onOpenChange(data.open)}>
-      <DialogTrigger disableButtonEnhancement>
-        <Tooltip content={tooltipText} relationship="label" withArrow={true}>
-          <Button {...buttonProps} disabled={buttonProps.disabled || !agentChatUrl || isLoading || isSaving} icon={<ChatIcon />}>
-            {IntlText.CHAT_TEXT}
-          </Button>
-        </Tooltip>
-      </DialogTrigger>
-      <DialogSurface style={{ width: '70vw', maxWidth: '70vw' }}>
-        <DialogBody>
-          <DialogTitle
-            action={
-              <DialogTrigger action="close">
-                <Button appearance="subtle" aria-label="close" icon={<CloseIcon />} />
-              </DialogTrigger>
-            }
-          />
-          <DialogContent style={{ height: '70vh', padding: 0 }}>{chatContent}</DialogContent>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
+    <>
+      <Dialog modalType="modal" surfaceMotion={null} open={onDialogOpen} onOpenChange={(_, data) => onOpenChange(data.open)}>
+        <DialogTrigger disableButtonEnhancement>
+          <Tooltip content={tooltipText} relationship="label" withArrow={true}>
+            <SplitButton
+              appearance={buttonProps.appearance}
+              shape={buttonProps.shape}
+              size={buttonProps.size}
+              primaryActionButton={{
+                disabled: buttonProps.disabled || isSaving || !agentChatUrl,
+                icon: <ChatIcon />,
+                onClick: () => onOpenChange(true),
+              }}
+              menuButton={{
+                icon: <InfoIcon />,
+                onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation();
+                  setInfoDialogOpen(true);
+                },
+                ref: infoButtonRef,
+                'aria-label': IntlText.INFO_TOOLTIP,
+              }}
+            >
+              {IntlText.CHAT_TEXT}
+            </SplitButton>
+          </Tooltip>
+        </DialogTrigger>
+        <DialogSurface style={{ width: '70vw', maxWidth: '70vw' }}>
+          <DialogBody>
+            <DialogTitle
+              action={
+                <DialogTrigger action="close">
+                  <Button appearance="subtle" aria-label="close" icon={<CloseIcon />} />
+                </DialogTrigger>
+              }
+            />
+            <DialogContent style={{ height: '70vh', padding: 0 }}>{chatContent}</DialogContent>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+
+      <Dialog modalType="alert" open={infoDialogOpen} onOpenChange={(_, data) => setInfoDialogOpen(data.open)}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>{IntlText.INFO_DIALOG_TITLE}</DialogTitle>
+            <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalXS }}>
+              <div>
+                <Text weight="semibold" as="h4" block style={{ marginBottom: tokens.spacingVerticalXS }}>
+                  {IntlText.INFO_DIALOG_DEVELOPMENT}
+                </Text>
+                <Text as="p" block>
+                  {IntlText.INFO_DIALOG_DEVELOPMENT_DESC}
+                </Text>
+              </div>
+
+              <div>
+                <Text weight="semibold" as="h4" block style={{ marginBottom: tokens.spacingVerticalXS }}>
+                  {IntlText.INFO_DIALOG_PRODUCTION}
+                </Text>
+                <Text as="p" block>
+                  {IntlText.INFO_DIALOG_PRODUCTION_DESC}
+                </Text>
+              </div>
+
+              <div>
+                <Text weight="semibold" as="h4" block style={{ marginBottom: tokens.spacingVerticalXS }}>
+                  {IntlText.INFO_DIALOG_SETUP}
+                </Text>
+                <Text as="p" block style={{ marginBottom: tokens.spacingVerticalS }}>
+                  {IntlText.INFO_DIALOG_SETUP_DESC}
+                </Text>
+                <Link
+                  href="https://azure.github.io/logicapps-labs/docs/logicapps-ai-course/build_conversational_agents/add-user-context-to-tools"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {IntlText.INFO_DIALOG_LEARN_MORE}
+                </Link>
+              </div>
+            </DialogContent>
+            <div style={{ marginTop: tokens.spacingVerticalL, display: 'flex', justifyContent: 'flex-end' }}>
+              <Button appearance="primary" onClick={() => setInfoDialogOpen(false)}>
+                {IntlText.CLOSE}
+              </Button>
+            </div>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    </>
   );
 };
