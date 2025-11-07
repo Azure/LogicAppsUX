@@ -22,12 +22,12 @@ import {
   ConnectionService,
   equals,
   foundryServiceConnectionRegex,
+  apimanagementRegex,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
   type Connector,
 } from '@microsoft/logic-apps-shared';
-import { apimanagementRegex } from '@microsoft/logic-apps-shared/src/designer-client-services/lib/standard/connection';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

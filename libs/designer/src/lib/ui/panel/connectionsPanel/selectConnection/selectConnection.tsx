@@ -22,6 +22,7 @@ import {
   ConnectionService,
   equals,
   foundryServiceConnectionRegex,
+  apimanagementRegex,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
@@ -32,7 +33,6 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { AgentUtils, isDynamicConnection } from '../../../../common/utilities/Utils';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
-import { apimanagementRegex } from '@microsoft/logic-apps-shared/src/designer-client-services/lib/standard/connection';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
