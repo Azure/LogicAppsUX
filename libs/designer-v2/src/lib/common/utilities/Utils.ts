@@ -31,6 +31,7 @@ export class AgentUtils {
   public static ModelType = {
     AzureOpenAI: 'Azure OpenAI',
     FoundryService: 'Foundry Agent Service',
+    APIM: 'APIM Gen AI Gateway ',
   };
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
