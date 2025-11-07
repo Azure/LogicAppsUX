@@ -219,7 +219,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
     workflowBaseManagementUri?: string
   ) {
     const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-    const workflowParameters = this.panelMetadata.parametersData;
     const parametersFromDefinition = {} as any;
 
     if (connectionReferences) {
@@ -242,7 +241,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
         parameter.value = parameter.value ?? parameter?.defaultValue;
         delete parameter.defaultValue;
       }
-      await this.mergeJsonParameters(this.workflowFilePath, parametersFromDefinition, workflowParameters);
+      await this.mergeJsonParameters(this.workflowFilePath, parametersFromDefinition);
       await saveWorkflowParameter(this.context, this.workflowFilePath, parametersFromDefinition);
     }
 
@@ -256,15 +255,11 @@ export default class OpenConnectionView extends OpenDesignerBase {
    * @param panelParameterRecord The parameters from the panel
    * @returns parameters from JSON file and designer.
    */
-  private async mergeJsonParameters(
-    filePath: string,
-    definitionParameters: any,
-    panelParameterRecord: Record<string, Parameter>
-  ): Promise<void> {
+  private async mergeJsonParameters(filePath: string, definitionParameters: any): Promise<void> {
     const jsonParameters = await getParametersFromFile(this.context, filePath);
 
     Object.entries(jsonParameters).forEach(([key, parameter]) => {
-      if (!definitionParameters[key] && !panelParameterRecord[key]) {
+      if (!definitionParameters[key]) {
         definitionParameters[key] = parameter;
       }
     });
