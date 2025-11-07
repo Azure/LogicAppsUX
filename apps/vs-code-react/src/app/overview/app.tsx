@@ -21,7 +21,7 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, azureDetails, kind } = workflowState;
+  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, azureDetails, kind, connectionData } = workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const styles = useOverviewStyles();
 
@@ -49,6 +49,8 @@ export const OverviewApp = () => {
 
   const clientId = azureDetails?.clientId ?? '';
   const tenantId = azureDetails?.tenantId ?? '';
+  const azureSubscriptionId = azureDetails?.subscriptionId ?? '';
+  const resourceGroupName = azureDetails?.resourceGroupName ?? '';
 
   const intlText = useIntlMessages(overviewMessages);
 
@@ -116,7 +118,16 @@ export const OverviewApp = () => {
   const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
     ['agentUrl', isWorkflowRuntimeRunning, baseUrl],
     async () => {
-      return fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId);
+      return fetchAgentUrl(
+        workflowProperties.name,
+        baseUrl,
+        httpClient,
+        clientId,
+        tenantId,
+        connectionData,
+        azureSubscriptionId,
+        resourceGroupName
+      );
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
