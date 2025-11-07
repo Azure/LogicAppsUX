@@ -208,7 +208,7 @@ async function getConnectionReference(
         settingsToAdd[appSettingKey] = response.connectionKey;
       }
 
-      // Determine authentication based on ext.useMSI
+      // Determine authentication based on useMSI
       const authValue = useMSI
         ? { type: 'ManagedServiceIdentity' }
         : {
@@ -217,13 +217,34 @@ async function getConnectionReference(
             parameter: `@appsetting('${referenceKey}-connectionKey')`,
           };
 
+      // Check if connectionProperties contains dynamic connection properties
+      const hasDynamicProperties = connectionProperties?.runtimeSource === 'Dynamic' && connectionProperties?.dynamicConnectionProxyUrl;
+
+      // Build the base connection reference
       const connectionReference: ConnectionReferenceModel = {
         api: { id: apiId },
         connection: { id: connectionId },
-        connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
+        connectionRuntimeUrl: response.runtimeUrls?.length ? response.runtimeUrls[0] : '',
         authentication: authValue,
-        connectionProperties,
       };
+
+      if (hasDynamicProperties) {
+        // Destructure to extract dynamic properties and get remaining properties
+        const { runtimeSource, dynamicConnectionProxyUrl, ...remainingProperties } = connectionProperties;
+
+        // Use the destructured variables to set top-level properties
+        connectionReference.runtimeSource = runtimeSource;
+        connectionReference.dynamicConnectionProxyUrl = dynamicConnectionProxyUrl;
+
+        // Only add connectionProperties if there are remaining properties
+        if (Object.keys(remainingProperties).length > 0) {
+          connectionReference.connectionProperties = remainingProperties;
+        }
+        // If no remaining properties, connectionProperties is omitted entirely
+      } else if (connectionProperties && Object.keys(connectionProperties).length > 0) {
+        // Keep connectionProperties as-is if no dynamic properties but has other properties
+        connectionReference.connectionProperties = connectionProperties;
+      }
 
       return parameterizeConnectionsSetting
         ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)

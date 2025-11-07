@@ -60,6 +60,7 @@ export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, buttonCom
       <iframe
         src={chatUrl}
         title={IntlText.TITLE}
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );

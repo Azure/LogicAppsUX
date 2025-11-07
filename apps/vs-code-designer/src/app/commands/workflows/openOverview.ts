@@ -108,7 +108,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       tenantId: workflowNode?.parent?.subscription?.tenantId,
       resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
     };
-    // For remote workflows, connection data would typically come from the API
     connectionData = {};
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));

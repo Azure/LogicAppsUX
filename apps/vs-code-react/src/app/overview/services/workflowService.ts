@@ -177,7 +177,7 @@ const fetchOBOData = async (
     }
 
     connectionId2 =
-      '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/SamiEastUS2EUAP/providers/Microsoft.Web/connections/teams';
+      '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/rohithah-brazilus/providers/Microsoft.Web/connections/teams-1';
 
     const oboKeysUri = `${armBaseUrl}${connectionId2}/listDynamicConnectionKeys?api-version=2015-08-01-preview`;
     console.log('🔗 OBO Keys Request URI:', oboKeysUri);
