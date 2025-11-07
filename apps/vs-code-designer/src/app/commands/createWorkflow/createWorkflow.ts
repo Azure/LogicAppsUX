@@ -4,12 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 import { localize } from '../../../localize';
 import { createLogicAppWorkflow } from './createLogicAppWorkflow';
+import { getWorkspaceRoot } from '../../utils/workspace';
+import { isCodefulProject } from '../../utils/codeful';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
-export async function createWorkflow(): Promise<void> {
+export const createWorkflow = async (context: IActionContext) => {
+  const workspaceFolderPath = await getWorkspaceRoot(context);
+  const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true);
+  const isCodeful = await isCodefulProject(projectRoot);
+
   await createWorkspaceWebviewCommandHandler({
     panelName: localize('createWorkflow', 'Create workflow'),
     panelGroupKey: ext.webViewKey.createWorkflow,
@@ -18,5 +25,8 @@ export async function createWorkflow(): Promise<void> {
     createHandler: async (context: IActionContext, data: any) => {
       await createLogicAppWorkflow(context, data, false);
     },
+    extraInitializeData: {
+      logicAppType: isCodeful ? ProjectType.agentCodeful : '',
+    },
   });
-}
+};

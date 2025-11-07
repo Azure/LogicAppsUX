@@ -35,7 +35,7 @@ export const LogicAppTypeStep: React.FC = () => {
   // Validation state
   const [logicAppNameError, setLogicAppNameError] = useState<string | undefined>(undefined);
 
-  const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
+  const handleLogicAppTypeChange = (_event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
     dispatch(setLogicAppType(data.value));
     if (data.value === 'rulesEngine') {
       dispatch(setTargetFramework('net472'));

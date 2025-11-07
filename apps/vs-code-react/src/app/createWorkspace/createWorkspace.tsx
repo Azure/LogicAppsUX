@@ -478,6 +478,17 @@ export const CreateWorkspace = () => {
           functionFolderName,
         }),
       };
+    } else if (flowType === FLOW_TYPES.CREATE_WORKFLOW) {
+      data = {
+        workspaceProjectPath,
+        workspaceName,
+        logicAppType,
+        logicAppName,
+        workflowType,
+        workflowName,
+        targetFramework,
+        projectType,
+      };
     } else {
       // createWorkspace
       data = {
@@ -503,12 +514,14 @@ export const CreateWorkspace = () => {
     // Send the appropriate command based on flow type
     const command =
       flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE
-        ? FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE
+        ? ExtensionCommand.createWorkspaceFromPackage
         : flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE
-          ? FLOW_TYPES.CREATE_WORKSPACE_STRUCTURE
+          ? ExtensionCommand.createWorkspaceStructure
           : flowType === FLOW_TYPES.CREATE_LOGIC_APP
-            ? FLOW_TYPES.CREATE_LOGIC_APP
-            : ExtensionCommand.createWorkspace;
+            ? ExtensionCommand.createLogicApp
+            : flowType === FLOW_TYPES.CREATE_WORKFLOW
+              ? ExtensionCommand.createWorkflow
+              : ExtensionCommand.createWorkspace;
 
     vscode.postMessage({ command, data });
   };

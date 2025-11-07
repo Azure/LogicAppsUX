@@ -53,5 +53,14 @@ export const getValidationRequirements = (flowType: string, logicAppType: string
     requirements.needsFunctionFields = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
   }
 
+  // Override for specific flow types that need more fields
+  if (flowType === 'createWorkflow') {
+    requirements.needsLogicAppType = false;
+    requirements.needsLogicAppName = false;
+    requirements.needsWorkspaceName = false;
+    requirements.needsWorkspacePath = false;
+    requirements.needsWorkflowFields = true;
+  }
+
   return requirements;
 };

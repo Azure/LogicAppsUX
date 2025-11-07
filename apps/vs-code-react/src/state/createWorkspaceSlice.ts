@@ -28,7 +28,7 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
-  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace';
+  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace' | 'createWorkflow';
   pathValidationResults: Record<string, boolean>;
   packageValidationResults: Record<string, boolean>;
   workspaceExistenceResults: Record<string, boolean>;
@@ -83,9 +83,10 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform } = action.payload;
+      const { separator, platform, logicAppType } = action.payload;
       state.separator = separator;
       state.platform = platform;
+      state.logicAppType = logicAppType || '';
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;

@@ -14,7 +14,7 @@ import path from 'path';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { getLogicAppWithoutCustomCode } from '../../utils/workspace';
 
-export async function createNewProjectFromCommand(context: IActionContext): Promise<void> {
+export async function createNewProject(context: IActionContext): Promise<void> {
   // Determine if in workspace, if not in workspace but there is a logic app project found,
   // prompt to see if they want to move the project over to a logic app workspace
   let workspaceRootFolder = '';
