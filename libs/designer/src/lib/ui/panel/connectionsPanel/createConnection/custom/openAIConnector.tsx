@@ -475,7 +475,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     required={true}
                     disabled={isAPIMAccountsComboboxDisabled}
                     placeholder={isFetchingAPIManagementAccounts ? stringResources.LOADING_APIM : stringResources.SELECT_APIM_ACCOUNT}
-                    value={isUndefinedOrEmptyString(value) ? undefined : value.split('/').pop()}
+                    value={isUndefinedOrEmptyString(apimAccount) ? undefined : apimAccount.split('/').pop()}
                     className={styles.openAICombobox}
                     onOptionSelect={async (_e, option?: OptionOnSelectData) => {
                       if (option?.optionValue) {
