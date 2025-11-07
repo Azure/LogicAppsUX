@@ -13,3 +13,6 @@ export const useWorkflowParameterValidationErrors = () =>
 
 export const useIsWorkflowParametersDirty = () =>
   useSelector(createSelector(getWorkflowParametersState, (state: WorkflowParametersState) => state.isDirty));
+
+export const useWorkflowParametersChangeCount = () =>
+  useSelector(createSelector(getWorkflowParametersState, (state: WorkflowParametersState) => state.changeCount));
