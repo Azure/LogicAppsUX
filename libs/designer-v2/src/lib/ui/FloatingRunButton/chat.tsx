@@ -236,7 +236,7 @@ export const ChatButton = (props: ChatButtonProps) => {
               shape={buttonProps.shape}
               size={buttonProps.size}
               primaryActionButton={{
-                disabled: buttonProps.disabled || isSaving || !agentChatUrl,
+                disabled: buttonProps.disabled || isSaving || isLoading,
                 icon: <ChatIcon />,
                 onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
