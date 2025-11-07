@@ -34,7 +34,7 @@ export async function createNewProjectFromCommand(context: IActionContext): Prom
   const logicAppsWithoutCustomCode = await getLogicAppWithoutCustomCode(context);
 
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createLogicAppProject', 'Create Project'),
+    panelName: localize('createLogicAppProject', 'Create project'),
     panelGroupKey: ext.webViewKey.createLogicApp,
     projectName: ProjectName.createLogicApp,
     createCommand: ExtensionCommand.createLogicApp,

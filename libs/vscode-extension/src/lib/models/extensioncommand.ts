@@ -56,6 +56,7 @@ export const ExtensionCommand = {
   insert_connection: 'insert-connection',
   pickProcess: 'pickProcess',
   createWorkspace: 'createWorkspace',
+  createWorkflow: 'createWorkflow',
   update_workspace_path: 'update-workspace-path',
   validatePath: 'validatePath',
   createLogicApp: 'createLogicApp',

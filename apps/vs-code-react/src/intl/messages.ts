@@ -547,6 +547,11 @@ export const workspaceMessages = defineMessages({
     id: 'Wxan/5',
     description: 'Create logic app project text.',
   },
+  CREATE_WORKFLOW: {
+    defaultMessage: 'Create workflow',
+    id: 'CBQYkl',
+    description: 'Create logic app workflow text.',
+  },
   CREATE_PROJECT_BUTTON: {
     defaultMessage: 'Create project',
     id: 'u+VFmh',
@@ -576,6 +581,11 @@ export const workspaceMessages = defineMessages({
     defaultMessage: 'Logic app created successfully!',
     id: '8YVpN7',
     description: 'Logic app creation success message',
+  },
+  WORKFLOW_CREATED: {
+    defaultMessage: 'Workflow created successfully!',
+    id: 'WXclF7',
+    description: 'Workflow creation success message',
   },
   WORKSPACE_CREATED: {
     defaultMessage: 'Workspace created successfully!',

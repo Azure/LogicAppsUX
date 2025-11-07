@@ -19,7 +19,7 @@ import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { cloudToLocal } from './cloudToLocal/cloudToLocal';
-import { createNewCodeProjectFromCommand } from './createWorkspace/createWorkspace';
+import { createWorkspace } from './createWorkspace/createWorkspace';
 import { createNewProjectFromCommand } from './createProject/createProject';
 import { createCustomCodeFunction } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
@@ -89,7 +89,7 @@ export function registerCommands(): void {
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
   registerCommand(extensionCommand.createProject, createNewProjectFromCommand);
-  registerCommand(extensionCommand.createWorkspace, createNewCodeProjectFromCommand);
+  registerCommand(extensionCommand.createWorkspace, createWorkspace);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);

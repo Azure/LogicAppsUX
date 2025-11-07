@@ -14,8 +14,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { getValidationRequirements, nameValidation } from './utils/validation';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
+import { CreateWorkflowSetup } from '../createWorkflow/createWorkflowSetup';
 
-export const CreateWorkspace: React.FC = () => {
+const FLOW_TYPES = {
+  CREATE_WORKSPACE: 'createWorkspace',
+  CREATE_WORKSPACE_FROM_PACKAGE: 'createWorkspaceFromPackage',
+  CREATE_LOGIC_APP: 'createLogicApp',
+  CREATE_WORKFLOW: 'createWorkflow',
+  CONVERT_TO_WORKSPACE: 'convertToWorkspace',
+  CREATE_WORKSPACE_STRUCTURE: 'createWorkspaceStructure',
+};
+
+export const CreateWorkspace = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
@@ -51,7 +61,7 @@ export const CreateWorkspace: React.FC = () => {
 
   // Set flow type when component mounts
   useEffect(() => {
-    dispatch(setFlowType('createWorkspace'));
+    dispatch(setFlowType(FLOW_TYPES.CREATE_WORKSPACE));
   }, [dispatch]);
 
   // Calculate total steps - always 2: Setup and Review + Create
@@ -62,26 +72,28 @@ export const CreateWorkspace: React.FC = () => {
   // Helper function to get flow-specific messages
   const getCreateWorkspaceMessage = () => {
     switch (flowType) {
-      case 'createWorkspaceFromPackage':
+      case FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE:
         return intlText.CREATE_WORKSPACE_FROM_PACKAGE;
-      case 'convertToWorkspace':
+      case FLOW_TYPES.CONVERT_TO_WORKSPACE:
         return intlText.CREATE_WORKSPACE;
-      case 'createLogicApp':
+      case FLOW_TYPES.CREATE_LOGIC_APP:
         return intlText.CREATE_PROJECT;
+      case FLOW_TYPES.CREATE_WORKFLOW:
+        return intlText.CREATE_WORKFLOW;
       default:
         return intlText.CREATE_WORKSPACE;
     }
   };
 
   const getCreateButtonMessage = () => {
-    if (flowType === 'createLogicApp') {
+    if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
       return intlText.CREATE_PROJECT_BUTTON;
     }
     return intlText.CREATE_WORKSPACE_BUTTON;
   };
 
   const getCreatingMessage = () => {
-    if (flowType === 'createWorkspaceFromPackage') {
+    if (flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE) {
       return intlText.CREATING_PACKAGE;
     }
     return intlText.CREATING_WORKSPACE;
@@ -89,11 +101,13 @@ export const CreateWorkspace: React.FC = () => {
 
   const getSuccessTitle = () => {
     switch (flowType) {
-      case 'createWorkspaceFromPackage':
+      case FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE:
         return intlText.WORKSPACE_PACKAGE_CREATED;
-      case 'convertToWorkspace':
-      case 'createLogicApp':
+      case FLOW_TYPES.CONVERT_TO_WORKSPACE:
+      case FLOW_TYPES.CREATE_LOGIC_APP:
         return intlText.LOGIC_APP_CREATED;
+      case FLOW_TYPES.CREATE_WORKFLOW:
+        return intlText.WORKFLOW_CREATED;
       default:
         return intlText.WORKSPACE_CREATED;
     }
@@ -101,10 +115,10 @@ export const CreateWorkspace: React.FC = () => {
 
   const getSuccessDescription = () => {
     switch (flowType) {
-      case 'createWorkspaceFromPackage':
+      case FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE:
         return intlText.WORKSPACE_PACKAGE_CREATED_DESCRIPTION;
-      case 'convertToWorkspace':
-      case 'createLogicApp':
+      case FLOW_TYPES.CONVERT_TO_WORKSPACE:
+      case FLOW_TYPES.CREATE_LOGIC_APP:
         return intlText.LOGIC_APP_CREATED_DESCRIPTION;
       default:
         return intlText.WORKSPACE_CREATED_DESCRIPTION;
@@ -112,7 +126,7 @@ export const CreateWorkspace: React.FC = () => {
   };
 
   const getProjectSetupStepLabel = () => {
-    if (flowType === 'convertToWorkspace' || flowType === 'createLogicApp') {
+    if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE || flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
       return intlText.LOGIC_APP_SETUP;
     }
     return intlText.PROJECT_SETUP_LABEL;
@@ -199,7 +213,7 @@ export const CreateWorkspace: React.FC = () => {
         // Logic app name validation
         if (requirements.needsLogicAppName) {
           const logicAppNameValid =
-            flowType === 'createLogicApp'
+            flowType === FLOW_TYPES.CREATE_LOGIC_APP
               ? validateLogicAppNameForNavigation(logicAppName)
               : logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
           if (!logicAppNameValid) {
@@ -210,7 +224,7 @@ export const CreateWorkspace: React.FC = () => {
         // Workflow fields validation
         if (requirements.needsWorkflowFields) {
           // For createLogicApp, check if using existing logic app
-          if (flowType === 'createLogicApp') {
+          if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
             const isCustomCodeOrRulesEngine = logicAppType === ProjectType.customCode || logicAppType === ProjectType.rulesEngine;
             const isExistingLogicApp = logicAppsWithoutCustomCode?.some((app: { label: string }) => app.label === logicAppName);
             const usingExistingLogicApp = isCustomCodeOrRulesEngine && isExistingLogicApp;
@@ -282,7 +296,7 @@ export const CreateWorkspace: React.FC = () => {
         const requirements = getValidationRequirements(flowType, logicAppType);
 
         // For convertToWorkspace, only validate workspace path and name
-        if (flowType === 'convertToWorkspace') {
+        if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
           const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
           const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
           const workspaceNameValid =
@@ -417,14 +431,14 @@ export const CreateWorkspace: React.FC = () => {
     // Add flow-specific data
     let data: any = { ...baseData };
 
-    if (flowType === 'createWorkspaceFromPackage') {
+    if (flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE) {
       data = {
         ...data,
         packagePath,
         logicAppType,
         logicAppName,
       };
-    } else if (flowType === 'convertToWorkspace') {
+    } else if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
       data = {
         ...data,
         logicAppType,
@@ -443,7 +457,7 @@ export const CreateWorkspace: React.FC = () => {
           functionName,
         }),
       };
-    } else if (flowType === 'createLogicApp') {
+    } else if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
       data = {
         workspaceProjectPath,
         workspaceName,
@@ -488,12 +502,12 @@ export const CreateWorkspace: React.FC = () => {
 
     // Send the appropriate command based on flow type
     const command =
-      flowType === 'createWorkspaceFromPackage'
-        ? 'createWorkspaceFromPackage'
-        : flowType === 'convertToWorkspace'
-          ? 'createWorkspaceStructure'
-          : flowType === 'createLogicApp'
-            ? 'createLogicApp'
+      flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE
+        ? FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE
+        : flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE
+          ? FLOW_TYPES.CREATE_WORKSPACE_STRUCTURE
+          : flowType === FLOW_TYPES.CREATE_LOGIC_APP
+            ? FLOW_TYPES.CREATE_LOGIC_APP
             : ExtensionCommand.createWorkspace;
 
     vscode.postMessage({ command, data });
@@ -503,18 +517,21 @@ export const CreateWorkspace: React.FC = () => {
     switch (currentStep) {
       case 0: {
         // Render different setup steps based on flow type
-        if (flowType === 'createWorkspaceFromPackage') {
+        if (flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE) {
           return <PackageSetupStep />;
         }
-        if (flowType === 'convertToWorkspace') {
+        if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
           return (
             <div className={styles.formSection}>
               <WorkspaceNameStep />
             </div>
           );
         }
-        if (flowType === 'createLogicApp') {
+        if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
           return <CreateLogicAppSetupStep />;
+        }
+        if (flowType === FLOW_TYPES.CREATE_WORKFLOW) {
+          return <CreateWorkflowSetup />;
         }
         return <ProjectSetupStep />;
       }
@@ -522,17 +539,17 @@ export const CreateWorkspace: React.FC = () => {
         return <ReviewCreateStep />;
       default: {
         // Default to first step based on flow type
-        if (flowType === 'createWorkspaceFromPackage') {
+        if (flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE) {
           return <PackageSetupStep />;
         }
-        if (flowType === 'convertToWorkspace') {
+        if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
           return (
             <div className={styles.formSection}>
               <WorkspaceNameStep />
             </div>
           );
         }
-        if (flowType === 'createLogicApp') {
+        if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
           return <CreateLogicAppSetupStep />;
         }
         return <ProjectSetupStep />;
@@ -594,31 +611,41 @@ export const CreateWorkspace: React.FC = () => {
 };
 
 // Separate components for each flow type that set their flowType
-export const CreateWorkspaceFromPackage: React.FC = () => {
+export const CreateWorkspaceFromPackage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setFlowType('createWorkspaceFromPackage'));
+    dispatch(setFlowType(FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE));
   }, [dispatch]);
 
   return <CreateWorkspace />;
 };
 
-export const CreateWorkspaceStructure: React.FC = () => {
+export const CreateWorkspaceStructure = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setFlowType('convertToWorkspace'));
+    dispatch(setFlowType(FLOW_TYPES.CONVERT_TO_WORKSPACE));
   }, [dispatch]);
 
   return <CreateWorkspace />;
 };
 
-export const CreateLogicApp: React.FC = () => {
+export const CreateLogicApp = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setFlowType('createLogicApp'));
+    dispatch(setFlowType(FLOW_TYPES.CREATE_LOGIC_APP));
+  }, [dispatch]);
+
+  return <CreateWorkspace />;
+};
+
+export const CreateWorkflow = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setFlowType(FLOW_TYPES.CREATE_WORKFLOW));
   }, [dispatch]);
 
   return <CreateWorkspace />;

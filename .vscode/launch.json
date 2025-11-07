@@ -6,14 +6,10 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"
-      ],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
-      "outFiles": [
-        "${workspaceFolder}/apps/vs-code-designer/dist/*.js"
-      ],
+      "outFiles": ["${workspaceFolder}/apps/vs-code-designer/dist/*.js"],
       "preLaunchTask": "npm: build:extension",
       "env": {
         "DEBUGTELEMETRY": "v",

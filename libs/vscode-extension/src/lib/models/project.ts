@@ -18,6 +18,7 @@ export const ProjectName = {
   createWorkspace: 'createWorkspace',
   createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   createLogicApp: 'createLogicApp',
+  createWorkflow: 'createWorkflow',
   createWorkspaceStructure: 'createWorkspaceStructure',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
@@ -152,6 +153,7 @@ export const RouteName = {
   createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   createLogicApp: 'createLogicApp',
   createWorkspaceStructure: 'createWorkspaceStructure',
+  createWorkflow: 'createWorkflow',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];

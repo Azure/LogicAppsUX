@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
@@ -12,7 +11,7 @@ import { WorkflowTypeStep } from '../createWorkspace/steps/workflowTypeStep';
 import { DotNetFrameworkStep } from '../createWorkspace/steps/dotNetFrameworkStep';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
-export const CreateLogicAppSetupStep: React.FC = () => {
+export const CreateLogicAppSetupStep = () => {
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
   const { logicAppType, logicAppName, logicAppsWithoutCustomCode } = createWorkspaceState;
