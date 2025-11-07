@@ -126,7 +126,7 @@ const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
 const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
-export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+/;
+export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+\/apis\/[^/]+/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
