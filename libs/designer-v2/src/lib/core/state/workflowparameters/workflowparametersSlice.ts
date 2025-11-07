@@ -17,12 +17,14 @@ export interface WorkflowParametersState {
   definitions: Record<string, WorkflowParameterDefinition>;
   validationErrors: Record<string, Record<string, string | undefined>>;
   isDirty: boolean;
+  changeCount: number;
 }
 
 export const initialState: WorkflowParametersState = {
   definitions: {},
   validationErrors: {},
   isDirty: false,
+  changeCount: 0,
 };
 
 export const validateParameter = (
@@ -96,12 +98,14 @@ export const workflowParametersSlice = createSlice({
         name: '',
       };
       state.isDirty = true;
+      state.changeCount += 1;
     },
     deleteParameter: (state, action: PayloadAction<string>) => {
       const parameterId = action.payload;
       delete state.validationErrors[parameterId];
       delete state.definitions[parameterId];
       state.isDirty = true;
+      state.changeCount += 1;
     },
     updateParameter: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
@@ -145,9 +149,13 @@ export const workflowParametersSlice = createSlice({
         state.validationErrors[id] = newErrorObj;
       }
       state.isDirty = true;
+      state.changeCount += 1;
     },
     setIsWorkflowParametersDirty: (state, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
+      if (action.payload) {
+        state.changeCount += 1;
+      }
     },
   },
   extraReducers: (builder) => {
