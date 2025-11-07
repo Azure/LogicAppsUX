@@ -27,6 +27,7 @@ import {
   type Connection,
   type Connector,
 } from '@microsoft/logic-apps-shared';
+import { apimanagementRegex } from '@microsoft/logic-apps-shared/src/designer-client-services/lib/standard/connection';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -65,15 +66,28 @@ export const SelectConnectionWrapper = () => {
       return connectionData.filter((c) => !isDynamicConnection(c.properties.features));
     }
 
-    if (isA2A && AgentUtils.isConnector(connector?.id)) {
-      // For A2A, hide the foundry connection from the list
+    if (AgentUtils.isConnector(connector?.id)) {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
+        let modelType = AgentUtils.ModelType.AzureOpenAI;
         if (connectionReference?.resourceId) {
-          return !foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '');
+          if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
+            modelType = AgentUtils.ModelType.FoundryService;
+          } else if (apimanagementRegex.test(connectionReference.resourceId ?? '')) {
+            modelType = AgentUtils.ModelType.APIM;
+          }
         }
 
-        return true;
+        // Set the connection parameters with the model type
+        c.properties.connectionParameters = {
+          ...(c.properties.connectionParameters ?? {}),
+          agentModelType: {
+            type: modelType,
+          },
+        };
+
+        // For A2A, hide the foundry connection from the list
+        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI : true;
       });
     }
 
