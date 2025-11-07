@@ -32,6 +32,7 @@ type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
+  isDraft?: boolean;
   isDarkMode?: boolean;
   isUnitTest?: boolean;
   isVSCode?: boolean;

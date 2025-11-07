@@ -578,6 +578,7 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly || isMonitoringView || !isDraftMode,
           isMonitoringView,
+          isDraft: isDraftMode,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {

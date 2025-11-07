@@ -10,3 +10,5 @@ export const useNotes = () => useSelector(createSelector(getNotesState, (state: 
 export const useNote = (id: string) => useSelector(createSelector(getNotesState, (state: NotesState) => state.notes[id]));
 
 export const useIsNotesDirty = () => useSelector(createSelector(getNotesState, (state: NotesState) => state.isDirty));
+
+export const useNotesChangeCount = () => useSelector(createSelector(getNotesState, (state: NotesState) => state.changeCount));
