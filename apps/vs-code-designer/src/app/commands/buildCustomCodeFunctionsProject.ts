@@ -22,8 +22,12 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
  */
 export async function buildCustomCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<void> {
   const workspaceFolderPath = await getWorkspaceRoot(context);
-
   const nodePath = node?.fsPath || workspaceFolderPath;
+  const isCustomCodeProject = await isCustomCodeFunctionsProject(nodePath);
+  if (!isCustomCodeProject) {
+    return;
+  }
+
   if (isNullOrUndefined(nodePath)) {
     const errorMessage = 'No project path found to build custom code functions project.';
     context.telemetry.properties.result = 'Failed';
@@ -33,16 +37,13 @@ export async function buildCustomCodeFunctionsProject(context: IActionContext, n
   }
 
   context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
-  if (await isCustomCodeFunctionsProject(nodePath)) {
-    try {
-      context.telemetry.properties.lastStep = 'buildCustomCodeProject';
-      await buildCustomCodeProject(nodePath);
-      context.telemetry.properties.result = 'Succeeded';
-    } catch (error) {
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = error.message ?? error;
-    }
-    return;
+  try {
+    context.telemetry.properties.lastStep = 'buildCustomCodeProject';
+    await buildCustomCodeProject(nodePath);
+    context.telemetry.properties.result = 'Succeeded';
+  } catch (error) {
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message ?? error;
   }
 
   context.telemetry.properties.lastStep = 'tryGetLogicAppCustomCodeFunctionsProjects';

@@ -8,7 +8,6 @@ import {
   extensionCommand,
   workflowFileName,
   codefulWorkflowFileName,
-  localSettingsFileName,
   customExtensionContext,
 } from '../../constants';
 import { localize } from '../../localize';
@@ -20,6 +19,7 @@ import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
 import { NoWorkspaceError } from './errors';
 import * as vscode from 'vscode';
+import { hasCodefulWorkflowSetting } from './codeful';
 
 const projectSubpathKey = 'projectSubpath';
 
@@ -96,7 +96,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
 
   const hasValidCodefulWorkflow = validCodefulWorkflowChecks.some((valid) => valid);
   const hasValidCodelessWorkflow = validWorkflowChecks.some((valid) => valid);
-  const isCodefulAgent = await hasCodefulAgent(folderPath);
+  const isCodefulAgent = await hasCodefulWorkflowSetting(folderPath);
 
   if (isCodefulAgent) {
     vscode.commands.executeCommand('setContext', customExtensionContext.isAgentCodeful, true);
@@ -115,21 +115,6 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
     return false;
   }
 }
-
-const hasCodefulAgent = async (folderPath: string) => {
-  const localSettingsFilePath = path.join(folderPath, localSettingsFileName);
-  if (!(await fse.pathExists(localSettingsFilePath))) {
-    return false;
-  }
-
-  try {
-    const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
-    const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED;
-  } catch {
-    return false;
-  }
-};
 
 /**
  * Checks root folder and subFolders one level down

@@ -5,12 +5,12 @@
 import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { installLSPSDK } from '../../languageServer/languageServer';
 import { getDependencyTimeout } from '../../utils/binaries';
 import { getDependenciesVersion } from '../../utils/bundleFeed';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
+import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { runWithDurationTelemetry } from '../../utils/telemetry';
 import { timeout } from '../../utils/timeout';

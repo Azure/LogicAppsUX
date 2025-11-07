@@ -43,5 +43,5 @@
       <FilesToCopyCodeful Include="$(PublishDir)**\*"/>
     </ItemGroup>
    <Copy SourceFiles="@(FilesToCopyCodeful)" DestinationFolder="$(LogicAppFolderToPublish)\%(RecursiveDir)"/>                                                                                                                                                                                                                                        
-   </Target>
+  </Target>
 </Project>

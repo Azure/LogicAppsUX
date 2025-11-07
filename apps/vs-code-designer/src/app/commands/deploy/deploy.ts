@@ -59,6 +59,7 @@ import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { buildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { publishCodefulProject } from '../publishCodefulProject';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -92,8 +93,14 @@ async function deploy(
 
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory)))) {
+    const customFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
+    if (!customFolderExists) {
       await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
+    }
+
+    const agentIsolatedExists = await fse.pathExists(path.join(logicAppNode.fsPath, 'AgentIsolatedWorker'));
+    if (!agentIsolatedExists) {
+      await publishCodefulProject(actionContext, logicAppNode);
     }
   }
 
