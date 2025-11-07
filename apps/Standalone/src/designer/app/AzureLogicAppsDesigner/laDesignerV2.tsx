@@ -402,8 +402,9 @@ const DesignerEditor = () => {
         settingsToUpdate,
         customCodeToUpdate,
         notesToUpdate,
+        /*mcpServer*/ undefined,
         clearDirtyState,
-        undefined,
+        /*options*/ undefined,
         isDraftSave
       );
 
@@ -436,6 +437,7 @@ const DesignerEditor = () => {
         /*settings*/ undefined,
         /*customcode*/ undefined,
         /*notes*/ undefined,
+        /*mcpServer*/ undefined,
         clearDirtyState
       );
     } catch (error: any) {
