@@ -58,6 +58,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private migrationOptions: Record<string, any>;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
+  private workflowRuntimeBaseUrlInterval: NodeJS.Timeout;
+  private getWorkflowRuntimeBaseUrl: () => string | undefined;
 
   constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -113,8 +115,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
 
     await startDesignTimeApi(this.projectPath);
-    // TODO(aeldridge): Temporarily removed starting runtime due to conflicts with debugger launch tasks. Re-add once fixed.
-    // await startRuntimeApi(this.projectPath);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
@@ -124,16 +124,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
 
-    // if (!ext.runtimeInstances.has(this.projectPath)) {
-    //   throw new Error(localize('runtimeNotRunning', `Runtime is not running for project ${this.projectPath}.`));
-    // }
-    // const runtimePort = ext.runtimeInstances.get(this.projectPath).port;
-    // if (!runtimePort) {
-    //   throw new Error(localize('runtimePortNotFound', 'Runtime port not found.'));
-    // }
-
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.getWorkflowRuntimeBaseUrl = () =>
+      ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
+    this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -178,6 +172,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.panel.onDidDispose(
       () => {
+        clearInterval(this.workflowRuntimeBaseUrlInterval);
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
       },
       null,
@@ -191,6 +186,20 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
+        this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
+          const updatedRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+
+          if (updatedRuntimeBaseUrl !== this.workflowRuntimeBaseUrl) {
+            this.workflowRuntimeBaseUrl = updatedRuntimeBaseUrl;
+            this.panel.webview.postMessage({
+              command: ExtensionCommand.update_runtime_base_url,
+              data: {
+                baseUrl: this.workflowRuntimeBaseUrl,
+              },
+            });
+          }
+        }, 3000);
+
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
