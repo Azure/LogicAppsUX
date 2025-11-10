@@ -14,6 +14,7 @@ export const useFloatingRunButtonStyles = makeStyles({
   },
   errorTooltip: {
     padding: '0px',
+    wordBreak: 'break-word',
   },
 });
 
