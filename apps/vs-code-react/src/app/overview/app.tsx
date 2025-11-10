@@ -108,20 +108,11 @@ export const OverviewApp = () => {
     [data?.pages]
   );
 
-  useEffect(() => {
-    console.log('updated workflowProperties:', workflowProperties);
-  }, [workflowProperties]);
-
-  useEffect(() => {
-    console.log('updated callbackInfo:', workflowProperties.callbackInfo);
-  }, [workflowProperties.callbackInfo]);
-
   const {
     mutate: runTriggerCall,
     isLoading: runTriggerLoading,
     error: runTriggerError,
   } = useMutation(async () => {
-    console.log('running trigger, callbackInfo:', workflowProperties.callbackInfo);
     invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
     await runService?.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
     return refetch();
