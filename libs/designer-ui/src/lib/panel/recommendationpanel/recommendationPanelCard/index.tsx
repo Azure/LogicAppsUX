@@ -5,6 +5,7 @@ import { InfoDot } from '../../../infoDot';
 import { ChevronRight12Regular } from '@fluentui/react-icons';
 import { ConnectorAvatar } from '../connectorAvatar';
 import { FavoriteButton } from '../favoriteButton';
+import { useIntl } from 'react-intl';
 
 export interface OperationsData {
   type: 'Operation';
@@ -53,6 +54,13 @@ export const RecommendationPanelCard = ({
     }
   };
 
+  const intl = useIntl();
+  const triggerTag = intl.formatMessage({
+    defaultMessage: 'Trigger',
+    id: '6D5fAm',
+    description: 'Tag for trigger operations',
+  });
+
   return (
     <Card
       className="msla-recommendation-panel-card"
@@ -82,6 +90,11 @@ export const RecommendationPanelCard = ({
           {previewTag ? (
             <Badge appearance="tint" shape="circular" color="informative" size="medium">
               {previewTag}
+            </Badge>
+          ) : null}
+          {(data as any)?.isTrigger ? (
+            <Badge appearance="tint" shape="circular" size="medium">
+              {triggerTag}
             </Badge>
           ) : null}
         </div>
