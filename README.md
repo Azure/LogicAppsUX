@@ -32,6 +32,15 @@ See each application's README for more details and setup instructions.
 - **Testing:** Vitest, Playwright (for E2E).
 - **CI/CD:** GitHub Actions workflows in `.github/workflows` and Azure Pipelines.
 
+### Useful Commands
+
+```bash
+# Generate HTML changelog between two releases
+pnpm changelog <from-version> <to-version>
+# Example: pnpm changelog 5.203.0 5.230.11
+# Output: CHANGELOG_v<from>_to_v<to>.html
+```
+
 ## Contributing
 
 We welcome contributions and suggestions! Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [https://cla.opensource.microsoft.com](https://cla.opensource.microsoft.com).

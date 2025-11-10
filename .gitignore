@@ -110,6 +110,7 @@ dist-ssr
 .docusaurus
 .cache-loader
 CHANGELOG.MD
+CHANGELOG_*.html
 # Misc
 .DS_Store
 .env

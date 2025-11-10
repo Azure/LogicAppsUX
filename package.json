@@ -75,6 +75,7 @@
     "build": "turbo run build",
     "build:lib": "turbo run build:lib",
     "build:extension": "turbo run build:extension",
+    "changelog": "node fetch-and-generate-changelog.cjs",
     "check": "biome check --write .",
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
