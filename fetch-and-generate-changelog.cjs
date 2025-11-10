@@ -95,8 +95,9 @@ async function fetchAllPRs(startDate, endDate) {
   const allPRs = [];
   let page = 1;
   const perPage = 100;
+  let hasMorePages = true;
   
-  while (true) {
+  while (hasMorePages) {
     const query = encodeURIComponent(`is:pr is:merged repo:${OWNER}/${REPO} merged:${startDate}..${endDate}`);
     const endpoint = `/search/issues?q=${query}&per_page=${perPage}&page=${page}&sort=created&order=asc`;
     
@@ -107,16 +108,17 @@ async function fetchAllPRs(startDate, endDate) {
       allPRs.push(...result.items);
       console.log(`  Found ${result.items.length} PRs (total so far: ${allPRs.length})`);
       
+      // If we got fewer results than requested, we've reached the last page
       if (result.items.length < perPage) {
-        break; // Last page
+        hasMorePages = false;
+      } else {
+        page++;
+        // Rate limiting - wait 1 second between requests
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
-      page++;
     } else {
-      break;
+      hasMorePages = false;
     }
-    
-    // Rate limiting - wait 1 second between requests
-    await new Promise(resolve => setTimeout(resolve, 1000));
   }
   
   console.log(`\nTotal PRs fetched: ${allPRs.length}`);
