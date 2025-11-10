@@ -15,6 +15,10 @@ export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };
 
+export const useIsDraft = () => {
+  return useSelector((state: RootState) => state.designerOptions.isDraft);
+};
+
 export const useUnitTest = () => {
   return useSelector((state: RootState) => state.designerOptions.isUnitTest);
 };

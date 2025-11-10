@@ -10,11 +10,13 @@ import type { Note } from '../../../common/models/workflow';
 export interface NotesState {
   notes: Record<string, Note>;
   isDirty: boolean;
+  changeCount: number;
 }
 
 const initialState: NotesState = {
   notes: {},
   isDirty: false,
+  changeCount: 0,
 };
 
 const notesSlice = createSlice({
@@ -71,6 +73,7 @@ const notesSlice = createSlice({
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.notes);
     builder.addMatcher(isAnyOf(addNote, updateNote, deleteNote), (state) => {
       state.isDirty = true;
+      state.changeCount += 1;
     });
   },
 });
