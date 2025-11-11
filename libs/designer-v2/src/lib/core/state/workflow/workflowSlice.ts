@@ -64,6 +64,7 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
+  changeCount: 0,
   originalDefinition: {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
@@ -725,6 +726,9 @@ export const workflowSlice = createSlice({
     },
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
+      if (action.payload) {
+        state.changeCount += 1;
+      }
     },
     setHostErrorMessages: (state, action: PayloadAction<{ level: MessageLevel; errorMessages: ErrorMessage[] | undefined }>) => {
       if (!action.payload.errorMessages) {
@@ -747,7 +751,10 @@ export const workflowSlice = createSlice({
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
     });
     builder.addCase(updateNodeParameters, (state, action) => {
-      state.isDirty = state.isDirty || action.payload.isUserAction || false;
+      if (action.payload.isUserAction) {
+        state.isDirty = true;
+        state.changeCount += 1;
+      }
     });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
     builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
@@ -768,6 +775,7 @@ export const workflowSlice = createSlice({
       const { ignoreDirty = false } = action.payload;
       if (!ignoreDirty) {
         state.isDirty = true;
+        state.changeCount += 1;
       }
     });
     builder.addMatcher(
@@ -791,6 +799,7 @@ export const workflowSlice = createSlice({
       ),
       (state) => {
         state.isDirty = true;
+        state.changeCount += 1;
       }
     );
   },
