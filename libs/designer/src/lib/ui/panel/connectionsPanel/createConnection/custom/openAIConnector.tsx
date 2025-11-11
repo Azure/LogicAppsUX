@@ -3,7 +3,12 @@ import { type ConnectionParameterProps, UniversalConnectionParameter } from '../
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAllAPIMServiceAccounts, useAllCognitiveServiceAccounts, useAllCognitiveServiceProjects } from './useCognitiveService';
+import {
+  useAllAPIMServiceAccounts,
+  useAllAPIMServiceAccountsApis,
+  useAllCognitiveServiceAccounts,
+  useAllCognitiveServiceProjects,
+} from './useCognitiveService';
 import { useStyles } from './styles';
 import {
   Link,
@@ -36,6 +41,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const [cognitiveServiceAccountId, setCognitiveServiceAccountId] = useState<string>('');
   const [selectedCognitiveServiceProject, setSelectedCognitiveServiceProject] = useState<string>('');
+  const [apimAccount, setApimAccount] = useState<string>('');
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
   const isAgentServiceConnection = useMemo(
@@ -64,6 +70,12 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     data: allAPIMServiceAccounts,
     refetch: refetchAPIManagementAccounts,
   } = useAllAPIMServiceAccounts(selectedSubscriptionId, isAPIMGenAIGateway);
+
+  const {
+    isFetching: isFetchingAPIManagementAccountApis,
+    data: allAPIMServiceAccountsApis,
+    refetch: refetchAPIManagementAccountApis,
+  } = useAllAPIMServiceAccountsApis(apimAccount, isAPIMGenAIGateway);
 
   const {
     isFetching: isFetchingCognitiveServiceProjects,
@@ -110,6 +122,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Azure API Management Service',
         id: 'w6LBmz',
         description: 'Azure API Management Service label',
+      }),
+      API_MANAGEMENT_SERVICE_APIS: intl.formatMessage({
+        defaultMessage: 'Azure API Management Service APIs',
+        id: 'WeF48H',
+        description: 'Azure API Management Service APIs label',
       }),
       SELECT_COGNITIVE_SERVICE_AI_RESOURCE: intl.formatMessage({
         defaultMessage: 'Select an Azure AI resource',
@@ -166,6 +183,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'JASGDy',
         description: 'Loading API Management accounts...',
       }),
+      LOADING_APIM_APIS: intl.formatMessage({
+        defaultMessage: 'Loading API Management APIs...',
+        id: '9bCLPz',
+        description: 'Loading API Management APIs...',
+      }),
       SELECT_COGNITIVE_SERVICE_PROJECT: intl.formatMessage({
         defaultMessage: 'Select a project',
         id: 'QwAEWd',
@@ -175,6 +197,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Select a API Management account',
         id: 'kab2jl',
         description: 'Select the API Management account to use for this connection',
+      }),
+      SELECT_APIM_ACCOUNT_APIS: intl.formatMessage({
+        defaultMessage: 'Select a API Management API',
+        id: 'UVZHa1',
+        description: 'Select the API Management API to use for this connection',
       }),
       MISSING_ROLE_WRITE_PERMISSIONS: intl.formatMessage({
         defaultMessage: 'Missing role write permissions',
@@ -354,6 +381,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             setCognitiveServiceAccountId('');
             setSelectedCognitiveServiceProject('');
             setParameterValue('');
+            setApimAccount('');
           }}
           selectedSubscriptionId={selectedSubscriptionId}
           title={stringResources.SELECT_SUBSCRIPTION}
@@ -434,68 +462,129 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             </div>
           </ConnectionParameterRow>
         ) : isAPIMGenAIGateway ? (
-          <ConnectionParameterRow
-            parameterKey={'apiManagementService'}
-            displayName={stringResources.API_MANAGEMENT_SERVICE}
-            required={true}
-          >
-            <div className={styles.openAIContainer}>
-              <div className={styles.comboxbox}>
-                <Combobox
-                  data-automation-id="apim-account-combobox"
-                  required={true}
-                  disabled={isAPIMAccountsComboboxDisabled}
-                  placeholder={isFetchingAPIManagementAccounts ? stringResources.LOADING_APIM : stringResources.SELECT_APIM_ACCOUNT}
-                  value={isUndefinedOrEmptyString(value) ? undefined : value.split('/').pop()}
-                  className={styles.openAICombobox}
-                  onOptionSelect={async (_e, option?: OptionOnSelectData) => {
-                    if (option?.optionValue) {
-                      const resourceId = option?.optionValue as string;
-                      setValue(resourceId);
-                    }
-                  }}
-                >
-                  {isFetchingAPIManagementAccounts ? (
-                    <Spinner
-                      style={{
-                        position: 'absolute',
-                        bottom: '6px',
-                        left: '8px',
-                      }}
-                      labelPosition="after"
-                      label={stringResources.LOADING_APIM}
-                    />
-                  ) : (
-                    (allAPIMServiceAccounts ?? []).map((account: any) => {
-                      return (
-                        <Option
-                          key={account.id}
-                          value={account.id}
-                        >{`${account.name} ${account.location ? `(${account.location})` : ''}`}</Option>
-                      );
-                    })
-                  )}
-                </Combobox>
-                <div className={styles.comboboxFooter}>
-                  <Link className={styles.createNewButton} target="_blank" href={constants.LINKS.APIM_LEARN_MORE}>
-                    {stringResources.LEARN_MORE}
-                    <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
-                  </Link>
+          <>
+            <ConnectionParameterRow
+              parameterKey={'apiManagementService'}
+              displayName={stringResources.API_MANAGEMENT_SERVICE}
+              required={true}
+            >
+              <div className={styles.openAIContainer}>
+                <div className={styles.comboxbox}>
+                  <Combobox
+                    data-automation-id="apim-account-combobox"
+                    required={true}
+                    disabled={isAPIMAccountsComboboxDisabled}
+                    placeholder={isFetchingAPIManagementAccounts ? stringResources.LOADING_APIM : stringResources.SELECT_APIM_ACCOUNT}
+                    value={isUndefinedOrEmptyString(apimAccount) ? undefined : apimAccount.split('/').pop()}
+                    className={styles.openAICombobox}
+                    onOptionSelect={async (_e, option?: OptionOnSelectData) => {
+                      if (option?.optionValue) {
+                        const resourceId = option?.optionValue as string;
+                        setApimAccount(resourceId);
+                      }
+                    }}
+                  >
+                    {isFetchingAPIManagementAccounts ? (
+                      <Spinner
+                        style={{
+                          position: 'absolute',
+                          bottom: '6px',
+                          left: '8px',
+                        }}
+                        labelPosition="after"
+                        label={stringResources.LOADING_APIM}
+                      />
+                    ) : (
+                      (allAPIMServiceAccounts ?? []).map((account: any) => {
+                        return (
+                          <Option
+                            key={account.id}
+                            value={account.id}
+                          >{`${account.name} ${account.location ? `(${account.location})` : ''}`}</Option>
+                        );
+                      })
+                    )}
+                  </Combobox>
+                  <div className={styles.comboboxFooter}>
+                    <Link className={styles.createNewButton} target="_blank" href={constants.LINKS.APIM_LEARN_MORE}>
+                      {stringResources.LEARN_MORE}
+                      <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+                    </Link>
+                  </div>
                 </div>
+                <Button
+                  icon={<RefreshIcon />}
+                  size="small"
+                  appearance="transparent"
+                  style={{
+                    margin: '0 4px',
+                    height: '100%',
+                  }}
+                  disabled={isAPIMAccountsComboboxDisabled}
+                  onClick={onRefreshAPIManagementAccounts}
+                />
               </div>
-              <Button
-                icon={<RefreshIcon />}
-                size="small"
-                appearance="transparent"
-                style={{
-                  margin: '0 4px',
-                  height: '100%',
-                }}
-                disabled={isAPIMAccountsComboboxDisabled}
-                onClick={onRefreshAPIManagementAccounts}
-              />
-            </div>
-          </ConnectionParameterRow>
+            </ConnectionParameterRow>
+            <ConnectionParameterRow
+              parameterKey={'apiManagementServiceApis'}
+              displayName={stringResources.API_MANAGEMENT_SERVICE_APIS}
+              required={true}
+            >
+              <div className={styles.openAIContainer}>
+                <div className={styles.comboxbox}>
+                  <Combobox
+                    data-automation-id="apim-account-apis-combobox"
+                    required={true}
+                    disabled={!apimAccount}
+                    placeholder={
+                      isFetchingAPIManagementAccountApis ? stringResources.LOADING_APIM_APIS : stringResources.SELECT_APIM_ACCOUNT_APIS
+                    }
+                    value={isUndefinedOrEmptyString(value) ? undefined : value.split('/').pop()}
+                    className={styles.openAICombobox}
+                    onOptionSelect={async (_e, option?: OptionOnSelectData) => {
+                      if (option?.optionValue) {
+                        const resourceId = option?.optionValue as string;
+                        setValue(resourceId);
+                      }
+                    }}
+                  >
+                    {isFetchingAPIManagementAccountApis ? (
+                      <Spinner
+                        style={{
+                          position: 'absolute',
+                          bottom: '6px',
+                          left: '8px',
+                        }}
+                        labelPosition="after"
+                        label={stringResources.LOADING_APIM_APIS}
+                      />
+                    ) : (
+                      (allAPIMServiceAccountsApis ?? []).map((apis: any) => {
+                        return (
+                          <Option key={apis.id} value={apis.id}>
+                            {apis.name}
+                          </Option>
+                        );
+                      })
+                    )}
+                  </Combobox>
+                </div>
+                <Button
+                  icon={<RefreshIcon />}
+                  size="small"
+                  appearance="transparent"
+                  style={{
+                    margin: '0 4px',
+                    height: '100%',
+                  }}
+                  disabled={isAPIMAccountsComboboxDisabled || !apimAccount}
+                  onClick={() => {
+                    refetchAPIManagementAccountApis();
+                  }}
+                />
+              </div>
+            </ConnectionParameterRow>
+          </>
         ) : (
           <ConnectionParameterRow
             parameterKey={'cognitive-service-resource-id'}

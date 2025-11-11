@@ -52,6 +52,7 @@ import type {
   Connector,
   OperationParameterSetParameter,
   OperationManifest,
+  ConsumptionWorkflowMetadata,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
@@ -63,6 +64,7 @@ import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 import { useStyles } from './styles';
 import { isA2AKind } from '../../../../core/state/workflow/helper';
+import { useShouldEnableAPIMGatewayConnection } from '../../../../core/utils/experimentation';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -111,7 +113,7 @@ export interface CreateConnectionProps {
   isAgentSubgraph?: boolean;
   operationManifest?: OperationManifest;
   workflowKind?: string;
-  workflowMetadata?: { agentType?: string };
+  workflowMetadata?: ConsumptionWorkflowMetadata;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -160,7 +162,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
   const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
-
+  const enableAPIMGenAIGatewayForAgents = useShouldEnableAPIMGatewayConnection();
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(true);
   const onAuthDropdownChange = useCallback(
@@ -305,12 +307,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const isDynamicConnectionOptionValidForConnector = useMemo(() => {
-    // Dynamic connections are supported for agent workflows in both Standard (v2) and Consumption (v1) SKUs
-    // Standard: check workflowKind
-    // Consumption: check metadata.agentType
-    const isAgent = workflowKind ? isA2AKind(workflowKind) : workflowMetadata?.agentType !== undefined;
-
-    return isUsingOAuth && connector?.properties?.isDynamicConnectionAllowed && isAgent && isAgentSubgraph;
+    return (
+      isUsingOAuth && connector?.properties?.isDynamicConnectionAllowed && isAgentSubgraph && isA2AKind(workflowKind, workflowMetadata)
+    );
   }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
 
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
@@ -849,6 +848,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                                 (option: any) =>
                                   !((option.unSupportedWorkflowKind ?? []) as string[]).includes((workflowKind ?? '').toLowerCase())
                               )
+                              .filter((option: any) => {
+                                if (option.value === 'APIMGenAIGateway' && !enableAPIMGenAIGatewayForAgents) {
+                                  return false;
+                                }
+                                return true;
+                              })
                               .map((option: any) => ({
                                 value: option.value,
                                 text: option.displayName,

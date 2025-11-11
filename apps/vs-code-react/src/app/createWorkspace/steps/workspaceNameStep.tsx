@@ -77,10 +77,9 @@ export const WorkspaceNameStep: React.FC = () => {
       workspaceProjectPath.fsPath,
       intlText.WORKSPACE_NAME_EMPTY,
       intlText.WORKSPACE_NAME_VALIDATION,
-      format.FOLDER_EXISTS_MESSAGE,
-      format.CODE_WORKSPACE_EXISTS_MESSAGE,
       separator,
       workspaceExistenceResults,
+      format,
     ]
   );
 
@@ -194,16 +193,15 @@ export const WorkspaceNameStep: React.FC = () => {
           <Label required htmlFor={projectPathInputId}>
             {intlText.WORKSPACE_PARENT_FOLDER}
           </Label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <Input
               id={projectPathInputId}
               value={workspaceProjectPath.fsPath ?? ''}
               onChange={handleProjectPathChange}
               className={styles.inputControl}
-              style={{ width: '800px' }}
             />
             <Button onClick={onOpenExplorer} className={styles.browseButton} disabled={isValidatingPath}>
-              {isValidatingPath ? 'Validating...' : intlText.BROWSE_BUTTON}
+              {isValidatingPath ? intlText.VALIDATING_BROWSE_BUTTON : intlText.BROWSE_BUTTON}
             </Button>
           </div>
           {workspaceProjectPath.fsPath && (

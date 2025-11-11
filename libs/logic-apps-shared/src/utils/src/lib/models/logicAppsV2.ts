@@ -1046,6 +1046,7 @@ export interface runInstanceProperties {
     id: string;
     name: string;
     type: string;
+    mode?: string;
   };
 }
 

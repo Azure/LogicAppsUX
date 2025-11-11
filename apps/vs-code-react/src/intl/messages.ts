@@ -192,6 +192,11 @@ export const workspaceMessages = defineMessages({
     id: 'cR0MlP',
     description: 'Browse folder button',
   },
+  VALIDATING_BROWSE_BUTTON: {
+    defaultMessage: 'Validating...',
+    id: 'A7wxg0',
+    description: 'Validating folder button',
+  },
   PACKAGE_PATH_EMPTY_MESSAGE: {
     defaultMessage: 'Package path cannot be empty.',
     id: 'pO1Zvz',
@@ -1066,5 +1071,10 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Overview',
     id: '3H+PIM',
     description: 'Overview page title',
+  },
+  DEBUG_PROJECT_ERROR: {
+    defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view.',
+    id: 'VWH06W',
+    description: 'Debug project error message',
   },
 });

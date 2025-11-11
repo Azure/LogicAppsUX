@@ -11,6 +11,7 @@ import {
   getRecordEntry,
   UnsupportedException,
   isNullOrUndefined,
+  parseErrorMessage,
 } from '../../../utils/src';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
@@ -414,7 +415,7 @@ export class ConsumptionRunService implements IRunService {
         content: options?.body,
       });
     } catch (e: any) {
-      throw new Error(`${e.status} ${e?.data?.error?.message}`);
+      throw new Error(parseErrorMessage(e));
     }
   }
 

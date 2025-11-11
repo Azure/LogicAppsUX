@@ -1,4 +1,4 @@
-import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle, mergeClasses } from '@fluentui/react-components';
+import { Text, Button, MessageBar, MessageBarBody, MessageBarTitle, mergeClasses, tokens } from '@fluentui/react-components';
 import { Add16Regular, Settings16Regular } from '@fluentui/react-icons';
 import { useMcpWizardStyles } from './styles';
 import { useIntl } from 'react-intl';
@@ -340,7 +340,7 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
         {
           label: INTL_TEXT.serverDescriptionLabel,
           value: serverDescription,
-          type: 'textfield',
+          type: 'textarea',
           placeholder: INTL_TEXT.serverDescriptionPlaceholder,
           required: true,
           onChange: setMcpServerDescription,
@@ -432,9 +432,6 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
       {showSuccessToast ? <SuccessToast show={showSuccessToast} /> : null}
       <McpPanelRoot onCreateApp={handleAppCreate} />
 
-      <Text size={500} weight="bold">
-        {INTL_TEXT.title}
-      </Text>
       <DescriptionWithLink
         text={INTL_TEXT.description}
         linkUrl="https://go.microsoft.com/fwlink/?linkid=2330611"
@@ -463,16 +460,17 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
         {/* Main Section */}
         <div style={{ margin: 0 }}>
           <div className={styles.sectionHeader}>
-            <Text size={400} weight="bold">
-              {intl.formatMessage(
-                {
-                  id: 'VXpA1B',
-                  defaultMessage: 'Tools ({toolsCount})',
+            <div className={styles.toolsHeader}>
+              <Text size={400} weight="bold">
+                {intl.formatMessage({
+                  id: 'tHFp5l',
+                  defaultMessage: 'Tools',
                   description: 'Title for the main section with the count of tools',
-                },
-                { toolsCount }
-              )}
-            </Text>
+                })}
+              </Text>
+              <div style={{ color: tokens.colorPaletteRedForeground3 }}>{'*'}</div>
+              <div style={{ paddingLeft: tokens.spacingHorizontalXS }}>{`(${toolsCount})`}</div>
+            </div>
             {disableConnectorSelection ? (
               <Button
                 appearance="secondary"
@@ -496,13 +494,13 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
               <Text size={400} weight="semibold">
                 {INTL_TEXT.connectorsTitle}
               </Text>
-              {disableConnectorSelection ? null : (
+              {disableConnectorSelection || connectorExists ? null : (
                 <Button
                   appearance="secondary"
                   icon={<Add16Regular />}
                   onClick={handleAddConnectors}
                   size="small"
-                  disabled={disableConfiguration || connectorExists}
+                  disabled={disableConfiguration}
                 >
                   {INTL_TEXT.addConnectorsButton}
                 </Button>

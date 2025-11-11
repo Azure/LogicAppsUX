@@ -34,6 +34,6 @@ export const getSubLabelForConnection = (item: ConnectionProperties): string | u
     item.authenticatedUser?.name ??
     item.accountName ??
     item.connectionParameters?.agentModelType?.type ??
-    (isDynamicConnection(item.feature) ? 'Dynamic connection' : undefined)
+    (isDynamicConnection(item.features) ? 'Dynamic connection' : undefined)
   );
 };
