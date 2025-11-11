@@ -45,8 +45,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let workflowFilePath: string;
   let workflowName = '';
   let workflowContent: any;
-  let baseUrl: string;
-  let getBaseUrl: () => string;
+  let baseUrl: string | undefined;
+  let getBaseUrl: () => string | undefined;
   let apiVersion: string;
   let accessToken: string;
   let getAccessToken: () => Promise<string>;
