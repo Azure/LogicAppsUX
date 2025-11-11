@@ -28,8 +28,7 @@ import {
 } from '@fluentui/react-icons';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { MessageBar, MessageBarType } from '@fluentui/react';
-import { useIntlFormatters, useIntlMessages } from 'intl';
-import { chatMessages } from 'intl/messages';
+import { useIntlFormatters, useIntlMessages, chatMessages } from '../../../intl';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
