@@ -98,7 +98,7 @@ async function deploy(
       await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
     }
 
-    const agentIsolatedExists = await fse.pathExists(path.join(logicAppNode.fsPath, 'AgentIsolatedWorker'));
+    const agentIsolatedExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'codeful'));
     if (!agentIsolatedExists) {
       await publishCodefulProject(actionContext, logicAppNode);
     }

@@ -67,7 +67,7 @@ export async function uploadAppSettings(
 
     ext.outputChannel.appendLog(localize('uploadingSettings', 'Uploading settings...'), { resourceName: client.fullName });
     if (localSettings.Values[workflowCodefulEnabled] === 'true') {
-      localSettings.Values[ProjectDirectoryPathKey] = 'C:\\home\\site\\wwwroot\\AgentIsolatedWorker';
+      localSettings.Values[ProjectDirectoryPathKey] = 'C:\\home\\site\\wwwroot\\lib\\codeful';
     }
     await confirmOverwriteSettings(context, localSettings.Values, remoteSettings.properties, client.fullName);
 
