@@ -47,6 +47,7 @@ import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
+import { isCodefulProject } from '../codeful';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -391,7 +392,9 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
           await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
         }
 
-        if (autoStartDesignTime) {
+        const isCodeful = (await isCodefulProject(projectPath)) ?? false;
+
+        if (autoStartDesignTime && !isCodeful) {
           startDesignTimeApi(projectPath);
         }
       }
