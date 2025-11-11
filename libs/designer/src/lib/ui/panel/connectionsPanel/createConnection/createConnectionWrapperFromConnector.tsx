@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../../../core';
-import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
+import { getConnectionMetadata, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
@@ -30,6 +30,7 @@ export const CreateConnectionWrapper = ({
     type: Constants.NODE.TYPE.AGENT,
   } as any;
   const { data: operationManifest } = useOperationManifest(operationInfo);
+  const connectionMetadata = getConnectionMetadata(operationManifest);
 
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
@@ -48,6 +49,7 @@ export const CreateConnectionWrapper = ({
       isAgentSubgraph={isAgentSubgraph ?? false}
       assistedConnectionProps={assistedConnectionProps}
       showActionBar={true}
+      connectionMetadata={connectionMetadata}
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={onConnectionSuccessful}
