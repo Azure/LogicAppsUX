@@ -128,7 +128,8 @@ export const OverviewApp = () => {
   const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
     ['agentUrl', isWorkflowRuntimeRunning, baseUrl],
     async () => {
-      return fetchAgentUrl(workflowProperties.name, baseUrl, httpClient!, clientId, tenantId);
+      invariant(!!httpClient, 'Agent URL should not be retrieved unless httpClient is available');
+      return fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,
