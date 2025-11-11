@@ -474,38 +474,6 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
   });
 };
 
-// Async function to fetch Agent Model IDs (uses React Query for memoization)
-export const fetchAgentModelIds = (siteResourceId: string): Promise<string[]> => {
-  const queryClient = getReactQueryClient();
-
-  return queryClient.fetchQuery(['agentModelIds', siteResourceId], async (): Promise<string[]> => {
-    try {
-      const endpoint = `${siteResourceId}/models`;
-      const uri = `${baseUrl}${endpoint}`;
-
-      const response = await axios.get(uri, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-        params: {
-          'api-version': consumptionApiVersion,
-        },
-      });
-
-      // Return the value array if it exists, otherwise return empty array
-      return response?.data ?? [];
-    } catch (error) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: `Failed to fetch agent models: ${error}`,
-        area: 'fetchAgentModelIds',
-        error: error instanceof Error ? error : undefined,
-      });
-      return [];
-    }
-  });
-};
-
 export const fetchAgentUrlConsumption = async (workflowId: string, workflowName: string, accessEndpoint: string): Promise<AgentURL> => {
   if (!accessEndpoint || !workflowName) {
     return { agentUrl: '', chatUrl: '', hostName: '' };

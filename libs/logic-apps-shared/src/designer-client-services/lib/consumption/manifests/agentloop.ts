@@ -58,14 +58,6 @@ export default {
           type: 'string',
           default: 'AzureOpenAI',
         },
-        modelId: {
-          title: 'Model Id',
-          description: 'Select the model to use.',
-          type: 'string',
-          'x-ms-editor': 'dropdown',
-          'x-ms-visibility': 'important',
-          default: 'gpt-4o-mini',
-        },
         deploymentId: {
           type: 'string',
           title: 'AI model',
@@ -183,7 +175,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'modelId', 'messages'],
+      required: ['agentModelType', 'messages'],
     },
     outputs: {
       type: 'object',
