@@ -38,10 +38,14 @@
     </PropertyGroup>
     <WriteLinesToFile File="$(WorkerConfigPath)" Lines="$([System.IO.File]::ReadAllText($(WorkerConfigPath)).Replace('dotnet-isolated','dotnet'))" Overwrite="true" Condition="Exists('$(WorkerConfigPath)')"/>
   </Target>
-  <Target Name="CopyToCodefulFolder" AfterTargets="Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
+   <Target Name="CopyToCodefulFolder" AfterTargets="Build;Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
+    <PropertyGroup>
+      <SourcePath>$(PublishDir)</SourcePath>
+      <SourcePath Condition="!Exists('$(PublishDir)')">$(OutputPath)</SourcePath>
+    </PropertyGroup>
     <ItemGroup>
-      <FilesToCopyCodeful Include="$(PublishDir)**\*"/>
+      <FilesToCopyCodeful Include="$(SourcePath)**\*"/>
     </ItemGroup>
-   <Copy SourceFiles="@(FilesToCopyCodeful)" DestinationFolder="$(LogicAppFolderToPublish)\%(RecursiveDir)"/>                                                                                                                                                                                                                                        
+    <Copy SourceFiles="@(FilesToCopyCodeful)" DestinationFolder="$(LogicAppFolderToPublish)\%(RecursiveDir)"/>
   </Target>
 </Project>

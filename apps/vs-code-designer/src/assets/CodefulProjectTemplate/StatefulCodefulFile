@@ -28,16 +28,22 @@ public class Program
             .Build();
 
         var trigger = WorkflowTriggers.Managed.Msnweather("msnweather").WhenOnCurrentWeatherChange(
-                () => "Seattle",
-                () => OnCurrentWeatherChangeMeasureInput.Temperature,
-                () => OnCurrentWeatherChangeWhenInput.IsEqualTo,
-                () => 75d,
-                () => "I"
-            );
-        trigger.WithName("triggerName");
+            location: () => "Seattle, WA",
+            measure: () => OnCurrentWeatherChangeMeasureInput.Temperature,
+            when: () => OnCurrentWeatherChangeWhenInput.IsEqualTo,
+            target: () => 70,
+            units: () => "I"
+        );
+
+        trigger.WithName("weather_trigger");
+        trigger.WithRecurrence(new FlowRecurrence
+        {
+            Frequency = FlowRecurrenceFrequency.Minute,
+            Interval = 1
+        });
         var builder = WorkflowBuilderFactory.CreateStatefulWorkflow( <%= flowName %>, trigger);
 
-        var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput}");
+        var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput.Body}");
         builder.AddAction(compose);
 
 
