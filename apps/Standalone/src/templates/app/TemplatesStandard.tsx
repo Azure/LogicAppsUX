@@ -191,8 +191,9 @@ export const TemplatesStandard = () => {
           updatedConnectionsData,
           updatedParametersData,
           updatedSettingProperties,
-          undefined,
-          undefined,
+          /*customCodeData*/ undefined,
+          /*notesData*/ undefined,
+          /*mcpServer*/ undefined,
           () => {},
           { skipValidation: true, throwError: true }
         );
