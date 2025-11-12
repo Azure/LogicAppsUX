@@ -85,6 +85,8 @@ export const nodeJsDependencyName = 'NodeJs';
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowAuthenticationMethodKey = 'WORKFLOWS_AUTHENTICATION_METHOD';
+export const WORKFLOWS_DYNAMIC_CONNECTION_DEFAULT_AUTH_AUDIENCE_KEY = 'WORKFLOWS_DYNAMIC_CONNECTION_DEFAULT_AUTH_AUDIENCE';
+export const defaultMsiAudience = 'https://management.core.windows.net/';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
 export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME';
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
