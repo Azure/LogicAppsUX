@@ -14,7 +14,7 @@ import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
   workflowResourceGroupNameKey,
-  WORKFLOWS_DYNAMIC_CONNECTION_DEFAULT_AUTH_AUDIENCE_KEY,
+  workflowsDynamicConnectionDefaultAuthAudienceKey,
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
 } from '../../../constants';
@@ -108,7 +108,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       // Save the authentication method to local settings
       if (context.authenticationMethod) {
         valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
-        valuesToUpdateInSettings[WORKFLOWS_DYNAMIC_CONNECTION_DEFAULT_AUTH_AUDIENCE_KEY] = defaultMsiAudience;
+        valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
       }
     }
 
