@@ -97,6 +97,9 @@ export const designerSlice = createSlice({
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
     },
+    updateRuntimeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
+      state.workflowRuntimeBaseUrl = action.payload ?? '';
+    },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;
       state.callbackInfo = callbackInfo;
@@ -137,6 +140,7 @@ export const designerSlice = createSlice({
 
 export const {
   initializeDesigner,
+  updateRuntimeBaseUrl,
   updateCallbackUrl,
   createFileSystemConnection,
   updateFileSystemConnection,
