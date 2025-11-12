@@ -43,7 +43,7 @@ public class Program
         });
         var builder = WorkflowBuilderFactory.CreateStatefulWorkflow( <%= flowName %>, trigger);
 
-        var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput.Body}");
+        var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput}");
         builder.AddAction(compose);
 
 

@@ -174,19 +174,39 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
  * @param {string} projectPath - The path of the project.
  * @returns The local settings schema.
  */
-export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string) => {
-  return {
+export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, isCodeful?: boolean): ILocalSettingsJson => {
+  const baseSettings: ILocalSettingsJson = {
     IsEncrypted: false,
     Values: {
       [appKindSetting]: logicAppKind,
-      ...(projectPath ? { [ProjectDirectoryPathKey]: projectPath } : {}),
-      ...(isDesignTime ? { [workerRuntimeKey]: WorkerRuntime.Node } : { [workerRuntimeKey]: WorkerRuntime.Dotnet }),
-      ...(isDesignTime
-        ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
-        : { [azureWebJobsStorageKey]: localEmulatorConnectionString }),
-      ...(isDesignTime ? {} : { [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue }),
     },
   };
+
+  // Add project path if provided
+  if (projectPath) {
+    baseSettings.Values[ProjectDirectoryPathKey] = projectPath;
+  }
+
+  // Add runtime-specific settings
+  if (isDesignTime) {
+    baseSettings.Values[workerRuntimeKey] = WorkerRuntime.Node;
+    baseSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+  } else {
+    baseSettings.Values[workerRuntimeKey] = WorkerRuntime.Dotnet;
+    baseSettings.Values[azureWebJobsStorageKey] = localEmulatorConnectionString;
+    baseSettings.Values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+  }
+
+  // Add codeful-specific settings
+  if (isCodeful) {
+    Object.assign(baseSettings.Values, {
+      AzureFunctionsJobHost__extensionBundle__version: '[1.141.0.12]',
+      WORKFLOW_CODEFUL_ENABLED: 'true',
+      FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test',
+    });
+  }
+
+  return baseSettings;
 };
 
 export async function removeAppKindFromLocalSettings(logicAppPath: string, context: IActionContext): Promise<void> {

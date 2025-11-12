@@ -180,7 +180,7 @@ export async function createLocalConfigurationFiles(
   if (logicAppType === ProjectType.agentCodeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
     localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
-    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.141.0.11]';
+    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.141.0.12]';
     localSettingsJson.Values['FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI'] = 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test';
   }
 

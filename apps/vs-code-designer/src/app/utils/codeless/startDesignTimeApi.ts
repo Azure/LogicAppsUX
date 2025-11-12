@@ -82,7 +82,8 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-      const settingsFileContent = getLocalSettingsSchema(true, projectPath);
+      const isCodeful = (await isCodefulProject(projectPath)) ?? false;
+      const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
 
       const hostFileContent: any = {
         version: '2.0',
