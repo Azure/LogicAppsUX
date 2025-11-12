@@ -205,7 +205,6 @@ export default {
     },
   },
   DEFAULT_CUSTOM_CODE_INPUT: 'CodeFile',
-  DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT: 'modelId',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',

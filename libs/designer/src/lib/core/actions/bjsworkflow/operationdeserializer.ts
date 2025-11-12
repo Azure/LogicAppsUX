@@ -2,7 +2,6 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
-import { AgentUtils } from '../../../common/utilities/Utils';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -53,7 +52,6 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   getSupportedChannelsFromManifest,
-  initializeAgentModelIds,
   updateCallbackUrlInInputs,
   updateAgentUrlInInputs,
   updateCustomCodeInInputs,
@@ -397,14 +395,6 @@ export const initializeOperationDetailsForManifest = async (
     // Populate Customcode with values gotten from file system
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       updateCustomCodeInInputs(customCodeParameter, customCode);
-    }
-
-    const agentModelIdParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT);
-    if (
-      agentModelIdParameter &&
-      AgentUtils.isConsumptionAgentModelTypeParameter(nodeOperationInfo?.connectorId, agentModelIdParameter.parameterName)
-    ) {
-      await initializeAgentModelIds(agentModelIdParameter);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(

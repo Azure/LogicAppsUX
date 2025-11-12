@@ -30,7 +30,6 @@ import { isConnectionRequiredForOperation, isConnectionAutoSelectionDisabled, up
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
-  initializeAgentModelIds,
   initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
@@ -257,14 +256,6 @@ export const initializeOperationDetails = async (
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
-    }
-
-    const agentModelIdParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT);
-    if (
-      agentModelIdParameter &&
-      AgentUtils.isConsumptionAgentModelTypeParameter(operationInfo?.connectorId, agentModelIdParameter.parameterName)
-    ) {
-      await initializeAgentModelIds(agentModelIdParameter);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
