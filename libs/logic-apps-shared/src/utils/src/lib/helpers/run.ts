@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isNullOrUndefined, isObject } from '../helpers';
+import { isObject } from '../helpers';
 import type { CallbackInfo, CallbackInfoWithRelativePath, LogicAppsV2 } from '../models';
 
 export function isCallbackInfoWithRelativePath(value: any): value is CallbackInfoWithRelativePath {
@@ -75,7 +75,7 @@ export function getTriggerName(definition: LogicAppsV2.WorkflowDefinition): stri
  * @returns {Promise<boolean>} - A promise that resolves to true if the runtime is up, false otherwise.
  */
 export async function isRuntimeUp(baseUrl: string): Promise<boolean> {
-  if (isNullOrUndefined(baseUrl)) {
+  if (!baseUrl) {
     return false;
   }
 
