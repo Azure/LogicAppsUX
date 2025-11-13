@@ -194,6 +194,14 @@ async function getConnectionReference(
   // TODO: Fix in designer, this is a workaround to prevent extra runtime URLs to be generated in connection.json
   // This prevents duplicate URLs that may be returned from the designer
   delete connectionProperties?.connectionRuntimeUrl;
+  let runtimeSource: string | undefined;
+  let dynamicConnectionProxyUrl: string | undefined;
+  const isDynamicConnection = connectionProperties?.runtimeSource === 'Dynamic';
+
+  if (isDynamicConnection) {
+    runtimeSource = connectionProperties.runtimeSource;
+    dynamicConnectionProxyUrl = connectionProperties.dynamicConnectionProxyUrl;
+  }
 
   return axios
     .post(
@@ -222,8 +230,22 @@ async function getConnectionReference(
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
         authentication: authValue,
-        connectionProperties,
       };
+
+      if (isDynamicConnection) {
+        // Flatten dynamic properties to the top level
+        if (runtimeSource) {
+          connectionReference.runtimeSource = runtimeSource;
+        }
+
+        if (dynamicConnectionProxyUrl) {
+          connectionReference.dynamicConnectionProxyUrl = dynamicConnectionProxyUrl;
+        }
+      } else if (connectionProperties) {
+        // Non-dynamic connections keep connectionProperties as before
+        // (with connectionRuntimeUrl stripped by the earlier workaround for proper handling in connection.json).
+        connectionReference.connectionProperties = connectionProperties;
+      }
 
       return parameterizeConnectionsSetting
         ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)
