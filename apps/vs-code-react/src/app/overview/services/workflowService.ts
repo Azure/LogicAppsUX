@@ -111,14 +111,11 @@ const fetchA2AAuthKey = async (workflowName: string, baseUrl: string, httpClient
 
 // Helper function to fetch OBO (On-Behalf-Of) data
 const fetchOBOData = async (
-  siteResourceId: string,
-  baseUrl: string,
   httpClient: IHttpClient,
   clientId: string,
   tenantId: string,
   azureSubscriptionId: string,
   resourceGroup: string,
-  siteName: string,
   connectionsData?: ConnectionsData | undefined
 ) => {
   try {
