@@ -1078,3 +1078,94 @@ export const overviewMessages = defineMessages({
     description: 'Debug project error message',
   },
 });
+
+export const chatMessages = defineMessages({
+  CHAT_TEXT: {
+    defaultMessage: 'Chat',
+    id: '9VbsXx',
+    description: 'Chat button text',
+  },
+  LOADING: {
+    defaultMessage: 'Loading',
+    id: 'WgJsL1',
+    description: 'Loading text',
+  },
+  TITLE: {
+    defaultMessage: 'Agent chat',
+    id: 'Xj/wPS',
+    description: 'Agent chat title',
+  },
+  DEFAULT_TOOLTIP: {
+    defaultMessage: 'Click here to chat with your workflow',
+    id: 'sBGZCI',
+    description: 'Tooltip for chat button',
+  },
+  CHAT_IN_AUTHENTICATION_DRAFT: {
+    defaultMessage:
+      'Embedded chat is unavailable with authentication enabled. Publish to access the chat client and click to open in new tab: {url}',
+    id: '3MaYXN',
+    description: 'Tooltip for chat button',
+  },
+  CHAT_IN_AUTHENTICATION_PROD: {
+    defaultMessage: 'Embedded chat is unavailable with authentication enabled. Click to open in new tab: {url}',
+    id: '7rokiZ',
+    description: 'Tooltip for chat button',
+  },
+  INFO_TOOLTIP: {
+    defaultMessage: 'Chat availability information',
+    id: 'a1fbm6',
+    description: 'Tooltip for info button',
+  },
+  INFO_DIALOG_TITLE: {
+    defaultMessage: 'Chat availability: Development vs Production',
+    id: 'FiSFtL',
+    description: 'Title for chat info dialog',
+  },
+  INFO_DIALOG_DEVELOPMENT: {
+    defaultMessage: 'Development & Testing',
+    id: '2p9WPX',
+    description: 'Development section header in info dialog',
+  },
+  INFO_DIALOG_DEVELOPMENT_DESC: {
+    defaultMessage:
+      'In-portal chat is available for testing and development purposes. This allows you to test your conversational workflows before deploying to production.',
+    id: 'qIT2h2',
+    description: 'Development section description in info dialog',
+  },
+  INFO_DIALOG_PRODUCTION: {
+    defaultMessage: 'Production',
+    id: 'uG+CHc',
+    description: 'Production section header in info dialog',
+  },
+  INFO_DIALOG_PRODUCTION_DESC: {
+    defaultMessage:
+      'Chat is only available in production when authentication is enabled on the app. This ensures secure access to your workflow.',
+    id: '8lZGy+',
+    description: 'Production section description in info dialog',
+  },
+  INFO_DIALOG_SETUP: {
+    defaultMessage: 'Setting up authentication',
+    id: 'PAkWmu',
+    description: 'Setup section header in info dialog',
+  },
+  INFO_DIALOG_SETUP_DESC: {
+    defaultMessage: 'To enable authentication for production use, follow the authentication setup guide.',
+    id: 'ukB9Bs',
+    description: 'Setup section description in info dialog',
+  },
+  INFO_DIALOG_LEARN_MORE: {
+    defaultMessage: 'Learn more about authentication setup',
+    id: 'DvKGRc',
+    description: 'Link text for authentication setup guide',
+  },
+  CLOSE: {
+    defaultMessage: 'Close',
+    id: '4BH2f8',
+    description: 'Close button text',
+  },
+  DEBUG_PROJECT_ERROR: {
+    defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view.',
+    id: 'VWH06W',
+    description: 'Debug project error message',
+  },
+});

@@ -6,6 +6,7 @@ import type {
   ConnectionsData,
   IDesignerPanelMetadata,
   CompleteFileSystemConnectionData,
+  ICallbackUrlResponse,
 } from '@microsoft/vscode-extension-logic-apps';
 
 export interface IApiService {
@@ -278,10 +279,17 @@ export interface InjectValuesMessage {
   };
 }
 
-export interface UpdateBaseUrlMessage {
-  command: typeof ExtensionCommand.update_base_url;
+export interface UpdateRuntimeBaseUrlMessage {
+  command: typeof ExtensionCommand.update_runtime_base_url;
   data: {
     baseUrl?: string;
+  };
+}
+
+export interface UpdateCallbackInfoMessage {
+  command: typeof ExtensionCommand.update_callback_info;
+  data: {
+    callbackInfo?: ICallbackUrlResponse;
   };
 }
 

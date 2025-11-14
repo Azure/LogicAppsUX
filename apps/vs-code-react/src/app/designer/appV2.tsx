@@ -103,6 +103,7 @@ export const DesignerApp = () => {
     return getDesignerServices(
       baseUrl,
       workflowRuntimeBaseUrl,
+      true,
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,

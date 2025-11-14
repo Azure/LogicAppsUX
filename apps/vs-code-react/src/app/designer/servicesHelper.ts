@@ -65,6 +65,7 @@ export interface IDesignerServices {
 export const getDesignerServices = (
   baseUrl: string,
   workflowRuntimeBaseUrl: string,
+  isWorkflowRuntimeRunning: boolean,
   apiVersion: string,
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
@@ -338,7 +339,14 @@ export const getDesignerServices = (
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
     getAgentUrl: () =>
-      fetchAgentUrl(workflowName, isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl, httpClient, clientId, tenantId),
+      fetchAgentUrl(
+        workflowName,
+        isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
+        httpClient,
+        clientId,
+        tenantId,
+        isWorkflowRuntimeRunning
+      ),
   };
 
   const hostService: IHostService = {
