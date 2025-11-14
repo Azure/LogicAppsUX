@@ -23,7 +23,7 @@ export const createWorkflow = async (context: IActionContext) => {
     projectName: ProjectName.createWorkflow,
     createCommand: ExtensionCommand.createWorkflow,
     createHandler: async (context: IActionContext, data: any) => {
-      await createLogicAppWorkflow(context, data, false);
+      await createLogicAppWorkflow(context, data, projectRoot);
     },
     extraInitializeData: {
       logicAppType: isCodeful ? ProjectType.agentCodeful : '',

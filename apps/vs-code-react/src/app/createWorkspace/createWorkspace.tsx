@@ -89,6 +89,9 @@ export const CreateWorkspace = () => {
     if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
       return intlText.CREATE_PROJECT_BUTTON;
     }
+    if (flowType === FLOW_TYPES.CREATE_WORKFLOW) {
+      return intlText.CREATE_WORKFLOW;
+    }
     return intlText.CREATE_WORKSPACE_BUTTON;
   };
 
