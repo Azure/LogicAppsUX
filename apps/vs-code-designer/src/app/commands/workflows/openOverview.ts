@@ -297,7 +297,7 @@ async function getConnectionData(projectPath: string): Promise<Record<string, an
     }
   } catch (error) {
     // Log error but don't throw to avoid breaking the overview
-    console.warn('Failed to read connection.json:', error);
+    console.warn('Failed to read connections.json:', error);
   }
   return {};
 }
