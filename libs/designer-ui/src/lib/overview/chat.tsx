@@ -66,7 +66,7 @@ export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, isWorkflo
     if (loading) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
-    const chatUrl = `${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${data?.queryParams?.oboUserToken ? `&oboUserToken=${data?.queryParams?.oboUserToken}` : ''}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`;
+    const chatUrl = `${data?.chatUrl}?apiKey=${encodeURIComponent(data?.queryParams?.apiKey ?? '')}${data?.queryParams?.oboUserToken ? `&oboUserToken=${encodeURIComponent(data.queryParams.oboUserToken)}` : ''}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`;
 
     return (
       <iframe
