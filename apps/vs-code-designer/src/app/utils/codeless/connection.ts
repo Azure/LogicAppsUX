@@ -155,13 +155,46 @@ async function addConnectionDataInJson(
   }
 }
 
-export function isKeyExpired(jwtTokenHelper: JwtTokenHelper, date: number, connectionKey: string, bufferInHours: number): boolean {
-  const payload: Record<string, any> = jwtTokenHelper.extractJwtTokenPayload(connectionKey);
-  const secondsSinceEpoch = date / 1000;
-  const buffer = bufferInHours * 3600; // convert to seconds
-  const expiry = payload[JwtTokenConstants.expiry];
+/**
+ * Determines whether a connection key (JWT) is expired.
+ *
+ * @param jwtTokenHelper - Helper for extracting JWT payloads
+ * @param date - Current time in ms since epoch
+ * @param connectionKey - Raw value from local.settings.json
+ * @param bufferInHours - Expiry buffer (hours before actual expiry)
+ * @returns boolean
+ *          true  → key is expired OR invalid
+ *          false → key is valid and not expired
+ */
+export function isKeyExpired(
+  jwtTokenHelper: JwtTokenHelper,
+  date: number,
+  connectionKey: string,
+  bufferInHours: number,
+  context?: IActionContext,
+  referenceKey?: string
+): boolean {
+  try {
+    // Existing behavior (unchanged for valid JWTs)
+    const payload: Record<string, any> = jwtTokenHelper.extractJwtTokenPayload(connectionKey);
+    const secondsSinceEpoch = date / 1000;
+    const buffer = bufferInHours * 3600;
+    const expiry = payload[JwtTokenConstants.expiry];
 
-  return expiry - buffer <= secondsSinceEpoch;
+    return expiry - buffer <= secondsSinceEpoch;
+  } catch (error) {
+    // safe fallback for invalid/malformed keys
+    const message = error instanceof Error ? error.message : String(error);
+
+    // - If we have telemetry context, log it
+    if (context) {
+      context.telemetry.properties.connectionKeyInvalidFormat = referenceKey
+        ? `${referenceKey}-connectionKey invalid or non-JWT: ${message}`
+        : `connectionKey invalid or non-JWT: ${message}`;
+    }
+    // Treat invalid values (parameter expressions, empty strings) as "expired"
+    return true;
+  }
 }
 
 function formatSetting(setting: string): string {
@@ -265,130 +298,139 @@ export async function getConnectionsAndSettingsToUpdate(
   workflowBaseManagementUri: string,
   parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
-  const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
-  const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
-  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
-  const useMsi = await isMSIEnabled(projectPath, context);
+  try {
+    const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
+    const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
+    const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+    const useMsi = await isMSIEnabled(projectPath, context);
 
-  let areKeysRefreshed = false;
-  let areKeysGenerated = false;
+    let areKeysRefreshed = false;
+    let areKeysGenerated = false;
 
-  const referencesToAdd = connectionsData.managedApiConnections || {};
-  const settingsToAdd: Record<string, string> = {};
-  const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
-  let accessToken: string | undefined;
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+    const referencesToAdd = connectionsData.managedApiConnections || {};
+    const settingsToAdd: Record<string, string> = {};
+    const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
+    let accessToken: string | undefined;
+    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
-  for (const referenceKey of Object.keys(connectionReferences)) {
-    const reference = connectionReferences[referenceKey];
+    for (const referenceKey of Object.keys(connectionReferences)) {
+      const reference = connectionReferences[referenceKey];
 
-    context.telemetry.properties.checkingConnectionKey = `Checking ${referenceKey}-connectionKey validity`;
-    if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
-      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
-      referencesToAdd[referenceKey] = await getConnectionReference(
-        context,
-        referenceKey,
-        reference,
-        accessToken,
-        workflowBaseManagementUri,
-        settingsToAdd,
-        parametersFromDefinition,
-        parameterizeConnectionsSetting,
-        useMsi
-      );
+      context.telemetry.properties.checkingConnectionKey = `Checking ${referenceKey}-connectionKey validity`;
+      if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
+        accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
+        referencesToAdd[referenceKey] = await getConnectionReference(
+          context,
+          referenceKey,
+          reference,
+          accessToken,
+          workflowBaseManagementUri,
+          settingsToAdd,
+          parametersFromDefinition,
+          parameterizeConnectionsSetting,
+          useMsi
+        );
 
-      context.telemetry.properties.connectionKeyGenerated = useMsi
-        ? `${referenceKey} configured for MSI authentication`
-        : `${referenceKey}-connectionKey generated and is valid for 7 days`;
+        context.telemetry.properties.connectionKeyGenerated = useMsi
+          ? `${referenceKey} configured for MSI authentication`
+          : `${referenceKey}-connectionKey generated and is valid for 7 days`;
 
-      if (!useMsi) {
+        if (!useMsi) {
+          areKeysGenerated = true;
+        }
+      } else if (!useMsi && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
+        const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
+
+        accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
+
+        // call api to get connection key but will not modify connections file
+        await getConnectionReference(
+          context,
+          referenceKey,
+          resolvedConnectionReference,
+          accessToken,
+          workflowBaseManagementUri,
+          settingsToAdd,
+          parametersFromDefinition,
+          parameterizeConnectionsSetting,
+          useMsi
+        );
+
+        context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
         areKeysGenerated = true;
+      } else if (
+        !useMsi &&
+        isApiHubConnectionId(reference.connection.id) &&
+        localSettings.Values[`${referenceKey}-connectionKey`] &&
+        isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3, context, referenceKey)
+      ) {
+        const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
+
+        accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
+
+        // call api to get connection key but will not modify connections file
+        await getConnectionReference(
+          context,
+          referenceKey,
+          resolvedConnectionReference,
+          accessToken,
+          workflowBaseManagementUri,
+          settingsToAdd,
+          parametersFromDefinition,
+          parameterizeConnectionsSetting,
+          useMsi
+        );
+
+        context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
+        areKeysRefreshed = true;
+      } else {
+        context.telemetry.properties.connectionKeyValid = `${referenceKey}-connectionKey exists and is valid`;
       }
-    } else if (!useMsi && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
-      const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
-
-      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
-
-      // call api to get connection key but will not modify connections file
-      await getConnectionReference(
-        context,
-        referenceKey,
-        resolvedConnectionReference,
-        accessToken,
-        workflowBaseManagementUri,
-        settingsToAdd,
-        parametersFromDefinition,
-        parameterizeConnectionsSetting,
-        useMsi
-      );
-
-      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
-      areKeysGenerated = true;
-    } else if (
-      !useMsi &&
-      isApiHubConnectionId(reference.connection.id) &&
-      localSettings.Values[`${referenceKey}-connectionKey`] &&
-      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
-    ) {
-      const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
-
-      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
-
-      // call api to get connection key but will not modify connections file
-      await getConnectionReference(
-        context,
-        referenceKey,
-        resolvedConnectionReference,
-        accessToken,
-        workflowBaseManagementUri,
-        settingsToAdd,
-        parametersFromDefinition,
-        parameterizeConnectionsSetting,
-        useMsi
-      );
-
-      context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
-      areKeysRefreshed = true;
-    } else {
-      context.telemetry.properties.connectionKeyValid = `${referenceKey}-connectionKey exists and is valid`;
     }
-  }
 
-  // Update MSI connection permissions if MSI is enabled
-  if (useMsi) {
-    try {
-      const updatedReferences = await updateConnectionReferencesLocalMSI(
-        context,
-        referencesToAdd,
-        azureTenantId,
-        workflowBaseManagementUri,
-        localSettings
-      );
-      Object.assign(referencesToAdd, updatedReferences);
-      context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
-    } catch (error) {
-      context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;
-      window.showErrorMessage(
-        localize('msiPermissionError', 'Failed to configure MSI permissions for connections. Please check your access rights.')
+    // Update MSI connection permissions if MSI is enabled
+    if (useMsi) {
+      try {
+        const updatedReferences = await updateConnectionReferencesLocalMSI(
+          context,
+          referencesToAdd,
+          azureTenantId,
+          workflowBaseManagementUri,
+          localSettings
+        );
+        Object.assign(referencesToAdd, updatedReferences);
+        context.telemetry.properties.msiPermissionsUpdated = 'MSI access policies configured successfully';
+      } catch (error) {
+        context.telemetry.properties.msiPermissionsError = `Failed to update MSI permissions: ${error}`;
+        window.showErrorMessage(
+          localize('msiPermissionError', 'Failed to configure MSI permissions for connections. Please check your access rights.')
+        );
+      }
+    }
+
+    connectionsData.managedApiConnections = referencesToAdd;
+
+    if (areKeysRefreshed) {
+      window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed and are valid for 7 days.'));
+    }
+
+    if (areKeysGenerated) {
+      window.showInformationMessage(
+        localize('connectionKeysGenerated', 'New connection keys have been generated and are valid for 7 days.')
       );
     }
+
+    return {
+      connections: connectionsData,
+      settings: settingsToAdd,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.getConnectionsAndSettingsError = errorMessage;
+    ext.outputChannel.appendLog(localize('getConnectionsAndSettingsError', 'Failed to get connections and settings: {0}', errorMessage));
+    throw new Error(localize('connectionSettingsError', 'Failed to retrieve connection settings: {0}', errorMessage));
   }
-
-  connectionsData.managedApiConnections = referencesToAdd;
-
-  if (areKeysRefreshed) {
-    window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed and are valid for 7 days.'));
-  }
-
-  if (areKeysGenerated) {
-    window.showInformationMessage(localize('connectionKeysGenerated', 'New connection keys have been generated and are valid for 7 days.'));
-  }
-
-  return {
-    connections: connectionsData,
-    settings: settingsToAdd,
-  };
 }
 
 export async function getCustomCodeToUpdate(
