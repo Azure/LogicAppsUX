@@ -3,7 +3,7 @@ import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import { type Runs, StandardRunService, Theme, equals, isRuntimeUp } from '@microsoft/logic-apps-shared';
+import { type Runs, StandardRunService, Theme, equals, isNullOrUndefined, isRuntimeUp } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useIntlMessages, overviewMessages } from '../../intl';
@@ -55,6 +55,10 @@ export const OverviewApp = () => {
   const intlText = useIntlMessages(overviewMessages);
 
   const httpClient = useMemo(() => {
+    if (!baseUrl) {
+      return;
+    }
+
     return new HttpClient({
       accessToken: accessToken,
       baseUrl: baseUrl,
@@ -64,6 +68,10 @@ export const OverviewApp = () => {
   }, [accessToken, baseUrl, hostVersion]);
 
   const runService = useMemo(() => {
+    if (!baseUrl || !httpClient) {
+      return;
+    }
+
     return new StandardRunService({
       baseUrl: baseUrl,
       apiVersion: apiVersion,
@@ -73,6 +81,10 @@ export const OverviewApp = () => {
   }, [baseUrl, apiVersion, workflowProperties.name, httpClient]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
+    if (!runService) {
+      return Promise.resolve({ runs: [], nextLink: undefined });
+    }
+
     if (pageParam) {
       return runService.getMoreRuns(pageParam);
     }
@@ -103,14 +115,14 @@ export const OverviewApp = () => {
     isLoading: runTriggerLoading,
     error: runTriggerError,
   } = useMutation(async () => {
-    invariant(workflowState.workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    await runService.runTrigger(workflowState.workflowProperties.callbackInfo as CallbackInfo);
+    invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+    await runService?.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
     return refetch();
   });
 
   const onVerifyRunId = useCallback(
     (runId: string) => {
-      return runService.getRun(runId);
+      return runService?.getRun(runId);
     },
     [runService]
   );
@@ -118,6 +130,7 @@ export const OverviewApp = () => {
   const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
     ['agentUrl', isWorkflowRuntimeRunning, baseUrl],
     async () => {
+      invariant(!!httpClient, 'Agent URL should not be retrieved unless httpClient is available');
       return fetchAgentUrl(
         workflowProperties.name,
         baseUrl,
@@ -134,7 +147,7 @@ export const OverviewApp = () => {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      enabled: isWorkflowRuntimeRunning && isAgentWorkflow,
+      enabled: isWorkflowRuntimeRunning && isAgentWorkflow && !isNullOrUndefined(httpClient),
     }
   );
 

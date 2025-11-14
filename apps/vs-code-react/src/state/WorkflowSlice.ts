@@ -1,7 +1,7 @@
 import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../run-service';
 import { AdvancedOptionsTypes } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
-import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -18,6 +18,11 @@ export interface InitializePayload {
   azureDetails?: AzureConnectorDetails;
   kind?: string;
   connectionData?: Record<string, any>;
+}
+
+export interface UpdateCallbackInfoPayload {
+  baseUrl?: string;
+  callbackInfo?: ICallbackUrlResponse;
 }
 
 export const Status = {
@@ -95,7 +100,7 @@ export const workflowSlice = createSlice({
       initializedState.accessToken = accessToken;
       initializedState.cloudHost = cloudHost;
       initializedState.apiVersion = apiVersion;
-      initializedState.baseUrl = baseUrl;
+      initializedState.baseUrl = baseUrl ?? '';
       initializedState.corsNotice = corsNotice;
       initializedState.workflowProperties = workflowProperties;
       initializedState.reviewContent = reviewContent;
@@ -125,6 +130,13 @@ export const workflowSlice = createSlice({
     },
     updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.baseUrl = action.payload ?? '';
+    },
+    updateCallbackInfo: (state: WorkflowState, action: PayloadAction<UpdateCallbackInfoPayload>) => {
+      const { callbackInfo } = action.payload;
+      state.workflowProperties = {
+        ...state.workflowProperties,
+        callbackInfo: callbackInfo,
+      };
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
@@ -187,6 +199,7 @@ export const workflowSlice = createSlice({
 export const {
   initializeWorkflow,
   updateBaseUrl,
+  updateCallbackInfo,
   updateAccessToken,
   updateSelectedWorkFlows,
   updateSelectedSubscripton,

@@ -59,7 +59,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       icon: <PlayRegular />,
       title: Resources.OVERVIEW_RUN_TRIGGER,
       onClick: onRunTrigger,
-      disabled: !triggerName,
+      disabled: !isWorkflowRuntimeRunning || !triggerName,
     });
   }
 

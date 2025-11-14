@@ -14,7 +14,7 @@ import {
   useAllConnectionErrors,
   getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS, equals, isNullOrEmpty } from '@microsoft/logic-apps-shared';
+import { type AgentURL, RUN_AFTER_COLORS, equals, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -42,7 +42,7 @@ import {
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
 import { useIntlMessages, designerMessages } from '../../../intl';
-import { ChatButton } from '@microsoft/logic-apps-designer-v2';
+import { ChatButton } from './chat';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
@@ -63,22 +63,26 @@ const AssertionsIcon = bundleIcon(CheckmarkFilled, CheckmarkRegular);
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
   isDisabled: boolean;
+  isWorkflowRuntimeRunning: boolean;
   onRefresh(): void;
   isDarkMode: boolean;
   isUnitTest: boolean;
   isLocal: boolean;
   runId: string;
   kind?: string;
+  getAgentUrl?: () => Promise<AgentURL>;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isRefreshing,
   isDisabled,
+  isWorkflowRuntimeRunning,
   onRefresh,
   isDarkMode,
   isUnitTest,
   isLocal,
   runId,
+  getAgentUrl,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -385,7 +389,14 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       {shouldRenderChatButton ? (
         <Tooltip relationship="label" withArrow appearance="inverted" content={intlText.CHAT_BUTTON_TOOLTIP_CONTENT}>
           <span style={{ display: 'inline-flex' }}>
-            <ChatButton appearance="transparent" isDarkMode={isDarkMode} disabled={true} />
+            <ChatButton
+              appearance="transparent"
+              isDarkMode={isDarkMode}
+              saveWorkflow={async () => saveWorkflowMutate()}
+              getAgentUrl={getAgentUrl}
+              isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+              disabled={!isWorkflowRuntimeRunning}
+            />
           </span>
         </Tooltip>
       ) : null}
