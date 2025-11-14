@@ -40,22 +40,7 @@ export const fetchAgentUrl = (
       // Get OBO data if connections are available
       let oboToken: string | undefined = undefined;
       if (connectionsData) {
-        // Extract site resource ID from runtime URL
-        const url = new URL(runtimeUrl);
-        const siteName = url.hostname.split('.')[0];
-        const siteResourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${siteName}`;
-
-        const oboData = await fetchOBOData(
-          siteResourceId,
-          baseUrl,
-          httpClient,
-          clientId,
-          tenantId,
-          subscriptionId!,
-          resourceGroup!,
-          siteName,
-          connectionsData
-        );
+        const oboData = await fetchOBOData(baseUrl, httpClient, clientId, tenantId, subscriptionId!, resourceGroup!, connectionsData);
 
         // Extract OBO token from response
         if (oboData && oboData?.key) {
@@ -72,13 +57,12 @@ export const fetchAgentUrl = (
         };
       }
 
-      const result = {
+      return {
         agentUrl,
         chatUrl,
         queryParams,
         hostName: runtimeUrl,
       };
-      return result;
     } catch (error) {
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -111,6 +95,7 @@ const fetchA2AAuthKey = async (workflowName: string, baseUrl: string, httpClient
 
 // Helper function to fetch OBO (On-Behalf-Of) data
 const fetchOBOData = async (
+  baseUrl: string,
   httpClient: IHttpClient,
   clientId: string,
   tenantId: string,
@@ -136,6 +121,7 @@ const fetchOBOData = async (
       if (equals(runtimeSourceAtRoot ?? '', 'Dynamic', true) || equals(runtimeSourceInProperties ?? '', 'Dynamic', true)) {
         connectionId = connection.connection.id;
         connectionId = resolveConnectionIdPlaceholders(connectionId, azureSubscriptionId, resourceGroup);
+        break;
       }
     }
 

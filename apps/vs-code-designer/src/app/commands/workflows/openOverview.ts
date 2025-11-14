@@ -23,7 +23,7 @@ import {
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
 } from '../../utils/codeless/common';
-import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getConnectionsJson, getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
@@ -33,7 +33,7 @@ import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { existsSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -86,7 +86,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     accessToken = await getAccessToken();
     if (projectPath) {
       azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
-      connectionData = await getConnectionData(projectPath);
+      const connectionJson = await getConnectionsJson(projectPath);
+      connectionData = connectionJson ? JSON.parse(connectionJson) : {};
     }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
@@ -286,18 +287,4 @@ function getWorkflowStateType(workflowName: string, kind: string, settings: Reco
       : settings[operationOptionsSetting]?.toLowerCase() === 'withstatelessrunhistory'
         ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
         : localize('logicapps.stateless', 'Stateless');
-}
-
-async function getConnectionData(projectPath: string): Promise<Record<string, any>> {
-  try {
-    const connectionFilePath = join(projectPath, 'connections.json');
-    if (existsSync(connectionFilePath)) {
-      const connectionContent = readFileSync(connectionFilePath, 'utf8');
-      return JSON.parse(connectionContent);
-    }
-  } catch (error) {
-    // Log error but don't throw to avoid breaking the overview
-    console.warn('Failed to read connections.json:', error);
-  }
-  return {};
 }
