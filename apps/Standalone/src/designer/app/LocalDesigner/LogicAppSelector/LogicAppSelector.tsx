@@ -3,7 +3,7 @@ import { useResourcePath, useIsMonitoringView, useRunFiles } from '../../../stat
 import { setResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 const fileOptions = [
@@ -98,14 +98,32 @@ export const LocalLogicAppSelector: React.FC = () => {
   );
 
   const runOptions = useMemo(() => {
-    return runFiles.map((runFile) => {
-      return {
-        key: runFile.path,
-        text: runFile.path.split('/').pop().replace('.json', ''),
-        module: runFile.module,
-      };
-    });
+    return runFiles.map((runFile) => ({
+      key: runFile.path,
+      text: runFile.path.split('/').pop().replace('.json', ''),
+      module: runFile.module,
+    }));
   }, [runFiles]);
+
+  // If url query has preset values, set them on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const resourceId = urlParams.get('localId');
+    const resourceOption = fileOptions.find((opt) => opt.key === resourceId);
+    if (resourceId && resourceOption) {
+      dispatch(setResourcePath(resourceId));
+      dispatch(loadWorkflow(resourceOption));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const runId = urlParams.get('localRunId');
+    const runFile = runOptions.find((run) => run.text === runId)?.module;
+    if (runFile) {
+      dispatch(loadRun({ runFile }));
+    }
+  }, [dispatch, runOptions]);
 
   return (
     <div>

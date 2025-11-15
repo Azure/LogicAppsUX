@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { LoadMockDirect } from '../utils/GoToWorkflow';
 
 test.describe(
   'Escape Expression Tokens Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   async () => {
     test('Expressions should be able to use escape characters and serialize', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
@@ -26,8 +25,7 @@ test.describe(
     });
 
     test('Expressions should be able to use escaped escape characters and serialize as the same', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
@@ -44,8 +42,7 @@ test.describe(
     });
 
     test('Expressions should maintain behavior of escaped characters in all instances the user views at', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();

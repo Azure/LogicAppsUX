@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'Graph Collapse Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Should collapse graphs', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await LoadMockDirect(page, 'AllScopeNodes.json');
 
       // Collapse and reopen the foreach condition node, confirming the child node visibility
       await expect(page.getByLabel('ForEach operation')).toBeVisible();

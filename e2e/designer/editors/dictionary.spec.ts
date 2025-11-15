@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { LoadMockDirect } from '../utils/GoToWorkflow';
 
 test.describe(
   'dictionary editor',
@@ -8,9 +8,7 @@ test.describe(
   },
   async () => {
     test('Should handle dictionary serialization', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       await page.getByLabel('Insert a new step between Initialize ArrayVariable and Parse JSON').click();
       await page.getByText('Add an action').click();
       await page.getByLabel('HTTP', { exact: true }).first().click();
@@ -46,9 +44,7 @@ test.describe(
     });
 
     test('Should not do value string interpolation if is of type `any` and has a token', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       await page.getByLabel('Insert a new step between Initialize ArrayVariable and Parse JSON').click();
       await page.getByText('Add an action').click();
       await page.getByPlaceholder('Search for an action or').fill('select');
