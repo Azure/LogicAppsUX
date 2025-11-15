@@ -7,6 +7,7 @@ import {
   type IHttpClient,
   type ConnectionsData,
   equals,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 
 export const fetchAgentUrl = (
@@ -112,24 +113,44 @@ const fetchOBOData = async (
 
     for (const key of Object.keys(apiConnections)) {
       const connection = apiConnections[key];
+
       // Check for runtimeSource at the root level (new structure after your changes)
       const runtimeSourceAtRoot = connection.runtimeSource;
       // Also check in connectionProperties for backward compatibility
       const runtimeSourceInProperties = connection.connectionProperties?.runtimeSource;
 
       // Check both locations for Dynamic runtime source
-      if (equals(runtimeSourceAtRoot ?? '', 'Dynamic', true) || equals(runtimeSourceInProperties ?? '', 'Dynamic', true)) {
+      const isDynamic = equals(runtimeSourceAtRoot ?? '', 'Dynamic', true) || equals(runtimeSourceInProperties ?? '', 'Dynamic', true);
+
+      if (isDynamic) {
         connectionId = connection.connection.id;
-        connectionId = resolveConnectionIdPlaceholders(connectionId, azureSubscriptionId, resourceGroup);
         break;
       }
     }
 
     if (!connectionId) {
+      // No dynamic connection found – OBO is optional, so we can return null
       return null;
     }
 
-    const oboKeysUri = `${armBaseUrl}${connectionId}/listDynamicConnectionKeys?api-version=2015-08-01-preview`;
+    const appsettings: Record<string, string> = {
+      WORKFLOWS_SUBSCRIPTION_ID: azureSubscriptionId,
+      WORKFLOWS_RESOURCE_GROUP_NAME: resourceGroup,
+    };
+
+    // Wrap the connectionId in a JSON payload so resolveConnectionsReferences
+    // can safely JSON.parse after doing text replacement.
+    const connectionIdPayload = JSON.stringify({ connectionId });
+
+    const resolvedPayload = resolveConnectionsReferences(
+      connectionIdPayload,
+      /* parameters */ undefined,
+      /* appsettings */ appsettings
+    ) as { connectionId?: string };
+
+    const resolvedConnectionId = resolvedPayload?.connectionId ?? connectionId;
+
+    const oboKeysUri = `${armBaseUrl}${resolvedConnectionId}/listDynamicConnectionKeys?api-version=2015-08-01-preview`;
 
     const oboResponse = await httpClient.post<any, any>({
       uri: oboKeysUri,
@@ -150,25 +171,4 @@ const fetchOBOData = async (
     });
     return null;
   }
-};
-
-// Helper function to resolve app settings placeholders in connection IDs
-const resolveConnectionIdPlaceholders = (connectionId: string, subscriptionId: string, resourceGroup: string): string => {
-  let resolvedConnectionId = connectionId;
-
-  // Replace subscription ID placeholder - handle both encoded and non-encoded formats
-  // Non-encoded format: @{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}
-  resolvedConnectionId = resolvedConnectionId.replace(/@\{appsetting\('WORKFLOWS_SUBSCRIPTION_ID'\)\}/g, subscriptionId);
-
-  // URL-encoded format (just in case): @%7Bappsetting('WORKFLOWS_SUBSCRIPTION_ID')%7D
-  resolvedConnectionId = resolvedConnectionId.replace(/@%7Bappsetting\('WORKFLOWS_SUBSCRIPTION_ID'\)%7D/g, subscriptionId);
-
-  // Replace resource group placeholder - handle both encoded and non-encoded formats
-  // Non-encoded format: @{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}
-  resolvedConnectionId = resolvedConnectionId.replace(/@\{appsetting\('WORKFLOWS_RESOURCE_GROUP_NAME'\)\}/g, resourceGroup);
-
-  // URL-encoded format (just in case): @%7Bappsetting('WORKFLOWS_RESOURCE_GROUP_NAME')%7D
-  resolvedConnectionId = resolvedConnectionId.replace(/@%7Bappsetting\('WORKFLOWS_RESOURCE_GROUP_NAME'\)%7D/g, resourceGroup);
-
-  return resolvedConnectionId;
 };
