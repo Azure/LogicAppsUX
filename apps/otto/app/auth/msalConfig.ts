@@ -54,5 +54,5 @@ export const msalConfig = {
  * Scopes for login request
  */
 export const loginRequest = {
-  scopes: ['User.Read'], // Basic Microsoft Graph API scope
+  scopes: ['User.Read', 'profile', 'User.ReadBasic.All'], // Basic Microsoft Graph API scope
 };

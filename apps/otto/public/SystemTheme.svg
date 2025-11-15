@@ -1,0 +1,14 @@
+<svg width="79" height="44" viewBox="0 0 79 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="79" height="44" rx="4" fill="#F5F5F5"/>
+  <!-- Split design - half light, half dark -->
+  <rect width="39.5" height="44" rx="4" fill="#FFFFFF"/>
+  <rect x="39.5" width="39.5" height="44" rx="4" fill="#1F1F1F"/>
+  <!-- Window chrome on left (light) -->
+  <rect x="4" y="4" width="31.5" height="2" rx="1" fill="#E1E1E1"/>
+  <rect x="4" y="8" width="20" height="1.5" rx="0.75" fill="#E1E1E1"/>
+  <rect x="4" y="11" width="25" height="1.5" rx="0.75" fill="#E1E1E1"/>
+  <!-- Window chrome on right (dark) -->
+  <rect x="43.5" y="4" width="31.5" height="2" rx="1" fill="#3A3A3A"/>
+  <rect x="43.5" y="8" width="20" height="1.5" rx="0.75" fill="#3A3A3A"/>
+  <rect x="43.5" y="11" width="25" height="1.5" rx="0.75" fill="#3A3A3A"/>
+</svg>

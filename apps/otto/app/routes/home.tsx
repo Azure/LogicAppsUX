@@ -1,7 +1,8 @@
 import type { Route } from './+types/home';
 import React from 'react';
-import { UserProfile } from '../components/UserProfile';
 import { ClientOnly } from '../components/ClientOnly';
+import { Header } from '../components/Header';
+import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
 
 // These will be loaded dynamically on the client
 let makeStyles: any;
@@ -9,6 +10,7 @@ let shorthands: any;
 let tokens: any;
 let FluentProvider: any;
 let webDarkTheme: any;
+let webLightTheme: any;
 
 if (typeof window !== 'undefined') {
   const fluentUI = await import('@fluentui/react-components');
@@ -17,6 +19,7 @@ if (typeof window !== 'undefined') {
   tokens = fluentUI.tokens;
   FluentProvider = fluentUI.FluentProvider;
   webDarkTheme = fluentUI.webDarkTheme;
+  webLightTheme = fluentUI.webLightTheme;
 }
 
 const createStyles = () => {
@@ -127,19 +130,37 @@ function HomeContent() {
 
   const { AuthProvider, RequireAuth } = AuthComponents;
 
-  if (!FluentProvider || !webDarkTheme) {
+  if (!FluentProvider || !webDarkTheme || !webLightTheme) {
     return null;
   }
 
   return (
-    <FluentProvider theme={webDarkTheme}>
+    <ThemeProvider>
+      <ThemedApp AuthProvider={AuthProvider} RequireAuth={RequireAuth} styles={styles} />
+    </ThemeProvider>
+  );
+}
+
+function ThemedApp({
+  AuthProvider,
+  RequireAuth,
+  styles,
+}: {
+  AuthProvider: React.ComponentType<{ children: React.ReactNode }>;
+  RequireAuth: React.ComponentType<{ children: React.ReactNode }>;
+  styles: any;
+}) {
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme === 'dark' ? webDarkTheme : webLightTheme;
+
+  return (
+    <FluentProvider theme={theme}>
       <AuthProvider>
         <RequireAuth>
           <div className={styles.pageContainer}>
+            <Header />
             <div className={styles.contentWrapper}>
-              <div className={styles.profileSection}>
-                <UserProfile />
-              </div>
+              <div className={styles.profileSection}>Hello</div>
             </div>
           </div>
         </RequireAuth>
