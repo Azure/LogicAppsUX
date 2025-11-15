@@ -1,5 +1,6 @@
 export interface AgentQueryParams {
   apiKey?: string;
+  oboUserToken?: string;
   [key: string]: string | undefined;
 }
 
