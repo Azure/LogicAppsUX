@@ -455,7 +455,6 @@ export function getClientBuiltInOperations(
     ClientOperationsData.untilOperation,
     ClientOperationsData.switchOperation,
     ClientOperationsData.agentOperation,
-    ClientOperationsData.handoffOperation,
     ClientOperationsData.recurrenceOperation,
     ClientOperationsData.delayOperation,
     ClientOperationsData.delayUntilOperation,
