@@ -59,6 +59,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [operationParameterValues]
   );
 
+  const isV1ChatCompletionsService = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'V1ChatCompletionsService', true),
+    [operationParameterValues]
+  );
+
   const {
     isFetching: isFetchingAccount,
     data: allCognitiveServiceAccounts,
@@ -202,6 +207,16 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Select a API Management API',
         id: 'UVZHa1',
         description: 'Select the API Management API to use for this connection',
+      }),
+      V1_CHAT_ENDPOINT: intl.formatMessage({
+        defaultMessage: 'V1 Chat Completion Endpoint',
+        id: 'ryGfra',
+        description: 'V1 Chat Completion Service Endpoint',
+      }),
+      V1_CHAT_ENDPOINT_DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'Endpoint and certificate details will be filled automatically from app settings.',
+        id: 'gJkk9w',
+        description: 'V1 Chat Completion endpoint description',
       }),
       MISSING_ROLE_WRITE_PERMISSIONS: intl.formatMessage({
         defaultMessage: 'Missing role write permissions',
@@ -586,6 +601,16 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
               </div>
             </ConnectionParameterRow>
           </>
+        ) : isV1ChatCompletionsService ? (
+          <ConnectionParameterRow
+            parameterKey={'v1ChatEndpoint'}
+            displayName={stringResources.V1_CHAT_ENDPOINT}
+            required={true}
+          >
+            <div className={styles.openAIContainer}>
+              <Text>{stringResources.V1_CHAT_ENDPOINT_DESCRIPTION}</Text>
+            </div>
+          </ConnectionParameterRow>
         ) : (
           <ConnectionParameterRow
             parameterKey={'cognitive-service-resource-id'}
@@ -665,15 +690,21 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   return (
     <UniversalConnectionParameter
       {...props}
-      // For APIM Gen AI Gateway, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
-      isLoading={isAPIMGenAIGateway ? !parameterValues?.['cognitiveServiceAccountId'] : true}
+      // For APIM Gen AI Gateway and V1 Chat Completions, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
+      isLoading={
+        isAPIMGenAIGateway
+          ? !parameterValues?.['cognitiveServiceAccountId']
+          : isV1ChatCompletionsService
+            ? false
+            : true
+      }
       parameter={{
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
           description: loadingAccountDetails
             ? stringResources.FETCHING
-            : isAPIMGenAIGateway
+            : isAPIMGenAIGateway || isV1ChatCompletionsService
               ? stringResources.DEFAULT_PLACEHOLDER
               : parameter.uiDefinition?.description,
         },

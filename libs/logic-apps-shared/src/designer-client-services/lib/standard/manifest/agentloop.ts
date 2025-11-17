@@ -63,6 +63,10 @@ export default {
                 value: 'APIMGenAIGateway',
                 displayName: 'APIM Gen AI Gateway (Preview)',
               },
+              {
+                value: 'V1ChatCompletionsService',
+                displayName: 'V1 Chat Completions Service (Preview)',
+              },
             ],
           },
           type: 'string',

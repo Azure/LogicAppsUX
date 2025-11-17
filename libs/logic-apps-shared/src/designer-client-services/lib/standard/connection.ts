@@ -821,6 +821,7 @@ function convertToAgentConnectionsData(
     equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
     foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
   const isAPIMManagementConnection = apimanagementRegex.test(cognitiveServiceAccountId);
+  const isClientCertificateAuth = equals(connectionParametersSetValues?.name ?? '', 'ClientCertificate', true);
 
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
@@ -828,10 +829,18 @@ function convertToAgentConnectionsData(
       displayName,
       authentication: {
         type: connectionParametersSetValues?.name,
-        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
+        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true)
+          ? undefined
+          : isClientCertificateAuth
+            ? undefined
+            : parameterValues?.['openAIKey'],
+        ...(isClientCertificateAuth && {
+          pfx: parameterValues?.['clientCertificatePfx'],
+          password: parameterValues?.['clientCertificatePassword'],
+        }),
       },
       endpoint: parameterValues?.['openAIEndpoint'],
-      resourceId: cognitiveServiceAccountId,
+      resourceId: cognitiveServiceAccountId || '',
       type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
