@@ -256,10 +256,8 @@ function isLogicAppProject(project: unknown): project is LogicAppProject {
  * @returns A promise that resolves to the created workflow configuration
  * 
  * @example
- * ```typescript
  * const workflow = await createWorkflow(context, '/path/to/workspace');
  * console.log(`Created workflow: ${workflow.name}`);
- * ```
  * 
  * @throws {Error} When the workspace path is invalid or inaccessible
  */
