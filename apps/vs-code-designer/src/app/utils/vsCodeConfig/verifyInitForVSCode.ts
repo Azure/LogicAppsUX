@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { projectLanguageSetting, funcVersionSetting, vscodeFolderName, settingsFileName } from '../../../constants';
+import { projectLanguageSetting, funcVersionSetting } from '../../../constants';
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { localize } from '../../../localize';
@@ -29,7 +29,7 @@ export async function verifyInitForVSCode(
   version?: string
 ): Promise<[ProjectLanguage, FuncVersion]> {
   let settings: { [key: string]: any } = {};
-  const settingsPath = path.join(fsPath, vscodeFolderName, settingsFileName);
+  const settingsPath = path.join(fsPath, '.vscode', 'settings.json');
   if (await fse.pathExists(settingsPath)) {
     settings = JSON.parse(await fse.readFile(settingsPath, 'utf8'));
   }

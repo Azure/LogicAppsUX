@@ -4,12 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { testsDirectoryName, testResultsDirectoryName, workflowFileName, assetsFolderName } from '../../../../../constants';
-import { ext } from '../../../../../extensionVariables';
-import { localize } from '../../../../../localize';
-import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../../utils/codeless/common';
-import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
-import { getWorkflowNode, isMultiRootWorkspace } from '../../../../utils/workspace';
 import * as path from 'path';
 import {
   type TestItem,
@@ -26,6 +20,12 @@ import {
 import * as fse from 'fs-extra';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getUnitTestName, pickUnitTestNode, pickUnitTestResult } from '../../../../utils/unitTest/codelessUnitTest';
+import { localize } from 'vscode-nls';
+import { testsDirectoryName, testResultsDirectoryName, workflowFileName } from '../../../../../constants';
+import { tryGetWebviewPanel, removeWebviewPanelFromCache, cacheWebviewPanel } from '../../../../utils/codeless/common';
+import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
+import { isMultiRootWorkspace, getWorkflowNode } from '../../../../utils/workspace';
+import { ext } from '../../../../../extensionVariables';
 
 /**
  * Opens the unit test results for a given context and node.
@@ -108,8 +108,8 @@ async function openResultsWebview(
 
   const panel: WebviewPanel = window.createWebviewPanel('UnitTestsResults', panelName, ViewColumn.Active, webviewOptions);
   panel.iconPath = {
-    light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'Codeless.svg')),
-    dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'Codeless.svg')),
+    light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'Codeless.svg')),
+    dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'Codeless.svg')),
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 

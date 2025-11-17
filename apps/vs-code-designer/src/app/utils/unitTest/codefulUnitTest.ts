@@ -7,11 +7,12 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as xml2js from 'xml2js';
-import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
 import {
   assetsFolderName,
   dotNetBinaryPathSettingKey,
+  saveUnitTestEvent,
   testClassFileFromRunNoActionsTemplateName,
   testClassFileFromRunTemplateName,
   testClassFileNoActionsTemplateName,
@@ -20,7 +21,9 @@ import {
   testExecutorFileTemplateName,
   testMockClassTemplateName,
   testMockOutputsDirectory,
+  testsDirectoryName,
   testSettingsConfigFileTemplateName,
+  unitTestsFileName,
   unitTestTemplatesFolderName,
   workflowFileName,
 } from '../../../constants';
@@ -29,10 +32,122 @@ import { localize } from '../../../localize';
 import { getWorkflowsInLocalProject } from '../codeless/common';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting } from '../vsCodeConfig/settings';
-import { getTestsDirectory } from './unitTest';
 
 /**
- * Prompts the user to select a workflow and returns the selected workflow node.
+ * Saves a unit test definition for a workflow to the file system.
+ *
+ * Creates the necessary directory structure and writes the unit test definition as a JSON file.
+ * Displays a progress notification while saving and handles errors with user-friendly messages.
+ *
+ * @param context - The action context for telemetry and error handling
+ * @param projectPath - The absolute path to the project directory
+ * @param workflowName - The name of the workflow being tested
+ * @param unitTestName - The name of the unit test
+ * @param unitTestDefinition - The unit test definition object to be saved as JSON
+ * @returns A promise that resolves when the unit test is successfully saved
+ * @throws Will throw an error if the file cannot be written to the file system
+ */
+export const saveUnitTestDefinition = async (
+  context: IActionContext,
+  projectPath: string,
+  workflowName: string,
+  unitTestName: string,
+  unitTestDefinition: any
+): Promise<void> => {
+  await callWithTelemetryAndErrorHandling(saveUnitTestEvent, async () => {
+    const options: vscode.ProgressOptions = {
+      location: vscode.ProgressLocation.Notification,
+      title: localize('azureFunctions.savingWorkflow', 'Saving Unit Test Definition...'),
+    };
+
+    await vscode.window.withProgress(options, async () => {
+      const projectName = path.basename(projectPath);
+      const testsDirectory = getTestsDirectory(projectPath);
+      const unitTestsPath = path.join(projectPath, projectName, workflowName, `${unitTestName}${unitTestsFileName}`);
+      const workflowTestsPath = path.join(testsDirectory.fsPath, projectName, workflowName);
+
+      if (!fse.existsSync(workflowTestsPath)) {
+        fse.mkdirSync(workflowTestsPath, { recursive: true });
+      }
+      try {
+        fse.writeFileSync(unitTestsPath, JSON.stringify(unitTestDefinition, null, 4));
+        await vscode.workspace.updateWorkspaceFolders(
+          vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
+          null,
+          { uri: testsDirectory }
+        );
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+        const localizedError = localize('saveFailureUnitTest', 'Unit Test Definition not saved. ') + errorMessage;
+        context.telemetry.properties.saveUnitTestError = localizedError;
+        vscode.window.showErrorMessage(`${localizedError}`, localize('OK', 'OK'));
+        throw error;
+      }
+    });
+  });
+};
+
+/**
+ * Retrieves the name of the unit test from the given file path.
+ * @param {string} filePath - The path of the unit test file.
+ * @returns The name of the unit test.
+ */
+export const getUnitTestName = (filePath: string) => {
+  const unitTestFileName = path.basename(filePath);
+  const fileNameItems = unitTestFileName.split('.');
+  return fileNameItems[0];
+};
+
+/**
+ * Retrieves the tests directory for a given project path.
+ * @param {string} projectPath - The path of the project.
+ * @returns The tests directory as a `vscode.Uri` object.
+ */
+export const getTestsDirectory = (projectPath: string) => {
+  const workspacePath = path.dirname(projectPath);
+  const testsDirectory = vscode.Uri.file(path.join(workspacePath, testsDirectoryName));
+  return testsDirectory;
+};
+
+/**
+ * Retrieves the list of unit tests in a local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to a record of unit test names and their corresponding file paths.
+ */
+export async function getUnitTestInLocalProject(projectPath: string): Promise<Record<string, string>> {
+  if (!(await fse.pathExists(projectPath))) {
+    return {};
+  }
+
+  const unitTests: Record<string, any> = {};
+
+  const testFileSearch = async (directoryPath: string) => {
+    const subpaths: string[] = await fse.readdir(directoryPath);
+
+    for (const subPath of subpaths) {
+      const fullPath: string = path.join(directoryPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+      if (fileStats.isDirectory()) {
+        await testFileSearch(fullPath);
+      } else if (fileStats.isFile() && fullPath.endsWith(unitTestsFileName)) {
+        try {
+          const relativePath = path.relative(projectPath, path.dirname(fullPath));
+          const unitTestFileNameWithoutExtension = path.basename(fullPath).replace('.unit-test.json', '');
+          const fileNameWithSubPath = `${relativePath} - ${unitTestFileNameWithoutExtension}`;
+          unitTests[fileNameWithSubPath] = fullPath;
+        } catch {
+          // If unable to load the workflow or read the definition we skip the workflow
+        }
+      }
+    }
+  };
+  await testFileSearch(projectPath);
+
+  return unitTests;
+}
+
+/**
+ * Prompts the user to select a unit test to edit.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path of the project.
  * @returns {Promise<vscode.Uri>} - A promise that resolves to the selected workflow node.

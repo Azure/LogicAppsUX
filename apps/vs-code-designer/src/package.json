@@ -405,18 +405,15 @@
         },
         {
           "command": "azureLogicAppsStandard.createProject",
-          "group": "1_create@2",
-          "when": "logicApps.hasProject"
+          "group": "1_create@2"
         },
         {
           "command": "azureLogicAppsStandard.createWorkflow",
-          "group": "1_create@3",
-          "when": "logicApps.hasProject"
+          "group": "1_create@3"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "group": "2_deploy@1",
-          "when": "logicApps.hasProject"
+          "group": "2_deploy@1"
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
@@ -664,94 +661,94 @@
       "explorer/context": [
         {
           "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
-          "when": "logicApps.hasProject && resourceFilename in azureLogicAppsStandard.dataMap.setDmFolders",
+          "when": "resourceFilename in azureLogicAppsStandard.dataMap.setDmFolders",
           "group": "navigation"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "logicApps.hasProject && explorerResourceIsFolder == true",
+          "when": "explorerResourceIsFolder == true",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.createProject",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.createWorkflow",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.createCustomCodeFunction",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
           "group": "navigation@1"
         },
         {
           "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "logicApps.hasProject && resourceFilename==workflow.json",
+          "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
         },
         {
           "command": "azureLogicAppsStandard.openDesigner",
-          "when": "logicApps.hasProject && resourceFilename==workflow.json",
+          "when": "resourceFilename==workflow.json",
           "group": "navigation@3"
         },
         {
           "command": "azureLogicAppsStandard.switchToDotnetProject",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
         },
         {
           "command": "azureLogicAppsStandard.reviewValidation",
-          "when": "logicApps.hasProject && resourceDirname=~/\\.logs\\/export/ && resourceFilename=~/exportValidation.json/",
+          "when": "resourceDirname=~/\\.logs\\/export/ && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
         },
         {
           "command": "azureLogicAppsStandard.switchDebugMode",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@2"
         },
         {
           "command": "azureLogicAppsStandard.useSQLStorage",
-          "when": "logicApps.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
         },
         {
           "command": "azureLogicAppsStandard.syncCloudSettings",
-          "when": "logicApps.hasProject && resourceFilename==cloud.settings.json",
+          "when": "resourceFilename==cloud.settings.json",
           "group": "zzz_appSettings@3"
         },
         {
           "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
-          "when": "logicApps.hasProject && resourceFilename==local.settings.json",
+          "when": "resourceFilename==local.settings.json",
           "group": "zzz_appSettings@3"
         },
         {
           "command": "azureLogicAppsStandard.enableAzureConnectors",
-          "when": "logicApps.hasProject && resourceFilename==workflow.json",
+          "when": "resourceFilename==workflow.json",
           "group": "navigation@2"
         },
         {
           "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
-          "when": "logicApps.hasProject && resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ],
       "commandPalette": [
         {
           "command": "azureLogicAppsStandard.openDesigner",
-          "when": "logicApps.hasProject && resourceFilename==workflow.json"
+          "when": "resourceFilename==workflow.json"
         },
         {
           "command": "azureLogicAppsStandard.viewContent",
@@ -767,7 +764,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "logicApps.hasProject && resourceFilename==workflow.json"
+          "when": "resourceFilename==workflow.json"
         },
         {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
@@ -775,7 +772,7 @@
         },
         {
           "command": "azureLogicAppsStandard.startRemoteDebug",
-          "when": "logicApps.hasProject && config.azureLogicAppsStandard.enableRemoteDebugging == true"
+          "when": "config.azureLogicAppsStandard.enableRemoteDebugging == true"
         },
         {
           "command": "azureLogicAppsStandard.viewProperties",

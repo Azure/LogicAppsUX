@@ -36,20 +36,7 @@ import {
   validateWorkflowPath,
   validateUnitTestName,
 } from '../codefulUnitTest';
-import {
-  assetsFolderName,
-  testClassFileFromRunNoActionsTemplateName,
-  testClassFileFromRunTemplateName,
-  testClassFileNoActionsTemplateName,
-  testClassFileTemplateName,
-  testCsprojFileTemplateName,
-  testExecutorFileTemplateName,
-  testMockClassTemplateName,
-  testsDirectoryName,
-  testSettingsConfigFileTemplateName,
-  unitTestTemplatesFolderName,
-  workflowFileName,
-} from '../../../../constants';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -1507,7 +1494,7 @@ describe('codefulUnitTest', () => {
     it('should update the solution with the project when solution file exists', async () => {
       pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
 
-      const testsDirectory = path.join(projectPath, testsDirectoryName);
+      const testsDirectory = path.join(projectPath, 'Tests');
       const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
 
       await updateTestsSln(testsDirectory, logicAppCsprojPath);
@@ -1523,7 +1510,7 @@ describe('codefulUnitTest', () => {
     it('should create a new solution file when it does not exist', async () => {
       pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
 
-      const testsDirectory = path.join(projectPath, testsDirectoryName);
+      const testsDirectory = path.join(projectPath, 'Tests');
       const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
 
       await updateTestsSln(testsDirectory, logicAppCsprojPath);
@@ -1540,14 +1527,14 @@ describe('codefulUnitTest', () => {
 
   describe('validateWorkflowPath', () => {
     it('should throw an error if the workflow node is not valid', () => {
-      const invalidWorkflowPath = path.join(projectPath, '..', fakeLogicAppName, 'workflow1', workflowFileName);
+      const invalidWorkflowPath = path.join(projectPath, '..', fakeLogicAppName, 'workflow1', 'workflow.json');
       expect(() => validateWorkflowPath(projectPath, invalidWorkflowPath)).toThrowError(
         "doesn't belong to the Logic Apps Standard Project"
       );
     });
 
     it('should not throw an error if the workflow node is valid', () => {
-      const validWorkflowPath = path.join(projectPath, fakeLogicAppName, 'workflow1', workflowFileName);
+      const validWorkflowPath = path.join(projectPath, fakeLogicAppName, 'workflow1', 'workflow.json');
       expect(() => validateWorkflowPath(projectPath, validWorkflowPath)).not.toThrowError();
     });
   });
