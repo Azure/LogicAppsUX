@@ -148,7 +148,7 @@ class Util { }
 // Good structure
 export class WorkflowCreateStep extends AzureWizardPromptStep<IProjectWizardContext> {
   // Static members first
-  public static string GetStepName() {
+  public static GetStepName(): string {
     // ...
   }
 
