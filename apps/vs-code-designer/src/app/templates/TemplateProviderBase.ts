@@ -11,7 +11,6 @@ import { FuncVersion, TemplateType } from '@microsoft/vscode-extension-logic-app
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Disposable } from 'vscode';
-import { assetsFolderName } from '../../constants';
 
 const v3BackupTemplatesVersion = '3.4.1';
 const v2BackupTemplatesVersion = '2.47.1';
@@ -143,7 +142,7 @@ export abstract class TemplateProviderBase implements Disposable {
   }
 
   protected getBackupPath(): string {
-    return ext.context.asAbsolutePath(path.join(assetsFolderName, 'backupTemplates', this.backupSubpath));
+    return ext.context.asAbsolutePath(path.join('assets', 'backupTemplates', this.backupSubpath));
   }
 
   /**

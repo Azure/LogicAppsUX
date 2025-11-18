@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import * as syncCloudSettings from '../../../../syncCloudSettings';
 import { ext } from '../../../../../../extensionVariables';
 import { IAzureDeploymentScriptsContext } from '../../../generateDeploymentScripts';
-import { assetsFolderName, deploymentDirectory, deploymentScriptTemplatesFolderName } from '../../../../../../constants';
+import { assetsFolderName } from '../../../../../../constants';
 
 describe('GenerateDeploymentCenterScriptsStep', () => {
   let context: IAzureDeploymentScriptsContext;
@@ -28,11 +28,11 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
     const rootDir = path.join(__dirname, '..', '..', '..', '..', '..', '..');
     const assetsFolderPath = path.join(rootDir, assetsFolderName);
-    deploymentScriptTemplatePath = path.join(assetsFolderPath, deploymentScriptTemplatesFolderName, 'DeploymentCenterScript');
+    deploymentScriptTemplatePath = path.join(assetsFolderPath, 'DeploymentScriptTemplates', 'DeploymentCenterScript');
     deploymentScriptTemplate = await realFs.readFile(deploymentScriptTemplatePath, 'utf8');
-    dotDeploymentTemplatePath = path.join(assetsFolderPath, deploymentScriptTemplatesFolderName, 'dotdeployment');
+    dotDeploymentTemplatePath = path.join(assetsFolderPath, 'DeploymentScriptTemplates', 'dotdeployment');
     dotDeploymentContent = await realFs.readFile(dotDeploymentTemplatePath, 'utf8');
-    readmeTemplatePath = path.join(assetsFolderPath, deploymentScriptTemplatesFolderName, 'DeploymentCenterReadme');
+    readmeTemplatePath = path.join(assetsFolderPath, 'DeploymentScriptTemplates', 'DeploymentCenterReadme');
     readmeContent = await realFs.readFile(readmeTemplatePath, 'utf8');
   });
 
@@ -70,7 +70,7 @@ describe('GenerateDeploymentCenterScriptsStep', () => {
     expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('dotdeployment'), 'utf-8');
     expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('DeploymentCenterReadme'), 'utf-8');
 
-    const deploymentDirectoryPath = path.join(context.workspacePath as string, deploymentDirectory);
+    const deploymentDirectoryPath = path.join(context.workspacePath as string, 'deployment');
     expect(fse.ensureDir).toHaveBeenCalledWith(deploymentDirectoryPath);
     expect(writeFileSpy).toHaveBeenCalledWith(path.join(deploymentDirectoryPath, 'deploy.ps1'), expect.any(String));
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { ContainerApp } from '@azure/arm-appcontainers';
-import { artifactsDirectory, contextValuePrefix, localSettingsFileName } from '../../constants';
+import { contextValuePrefix, localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
@@ -290,7 +290,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
 
     if (!this._artifactsTreeItem) {
       try {
-        await getFileOrFolderContent(context, proxyTree, artifactsDirectory);
+        await getFileOrFolderContent(context, proxyTree, 'Artifacts');
       } catch (error) {
         if (error.statusCode === 404) {
           return children;
