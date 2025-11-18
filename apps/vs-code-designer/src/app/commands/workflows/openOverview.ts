@@ -23,7 +23,7 @@ import {
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
 } from '../../utils/codeless/common';
-import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getConnectionsJson, getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
@@ -40,20 +40,23 @@ import * as vscode from 'vscode';
 import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../utils/startRuntimeApi';
 
+// TODO(aeldridge): We should split into remote and local open overview
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
   let workflowName = '';
   let workflowContent: any;
-  let baseUrl: string;
-  let getBaseUrl: () => string;
+  let baseUrl: string | undefined;
+  let getBaseUrl: () => string | undefined;
   let apiVersion: string;
   let accessToken: string;
   let getAccessToken: () => Promise<string>;
   let isLocal: boolean;
   let callbackInfo: ICallbackUrlResponse | undefined;
+  let getCallbackInfo: (baseUrl: string) => Promise<ICallbackUrlResponse | undefined>;
   let panelName = '';
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
+  let connectionData: Record<string, any> = {};
   let azureDetails: AzureConnectorDetails;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
@@ -69,18 +72,22 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
-    getBaseUrl = () => `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
-    baseUrl = getBaseUrl();
+    getBaseUrl = () => (ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined);
+    baseUrl = getBaseUrl?.();
     apiVersion = '2019-10-01-edge-preview';
     isLocal = true;
     triggerName = getTriggerName(workflowContent.definition);
-    callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+    getCallbackInfo = async (baseUrl: string) =>
+      await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+    callbackInfo = await getCallbackInfo(baseUrl);
 
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
     accessToken = await getAccessToken();
     if (projectPath) {
       azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+      const connectionJson = await getConnectionsJson(projectPath);
+      connectionData = connectionJson ? JSON.parse(connectionJson) : {};
     }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
@@ -88,10 +95,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     workflowContent = workflowNode.workflowFileContent;
     getAccessToken = async () => await getAuthorizationTokenFromNode(workflowNode);
     getBaseUrl = () => getWorkflowManagementBaseURI(workflowNode);
-    baseUrl = getBaseUrl();
+    baseUrl = getBaseUrl?.();
     apiVersion = workflowAppApiVersion;
     triggerName = getTriggerName(workflowContent.definition);
-    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
+    getCallbackInfo = async (baseUrl: string) => await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
+    callbackInfo = await getCallbackInfo(baseUrl);
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isLocal = false;
     accessToken = await getAccessToken();
@@ -104,6 +112,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       tenantId: workflowNode?.parent?.subscription?.tenantId,
       resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
     };
+    connectionData = {};
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
@@ -169,6 +178,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             isLocal: isLocal,
             azureDetails: azureDetails,
             kind: kind,
+            connectionData: connectionData,
           },
         });
 
@@ -190,13 +200,23 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
         baseUrlInterval = setInterval(async () => {
           const updatedBaseUrl = getBaseUrl();
-
           if (updatedBaseUrl !== baseUrl) {
             baseUrl = updatedBaseUrl;
             panel.webview.postMessage({
-              command: ExtensionCommand.update_base_url,
+              command: ExtensionCommand.update_runtime_base_url,
               data: {
                 baseUrl,
+              },
+            });
+          }
+
+          const updatedCallbackInfo = await getCallbackInfo(baseUrl);
+          if (updatedCallbackInfo?.value !== callbackInfo?.value || updatedCallbackInfo?.basePath !== callbackInfo?.basePath) {
+            callbackInfo = updatedCallbackInfo;
+            panel.webview.postMessage({
+              command: ExtensionCommand.update_callback_info,
+              data: {
+                callbackInfo,
               },
             });
           }

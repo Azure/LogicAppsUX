@@ -31,7 +31,7 @@ export interface OverviewProps {
   onLoadRuns(): void;
   onOpenRun(run: RunDisplayItem): void;
   onRunTrigger(): void;
-  onVerifyRunId(runId: string): Promise<Run | RunError>;
+  onVerifyRunId(runId: string): Promise<Run | RunError> | undefined;
   onCreateUnitTestFromRun?(run: RunDisplayItem): void;
 }
 
@@ -119,6 +119,9 @@ export const Overview: React.FC<OverviewProps> = ({
     }
 
     const response = await onVerifyRunId(value);
+    if (!response) {
+      return '';
+    }
     if (isRunError(response)) {
       return (response as RunError).error.message;
     }

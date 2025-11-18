@@ -9,10 +9,12 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import * as path from 'path';
 import type { Progress } from 'vscode';
 import {
+  defaultMsiAudience,
   workflowAuthenticationMethodKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
   workflowResourceGroupNameKey,
+  workflowsDynamicConnectionDefaultAuthAudienceKey,
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
 } from '../../../constants';
@@ -106,6 +108,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       // Save the authentication method to local settings
       if (context.authenticationMethod) {
         valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
+        valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
       }
     }
 
