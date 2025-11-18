@@ -37,6 +37,18 @@ import {
   validateUnitTestName,
 } from '../codefulUnitTest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import {
+  assetsFolderName,
+  testClassFileFromRunNoActionsTemplateName,
+  testClassFileFromRunTemplateName,
+  testClassFileNoActionsTemplateName,
+  testClassFileTemplateName,
+  testCsprojFileTemplateName,
+  testExecutorFileTemplateName,
+  testMockClassTemplateName,
+  testSettingsConfigFileTemplateName,
+  unitTestTemplatesFolderName,
+} from '../../../../constants';
 
 // ============================================================================
 // Global Constants and Test Hooks
