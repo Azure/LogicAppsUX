@@ -58,6 +58,13 @@ export default {
           type: 'string',
           default: 'AzureOpenAI',
         },
+        modelId: {
+          type: 'string',
+          title: 'Model ID',
+          description: 'The model ID to use.',
+          default: 'gpt-4o-mini',
+          'x-ms-visibility': 'hideInUI',
+        },
         deploymentId: {
           type: 'string',
           title: 'AI model',

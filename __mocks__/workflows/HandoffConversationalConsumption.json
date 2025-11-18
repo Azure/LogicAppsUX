@@ -21,6 +21,7 @@
         "inputs": {
           "parameters": {
             "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
             "messages": [
               {
                 "role": "System",
@@ -74,6 +75,7 @@
         "inputs": {
           "parameters": {
             "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
             "messages": [
               {
                 "role": "System",
@@ -112,6 +114,7 @@
         "inputs": {
           "parameters": {
             "agentModelType": "AzureOpenAI",
+            "modelId": "gpt-4o-mini",
             "messages": [
               {
                 "role": "System",
