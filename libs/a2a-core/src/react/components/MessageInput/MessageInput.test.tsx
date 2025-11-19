@@ -1,4 +1,3 @@
-import React from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -201,9 +200,7 @@ describe('MessageInput', () => {
 
   it('handles file selection', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />
-    );
+    const { container } = render(<MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />);
 
     // Simulate file selection
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -215,9 +212,7 @@ describe('MessageInput', () => {
 
   it('sends message with attachments', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />
-    );
+    const { container } = render(<MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />);
 
     // Simulate file selection
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -240,9 +235,7 @@ describe('MessageInput', () => {
 
   it('sends attachments without message text', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />
-    );
+    const { container } = render(<MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />);
 
     // Simulate file selection
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -265,9 +258,7 @@ describe('MessageInput', () => {
 
   it('removes attachments', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />
-    );
+    const { container } = render(<MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />);
 
     // Simulate file selection
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -363,19 +354,13 @@ describe('MessageInput', () => {
     expect(screen.queryByTestId('file-upload')).not.toBeInTheDocument();
   });
 
-  it('passes file upload props correctly', () => {
+  it('passes file upload props correctly', async () => {
     const FileUpload = vi.fn(() => null);
     vi.doMock('../FileUpload', () => ({ FileUpload }));
 
-    render(
-      <MessageInput
-        onSendMessage={mockOnSendMessage}
-        maxFileSize={5000000}
-        allowedFileTypes={['.pdf', '.doc']}
-      />
-    );
+    render(<MessageInput onSendMessage={mockOnSendMessage} maxFileSize={5000000} allowedFileTypes={['.pdf', '.doc']} />);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(FileUpload).toHaveBeenCalledWith(
         expect.objectContaining({
           maxFileSize: 5000000,
@@ -389,9 +374,7 @@ describe('MessageInput', () => {
 
   it('enables send button when only attachments are present', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />
-    );
+    const { container } = render(<MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />);
 
     const buttons = screen.getAllByRole('button');
     const sendButton = buttons[buttons.length - 1]; // Send button is the last button
@@ -407,9 +390,7 @@ describe('MessageInput', () => {
 
   it('generates unique IDs for attachments', async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />
-    );
+    const { container } = render(<MessageInput onSendMessage={mockOnSendMessage} allowFileUpload />);
 
     // Simulate file selection
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -424,9 +405,7 @@ describe('MessageInput', () => {
     expect(mockOnSendMessage).toHaveBeenCalled();
     const attachment = mockOnSendMessage.mock.calls[0][1]?.[0];
     // Expect GUID format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-    expect(attachment.id).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
-    );
+    expect(attachment.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   });
 
   it('renders input components correctly', () => {
