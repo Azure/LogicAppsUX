@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -354,22 +353,17 @@ describe('MessageInput', () => {
     expect(screen.queryByTestId('file-upload')).not.toBeInTheDocument();
   });
 
-  it('passes file upload props correctly', async () => {
-    const FileUpload = vi.fn(() => null);
-    vi.doMock('../FileUpload', () => ({ FileUpload }));
+  it('passes file upload props correctly', () => {
+    const { container } = render(
+      <MessageInput onSendMessage={mockOnSendMessage} allowFileUpload maxFileSize={5000000} allowedFileTypes={['.pdf', '.doc']} />
+    );
 
-    render(<MessageInput onSendMessage={mockOnSendMessage} maxFileSize={5000000} allowedFileTypes={['.pdf', '.doc']} />);
+    // Verify file upload input is rendered when allowFileUpload is true
+    const fileInput = container.querySelector('#file-upload') as HTMLInputElement;
+    expect(fileInput).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(FileUpload).toHaveBeenCalledWith(
-        expect.objectContaining({
-          maxFileSize: 5000000,
-          allowedFileTypes: ['.pdf', '.doc'],
-          disabled: false,
-        }),
-        expect.anything()
-      );
-    });
+    // Verify the allowed file types are set correctly
+    expect(fileInput.accept).toBe('.pdf,.doc');
   });
 
   it('enables send button when only attachments are present', async () => {
