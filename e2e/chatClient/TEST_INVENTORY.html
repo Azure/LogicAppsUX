@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A Chat E2E Test Suite Inventory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        h4 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .metadata-item {
+            font-weight: 600;
+        }
+
+        .metadata-item span {
+            color: #3498db;
+        }
+
+        .summary-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .coverage-areas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .coverage-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #27ae60;
+        }
+
+        .test-category {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .test-category h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .test-file {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 3px solid #95a5a6;
+        }
+
+        .test-file h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .test-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .test-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .test-list li:before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .test-group {
+            margin: 15px 0;
+        }
+
+        .test-group-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>A2A Chat E2E Test Suite Inventory</h1>
+
+        <div class="metadata">
+            <div class="metadata-item">Last Updated: <span>November 3, 2025</span></div>
+            <div class="metadata-item">Total Test Files: <span>13</span></div>
+            <div class="metadata-item">Total Test Scenarios: <span>139</span></div>
+        </div>
+
+        <div class="summary-box">
+            <h2>📋 Executive Summary</h2>
+            <p>This document provides a comprehensive inventory of all end-to-end (E2E) tests for the A2A Chat application. The test suite is organized into two main categories: <strong>Smoke Tests</strong> (critical path validation) and <strong>Feature Tests</strong> (comprehensive functional testing organized by domain).</p>
+
+            <h3>Test Coverage Areas</h3>
+            <div class="coverage-areas">
+                <div class="coverage-item">✅ Authentication & Authorization</div>
+                <div class="coverage-item">✅ Chat Messaging & SSE Streaming</div>
+                <div class="coverage-item">✅ Session Management & History</div>
+                <div class="coverage-item">✅ User Interface & Accessibility</div>
+                <div class="coverage-item">✅ Error Handling & Reliability</div>
+                <div class="coverage-item">✅ Edge Cases & Boundary Conditions</div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2><span class="icon">🚀</span> Smoke Tests (11 scenarios)</h2>
+            <p><strong>Purpose:</strong> Fast, critical path tests that must always pass. These validate the core user journey and are run on every deployment.</p>
+
+            <div class="test-file">
+                <h4>📄 smoke/page-load.spec.ts - 3 tests</h4>
+                <p>Basic application loading and initialization:</p>
+                <ul class="test-list">
+                    <li>Page loads without errors</li>
+                    <li>Correct page title displayed</li>
+                    <li>No JavaScript console errors on load</li>
+                </ul>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 smoke/basic-chat.spec.ts - 8 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Critical Chat Flow:</div>
+                    <ul class="test-list">
+                        <li>Chat interface displays after starting new chat</li>
+                        <li>Messages can be sent and displayed</li>
+                        <li>Loading state shown while waiting for response</li>
+                        <li>Enter key sends messages</li>
+                        <li>Send button enables when text entered</li>
+                        <li>User messages appear in chat history</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Accessibility (Critical):</div>
+                    <ul class="test-list">
+                        <li>Full keyboard accessibility</li>
+                        <li>Proper ARIA labels present</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2>🎯 Feature Tests by Domain (128 scenarios)</h2>
+
+        <div class="test-category">
+            <h3><span class="icon">🔐</span> Authentication (14 tests)</h3>
+            <p>Tests covering API key and OBO (On-Behalf-Of) token authentication flows.</p>
+
+            <div class="test-file">
+                <h4>📄 features/authentication/auth-flow.spec.ts - 9 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Authentication Flows:</div>
+                    <ul class="test-list">
+                        <li>Authentication required UI displays correctly</li>
+                        <li>Service icon shown when provided</li>
+                        <li>Multiple authentication requirements handled</li>
+                        <li>Authentication cancellation supported</li>
+                        <li>Popup blocker scenarios handled</li>
+                        <li>Popup opens when sign-in button clicked</li>
+                        <li>Authenticating state shown while popup open</li>
+                        <li>Cancel button disabled during authentication</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Authentication Edge Cases:</div>
+                    <ul class="test-list">
+                        <li>Rapid authentication attempts handled</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 features/authentication/auth-headers.spec.ts - 10 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">API Key Authentication:</div>
+                    <ul class="test-list">
+                        <li>API key included in agent card requests</li>
+                        <li>API key included in message/stream requests</li>
+                        <li>API key included in contexts/list requests</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">OBO Token Authentication:</div>
+                    <ul class="test-list">
+                        <li>OBO token included in agent card requests</li>
+                        <li>OBO token included in message/stream requests</li>
+                        <li>OBO token included in contexts/list requests</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Combined Authentication:</div>
+                    <ul class="test-list">
+                        <li>Both API key and OBO token sent together</li>
+                        <li>Credentials maintained across multiple requests</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Edge Cases:</div>
+                    <ul class="test-list">
+                        <li>No API key header when not provided</li>
+                        <li>Special characters in API key handled</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h3><span class="icon">💬</span> Messaging (28 tests)</h3>
+            <p>Tests covering message sending, receiving, and SSE (Server-Sent Events) streaming.</p>
+
+            <div class="test-file">
+                <h4>📄 features/messaging/complete-flow.spec.ts - 2 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">End-to-End Chat Flow:</div>
+                    <ul class="test-list">
+                        <li>Complete chat conversation from start to finish</li>
+                        <li>Typing indicator shown while waiting for response</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 features/messaging/input-validation.spec.ts - 17 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Input Validation:</div>
+                    <ul class="test-list">
+                        <li>Whitespace trimmed from messages</li>
+                        <li>Newlines handled in messages</li>
+                        <li>Unicode characters supported</li>
+                        <li>Numbers and symbols processed</li>
+                        <li>Markdown-like syntax handled</li>
+                        <li>Input value preserved while typing</li>
+                        <li>Messages can be edited before sending</li>
+                        <li>Rapid typing handled</li>
+                        <li>Pasting text supported</li>
+                        <li>Input can be cleared and refilled</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Input State Management:</div>
+                    <ul class="test-list">
+                        <li>Focus maintained on input after typing</li>
+                        <li>Input cleared after successful send</li>
+                        <li>Input disabled while waiting for response</li>
+                        <li>Send button state updates based on input</li>
+                        <li>Escape key handled without crashing</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 features/messaging/sse-responses.spec.ts - 9 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">SSE Response Handling:</div>
+                    <ul class="test-list">
+                        <li>Simple text responses received and displayed</li>
+                        <li>Code blocks rendered correctly</li>
+                        <li>Images displayed correctly</li>
+                        <li>Structured data shown correctly</li>
+                        <li>Streaming responses handled progressively</li>
+                        <li>Error responses handled gracefully</li>
+                        <li>Multiple messages processed in sequence</li>
+                        <li>Mixed content types in conversation</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">SSE Connection Management:</div>
+                    <ul class="test-list">
+                        <li>Reconnection if connection lost</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h3><span class="icon">📚</span> Sessions (25 tests)</h3>
+            <p>Tests for chat session creation, management, and history loading.</p>
+
+            <div class="test-file">
+                <h4>📄 features/sessions/chat-history.spec.ts - 15 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Chat History Loading:</div>
+                    <ul class="test-list">
+                        <li>Existing chat sessions loaded on initial load</li>
+                        <li>Sessions displayed in sidebar</li>
+                        <li>Empty chat history handled gracefully</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Loading Historical Messages:</div>
+                    <ul class="test-list">
+                        <li>Messages loaded when clicking historical session</li>
+                        <li>Historical messages displayed in correct order</li>
+                        <li>Both user and assistant messages shown from history</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Session Switching:</div>
+                    <ul class="test-list">
+                        <li>Switching between different historical sessions</li>
+                        <li>Active session indicator preserved</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Authentication with History:</div>
+                    <ul class="test-list">
+                        <li>API key included in contexts/list request</li>
+                        <li>OBO token included in contexts/list request</li>
+                        <li>API key included in tasks/list request</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Error Handling:</div>
+                    <ul class="test-list">
+                        <li>contexts/list failure handled gracefully</li>
+                        <li>tasks/list failure handled gracefully</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Creating New Chat:</div>
+                    <ul class="test-list">
+                        <li>New chat creation allowed with existing history</li>
+                        <li>New session created when sending message in new chat</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 features/sessions/multi-session.spec.ts - 8 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Multi-Session Management:</div>
+                    <ul class="test-list">
+                        <li>Multiple chat sessions can be created</li>
+                        <li>Sessions shown in sidebar after creation</li>
+                        <li>Session title based on first message</li>
+                        <li>Separate message history per session</li>
+                        <li>Empty state shown for new session</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Session Switching:</div>
+                    <ul class="test-list">
+                        <li>Switching between sessions via sidebar</li>
+                        <li>Input preserved when switching sessions</li>
+                        <li>Active session indicator displayed</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 features/sessions/session-management.spec.ts - 10 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Session Management UI:</div>
+                    <ul class="test-list">
+                        <li>Empty state when no sessions exist</li>
+                        <li>New chat session created via "Start a new chat"</li>
+                        <li>"+ New Chat" button always visible in sidebar</li>
+                        <li>Message input shown with placeholder text</li>
+                        <li>Send button enabled when message typed</li>
+                        <li>User message shown in chat after sending</li>
+                        <li>"Agent is typing..." indicator displayed</li>
+                        <li>Message input cleared after sending</li>
+                        <li>Agent name shown in header</li>
+                        <li>Agent description shown in header</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h3><span class="icon">🎨</span> UI & Accessibility (35 tests)</h3>
+            <p>Tests ensuring the interface is accessible, keyboard-navigable, and handles edge cases.</p>
+
+            <div class="test-file">
+                <h4>📄 features/ui/accessibility.spec.ts - 17 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Keyboard Navigation:</div>
+                    <ul class="test-list">
+                        <li>Tab navigates to "Start a new chat" button</li>
+                        <li>Enter key activates "Start a new chat"</li>
+                        <li>Space key activates "Start a new chat"</li>
+                        <li>Chat interface navigable with keyboard</li>
+                        <li>Enter key sends message from input</li>
+                        <li>Shift+Enter creates new line</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">ARIA Labels and Semantics:</div>
+                    <ul class="test-list">
+                        <li>Accessible button labels present</li>
+                        <li>Proper heading structure</li>
+                        <li>Accessible form controls</li>
+                        <li>Semantic HTML elements used</li>
+                        <li>Proper button types</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Focus Management:</div>
+                    <ul class="test-list">
+                        <li>Focus moves to message input when chat opens</li>
+                        <li>Input disabled while agent responding</li>
+                        <li>Visible focus indicators</li>
+                        <li>Keyboard focus not trapped</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Color Contrast:</div>
+                    <ul class="test-list">
+                        <li>Readable text in empty state</li>
+                        <li>Readable button text</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-file">
+                <h4>📄 features/ui/edge-cases.spec.ts - 18 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Rapid Interactions:</div>
+                    <ul class="test-list">
+                        <li>Rapid send button clicks handled</li>
+                        <li>Rapid typing and sending handled</li>
+                        <li>Rapid "Start a new chat" clicks handled</li>
+                        <li>Rapid session switching handled</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Boundary Conditions:</div>
+                    <ul class="test-list">
+                        <li>Single character messages processed</li>
+                        <li>Messages with only numbers handled</li>
+                        <li>Messages with repeated characters handled</li>
+                        <li>Messages with only punctuation handled</li>
+                        <li>Zero-width characters handled</li>
+                        <li>Messages with tab characters handled</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Browser Behavior:</div>
+                    <ul class="test-list">
+                        <li>Page refresh during chat handled</li>
+                        <li>Browser back button handled</li>
+                        <li>Browser forward button handled</li>
+                        <li>State maintained when window loses/regains focus</li>
+                        <li>Window resize handled</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Race Conditions:</div>
+                    <ul class="test-list">
+                        <li>Typing while previous message sending</li>
+                        <li>Rapid input changes handled</li>
+                        <li>Send button state during rapid typing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h3><span class="icon">🛡️</span> Reliability & Error Handling (11 tests)</h3>
+            <p>Tests ensuring graceful degradation and error recovery.</p>
+
+            <div class="test-file">
+                <h4>📄 features/reliability/error-handling.spec.ts - 11 tests</h4>
+                <div class="test-group">
+                    <div class="test-group-title">Connection & Loading Errors:</div>
+                    <ul class="test-list">
+                        <li>Error shown when agent card fails to load</li>
+                        <li>Error shown when agent card is invalid JSON</li>
+                        <li>Error shown when session list fails to load</li>
+                        <li>Network timeout handled gracefully</li>
+                        <li>Missing agent card parameter handled</li>
+                    </ul>
+                </div>
+                <div class="test-group">
+                    <div class="test-group-title">Message Error Handling:</div>
+                    <ul class="test-list">
+                        <li>Empty messages prevented from sending</li>
+                        <li>Whitespace-only messages prevented</li>
+                        <li>Very long messages handled</li>
+                        <li>Special characters in messages processed</li>
+                        <li>Emoji in messages supported</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>📊 Test Distribution by Category</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Test Files</th>
+                        <th>Test Scenarios</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🚀 Smoke Tests</td>
+                        <td>2</td>
+                        <td>11</td>
+                    </tr>
+                    <tr>
+                        <td>🔐 Authentication</td>
+                        <td>2</td>
+                        <td>14</td>
+                    </tr>
+                    <tr>
+                        <td>💬 Messaging</td>
+                        <td>3</td>
+                        <td>28</td>
+                    </tr>
+                    <tr>
+                        <td>📚 Sessions</td>
+                        <td>3</td>
+                        <td>25</td>
+                    </tr>
+                    <tr>
+                        <td>🎨 UI & Accessibility</td>
+                        <td>2</td>
+                        <td>35</td>
+                    </tr>
+                    <tr>
+                        <td>🛡️ Reliability</td>
+                        <td>1</td>
+                        <td>11</td>
+                    </tr>
+                    <tr style="font-weight: bold; background: #ecf0f1;">
+                        <td>TOTAL</td>
+                        <td>13</td>
+                        <td>139</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="test-category">
+            <h2>🔍 Key Testing Scenarios</h2>
+
+            <h3>User Journeys Covered</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li><strong>First Time User:</strong> Open app → Start chat → Send message → Receive response</li>
+                    <li><strong>Returning User:</strong> Open app → See history → Resume session → Continue conversation</li>
+                    <li><strong>Multi-Session User:</strong> Create multiple chats → Switch between them → Manage sessions</li>
+                    <li><strong>Authenticated User:</strong> Handle OBO token flow → Complete authentication → Chat with credentials</li>
+                    <li><strong>Error Recovery:</strong> Handle network failures → Show errors → Allow retry</li>
+                </ul>
+            </div>
+
+            <h3>Protocol Coverage</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li>Agent Card loading and validation</li>
+                    <li>contexts/list (session listing)</li>
+                    <li>tasks/list (message history loading)</li>
+                    <li>message/stream (SSE-based chat)</li>
+                    <li>Authentication flows (OBO and API key)</li>
+                </ul>
+            </div>
+
+            <h3>Browser Features Tested</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li>Keyboard navigation</li>
+                    <li>Focus management</li>
+                    <li>ARIA labels and semantics</li>
+                    <li>Page lifecycle (refresh, back/forward)</li>
+                    <li>Window events (resize, focus)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>🚦 Running the Tests</h2>
+
+            <h3>Run All Tests</h3>
+            <div class="code-block">
+                <code>pnpm test:e2e</code>
+            </div>
+
+            <h3>Run Smoke Tests Only</h3>
+            <div class="code-block">
+                <code>pnpm test:e2e e2e/tests/smoke</code>
+            </div>
+
+            <h3>Run Specific Feature Area</h3>
+            <div class="code-block">
+                <code>pnpm test:e2e e2e/tests/features/authentication<br>
+pnpm test:e2e e2e/tests/features/messaging<br>
+pnpm test:e2e e2e/tests/features/sessions<br>
+pnpm test:e2e e2e/tests/features/ui<br>
+pnpm test:e2e e2e/tests/features/reliability</code>
+            </div>
+
+            <h3>Run Specific Test File</h3>
+            <div class="code-block">
+                <code>pnpm test:e2e e2e/tests/features/authentication/auth-flow.spec.ts</code>
+            </div>
+
+            <h3>Run in Different Browsers</h3>
+            <div class="code-block">
+                <code>pnpm test:e2e --project=chromium<br>
+pnpm test:e2e --project=firefox<br>
+pnpm test:e2e --project=webkit</code>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>🏗️ Test Infrastructure</h2>
+
+            <h3>Testing Framework</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li><strong>Playwright:</strong> Browser automation and E2E testing</li>
+                    <li><strong>TypeScript:</strong> Type-safe test code</li>
+                    <li><strong>Fixtures:</strong> Shared SSE mocking and agent card setup</li>
+                </ul>
+            </div>
+
+            <h3>Test Execution</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li>Tests run in Chromium by default</li>
+                    <li>Support for parallel execution (8 workers)</li>
+                    <li>SSE (Server-Sent Events) mocking for reliable testing</li>
+                    <li>Cross-browser testing capability (Chromium, Firefox, WebKit)</li>
+                </ul>
+            </div>
+
+            <h3>Mocking Strategy</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li><strong>Agent Card:</strong> Mocked via route interception</li>
+                    <li><strong>SSE Streams:</strong> Custom fixture with configurable responses</li>
+                    <li><strong>Authentication:</strong> Mock popup windows for OBO flow testing</li>
+                    <li><strong>Sessions:</strong> URL parameter-based mocking (withHistory=true, errorHistory=true, etc.)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-category">
+            <h2>📝 Test Maintenance Notes</h2>
+
+            <h3>When to Update Tests</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li><strong>New Features:</strong> Add tests in appropriate domain directory</li>
+                    <li><strong>Bug Fixes:</strong> Add regression test before fixing</li>
+                    <li><strong>UI Changes:</strong> Update selectors and expectations</li>
+                    <li><strong>API Changes:</strong> Update mocks and assertions</li>
+                </ul>
+            </div>
+
+            <h3>Test Organization Principles</h3>
+            <div class="test-group">
+                <ul class="test-list">
+                    <li><strong>Smoke tests:</strong> Must be fast (&lt;30s total) and test critical path only</li>
+                    <li><strong>Feature tests:</strong> Organized by domain, can be more comprehensive</li>
+                    <li><strong>One assertion per test:</strong> Tests should verify single behavior</li>
+                    <li><strong>Test behavior, not implementation:</strong> Focus on user-visible outcomes</li>
+                </ul>
+            </div>
+
+            <h3>Test File Locations</h3>
+            <div class="code-block">
+                <code>e2e/tests/<br>
+├── smoke/              # Critical path tests (fast)<br>
+└── features/           # Domain-organized feature tests<br>
+    ├── authentication/ # Auth flows and credentials<br>
+    ├── messaging/      # Chat and SSE functionality<br>
+    ├── sessions/       # Session management and history<br>
+    ├── ui/            # UI behavior and accessibility<br>
+    └── reliability/    # Error handling and recovery</code>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Report Generated:</strong> November 3, 2025</p>
+            <p><strong>Test Suite Version:</strong> 1.0</p>
+            <p><strong>Maintained By:</strong> A2A Chat Team</p>
+        </div>
+    </div>
+</body>
+</html>
