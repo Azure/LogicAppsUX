@@ -269,7 +269,10 @@ describe('FileUpload', () => {
   it('uses default max file size of 10MB when not specified', async () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const largeFile = new File(['x'.repeat(11 * 1024 * 1024)], 'large.txt', { type: 'text/plain' });
+    // Create a small file and override its size property to simulate a large file
+    const largeFile = new File(['test'], 'large.txt', { type: 'text/plain' });
+    Object.defineProperty(largeFile, 'size', { value: 11 * 1024 * 1024 });
+
     const input = screen
       .getByRole('button')
       .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
