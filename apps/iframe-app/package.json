@@ -1,0 +1,44 @@
+{
+  "name": "@a2achat/iframe-app",
+  "version": "0.0.0",
+  "description": "A2A Chat iframe application",
+  "type": "module",
+  "scripts": {
+    "build": "vite build && mv dist/index.html dist/iframe.html",
+    "build:chat": "vite build && mv dist/index.html dist/iframe.html",
+    "dev": "vite",
+    "e2e": "E2E=true vite",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:multi-session": "tsx test-multi-session.ts",
+    "lint": "echo 'TODO: Lint code'",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "^9.66.7",
+    "@fluentui/react-icons": "^2.0.306",
+    "@microsoft/logicAppsChat": "workspace:*",
+    "idb": "^8.0.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "vite-plugin-mkcert": "^1.17.8"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^24.0.12",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^2.1.8",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^6.4.1",
+    "vite-bundle-analyzer": "^1.1.0",
+    "vitest": "^2.1.8"
+  },
+  "private": true
+}

@@ -1,0 +1,49 @@
+.multiSessionContainer {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 260px;
+  height: 100%;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+}
+
+.chatArea {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .chatArea {
+    width: 100%;
+  }
+}
+
+/* Adjust for iframe constraints */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 200px;
+  }
+}

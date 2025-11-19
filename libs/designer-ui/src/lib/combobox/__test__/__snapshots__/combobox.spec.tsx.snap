@@ -29,7 +29,7 @@ exports[`lib/combobox > displays error state correctly 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -51,7 +51,7 @@ exports[`lib/combobox > displays error state correctly 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -97,7 +97,7 @@ exports[`lib/combobox > displays loading state correctly 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -119,7 +119,7 @@ exports[`lib/combobox > displays loading state correctly 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -166,7 +166,7 @@ exports[`lib/combobox > displays placeholder text 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -188,7 +188,7 @@ exports[`lib/combobox > displays placeholder text 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -234,7 +234,7 @@ exports[`lib/combobox > handles large datasets efficiently 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -256,7 +256,7 @@ exports[`lib/combobox > handles large datasets efficiently 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -302,7 +302,7 @@ exports[`lib/combobox > renders component with different modes 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -324,7 +324,7 @@ exports[`lib/combobox > renders component with different modes 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -370,7 +370,7 @@ exports[`lib/combobox > renders component with different modes 2`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -392,7 +392,7 @@ exports[`lib/combobox > renders component with different modes 2`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -439,7 +439,7 @@ exports[`lib/combobox > respects readonly prop 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -462,7 +462,7 @@ exports[`lib/combobox > respects readonly prop 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -508,7 +508,7 @@ exports[`lib/combobox > should render in Default mode initially 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -530,7 +530,7 @@ exports[`lib/combobox > should render in Default mode initially 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -576,7 +576,7 @@ exports[`lib/combobox > should render with basic props 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -598,7 +598,7 @@ exports[`lib/combobox > should render with basic props 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"

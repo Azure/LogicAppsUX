@@ -37,7 +37,7 @@ exports[`lib/dropdown > applies custom height and fontSize 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -59,7 +59,7 @@ exports[`lib/dropdown > applies custom height and fontSize 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -113,7 +113,7 @@ exports[`lib/dropdown > displays placeholder text 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -135,7 +135,7 @@ exports[`lib/dropdown > displays placeholder text 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -189,7 +189,7 @@ exports[`lib/dropdown > handles case insensitive comparison when isCaseSensitive
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -211,7 +211,7 @@ exports[`lib/dropdown > handles case insensitive comparison when isCaseSensitive
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -265,7 +265,7 @@ exports[`lib/dropdown > handles case sensitive comparison when isCaseSensitive i
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -287,7 +287,7 @@ exports[`lib/dropdown > handles case sensitive comparison when isCaseSensitive i
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -342,7 +342,7 @@ exports[`lib/dropdown > renders in multiSelect mode 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -397,7 +397,7 @@ exports[`lib/dropdown > renders with array serialization for multiSelect 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -451,7 +451,7 @@ exports[`lib/dropdown > renders with custom onChange handler 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -473,7 +473,7 @@ exports[`lib/dropdown > renders with custom onChange handler 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -528,7 +528,7 @@ exports[`lib/dropdown > renders with separator serialization for multiSelect 1`]
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -584,7 +584,7 @@ exports[`lib/dropdown > respects readonly prop 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -607,7 +607,7 @@ exports[`lib/dropdown > respects readonly prop 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -662,7 +662,7 @@ exports[`lib/dropdown > sets data-automation-id attribute 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -684,7 +684,7 @@ exports[`lib/dropdown > sets data-automation-id attribute 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -738,7 +738,7 @@ exports[`lib/dropdown > should render with basic props 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -760,7 +760,7 @@ exports[`lib/dropdown > should render with basic props 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -814,7 +814,7 @@ exports[`lib/dropdown > should render with label when provided 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -836,7 +836,7 @@ exports[`lib/dropdown > should render with label when provided 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -889,7 +889,7 @@ exports[`lib/dropdown > should render without label when not provided 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -911,7 +911,7 @@ exports[`lib/dropdown > should render without label when not provided 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"

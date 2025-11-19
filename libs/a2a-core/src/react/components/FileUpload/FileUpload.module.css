@@ -1,0 +1,26 @@
+.hiddenInput {
+  display: none;
+}
+
+.uploadButton {
+  background: none;
+  border: none;
+  padding: calc(var(--chat-spacing-unit) * 1);
+  cursor: pointer;
+  color: var(--chat-color-text-secondary);
+  border-radius: var(--chat-radius-small);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadButton:hover:not(:disabled) {
+  background-color: var(--chat-color-surface);
+  color: var(--chat-color-text);
+}
+
+.uploadButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

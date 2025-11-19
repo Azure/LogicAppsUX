@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Chat Widget Styling Test</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Import the CSS - this is critical for proper styling -->
+  <link rel="stylesheet" href="../dist/react/styles.css">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .chat-container {
+      height: 600px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    
+    .info {
+      background-color: #f0f7ff;
+      border: 1px solid #0066cc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .info h3 {
+      margin-top: 0;
+      color: #0066cc;
+    }
+    
+    .info code {
+      background-color: #e0e0e0;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: 'SF Mono', Monaco, Consolas, monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>React Chat Widget Styling Test</h1>
+    
+    <div class="info">
+      <h3>CSS Import Test</h3>
+      <p>This page tests that the chat widget styles are properly loaded from <code>@microsoft/logicAppsChat/styles.css</code></p>
+      <p>If the widget appears styled correctly with proper layout, colors, and spacing, then the CSS import is working!</p>
+    </div>
+    
+    <div id="root"></div>
+  </div>
+
+  <script type="text/babel">
+    // Mock ChatWidget component that uses the same CSS classes
+    function ChatWidget({ welcomeMessage }) {
+      const [messages, setMessages] = React.useState([]);
+      const [inputValue, setInputValue] = React.useState('');
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (inputValue.trim()) {
+          setMessages([...messages, {
+            id: Date.now(),
+            text: inputValue,
+            role: 'user',
+            timestamp: new Date().toLocaleTimeString()
+          }]);
+          setInputValue('');
+          
+          // Simulate assistant response
+          setTimeout(() => {
+            setMessages(prev => [...prev, {
+              id: Date.now() + 1,
+              text: 'This is a test response to verify styling is working correctly.',
+              role: 'assistant',
+              timestamp: new Date().toLocaleTimeString()
+            }]);
+          }, 1000);
+        }
+      };
+      
+      return (
+        <div className="a2a-chat-widget">
+          <div className="chat-widget-container">
+            <div className="chatWindow">
+              <div className="header">
+                <div>Chat Widget Test</div>
+                <div className="headerActions">
+                  <button className="clearButton" onClick={() => setMessages([])}>
+                    Clear
+                  </button>
+                </div>
+              </div>
+              
+              <div className="messageList">
+                {messages.length === 0 && (
+                  <div className="welcomeMessage">
+                    {welcomeMessage}
+                  </div>
+                )}
+                
+                {messages.map(message => (
+                  <div key={message.id} className={`messageWrapper ${message.role}`}>
+                    <div className="messageContainer">
+                      <div className="senderName">
+                        {message.role === 'user' ? 'You' : 'Assistant'}
+                      </div>
+                      <div className="messageBubble">
+                        <div className="message">
+                          <div className="textContent">
+                            {message.text}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="metadata">
+                        <span>{message.timestamp}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="inputContainer">
+                <form onSubmit={handleSubmit} className="inputWrapper">
+                  <textarea
+                    className="textarea"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit(e);
+                      }
+                    }}
+                    placeholder="Type a message..."
+                    rows="1"
+                  />
+                  <button type="submit" className="sendButton" disabled={!inputValue.trim()}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Render the test widget
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+      <div className="chat-container">
+        <ChatWidget welcomeMessage="Welcome! This is a test to verify CSS styling is working correctly. Try sending a message!" />
+      </div>
+    );
+  </script>
+</body>
+</html>

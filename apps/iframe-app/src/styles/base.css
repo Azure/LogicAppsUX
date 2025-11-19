@@ -1,0 +1,167 @@
+:root {
+  /* Default CSS Custom Properties */
+  --chat-color-primary: #0066cc;
+  --chat-color-primary-text: #ffffff;
+  --chat-color-background: #ffffff;
+  --chat-color-surface: #f5f5f5;
+  --chat-color-text: #333333;
+  --chat-color-text-secondary: #666666;
+  --chat-color-border: #e0e0e0;
+  --chat-color-error: #d32f2f;
+  --chat-color-success: #388e3c;
+
+  /* Multi-session UI specific colors */
+  --chat-bg-secondary: #f3f4f6;
+  --chat-bg-hover: #e5e7eb;
+  --chat-bg-active: #dbeafe;
+  --chat-text-primary: #111827;
+  --chat-text-secondary: #6b7280;
+  --chat-text-tertiary: #9ca3af;
+  --chat-primary: #3b82f6;
+  --chat-primary-hover: #2563eb;
+  --chat-border-color: #e5e7eb;
+
+  --chat-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --chat-font-size-small: 0.875rem;
+  --chat-font-size-base: 1rem;
+  --chat-font-size-large: 1.125rem;
+
+  --chat-spacing-unit: 8px;
+
+  --chat-radius-small: 4px;
+  --chat-radius-medium: 8px;
+  --chat-radius-large: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.chat-widget-container {
+  font-family: var(--chat-font-family);
+  font-size: var(--chat-font-size-base);
+  color: var(--chat-color-text);
+  background-color: var(--chat-color-background);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Utility classes */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes chat-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes chat-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.chat-fade-in {
+  animation: chat-fade-in 0.3s ease-out;
+}
+
+/* Dark mode support for multi-session UI */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --chat-bg-secondary: #1f2937;
+    --chat-bg-hover: #374151;
+    --chat-bg-active: #1e3a8a;
+    --chat-text-primary: #f9fafb;
+    --chat-text-secondary: #d1d5db;
+    --chat-text-tertiary: #9ca3af;
+    --chat-border-color: #374151;
+  }
+}
+
+/* Frame Blade specific styling */
+.fxs-frame-header {
+  font-family: var(--chat-font-family);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--chat-text-primary);
+  margin: 0;
+  padding: 1rem;
+}
+
+.fxs-frame-content {
+  padding: 1rem;
+  color: var(--chat-text-primary);
+}
+
+.fxs-frame-button {
+  background-color: var(--chat-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--chat-radius-small);
+  cursor: pointer;
+  font-family: var(--chat-font-family);
+  font-size: var(--chat-font-size-base);
+  transition: background-color 0.2s ease;
+}
+
+.fxs-frame-button:hover {
+  background-color: var(--chat-primary-hover);
+}
+
+.fxs-frame-button:active {
+  transform: translateY(1px);
+}
+
+/* Apply Frame Blade theme classes */
+body.fxs-theme-dark {
+  --chat-color-background: #1a1a1a;
+  --chat-color-surface: #2d2d2d;
+  --chat-color-text: #e0e0e0;
+  --chat-color-text-secondary: #a0a0a0;
+  --chat-color-border: #404040;
+  --chat-bg-secondary: #1f2937;
+  --chat-bg-hover: #374151;
+  --chat-text-primary: #f9fafb;
+  --chat-text-secondary: #d1d5db;
+  --chat-border-color: #374151;
+}
+
+body.fxs-theme-blue {
+  --chat-color-primary: #0078d4;
+  --chat-color-primary-hover: #106ebe;
+}
