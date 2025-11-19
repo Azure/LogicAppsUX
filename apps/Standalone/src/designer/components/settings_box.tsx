@@ -11,8 +11,13 @@ import { ThemeProvider } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 
+const isLoadingDirect = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('id') !== null || urlParams.get('localId') !== null;
+};
+
 export const SettingsBox = () => {
-  const [active, toggleActive] = useBoolean(true);
+  const [active, toggleActive] = useBoolean(isLoadingDirect());
   const isDark = useIsDarkMode();
   const isLocal = useIsLocal();
   const isConsumption = useHostingPlan() === 'consumption';

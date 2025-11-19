@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'RunAfter Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   async () => {
     test('RunAfter visible for all operations (except trigger and action immediately after the trigger', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       await page.getByLabel('Parse JSON operation, Data').click({
         button: 'right',
@@ -36,8 +35,7 @@ test.describe(
       await expect(page.getByRole('menuitem', { name: 'Run After' })).not.toBeVisible();
     });
     test('RunAfter visible for all scope operations (except trigger and action immediately after the trigger', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       await page.getByLabel('Insert a new step after HTTP').click();
       await page.getByText('Add an action').click();

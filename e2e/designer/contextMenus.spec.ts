@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'ContextMenu Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Should open node context menus', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Scope');
+      await LoadMockDirect(page, 'simpleScoped.json');
 
       // Open trigger context menu
       await page.getByText('manual', { exact: true }).click({ button: 'right' });
@@ -26,8 +25,7 @@ test.describe(
     });
 
     test('Should open edge context menus', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Scope');
+      await LoadMockDirect(page, 'simpleScoped.json');
 
       // Click first edge button
       await page.getByLabel('Insert a new step between manual and Initialize variable').click();
