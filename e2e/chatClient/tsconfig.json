@@ -18,8 +18,8 @@
     "noUnusedParameters": false,
     "baseUrl": ".",
     "paths": {
-      "@microsoft/a2achat-core": ["../packages/a2a-core/src/index.ts"],
-      "@microsoft/a2achat-core/*": ["../packages/a2a-core/src/*"]
+      "@microsoft/a2achat-core": ["../../libs/a2a-core/src/index.ts"],
+      "@microsoft/a2achat-core/*": ["../../libs/a2a-core/src/*"]
     }
   },
   "include": ["**/*.ts"],
