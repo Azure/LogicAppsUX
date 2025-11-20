@@ -73,7 +73,7 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
     }
 
     const queryString = new URLSearchParams(definedParams).toString();
-    return queryString ? `${url}?${queryString}` : url;
+    return queryString ? `${url}${url.includes('?') ? '&' : '?'}${queryString}` : url;
   }, [url, queryParams]);
 
   const handleOpenInNewTab = () => {
