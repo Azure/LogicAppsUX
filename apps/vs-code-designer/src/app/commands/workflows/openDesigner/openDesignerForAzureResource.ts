@@ -1,5 +1,5 @@
 import { openUrl } from '@microsoft/vscode-azext-utils';
-import { assetsFolderName, workflowAppApiVersion } from '../../../../constants';
+import { workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import {
@@ -46,8 +46,8 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
 
     this.panel = vscode.window.createWebviewPanel(this.panelGroupKey, this.workflowName, vscode.ViewColumn.Active, this.getPanelOptions());
     this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
     };
     this.panelMetadata = await this.getDesignerPanelMetadata();
 

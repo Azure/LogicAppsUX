@@ -13,10 +13,6 @@ export const ProjectName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
-  createWorkspace: 'createWorkspace',
-  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
-  createLogicApp: 'createLogicApp',
-  createWorkspaceStructure: 'createWorkspaceStructure',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
 
@@ -61,7 +57,6 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
-  functionFolderName?: string;
   functionAppNamespace?: string;
   functionAppName?: string;
   customCodeFunctionName?: string;
@@ -92,22 +87,6 @@ export interface IProjectWizardContext extends IActionContext {
   MSIenabled?: boolean;
 }
 
-export interface IWebviewProjectContext extends IActionContext {
-  workspaceFilePath: string;
-  workspaceProjectPath: ITargetDirectory;
-  workspaceName: string;
-  logicAppName: string;
-  logicAppType: string;
-  projectType: string;
-  targetFramework: string;
-  workflowName: string;
-  workflowType: string;
-  functionFolderName?: string;
-  functionName?: string;
-  functionNamespace?: string;
-  shouldCreateLogicAppProject: boolean;
-}
-
 export const OpenBehavior = {
   addToWorkspace: 'AddToWorkspace',
   openInNewWindow: 'OpenInNewWindow',
@@ -129,8 +108,3 @@ export const DeploymentScriptType = {
   azureDeploymentCenter: 'azureDeploymentCenter',
 } as const;
 export type DeploymentScriptType = (typeof DeploymentScriptType)[keyof typeof DeploymentScriptType];
-
-export interface ITargetDirectory {
-  fsPath: string;
-  path: string;
-}

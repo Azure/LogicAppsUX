@@ -13,7 +13,7 @@ import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import { parse } from 'yaml';
 import { localize } from '../../../localize';
-import { assetsFolderName, dataMapNameValidation } from '../../../constants';
+import { dataMapNameValidation } from '../../../constants';
 
 export default class DataMapperExt {
   public static async openDataMapperPanel(
@@ -94,8 +94,8 @@ export default class DataMapperExt {
 
     ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
     ext.dataMapPanelManagers[dataMapName].panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'wand.png')),
-      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'wand.png')),
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'wand.png')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'wand.png')),
     };
     ext.dataMapPanelManagers[dataMapName].updateWebviewPanelTitle();
     ext.dataMapPanelManagers[dataMapName].mapDefinitionData = mapDefinitionData;

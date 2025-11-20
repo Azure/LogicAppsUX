@@ -53,7 +53,7 @@ export async function getCustomCodeAppFilesToUpdate(
           hostFile.managedDependency = {
             enabled: true,
           };
-          appFiles[hostFileName] = JSON.stringify(hostFile, null, 2);
+          appFiles['host.json'] = JSON.stringify(hostFile, null, 2);
         }
       } catch (error) {
         const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', hostFileName, parseError(error).message);
@@ -63,7 +63,7 @@ export async function getCustomCodeAppFilesToUpdate(
   }
   const requirementsFilePath: string = path.join(workflowFilePath, powershellRequirementsFileName);
   if (!(await fse.pathExists(requirementsFilePath))) {
-    appFiles[powershellRequirementsFileName] = getAppFileForFileExtension('.ps1');
+    appFiles['requirements.psd1'] = getAppFileForFileExtension('.ps1');
   }
   return appFiles;
 }

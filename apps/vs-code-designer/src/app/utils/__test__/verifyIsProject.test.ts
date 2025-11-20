@@ -3,7 +3,6 @@ import type { WorkspaceFolder } from 'vscode';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as verifyIsProject from '../verifyIsProject';
-import { hostFileName, workflowFileName } from '../../../constants';
 
 describe('tryGetAllLogicAppProjectRoots', () => {
   const testWorkspaceFolderPath = path.join('test', 'workspace', 'LogicApp1');
@@ -31,15 +30,15 @@ describe('tryGetAllLogicAppProjectRoots', () => {
   it('should return the folderPath if it is a logic app project', async () => {
     vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
     vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
-      if (filePath === testWorkspaceFolderPath) return [hostFileName, 'workflow1'];
-      if (filePath === path.join(testWorkspaceFolderPath, 'workflow1')) return [workflowFileName];
+      if (filePath === testWorkspaceFolderPath) return ['host.json', 'workflow1'];
+      if (filePath === path.join(testWorkspaceFolderPath, 'workflow1')) return ['workflow.json'];
       return [];
     });
     vi.spyOn(fse, 'readFile').mockImplementation(async (filePath: fse.PathLike) => {
-      if (filePath === path.join(testWorkspaceFolderPath, hostFileName)) {
+      if (filePath === path.join(testWorkspaceFolderPath, 'host.json')) {
         return JSON.stringify({ version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' } });
       }
-      if (filePath === path.join(testWorkspaceFolderPath, 'workflow1', workflowFileName)) {
+      if (filePath === path.join(testWorkspaceFolderPath, 'workflow1', 'workflow.json')) {
         return JSON.stringify({
           definition: {
             $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -60,27 +59,27 @@ describe('tryGetAllLogicAppProjectRoots', () => {
     vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
     vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
       if (filePath === testWorkspaceFolderPath) return ['LogicApp1', 'LogicApp2'];
-      if (filePath === testLogicAppProjectPath1) return [hostFileName, 'workflow1'];
-      if (filePath === testLogicAppProjectPath2) return [hostFileName, 'workflow1'];
-      if (filePath === path.join(testLogicAppProjectPath1, 'workflow1')) return [workflowFileName];
-      if (filePath === path.join(testLogicAppProjectPath2, 'workflow1')) return [workflowFileName];
+      if (filePath === testLogicAppProjectPath1) return ['host.json', 'workflow1'];
+      if (filePath === testLogicAppProjectPath2) return ['host.json', 'workflow1'];
+      if (filePath === path.join(testLogicAppProjectPath1, 'workflow1')) return ['workflow.json'];
+      if (filePath === path.join(testLogicAppProjectPath2, 'workflow1')) return ['workflow.json'];
       return [];
     });
     vi.spyOn(fse, 'readFile').mockImplementation(async (filePath: fse.PathLike) => {
-      if (filePath === path.join(testLogicAppProjectPath1, hostFileName)) {
+      if (filePath === path.join(testLogicAppProjectPath1, 'host.json')) {
         return JSON.stringify({ version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' } });
       }
-      if (filePath === path.join(testLogicAppProjectPath2, hostFileName)) {
+      if (filePath === path.join(testLogicAppProjectPath2, 'host.json')) {
         return JSON.stringify({ version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' } });
       }
-      if (filePath === path.join(testLogicAppProjectPath1, 'workflow1', workflowFileName)) {
+      if (filePath === path.join(testLogicAppProjectPath1, 'workflow1', 'workflow.json')) {
         return JSON.stringify({
           definition: {
             $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
           },
         });
       }
-      if (filePath === path.join(testLogicAppProjectPath2, 'workflow1', workflowFileName)) {
+      if (filePath === path.join(testLogicAppProjectPath2, 'workflow1', 'workflow.json')) {
         return JSON.stringify({
           definition: {
             $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -98,11 +97,11 @@ describe('tryGetAllLogicAppProjectRoots', () => {
     vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
     vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
       if (filePath === testWorkspaceFolderPath) return ['sub1', 'sub2'];
-      if (filePath === path.join(testWorkspaceFolderPath, 'sub1')) return [workflowFileName];
+      if (filePath === path.join(testWorkspaceFolderPath, 'sub1')) return ['workflow.json'];
       return [];
     });
     vi.spyOn(fse, 'readFile').mockImplementation(async (filePath: fse.PathLike) => {
-      if (filePath === path.join(testWorkspaceFolderPath, 'sub1', workflowFileName)) {
+      if (filePath === path.join(testWorkspaceFolderPath, 'sub1', 'workflow.json')) {
         return JSON.stringify({
           definition: {
             $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',

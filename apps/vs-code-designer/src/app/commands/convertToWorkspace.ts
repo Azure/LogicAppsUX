@@ -1,85 +1,21 @@
 import { extensionCommand } from '../../constants';
 import { localize } from '../../localize';
 import { addLocalFuncTelemetry } from '../utils/funcCoreTools/funcVersion';
-import { DialogResponses } from '@microsoft/vscode-azext-utils';
+import { WorkspaceFolderStep } from './createWorkspace/createWorkspaceSteps/workspaceFolderStep';
+import { OpenFolderStep } from './createWorkspace/createWorkspaceSteps/openFolderStep';
+import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import {
-  ExtensionCommand,
-  type IWebviewProjectContext,
-  ProjectName,
-  type IFunctionWizardContext,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import {
-  getWorkspaceFile,
-  getWorkspaceFileInParentDirectory,
-  getWorkspaceFolderWithoutPrompting,
-  getWorkspaceRoot,
-} from '../utils/workspace';
-import { isLogicAppProject, isLogicAppProjectInRoot } from '../utils/verifyIsProject';
-import { ext } from '../../extensionVariables';
-import * as fse from 'fs-extra';
-import * as path from 'path';
-import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewCommandHandler';
-
-export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
-  addLocalFuncTelemetry(context);
-
-  const myWebviewProjectContext: IWebviewProjectContext = options;
-
-  const workspaceFolderPath = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
-
-  await fse.ensureDir(workspaceFolderPath);
-  const workspaceFilePath = path.join(workspaceFolderPath, `${myWebviewProjectContext.workspaceName}.code-workspace`);
-
-  // Start with an empty folders array
-  const workspaceFolders = [];
-  const foldersToAdd = vscode.workspace.workspaceFolders;
-
-  if (foldersToAdd && foldersToAdd.length === 1) {
-    const folder = foldersToAdd[0];
-    const folderPath = folder.uri.fsPath;
-    if (await isLogicAppProject(folderPath)) {
-      const destinationPath = path.join(workspaceFolderPath, folder.name);
-      await fse.copy(folderPath, destinationPath);
-      workspaceFolders.push({ name: folder.name, path: `./${folder.name}` });
-    } else {
-      const subpaths: string[] = await fse.readdir(folderPath);
-      for (const subpath of subpaths) {
-        const fullPath = path.join(folderPath, subpath);
-        const destinationPath = path.join(workspaceFolderPath, subpath);
-        await fse.copy(fullPath, destinationPath);
-        workspaceFolders.push({ name: subpath, path: `./${subpath}` });
-      }
-    }
-  }
-
-  const workspaceData = {
-    folders: workspaceFolders,
-  };
-
-  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
-
-  const uri = vscode.Uri.file(workspaceFilePath);
-
-  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, true /* forceNewWindow */);
-}
-
-async function createWorkspaceStructureWebview(_context: IActionContext): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
-    createWorkspaceWebviewCommandHandler({
-      panelName: localize('createWorkspaceStructure', 'Create Workspace Structure'),
-      panelGroupKey: ext.webViewKey.createWorkspaceStructure,
-      projectName: ProjectName.createWorkspaceStructure,
-      createCommand: ExtensionCommand.createWorkspaceStructure,
-      createHandler: createWorkspaceFile,
-      onResolve: resolve,
-    });
-  });
-}
+import { window } from 'vscode';
+import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder, getWorkspaceRoot } from '../utils/workspace';
+import { WorkspaceNameStep } from './createWorkspace/createWorkspaceSteps/workspaceNameStep';
+import { WorkspaceFileStep } from './createWorkspace/createWorkspaceSteps/workspaceFileStep';
+import { isLogicAppProjectInRoot } from '../utils/verifyIsProject';
 
 export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
-  const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
+  const convertToWorkspaceStartTime = Date.now();
+  const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
 
@@ -102,9 +38,11 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
       if (shouldOpenWorkspace === DialogResponses.yes) {
         await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
         context.telemetry.properties.openContainingWorkspace = 'true';
+        context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
         return true;
       }
       context.telemetry.properties.openContainingWorkspace = 'false';
+      context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
       return false;
     }
 
@@ -120,13 +58,27 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
         DialogResponses.no
       );
       if (shouldCreateWorkspace === DialogResponses.yes) {
-        return await createWorkspaceStructureWebview(context);
+        const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
+          title: localize('convertToWorkspace', 'Convert to workspace'),
+          promptSteps: [new WorkspaceFolderStep(), new WorkspaceNameStep(), new WorkspaceFileStep()],
+          executeSteps: [new OpenFolderStep()],
+        });
+
+        await workspaceWizard.prompt();
+        await workspaceWizard.execute();
+        context.telemetry.properties.createContainingWorkspace = 'true';
+        context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
+        window.showInformationMessage(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
+        return true;
       }
+
       context.telemetry.properties.createContainingWorkspace = 'false';
+      context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
       return false;
     }
 
     context.telemetry.properties.isWorkspace = 'true';
+    context.telemetry.measurements.convertToWorkspaceDuration = (Date.now() - convertToWorkspaceStartTime) / 1000;
     return true;
   }
 }

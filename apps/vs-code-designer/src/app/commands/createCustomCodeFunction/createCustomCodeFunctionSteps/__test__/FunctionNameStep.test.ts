@@ -6,7 +6,6 @@ import { FunctionNameStep } from '../functionNameStep';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { IProjectWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { vscodeFolderName } from '../../../../../constants';
 
 describe('FunctionNameStep', () => {
   const existingFunctionName = 'Func1';
@@ -19,7 +18,7 @@ describe('FunctionNameStep', () => {
     [`${existingFunctionName}.cs`, vscode.FileType.File],
     [`${existingFunctionName}.csproj`, vscode.FileType.File],
     [`${existingFunctionName}.sln`, vscode.FileType.File],
-    [vscodeFolderName, vscode.FileType.Directory],
+    ['.vscode', vscode.FileType.Directory],
   ];
   let functionNameStep: FunctionNameStep;
   let testContext: any;
