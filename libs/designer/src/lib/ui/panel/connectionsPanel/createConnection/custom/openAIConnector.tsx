@@ -68,7 +68,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     isFetching: isFetchingAccount,
     data: allCognitiveServiceAccounts,
     refetch: refetchServiceAccounts,
-  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI);
+  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI || isV1ChatCompletionsService);
 
   const {
     isFetching: isFetchingAPIManagementAccounts,
@@ -207,16 +207,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Select a API Management API',
         id: 'UVZHa1',
         description: 'Select the API Management API to use for this connection',
-      }),
-      V1_CHAT_ENDPOINT: intl.formatMessage({
-        defaultMessage: 'V1 Chat Completion Endpoint',
-        id: 'ryGfra',
-        description: 'V1 Chat Completion Service Endpoint',
-      }),
-      V1_CHAT_ENDPOINT_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Endpoint and certificate details will be filled automatically from app settings.',
-        id: 'gJkk9w',
-        description: 'V1 Chat Completion endpoint description',
       }),
       MISSING_ROLE_WRITE_PERMISSIONS: intl.formatMessage({
         defaultMessage: 'Missing role write permissions',
@@ -603,11 +593,64 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         ) : isV1ChatCompletionsService ? (
           <ConnectionParameterRow
             parameterKey={'v1ChatEndpoint'}
-            displayName={stringResources.V1_CHAT_ENDPOINT}
+            displayName={stringResources.COGNITIVE_SERVICE_OPENAI_RESOURCE}
             required={true}
           >
             <div className={styles.openAIContainer}>
-              <Text>{stringResources.V1_CHAT_ENDPOINT_DESCRIPTION}</Text>
+              <div className={styles.comboxbox}>
+                <Combobox
+                  data-automation-id="openai-combobox"
+                  required={true}
+                  disabled={openAIComboboxDisabled}
+                  placeholder={
+                    isFetchingAccount
+                      ? stringResources.LOADING_ACCOUNTS
+                      : isAgentServiceConnection
+                        ? stringResources.SELECT_COGNITIVE_SERVICE_AI_RESOURCE
+                        : stringResources.SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE
+                  }
+                  value={isUndefinedOrEmptyString(cognitiveServiceAccountId) ? undefined : cognitiveServiceAccountId.split('/').pop()}
+                  className={styles.openAICombobox}
+                  onOptionSelect={async (_e: any, option?: OptionOnSelectData) => {
+                    if (option?.optionValue) {
+                      const cognitiveServiceKey = option?.optionValue as string;
+                      setCognitiveServiceAccountId(cognitiveServiceKey);
+                      setSelectedCognitiveServiceProject(''); // Reset project selection when account changes
+                      setParameterValue(cognitiveServiceKey);
+                      if (!isAgentServiceConnection) {
+                        onSetOpenAIValues(cognitiveServiceKey);
+                      }
+                    }
+                  }}
+                >
+                  {isFetchingAccount ? (
+                    <Spinner
+                      style={{ position: 'absolute', bottom: '6px', left: '8px' }}
+                      labelPosition="after"
+                      label={stringResources.LOADING_ACCOUNTS}
+                    />
+                  ) : (
+                    (allCognitiveServiceAccounts ?? []).map((account: any) => {
+                      return <Option key={account.id} value={account.id}>{`${account.name} (/${account.resourceGroup})`}</Option>;
+                    })
+                  )}
+                </Combobox>
+                <div className={styles.comboboxFooter}>
+                  {requiresRoleAssignments && !isAgentServiceConnection && !!cognitiveServiceAccountId ? <RoleMessages /> : null}
+                  <CreateNewButton href="https://aka.ms/openAICreate" />
+                </div>
+              </div>
+              <Button
+                icon={<RefreshIcon />}
+                size="small"
+                style={{
+                  margin: '0 4px',
+                  height: '100%',
+                }}
+                appearance="transparent"
+                disabled={isOpenAIRefreshDisabled}
+                onClick={onRefreshServiceAccounts}
+              />
             </div>
           </ConnectionParameterRow>
         ) : (
@@ -690,13 +733,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     <UniversalConnectionParameter
       {...props}
       // For APIM Gen AI Gateway and V1 Chat Completions, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
-      isLoading={
-        isAPIMGenAIGateway
-          ? !parameterValues?.['cognitiveServiceAccountId']
-          : isV1ChatCompletionsService
-            ? false
-            : true
-      }
+      isLoading={isAPIMGenAIGateway ? !parameterValues?.['cognitiveServiceAccountId'] : isV1ChatCompletionsService ? false : true}
       parameter={{
         ...parameter,
         uiDefinition: {
