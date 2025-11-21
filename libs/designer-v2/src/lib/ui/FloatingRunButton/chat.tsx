@@ -213,10 +213,26 @@ export const ChatButton = (props: ChatButtonProps) => {
     if (isLoading || isSaving) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
+    const queryParams = new URLSearchParams();
+
+    if (data?.queryParams?.apiKey) {
+      queryParams.set('apiKey', data.queryParams.apiKey);
+    }
+
+    if (data?.queryParams?.oboUserToken) {
+      queryParams.set('oboUserToken', data.queryParams.oboUserToken);
+    }
+
+    if (isDarkMode) {
+      queryParams.set('mode', 'dark');
+    }
+
+    const separator = agentChatUrl?.includes('?') ? '&' : '?';
+    const src = queryParams.toString() ? `${agentChatUrl}${separator}${queryParams.toString()}` : agentChatUrl;
 
     return (
       <iframe
-        src={`${agentChatUrl}${agentChatUrl?.includes('?') ? '&' : '?'}apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}`}
+        src={src}
         title={IntlText.TITLE}
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
         referrerPolicy="strict-origin-when-cross-origin"
@@ -224,7 +240,16 @@ export const ChatButton = (props: ChatButtonProps) => {
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [isLoading, isSaving, agentChatUrl, data?.queryParams?.apiKey, isDarkMode, IntlText.TITLE, IntlText.LOADING]);
+  }, [
+    isLoading,
+    isSaving,
+    agentChatUrl,
+    data?.queryParams?.apiKey,
+    data?.queryParams?.oboUserToken,
+    isDarkMode,
+    IntlText.TITLE,
+    IntlText.LOADING,
+  ]);
 
   return (
     <>

@@ -313,7 +313,7 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isD
 // Helper function to fetch EasyAuth
 const fetchAuthentication = async (siteResourceId: string) => {
   try {
-    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, null, {
       headers: {
         Authorization: `Bearer ${environment.armToken}`,
       },
@@ -445,7 +445,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
           queryParams = { apiKey: a2aKey };
 
           // Add OBO token if available
-          const oboKey = oboData?.properties?.key;
+          const oboKey = oboData?.properties?.key || oboData?.key;
           if (oboKey) {
             queryParams.oboUserToken = oboKey;
           }
