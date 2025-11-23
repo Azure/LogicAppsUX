@@ -363,7 +363,7 @@ const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2
 };
 
 const isAgentCondition = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.AgentCondition => {
-  return !action?.type || !equals(action?.type, 'mcpclienttool');
+  return !isMcpClient(action);
 };
 
 const isMcpClient = (action: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): action is LogicAppsV2.McpClient => {
