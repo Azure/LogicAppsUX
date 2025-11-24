@@ -165,7 +165,7 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=true 1`] =
         aria-disabled="true"
         aria-expanded="false"
         aria-haspopup="menu"
-        class="fui-Button r1alrhcs fui-MenuButton ___1fq6dmv_1ihvkft f1bg9a2p f1jj8ep1 f15xbau f4ikngz fy0fskl f1s2aq7o fdrzuqr f15x8b5r f1falr9n f12mpcsy f1gwvigk f1jnshp0 f18rmfxp fvgxktp fphbwmw f19vpps7 fv5swzo f1al02dq f1t6o4dc f10ztigi f1ft5sdu f12zbtn2 f1gzf82w fcvwxyo f8w4c43 f1ol4fw6 f1q1lw4e f1dwjv2g f14ptb23 f9dbb4x f3qs60o fwd1oij f5u9ap2 f1cyfu5x f127ot8j f19etb0b f4f984j f3d22hf fw441p0 fj8k9ua fifrq0d f196mwp7 f1l6uprw fnekfq fa9u7a5 f1m71e0y f1xxg0vq f16oldlo f17g64ui fjvf891 fqbrke7 f1efp33f f1gue8i f18ktai2 fwbmr0d f44c6la"
+        class="fui-Button r1alrhcs fui-MenuButton ___7dg0yg0_z1vqji0 f1bg9a2p f1jj8ep1 f15xbau f4ikngz fy0fskl f1s2aq7o fdrzuqr f15x8b5r f1falr9n f12mpcsy f1gwvigk f1jnshp0 f18rmfxp fvgxktp fphbwmw f19vpps7 fv5swzo f1al02dq f1t6o4dc f10ztigi f1ft5sdu f12zbtn2 f1gzf82w fcvwxyo f8w4c43 f1ol4fw6 f1q1lw4e f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fuigjrg fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f1vmkb5g f53ppgq f1663y11 f18v5270 f80fkiy f1kc2mi9 f4dhi0o f1y0svfh fihuait fnxhupq fx507ft fyd6l6x fb3rf2x fequ9m0 f18ktai2 fwbmr0d f44c6la"
         disabled=""
         id="menur0"
         role="button"

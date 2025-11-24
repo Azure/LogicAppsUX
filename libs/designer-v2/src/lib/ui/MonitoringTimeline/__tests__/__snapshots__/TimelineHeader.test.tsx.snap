@@ -93,7 +93,7 @@ exports[`TimelineHeader > should render with default props when expanded 1`] = `
     Task timeline
   </span>
   <button
-    className="fui-Button r1alrhcs ___152i3i5_1yuq8eu fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f44lkw9 f1062rbf f18ktai2 fwbmr0d f44c6la"
+    className="fui-Button r1alrhcs ___18vzs3l_jbqu760 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f44lkw9 f1062rbf f18ktai2 fwbmr0d f44c6la"
     onClick={[Function]}
     type="button"
   >

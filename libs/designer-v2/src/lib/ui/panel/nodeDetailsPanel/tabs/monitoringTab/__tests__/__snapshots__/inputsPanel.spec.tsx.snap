@@ -13,7 +13,7 @@ exports[`InputsPanel > should render error state 1`] = `
       />
       <button
         aria-expanded="true"
-        class="fui-Button r1alrhcs ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         style="justify-content: flex-start; flex-grow: 1;"
         type="button"
       >
@@ -52,7 +52,7 @@ exports[`InputsPanel > should render error state 1`] = `
         Inputs
       </button>
       <button
-        class="fui-Button r1alrhcs msla-show-raw-button ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         type="button"
       >
         Show raw inputs
@@ -114,7 +114,7 @@ exports[`InputsPanel > should render error state 1`] = `
             >
               <button
                 aria-label="Copy the value of '' to the clipboard"
-                class="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
+                class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                 type="button"
               >
                 <span
@@ -192,7 +192,7 @@ exports[`InputsPanel > should render loading state 1`] = `
       />
       <button
         aria-expanded="true"
-        class="fui-Button r1alrhcs ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         style="justify-content: flex-start; flex-grow: 1;"
         type="button"
       >
@@ -231,7 +231,7 @@ exports[`InputsPanel > should render loading state 1`] = `
         Inputs
       </button>
       <button
-        class="fui-Button r1alrhcs msla-show-raw-button ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         type="button"
       >
         Show raw inputs
@@ -293,7 +293,7 @@ exports[`InputsPanel > should render loading state 1`] = `
             >
               <button
                 aria-label="Copy the value of '' to the clipboard"
-                class="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
+                class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                 type="button"
               >
                 <span
@@ -371,7 +371,7 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
       />
       <button
         aria-expanded="true"
-        class="fui-Button r1alrhcs ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         style="justify-content: flex-start; flex-grow: 1;"
         type="button"
       >
@@ -410,7 +410,7 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
         Inputs
       </button>
       <button
-        class="fui-Button r1alrhcs msla-show-raw-button ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs msla-show-raw-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         type="button"
       >
         Show raw inputs
@@ -472,7 +472,7 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
             >
               <button
                 aria-label="Copy the value of '' to the clipboard"
-                class="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
+                class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
                 type="button"
               >
                 <span
@@ -550,7 +550,7 @@ exports[`InputsPanel > should render the InputsPanel with no inputs 1`] = `
       />
       <button
         aria-expanded="true"
-        class="fui-Button r1alrhcs ___17rk7km_7upox30 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3"
+        class="fui-Button r1alrhcs ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
         style="justify-content: flex-start; flex-grow: 1;"
         type="button"
       >
@@ -626,7 +626,7 @@ exports[`InputsPanel > should render the InputsPanel with secure inputs 1`] = `
     >
       <div
         class="msla-trace-inputs-outputs-header-text"
-        style="border-color: rgba(0, 0, 0, 0.7);"
+        style="border-color: #000000b3;"
       >
         Inputs
       </div>

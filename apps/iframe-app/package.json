@@ -17,8 +17,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fluentui/react-components": "9.70.0",
-    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/react-components": "^9.66.7",
+    "@fluentui/react-icons": "^2.0.306",
     "@microsoft/logicAppsChat": "workspace:*",
     "idb": "^8.0.3",
     "react": "^19.2.0",

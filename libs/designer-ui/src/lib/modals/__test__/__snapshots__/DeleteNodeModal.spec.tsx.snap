@@ -22,10 +22,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
         class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
-        aria-labelledby="dialog-title-r11"
+        aria-labelledby="dialog-title-r12"
         aria-modal="true"
         class="fui-DialogSurface r1u3t6p6"
-        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r12","isOthersAccessible":false,"isTrapped":false}}"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r11","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
@@ -34,7 +34,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
-            id="dialog-title-r11"
+            id="dialog-title-r12"
           >
             Delete workflow graph
           </h2>
@@ -53,10 +53,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = 
             </p>
           </div>
           <div
-            class="fui-DialogActions rhfpeu0 ___1w6yguj_o4tqhn0 f1a7i8kp fd46tj4 fsyjsko f1n00o3b f1mvsp37 flbz1vp"
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
           >
             <button
-              class="fui-Button r1alrhcs ___lkb4hm0_1iawwqv ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1nz3ub2 fag2qd2 fmvhcg7 f1o3dhpw f14bpyus fqc85l4 f1h3a8gf fkiggi6 f8gmj8i f1ap8nzx f1igan7k fjag8bx f1v3eptx fpelvsg f1r9enuy fdvt4n0 f1l34yyb f1grx941 fqfbdvs f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv fixhny3 feygou5"
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
               data-tabster="{"restorer":{"type":1}}"
               role="button"
               tabindex="0"
@@ -162,10 +162,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
         class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
-        aria-labelledby="dialog-title-rt"
+        aria-labelledby="dialog-title-ru"
         aria-modal="true"
         class="fui-DialogSurface r1u3t6p6"
-        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-ru","isOthersAccessible":false,"isTrapped":false}}"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-rt","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
@@ -174,7 +174,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
-            id="dialog-title-rt"
+            id="dialog-title-ru"
           >
             Delete workflow action
           </h2>
@@ -193,10 +193,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`
             </p>
           </div>
           <div
-            class="fui-DialogActions rhfpeu0 ___1w6yguj_o4tqhn0 f1a7i8kp fd46tj4 fsyjsko f1n00o3b f1mvsp37 flbz1vp"
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
           >
             <button
-              class="fui-Button r1alrhcs ___lkb4hm0_1iawwqv ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1nz3ub2 fag2qd2 fmvhcg7 f1o3dhpw f14bpyus fqc85l4 f1h3a8gf fkiggi6 f8gmj8i f1ap8nzx f1igan7k fjag8bx f1v3eptx fpelvsg f1r9enuy fdvt4n0 f1l34yyb f1grx941 fqfbdvs f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv fixhny3 feygou5"
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
               data-tabster="{"restorer":{"type":1}}"
               role="button"
               tabindex="0"
@@ -302,10 +302,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
         class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
-        aria-labelledby="dialog-title-r19"
+        aria-labelledby="dialog-title-r1a"
         aria-modal="true"
         class="fui-DialogSurface r1u3t6p6"
-        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r1a","isOthersAccessible":false,"isTrapped":false}}"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r19","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
@@ -314,7 +314,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
-            id="dialog-title-r19"
+            id="dialog-title-r1a"
           >
             Node
           </h2>
@@ -333,10 +333,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 
             </p>
           </div>
           <div
-            class="fui-DialogActions rhfpeu0 ___1w6yguj_o4tqhn0 f1a7i8kp fd46tj4 fsyjsko f1n00o3b f1mvsp37 flbz1vp"
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
           >
             <button
-              class="fui-Button r1alrhcs ___lkb4hm0_1iawwqv ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1nz3ub2 fag2qd2 fmvhcg7 f1o3dhpw f14bpyus fqc85l4 f1h3a8gf fkiggi6 f8gmj8i f1ap8nzx f1igan7k fjag8bx f1v3eptx fpelvsg f1r9enuy fdvt4n0 f1l34yyb f1grx941 fqfbdvs f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv fixhny3 feygou5"
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
               data-tabster="{"restorer":{"type":1}}"
               role="button"
               tabindex="0"
@@ -442,10 +442,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
         class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
-        aria-labelledby="dialog-title-r15"
+        aria-labelledby="dialog-title-r16"
         aria-modal="true"
         class="fui-DialogSurface r1u3t6p6"
-        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r16","isOthersAccessible":false,"isTrapped":false}}"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r15","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
@@ -454,7 +454,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
-            id="dialog-title-r15"
+            id="dialog-title-r16"
           >
             Delete switch case
           </h2>
@@ -473,10 +473,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 
             </p>
           </div>
           <div
-            class="fui-DialogActions rhfpeu0 ___1w6yguj_o4tqhn0 f1a7i8kp fd46tj4 fsyjsko f1n00o3b f1mvsp37 flbz1vp"
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
           >
             <button
-              class="fui-Button r1alrhcs ___lkb4hm0_1iawwqv ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1nz3ub2 fag2qd2 fmvhcg7 f1o3dhpw f14bpyus fqc85l4 f1h3a8gf fkiggi6 f8gmj8i f1ap8nzx f1igan7k fjag8bx f1v3eptx fpelvsg f1r9enuy fdvt4n0 f1l34yyb f1grx941 fqfbdvs f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv fixhny3 feygou5"
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
               data-tabster="{"restorer":{"type":1}}"
               role="button"
               tabindex="0"
@@ -582,10 +582,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
         class="fui-DialogSurface__backdrop r1e18s3l"
       />
       <div
-        aria-labelledby="dialog-title-r1d"
+        aria-labelledby="dialog-title-r1e"
         aria-modal="true"
         class="fui-DialogSurface r1u3t6p6"
-        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r1e","isOthersAccessible":false,"isTrapped":false}}"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r1d","isOthersAccessible":false,"isTrapped":false}}"
         role="dialog"
         tabindex="-1"
       >
@@ -594,7 +594,7 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
         >
           <h2
             class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
-            id="dialog-title-r1d"
+            id="dialog-title-r1e"
           />
           <div
             class="fui-DialogContent r1v5zwsm ___1hy2n0k_n23su40 fvgz9i8"
@@ -620,10 +620,10 @@ exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not pr
             </div>
           </div>
           <div
-            class="fui-DialogActions rhfpeu0 ___1w6yguj_o4tqhn0 f1a7i8kp fd46tj4 fsyjsko f1n00o3b f1mvsp37 flbz1vp"
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
           >
             <button
-              class="fui-Button r1alrhcs ___lkb4hm0_1iawwqv ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1nz3ub2 fag2qd2 fmvhcg7 f1o3dhpw f14bpyus fqc85l4 f1h3a8gf fkiggi6 f8gmj8i f1ap8nzx f1igan7k fjag8bx f1v3eptx fpelvsg f1r9enuy fdvt4n0 f1l34yyb f1grx941 fqfbdvs f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv fixhny3 feygou5"
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
               data-tabster="{"restorer":{"type":1}}"
               role="button"
               tabindex="0"
