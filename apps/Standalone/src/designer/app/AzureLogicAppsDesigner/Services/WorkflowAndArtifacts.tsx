@@ -313,7 +313,7 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isD
 // Helper function to fetch EasyAuth
 const fetchAuthentication = async (siteResourceId: string) => {
   try {
-    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, null, {
       headers: {
         Authorization: `Bearer ${environment.armToken}`,
       },
@@ -445,7 +445,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
           queryParams = { apiKey: a2aKey };
 
           // Add OBO token if available
-          const oboKey = oboData?.properties?.key;
+          const oboKey = oboData?.properties?.key || oboData?.key;
           if (oboKey) {
             queryParams.oboUserToken = oboKey;
           }
@@ -470,38 +470,6 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         area: 'fetchAgentUrl',
       });
       return { agentUrl: '', chatUrl: '', hostName };
-    }
-  });
-};
-
-// Async function to fetch Agent Model IDs (uses React Query for memoization)
-export const fetchAgentModelIds = (siteResourceId: string): Promise<string[]> => {
-  const queryClient = getReactQueryClient();
-
-  return queryClient.fetchQuery(['agentModelIds', siteResourceId], async (): Promise<string[]> => {
-    try {
-      const endpoint = `${siteResourceId}/models`;
-      const uri = `${baseUrl}${endpoint}`;
-
-      const response = await axios.get(uri, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-        params: {
-          'api-version': consumptionApiVersion,
-        },
-      });
-
-      // Return the value array if it exists, otherwise return empty array
-      return response?.data ?? [];
-    } catch (error) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: `Failed to fetch agent models: ${error}`,
-        area: 'fetchAgentModelIds',
-        error: error instanceof Error ? error : undefined,
-      });
-      return [];
     }
   });
 };

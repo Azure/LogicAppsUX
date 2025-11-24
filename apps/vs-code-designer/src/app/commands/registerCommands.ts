@@ -14,7 +14,7 @@ import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
 import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
-import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
@@ -162,7 +162,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
   // Custom code commands
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
