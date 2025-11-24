@@ -28,7 +28,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
   >
     <button
       aria-label="Stop"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-stop"
       id="msla-agent-chat-header-stop"
       onClick={[Function]}
@@ -70,7 +70,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
     </button>
     <button
       aria-label="Refresh"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-refresh"
       id="msla-agent-chat-header-refresh"
       onClick={[Function]}
@@ -112,7 +112,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
     </button>
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-collapse"
       id="msla-agent-chat-header-collapse"
       onClick={[Function]}
@@ -184,7 +184,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
   >
     <button
       aria-label="Refresh"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-refresh"
       id="msla-agent-chat-header-refresh"
       onClick={[Function]}
@@ -226,7 +226,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
     </button>
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-collapse"
       id="msla-agent-chat-header-collapse"
       onClick={[Function]}
@@ -298,7 +298,7 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
   >
     <button
       aria-label="Refresh"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-refresh"
       id="msla-agent-chat-header-refresh"
       onClick={[Function]}
@@ -340,7 +340,7 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
     </button>
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-agent-chat-header-collapse"
       id="msla-agent-chat-header-collapse"
       onClick={[Function]}

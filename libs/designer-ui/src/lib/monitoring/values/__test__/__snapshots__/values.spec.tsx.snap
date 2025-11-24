@@ -78,7 +78,7 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
       >
         <button
           aria-label="Copy the value of 'display-name' to the clipboard"
-          className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+          className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
@@ -533,7 +533,7 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
       >
         <button
           aria-label="Copy the value of 'display-name' to the clipboard"
-          className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+          className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
@@ -629,7 +629,7 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
       >
         <button
           aria-label="Copy the value of 'raw' to the clipboard"
-          className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+          className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
@@ -725,7 +725,7 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
       >
         <button
           aria-label="Copy the value of 'XML' to the clipboard"
-          className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+          className="fui-Button r1alrhcs ___1n7gl7d_1jsvaz6 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f1v3eptx fivsta0 fqfbdvs f1wfsnb3 f18ktai2 fwbmr0d f44c6la"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}

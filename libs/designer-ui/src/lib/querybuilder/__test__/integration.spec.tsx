@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GroupType, QueryBuilderEditor } from '../index';
 import { HybridQueryBuilderEditor } from '../HybridQueryBuilder';
 import { convertRootPropToValue, SimpleQueryBuilder } from '../SimpleQueryBuilder';
-import { MoveOption } from '../Group';
 import { createTestRow, createTestGroup, mockGetTokenPicker, QueryBuilderTestWrapper, createTestValueSegment } from './test-utils';
 import { ValueSegmentType } from '../../editor';
 import { TokenType } from '@microsoft/logic-apps-shared';
