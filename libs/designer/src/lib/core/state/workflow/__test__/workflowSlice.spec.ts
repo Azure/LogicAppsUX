@@ -127,9 +127,7 @@ describe('workflowSlice - setRepetitionRunData', () => {
       correlation: { actionTrackingId: 'track2', clientTrackingId: 'client2' },
       status: 'Succeeded',
       code: '200',
-      inputsLink: { contentSize: 0, uri: undefined },
-      outputsLink: { contentSize: 0, uri: undefined },
-    } as LogicAppsV2.WorkflowRunAction;
+    } as unknown as LogicAppsV2.WorkflowRunAction;
 
     const newState = workflowSlice.reducer(
       initialState,
