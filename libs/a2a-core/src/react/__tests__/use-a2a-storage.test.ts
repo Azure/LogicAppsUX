@@ -31,10 +31,27 @@ describe('useA2A - Storage Configuration', () => {
     url: 'https://example.com/api/agents/TestAgent',
     name: 'Test Agent',
     description: 'Test Description',
+    protocolVersion: '1.0.0',
+    version: '1.0.0',
+    capabilities: {
+      streaming: false,
+      pushNotifications: false,
+      stateTransitionHistory: false,
+      extensions: [],
+    },
+    defaultInputModes: ['text'],
+    defaultOutputModes: ['text'],
+    skills: [],
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock fetch to return a valid response by default to avoid "Cannot read properties of undefined (reading 'ok')"
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: [] }), // Default empty list of sessions
+    } as Response);
 
     // Reset chatStore state between tests
     const store = useChatStore.getState();
@@ -50,14 +67,11 @@ describe('useA2A - Storage Configuration', () => {
 
   describe('Storage Initialization', () => {
     it('should accept server storage configuration', async () => {
-      const getAuthToken = vi.fn().mockResolvedValue('test-token');
-
       const { result } = renderHook(() =>
         useA2A({
           storageConfig: {
             type: 'server',
             agentUrl: 'https://example.com/api/agents/TestAgent',
-            getAuthToken,
           },
         })
       );
@@ -85,7 +99,6 @@ describe('useA2A - Storage Configuration', () => {
     });
 
     it('should use agentUrl from storageConfig', async () => {
-      const getAuthToken = vi.fn().mockResolvedValue('test-token');
       const storageAgentUrl = 'https://storage.example.com/api/agents/StorageAgent';
 
       const { result } = renderHook(() =>
@@ -93,7 +106,6 @@ describe('useA2A - Storage Configuration', () => {
           storageConfig: {
             type: 'server',
             agentUrl: storageAgentUrl,
-            getAuthToken,
           },
         })
       );
@@ -107,14 +119,11 @@ describe('useA2A - Storage Configuration', () => {
     });
 
     it('should fallback to agentCard URL if storageConfig agentUrl not provided', async () => {
-      const getAuthToken = vi.fn().mockResolvedValue('test-token');
-
       const { result } = renderHook(() =>
         useA2A({
           storageConfig: {
             type: 'server',
             // No agentUrl specified, should use from agentCard
-            getAuthToken,
           },
         })
       );
@@ -128,16 +137,13 @@ describe('useA2A - Storage Configuration', () => {
     });
 
     it('should support optional timeout configuration', async () => {
-      const getAuthToken = vi.fn().mockResolvedValue('test-token');
-
       const { result } = renderHook(() =>
         useA2A({
           storageConfig: {
             type: 'server',
             agentUrl: 'https://example.com/api/agents/TestAgent',
-            getAuthToken,
             timeout: 60000,
-          },
+          } as any, // timeout is not in StorageConfig type yet but passed to constructor
         })
       );
 
@@ -174,8 +180,6 @@ describe('useA2A - Storage Configuration', () => {
     });
 
     it('should prioritize storageConfig over persistSession', async () => {
-      const getAuthToken = vi.fn().mockResolvedValue('test-token');
-
       const { result } = renderHook(() =>
         useA2A({
           persistSession: true,
@@ -183,7 +187,6 @@ describe('useA2A - Storage Configuration', () => {
           storageConfig: {
             type: 'server',
             agentUrl: 'https://example.com/api/agents/TestAgent',
-            getAuthToken,
           },
         })
       );
@@ -213,10 +216,7 @@ describe('useA2A - Storage Configuration', () => {
       );
 
       // The error should be caught in useEffect and logged
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '[useA2A] Failed to initialize storage:',
-        expect.any(Error)
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith('[useA2A] Failed to initialize storage:', expect.any(Error));
 
       // Storage should not be initialized
       const storeState = useChatStore.getState();
