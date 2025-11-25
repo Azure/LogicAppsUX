@@ -522,17 +522,13 @@ export const workflowSlice = createSlice({
       }
       nodeMetadata.toolRunIndex = page;
     },
-    setRepetitionRunData: (
-      state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; isWithinAgentic?: boolean }>
-    ) => {
-      const { nodeId, runData, isWithinAgentic = false } = action.payload;
+    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
+      const { nodeId, runData } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
       }
       const nodeRunData = {
-        ...(isWithinAgentic ? {} : nodeMetadata.runData),
         ...runData,
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
