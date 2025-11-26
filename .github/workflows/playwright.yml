@@ -6,7 +6,7 @@ on:
     branches: [main, dev/*, hotfix/*]
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
     - name: Run Playwright tests
-      run: pnpm run test:e2e --grep @mock --workers 4
+      run: pnpm run test:e2e --grep @mock --workers 6
     - uses: actions/upload-artifact@v4
       if: always()
       with:
