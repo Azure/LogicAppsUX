@@ -92,21 +92,6 @@ importers:
       '@formatjs/cli':
         specifier: ^6.2.9
         version: 6.2.9
-      '@microsoft/designer-ui':
-        specifier: workspace:^
-        version: link:libs/designer-ui
-      '@microsoft/logic-apps-chatbot':
-        specifier: workspace:^
-        version: link:libs/chatbot
-      '@microsoft/logic-apps-designer':
-        specifier: workspace:^
-        version: link:libs/designer
-      '@microsoft/logic-apps-designer-v2':
-        specifier: workspace:^
-        version: link:libs/designer-v2
-      '@microsoft/logic-apps-shared':
-        specifier: workspace:^
-        version: link:libs/logic-apps-shared
       '@playwright/test':
         specifier: ^1.49.1
         version: 1.49.1
