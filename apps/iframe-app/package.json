@@ -17,7 +17,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fluentui/react-components": "^9.66.7",
+    "@fluentui/react-components": "9.70.0",
     "@fluentui/react-icons": "^2.0.306",
     "@microsoft/logicAppsChat": "workspace:*",
     "idb": "^8.0.3",
@@ -27,18 +27,18 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
+    "@testing-library/react": "^15.0.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.0.12",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.4.6",
     "@vitest/coverage-v8": "^2.1.8",
     "jsdom": "^26.0.0",
     "typescript": "^5.3.3",
     "vite": "^6.4.1",
     "vite-bundle-analyzer": "^1.1.0",
-    "vitest": "^2.1.8"
+    "vitest": "^3.2.4"
   },
   "private": true
 }

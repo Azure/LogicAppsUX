@@ -55,9 +55,9 @@
   "author": "Travis Vu",
   "license": "MIT",
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.1.0",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^15.0.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/events": "^3.0.3",
     "@types/node": "^24.0.12",
     "@types/prismjs": "^1.26.5",
@@ -84,7 +84,7 @@
     }
   },
   "dependencies": {
-    "@fluentui/react-components": "^9.66.7",
+    "@fluentui/react-components": "9.70.0",
     "@fluentui/react-icons": "^2.0.306",
     "eventemitter3": "^5.0.1",
     "idb": "^8.0.3",

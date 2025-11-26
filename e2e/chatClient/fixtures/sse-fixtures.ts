@@ -4,7 +4,7 @@
  * Sets up route interception for A2A SSE endpoints using Playwright's built-in capabilities
  */
 
-import { test as base, Page } from '@playwright/test';
+import { test as base, type Page } from '@playwright/test';
 import { generateSSEResponse, AGENT_CARD } from '../mocks/sse-generators';
 
 async function setupSSEMocking(page: Page) {
