@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test(
   'Should be able to drag and drop operations',
@@ -7,9 +7,7 @@ test(
     tag: '@mock',
   },
   async ({ page }) => {
-    await page.goto('/');
-
-    await GoToMockWorkflow(page, 'Panel');
+    await LoadMockDirect(page, 'Panel.json');
     await page.getByTestId('card-http').dragTo(page.getByTestId('msla-plus-button-manual-initialize_arrayvariable'));
   }
 );
