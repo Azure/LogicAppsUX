@@ -62,18 +62,24 @@ pnpm run templates       # Download workflow templates
 ```
 /apps
   /Standalone         - Development environment (Vite + React)
-  /docs              - Documentation site (Docusaurus)
-  /vs-code-designer  - VS Code extension host
-  /vs-code-react     - VS Code webviews
+  /docs               - Documentation site (Docusaurus)
+  /iframe-app         - A2A Chat iframe application
+  /vs-code-designer   - VS Code extension host
+  /vs-code-react      - VS Code webviews
 
 /libs
-  /designer          - Main workflow designer component
-  /data-mapper-v2    - Visual data transformation tool
-  /designer-ui       - Shared UI components (stateless)
-  /logic-apps-shared - Common utilities and services
-  /chatbot          - AI chatbot integration
-  /vscode-extension - VS Code extension utilities
+  /a2a-core           - A2A protocol chat client SDK
+  /chatbot            - AI chatbot integration
+  /data-mapper        - Data transformation tool (v1, legacy)
+  /data-mapper-v2     - Visual data transformation tool (current)
+  /designer           - Main workflow designer component
+  /designer-ui        - Shared UI components (stateless)
+  /designer-v2        - Next-generation designer (in development)
+  /logic-apps-shared  - Common utilities and services
+  /vscode-extension   - VS Code extension utilities
 ```
+
+Each app and library has its own CLAUDE.md with specific guidance.
 
 ### Key Architectural Patterns
 
@@ -189,3 +195,47 @@ The codebase is actively migrating from .less CSS files to Fluent UI v9's makeSt
 - Follow the checklist in `LESS_TO_MAKESTYLES_MIGRATION_PLAN.md`
 - Mark tasks as completed with checkboxes
 - Update the plan's status section when milestones are reached
+
+## Package Dependency Graph
+
+Understanding library dependencies helps when making changes:
+
+```
+logic-apps-shared (foundation)
+    ↑
+    ├── designer-ui (stateless UI)
+    │       ↑
+    │       ├── designer (main workflow designer)
+    │       ├── designer-v2 (next-gen designer)
+    │       ├── data-mapper (v1)
+    │       ├── data-mapper-v2 (current)
+    │       └── chatbot
+    │
+    └── vscode-extension (VS Code utilities)
+            ↑
+            └── vs-code-designer (extension host)
+
+a2a-core (standalone SDK)
+    ↑
+    └── iframe-app (chat iframe)
+```
+
+## Cross-Cutting Concerns
+
+### Adding New Operations/Connectors
+1. Define operation metadata in `logic-apps-shared`
+2. Add UI components in `designer-ui` if needed
+3. Implement operation handling in `designer`
+4. Update parsers if workflow format changes
+
+### Modifying State Shape
+1. Update Redux slice in `designer/src/lib/core/state/`
+2. Update selectors
+3. Update any affected serializers/deserializers
+4. Add migration logic if needed for persisted state
+
+### Adding New Services
+1. Define interface in `logic-apps-shared/src/designer-client-services/`
+2. Implement base class with common logic
+3. Create environment-specific implementations (Consumption/Standard)
+4. Register via service provider context
