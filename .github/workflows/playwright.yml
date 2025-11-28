@@ -7,7 +7,6 @@ on:
 
 jobs:
   test:
-    name: Designer E2E Tests
     timeout-minutes: 90
     runs-on: ubuntu-latest
     steps:

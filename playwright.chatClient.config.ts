@@ -36,7 +36,7 @@ export default defineConfig({
 
   /* Run the chat client dev server before starting the tests */
   webServer: {
-    command: 'pnpm --filter @a2achat/iframe-app run e2e',
+    command: 'pnpm --filter @microsoft/logicAppsChat run build && pnpm --filter @a2achat/iframe-app run e2e',
     url: 'http://localhost:3001/',
     ignoreHTTPSErrors: true,
     reuseExistingServer: !process.env.CI,
