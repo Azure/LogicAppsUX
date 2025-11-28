@@ -6,10 +6,12 @@ export class RealDataApi {
   private workflowName: string;
   private siteId: string;
   public siteName: string;
-  constructor(
-    public readonly page: Page,
-    public readonly request: APIRequestContext
-  ) {
+  public readonly page: Page;
+  public readonly request: APIRequestContext;
+
+  constructor(page: Page, request: APIRequestContext) {
+    this.page = page;
+    this.request = request;
     this.workflowName = 'testworkflow2';
     this.siteName = process.env.AZURE_SITE_NAME ?? '';
     this.siteId = `/subscriptions/${process.env.AZURE_SUBSCRIPTION_ID}/resourceGroups/${process.env.AZURE_RESOURCE_GROUP}/providers/Microsoft.Web/sites/${this.siteName}`;
