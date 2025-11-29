@@ -35,7 +35,7 @@ import {
   Info24Filled,
   Info24Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -265,8 +265,22 @@ export const ChatButton = (props: ChatButtonProps) => {
   const [copiedApiKey, setCopiedApiKey] = useState(false);
   const [activeSection, setActiveSection] = useState<'connect' | 'availability'>('connect');
   const infoButtonRef = useRef<HTMLButtonElement>(null);
+  const agentUrlTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const apiKeyTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const agentChatUrl = useMemo(() => data?.chatUrl, [data?.chatUrl]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (agentUrlTimerRef.current) {
+        clearTimeout(agentUrlTimerRef.current);
+      }
+      if (apiKeyTimerRef.current) {
+        clearTimeout(apiKeyTimerRef.current);
+      }
+    };
+  }, []);
 
   const IntlText = useMemo(
     () => ({
@@ -463,7 +477,10 @@ export const ChatButton = (props: ChatButtonProps) => {
     if (data?.agentUrl) {
       await navigator.clipboard.writeText(data.agentUrl);
       setCopiedAgentUrl(true);
-      setTimeout(() => setCopiedAgentUrl(false), 2000);
+      if (agentUrlTimerRef.current) {
+        clearTimeout(agentUrlTimerRef.current);
+      }
+      agentUrlTimerRef.current = setTimeout(() => setCopiedAgentUrl(false), 2000);
     }
   }, [data?.agentUrl]);
 
@@ -471,7 +488,10 @@ export const ChatButton = (props: ChatButtonProps) => {
     if (data?.queryParams?.apiKey) {
       await navigator.clipboard.writeText(data.queryParams.apiKey);
       setCopiedApiKey(true);
-      setTimeout(() => setCopiedApiKey(false), 2000);
+      if (apiKeyTimerRef.current) {
+        clearTimeout(apiKeyTimerRef.current);
+      }
+      apiKeyTimerRef.current = setTimeout(() => setCopiedApiKey(false), 2000);
     }
   }, [data?.queryParams?.apiKey]);
 
