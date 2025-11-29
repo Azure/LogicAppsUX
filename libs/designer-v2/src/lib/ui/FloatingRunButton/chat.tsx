@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   Button,
   Dialog,
+  DialogActions,
   DialogBody,
   DialogContent,
   DialogSurface,
@@ -14,6 +15,8 @@ import {
   Link,
   Spinner,
   SplitButton,
+  Tab,
+  TabList,
   Text,
   tokens,
   Tooltip,
@@ -216,37 +219,14 @@ interface SectionTabsProps {
 
 const SectionTabs = ({ activeSection, onSectionChange, intlText }: SectionTabsProps) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: tokens.spacingHorizontalS,
-        borderBottom: `2px solid ${tokens.colorNeutralStroke1}`,
-        marginBottom: tokens.spacingVerticalS,
-      }}
+    <TabList
+      selectedValue={activeSection}
+      onTabSelect={(_, data) => onSectionChange(data.value as 'connect' | 'availability')}
+      style={{ marginBottom: tokens.spacingVerticalS }}
     >
-      <Button
-        appearance={activeSection === 'connect' ? 'primary' : 'subtle'}
-        onClick={() => onSectionChange('connect')}
-        style={{
-          borderRadius: 0,
-          borderBottom: activeSection === 'connect' ? `2px solid ${tokens.colorBrandForeground1}` : 'none',
-          marginBottom: '-2px',
-        }}
-      >
-        {intlText.INFO_SECTION_CONNECT}
-      </Button>
-      <Button
-        appearance={activeSection === 'availability' ? 'primary' : 'subtle'}
-        onClick={() => onSectionChange('availability')}
-        style={{
-          borderRadius: 0,
-          borderBottom: activeSection === 'availability' ? `2px solid ${tokens.colorBrandForeground1}` : 'none',
-          marginBottom: '-2px',
-        }}
-      >
-        {intlText.INFO_SECTION_AVAILABILITY}
-      </Button>
-    </div>
+      <Tab value="connect">{intlText.INFO_SECTION_CONNECT}</Tab>
+      <Tab value="availability">{intlText.INFO_SECTION_AVAILABILITY}</Tab>
+    </TabList>
   );
 };
 
@@ -609,13 +589,7 @@ export const ChatButton = (props: ChatButtonProps) => {
       <Dialog modalType="alert" open={infoDialogOpen} onOpenChange={(_, data) => setInfoDialogOpen(data.open)}>
         <DialogSurface>
           <DialogBody>
-            <DialogTitle>
-              {isDraftMode
-                ? IntlText.INFO_SECTION_AVAILABILITY
-                : activeSection === 'connect'
-                  ? IntlText.INFO_SECTION_CONNECT
-                  : IntlText.INFO_SECTION_AVAILABILITY}
-            </DialogTitle>
+            {isDraftMode && <DialogTitle>{IntlText.INFO_SECTION_AVAILABILITY}</DialogTitle>}
             <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalM }}>
               {!isDraftMode && (
                 <SectionTabs
@@ -669,11 +643,11 @@ export const ChatButton = (props: ChatButtonProps) => {
                 />
               )}
             </DialogContent>
-            <div style={{ marginTop: tokens.spacingVerticalL, display: 'flex', justifyContent: 'flex-end' }}>
+            <DialogActions>
               <Button appearance="primary" onClick={() => setInfoDialogOpen(false)}>
                 {IntlText.CLOSE}
               </Button>
-            </div>
+            </DialogActions>
           </DialogBody>
         </DialogSurface>
       </Dialog>
