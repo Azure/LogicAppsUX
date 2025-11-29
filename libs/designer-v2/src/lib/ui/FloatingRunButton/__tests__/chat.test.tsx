@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ChatButton, useAgentUrl } from '../chat';
+import { ChatButton } from '../chat';
 import * as WorkflowServiceModule from '@microsoft/logic-apps-shared';
 
 // Mock the WorkflowService
@@ -26,7 +26,19 @@ describe('ChatButton', () => {
       defaultOptions: {
         queries: {
           retry: false,
+          cacheTime: 0,
+          staleTime: 0,
         },
+      },
+    });
+
+    mockGetAgentUrl.mockResolvedValue({
+      agentUrl: 'https://test-agent.azurewebsites.net',
+      chatUrl: 'https://test-chat.azurewebsites.net',
+      hostName: 'test-agent.azurewebsites.net',
+      authenticationEnabled: false,
+      queryParams: {
+        apiKey: 'test-api-key-123',
       },
     });
 
@@ -42,16 +54,6 @@ describe('ChatButton', () => {
       saveWorkflow: mockSaveWorkflow,
       appearance: 'primary',
     };
-
-    mockGetAgentUrl.mockResolvedValue({
-      agentUrl: 'https://test-agent.azurewebsites.net',
-      chatUrl: 'https://test-chat.azurewebsites.net',
-      hostName: 'test-agent.azurewebsites.net',
-      authenticationEnabled: false,
-      queryParams: {
-        apiKey: 'test-api-key-123',
-      },
-    });
   });
 
   const renderWithProviders = (props: ChatButtonProps) => {
@@ -231,10 +233,14 @@ describe('ChatButton', () => {
       const infoButton = buttons[1];
       await user.click(infoButton);
 
-      await waitFor(async () => {
-        const availabilityTab = screen.getByText('Chat Availability');
-        await user.click(availabilityTab);
+      await waitFor(() => {
+        expect(screen.getByText('Chat Availability')).toBeInTheDocument();
+      });
 
+      const availabilityTab = screen.getByText('Chat Availability');
+      await user.click(availabilityTab);
+
+      await waitFor(() => {
         expect(screen.getByText('Development & Testing')).toBeInTheDocument();
         expect(screen.getByText('Production')).toBeInTheDocument();
       });
@@ -256,11 +262,13 @@ describe('ChatButton', () => {
 
     it('should copy agent URL when copy button is clicked', async () => {
       const user = userEvent.setup();
-      const writeTextMock = vi.fn();
-      Object.assign(navigator, {
-        clipboard: {
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
           writeText: writeTextMock,
         },
+        writable: true,
+        configurable: true,
       });
 
       renderWithProviders(defaultProps);
@@ -269,24 +277,28 @@ describe('ChatButton', () => {
       const infoButton = buttons[1];
       await user.click(infoButton);
 
-      await waitFor(async () => {
+      await waitFor(() => {
         const agentUrlInput = screen.getByLabelText('Agent URL') as HTMLInputElement;
         expect(agentUrlInput.value).toBe('https://test-agent.azurewebsites.net');
+      });
 
-        const copyButtons = screen.getAllByText('Copy');
-        await user.click(copyButtons[0]);
+      const copyButtons = screen.getAllByText('Copy');
+      await user.click(copyButtons[0]);
 
+      await waitFor(() => {
         expect(writeTextMock).toHaveBeenCalledWith('https://test-agent.azurewebsites.net');
       });
     });
 
     it('should copy API key when copy button is clicked', async () => {
       const user = userEvent.setup();
-      const writeTextMock = vi.fn();
-      Object.assign(navigator, {
-        clipboard: {
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
           writeText: writeTextMock,
         },
+        writable: true,
+        configurable: true,
       });
 
       renderWithProviders(defaultProps);
@@ -295,10 +307,14 @@ describe('ChatButton', () => {
       const infoButton = buttons[1];
       await user.click(infoButton);
 
-      await waitFor(async () => {
-        const copyButtons = screen.getAllByText('Copy');
-        await user.click(copyButtons[1]);
+      await waitFor(() => {
+        expect(screen.getByLabelText('API Key')).toBeInTheDocument();
+      });
 
+      const copyButtons = screen.getAllByText('Copy');
+      await user.click(copyButtons[1]);
+
+      await waitFor(() => {
         expect(writeTextMock).toHaveBeenCalledWith('test-api-key-123');
       });
     });
@@ -342,28 +358,20 @@ describe('ChatButton', () => {
   });
 
   describe('useAgentUrl Hook', () => {
-    it('should fetch agent URL for draft mode', async () => {
-      const { result } = renderHook(() => useAgentUrl({ isDraftMode: true }), {
-        wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
-      });
+    it('should call getAgentUrl with true for draft mode', async () => {
+      renderWithProviders({ ...defaultProps, isDraftMode: true });
 
       await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
+        expect(mockGetAgentUrl).toHaveBeenCalledWith(true);
       });
-
-      expect(mockGetAgentUrl).toHaveBeenCalledWith(true);
     });
 
-    it('should fetch agent URL for production mode', async () => {
-      const { result } = renderHook(() => useAgentUrl({ isDraftMode: false }), {
-        wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
-      });
+    it('should call getAgentUrl with false for production mode', async () => {
+      renderWithProviders({ ...defaultProps, isDraftMode: false });
 
       await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
+        expect(mockGetAgentUrl).toHaveBeenCalledWith(false);
       });
-
-      expect(mockGetAgentUrl).toHaveBeenCalledWith(false);
     });
   });
 
@@ -389,20 +397,3 @@ describe('ChatButton', () => {
     });
   });
 });
-
-// Helper to render hooks
-function renderHook<T>(hook: () => T, options: { wrapper: React.ComponentType<{ children: React.ReactNode }> }) {
-  let result: { current: T };
-  const TestComponent = () => {
-    result = { current: hook() };
-    return null;
-  };
-
-  render(
-    <options.wrapper>
-      <TestComponent />
-    </options.wrapper>
-  );
-
-  return { result: result! };
-}
