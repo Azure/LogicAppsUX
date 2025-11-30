@@ -13,6 +13,8 @@ import {
   Field,
   Input,
   Link,
+  Skeleton,
+  SkeletonItem,
   Spinner,
   SplitButton,
   Tab,
@@ -25,6 +27,8 @@ import type { ButtonProps } from '@fluentui/react-components';
 import { WorkflowService } from '@microsoft/logic-apps-shared';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
 import {
+  ArrowClockwise24Filled,
+  ArrowClockwise24Regular,
   bundleIcon,
   Chat24Filled,
   Chat24Regular,
@@ -41,6 +45,7 @@ const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 const InfoIcon = bundleIcon(Info24Filled, Info24Regular);
 const CopyIcon = bundleIcon(Copy24Filled, Copy24Regular);
+const RefreshIcon = bundleIcon(ArrowClockwise24Filled, ArrowClockwise24Regular);
 
 // Child Components
 interface ChatAvailabilitySectionProps {
@@ -131,6 +136,7 @@ interface ConnectToAgentSectionProps {
     INFO_DIALOG_OPTION2_DESC_NO_AUTH: string;
     INFO_DIALOG_OPEN_CHAT: string;
     INFO_DIALOG_AUTH_SETTINGS: string;
+    INFO_DIALOG_REFRESH_BUTTON: string;
   };
   agentUrl: string;
   apiKey: string;
@@ -139,6 +145,8 @@ interface ConnectToAgentSectionProps {
   onCopyAgentUrl: () => void;
   onCopyApiKey: () => void;
   onConfigureAuth: () => void;
+  onRefresh: () => void;
+  isRefreshing: boolean;
   authenticationEnabled?: boolean;
   chatUrl?: string;
   siteResourceId?: string;
@@ -153,39 +161,57 @@ const ConnectToAgentSection = ({
   onCopyAgentUrl,
   onCopyApiKey,
   onConfigureAuth,
+  onRefresh,
+  isRefreshing,
   authenticationEnabled,
   chatUrl,
 }: ConnectToAgentSectionProps) => {
   return (
     <>
       <div>
-        <Text weight="semibold" as="h4" block style={{ marginBottom: tokens.spacingVerticalXS }}>
-          {intlText.INFO_DIALOG_OPTION1_TITLE}
-        </Text>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: tokens.spacingVerticalXS }}>
+          <Text weight="semibold" as="h4">
+            {intlText.INFO_DIALOG_OPTION1_TITLE}
+          </Text>
+          <Button appearance="subtle" size="small" icon={<RefreshIcon />} onClick={onRefresh} disabled={isRefreshing}>
+            {intlText.INFO_DIALOG_REFRESH_BUTTON}
+          </Button>
+        </div>
         <Text as="p" block style={{ marginBottom: tokens.spacingVerticalM }}>
           {intlText.INFO_DIALOG_OPTION1_DESC}
         </Text>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS }}>
-          <CredentialField
-            label={intlText.INFO_DIALOG_AGENT_URL_LABEL}
-            value={agentUrl}
-            isCopied={copiedAgentUrl}
-            onCopy={onCopyAgentUrl}
-            copyButtonText={intlText.INFO_DIALOG_COPY_BUTTON}
-            copiedButtonText={intlText.INFO_DIALOG_COPIED_BUTTON}
-          />
+        {isRefreshing ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS }}>
+            <Skeleton>
+              <SkeletonItem style={{ height: '56px', width: '100%' }} />
+            </Skeleton>
+            <Skeleton>
+              <SkeletonItem style={{ height: '56px', width: '100%' }} />
+            </Skeleton>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS }}>
+            <CredentialField
+              label={intlText.INFO_DIALOG_AGENT_URL_LABEL}
+              value={agentUrl}
+              isCopied={copiedAgentUrl}
+              onCopy={onCopyAgentUrl}
+              copyButtonText={intlText.INFO_DIALOG_COPY_BUTTON}
+              copiedButtonText={intlText.INFO_DIALOG_COPIED_BUTTON}
+            />
 
-          <CredentialField
-            label={intlText.INFO_DIALOG_API_KEY_LABEL}
-            value={apiKey}
-            isCopied={copiedApiKey}
-            onCopy={onCopyApiKey}
-            copyButtonText={intlText.INFO_DIALOG_COPY_BUTTON}
-            copiedButtonText={intlText.INFO_DIALOG_COPIED_BUTTON}
-            isPassword
-          />
-        </div>
+            <CredentialField
+              label={intlText.INFO_DIALOG_API_KEY_LABEL}
+              value={apiKey}
+              isCopied={copiedApiKey}
+              onCopy={onCopyApiKey}
+              copyButtonText={intlText.INFO_DIALOG_COPY_BUTTON}
+              copiedButtonText={intlText.INFO_DIALOG_COPIED_BUTTON}
+              isPassword
+            />
+          </div>
+        )}
       </div>
 
       <div>
@@ -258,7 +284,7 @@ export type ChatButtonProps = ButtonProps & {
 export const ChatButton = (props: ChatButtonProps) => {
   const intl = useIntl();
   const { isDarkMode, isDraftMode, saveWorkflow, tooltipText: clientStateTooltipText, ...buttonProps } = props;
-  const { isLoading, data } = useAgentUrl({ isDraftMode });
+  const { isLoading, data, refetch, isFetching } = useAgentUrl({ isDraftMode });
   const [isSaving, setIsSaving] = useState(false);
   const [onDialogOpen, setOnDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
@@ -438,6 +464,11 @@ export const ChatButton = (props: ChatButtonProps) => {
         id: 'MdtNYy',
         description: 'Link text for authentication documentation',
       }),
+      INFO_DIALOG_REFRESH_BUTTON: intl.formatMessage({
+        defaultMessage: 'Refresh',
+        id: 'GSzT3T',
+        description: 'Refresh button text to reload agent details',
+      }),
       INFO_SECTION_CONNECT: intl.formatMessage({
         defaultMessage: 'Connect to Agent',
         id: '9/yaph',
@@ -507,6 +538,10 @@ export const ChatButton = (props: ChatButtonProps) => {
       });
     }
   }, [props.siteResourceId]);
+
+  const handleRefreshAgentDetails = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
   const tooltipText = useMemo(() => {
     if (buttonProps.disabled) {
@@ -663,6 +698,7 @@ export const ChatButton = (props: ChatButtonProps) => {
                     INFO_DIALOG_OPTION2_DESC_NO_AUTH: IntlText.INFO_DIALOG_OPTION2_DESC_NO_AUTH,
                     INFO_DIALOG_OPEN_CHAT: IntlText.INFO_DIALOG_OPEN_CHAT,
                     INFO_DIALOG_AUTH_SETTINGS: IntlText.INFO_DIALOG_AUTH_SETTINGS,
+                    INFO_DIALOG_REFRESH_BUTTON: IntlText.INFO_DIALOG_REFRESH_BUTTON,
                   }}
                   agentUrl={data?.agentUrl || ''}
                   apiKey={data?.queryParams?.apiKey || ''}
@@ -671,6 +707,8 @@ export const ChatButton = (props: ChatButtonProps) => {
                   onCopyAgentUrl={handleCopyAgentUrl}
                   onCopyApiKey={handleCopyApiKey}
                   onConfigureAuth={handleConfigureAuth}
+                  onRefresh={handleRefreshAgentDetails}
+                  isRefreshing={isFetching}
                   authenticationEnabled={data?.authenticationEnabled}
                   chatUrl={agentChatUrl}
                   siteResourceId={props.siteResourceId}

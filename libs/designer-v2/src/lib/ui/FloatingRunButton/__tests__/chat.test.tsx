@@ -406,4 +406,90 @@ describe('ChatButton', () => {
       expect(screen.getByText('Chat')).toBeInTheDocument();
     });
   });
+
+  describe('Refresh Agent Details', () => {
+    it('should show refresh button in Connect to Agent section', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(defaultProps);
+
+      const buttons = screen.getAllByRole('button');
+      const infoButton = buttons[1];
+      await user.click(infoButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Refresh')).toBeInTheDocument();
+      });
+    });
+
+    it('should show skeleton loading state when refreshing', async () => {
+      let resolveGetAgentUrl: (value: any) => void;
+      const pendingPromise = new Promise((resolve) => {
+        resolveGetAgentUrl = resolve;
+      });
+
+      mockGetAgentUrl.mockReturnValue(pendingPromise);
+
+      const user = userEvent.setup();
+      renderWithProviders(defaultProps);
+
+      const buttons = screen.getAllByRole('button');
+      const infoButton = buttons[1];
+      await user.click(infoButton);
+
+      // Wait for initial load
+      resolveGetAgentUrl!({
+        agentUrl: 'https://test-agent.azurewebsites.net',
+        chatUrl: 'https://test-chat.azurewebsites.net',
+        hostName: 'test-agent.azurewebsites.net',
+        authenticationEnabled: false,
+        queryParams: {
+          apiKey: 'test-api-key-123',
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Refresh')).toBeInTheDocument();
+      });
+
+      // Click refresh button
+      const refreshButton = screen.getByText('Refresh');
+
+      // Mock another pending promise for refetch
+      const refetchPromise = new Promise(() => {
+        // Keep pending to show loading state
+      });
+      mockGetAgentUrl.mockReturnValue(refetchPromise);
+
+      await user.click(refreshButton);
+
+      // Verify refresh button is disabled during refresh
+      await waitFor(() => {
+        expect(refreshButton).toBeDisabled();
+      });
+    });
+
+    it('should refresh agent details when refresh button is clicked', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(defaultProps);
+
+      const buttons = screen.getAllByRole('button');
+      const infoButton = buttons[1];
+      await user.click(infoButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Refresh')).toBeInTheDocument();
+      });
+
+      const initialCallCount = mockGetAgentUrl.mock.calls.length;
+
+      // Click refresh button
+      const refreshButton = screen.getByText('Refresh');
+      await user.click(refreshButton);
+
+      // Wait for refetch to be called
+      await waitFor(() => {
+        expect(mockGetAgentUrl.mock.calls.length).toBeGreaterThan(initialCallCount);
+      });
+    });
+  });
 });
