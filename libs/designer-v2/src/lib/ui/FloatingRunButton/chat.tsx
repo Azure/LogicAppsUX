@@ -138,6 +138,7 @@ interface ConnectToAgentSectionProps {
   copiedApiKey: boolean;
   onCopyAgentUrl: () => void;
   onCopyApiKey: () => void;
+  onConfigureAuth: () => void;
   authenticationEnabled?: boolean;
   chatUrl?: string;
   siteResourceId?: string;
@@ -151,9 +152,9 @@ const ConnectToAgentSection = ({
   copiedApiKey,
   onCopyAgentUrl,
   onCopyApiKey,
+  onConfigureAuth,
   authenticationEnabled,
   chatUrl,
-  siteResourceId,
 }: ConnectToAgentSectionProps) => {
   return (
     <>
@@ -198,7 +199,7 @@ const ConnectToAgentSection = ({
               {intlText.INFO_DIALOG_OPEN_CHAT}
             </Link>
           ) : (
-            <Link href={`https://portal.azure.com/#@/resource${siteResourceId}/authentication`} target="_blank" rel="noopener noreferrer">
+            <Link onClick={onConfigureAuth} style={{ cursor: 'pointer' }}>
               {intlText.INFO_DIALOG_AUTH_SETTINGS}
             </Link>
           )}
@@ -495,6 +496,18 @@ export const ChatButton = (props: ChatButtonProps) => {
     }
   }, [data?.queryParams?.apiKey]);
 
+  const handleConfigureAuth = useCallback(() => {
+    if (props.siteResourceId) {
+      WorkflowService().openBlade?.({
+        extensionName: 'WebsitesExtension',
+        bladeName: 'AppServiceEasyAuthOverviewBlade',
+        parameters: {
+          id: props.siteResourceId,
+        },
+      });
+    }
+  }, [props.siteResourceId]);
+
   const tooltipText = useMemo(() => {
     if (buttonProps.disabled) {
       return clientStateTooltipText ?? IntlText.DEFAULT_TOOLTIP;
@@ -657,6 +670,7 @@ export const ChatButton = (props: ChatButtonProps) => {
                   copiedApiKey={copiedApiKey}
                   onCopyAgentUrl={handleCopyAgentUrl}
                   onCopyApiKey={handleCopyApiKey}
+                  onConfigureAuth={handleConfigureAuth}
                   authenticationEnabled={data?.authenticationEnabled}
                   chatUrl={agentChatUrl}
                   siteResourceId={props.siteResourceId}
