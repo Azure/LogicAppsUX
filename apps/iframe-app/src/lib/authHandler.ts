@@ -54,13 +54,13 @@ function openLogoutPopup(baseUrl: string, onComplete: () => void): void {
 
       // Check if popup navigated to logout complete
       // This might fail due to cross-origin restrictions, but we try
-      if (popup.location.href?.endsWith(`/.auth/logout/complete`)) {
+      if (popup.location.href?.endsWith('/.auth/logout/complete')) {
         clearInterval(checkInterval);
         popup.close();
         onComplete();
         return;
       }
-    } catch (e) {
+    } catch (_e) {
       // Cross-origin error is expected, just check if closed
       if (popup.closed) {
         clearInterval(checkInterval);

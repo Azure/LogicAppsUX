@@ -1,6 +1,6 @@
+import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { Plugin } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 
 // Custom plugin to rename index.html to iframe.html

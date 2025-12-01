@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { getAllowedOrigins, isOriginAllowed, getParentOrigin } from '../origin-validator';
 
 describe('origin-validator', () => {
@@ -33,9 +33,7 @@ describe('origin-validator', () => {
     });
 
     it('should parse allowed origins from URL parameter', () => {
-      (window as any).location = new URL(
-        'http://localhost:3000?allowedOrigins=https://example.com,https://app.example.com'
-      );
+      (window as any).location = new URL('http://localhost:3000?allowedOrigins=https://example.com,https://app.example.com');
 
       const origins = getAllowedOrigins();
       expect(origins).toContain('https://example.com');

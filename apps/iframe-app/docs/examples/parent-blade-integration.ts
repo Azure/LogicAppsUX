@@ -2,12 +2,7 @@
  * Example TypeScript implementation for parent blade integration
  * This shows how to properly integrate the A2A Chat iframe in an Azure Portal blade
  */
-
-import type {
-  ChatHistoryData,
-  ChatHistoryMessage,
-  ChatHistoryFrameBladeMessage,
-} from '../lib/types/chat-history';
+import type { ChatHistoryData, ChatHistoryFrameBladeMessage } from '../../src/lib/types/chat-history';
 
 interface ChatIntegrationConfig {
   chatFrameUrl: string;
@@ -82,16 +77,18 @@ export class A2AChatIntegration {
     }
 
     switch (message.kind) {
-      case 'ready':
+      case 'ready': {
         console.log('A2A Chat iframe is ready');
         this.chatReady = true;
         this.onChatReady();
         break;
+      }
 
-      case 'initializationcomplete':
+      case 'initializationcomplete': {
         console.log('A2A Chat initialization complete');
         this.onChatInitialized();
         break;
+      }
 
       case 'revealcontent':
         console.log('A2A Chat content revealed');
@@ -160,8 +157,7 @@ export class A2AChatIntegration {
         {
           id: 'msg-2',
           role: 'assistant',
-          content:
-            "I'd be happy to help you with your Azure subscription. What specific issue are you experiencing?",
+          content: "I'd be happy to help you with your Azure subscription. What specific issue are you experiencing?",
           timestamp: new Date('2024-01-15T10:30:15Z'),
           metadata: {},
         },
