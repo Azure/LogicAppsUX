@@ -1,0 +1,111 @@
+.inputContainer {
+  border-top: 1px solid var(--chat-color-border);
+  background-color: var(--chat-color-background);
+  padding: calc(var(--chat-spacing-unit) * 2);
+}
+
+.attachmentPreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--chat-spacing-unit) * 1);
+  margin-bottom: calc(var(--chat-spacing-unit) * 1);
+}
+
+.attachmentItem {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--chat-spacing-unit) * 0.5);
+  padding: calc(var(--chat-spacing-unit) * 0.5) calc(var(--chat-spacing-unit) * 1);
+  background-color: var(--chat-color-surface);
+  border-radius: var(--chat-radius-small);
+  font-size: var(--chat-font-size-small);
+}
+
+.attachmentName {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--chat-color-text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.removeButton:hover {
+  background-color: var(--chat-color-error);
+  color: white;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--chat-spacing-unit) * 1);
+  background-color: var(--chat-color-surface);
+  border-radius: var(--chat-radius-medium);
+  padding: calc(var(--chat-spacing-unit) * 1);
+}
+
+.textarea {
+  flex: 1;
+  border: none;
+  background: none;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--chat-font-size-base);
+  color: var(--chat-color-text);
+  padding: calc(var(--chat-spacing-unit) * 0.5) 0;
+  min-height: 24px;
+  max-height: 120px;
+  line-height: 1.5;
+}
+
+.textarea::placeholder {
+  color: var(--chat-color-text-secondary);
+}
+
+.sendButton {
+  background-color: var(--chat-color-primary);
+  color: var(--chat-color-primary-text);
+  border: none;
+  border-radius: var(--chat-radius-small);
+  padding: calc(var(--chat-spacing-unit) * 1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.sendButton:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.connectionStatus {
+  margin-top: calc(var(--chat-spacing-unit) * 1);
+  text-align: center;
+  color: var(--chat-color-text-secondary);
+  font-size: var(--chat-font-size-small);
+}
