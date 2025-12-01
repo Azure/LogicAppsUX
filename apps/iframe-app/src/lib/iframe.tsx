@@ -21,7 +21,6 @@ import { ErrorDisplay } from '../components/ErrorDisplay';
 import { parseIframeConfig, type IframeConfig } from './utils/config-parser';
 import '@microsoft/logicAppsChat/styles.css';
 import '../styles/base.css';
-import { SettingsBox } from '../components/Settings/settingsBox';
 
 // Main application component that uses the configuration
 function App() {
@@ -55,7 +54,6 @@ function App() {
 
   return (
     <div style={{ height: '100vh' }}>
-      <SettingsBox />
       <IframeWrapper config={config} />
     </div>
   );
