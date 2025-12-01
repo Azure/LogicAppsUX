@@ -1,6 +1,7 @@
 import type { OpenAPIV2, ManagedIdentity, LogicAppsV2, AgentURL } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 import type { CallbackInfo } from './callbackInfo';
+import type { BladeReference, OpenBladeOptions } from './common/models/AzurePortalBlade';
 
 export interface NodeOutputs {
   outputs: Record<string, OutputInfo>;
@@ -74,6 +75,11 @@ export interface IWorkflowService {
    * Resubmits workflow from a specific action
    */
   resubmitWorkflow?(runId: string, actionsToResubmit: string[]): void;
+
+  /**
+   * Opens an Azure Portal blade
+   */
+  openBlade?(bladeReference: BladeReference | Promise<BladeReference>, options?: OpenBladeOptions): Promise<boolean>;
 }
 
 let service: IWorkflowService;
