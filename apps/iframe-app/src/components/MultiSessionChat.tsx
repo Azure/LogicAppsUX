@@ -142,7 +142,7 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
     }
 
     initializeStorage();
-  }, [config.storageConfig, config.apiUrl]);
+  }, [config.storageConfig, config.apiUrl, config.apiKey, config.oboUserToken]);
 
   const { sessions, activeSessionId, createNewSession, switchSession, renameSession, deleteSession } = useChatSessions();
 
@@ -270,7 +270,7 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
     return () => {
       cancelled = true;
     };
-  }, [config.apiUrl]);
+  }, [config.apiKey, config.apiUrl, config.oboUserToken]);
 
   const handleNewSession = useCallback(async () => {
     try {
