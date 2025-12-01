@@ -1,4 +1,3 @@
-import type React from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { Button, Text, Badge, makeStyles, shorthands, tokens, mergeClasses } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular, CheckmarkCircleRegular, ErrorCircleRegular } from '@fluentui/react-icons';
@@ -94,7 +93,7 @@ interface AuthPartState extends AuthRequiredPart {
   error?: string;
 }
 
-export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({ authParts, status, onAuthenticate, onCancel }) => {
+export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCancel }: AuthenticationMessageProps) => {
   const styles = useStyles();
   const [localStatus, setLocalStatus] = useState<AuthenticationStatus>(status);
   const [authStates, setAuthStates] = useState<AuthPartState[]>(() =>
