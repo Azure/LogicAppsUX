@@ -36,10 +36,9 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
     if (allowedOrigin === parentTrustedAuthority) {
       return true;
     }
-    const subdomainSuffix = '.' + allowedOrigin;
+    const subdomainSuffix = `.${allowedOrigin}`;
     return (
-      parentTrustedAuthority.length > subdomainSuffix.length &&
-      parentTrustedAuthority.slice(-subdomainSuffix.length) === subdomainSuffix
+      parentTrustedAuthority.length > subdomainSuffix.length && parentTrustedAuthority.slice(-subdomainSuffix.length) === subdomainSuffix
     );
   });
 
@@ -73,13 +72,12 @@ function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): st
     const matchIndex = currentUrl.toLowerCase().indexOf('/api/agentschat/');
     const baseUrl = currentUrl.substring(0, matchIndex);
     return `${baseUrl}/api/agents/${agentKind}/.well-known/agent-card.json`;
-  } else if (consumptionMatch && consumptionMatch[1] && consumptionMatch[2]) {
+  }
+  if (consumptionMatch && consumptionMatch[1] && consumptionMatch[2]) {
     const scaleunit = consumptionMatch[1];
     const flowId = consumptionMatch[2];
     const scaleUnitId = scaleunit.match(/^cu/i) ? scaleunit.substring(2) : scaleunit;
-    const agentCardBackendHost = currentHost
-      .replace(currentHost.split('.')[0], 'app-' + scaleUnitId)
-      .split(':')[0]; // Remove port if any
+    const agentCardBackendHost = currentHost.replace(currentHost.split('.')[0], `app-${scaleUnitId}`).split(':')[0]; // Remove port if any
     return `${window.location.protocol}//${agentCardBackendHost}/api/agents/${flowId}/.well-known/agent-card.json`;
   }
 
@@ -90,10 +88,7 @@ function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): st
   );
 }
 
-function parseTheme(
-  params: URLSearchParams,
-  dataset: DOMStringMap
-): Partial<ChatTheme> | undefined {
+function parseTheme(params: URLSearchParams, dataset: DOMStringMap): Partial<ChatTheme> | undefined {
   const theme: Partial<ChatTheme> = {};
 
   // Check for preset theme
@@ -125,23 +120,15 @@ function parseTheme(
 
     theme.branding = {
       logoUrl,
-      logoSize: (['small', 'medium', 'large'].includes(logoSize as string)
-        ? logoSize
-        : 'medium') as 'small' | 'medium' | 'large',
-      logoPosition:
-        logoPosition === 'header' || logoPosition === 'footer'
-          ? (logoPosition as 'header' | 'footer')
-          : 'header',
+      logoSize: (['small', 'medium', 'large'].includes(logoSize as string) ? logoSize : 'medium') as 'small' | 'medium' | 'large',
+      logoPosition: logoPosition === 'header' || logoPosition === 'footer' ? (logoPosition as 'header' | 'footer') : 'header',
     };
   }
 
   return Object.keys(theme).length > 0 ? theme : undefined;
 }
 
-function parseMetadata(
-  params: URLSearchParams,
-  dataset: DOMStringMap
-): Record<string, unknown> | undefined {
+function parseMetadata(params: URLSearchParams, dataset: DOMStringMap): Record<string, unknown> | undefined {
   const metadataStr = dataset.metadata || params.get('metadata');
   if (!metadataStr) {
     return undefined;
@@ -162,7 +149,7 @@ function parseFileUploadConfig(params: URLSearchParams, dataset: DOMStringMap) {
 
   return {
     allowFileUpload,
-    maxFileSize: dataset.maxFileSize ? parseInt(dataset.maxFileSize) : undefined,
+    maxFileSize: dataset.maxFileSize ? Number.parseInt(dataset.maxFileSize) : undefined,
     allowedFileTypes: dataset.allowedFileTypes?.split(',').map((t) => t.trim()),
   };
 }
@@ -222,8 +209,7 @@ export function parseIframeConfig(): IframeConfig {
     userId: dataset.userId || params.get('userId') || undefined,
     userName: dataset.userName || params.get('userName') || window.LOGGED_IN_USER_NAME || undefined,
     placeholder: dataset.placeholder || params.get('placeholder') || undefined,
-    welcomeMessage:
-      brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
+    welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
     oboUserToken: oboUserToken || undefined,

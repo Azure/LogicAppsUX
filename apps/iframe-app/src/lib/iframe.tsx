@@ -20,11 +20,17 @@ import { ErrorDisplay } from '../components/ErrorDisplay';
 import { useIframeConfig } from './hooks/useIframeConfig';
 import '@microsoft/logicAppsChat/styles.css';
 import '../styles/base.css';
+import { SettingsBox } from '../components/settings_box';
 
 // Main application component that uses the configuration
 function App() {
   const config = useIframeConfig();
-  return <IframeWrapper config={config} />;
+  return (
+    <div style={{ height: '100vh' }}>
+      <SettingsBox />
+      <IframeWrapper config={config} />;
+    </div>
+  );
 }
 
 // Initialize the widget

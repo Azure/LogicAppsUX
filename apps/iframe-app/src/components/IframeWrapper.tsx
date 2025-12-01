@@ -13,16 +13,7 @@ interface IframeWrapperProps {
 }
 
 export function IframeWrapper({ config }: IframeWrapperProps) {
-  const {
-    props,
-    multiSession,
-    apiKey,
-    oboUserToken,
-    mode: initialMode = 'light',
-    inPortal,
-    trustedParentOrigin,
-    contextId,
-  } = config;
+  const { props, multiSession, apiKey, oboUserToken, mode: initialMode = 'light', inPortal, trustedParentOrigin, contextId } = config;
 
   // State
   const [agentCard, setAgentCard] = useState<any>(null);
@@ -59,18 +50,11 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
 
   // Show loading states
   if (expectPostMessage && isWaitingForAgentCard) {
-    return (
-      <LoadingDisplay
-        title="Waiting for Configuration"
-        message="Waiting for agent card data via postMessage..."
-      />
-    );
+    return <LoadingDisplay title="Waiting for Configuration" message="Waiting for agent card data via postMessage..." />;
   }
 
   if (inPortal && !isFrameBladeReady) {
-    return (
-      <LoadingDisplay title="Initializing Frame Blade..." message="Connecting to Azure Portal..." />
-    );
+    return <LoadingDisplay title="Initializing Frame Blade..." message="Connecting to Azure Portal..." />;
   }
 
   // Prepare final props
@@ -81,9 +65,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const mode = inPortal ? currentTheme : urlMode === 'dark' ? 'dark' : initialMode;
 
   // Create unauthorized handler
-  const baseUrl = getBaseUrl(
-    typeof finalProps.agentCard === 'string' ? finalProps.agentCard : finalProps.agentCard.url
-  );
+  const baseUrl = getBaseUrl(typeof finalProps.agentCard === 'string' ? finalProps.agentCard : finalProps.agentCard.url);
   const onUnauthorized = createUnauthorizedHandler({
     baseUrl,
     onRefreshSuccess: () => console.log('Authentication token refreshed successfully'),
@@ -101,7 +83,9 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   // Create storage configuration for server-side chat history
   // Extract base agent URL (remove .well-known/agent-card.json if present)
   const getAgentBaseUrl = (cardUrl: string | undefined): string => {
-    if (!cardUrl) return '';
+    if (!cardUrl) {
+      return '';
+    }
     // Remove .well-known/agent-card.json from the end if it exists
     return cardUrl.replace(/\/\.well-known\/agent-card\.json$/, '');
   };
@@ -132,10 +116,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     return (
       <MultiSessionChat
         config={{
-          apiUrl:
-            typeof propsWithAuth.agentCard === 'string'
-              ? propsWithAuth.agentCard
-              : propsWithAuth.agentCard.url,
+          apiUrl: typeof propsWithAuth.agentCard === 'string' ? propsWithAuth.agentCard : propsWithAuth.agentCard.url,
           apiKey: apiKey || propsWithAuth.apiKey || '',
           oboUserToken: oboUserToken || propsWithAuth.oboUserToken || '',
           onUnauthorized,
