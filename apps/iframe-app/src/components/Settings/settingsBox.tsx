@@ -1,13 +1,12 @@
 // import { AzureConsumptionLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
 // import { AzureStandardLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 // import SourceSettings from '../app/SettingsSections/sourceSettings';
-import styles from './settings_box.module.less';
+import styles from './settingBox.module.less';
 import { darkTheme } from '../themes';
 import { ThemeProvider } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { useState } from 'react';
-import ContextSettings from './contextSettings';
 
 export const SettingsBox = () => {
   const [active, toggleActive] = useBoolean(true);
@@ -76,9 +75,7 @@ export const SettingsBox = () => {
         <div className={styles.contentWrapper}>
           <SettingsSection title="Logic App Source">{/* <SourceSettings /> */}</SettingsSection>
           <SettingsSection title="Workflow Load Settings">{}</SettingsSection>
-          <SettingsSection title="Context Settings">
-            <ContextSettings />
-          </SettingsSection>
+          <SettingsSection title="Context Settings">{}</SettingsSection>
         </div>
       </div>
     </ThemeProvider>
