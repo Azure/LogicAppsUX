@@ -134,6 +134,8 @@ describe('EnterpriseAgentRegistry', () => {
       json: async () => mockAgentCard,
     } as Response);
 
+    const agentCard = await registry.getAgentCard('enterprise-123');
+
     expect(mockFetch).toHaveBeenCalledWith(
       'https://enterprise.example.com/registry/agents/enterprise-123',
       expect.objectContaining({
@@ -143,6 +145,7 @@ describe('EnterpriseAgentRegistry', () => {
         },
       })
     );
+    expect(agentCard.name).toBe('Enterprise Agent');
   });
 
   it('should handle authentication errors', async () => {
