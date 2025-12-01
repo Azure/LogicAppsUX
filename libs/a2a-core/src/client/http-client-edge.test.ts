@@ -50,9 +50,7 @@ describe('HttpClient edge cases', () => {
         json: async () => ({ code: 'ERR_001', details: 'Complex error' }),
       } as Response);
 
-      await expect(client.get('/test')).rejects.toThrow(
-        '{"code":"ERR_001","details":"Complex error"}'
-      );
+      await expect(client.get('/test')).rejects.toThrow('{"code":"ERR_001","details":"Complex error"}');
     });
 
     it('should handle text error responses', async () => {

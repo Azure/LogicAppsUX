@@ -75,10 +75,7 @@ describe('useParentCommunication', () => {
       })
     );
 
-    expect(mockPostMessage).toHaveBeenCalledWith(
-      { type: 'IFRAME_READY' },
-      'https://parent.example.com'
-    );
+    expect(mockPostMessage).toHaveBeenCalledWith({ type: 'IFRAME_READY' }, 'https://parent.example.com');
   });
 
   it('should handle SET_AGENT_CARD message', () => {
@@ -113,10 +110,7 @@ describe('useParentCommunication', () => {
 
     expect(onAgentCardReceived).toHaveBeenCalledWith(agentCard);
     expect(result.current.isWaitingForAgentCard).toBe(false);
-    expect(mockSource.postMessage).toHaveBeenCalledWith(
-      { type: 'AGENT_CARD_RECEIVED' },
-      'https://parent.example.com'
-    );
+    expect(mockSource.postMessage).toHaveBeenCalledWith({ type: 'AGENT_CARD_RECEIVED' }, 'https://parent.example.com');
   });
 
   it('should ignore messages from untrusted origins', () => {
@@ -144,10 +138,7 @@ describe('useParentCommunication', () => {
     });
 
     expect(onAgentCardReceived).not.toHaveBeenCalled();
-    expect(warnSpy).toHaveBeenCalledWith(
-      'Ignoring message from untrusted origin:',
-      'https://untrusted.com'
-    );
+    expect(warnSpy).toHaveBeenCalledWith('Ignoring message from untrusted origin:', 'https://untrusted.com');
 
     warnSpy.mockRestore();
   });

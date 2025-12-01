@@ -116,8 +116,7 @@ describe('A2AClient - Artifact File Processing', () => {
                 kind: 'file',
                 name: 'generated-image.png',
                 mimeType: 'image/png',
-                bytes:
-                  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+                bytes: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
               },
             ],
           },
@@ -325,9 +324,7 @@ describe('A2AClient - Artifact File Processing', () => {
     const lastUpdate = updates[updates.length - 1];
     if (lastUpdate.artifacts) {
       // Count artifacts with the same ID
-      const artifactCount = lastUpdate.artifacts.filter(
-        (a: any) => a.artifactId === 'dup-artifact'
-      ).length;
+      const artifactCount = lastUpdate.artifacts.filter((a: any) => a.artifactId === 'dup-artifact').length;
       // Should only have 1 instance (duplicates should be prevented/updated)
       expect(artifactCount).toBe(1);
     }

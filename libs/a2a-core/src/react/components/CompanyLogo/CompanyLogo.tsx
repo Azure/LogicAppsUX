@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import type { ChatTheme } from '../../types';
 import styles from './CompanyLogo.module.css';
 
@@ -29,8 +29,7 @@ export function CompanyLogo({ branding, className }: CompanyLogoProps) {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height:
-          branding.logoSize === 'small' ? '24px' : branding.logoSize === 'large' ? '48px' : '32px',
+        height: branding.logoSize === 'small' ? '24px' : branding.logoSize === 'large' ? '48px' : '32px',
       };
 
   const imgStyle: React.CSSProperties = hasStyles
@@ -39,12 +38,7 @@ export function CompanyLogo({ branding, className }: CompanyLogoProps) {
         display: 'block',
         height: '100%',
         width: 'auto',
-        maxWidth:
-          branding.logoSize === 'small'
-            ? '120px'
-            : branding.logoSize === 'large'
-              ? '240px'
-              : '160px',
+        maxWidth: branding.logoSize === 'small' ? '120px' : branding.logoSize === 'large' ? '240px' : '160px',
         objectFit: 'contain' as const,
       };
 

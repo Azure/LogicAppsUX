@@ -360,10 +360,7 @@ test.describe('Focus Management', { tag: '@mock' }, () => {
     });
 
     // Should have some kind of focus indicator
-    const hasFocusIndicator =
-      focusStyle.outline !== 'none' ||
-      parseInt(focusStyle.outlineWidth) > 0 ||
-      focusStyle.boxShadow !== 'none';
+    const hasFocusIndicator = focusStyle.outline !== 'none' || parseInt(focusStyle.outlineWidth) > 0 || focusStyle.boxShadow !== 'none';
 
     expect(hasFocusIndicator).toBe(true);
   });

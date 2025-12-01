@@ -1,4 +1,3 @@
-import React from 'react';
 import { Caption1, makeStyles, tokens } from '@fluentui/react-components';
 
 const useStyles = makeStyles({

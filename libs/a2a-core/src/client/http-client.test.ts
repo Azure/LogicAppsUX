@@ -250,9 +250,7 @@ describe('HttpClient', () => {
         onUnauthorized
       );
 
-      await expect(client.get('/protected')).rejects.toThrow(
-        'HTTP error! status: 401 Unauthorized'
-      );
+      await expect(client.get('/protected')).rejects.toThrow('HTTP error! status: 401 Unauthorized');
 
       expect(onUnauthorized).toHaveBeenCalledTimes(3); // Once per initial attempt + 2 retries
       expect(onUnauthorized).toHaveBeenCalledWith({
@@ -281,9 +279,7 @@ describe('HttpClient', () => {
         onUnauthorized
       );
 
-      await expect(client.post('/auth', { data: 'test' })).rejects.toThrow(
-        'HTTP error! status: 401 Unauthorized'
-      );
+      await expect(client.post('/auth', { data: 'test' })).rejects.toThrow('HTTP error! status: 401 Unauthorized');
 
       expect(onUnauthorized).toHaveBeenCalledTimes(1);
       expect(onUnauthorized).toHaveBeenCalledWith({
@@ -312,9 +308,7 @@ describe('HttpClient', () => {
         onUnauthorized
       );
 
-      await expect(client.get('/error')).rejects.toThrow(
-        'HTTP error! status: 500 Internal Server Error'
-      );
+      await expect(client.get('/error')).rejects.toThrow('HTTP error! status: 500 Internal Server Error');
 
       expect(onUnauthorized).not.toHaveBeenCalled();
     });
@@ -342,9 +336,7 @@ describe('HttpClient', () => {
         onUnauthorized
       );
 
-      await expect(client.get('/protected')).rejects.toThrow(
-        'HTTP redirect detected - session may have expired'
-      );
+      await expect(client.get('/protected')).rejects.toThrow('HTTP redirect detected - session may have expired');
 
       expect(onUnauthorized).toHaveBeenCalledTimes(3); // Once per initial attempt + 2 retries
       expect(onUnauthorized).toHaveBeenCalledWith({
@@ -376,9 +368,7 @@ describe('HttpClient', () => {
         onUnauthorized
       );
 
-      await expect(client.post('/auth', { data: 'test' })).rejects.toThrow(
-        'HTTP redirect detected - session may have expired'
-      );
+      await expect(client.post('/auth', { data: 'test' })).rejects.toThrow('HTTP redirect detected - session may have expired');
 
       expect(onUnauthorized).toHaveBeenCalledTimes(1);
       expect(onUnauthorized).toHaveBeenCalledWith({
@@ -444,11 +434,7 @@ describe('HttpClient', () => {
   describe('token refresh', () => {
     it('should call onTokenRefreshRequired when x-ms-aad-token-refresh-option header is refresh', async () => {
       const onTokenRefreshRequired = vi.fn();
-      client = new HttpClient(
-        'https://test-agent.logic.azure.com',
-        { type: 'none' },
-        { onTokenRefreshRequired }
-      );
+      client = new HttpClient('https://test-agent.logic.azure.com', { type: 'none' }, { onTokenRefreshRequired });
 
       const mockFetch = vi.mocked(fetch);
       mockFetch.mockResolvedValueOnce({
@@ -506,11 +492,7 @@ describe('HttpClient', () => {
 
     it('should not trigger token refresh for other header values', async () => {
       const onTokenRefreshRequired = vi.fn();
-      client = new HttpClient(
-        'https://test-agent.logic.azure.com',
-        { type: 'none' },
-        { onTokenRefreshRequired }
-      );
+      client = new HttpClient('https://test-agent.logic.azure.com', { type: 'none' }, { onTokenRefreshRequired });
 
       const mockFetch = vi.mocked(fetch);
       mockFetch.mockResolvedValueOnce({
@@ -528,11 +510,7 @@ describe('HttpClient', () => {
 
     it('should handle missing headers gracefully', async () => {
       const onTokenRefreshRequired = vi.fn();
-      client = new HttpClient(
-        'https://test-agent.logic.azure.com',
-        { type: 'none' },
-        { onTokenRefreshRequired }
-      );
+      client = new HttpClient('https://test-agent.logic.azure.com', { type: 'none' }, { onTokenRefreshRequired });
 
       const mockFetch = vi.mocked(fetch);
       mockFetch.mockResolvedValueOnce({
@@ -548,11 +526,7 @@ describe('HttpClient', () => {
 
     it('should not trigger token refresh for non-consumption agent URLs', async () => {
       const onTokenRefreshRequired = vi.fn();
-      client = new HttpClient(
-        'https://api.example.com',
-        { type: 'none' },
-        { onTokenRefreshRequired }
-      );
+      client = new HttpClient('https://api.example.com', { type: 'none' }, { onTokenRefreshRequired });
 
       const mockFetch = vi.mocked(fetch);
       mockFetch.mockResolvedValueOnce({

@@ -32,8 +32,7 @@ describe('authHandler', () => {
 
   describe('getBaseUrl', () => {
     it('should extract base URL from agent card URL', () => {
-      const agentCardUrl =
-        'https://app.example.com/api/agents/assistant/.well-known/agent-card.json';
+      const agentCardUrl = 'https://app.example.com/api/agents/assistant/.well-known/agent-card.json';
       expect(getBaseUrl(agentCardUrl)).toBe('https://app.example.com');
     });
 
@@ -83,11 +82,7 @@ describe('authHandler', () => {
       await handler();
 
       expect(onRefreshFailed).toHaveBeenCalled();
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        'https://example.com/.auth/logout',
-        'auth-logout',
-        'width=600,height=700,popup=true'
-      );
+      expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/.auth/logout', 'auth-logout', 'width=600,height=700,popup=true');
 
       // Simulate popup being closed
       mockPopup.closed = true;
@@ -163,9 +158,7 @@ describe('authHandler', () => {
     });
 
     it('should prevent multiple simultaneous auth attempts', async () => {
-      mockFetch.mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 100))
-      );
+      mockFetch.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 100)));
 
       const handler = createUnauthorizedHandler({
         baseUrl: 'https://example.com',

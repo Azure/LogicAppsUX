@@ -1,18 +1,7 @@
 import { HttpClient } from './http-client';
-import {
-  MessageSchema,
-  MessageSendRequestSchema,
-  TaskSchema,
-  isJsonRpcError,
-} from '../types/schemas';
+import { MessageSchema, MessageSendRequestSchema, TaskSchema, isJsonRpcError } from '../types/schemas';
 import type { AgentCard, AgentCapabilities, Task, MessageSendRequest, TaskState } from '../types';
-import type {
-  AuthConfig,
-  HttpClientOptions,
-  AuthRequiredHandler,
-  AuthRequiredPart,
-  UnauthorizedHandler,
-} from './types';
+import type { AuthConfig, HttpClientOptions, AuthRequiredHandler, AuthRequiredPart, UnauthorizedHandler } from './types';
 import { SSEClient } from '../streaming/sse-client';
 import type { SSEMessage } from '../streaming/types';
 import { JsonRpcErrorResponse } from '../types/errors';
@@ -107,19 +96,19 @@ export class A2AClient {
         parts: request.message.content.map((part) => {
           if (part.type === 'text') {
             return { kind: 'text', text: part.content };
-          } else if (part.type === 'file') {
+          }
+          if (part.type === 'file') {
             return {
               kind: 'file',
               mimeType: part.mimeType,
               data: part.data,
               filename: part.filename,
             };
-          } else {
-            return {
-              kind: 'data',
-              data: (part as any).data,
-            };
           }
+          return {
+            kind: 'data',
+            data: (part as any).data,
+          };
         }),
         // Include contextId directly in message if available
         ...(request.context?.['contextId'] ? { contextId: request.context['contextId'] } : {}),
@@ -186,31 +175,27 @@ export class A2AClient {
                   // Transform message to A2A protocol format
                   const a2aMessage = {
                     kind: 'message',
-                    messageId: crypto.randomUUID
-                      ? crypto.randomUUID()
-                      : `msg-${Date.now()}-${Math.random()}`,
+                    messageId: crypto.randomUUID ? crypto.randomUUID() : `msg-${Date.now()}-${Math.random()}`,
                     role: request.message.role,
                     parts: request.message.content.map((part) => {
                       if (part.type === 'text') {
                         return { kind: 'text', text: part.content };
-                      } else if (part.type === 'file') {
+                      }
+                      if (part.type === 'file') {
                         return {
                           kind: 'file',
                           mimeType: part.mimeType,
                           data: part.data,
                           filename: part.filename,
                         };
-                      } else {
-                        return {
-                          kind: 'data',
-                          data: (part as any).data,
-                        };
                       }
+                      return {
+                        kind: 'data',
+                        data: (part as any).data,
+                      };
                     }),
                     // Include contextId directly in message if available
-                    ...(request.context?.['contextId']
-                      ? { contextId: request.context['contextId'] }
-                      : {}),
+                    ...(request.context?.['contextId'] ? { contextId: request.context['contextId'] } : {}),
                     // Include taskId directly in message if available
                     ...(request.context?.['taskId'] ? { taskId: request.context['taskId'] } : {}),
                   };
@@ -328,9 +313,7 @@ export class A2AClient {
                           messages: [...currentTask.messages],
                           artifacts: currentTask.artifacts ? [...currentTask.artifacts] : undefined,
                           // Pass through contextId to the consumer
-                          ...((currentTask as any).contextId
-                            ? { contextId: (currentTask as any).contextId }
-                            : {}),
+                          ...((currentTask as any).contextId ? { contextId: (currentTask as any).contextId } : {}),
                         });
 
                         // Check if completed
@@ -360,14 +343,11 @@ export class A2AClient {
                           messages: [],
                           artifacts: [],
                           // Pass through contextId to the consumer
-                          ...((currentTask as any).contextId
-                            ? { contextId: (currentTask as any).contextId }
-                            : {}),
+                          ...((currentTask as any).contextId ? { contextId: (currentTask as any).contextId } : {}),
                         });
                       } else if (
                         result.kind === 'auth-required' ||
-                        (result.kind === 'status-update' &&
-                          result.status?.state === 'auth-required')
+                        (result.kind === 'status-update' && result.status?.state === 'auth-required')
                       ) {
                         // Handle authentication required status FIRST before general status updates
                         console.log('[a2a-client] AUTH REQUIRED EVENT DETECTED!', {
@@ -405,10 +385,7 @@ export class A2AClient {
                             if (part.kind === 'Data' || part.kind === 'data') {
                               const authData = part.data;
                               console.log('[a2a-client] Auth data:', authData);
-                              if (
-                                authData?.messageType === 'InTaskAuthRequired' &&
-                                authData?.consentLink
-                              ) {
+                              if (authData?.messageType === 'InTaskAuthRequired' && authData?.consentLink) {
                                 // Handle new packet structure where consentLink is an object
                                 const rawConsentLink = authData.consentLink;
                                 console.log('[a2a-client] Raw consentLink:', {
@@ -418,22 +395,16 @@ export class A2AClient {
                                 });
 
                                 // Check if consentLink is a string or object with link property
-                                const consentLinkUrl =
-                                  typeof rawConsentLink === 'string'
-                                    ? rawConsentLink
-                                    : rawConsentLink?.link;
+                                const consentLinkUrl = typeof rawConsentLink === 'string' ? rawConsentLink : rawConsentLink?.link;
 
-                                console.log(
-                                  '[a2a-client] Extracted consentLinkUrl:',
-                                  consentLinkUrl
-                                );
+                                console.log('[a2a-client] Extracted consentLinkUrl:', consentLinkUrl);
 
                                 // Validate that we have a valid consent link URL
                                 if (!consentLinkUrl || typeof consentLinkUrl !== 'string') {
-                                  console.error(
-                                    '[a2a-client] Invalid consent link - skipping auth part:',
-                                    { rawConsentLink, consentLinkUrl }
-                                  );
+                                  console.error('[a2a-client] Invalid consent link - skipping auth part:', {
+                                    rawConsentLink,
+                                    consentLinkUrl,
+                                  });
                                   continue;
                                 }
 
@@ -444,13 +415,11 @@ export class A2AClient {
                                       ? rawConsentLink.status
                                       : authData.status || 'Unauthenticated',
                                   serviceName:
-                                    typeof rawConsentLink === 'object' &&
-                                    rawConsentLink?.apiDetails?.apiDisplayName
+                                    typeof rawConsentLink === 'object' && rawConsentLink?.apiDetails?.apiDisplayName
                                       ? rawConsentLink.apiDetails.apiDisplayName
                                       : authData.serviceName || 'External Service',
                                   serviceIcon:
-                                    typeof rawConsentLink === 'object' &&
-                                    rawConsentLink?.apiDetails?.apiIconUri
+                                    typeof rawConsentLink === 'object' && rawConsentLink?.apiDetails?.apiIconUri
                                       ? rawConsentLink.apiDetails.apiIconUri
                                       : authData.serviceIcon,
                                   description: authData.description,
@@ -479,9 +448,7 @@ export class A2AClient {
                               })
                               .catch((error) => {
                                 console.error('[a2a-client] Auth handler error:', error);
-                                errorOccurred = new Error(
-                                  `Authentication failed: ${error.message}`
-                                );
+                                errorOccurred = new Error(`Authentication failed: ${error.message}`);
                                 isComplete = true;
                                 if (sseClient) {
                                   sseClient.close();
@@ -517,13 +484,8 @@ export class A2AClient {
 
                         // Update task state
                         currentTask.state =
-                          result.status?.state === 'completed'
-                            ? 'completed'
-                            : result.status?.state === 'failed'
-                              ? 'failed'
-                              : 'running';
-                        currentTask.updatedAt =
-                          result.status?.timestamp || new Date().toISOString();
+                          result.status?.state === 'completed' ? 'completed' : result.status?.state === 'failed' ? 'failed' : 'running';
+                        currentTask.updatedAt = result.status?.timestamp || new Date().toISOString();
 
                         // Update contextId if provided
                         if (result.contextId) {
@@ -555,9 +517,7 @@ export class A2AClient {
                           messages: [...currentTask.messages],
                           artifacts: currentTask.artifacts ? [...currentTask.artifacts] : undefined,
                           // Pass through contextId to the consumer
-                          ...((currentTask as any).contextId
-                            ? { contextId: (currentTask as any).contextId }
-                            : {}),
+                          ...((currentTask as any).contextId ? { contextId: (currentTask as any).contextId } : {}),
                         });
 
                         // Check if this is the final update
@@ -589,8 +549,7 @@ export class A2AClient {
                           const artifact = result.artifact;
                           const artifactId = (artifact as any).artifactId || (artifact as any).id;
                           const existingArtifactIndex = currentTask.artifacts?.findIndex(
-                            (a) =>
-                              (a as any).artifactId === artifactId || (a as any).id === artifactId
+                            (a) => (a as any).artifactId === artifactId || (a as any).id === artifactId
                           );
 
                           if (existingArtifactIndex === -1 || existingArtifactIndex === undefined) {
@@ -613,14 +572,7 @@ export class A2AClient {
                             (part: any) => part.kind === 'file' && part.bytes && part.mimeType
                           );
 
-                          if (!result.append) {
-                            // Start new message - this is the first chunk
-                            const newMessage = {
-                              role: 'assistant' as const,
-                              content: [{ type: 'text' as const, content: textParts }],
-                            };
-                            currentTask.messages = [...(currentTask.messages || []), newMessage];
-                          } else {
+                          if (result.append) {
                             // Append to existing message - this is a continuation
                             if (currentTask.messages && currentTask.messages.length > 0) {
                               const lastMessageIndex = currentTask.messages.length - 1;
@@ -650,6 +602,13 @@ export class A2AClient {
                                 }
                               }
                             }
+                          } else {
+                            // Start new message - this is the first chunk
+                            const newMessage = {
+                              role: 'assistant' as const,
+                              content: [{ type: 'text' as const, content: textParts }],
+                            };
+                            currentTask.messages = [...(currentTask.messages || []), newMessage];
                           }
 
                           // Only queue task update if artifact has file parts
@@ -660,9 +619,7 @@ export class A2AClient {
                               messages: [...(currentTask.messages || [])],
                               artifacts: currentTask.artifacts ? [...currentTask.artifacts] : [],
                               // Pass through contextId to the consumer
-                              ...((currentTask as any).contextId
-                                ? { contextId: (currentTask as any).contextId }
-                                : {}),
+                              ...((currentTask as any).contextId ? { contextId: (currentTask as any).contextId } : {}),
                             });
                           }
                         } else if (result.artifact) {
@@ -672,8 +629,7 @@ export class A2AClient {
                           // Check if this artifact already exists (avoid duplicates)
                           const artifactId = (artifact as any).artifactId || (artifact as any).id;
                           const existingArtifactIndex = currentTask.artifacts?.findIndex(
-                            (a) =>
-                              (a as any).artifactId === artifactId || (a as any).id === artifactId
+                            (a) => (a as any).artifactId === artifactId || (a as any).id === artifactId
                           );
 
                           if (existingArtifactIndex === -1 || existingArtifactIndex === undefined) {
@@ -712,11 +668,7 @@ export class A2AClient {
                       }
 
                       // Check if this is the final message
-                      if (
-                        result.final ||
-                        result.status?.state === 'completed' ||
-                        result.status?.state === 'failed'
-                      ) {
+                      if (result.final || result.status?.state === 'completed' || result.status?.state === 'failed') {
                         isComplete = true;
                         if (sseClient) {
                           sseClient.close();
@@ -752,26 +704,26 @@ export class A2AClient {
                 if (messageQueue.length > 0) {
                   const task = messageQueue.shift()!;
                   return { value: task, done: false };
-                } else if (isComplete) {
-                  return { done: true, value: undefined };
-                } else {
-                  // Wait for new messages
-                  return new Promise((resolve, reject) => {
-                    const checkQueue = setInterval(() => {
-                      if (errorOccurred) {
-                        clearInterval(checkQueue);
-                        reject(errorOccurred);
-                      } else if (messageQueue.length > 0) {
-                        clearInterval(checkQueue);
-                        const task = messageQueue.shift()!;
-                        resolve({ value: task, done: false });
-                      } else if (isComplete) {
-                        clearInterval(checkQueue);
-                        resolve({ done: true, value: undefined });
-                      }
-                    }, 100);
-                  });
                 }
+                if (isComplete) {
+                  return { done: true, value: undefined };
+                }
+                // Wait for new messages
+                return new Promise((resolve, reject) => {
+                  const checkQueue = setInterval(() => {
+                    if (errorOccurred) {
+                      clearInterval(checkQueue);
+                      reject(errorOccurred);
+                    } else if (messageQueue.length > 0) {
+                      clearInterval(checkQueue);
+                      const task = messageQueue.shift()!;
+                      resolve({ value: task, done: false });
+                    } else if (isComplete) {
+                      clearInterval(checkQueue);
+                      resolve({ done: true, value: undefined });
+                    }
+                  }, 100);
+                });
               } catch (error) {
                 if (sseClient) {
                   sseClient.close();
@@ -798,10 +750,7 @@ export class A2AClient {
   };
 
   // Send authentication completed message as a regular user message with data part
-  sendAuthenticationCompleted = async (
-    contextId: string,
-    taskId: string
-  ): Promise<AsyncIterable<Task>> => {
+  sendAuthenticationCompleted = async (contextId: string, taskId: string): Promise<AsyncIterable<Task>> => {
     // Create the auth completed message exactly as expected by the server
     // The contextId and taskId must be in the message itself, and we need a "data" part
     const messageRequest: MessageSendRequest = {
@@ -846,14 +795,12 @@ export class A2AClient {
       await this.httpClient.post(`/tasks/${taskId}/cancel`, { reason });
     },
 
-    waitForCompletion: async (
-      taskId: string,
-      options: WaitForCompletionOptions = {}
-    ): Promise<Task> => {
+    waitForCompletion: async (taskId: string, options: WaitForCompletionOptions = {}): Promise<Task> => {
       const { pollingInterval = 1000, timeout = 30000 } = options;
 
       const startTime = Date.now();
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const task = await this.task.get(taskId);
 

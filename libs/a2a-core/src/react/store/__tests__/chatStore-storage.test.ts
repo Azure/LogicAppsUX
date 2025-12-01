@@ -214,9 +214,7 @@ describe('ChatStore - Storage Integration', () => {
         },
       ];
 
-      (mockStorage.listSessions as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
-        existingSessions
-      );
+      (mockStorage.listSessions as ReturnType<typeof vi.fn>).mockResolvedValueOnce(existingSessions);
       (mockStorage.deleteSession as ReturnType<typeof vi.fn>).mockResolvedValueOnce(undefined);
 
       const { result } = renderHook(() => useChatStore());
@@ -255,9 +253,7 @@ describe('ChatStore - Storage Integration', () => {
         updatedAt: new Date(),
       };
 
-      (mockStorage.listSessions as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
-        initialSession,
-      ]);
+      (mockStorage.listSessions as ReturnType<typeof vi.fn>).mockResolvedValueOnce([initialSession]);
       (mockStorage.updateSession as ReturnType<typeof vi.fn>).mockResolvedValueOnce(updatedSession);
 
       const { result } = renderHook(() => useChatStore());

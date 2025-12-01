@@ -264,9 +264,7 @@ test.describe('Complete Chat Flow', { tag: '@mock' }, () => {
     await page.getByRole('button', { name: /start a new chat/i }).click();
     await page.locator('textarea').first().fill('Hello!');
 
-    const sendButton = page
-      .getByRole('button', { name: /send/i })
-      .or(page.locator('button:has(svg)').last());
+    const sendButton = page.getByRole('button', { name: /send/i }).or(page.locator('button:has(svg)').last());
     await sendButton.click();
 
     // Should show typing indicator

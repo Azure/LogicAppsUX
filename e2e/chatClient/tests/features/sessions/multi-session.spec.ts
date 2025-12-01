@@ -395,9 +395,7 @@ test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
       await route.continue();
     });
 
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`);
     await page.waitForLoadState('networkidle');
   });
 
@@ -442,9 +440,7 @@ test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
     }
   });
 
-  test('should show typing indicator on chat tab when switching sessions during streaming', async ({
-    page,
-  }) => {
+  test('should show typing indicator on chat tab when switching sessions during streaming', async ({ page }) => {
     // Start first chat session
     await page.getByRole('button', { name: /start a new chat/i }).click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
@@ -480,9 +476,7 @@ test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
     }
   });
 
-  test('should preserve message when switching back to session after message completed streaming', async ({
-    page,
-  }) => {
+  test('should preserve message when switching back to session after message completed streaming', async ({ page }) => {
     // Start first chat session
     await page.getByRole('button', { name: /start a new chat/i }).click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });

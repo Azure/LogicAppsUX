@@ -157,8 +157,6 @@ test.describe('Server Error Responses', { tag: '@mock' }, () => {
   });
 
   test('should handle network timeout', async ({ page }) => {
-    let requestCount = 0;
-
     await page.route('**/api/agents/test', async (route: Route) => {
       const request = route.request();
       if (request.method() !== 'POST') {
@@ -177,7 +175,6 @@ test.describe('Server Error Responses', { tag: '@mock' }, () => {
       }
 
       if (postData?.method === 'message/stream') {
-        requestCount++;
         // Hang the request - don't respond at all (simulates timeout)
         // This will trigger client-side timeout handling
 
@@ -658,9 +655,7 @@ test.describe('Rate Limiting and Throttling', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Should show rate limit error
-    await expect(
-      page.getByText(/too many requests|rate limit|slow down|try again later/i).first()
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/too many requests|rate limit|slow down|try again later/i).first()).toBeVisible({ timeout: 10000 });
 
     // Input should be re-enabled
     await expect(messageInput).toBeEnabled({ timeout: 5000 });

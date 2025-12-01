@@ -268,6 +268,7 @@ describe('A2AClient - Stream', () => {
 
     await expect(async () => {
       const stream = client.message.stream(invalidRequest);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for await (const _update of stream) {
         // Should not reach here
       }
@@ -454,8 +455,6 @@ describe('A2AClient - Stream', () => {
     expect(updates).toHaveLength(4); // Initial + 3 updates
     expect(updates[1].messages[1].content[0].content).toBe('Once upon a');
     expect(updates[2].messages[1].content[0].content).toBe('Once upon a time, in a');
-    expect(updates[3].messages[1].content[0].content).toBe(
-      'Once upon a time, in a land far away...'
-    );
+    expect(updates[3].messages[1].content[0].content).toBe('Once upon a time, in a land far away...');
   });
 });

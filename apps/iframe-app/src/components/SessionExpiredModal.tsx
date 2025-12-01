@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 interface SessionExpiredModalProps {
   isOpen: boolean;
@@ -9,7 +9,9 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({ isOpen
     window.location.reload();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div

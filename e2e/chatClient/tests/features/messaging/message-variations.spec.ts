@@ -47,9 +47,7 @@ test.describe('Long Message Handling', { tag: '@mock' }, () => {
     const sendButton = page.locator('button:has(svg)').last();
 
     // Create a 5000+ character message
-    const extremelyLongMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(
-      100
-    );
+    const extremelyLongMessage = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(100);
 
     expect(extremelyLongMessage.length).toBeGreaterThan(5000);
 
@@ -77,9 +75,7 @@ test.describe('Long Message Handling', { tag: '@mock' }, () => {
     await expect(page.getByText('give me a very long response')).toBeVisible({ timeout: 5000 });
 
     // Agent should respond with long text
-    await expect(
-      page.getByText('This is a very long response that contains a lot of information')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('This is a very long response that contains a lot of information')).toBeVisible({ timeout: 10000 });
 
     // Verify scrolling works by checking if messages container is scrollable
     const messagesContainer = page.locator('[class*="messages"]').or(page.locator('[role="log"]'));
@@ -405,11 +401,7 @@ test.describe('Message Boundary Edge Cases', { tag: '@mock' }, () => {
     const messageInput = page.locator('textarea').first();
     const sendButton = page.locator('button:has(svg)').last();
 
-    const pathMessages = [
-      'C:\\Users\\Test\\Documents\\file.txt',
-      '/home/user/documents/file.txt',
-      '..\\..\\config\\secrets.json',
-    ];
+    const pathMessages = ['C:\\Users\\Test\\Documents\\file.txt', '/home/user/documents/file.txt', '..\\..\\config\\secrets.json'];
 
     for (const msg of pathMessages) {
       await expect(messageInput).toBeEnabled({ timeout: 5000 });

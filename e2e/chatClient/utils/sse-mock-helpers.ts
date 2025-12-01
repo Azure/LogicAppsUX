@@ -106,11 +106,7 @@ export const mockSSEEndpoint = async (page: Page, url: string, config: SSEMockCo
 /**
  * Mock SSE endpoint with custom handler
  */
-export const mockSSEWithHandler = async (
-  page: Page,
-  url: string,
-  handler: (request: Request) => Promise<SSEMockConfig>
-) => {
+export const mockSSEWithHandler = async (page: Page, url: string, handler: (request: Request) => Promise<SSEMockConfig>) => {
   await page.route(url, async (route: Route) => {
     const request = route.request();
 
@@ -148,20 +144,13 @@ export const mockSSEWithHandler = async (
  * Wait for SSE connection to be established
  */
 export const waitForSSEConnection = async (page: Page, url: string, timeout = 5000) => {
-  return page.waitForRequest(
-    (request) => request.url().includes(url) && request.method() === 'POST',
-    { timeout }
-  );
+  return page.waitForRequest((request) => request.url().includes(url) && request.method() === 'POST', { timeout });
 };
 
 /**
  * Wait for SSE event in page
  */
-export const waitForSSEEvent = async (
-  page: Page,
-  eventType: string,
-  timeout = 5000
-): Promise<unknown> => {
+export const waitForSSEEvent = async (page: Page, eventType: string, timeout = 5000): Promise<unknown> => {
   return page.evaluate(
     ({ eventType, timeout }) => {
       return new Promise((resolve, reject) => {

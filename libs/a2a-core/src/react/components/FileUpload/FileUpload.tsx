@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import type React from 'react';
+import { useRef } from 'react';
 
 interface FileUploadProps {
   onFileSelect: (files: FileList) => void;
@@ -26,9 +27,7 @@ export function FileUpload({
     if (input.files && input.files.length > 0) {
       const validFiles: File[] = [];
 
-      for (let i = 0; i < input.files.length; i++) {
-        const file = input.files[i];
-
+      for (const file of input.files) {
         // Check file size
         if (file.size > maxFileSize) {
           alert(`File "${file.name}" is too large. Maximum size is ${formatFileSize(maxFileSize)}`);
@@ -88,20 +87,8 @@ export function FileUpload({
         className="hiddenInput"
         disabled={disabled}
       />
-      <button
-        type="button"
-        onClick={handleClick}
-        className="uploadButton"
-        disabled={disabled}
-        title="Attach files"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+      <button type="button" onClick={handleClick} className="uploadButton" disabled={disabled} title="Attach files">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M10.5 4.5L10.5 13.5M10.5 13.5L7 10M10.5 13.5L14 10"
             stroke="currentColor"
@@ -117,9 +104,11 @@ export function FileUpload({
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 }

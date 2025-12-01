@@ -86,10 +86,7 @@ export const TEST_METADATA = {
 /**
  * Create a test user message with optional overrides
  */
-export const createTestUserMessage = (
-  content: string = TEST_MESSAGES.SIMPLE_QUESTION,
-  metadata?: Record<string, unknown>
-): Message => {
+export const createTestUserMessage = (content: string = TEST_MESSAGES.SIMPLE_QUESTION, metadata?: Record<string, unknown>): Message => {
   return createUserMessage(content, metadata ?? TEST_METADATA.DEFAULT);
 };
 
@@ -185,14 +182,10 @@ export const TEST_VIEWPORTS = {
  * Test user agents
  */
 export const TEST_USER_AGENTS = {
-  CHROME_DESKTOP:
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  FIREFOX_DESKTOP:
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0',
-  SAFARI_DESKTOP:
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
-  CHROME_MOBILE:
-    'Mozilla/5.0 (Linux; Android 10; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+  CHROME_DESKTOP: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  FIREFOX_DESKTOP: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0',
+  SAFARI_DESKTOP: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+  CHROME_MOBILE: 'Mozilla/5.0 (Linux; Android 10; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
   SAFARI_MOBILE:
     'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1',
 } as const;

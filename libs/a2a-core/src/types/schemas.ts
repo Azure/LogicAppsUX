@@ -228,13 +228,7 @@ export function isJsonRpcError(response: unknown): response is JsonRpcError {
 
 // Helper type guard to check if response has result
 export function isJsonRpcResult<T>(response: unknown): response is JsonRpcResult<T> {
-  if (
-    typeof response === 'object' &&
-    response !== null &&
-    'jsonrpc' in response &&
-    response.jsonrpc === '2.0' &&
-    'result' in response
-  ) {
+  if (typeof response === 'object' && response !== null && 'jsonrpc' in response && response.jsonrpc === '2.0' && 'result' in response) {
     return true;
   }
   return false;

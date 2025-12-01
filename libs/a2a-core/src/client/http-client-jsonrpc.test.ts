@@ -28,9 +28,7 @@ describe('HttpClient - JSON-RPC Error Handling', () => {
         }),
       } as Response);
 
-      await expect(client.request('/test', { method: 'POST' })).rejects.toThrow(
-        JsonRpcErrorResponse
-      );
+      await expect(client.request('/test', { method: 'POST' })).rejects.toThrow(JsonRpcErrorResponse);
     });
 
     it('should preserve error code in JsonRpcErrorResponse', async () => {

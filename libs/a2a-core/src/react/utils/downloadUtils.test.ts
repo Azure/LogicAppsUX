@@ -26,12 +26,8 @@ describe('downloadUtils', () => {
     };
 
     createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink as any) as any;
-    appendChildSpy = vi
-      .spyOn(document.body, 'appendChild')
-      .mockImplementation(() => mockLink as any) as any;
-    removeChildSpy = vi
-      .spyOn(document.body, 'removeChild')
-      .mockImplementation(() => mockLink as any) as any;
+    appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any) as any;
+    removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any) as any;
   });
 
   afterEach(() => {

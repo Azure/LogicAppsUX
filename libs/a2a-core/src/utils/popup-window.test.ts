@@ -42,11 +42,7 @@ describe('popup-window', () => {
     it('should open a popup window with default options', () => {
       openPopupWindow('https://example.com/auth');
 
-      expect(window.open).toHaveBeenCalledWith(
-        'https://example.com/auth',
-        'a2a-auth',
-        expect.stringContaining('width=600')
-      );
+      expect(window.open).toHaveBeenCalledWith('https://example.com/auth', 'a2a-auth', expect.stringContaining('width=600'));
       expect(mockPopup.focus).toHaveBeenCalled();
     });
 
@@ -106,9 +102,7 @@ describe('popup-window', () => {
     it('should throw error when popup blocker prevents opening', async () => {
       window.open = vi.fn().mockReturnValue(null);
 
-      await expect(openPopupWindow('https://example.com/auth')).rejects.toThrow(
-        'Failed to open popup window'
-      );
+      await expect(openPopupWindow('https://example.com/auth')).rejects.toThrow('Failed to open popup window');
     });
 
     it('should timeout after 10 minutes and close popup', async () => {

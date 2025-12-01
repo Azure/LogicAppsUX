@@ -109,10 +109,7 @@ describe('useTheme', () => {
     expect(setPropertySpy).toHaveBeenCalledWith('--chat-color-success', '#388e3c');
 
     // Check typography CSS variables
-    expect(setPropertySpy).toHaveBeenCalledWith(
-      '--chat-font-family',
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    );
+    expect(setPropertySpy).toHaveBeenCalledWith('--chat-font-family', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
     expect(setPropertySpy).toHaveBeenCalledWith('--chat-font-size-small', '0.875rem');
     expect(setPropertySpy).toHaveBeenCalledWith('--chat-font-size-base', '1rem');
     expect(setPropertySpy).toHaveBeenCalledWith('--chat-font-size-large', '1.125rem');
@@ -315,12 +312,9 @@ describe('useTheme', () => {
   });
 
   it('applies theme when custom theme changes', () => {
-    const { rerender } = renderHook(
-      ({ theme }: { theme?: Partial<ChatTheme> }) => useTheme(theme),
-      {
-        initialProps: { theme: undefined as Partial<ChatTheme> | undefined },
-      }
-    );
+    const { rerender } = renderHook(({ theme }: { theme?: Partial<ChatTheme> }) => useTheme(theme), {
+      initialProps: { theme: undefined as Partial<ChatTheme> | undefined },
+    });
 
     const initialCallCount = setPropertySpy.mock.calls.length;
 

@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { AgentCardSchema } from './schemas';
-import type { AgentCard } from './schemas';
 import { getMockAgentCard } from '../test-utils/mock-agent-card';
 
 describe('AgentCard schema', () => {

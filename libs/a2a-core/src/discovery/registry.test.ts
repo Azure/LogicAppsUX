@@ -84,10 +84,7 @@ describe('EnterpriseAgentRegistry', () => {
   let registry: EnterpriseAgentRegistry;
 
   beforeEach(() => {
-    registry = new EnterpriseAgentRegistry(
-      'https://enterprise.example.com/registry',
-      'api-key-123'
-    );
+    registry = new EnterpriseAgentRegistry('https://enterprise.example.com/registry', 'api-key-123');
     vi.clearAllMocks();
   });
 
@@ -137,8 +134,6 @@ describe('EnterpriseAgentRegistry', () => {
       json: async () => mockAgentCard,
     } as Response);
 
-    const agentCard = await registry.getAgentCard('enterprise-123');
-
     expect(mockFetch).toHaveBeenCalledWith(
       'https://enterprise.example.com/registry/agents/enterprise-123',
       expect.objectContaining({
@@ -158,8 +153,6 @@ describe('EnterpriseAgentRegistry', () => {
       statusText: 'Unauthorized',
     } as Response);
 
-    await expect(registry.searchAgents('test')).rejects.toThrow(
-      'Failed to search agents: 401 Unauthorized'
-    );
+    await expect(registry.searchAgents('test')).rejects.toThrow('Failed to search agents: 401 Unauthorized');
   });
 });

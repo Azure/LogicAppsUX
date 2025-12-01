@@ -20,12 +20,7 @@
       "require": "./dist/react/styles.css"
     }
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE",
-    "package.json"
-  ],
+  "files": ["dist", "README.md", "LICENSE", "package.json"],
   "scripts": {
     "build": "tsup",
     "build:lib": "tsup",
@@ -39,19 +34,7 @@
     "check": "npm run typecheck && npm run test -- --run && npm run build",
     "prepublishOnly": "npm run check"
   },
-  "keywords": [
-    "a2a",
-    "a2a-protocol",
-    "ai",
-    "agents",
-    "ai-agents",
-    "sdk",
-    "browser",
-    "typescript",
-    "react",
-    "chat",
-    "streaming"
-  ],
+  "keywords": ["a2a", "a2a-protocol", "ai", "agents", "ai-agents", "sdk", "browser", "typescript", "react", "chat", "streaming"],
   "author": "Travis Vu",
   "license": "MIT",
   "devDependencies": {
@@ -96,8 +79,5 @@
     "zod": "^4.0.2",
     "zustand": "^4.4.0"
   },
-  "sideEffects": [
-    "*.css",
-    "**/*.css"
-  ]
+  "sideEffects": ["*.css", "**/*.css"]
 }

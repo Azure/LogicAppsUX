@@ -16,10 +16,7 @@ export { ChatWidget };
 export type { ChatWidgetProps, ChatTheme, Message, Attachment, AuthConfig, AgentCard };
 
 // For convenience, export a function to mount the widget
-export function mountChatWidget(
-  container: HTMLElement | string,
-  props: ChatWidgetProps
-): () => void {
+export function mountChatWidget(container: HTMLElement | string, props: ChatWidgetProps): () => void {
   const element = typeof container === 'string' ? document.querySelector(container) : container;
 
   if (!element) {

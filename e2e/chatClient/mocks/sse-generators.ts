@@ -11,11 +11,7 @@ function createSSEMessage(data: unknown): string {
   return `data: ${JSON.stringify(data)}\n\n`;
 }
 
-export function generateSSEResponse(
-  requestId: string,
-  userMessage: string,
-  messageType?: string
-): string {
+export function generateSSEResponse(requestId: string, userMessage: string, messageType?: string): string {
   const contextId = `ctx-${randomUUID()}`;
   const taskId = `task-${randomUUID()}`;
   const artifactId = randomUUID();
@@ -179,10 +175,7 @@ export function generateSSEResponse(
         },
       }),
     ];
-  } else if (
-    userMessage.toLowerCase().includes('structured') ||
-    userMessage.toLowerCase().includes('data')
-  ) {
+  } else if (userMessage.toLowerCase().includes('structured') || userMessage.toLowerCase().includes('data')) {
     messages = [
       createSSEMessage({
         jsonrpc: '2.0',
@@ -342,18 +335,7 @@ export function generateSSEResponse(
       }),
     ];
   } else if (userMessage.toLowerCase().includes('stream')) {
-    const words = [
-      'This',
-      'is',
-      'a',
-      'streaming',
-      'response',
-      'that',
-      'arrives',
-      'word',
-      'by',
-      'word',
-    ];
+    const words = ['This', 'is', 'a', 'streaming', 'response', 'that', 'arrives', 'word', 'by', 'word'];
 
     messages = [
       createSSEMessage({

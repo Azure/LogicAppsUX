@@ -1,4 +1,3 @@
-import React from 'react';
 import { ChatWidget } from '@microsoft/logicAppsChat/react';
 
 /**

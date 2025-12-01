@@ -1,18 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Button,
-  Text,
-  Badge,
-  makeStyles,
-  shorthands,
-  tokens,
-  mergeClasses,
-} from '@fluentui/react-components';
-import {
-  ShieldCheckmarkRegular,
-  CheckmarkCircleRegular,
-  ErrorCircleRegular,
-} from '@fluentui/react-icons';
+import type React from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { Button, Text, Badge, makeStyles, shorthands, tokens, mergeClasses } from '@fluentui/react-components';
+import { ShieldCheckmarkRegular, CheckmarkCircleRegular, ErrorCircleRegular } from '@fluentui/react-icons';
 import type { AuthRequiredPart, AuthenticationStatus } from '../../types';
 import { openPopupWindow } from '../../../utils/popup-window';
 
@@ -105,12 +94,7 @@ interface AuthPartState extends AuthRequiredPart {
   error?: string;
 }
 
-export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
-  authParts,
-  status,
-  onAuthenticate,
-  onCancel,
-}) => {
+export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({ authParts, status, onAuthenticate, onCancel }) => {
   const styles = useStyles();
   const [localStatus, setLocalStatus] = useState<AuthenticationStatus>(status);
   const [authStates, setAuthStates] = useState<AuthPartState[]>(() =>
@@ -138,9 +122,7 @@ export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
       });
 
       if (!authPart || authPart.isAuthenticated || authPart.isAuthenticating) {
-        console.log(
-          '[AuthenticationMessage] Skipping authentication - already authenticated or authenticating'
-        );
+        console.log('[AuthenticationMessage] Skipping authentication - already authenticated or authenticating');
         return;
       }
 
@@ -205,8 +187,7 @@ export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
 
   // Check if all auth parts are locally authenticated
   const allLocallyAuthenticated = authStates.every((state) => state.isAuthenticated);
-  const effectiveStatus =
-    localStatus === 'canceled' ? 'canceled' : allLocallyAuthenticated ? 'completed' : localStatus;
+  const effectiveStatus = localStatus === 'canceled' ? 'canceled' : allLocallyAuthenticated ? 'completed' : localStatus;
 
   const getIcon = () => {
     switch (effectiveStatus) {
@@ -268,15 +249,12 @@ export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
 
       {effectiveStatus === 'pending' && (
         <Text className={styles.description}>
-          This action requires authentication with{' '}
-          {authParts.length === 1 ? 'an external service' : 'external services'}. Please sign in to
+          This action requires authentication with {authParts.length === 1 ? 'an external service' : 'external services'}. Please sign in to
           continue.
         </Text>
       )}
 
-      {effectiveStatus === 'canceled' && (
-        <Text className={styles.description}>Authentication request was canceled.</Text>
-      )}
+      {effectiveStatus === 'canceled' && <Text className={styles.description}>Authentication request was canceled.</Text>}
 
       {effectiveStatus !== 'canceled' && (
         <div className={styles.services}>
@@ -284,11 +262,7 @@ export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
             <div key={index} className={styles.service}>
               <div className={styles.serviceInfo}>
                 {authState.serviceIcon ? (
-                  <img
-                    src={authState.serviceIcon}
-                    alt={authState.serviceName}
-                    className={styles.serviceIcon}
-                  />
+                  <img src={authState.serviceIcon} alt={authState.serviceName} className={styles.serviceIcon} />
                 ) : (
                   <ShieldCheckmarkRegular />
                 )}
@@ -310,22 +284,14 @@ export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
                   onClick={() => handleAuthenticate(index)}
                   icon={authState.isAuthenticated ? <CheckmarkCircleRegular /> : undefined}
                 >
-                  {authState.isAuthenticated
-                    ? 'Authenticated'
-                    : authState.isAuthenticating
-                      ? 'Authenticating...'
-                      : 'Sign In'}
+                  {authState.isAuthenticated ? 'Authenticated' : authState.isAuthenticating ? 'Authenticating...' : 'Sign In'}
                 </Button>
               )}
 
               {effectiveStatus === 'completed' && (
                 <Badge
                   appearance="tint"
-                  icon={
-                    <CheckmarkCircleRegular
-                      style={{ color: tokens.colorPaletteGreenForeground1 }}
-                    />
-                  }
+                  icon={<CheckmarkCircleRegular style={{ color: tokens.colorPaletteGreenForeground1 }} />}
                   style={{ color: tokens.colorPaletteGreenForeground1 }}
                 >
                   Authenticated
@@ -337,24 +303,14 @@ export const AuthenticationMessage: React.FC<AuthenticationMessageProps> = ({
       )}
 
       {effectiveStatus === 'completed' && (
-        <Badge
-          appearance="tint"
-          size="large"
-          className={styles.successBadge}
-          icon={<CheckmarkCircleRegular />}
-        >
+        <Badge appearance="tint" size="large" className={styles.successBadge} icon={<CheckmarkCircleRegular />}>
           All services authenticated successfully
         </Badge>
       )}
 
       {effectiveStatus === 'pending' && onCancel && (
         <div className={styles.cancelButtonContainer}>
-          <Button
-            appearance="secondary"
-            size="small"
-            onClick={handleCancel}
-            disabled={authStates.some((state) => state.isAuthenticating)}
-          >
+          <Button appearance="secondary" size="small" onClick={handleCancel} disabled={authStates.some((state) => state.isAuthenticating)}>
             Cancel Authentication
           </Button>
         </div>

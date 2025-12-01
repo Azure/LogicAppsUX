@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  JsonRpcErrorSchema,
-  isJsonRpcError,
-  isJsonRpcResult,
-  createJsonRpcResultSchema,
-} from './schemas';
+import { JsonRpcErrorSchema, isJsonRpcError, isJsonRpcResult, createJsonRpcResultSchema } from './schemas';
 import { JsonRpcErrorResponse } from './errors';
 import { z } from 'zod';
 
@@ -47,9 +42,7 @@ describe('JSON-RPC Real-World Examples', () => {
 
       expect(parseResult.success).toBe(true);
       if (parseResult.success) {
-        expect(parseResult.data.result.taskId).toBe(
-          '08584398997403011416617093712_08584398997401729245939347293CU00'
-        );
+        expect(parseResult.data.result.taskId).toBe('08584398997403011416617093712_08584398997401729245939347293CU00');
         expect(parseResult.data.result.kind).toBe('status-update');
         expect(parseResult.data.result.status.state).toBe('submitted');
       }
@@ -76,9 +69,7 @@ describe('JSON-RPC Real-World Examples', () => {
 
       // The result should be extractable
       const extractedResult = (realWorldResult as any).result;
-      expect(extractedResult.taskId).toBe(
-        '08584398997403011416617093712_08584398997401729245939347293CU00'
-      );
+      expect(extractedResult.taskId).toBe('08584398997403011416617093712_08584398997401729245939347293CU00');
       expect(extractedResult.kind).toBe('status-update');
     });
   });
@@ -226,9 +217,7 @@ describe('JSON-RPC Real-World Examples', () => {
       // HTTP client would extract the result
       const extracted = response.result;
 
-      expect(extracted.taskId).toBe(
-        '08584398997403011416617093712_08584398997401729245939347293CU00'
-      );
+      expect(extracted.taskId).toBe('08584398997403011416617093712_08584398997401729245939347293CU00');
       expect(extracted.kind).toBe('status-update');
       expect(extracted.final).toBe(false);
     });

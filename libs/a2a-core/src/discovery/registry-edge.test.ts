@@ -30,9 +30,7 @@ describe('Registry edge cases', () => {
         statusText: 'Internal Server Error',
       } as Response);
 
-      await expect(registry.searchAgents('test')).rejects.toThrow(
-        'Failed to search agents: 500 Internal Server Error'
-      );
+      await expect(registry.searchAgents('test')).rejects.toThrow('Failed to search agents: 500 Internal Server Error');
     });
 
     it('should validate agent card from registry', async () => {
@@ -47,9 +45,7 @@ describe('Registry edge cases', () => {
         }),
       } as Response);
 
-      await expect(registry.getAgentCard('invalid-agent')).rejects.toThrow(
-        'Invalid agent card from registry'
-      );
+      await expect(registry.getAgentCard('invalid-agent')).rejects.toThrow('Invalid agent card from registry');
     });
   });
 
@@ -78,9 +74,7 @@ describe('Registry edge cases', () => {
         statusText: 'Forbidden',
       } as Response);
 
-      await expect(registry.getAgentCard('agent-123')).rejects.toThrow(
-        'Failed to get agent card: 403 Forbidden'
-      );
+      await expect(registry.getAgentCard('agent-123')).rejects.toThrow('Failed to get agent card: 403 Forbidden');
     });
   });
 });

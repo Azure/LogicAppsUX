@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ChatInterface } from './chat-interface';
 import { A2AClient } from '../client/a2a-client';
 import { SessionManager } from '../session/session-manager';
-import type { Message, Task, AgentCard } from '../types';
-import type { ChatOptions, ChatMessage, ChatEventMap } from './types';
+import type { Task, AgentCard } from '../types';
+import type { ChatMessage } from './types';
 
 // Mock dependencies
 vi.mock('../client/a2a-client');
@@ -85,8 +85,12 @@ describe('ChatInterface', () => {
       ];
 
       mockSession.get.mockImplementation((key: string) => {
-        if (key === 'a2a-chat-history-conv-123') return history;
-        if (key === 'a2a-conversation-id') return 'conv-123';
+        if (key === 'a2a-chat-history-conv-123') {
+          return history;
+        }
+        if (key === 'a2a-conversation-id') {
+          return 'conv-123';
+        }
         return undefined;
       });
 
@@ -466,12 +470,8 @@ describe('ChatInterface', () => {
       await chat.send('Hi');
 
       expect(messageHandler).toHaveBeenCalledTimes(2);
-      expect(messageHandler).toHaveBeenCalledWith(
-        expect.objectContaining({ role: 'user', content: 'Hi' })
-      );
-      expect(messageHandler).toHaveBeenCalledWith(
-        expect.objectContaining({ role: 'assistant', content: 'Hello!' })
-      );
+      expect(messageHandler).toHaveBeenCalledWith(expect.objectContaining({ role: 'user', content: 'Hi' }));
+      expect(messageHandler).toHaveBeenCalledWith(expect.objectContaining({ role: 'assistant', content: 'Hello!' }));
     });
 
     it('should emit error events', async () => {

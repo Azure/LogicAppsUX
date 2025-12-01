@@ -1,11 +1,6 @@
 import React from 'react';
-import { FluentProvider, Theme } from '@fluentui/react-components';
-import {
-  createCustomTheme,
-  ThemeConfig,
-  defaultLightTheme,
-  defaultDarkTheme,
-} from '../../theme/fluentTheme';
+import { FluentProvider, type Theme } from '@fluentui/react-components';
+import { createCustomTheme, type ThemeConfig, defaultLightTheme, defaultDarkTheme } from '../../theme/fluentTheme';
 
 export interface ChatThemeProviderProps {
   children: React.ReactNode;
@@ -14,12 +9,7 @@ export interface ChatThemeProviderProps {
   customTheme?: Theme;
 }
 
-export const ChatThemeProvider: React.FC<ChatThemeProviderProps> = ({
-  children,
-  theme = 'light',
-  themeConfig,
-  customTheme,
-}) => {
+export const ChatThemeProvider: React.FC<ChatThemeProviderProps> = ({ children, theme = 'light', themeConfig, customTheme }) => {
   const fluentTheme = React.useMemo(() => {
     if (customTheme) {
       return customTheme;
@@ -37,9 +27,7 @@ export const ChatThemeProvider: React.FC<ChatThemeProviderProps> = ({
   React.useEffect(() => {
     // Fix tabster dummy elements that have aria-hidden="true" with tabindex="0"
     const fixTabsterAccessibility = () => {
-      const tabsterDummies = document.querySelectorAll(
-        '[data-tabster-dummy][aria-hidden="true"][tabindex="0"]'
-      );
+      const tabsterDummies = document.querySelectorAll('[data-tabster-dummy][aria-hidden="true"][tabindex="0"]');
       tabsterDummies.forEach((element) => {
         element.setAttribute('tabindex', '-1');
       });

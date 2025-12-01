@@ -242,9 +242,7 @@ test.describe('Boundary Conditions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Tabs might be converted to spaces or preserved
-    const hasMessage = await page
-      .getByText(/Column1.*Column2.*Column3/)
-      .isVisible({ timeout: 5000 });
+    const hasMessage = await page.getByText(/Column1.*Column2.*Column3/).isVisible({ timeout: 5000 });
     expect(hasMessage).toBe(true);
   });
 });

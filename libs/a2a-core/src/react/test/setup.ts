@@ -135,7 +135,7 @@ global.TextDecoderStream = class TextDecoderStream {
   fatal: boolean;
   ignoreBOM: boolean;
 
-  constructor(label: string = 'utf-8', options?: TextDecoderOptions) {
+  constructor(label = 'utf-8', options?: TextDecoderOptions) {
     const { readable, writable } = new TransformStream<Uint8Array, string>({
       transform(chunk, controller) {
         controller.enqueue(new TextDecoder(label, options).decode(chunk));

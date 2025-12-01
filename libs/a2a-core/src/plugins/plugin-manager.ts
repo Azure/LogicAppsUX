@@ -1,10 +1,4 @@
-import type {
-  Plugin,
-  PluginContext,
-  PluginHooks,
-  PluginInfo,
-  PluginRegistrationOptions,
-} from './types';
+import type { Plugin, PluginContext, PluginHooks, PluginInfo, PluginRegistrationOptions } from './types';
 
 export class PluginManager {
   private plugins = new Map<string, Plugin>();
@@ -36,15 +30,15 @@ export class PluginManager {
       this.plugins.set(plugin.name, plugin);
       this.enabledPlugins.add(plugin.name); // Enabled by default
     } catch (error) {
-      throw new Error(
-        `Failed to install plugin ${plugin.name}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to install plugin ${plugin.name}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
   unregister(pluginName: string): void {
     const plugin = this.plugins.get(pluginName);
-    if (!plugin) return;
+    if (!plugin) {
+      return;
+    }
 
     // Call uninstall if provided
     try {
@@ -106,10 +100,14 @@ export class PluginManager {
 
     // Execute hooks from all enabled plugins
     for (const [pluginName, plugin] of this.plugins.entries()) {
-      if (!this.enabledPlugins.has(pluginName)) continue;
+      if (!this.enabledPlugins.has(pluginName)) {
+        continue;
+      }
 
       const hook = plugin.hooks?.[hookName];
-      if (!hook) continue;
+      if (!hook) {
+        continue;
+      }
 
       try {
         result = await hook(result);
