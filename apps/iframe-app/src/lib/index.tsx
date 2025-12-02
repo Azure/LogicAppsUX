@@ -8,7 +8,6 @@ import {
   type AuthConfig,
   type AgentCard,
 } from '@microsoft/logicAppsChat';
-import '@microsoft/logicAppsChat/styles.css';
 import '../styles/base.css';
 
 // Re-export everything from the core library
