@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ChatWidget,
-  ChatWindow,
-  useChatWidget,
-  AuthenticationMessage,
-  useChatStore,
-} from '../react';
+import { ChatWidget, ChatWindow, useChatWidget, AuthenticationMessage, useChatStore } from '../react';
 import type { AuthRequiredEvent } from '../client/types';
 
 /**
@@ -116,11 +110,7 @@ export function ManualAuthUIExample() {
             zIndex: 1000,
           }}
         >
-          <AuthenticationMessage
-            authParts={authEvent.authParts}
-            status="pending"
-            onAuthenticate={handleAuthCompleted}
-          />
+          <AuthenticationMessage authParts={authEvent.authParts} status="pending" onAuthenticate={handleAuthCompleted} />
         </div>
       )}
     </div>

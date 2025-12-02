@@ -54,7 +54,9 @@ export class LoggerPlugin implements Plugin {
   }
 
   private log(level: LogLevel, message: string, data?: any): void {
-    if (!this.shouldLog(level)) return;
+    if (!this.shouldLog(level)) {
+      return;
+    }
 
     const formattedMessage = this.formatMessage(level, message);
 

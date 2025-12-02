@@ -94,7 +94,9 @@ export class SessionManager extends EventEmitter<SessionEventMap> {
   private async loadSession(): Promise<SessionData | null> {
     try {
       const stored = await this.storagePlugin.getItem(this.options.storageKey);
-      if (!stored) return null;
+      if (!stored) {
+        return null;
+      }
 
       const parsed = JSON.parse(stored);
       const session: SessionData = {

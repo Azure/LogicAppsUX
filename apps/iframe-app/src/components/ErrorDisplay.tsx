@@ -26,16 +26,8 @@ export function ErrorDisplay({ title, message, details }: ErrorDisplayProps) {
         <p style={{ margin: 0 }}>{message}</p>
         {details && (
           <>
-            {details.url && (
-              <p style={{ marginTop: '10px', fontSize: '12px', color: '#999' }}>
-                URL: {details.url}
-              </p>
-            )}
-            {details.parameters && (
-              <p style={{ marginTop: '5px', fontSize: '12px', color: '#999' }}>
-                Parameters: {details.parameters}
-              </p>
-            )}
+            {details.url && <p style={{ marginTop: '10px', fontSize: '12px', color: '#999' }}>URL: {details.url}</p>}
+            {details.parameters && <p style={{ marginTop: '5px', fontSize: '12px', color: '#999' }}>Parameters: {details.parameters}</p>}
           </>
         )}
       </div>

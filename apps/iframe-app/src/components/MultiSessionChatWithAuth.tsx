@@ -13,12 +13,7 @@ interface MultiSessionChatWithAuthProps extends Omit<ChatWidgetProps, 'agentCard
  * Example wrapper component that shows how to handle session expiration
  * with a modal when a 302 redirect is detected.
  */
-export function MultiSessionChatWithAuth({
-  apiUrl,
-  apiKey,
-  mode = 'light',
-  ...chatWidgetProps
-}: MultiSessionChatWithAuthProps) {
+export function MultiSessionChatWithAuth({ apiUrl, apiKey, mode = 'light', ...chatWidgetProps }: MultiSessionChatWithAuthProps) {
   const { isSessionExpired, handleUnauthorized } = useSessionExpiredHandler();
 
   return (

@@ -56,10 +56,7 @@ export interface ChatHistoryStorage {
    * @param updates - Partial updates to apply
    * @returns Updated session
    */
-  updateSession(
-    sessionId: string,
-    updates: Partial<Pick<ChatSession, 'name'>>
-  ): Promise<ChatSession>;
+  updateSession(sessionId: string, updates: Partial<Pick<ChatSession, 'name'>>): Promise<ChatSession>;
 
   /**
    * Delete (archive) a chat session

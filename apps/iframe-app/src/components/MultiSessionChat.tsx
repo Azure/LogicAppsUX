@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
-import {
-  ChatWidget,
-  ChatWidgetProps,
-  ChatThemeProvider,
-  StorageConfig,
-  useChatStore,
-  ServerHistoryStorage,
-} from '@microsoft/logicAppsChat';
-import { AgentCard, isDirectAgentCardUrl } from '@microsoft/logicAppsChat';
+import type { ChatWidgetProps, StorageConfig, AgentCard } from '@microsoft/logicAppsChat';
+import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage, isDirectAgentCardUrl } from '@microsoft/logicAppsChat';
 import {
   FluentProvider,
   makeStyles,
@@ -15,8 +8,9 @@ import {
   shorthands,
   Spinner,
   mergeClasses,
+  webLightTheme,
+  webDarkTheme,
 } from '@fluentui/react-components';
-import { webLightTheme, webDarkTheme } from '@fluentui/react-components';
 import { useChatSessions } from '../hooks/useChatSessions';
 import { SessionList } from './SessionList';
 
@@ -112,11 +106,7 @@ interface MultiSessionChatProps extends Omit<ChatWidgetProps, 'agentCard'> {
   mode?: 'light' | 'dark';
 }
 
-export function MultiSessionChat({
-  config,
-  mode = 'light',
-  ...chatWidgetProps
-}: MultiSessionChatProps) {
+export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }: MultiSessionChatProps) {
   const styles = useStyles();
   const [agentCard, setAgentCard] = useState<AgentCard | undefined>();
   const [isLoadingAgent, setIsLoadingAgent] = useState(true);
@@ -152,16 +142,9 @@ export function MultiSessionChat({
     }
 
     initializeStorage();
-  }, [config.storageConfig, config.apiUrl]);
+  }, [config.storageConfig, config.apiUrl, config.apiKey, config.oboUserToken]);
 
-  const {
-    sessions,
-    activeSessionId,
-    createNewSession,
-    switchSession,
-    renameSession,
-    deleteSession,
-  } = useChatSessions();
+  const { sessions, activeSessionId, createNewSession, switchSession, renameSession, deleteSession } = useChatSessions();
 
   // Check screen size and auto-collapse on small screens
   useEffect(() => {
@@ -188,7 +171,9 @@ export function MultiSessionChat({
     let animationFrameId: number;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing) return;
+      if (!isResizing) {
+        return;
+      }
 
       // Cancel any pending animation frame
       if (animationFrameId) {
@@ -242,9 +227,7 @@ export function MultiSessionChat({
         setIsLoadingAgent(true);
         setAgentError(undefined);
 
-        const url = isDirectAgentCardUrl(config.apiUrl)
-          ? config.apiUrl
-          : `${config.apiUrl}/.well-known/agent-card.json`;
+        const url = isDirectAgentCardUrl(config.apiUrl) ? config.apiUrl : `${config.apiUrl}/.well-known/agent-card.json`;
 
         const requestInit: RequestInit = {};
         const headers: HeadersInit = {};
@@ -287,7 +270,7 @@ export function MultiSessionChat({
     return () => {
       cancelled = true;
     };
-  }, [config.apiUrl]);
+  }, [config.apiKey, config.apiUrl, config.oboUserToken]);
 
   const handleNewSession = useCallback(async () => {
     try {
@@ -351,11 +334,7 @@ export function MultiSessionChat({
       <div className={mergeClasses(styles.multiSessionContainer, isResizing && styles.resizing)}>
         <div
           ref={sidebarRef}
-          className={mergeClasses(
-            styles.sidebar,
-            !isResizing && styles.sidebarTransition,
-            isCollapsed && styles.sidebarCollapsed
-          )}
+          className={mergeClasses(styles.sidebar, !isResizing && styles.sidebarTransition, isCollapsed && styles.sidebarCollapsed)}
           style={{ width: isCollapsed ? 0 : sidebarWidth }}
         >
           <SessionList
@@ -401,10 +380,7 @@ export function MultiSessionChat({
             {sessions.map((session) => (
               <div
                 key={session.id}
-                className={mergeClasses(
-                  styles.sessionChat,
-                  session.id !== activeSessionId && styles.sessionChatHidden
-                )}
+                className={mergeClasses(styles.sessionChat, session.id !== activeSessionId && styles.sessionChatHidden)}
               >
                 <ChatWidget
                   agentCard={agentCard}

@@ -6,13 +6,7 @@
 
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
-import {
-  waitForVisible,
-  typeRealistic,
-  waitForCondition,
-  getCount,
-  getAllInnerTexts,
-} from '../utils/test-helpers';
+import { waitForVisible, typeRealistic, waitForCondition, getCount, getAllInnerTexts } from '../utils/test-helpers';
 
 /**
  * Chat Page Object

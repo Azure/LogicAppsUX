@@ -133,9 +133,7 @@ test.describe('SSE Response Integration Tests', { tag: '@mock' }, () => {
     await expect(page.getByText(/This is a/)).toBeVisible({ timeout: 3000 });
 
     // Full response should eventually appear
-    await expect(
-      page.getByText(/This is a streaming response that arrives word by word/)
-    ).toBeVisible({
+    await expect(page.getByText(/This is a streaming response that arrives word by word/)).toBeVisible({
       timeout: 15000,
     });
 

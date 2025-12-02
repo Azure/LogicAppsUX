@@ -38,11 +38,9 @@ export function getAgentStorageIdentifier(agentUrl: string): string {
     const hostKey = url.host.replace(/\./g, '-');
 
     return `${hostKey}-${safeKey}`;
-  } catch (error) {
+  } catch (_error) {
     // Fallback for invalid URLs - create a hash of the URL
-    const hashNum = agentUrl
-      .split('')
-      .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0);
+    const hashNum = agentUrl.split('').reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0);
 
     const hashStr = Math.abs(hashNum).toString(36);
     return `agent-${hashStr}`;

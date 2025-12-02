@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { StatusMessage } from '../StatusMessage';
@@ -22,9 +21,7 @@ describe('StatusMessage', () => {
   });
 
   it('should show nothing when connected, not typing, and no auth required', () => {
-    const { container } = render(
-      <StatusMessage isConnected={true} isTyping={false} hasAuthRequired={false} />
-    );
+    const { container } = render(<StatusMessage isConnected={true} isTyping={false} hasAuthRequired={false} />);
     expect(container.firstChild).toBeNull();
   });
 

@@ -107,7 +107,7 @@ export class ServerHistoryStorage implements ChatHistoryStorage {
     // So we create a "pending" session locally
     const pendingSession: ChatSession = {
       id: `pending-${Date.now()}`, // Temporary ID until first message
-      name: name ?? `New Chat`,
+      name: name ?? 'New Chat',
       createdAt: new Date(),
       updatedAt: new Date(),
       status: 'Running', // Pending sessions are available for use
@@ -141,10 +141,7 @@ export class ServerHistoryStorage implements ChatHistoryStorage {
    *
    * Uses context/update API (singular method name!)
    */
-  async updateSession(
-    sessionId: string,
-    updates: Partial<Pick<ChatSession, 'name'>>
-  ): Promise<ChatSession> {
+  async updateSession(sessionId: string, updates: Partial<Pick<ChatSession, 'name'>>): Promise<ChatSession> {
     const updateParams: { Id: string; Name?: string } = {
       Id: sessionId,
     };

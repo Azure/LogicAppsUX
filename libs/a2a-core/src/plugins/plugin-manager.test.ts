@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PluginManager } from './plugin-manager';
-import type { Plugin, PluginContext, PluginHooks } from './types';
+import type { Plugin, PluginContext } from './types';
 
 describe('PluginManager', () => {
   let manager: PluginManager;
@@ -239,9 +239,7 @@ describe('PluginManager', () => {
     it('should execute message transformation hooks', async () => {
       const transformHook = vi.fn((message) => ({
         ...message,
-        content: message.content.map((part: any) =>
-          part.type === 'text' ? { ...part, content: part.content.toUpperCase() } : part
-        ),
+        content: message.content.map((part: any) => (part.type === 'text' ? { ...part, content: part.content.toUpperCase() } : part)),
       }));
 
       const plugin: Plugin = {
@@ -367,9 +365,7 @@ describe('PluginManager', () => {
         install: vi.fn(),
       };
 
-      expect(() => manager.register(dependentPlugin)).toThrow(
-        'Plugin dependent requires plugin required-plugin to be registered first'
-      );
+      expect(() => manager.register(dependentPlugin)).toThrow('Plugin dependent requires plugin required-plugin to be registered first');
     });
 
     it('should handle circular dependencies', () => {
@@ -388,14 +384,10 @@ describe('PluginManager', () => {
       };
 
       // First plugin with dependency should fail
-      expect(() => manager.register(plugin1)).toThrow(
-        'Plugin plugin-1 requires plugin plugin-2 to be registered first'
-      );
+      expect(() => manager.register(plugin1)).toThrow('Plugin plugin-1 requires plugin plugin-2 to be registered first');
 
       // Second plugin with circular dependency should also fail
-      expect(() => manager.register(plugin2)).toThrow(
-        'Plugin plugin-2 requires plugin plugin-1 to be registered first'
-      );
+      expect(() => manager.register(plugin2)).toThrow('Plugin plugin-2 requires plugin plugin-1 to be registered first');
     });
   });
 
@@ -409,9 +401,7 @@ describe('PluginManager', () => {
         },
       };
 
-      expect(() => manager.register(plugin)).toThrow(
-        'Failed to install plugin error-plugin: Installation failed'
-      );
+      expect(() => manager.register(plugin)).toThrow('Failed to install plugin error-plugin: Installation failed');
     });
 
     it('should handle plugin uninstall errors gracefully', () => {

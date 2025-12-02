@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { TaskSchema, MessageSchema, PartSchema, TaskStateSchema } from './schemas';
-import type { Task, Message, Part } from './schemas';
 
 describe('Part schema', () => {
   it('should validate text part', () => {

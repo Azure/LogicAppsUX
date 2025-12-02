@@ -5,9 +5,7 @@ import type { IframeConfig } from '../../lib/utils/config-parser';
 
 // Mock the dependencies
 vi.mock('@microsoft/logicAppsChat', () => ({
-  ChatWidget: vi.fn(({ sessionKey }) => (
-    <div data-testid="chat-widget">ChatWidget (sessionKey: {sessionKey})</div>
-  )),
+  ChatWidget: vi.fn(({ sessionKey }) => <div data-testid="chat-widget">ChatWidget (sessionKey: {sessionKey})</div>),
 }));
 
 vi.mock('../MultiSessionChat', () => ({

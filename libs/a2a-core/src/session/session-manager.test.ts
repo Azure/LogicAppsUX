@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SessionManager } from './session-manager';
-import type { SessionData, SessionOptions } from './types';
+import type { SessionData } from './types';
 
 // Mock browser storage
 const mockLocalStorage = {
@@ -115,7 +115,7 @@ describe('SessionManager', () => {
 
       // Find the call that contains our test data
       const calls = mockLocalStorage.setItem.mock.calls;
-      const dataCall = calls.find(([key, value]) => {
+      const dataCall = calls.find(([_key, value]) => {
         try {
           const parsed = JSON.parse(value);
           return parsed.data && parsed.data.test === 'value';

@@ -9,9 +9,7 @@ vi.mock('@microsoft/logicAppsChat', () => ({
 }));
 
 vi.mock('../MultiSessionChat', () => ({
-  MultiSessionChat: vi.fn(({ mode }) => (
-    <div data-testid="multi-session-chat">MultiSessionChat (mode: {mode})</div>
-  )),
+  MultiSessionChat: vi.fn(({ mode }) => <div data-testid="multi-session-chat">MultiSessionChat (mode: {mode})</div>),
 }));
 
 vi.mock('../../lib/authHandler', () => ({

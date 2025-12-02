@@ -49,10 +49,7 @@ export const transformStorageMessagesToUI = (storageMessages: StorageMessage[]):
 /**
  * Transform UI message to storage message format
  */
-export const transformUIMessageToStorage = (
-  uiMessage: UIMessage,
-  contextId: string
-): StorageMessage => {
+export const transformUIMessageToStorage = (uiMessage: UIMessage, contextId: string): StorageMessage => {
   return {
     id: uiMessage.id,
     role: uiMessage.sender === 'assistant' ? 'assistant' : 'user',

@@ -6,9 +6,7 @@ describe('agentUrlUtils', () => {
     it('should return true for URLs with /.well-known/agent-card.json', () => {
       expect(isDirectAgentCardUrl('https://example.com/.well-known/agent-card.json')).toBe(true);
       expect(isDirectAgentCardUrl('http://localhost:3000/.well-known/agent-card.json')).toBe(true);
-      expect(
-        isDirectAgentCardUrl('https://subdomain.example.com/.well-known/agent-card.json')
-      ).toBe(true);
+      expect(isDirectAgentCardUrl('https://subdomain.example.com/.well-known/agent-card.json')).toBe(true);
     });
 
     it('should return true for URLs ending with .json', () => {

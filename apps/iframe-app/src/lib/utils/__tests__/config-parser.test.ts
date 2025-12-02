@@ -77,9 +77,7 @@ describe('parseIframeConfig', () => {
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe(
-        'https://example.com/api/agents/TestAgent/.well-known/agent-card.json'
-      );
+      expect(config.props.agentCard).toBe('https://example.com/api/agents/TestAgent/.well-known/agent-card.json');
     });
 
     it('handles case-insensitive URL pattern matching', () => {
@@ -87,9 +85,7 @@ describe('parseIframeConfig', () => {
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe(
-        'https://example.com/api/agents/MyAgent/.well-known/agent-card.json'
-      );
+      expect(config.props.agentCard).toBe('https://example.com/api/agents/MyAgent/.well-known/agent-card.json');
     });
 
     it('throws error when agent URL is missing and URL pattern does not match', () => {
@@ -250,9 +246,7 @@ describe('parseIframeConfig', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://evil.com';
 
-      expect(() => parseIframeConfig()).toThrow(
-        "The origin 'evil.com' is not trusted for Frame Blade"
-      );
+      expect(() => parseIframeConfig()).toThrow("The origin 'evil.com' is not trusted for Frame Blade");
     });
 
     it('allows localhost for development', () => {

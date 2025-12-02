@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AuthenticationMessage } from '../AuthenticationMessage';
@@ -29,13 +28,7 @@ describe('AuthenticationMessage', () => {
   });
 
   it('should display pending state correctly', () => {
-    render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-      />
-    );
+    render(<AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} />);
 
     expect(screen.getByText('Authentication Required')).toBeInTheDocument();
     expect(screen.getByText('External Service')).toBeInTheDocument();
@@ -44,13 +37,7 @@ describe('AuthenticationMessage', () => {
   });
 
   it('should display completed state correctly', () => {
-    render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="completed"
-        onAuthenticate={mockOnAuthenticate}
-      />
-    );
+    render(<AuthenticationMessage authParts={mockAuthParts} status="completed" onAuthenticate={mockOnAuthenticate} />);
 
     expect(screen.getByText('Authentication Completed')).toBeInTheDocument();
     expect(screen.getByText('External Service')).toBeInTheDocument();
@@ -60,13 +47,7 @@ describe('AuthenticationMessage', () => {
   });
 
   it('should display failed state correctly', () => {
-    render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="failed"
-        onAuthenticate={mockOnAuthenticate}
-      />
-    );
+    render(<AuthenticationMessage authParts={mockAuthParts} status="failed" onAuthenticate={mockOnAuthenticate} />);
 
     expect(screen.getByText('Authentication Failed')).toBeInTheDocument();
     // Failed state doesn't show additional text, just the title and auth parts
@@ -74,12 +55,7 @@ describe('AuthenticationMessage', () => {
 
   it('should show cancel button when onCancel is provided and status is pending', () => {
     render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-        onCancel={mockOnCancel}
-      />
+      <AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} onCancel={mockOnCancel} />
     );
 
     expect(screen.getByText('Cancel Authentication')).toBeInTheDocument();
@@ -87,12 +63,7 @@ describe('AuthenticationMessage', () => {
 
   it('should show canceled state when cancel button is clicked', () => {
     render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-        onCancel={mockOnCancel}
-      />
+      <AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} onCancel={mockOnCancel} />
     );
 
     const cancelButton = screen.getByText('Cancel Authentication');
@@ -106,12 +77,7 @@ describe('AuthenticationMessage', () => {
 
   it('should not show cancel button when status is completed', () => {
     render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="completed"
-        onAuthenticate={mockOnAuthenticate}
-        onCancel={mockOnCancel}
-      />
+      <AuthenticationMessage authParts={mockAuthParts} status="completed" onAuthenticate={mockOnAuthenticate} onCancel={mockOnCancel} />
     );
 
     expect(screen.queryByText('Cancel Authentication')).not.toBeInTheDocument();
@@ -119,12 +85,7 @@ describe('AuthenticationMessage', () => {
 
   it('should call onCancel when cancel button is clicked', () => {
     render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-        onCancel={mockOnCancel}
-      />
+      <AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} onCancel={mockOnCancel} />
     );
 
     const cancelButton = screen.getByText('Cancel Authentication');
@@ -136,13 +97,7 @@ describe('AuthenticationMessage', () => {
   it('should handle successful authentication', async () => {
     mockOpenPopupWindow.mockResolvedValueOnce({ closed: true, error: null });
 
-    render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-      />
-    );
+    render(<AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} />);
 
     const signInButton = screen.getByText('Sign In');
     fireEvent.click(signInButton);
@@ -161,12 +116,7 @@ describe('AuthenticationMessage', () => {
     mockOpenPopupWindow.mockImplementation(() => new Promise(() => {})); // Never resolves
 
     render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-        onCancel={mockOnCancel}
-      />
+      <AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} onCancel={mockOnCancel} />
     );
 
     const signInButton = screen.getByText('Sign In');
@@ -181,26 +131,14 @@ describe('AuthenticationMessage', () => {
   });
 
   it('should initialize auth states correctly based on status', () => {
-    const { rerender } = render(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="pending"
-        onAuthenticate={mockOnAuthenticate}
-      />
-    );
+    const { rerender } = render(<AuthenticationMessage authParts={mockAuthParts} status="pending" onAuthenticate={mockOnAuthenticate} />);
 
     // Initially pending
     expect(screen.getByText('Authentication Required')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
 
     // Rerender with completed status
-    rerender(
-      <AuthenticationMessage
-        authParts={mockAuthParts}
-        status="completed"
-        onAuthenticate={mockOnAuthenticate}
-      />
-    );
+    rerender(<AuthenticationMessage authParts={mockAuthParts} status="completed" onAuthenticate={mockOnAuthenticate} />);
 
     // Should now show completed state
     expect(screen.getByText('Authentication Completed')).toBeInTheDocument();

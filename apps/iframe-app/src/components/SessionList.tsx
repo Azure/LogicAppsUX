@@ -1,4 +1,5 @@
-import React, { useState, useCallback, memo } from 'react';
+import type React from 'react';
+import { useState, useCallback, memo } from 'react';
 import {
   Button,
   Card,
@@ -343,7 +344,7 @@ const SessionItem = memo(
     const activeStyle =
       isActive && themeColors
         ? {
-            backgroundColor: themeColors.primary + '15',
+            backgroundColor: `${themeColors.primary}15`,
             borderColor: themeColors.primary,
           }
         : {};
@@ -351,25 +352,15 @@ const SessionItem = memo(
     // Render status badge - only show for non-Running statuses
     const renderStatusBadge = () => {
       // Don't show badge for Running, active, missing status, or pending sessions
-      if (
-        !status ||
-        status === 'Running' ||
-        status === 'active' ||
-        session.id.startsWith('pending-')
-      )
+      if (!status || status === 'Running' || status === 'active' || session.id.startsWith('pending-')) {
         return null;
+      }
 
-      const statusIcon = isFailed ? (
-        <WarningRegular fontSize={14} />
-      ) : (
-        <WarningRegular fontSize={14} />
-      );
+      const statusIcon = isFailed ? <WarningRegular fontSize={14} /> : <WarningRegular fontSize={14} />;
 
       const statusClass = isFailed ? styles.statusBadgeFailed : styles.statusBadgeOther;
 
-      const statusTooltip = isFailed
-        ? 'Chat failed - You can view history but cannot send new messages'
-        : `Chat status: ${status}`;
+      const statusTooltip = isFailed ? 'Chat failed - You can view history but cannot send new messages' : `Chat status: ${status}`;
 
       return (
         <Tooltip content={statusTooltip} relationship="label">
@@ -412,27 +403,13 @@ const SessionItem = memo(
                     }}
                   >
                     {renderStatusBadge()}
-                    <Tooltip
-                      content="Click edit icon or double-click to rename"
-                      relationship="label"
-                    >
+                    <Tooltip content="Click edit icon or double-click to rename" relationship="label">
                       <Text className={styles.sessionName}>{session.name || 'Untitled Chat'}</Text>
                     </Tooltip>
                   </div>
-                  {unreadCount > 0 && !isActive && !isTyping && (
-                    <div className={styles.unreadBadge}>{unreadCount}</div>
-                  )}
-                  <div
-                    className={mergeClasses(
-                      styles.sessionActions,
-                      styles.sessionActionsHidden,
-                      'session-actions'
-                    )}
-                  >
-                    <Tooltip
-                      content={canEdit ? 'Rename chat' : 'Cannot rename failed chat'}
-                      relationship="label"
-                    >
+                  {unreadCount > 0 && !isActive && !isTyping && <div className={styles.unreadBadge}>{unreadCount}</div>}
+                  <div className={mergeClasses(styles.sessionActions, styles.sessionActionsHidden, 'session-actions')}>
+                    <Tooltip content={canEdit ? 'Rename chat' : 'Cannot rename failed chat'} relationship="label">
                       <Button
                         appearance="subtle"
                         icon={<EditRegular />}
@@ -442,10 +419,7 @@ const SessionItem = memo(
                         disabled={!canEdit}
                       />
                     </Tooltip>
-                    <Tooltip
-                      content={isFailed ? 'Archive failed chat' : 'Archive chat'}
-                      relationship="label"
-                    >
+                    <Tooltip content={isFailed ? 'Archive failed chat' : 'Archive chat'} relationship="label">
                       <Button
                         appearance="subtle"
                         icon={<ArchiveRegular />}
@@ -457,15 +431,9 @@ const SessionItem = memo(
                     </Tooltip>
                   </div>
                 </div>
-                {session.lastMessage && (
-                  <Caption1 className={styles.lastMessage}>{session.lastMessage}</Caption1>
-                )}
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                >
-                  <Caption1 className={styles.sessionTime}>
-                    {formatDate(session.updatedAt || Date.now())}
-                  </Caption1>
+                {session.lastMessage && <Caption1 className={styles.lastMessage}>{session.lastMessage}</Caption1>}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Caption1 className={styles.sessionTime}>{formatDate(session.updatedAt || Date.now())}</Caption1>
                   {isTyping && (
                     <div className={styles.typingIndicator}>
                       <div className={styles.typingDot} />
@@ -482,6 +450,8 @@ const SessionItem = memo(
     );
   }
 );
+
+SessionItem.displayName = 'SessionItem';
 
 export const SessionList = memo(
   ({
@@ -545,10 +515,18 @@ export const SessionList = memo(
       const diffHours = Math.floor(diffMs / 3600000);
       const diffDays = Math.floor(diffMs / 86400000);
 
-      if (diffMins < 1) return 'Just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      if (diffDays < 7) return `${diffDays}d ago`;
+      if (diffMins < 1) {
+        return 'Just now';
+      }
+      if (diffMins < 60) {
+        return `${diffMins}m ago`;
+      }
+      if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      }
+      if (diffDays < 7) {
+        return `${diffDays}d ago`;
+      }
 
       return date.toLocaleDateString();
     }, []);
@@ -560,7 +538,7 @@ export const SessionList = memo(
     const themeStyle = themeColors
       ? ({
           '--theme-primary': themeColors.primary,
-          '--theme-primary-hover': themeColors.primary + 'dd',
+          '--theme-primary-hover': `${themeColors.primary}dd`,
         } as React.CSSProperties)
       : {};
 
@@ -571,11 +549,7 @@ export const SessionList = memo(
             <img
               src={logoUrl}
               alt="Company Logo"
-              className={mergeClasses(
-                styles.logo,
-                logoSize === 'small' && styles.logoSmall,
-                logoSize === 'large' && styles.logoLarge
-              )}
+              className={mergeClasses(styles.logo, logoSize === 'small' && styles.logoSmall, logoSize === 'large' && styles.logoLarge)}
             />
           )}
           <h3 className={styles.title}>Chats</h3>
@@ -598,7 +572,7 @@ export const SessionList = memo(
                 }
                 onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                   if (themeColors) {
-                    e.currentTarget.style.backgroundColor = themeColors.primary + 'dd';
+                    e.currentTarget.style.backgroundColor = `${themeColors.primary}dd`;
                   }
                 }}
                 onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -653,7 +627,7 @@ export const SessionList = memo(
               }}
               onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                 if (themeColors) {
-                  e.currentTarget.style.backgroundColor = themeColors.primary + 'dd';
+                  e.currentTarget.style.backgroundColor = `${themeColors.primary}dd`;
                 }
               }}
               onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -670,3 +644,5 @@ export const SessionList = memo(
     );
   }
 );
+
+SessionList.displayName = 'SessionList';

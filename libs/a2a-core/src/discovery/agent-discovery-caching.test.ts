@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AgentDiscovery } from './agent-discovery';
-import type { AgentCard } from '../types';
 import { getMockAgentCard } from '../test-utils/mock-agent-card';
 
 // Mock fetch globally

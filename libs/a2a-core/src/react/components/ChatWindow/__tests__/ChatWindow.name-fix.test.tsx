@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ChatWindow } from '../ChatWindow';
 import type { ChatWindowProps } from '../ChatWindow';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the useChatWidget hook
 const mockUseChatWidget = vi.fn();
@@ -12,7 +12,7 @@ vi.mock('../../hooks/useChatWidget', () => ({
 
 // Mock the components that ChatWindow uses
 vi.mock('../../MessageList', () => ({
-  MessageList: ({ agentName = 'Agent', userName = 'You', ...props }: any) => (
+  MessageList: ({ agentName = 'Agent', userName = 'You' }: any) => (
     <div data-testid="message-list">
       <div data-testid="agent-name">{agentName}</div>
       <div data-testid="user-name">{userName}</div>

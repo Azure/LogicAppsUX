@@ -2,12 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useA2A } from '../use-a2a';
 import { AgentDiscovery } from '../../discovery/agent-discovery';
 import type { AgentCard } from '../../types';
-import type {
-  AuthConfig,
-  AuthRequiredHandler,
-  UnauthorizedHandler,
-  AuthRequiredEvent,
-} from '../../client/types';
+import type { AuthConfig, AuthRequiredHandler, UnauthorizedHandler, AuthRequiredEvent } from '../../client/types';
 import type { Message } from '../types';
 import { createMessage } from '../utils/messageUtils';
 import { useChatStore } from '../store/chatStore';
@@ -64,19 +59,13 @@ export function useChatWidget({
   } = useChatStore();
 
   // Get session-specific messages if sessionId is provided (multi-session mode)
-  const sessionMessages = useChatStore((state) =>
-    sessionId ? state.sessionMessages.get(sessionId) || [] : []
-  );
+  const sessionMessages = useChatStore((state) => (sessionId ? state.sessionMessages.get(sessionId) || [] : []));
 
   // Get session-specific typing state for multi-session mode
-  const sessionIsTyping = useChatStore((state) =>
-    sessionId ? state.typingByContext.get(sessionId) || false : false
-  );
+  const sessionIsTyping = useChatStore((state) => (sessionId ? state.typingByContext.get(sessionId) || false : false));
 
   // Get session-specific connection state for multi-session mode
-  const sessionIsConnected = useChatStore((state) =>
-    sessionId ? state.activeConnections.has(sessionId) : false
-  );
+  const sessionIsConnected = useChatStore((state) => (sessionId ? state.activeConnections.has(sessionId) : false));
 
   // Pending sessions are treated as "ready" even without connection
   // Connection will be created automatically when first message is sent
@@ -116,8 +105,9 @@ export function useChatWidget({
           storageConfig,
           initialContextId,
         }
-      : !sessionId
-        ? {
+      : sessionId
+        ? (undefined as any) // Disable useA2A in multi-session mode
+        : {
             persistSession: true,
             sessionKey: sessionKey || 'a2a-chat-session',
             agentUrl: derivedAgentUrl,
@@ -131,7 +121,6 @@ export function useChatWidget({
             storageConfig,
             initialContextId,
           }
-        : (undefined as any) // Disable useA2A in multi-session mode
   );
 
   // Update contextIdRef when contextId changes
@@ -152,7 +141,9 @@ export function useChatWidget({
 
   // Handle incoming messages from SDK
   useEffect(() => {
-    if (messages.length === 0) return;
+    if (messages.length === 0) {
+      return;
+    }
 
     messages.forEach((sdkMessage) => {
       const existingInternalId = messageIdMap.current.get(sdkMessage.id);
@@ -205,11 +196,7 @@ export function useChatWidget({
       if (shouldAddToUI) {
         const internalMessage = createMessage(
           sdkMessage.content,
-          sdkMessage.role === 'system'
-            ? 'system'
-            : sdkMessage.role === 'user'
-              ? 'user'
-              : 'assistant'
+          sdkMessage.role === 'system' ? 'system' : sdkMessage.role === 'user' ? 'user' : 'assistant'
         );
         internalMessage.metadata = {
           ...internalMessage.metadata,
@@ -261,8 +248,7 @@ export function useChatWidget({
   // Auto-connect when agentCard is provided
   useEffect(() => {
     // Multi-session mode: setup config and optionally start stream
-    const isAlreadyConnected =
-      sessionId && useChatStore.getState().activeConnections.has(sessionId);
+    const isAlreadyConnected = sessionId && useChatStore.getState().activeConnections.has(sessionId);
     const isPendingSession = sessionId?.startsWith('pending-');
     const hasConfig = sessionId && useChatStore.getState().sessionConfigs.has(sessionId);
 
@@ -281,7 +267,7 @@ export function useChatWidget({
           if (isDirectAgentCardUrl(agentCard)) {
             try {
               resolvedAgentCard = await discovery.fromDirect(agentCard);
-            } catch (error) {
+            } catch (_error) {
               // Fallback: fetch manually
               const headers: HeadersInit = {};
               if (apiKey) {
@@ -352,7 +338,7 @@ export function useChatWidget({
         stopSessionStream(sessionId);
       }
     };
-  }, [sessionId, agentCard]);
+  }, [sessionId, agentCard, auth, apiKey, oboUserToken, onAuthRequired, onUnauthorized, startSessionStream, stopSessionStream]);
 
   // Single-session mode: use useA2A connection
   useEffect(() => {
@@ -366,7 +352,7 @@ export function useChatWidget({
             if (isDirectAgentCardUrl(agentCard)) {
               try {
                 resolvedAgentCard = await discovery.fromDirect(agentCard);
-              } catch (error) {
+              } catch (_error) {
                 // Fallback: fetch manually
                 const headers: HeadersInit = {};
                 if (apiKey) {
@@ -406,7 +392,7 @@ export function useChatWidget({
     }
 
     return undefined;
-  }, [sessionId, agentCard, isConnected, connect]);
+  }, [sessionId, agentCard, isConnected, connect, apiKey]);
 
   const sendMessage = useCallback(
     async (content: string): Promise<void> => {
@@ -506,7 +492,9 @@ export function useChatWidget({
         if (task.messages && task.messages.length > 0) {
           for (let i = 0; i < task.messages.length; i++) {
             const message = task.messages[i];
-            if (!message) continue;
+            if (!message) {
+              continue;
+            }
 
             const contentParts = message.content || [];
             const textContent = contentParts
@@ -523,9 +511,7 @@ export function useChatWidget({
 
                 // Skip if this is a user message that we already have
                 if (message.role === 'user') {
-                  const isDuplicate = sessionMsgs.some(
-                    (msg) => msg.sender === 'user' && msg.content === textContent
-                  );
+                  const isDuplicate = sessionMsgs.some((msg) => msg.sender === 'user' && msg.content === textContent);
                   if (isDuplicate) {
                     return {};
                   }

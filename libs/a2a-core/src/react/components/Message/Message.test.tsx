@@ -1,4 +1,3 @@
-import React from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -22,7 +21,7 @@ vi.mock('marked-highlight', () => ({
 // Mock download utils
 vi.mock('../../utils/downloadUtils', () => ({
   downloadFile: vi.fn(),
-  getMimeType: vi.fn((filename: string) => 'text/plain'),
+  getMimeType: vi.fn((_filename: string) => 'text/plain'),
 }));
 
 // Mock popup window utils
@@ -262,9 +261,7 @@ describe('Message', () => {
     render(<Message message={errorMessage} />);
 
     // User-friendly error message for content filter
-    expect(
-      screen.getByText('Your message was filtered by content policy. Please modify and try again.')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Your message was filtered by content policy. Please modify and try again.')).toBeInTheDocument();
   });
 
   it('renders custom error code with user-friendly message', () => {
@@ -280,9 +277,7 @@ describe('Message', () => {
     render(<Message message={errorMessage} />);
 
     // User-friendly error message for AgentLoopChatCompletionFailed
-    expect(
-      screen.getByText('Unable to complete the request. Please try again with different content.')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Unable to complete the request. Please try again with different content.')).toBeInTheDocument();
   });
 
   it('shows full error message in tooltip', async () => {
@@ -290,8 +285,7 @@ describe('Message', () => {
       ...baseMessage,
       status: 'error',
       error: {
-        message:
-          'HTTP 400 (: content_filter) - The response was filtered\r\nDetailed error information',
+        message: 'HTTP 400 (: content_filter) - The response was filtered\r\nDetailed error information',
         code: -32603,
       },
     };
@@ -299,9 +293,7 @@ describe('Message', () => {
     render(<Message message={errorMessage} />);
 
     // Get the user-friendly error text element
-    const errorText = screen.getByText(
-      'Your message was filtered by content policy. Please modify and try again.'
-    );
+    const errorText = screen.getByText('Your message was filtered by content policy. Please modify and try again.');
 
     // The error message should be displayed
     expect(errorText).toBeInTheDocument();
@@ -340,9 +332,7 @@ describe('Message', () => {
     render(<Message message={errorMessage} />);
 
     // Should show user-friendly message for content_filter
-    expect(
-      screen.getByText('Your message was filtered by content policy. Please modify and try again.')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Your message was filtered by content policy. Please modify and try again.')).toBeInTheDocument();
   });
 
   it('does not render error status for sent messages', () => {
@@ -453,9 +443,7 @@ describe('Message', () => {
   it('handles zero-byte files', () => {
     const messageWithEmptyFile: MessageType = {
       ...baseMessage,
-      attachments: [
-        { id: '1', name: 'empty.txt', size: 0, type: 'text/plain', status: 'uploaded' },
-      ],
+      attachments: [{ id: '1', name: 'empty.txt', size: 0, type: 'text/plain', status: 'uploaded' }],
     };
 
     render(<Message message={messageWithEmptyFile} />);

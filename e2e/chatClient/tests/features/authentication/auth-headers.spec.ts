@@ -14,15 +14,12 @@ test.describe('API Key Authentication', { tag: '@mock' }, () => {
   test('should include API key header in agent card request', async ({ page }) => {
     // Set up request listener
     const requestPromise = page.waitForRequest(
-      (request) =>
-        request.url().includes('.well-known/agent-card.json') && request.method() === 'GET'
+      (request) => request.url().includes('.well-known/agent-card.json') && request.method() === 'GET'
     );
 
     // Navigate to app with API key
     const apiKey = 'test-api-key-12345';
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}`);
     await page.waitForLoadState('networkidle');
 
     // Verify API key header was sent
@@ -34,9 +31,7 @@ test.describe('API Key Authentication', { tag: '@mock' }, () => {
   test('should include API key header in message/stream requests', async ({ page }) => {
     // Navigate to app with API key
     const apiKey = 'test-api-key-67890';
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}`);
     await page.waitForLoadState('networkidle');
 
     // Start new chat
@@ -71,9 +66,7 @@ test.describe('API Key Authentication', { tag: '@mock' }, () => {
     });
 
     // Navigate to app with API key
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}`);
     await page.waitForLoadState('networkidle');
 
     // Verify API key header in contexts/list request
@@ -87,15 +80,12 @@ test.describe('OBO Token Authentication', { tag: '@mock' }, () => {
   test('should include OBO token header in agent card request', async ({ page }) => {
     // Set up request listener
     const requestPromise = page.waitForRequest(
-      (request) =>
-        request.url().includes('.well-known/agent-card.json') && request.method() === 'GET'
+      (request) => request.url().includes('.well-known/agent-card.json') && request.method() === 'GET'
     );
 
     // Navigate to app with OBO token
     const oboToken = 'obo-user-token-abc123';
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&oboUserToken=${oboToken}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&oboUserToken=${oboToken}`);
     await page.waitForLoadState('networkidle');
 
     // Verify OBO token header was sent
@@ -107,9 +97,7 @@ test.describe('OBO Token Authentication', { tag: '@mock' }, () => {
   test('should include OBO token header in message/stream requests', async ({ page }) => {
     // Navigate to app with OBO token
     const oboToken = 'obo-user-token-def456';
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&oboUserToken=${oboToken}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&oboUserToken=${oboToken}`);
     await page.waitForLoadState('networkidle');
 
     // Start new chat
@@ -144,9 +132,7 @@ test.describe('OBO Token Authentication', { tag: '@mock' }, () => {
     });
 
     // Navigate to app with OBO token
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&oboUserToken=${oboToken}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&oboUserToken=${oboToken}`);
     await page.waitForLoadState('networkidle');
 
     // Verify OBO token header in contexts/list request
@@ -162,9 +148,7 @@ test.describe('Combined API Key and OBO Token Authentication', { tag: '@mock' },
     const oboToken = 'combined-obo-token';
 
     // Navigate to app with both credentials
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}&oboUserToken=${oboToken}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}&oboUserToken=${oboToken}`);
     await page.waitForLoadState('networkidle');
 
     // Start new chat
@@ -195,9 +179,7 @@ test.describe('Combined API Key and OBO Token Authentication', { tag: '@mock' },
     const oboToken = 'persistent-obo-token';
 
     // Navigate to app with both credentials
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}&oboUserToken=${oboToken}`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&apiKey=${apiKey}&oboUserToken=${oboToken}`);
     await page.waitForLoadState('networkidle');
 
     // Start new chat

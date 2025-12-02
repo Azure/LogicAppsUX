@@ -22,7 +22,7 @@ class MockIDBRequest {
   error: any;
   source: any;
   transaction: any;
-  readyState: string = 'pending';
+  readyState = 'pending';
   onsuccess: ((event: any) => void) | null = null;
   onerror: ((event: any) => void) | null = null;
   private listeners: { [key: string]: Array<(event: any) => void> } = {};
@@ -72,7 +72,7 @@ class MockIDBObjectStore {
   keyPath: string | string[] | null;
   indexNames: string[] = [];
   transaction: any;
-  autoIncrement: boolean = false;
+  autoIncrement = false;
 
   constructor(name: string) {
     this.name = name;
@@ -143,12 +143,14 @@ class MockIDBDatabase {
       item: (index: number) => storeNames[index] || null,
       contains: (name: string) => storeNames.includes(name),
       [Symbol.iterator]: () => storeNames[Symbol.iterator](),
-      // Add array indexing
-      ...storeNames.reduce((acc, name, i) => ({ ...acc, [i]: name }), {}),
+      ...storeNames.reduce((acc: { [key: number]: string }, name, i) => {
+        acc[i] = name;
+        return acc;
+      }, {}),
     } as unknown as DOMStringList;
   }
 
-  transaction(storeNames: string | string[], mode: string = 'readonly') {
+  transaction(storeNames: string | string[], mode = 'readonly') {
     const names = Array.isArray(storeNames) ? storeNames : [storeNames];
     return new MockIDBTransaction(this, names, mode);
   }
@@ -166,7 +168,10 @@ class MockIDBDatabase {
       item: (index: number) => currentStores[index] || null,
       contains: (storeName: string) => currentStores.includes(storeName),
       [Symbol.iterator]: () => currentStores[Symbol.iterator](),
-      ...currentStores.reduce((acc, storeName, i) => ({ ...acc, [i]: storeName }), {}),
+      ...currentStores.reduce((acc: { [key: number]: string }, storeName, i) => {
+        acc[i] = storeName;
+        return acc;
+      }, {}),
     } as unknown as DOMStringList;
 
     return new MockIDBObjectStore(name);
@@ -208,8 +213,8 @@ class MockIDBIndex {
   name: string;
   keyPath: string | string[] | null;
   objectStore: MockIDBObjectStore;
-  unique: boolean = false;
-  multiEntry: boolean = false;
+  unique = false;
+  multiEntry = false;
 
   constructor(name: string, objectStore: MockIDBObjectStore) {
     this.name = name;
@@ -220,7 +225,7 @@ class MockIDBIndex {
 
 class MockIDBCursor {
   source: any;
-  direction: string = 'next';
+  direction = 'next';
   key: any;
   primaryKey: any;
   value: any;

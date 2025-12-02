@@ -165,14 +165,7 @@ export function useFrameBlade({
       window.removeEventListener('message', handleMessage);
       clearTimeout(timer);
     };
-  }, [
-    enabled,
-    trustedParentOrigin,
-    sendMessage,
-    onThemeChange,
-    onAuthTokenReceived,
-    onChatHistoryReceived,
-  ]);
+  }, [enabled, trustedParentOrigin, sendMessage, onThemeChange, onAuthTokenReceived, onChatHistoryReceived]);
 
   return {
     isReady,

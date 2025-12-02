@@ -13,17 +13,20 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:multi-session": "tsx test-multi-session.ts",
-    "lint": "echo 'TODO: Lint code'",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@fluentui/react-components": "9.70.0",
-    "@fluentui/react-icons": "^2.0.306",
     "@microsoft/logicAppsChat": "workspace:*",
     "idb": "^8.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "vite-plugin-mkcert": "^1.17.8"
+    "vite-plugin-mkcert": "^1.17.8",
+    "@fluentui/react-hooks": "8.6.20",
+    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/utilities": "8.15.0",
+    "@fluentui/react": "8.110.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

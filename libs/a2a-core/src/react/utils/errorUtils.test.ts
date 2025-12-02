@@ -31,8 +31,7 @@ describe('errorUtils', () => {
           message: 'HTTP 400 (: content_filter)',
           data: {
             code: 'AgentLoopChatCompletionFailed',
-            message:
-              "The response was filtered due to the prompt triggering Azure OpenAI's content management policy.",
+            message: "The response was filtered due to the prompt triggering Azure OpenAI's content management policy.",
           },
         },
         id: null,
@@ -40,9 +39,7 @@ describe('errorUtils', () => {
 
       const result = formatErrorMessage(error);
 
-      expect(result.message).toBe(
-        "The response was filtered due to the prompt triggering Azure OpenAI's content management policy."
-      );
+      expect(result.message).toBe("The response was filtered due to the prompt triggering Azure OpenAI's content management policy.");
       expect(result.code).toBe('AgentLoopChatCompletionFailed');
       expect(result.details).toBeDefined();
     });
@@ -92,9 +89,7 @@ describe('errorUtils', () => {
 
       const result = getUserFriendlyErrorMessage(error);
 
-      expect(result).toBe(
-        'Your message was filtered by content policy. Please modify and try again.'
-      );
+      expect(result).toBe('Your message was filtered by content policy. Please modify and try again.');
     });
 
     it('should return user-friendly message for AgentLoopChatCompletionFailed', () => {
@@ -105,9 +100,7 @@ describe('errorUtils', () => {
 
       const result = getUserFriendlyErrorMessage(error);
 
-      expect(result).toBe(
-        'Unable to complete the request. Please try again with different content.'
-      );
+      expect(result).toBe('Unable to complete the request. Please try again with different content.');
     });
 
     it('should return message as-is for internal errors without content_filter', () => {
@@ -187,9 +180,7 @@ describe('errorUtils', () => {
 
       const result = getUserFriendlyErrorMessage(error);
 
-      expect(result).toBe(
-        'Your message was filtered by content policy. Please modify and try again.'
-      );
+      expect(result).toBe('Your message was filtered by content policy. Please modify and try again.');
     });
   });
 });

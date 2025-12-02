@@ -36,10 +36,7 @@ export const createStructuredPart = (data: unknown, schema?: Record<string, unkn
 /**
  * Create a user message
  */
-export const createUserMessage = (
-  content: string,
-  metadata?: Record<string, unknown>
-): Message => ({
+export const createUserMessage = (content: string, metadata?: Record<string, unknown>): Message => ({
   role: 'user',
   content: [createTextPart(content)],
   metadata,
@@ -48,10 +45,7 @@ export const createUserMessage = (
 /**
  * Create an assistant message
  */
-export const createAssistantMessage = (
-  content: string,
-  metadata?: Record<string, unknown>
-): Message => ({
+export const createAssistantMessage = (content: string, metadata?: Record<string, unknown>): Message => ({
   role: 'assistant',
   content: [createTextPart(content)],
   metadata,
@@ -69,12 +63,7 @@ export const createJsonRpcSuccess = (result: unknown, id: string | number = 1) =
 /**
  * Create a JSON-RPC 2.0 error response
  */
-export const createJsonRpcError = (
-  code: number,
-  message: string,
-  data?: unknown,
-  id: string | number = 1
-) => ({
+export const createJsonRpcError = (code: number, message: string, data?: unknown, id: string | number = 1) => ({
   jsonrpc: '2.0',
   id,
   error: {
@@ -126,20 +115,13 @@ export const createSimpleTextResponse = (text: string, taskId = 'task-1'): SSEEv
     messages: [createAssistantMessage(text)],
   };
 
-  return [
-    createSSEEvent(createJsonRpcSuccess(task, 1), 'message'),
-    createSSEEvent('[DONE]', 'done'),
-  ];
+  return [createSSEEvent(createJsonRpcSuccess(task, 1), 'message'), createSSEEvent('[DONE]', 'done')];
 };
 
 /**
  * Streaming response: Text chunks
  */
-export const createStreamingTextResponse = (
-  text: string,
-  chunkSize = 10,
-  taskId = 'task-1'
-): SSEEvent[] => {
+export const createStreamingTextResponse = (text: string, chunkSize = 10, taskId = 'task-1'): SSEEvent[] => {
   const events: SSEEvent[] = [];
   const chunks = text.match(new RegExp(`.{1,${chunkSize}}`, 'g')) || [text];
 
@@ -206,27 +188,14 @@ export const createAuthRequiredResponse = (consentUrl: string, taskId = 'task-1'
  * Error response: Network error
  */
 export const createNetworkErrorResponse = (): SSEEvent[] => {
-  return [
-    createSSEEvent(
-      createJsonRpcError(-32000, 'Network error', { type: 'network', retryable: true }, 1),
-      'error'
-    ),
-  ];
+  return [createSSEEvent(createJsonRpcError(-32000, 'Network error', { type: 'network', retryable: true }, 1), 'error')];
 };
 
 /**
  * Error response: Server error
  */
-export const createServerErrorResponse = (
-  statusCode = 500,
-  message = 'Internal server error'
-): SSEEvent[] => {
-  return [
-    createSSEEvent(
-      createJsonRpcError(-32603, message, { statusCode, retryable: true }, 1),
-      'error'
-    ),
-  ];
+export const createServerErrorResponse = (statusCode = 500, message = 'Internal server error'): SSEEvent[] => {
+  return [createSSEEvent(createJsonRpcError(-32603, message, { statusCode, retryable: true }, 1), 'error')];
 };
 
 /**
@@ -289,12 +258,7 @@ export const createMultiMessageResponse = (messages: string[], taskId = 'task-1'
  * Rate limit error response
  */
 export const createRateLimitErrorResponse = (retryAfter = 60): SSEEvent[] => {
-  return [
-    createSSEEvent(
-      createJsonRpcError(-32001, 'Rate limit exceeded', { retryable: true, retryAfter }, 1),
-      'error'
-    ),
-  ];
+  return [createSSEEvent(createJsonRpcError(-32001, 'Rate limit exceeded', { retryable: true, retryAfter }, 1), 'error')];
 };
 
 /**

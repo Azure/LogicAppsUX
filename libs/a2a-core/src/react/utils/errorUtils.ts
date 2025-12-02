@@ -45,12 +45,7 @@ export function formatErrorMessage(error: unknown): {
 export function getUserFriendlyErrorMessage(error: unknown): string {
   // If error is already our formatted error object, use it directly
   let formatted: { message: string; code?: number | string; details?: any };
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'message' in error &&
-    typeof (error as any).message === 'string'
-  ) {
+  if (typeof error === 'object' && error !== null && 'message' in error && typeof (error as any).message === 'string') {
     formatted = error as { message: string; code?: number | string; details?: any };
   } else {
     formatted = formatErrorMessage(error);
@@ -59,7 +54,7 @@ export function getUserFriendlyErrorMessage(error: unknown): string {
   // Check if this is an HTTP error message and extract status code
   const httpErrorMatch = formatted.message.match(/HTTP error! status: (\d+)/);
   if (httpErrorMatch) {
-    const statusCode = parseInt(httpErrorMatch[1], 10);
+    const statusCode = Number.parseInt(httpErrorMatch[1], 10);
     switch (statusCode) {
       case 400:
         return 'Invalid request. Please check your message and try again.';
@@ -113,15 +108,13 @@ export function getUserFriendlyErrorMessage(error: unknown): string {
         return 'Method not supported by the agent.';
       case -32602:
         return 'Invalid parameters. Please check your input.';
-      case -32603:
+      case -32603: {
         // For internal errors, check if it's a content filter error
-        if (
-          formatted.message.toLowerCase().includes('content_filter') ||
-          formatted.message.toLowerCase().includes('content management')
-        ) {
+        if (formatted.message.toLowerCase().includes('content_filter') || formatted.message.toLowerCase().includes('content management')) {
           return 'Your message was filtered by content policy. Please modify and try again.';
         }
         return formatted.message || 'The agent encountered an error. Please try again.';
+      }
       default:
         return formatted.message || 'Failed to send message. Please try again.';
     }

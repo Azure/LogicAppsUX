@@ -1,12 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Button,
-  Textarea,
-  tokens,
-  makeStyles,
-  shorthands,
-  Badge,
-} from '@fluentui/react-components';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Button, Textarea, tokens, makeStyles, shorthands, Badge } from '@fluentui/react-components';
 import { SendRegular, AttachRegular, DismissRegular } from '@fluentui/react-icons';
 import { useChatStore } from '../../store/chatStore';
 import { generateMessageId } from '../../utils/messageUtils';
@@ -89,17 +83,10 @@ export function MessageInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const wasTypingRef = useRef(false);
   const shouldRestoreFocusRef = useRef(true);
-  const {
-    isConnected: globalIsConnected,
-    isTyping: globalIsTyping,
-    getIsTypingForContext,
-    getAuthRequiredForContext,
-  } = useChatStore();
+  const { isConnected: globalIsConnected, isTyping: globalIsTyping, getIsTypingForContext, getAuthRequiredForContext } = useChatStore();
 
   // Get session-specific connection state for multi-session mode
-  const sessionIsConnected = useChatStore((state) =>
-    sessionId ? state.activeConnections.has(sessionId) : false
-  );
+  const sessionIsConnected = useChatStore((state) => (sessionId ? state.activeConnections.has(sessionId) : false));
 
   // Pending sessions are treated as "ready" even without connection
   // Connection will be created automatically when first message is sent
@@ -218,11 +205,7 @@ export function MessageInput({
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       {/* Status message with priority hierarchy */}
-      <StatusMessage
-        isConnected={isConnected}
-        isTyping={isTyping}
-        hasAuthRequired={authRequired !== null}
-      />
+      <StatusMessage isConnected={isConnected} isTyping={isTyping} hasAuthRequired={authRequired !== null} />
 
       {pendingAttachments.length > 0 && (
         <div className={styles.attachmentPreview}>

@@ -57,9 +57,7 @@ describe('messageUtils', () => {
     });
 
     it('should include attachments when provided', () => {
-      const attachments = [
-        { id: '1', name: 'file.txt', type: 'text/plain', size: 100, status: 'uploaded' as const },
-      ];
+      const attachments = [{ id: '1', name: 'file.txt', type: 'text/plain', size: 100, status: 'uploaded' as const }];
       const message = createMessage('Message with attachment', 'user', attachments);
 
       expect(message.attachments).toEqual(attachments);

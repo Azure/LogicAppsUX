@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -40,9 +39,7 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
     const button = screen.getByRole('button');
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     const clickSpy = vi.spyOn(input, 'click');
 
@@ -55,9 +52,7 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} disabled />);
 
     const button = screen.getByRole('button');
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     const clickSpy = vi.spyOn(input, 'click');
 
@@ -72,9 +67,7 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
     const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [file] } });
@@ -92,9 +85,7 @@ describe('FileUpload', () => {
 
     const file1 = new File(['content1'], 'file1.txt', { type: 'text/plain' });
     const file2 = new File(['content2'], 'file2.txt', { type: 'text/plain' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [file1, file2] } });
@@ -111,17 +102,13 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} maxFileSize={maxFileSize} />);
 
     const largeFile = new File(['x'.repeat(2048)], 'large.txt', { type: 'text/plain' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [largeFile] } });
     });
 
-    expect(global.alert).toHaveBeenCalledWith(
-      'File "large.txt" is too large. Maximum size is 1 KB'
-    );
+    expect(global.alert).toHaveBeenCalledWith('File "large.txt" is too large. Maximum size is 1 KB');
     expect(mockOnFileSelect).not.toHaveBeenCalled();
   });
 
@@ -130,9 +117,7 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} maxFileSize={maxFileSize} />);
 
     const smallFile = new File(['small content'], 'small.txt', { type: 'text/plain' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [smallFile] } });
@@ -148,9 +133,7 @@ describe('FileUpload', () => {
 
     const txtFile = new File(['txt content'], 'doc.txt', { type: 'text/plain' });
     const jpgFile = new File(['jpg content'], 'image.jpg', { type: 'image/jpeg' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [txtFile, jpgFile] } });
@@ -168,9 +151,7 @@ describe('FileUpload', () => {
 
     const txtFile = new File(['txt content'], 'doc.txt', { type: 'text/plain' });
     const jpgFile = new File(['jpg content'], 'image.jpg', { type: 'image/jpeg' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [txtFile, jpgFile] } });
@@ -190,9 +171,7 @@ describe('FileUpload', () => {
     const txtFile = new File(['txt content'], 'doc.txt', { type: 'text/plain' });
     const pdfFile = new File(['pdf content'], 'file.pdf', { type: 'application/pdf' });
 
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [jpgFile, pngFile, txtFile, pdfFile] } });
@@ -207,9 +186,7 @@ describe('FileUpload', () => {
     const allowedFileTypes = ['.txt', '.pdf', 'image/*'];
     render(<FileUpload onFileSelect={mockOnFileSelect} allowedFileTypes={allowedFileTypes} />);
 
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
     expect(input).toHaveAttribute('accept', '.txt,.pdf,image/*');
   });
 
@@ -217,9 +194,7 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
     const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [file] } });
@@ -232,9 +207,7 @@ describe('FileUpload', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} maxFileSize={10} />);
 
     const largeFile = new File(['x'.repeat(100)], 'large.txt', { type: 'text/plain' });
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [largeFile] } });
@@ -244,17 +217,13 @@ describe('FileUpload', () => {
   });
 
   it('handles mixed valid and invalid files', async () => {
-    render(
-      <FileUpload onFileSelect={mockOnFileSelect} maxFileSize={1024} allowedFileTypes={['.txt']} />
-    );
+    render(<FileUpload onFileSelect={mockOnFileSelect} maxFileSize={1024} allowedFileTypes={['.txt']} />);
 
     const validFile = new File(['small'], 'valid.txt', { type: 'text/plain' });
     const largeFile = new File(['x'.repeat(2048)], 'large.txt', { type: 'text/plain' });
     const wrongTypeFile = new File(['image'], 'image.jpg', { type: 'image/jpeg' });
 
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [validFile, largeFile, wrongTypeFile] } });
@@ -273,17 +242,13 @@ describe('FileUpload', () => {
     const largeFile = new File(['test'], 'large.txt', { type: 'text/plain' });
     Object.defineProperty(largeFile, 'size', { value: 11 * 1024 * 1024 });
 
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [largeFile] } });
     });
 
-    expect(global.alert).toHaveBeenCalledWith(
-      'File "large.txt" is too large. Maximum size is 10 MB'
-    );
+    expect(global.alert).toHaveBeenCalledWith('File "large.txt" is too large. Maximum size is 10 MB');
   });
 
   it('renders SVG icon in button', () => {
@@ -298,9 +263,7 @@ describe('FileUpload', () => {
   it('handles empty files array in change event', async () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: [] } });
@@ -312,9 +275,7 @@ describe('FileUpload', () => {
   it('handles null files in change event', async () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const input = screen
-      .getByRole('button')
-      .parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+    const input = screen.getByRole('button').parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
 
     await waitFor(() => {
       fireEvent.change(input, { target: { files: null } });

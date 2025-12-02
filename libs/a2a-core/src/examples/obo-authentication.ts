@@ -98,7 +98,7 @@ export function ExampleOBOComponent() {
 // Example usage with React hooks
 import { useA2A } from '../react/use-a2a';
 import { openPopupWindow } from '../utils/popup-window';
-import { A2AClient } from '../client/a2a-client';
+import type { A2AClient } from '../client/a2a-client';
 
 export function ExampleWithHooks() {
   // Using the useA2A hook with auth handler

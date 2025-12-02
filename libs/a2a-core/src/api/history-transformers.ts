@@ -14,15 +14,7 @@
  * See: docs/api-testing-findings.md for detailed behavior
  */
 
-import type {
-  ServerContext,
-  ServerTask,
-  ServerMessage,
-  ServerMessagePart,
-  ChatSession,
-  Message,
-  MessageContent,
-} from './history-types';
+import type { ServerContext, ServerTask, ServerMessage, ServerMessagePart, ChatSession, Message, MessageContent } from './history-types';
 
 /**
  * Transform a server context to our internal ChatSession format
@@ -152,12 +144,11 @@ export const transformMessageParts = (parts: ServerMessagePart[]): MessageConten
         type: 'text',
         text: part.text,
       };
-    } else {
-      return {
-        type: 'data',
-        data: part.data,
-      };
     }
+    return {
+      type: 'data',
+      data: part.data,
+    };
   });
 };
 
@@ -195,7 +186,7 @@ const parseServerDate = (dateStr: string): Date => {
   const date = new Date(dateStr);
 
   // Validate the date
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     throw new Error(`Invalid date format: ${dateStr}`);
   }
 
@@ -212,9 +203,7 @@ const parseServerDate = (dateStr: string): Date => {
  * @param message - Internal message
  * @returns Server message format
  */
-export const transformMessageToServer = (
-  message: Message
-): Omit<ServerMessage, 'taskId' | 'contextId' | 'kind' | 'metadata'> => {
+export const transformMessageToServer = (message: Message): Omit<ServerMessage, 'taskId' | 'contextId' | 'kind' | 'metadata'> => {
   return {
     messageId: message.id,
     // Transform 'assistant' back to 'agent'
@@ -225,12 +214,11 @@ export const transformMessageToServer = (
           kind: 'text' as const,
           text: content.text,
         };
-      } else {
-        return {
-          kind: 'data' as const,
-          data: content.data,
-        };
       }
+      return {
+        kind: 'data' as const,
+        data: content.data,
+      };
     }),
   };
 };
@@ -242,9 +230,7 @@ export const transformMessageToServer = (
  */
 const isAuthRequiredMessage = (serverMessage: ServerMessage): boolean => {
   // Check if message has text parts that start with "Please authenticate using links:"
-  return serverMessage.parts.some(
-    (part) => part.kind === 'text' && part.text.startsWith('Please authenticate using links:')
-  );
+  return serverMessage.parts.some((part) => part.kind === 'text' && part.text.startsWith('Please authenticate using links:'));
 };
 
 /**
@@ -255,9 +241,7 @@ const isAuthRequiredMessage = (serverMessage: ServerMessage): boolean => {
 const extractAuthEventFromMessage = (serverMessage: ServerMessage): any | null => {
   try {
     // Find the text part with auth details
-    const authPart = serverMessage.parts.find(
-      (part) => part.kind === 'text' && part.text.startsWith('Please authenticate using links:')
-    );
+    const authPart = serverMessage.parts.find((part) => part.kind === 'text' && part.text.startsWith('Please authenticate using links:'));
 
     if (!authPart || authPart.kind !== 'text') {
       return null;

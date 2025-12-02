@@ -31,7 +31,9 @@ export class SSEClient {
   }
 
   private async connect(isRetry = false): Promise<void> {
-    if (this.closed) return;
+    if (this.closed) {
+      return;
+    }
 
     try {
       // Use fetch for SSE when we need to send POST with body
@@ -48,11 +50,7 @@ export class SSEClient {
         });
 
         // Handle manual redirect responses
-        if (
-          response.type === 'opaqueredirect' ||
-          response.status === 302 ||
-          response.status === 301
-        ) {
+        if (response.type === 'opaqueredirect' || response.status === 302 || response.status === 301) {
           if (this.options.onUnauthorized && !isRetry) {
             await Promise.resolve(
               this.options.onUnauthorized({
@@ -78,11 +76,8 @@ export class SSEClient {
               if (tokenRefreshHeader === 'refresh') {
                 if (this.options.onTokenRefreshRequired) {
                   await Promise.resolve(this.options.onTokenRefreshRequired());
-                } else {
-                  // Default behavior: reload the page
-                  if (typeof window !== 'undefined') {
-                    window.location.reload();
-                  }
+                } else if (typeof window !== 'undefined') {
+                  window.location.reload();
                 }
                 return;
               }
@@ -254,7 +249,7 @@ export class SSEClient {
         // Handle SSE format with event type and data
         const lines = rawData.split('\n');
         let eventName = eventType;
-        let dataLines: string[] = [];
+        const dataLines: string[] = [];
         let id: string | undefined;
 
         for (const line of lines) {
@@ -268,7 +263,7 @@ export class SSEClient {
             // Return special retry message
             return {
               event: 'retry',
-              data: parseInt(line.slice(6).trim(), 10),
+              data: Number.parseInt(line.slice(6).trim(), 10),
             };
           }
           // Ignore comment lines starting with ':'
@@ -285,10 +280,9 @@ export class SSEClient {
         }
 
         return { event: eventName, data, ...(id && { id }) };
-      } else {
-        // Already parsed data
-        data = rawData;
       }
+      // Already parsed data
+      data = rawData;
     } catch {
       // Fallback to raw data
       data = event.data;

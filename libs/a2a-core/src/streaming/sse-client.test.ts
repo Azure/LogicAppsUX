@@ -6,7 +6,7 @@ import type { SSEMessage } from './types';
 class MockEventSource {
   url: string;
   withCredentials: boolean;
-  readyState: number = 0; // CONNECTING
+  readyState = 0; // CONNECTING
   onopen: ((event: Event) => void) | null = null;
   onmessage: ((event: MessageEvent) => void) | null = null;
   onerror: ((event: Event) => void) | null = null;
@@ -54,12 +54,10 @@ describe('SSEClient', () => {
     mockEventSource = null as any;
 
     // Capture EventSource instance
-    vi.spyOn(global, 'EventSource' as any).mockImplementation(
-      (url: string, config?: EventSourceInit) => {
-        mockEventSource = new MockEventSource(url, config);
-        return mockEventSource as any;
-      }
-    );
+    vi.spyOn(global, 'EventSource' as any).mockImplementation((url: string, config?: EventSourceInit) => {
+      mockEventSource = new MockEventSource(url, config);
+      return mockEventSource as any;
+    });
   });
 
   afterEach(() => {
@@ -100,9 +98,7 @@ describe('SSEClient', () => {
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     // Simulate SSE messages
-    mockEventSource.dispatchMessage(
-      'event: task.update\ndata: {"taskId":"123","state":"processing"}\n\n'
-    );
+    mockEventSource.dispatchMessage('event: task.update\ndata: {"taskId":"123","state":"processing"}\n\n');
     mockEventSource.dispatchMessage('event: message\ndata: {"content":"Hello"}\n\n');
 
     expect(messages).toHaveLength(2);
@@ -216,7 +212,9 @@ describe('SSEClient', () => {
     (async () => {
       for await (const message of iterator) {
         messages.push(message);
-        if (messages.length === 2) break;
+        if (messages.length === 2) {
+          break;
+        }
       }
     })();
 
@@ -245,9 +243,7 @@ describe('SSEClient', () => {
     await new Promise((resolve) => setTimeout(resolve, 10));
 
     // Simulate multiline data
-    mockEventSource.dispatchMessage(
-      'event: message\ndata: {"content":\ndata: "Hello\\nWorld"}\n\n'
-    );
+    mockEventSource.dispatchMessage('event: message\ndata: {"content":\ndata: "Hello\\nWorld"}\n\n');
 
     expect(messages).toHaveLength(1);
     expect(messages[0]).toEqual({
