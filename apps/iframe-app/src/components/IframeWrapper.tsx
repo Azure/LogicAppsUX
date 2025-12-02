@@ -5,7 +5,7 @@ import { LoadingDisplay } from './LoadingDisplay';
 import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
-import { getBaseUrl, openLoginPopup } from '../lib/authHandler';
+import { getBaseUrl, openLoginPopup, createUnauthorizedHandler } from '../lib/authHandler';
 import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
@@ -43,8 +43,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     setIsLoggingIn(true);
     openLoginPopup({
       baseUrl,
-      // Don't specify redirect - let it stay on the server after login
-      // The popup will be detected as closed or same-origin when it returns
       onSuccess: () => {
         setNeedsLogin(false);
         setIsLoggingIn(false);
@@ -52,16 +50,22 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         window.location.reload();
       },
       onFailed: () => {
-        console.log('Login failed or cancelled');
         setIsLoggingIn(false);
       },
     });
   }, [baseUrl]);
 
-  // Handle 401 unauthorized - show login prompt
-  const handleUnauthorized = useCallback(() => {
-    setNeedsLogin(true);
-  }, []);
+  // Create unauthorized handler - tries refresh first, then shows login UI
+  const handleUnauthorized = useMemo(
+    () =>
+      createUnauthorizedHandler({
+        baseUrl,
+        onLoginRequired: () => {
+          setNeedsLogin(true);
+        },
+      }),
+    [baseUrl]
+  );
 
   // Handle chat history received from parent blade
   const handleChatHistoryReceived = useCallback((history: ChatHistoryData) => {
