@@ -113,72 +113,124 @@ export function openLoginPopup(options: LoginPopupOptions): void {
   const popup = window.open(loginUrl, 'auth-login', 'width=600,height=700,popup=true');
 
   if (!popup) {
-    console.error('Failed to open login popup - popup may be blocked');
+    console.error('[Auth] Failed to open login popup - popup may be blocked');
     onFailed?.();
     return;
   }
 
-  let loginSucceeded = false;
+  let completed = false;
+  let wasOnDifferentOrigin = false;
 
-  // Monitor popup for completion
-  const checkInterval = setInterval(() => {
-    try {
-      // Check if popup is closed
-      if (popup.closed) {
-        clearInterval(checkInterval);
-        if (loginSucceeded) {
-          onSuccess?.();
-        } else {
-          // Popup closed without confirmed success - check if we have a valid session
-          checkAuthStatus(baseUrl).then((isAuthenticated) => {
-            if (isAuthenticated) {
-              onSuccess?.();
-            } else {
-              onFailed?.();
-            }
-          });
-        }
-        return;
-      }
-
-      // Try to detect successful login by checking the URL
-      // This might fail due to cross-origin restrictions
-      try {
-        const popupUrl = popup.location.href;
-        // Check if redirected back to our app (login complete)
-        if (popupUrl && popupUrl.startsWith(baseUrl) && !popupUrl.includes('/.auth/login')) {
-          loginSucceeded = true;
-          clearInterval(checkInterval);
-          popup.close();
-          onSuccess?.();
-          return;
-        }
-      } catch (_urlError) {
-        // Cross-origin error is expected during OAuth flow
-      }
-    } catch (_e) {
-      // Cross-origin error is expected, just check if closed
-      if (popup.closed) {
-        clearInterval(checkInterval);
-        // Check auth status when popup closes
-        checkAuthStatus(baseUrl).then((isAuthenticated) => {
-          if (isAuthenticated) {
-            onSuccess?.();
-          } else {
-            onFailed?.();
-          }
-        });
-      }
-    }
-  }, 500);
-
-  // Timeout
-  setTimeout(() => {
+  const cleanup = () => {
+    completed = true;
     clearInterval(checkInterval);
+    clearTimeout(timeoutId);
+  };
+
+  const handleSuccess = () => {
+    if (completed) {
+      return;
+    }
+    cleanup();
     if (!popup.closed) {
       popup.close();
     }
+    onSuccess?.();
+  };
+
+  const handleFailure = () => {
+    if (completed) {
+      return;
+    }
+    cleanup();
     onFailed?.();
+  };
+
+  // Monitor popup for completion
+  // Since we can't read cross-origin popup URLs, we poll the auth status instead
+  const checkInterval = setInterval(async () => {
+    if (completed) {
+      return;
+    }
+
+    // Check if popup is closed by user
+    if (popup.closed) {
+      cleanup();
+
+      // Give a moment for cookies to be set
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Check if we're now authenticated
+      const isAuthenticated = await checkAuthStatus(baseUrl);
+
+      if (isAuthenticated) {
+        onSuccess?.();
+      } else {
+        handleFailure();
+      }
+      return;
+    }
+
+    // Poll auth status to detect when login completes
+    // This works even with cross-origin popups
+    if (wasOnDifferentOrigin) {
+      try {
+        const isAuthenticated = await checkAuthStatus(baseUrl);
+        if (isAuthenticated) {
+          console.log('[Auth] Auth status check passed - user is now authenticated!');
+          handleSuccess();
+          return;
+        }
+      } catch (_e) {
+        // Ignore errors during polling
+      }
+    }
+
+    // Try to detect if popup navigated away from about:blank
+    try {
+      const popupHref = popup.location.href;
+
+      // Skip about:blank - popup hasn't navigated yet
+      if (!popupHref || popupHref === 'about:blank') {
+        return;
+      }
+
+      const popupOrigin = popup.location.origin;
+      const baseOrigin = new URL(baseUrl).origin;
+
+      console.log('[Auth] Popup URL check - origin:', popupOrigin, 'href:', popupHref);
+
+      // If popup is on our origin (not Azure AD), check if login is complete
+      if (popupOrigin === baseOrigin) {
+        console.log('[Auth] Popup returned to our origin!');
+
+        // Check if we're NOT on the initial login page
+        const isLoginPage = popupHref.includes('/.auth/login/aad') && !popupHref.includes('callback');
+
+        if (!isLoginPage) {
+          console.log('[Auth] Not on login page anymore, login complete!');
+          handleSuccess();
+          return;
+        }
+      }
+    } catch (_e) {
+      // Cross-origin error - popup is on Azure AD's domain or the target server
+      // This is expected during the OAuth flow
+      wasOnDifferentOrigin = true;
+    }
+  }, 500); // Poll every 500ms
+
+  // Timeout
+  const timeoutId = setTimeout(() => {
+    if (completed) {
+      return;
+    }
+    console.log('[Auth] Login timed out');
+    cleanup();
+    if (!popup.closed) {
+      popup.close();
+    }
+    handleFailure();
   }, timeout);
 }
 
@@ -188,9 +240,10 @@ export function openLoginPopup(options: LoginPopupOptions): void {
  */
 export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
   try {
+    console.log('[Auth] Checking auth status at:', `${baseUrl}/.auth/me`);
     const response = await fetch(`${baseUrl}/.auth/me`, {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'include', // Important: include cookies for cross-origin
     });
 
     if (!response.ok) {
@@ -198,10 +251,12 @@ export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
     }
 
     const data = await response.json();
-    // /.auth/me returns an array of identity providers, empty if not authenticated
-    return Array.isArray(data) && data.length > 0;
+    // /.auth/me returns an array of identity providers, empty array or null if not authenticated
+    const isAuthenticated = Array.isArray(data) && data.length > 0;
+    console.log('[Auth] Is authenticated:', isAuthenticated);
+    return isAuthenticated;
   } catch (error) {
-    console.error('Failed to check auth status:', error);
+    console.error('[Auth] Failed to check auth status:', error);
     return false;
   }
 }

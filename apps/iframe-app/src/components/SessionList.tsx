@@ -13,7 +13,7 @@ import {
   mergeClasses,
   Tooltip,
 } from '@fluentui/react-components';
-import { AddRegular, EditRegular, ArchiveRegular, WarningRegular } from '@fluentui/react-icons';
+import { EditRegular, ArchiveRegular, WarningRegular, AddFilled } from '@fluentui/react-icons';
 import type { SessionMetadata } from '../hooks/useChatSessions';
 import type { ChatTheme } from '@microsoft/logicAppsChat';
 import { useChatStore } from '@microsoft/logicAppsChat';
@@ -611,10 +611,10 @@ export const SessionList = memo(
           <div className={styles.buttonWrapper}>
             <Button
               appearance="primary"
-              icon={<AddRegular fontSize={16} />}
+              icon={<AddFilled fontSize={16} />}
               onClick={onNewSession}
               size="medium"
-              title="New Chat"
+              title="New chat"
               style={{
                 width: '100%',
                 minHeight: '40px',
@@ -636,7 +636,7 @@ export const SessionList = memo(
                 }
               }}
             >
-              New Chat
+              New chat
             </Button>
           </div>
         </div>

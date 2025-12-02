@@ -31,6 +31,16 @@ vi.mock('../../lib/hooks/useParentCommunication', () => ({
   })),
 }));
 
+vi.mock('../../hooks/useAuth', () => ({
+  useAuth: vi.fn(() => ({
+    isAuthenticated: true,
+    isLoading: false,
+    error: null,
+    login: vi.fn(),
+    checkAuth: vi.fn(),
+  })),
+}));
+
 describe('IframeWrapper', () => {
   const defaultConfig: IframeConfig = {
     props: {
@@ -289,7 +299,7 @@ describe('IframeWrapper', () => {
       expect.objectContaining({
         initialContextId: 'ctx-from-url',
       }),
-      undefined
+      expect.anything()
     );
   });
 

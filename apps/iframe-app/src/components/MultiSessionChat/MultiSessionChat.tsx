@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import type { ChatWidgetProps, StorageConfig, AgentCard } from '@microsoft/logicAppsChat';
 import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage, isDirectAgentCardUrl } from '@microsoft/logicAppsChat';
-import { FluentProvider, Spinner, mergeClasses, webLightTheme, webDarkTheme } from '@fluentui/react-components';
+import { Spinner, mergeClasses } from '@fluentui/react-components';
 import { useChatSessions } from '../../hooks/useChatSessions';
 import { SessionList } from '../SessionList';
 import { useMultiSessionChatStyles } from './MultiSessionChatStyles';
@@ -221,115 +221,106 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
   // Show loading state while fetching agent card
   if (isLoadingAgent) {
     return (
-      <FluentProvider theme={mode === 'dark' ? webDarkTheme : webLightTheme}>
-        <div className={styles.loadingContainer}>
-          <Spinner size="medium" />
-          <div>Loading agent...</div>
-        </div>
-      </FluentProvider>
+      <div className={styles.loadingContainer}>
+        <Spinner size="medium" />
+        <div>Loading agent...</div>
+      </div>
     );
   }
 
   // Show error if agent card failed to load
   if (agentError || !agentCard) {
     return (
-      <FluentProvider theme={mode === 'dark' ? webDarkTheme : webLightTheme}>
-        <div className={styles.errorContainer}>
-          <div>Error: {agentError?.message || 'Failed to load agent'}</div>
-        </div>
-      </FluentProvider>
+      <div className={styles.errorContainer}>
+        <div>Error: {agentError?.message || 'Failed to load agent'}</div>
+      </div>
     );
   }
 
   // Don't block rendering if no active session - let SessionList handle creating first session
 
   return (
-    <FluentProvider theme={mode === 'dark' ? webDarkTheme : webLightTheme}>
-      <div className={mergeClasses(styles.multiSessionContainer, isResizing && styles.resizing)}>
-        <div
-          ref={sidebarRef}
-          className={mergeClasses(styles.sidebar, !isResizing && styles.sidebarTransition, isCollapsed && styles.sidebarCollapsed)}
-          style={{ width: isCollapsed ? 0 : sidebarWidth }}
-        >
-          <SessionList
-            sessions={sessions}
-            activeSessionId={activeSessionId}
-            onSessionClick={handleSessionClick}
-            onNewSession={handleNewSession}
-            onRenameSession={async (id, name) => {
-              try {
-                await renameSession(id, name);
-              } catch (error) {
-                console.error('Error renaming session:', error);
+    <div className={mergeClasses(styles.multiSessionContainer, isResizing && styles.resizing)}>
+      <div
+        ref={sidebarRef}
+        className={mergeClasses(styles.sidebar, !isResizing && styles.sidebarTransition, isCollapsed && styles.sidebarCollapsed)}
+        style={{ width: isCollapsed ? 0 : sidebarWidth }}
+      >
+        <SessionList
+          sessions={sessions}
+          activeSessionId={activeSessionId}
+          onSessionClick={handleSessionClick}
+          onNewSession={handleNewSession}
+          onRenameSession={async (id, name) => {
+            try {
+              await renameSession(id, name);
+            } catch (error) {
+              console.error('Error renaming session:', error);
+            }
+          }}
+          onDeleteSession={async (id) => {
+            try {
+              await deleteSession(id);
+            } catch (error) {
+              console.error('Error deleting session:', error);
+            }
+          }}
+          logoUrl={chatWidgetProps.theme?.branding?.logoUrl}
+          logoSize={chatWidgetProps.theme?.branding?.logoSize}
+          themeColors={chatWidgetProps.theme?.colors}
+        />
+        {!isCollapsed && (
+          <div
+            className={styles.resizeHandle}
+            onMouseDown={startResizing}
+            onMouseEnter={(e) => {
+              if (chatWidgetProps.theme?.colors?.primary) {
+                e.currentTarget.style.backgroundColor = chatWidgetProps.theme.colors.primary;
               }
             }}
-            onDeleteSession={async (id) => {
-              try {
-                await deleteSession(id);
-              } catch (error) {
-                console.error('Error deleting session:', error);
-              }
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
             }}
-            logoUrl={chatWidgetProps.theme?.branding?.logoUrl}
-            logoSize={chatWidgetProps.theme?.branding?.logoSize}
-            themeColors={chatWidgetProps.theme?.colors}
           />
-          {!isCollapsed && (
-            <div
-              className={styles.resizeHandle}
-              onMouseDown={startResizing}
-              onMouseEnter={(e) => {
-                if (chatWidgetProps.theme?.colors?.primary) {
-                  e.currentTarget.style.backgroundColor = chatWidgetProps.theme.colors.primary;
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            />
-          )}
-        </div>
-        <div className={styles.chatArea}>
-          <ChatThemeProvider theme={mode}>
-            {sessions.map((session) => (
-              <div
-                key={session.id}
-                className={mergeClasses(styles.sessionChat, session.id !== activeSessionId && styles.sessionChatHidden)}
-              >
-                <ChatWidget
-                  agentCard={agentCard}
-                  apiKey={config.apiKey}
-                  oboUserToken={config.oboUserToken}
-                  sessionKey={`a2a-chat-session-${session.id}`}
-                  sessionId={session.id}
-                  agentUrl={config.apiUrl}
-                  metadata={{
-                    ...chatWidgetProps.metadata,
-                    sessionId: session.id,
-                  }}
-                  theme={chatWidgetProps.theme}
-                  userName={chatWidgetProps.userName}
-                  placeholder={chatWidgetProps.placeholder}
-                  welcomeMessage={chatWidgetProps.welcomeMessage}
-                  allowFileUpload={false}
-                  onToggleSidebar={toggleSidebar}
-                  isSidebarCollapsed={isCollapsed}
-                  mode={mode}
-                  fluentTheme={mode}
-                  onUnauthorized={config.onUnauthorized}
-                  onContextIdChange={handleContextIdChange}
-                  sessionName={session.name}
-                  onRenameSession={async (newName: string) => {
-                    await renameSession(session.id, newName);
-                  }}
-                  storageConfig={config.storageConfig}
-                  initialContextId={session.id || undefined}
-                />
-              </div>
-            ))}
-          </ChatThemeProvider>
-        </div>
+        )}
       </div>
-    </FluentProvider>
+      <div className={styles.chatArea}>
+        <ChatThemeProvider theme={mode}>
+          {sessions.map((session) => (
+            <div key={session.id} className={mergeClasses(styles.sessionChat, session.id !== activeSessionId && styles.sessionChatHidden)}>
+              <ChatWidget
+                agentCard={agentCard}
+                apiKey={config.apiKey}
+                oboUserToken={config.oboUserToken}
+                sessionKey={`a2a-chat-session-${session.id}`}
+                sessionId={session.id}
+                agentUrl={config.apiUrl}
+                metadata={{
+                  ...chatWidgetProps.metadata,
+                  sessionId: session.id,
+                }}
+                theme={chatWidgetProps.theme}
+                userName={chatWidgetProps.userName}
+                placeholder={chatWidgetProps.placeholder}
+                welcomeMessage={chatWidgetProps.welcomeMessage}
+                allowFileUpload={false}
+                onToggleSidebar={toggleSidebar}
+                isSidebarCollapsed={isCollapsed}
+                mode={mode}
+                fluentTheme={mode}
+                onUnauthorized={config.onUnauthorized}
+                onContextIdChange={handleContextIdChange}
+                sessionName={session.name}
+                onRenameSession={async (newName: string) => {
+                  await renameSession(session.id, newName);
+                }}
+                storageConfig={config.storageConfig}
+                initialContextId={session.id || undefined}
+              />
+            </div>
+          ))}
+        </ChatThemeProvider>
+      </div>
+    </div>
   );
 }
