@@ -96,7 +96,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     return <LoadingDisplay title="Initializing Frame Blade..." message="Connecting to Azure Portal..." />;
   }
 
-  // Show login prompt if 401 was received (cookie-based auth needed)
   if (needsLogin) {
     return (
       <FluentProvider theme={theme}>

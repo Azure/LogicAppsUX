@@ -279,7 +279,6 @@ export function createUnauthorizedHandler(config: AuthHandlerConfig) {
       const refreshSuccess = await refreshAuthToken(config.baseUrl);
 
       if (refreshSuccess) {
-        console.log('[Auth] Token refresh successful');
         config.onRefreshSuccess?.();
         // Reload to retry with refreshed token
         window.location.reload();

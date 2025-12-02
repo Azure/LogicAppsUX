@@ -289,7 +289,7 @@ describe('IframeWrapper', () => {
       expect.objectContaining({
         initialContextId: 'ctx-from-url',
       }),
-      expect.anything()
+      undefined
     );
   });
 
