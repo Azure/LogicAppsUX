@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { ChatWidget, type ChatWidgetProps, type StorageConfig } from '@microsoft/logicAppsChat';
 import { MultiSessionChat } from './MultiSessionChat/MultiSessionChat';
 import { LoadingDisplay } from './LoadingDisplay';
@@ -6,7 +6,7 @@ import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
 import { getBaseUrl, openLoginPopup } from '../lib/authHandler';
-import type { IframeConfig } from '../lib/utils/config-parser';
+import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 
@@ -33,6 +33,11 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const agentCardUrl = props.agentCard;
   const baseUrl = getBaseUrl(typeof agentCardUrl === 'string' ? agentCardUrl : agentCardUrl?.url);
 
+  // Determine theme mode
+  const urlMode = params.get('mode');
+  const mode = inPortal ? currentTheme : urlMode === 'dark' ? 'dark' : initialMode;
+  const theme = useMemo(() => (mode === 'dark' ? webDarkTheme : webLightTheme), [mode]);
+
   // Handle login button click
   const handleLogin = useCallback(() => {
     setIsLoggingIn(true);
@@ -56,13 +61,11 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
 
   // Handle 401 unauthorized - show login prompt
   const handleUnauthorized = useCallback(() => {
-    console.log('Received 401, showing login prompt...');
     setNeedsLogin(true);
   }, []);
 
   // Handle chat history received from parent blade
   const handleChatHistoryReceived = useCallback((history: ChatHistoryData) => {
-    console.log('Chat history received:', history);
     chatHistoryRef.current = history;
   }, []);
 
@@ -89,21 +92,12 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   if (inPortal && !isFrameBladeReady) {
     return <LoadingDisplay title="Initializing Frame Blade..." message="Connecting to Azure Portal..." />;
   }
-  // Determine theme mode
-  const urlMode = params.get('mode');
-  const mode = inPortal ? currentTheme : urlMode === 'dark' ? 'dark' : initialMode;
 
   // Show login prompt if 401 was received (cookie-based auth needed)
   if (needsLogin) {
     return (
-      <FluentProvider theme={mode === 'dark' ? webDarkTheme : webLightTheme}>
-        <LoginPrompt
-          title="Sign in required"
-          message="Please sign in with your account to use the chat."
-          buttonText="Sign in"
-          onLogin={handleLogin}
-          isLoading={isLoggingIn}
-        />
+      <FluentProvider theme={theme}>
+        <LoginPrompt onLogin={handleLogin} isLoading={isLoggingIn} />
       </FluentProvider>
     );
   }
@@ -117,16 +111,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     authToken && inPortal
       ? { ...finalProps, apiKey: authToken, oboUserToken: oboUserToken }
       : { ...finalProps, oboUserToken: oboUserToken };
-
-  // Create storage configuration for server-side chat history
-  // Extract base agent URL (remove .well-known/agent-card.json if present)
-  const getAgentBaseUrl = (cardUrl: string | undefined): string => {
-    if (!cardUrl) {
-      return '';
-    }
-    // Remove .well-known/agent-card.json from the end if it exists
-    return cardUrl.replace(/\/\.well-known\/agent-card\.json$/, '');
-  };
 
   const agentBaseUrl =
     typeof propsWithAuth.agentCard === 'string'
@@ -145,7 +129,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   // Render appropriate chat component
   if (multiSession) {
     return (
-      <FluentProvider theme={mode === 'dark' ? webDarkTheme : webLightTheme}>
+      <FluentProvider theme={theme}>
         <MultiSessionChat
           config={{
             apiUrl: typeof propsWithAuth.agentCard === 'string' ? propsWithAuth.agentCard : propsWithAuth.agentCard.url,
@@ -168,7 +152,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const initialContextId = contextId || chatHistoryRef.current?.contextId;
 
   return (
-    <FluentProvider theme={mode === 'dark' ? webDarkTheme : webLightTheme}>
+    <FluentProvider theme={theme}>
       <ChatWidget
         {...propsWithAuth}
         mode={mode}

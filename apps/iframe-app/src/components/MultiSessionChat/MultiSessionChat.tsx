@@ -3,8 +3,8 @@ import type { ChatWidgetProps, StorageConfig, AgentCard } from '@microsoft/logic
 import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage, isDirectAgentCardUrl } from '@microsoft/logicAppsChat';
 import { Spinner, mergeClasses } from '@fluentui/react-components';
 import { useChatSessions } from '../../hooks/useChatSessions';
-import { SessionList } from '../SessionList';
 import { useMultiSessionChatStyles } from './MultiSessionChatStyles';
+import { SessionList } from '../SessionList/SessionList';
 
 interface MultiSessionChatProps extends Omit<ChatWidgetProps, 'agentCard'> {
   config: {
