@@ -46,7 +46,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       // Don't specify redirect - let it stay on the server after login
       // The popup will be detected as closed or same-origin when it returns
       onSuccess: () => {
-        console.log('Login successful, reloading to retry...');
         setNeedsLogin(false);
         setIsLoggingIn(false);
         // Reload the page to retry fetching with new auth cookies

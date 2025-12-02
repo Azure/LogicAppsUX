@@ -154,7 +154,7 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
 
         const response = await fetch(url, requestInit);
         if (!response.ok) {
-          if (response.status === 401 && response.statusText === 'Unauthorized') {
+          if (response.statusText === 'Unauthorized') {
             if (config.onUnauthorized) {
               await config.onUnauthorized();
             }

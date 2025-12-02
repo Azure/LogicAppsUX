@@ -277,7 +277,6 @@ export function createUnauthorizedHandler(config: AuthHandlerConfig) {
     isHandling = true;
 
     try {
-      console.log('Attempting to refresh authentication token...');
       const refreshSuccess = await refreshAuthToken(config.baseUrl);
 
       if (refreshSuccess) {
@@ -293,17 +292,14 @@ export function createUnauthorizedHandler(config: AuthHandlerConfig) {
           baseUrl: config.baseUrl,
           postLoginRedirectUri: '/',
           onSuccess: () => {
-            console.log('Login successful, refreshing page...');
             config.onLoginSuccess?.();
             // Refresh the page to retry with new auth
             window.location.reload();
           },
           onFailed: () => {
-            console.log('Login failed or cancelled, falling back to logout...');
             config.onLoginFailed?.();
             // If login failed, try logout to clear any stale state
             openLogoutPopup(config.baseUrl, () => {
-              console.log('Logout complete, refreshing page...');
               config.onLogoutComplete?.();
               window.location.reload();
             });
