@@ -371,6 +371,7 @@ export default {
       JOIN: 'join',
       LIQUID: 'liquid',
       MANUAL: 'manual',
+      MCP_CLIENT: 'mcpclienttool',
       OPEN_API_CONNECTION: 'openapiconnection',
       OPEN_API_CONNECTION_WEBHOOK: 'openapiconnectionwebhook',
       OPEN_API_CONNECTION_NOTIFICATION: 'openapiconnectionnotification',
@@ -420,6 +421,8 @@ export default {
       VIRTUALAGENT: 'virtualagent',
       XML_TO_JSON: 'xmltojson',
       XML_TO_TEXT: 'xmltotext',
+      MANAGED: 'managed',
+      BUILTIN: 'builtin',
     },
     PHASE: {
       NOT_SPECIFIED: 'NOTSPECIFIED',
@@ -812,6 +815,7 @@ export default {
     JOIN: 'Join',
     LIQUID: 'Liquid',
     MANUAL: 'Manual', // 2015-08-01-preview
+    MCP_CLIENT: 'McpClientTool',
     OPEN_API_CONNECTION: 'OpenApiConnection',
     OPEN_API_CONNECTION_WEBHOOK: 'OpenApiConnectionWebhook',
     OPEN_API_CONNECTION_NOTIFICATION: 'OpenApiConnectionNotification',
