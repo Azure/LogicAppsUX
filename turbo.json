@@ -18,6 +18,9 @@
     "build:lib": {
       "outputs": ["build/**"]
     },
+    "a2a-core#build:lib": {
+      "outputs": ["dist/**"]
+    },
     "vscode-designer#build:extension": {
       "cache": false,
       "dependsOn": ["build"]
