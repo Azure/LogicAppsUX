@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
-import type { ChatWidgetProps, StorageConfig, AgentCard } from '@microsoft/logicAppsChat';
-import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage, isDirectAgentCardUrl } from '@microsoft/logicAppsChat';
+import type { ChatWidgetProps, StorageConfig, AgentCard } from '@microsoft/logic-apps-chat';
+import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage, isDirectAgentCardUrl } from '@microsoft/logic-apps-chat';
 import { Spinner, mergeClasses } from '@fluentui/react-components';
 import { useChatSessions } from '../../hooks/useChatSessions';
 import { useMultiSessionChatStyles } from './MultiSessionChatStyles';

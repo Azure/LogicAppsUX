@@ -4,7 +4,7 @@ import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
 
 // Mock the dependencies
-vi.mock('@microsoft/logicAppsChat', () => ({
+vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(({ mode }) => <div data-testid="chat-widget">ChatWidget (mode: {mode})</div>),
 }));
 
@@ -185,7 +185,7 @@ describe('IframeWrapper', () => {
 
   it('should handle auth token from Frame Blade', async () => {
     const { useFrameBlade } = await import('../../lib/hooks/useFrameBlade');
-    const { ChatWidget } = await import('@microsoft/logicAppsChat');
+    const { ChatWidget } = await import('@microsoft/logic-apps-chat');
 
     let capturedAuthCallback: ((token: string) => void) | undefined;
 
@@ -275,7 +275,7 @@ describe('IframeWrapper', () => {
   });
 
   it('should pass contextId from URL config to ChatWidget', async () => {
-    const { ChatWidget } = vi.mocked(await import('@microsoft/logicAppsChat'));
+    const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
 
     const configWithContextId: IframeConfig = {
       ...defaultConfig,

@@ -1,4 +1,4 @@
-import type { ChatTheme } from '@microsoft/logicAppsChat';
+import type { ChatTheme } from '@microsoft/logic-apps-chat';
 
 export const THEME_PRESETS: Record<string, Partial<ChatTheme['colors']>> = {
   default: {

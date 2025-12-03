@@ -3,7 +3,7 @@ import { useCallback, memo } from 'react';
 import { Button, Card, Text, Caption1, Input, mergeClasses, Tooltip } from '@fluentui/react-components';
 import { EditRegular, ArchiveRegular, WarningRegular } from '@fluentui/react-icons';
 import type { SessionMetadata } from '../../hooks/useChatSessions';
-import type { ChatTheme } from '@microsoft/logicAppsChat';
+import type { ChatTheme } from '@microsoft/logic-apps-chat';
 import { useSessionListStyles } from './SessionListStyles';
 
 // Memoized session item component to prevent unnecessary re-renders
