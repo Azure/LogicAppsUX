@@ -31,7 +31,7 @@ export const useIsAgenticWorkflow = (): boolean => {
     return equals(workflowKind, 'agentic', true) || equals(workflowKind, 'stateful', true);
   }, [workflowKind]);
 
-  // enable agnetic for all stateful workflows as well as consumption workflows
+  // enable agentic for all stateful workflows as well as consumption workflows
   return !workflowKind || isAgenticOrStateful;
 };
 
