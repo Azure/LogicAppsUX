@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@fluentui/react-components": "9.70.0",
-    "@microsoft/logicAppsChat": "workspace:*",
+    "@microsoft/logic-apps-chat": "workspace:*",
     "idb": "^8.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

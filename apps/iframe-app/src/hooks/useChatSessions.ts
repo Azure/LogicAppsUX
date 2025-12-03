@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useChatStore } from '@microsoft/logicAppsChat';
+import { useChatStore } from '@microsoft/logic-apps-chat';
 
 // Local type definitions for session metadata
 export interface SessionMetadata {

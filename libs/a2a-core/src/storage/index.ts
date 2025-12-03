@@ -7,7 +7,7 @@
  *
  * @example
  * ```typescript
- * import { createHistoryStorage } from '@microsoft/logicAppsChat/storage';
+ * import { createHistoryStorage } from '@microsoft/logic-apps-chat/storage';
  *
  * const storage = createHistoryStorage({
  *   type: 'server',

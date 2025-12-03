@@ -2,7 +2,7 @@
 
 React SDK for building chat interfaces that connect to AI agents using the A2A (Agent-to-Agent) protocol.
 
-**Package**: `@microsoft/logicAppsChat`
+**Package**: `@microsoft/logic-apps-chat`
 
 ## Purpose
 
@@ -49,7 +49,7 @@ Multiple entry points:
 
 ### A2A Client
 ```typescript
-import { A2AClient } from '@microsoft/logicAppsChat'
+import { A2AClient } from '@microsoft/logic-apps-chat'
 
 const client = new A2AClient({
   agentUrl: 'https://agent.example.com',
@@ -74,7 +74,7 @@ interface Message {
 
 ### ChatProvider
 ```tsx
-import { ChatProvider, ChatWindow } from '@microsoft/logicAppsChat/react'
+import { ChatProvider, ChatWindow } from '@microsoft/logic-apps-chat/react'
 
 <ChatProvider agentUrl="https://...">
   <ChatWindow />
@@ -92,7 +92,7 @@ import { ChatProvider, ChatWindow } from '@microsoft/logicAppsChat/react'
 
 Uses Zustand for chat state:
 ```typescript
-import { useChatStore } from '@microsoft/logicAppsChat/react'
+import { useChatStore } from '@microsoft/logic-apps-chat/react'
 
 const { messages, sendMessage, isLoading } = useChatStore()
 ```
@@ -108,7 +108,7 @@ IndexedDB storage via `idb`:
 
 Uses Zod for runtime validation:
 ```typescript
-import { MessageSchema } from '@microsoft/logicAppsChat'
+import { MessageSchema } from '@microsoft/logic-apps-chat'
 
 const validated = MessageSchema.parse(rawMessage)
 ```

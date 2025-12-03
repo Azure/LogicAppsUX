@@ -4,10 +4,10 @@
  */
 
 // Example imports you would use:
-// import { A2AClient } from '@microsoft/logicAppsChat';
-// import { openPopupWindow } from '@microsoft/logicAppsChat';
-// import type { AuthRequiredEvent, AuthRequiredHandler } from '@microsoft/logicAppsChat';
-// import type { AgentCard } from '@microsoft/logicAppsChat';
+// import { A2AClient } from '@microsoft/logic-apps-chat';
+// import { openPopupWindow } from '@microsoft/logic-apps-chat';
+// import type { AuthRequiredEvent, AuthRequiredHandler } from '@microsoft/logic-apps-chat';
+// import type { AgentCard } from '@microsoft/logic-apps-chat';
 
 // Create an auth handler that opens the consent link in a popup
 // Example handler shown for documentation purposes

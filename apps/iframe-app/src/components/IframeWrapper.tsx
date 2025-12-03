@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
-import { ChatWidget, type ChatWidgetProps, type StorageConfig } from '@microsoft/logicAppsChat';
+import { ChatWidget, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
 import { MultiSessionChat } from './MultiSessionChat/MultiSessionChat';
 import { LoadingDisplay } from './LoadingDisplay';
 import { LoginPrompt } from './LoginPrompt';

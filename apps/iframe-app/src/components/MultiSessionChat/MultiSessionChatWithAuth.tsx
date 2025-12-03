@@ -1,7 +1,7 @@
 import { MultiSessionChat } from './MultiSessionChat';
 import { SessionExpiredModal } from '../SessionExpiredModal';
 import { useSessionExpiredHandler } from '../../hooks/useSessionExpiredHandler';
-import type { ChatWidgetProps } from '@microsoft/logicAppsChat';
+import type { ChatWidgetProps } from '@microsoft/logic-apps-chat';
 
 interface MultiSessionChatWithAuthProps extends Omit<ChatWidgetProps, 'agentCard'> {
   apiUrl: string;
