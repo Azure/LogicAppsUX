@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { parseIframeConfig } from '../config-parser';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { getAgentBaseUrl, parseIframeConfig } from '../config-parser';
 
 describe('parseIframeConfig', () => {
   let originalLocation: Location;
@@ -258,5 +258,110 @@ describe('parseIframeConfig', () => {
       expect(config.inPortal).toBe(true);
       expect(config.trustedParentOrigin).toBe('https://localhost:3000');
     });
+  });
+});
+
+describe('getAgentBaseUrl', () => {
+  it('removes agent card suffix from URL', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent');
+  });
+
+  it('returns URL unchanged if no agent card suffix', () => {
+    const url = 'https://example.com/api/agents/TestAgent';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent');
+  });
+
+  it('returns empty string for undefined URL', () => {
+    const result = getAgentBaseUrl(undefined);
+
+    expect(result).toBe('');
+  });
+
+  it('handles URLs with query parameters after agent card suffix', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json?param=value';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent?param=value');
+  });
+
+  it('handles URLs with hash fragments', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json#section';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent#section');
+  });
+
+  it('handles URLs with both query parameters and hash fragments', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json?param=value#section';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent?param=value#section');
+  });
+
+  it('handles URLs with port numbers', () => {
+    const url = 'https://example.com:8080/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com:8080/api/agents/TestAgent');
+  });
+
+  it('handles URLs with special characters in agent name', () => {
+    const url = 'https://example.com/api/agents/Test-Agent_v2.0/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/Test-Agent_v2.0');
+  });
+
+  it('handles URLs with encoded characters', () => {
+    const url = 'https://example.com/api/agents/Test%20Agent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/Test%20Agent');
+  });
+
+  it('handles URLs with multiple path segments after agent', () => {
+    const url = 'https://example.com/api/v2/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/v2/agents/TestAgent');
+  });
+
+  it('handles protocol-relative URLs', () => {
+    const url = '//example.com/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('//example.com/api/agents/TestAgent');
+  });
+
+  it('handles relative URLs', () => {
+    const url = '/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('/api/agents/TestAgent');
+  });
+
+  it('only removes the exact suffix pattern', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/other-file.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent/.well-known/other-file.json');
+  });
+
+  it('handles empty string', () => {
+    const result = getAgentBaseUrl('');
+
+    expect(result).toBe('');
+  });
+
+  it('handles URLs with trailing slashes before suffix', () => {
+    const url = 'https://example.com/api/agents/TestAgent//.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent/');
   });
 });
