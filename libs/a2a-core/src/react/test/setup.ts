@@ -130,7 +130,7 @@ beforeEach(() => {
 // Mock TextDecoderStream for SSE parsing tests
 global.TextDecoderStream = class TextDecoderStream {
   readable: ReadableStream<string>;
-  writable: WritableStream<Uint8Array>;
+  writable: WritableStream;
   encoding: string;
   fatal: boolean;
   ignoreBOM: boolean;
