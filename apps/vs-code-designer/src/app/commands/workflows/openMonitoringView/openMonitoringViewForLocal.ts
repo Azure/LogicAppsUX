@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { assetsFolderName, localSettingsFileName, managementApiPrefix } from '../../../../constants';
+import { EXTENSION_BUNDLE_VERSION, assetsFolderName, localSettingsFileName, managementApiPrefix } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -31,7 +31,7 @@ import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
-import { getBundleVersionNumber } from '../../../utils/bundleFeed';
+import { getPublicUrl } from '../../../utils/extension';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
@@ -74,7 +74,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
-    this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${ext.workflowRuntimePort}`);
+    this.baseUrl = `${publicUrl}${managementApiPrefix}`;
 
     if (this.projectPath) {
       this.localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;
@@ -187,7 +188,6 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
-    const bundleVersionNumber = await getBundleVersionNumber();
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
@@ -214,7 +214,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
-      extensionBundleVersion: bundleVersionNumber,
+      extensionBundleVersion: EXTENSION_BUNDLE_VERSION,
     };
   }
 }
