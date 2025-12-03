@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  EXTENSION_BUNDLE_VERSION,
   localSettingsFileName,
   workflowLocationKey,
   workflowResourceGroupNameKey,
@@ -93,7 +94,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
       : 'false';
     context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
       ? ext.currentBundleVersion.get(projectPath)
-      : ext.defaultBundleVersion;
+      : EXTENSION_BUNDLE_VERSION;
 
     if (error instanceof UserCancelledError) {
       context.telemetry.properties.result = 'Canceled';

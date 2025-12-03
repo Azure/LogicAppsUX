@@ -24,11 +24,11 @@ import {
   startDesignTimeProcess,
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
-import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as portfinder from 'portfinder';
 import { ProgressLocation, type Uri, window } from 'vscode';
+import { getPublicUrl } from '../../utils/extension';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
@@ -47,7 +47,8 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
   }
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
-  const url = `${backendRuntimeBaseUrl}${designTimeInst.port}${designerStartApi}`;
+  const publicUrl = getPublicUrl(`${backendRuntimeBaseUrl}${designTimeInst.port}`);
+  const url = `${publicUrl}${designerStartApi}`;
 
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
@@ -75,7 +76,7 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
         );
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${designTimeInst.port}`;
-        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+        startDesignTimeProcess(ext.outputChannel, cwd, 'func', 'host', 'start', portArgs);
 
         await waitForDesignTimeStartUp(context, projectPath, url, true);
       } else {

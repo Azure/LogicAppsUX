@@ -79,8 +79,6 @@ export const dotnetDependencyName = 'DotNetSDK';
 
 // Node
 export const node = 'node';
-export const npm = 'npm';
-export const nodeJsDependencyName = 'NodeJs';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -130,8 +128,8 @@ export const WorkflowKind = {
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
 // Designer
-export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
-export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
+export const managementApiPrefix = 'runtime/webhooks/workflow/api/management';
+export const designerStartApi = 'runtime/webhooks/workflow/api/management/operationGroups';
 export const designerApiLoadTimeout = 300000;
 
 // Commands
@@ -201,9 +199,6 @@ export const extensionCommand = {
   startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects: 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
-  validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
-  resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
-  disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
   parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
@@ -244,29 +239,19 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
-export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
-export const validateDotNetSDKSetting = 'validateDotNetSDK';
-export const validateNodeJsSetting = 'validateNodeJs';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
-export const show64BitWarningSetting = 'show64BitWarning';
 export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
-export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
-export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
-export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
-export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
-export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
-export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
@@ -289,17 +274,15 @@ export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
 export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
 
 // Project
-export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
+export const EXTENSION_BUNDLE_VERSION = '1.131.9';
+export const defaultVersionRange = '[1.*, 2.0.0)';
 export const funcWatchProblemMatcher = '$func-watch';
-export const extInstallCommand = 'extensions install';
-export const extInstallTaskName = `${func}: ${extInstallCommand}`;
+export const extInstallTaskName = `${func}: extensions install`;
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
-export const defaultLogicAppsFolder = '.azurelogicapps';
 export const defaultFunctionCoreToolsFolder = '.azure-functions-core-tools';
-export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
-export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
+export const defaultAzuritePathValue = path.join(os.homedir(), '.azurite');
 export const defaultExtensionBundlePathValue = path.join(
   os.homedir(),
   defaultFunctionCoreToolsFolder,
@@ -308,14 +291,6 @@ export const defaultExtensionBundlePathValue = path.join(
   extensionBundleId
 );
 export const defaultDataMapperVersion = 2;
-
-// Fallback Dependency Versions
-export const DependencyVersion = {
-  dotnet6: '6.0.413',
-  funcCoreTools: '4.0.7030',
-  nodeJs: '18.17.1',
-} as const;
-export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
 export const hostFileContent = {
   version: '2.0',
@@ -332,12 +307,6 @@ export const hostFileContent = {
   },
 };
 
-export const DependencyDefaultPath = {
-  dotnet: 'dotnet',
-  funcCoreTools: 'func',
-  node: 'node',
-} as const;
-export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
   net8: 'net8.0',
@@ -349,13 +318,6 @@ export const DotnetVersion = {
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
 
 export const dotnetExtensionId = 'ms-dotnettools.csharp';
-
-// Packages Manager
-export const PackageManager = {
-  npm: 'npm',
-  brew: 'brew',
-} as const;
-export type PackageManager = (typeof PackageManager)[keyof typeof PackageManager];
 
 // Resources
 export const kubernetesKind = 'kubernetes';

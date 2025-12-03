@@ -2,19 +2,18 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { DebugConfiguration } from 'vscode';
-import { debugSymbolDll, extensionBundleId, extensionCommand } from '../../constants';
-
+import { debugSymbolDll, EXTENSION_BUNDLE_VERSION, extensionBundleId, extensionCommand } from '../../constants';
 import * as path from 'path';
-import { getBundleVersionNumber, getExtensionBundleFolder } from './bundleFeed';
+import { getExtensionBundleFolder } from './bundleFeed';
 
 export async function getDebugSymbolDll(): Promise<string> {
   const bundleFolderRoot = await getExtensionBundleFolder();
   const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
-  const bundleVersionNumber = await getBundleVersionNumber();
 
-  return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+  return path.join(bundleFolder, EXTENSION_BUNDLE_VERSION, 'bin', debugSymbolDll);
 }
 
 /**
@@ -37,7 +36,7 @@ export const getDebugConfiguration = (
       name: `Run/Debug logic app with local function ${logicAppName}`,
       type: 'logicapp',
       request: 'launch',
-      funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
+      funcRuntime: 'coreclr',
       customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
       isCodeless: true,
     };
@@ -45,7 +44,7 @@ export const getDebugConfiguration = (
 
   return {
     name: `Run/Debug logic app ${logicAppName}`,
-    type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
+    type: 'coreclr',
     request: 'attach',
     processId: `\${command:${extensionCommand.pickProcess}}`,
   };

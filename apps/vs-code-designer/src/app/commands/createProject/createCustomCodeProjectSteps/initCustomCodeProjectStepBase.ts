@@ -123,7 +123,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
         "tasks": [
           {
             "label": "generateDebugSymbols",
-            "command": '\${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            "command": 'dotnet',
             "args": [
               "\${input:getDebugSymbolDll}"
             ],
@@ -132,7 +132,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
           },
           {
             "type": "shell",
-            "command":"\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}",
+            "command":"func",
             "args" : ["host", "start"],
             "options": {
               "env": {

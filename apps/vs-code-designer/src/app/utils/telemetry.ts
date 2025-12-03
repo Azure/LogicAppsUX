@@ -53,12 +53,10 @@ export const logSubscriptions = async (context: IActionContext) => {
 
 export const logExtensionSettings = async (context: IActionContext) => {
   const settingsToLog = [
-    'autoRuntimeDependenciesValidationAndInstallation',
     'autoStartAzurite',
     'autoStartDesignTime',
     'parameterizeConnectionsInProjectLoad',
     'showStartDesignTimeMessage',
-    'validateDotNetSDK',
     'stopFuncTaskPostDebug',
   ];
   try {
