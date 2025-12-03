@@ -58,7 +58,7 @@ describe('authHandler', () => {
       expect(result).toBe(true);
       expect(mockFetch).toHaveBeenCalledWith('https://example.com/.auth/me', {
         method: 'GET',
-        credentials: 'same-origin',
+        credentials: 'include',
       });
     });
 
@@ -131,8 +131,12 @@ describe('authHandler', () => {
       // Simulate popup being closed after successful login
       mockPopup.closed = true;
 
-      // Advance timers to trigger interval check
-      await vi.advanceTimersByTimeAsync(600);
+      // First interval tick to detect popup closed
+      await vi.advanceTimersByTimeAsync(500);
+      // Wait for the 500ms delay after popup close
+      await vi.advanceTimersByTimeAsync(500);
+      // Allow promises to resolve
+      await vi.runAllTimersAsync();
 
       expect(onSuccess).toHaveBeenCalled();
 
@@ -148,6 +152,7 @@ describe('authHandler', () => {
       const handler = createUnauthorizedHandler({
         baseUrl: 'https://example.com',
         onRefreshSuccess,
+        onLoginRequired: vi.fn(),
       });
 
       await handler();
@@ -159,151 +164,69 @@ describe('authHandler', () => {
       expect(onRefreshSuccess).toHaveBeenCalled();
     });
 
-    it('should open login popup when refresh fails', async () => {
+    it('should call onLoginRequired when refresh fails', async () => {
       mockFetch.mockResolvedValueOnce({ ok: false });
-      const mockPopup = { closed: false, close: vi.fn(), location: { href: '' } };
-      mockWindowOpen.mockReturnValueOnce(mockPopup);
 
       const onRefreshFailed = vi.fn();
-      const onLoginSuccess = vi.fn();
+      const onLoginRequired = vi.fn();
 
       const handler = createUnauthorizedHandler({
         baseUrl: 'https://example.com',
         onRefreshFailed,
-        onLoginSuccess,
+        onLoginRequired,
       });
 
       await handler();
 
       expect(onRefreshFailed).toHaveBeenCalled();
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        'https://example.com/.auth/login/aad?post_login_redirect_uri=%2F',
-        'auth-login',
-        'width=600,height=700,popup=true'
-      );
+      expect(onLoginRequired).toHaveBeenCalled();
     });
 
-    it('should call onLoginSuccess when login popup succeeds', async () => {
-      vi.useFakeTimers();
-
-      mockFetch
-        .mockResolvedValueOnce({ ok: false }) // refresh fails
-        .mockResolvedValueOnce({
-          // checkAuthStatus succeeds
-          ok: true,
-          json: () => Promise.resolve([{ provider_name: 'aad' }]),
-        });
-
-      const mockPopup = { closed: false, close: vi.fn(), location: { href: '' } };
-      mockWindowOpen.mockReturnValueOnce(mockPopup);
-
-      const onLoginSuccess = vi.fn();
-
-      const handler = createUnauthorizedHandler({
-        baseUrl: 'https://example.com',
-        onLoginSuccess,
-      });
-
-      await handler();
-
-      // Simulate popup being closed after successful login
-      mockPopup.closed = true;
-
-      // Advance timers to trigger interval check
-      await vi.advanceTimersByTimeAsync(600);
-
-      expect(onLoginSuccess).toHaveBeenCalled();
-
-      vi.useRealTimers();
-    });
-
-    it('should fall back to logout when login fails', async () => {
-      vi.useFakeTimers();
-
-      mockFetch
-        .mockResolvedValueOnce({ ok: false }) // refresh fails
-        .mockResolvedValueOnce({
-          // checkAuthStatus fails (not authenticated)
-          ok: true,
-          json: () => Promise.resolve([]),
-        });
-
-      const mockLoginPopup = { closed: false, close: vi.fn(), location: { href: '' } };
-      const mockLogoutPopup = { closed: false, close: vi.fn(), location: { href: '' } };
-      mockWindowOpen.mockReturnValueOnce(mockLoginPopup).mockReturnValueOnce(mockLogoutPopup);
-
-      const onLoginFailed = vi.fn();
-      const onLogoutComplete = vi.fn();
-
-      const handler = createUnauthorizedHandler({
-        baseUrl: 'https://example.com',
-        onLoginFailed,
-        onLogoutComplete,
-      });
-
-      await handler();
-
-      // Simulate login popup being closed without success
-      mockLoginPopup.closed = true;
-
-      // Advance timers to trigger interval check and auth status check
-      await vi.advanceTimersByTimeAsync(600);
-
-      expect(onLoginFailed).toHaveBeenCalled();
-
-      // Now logout popup should be opened
-      expect(mockWindowOpen).toHaveBeenCalledTimes(2);
-      expect(mockWindowOpen).toHaveBeenLastCalledWith('https://example.com/.auth/logout', 'auth-logout', 'width=600,height=700,popup=true');
-
-      // Simulate logout popup being closed
-      mockLogoutPopup.closed = true;
-
-      await vi.advanceTimersByTimeAsync(600);
-
-      expect(onLogoutComplete).toHaveBeenCalled();
-
-      vi.useRealTimers();
-    });
-
-    it('should redirect directly if popup is blocked', async () => {
-      mockFetch.mockResolvedValueOnce({ ok: false });
-      mockWindowOpen.mockReturnValueOnce(null);
-
-      const onLoginFailed = vi.fn();
-
-      const handler = createUnauthorizedHandler({
-        baseUrl: 'https://example.com',
-        onLoginFailed,
-      });
-
-      await handler();
-
-      expect(onLoginFailed).toHaveBeenCalled();
-    });
-
-    it('should handle fetch errors gracefully', async () => {
+    it('should call onLoginRequired when refresh throws an error', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
-      const mockPopup = { closed: false, close: vi.fn(), location: { href: '' } };
-      mockWindowOpen.mockReturnValueOnce(mockPopup);
 
       const onRefreshFailed = vi.fn();
+      const onLoginRequired = vi.fn();
 
       const handler = createUnauthorizedHandler({
         baseUrl: 'https://example.com',
         onRefreshFailed,
+        onLoginRequired,
       });
 
       await handler();
 
       expect(onRefreshFailed).toHaveBeenCalled();
-      expect(mockWindowOpen).toHaveBeenCalled();
+      expect(onLoginRequired).toHaveBeenCalled();
+    });
+
+    it('should reload page when refresh succeeds', async () => {
+      mockFetch.mockResolvedValueOnce({ ok: true });
+
+      const handler = createUnauthorizedHandler({
+        baseUrl: 'https://example.com',
+        onLoginRequired: vi.fn(),
+      });
+
+      await handler();
+
+      expect(mockLocation.reload).toHaveBeenCalled();
     });
 
     it('should prevent multiple simultaneous auth attempts', async () => {
-      mockFetch.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ ok: true }), 100)));
+      vi.useFakeTimers();
+
+      let resolvePromise: (value: { ok: boolean }) => void;
+      mockFetch.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolvePromise = resolve;
+          })
+      );
 
       const handler = createUnauthorizedHandler({
         baseUrl: 'https://example.com',
+        onLoginRequired: vi.fn(),
       });
 
       // Call handler multiple times
@@ -311,10 +234,17 @@ describe('authHandler', () => {
       const promise2 = handler();
       const promise3 = handler();
 
-      await Promise.all([promise1, promise2, promise3]);
+      // Resolve the fetch
+      resolvePromise!({ ok: true });
+
+      await promise1;
+      await promise2;
+      await promise3;
 
       // Should only make one fetch call
       expect(mockFetch).toHaveBeenCalledTimes(1);
+
+      vi.useRealTimers();
     });
   });
 });
