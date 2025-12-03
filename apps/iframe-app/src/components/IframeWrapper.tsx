@@ -46,8 +46,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       onSuccess: () => {
         setNeedsLogin(false);
         setIsLoggingIn(false);
-        // Reload the page to retry fetching with new auth cookies
-        window.location.reload();
       },
       onFailed: () => {
         setIsLoggingIn(false);

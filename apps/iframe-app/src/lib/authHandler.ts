@@ -146,76 +146,80 @@ export function openLoginPopup(options: LoginPopupOptions): void {
   };
 
   // Monitor popup for completion
-  // Since we can't read cross-origin popup URLs, we poll the auth status instead
   const checkInterval = setInterval(async () => {
     if (completed) {
       return;
     }
 
-    // Check if popup is closed by user
-    if (popup.closed) {
-      cleanup();
+    const popupIsClosed = popup.closed;
 
-      // Give a moment for cookies to be set
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    // Determine if we should check auth status
+    // (either popup closed OR we've seen cross-origin navigation indicating OAuth flow)
+    const shouldCheckAuth = popupIsClosed || wasOnDifferentOrigin;
 
-      // Check if we're now authenticated
-      const isAuthenticated = await checkAuthStatus(baseUrl);
+    if (!shouldCheckAuth) {
+      // Try to detect if popup navigated away from about:blank
+      try {
+        const popupHref = popup.location.href;
 
-      if (isAuthenticated) {
-        onSuccess?.();
-      } else {
-        handleFailure();
+        // Skip about:blank - popup hasn't navigated yet
+        if (!popupHref || popupHref === 'about:blank') {
+          return;
+        }
+
+        const popupOrigin = popup.location.origin;
+        const baseOrigin = new URL(baseUrl).origin;
+
+        // If popup is on our origin (not Azure AD), check if login is complete
+        if (popupOrigin === baseOrigin) {
+          // Check if we're NOT on the initial login page
+          const isLoginPage = popupHref.includes('/.auth/login/aad') && !popupHref.includes('callback');
+
+          if (!isLoginPage) {
+            console.log('[Auth] Not on login page anymore, login complete!');
+            handleSuccess();
+          }
+        }
+      } catch (_e) {
+        // Cross-origin error - popup is on Azure AD's domain or the target server
+        // This is expected during the OAuth flow
+        wasOnDifferentOrigin = true;
       }
       return;
     }
 
-    // Poll auth status to detect when login completes
-    // This works even with cross-origin popups
-    if (wasOnDifferentOrigin) {
-      try {
-        const isAuthenticated = await checkAuthStatus(baseUrl);
-        if (isAuthenticated) {
-          console.log('[Auth] Auth status check passed - user is now authenticated!');
-          handleSuccess();
-          return;
-        }
-      } catch (_e) {
-        // Ignore errors during polling
-      }
+    // Single path for auth checking - prevents duplicate success calls
+    if (completed) {
+      return;
     }
 
-    // Try to detect if popup navigated away from about:blank
-    try {
-      const popupHref = popup.location.href;
+    // If popup just closed, give a moment for cookies to be set
+    if (popupIsClosed) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
 
-      // Skip about:blank - popup hasn't navigated yet
-      if (!popupHref || popupHref === 'about:blank') {
+    if (completed) {
+      return;
+    }
+
+    try {
+      const isAuthenticated = await checkAuthStatus(baseUrl);
+
+      if (completed) {
         return;
       }
 
-      const popupOrigin = popup.location.origin;
-      const baseOrigin = new URL(baseUrl).origin;
-
-      console.log('[Auth] Popup URL check - origin:', popupOrigin, 'href:', popupHref);
-
-      // If popup is on our origin (not Azure AD), check if login is complete
-      if (popupOrigin === baseOrigin) {
-        console.log('[Auth] Popup returned to our origin!');
-
-        // Check if we're NOT on the initial login page
-        const isLoginPage = popupHref.includes('/.auth/login/aad') && !popupHref.includes('callback');
-
-        if (!isLoginPage) {
-          console.log('[Auth] Not on login page anymore, login complete!');
-          handleSuccess();
-          return;
-        }
+      if (isAuthenticated) {
+        handleSuccess();
+      } else if (popupIsClosed) {
+        // Only fail if popup is closed AND not authenticated
+        handleFailure();
       }
+      // If not authenticated but popup still open, keep polling
     } catch (_e) {
-      // Cross-origin error - popup is on Azure AD's domain or the target server
-      // This is expected during the OAuth flow
-      wasOnDifferentOrigin = true;
+      if (popupIsClosed && !completed) {
+        handleFailure();
+      }
     }
   }, 500); // Poll every 500ms
 
