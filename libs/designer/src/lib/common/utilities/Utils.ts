@@ -1,6 +1,9 @@
 import toTitleCase from 'to-title-case';
 import constants from '../constants';
+import type { Connection } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
+import type { RootState } from '../../core';
+import { isAgentSubgraphFromMetadata } from '../hooks/agent';
 
 export const titleCase = (s: string) => toTitleCase(s);
 
@@ -20,10 +23,15 @@ export const getSKUDefaultHostOptions = (sku: string) => {
   }
 };
 
+export const isDynamicConnection = (feature?: string): boolean => {
+  return equals(feature ?? '', 'DynamicUserInvoked', true);
+};
+
 export class AgentUtils {
   public static ModelType = {
     AzureOpenAI: 'Azure OpenAI',
     FoundryService: 'Foundry Agent Service',
+    APIM: 'APIM Gen AI Gateway ',
   };
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
@@ -37,11 +45,8 @@ export class AgentUtils {
     return equals(parameterName ?? '', 'agentModelType', true);
   };
 
-  public static isConsumptionAgentModelTypeParameter = (operationId: string, parameterName?: string): boolean => {
-    return equals(operationId, 'connectionProviders/agent', true) && equals(parameterName ?? '', 'modelId', true);
+  public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {
+    const isAgentSubgraph = isAgentSubgraphFromMetadata(nodeId, state?.workflow?.nodesMetadata);
+    return isAgentSubgraph || !isDynamicConnection(connections.properties?.features);
   };
 }
-
-export const isDynamicConnection = (feature?: string): boolean => {
-  return equals(feature ?? '', 'DynamicUserInvoked', true);
-};

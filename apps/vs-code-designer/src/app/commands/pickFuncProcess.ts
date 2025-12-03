@@ -31,7 +31,7 @@ import { Platform, ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
-import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
 
@@ -86,7 +86,7 @@ export async function pickFuncProcessInternal(
     throw new UserCancelledError('preDebugValidate');
   }
 
-  await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+  await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);

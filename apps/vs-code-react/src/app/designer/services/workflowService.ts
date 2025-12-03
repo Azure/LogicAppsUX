@@ -7,11 +7,12 @@ export const fetchAgentUrl = (
   runtimeUrl: string,
   httpClient: IHttpClient,
   clientId: string,
-  tenantId: string
+  tenantId: string,
+  isWorkflowRuntimeRunning?: boolean
 ): Promise<AgentURL> => {
   const queryClient = getReactQueryClient();
 
-  return queryClient.fetchQuery(['agentUrl', workflowName, runtimeUrl], async (): Promise<AgentURL> => {
+  return queryClient.fetchQuery(['agentUrl', workflowName, runtimeUrl, isWorkflowRuntimeRunning], async (): Promise<AgentURL> => {
     if (!workflowName || !runtimeUrl) {
       return { agentUrl: '', chatUrl: '', hostName: '' };
     }

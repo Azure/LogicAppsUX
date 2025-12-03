@@ -65,6 +65,7 @@ export interface IDesignerServices {
 export const getDesignerServices = (
   baseUrl: string,
   workflowRuntimeBaseUrl: string,
+  isWorkflowRuntimeRunning: boolean,
   apiVersion: string,
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
@@ -338,7 +339,14 @@ export const getDesignerServices = (
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
     getAgentUrl: () =>
-      fetchAgentUrl(workflowName, isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl, httpClient, clientId, tenantId),
+      fetchAgentUrl(
+        workflowName,
+        isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
+        httpClient,
+        clientId,
+        tenantId,
+        isWorkflowRuntimeRunning
+      ),
   };
 
   const hostService: IHostService = {
@@ -447,30 +455,6 @@ const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettin
   }
 
   return updatedSettings;
-};
-
-export const isMultiVariableSupport = (version?: string): boolean => {
-  if (!version) {
-    return false;
-  }
-
-  const [major, minor, patch] = version.split('.').map(Number);
-  if ([major, minor, patch].some(Number.isNaN)) {
-    return false;
-  }
-
-  // Compare with 1.114.22
-  if (major > 1) {
-    return true;
-  }
-  if (major === 1 && minor > 114) {
-    return true;
-  }
-  if (major === 1 && minor === 114 && patch > 22) {
-    return true;
-  }
-
-  return false;
 };
 
 const extractConnectionName = (connectionId: string): string => {

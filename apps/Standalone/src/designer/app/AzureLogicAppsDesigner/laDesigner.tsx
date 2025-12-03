@@ -107,6 +107,7 @@ const DesignerEditor = () => {
     showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
+    areCustomEditorsEnabled,
   } = useSelector((state: RootState) => state.workflowLoader);
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -186,10 +187,11 @@ const DesignerEditor = () => {
         language,
         queryClient,
         settingsData?.properties ?? {},
-        dispatch
+        dispatch,
+        areCustomEditorsEnabled
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language, areCustomEditorsEnabled]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -359,7 +361,8 @@ const DesignerEditor = () => {
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
-      undefined,
+      /*notes*/ undefined,
+      /*mcpServer*/ undefined,
       clearDirtyState
     );
   };
@@ -376,6 +379,7 @@ const DesignerEditor = () => {
         /*settings*/ undefined,
         /*customcode*/ undefined,
         /*notes*/ undefined,
+        /*mcpServer*/ undefined,
         clearDirtyState
       );
     } catch (error: any) {
@@ -542,7 +546,8 @@ const getDesignerServices = (
   locale: string | undefined,
   queryClient: QueryClient,
   appSettings: Record<string, string>,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
+  areCustomEditorsEnabled?: boolean
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -899,7 +904,7 @@ const getDesignerServices = (
   });
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
-  const editorService = new CustomEditorService();
+  const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
 
   return {
     appService,

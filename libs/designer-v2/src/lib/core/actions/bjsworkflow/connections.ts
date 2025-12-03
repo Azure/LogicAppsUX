@@ -3,6 +3,7 @@ import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import {
   changeConnectionMapping,
@@ -358,6 +359,13 @@ export const getConnectionMappingForNode = (
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
       return getManifestBasedConnectionMapping(nodeId, isTrigger, operation);
     }
+    if (isManagedMcpOperation(operation)) {
+      const connectionReferenceKey = (operation as any).inputs.connectionReference.connectionName;
+      if (connectionReferenceKey !== undefined) {
+        const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });
+        return mapping;
+      }
+    }
     if (isApiConnectionType(operation.type)) {
       const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
       if (connectionReferenceKey !== undefined) {
@@ -579,6 +587,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
 
     case ConnectionReferenceKeyFormat.HybridTrigger:
       return getHybridTriggerConnectionReferenceKey((operationDefinition as LogicAppsV2.HybridTriggerOperation).inputs);
+
+    case ConnectionReferenceKeyFormat.McpConnection:
+      return (operationDefinition as any).inputs.connectionReference.connectionName;
     default:
       throw Error('No known connection reference key type');
   }

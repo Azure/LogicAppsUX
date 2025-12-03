@@ -24,6 +24,8 @@ import type {
   ValidateWorkspacePathMessage,
   WorkspaceExistenceResultMessage,
   PackageExistenceResultMessage,
+  UpdateRuntimeBaseUrlMessage,
+  UpdateCallbackInfoMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -51,9 +53,23 @@ import {
   changeXsltContent as changeXsltContentV2,
   changeXsltFilename as changeXsltFilenameV2,
 } from './state/DataMapSliceV2';
-import { initializeDesigner, updateCallbackUrl, updateFileSystemConnection, updatePanelMetadata } from './state/DesignerSlice';
+import {
+  initializeDesigner,
+  updateCallbackUrl,
+  updateFileSystemConnection,
+  updatePanelMetadata,
+  updateRuntimeBaseUrl,
+} from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
-import { initializeWorkflow, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/WorkflowSlice';
+import {
+  initializeWorkflow,
+  updateAccessToken,
+  updateTargetDirectory,
+  addStatus,
+  setFinalStatus,
+  updateCallbackInfo,
+  updateBaseUrl,
+} from './state/WorkflowSlice';
 import { changeDataMapperVersion, initialize } from './state/projectSlice';
 import type { AppDispatch, RootState } from './state/store';
 import { SchemaType } from '@microsoft/logic-apps-shared';
@@ -95,6 +111,8 @@ type DataMapperMessageType =
   | GetDataMapperVersionMessage
   | GetTestFeatureEnablementStatus;
 type WorkflowMessageType =
+  | UpdateCallbackInfoMessage
+  | UpdateRuntimeBaseUrlMessage
   | UpdateAccessTokenMessage
   | UpdateExportPathMessage
   | UpdateWorkspacePathMessage
@@ -147,6 +165,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {
             dispatch(initializeDesigner(message.data));
+            break;
+          }
+          case ExtensionCommand.update_runtime_base_url: {
+            dispatch(updateRuntimeBaseUrl(message.data.baseUrl));
             break;
           }
           case ExtensionCommand.receiveCallback: {
@@ -319,6 +341,14 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {
             dispatch(initializeWorkflow(message.data as InitializePayload));
+            break;
+          }
+          case ExtensionCommand.update_runtime_base_url: {
+            dispatch(updateBaseUrl(message.data.baseUrl));
+            break;
+          }
+          case ExtensionCommand.update_callback_info: {
+            dispatch(updateCallbackInfo(message.data));
             break;
           }
           case ExtensionCommand.update_access_token: {

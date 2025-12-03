@@ -23,7 +23,7 @@ import {
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
 } from '../../utils/codeless/common';
-import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getConnectionsJson, getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
@@ -40,20 +40,23 @@ import * as vscode from 'vscode';
 import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../utils/startRuntimeApi';
 
+// TODO(aeldridge): We should split into remote and local open overview
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
   let workflowName = '';
   let workflowContent: any;
-  let baseUrl: string;
+  let baseUrl: string | undefined;
+  let getBaseUrl: () => string | undefined;
   let apiVersion: string;
   let accessToken: string;
   let getAccessToken: () => Promise<string>;
   let isLocal: boolean;
   let callbackInfo: ICallbackUrlResponse | undefined;
+  let getCallbackInfo: (baseUrl: string) => Promise<ICallbackUrlResponse | undefined>;
   let panelName = '';
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
-  let isWorkflowRuntimeRunning: boolean;
+  let connectionData: Record<string, any> = {};
   let azureDetails: AzureConnectorDetails;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
@@ -69,31 +72,36 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
-    baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    getBaseUrl = () => (ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined);
+    baseUrl = getBaseUrl?.();
     apiVersion = '2019-10-01-edge-preview';
     isLocal = true;
     triggerName = getTriggerName(workflowContent.definition);
-    callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+    getCallbackInfo = async (baseUrl: string) =>
+      await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+    callbackInfo = await getCallbackInfo(baseUrl);
 
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
-    isWorkflowRuntimeRunning = await isRuntimeUp(ext.workflowRuntimePort);
     accessToken = await getAccessToken();
     if (projectPath) {
       azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+      const connectionJson = await getConnectionsJson(projectPath);
+      connectionData = connectionJson ? JSON.parse(connectionJson) : {};
     }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
     panelName = `${workflowNode.id}-${workflowName}-overview`;
     workflowContent = workflowNode.workflowFileContent;
     getAccessToken = async () => await getAuthorizationTokenFromNode(workflowNode);
-    baseUrl = getWorkflowManagementBaseURI(workflowNode);
+    getBaseUrl = () => getWorkflowManagementBaseURI(workflowNode);
+    baseUrl = getBaseUrl?.();
     apiVersion = workflowAppApiVersion;
     triggerName = getTriggerName(workflowContent.definition);
-    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
+    getCallbackInfo = async (baseUrl: string) => await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
+    callbackInfo = await getCallbackInfo(baseUrl);
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isLocal = false;
-    isWorkflowRuntimeRunning = true;
     accessToken = await getAccessToken();
     azureDetails = {
       enabled: true,
@@ -104,6 +112,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       tenantId: workflowNode?.parent?.subscription?.tenantId,
       resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
     };
+    connectionData = {};
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
@@ -147,7 +156,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval: NodeJS.Timeout;
+  let accessTokenInterval: NodeJS.Timeout;
+  let baseUrlInterval: NodeJS.Timeout;
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
       case ExtensionCommand.loadRun: {
@@ -166,14 +176,15 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
             isLocal: isLocal,
-            isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
             azureDetails: azureDetails,
             kind: kind,
+            connectionData: connectionData,
           },
         });
+
         // Just shipping the access Token every 5 seconds is easier and more
         // performant that asking for it every time and waiting.
-        interval = setInterval(async () => {
+        accessTokenInterval = setInterval(async () => {
           const updatedAccessToken = await getAccessToken();
 
           if (updatedAccessToken !== accessToken) {
@@ -186,6 +197,31 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
+
+        baseUrlInterval = setInterval(async () => {
+          const updatedBaseUrl = getBaseUrl();
+          if (updatedBaseUrl !== baseUrl) {
+            baseUrl = updatedBaseUrl;
+            panel.webview.postMessage({
+              command: ExtensionCommand.update_runtime_base_url,
+              data: {
+                baseUrl,
+              },
+            });
+          }
+
+          const updatedCallbackInfo = await getCallbackInfo(baseUrl);
+          if (updatedCallbackInfo?.value !== callbackInfo?.value || updatedCallbackInfo?.basePath !== callbackInfo?.basePath) {
+            callbackInfo = updatedCallbackInfo;
+            panel.webview.postMessage({
+              command: ExtensionCommand.update_callback_info,
+              data: {
+                callbackInfo,
+              },
+            });
+          }
+        }, 3000);
+
         break;
       }
       default:
@@ -196,7 +232,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   panel.onDidDispose(
     () => {
       removeWebviewPanelFromCache(panelGroupKey, panelName);
-      clearInterval(interval);
+      clearInterval(accessTokenInterval);
+      clearInterval(baseUrlInterval);
     },
     null,
     ext.context.subscriptions
@@ -241,10 +278,13 @@ function normalizeLocation(location: string): string {
 }
 
 function getWorkflowStateType(workflowName: string, kind: string, settings: Record<string, string>): string {
-  const settingName = `Workflows.${workflowName}.OperationOptions`;
-  return kind?.toLowerCase() === 'stateful'
+  const operationOptionsSetting = `Workflows.${workflowName}.OperationOptions`;
+  const flowKindLower = kind?.toLowerCase();
+  return flowKindLower === 'stateful'
     ? localize('logicapps.stateful', 'Stateful')
-    : settings[settingName]?.toLowerCase() === 'withstatelessrunhistory'
-      ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
-      : localize('logicapps.stateless', 'Stateless');
+    : flowKindLower === 'agent'
+      ? localize('logicapps.agent', 'Agent')
+      : settings[operationOptionsSetting]?.toLowerCase() === 'withstatelessrunhistory'
+        ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
+        : localize('logicapps.stateless', 'Stateless');
 }

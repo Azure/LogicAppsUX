@@ -22,6 +22,7 @@ import {
   ConnectionService,
   equals,
   foundryServiceConnectionRegex,
+  apimanagementRegex,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
@@ -63,10 +64,12 @@ export const SelectConnectionWrapper = () => {
     if (AgentUtils.isConnector(connector?.id)) {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
-        let isAzureOpenAI = true;
+        let modelType = AgentUtils.ModelType.AzureOpenAI;
         if (connectionReference?.resourceId) {
           if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
-            isAzureOpenAI = false;
+            modelType = AgentUtils.ModelType.FoundryService;
+          } else if (apimanagementRegex.test(connectionReference.resourceId ?? '')) {
+            modelType = AgentUtils.ModelType.APIM;
           }
         }
 
@@ -74,18 +77,18 @@ export const SelectConnectionWrapper = () => {
         c.properties.connectionParameters = {
           ...(c.properties.connectionParameters ?? {}),
           agentModelType: {
-            type: isAzureOpenAI ? AgentUtils.ModelType.AzureOpenAI : AgentUtils.ModelType.FoundryService,
+            type: modelType,
           },
         };
 
         // For A2A, hide the foundry connection from the list
-        return isA2A ? isAzureOpenAI : true;
+        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI : true;
       });
     }
 
-    if (!isA2A && !isAgentSubgraph) {
+    if (!isA2A || !isAgentSubgraph) {
       // Filter out dynamic connections
-      return connectionData.filter((c) => !isDynamicConnection(c.properties.feature));
+      return connectionData.filter((c) => !isDynamicConnection(c.properties.features));
     }
 
     return connectionData;

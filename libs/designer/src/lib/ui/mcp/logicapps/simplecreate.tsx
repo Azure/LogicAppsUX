@@ -17,15 +17,9 @@ export const SimpleCreate = ({ showValidationErrors }: { showValidationErrors: b
   const intl = useIntl();
   const intlTexts = {
     description: intl.formatMessage({
-      defaultMessage:
-        'Quickly create a resource with the recommended defaults. For full setup, switch to Advanced create, or edit the advanced settings later, if necessary.',
-      id: 'jW06l2',
+      defaultMessage: 'Provide the additional requested details to create a logic app with the default values.',
+      id: 'dMklCt',
       description: 'Description for creating a simple logic app',
-    }),
-    linkText: intl.formatMessage({
-      defaultMessage: 'Compare Quick create and Advanced create',
-      id: 'go/NOM',
-      description: 'Link text for learning more about logic apps create views',
     }),
     defaultSettingsTitle: intl.formatMessage({
       defaultMessage: 'Default settings',
@@ -54,11 +48,7 @@ export const SimpleCreate = ({ showValidationErrors }: { showValidationErrors: b
 
   return (
     <div className={styles.container}>
-      <DescriptionWithLink
-        text={intlTexts.description}
-        linkText={intlTexts.linkText}
-        linkUrl="https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-overview"
-      />
+      <DescriptionWithLink text={intlTexts.description} />
 
       {showValidationErrors && (!newLogicAppDetails?.isValid || newLogicAppDetails?.errorMessage) ? (
         <ErrorBar

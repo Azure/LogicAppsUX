@@ -13,17 +13,19 @@ import {
 import { bundleIcon, Chat24Filled, Chat24Regular, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
+import { MessageBar, MessageBarType } from '@fluentui/react';
 
 export interface ChatButtonProps {
   loading?: boolean;
   data?: AgentURL;
+  isWorkflowRuntimeRunning?: boolean;
   buttonCommonProps: any;
 }
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, buttonCommonProps }: ChatButtonProps) => {
+export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, isWorkflowRuntimeRunning, buttonCommonProps }: ChatButtonProps) => {
   const intl = useIntl();
 
   const IntlText = useMemo(
@@ -43,22 +45,38 @@ export const ChatButton: React.FC<ChatButtonProps> = ({ loading, data, buttonCom
         id: 'Xj/wPS',
         description: 'Agent chat title',
       }),
+      DEBUG_PROJECT_ERROR: intl.formatMessage({
+        defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view.',
+        id: 'VWH06W',
+        description: 'Debug project error message',
+      }),
     }),
     [intl]
   );
 
   const chatContent = useMemo(() => {
+    if (!isWorkflowRuntimeRunning) {
+      return (
+        <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
+          {IntlText.DEBUG_PROJECT_ERROR}
+        </MessageBar>
+      );
+    }
+
     if (loading) {
       return <Spinner size="medium" label={IntlText.LOADING} />;
     }
+    const chatUrl = `${data?.chatUrl}?apiKey=${encodeURIComponent(data?.queryParams?.apiKey ?? '')}${data?.queryParams?.oboUserToken ? `&oboUserToken=${encodeURIComponent(data.queryParams.oboUserToken)}` : ''}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`;
+
     return (
       <iframe
-        src={`${data?.chatUrl}?apiKey=${data?.queryParams?.apiKey}${buttonCommonProps.isDarkMode ? '&mode=dark' : ''}`}
+        src={chatUrl}
         title={IntlText.TITLE}
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
         style={{ width: '100%', height: '99%', border: 'none', borderRadius: tokens.borderRadiusXLarge }}
       />
     );
-  }, [loading, data, IntlText, buttonCommonProps.isDarkMode]);
+  }, [loading, isWorkflowRuntimeRunning, data, IntlText, buttonCommonProps.isDarkMode]);
 
   return (
     <Dialog modalType="non-modal" surfaceMotion={null}>

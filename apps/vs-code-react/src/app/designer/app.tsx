@@ -2,7 +2,7 @@ import { createFileSystemConnection, updateUnitTestDefinition } from '../../stat
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import { getDesignerServices, isMultiVariableSupport } from './servicesHelper';
+import { getDesignerServices } from './servicesHelper';
 import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -16,7 +16,7 @@ import {
   getReactQueryClient,
   runsQueriesKeys,
 } from '@microsoft/logic-apps-designer';
-import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
+import { equals, isEmptyString, isNullOrUndefined, isRuntimeUp, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback } from 'react';
@@ -57,6 +57,29 @@ export const DesignerApp = () => {
 
   const intlText = useIntlMessages(commonMessages);
 
+  const isAgentWorkflow = useMemo(() => {
+    return equals(standardApp?.kind, 'agent', true);
+  }, [standardApp?.kind]);
+
+  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(false);
+  useEffect(() => {
+    // NOTE(aeldridge): We only need to check runtime status for agent workflows currently
+    if (!isAgentWorkflow) {
+      return;
+    }
+
+    const pingRuntimeApi = async () => {
+      setIsWorkflowRuntimeRunning(await isRuntimeUp(workflowRuntimeBaseUrl));
+    };
+
+    pingRuntimeApi();
+    const pingRuntimeInterval = setInterval(async () => {
+      pingRuntimeApi();
+    }, 5000);
+
+    return () => clearInterval(pingRuntimeInterval);
+  }, [isAgentWorkflow, workflowRuntimeBaseUrl]);
+
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
   });
@@ -85,6 +108,7 @@ export const DesignerApp = () => {
     return getDesignerServices(
       baseUrl,
       workflowRuntimeBaseUrl,
+      isWorkflowRuntimeRunning,
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,
@@ -95,11 +119,13 @@ export const DesignerApp = () => {
       oauthRedirectUrl,
       hostVersion,
       queryClient,
-      sendMsgToVsix
+      sendMsgToVsix,
+      undefined
     );
   }, [
     baseUrl,
     workflowRuntimeBaseUrl,
+    isWorkflowRuntimeRunning,
     apiVersion,
     apiHubServiceDetails,
     isLocal,
@@ -118,13 +144,17 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const isMultiVariableSupportEnabled = useMemo(
-    () => isMultiVariableSupport(panelMetaData?.extensionBundleVersion),
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', '1.114.22'),
     [panelMetaData?.extensionBundleVersion]
   );
 
   const getRunInstance = () => {
     return services.runService.getRun(runId);
   };
+
+  const getAgentUrl = useMemo(() => {
+    return services.workflowService?.getAgentUrl ? () => services.workflowService.getAgentUrl!(false) : undefined;
+  }, [services.workflowService]);
 
   const {
     refetch,
@@ -200,11 +230,13 @@ export const DesignerApp = () => {
       <DesignerCommandBar
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
+        isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         onRefresh={onRefreshMonitoringView}
         isDarkMode={theme === Theme.Dark}
         isUnitTest={isUnitTest}
         isLocal={isLocal}
         runId={runId}
+        getAgentUrl={getAgentUrl}
       />
     );
 

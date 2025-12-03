@@ -48,6 +48,8 @@ export const useFocusElement = () => useSelector(createSelector(getWorkflowState
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
 
+export const useWorkflowChangeCount = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.changeCount));
+
 export const useTimelineRepetitionIndex = () =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.timelineRepetitionIndex));
 
@@ -473,11 +475,17 @@ export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
 export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
 
+export const useRunMode = (): string | null =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance?.properties?.workflow?.mode ?? null));
+
 export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData?.retryHistory));
 
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));
+
+export const useToolRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.toolRunData));
 
 export const useSubgraphRunData = (id: string): Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }> | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.subgraphRunData));
@@ -540,6 +548,17 @@ export const useRunIndex = (id: string | undefined): number | undefined => {
         return undefined;
       }
       return getRecordEntry(state.nodesMetadata, id)?.runIndex ?? undefined;
+    })
+  );
+};
+
+export const useToolRunIndex = (id: string | undefined): number | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) {
+        return undefined;
+      }
+      return getRecordEntry(state.nodesMetadata, id)?.toolRunIndex ?? undefined;
     })
   );
 };

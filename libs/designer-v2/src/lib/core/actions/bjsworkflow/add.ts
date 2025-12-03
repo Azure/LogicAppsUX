@@ -67,7 +67,7 @@ import { isA2AWorkflow } from '../../state/workflow/helper';
 import { openKindChangeDialog } from '../../state/modal/modalSlice';
 import constants from '../../../common/constants';
 import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
-import { isDynamicConnection } from '../../../common/utilities/Utils';
+import { AgentUtils } from '../../../common/utilities/Utils';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -78,6 +78,7 @@ type AddOperationPayload = {
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
   isAddingHandoff?: boolean;
+  isAddingMcpServer?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
@@ -393,7 +394,9 @@ export const initializeOperationDetails = async (
 
   if (isConnectionRequired) {
     try {
-      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired);
+      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired, (c: Connection) =>
+        AgentUtils.filterDynamicConnectionFeatures(c, nodeId, state)
+      );
     } catch (e: any) {
       dispatch(
         updateErrorDetails({
@@ -483,11 +486,12 @@ export const trySetDefaultConnectionForNode = async (
   nodeId: string,
   connector: Connector,
   dispatch: AppDispatch,
-  isConnectionRequired: boolean
+  isConnectionRequired: boolean,
+  connectionFilterFunc?: (connection: Connection) => boolean
 ) => {
   const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter(
-    (c) => c.properties.overallStatus !== 'Error' || !isDynamicConnection(c.properties.feature)
+    (c) => c.properties.overallStatus !== 'Error' && (!connectionFilterFunc || connectionFilterFunc(c))
   );
   if (connections.length > 0) {
     const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];

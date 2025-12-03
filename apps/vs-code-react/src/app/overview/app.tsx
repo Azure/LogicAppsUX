@@ -3,19 +3,11 @@ import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import {
-  type AgentURL,
-  type IWorkflowService,
-  type ManagedIdentity,
-  type Runs,
-  StandardRunService,
-  Theme,
-  equals,
-} from '@microsoft/logic-apps-shared';
+import { type Runs, StandardRunService, Theme, equals, isNullOrUndefined, isRuntimeUp } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useIntlMessages, overviewMessages } from '../../intl';
-import { useInfiniteQuery, useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useOverviewStyles } from './overviewStyles';
@@ -29,8 +21,7 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, isLocal, isWorkflowRuntimeRunning, azureDetails, kind } =
-    workflowState;
+  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, azureDetails, kind, connectionData } = workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const styles = useOverviewStyles();
 
@@ -42,13 +33,32 @@ export const OverviewApp = () => {
     return equals(kind, 'agent', true);
   }, [kind]);
 
-  const emptyArmId = '00000000-0000-0000-0000-000000000000';
+  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(true);
+  useEffect(() => {
+    const pingRuntimeApi = async () => {
+      setIsWorkflowRuntimeRunning(await isRuntimeUp(baseUrl));
+    };
+
+    pingRuntimeApi();
+    const interval = setInterval(async () => {
+      pingRuntimeApi();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [baseUrl]);
+
   const clientId = azureDetails?.clientId ?? '';
   const tenantId = azureDetails?.tenantId ?? '';
+  const azureSubscriptionId = azureDetails?.subscriptionId ?? '';
+  const resourceGroupName = azureDetails?.resourceGroupName ?? '';
 
   const intlText = useIntlMessages(overviewMessages);
 
   const httpClient = useMemo(() => {
+    if (!baseUrl) {
+      return;
+    }
+
     return new HttpClient({
       accessToken: accessToken,
       baseUrl: baseUrl,
@@ -58,6 +68,10 @@ export const OverviewApp = () => {
   }, [accessToken, baseUrl, hostVersion]);
 
   const runService = useMemo(() => {
+    if (!baseUrl || !httpClient) {
+      return;
+    }
+
     return new StandardRunService({
       baseUrl: baseUrl,
       apiVersion: apiVersion,
@@ -67,6 +81,10 @@ export const OverviewApp = () => {
   }, [baseUrl, apiVersion, workflowProperties.name, httpClient]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
+    if (!runService) {
+      return Promise.resolve({ runs: [], nextLink: undefined });
+    }
+
     if (pageParam) {
       return runService.getMoreRuns(pageParam);
     }
@@ -97,60 +115,41 @@ export const OverviewApp = () => {
     isLoading: runTriggerLoading,
     error: runTriggerError,
   } = useMutation(async () => {
-    invariant(workflowState.workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    await runService.runTrigger(workflowState.workflowProperties.callbackInfo as CallbackInfo);
+    invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+    await runService?.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
     return refetch();
   });
 
   const onVerifyRunId = useCallback(
     (runId: string) => {
-      return runService.getRun(runId);
+      return runService?.getRun(runId);
     },
     [runService]
   );
 
-  const workflowService: IWorkflowService = useMemo(
-    () => ({
-      getCallbackUrl: async (triggerId: string) => {
-        if (isLocal) {
-          try {
-            const url = `${baseUrl}/workflows/${workflowProperties.name}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
-            return (await httpClient.post({ uri: url })) as any;
-          } catch {
-            return undefined;
-          }
-        }
-        return undefined;
-      },
-      getAppIdentity: () => {
-        return {
-          principalId: emptyArmId,
-          tenantId: emptyArmId,
-          type: 'SystemAssigned',
-        } as ManagedIdentity;
-      },
-      isExplicitAuthRequiredForManagedIdentity: () => true,
-      getAgentUrl: () => fetchAgentUrl(workflowProperties.name, baseUrl, httpClient, clientId, tenantId),
-    }),
-    [isLocal, baseUrl, workflowProperties.name, apiVersion, httpClient, clientId, tenantId]
+  const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
+    ['agentUrl', isWorkflowRuntimeRunning, baseUrl],
+    async () => {
+      invariant(!!httpClient, 'Agent URL should not be retrieved unless httpClient is available');
+      return fetchAgentUrl(
+        workflowProperties.name,
+        baseUrl,
+        httpClient,
+        clientId,
+        tenantId,
+        connectionData,
+        azureSubscriptionId,
+        resourceGroupName
+      );
+    },
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: isWorkflowRuntimeRunning && isAgentWorkflow && !isNullOrUndefined(httpClient),
+    }
   );
-
-  const useAgentUrl = (): UseQueryResult<AgentURL> => {
-    return useQuery(
-      ['agentUrl'],
-      async () => {
-        return workflowService.getAgentUrl?.();
-      },
-      {
-        cacheTime: 1000 * 60 * 60 * 24,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      }
-    );
-  };
-
-  const { isLoading: agentUrlIsLoading, data: agentUrlData } = useAgentUrl();
 
   const errorMessage = useMemo((): string | undefined => {
     if (!isWorkflowRuntimeRunning) {
@@ -188,6 +187,7 @@ export const OverviewApp = () => {
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlIsLoading}
         agentUrlData={agentUrlData}
+        isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         runItems={runItems ?? []}
         workflowProperties={workflowState.workflowProperties}
         isRefreshing={isRefetching}

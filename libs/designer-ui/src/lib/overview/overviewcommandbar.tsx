@@ -12,6 +12,7 @@ export interface OverviewCommandBarProps {
   isAgentWorkflow?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
+  isWorkflowRuntimeRunning?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
 }
@@ -22,6 +23,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
   isAgentWorkflow,
   agentUrlLoading,
   agentUrlData,
+  isWorkflowRuntimeRunning,
   onRefresh,
   onRunTrigger,
   triggerName,
@@ -57,19 +59,26 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       icon: <PlayRegular />,
       title: Resources.OVERVIEW_RUN_TRIGGER,
       onClick: onRunTrigger,
-      disabled: !triggerName,
+      disabled: !isWorkflowRuntimeRunning || !triggerName,
     });
   }
 
   const buttonCommonProps = {
     appearance: 'transparent',
     isDarkMode: isDarkMode,
-    disabled: !triggerName,
+    disabled: !isWorkflowRuntimeRunning,
   };
 
   return (
     <Toolbar data-testid="msla-overview-command-bar" style={{ padding: '8px 0' }}>
-      {isAgentWorkflow ? <ChatButton loading={agentUrlLoading} data={agentUrlData} buttonCommonProps={buttonCommonProps} /> : null}
+      {isAgentWorkflow ? (
+        <ChatButton
+          loading={agentUrlLoading}
+          isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+          data={agentUrlData}
+          buttonCommonProps={buttonCommonProps}
+        />
+      ) : null}
       {items.map((item, index) => (
         <Button key={index} appearance="transparent" {...item}>
           {item.title}

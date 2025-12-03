@@ -6,7 +6,7 @@ import type {
   ParameterInfo,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, BindingMode } from '@microsoft/logic-apps-shared';
 import { ApiConnectionInputsBinder, DefaultInputsBinder, ManifestInputsBinder } from './inputs/index';
 import constants from '../../../../common/constants';
 
@@ -33,6 +33,7 @@ export default class InputsBinder {
     const getBoundParameters = async (input: any): Promise<BoundParameters> => {
       if (
         manifest &&
+        manifest.properties.inputsBindingMode !== BindingMode.Untyped &&
         !equals(type, constants.NODE.TYPE.IF) &&
         !equals(type, constants.NODE.TYPE.FOREACH) &&
         !equals(type, constants.NODE.TYPE.SWITCH) &&

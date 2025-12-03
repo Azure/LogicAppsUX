@@ -105,6 +105,7 @@ const DesignerEditor = () => {
     hostingPlan,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
+    areCustomEditorsEnabled,
   } = useSelector((state: RootState) => state.workflowLoader);
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -269,10 +270,11 @@ const DesignerEditor = () => {
         queryClient,
         settingsData?.properties ?? {},
         dispatch,
-        onRunSelected
+        onRunSelected,
+        areCustomEditorsEnabled
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language, areCustomEditorsEnabled]
   );
 
   const originalSettings: Record<string, string> = useMemo(() => {
@@ -400,8 +402,9 @@ const DesignerEditor = () => {
         settingsToUpdate,
         customCodeToUpdate,
         notesToUpdate,
+        /*mcpServer*/ undefined,
         clearDirtyState,
-        undefined,
+        /*options*/ undefined,
         isDraftSave
       );
 
@@ -434,6 +437,7 @@ const DesignerEditor = () => {
         /*settings*/ undefined,
         /*customcode*/ undefined,
         /*notes*/ undefined,
+        /*mcpServer*/ undefined,
         clearDirtyState
       );
     } catch (error: any) {
@@ -576,6 +580,7 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly || isMonitoringView || !isDraftMode,
           isMonitoringView,
+          isDraft: isDraftMode,
           isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
@@ -685,7 +690,8 @@ const getDesignerServices = (
   queryClient: QueryClient,
   appSettings: Record<string, string>,
   dispatch: AppDispatch,
-  openRun: (runId: string) => void
+  openRun: (runId: string) => void,
+  areCustomEditorsEnabled?: boolean
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -1044,7 +1050,7 @@ const getDesignerServices = (
   });
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
-  const editorService = new CustomEditorService();
+  const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
 
   return {
     appService,

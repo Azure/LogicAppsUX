@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2A Chat - Iframe</title>
+  <script>
+    window.LOGGED_IN_USER_NAME = "REPLACE_ME_WITH_LOGGED_IN_USERNAME";
+
+    // The line below ensures the variable exists (as undefined if not set by server)
+    window.LOGGED_IN_USER_NAME = window.LOGGED_IN_USER_NAME?.includes("REPLACE_ME_WITH") ? undefined : window.LOGGED_IN_USER_NAME;
+
+  </script>
+  <script>
+    // Immediately notify parent that iframe is loading
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({ type: 'IFRAME_LOADING', timestamp: Date.now() }, '*');
+      } catch (e) {
+        // Ignore errors if postMessage fails
+      }
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    #chat-root {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="chat-root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

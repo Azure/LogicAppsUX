@@ -21,6 +21,7 @@ export interface OverviewProps {
   isAgentWorkflow?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
+  isWorkflowRuntimeRunning?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
   supportsUnitTest?: boolean;
@@ -30,7 +31,7 @@ export interface OverviewProps {
   onLoadRuns(): void;
   onOpenRun(run: RunDisplayItem): void;
   onRunTrigger(): void;
-  onVerifyRunId(runId: string): Promise<Run | RunError>;
+  onVerifyRunId(runId: string): Promise<Run | RunError> | undefined;
   onCreateUnitTestFromRun?(run: RunDisplayItem): void;
 }
 
@@ -50,6 +51,7 @@ export const Overview: React.FC<OverviewProps> = ({
   isAgentWorkflow,
   agentUrlLoading,
   agentUrlData,
+  isWorkflowRuntimeRunning,
   hasMoreRuns = false,
   supportsUnitTest = false,
   runItems,
@@ -117,6 +119,9 @@ export const Overview: React.FC<OverviewProps> = ({
     }
 
     const response = await onVerifyRunId(value);
+    if (!response) {
+      return '';
+    }
     if (isRunError(response)) {
       return (response as RunError).error.message;
     }
@@ -134,10 +139,16 @@ export const Overview: React.FC<OverviewProps> = ({
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlLoading}
         agentUrlData={agentUrlData}
+        isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />
-      <OverviewProperties {...workflowProperties} />
+      <OverviewProperties
+        {...workflowProperties}
+        agentUrl={agentUrlData?.agentUrl}
+        agentApiKey={agentUrlData?.queryParams?.apiKey}
+        isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+      />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
           <div className={styles.runHistoryFilter}>
