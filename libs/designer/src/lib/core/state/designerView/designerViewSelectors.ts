@@ -1,7 +1,7 @@
-import { equals, enableAgentConsumption } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { isA2AWorkflow } from '../workflow/helper';
 
 export const useShowMinimap = () => {
@@ -26,40 +26,13 @@ export const useEdgeContextMenuData = () => {
 
 export const useIsAgenticWorkflow = (): boolean => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
-  const [isEnabledForConsumption, setIsEnabledForConsumption] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const checkFeatureFlag = async () => {
-      try {
-        const enabled = await enableAgentConsumption();
-        if (!cancelled) {
-          setIsEnabledForConsumption(enabled);
-        }
-      } catch {
-        if (!cancelled) {
-          setIsEnabledForConsumption(false);
-        }
-      }
-    };
-
-    checkFeatureFlag();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const isAgenticOrStateful = useMemo(() => {
     return equals(workflowKind, 'agentic', true) || equals(workflowKind, 'stateful', true);
   }, [workflowKind]);
 
-  if (isEnabledForConsumption) {
-    return !workflowKind || isAgenticOrStateful;
-  }
-
-  return isAgenticOrStateful;
+  // enable agnetic for all stateful workflows as well as consumption workflows
+  return !workflowKind || isAgenticOrStateful;
 };
 
 // Temporary hook for backwards compatibility with agentic wf, TODO: delete once stateful is merged in
