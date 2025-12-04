@@ -148,7 +148,6 @@ export const getInputParametersFromManifest = (
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
-  console.log(stepDefinition);
   if (stepDefinition) {
     const { inputsLocation } = manifest.properties;
     const operationData = clone(stepDefinition);
