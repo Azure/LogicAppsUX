@@ -32,7 +32,7 @@ import constants from '../../../../../common/constants';
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, value, parameterValues } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -207,16 +207,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         defaultMessage: 'Select a API Management API',
         id: 'UVZHa1',
         description: 'Select the API Management API to use for this connection',
-      }),
-      V1_CHAT_ENDPOINT: intl.formatMessage({
-        defaultMessage: 'V1 Chat Completion Endpoint',
-        id: 'ryGfra',
-        description: 'V1 Chat Completion Service Endpoint',
-      }),
-      V1_CHAT_ENDPOINT_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Endpoint and certificate details will be filled automatically from app settings.',
-        id: 'gJkk9w',
-        description: 'V1 Chat Completion endpoint description',
       }),
       MISSING_ROLE_WRITE_PERMISSIONS: intl.formatMessage({
         defaultMessage: 'Missing role write permissions',
@@ -394,7 +384,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             setSelectedSubscriptionId(id);
             // Reset account and project selections when subscription changes
             setCognitiveServiceAccountId('');
-            setValue(undefined);
             setSelectedCognitiveServiceProject('');
             setParameterValue('');
             setApimAccount('');
@@ -601,16 +590,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
               </div>
             </ConnectionParameterRow>
           </>
-        ) : isV1ChatCompletionsService ? (
-          <ConnectionParameterRow
-            parameterKey={'v1ChatEndpoint'}
-            displayName={stringResources.V1_CHAT_ENDPOINT}
-            required={true}
-          >
-            <div className={styles.openAIContainer}>
-              <Text>{stringResources.V1_CHAT_ENDPOINT_DESCRIPTION}</Text>
-            </div>
-          </ConnectionParameterRow>
         ) : (
           <ConnectionParameterRow
             parameterKey={'cognitive-service-resource-id'}
@@ -687,26 +666,39 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     );
   }
 
+  // Render other parameters (openAIEndpoint, openAIKey, clientCertificate*, etc.)
+  const shouldDisableField = (() => {
+    if (isAPIMGenAIGateway) {
+      // For APIM, disable until account is selected
+      return !parameterValues?.['cognitiveServiceAccountId'];
+    }
+    if (isV1ChatCompletionsService) {
+      // For V1ChatCompletions (BYO), always enable for user input
+      return false;
+    }
+    // For Azure OpenAI, disable (auto-filled from Azure resource)
+    return true;
+  })();
+
+  const fieldDescription = (() => {
+    if (loadingAccountDetails) {
+      return stringResources.FETCHING;
+    }
+    if (isAPIMGenAIGateway || isV1ChatCompletionsService) {
+      return stringResources.DEFAULT_PLACEHOLDER;
+    }
+    return parameter.uiDefinition?.description;
+  })();
+
   return (
     <UniversalConnectionParameter
       {...props}
-      // For APIM Gen AI Gateway and V1 Chat Completions, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
-      isLoading={
-        isAPIMGenAIGateway
-          ? !parameterValues?.['cognitiveServiceAccountId']
-          : isV1ChatCompletionsService
-            ? false
-            : true
-      }
+      isLoading={shouldDisableField}
       parameter={{
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
-          description: loadingAccountDetails
-            ? stringResources.FETCHING
-            : isAPIMGenAIGateway || isV1ChatCompletionsService
-              ? stringResources.DEFAULT_PLACEHOLDER
-              : parameter.uiDefinition?.description,
+          description: fieldDescription,
         },
       }}
     />

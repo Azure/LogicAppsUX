@@ -46,8 +46,6 @@ import {
   UserPreferenceService,
   LoggerService,
   LogEntryLevel,
-  foundryServiceConnectionRegex,
-  apimanagementRegex,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -113,38 +111,36 @@ export const updateTemplateConnection = createAsyncThunk(
 
 const updateAgentParametersForConnection = (
   nodeId: string,
-  connection: Connection,
   dispatch: Dispatch,
-  getState: () => RootState
+  getState: () => RootState,
+  connection: Connection
 ): void => {
   const state = getState();
-  const connectionReference = getConnectionReference(state.connections, nodeId);
-  const resourceId = connectionReference?.resourceId ?? '';
 
-  // Determine model type based on resourceId
-  let agentModelTypeValue = 'AzureOpenAI';
-  if (resourceId) {
-    if (foundryServiceConnectionRegex.test(resourceId)) {
-      agentModelTypeValue = 'FoundryAgentService';
-    } else if (apimanagementRegex.test(resourceId)) {
-      agentModelTypeValue = 'APIMGenAIGateway';
-    }
-  } else {
-    agentModelTypeValue = 'V1ChatCompletionsService';
-  }
+  // Extract modelType from connection
+  const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
 
-  // Get current parameters
+  // Map display name back to manifest value
+  const ModelTypeReverseMap = Object.fromEntries(Object.entries(AgentUtils.ModelType).map(([key, val]) => [val.trim(), key]));
+  const agentModelTypeValue = ModelTypeReverseMap[rawModelType] ?? 'AzureOpenAI';
+
+  // Get current parameter groups
   const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
   if (!parameterGroups) {
     return;
   }
 
   const defaultGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
-  const agentModelTypeParam = defaultGroup?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
-  const deploymentIdParam = defaultGroup?.parameters?.find((p) => p.parameterKey === 'inputs.$.deploymentId');
-  const modelIdParam = defaultGroup?.parameters?.find((p) => p.parameterKey === 'inputs.$.modelId');
+  if (!defaultGroup) {
+    return;
+  }
 
-  if (!agentModelTypeParam) {
+  const agentModelTypeParam = defaultGroup.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
+  const deploymentIdParam = defaultGroup.parameters?.find((p) => p.parameterKey === 'inputs.$.deploymentId');
+  const modelIdParam = defaultGroup.parameters?.find((p) => p.parameterKey === 'inputs.$.modelId');
+
+  // Both deploymentId and modelId should exist (they're just conditionally hidden)
+  if (!agentModelTypeParam || !deploymentIdParam || !modelIdParam) {
     return;
   }
 
@@ -156,32 +152,35 @@ const updateAgentParametersForConnection = (
     parameterId: agentModelTypeParam.id,
     propertiesToUpdate: {
       value: [createLiteralValueSegment(agentModelTypeValue)],
+      preservedValue: undefined,
     },
   });
 
-  // Clear the inappropriate deployment/model parameter
-  const isV1ChatCompletionsService = agentModelTypeValue === 'V1ChatCompletionsService';
-  if (isV1ChatCompletionsService && deploymentIdParam) {
-    // Switching to isV1ChatCompletionsService - clear deploymentId
+  // Update visibility and clear values based on model type
+  const isV1 = agentModelTypeValue === 'V1ChatCompletionsService';
+
+  if (isV1) {
+    // V1 Chat Completions: show modelId, hide deploymentId
     parametersToUpdate.push({
       groupId: ParameterGroupKeys.DEFAULT,
       parameterId: deploymentIdParam.id,
       propertiesToUpdate: {
         value: [createLiteralValueSegment('')],
+        preservedValue: undefined,
       },
     });
-  } else if (!isV1ChatCompletionsService && modelIdParam) {
-    // Switching to Azure OpenAI/Foundry/APIM - clear modelId
+  } else {
+    // AzureOpenAI/Foundry/APIM: show deploymentId, hide modelId
     parametersToUpdate.push({
       groupId: ParameterGroupKeys.DEFAULT,
       parameterId: modelIdParam.id,
       propertiesToUpdate: {
         value: [createLiteralValueSegment('')],
+        preservedValue: undefined,
       },
     });
   }
 
-  // Dispatch the parameter updates
   dispatch(
     updateNodeParameters({
       nodeId,
@@ -199,7 +198,7 @@ export const updateNodeConnection = createAsyncThunk(
 
     // For agent connections, update agentModelType and clear inappropriate deployment/model parameters
     if (AgentUtils.isConnector(connector.id)) {
-      updateAgentParametersForConnection(nodeId, connection, dispatch, getState as () => RootState);
+      updateAgentParametersForConnection(nodeId, dispatch, getState as () => RootState, connection);
     }
 
     UserPreferenceService()?.setMostRecentlyUsedConnectionId(connector.id, connection.id);

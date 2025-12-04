@@ -390,8 +390,8 @@ export function createParameterInfo(
 
   // For agent operations, treat deploymentId and modelId as required when they're conditionally visible
   // These parameters are mutually exclusive based on agentModelType
-  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameter.name);
-  const isRequired = !!parameter.required || (isAgentDeploymentOrModelParam && hasConditionalVisibility(parameter));
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameter.name) || parameter.name === 'modelId';
+  const isRequired = !!parameter.required || (isAgentDeploymentOrModelParam && !shouldHideInUI(parameter));
 
   const parameterInfo: ParameterInfo = {
     alternativeKey,

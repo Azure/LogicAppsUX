@@ -118,7 +118,7 @@ const updateAgentParametersForConnection = (
 ): void => {
   const state = getState();
 
-  //  Extract modelType from connection
+  // Extract modelType from connection
   const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
 
   // Map display name back to manifest value
@@ -147,12 +147,13 @@ const updateAgentParametersForConnection = (
 
   const parametersToUpdate = [];
 
-  //Update agentModelType parameter
+  // Update agentModelType parameter
   parametersToUpdate.push({
     groupId: ParameterGroupKeys.DEFAULT,
     parameterId: agentModelTypeParam.id,
     propertiesToUpdate: {
       value: [createLiteralValueSegment(agentModelTypeValue)],
+      preservedValue: undefined,
     },
   });
 
@@ -166,6 +167,7 @@ const updateAgentParametersForConnection = (
       parameterId: deploymentIdParam.id,
       propertiesToUpdate: {
         value: [createLiteralValueSegment('')],
+        preservedValue: undefined,
       },
     });
   } else {
@@ -175,6 +177,7 @@ const updateAgentParametersForConnection = (
       parameterId: modelIdParam.id,
       propertiesToUpdate: {
         value: [createLiteralValueSegment('')],
+        preservedValue: undefined,
       },
     });
   }

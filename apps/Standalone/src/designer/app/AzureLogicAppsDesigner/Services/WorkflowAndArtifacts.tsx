@@ -313,7 +313,7 @@ const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isD
 // Helper function to fetch EasyAuth
 const fetchAuthentication = async (siteResourceId: string) => {
   try {
-    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, {
+    const response = await axios.post(`${baseUrl}${siteResourceId}/config/authsettings/list?api-version=${standardApiVersion}`, null, {
       headers: {
         Authorization: `Bearer ${environment.armToken}`,
       },
