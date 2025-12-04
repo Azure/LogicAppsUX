@@ -51,7 +51,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         setLoginError(null);
       },
       onFailed: (error: Error) => {
-        console.log('Login failed:', error);
         setIsLoggingIn(false);
         setLoginError(error.message);
       },
