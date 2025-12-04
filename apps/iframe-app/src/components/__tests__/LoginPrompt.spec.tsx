@@ -142,6 +142,27 @@ describe('LoginPrompt', () => {
       expect(screen.getByText('Previous error')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Signing in...' })).toBeDisabled();
     });
+
+    it('should render error using MessageBar component', () => {
+      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Test error" />);
+
+      // MessageBar renders with a specific role or class
+      const messageBar = container.querySelector('[class*="fui-MessageBar"]');
+      expect(messageBar).toBeInTheDocument();
+    });
+
+    it('should not display icon in error MessageBar', () => {
+      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Test error" />);
+
+      // The MessageBar should not have an icon container with SVG
+      // When icon={null}, MessageBar doesn't render the icon slot
+      const messageBar = container.querySelector('[class*="fui-MessageBar"]');
+      expect(messageBar).toBeInTheDocument();
+
+      // Check that there's no icon within the MessageBar (the PersonRegular icon is outside the MessageBar)
+      const messageBarIcon = messageBar?.querySelector('[class*="fui-MessageBar__icon"]');
+      expect(messageBarIcon).toBeNull();
+    });
   });
 
   describe('structure', () => {
