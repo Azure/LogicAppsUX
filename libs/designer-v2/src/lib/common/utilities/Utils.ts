@@ -32,7 +32,7 @@ export class AgentUtils {
     AzureOpenAI: 'Azure OpenAI',
     FoundryService: 'Foundry Agent Service',
     APIM: 'APIM Gen AI Gateway',
-    V1ChatCompletionsService: 'V1 Chat Completions',
+    V1ChatCompletionsService: 'V1 Chat Completions Service',
   };
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
