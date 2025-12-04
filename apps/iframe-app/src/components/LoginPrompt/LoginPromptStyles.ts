@@ -34,6 +34,17 @@ export const useLoginPromptStyles = makeStyles({
     fontSize: tokens.fontSizeBase300,
     lineHeight: tokens.lineHeightBase300,
   },
+  errorMessage: {
+    backgroundColor: tokens.colorPaletteRedBackground1,
+    color: tokens.colorPaletteRedForeground1,
+    ...shorthands.padding(tokens.spacingVerticalS, tokens.spacingHorizontalM),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    fontSize: tokens.fontSizeBase200,
+    lineHeight: tokens.lineHeightBase200,
+    textAlign: 'center',
+    marginBottom: tokens.spacingVerticalM,
+    width: '100%',
+  },
   button: {
     minWidth: '200px',
     height: '44px',

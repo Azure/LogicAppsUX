@@ -5,9 +5,10 @@ import { useLoginPromptStyles } from './LoginPromptStyles';
 interface LoginPromptProps {
   onLogin: () => void;
   isLoading?: boolean;
+  error?: string;
 }
 
-export function LoginPrompt({ onLogin, isLoading = false }: LoginPromptProps) {
+export function LoginPrompt({ onLogin, isLoading = false, error }: LoginPromptProps) {
   const styles = useLoginPromptStyles();
 
   return (
@@ -18,6 +19,7 @@ export function LoginPrompt({ onLogin, isLoading = false }: LoginPromptProps) {
         </div>
         <Title3>Sign in required</Title3>
         <p className={styles.message}>Please sign in to continue using the chat</p>
+        {error && <div className={styles.errorMessage}>{error}</div>}
         <Button appearance="primary" size="large" onClick={onLogin} disabled={isLoading} className={styles.button}>
           {isLoading ? <Spinner size="tiny" className={styles.spinner} /> : null}
           {isLoading ? 'Signing in...' : 'Sign in'}
