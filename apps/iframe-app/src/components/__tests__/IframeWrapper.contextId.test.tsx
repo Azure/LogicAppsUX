@@ -4,7 +4,7 @@ import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
 
 // Mock the dependencies
-vi.mock('@microsoft/logicAppsChat', () => ({
+vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(({ sessionKey }) => <div data-testid="chat-widget">ChatWidget (sessionKey: {sessionKey})</div>),
 }));
 
@@ -57,7 +57,7 @@ describe('IframeWrapper - contextId support', () => {
   });
 
   it('should pass initialContextId to ChatWidget for single-session mode', async () => {
-    const { ChatWidget } = vi.mocked(await import('@microsoft/logicAppsChat'));
+    const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
 
     const configWithContextId: IframeConfig = {
       ...defaultConfig,
@@ -89,7 +89,7 @@ describe('IframeWrapper - contextId support', () => {
   });
 
   it('should pass sessionKey to ChatWidget', async () => {
-    const { ChatWidget } = vi.mocked(await import('@microsoft/logicAppsChat'));
+    const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
 
     const configWithSessionKey: IframeConfig = {
       ...defaultConfig,
@@ -112,7 +112,7 @@ describe('IframeWrapper - contextId support', () => {
   });
 
   it('should handle missing contextId gracefully', async () => {
-    const { ChatWidget } = vi.mocked(await import('@microsoft/logicAppsChat'));
+    const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
 
     const configWithoutContextId: IframeConfig = {
       ...defaultConfig,
@@ -134,7 +134,7 @@ describe('IframeWrapper - contextId support', () => {
   });
 
   it('should pass contextId with custom sessionKey', async () => {
-    const { ChatWidget } = vi.mocked(await import('@microsoft/logicAppsChat'));
+    const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
 
     const configWithSessionKey: IframeConfig = {
       ...defaultConfig,

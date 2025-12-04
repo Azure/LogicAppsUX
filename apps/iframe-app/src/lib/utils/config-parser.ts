@@ -1,4 +1,4 @@
-import type { ChatWidgetProps, ChatTheme } from '@microsoft/logicAppsChat';
+import type { ChatWidgetProps, ChatTheme } from '@microsoft/logic-apps-chat';
 import { THEME_PRESETS } from './theme-presets';
 
 export interface IframeConfig {

@@ -1,4 +1,4 @@
-import { ChatWidget } from '@microsoft/logicAppsChat/react';
+import { ChatWidget } from '@microsoft/logic-apps-chat/react';
 
 /**
  * Demo showcasing the chat blocking features:

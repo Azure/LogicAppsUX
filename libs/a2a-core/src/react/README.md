@@ -41,10 +41,10 @@ The chat widget requires its CSS file to be imported for proper styling:
 
 ```tsx
 // Import the chat widget component
-import { ChatWidget } from '@microsoft/logicAppsChat/react';
+import { ChatWidget } from '@microsoft/logic-apps-chat/react';
 
 // IMPORTANT: Import the styles - without this, the widget will appear broken
-import '@microsoft/logicAppsChat/react/styles.css';
+import '@microsoft/logic-apps-chat/react/styles.css';
 
 function App() {
   return (

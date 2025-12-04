@@ -3,8 +3,8 @@ import { useState, useCallback, memo } from 'react';
 import { Button, Body1, mergeClasses } from '@fluentui/react-components';
 import { AddFilled } from '@fluentui/react-icons';
 import type { SessionMetadata } from '../../hooks/useChatSessions';
-import type { ChatTheme } from '@microsoft/logicAppsChat';
-import { useChatStore } from '@microsoft/logicAppsChat';
+import type { ChatTheme } from '@microsoft/logic-apps-chat';
+import { useChatStore } from '@microsoft/logic-apps-chat';
 import { useSessionListStyles } from './SessionListStyles';
 import SessionItem from './SessionItem';
 
