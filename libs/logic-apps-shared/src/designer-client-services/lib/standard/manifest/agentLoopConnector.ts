@@ -20,9 +20,10 @@ export default {
           constraints: {
             required: 'true',
             notSupportedConnectionParameters: {
-              FoundryAgentService: ['Key'],
-              APIMGenAIGateway: ['ManagedServiceIdentity'],
-              V1ChatCompletionsService: ['ManagedServiceIdentity'],
+              AzureOpenAI: ['BringYourOwnKey', 'ClientCertificate'],
+              FoundryAgentService: ['Key', 'BringYourOwnKey', 'ClientCertificate'],
+              APIMGenAIGateway: ['ManagedServiceIdentity', 'BringYourOwnKey', 'ClientCertificate'],
+              V1ChatCompletionsService: ['Key', 'ManagedServiceIdentity'],
             },
           },
         },
@@ -121,9 +122,45 @@ export default {
           },
         },
         {
+          name: 'BringYourOwnKey',
+          parameters: {
+            endpoint: {
+              type: 'string',
+              parameterSource: 'AppConfiguration',
+              uiDefinition: {
+                displayName: 'API endpoint',
+                description: 'Enter the endpoint for your V1 chat completion service.',
+                tooltip: 'The endpoint URL for the V1 chat completion service',
+                constraints: {
+                  clearText: true,
+                  required: 'true',
+                },
+              },
+            },
+            key: {
+              type: 'securestring',
+              parameterSource: 'AppConfiguration',
+              uiDefinition: {
+                displayName: 'API key',
+                description: 'Enter your API key.',
+                tooltip: 'The API key to access your V1 chat completion service',
+                constraints: {
+                  clearText: false,
+                  required: 'true',
+                },
+              },
+            },
+          },
+          uiDefinition: {
+            displayName: 'Key',
+            tooltip: 'Provide your own endpoint and API key',
+            description: 'Provide your own endpoint and API key',
+          },
+        },
+        {
           name: 'ClientCertificate',
           parameters: {
-            openAIEndpoint: {
+            endpoint: {
               type: 'string',
               parameterSource: 'AppConfiguration',
               uiDefinition: {

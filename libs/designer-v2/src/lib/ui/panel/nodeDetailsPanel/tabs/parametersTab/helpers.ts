@@ -58,8 +58,11 @@ export const getDeploymentIdParameter = (state: RootState, nodeId: string): Para
   const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
   const defaultGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
 
-  // Find the parameter that holds the connection reference (named 'agentConnection' in metadata)
-  return defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId');
+  // Find either deploymentId (for Azure OpenAI/Foundry/APIM) or modelId (for V1ChatCompletin)
+  return (
+    defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId') ||
+    defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.modelId')
+  );
 };
 
 export const getConnectionToAssign = (

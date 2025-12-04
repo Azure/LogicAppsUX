@@ -70,12 +70,16 @@ export const SelectConnectionWrapper = () => {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
         let modelType = AgentUtils.ModelType.AzureOpenAI;
+
         if (connectionReference?.resourceId) {
           if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
             modelType = AgentUtils.ModelType.FoundryService;
           } else if (apimanagementRegex.test(connectionReference.resourceId ?? '')) {
             modelType = AgentUtils.ModelType.APIM;
           }
+        } else {
+          // No resourceId means this is a V1ChatCompletionsService connection (BYO)
+          modelType = AgentUtils.ModelType.V1ChatCompletionsService;
         }
 
         // Set the connection parameters with the model type

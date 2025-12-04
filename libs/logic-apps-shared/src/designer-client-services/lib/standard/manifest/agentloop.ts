@@ -83,12 +83,52 @@ export default {
           'x-ms-connection-options': {
             'x-ms-visibility': 'subLabelOnly',
           },
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['AzureOpenAI', 'FoundryAgentService', 'APIMGenAIGateway'],
+              },
+            ],
+          },
+        },
+        modelId: {
+          type: 'string',
+          title: 'Model Id',
+          description: 'The model identifier to use (e.g., claude-3-5-sonnet, gpt-4, etc.).',
+          'x-ms-visibility': 'important',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['V1ChatCompletionsService'],
+              },
+            ],
+          },
         },
         messages: {
           title: 'Instructions for agent',
           'x-ms-visibility': 'important',
           'x-ms-editor': 'agentinstruction',
           type: 'array',
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+          description: 'Custom headers to include in the request',
+          'x-ms-editor': 'dictionary',
+          'x-ms-visibility': 'important',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['V1ChatCompletionsService'],
+              },
+            ],
+          },
         },
         agentModelSettings: {
           type: 'object',
@@ -187,6 +227,25 @@ export default {
                       {
                         name: 'agentModelType',
                         values: ['FoundryAgentService'],
+                      },
+                    ],
+                  },
+                },
+                metadata: {
+                  type: 'object',
+                  title: 'Metadata',
+                  description: 'Additional metadata to pass to the model',
+                  'x-ms-editor': 'dictionary',
+                  'x-ms-editor-options': {
+                    valueType: 'string',
+                  },
+                  'x-ms-visibility': 'important',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['V1ChatCompletionsService'],
                       },
                     ],
                   },
@@ -308,7 +367,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'deploymentId', 'messages', 'deploymentModelProperties'],
+      required: ['agentModelType', 'messages'],
     },
     outputs: {
       type: 'object',
