@@ -413,6 +413,7 @@ export class ConsumptionRunService implements IRunService {
         headers: options?.headers,
         queryParameters: mergedParams,
         content: options?.body,
+        noAuth: true,
       });
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));

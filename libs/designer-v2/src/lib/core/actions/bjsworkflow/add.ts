@@ -78,6 +78,7 @@ type AddOperationPayload = {
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
   isAddingHandoff?: boolean;
+  isAddingMcpServer?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {

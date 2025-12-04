@@ -17,6 +17,7 @@ export interface InitializePayload {
   isLocal?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
+  connectionData?: Record<string, any>;
 }
 
 export interface UpdateCallbackInfoPayload {
@@ -46,6 +47,7 @@ export interface WorkflowState {
   isLocal?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
+  connectionData?: Record<string, any>;
 }
 
 const initialState: WorkflowState = {
@@ -72,6 +74,7 @@ const initialState: WorkflowState = {
     },
     selectedAdvanceOptions: [],
   },
+  connectionData: {},
 };
 
 export const workflowSlice = createSlice({
@@ -91,6 +94,7 @@ export const workflowSlice = createSlice({
         isLocal,
         azureDetails,
         kind,
+        connectionData,
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -122,6 +126,7 @@ export const workflowSlice = createSlice({
       initializedState.isLocal = isLocal;
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
+      initializedState.connectionData = connectionData || {};
     },
     updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.baseUrl = action.payload ?? '';
@@ -135,6 +140,9 @@ export const workflowSlice = createSlice({
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
+    },
+    updateConnectionData: (state: WorkflowState, action: PayloadAction<Record<string, any>>) => {
+      state.connectionData = action.payload;
     },
     updateSelectedWorkFlows: (state: WorkflowState, action: PayloadAction<{ selectedWorkflows: WorkflowsList[] }>) => {
       const { selectedWorkflows } = action.payload;
@@ -199,6 +207,7 @@ export const {
   updateValidationState,
   updateTargetDirectory,
   updatePackageUrl,
+  updateConnectionData,
   updateManagedConnections,
   addStatus,
   setFinalStatus,

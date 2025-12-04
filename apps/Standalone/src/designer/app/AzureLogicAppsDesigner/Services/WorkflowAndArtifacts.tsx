@@ -445,7 +445,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
           queryParams = { apiKey: a2aKey };
 
           // Add OBO token if available
-          const oboKey = oboData?.properties?.key;
+          const oboKey = oboData?.properties?.key || oboData?.key;
           if (oboKey) {
             queryParams.oboUserToken = oboKey;
           }
@@ -474,39 +474,12 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
   });
 };
 
-// Async function to fetch Agent Model IDs (uses React Query for memoization)
-export const fetchAgentModelIds = (siteResourceId: string): Promise<string[]> => {
-  const queryClient = getReactQueryClient();
-
-  return queryClient.fetchQuery(['agentModelIds', siteResourceId], async (): Promise<string[]> => {
-    try {
-      const endpoint = `${siteResourceId}/models`;
-      const uri = `${baseUrl}${endpoint}`;
-
-      const response = await axios.get(uri, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-        params: {
-          'api-version': consumptionApiVersion,
-        },
-      });
-
-      // Return the value array if it exists, otherwise return empty array
-      return response?.data ?? [];
-    } catch (error) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: `Failed to fetch agent models: ${error}`,
-        area: 'fetchAgentModelIds',
-        error: error instanceof Error ? error : undefined,
-      });
-      return [];
-    }
-  });
-};
-
-export const fetchAgentUrlConsumption = async (workflowId: string, workflowName: string, accessEndpoint: string): Promise<AgentURL> => {
+export const fetchAgentUrlConsumption = async (
+  workflowId: string,
+  workflowName: string,
+  accessEndpoint: string,
+  _isDraftMode?: boolean
+): Promise<AgentURL> => {
   if (!accessEndpoint || !workflowName) {
     return { agentUrl: '', chatUrl: '', hostName: '' };
   }
@@ -938,8 +911,14 @@ export const saveWorkflowConsumption = async (
   options?: {
     shouldConvertToConsumption?: boolean /* false when saving from code view*/;
     throwError?: boolean;
-  }
+  },
+  isDraftSave?: boolean
 ): Promise<any> => {
+  // Implement draft save logic for consumption if needed
+  if (isDraftSave) {
+    return;
+  }
+
   const shouldConvertToConsumption = options?.shouldConvertToConsumption ?? true;
 
   const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
@@ -1031,6 +1010,7 @@ export const validateWorkflowConsumption = async (
       ...outdatedWorkflow?.properties,
       definition: workflow.definition,
       parameters: workflow.parameters,
+      notes: workflow.notes,
       connectionReferences: workflow.connectionReferences,
     },
   };

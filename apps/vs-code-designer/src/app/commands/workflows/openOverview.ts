@@ -23,7 +23,7 @@ import {
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
 } from '../../utils/codeless/common';
-import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getConnectionsJson, getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
@@ -56,6 +56,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let panelName = '';
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
+  let connectionData: Record<string, any> = {};
   let azureDetails: AzureConnectorDetails;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
@@ -85,6 +86,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     accessToken = await getAccessToken();
     if (projectPath) {
       azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+      const connectionJson = await getConnectionsJson(projectPath);
+      connectionData = connectionJson ? JSON.parse(connectionJson) : {};
     }
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
@@ -109,6 +112,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       tenantId: workflowNode?.parent?.subscription?.tenantId,
       resourceGroupName: workflowNode?.parent?.parent?.site.resourceGroup,
     };
+    connectionData = {};
   } else {
     throw new Error(localize('noWorkflowNode', 'No workflow node provided.'));
   }
@@ -174,6 +178,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             isLocal: isLocal,
             azureDetails: azureDetails,
             kind: kind,
+            connectionData: connectionData,
           },
         });
 

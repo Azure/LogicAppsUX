@@ -742,6 +742,8 @@ export const processScopeActions = (
         nodesMetadata[toolName] = {
           ...nodesMetadata[toolName],
           subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+          graphId: actionName,
+          parentNodeId: actionName,
         };
 
         if (toolAction.metadata) {

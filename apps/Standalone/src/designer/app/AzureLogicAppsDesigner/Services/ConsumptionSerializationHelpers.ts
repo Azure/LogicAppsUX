@@ -30,6 +30,16 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
     }
   });
 
+  // Move notes to definition.metadata
+  // TODO: Move notes to the root once backend supports it
+  if (workflow?.notes) {
+    if (!workflow.definition.metadata) {
+      workflow.definition.metadata = {};
+    }
+    workflow.definition.metadata.notes = workflow.notes;
+    delete workflow.notes;
+  }
+
   if (isOpenApiSchema) {
     if (workflow?.connections) {
       workflow.connectionReferences = workflow.connections;

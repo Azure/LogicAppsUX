@@ -22,7 +22,7 @@ export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean 
 };
 
 export const isAgentConnectorAndConsumptionAgentModel = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && AgentUtils.isConsumptionAgentModelTypeParameter(key);
+  return AgentUtils.isConnector(id) && AgentUtils.isAgentModelTypeParameter(key);
 };
 
 export const isAgentConnectorAndAgentServiceModel = (

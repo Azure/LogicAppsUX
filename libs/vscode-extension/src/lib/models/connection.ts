@@ -17,6 +17,8 @@ export interface ConnectionReferenceModel {
     parameter?: string;
   };
   connectionProperties?: Record<string, unknown>;
+  dynamicConnectionProxyUrl?: string;
+  runtimeSource?: string;
 }
 
 export interface FunctionConnectionModel {

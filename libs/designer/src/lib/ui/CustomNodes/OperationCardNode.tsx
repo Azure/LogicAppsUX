@@ -150,7 +150,6 @@ const DefaultNode = ({ id }: NodeProps) => {
           setRepetitionRunData({
             nodeId: id,
             runData: subgraphRunData as LogicAppsV2.WorkflowRunAction,
-            isWithinAgentic: isWithinAgenticLoop,
           })
         );
       }

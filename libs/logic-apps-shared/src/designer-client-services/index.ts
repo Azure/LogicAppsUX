@@ -12,6 +12,7 @@ export * from './lib/httpClient';
 export * from './lib/common/azure';
 export * from './lib/common/exceptions';
 export * from './lib/common/dataSvg';
+export * from './lib/common/models/AzurePortalBlade';
 export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
