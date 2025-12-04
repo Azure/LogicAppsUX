@@ -7,8 +7,7 @@ import {
   type Attachment,
   type AuthConfig,
   type AgentCard,
-} from '@microsoft/logicAppsChat';
-import '@microsoft/logicAppsChat/styles.css';
+} from '@microsoft/logic-apps-chat';
 import '../styles/base.css';
 
 // Re-export everything from the core library

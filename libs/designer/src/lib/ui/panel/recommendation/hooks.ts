@@ -1,4 +1,4 @@
-import { enableParseDocumentWithMetadata, LogEntryLevel, LoggerService, enableAgentConsumption } from '@microsoft/logic-apps-shared';
+import { enableParseDocumentWithMetadata, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useDiscoveryPanelFavoriteOperations } from '../../../core/state/panel/panelSelectors';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,20 +11,6 @@ export function useShouldEnableParseDocumentWithMetadata(): boolean | null {
   useEffect(() => {
     const check = async () => {
       const result = await enableParseDocumentWithMetadata();
-      setEnabled(result);
-    };
-    check();
-  }, []);
-
-  return enabled;
-}
-
-export function useShouldShowAgentRequestTriggerConsumption(): boolean | null {
-  const [enabled, setEnabled] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const check = async () => {
-      const result = await enableAgentConsumption();
       setEnabled(result);
     };
     check();

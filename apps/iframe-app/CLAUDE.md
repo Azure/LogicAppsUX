@@ -23,7 +23,7 @@ pnpm run type-check     # TypeScript validation
 ## Architecture
 
 ### Core Components
-- Uses `@microsoft/logicAppsChat` SDK for A2A protocol
+- Uses `@microsoft/logic-apps-chat` SDK for A2A protocol
 - Fluent UI v9 for consistent styling
 - IndexedDB for message persistence
 - React 19 with streaming support
@@ -69,6 +69,6 @@ pnpm run test:multi-session      # Test multiple chat sessions
 
 ## Dependencies
 
-- `@microsoft/logicAppsChat` - A2A protocol SDK
+- `@microsoft/logic-apps-chat` - A2A protocol SDK
 - `@fluentui/react-components` - UI framework
 - `idb` - IndexedDB wrapper

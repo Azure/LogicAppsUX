@@ -474,7 +474,12 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
   });
 };
 
-export const fetchAgentUrlConsumption = async (workflowId: string, workflowName: string, accessEndpoint: string): Promise<AgentURL> => {
+export const fetchAgentUrlConsumption = async (
+  workflowId: string,
+  workflowName: string,
+  accessEndpoint: string,
+  _isDraftMode?: boolean
+): Promise<AgentURL> => {
   if (!accessEndpoint || !workflowName) {
     return { agentUrl: '', chatUrl: '', hostName: '' };
   }
@@ -906,8 +911,14 @@ export const saveWorkflowConsumption = async (
   options?: {
     shouldConvertToConsumption?: boolean /* false when saving from code view*/;
     throwError?: boolean;
-  }
+  },
+  isDraftSave?: boolean
 ): Promise<any> => {
+  // Implement draft save logic for consumption if needed
+  if (isDraftSave) {
+    return;
+  }
+
   const shouldConvertToConsumption = options?.shouldConvertToConsumption ?? true;
 
   const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
@@ -999,6 +1010,7 @@ export const validateWorkflowConsumption = async (
       ...outdatedWorkflow?.properties,
       definition: workflow.definition,
       parameters: workflow.parameters,
+      notes: workflow.notes,
       connectionReferences: workflow.connectionReferences,
     },
   };

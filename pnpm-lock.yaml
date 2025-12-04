@@ -460,7 +460,7 @@ importers:
       '@fluentui/utilities':
         specifier: 8.15.0
         version: 8.15.0(@types/react@18.3.0)(react@18.3.1)
-      '@microsoft/logicAppsChat':
+      '@microsoft/logic-apps-chat':
         specifier: workspace:*
         version: link:../../libs/a2a-core
       idb:
