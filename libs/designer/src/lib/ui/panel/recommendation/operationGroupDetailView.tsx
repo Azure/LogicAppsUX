@@ -1,13 +1,12 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
-import { parsedocumentwithmetadata, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { useDispatch } from 'react-redux';
 import { addConnectorAsOperation, type AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import constants from '../../../common/constants';
 
 type OperationGroupDetailViewProps = {
@@ -26,7 +25,6 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   const isRoot = useMemo(() => graphId === 'root', [graphId]);
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
   const isAgentTool = useIsAddingAgentTool();
-  const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -53,17 +51,13 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
         }
       }
 
-      if (shouldEnableParseDocWithMetadata === false && data.id === parsedocumentwithmetadata.id) {
-        return false;
-      }
-
       return (
         !filters?.['actionType'] ||
         (filters?.['actionType'] === 'actions' && (!data.isTrigger || ignoreActionsFilter)) ||
         (filters?.['actionType'] === 'triggers' && data.isTrigger)
       );
     },
-    [filters, ignoreActionsFilter, isAgentTool, isRoot, isWithinAgenticLoop, shouldEnableParseDocWithMetadata]
+    [filters, ignoreActionsFilter, isAgentTool, isRoot, isWithinAgenticLoop]
   );
 
   const operationGroupActions: OperationActionData[] = groupOperations
