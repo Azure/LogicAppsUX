@@ -864,7 +864,7 @@ export const ParameterSection = ({
       // Control is disabled if it is DeploymentId parameter in Agentic Loop and a connection has not been setup yet
       const isReadOnlyForAgenticScenario =
         AgentUtils.isConnector(operationInfo?.connectorId) &&
-        AgentUtils.isDeploymentIdParameter(param?.parameterName) &&
+        AgentUtils.isDeploymentOrModelIdParameter(param?.parameterName) &&
         !cognitiveServiceAccountId;
 
       const { subMenu, subComponent } = getConnectionElements(param);

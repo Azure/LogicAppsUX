@@ -38,7 +38,7 @@ export class AgentUtils {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
   };
 
-  public static isDeploymentIdParameter = (parameterName?: string): boolean => {
+  public static isDeploymentOrModelIdParameter = (parameterName?: string): boolean => {
     return equals(parameterName ?? '', 'deploymentId', true) || equals(parameterName ?? '', 'modelId', true);
   };
 

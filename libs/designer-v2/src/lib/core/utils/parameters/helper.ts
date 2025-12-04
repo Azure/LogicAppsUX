@@ -390,7 +390,7 @@ export function createParameterInfo(
 
   // For agent operations, treat deploymentId and modelId as required when they're conditionally visible
   // These parameters are mutually exclusive based on agentModelType
-  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentIdParameter(parameter.name) || parameter.name === 'modelId';
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameter.name);
   const isRequired = !!parameter.required || (isAgentDeploymentOrModelParam && hasConditionalVisibility(parameter));
 
   const parameterInfo: ParameterInfo = {
@@ -4336,8 +4336,7 @@ export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
   // For parameters with x-ms-input-dependencies (like deploymentId/modelId),
   // don't enforce as required during validation since only one is visible at a time
   const hasInputDependencies = !!parameterInfo.schema?.['x-ms-input-dependencies'];
-  const isAgentDeploymentOrModelParam =
-    AgentUtils.isDeploymentIdParameter(parameterInfo.parameterName) || parameterInfo.parameterName === 'modelId';
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameterInfo.parameterName);
   if (isAgentDeploymentOrModelParam && hasInputDependencies) {
     return false;
   }

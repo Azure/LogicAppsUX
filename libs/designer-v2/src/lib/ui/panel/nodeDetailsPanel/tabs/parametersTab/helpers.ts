@@ -14,7 +14,7 @@ interface CategorizedConnections {
 export const agentModelTypeParameterKey = 'inputs.$.agentModelType';
 
 export const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && AgentUtils.isDeploymentIdParameter(key);
+  return AgentUtils.isConnector(id) && AgentUtils.isDeploymentOrModelIdParameter(key);
 };
 
 export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean => {
