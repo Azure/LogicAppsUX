@@ -47,7 +47,8 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         setNeedsLogin(false);
         setIsLoggingIn(false);
       },
-      onFailed: () => {
+      onFailed: (error: Error) => {
+        console.log('Login failed:', error);
         setIsLoggingIn(false);
       },
     });
