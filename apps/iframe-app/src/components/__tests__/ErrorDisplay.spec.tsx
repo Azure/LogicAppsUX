@@ -75,7 +75,7 @@ describe('ErrorDisplay', () => {
     );
 
     expect(screen.getByText(/URL:/)).toBeInTheDocument();
-    expect(screen.getByText(/https:\/\/api.example.com/)).toBeInTheDocument();
+    expect(screen.getByText(/https:\/\/api\.example\.com/)).toBeInTheDocument();
     expect(screen.getByText(/Parameters:/)).toBeInTheDocument();
     expect(screen.getByText(/key=value/)).toBeInTheDocument();
   });
