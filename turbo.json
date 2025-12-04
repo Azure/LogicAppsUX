@@ -43,7 +43,7 @@
     "test:extension-unit": {
       "outputs": ["coverage/**"]
     },
-    "test": {
+    "test:iframe-app": {
       "outputs": ["coverage/**"]
     },
     "vscode:designer:pack": {

@@ -9,6 +9,7 @@
     "dev": "vite",
     "e2e": "E2E=true vite",
     "preview": "vite preview",
+    "test:iframe-app": "vitest run --retry=3",
     "test": "vitest run --retry=3",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",

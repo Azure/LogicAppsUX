@@ -159,6 +159,66 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     // Sign in button should be enabled again (not stuck in loading state)
     await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled();
   });
+
+  test('should display error message when popup is blocked', async ({ page }) => {
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // Override window.open to return null (simulating popup blocker)
+    await page.evaluate(() => {
+      window.open = () => null;
+    });
+
+    // Click sign in
+    await page.getByRole('button', { name: 'Sign in' }).click();
+
+    // Wait for error message to appear
+    await page.waitForTimeout(1000);
+
+    // Error message should be displayed
+    await expect(page.getByText(/failed to open login popup/i)).toBeVisible({ timeout: 5000 });
+
+    // Sign in button should be enabled for retry
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled();
+  });
+
+  test('should clear error message when retrying login', async ({ page, context }) => {
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // First attempt - simulate popup blocker
+    await page.evaluate(() => {
+      window.open = () => null;
+    });
+
+    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.waitForTimeout(1000);
+
+    // Error should be visible
+    await expect(page.getByText(/failed to open login popup/i)).toBeVisible({ timeout: 5000 });
+
+    // Restore window.open to work normally
+    await page.evaluate(() => {
+      window.open = window.constructor.prototype.open;
+    });
+
+    // Set up popup listener for retry
+    const popupPromise = context.waitForEvent('page');
+
+    // Click sign in again
+    await page.getByRole('button', { name: 'Sign in' }).click();
+
+    // Wait for popup
+    const popup = await popupPromise;
+
+    // Button should show loading state (error cleared on retry start)
+    await expect(page.getByRole('button', { name: 'Signing in...' })).toBeVisible({ timeout: 2000 });
+
+    // Clean up
+    await popup.close();
+  });
 });
 
 test.describe('Token Refresh Flow', { tag: '@mock' }, () => {
