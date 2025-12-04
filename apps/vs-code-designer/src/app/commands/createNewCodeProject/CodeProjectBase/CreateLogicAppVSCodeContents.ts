@@ -2,7 +2,10 @@ import { latestGAVersion, ProjectLanguage, ProjectType, TargetFramework } from '
 import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import {
   assetsFolderName,
+  containerTemplatesFolderName,
   deploySubpathSetting,
+  devContainerFileName,
+  devContainerFolderName,
   extensionCommand,
   extensionsFileName,
   funcVersionSetting,
@@ -53,11 +56,17 @@ export async function writeExtensionsJson(context: IActionContext, vscodePath: s
   await fse.copyFile(templatePath, extensionsJsonPath);
 }
 
-export async function writeTasksJson(context: IActionContext, vscodePath: string): Promise<void> {
+export async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
-  const tasksJsonFile = 'TasksJsonFile';
+  const tasksJsonFile = context.isDevContainerProject ? 'DevContainerTasksJsonFile' : 'TasksJsonFile';
   const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, tasksJsonFile);
   await fse.copyFile(templatePath, tasksJsonPath);
+}
+
+export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
+  const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
+  const templatePath = path.join(__dirname, assetsFolderName, containerTemplatesFolderName, devContainerFileName);
+  await fse.copyFile(templatePath, devContainerJsonPath);
 }
 
 export function getDebugConfiguration(logicAppName: string, customCodeTargetFramework?: TargetFramework): DebugConfiguration {
@@ -128,4 +137,15 @@ export async function createLogicAppVsCodeContents(
     myWebviewProjectContext.logicAppName,
     myWebviewProjectContext.targetFramework as TargetFramework
   );
+}
+
+export async function createDevContainerContents(
+  myWebviewProjectContext: IWebviewProjectContext,
+  logicAppFolderPath: string
+): Promise<void> {
+  if (myWebviewProjectContext.isDevContainerProject) {
+    const devContainerPath: string = path.join(logicAppFolderPath, devContainerFolderName);
+    await fse.ensureDir(devContainerPath);
+    await writeDevContainerJson(devContainerPath);
+  }
 }
