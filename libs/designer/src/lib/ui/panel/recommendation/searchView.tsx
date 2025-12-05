@@ -9,7 +9,6 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
@@ -41,7 +40,6 @@ export const SearchView: FC<SearchViewProps> = ({
   isAddingMcpServer,
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
-  const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
@@ -133,17 +131,19 @@ export const SearchView: FC<SearchViewProps> = ({
 
   useDebouncedEffect(
     () => {
-      const searchResultsPromise = new DefaultSearchOperationsService(
-        allOperations,
-        shouldEnableParseDocWithMetadata ?? false
-      ).searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops);
+      const searchResultsPromise = new DefaultSearchOperationsService(allOperations).searchOperations(
+        searchTerm,
+        filters['actionType'],
+        filters['runtime'],
+        filterAgenticLoops
+      );
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata, isAddingMcpServer],
+    [searchTerm, allOperations, filters, filterAgenticLoops, isAddingMcpServer],
     200
   );
 

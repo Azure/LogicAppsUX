@@ -61,24 +61,23 @@ export const SelectConnectionWrapper = () => {
   const connections = useMemo(() => {
     const connectionData = connectionQuery?.data ?? [];
 
-    if (!isA2A || !isAgentSubgraph) {
-      // Filter out dynamic connections
-      return connectionData.filter((c) => !isDynamicConnection(c.properties.features));
-    }
-
     if (AgentUtils.isConnector(connector?.id)) {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
         let modelType = AgentUtils.ModelType.AzureOpenAI;
+
         if (connectionReference?.resourceId) {
           if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
             modelType = AgentUtils.ModelType.FoundryService;
           } else if (apimanagementRegex.test(connectionReference.resourceId ?? '')) {
             modelType = AgentUtils.ModelType.APIM;
           }
+        } else if (!c.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value) {
+          // No cognitive serviceAccountId means this is a V1ChatCompletionsService connection (BYO)
+          modelType = AgentUtils.ModelType.V1ChatCompletionsService;
         }
 
-        // Set the connection parameters with the model type
+        // Add a tag for model type
         c.properties.connectionParameters = {
           ...(c.properties.connectionParameters ?? {}),
           agentModelType: {
@@ -87,8 +86,13 @@ export const SelectConnectionWrapper = () => {
         };
 
         // For A2A, hide the foundry connection from the list
-        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI : true;
+        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI || modelType === AgentUtils.ModelType.V1ChatCompletionsService : true;
       });
+    }
+
+    if (!isA2A || !isAgentSubgraph) {
+      // Filter out dynamic connections
+      return connectionData.filter((c) => !isDynamicConnection(c.properties.features));
     }
 
     return connectionData;

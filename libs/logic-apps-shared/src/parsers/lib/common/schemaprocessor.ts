@@ -602,21 +602,26 @@ export class SchemaProcessor {
   private _sortProperties(parameters: SchemaProperty[]): SchemaProperty[] {
     const sortedParameters: SchemaProperty[] = [];
 
+    // Helper to check if parameter is effectively required (either explicitly required or has conditional visibility via x-ms-input-dependencies)
+    const isEffectivelyRequired = (parameter: SchemaProperty) => {
+      return parameter.required || !!parameter.schema?.['x-ms-input-dependencies'];
+    };
+
     parameters.forEach((parameter) => {
-      if (parameter.required) {
+      if (isEffectivelyRequired(parameter)) {
         sortedParameters.push(parameter);
       }
     });
 
     parameters.forEach((parameter) => {
-      if (!parameter.required && equals(parameter.visibility, SwaggerConstants.Visibility.Important)) {
+      if (!isEffectivelyRequired(parameter) && equals(parameter.visibility, SwaggerConstants.Visibility.Important)) {
         sortedParameters.push(parameter);
       }
     });
 
     parameters.forEach((parameter) => {
       if (
-        !parameter.required &&
+        !isEffectivelyRequired(parameter) &&
         !equals(parameter.visibility, SwaggerConstants.Visibility.Important) &&
         !equals(parameter.visibility, SwaggerConstants.Visibility.Advanced)
       ) {
@@ -626,7 +631,7 @@ export class SchemaProcessor {
 
     parameters.forEach((parameter) => {
       if (
-        !parameter.required &&
+        !isEffectivelyRequired(parameter) &&
         !equals(parameter.visibility, SwaggerConstants.Visibility.Important) &&
         equals(parameter.visibility, SwaggerConstants.Visibility.Advanced)
       ) {
