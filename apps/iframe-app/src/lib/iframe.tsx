@@ -22,6 +22,10 @@ import { parseIframeConfig, type IframeConfig } from './utils/config-parser';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
 import '../styles/base.css';
 import type { OnErrorFn } from '@formatjs/intl';
+import { getReactQueryClient } from '@microsoft/logic-apps-designer';
+import { QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = getReactQueryClient();
 
 // Main application component that uses the configuration
 function App() {
@@ -63,9 +67,11 @@ function App() {
 
   return (
     <div style={{ height: '100vh' }}>
-      <IntlProvider locale={config.locale ?? 'en-US'} defaultLocale={'en-US'} onError={onError}>
-        <IframeWrapper config={config} />
-      </IntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <IntlProvider locale={config.locale ?? 'en-US'} defaultLocale={'en-US'} onError={onError}>
+          <IframeWrapper config={config} />
+        </IntlProvider>
+      </QueryClientProvider>
     </div>
   );
 }

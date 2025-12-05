@@ -466,9 +466,15 @@ importers:
       '@microsoft/logic-apps-chat':
         specifier: workspace:*
         version: link:../../libs/a2a-core
+      '@microsoft/logic-apps-designer':
+        specifier: workspace:*
+        version: link:../../libs/designer
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../../libs/logic-apps-shared
+      '@tanstack/react-query':
+        specifier: 4.36.1
+        version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       idb:
         specifier: ^8.0.3
         version: 8.0.3

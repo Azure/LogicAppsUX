@@ -26,6 +26,9 @@ export default defineConfig({
     ...(process.env.CI || process.env.E2E ? [] : [mkcert()]),
   ],
   base: './', // Use relative paths instead of absolute
+  define: {
+    'process.env': {},
+  },
   build: {
     outDir: 'dist',
     rollupOptions: {
