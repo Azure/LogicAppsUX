@@ -1,23 +1,9 @@
-import { enableParseDocumentWithMetadata, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useDiscoveryPanelFavoriteOperations } from '../../../core/state/panel/panelSelectors';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core';
 import { setFavoriteOperations } from '../../../core/state/panel/panelSlice';
-
-export function useShouldEnableParseDocumentWithMetadata(): boolean | null {
-  const [enabled, setEnabled] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const check = async () => {
-      const result = await enableParseDocumentWithMetadata();
-      setEnabled(result);
-    };
-    check();
-  }, []);
-
-  return enabled;
-}
 
 export const useOnFavoriteClick = () => {
   const favorites = useDiscoveryPanelFavoriteOperations();
