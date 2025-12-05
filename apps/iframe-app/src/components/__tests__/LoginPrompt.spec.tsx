@@ -78,8 +78,6 @@ describe('LoginPrompt', () => {
     });
 
     it('should not display error message when error prop is empty string', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="" />);
-
       // Empty string should not render the error div
       const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="" />);
       // The error div should not be present when error is empty

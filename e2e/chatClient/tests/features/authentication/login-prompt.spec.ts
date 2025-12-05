@@ -173,14 +173,12 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     // Click sign in
     await page.getByRole('button', { name: 'Sign in' }).click();
 
-    // Wait for error handling to complete
-    await page.waitForTimeout(500);
+    // Wait for button to return to enabled state (indicates error handling completed)
+    // The button goes to "Signing in..." (disabled) then back to "Sign in" (enabled) on error
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled({ timeout: 5000 });
 
     // Login prompt should still be visible (app didn't crash)
     await expect(page.getByText('Sign in required')).toBeVisible();
-
-    // Sign in button should be enabled for retry (not stuck in loading)
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled({ timeout: 3000 });
 
     // Error message should be displayed (if the feature is working)
     // Using a soft assertion since this is a new feature
