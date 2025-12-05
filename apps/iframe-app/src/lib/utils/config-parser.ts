@@ -10,6 +10,7 @@ export interface IframeConfig {
   inPortal?: boolean;
   trustedParentOrigin?: string;
   contextId?: string;
+  locale?: string;
 }
 
 interface PortalValidationResult {
@@ -222,6 +223,9 @@ export function parseIframeConfig(): IframeConfig {
   // Context ID for session linking
   const contextId = params.get('contextId') || dataset.contextId || undefined;
 
+  // Locale/language for internationalization (supports: locale, language, lang)
+  const locale = params.get('locale') || params.get('language') || params.get('lang') || dataset.locale || dataset.language || 'en-US';
+
   return {
     props,
     multiSession,
@@ -231,6 +235,7 @@ export function parseIframeConfig(): IframeConfig {
     inPortal,
     trustedParentOrigin,
     contextId,
+    locale,
   };
 }
 

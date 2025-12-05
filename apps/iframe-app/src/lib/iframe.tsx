@@ -63,7 +63,7 @@ function App() {
 
   return (
     <div style={{ height: '100vh' }}>
-      <IntlProvider locale={'en-US'} defaultLocale={'en-US'} onError={onError}>
+      <IntlProvider locale={config.locale ?? 'en-US'} defaultLocale={'en-US'} onError={onError}>
         <IframeWrapper config={config} />
       </IntlProvider>
     </div>
