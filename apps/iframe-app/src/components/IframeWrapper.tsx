@@ -25,6 +25,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [needsLogin, setNeedsLogin] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const chatHistoryRef = useRef<ChatHistoryData | null>(null);
 
   // Check if we should wait for postMessage
@@ -43,14 +44,17 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   // Handle login button click
   const handleLogin = useCallback(() => {
     setIsLoggingIn(true);
+    setLoginError(null);
     openLoginPopup({
       baseUrl,
       onSuccess: () => {
         setNeedsLogin(false);
         setIsLoggingIn(false);
+        setLoginError(null);
       },
-      onFailed: () => {
+      onFailed: (error: Error) => {
         setIsLoggingIn(false);
+        setLoginError(error.message);
       },
     });
   }, [baseUrl]);
@@ -99,7 +103,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   if (needsLogin) {
     return (
       <FluentProvider theme={theme}>
-        <LoginPrompt onLogin={handleLogin} isLoading={isLoggingIn} />
+        <LoginPrompt onLogin={handleLogin} isLoading={isLoggingIn} error={loginError ?? undefined} />
       </FluentProvider>
     );
   }

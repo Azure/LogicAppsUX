@@ -81,16 +81,12 @@ function init() {
     const root = createRoot(container);
     root.render(<App />);
   } catch (error) {
-    console.error('Failed to initialize chat widget:', error);
-
     const errorDetails = {
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       location: window.location.href,
       search: window.location.search,
     };
-
-    console.error('Error details:', errorDetails);
 
     // Display error to user
     const root = createRoot(document.body);

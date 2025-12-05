@@ -91,7 +91,7 @@ export interface LoginPopupOptions {
   /** Callback when login completes successfully */
   onSuccess?: () => void;
   /** Callback when login fails or is cancelled */
-  onFailed?: () => void;
+  onFailed?: (error: Error) => void;
   /** Timeout in milliseconds (default: 5 minutes) */
   timeout?: number;
 }
@@ -112,8 +112,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
   const popup = window.open(loginUrl, 'auth-login', 'width=600,height=700,popup=true');
 
   if (!popup) {
-    console.error('[Auth] Failed to open login popup - popup may be blocked');
-    onFailed?.();
+    onFailed?.(new Error('Failed to open login popup'));
     return;
   }
 
@@ -137,12 +136,12 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     onSuccess?.();
   };
 
-  const handleFailure = () => {
+  const handleFailure = (error: Error) => {
     if (completed) {
       return;
     }
     cleanup();
-    onFailed?.();
+    onFailed?.(error);
   };
 
   // Monitor popup for completion
@@ -176,7 +175,6 @@ export function openLoginPopup(options: LoginPopupOptions): void {
           const isLoginPage = popupHref.includes('/.auth/login/aad') && !popupHref.includes('callback');
 
           if (!isLoginPage) {
-            console.log('[Auth] Not on login page anymore, login complete!');
             handleSuccess();
           }
         }
@@ -213,12 +211,13 @@ export function openLoginPopup(options: LoginPopupOptions): void {
         handleSuccess();
       } else if (popupIsClosed) {
         // Only fail if popup is closed AND not authenticated
-        handleFailure();
+        handleFailure(new Error('Login cancelled or failed'));
       }
       // If not authenticated but popup still open, keep polling
-    } catch (_e) {
+    } catch (error) {
       if (popupIsClosed && !completed) {
-        handleFailure();
+        const err = error instanceof Error ? error : new Error('Login failed');
+        handleFailure(err);
       }
     }
   }, 500); // Poll every 500ms
@@ -233,7 +232,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     if (!popup.closed) {
       popup.close();
     }
-    handleFailure();
+    handleFailure(new Error('Login timed out'));
   }, timeout);
 }
 

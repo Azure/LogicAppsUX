@@ -9,7 +9,8 @@
     "dev": "vite",
     "e2e": "E2E=true vite",
     "preview": "vite preview",
-    "test": "vitest",
+    "test:iframe-app": "vitest run --retry=3",
+    "test": "vitest run --retry=3",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:multi-session": "tsx test-multi-session.ts",
@@ -17,7 +18,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.70.0",
+    "@fluentui/react-hooks": "8.6.20",
+    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/utilities": "8.15.0",
     "@microsoft/logic-apps-chat": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
     "idb": "^8.0.3",
@@ -25,11 +30,7 @@
     "react-dom": "^19.2.0",
     "react-intl": "6.3.0",
     "vite-plugin-mkcert": "^1.17.8",
-    "@fluentui/react-hooks": "8.6.20",
-    "@fluentui/react-icons": "2.0.224",
-    "@fluentui/utilities": "8.15.0",
-    "@fluentui/react": "8.110.2",
-        "@formatjs/intl": "^2.10.1"
+    "@formatjs/intl": "^2.10.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

@@ -34,6 +34,13 @@ export const useLoginPromptStyles = makeStyles({
     fontSize: tokens.fontSizeBase300,
     lineHeight: tokens.lineHeightBase300,
   },
+  errorMessage: {
+    marginBottom: tokens.spacingVerticalM,
+    width: '100%',
+    justifyContent: 'center',
+    display: 'flex',
+    alignItems: 'center',
+  },
   button: {
     minWidth: '200px',
     height: '44px',
