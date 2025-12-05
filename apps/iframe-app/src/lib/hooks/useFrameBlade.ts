@@ -67,7 +67,6 @@ export function useFrameBlade({
         sessionId: sessionIdRef.current,
       };
 
-      console.log('Sending Frame Blade message:', message);
       window.parent.postMessage(message, trustedParentOrigin);
     },
     [enabled, trustedParentOrigin]
@@ -115,7 +114,6 @@ export function useFrameBlade({
         case 'chatHistory':
           // Handle chat history data from parent blade
           if (msg.data && onChatHistoryReceived) {
-            console.log('Received chat history from parent blade');
             onChatHistoryReceived(msg.data as ChatHistoryData);
           }
           break;
@@ -151,12 +149,10 @@ export function useFrameBlade({
     window.addEventListener('message', handleMessage);
 
     // Send ready message
-    console.log('Sending Frame Blade ready message to:', trustedParentOrigin);
     sendMessage('ready');
 
     // Signal initialization complete after delay
     const timer = setTimeout(() => {
-      console.log('Sending Frame Blade initializationcomplete message');
       sendMessage('initializationcomplete');
       setIsReady(true);
     }, 100);

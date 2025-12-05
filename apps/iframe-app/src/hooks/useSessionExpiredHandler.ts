@@ -4,17 +4,9 @@ import type { UnauthorizedHandler } from '@microsoft/logic-apps-chat';
 export const useSessionExpiredHandler = () => {
   const [isSessionExpired, setIsSessionExpired] = useState(false);
 
-  const handleUnauthorized: UnauthorizedHandler = useCallback((event) => {
-    console.log('Session expired or redirect detected:', event);
-
+  const handleUnauthorized: UnauthorizedHandler = useCallback(() => {
     // Show the session expired modal
     setIsSessionExpired(true);
-
-    // You could also check specific conditions here
-    // For example, only show modal for certain URLs or status texts
-    if (event.statusText === 'Redirect') {
-      console.log('Redirect detected - likely session timeout');
-    }
   }, []);
 
   return {

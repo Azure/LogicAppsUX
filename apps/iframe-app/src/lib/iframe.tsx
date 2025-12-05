@@ -14,12 +14,18 @@
  * - In development (localhost), allow common development ports
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IframeWrapper } from '../components/IframeWrapper';
 import { ErrorDisplay } from '../components/ErrorDisplay';
 import { parseIframeConfig, type IframeConfig } from './utils/config-parser';
+import { IntlProvider } from '@microsoft/logic-apps-shared';
 import '../styles/base.css';
+import type { OnErrorFn } from '@formatjs/intl';
+import { getReactQueryClient } from '@microsoft/logic-apps-designer';
+import { QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = getReactQueryClient();
 
 // Main application component that uses the configuration
 function App() {
@@ -32,6 +38,14 @@ function App() {
       setError(err instanceof Error ? err : new Error(String(err)));
       return null;
     }
+  }, []);
+
+  const onError = useCallback<OnErrorFn>((err) => {
+    if (err.code === 'MISSING_TRANSLATION' || err.code === 'MISSING_DATA') {
+      console.error(`IntlProvider error ${err.code} - ${err.message} - ${err.stack}`);
+      return;
+    }
+    throw err;
   }, []);
 
   if (error) {
@@ -53,7 +67,11 @@ function App() {
 
   return (
     <div style={{ height: '100vh' }}>
-      <IframeWrapper config={config} />
+      <QueryClientProvider client={queryClient}>
+        <IntlProvider locale={config.locale ?? 'en-US'} defaultLocale={'en-US'} onError={onError}>
+          <IframeWrapper config={config} />
+        </IntlProvider>
+      </QueryClientProvider>
     </div>
   );
 }

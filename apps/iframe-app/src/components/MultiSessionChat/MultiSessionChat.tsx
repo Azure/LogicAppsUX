@@ -5,6 +5,7 @@ import { Spinner, mergeClasses } from '@fluentui/react-components';
 import { useChatSessions } from '../../hooks/useChatSessions';
 import { useMultiSessionChatStyles } from './MultiSessionChatStyles';
 import { SessionList } from '../SessionList/SessionList';
+import { useIframeStrings } from '../../lib/intl/strings';
 
 interface MultiSessionChatProps extends Omit<ChatWidgetProps, 'agentCard'> {
   config: {
@@ -19,6 +20,7 @@ interface MultiSessionChatProps extends Omit<ChatWidgetProps, 'agentCard'> {
 
 export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }: MultiSessionChatProps) {
   const styles = useMultiSessionChatStyles();
+  const strings = useIframeStrings();
   const [agentCard, setAgentCard] = useState<AgentCard | undefined>();
   const [isLoadingAgent, setIsLoadingAgent] = useState(true);
   const [agentError, setAgentError] = useState<Error | undefined>();
@@ -223,7 +225,7 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
     return (
       <div className={styles.loadingContainer}>
         <Spinner size="medium" />
-        <div>Loading agent...</div>
+        <div>{strings.loading.loadingAgent}</div>
       </div>
     );
   }
@@ -232,7 +234,9 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
   if (agentError || !agentCard) {
     return (
       <div className={styles.errorContainer}>
-        <div>Error: {agentError?.message || 'Failed to load agent'}</div>
+        <div>
+          {strings.multiSessionChat.error}: {agentError?.message || strings.multiSessionChat.failedToLoadAgent}
+        </div>
       </div>
     );
   }

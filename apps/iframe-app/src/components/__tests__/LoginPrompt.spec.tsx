@@ -1,10 +1,15 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { IntlProvider } from 'react-intl';
 import { LoginPrompt } from '../LoginPrompt/LoginPrompt';
 
 const renderWithProvider = (ui: React.ReactElement) => {
-  return render(<FluentProvider theme={webLightTheme}>{ui}</FluentProvider>);
+  return render(
+    <IntlProvider locale="en" messages={{}}>
+      <FluentProvider theme={webLightTheme}>{ui}</FluentProvider>
+    </IntlProvider>
+  );
 };
 
 describe('LoginPrompt', () => {

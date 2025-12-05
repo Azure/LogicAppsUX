@@ -227,7 +227,6 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     if (completed) {
       return;
     }
-    console.log('[Auth] Login timed out');
     cleanup();
     if (!popup.closed) {
       popup.close();
@@ -242,7 +241,6 @@ export function openLoginPopup(options: LoginPopupOptions): void {
  */
 export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
   try {
-    console.log('[Auth] Checking auth status at:', `${baseUrl}/.auth/me`);
     const response = await fetch(`${baseUrl}/.auth/me`, {
       method: 'GET',
       credentials: 'include', // Important: include cookies for cross-origin
@@ -255,7 +253,6 @@ export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
     const data = await response.json();
     // /.auth/me returns an array of identity providers, empty array or null if not authenticated
     const isAuthenticated = Array.isArray(data) && data.length > 0;
-    console.log('[Auth] Is authenticated:', isAuthenticated);
     return isAuthenticated;
   } catch (error) {
     console.error('[Auth] Failed to check auth status:', error);

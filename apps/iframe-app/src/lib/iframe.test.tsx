@@ -6,6 +6,17 @@ vi.mock('react-dom/client');
 vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(() => null),
 }));
+vi.mock('@microsoft/logic-apps-designer', () => ({
+  getReactQueryClient: vi.fn(() => ({
+    defaultOptions: {},
+  })),
+}));
+vi.mock('@tanstack/react-query', () => ({
+  QueryClientProvider: vi.fn(({ children }) => children),
+}));
+vi.mock('@microsoft/logic-apps-shared', () => ({
+  IntlProvider: vi.fn(({ children }) => children),
+}));
 vi.mock('../styles/base.css', () => ({}));
 vi.mock('./hooks/useIframeConfig', () => ({
   useIframeConfig: vi.fn(() => ({

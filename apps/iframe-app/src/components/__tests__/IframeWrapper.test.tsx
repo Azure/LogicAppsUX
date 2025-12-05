@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
 
@@ -35,6 +36,14 @@ vi.mock('../../lib/hooks/useParentCommunication', () => ({
   })),
 }));
 
+const renderWithIntl = (ui: React.ReactElement) => {
+  return render(
+    <IntlProvider locale="en" messages={{}}>
+      {ui}
+    </IntlProvider>
+  );
+};
+
 describe('IframeWrapper', () => {
   const defaultConfig: IframeConfig = {
     props: {
@@ -60,7 +69,7 @@ describe('IframeWrapper', () => {
   });
 
   it('should render ChatWidget in single-session mode', () => {
-    render(<IframeWrapper config={defaultConfig} />);
+    renderWithIntl(<IframeWrapper config={defaultConfig} />);
 
     expect(screen.getByTestId('chat-widget')).toBeInTheDocument();
     expect(screen.getByText('ChatWidget (mode: light)')).toBeInTheDocument();
@@ -73,7 +82,7 @@ describe('IframeWrapper', () => {
       apiKey: 'test-api-key',
     };
 
-    render(<IframeWrapper config={multiSessionConfig} />);
+    renderWithIntl(<IframeWrapper config={multiSessionConfig} />);
 
     expect(screen.getByTestId('multi-session-chat')).toBeInTheDocument();
     expect(screen.getByText('MultiSessionChat (mode: light)')).toBeInTheDocument();
@@ -85,7 +94,7 @@ describe('IframeWrapper', () => {
       mode: 'dark',
     };
 
-    render(<IframeWrapper config={darkModeConfig} />);
+    renderWithIntl(<IframeWrapper config={darkModeConfig} />);
 
     expect(screen.getByText('ChatWidget (mode: dark)')).toBeInTheDocument();
   });
@@ -99,9 +108,9 @@ describe('IframeWrapper', () => {
 
     (window as any).location = new URL('http://localhost:3000?expectPostMessage=true');
 
-    render(<IframeWrapper config={defaultConfig} />);
+    renderWithIntl(<IframeWrapper config={defaultConfig} />);
 
-    expect(screen.getByText('Waiting for Configuration')).toBeInTheDocument();
+    expect(screen.getByText('Waiting for configuration')).toBeInTheDocument();
     expect(screen.getByText('Waiting for agent card data via postMessage...')).toBeInTheDocument();
   });
 
@@ -118,10 +127,10 @@ describe('IframeWrapper', () => {
       trustedParentOrigin: 'https://portal.azure.com',
     };
 
-    render(<IframeWrapper config={portalConfig} />);
+    renderWithIntl(<IframeWrapper config={portalConfig} />);
 
-    expect(screen.getByText('Initializing Frame Blade...')).toBeInTheDocument();
-    expect(screen.getByText('Connecting to Azure Portal...')).toBeInTheDocument();
+    expect(screen.getByText('Initializing frame blade...')).toBeInTheDocument();
+    expect(screen.getByText('Connecting to azure portal...')).toBeInTheDocument();
   });
 
   it('should handle agent card from postMessage', async () => {
@@ -139,7 +148,7 @@ describe('IframeWrapper', () => {
 
     (window as any).location = new URL('http://localhost:3000?expectPostMessage=true');
 
-    const { rerender } = render(<IframeWrapper config={defaultConfig} />);
+    const { rerender } = renderWithIntl(<IframeWrapper config={defaultConfig} />);
 
     // Simulate receiving agent card
     act(() => {
@@ -148,7 +157,11 @@ describe('IframeWrapper', () => {
       }
     });
 
-    rerender(<IframeWrapper config={defaultConfig} />);
+    rerender(
+      <IntlProvider locale="en" messages={{}}>
+        <IframeWrapper config={defaultConfig} />
+      </IntlProvider>
+    );
 
     expect(screen.getByTestId('chat-widget')).toBeInTheDocument();
   });
@@ -172,7 +185,7 @@ describe('IframeWrapper', () => {
       trustedParentOrigin: 'https://portal.azure.com',
     };
 
-    render(<IframeWrapper config={portalConfig} />);
+    renderWithIntl(<IframeWrapper config={portalConfig} />);
 
     expect(screen.getByText('ChatWidget (mode: light)')).toBeInTheDocument();
 
@@ -207,7 +220,7 @@ describe('IframeWrapper', () => {
       trustedParentOrigin: 'https://portal.azure.com',
     };
 
-    render(<IframeWrapper config={portalConfig} />);
+    renderWithIntl(<IframeWrapper config={portalConfig} />);
 
     // Simulate receiving auth token
     act(() => {
@@ -228,7 +241,7 @@ describe('IframeWrapper', () => {
   it('should respect URL mode parameter over initial mode', () => {
     (window as any).location = new URL('http://localhost:3000?mode=dark');
 
-    render(<IframeWrapper config={defaultConfig} />);
+    renderWithIntl(<IframeWrapper config={defaultConfig} />);
 
     expect(screen.getByText('ChatWidget (mode: dark)')).toBeInTheDocument();
   });
@@ -252,7 +265,7 @@ describe('IframeWrapper', () => {
       trustedParentOrigin: 'https://portal.azure.com',
     };
 
-    render(<IframeWrapper config={portalConfig} />);
+    renderWithIntl(<IframeWrapper config={portalConfig} />);
 
     const chatHistory = {
       contextId: 'test-context-123',
@@ -287,7 +300,7 @@ describe('IframeWrapper', () => {
       multiSession: false,
     };
 
-    render(<IframeWrapper config={configWithContextId} />);
+    renderWithIntl(<IframeWrapper config={configWithContextId} />);
 
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -304,7 +317,7 @@ describe('IframeWrapper', () => {
       multiSession: true,
     };
 
-    render(<IframeWrapper config={configWithContextId} />);
+    renderWithIntl(<IframeWrapper config={configWithContextId} />);
 
     // Multi-session mode uses MultiSessionChat, which doesn't use initialContextId
     expect(screen.getByTestId('multi-session-chat')).toBeInTheDocument();

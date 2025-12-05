@@ -1,8 +1,12 @@
+import { useIframeStrings } from '../lib/intl/strings';
+
 interface SessionExpiredModalProps {
   isOpen: boolean;
 }
 
 export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({ isOpen }) => {
+  const strings = useIframeStrings();
+
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -40,10 +44,10 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({ isOpen
         aria-describedby="session-expired-description"
       >
         <h2 id="session-expired-title" style={{ marginTop: 0, marginBottom: '16px' }}>
-          Session Expired
+          {strings.sessionExpired.title}
         </h2>
         <p id="session-expired-description" style={{ marginBottom: '24px' }}>
-          Your session has expired. Please refresh the page to continue.
+          {strings.sessionExpired.description}
         </p>
         <button
           onClick={handleRefresh}
@@ -64,7 +68,7 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({ isOpen
             e.currentTarget.style.backgroundColor = '#0078d4';
           }}
         >
-          Refresh Page
+          {strings.sessionExpired.refreshPage}
         </button>
       </div>
     </div>
