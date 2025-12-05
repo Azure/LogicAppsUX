@@ -209,13 +209,18 @@ export const detectSequentialInitializeVariables = (definition: LogicAppsV2.Work
  * using patterns: @{variable({name})} or @variable({name})
  */
 export const hasVariableReference = (value: any): boolean => {
-  if (typeof value !== 'string') {
-    return false;
+  if (typeof value === 'string') {
+    // Check for @{variable(...)} or @variable(...) patterns
+    const variableReferencePattern = /@\{?variables?\s*\([^)]*\)\}?/i;
+    return variableReferencePattern.test(value);
   }
-
-  // Check for @{variable(...)} or @variable(...) patterns
-  const variableReferencePattern = /@\{?variables?\s*\([^)]*\)\}?/i;
-  return variableReferencePattern.test(value);
+  if (Array.isArray(value)) {
+    return value.some((item) => hasVariableReference(item));
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Object.values(value).some((v) => hasVariableReference(v));
+  }
+  return false;
 };
 
 export const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDefinition): LogicAppsV2.WorkflowDefinition => {
