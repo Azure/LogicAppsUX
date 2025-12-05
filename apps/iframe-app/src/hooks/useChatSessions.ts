@@ -33,8 +33,6 @@ export function useChatSessions() {
   // Sync server sessions to local state whenever they change
   useEffect(() => {
     if (serverSessions.length > 0) {
-      console.log('[useChatSessions] Server sessions changed, syncing to local state');
-
       // Preserve any pending sessions (not yet on server) and real sessions (if not synced yet)
       setSessions((prevSessions) => {
         const pendingSessions = prevSessions.filter((s) => s.id.startsWith('pending-'));
@@ -42,13 +40,6 @@ export function useChatSessions() {
         // Preserve all real sessions (non-pending) that exist locally but not in serverSessions yet
         // This prevents sessions from disappearing during the race between creation and server sync
         const localRealSessions = prevSessions.filter((s) => !s.id.startsWith('pending-') && !serverSessions.some((ss) => ss.id === s.id));
-
-        if (localRealSessions.length > 0) {
-          console.log(
-            '[useChatSessions] Preserving local real sessions not yet synced:',
-            localRealSessions.map((s) => s.id)
-          );
-        }
 
         // Filter out recently deleted sessions to prevent them from being re-added
         const serverSessionsData = serverSessions
@@ -107,7 +98,6 @@ export function useChatSessions() {
       // No server sessions available - keep local sessions (both pending and real) sorted by updatedAt
       // This is important for the first chat: when migration happens from pending to real context ID,
       // we need to preserve that real session even though server hasn't been polled yet
-      console.log('[useChatSessions] No server sessions available, keeping local sessions');
       setSessions((prevSessions) => {
         // Sort all local sessions by recency instead of filtering
         return [...prevSessions].sort((a, b) => b.updatedAt - a.updatedAt);
@@ -133,7 +123,6 @@ export function useChatSessions() {
 
       if (sessions.length > 0) {
         // Select the first session
-        console.log('[useChatSessions] Auto-selecting first session:', sessions[0].id);
         const firstSessionId = sessions[0].id;
         const serverSession = serverSessions.find((s) => s.id === firstSessionId);
 
@@ -169,8 +158,6 @@ export function useChatSessions() {
 
   useEffect(() => {
     if (lastMigration && lastMigration.from === activeSessionId) {
-      console.log(`[useChatSessions] Migration detected: ${lastMigration.from} -> ${lastMigration.to}`);
-
       // Find the pending session to preserve its name
       const pendingSession = sessions.find((s) => s.id === lastMigration.from);
 
@@ -227,7 +214,6 @@ export function useChatSessions() {
       // If the pending session had a custom name, update it on the server
       // Migration is guaranteed to be complete when lastMigration is set
       if (pendingSession?.name && pendingSession.name !== 'New chat') {
-        console.log(`[useChatSessions] Pending session had custom name "${pendingSession.name}", updating on server`);
         (async () => {
           try {
             const chatStoreRenameSession = useChatStore.getState().renameSession;
@@ -329,7 +315,6 @@ export function useChatSessions() {
         const isPendingSession = sessionId.startsWith('pending-');
 
         if (isPendingSession) {
-          console.log('[useChatSessions] Renaming pending session locally:', sessionId);
           // Update local state only - no server call
           setSessions((prev) =>
             prev.map((session) => (session.id === sessionId ? { ...session, name: newName, updatedAt: Date.now() } : session))
@@ -340,8 +325,6 @@ export function useChatSessions() {
             setActiveSession((prev) => (prev ? { ...prev, name: newName, updatedAt: Date.now() } : prev));
           }
         } else {
-          console.log('[useChatSessions] Renaming server session:', sessionId);
-
           // Optimistically update local state immediately for instant UI feedback
           setSessions((prev) =>
             prev.map((session) => (session.id === sessionId ? { ...session, name: newName, updatedAt: Date.now() } : session))
@@ -366,8 +349,6 @@ export function useChatSessions() {
   const deleteSession = useCallback(
     async (sessionId: string) => {
       try {
-        console.log('[useChatSessions] Deleting (archiving) server session:', sessionId);
-
         // Add to recently deleted IDs to prevent re-adding from server sync
         setRecentlyDeletedIds((prev) => {
           const next = new Set(prev);

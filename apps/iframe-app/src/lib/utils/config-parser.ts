@@ -158,17 +158,13 @@ export function parseIframeConfig(): IframeConfig {
   const params = new URLSearchParams(window.location.search);
   const dataset = document.documentElement.dataset;
 
-  console.log('Parsing iframe config from URL:', window.location.href);
-
   // Check portal context
   const inPortal = params.get('inPortal') === 'true';
   let trustedParentOrigin: string | undefined;
 
   if (inPortal) {
-    console.log('Running in portal context, validating security...');
     const portalValidation = validatePortalSecurity(params);
     trustedParentOrigin = portalValidation.trustedParentOrigin;
-    console.log('Trusted parent origin:', trustedParentOrigin);
   }
 
   // Get agent card URL
@@ -225,9 +221,6 @@ export function parseIframeConfig(): IframeConfig {
 
   // Context ID for session linking
   const contextId = params.get('contextId') || dataset.contextId || undefined;
-  if (contextId) {
-    console.log('Using contextId:', contextId);
-  }
 
   return {
     props,
