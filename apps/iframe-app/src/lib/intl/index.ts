@@ -1,0 +1,1 @@
+export { useIframeStrings } from './strings';

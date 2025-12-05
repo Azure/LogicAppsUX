@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { ChatWidget, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
 import { MultiSessionChat } from './MultiSessionChat/MultiSessionChat';
 import { LoadingDisplay } from './LoadingDisplay';
@@ -9,6 +9,7 @@ import { getBaseUrl, openLoginPopup, createUnauthorizedHandler } from '../lib/au
 import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { useIframeStrings } from '../lib/intl/strings';
 
 interface IframeWrapperProps {
   config: IframeConfig;
@@ -16,6 +17,7 @@ interface IframeWrapperProps {
 
 export function IframeWrapper({ config }: IframeWrapperProps) {
   const { props, multiSession, apiKey, oboUserToken, mode: initialMode = 'light', inPortal, trustedParentOrigin, contextId } = config;
+  const strings = useIframeStrings();
 
   // State
   const [agentCard, setAgentCard] = useState<any>(null);
@@ -87,11 +89,11 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
 
   // Show loading states
   if (expectPostMessage && isWaitingForAgentCard) {
-    return <LoadingDisplay title="Waiting for Configuration" message="Waiting for agent card data via postMessage..." />;
+    return <LoadingDisplay title={strings.loading.waitingForConfiguration} message={strings.loading.waitingForAgentCard} />;
   }
 
   if (inPortal && !isFrameBladeReady) {
-    return <LoadingDisplay title="Initializing Frame Blade..." message="Connecting to Azure Portal..." />;
+    return <LoadingDisplay title={strings.loading.initializingFrameBlade} message={strings.loading.connectingToAzurePortal} />;
   }
 
   if (needsLogin) {

@@ -460,9 +460,15 @@ importers:
       '@fluentui/utilities':
         specifier: 8.15.0
         version: 8.15.0(@types/react@18.3.0)(react@18.3.1)
+      '@formatjs/intl':
+        specifier: ^2.10.1
+        version: 2.10.1(typescript@5.9.3)
       '@microsoft/logic-apps-chat':
         specifier: workspace:*
         version: link:../../libs/a2a-core
+      '@microsoft/logic-apps-shared':
+        specifier: workspace:*
+        version: link:../../libs/logic-apps-shared
       idb:
         specifier: ^8.0.3
         version: 8.0.3
@@ -472,6 +478,9 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
+      react-intl:
+        specifier: 6.3.0
+        version: 6.3.0(react@18.3.1)(typescript@5.9.3)
       vite-plugin-mkcert:
         specifier: ^1.17.8
         version: 1.17.8(vite@6.4.1(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.7.0))
@@ -20857,6 +20866,18 @@ snapshots:
     optionalDependencies:
       typescript: 4.9.5
 
+  '@formatjs/intl@2.10.1(typescript@5.9.3)':
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.18.2
+      '@formatjs/fast-memoize': 2.2.0
+      '@formatjs/icu-messageformat-parser': 2.7.6
+      '@formatjs/intl-displaynames': 6.6.6
+      '@formatjs/intl-listformat': 7.5.5
+      intl-messageformat: 10.5.11
+      tslib: 2.4.0
+    optionalDependencies:
+      typescript: 5.9.3
+
   '@formatjs/intl@2.6.7(typescript@4.9.5)':
     dependencies:
       '@formatjs/ecma402-abstract': 1.14.3
@@ -20868,6 +20889,18 @@ snapshots:
       tslib: 2.4.0
     optionalDependencies:
       typescript: 4.9.5
+
+  '@formatjs/intl@2.6.7(typescript@5.9.3)':
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.14.3
+      '@formatjs/fast-memoize': 1.2.8
+      '@formatjs/icu-messageformat-parser': 2.3.0
+      '@formatjs/intl-displaynames': 6.2.6
+      '@formatjs/intl-listformat': 7.1.9
+      intl-messageformat: 10.3.1
+      tslib: 2.4.0
+    optionalDependencies:
+      typescript: 5.9.3
 
   '@formatjs/ts-transformer@3.13.12':
     dependencies:
@@ -29645,6 +29678,22 @@ snapshots:
       tslib: 2.4.0
     optionalDependencies:
       typescript: 4.9.5
+
+  react-intl@6.3.0(react@18.3.1)(typescript@5.9.3):
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.14.3
+      '@formatjs/icu-messageformat-parser': 2.3.0
+      '@formatjs/intl': 2.6.7(typescript@5.9.3)
+      '@formatjs/intl-displaynames': 6.2.6
+      '@formatjs/intl-listformat': 7.1.9
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/react': 18.3.0
+      hoist-non-react-statics: 3.3.2
+      intl-messageformat: 10.3.1
+      react: 18.3.1
+      tslib: 2.4.0
+    optionalDependencies:
+      typescript: 5.9.3
 
   react-is@16.13.1: {}
 

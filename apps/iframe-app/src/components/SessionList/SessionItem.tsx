@@ -5,6 +5,7 @@ import { EditRegular, ArchiveRegular, WarningRegular } from '@fluentui/react-ico
 import type { SessionMetadata } from '../../hooks/useChatSessions';
 import type { ChatTheme } from '@microsoft/logic-apps-chat';
 import { useSessionListStyles } from './SessionListStyles';
+import { useIframeStrings } from '../../lib/intl/strings';
 
 // Memoized session item component to prevent unnecessary re-renders
 interface SessionItemProps {
@@ -44,6 +45,7 @@ const SessionItem = memo(
     unreadCount = 0,
   }: SessionItemProps) => {
     const styles = useSessionListStyles();
+    const strings = useIframeStrings();
 
     // Failed sessions can be viewed (to see history) but not edited
     const isFailed = status === 'Failed';
@@ -62,9 +64,9 @@ const SessionItem = memo(
         if (!canEdit) {
           return;
         }
-        onStartEdit(session.id, session.name || 'Untitled Chat');
+        onStartEdit(session.id, session.name || strings.sessionItem.untitledChat);
       },
-      [onStartEdit, session.id, session.name, canEdit]
+      [onStartEdit, session.id, session.name, canEdit, strings.sessionItem.untitledChat]
     );
 
     const handleStartEdit = useCallback(
@@ -74,9 +76,9 @@ const SessionItem = memo(
         if (!canEdit) {
           return;
         }
-        onStartEdit(session.id, session.name || 'Untitled Chat');
+        onStartEdit(session.id, session.name || strings.sessionItem.untitledChat);
       },
-      [onStartEdit, session.id, session.name, canEdit]
+      [onStartEdit, session.id, session.name, canEdit, strings.sessionItem.untitledChat]
     );
 
     const handleDelete = useCallback(
@@ -86,14 +88,12 @@ const SessionItem = memo(
         if (!canDelete) {
           return;
         }
-        const confirmMessage = isFailed
-          ? 'Archive this failed chat? You can view archived chats later if needed.'
-          : 'Archive this chat? You can view archived chats later if needed.';
+        const confirmMessage = isFailed ? strings.sessionItem.archiveFailedConfirm : strings.sessionItem.archiveConfirm;
         if (confirm(confirmMessage)) {
           onDeleteSession(session.id);
         }
       },
-      [onDeleteSession, session.id, canDelete, isFailed]
+      [onDeleteSession, session.id, canDelete, isFailed, strings.sessionItem.archiveConfirm, strings.sessionItem.archiveFailedConfirm]
     );
 
     const handleEditChange = useCallback(
@@ -127,7 +127,7 @@ const SessionItem = memo(
 
       const statusClass = isFailed ? styles.statusBadgeFailed : styles.statusBadgeOther;
 
-      const statusTooltip = isFailed ? 'Chat failed - You can view history but cannot send new messages' : `Chat status: ${status}`;
+      const statusTooltip = isFailed ? strings.sessionItem.failedChatTooltip : `${strings.sessionItem.chatStatus}: ${status}`;
 
       return (
         <Tooltip content={statusTooltip} relationship="label">
@@ -170,29 +170,35 @@ const SessionItem = memo(
                     }}
                   >
                     {renderStatusBadge()}
-                    <Tooltip content="Click edit icon or double-click to rename" relationship="label">
-                      <Text className={styles.sessionName}>{session.name || 'Untitled Chat'}</Text>
+                    <Tooltip content={strings.sessionItem.renameTooltip} relationship="label">
+                      <Text className={styles.sessionName}>{session.name || strings.sessionItem.untitledChat}</Text>
                     </Tooltip>
                   </div>
                   {unreadCount > 0 && !isActive && !isTyping && <div className={styles.unreadBadge}>{unreadCount}</div>}
                   <div className={mergeClasses(styles.sessionActions, styles.sessionActionsHidden, 'session-actions')}>
-                    <Tooltip content={canEdit ? 'Rename chat' : 'Cannot rename failed chat'} relationship="label">
+                    <Tooltip
+                      content={canEdit ? strings.sessionItem.renameChat : strings.sessionItem.cannotRenameFailed}
+                      relationship="label"
+                    >
                       <Button
                         appearance="subtle"
                         icon={<EditRegular />}
                         size="small"
                         onClick={handleStartEdit}
-                        title="Rename"
+                        title={strings.sessionItem.rename}
                         disabled={!canEdit}
                       />
                     </Tooltip>
-                    <Tooltip content={isFailed ? 'Archive failed chat' : 'Archive chat'} relationship="label">
+                    <Tooltip
+                      content={isFailed ? strings.sessionItem.archiveFailedChat : strings.sessionItem.archiveChat}
+                      relationship="label"
+                    >
                       <Button
                         appearance="subtle"
                         icon={<ArchiveRegular />}
                         size="small"
                         onClick={handleDelete}
-                        title="Archive"
+                        title={strings.sessionItem.archive}
                         disabled={!canDelete}
                       />
                     </Tooltip>

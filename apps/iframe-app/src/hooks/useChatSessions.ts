@@ -252,7 +252,6 @@ export function useChatSessions() {
         const isPendingSession = sessionId.startsWith('pending-');
 
         if (isPendingSession) {
-          console.log('[useChatSessions] Switching to pending session:', sessionId);
           setActiveSession({
             id: sessionId,
             name: 'New Chat',
@@ -265,7 +264,6 @@ export function useChatSessions() {
 
         const serverSession = serverSessions.find((s) => s.id === sessionId);
         if (serverSession) {
-          console.log('[useChatSessions] Switching to server session:', sessionId);
           setActiveSession({
             id: serverSession.id,
             name: serverSession.name || 'Untitled Chat',
@@ -276,11 +274,8 @@ export function useChatSessions() {
           // Only load messages from server if we don't already have messages in memory
           const existingMessages = useChatStore.getState().sessionMessages.get(sessionId);
           if (!existingMessages || existingMessages.length === 0) {
-            console.log('[useChatSessions] No messages in memory, loading from server');
             const loadMessagesForSession = useChatStore.getState().loadMessagesForSession;
             await loadMessagesForSession(sessionId);
-          } else {
-            console.log('[useChatSessions] Messages already in memory, skipping server load');
           }
         }
       } catch (error) {
@@ -293,8 +288,6 @@ export function useChatSessions() {
   const createNewSession = useCallback(
     async (name?: string) => {
       try {
-        console.log('[useChatSessions] Creating new pending session (local only)...');
-
         // Create a purely local pending session - don't call storage yet
         // The real session will be created on the server when the first message is sent
         const pendingSessionId = `pending-${Date.now()}`;
@@ -308,8 +301,6 @@ export function useChatSessions() {
           status: 'Running', // Match server convention for active chats
           lastMessage: '',
         };
-
-        console.log('[useChatSessions] Local pending session created:', pendingSessionId);
 
         // Add the pending session to the sessions list
         setSessions((prev) => [newSessionMetadata, ...prev]);

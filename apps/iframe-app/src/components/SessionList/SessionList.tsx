@@ -7,6 +7,7 @@ import type { ChatTheme } from '@microsoft/logic-apps-chat';
 import { useChatStore } from '@microsoft/logic-apps-chat';
 import { useSessionListStyles } from './SessionListStyles';
 import SessionItem from './SessionItem';
+import { useIframeStrings } from '../../lib/intl/strings';
 
 interface SessionListProps {
   sessions: SessionMetadata[];
@@ -34,6 +35,7 @@ export const SessionList = memo(
     themeColors,
   }: SessionListProps) => {
     const styles = useSessionListStyles();
+    const strings = useIframeStrings();
     const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
 
@@ -75,29 +77,32 @@ export const SessionList = memo(
     }, []);
 
     // Memoize the format date function to avoid recreating it
-    const formatDate = useCallback((timestamp: number) => {
-      const date = new Date(timestamp);
-      const now = new Date();
-      const diffMs = now.getTime() - date.getTime();
-      const diffMins = Math.floor(diffMs / 60000);
-      const diffHours = Math.floor(diffMs / 3600000);
-      const diffDays = Math.floor(diffMs / 86400000);
+    const formatDate = useCallback(
+      (timestamp: number) => {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
 
-      if (diffMins < 1) {
-        return 'Just now';
-      }
-      if (diffMins < 60) {
-        return `${diffMins}m ago`;
-      }
-      if (diffHours < 24) {
-        return `${diffHours}h ago`;
-      }
-      if (diffDays < 7) {
-        return `${diffDays}d ago`;
-      }
+        if (diffMins < 1) {
+          return strings.time.justNow;
+        }
+        if (diffMins < 60) {
+          return strings.time.minutesAgo(diffMins);
+        }
+        if (diffHours < 24) {
+          return strings.time.hoursAgo(diffHours);
+        }
+        if (diffDays < 7) {
+          return strings.time.daysAgo(diffDays);
+        }
 
-      return date.toLocaleDateString();
-    }, []);
+        return date.toLocaleDateString();
+      },
+      [strings]
+    );
 
     // Ensure sessions is an array
     const safeSessions = Array.isArray(sessions) ? sessions : [];
@@ -116,16 +121,16 @@ export const SessionList = memo(
           {logoUrl && (
             <img
               src={logoUrl}
-              alt="Company Logo"
+              alt={strings.sessionList.companyLogo}
               className={mergeClasses(styles.logo, logoSize === 'small' && styles.logoSmall, logoSize === 'large' && styles.logoLarge)}
             />
           )}
-          <h3 className={styles.title}>Chats</h3>
+          <h3 className={styles.title}>{strings.sessionList.chats}</h3>
         </div>
         <div className={styles.sessions}>
           {safeSessions.length === 0 ? (
             <div className={styles.emptyState}>
-              <Body1 className={styles.emptyStateText}>No chats yet</Body1>
+              <Body1 className={styles.emptyStateText}>{strings.sessionList.noChatsYet}</Body1>
               <Button
                 appearance="primary"
                 onClick={onNewSession}
@@ -149,7 +154,7 @@ export const SessionList = memo(
                   }
                 }}
               >
-                Start a new chat
+                {strings.sessionList.startNewChat}
               </Button>
             </div>
           ) : (
@@ -182,7 +187,7 @@ export const SessionList = memo(
               icon={<AddFilled fontSize={16} />}
               onClick={onNewSession}
               size="medium"
-              title="New chat"
+              title={strings.sessionList.newChat}
               style={{
                 width: '100%',
                 minHeight: '40px',
@@ -204,7 +209,7 @@ export const SessionList = memo(
                 }
               }}
             >
-              New chat
+              {strings.sessionList.newChat}
             </Button>
           </div>
         </div>
