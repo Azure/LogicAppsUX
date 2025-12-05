@@ -247,8 +247,8 @@ export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
   if (!cardUrl) {
     return '';
   }
-  // Remove .well-known/agent-card.json from the end if it exists
-  return cardUrl.replace(/\/\.well-known\/agent-card\.json$/, '');
+  // Remove .well-known/agent-card.json from the URL, preserving query params and hash fragments
+  return cardUrl.replace(/\/\.well-known\/agent-card\.json(?=\?|#|$)/, '');
 };
 
 // Declare global type for TypeScript

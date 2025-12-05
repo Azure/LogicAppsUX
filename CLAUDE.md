@@ -28,6 +28,7 @@ pnpm run test:lib        # Run unit tests
 pnpm run test:e2e        # Run E2E tests with Playwright
 pnpm run test:e2e:ui     # Run E2E tests with UI
 pnpm run test:extension-unit # Test VS Code extension
+pnpm run test:iframe-app # Test IFrame chat app
 
 # Run specific tests
 pnpm --filter @microsoft/logic-apps-designer test -- <test-name>

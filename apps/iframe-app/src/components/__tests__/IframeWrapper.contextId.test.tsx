@@ -6,9 +6,13 @@ import type { IframeConfig } from '../../lib/utils/config-parser';
 // Mock the dependencies
 vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(({ sessionKey }) => <div data-testid="chat-widget">ChatWidget (sessionKey: {sessionKey})</div>),
+  useChatStore: vi.fn((selector) => {
+    const mockState = { sessions: [] };
+    return selector ? selector(mockState) : mockState;
+  }),
 }));
 
-vi.mock('../MultiSessionChat', () => ({
+vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
   MultiSessionChat: vi.fn(() => <div data-testid="multi-session-chat">MultiSessionChat</div>),
 }));
 
@@ -71,7 +75,7 @@ describe('IframeWrapper - contextId support', () => {
       expect.objectContaining({
         initialContextId: 'test-context-123',
       }),
-      undefined
+      {}
     );
   });
 
@@ -107,7 +111,7 @@ describe('IframeWrapper - contextId support', () => {
       expect.objectContaining({
         sessionKey: 'my-session',
       }),
-      undefined
+      {}
     );
   });
 
@@ -129,7 +133,7 @@ describe('IframeWrapper - contextId support', () => {
       expect.objectContaining({
         initialContextId: undefined,
       }),
-      undefined
+      {}
     );
   });
 
@@ -153,7 +157,7 @@ describe('IframeWrapper - contextId support', () => {
         sessionKey: 'custom-session',
         initialContextId: 'test-context-abc',
       }),
-      undefined
+      {}
     );
   });
 });

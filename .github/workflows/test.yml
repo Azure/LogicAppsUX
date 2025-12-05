@@ -45,3 +45,4 @@ jobs:
       - run: pnpm turbo run test:lib --cache-dir=.turbo
       - run: pnpm turbo run build:extension --cache-dir=.turbo
       - run: pnpm turbo run test:extension-unit --cache-dir=.turbo
+      - run: pnpm turbo run test:iframe-app --cache-dir=.turbo

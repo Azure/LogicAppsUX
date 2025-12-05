@@ -6,9 +6,13 @@ import type { IframeConfig } from '../../lib/utils/config-parser';
 // Mock the dependencies
 vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(({ mode }) => <div data-testid="chat-widget">ChatWidget (mode: {mode})</div>),
+  useChatStore: vi.fn((selector) => {
+    const mockState = { sessions: [] };
+    return selector ? selector(mockState) : mockState;
+  }),
 }));
 
-vi.mock('../MultiSessionChat', () => ({
+vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
   MultiSessionChat: vi.fn(({ mode }) => <div data-testid="multi-session-chat">MultiSessionChat (mode: {mode})</div>),
 }));
 
@@ -217,7 +221,7 @@ describe('IframeWrapper', () => {
       expect.objectContaining({
         apiKey: 'frame-blade-auth-token',
       }),
-      undefined
+      {}
     );
   });
 
@@ -289,7 +293,7 @@ describe('IframeWrapper', () => {
       expect.objectContaining({
         initialContextId: 'ctx-from-url',
       }),
-      undefined
+      {}
     );
   });
 
