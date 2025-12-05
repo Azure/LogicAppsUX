@@ -154,7 +154,7 @@ export function useChatSessions() {
           }
         }
       }
-      // No else block - sessions are only created when user clicks "New Chat" button
+      // No else block - sessions are only created when user clicks "New chat" button
     }
 
     ensureActiveSession();
@@ -187,7 +187,7 @@ export function useChatSessions() {
         // Create a local session with the real context ID
         // The server created this session, we just haven't polled for it yet
         // Preserve custom name if user renamed the pending session, otherwise use context ID
-        const hasCustomName = pendingSession?.name && pendingSession.name !== 'New Chat';
+        const hasCustomName = pendingSession?.name && pendingSession.name !== 'New chat';
         const realSessionData: SessionMetadata = {
           id: lastMigration.to,
           name: hasCustomName ? pendingSession!.name : lastMigration.suggestedName || lastMigration.to,
@@ -215,7 +215,7 @@ export function useChatSessions() {
       } else {
         // Use local session data until server sync happens
         // Preserve custom name if user renamed the pending session, otherwise use context ID
-        const hasCustomName = pendingSession?.name && pendingSession.name !== 'New Chat';
+        const hasCustomName = pendingSession?.name && pendingSession.name !== 'New chat';
         setActiveSession({
           id: lastMigration.to,
           name: hasCustomName ? pendingSession!.name : lastMigration.suggestedName || lastMigration.to,
@@ -226,7 +226,7 @@ export function useChatSessions() {
 
       // If the pending session had a custom name, update it on the server
       // Migration is guaranteed to be complete when lastMigration is set
-      if (pendingSession?.name && pendingSession.name !== 'New Chat') {
+      if (pendingSession?.name && pendingSession.name !== 'New chat') {
         console.log(`[useChatSessions] Pending session had custom name "${pendingSession.name}", updating on server`);
         (async () => {
           try {
@@ -254,7 +254,7 @@ export function useChatSessions() {
         if (isPendingSession) {
           setActiveSession({
             id: sessionId,
-            name: 'New Chat',
+            name: 'New chat',
             createdAt: Date.now(),
             updatedAt: Date.now(),
           });
@@ -295,7 +295,7 @@ export function useChatSessions() {
 
         const newSessionMetadata: SessionMetadata = {
           id: pendingSessionId,
-          name: name || 'New Chat',
+          name: name || 'New chat',
           createdAt: now,
           updatedAt: now,
           status: 'Running', // Match server convention for active chats
@@ -310,7 +310,7 @@ export function useChatSessions() {
 
         return {
           id: pendingSessionId,
-          name: name || 'New Chat',
+          name: name || 'New chat',
           createdAt: now,
           updatedAt: now,
         };
