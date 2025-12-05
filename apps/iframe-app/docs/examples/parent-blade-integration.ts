@@ -78,17 +78,20 @@ export class A2AChatIntegration {
 
     switch (message.kind) {
       case 'ready': {
+        console.log('A2A Chat iframe is ready');
         this.chatReady = true;
         this.onChatReady();
         break;
       }
 
       case 'initializationcomplete': {
+        console.log('A2A Chat initialization complete');
         this.onChatInitialized();
         break;
       }
 
       case 'revealcontent':
+        console.log('A2A Chat content revealed');
         break;
 
       default:
