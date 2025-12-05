@@ -221,7 +221,7 @@ describe('IframeWrapper', () => {
       expect.objectContaining({
         apiKey: 'frame-blade-auth-token',
       }),
-      expect.anything()
+      {}
     );
   });
 
@@ -293,7 +293,7 @@ describe('IframeWrapper', () => {
       expect.objectContaining({
         initialContextId: 'ctx-from-url',
       }),
-      expect.anything()
+      {}
     );
   });
 
