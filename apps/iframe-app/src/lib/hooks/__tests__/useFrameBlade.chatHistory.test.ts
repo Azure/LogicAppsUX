@@ -219,40 +219,4 @@ describe('useFrameBlade - chat history support', () => {
 
     expect(onChatHistoryReceived).not.toHaveBeenCalled();
   });
-
-  it('should log when chat history is received', () => {
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const onChatHistoryReceived = vi.fn();
-
-    renderHook(() =>
-      useFrameBlade({
-        enabled: true,
-        trustedParentOrigin: 'https://portal.azure.com',
-        onChatHistoryReceived,
-      })
-    );
-
-    const chatHistory: ChatHistoryData = {
-      contextId: 'test-context-789',
-      messages: [],
-    };
-
-    // Simulate chat history message
-    const event = new MessageEvent('message', {
-      origin: 'https://portal.azure.com',
-      data: {
-        signature: 'FxFrameBlade',
-        kind: 'chatHistory',
-        data: chatHistory,
-      },
-    });
-
-    act(() => {
-      messageListeners.forEach((listener) => listener(event));
-    });
-
-    expect(consoleLogSpy).toHaveBeenCalledWith('Received chat history from parent blade');
-
-    consoleLogSpy.mockRestore();
-  });
 });

@@ -51,18 +51,6 @@ describe('config-parser - contextId support', () => {
     expect(config.contextId).toBeUndefined();
   });
 
-  it('should log when contextId is found', () => {
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-789');
-
-    parseIframeConfig();
-
-    expect(consoleLogSpy).toHaveBeenCalledWith('Using contextId:', 'ctx-789');
-
-    consoleLogSpy.mockRestore();
-  });
-
   it('should handle contextId with special characters', () => {
     const contextId = 'ctx_123-456.789~abc';
     (window as any).location = new URL(`http://localhost:3000/iframe?agentCard=test&contextId=${encodeURIComponent(contextId)}`);

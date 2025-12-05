@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
 
@@ -35,6 +36,14 @@ vi.mock('../../lib/hooks/useParentCommunication', () => ({
   })),
 }));
 
+const renderWithIntl = (ui: React.ReactElement) => {
+  return render(
+    <IntlProvider locale="en" messages={{}}>
+      {ui}
+    </IntlProvider>
+  );
+};
+
 describe('IframeWrapper - contextId support', () => {
   const defaultConfig: IframeConfig = {
     props: {
@@ -69,7 +78,7 @@ describe('IframeWrapper - contextId support', () => {
       multiSession: false,
     };
 
-    render(<IframeWrapper config={configWithContextId} />);
+    renderWithIntl(<IframeWrapper config={configWithContextId} />);
 
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -86,7 +95,7 @@ describe('IframeWrapper - contextId support', () => {
       multiSession: true,
     };
 
-    render(<IframeWrapper config={configWithContextId} />);
+    renderWithIntl(<IframeWrapper config={configWithContextId} />);
 
     // Multi-session mode uses MultiSessionChat, not ChatWidget
     expect(screen.getByTestId('multi-session-chat')).toBeInTheDocument();
@@ -105,7 +114,7 @@ describe('IframeWrapper - contextId support', () => {
       multiSession: false,
     };
 
-    render(<IframeWrapper config={configWithSessionKey} />);
+    renderWithIntl(<IframeWrapper config={configWithSessionKey} />);
 
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -124,7 +133,7 @@ describe('IframeWrapper - contextId support', () => {
       multiSession: false,
     };
 
-    render(<IframeWrapper config={configWithoutContextId} />);
+    renderWithIntl(<IframeWrapper config={configWithoutContextId} />);
 
     expect(screen.getByTestId('chat-widget')).toBeInTheDocument();
 
@@ -150,7 +159,7 @@ describe('IframeWrapper - contextId support', () => {
       multiSession: false,
     };
 
-    render(<IframeWrapper config={configWithSessionKey} />);
+    renderWithIntl(<IframeWrapper config={configWithSessionKey} />);
 
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
