@@ -19,6 +19,8 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
+  checkAuthStatus: vi.fn(() => Promise.resolve(true)), // Mock as authenticated
+  openLoginPopup: vi.fn(),
 }));
 
 vi.mock('../../lib/hooks/useFrameBlade', () => ({
@@ -59,14 +61,15 @@ describe('IframeWrapper', () => {
     localStorage.clear();
   });
 
-  it('should render ChatWidget in single-session mode', () => {
+  it('should render ChatWidget in single-session mode', async () => {
     render(<IframeWrapper config={defaultConfig} />);
 
-    expect(screen.getByTestId('chat-widget')).toBeInTheDocument();
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
     expect(screen.getByText('ChatWidget (mode: light)')).toBeInTheDocument();
   });
 
-  it('should render MultiSessionChat in multi-session mode', () => {
+  it('should render MultiSessionChat in multi-session mode', async () => {
     const multiSessionConfig: IframeConfig = {
       ...defaultConfig,
       multiSession: true,
@@ -75,11 +78,12 @@ describe('IframeWrapper', () => {
 
     render(<IframeWrapper config={multiSessionConfig} />);
 
-    expect(screen.getByTestId('multi-session-chat')).toBeInTheDocument();
+    // Wait for auth check to complete (apiKey skips auth check)
+    await screen.findByTestId('multi-session-chat');
     expect(screen.getByText('MultiSessionChat (mode: light)')).toBeInTheDocument();
   });
 
-  it('should handle dark mode', () => {
+  it('should handle dark mode', async () => {
     const darkModeConfig: IframeConfig = {
       ...defaultConfig,
       mode: 'dark',
@@ -87,7 +91,8 @@ describe('IframeWrapper', () => {
 
     render(<IframeWrapper config={darkModeConfig} />);
 
-    expect(screen.getByText('ChatWidget (mode: dark)')).toBeInTheDocument();
+    // Wait for auth check to complete
+    await screen.findByText('ChatWidget (mode: dark)');
   });
 
   it('should show loading when waiting for postMessage', async () => {
@@ -150,7 +155,8 @@ describe('IframeWrapper', () => {
 
     rerender(<IframeWrapper config={defaultConfig} />);
 
-    expect(screen.getByTestId('chat-widget')).toBeInTheDocument();
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
   });
 
   it('should handle theme changes from Frame Blade', async () => {
@@ -174,7 +180,8 @@ describe('IframeWrapper', () => {
 
     render(<IframeWrapper config={portalConfig} />);
 
-    expect(screen.getByText('ChatWidget (mode: light)')).toBeInTheDocument();
+    // Wait for auth check to complete (inPortal skips auth check)
+    await screen.findByText('ChatWidget (mode: light)');
 
     // Simulate theme change
     act(() => {
@@ -209,6 +216,9 @@ describe('IframeWrapper', () => {
 
     render(<IframeWrapper config={portalConfig} />);
 
+    // Wait for auth check to complete (inPortal skips auth check)
+    await screen.findByTestId('chat-widget');
+
     // Simulate receiving auth token
     act(() => {
       if (capturedAuthCallback) {
@@ -225,12 +235,13 @@ describe('IframeWrapper', () => {
     );
   });
 
-  it('should respect URL mode parameter over initial mode', () => {
+  it('should respect URL mode parameter over initial mode', async () => {
     (window as any).location = new URL('http://localhost:3000?mode=dark');
 
     render(<IframeWrapper config={defaultConfig} />);
 
-    expect(screen.getByText('ChatWidget (mode: dark)')).toBeInTheDocument();
+    // Wait for auth check to complete
+    await screen.findByText('ChatWidget (mode: dark)');
   });
 
   it('should handle chat history from Frame Blade', async () => {
@@ -253,6 +264,9 @@ describe('IframeWrapper', () => {
     };
 
     render(<IframeWrapper config={portalConfig} />);
+
+    // Wait for auth check to complete (inPortal skips auth check)
+    await screen.findByTestId('chat-widget');
 
     const chatHistory = {
       contextId: 'test-context-123',
@@ -289,6 +303,9 @@ describe('IframeWrapper', () => {
 
     render(<IframeWrapper config={configWithContextId} />);
 
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
+
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
         initialContextId: 'ctx-from-url',
@@ -297,16 +314,17 @@ describe('IframeWrapper', () => {
     );
   });
 
-  it('should not use contextId for multi-session mode', () => {
+  it('should not use contextId for multi-session mode', async () => {
     const configWithContextId: IframeConfig = {
       ...defaultConfig,
       contextId: 'ctx-from-url',
       multiSession: true,
+      apiKey: 'test-api-key', // apiKey skips auth check
     };
 
     render(<IframeWrapper config={configWithContextId} />);
 
-    // Multi-session mode uses MultiSessionChat, which doesn't use initialContextId
-    expect(screen.getByTestId('multi-session-chat')).toBeInTheDocument();
+    // Wait for auth check to complete (apiKey skips auth check)
+    await screen.findByTestId('multi-session-chat');
   });
 });

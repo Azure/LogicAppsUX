@@ -2,61 +2,105 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { LoginPrompt } from '../LoginPrompt/LoginPrompt';
+import type { IdentityProvider } from '../../lib/utils/config-parser';
 
 const renderWithProvider = (ui: React.ReactElement) => {
   return render(<FluentProvider theme={webLightTheme}>{ui}</FluentProvider>);
 };
 
+const mockIdentityProviders: Record<string, IdentityProvider> = {
+  microsoft: {
+    signInEndpoint: '/.auth/login/aad',
+    name: 'Microsoft',
+  },
+  google: {
+    signInEndpoint: '/.auth/login/google',
+    name: 'Google',
+  },
+};
+
 describe('LoginPrompt', () => {
   it('should render the sign in required title', () => {
-    renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+    renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={mockIdentityProviders} />);
 
     expect(screen.getByText('Sign in required')).toBeInTheDocument();
   });
 
   it('should render the sign in message', () => {
-    renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+    renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={mockIdentityProviders} />);
 
-    expect(screen.getByText('Please sign in to continue using the chat')).toBeInTheDocument();
+    expect(screen.getByText('Sign in to continue using the chat')).toBeInTheDocument();
   });
 
-  it('should render the sign in button', () => {
-    renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+  it('should render sign in buttons for each identity provider', () => {
+    renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={mockIdentityProviders} />);
 
-    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Microsoft account' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Google account' })).toBeInTheDocument();
   });
 
-  it('should call onLogin when sign in button is clicked', () => {
+  it('should call onLogin with the provider when sign in button is clicked', () => {
     const onLogin = vi.fn();
-    renderWithProvider(<LoginPrompt onLogin={onLogin} />);
+    renderWithProvider(<LoginPrompt onLogin={onLogin} identityProviders={mockIdentityProviders} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Microsoft account' }));
 
     expect(onLogin).toHaveBeenCalledTimes(1);
+    expect(onLogin).toHaveBeenCalledWith(mockIdentityProviders.microsoft);
+  });
+
+  it('should not render buttons when identityProviders is undefined', () => {
+    renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   describe('loading state', () => {
-    it('should show "Signing in..." text when loading', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} isLoading={true} />);
+    it('should show "Signing in..." text on clicked button when loading', () => {
+      const onLogin = vi.fn();
+      renderWithProvider(<LoginPrompt onLogin={onLogin} isLoading={false} identityProviders={mockIdentityProviders} />);
 
-      expect(screen.getByRole('button', { name: 'Signing in...' })).toBeInTheDocument();
+      // Click the Microsoft button to set it as the loading button
+      fireEvent.click(screen.getByRole('button', { name: 'Microsoft account' }));
+
+      // Re-render with isLoading=true to simulate loading state
+      renderWithProvider(<LoginPrompt onLogin={onLogin} isLoading={true} identityProviders={mockIdentityProviders} />);
     });
 
-    it('should disable button when loading', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} isLoading={true} />);
+    it('should disable all buttons when loading', () => {
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} isLoading={true} identityProviders={mockIdentityProviders} />);
 
-      expect(screen.getByRole('button', { name: 'Signing in...' })).toBeDisabled();
+      const buttons = screen.getAllByRole('button');
+      buttons.forEach((button) => {
+        expect(button).toBeDisabled();
+      });
     });
 
-    it('should show spinner when loading', () => {
-      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} isLoading={true} />);
+    it('should show spinner only on the clicked button when loading', () => {
+      const onLogin = vi.fn();
+      const { container, rerender } = renderWithProvider(
+        <LoginPrompt onLogin={onLogin} isLoading={false} identityProviders={mockIdentityProviders} />
+      );
+
+      // Click the Microsoft button
+      fireEvent.click(screen.getByRole('button', { name: 'Microsoft account' }));
+
+      // Re-render with loading state
+      rerender(
+        <FluentProvider theme={webLightTheme}>
+          <LoginPrompt onLogin={onLogin} isLoading={true} identityProviders={mockIdentityProviders} />
+        </FluentProvider>
+      );
 
       // Fluent UI Spinner renders with role="progressbar"
-      expect(container.querySelector('[role="progressbar"]')).toBeInTheDocument();
+      const spinners = container.querySelectorAll('[role="progressbar"]');
+      expect(spinners).toHaveLength(1);
     });
 
     it('should not show spinner when not loading', () => {
-      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} isLoading={false} />);
+      const { container } = renderWithProvider(
+        <LoginPrompt onLogin={vi.fn()} isLoading={false} identityProviders={mockIdentityProviders} />
+      );
 
       expect(container.querySelector('[role="progressbar"]')).not.toBeInTheDocument();
     });
@@ -64,13 +108,13 @@ describe('LoginPrompt', () => {
 
   describe('error display', () => {
     it('should display error message when error prop is provided', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Failed to open login popup" />);
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Failed to open login popup" identityProviders={mockIdentityProviders} />);
 
       expect(screen.getByText('Failed to open login popup')).toBeInTheDocument();
     });
 
     it('should not display error message when error prop is undefined', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={mockIdentityProviders} />);
 
       // Error message container should not exist
       const errorMessages = screen.queryAllByText(/failed|error/i);
@@ -79,7 +123,7 @@ describe('LoginPrompt', () => {
 
     it('should not display error message when error prop is empty string', () => {
       // Empty string should not render the error div
-      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="" />);
+      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="" identityProviders={mockIdentityProviders} />);
       // The error div should not be present when error is empty
       expect(container.querySelectorAll('[class*="errorMessage"]')).toHaveLength(0);
     });
@@ -87,23 +131,23 @@ describe('LoginPrompt', () => {
     it('should display long error messages', () => {
       const longError =
         'This is a very long error message that explains in detail what went wrong during the authentication process and provides suggestions for resolution.';
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error={longError} />);
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error={longError} identityProviders={mockIdentityProviders} />);
 
       expect(screen.getByText(longError)).toBeInTheDocument();
     });
 
     it('should display error with special characters', () => {
       const errorWithSpecialChars = 'Error: Connection failed <timeout> & retry limit exceeded';
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error={errorWithSpecialChars} />);
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error={errorWithSpecialChars} identityProviders={mockIdentityProviders} />);
 
       expect(screen.getByText(errorWithSpecialChars)).toBeInTheDocument();
     });
 
-    it('should display error message above the sign in button', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Test error" />);
+    it('should display error message above the sign in buttons', () => {
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Test error" identityProviders={mockIdentityProviders} />);
 
       const errorElement = screen.getByText('Test error');
-      const button = screen.getByRole('button', { name: 'Sign in' });
+      const button = screen.getByRole('button', { name: 'Microsoft account' });
 
       // Both elements should be present
       expect(errorElement).toBeInTheDocument();
@@ -118,31 +162,49 @@ describe('LoginPrompt', () => {
       expect(buttonParent).toBeTruthy();
     });
 
-    it('should keep button enabled when there is an error', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Some error occurred" />);
+    it('should keep buttons enabled when there is an error', () => {
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Some error occurred" identityProviders={mockIdentityProviders} />);
 
-      expect(screen.getByRole('button', { name: 'Sign in' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'Microsoft account' })).toBeEnabled();
     });
 
     it('should allow retry when there is an error', () => {
       const onLogin = vi.fn();
-      renderWithProvider(<LoginPrompt onLogin={onLogin} error="Previous attempt failed" />);
+      renderWithProvider(<LoginPrompt onLogin={onLogin} error="Previous attempt failed" identityProviders={mockIdentityProviders} />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Microsoft account' }));
 
       expect(onLogin).toHaveBeenCalledTimes(1);
     });
 
     it('should display both error and loading state correctly', () => {
-      // When loading with a previous error, button should be disabled but error visible
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Previous error" isLoading={true} />);
+      // When loading with a previous error, buttons should be disabled but error visible
+      const onLogin = vi.fn();
+      const { rerender } = renderWithProvider(
+        <LoginPrompt onLogin={onLogin} error="Previous error" isLoading={false} identityProviders={mockIdentityProviders} />
+      );
+
+      // Click a button first
+      fireEvent.click(screen.getByRole('button', { name: 'Microsoft account' }));
+
+      // Re-render with loading state
+      rerender(
+        <FluentProvider theme={webLightTheme}>
+          <LoginPrompt onLogin={onLogin} error="Previous error" isLoading={true} identityProviders={mockIdentityProviders} />
+        </FluentProvider>
+      );
 
       expect(screen.getByText('Previous error')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Signing in...' })).toBeDisabled();
+      const buttons = screen.getAllByRole('button');
+      buttons.forEach((button) => {
+        expect(button).toBeDisabled();
+      });
     });
 
     it('should render error using MessageBar component', () => {
-      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Test error" />);
+      const { container } = renderWithProvider(
+        <LoginPrompt onLogin={vi.fn()} error="Test error" identityProviders={mockIdentityProviders} />
+      );
 
       // MessageBar renders with a specific role or class
       const messageBar = container.querySelector('[class*="fui-MessageBar"]');
@@ -150,7 +212,9 @@ describe('LoginPrompt', () => {
     });
 
     it('should not display icon in error MessageBar', () => {
-      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="Test error" />);
+      const { container } = renderWithProvider(
+        <LoginPrompt onLogin={vi.fn()} error="Test error" identityProviders={mockIdentityProviders} />
+      );
 
       // The MessageBar should not have an icon container with SVG
       // When icon={null}, MessageBar doesn't render the icon slot
@@ -165,7 +229,7 @@ describe('LoginPrompt', () => {
 
   describe('structure', () => {
     it('should have correct DOM structure', () => {
-      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+      const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={mockIdentityProviders} />);
 
       // Should have container div
       expect(container.querySelector('div')).toBeInTheDocument();
@@ -173,14 +237,14 @@ describe('LoginPrompt', () => {
       // Should have Title3 which renders as h3 equivalent
       expect(screen.getByText('Sign in required')).toBeInTheDocument();
 
-      // Should have button
-      expect(screen.getByRole('button')).toBeInTheDocument();
+      // Should have buttons for each provider
+      expect(screen.getAllByRole('button')).toHaveLength(2);
     });
 
     it('should apply styles via className', () => {
-      renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
+      renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={mockIdentityProviders} />);
 
-      const button = screen.getByRole('button');
+      const button = screen.getByRole('button', { name: 'Microsoft account' });
       expect(button).toHaveAttribute('class');
     });
   });

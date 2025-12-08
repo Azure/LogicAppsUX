@@ -44,8 +44,9 @@ test.describe('Login Prompt Display', { tag: '@mock' }, () => {
 
     // Login prompt should be visible
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Please sign in to continue using the chat')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByText('Sign in to continue using the chat')).toBeVisible();
+    // Should display identity provider buttons
+    await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeVisible();
   });
 
   test('should display person icon in login prompt', async ({ page }) => {
@@ -77,8 +78,11 @@ test.describe('Login Prompt Display', { tag: '@mock' }, () => {
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
-    const signInButton = page.getByRole('button', { name: 'Sign in' });
-    await expect(signInButton).toBeVisible({ timeout: 10000 });
+    // Wait for login prompt
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    const signInButton = page.getByRole('button', { name: 'Microsoft account' });
+    await expect(signInButton).toBeVisible();
     await expect(signInButton).toBeEnabled();
   });
 });
@@ -103,8 +107,8 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     // Set up popup listener
     const popupPromise = context.waitForEvent('page');
 
-    // Click sign in button
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    // Click sign in button (Microsoft is the first provider)
+    await page.getByRole('button', { name: 'Microsoft account' }).click();
 
     // Wait for popup
     const popup = await popupPromise;
@@ -124,10 +128,10 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     // Click sign in and capture popup
     const [popup] = await Promise.all([
       context.waitForEvent('page', { timeout: 5000 }),
-      page.getByRole('button', { name: 'Sign in' }).click(),
+      page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
-    // Button should show loading state
+    // Button should show loading state (only on the clicked button)
     await expect(page.getByRole('button', { name: 'Signing in...' })).toBeVisible({ timeout: 2000 });
 
     // Button should be disabled while loading
@@ -148,7 +152,7 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     });
 
     // Click sign in
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByRole('button', { name: 'Microsoft account' }).click();
 
     // Wait a moment for the click to process
     await page.waitForTimeout(1000);
@@ -157,7 +161,7 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     await expect(page.getByText('Sign in required')).toBeVisible();
 
     // Sign in button should be enabled again (not stuck in loading state)
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeEnabled();
   });
 
   test('should display error message when popup is blocked', async ({ page }) => {
@@ -171,11 +175,11 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     });
 
     // Click sign in
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByRole('button', { name: 'Microsoft account' }).click();
 
     // Wait for button to return to enabled state (indicates error handling completed)
-    // The button goes to "Signing in..." (disabled) then back to "Sign in" (enabled) on error
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled({ timeout: 5000 });
+    // The button goes to "Signing in..." (disabled) then back to provider name (enabled) on error
+    await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeEnabled({ timeout: 5000 });
 
     // Login prompt should still be visible (app didn't crash)
     await expect(page.getByText('Sign in required')).toBeVisible();
@@ -315,7 +319,7 @@ test.describe('Authentication Success Flow', { tag: '@mock' }, () => {
     // Click sign in
     const [popup] = await Promise.all([
       context.waitForEvent('page', { timeout: 5000 }),
-      page.getByRole('button', { name: 'Sign in' }).click(),
+      page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
     // Wait for popup to close (mock login page auto-closes)
@@ -341,8 +345,8 @@ test.describe('Login Prompt Accessibility', { tag: '@mock' }, () => {
 
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
 
-    // Button should be accessible by role
-    const signInButton = page.getByRole('button', { name: 'Sign in' });
+    // Button should be accessible by role (using first identity provider)
+    const signInButton = page.getByRole('button', { name: 'Microsoft account' });
     await expect(signInButton).toBeVisible();
     await expect(signInButton).toHaveAttribute('type', 'button');
   });
@@ -355,8 +359,8 @@ test.describe('Login Prompt Accessibility', { tag: '@mock' }, () => {
     // Tab to the sign in button
     await page.keyboard.press('Tab');
 
-    // Button should be focusable
-    const signInButton = page.getByRole('button', { name: 'Sign in' });
+    // Button should be focusable (first identity provider button)
+    const signInButton = page.getByRole('button', { name: 'Microsoft account' });
     await expect(signInButton).toBeFocused();
   });
 });
@@ -471,7 +475,7 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
     // Click sign in
     const [popup] = await Promise.all([
       context.waitForEvent('page', { timeout: 5000 }),
-      page.getByRole('button', { name: 'Sign in' }).click(),
+      page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
     // Wait for popup to close (triggers auth success)
@@ -558,7 +562,7 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
     // Click sign in
     const [popup] = await Promise.all([
       context.waitForEvent('page', { timeout: 5000 }),
-      page.getByRole('button', { name: 'Sign in' }).click(),
+      page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
     // Wait for popup to close
@@ -628,7 +632,7 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
     // Sign in
     const [popup] = await Promise.all([
       context.waitForEvent('page', { timeout: 5000 }),
-      page.getByRole('button', { name: 'Sign in' }).click(),
+      page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
     await popup.waitForEvent('close', { timeout: 5000 }).catch(() => popup.close());

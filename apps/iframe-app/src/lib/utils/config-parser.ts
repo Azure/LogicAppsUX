@@ -274,6 +274,6 @@ export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
 declare global {
   interface Window {
     LOGGED_IN_USER_NAME?: string;
-    IDENTITY_PROVIDERS?: Record<string, any>;
+    IDENTITY_PROVIDERS?: Record<string, IdentityProvider>;
   }
 }
