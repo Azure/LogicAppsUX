@@ -18,6 +18,7 @@ import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
@@ -58,6 +59,7 @@ export const EdgeContextualMenu = () => {
   const menuData = useEdgeContextMenuData();
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow();
+  const enableNestedAgentLoops = useEnableNestedAgentLoops();
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
@@ -447,7 +449,7 @@ export const EdgeContextualMenu = () => {
                   ) : (
                     addParallelBranchMenuItem
                   ))}
-                {(isAgenticWorkflow || isA2AWorkflow) && addAgentMenuItem}
+                {(isAgenticWorkflow || isA2AWorkflow) && (graphId === 'root' || enableNestedAgentLoops) && addAgentMenuItem}
                 {isPasteEnabled &&
                   (isPasteDisabledForUpstreamAgent ? (
                     <Tooltip content={a2aPasteDisabledText} relationship="description">

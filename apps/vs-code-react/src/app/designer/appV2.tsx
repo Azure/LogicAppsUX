@@ -142,6 +142,11 @@ export const DesignerApp = () => {
     [panelMetaData?.extensionBundleVersion]
   );
 
+  const isNestedAgentLoopsSupportEnabled = useMemo(
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', '1.115.0'),
+    [panelMetaData?.extensionBundleVersion]
+  );
+
   const { data: runInstance, isError: isErrorRunInstance } = useRun(runId);
 
   useEffect(() => {
@@ -318,6 +323,7 @@ export const DesignerApp = () => {
           hostOptions: {
             displayRuntimeInfo: true,
             enableMultiVariable: isMultiVariableSupportEnabled,
+            enableNestedAgentLoops: isNestedAgentLoopsSupportEnabled,
           },
         }}
       >
