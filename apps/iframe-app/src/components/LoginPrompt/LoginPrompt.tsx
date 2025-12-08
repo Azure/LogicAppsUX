@@ -15,6 +15,8 @@ export function LoginPrompt({ onLogin, isLoading = false, error, identityProvide
   const styles = useLoginPromptStyles();
   const [loadingProviderKey, setLoadingProviderKey] = useState<string | null>(null);
 
+  const identityProvidersEntries = identityProviders ? Object.entries(identityProviders) : [];
+
   return (
     <div className={styles.container}>
       <Card className={styles.card}>
@@ -24,13 +26,13 @@ export function LoginPrompt({ onLogin, isLoading = false, error, identityProvide
         <Title3>Sign in required</Title3>
         <p className={styles.message}>Sign in to continue using the chat</p>
         {error && (
-          <MessageBar intent="error" icon={null} className={styles.errorMessage}>
+          <MessageBar intent="error" icon={null} className={styles.messageBar}>
             <MessageBarBody>{error}</MessageBarBody>
           </MessageBar>
         )}
-        {identityProviders && (
+        {identityProvidersEntries.length > 0 ? (
           <div className={styles.identityProviders}>
-            {Object.entries(identityProviders).map(([key, provider]) => (
+            {identityProvidersEntries.map(([key, provider]) => (
               <Button
                 key={key}
                 appearance="primary"
@@ -47,6 +49,10 @@ export function LoginPrompt({ onLogin, isLoading = false, error, identityProvide
               </Button>
             ))}
           </div>
+        ) : (
+          <MessageBar intent="info" icon={null} className={styles.messageBar}>
+            <MessageBarBody>{'Configure Easy Auth to enable chat client authentication'}</MessageBarBody>
+          </MessageBar>
         )}
       </Card>
     </div>
