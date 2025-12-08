@@ -6,7 +6,7 @@ import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
 import { getBaseUrl, openLoginPopup, createUnauthorizedHandler } from '../lib/authHandler';
-import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
+import { type IdentityProvider, getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 
@@ -40,22 +40,26 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const theme = useMemo(() => (mode === 'dark' ? webDarkTheme : webLightTheme), [mode]);
 
   // Handle login button click
-  const handleLogin = useCallback(() => {
-    setIsLoggingIn(true);
-    setLoginError(null);
-    openLoginPopup({
-      baseUrl,
-      onSuccess: () => {
-        setNeedsLogin(false);
-        setIsLoggingIn(false);
-        setLoginError(null);
-      },
-      onFailed: (error: Error) => {
-        setIsLoggingIn(false);
-        setLoginError(error.message);
-      },
-    });
-  }, [baseUrl]);
+  const handleLogin = useCallback(
+    (provider: IdentityProvider) => {
+      setIsLoggingIn(true);
+      setLoginError(null);
+      openLoginPopup({
+        baseUrl,
+        signInEndpoint: provider.signInEndpoint,
+        onSuccess: () => {
+          setNeedsLogin(false);
+          setIsLoggingIn(false);
+          setLoginError(null);
+        },
+        onFailed: (error: Error) => {
+          setIsLoggingIn(false);
+          setLoginError(error.message);
+        },
+      });
+    },
+    [baseUrl]
+  );
 
   // Create unauthorized handler - tries refresh first, then shows login UI
   const handleUnauthorized = useMemo(
@@ -101,7 +105,12 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   if (needsLogin) {
     return (
       <FluentProvider theme={theme}>
-        <LoginPrompt onLogin={handleLogin} isLoading={isLoggingIn} error={loginError ?? undefined} />
+        <LoginPrompt
+          onLogin={handleLogin}
+          isLoading={isLoggingIn}
+          error={loginError ?? undefined}
+          identityProviders={props.identityProviders}
+        />
       </FluentProvider>
     );
   }

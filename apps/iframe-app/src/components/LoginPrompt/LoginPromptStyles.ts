@@ -42,10 +42,15 @@ export const useLoginPromptStyles = makeStyles({
     alignItems: 'center',
   },
   button: {
-    minWidth: '200px',
-    height: '44px',
+    minWidth: '250px',
+    fontSize: tokens.fontSizeBase300,
   },
   spinner: {
     marginRight: tokens.spacingHorizontalS,
+  },
+  identityProviders: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalL,
   },
 });

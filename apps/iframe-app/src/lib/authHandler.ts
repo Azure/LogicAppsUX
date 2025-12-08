@@ -94,6 +94,8 @@ export interface LoginPopupOptions {
   onFailed?: (error: Error) => void;
   /** Timeout in milliseconds (default: 5 minutes) */
   timeout?: number;
+  /** Path to the sign-in endpoint */
+  signInEndpoint?: string;
 }
 
 /**
@@ -101,10 +103,10 @@ export interface LoginPopupOptions {
  * Uses /.auth/login/aad endpoint for Microsoft Entra ID authentication
  */
 export function openLoginPopup(options: LoginPopupOptions): void {
-  const { baseUrl, postLoginRedirectUri, onSuccess, onFailed, timeout = 5 * 60 * 1000 } = options;
+  const { baseUrl, signInEndpoint, postLoginRedirectUri, onSuccess, onFailed, timeout = 5 * 60 * 1000 } = options;
 
   // Build login URL with optional redirect
-  let loginUrl = `${baseUrl}/.auth/login/aad`;
+  let loginUrl = `${baseUrl}${signInEndpoint}`;
   if (postLoginRedirectUri) {
     loginUrl += `?post_login_redirect_uri=${encodeURIComponent(postLoginRedirectUri)}`;
   }
@@ -172,7 +174,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
         // If popup is on our origin (not Azure AD), check if login is complete
         if (popupOrigin === baseOrigin) {
           // Check if we're NOT on the initial login page
-          const isLoginPage = popupHref.includes('/.auth/login/aad') && !popupHref.includes('callback');
+          const isLoginPage = popupHref.includes('/.auth/login/') && !popupHref.includes('callback');
 
           if (!isLoginPage) {
             handleSuccess();
@@ -242,7 +244,6 @@ export function openLoginPopup(options: LoginPopupOptions): void {
  */
 export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
   try {
-    console.log('[Auth] Checking auth status at:', `${baseUrl}/.auth/me`);
     const response = await fetch(`${baseUrl}/.auth/me`, {
       method: 'GET',
       credentials: 'include', // Important: include cookies for cross-origin
@@ -255,7 +256,6 @@ export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
     const data = await response.json();
     // /.auth/me returns an array of identity providers, empty array or null if not authenticated
     const isAuthenticated = Array.isArray(data) && data.length > 0;
-    console.log('[Auth] Is authenticated:', isAuthenticated);
     return isAuthenticated;
   } catch (error) {
     console.error('[Auth] Failed to check auth status:', error);
