@@ -49,10 +49,18 @@ describe('LoginPrompt', () => {
     expect(onLogin).toHaveBeenCalledWith(mockIdentityProviders.microsoft);
   });
 
-  it('should not render buttons when identityProviders is undefined', () => {
+  it('should show configuration message when identityProviders is undefined', () => {
     renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.getByText('Configure Easy Auth to enable chat client authentication')).toBeInTheDocument();
+  });
+
+  it('should show configuration message when identityProviders is empty', () => {
+    renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={{}} />);
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.getByText('Configure Easy Auth to enable chat client authentication')).toBeInTheDocument();
   });
 
   describe('loading state', () => {
@@ -124,8 +132,10 @@ describe('LoginPrompt', () => {
     it('should not display error message when error prop is empty string', () => {
       // Empty string should not render the error div
       const { container } = renderWithProvider(<LoginPrompt onLogin={vi.fn()} error="" identityProviders={mockIdentityProviders} />);
-      // The error div should not be present when error is empty
-      expect(container.querySelectorAll('[class*="errorMessage"]')).toHaveLength(0);
+      // The error div should not be present when error is empty (check for messageBar class with error intent)
+      const errorMessageBars = container.querySelectorAll('[class*="messageBar"]');
+      // There should be no error message bars when error is empty
+      expect(errorMessageBars).toHaveLength(0);
     });
 
     it('should display long error messages', () => {
