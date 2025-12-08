@@ -89,8 +89,8 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      // Exclude agent operations unless it's the root of an agentic or A2A workflow
-      if (((!isAgenticWorkflow && !isA2AWorkflow) || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
+      // Exclude agent operations unless it's an agentic or A2A workflow
+      if (!isAgenticWorkflow && !isA2AWorkflow && equals(type, constants.NODE.TYPE.AGENT)) {
         return false;
       }
 
