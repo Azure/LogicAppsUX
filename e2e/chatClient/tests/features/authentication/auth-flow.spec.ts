@@ -20,8 +20,11 @@ test.describe('Authentication Flows', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
-    // Start new chat
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+    // Start new chat - wait for button to be ready before clicking
+    const startButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startButton).toBeVisible({ timeout: 10000 });
+    await expect(startButton).toBeEnabled({ timeout: 5000 });
+    await startButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 
