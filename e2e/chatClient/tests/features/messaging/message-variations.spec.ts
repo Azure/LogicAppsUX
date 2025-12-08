@@ -208,7 +208,8 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(emojiMessage);
     await sendButton.click();
 
-    await expect(page.getByText(emojiMessage)).toBeVisible({ timeout: 5000 });
+    // Use first() to avoid strict mode violation - message appears in user bubble and possibly agent response
+    await expect(page.getByText(emojiMessage).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle emoji-only messages', async ({ page }) => {
@@ -288,8 +289,8 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(boxMessage);
     await sendButton.click();
 
-    // Check for a part of the box drawing
-    await expect(page.getByText('┌─┬─┐', { exact: false })).toBeVisible({ timeout: 5000 });
+    // Check for a part of the box drawing - use first() to avoid strict mode violation
+    await expect(page.getByText('┌─┬─┐', { exact: false }).first()).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -396,7 +397,8 @@ test.describe('Message Boundary Edge Cases', { tag: '@mock' }, () => {
     await messageInput.fill(urlMessage);
     await sendButton.click();
 
-    await expect(page.getByText(urlMessage)).toBeVisible({ timeout: 5000 });
+    // Use first() to avoid strict mode violation - message appears in user bubble and possibly agent response
+    await expect(page.getByText(urlMessage).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle messages with file paths', async ({ page }) => {

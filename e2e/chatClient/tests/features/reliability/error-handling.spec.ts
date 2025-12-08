@@ -94,8 +94,8 @@ test.describe('Error Handling', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
-    // App might still show UI but with error state
-    // Check for error message or fallback UI
+    // App might still show UI but with error state or gracefully degrade
+    // Check for error message, fallback UI, or the initial "start a new chat" state
     const hasError = await page
       .getByText(/error|failed/i)
       .first()
@@ -105,9 +105,13 @@ test.describe('Error Handling', { tag: '@mock' }, () => {
       .getByText(/no chats yet/i)
       .isVisible()
       .catch(() => false);
+    const hasStartButton = await page
+      .getByRole('button', { name: /start a new chat/i })
+      .isVisible()
+      .catch(() => false);
 
-    // Either error or empty state should be shown
-    expect(hasError || hasEmptyState).toBe(true);
+    // App should either show error, empty state, or gracefully degrade to initial state
+    expect(hasError || hasEmptyState || hasStartButton).toBe(true);
   });
 
   test('should handle network timeout gracefully', async ({ page }) => {

@@ -217,13 +217,14 @@ test.describe('ARIA Labels and Semantics', { tag: '@mock' }, () => {
   });
 
   test('should have proper heading structure', async ({ page }) => {
-    // Check for proper heading hierarchy
+    // Check for proper heading hierarchy - can be h1/h2/h3 or elements with role="heading"
     const h1 = await page.locator('h1').count();
     const h2 = await page.locator('h2').count();
     const h3 = await page.locator('h3').count();
+    const roleHeadings = await page.getByRole('heading').count();
 
-    // Should have at least some headings for structure
-    const totalHeadings = h1 + h2 + h3;
+    // Should have at least some headings for structure (including role="heading")
+    const totalHeadings = h1 + h2 + h3 + roleHeadings;
     expect(totalHeadings).toBeGreaterThan(0);
   });
 

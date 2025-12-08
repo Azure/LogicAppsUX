@@ -79,19 +79,25 @@ test.describe('Loading Messages for Historical Session', { tag: '@mock' }, () =>
     // Wait for sessions to load
     await page.waitForTimeout(1000);
 
-    // Set up request listener for tasks/list BEFORE clicking
-    const tasksListPromise = page.waitForRequest((request) => {
-      const postData = request.postDataJSON();
-      return postData?.method === 'tasks/list';
-    });
-
     // Click on the SECOND session in the sidebar (Bug Investigation) to trigger a new tasks/list request
     // The first session might already be loaded on initial page load
     const sessionItem = page.getByRole('group').filter({ hasText: 'Bug Investigation' }).filter({ hasText: '1/9/2025' });
     await expect(sessionItem).toBeVisible({ timeout: 5000 });
+
+    // Set up request listener AFTER initial load but BEFORE clicking
+    // Use a promise that filters for the specific session
+    const tasksListPromise = page.waitForRequest((request) => {
+      try {
+        const postData = request.postDataJSON();
+        return postData?.method === 'tasks/list' && postData?.params?.Id === 'session-2';
+      } catch {
+        return false;
+      }
+    });
+
     await sessionItem.click();
 
-    // Verify tasks/list request was made with context ID
+    // Verify tasks/list request was made with context ID for session-2
     const tasksRequest = await tasksListPromise;
     const requestBody = tasksRequest.postDataJSON();
 

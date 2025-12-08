@@ -93,12 +93,17 @@ test.describe('Session Management', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
-    // Find the "+ New Chat" button (there might be multiple buttons with "New Chat")
+    // Find the "New Chat" button - it may have different accessible name patterns
+    // Check for buttons or elements with "New Chat" text
     const newChatButtons = page.getByRole('button', { name: /new chat/i });
     const count = await newChatButtons.count();
 
-    // Should have at least one "New Chat" button
-    expect(count).toBeGreaterThanOrEqual(1);
+    // Also check for "start a new chat" button which is the initial call-to-action
+    const startNewChatButton = page.getByRole('button', { name: /start a new chat/i });
+    const startCount = await startNewChatButton.count();
+
+    // Should have at least one "New Chat" or "Start a new chat" button
+    expect(count + startCount).toBeGreaterThanOrEqual(1);
   });
 
   test('should show message input with placeholder text', async ({ page }) => {
@@ -146,8 +151,8 @@ test.describe('Session Management', { tag: '@mock' }, () => {
     // User message should appear in chat
     await expect(page.getByText(testMessage)).toBeVisible();
 
-    // Should show "You" label
-    await expect(page.getByText('You')).toBeVisible();
+    // Should show "You" label (use exact match to avoid matching "your" in other text)
+    await expect(page.getByText('You', { exact: true }).first()).toBeVisible();
   });
 
   test('should show "Agent is typing..." indicator after sending message', async ({ page }) => {
