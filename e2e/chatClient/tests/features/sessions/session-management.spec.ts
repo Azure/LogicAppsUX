@@ -93,17 +93,13 @@ test.describe('Session Management', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
-    // Find the "New Chat" button - it may have different accessible name patterns
-    // Check for buttons or elements with "New Chat" text
-    const newChatButtons = page.getByRole('button', { name: /new chat/i });
-    const count = await newChatButtons.count();
-
-    // Also check for "start a new chat" button which is the initial call-to-action
+    // Wait for the app to fully render - check for either button type to be visible
+    // The "Start a new chat" button appears in the empty state
     const startNewChatButton = page.getByRole('button', { name: /start a new chat/i });
-    const startCount = await startNewChatButton.count();
+    const newChatButton = page.getByRole('button', { name: /new chat/i });
 
-    // Should have at least one "New Chat" or "Start a new chat" button
-    expect(count + startCount).toBeGreaterThanOrEqual(1);
+    // Wait for at least one of the buttons to be visible (give it time to render)
+    await expect(startNewChatButton.or(newChatButton).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('should show message input with placeholder text', async ({ page }) => {
