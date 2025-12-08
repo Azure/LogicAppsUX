@@ -2,6 +2,7 @@ import { Button, Card, MessageBar, MessageBarBody, Spinner, Title3 } from '@flue
 import { PersonRegular } from '@fluentui/react-icons';
 import { useLoginPromptStyles } from './LoginPromptStyles';
 import type { IdentityProvider } from '../../lib/utils/config-parser';
+import { useState } from 'react';
 
 interface LoginPromptProps {
   onLogin: (provider: IdentityProvider) => void;
@@ -12,6 +13,7 @@ interface LoginPromptProps {
 
 export function LoginPrompt({ onLogin, isLoading = false, error, identityProviders }: LoginPromptProps) {
   const styles = useLoginPromptStyles();
+  const [loadingProviderKey, setLoadingProviderKey] = useState<string | null>(null);
 
   return (
     <div className={styles.container}>
@@ -34,13 +36,14 @@ export function LoginPrompt({ onLogin, isLoading = false, error, identityProvide
                 appearance="primary"
                 size="large"
                 onClick={() => {
+                  setLoadingProviderKey(key);
                   onLogin(provider);
                 }}
                 disabled={isLoading}
                 className={styles.button}
               >
-                {isLoading ? <Spinner size="tiny" className={styles.spinner} /> : null}
-                {isLoading ? 'Signing in...' : `${provider.name} account`}
+                {isLoading && loadingProviderKey === key ? <Spinner size="tiny" className={styles.spinner} /> : null}
+                {isLoading && loadingProviderKey === key ? 'Signing in...' : `${provider.name} account`}
               </Button>
             ))}
           </div>
