@@ -171,7 +171,7 @@ export const EdgeContextualMenu = () => {
 
   const addMcpServerText = intl.formatMessage({
     defaultMessage: 'Add an MCP server (preview)',
-    id: 'JTy5al',
+    id: 'kIei9R',
     description: 'Text that explains no tools exist in this agent',
   });
 
@@ -484,7 +484,7 @@ export const EdgeContextualMenu = () => {
                   ) : (
                     addParallelBranchMenuItem
                   ))}
-                {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && addAgentMenuItem}
+                {(isAgenticWorkflow || isA2AWorkflow) && addAgentMenuItem}
                 {isPasteEnabled &&
                   (isPasteDisabled ? (
                     <Tooltip content={a2aPasteDisabledText} relationship="description">

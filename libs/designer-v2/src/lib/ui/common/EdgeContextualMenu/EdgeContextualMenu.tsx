@@ -447,7 +447,7 @@ export const EdgeContextualMenu = () => {
                   ) : (
                     addParallelBranchMenuItem
                   ))}
-                {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && addAgentMenuItem}
+                {(isAgenticWorkflow || isA2AWorkflow) && addAgentMenuItem}
                 {isPasteEnabled &&
                   (isPasteDisabledForUpstreamAgent ? (
                     <Tooltip content={a2aPasteDisabledText} relationship="description">
