@@ -16,6 +16,7 @@ interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
 
+// This is a temporary workaround for identity providers until we have a proper way to configure them through server side
 const TEMP_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
   microsoft: {
     signInEndpoint: '/.auth/login/aad',
