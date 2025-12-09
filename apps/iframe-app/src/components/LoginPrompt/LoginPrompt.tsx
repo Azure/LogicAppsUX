@@ -51,7 +51,7 @@ export function LoginPrompt({ onLogin, isLoading = false, error, identityProvide
           </div>
         ) : (
           <MessageBar intent="info" icon={null} className={styles.messageBar}>
-            <MessageBarBody>{'Configure Easy Auth to enable chat client authentication'}</MessageBarBody>
+            <MessageBarBody>{'Configure easy auth and identity providers to enable chat client authentication'}</MessageBarBody>
           </MessageBar>
         )}
       </Card>
