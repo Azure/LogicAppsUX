@@ -66,6 +66,10 @@ export const useMcpClientToolEnabled = () => {
   return useSelector((state: RootState) => state.designerOptions.mcpClientToolEnabled ?? false);
 };
 
+export const useEnableNestedAgentLoops = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.enableNestedAgentLoops ?? false);
+};
+
 export const useAreDesignerOptionsInitialized = () => {
   return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
 };
