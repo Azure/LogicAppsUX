@@ -53,14 +53,14 @@ describe('LoginPrompt', () => {
     renderWithProvider(<LoginPrompt onLogin={vi.fn()} />);
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    expect(screen.getByText('Configure Easy Auth to enable chat client authentication')).toBeInTheDocument();
+    expect(screen.getByText('Configure easy auth and identity providers to enable chat client authentication')).toBeInTheDocument();
   });
 
   it('should show configuration message when identityProviders is empty', () => {
     renderWithProvider(<LoginPrompt onLogin={vi.fn()} identityProviders={{}} />);
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    expect(screen.getByText('Configure Easy Auth to enable chat client authentication')).toBeInTheDocument();
+    expect(screen.getByText('Configure easy auth and identity providers to enable chat client authentication')).toBeInTheDocument();
   });
 
   describe('loading state', () => {

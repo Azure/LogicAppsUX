@@ -1,12 +1,12 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { ChatWidget, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
+import { ChatWidget, type IdentityProvider, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
 import { MultiSessionChat } from './MultiSessionChat/MultiSessionChat';
 import { LoadingDisplay } from './LoadingDisplay';
 import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
 import { getBaseUrl, openLoginPopup, createUnauthorizedHandler, checkAuthStatus } from '../lib/authHandler';
-import { type IdentityProvider, getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
+import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 

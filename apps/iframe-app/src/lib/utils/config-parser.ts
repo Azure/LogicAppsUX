@@ -1,4 +1,4 @@
-import type { ChatWidgetProps, ChatTheme } from '@microsoft/logic-apps-chat';
+import type { ChatWidgetProps, ChatTheme, IdentityProvider } from '@microsoft/logic-apps-chat';
 import { THEME_PRESETS } from './theme-presets';
 
 export interface IframeConfig {
@@ -14,12 +14,6 @@ export interface IframeConfig {
 
 interface PortalValidationResult {
   trustedParentOrigin?: string;
-}
-
-// This will be replaced by the actual identity providers from the server
-export interface IdentityProvider {
-  signInEndpoint: string;
-  name: string;
 }
 
 const TEMP_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
