@@ -206,6 +206,22 @@ jobs:
         run: |
           gh release upload ${{ needs.create-release.outputs.tag_name }} apps/vs-code-designer/dist/*.vsix --clobber
 
+      - name: 'Build Iframe App'
+        run: |
+          cd apps/iframe-app
+          pnpm run build
+
+      - name: 'Archive Iframe App'
+        run: |
+          mv apps/iframe-app/dist AgentChatIFrames
+          zip -r AgentChatIFrames.zip AgentChatIFrames
+
+      - name: 'Upload Iframe App to Release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames.zip --clobber
+
       # NPM Publishing
       - name: 'Azure login'
         uses: azure/login@v2
