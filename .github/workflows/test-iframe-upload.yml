@@ -1,0 +1,49 @@
+name: Test Iframe Upload
+on: workflow_dispatch
+
+jobs:
+  test-upload:
+    runs-on: ubuntu-latest
+    environment: E2ETesting
+    permissions:
+      id-token: write # for Azure login
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: 'Build Iframe App'
+        run: |
+          cd apps/iframe-app
+          pnpm run build
+
+      - name: 'Archive Iframe App'
+        run: |
+          mv apps/iframe-app/dist AgentChatIFrames
+          zip -r AgentChatIFrames-v0.0.0-test.zip AgentChatIFrames
+
+      - name: 'Azure login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+
+      - name: 'Upload Iframe App to Azure Blob Storage'
+        run: |
+          az storage blob upload \
+            --account-name agentchatiframes \
+            --container-name chat \
+            --name AgentChatIFrames-v0.0.0-test.zip \
+            --file AgentChatIFrames-v0.0.0-test.zip \
+            --auth-mode login
