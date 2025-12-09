@@ -1,5 +1,9 @@
 name: Test Iframe Upload
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '**'
 
 jobs:
   test-upload:
