@@ -161,5 +161,5 @@ export interface ChatWidgetProps {
   storageConfig?: StorageConfig; // Optional storage configuration for server-side chat history
   initialContextId?: string; // Initial context ID for resuming existing server-side conversations
   sessionId?: string; // For multi-session mode - enables session-specific message isolation
-  identityProviders: Record<string, IdentityProvider>; // Identity providers configuration
+  identityProviders?: Record<string, IdentityProvider>; // Identity providers configuration
 }

@@ -17,7 +17,7 @@ interface PortalValidationResult {
 }
 
 // This is a temporary workaround for identity providers until we have a proper way to configure them through server side
-const TEMP_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
+const DEFAULT_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
   microsoft: {
     signInEndpoint: '/.auth/login/aad',
     name: 'Microsoft',
@@ -228,7 +228,7 @@ export function parseIframeConfig(): IframeConfig {
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
-    identityProviders: window.IDENTITY_PROVIDERS || TEMP_IDENTITY_PROVIDERS || undefined,
+    identityProviders: window.IDENTITY_PROVIDERS || DEFAULT_IDENTITY_PROVIDERS || undefined,
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };

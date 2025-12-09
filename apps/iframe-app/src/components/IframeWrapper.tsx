@@ -90,13 +90,12 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       }
 
       try {
-        const isAuthenticated = await checkAuthStatus(baseUrl);
-
+        const { isAuthenticated } = await checkAuthStatus(baseUrl);
         if (isAuthenticated) {
           setNeedsLogin(false);
         }
-      } catch {
-        /* empty */
+      } catch (error) {
+        console.error('[Auth] Failed to check authentication status:', error);
       } finally {
         setIsCheckingAuth(false);
       }
