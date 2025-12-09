@@ -642,3 +642,172 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
     await expect(page.getByText('Sign in required')).not.toBeVisible({ timeout: 15000 });
   });
 });
+
+test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
+  test('should display multiple provider buttons when multiple providers are configured', async ({ page }) => {
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
+    await page.addInitScript(() => {
+      (window as any).IDENTITY_PROVIDERS = {
+        aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+        github: { signInEndpoint: '/.auth/login/github', name: 'GitHub' },
+      };
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    // Wait for login prompt
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // All provider buttons should be visible
+    await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Google account' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'GitHub account' })).toBeVisible();
+  });
+
+  test('should use correct sign-in endpoint for each provider', async ({ page, context }) => {
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
+    await page.addInitScript(() => {
+      (window as any).IDENTITY_PROVIDERS = {
+        aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+      };
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    // Wait for login prompt
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // Test Google provider - click Google button and verify URL
+    const popupPromise = context.waitForEvent('page');
+    await page.getByRole('button', { name: 'Google account' }).click();
+    const popup = await popupPromise;
+
+    // Verify popup URL contains Google auth endpoint
+    expect(popup.url()).toContain('.auth/login/google');
+
+    await popup.close();
+  });
+
+  test('should show loading state only on clicked provider button', async ({ page, context }) => {
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
+    await page.addInitScript(() => {
+      (window as any).IDENTITY_PROVIDERS = {
+        aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+      };
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    // Wait for login prompt
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // Click Google button
+    const [popup] = await Promise.all([
+      context.waitForEvent('page', { timeout: 5000 }),
+      page.getByRole('button', { name: 'Google account' }).click(),
+    ]);
+
+    // Google button should show loading state
+    await expect(page.getByText('Signing in...')).toBeVisible({ timeout: 2000 });
+
+    // Microsoft button should still show provider name (not loading)
+    await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeVisible();
+
+    // All buttons should be disabled while loading
+    await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeDisabled();
+
+    await popup.close();
+  });
+
+  test('should show configuration message when no providers configured', async ({ page }) => {
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Set window.IDENTITY_PROVIDERS to empty object before page loads
+    await page.addInitScript(() => {
+      (window as any).IDENTITY_PROVIDERS = {};
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    // Wait for login prompt
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // Should show configuration message instead of buttons
+    await expect(page.getByText('Configure easy auth and identity providers to enable chat client authentication')).toBeVisible();
+
+    // No provider buttons should be visible
+    await expect(page.getByRole('button', { name: /account/i })).not.toBeVisible();
+  });
+
+  test('should handle single custom provider correctly', async ({ page, context }) => {
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Set window.IDENTITY_PROVIDERS to a single custom provider before page loads
+    await page.addInitScript(() => {
+      (window as any).IDENTITY_PROVIDERS = {
+        okta: { signInEndpoint: '/.auth/login/okta', name: 'Okta SSO' },
+      };
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+
+    // Wait for login prompt
+    await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
+
+    // Custom provider button should be visible
+    await expect(page.getByRole('button', { name: 'Okta SSO account' })).toBeVisible();
+
+    // Click and verify correct endpoint
+    const popupPromise = context.waitForEvent('page');
+    await page.getByRole('button', { name: 'Okta SSO account' }).click();
+    const popup = await popupPromise;
+
+    expect(popup.url()).toContain('.auth/login/okta');
+
+    await popup.close();
+  });
+});
