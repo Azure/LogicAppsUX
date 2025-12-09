@@ -55,7 +55,7 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toBe(true);
+      expect(result).toEqual({ isAuthenticated: true, error: null });
       expect(mockFetch).toHaveBeenCalledWith('https://example.com/.auth/me', {
         method: 'GET',
         credentials: 'include',
@@ -70,30 +70,48 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toBe(false);
+      expect(result).toEqual({ isAuthenticated: false, error: null });
     });
 
     it('should return false on error', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      const networkError = new Error('Network error');
+      mockFetch.mockRejectedValueOnce(networkError);
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toBe(false);
+      expect(result).toEqual({ isAuthenticated: false, error: networkError });
     });
   });
 
   describe('openLoginPopup', () => {
-    it('should open login popup with correct URL', () => {
+    it('should open login popup with correct URL using signInEndpoint', () => {
       const mockPopup = { closed: false, close: vi.fn(), location: { href: '' } };
       mockWindowOpen.mockReturnValueOnce(mockPopup);
 
       openLoginPopup({
         baseUrl: 'https://example.com',
+        signInEndpoint: '/.auth/login/aad',
         postLoginRedirectUri: '/dashboard',
       });
 
       expect(mockWindowOpen).toHaveBeenCalledWith(
         'https://example.com/.auth/login/aad?post_login_redirect_uri=%2Fdashboard',
+        'auth-login',
+        'width=600,height=700,popup=true'
+      );
+    });
+
+    it('should open login popup with different identity provider endpoint', () => {
+      const mockPopup = { closed: false, close: vi.fn(), location: { href: '' } };
+      mockWindowOpen.mockReturnValueOnce(mockPopup);
+
+      openLoginPopup({
+        baseUrl: 'https://example.com',
+        signInEndpoint: '/.auth/login/google',
+      });
+
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        'https://example.com/.auth/login/google',
         'auth-login',
         'width=600,height=700,popup=true'
       );
@@ -105,6 +123,7 @@ describe('authHandler', () => {
 
       openLoginPopup({
         baseUrl: 'https://example.com',
+        signInEndpoint: '/.auth/login/aad',
         onFailed,
       });
 
@@ -125,6 +144,7 @@ describe('authHandler', () => {
 
       openLoginPopup({
         baseUrl: 'https://example.com',
+        signInEndpoint: '/.auth/login/aad',
         onSuccess,
       });
 

@@ -17,6 +17,15 @@ async function setupSSEMocking(page: Page) {
     }
   });
 
+  // Mock authentication - return authenticated user to bypass login prompt
+  await page.route('**/.auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+    });
+  });
+
   // Intercept mock consent page requests
   await page.route('**/mock-consent*', async (route) => {
     const html = `
