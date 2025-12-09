@@ -454,7 +454,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-      const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
+      const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
       const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame${isDraftMode ? `?agentCard=${agentCardUrlForDraft}` : ''}`;
 
       return {
