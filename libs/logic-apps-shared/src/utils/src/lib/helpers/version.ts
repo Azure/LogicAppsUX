@@ -6,8 +6,8 @@ import { ArgumentException } from '../exception';
 export const BundleVersionRequirements = {
   /** Minimum version for multi-variable support in Initialize Variable action */
   MULTI_VARIABLE: '1.114.22',
-  /** Minimum version for nested agent loops inside regular loops */
-  NESTED_AGENT_LOOPS: '1.115.0',
+  /** Minimum version for nested agent loops inside regular loops (TODO: update when actual version is known) */
+  NESTED_AGENT_LOOPS: '2.0.0',
 } as const;
 
 /**
