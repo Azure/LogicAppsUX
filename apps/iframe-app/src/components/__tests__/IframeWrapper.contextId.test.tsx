@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
+import * as authHandler from '../../lib/authHandler';
 
 // Mock the dependencies
 vi.mock('@microsoft/logic-apps-chat', () => ({
@@ -19,7 +20,7 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
-  checkAuthStatus: vi.fn(() => Promise.resolve(true)), // Mock as authenticated
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true })),
   openLoginPopup: vi.fn(),
 }));
 
@@ -56,6 +57,9 @@ describe('IframeWrapper - contextId support', () => {
 
     // Reset mocks
     vi.clearAllMocks();
+
+    // Reset checkAuthStatus to return authenticated
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true });
   });
 
   afterEach(() => {

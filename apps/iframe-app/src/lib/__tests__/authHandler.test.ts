@@ -55,7 +55,7 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toBe(true);
+      expect(result).toEqual({ isAuthenticated: true, error: null });
       expect(mockFetch).toHaveBeenCalledWith('https://example.com/.auth/me', {
         method: 'GET',
         credentials: 'include',
@@ -70,15 +70,16 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toBe(false);
+      expect(result).toEqual({ isAuthenticated: false, error: null });
     });
 
     it('should return false on error', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      const networkError = new Error('Network error');
+      mockFetch.mockRejectedValueOnce(networkError);
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toBe(false);
+      expect(result).toEqual({ isAuthenticated: false, error: networkError });
     });
   });
 

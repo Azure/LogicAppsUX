@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
+import * as authHandler from '../../lib/authHandler';
 
 // Mock the dependencies
 vi.mock('@microsoft/logic-apps-chat', () => ({
@@ -19,7 +20,7 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
-  checkAuthStatus: vi.fn(() => Promise.resolve(true)), // Mock as authenticated
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true })),
   openLoginPopup: vi.fn(),
 }));
 
@@ -54,8 +55,11 @@ describe('IframeWrapper', () => {
     delete (window as any).location;
     (window as any).location = new URL('http://localhost:3000');
 
-    // Reset mocks
+    // Reset mocks - this clears call history
     vi.clearAllMocks();
+
+    // Reset checkAuthStatus to default (authenticated)
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true });
 
     // Clear localStorage
     localStorage.clear();
@@ -326,5 +330,231 @@ describe('IframeWrapper', () => {
 
     // Wait for auth check to complete (apiKey skips auth check)
     await screen.findByTestId('multi-session-chat');
+  });
+
+  describe('Authentication', () => {
+    it('should show loading state during authentication check', async () => {
+      // Create a promise that we can control
+      let resolveAuth: (value: { isAuthenticated: boolean }) => void;
+      const authPromise = new Promise<{ isAuthenticated: boolean }>((resolve) => {
+        resolveAuth = resolve;
+      });
+
+      vi.mocked(authHandler.checkAuthStatus).mockReturnValue(authPromise);
+
+      render(<IframeWrapper config={defaultConfig} />);
+
+      // Should show loading state while checking auth
+      expect(screen.getByText('Checking Authentication')).toBeInTheDocument();
+      expect(screen.getByText('Verifying authentication status...')).toBeInTheDocument();
+
+      // Resolve auth check
+      await act(async () => {
+        resolveAuth!({ isAuthenticated: true });
+      });
+
+      // Should now show the chat widget
+      await screen.findByTestId('chat-widget');
+    });
+
+    it('should show LoginPrompt when checkAuthStatus returns false', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+
+      const configWithProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: {
+            aad: {
+              signInEndpoint: '/.auth/login/aad',
+              name: 'Microsoft',
+            },
+          },
+        },
+      };
+
+      render(<IframeWrapper config={configWithProviders} />);
+
+      // Should show login prompt
+      await screen.findByText('Sign in required');
+      expect(screen.getByText('Sign in to continue using the chat')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Microsoft account' })).toBeInTheDocument();
+    });
+
+    it('should show LoginPrompt when checkAuthStatus throws an error', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockRejectedValue(new Error('Network error'));
+
+      const configWithProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: {
+            aad: {
+              signInEndpoint: '/.auth/login/aad',
+              name: 'Microsoft',
+            },
+          },
+        },
+      };
+
+      render(<IframeWrapper config={configWithProviders} />);
+
+      // Should show login prompt after error
+      await screen.findByText('Sign in required');
+    });
+
+    it('should skip auth check when in portal mode', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockClear();
+
+      const portalConfig: IframeConfig = {
+        ...defaultConfig,
+        inPortal: true,
+        trustedParentOrigin: 'https://portal.azure.com',
+      };
+
+      render(<IframeWrapper config={portalConfig} />);
+
+      // Should go directly to chat widget without checking auth
+      await screen.findByTestId('chat-widget');
+      expect(authHandler.checkAuthStatus).not.toHaveBeenCalled();
+    });
+
+    it('should skip auth check when apiKey is provided', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockClear();
+
+      const configWithApiKey: IframeConfig = {
+        ...defaultConfig,
+        apiKey: 'test-api-key-123',
+      };
+
+      render(<IframeWrapper config={configWithApiKey} />);
+
+      // Should go directly to chat widget without checking auth
+      await screen.findByTestId('chat-widget');
+      expect(authHandler.checkAuthStatus).not.toHaveBeenCalled();
+    });
+
+    it('should call openLoginPopup when login button is clicked', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+
+      const configWithProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: {
+            aad: {
+              signInEndpoint: '/.auth/login/aad',
+              name: 'Microsoft',
+            },
+          },
+        },
+      };
+
+      render(<IframeWrapper config={configWithProviders} />);
+
+      // Wait for login prompt
+      await screen.findByText('Sign in required');
+
+      // Click login button
+      const loginButton = screen.getByRole('button', { name: 'Microsoft account' });
+      await act(async () => {
+        loginButton.click();
+      });
+
+      // Should call openLoginPopup
+      expect(authHandler.openLoginPopup).toHaveBeenCalledWith(
+        expect.objectContaining({
+          signInEndpoint: '/.auth/login/aad',
+        })
+      );
+    });
+
+    it('should show chat widget after successful login', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+
+      // Capture the onSuccess callback
+      let onSuccessCallback: (() => void) | undefined;
+      vi.mocked(authHandler.openLoginPopup).mockImplementation((options: any) => {
+        onSuccessCallback = options.onSuccess;
+      });
+
+      const configWithProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: {
+            aad: {
+              signInEndpoint: '/.auth/login/aad',
+              name: 'Microsoft',
+            },
+          },
+        },
+      };
+
+      render(<IframeWrapper config={configWithProviders} />);
+
+      // Wait for login prompt
+      await screen.findByText('Sign in required');
+
+      // Click login button
+      const loginButton = screen.getByRole('button', { name: 'Microsoft account' });
+      await act(async () => {
+        loginButton.click();
+      });
+
+      // Simulate successful login callback
+      await act(async () => {
+        if (onSuccessCallback) {
+          onSuccessCallback();
+        }
+      });
+
+      // Should now show the chat widget
+      await screen.findByTestId('chat-widget');
+    });
+
+    it('should show error message when login fails', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+
+      // Capture the onFailed callback
+      let onFailedCallback: ((error: Error) => void) | undefined;
+      vi.mocked(authHandler.openLoginPopup).mockImplementation((options: any) => {
+        onFailedCallback = options.onFailed;
+      });
+
+      const configWithProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: {
+            aad: {
+              signInEndpoint: '/.auth/login/aad',
+              name: 'Microsoft',
+            },
+          },
+        },
+      };
+
+      render(<IframeWrapper config={configWithProviders} />);
+
+      // Wait for login prompt
+      await screen.findByText('Sign in required');
+
+      // Click login button
+      const loginButton = screen.getByRole('button', { name: 'Microsoft account' });
+      await act(async () => {
+        loginButton.click();
+      });
+
+      // Simulate failed login callback
+      await act(async () => {
+        if (onFailedCallback) {
+          onFailedCallback(new Error('Login popup was blocked'));
+        }
+      });
+
+      // Should show error message
+      await screen.findByText('Login popup was blocked');
+    });
   });
 });

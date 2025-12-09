@@ -156,7 +156,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
 
       if (isAuthenticated) {
         handleSuccess();
-      } else if (!isAuthenticated && !completed) {
+      } else if (!isAuthenticated) {
         // Only fail if popup is closed AND not authenticated
         handleFailure(error as Error);
       } else if (popupIsClosed && !completed) {
