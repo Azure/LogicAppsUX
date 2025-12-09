@@ -214,13 +214,13 @@ jobs:
       - name: 'Archive Iframe App'
         run: |
           mv apps/iframe-app/dist AgentChatIFrames
-          zip -r AgentChatIFrames.zip AgentChatIFrames
+          zip -r AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip AgentChatIFrames
 
       - name: 'Upload Iframe App to Release'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames.zip --clobber
+          gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip --clobber
 
       # NPM Publishing
       - name: 'Azure login'
@@ -229,6 +229,15 @@ jobs:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+
+      - name: 'Upload Iframe App to Azure Blob Storage'
+        run: |
+          az storage blob upload \
+            --account-name agentchatiframes \
+            --container-name chat \
+            --name AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip \
+            --file AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip \
+            --auth-mode login
 
       - name: 'Generate NPMRC'
         shell: bash
