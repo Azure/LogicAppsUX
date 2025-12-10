@@ -28,7 +28,7 @@ export const chunkTextManifest = {
           title: 'Encoding model',
           type: 'string',
           description: 'The encoding model to use for chunking.',
-          default: 'cl100k_base',
+          default: 'cl200k_base',
           'x-ms-editor': 'dropdown',
           'x-ms-editor-options': {
             multiSelect: false,
@@ -52,7 +52,11 @@ export const chunkTextManifest = {
               },
               {
                 value: 'cl200k_base',
-                displayName: 'cl200k_base (gpt-4o)',
+                displayName: 'cl200k_base (gpt-4.1, gpt-4o, gpt-5, gpt-5-mini, gpt-5-pro, gpt-5-thinking, etc.)',
+              },
+              {
+                value: 'o200k_harmony',
+                displayName: '(gpt-oss-)',
               },
             ],
           },
