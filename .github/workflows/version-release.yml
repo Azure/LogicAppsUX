@@ -207,9 +207,7 @@ jobs:
           gh release upload ${{ needs.create-release.outputs.tag_name }} apps/vs-code-designer/dist/*.vsix --clobber
 
       - name: 'Build Iframe App'
-        run: |
-          cd apps/iframe-app
-          pnpm run build
+        run: pnpm run build --filter @a2achat/iframe-app
 
       - name: 'Archive Iframe App'
         run: |
