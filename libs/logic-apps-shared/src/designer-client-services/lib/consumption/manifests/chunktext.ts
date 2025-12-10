@@ -52,7 +52,7 @@ export const chunkTextManifest = {
               },
               {
                 value: 'cl200k_base',
-                displayName: 'cl200k_base (gpt-4.1, gpt-4o, gpt-5, gpt-5-mini, gpt-5-pro, gpt-5-thinking, etc.)',
+                displayName: 'cl200k_base (gpt-4.1, gpt-4o, gpt-5, gpt-5-mini, gpt-5-pro, gpt-5-thinking, gpt-5-)',
               },
               {
                 value: 'o200k_harmony',
