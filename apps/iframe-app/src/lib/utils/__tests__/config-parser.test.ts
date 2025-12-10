@@ -219,6 +219,40 @@ describe('parseIframeConfig', () => {
 
       expect(config.contextId).toBe('ctx-123');
     });
+
+    it('includes default identity providers when window.IDENTITY_PROVIDERS is not set', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+    });
+
+    it('uses window.IDENTITY_PROVIDERS when set', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = {
+        custom: {
+          signInEndpoint: '/.auth/login/custom',
+          name: 'Custom Provider',
+        },
+      };
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toEqual({
+        custom: {
+          signInEndpoint: '/.auth/login/custom',
+          name: 'Custom Provider',
+        },
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
   });
 
   describe('portal security', () => {
