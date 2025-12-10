@@ -7,10 +7,11 @@
   <title>A2A Chat - Iframe</title>
   <script>
     window.LOGGED_IN_USER_NAME = "REPLACE_ME_WITH_LOGGED_IN_USERNAME";
+    window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS";
 
-    // The line below ensures the variable exists (as undefined if not set by server)
+    // The line below ensures the variables exist (as undefined if not set by server)
     window.LOGGED_IN_USER_NAME = window.LOGGED_IN_USER_NAME?.includes("REPLACE_ME_WITH") ? undefined : window.LOGGED_IN_USER_NAME;
-
+    window.IDENTITY_PROVIDERS = window.IDENTITY_PROVIDERS?.includes("REPLACE_ME_WITH") ? undefined : window.IDENTITY_PROVIDERS;
   </script>
   <script>
     // Immediately notify parent that iframe is loading
