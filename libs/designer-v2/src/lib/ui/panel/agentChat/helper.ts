@@ -90,7 +90,7 @@ const parseMessage = (
 
       return {
         id: guid(),
-        text: labelCase(toolName + (mcpToolName ? ` (${mcpToolName})` : '')),
+        text: labelCase(toolName) + (mcpToolName ? ` (${mcpToolName})` : ''),
         type: ConversationItemType.Tool,
         onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration, mcpToolName),
         status,
