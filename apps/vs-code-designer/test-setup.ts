@@ -60,6 +60,7 @@ vi.mock('os', () => ({
   arch: vi.fn(() => 'x64'),
   homedir: vi.fn(() => '/Users/testuser'),
   tmpdir: vi.fn(() => '/tmp'),
+  EOL: '\n',
 }));
 
 vi.mock('fs', () => ({
