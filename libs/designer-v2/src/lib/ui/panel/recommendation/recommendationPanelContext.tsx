@@ -13,6 +13,7 @@ import {
 import { selectOperationGroupId, selectOperationId, selectBrowseCategory } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
+import { McpConfiguration } from './mcpConfiguration';
 import { ConnectorDetailsView } from './details/connectorDetailsView';
 import { SearchView } from './searchView';
 import { Button } from '@fluentui/react-components';
@@ -38,6 +39,7 @@ const SELECTION_STATES = {
   DETAILS: 'DETAILS',
   AZURE_RESOURCE: 'AZURE_RESOURCE',
   CUSTOM_SWAGGER: 'HTTP_SWAGGER',
+  MCP_CONFIGURATION: 'MCP_CONFIGURATION',
 };
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
@@ -139,6 +141,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     return operation.properties.capabilities?.some((capability) => equals(capability, 'swaggerSelection'));
   }, []);
 
+  const hasMcpConfiguration = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+    return operation.properties.capabilities?.some((capability) => equals(capability, 'mcpConfiguration'));
+  }, []);
+
   const startAzureResourceSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
   }, []);
@@ -147,10 +153,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
+  const startMcpConfiguration = useCallback(() => {
+    setSelectionState(SELECTION_STATES.MCP_CONFIGURATION);
+  }, []);
+
   // Combined handler for both triggers and actions
   const onOperationClick = useCallback(
-    (id: string, apiId?: string, forceAsTrigger?: boolean) => {
+    (id: string, apiId?: string, forceAsTrigger?: boolean, operation?: DiscoveryOperation<DiscoveryResultTypes>) => {
       const searchResultPromise = Promise.resolve(
+        operation ??
         (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
       );
 
@@ -167,6 +178,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         }
         if (hasSwaggerSelection(operation)) {
           startSwaggerSelection();
+          return;
+        }
+        if (hasMcpConfiguration(operation)) {
+          startMcpConfiguration();
           return;
         }
 
@@ -230,11 +245,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       dispatch,
       hasAzureResourceSelection,
       hasSwaggerSelection,
+      hasMcpConfiguration,
       isParallelBranch,
       isTrigger,
       relationshipIds,
       startAzureResourceSelection,
       startSwaggerSelection,
+      startMcpConfiguration,
     ]
   );
 
@@ -290,12 +307,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
           </div>
         </div>
-        <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
+        {selectionState !== SELECTION_STATES.MCP_CONFIGURATION ? (
+            <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
+          ) : null}
       </div>
       {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
+          [SELECTION_STATES.MCP_CONFIGURATION]: selectedOperation ? <McpConfiguration operation={selectedOperation} /> : null,
           [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
             <ConnectorDetailsView connector={selectedConnector} onOperationClick={onOperationClick} />
           ) : null,

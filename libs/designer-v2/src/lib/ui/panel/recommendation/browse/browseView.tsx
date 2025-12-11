@@ -18,7 +18,7 @@ import { getTriggerCategories, getActionCategories, BrowseCategoryType } from '.
 
 interface BrowseViewProps {
   isTrigger?: boolean;
-  onOperationClick: (operationId: string, apiId?: string) => void;
+  onOperationClick: (operationId: string, apiId?: string, forceAsTrigger?: boolean, operation?: DiscoveryOperation<DiscoveryResultTypes>) => void;
 }
 
 export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewProps) => {
@@ -67,6 +67,11 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
     (categoryKey: string) => {
       const category = categories.find((cat) => cat.key === categoryKey);
       if (category?.type === BrowseCategoryType.IMMEDIATE && category.operation) {
+        // Special handling for MCP client operations
+        if (categoryKey === 'mcpServers') {
+          onOperationClick(category.operation.id, category.operation.properties?.api?.id, false, category.operation);
+          return;
+        }
         // Immediately add the operation if it's an immediate trigger with one operation
         addTriggerOperation(category.operation);
         return;
@@ -74,7 +79,7 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
       // Update Redux state for category selection
       dispatch(selectBrowseCategory({ key: categoryKey, title: category?.text ?? categoryKey }));
     },
-    [categories, addTriggerOperation, dispatch]
+    [categories, addTriggerOperation, dispatch, onOperationClick]
   );
 
   // Show appropriate view when a category is selected
@@ -85,6 +90,11 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
       // Special case for favorites category
       if (selectedBrowseCategory.key === 'favorites') {
         return <Favorites onConnectorSelected={onConnectorSelected} onOperationSelected={onOperationSelected} />;
+      }
+
+      if (selectedBrowseCategory.key === 'mcpServers') {
+        // MCP Servers specific logic can be added here if needed
+        return null;
       }
 
       return (

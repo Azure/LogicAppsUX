@@ -17,7 +17,7 @@ import { addResultSchema } from '../../state/staticresultschema/staticresultsSli
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { WorkflowKind, type NodesMetadata, type WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addAgentTool, addNode, setFocusNode, setWorkflowKind } from '../../state/workflow/workflowSlice';
+import { addAgentTool, addNode, setFocusNode, setWorkflowKind, addMcpServer } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isTriggerNode } from '../../utils/graph';
@@ -134,16 +134,20 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const agentToolMetadata = (getState() as RootState).panel.discoveryContent.agentToolMetadata;
     const newToolId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
 
-    if (isAddingAgentTool) {
-      if (newToolId && newToolGraphId) {
-        if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
-          initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
+    if (payload.isAddingMcpServer) {
+      dispatch(addMcpServer(newPayload as any));
+    } else {
+      if (isAddingAgentTool) {
+        if (newToolId && newToolGraphId) {
+          if (agentToolMetadata?.newAdditiveSubgraphId && agentToolMetadata?.subGraphManifest) {
+            initializeSubgraphFromManifest(agentToolMetadata.newAdditiveSubgraphId, agentToolMetadata?.subGraphManifest, dispatch);
+          }
+          dispatch(addAgentTool({ toolId: newToolId, graphId: newToolGraphId }));
         }
-        dispatch(addAgentTool({ toolId: newToolId, graphId: newToolGraphId }));
       }
-    }
 
-    dispatch(addNode(newPayload as any));
+      dispatch(addNode(newPayload as any));
+    }
 
     const nodeOperationInfo = {
       connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle

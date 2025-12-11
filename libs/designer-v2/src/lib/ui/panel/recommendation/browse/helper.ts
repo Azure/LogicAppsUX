@@ -1,5 +1,5 @@
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { a2aRequestOperation, getIntl, recurrenceOperation, requestOperation, agentOperation } from '@microsoft/logic-apps-shared';
+import { a2aRequestOperation, getIntl, recurrenceOperation, requestOperation, agentOperation, builtinMcpClientOperation } from '@microsoft/logic-apps-shared';
 import React from 'react';
 import {
   BotSparkle24Regular,
@@ -177,7 +177,7 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
   ];
 };
 
-export const getActionCategories = (allowAgents?: boolean): BrowseCategoryConfig[] => {
+export const   getActionCategories = (allowAgents?: boolean): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
   return [
@@ -304,6 +304,22 @@ export const getActionCategories = (allowAgents?: boolean): BrowseCategoryConfig
           'managedApis/todo',
         ],
       },
+    },
+    {
+      key: 'mcpServers',
+      text: intl.formatMessage({
+        defaultMessage: 'MCP Servers',
+        id: 'MCP001',
+        description: 'Filter by MCP Servers category of connectors',
+      }),
+      description: intl.formatMessage({
+        defaultMessage: 'Model Context Protocol server integrations',
+        id: 'MCP002',
+        description: 'MCP Servers category description',
+      }),
+      icon: React.createElement(Chat24Regular),
+      type: BrowseCategoryType.IMMEDIATE,
+      operation: builtinMcpClientOperation,
     },
   ];
 };
