@@ -40,6 +40,7 @@ import {
   Info24Regular,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { IFrameWithHeaders } from './iframeWithHeaders';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -589,8 +590,11 @@ export const ChatButton = (props: ChatButtonProps) => {
     const src = queryParams.toString() ? `${agentChatUrl}${separator}${queryParams.toString()}` : agentChatUrl;
 
     return (
-      <iframe
+      <IFrameWithHeaders
         src={src}
+        headers={{
+          'X-Api-Key': data?.queryParams?.apiKey || '',
+        }}
         title={IntlText.TITLE}
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
         referrerPolicy="strict-origin-when-cross-origin"

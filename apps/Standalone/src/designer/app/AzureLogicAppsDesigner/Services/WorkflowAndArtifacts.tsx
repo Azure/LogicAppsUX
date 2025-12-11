@@ -454,12 +454,13 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
+      const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
       const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
-      const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame${isDraftMode ? `?agentCard=${agentCardUrlForDraft}` : ''}`;
+      const draftChatUrl = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/*?agentCard=${agentCardUrlForDraft}${a2aCodeForDraft ? `&${a2aCodeForDraft}` : ''}`;
 
       return {
         agentUrl,
-        chatUrl,
+        chatUrl: isDraftMode ? draftChatUrl : prodChatUrl,
         queryParams,
         hostName,
       };
