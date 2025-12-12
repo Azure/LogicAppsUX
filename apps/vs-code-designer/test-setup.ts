@@ -95,6 +95,7 @@ vi.mock('vscode', () => ({
   window: {
     showInformationMessage: vi.fn(),
     showErrorMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
   },
   workspace: {
     workspaceFolders: [],

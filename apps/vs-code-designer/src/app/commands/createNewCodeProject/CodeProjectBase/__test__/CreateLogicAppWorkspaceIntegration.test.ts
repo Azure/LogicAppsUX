@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowType } from '../../../../../constants';
+import { WorkflowType, devContainerFolderName, devContainerFileName } from '../../../../../constants';
 
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');
@@ -35,7 +35,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
     const destAssetsPath = path.resolve(__dirname, '..', 'assets');
 
     // Check if assets need to be copied
-    if ((await fse.pathExists(srcAssetsPath)) && !(await fse.pathExists(destAssetsPath))) {
+    if (await fse.pathExists(srcAssetsPath)) {
       await fse.copy(srcAssetsPath, destAssetsPath);
       assetsCopied = true;
     }
@@ -43,8 +43,8 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
   afterAll(async () => {
     // Clean up copied assets
-    if (assetsCopied) {
-      const destAssetsPath = path.resolve(__dirname, '..', 'assets');
+    const destAssetsPath = path.resolve(__dirname, '..', 'assets');
+    if (await fse.pathExists(destAssetsPath)) {
       await fse.remove(destAssetsPath);
     }
   });
@@ -965,6 +965,221 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(xmlInput).toContain('UserDetails');
       expect(xmlInput).toContain('Age');
       expect(xmlInput).toContain('Status');
+    });
+  });
+
+  describe('DevContainer Workspace Creation', () => {
+    it('should create .devcontainer folder at workspace root when isDevContainerProject is true', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'DevContainerWorkspace',
+        logicAppName: 'DevContainerApp',
+        logicAppType: ProjectType.logicApp,
+        workflowName: 'TestWorkflow',
+        workflowType: 'Stateful',
+        targetFramework: 'net8',
+        isDevContainerProject: true,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      // Verify .devcontainer folder exists at workspace root (same level as .code-workspace file)
+      const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
+      const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
+      const devContainerExists = await fse.pathExists(devContainerPath);
+      expect(devContainerExists).toBe(true);
+
+      // Verify devcontainer.json exists inside .devcontainer folder
+      const devContainerJsonPath = path.join(devContainerPath, devContainerFileName);
+      const devContainerJsonExists = await fse.pathExists(devContainerJsonPath);
+      expect(devContainerJsonExists).toBe(true);
+
+      // Verify devcontainer.json has required properties
+      const devContainerContent = await fse.readJSON(devContainerJsonPath);
+      expect(devContainerContent).toHaveProperty('name');
+      expect(devContainerContent).toHaveProperty('image');
+      expect(devContainerContent).toHaveProperty('customizations');
+    });
+
+    it('should add .devcontainer folder to workspace file when isDevContainerProject is true', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'DevContainerWorkspaceFile',
+        logicAppName: 'DevContainerAppFile',
+        logicAppType: ProjectType.logicApp,
+        workflowName: 'TestWorkflow',
+        workflowType: 'Stateful',
+        targetFramework: 'net8',
+        isDevContainerProject: true,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      // Verify workspace file includes .devcontainer folder
+      const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
+      const workspaceContent = await fse.readJSON(workspaceFilePath);
+
+      expect(workspaceContent.folders).toHaveLength(2);
+
+      // Find the .devcontainer folder entry
+      const devContainerFolder = workspaceContent.folders.find((folder: any) => folder.path === devContainerFolderName);
+      expect(devContainerFolder).toBeDefined();
+      expect(devContainerFolder.name).toBe(devContainerFolderName);
+      expect(devContainerFolder.path).toBe(devContainerFolderName);
+    });
+
+    it('should not create .devcontainer folder when isDevContainerProject is false', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'NonDevContainerWorkspace',
+        logicAppName: 'NonDevContainerApp',
+        logicAppType: ProjectType.logicApp,
+        workflowName: 'TestWorkflow',
+        workflowType: 'Stateful',
+        targetFramework: 'net8',
+        isDevContainerProject: false,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      // Verify .devcontainer folder does NOT exist
+      const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
+      const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
+      const devContainerExists = await fse.pathExists(devContainerPath);
+      expect(devContainerExists).toBe(false);
+
+      // Verify workspace file does NOT include .devcontainer folder
+      const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
+      const workspaceContent = await fse.readJSON(workspaceFilePath);
+
+      expect(workspaceContent.folders).toHaveLength(1);
+      expect(workspaceContent.folders[0].name).toBe('NonDevContainerApp');
+    });
+
+    it('should not create .devcontainer folder when isDevContainerProject is undefined', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'UndefinedDevContainerWorkspace',
+        logicAppName: 'UndefinedDevContainerApp',
+        logicAppType: ProjectType.logicApp,
+        workflowName: 'TestWorkflow',
+        workflowType: 'Stateful',
+        targetFramework: 'net8',
+        // isDevContainerProject not set (undefined)
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      // Verify .devcontainer folder does NOT exist
+      const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
+      const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
+      const devContainerExists = await fse.pathExists(devContainerPath);
+      expect(devContainerExists).toBe(false);
+    });
+
+    it('should create .devcontainer at workspace root, not inside logic app folder', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'DevContainerLocationWorkspace',
+        logicAppName: 'DevContainerLocationApp',
+        logicAppType: ProjectType.logicApp,
+        workflowName: 'TestWorkflow',
+        workflowType: 'Stateful',
+        targetFramework: 'net8',
+        isDevContainerProject: true,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
+      const logicAppFolderPath = getLogicAppFolderPath(options.workspaceName, options.logicAppName);
+
+      // Verify .devcontainer is at workspace root
+      const devContainerAtRoot = path.join(workspaceRootFolder, devContainerFolderName);
+      const devContainerAtRootExists = await fse.pathExists(devContainerAtRoot);
+      expect(devContainerAtRootExists).toBe(true);
+
+      // Verify .devcontainer is NOT inside logic app folder
+      const devContainerInLogicApp = path.join(logicAppFolderPath, devContainerFolderName);
+      const devContainerInLogicAppExists = await fse.pathExists(devContainerInLogicApp);
+      expect(devContainerInLogicAppExists).toBe(false);
+
+      // Verify .code-workspace file is at workspace root (same level as .devcontainer)
+      const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
+      const workspaceFileExists = await fse.pathExists(workspaceFilePath);
+      expect(workspaceFileExists).toBe(true);
+
+      // Verify logic app folder is at workspace root (same level as .devcontainer)
+      const logicAppExists = await fse.pathExists(logicAppFolderPath);
+      expect(logicAppExists).toBe(true);
+
+      // All three should be siblings at the workspace root
+      const workspaceRootContents = await fse.readdir(workspaceRootFolder);
+      expect(workspaceRootContents).toContain(devContainerFolderName);
+      expect(workspaceRootContents).toContain(options.logicAppName);
+      expect(workspaceRootContents).toContain(`${options.workspaceName}.code-workspace`);
+    });
+
+    it('should create devcontainer with custom code project', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'CustomCodeDevContainer',
+        logicAppName: 'CustomCodeDevApp',
+        logicAppType: ProjectType.customCode,
+        workflowName: 'CustomWorkflow',
+        workflowType: 'Stateful',
+        functionFolderName: 'CustomFunctions',
+        targetFramework: 'net8',
+        isDevContainerProject: true,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      // Verify .devcontainer exists
+      const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
+      const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
+      const devContainerExists = await fse.pathExists(devContainerPath);
+      expect(devContainerExists).toBe(true);
+
+      // Verify workspace file includes both logic app, function folder, and .devcontainer
+      const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
+      const workspaceContent = await fse.readJSON(workspaceFilePath);
+
+      expect(workspaceContent.folders).toHaveLength(3);
+      expect(workspaceContent.folders.some((f: any) => f.name === 'CustomCodeDevApp')).toBe(true);
+      expect(workspaceContent.folders.some((f: any) => f.name === 'CustomFunctions')).toBe(true);
+      expect(workspaceContent.folders.some((f: any) => f.name === devContainerFolderName)).toBe(true);
+    });
+
+    it('should create devcontainer with rules engine project', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'RulesDevContainer',
+        logicAppName: 'RulesDevApp',
+        logicAppType: ProjectType.rulesEngine,
+        workflowName: 'RulesWorkflow',
+        workflowType: 'Stateful',
+        functionFolderName: 'RulesFunctions',
+        targetFramework: 'net8',
+        isDevContainerProject: true,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      // Verify .devcontainer exists
+      const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
+      const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
+      const devContainerExists = await fse.pathExists(devContainerPath);
+      expect(devContainerExists).toBe(true);
+
+      // Verify workspace file structure
+      const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
+      const workspaceContent = await fse.readJSON(workspaceFilePath);
+
+      expect(workspaceContent.folders).toHaveLength(3);
+      expect(workspaceContent.folders.some((f: any) => f.name === 'RulesDevApp')).toBe(true);
+      expect(workspaceContent.folders.some((f: any) => f.name === 'RulesFunctions')).toBe(true);
+      expect(workspaceContent.folders.some((f: any) => f.name === devContainerFolderName)).toBe(true);
     });
   });
 });
