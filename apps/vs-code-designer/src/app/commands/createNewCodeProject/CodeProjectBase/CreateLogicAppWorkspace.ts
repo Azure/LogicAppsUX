@@ -5,6 +5,7 @@ import {
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
   defaultVersionRange,
+  devContainerFolderName,
   extensionBundleId,
   extensionCommand,
   funcIgnoreFileName,
@@ -171,6 +172,11 @@ export async function createWorkspaceStructure(myWebviewProjectContext: IWebview
     workspaceFolders.push({ name: myWebviewProjectContext.functionFolderName, path: `./${myWebviewProjectContext.functionFolderName}` });
   }
 
+  // Add .devcontainer folder for devcontainer projects
+  if (myWebviewProjectContext.isDevContainerProject) {
+    workspaceFolders.push({ name: devContainerFolderName, path: devContainerFolderName });
+  }
+
   const workspaceData = {
     folders: workspaceFolders,
   };
@@ -240,7 +246,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   // .vscode folder
   await createLogicAppVsCodeContents(myWebviewProjectContext, logicAppFolderPath);
 
-  await createDevContainerContents(myWebviewProjectContext, logicAppFolderPath);
+  await createDevContainerContents(myWebviewProjectContext, workspaceFolder);
 
   await createLocalConfigurationFiles(myWebviewProjectContext, logicAppFolderPath);
 

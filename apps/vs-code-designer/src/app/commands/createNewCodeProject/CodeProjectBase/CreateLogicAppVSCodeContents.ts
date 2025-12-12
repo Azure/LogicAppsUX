@@ -139,12 +139,9 @@ export async function createLogicAppVsCodeContents(
   );
 }
 
-export async function createDevContainerContents(
-  myWebviewProjectContext: IWebviewProjectContext,
-  logicAppFolderPath: string
-): Promise<void> {
+export async function createDevContainerContents(myWebviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {
   if (myWebviewProjectContext.isDevContainerProject) {
-    const devContainerPath: string = path.join(logicAppFolderPath, devContainerFolderName);
+    const devContainerPath: string = path.join(workspaceFolder, devContainerFolderName);
     await fse.ensureDir(devContainerPath);
     await writeDevContainerJson(devContainerPath);
   }

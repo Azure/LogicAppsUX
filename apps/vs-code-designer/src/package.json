@@ -356,6 +356,11 @@
         "title": "Parameterize connections",
         "category": "Azure Logic Apps",
         "when": "config.myExtension.enableCommand"
+      },
+      {
+        "command": "azureLogicAppsStandard.enableDevContainer",
+        "title": "Enable Dev Container For Project",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [

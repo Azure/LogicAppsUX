@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, type Mock }
 import { createLogicAppProject } from '../CreateLogicAppProjects';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as os from 'os';
 import { addLocalFuncTelemetry } from '../../../../utils/funcCoreTools/funcVersion';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../../utils/git';
 import { createArtifactsFolder } from '../../../../utils/codeless/artifacts';
@@ -14,7 +13,7 @@ import {
   createRulesFiles,
   updateWorkspaceFile,
 } from '../CreateLogicAppWorkspace';
-import { createLogicAppVsCodeContents, writeExtensionsJson, writeTasksJson } from '../CreateLogicAppVSCodeContents';
+import { createLogicAppVsCodeContents } from '../CreateLogicAppVSCodeContents';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
