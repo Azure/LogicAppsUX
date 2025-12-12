@@ -98,8 +98,8 @@ function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | Workspace
   return isString(fsPath) ? Uri.file(fsPath) : fsPath;
 }
 
-function osSupportsVersion(version: FuncVersion | undefined): boolean {
-  return version !== FuncVersion.v1 || process.platform === Platform.windows;
+function osSupportsVersion(): boolean {
+  return process.platform === Platform.windows;
 }
 
 /**
@@ -112,12 +112,9 @@ export async function promptForFuncVersion(context: IActionContext, message?: st
   const recommended: string = localize('recommended', '(Recommended)');
   let picks: IAzureQuickPickItem<FuncVersion | undefined>[] = [
     { label: 'Azure Functions v4', description: recommended, data: FuncVersion.v4 },
-    { label: 'Azure Functions v3', data: FuncVersion.v3 },
-    { label: 'Azure Functions v2', data: FuncVersion.v2 },
-    { label: 'Azure Functions v1', data: FuncVersion.v1 },
   ];
 
-  picks = picks.filter((p) => osSupportsVersion(p.data));
+  picks = picks.filter(() => osSupportsVersion());
 
   picks.push({ label: localize('learnMore', '$(link-external) Learn more...'), description: '', data: undefined });
 

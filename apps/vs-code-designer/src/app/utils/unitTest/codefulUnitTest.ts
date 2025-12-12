@@ -1051,7 +1051,7 @@ export function mapJsonTypeToCSharp(jsonType: string, jsonFormat?: string): stri
 export async function updateTestsSln(testsDirectory: string, logicAppCsprojPath: string): Promise<void> {
   const solutionName = 'Tests'; // This will create "Tests.sln"
   const solutionFile = path.join(testsDirectory, `${solutionName}.sln`);
-  const dotnetBinaryPath = getGlobalSetting(dotNetBinaryPathSettingKey);
+  const dotnetCommand = 'dotnet';
 
   try {
     // Create a new solution file if it doesn't already exist.
@@ -1059,14 +1059,14 @@ export async function updateTestsSln(testsDirectory: string, logicAppCsprojPath:
       ext.outputChannel.appendLog(`Solution file already exists at ${solutionFile}.`);
     } else {
       ext.outputChannel.appendLog(`Creating new solution file at ${solutionFile}...`);
-      await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} new sln -n ${solutionName}`);
+      await executeCommand(ext.outputChannel, testsDirectory, `${dotnetCommand} new sln -n ${solutionName}`);
       ext.outputChannel.appendLog(`Solution file created: ${solutionFile}`);
     }
 
     // Compute the relative path from the tests directory to the Logic App .csproj.
     const relativeProjectPath = path.relative(testsDirectory, logicAppCsprojPath);
     ext.outputChannel.appendLog(`Adding project '${relativeProjectPath}' to solution '${solutionFile}'...`);
-    await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} sln "${solutionFile}" add "${relativeProjectPath}"`);
+    await executeCommand(ext.outputChannel, testsDirectory, `${dotnetCommand} sln "${solutionFile}" add "${relativeProjectPath}"`);
     ext.outputChannel.appendLog('Project added to solution successfully.');
   } catch (err) {
     ext.outputChannel.appendLog(`Error updating solution: ${err}`);

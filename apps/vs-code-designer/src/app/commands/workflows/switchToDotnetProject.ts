@@ -18,7 +18,6 @@ import {
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import { DotnetTemplateProvider } from '../../templates/dotnet/DotnetTemplateProvider';
-import { useBinariesDependencies } from '../../utils/binaries';
 import {
   getDotnetBuildFile,
   addNugetPackagesToBuildFile,
@@ -31,7 +30,7 @@ import {
   allowLocalSettingsToPublishDirectory,
   addNugetPackagesToBuildFileByName,
 } from '../../utils/codeless/updateBuildFile';
-import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
+import { getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -45,7 +44,6 @@ import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
 
@@ -53,21 +51,11 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
   switchToDotnetProject(context, target);
 }
 
-export async function switchToDotnetProject(
-  context: IProjectWizardContext,
-  target: vscode.Uri,
-  localDotNetMajorVersion = '8',
-  isCodeful = false
-) {
+export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, isCodeful = false) {
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     target = vscode.Uri.file(projectPath);
-  }
-
-  const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
-  if (!isDotNetInstalled) {
-    return;
   }
 
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath));
@@ -136,8 +124,6 @@ export async function switchToDotnetProject(
   const projectPath: string = target.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
-  const useBinaries = useBinariesDependencies();
-  const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
 
   await deleteBundleProjectFiles(target);
   await renameBundleProjectFiles(target);
@@ -158,9 +144,7 @@ export async function switchToDotnetProject(
 
   await copyBundleProjectFiles(target);
   await updateBuildFile(context, target, dotnetVersion, isCodeful);
-  if (useBinaries) {
-    await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
-  }
+  await createGlobalJsonFile(dotnetVersion, target.fsPath);
 
   const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);
 

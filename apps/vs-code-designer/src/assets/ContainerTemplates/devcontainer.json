@@ -1,0 +1,39 @@
+{
+  "name": "LogicAppContain",
+  "image": "carloscastrotrejo/logicapps-dev:latest",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-azurelogicapps",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-docker",
+        "azurite.azurite",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": false,
+        "azureLogicAppsStandard.azuriteLocationSetting": "/workspaces/${localWorkspaceFolderBasename}/.Azurite",
+        "azureLogicAppsStandard.dotnetBinaryPath": "dotnet",
+        "azureLogicAppsStandard.funcCoreToolsBinaryPath": "func",
+        "azureLogicAppsStandard.nodeJsBinaryPath": "node",
+        "files.exclude": {
+          "**/bin": true,
+          "**/obj": true
+        }
+      }
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  },
+  "portsAttributes": {
+    "*": {
+      "visibility": "public"
+    }
+  }
+}

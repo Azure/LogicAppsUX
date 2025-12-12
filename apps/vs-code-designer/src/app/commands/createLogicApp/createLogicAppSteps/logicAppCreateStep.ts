@@ -30,7 +30,7 @@ import type { CustomLocation } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullOrEmptyValue, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { ILogicAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension-logic-apps';
-import { StorageOptions, FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { StorageOptions, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
 
 export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
@@ -191,18 +191,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       );
     }
 
-    if (context.version === FuncVersion.v1) {
-      appSettings.push({
-        name: 'AzureWebJobsDashboard',
-        value: storageConnectionString.azureWebJobsDashboardValue,
-      });
-    }
-
-    if (
-      context.newSiteOS === WebsiteOS.windows &&
-      runtimeWithoutVersion.toLowerCase() === WorkerRuntime.Node &&
-      context.version !== FuncVersion.v1
-    ) {
+    if (context.newSiteOS === WebsiteOS.windows && runtimeWithoutVersion.toLowerCase() === WorkerRuntime.Node) {
       // Linux doesn't need this because it uses linuxFxVersion
       // v1 doesn't need this because it only supports one version of Node
       appSettings.push({

@@ -10,7 +10,6 @@ import {
   localSettingsFileName,
 } from '../../constants';
 import { localize } from '../../localize';
-import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
 import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launch';
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
@@ -31,22 +30,15 @@ export async function preDebugValidate(context: IActionContext, projectPath: str
 
   try {
     context.telemetry.properties.lastValidateStep = 'funcInstalled';
-    const message: string = localize(
-      'installFuncTools',
-      'You must have the Azure Functions Core Tools installed to debug your local functions.'
-    );
-    shouldContinue = await validateFuncCoreToolsInstalled(context, message, projectPath);
 
-    if (shouldContinue) {
-      const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
-      context.telemetry.properties.projectLanguage = projectLanguage;
+    const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
+    context.telemetry.properties.projectLanguage = projectLanguage;
 
-      context.telemetry.properties.lastValidateStep = 'workerRuntime';
-      await validateWorkerRuntime(context, projectLanguage, projectPath);
+    context.telemetry.properties.lastValidateStep = 'workerRuntime';
+    await validateWorkerRuntime(context, projectLanguage, projectPath);
 
-      context.telemetry.properties.lastValidateStep = 'emulatorRunning';
-      shouldContinue = await validateEmulatorIsRunning(context, projectPath);
-    }
+    context.telemetry.properties.lastValidateStep = 'emulatorRunning';
+    shouldContinue = await validateEmulatorIsRunning(context, projectPath);
   } catch (error) {
     if (parseError(error).isUserCancelledError) {
       shouldContinue = false;
