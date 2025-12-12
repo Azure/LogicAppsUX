@@ -310,7 +310,7 @@ describe('createLogicAppWorkspace', () => {
     expect(CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents).toHaveBeenCalledTimes(1);
 
     // Verify createDevContainerContents is called with correct parameters
-    expect(CreateLogicAppVSCodeContentsModule.createDevContainerContents).toHaveBeenCalledWith(mockOptionsLogicApp, logicAppFolderPath);
+    expect(CreateLogicAppVSCodeContentsModule.createDevContainerContents).toHaveBeenCalledWith(mockOptionsLogicApp, workspaceFolder);
     expect(CreateLogicAppVSCodeContentsModule.createDevContainerContents).toHaveBeenCalledTimes(1);
   });
 
