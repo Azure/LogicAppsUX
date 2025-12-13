@@ -1,5 +1,7 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
+import { setDiscoverySelectionState } from '../../../core/state/panel/panelSlice';
+import { SELECTION_STATES } from '../../../core/state/panel/panelTypes';
 import {
   useDiscoveryPanelIsAddingTrigger,
   useDiscoveryPanelIsParallelBranch,
@@ -32,6 +34,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const submitCallback = useCallback(() => {
     const newNodeId = getNodeId(operation);
+    dispatch(setDiscoverySelectionState(SELECTION_STATES.SEARCH));
     dispatch(
       addOperation({
         operation,

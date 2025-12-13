@@ -36,6 +36,14 @@ export type ActionPanelFavoriteItem = {
   operationId?: string;
 };
 
+export const SELECTION_STATES = {
+  SEARCH: 'SEARCH',
+  DETAILS: 'DETAILS',
+  AZURE_RESOURCE: 'AZURE_RESOURCE',
+  CUSTOM_SWAGGER: 'HTTP_SWAGGER',
+} as const;
+export type DiscoveryPanelSelectionState = (typeof SELECTION_STATES)[keyof typeof SELECTION_STATES];
+
 export interface DiscoveryPanelContentState {
   favoriteOperations: ActionPanelFavoriteItem[];
   isAddingTrigger: boolean;
@@ -48,6 +56,7 @@ export interface DiscoveryPanelContentState {
   selectedOperationGroupId: string;
   selectedOperationId: string;
   selectedBrowseCategory?: { key: string; title: string };
+  selectionState?: DiscoveryPanelSelectionState;
 }
 
 export interface ErrorPanelContentState {
