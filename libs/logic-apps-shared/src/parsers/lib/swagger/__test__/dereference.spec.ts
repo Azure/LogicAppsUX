@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { dereferenceSwagger } from '../dereference';
+import { Outlook } from './fixtures/outlook';
 import type { OpenAPIV2 } from '../../../../utils/src';
 
 describe('dereferenceSwagger', () => {
@@ -260,5 +261,143 @@ describe('dereferenceSwagger', () => {
 
     // Metadata should contain the cyclical ref
     expect(result.$refs?.['#/definitions/Person']).toEqual({ type: 'object' });
+  });
+
+  describe('unsupported $ref types (intentionally not resolved)', () => {
+    it('should NOT resolve external URL $refs - keeps them as-is', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: 'https://example.com/schemas/User.json',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // External URL $refs should remain unchanged
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.$ref).toBe('https://example.com/schemas/User.json');
+    });
+
+    it('should NOT resolve external file $refs - keeps them as-is', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: './schemas/User.json#/definitions/User',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // External file $refs should remain unchanged
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.$ref).toBe('./schemas/User.json#/definitions/User');
+    });
+
+    it('should NOT resolve relative file $refs without hash - keeps them as-is', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: 'common/definitions.yaml',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // Relative file $refs should remain unchanged
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.$ref).toBe('common/definitions.yaml');
+    });
+  });
+
+  describe('integration tests with real-world OpenAPI documents', () => {
+    it('should correctly dereference the Outlook connector swagger (224+ $refs)', () => {
+      const startTime = performance.now();
+
+      const result = dereferenceSwagger(Outlook as OpenAPIV2.Document);
+
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+
+      // Should complete without errors
+      expect(result).toBeDefined();
+      expect(result.swagger).toBe('2.0');
+      expect(result.info.title).toBe('Office 365 Outlook');
+
+      // Should have resolved paths
+      expect(result.paths).toBeDefined();
+      expect(Object.keys(result.paths).length).toBeGreaterThan(0);
+
+      // Verify a specific resolved $ref (CalendarGetTable returns TableMetadata)
+      const calendarGetTable = result.paths['/{connectionId}/$metadata.json/datasets/calendars/tables/{table}'];
+      expect(calendarGetTable).toBeDefined();
+      const response200 = calendarGetTable.get?.responses['200'];
+      expect(response200).toBeDefined();
+
+      // The schema should be resolved (not a $ref anymore)
+      const schema = response200.schema as Record<string, unknown>;
+      expect(schema.$ref).toBeUndefined();
+      expect(schema.type).toBe('object');
+      expect(schema.description).toBe('Table metadata');
+
+      // Performance check - should complete in reasonable time (< 100ms for this size)
+      expect(duration).toBeLessThan(100);
+    });
+
+    it('should handle the Outlook swagger without memory issues', () => {
+      // Run multiple times to check for memory leaks or accumulation issues
+      for (let i = 0; i < 5; i++) {
+        const result = dereferenceSwagger(Outlook as OpenAPIV2.Document);
+        expect(result).toBeDefined();
+      }
+    });
   });
 });
