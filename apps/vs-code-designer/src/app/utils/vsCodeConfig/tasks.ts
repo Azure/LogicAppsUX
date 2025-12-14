@@ -183,21 +183,21 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
         tasks: [
           {
             label: 'generateDebugSymbols',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            command: 'dotnet',
             args: ['${input:getDebugSymbolDll}'],
             type: 'process',
             problemMatcher: '$msCompile',
           },
           {
             label: 'clean',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            command: 'dotnet',
             args: ['clean', ...commonArgs],
             type: 'process',
             problemMatcher: '$msCompile',
           },
           {
             label: 'build',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            command: 'dotnet',
             args: ['build', ...commonArgs],
             type: 'process',
             dependsOn: 'clean',
@@ -209,14 +209,14 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
           },
           {
             label: 'clean release',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            command: 'dotnet',
             args: [...releaseArgs, ...commonArgs],
             type: 'process',
             problemMatcher: '$msCompile',
           },
           {
             label: 'publish',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            command: 'dotnet',
             args: ['publish', ...releaseArgs, ...commonArgs],
             type: 'process',
             dependsOn: 'clean release',
@@ -226,7 +226,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
             label: 'func: host start',
             dependsOn: 'build',
             type: 'shell',
-            command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+            command: 'func',
             args: ['host', 'start'],
             options: {
               cwd: debugSubpath,
@@ -253,14 +253,14 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
         tasks: [
           {
             label: 'generateDebugSymbols',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            command: 'dotnet',
             args: ['${input:getDebugSymbolDll}'],
             type: 'process',
             problemMatcher: '$msCompile',
           },
           {
             type: 'shell',
-            command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+            command: 'func',
             args: ['host', 'start'],
             options: {
               env: {

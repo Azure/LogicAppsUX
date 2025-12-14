@@ -1,4 +1,5 @@
 import {
+  EXTENSION_BUNDLE_VERSION,
   assetsFolderName,
   localSettingsFileName,
   logicAppsStandardExtensionId,
@@ -50,7 +51,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../unitTest/codefulUnitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
-import { getBundleVersionNumber } from '../../../utils/bundleFeed';
+import { getPublicUrl } from '../../../utils/extension';
 import { saveUnitTestDefinition } from '../../../utils/unitTest/codelessUnitTest';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
@@ -124,7 +125,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
 
-    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
+    this.baseUrl = `http://localhost:${designTimePort}/${managementApiPrefix}`;
     this.getWorkflowRuntimeBaseUrl = () =>
       ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
     this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
@@ -411,7 +412,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
+    const publicUrl = await getPublicUrl(`http://localhost:${designTimePort}`);
+    const url = `${publicUrl}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       const headers = createHttpHeaders({
         'Content-Type': 'application/json',
@@ -544,7 +546,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
-    const bundleVersionNumber = await getBundleVersionNumber();
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
@@ -572,7 +573,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
-      extensionBundleVersion: bundleVersionNumber,
+      extensionBundleVersion: EXTENSION_BUNDLE_VERSION,
     };
   }
 

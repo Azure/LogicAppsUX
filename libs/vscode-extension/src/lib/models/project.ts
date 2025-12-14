@@ -106,14 +106,12 @@ export interface IWebviewProjectContext extends IActionContext {
   functionName?: string;
   functionNamespace?: string;
   shouldCreateLogicAppProject: boolean;
+  isDevContainerProject: boolean;
 }
 
 export const OpenBehavior = {
-  addToWorkspace: 'AddToWorkspace',
   openInNewWindow: 'OpenInNewWindow',
-  openInCurrentWindow: 'OpenInCurrentWindow',
   alreadyOpen: 'AlreadyOpen',
-  dontOpen: 'DontOpen',
 } as const;
 export type OpenBehavior = (typeof OpenBehavior)[keyof typeof OpenBehavior];
 

@@ -45,7 +45,6 @@ describe('HttpClient', () => {
       uri: '/test-get',
       url: `${baseUrl}/test-get`,
       headers: {
-        Authorization: '',
         'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
       },
     });
@@ -190,7 +189,6 @@ describe('HttpClient', () => {
       url: `${baseUrl}/test-put`,
       content: { key: 'value' },
       headers: {
-        Authorization: '',
         'Content-Type': 'application/json',
         'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
       },

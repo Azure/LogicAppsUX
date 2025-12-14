@@ -2,12 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Button, Text, Field, Input, Label, useId } from '@fluentui/react-components';
-import type { InputOnChangeData } from '@fluentui/react-components';
+import { Button, Text, Field, Input, Label, useId, Switch } from '@fluentui/react-components';
+import type { InputOnChangeData, SwitchOnChangeData } from '@fluentui/react-components';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
-import { setProjectPath, setWorkspaceName } from '../../../state/createWorkspaceSlice';
+import { setProjectPath, setWorkspaceName, setIsDevContainerProject } from '../../../state/createWorkspaceSlice';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -22,8 +22,15 @@ export const WorkspaceNameStep: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { workspaceName, workspaceProjectPath, pathValidationResults, workspaceExistenceResults, isValidatingWorkspace, separator } =
-    createWorkspaceState;
+  const {
+    workspaceName,
+    workspaceProjectPath,
+    pathValidationResults,
+    workspaceExistenceResults,
+    isValidatingWorkspace,
+    separator,
+    isDevContainerProject,
+  } = createWorkspaceState;
   const projectPathInputId = useId();
   const workspaceNameId = useId();
 
@@ -173,6 +180,10 @@ export const WorkspaceNameStep: React.FC = () => {
     setWorkspaceNameError(validateWorkspaceName(data.value));
   };
 
+  const handleIsDevContainerProjectChange = (event: React.ChangeEvent<HTMLInputElement>, data: SwitchOnChangeData) => {
+    dispatch(setIsDevContainerProject(data.checked));
+  };
+
   const onOpenExplorer = () => {
     vscode.postMessage({
       command: ExtensionCommand.select_folder,
@@ -257,6 +268,11 @@ export const WorkspaceNameStep: React.FC = () => {
                 ' ✓ Available'}
             </Text>
           )}
+        </Field>
+      </div>
+      <div className={styles.fieldContainer}>
+        <Field>
+          <Switch checked={isDevContainerProject} onChange={handleIsDevContainerProjectChange} label={intlText.USE_DEV_CONTAINER_LABEL} />
         </Field>
       </div>
     </div>
