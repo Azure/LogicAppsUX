@@ -263,6 +263,240 @@ describe('dereferenceSwagger', () => {
     expect(result.$refs?.['#/definitions/Person']).toEqual({ type: 'object' });
   });
 
+  describe('edge cases for local $refs', () => {
+    it('should keep $ref when pointing to non-existent definition', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: '#/definitions/NonExistent',
+                  },
+                },
+              },
+            },
+          },
+        },
+        definitions: {},
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // Non-existent $ref should remain unchanged
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.$ref).toBe('#/definitions/NonExistent');
+    });
+
+    it('should keep $ref when path is malformed (missing definition)', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: '#/definitions/Nested/TooDeep',
+                  },
+                },
+              },
+            },
+          },
+        },
+        definitions: {
+          Nested: {
+            type: 'object',
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // Malformed path should remain unchanged
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.$ref).toBe('#/definitions/Nested/TooDeep');
+    });
+
+    it('should handle empty swagger document gracefully', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Empty API',
+          version: '1.0',
+        },
+        paths: {},
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      expect(result).toEqual(swagger);
+      expect(result.$refs).toBeUndefined();
+    });
+
+    it('should decode JSON Pointer escape sequences per RFC 6901', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: '#/definitions/Type~1With~1Slashes',
+                  },
+                },
+              },
+            },
+          },
+        },
+        definitions: {
+          'Type/With/Slashes': {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+            },
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // ~1 should be decoded as /
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.type).toBe('object');
+      expect((schema.properties as Record<string, unknown>).id).toEqual({ type: 'string' });
+    });
+
+    it('should decode tilde escape sequences (~0 → ~)', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: '#/definitions/Type~0With~0Tildes',
+                  },
+                },
+              },
+            },
+          },
+        },
+        definitions: {
+          'Type~With~Tildes': {
+            type: 'string',
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // ~0 should be decoded as ~
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.type).toBe('string');
+    });
+
+    it('should handle complex escape sequence ~01 (encodes to ~1 which is /)', () => {
+      // ~01 means: ~0 → ~ then literal 1, resulting in "~1" in the key
+      // This is NOT the same as ~1 (which decodes to /)
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: '#/definitions/Type~01',
+                  },
+                },
+              },
+            },
+          },
+        },
+        definitions: {
+          'Type~1': {
+            type: 'boolean',
+          },
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // ~01 decodes as: ~0→~, then 1 stays, so key is "Type~1"
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.type).toBe('boolean');
+    });
+
+    it('should keep $ref when referencing non-object intermediate path', () => {
+      const swagger: OpenAPIV2.Document = {
+        swagger: '2.0',
+        info: {
+          title: 'Test API',
+          version: '1.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              operationId: 'getTest',
+              responses: {
+                '200': {
+                  description: 'OK',
+                  schema: {
+                    $ref: '#/definitions/SimpleString/nested',
+                  },
+                },
+              },
+            },
+          },
+        },
+        definitions: {
+          SimpleString: 'just a string value' as unknown as OpenAPIV2.SchemaObject,
+        },
+      };
+
+      const result = dereferenceSwagger(swagger);
+
+      // Can't traverse into a string, should keep $ref
+      const schema = result.paths['/test'].get?.responses['200'].schema as Record<string, unknown>;
+      expect(schema.$ref).toBe('#/definitions/SimpleString/nested');
+    });
+  });
+
   describe('unsupported $ref types (intentionally not resolved)', () => {
     it('should NOT resolve external URL $refs - keeps them as-is', () => {
       const swagger: OpenAPIV2.Document = {

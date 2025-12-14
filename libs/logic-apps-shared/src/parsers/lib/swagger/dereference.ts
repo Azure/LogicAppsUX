@@ -23,9 +23,19 @@ export function dereferenceSwagger(swagger: OpenAPIV2.Document): DereferencedDoc
   const resolvingRefs = new Set<string>();
   const cyclicalRefs: Record<string, CyclicalRefMetadata> = {};
 
+  /**
+   * Decodes JSON Pointer escape sequences per RFC 6901.
+   * ~1 → / (slash)
+   * ~0 → ~ (tilde)
+   * Note: ~1 must be decoded before ~0 to handle ~01 correctly
+   */
+  function decodeJsonPointer(segment: string): string {
+    return segment.replace(/~1/g, '/').replace(/~0/g, '~');
+  }
+
   function resolveRef(refPath: string): unknown {
     // Parse JSON pointer: "#/definitions/User" → ["definitions", "User"]
-    const parts = refPath.replace(/^#\//, '').split('/');
+    const parts = refPath.replace(/^#\//, '').split('/').map(decodeJsonPointer);
     let current: unknown = swagger;
 
     for (const part of parts) {
@@ -63,6 +73,13 @@ export function dereferenceSwagger(swagger: OpenAPIV2.Document): DereferencedDoc
       // Mark as resolving before recursing
       resolvingRefs.add(refPath);
       const resolved = resolveRef(refPath);
+
+      // If resolution failed (undefined), keep the original $ref
+      if (resolved === undefined) {
+        resolvingRefs.delete(refPath);
+        return { $ref: refPath };
+      }
+
       const processed = processValue(resolved);
       resolvingRefs.delete(refPath);
 
