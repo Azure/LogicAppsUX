@@ -1,8 +1,8 @@
 import { Button, Card, MessageBar, MessageBarBody, Spinner, Title3 } from '@fluentui/react-components';
 import { PersonRegular } from '@fluentui/react-icons';
 import { useLoginPromptStyles } from './LoginPromptStyles';
-import type { IdentityProvider } from '../../lib/utils/config-parser';
 import { useRef } from 'react';
+import type { IdentityProvider } from '@microsoft/logic-apps-chat';
 
 interface LoginPromptProps {
   onLogin: (provider: IdentityProvider) => void;
