@@ -1,2 +1,2 @@
 // Themes barrel export
-export {};
+export { createFluentTheme } from './fluent';
