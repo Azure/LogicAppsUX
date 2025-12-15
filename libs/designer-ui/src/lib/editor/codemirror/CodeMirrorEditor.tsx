@@ -23,6 +23,7 @@ import type { CodeMirrorEditorProps, CodeMirrorEditorRef } from './types';
 const themeCompartment = new Compartment();
 const languageCompartment = new Compartment();
 const readOnlyCompartment = new Compartment();
+const keybindingsCompartment = new Compartment();
 
 const getLanguageExtension = (language?: string) => {
   switch (language) {
@@ -170,7 +171,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
           onScrollChanged,
           onMouseDown,
         }),
-        ...createKeybindingExtensions({ openTokenPicker }),
+        keybindingsCompartment.of(createKeybindingExtensions({ openTokenPicker })),
         EditorView.theme({
           '&': {
             fontSize: `${fontSize}px`,
@@ -269,6 +270,15 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         });
       }
     }, [readOnly]);
+
+    // Update keybindings when openTokenPicker changes
+    useEffect(() => {
+      if (viewRef.current) {
+        viewRef.current.dispatch({
+          effects: keybindingsCompartment.reconfigure(createKeybindingExtensions({ openTokenPicker })),
+        });
+      }
+    }, [openTokenPicker]);
 
     // Update value when controlled value changes
     useEffect(() => {
