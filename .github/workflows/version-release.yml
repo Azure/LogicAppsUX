@@ -208,6 +208,8 @@ jobs:
 
       - name: 'Build Iframe App'
         run: pnpm run build --filter @a2achat/iframe-app
+        env:
+          BUILD_VERSION: ${{ needs.create-release.outputs.tag_name }}
 
       - name: 'Archive Iframe App'
         run: |

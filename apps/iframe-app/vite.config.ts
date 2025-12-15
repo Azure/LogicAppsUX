@@ -5,6 +5,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mkcert from 'vite-plugin-mkcert';
 
+const version = process.env.BUILD_VERSION || 'dev';
+
 // Custom plugin to rename index.html to iframe.html after build
 function renameIndexHtml(): Plugin {
   return {
@@ -36,9 +38,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
-        assetFileNames: '[name]-[hash].[ext]',
-        chunkFileNames: '[name]-[hash].js',
-        entryFileNames: '[name]-[hash].js',
+        assetFileNames: `[name]-${version}-[hash:8].[ext]`,
+        chunkFileNames: `[name]-${version}-[hash:8].js`,
+        entryFileNames: `[name]-${version}-[hash:8].js`,
       },
     },
   },
