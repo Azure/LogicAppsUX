@@ -1,0 +1,2 @@
+// CodeMirror Editor - placeholder
+export {};
