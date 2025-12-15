@@ -51,7 +51,7 @@ export function ExpressionEditor({
   const handleBlur = (): void => {
     if (onBlur && editorRef?.current) {
       const currentSelection = editorRef.current.getSelection();
-      const currentCursorPosition = editorRef.current.getPosition()?.column ?? 0;
+      const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1;
       if (currentSelection) {
         // CodeMirror selection uses character offsets (from, to)
         const selectionStart = currentSelection.from;
