@@ -2,7 +2,6 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "dangerouslyDisablePackageManagerCheck": true,
-  "globalEnv": ["BUILD_VERSION"],
 
   "tasks": {
     "e2e": {
