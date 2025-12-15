@@ -29,7 +29,9 @@ export const createKeybindingExtensions = (options: KeybindingExtensionOptions):
       EditorView.domEventHandlers({
         keydown: (event: KeyboardEvent) => {
           // Check for Alt+/ (Option+/ on Mac)
-          if (event.altKey && event.key === '/') {
+          // Use event.code ('Slash') instead of event.key because on macOS
+          // Option+/ produces '÷' character, changing event.key
+          if (event.altKey && (event.key === '/' || event.code === 'Slash')) {
             event.preventDefault();
             event.stopPropagation();
             options.openTokenPicker?.();
