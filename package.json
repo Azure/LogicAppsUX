@@ -55,7 +55,7 @@
     "rimraf": "^5.0.5",
     "sherif": "^0.8.4",
     "tsup": "^8.0.2",
-    "turbo": "^2.3.0",
+    "turbo": "^2.6.3",
     "typescript": "5.7.2",
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.8",
@@ -68,7 +68,11 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --write"
+    ]
   },
   "private": true,
   "scripts": {
