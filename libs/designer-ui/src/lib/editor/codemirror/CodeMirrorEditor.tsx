@@ -10,6 +10,7 @@ import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { createFluentTheme } from './themes/fluent';
 import { createEventExtensions } from './extensions/events';
 import { createKeybindingExtensions } from './extensions/keybindings';
+import { workflow } from './languages';
 import type { CodeMirrorEditorProps, CodeMirrorEditorRef } from './types';
 
 const themeCompartment = new Compartment();
@@ -23,8 +24,7 @@ const getLanguageExtension = (language?: string) => {
     case EditorLanguage.python:
       return python();
     case EditorLanguage.templateExpressionLanguage:
-      // TODO: Add workflow language support in Task 8-11
-      return [];
+      return workflow();
     default:
       return [];
   }
