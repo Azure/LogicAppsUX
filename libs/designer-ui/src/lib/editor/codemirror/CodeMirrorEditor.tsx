@@ -2,9 +2,14 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useMemo } from 'rea
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, lineNumbers as lineNumbersExtension, highlightActiveLine, highlightActiveLineGutter } from '@codemirror/view';
 import { history } from '@codemirror/commands';
-import { bracketMatching, foldGutter, indentOnInput } from '@codemirror/language';
+import { bracketMatching, foldGutter, indentOnInput, StreamLanguage } from '@codemirror/language';
 import { json } from '@codemirror/lang-json';
 import { python } from '@codemirror/lang-python';
+import { javascript } from '@codemirror/lang-javascript';
+import { xml } from '@codemirror/lang-xml';
+import { yaml } from '@codemirror/lang-yaml';
+import { csharp } from '@codemirror/legacy-modes/mode/clike';
+import { powerShell } from '@codemirror/legacy-modes/mode/powershell';
 import { useTheme } from '@fluentui/react';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { createFluentTheme } from './themes/fluent';
@@ -19,8 +24,18 @@ const readOnlyCompartment = new Compartment();
 
 const getLanguageExtension = (language?: string) => {
   switch (language) {
+    case EditorLanguage.javascript:
+      return javascript();
     case EditorLanguage.json:
       return json();
+    case EditorLanguage.xml:
+      return xml();
+    case EditorLanguage.yaml:
+      return yaml();
+    case EditorLanguage.csharp:
+      return StreamLanguage.define(csharp);
+    case EditorLanguage.powershell:
+      return StreamLanguage.define(powerShell);
     case EditorLanguage.python:
       return python();
     case EditorLanguage.templateExpressionLanguage:
@@ -148,9 +163,30 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         EditorView.theme({
           '&': {
             fontSize: `${fontSize}px`,
+            height: '100%',
+            minHeight: '100px',
+            border: `1px solid ${isInverted ? '#605e5c' : '#8a8886'}`,
+            borderRadius: '2px',
+            boxSizing: 'border-box',
+          },
+          '&.cm-focused': {
+            outline: 'none',
+            borderColor: '#0078d4',
           },
           '.cm-scroller': {
             overflow: 'auto',
+            fontFamily: 'Consolas, "Courier New", monospace',
+          },
+          '.cm-content': {
+            textAlign: 'left',
+            padding: '4px 0',
+          },
+          '.cm-line': {
+            padding: '0 4px',
+          },
+          '.cm-gutters': {
+            borderRight: `1px solid ${isInverted ? '#3b3a39' : '#e1e1e1'}`,
+            backgroundColor: isInverted ? '#252423' : '#f3f3f3',
           },
         }),
       ];
