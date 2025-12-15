@@ -13,7 +13,7 @@ export const invokeNestedAgentManifest = {
 
     inputs: {
       type: 'object',
-      required: ['host'],
+      required: ['host', 'taskMessage'],
       properties: {
         taskMessage: {
           title: 'Task Message',
