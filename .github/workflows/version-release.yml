@@ -235,6 +235,8 @@ jobs:
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
       - name: 'Create Azure Blob Container for Iframe App'
+        id: create-container
+        continue-on-error: true
         run: |
           # Convert tag to valid container name (lowercase, replace dots with hyphens, strip 'v' prefix)
           VERSION="${{ needs.create-release.outputs.tag_name }}"
@@ -244,7 +246,7 @@ jobs:
           
           # Check if container already exists
           if az storage container exists --account-name agentchatiframes --name "$CONTAINER_NAME" --auth-mode login --query exists -o tsv | grep -q true; then
-            echo "::error::Container $CONTAINER_NAME already exists. Aborting to prevent overwrite."
+            echo "::warning::Container $CONTAINER_NAME already exists. Skipping blob storage upload."
             exit 1
           fi
           
@@ -257,6 +259,7 @@ jobs:
           echo "Created container: $CONTAINER_NAME"
 
       - name: 'Upload Iframe App to Azure Blob Storage'
+        if: steps.create-container.outcome == 'success'
         run: |
           # Upload the zip file
           az storage blob upload \
