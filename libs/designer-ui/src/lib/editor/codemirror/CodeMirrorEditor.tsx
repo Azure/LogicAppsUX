@@ -1,8 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useMemo } from 'react';
 import { EditorState, Compartment } from '@codemirror/state';
-import { EditorView, lineNumbers as lineNumbersExtension, highlightActiveLine, highlightActiveLineGutter } from '@codemirror/view';
+import { EditorView, lineNumbers as lineNumbersExtension, highlightActiveLine, highlightActiveLineGutter, keymap } from '@codemirror/view';
 import { history, defaultKeymap } from '@codemirror/commands';
-import { keymap } from '@codemirror/view';
 import { bracketMatching, foldGutter, indentOnInput, StreamLanguage } from '@codemirror/language';
 import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { linter } from '@codemirror/lint';
@@ -294,6 +293,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         ref={containerRef}
         className={className}
         style={containerStyle}
+        role="code"
         aria-label={label}
         data-automation-id={`codemirror-editor-${label}`}
       />
