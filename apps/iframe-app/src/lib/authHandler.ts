@@ -2,6 +2,43 @@
  * Authentication handler for App Service EasyAuth
  * Handles token refresh and logout scenarios when 401 errors occur
  */
+
+interface JwtPayload {
+  exp?: number;
+  iat?: number;
+  sub?: string;
+  aud?: string | string[];
+  iss?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Decodes a JWT token payload without verifying the signature.
+ * Use this only for reading claims client-side; signature verification should happen server-side.
+ * @param token The JWT token string
+ * @returns The decoded payload object
+ * @throws Error if the token format is invalid
+ */
+export function decodeJwtPayload(token: string): JwtPayload {
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    throw new Error('Invalid JWT format');
+  }
+
+  const base64Url = parts[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '=='.slice(0, (4 - (base64.length % 4)) % 4);
+
+  const jsonPayload = decodeURIComponent(
+    atob(padded)
+      .split('')
+      .map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`)
+      .join('')
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
 export type AuthHandlerConfig = {
   baseUrl: string;
   onRefreshSuccess?: () => void;
@@ -186,7 +223,13 @@ export function openLoginPopup(options: LoginPopupOptions): void {
   }, timeout);
 }
 
-export async function checkAuthStatus(baseUrl: string): Promise<{ isAuthenticated: boolean; error: Error | null }> {
+export interface AuthInformation {
+  isAuthenticated: boolean;
+  error: Error | null;
+  username?: string;
+}
+
+export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation> {
   try {
     const response = await fetch(`${baseUrl}/.auth/me`, {
       method: 'GET',
@@ -200,7 +243,8 @@ export async function checkAuthStatus(baseUrl: string): Promise<{ isAuthenticate
     const data = await response.json();
     // /.auth/me returns an array of identity providers, empty array or null if not authenticated
     const isAuthenticated = Array.isArray(data) && data.length > 0;
-    return { isAuthenticated, error: null };
+    const decodedJWT = decodeJwtPayload(data[0]?.access_token);
+    return { isAuthenticated, error: null, username: decodedJWT['name'] as string | undefined };
   } catch (error) {
     return { isAuthenticated: false, error: error as Error };
   }

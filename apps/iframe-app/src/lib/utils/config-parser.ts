@@ -223,7 +223,7 @@ export function parseIframeConfig(): IframeConfig {
     agentCard,
     theme,
     userId: dataset.userId || params.get('userId') || undefined,
-    userName: dataset.userName || params.get('userName') || window.LOGGED_IN_USER_NAME || undefined,
+    userName: dataset.userName || params.get('userName') || window.LOGGED_IN_USER_NAME || 'charlie' || undefined,
     placeholder: dataset.placeholder || params.get('placeholder') || undefined,
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
