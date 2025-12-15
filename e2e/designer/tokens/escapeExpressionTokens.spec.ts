@@ -13,10 +13,10 @@ test.describe(
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
-      const viewLine = page.locator('.view-line').first();
-      await viewLine.click();
-      // full expression not typed out because Monaco automatically fills closing brackets and single quotes
-      await viewLine.pressSequentially("array(split(variables('ArrayVariable'), '\n");
+      const editorLine = page.locator('.cm-line').first();
+      await editorLine.click();
+      // full expression not typed out because CodeMirror automatically fills closing brackets and single quotes
+      await editorLine.pressSequentially("array(split(variables('ArrayVariable'), '\n");
       await page.getByRole('tab', { name: 'Dynamic content' }).click();
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
@@ -31,10 +31,10 @@ test.describe(
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
-      const viewLine = page.locator('.view-line').first();
-      await viewLine.click();
-      // full expression not typed out because Monaco automatically fills closing brackets and single quotes
-      await viewLine.pressSequentially("array(split(variables('ArrayVariable'), '\\n");
+      const editorLine = page.locator('.cm-line').first();
+      await editorLine.click();
+      // full expression not typed out because CodeMirror automatically fills closing brackets and single quotes
+      await editorLine.pressSequentially("array(split(variables('ArrayVariable'), '\\n");
       await page.getByRole('tab', { name: 'Dynamic content' }).click();
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
@@ -49,9 +49,9 @@ test.describe(
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
-      const viewLine = page.locator('.view-line').first();
-      await viewLine.click();
-      await viewLine.pressSequentially(`concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`);
+      const editorLine = page.locator('.cm-line').first();
+      await editorLine.click();
+      await editorLine.pressSequentially(`concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`);
       await page.getByRole('tab', { name: 'Dynamic content' }).click();
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
