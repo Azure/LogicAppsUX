@@ -230,14 +230,44 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
+      - name: 'Create Azure Blob Container for Iframe App'
+        run: |
+          # Convert tag to valid container name (lowercase, replace dots with hyphens)
+          CONTAINER_NAME=$(echo "agentchatiframes-${{ needs.create-release.outputs.tag_name }}" | tr '[:upper:]' '[:lower:]' | tr '.' '-')
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+          
+          # Check if container already exists
+          if az storage container exists --account-name agentchatiframes --name "$CONTAINER_NAME" --auth-mode login --query exists -o tsv | grep -q true; then
+            echo "::error::Container $CONTAINER_NAME already exists. Aborting to prevent overwrite."
+            exit 1
+          fi
+          
+          # Create the container
+          az storage container create \
+            --account-name agentchatiframes \
+            --name "$CONTAINER_NAME" \
+            --auth-mode login
+          
+          echo "Created container: $CONTAINER_NAME"
+
       - name: 'Upload Iframe App to Azure Blob Storage'
         run: |
+          # Upload the zip file
           az storage blob upload \
             --account-name agentchatiframes \
-            --container-name chat \
+            --container-name "$CONTAINER_NAME" \
             --name AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip \
             --file AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip \
             --auth-mode login
+          
+          # Upload all files from the unzipped folder
+          az storage blob upload-batch \
+            --account-name agentchatiframes \
+            --destination "$CONTAINER_NAME" \
+            --source AgentChatIFrames \
+            --auth-mode login
+          
+          echo "Uploaded zip file and folder contents to container: $CONTAINER_NAME"
 
       - name: 'Generate NPMRC'
         shell: bash
