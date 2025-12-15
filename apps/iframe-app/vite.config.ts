@@ -5,7 +5,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mkcert from 'vite-plugin-mkcert';
 
-const version = process.env.BUILD_VERSION || 'dev';
+// Strip 'v' prefix from version if present (e.g., 'v0.116.1' -> '0.116.1')
+const version = (process.env.BUILD_VERSION || 'dev').replace(/^v/, '');
 
 // Custom plugin to rename index.html to iframe.html after build
 function renameIndexHtml(): Plugin {

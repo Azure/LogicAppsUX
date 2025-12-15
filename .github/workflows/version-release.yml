@@ -221,15 +221,19 @@ jobs:
 
       - name: 'Archive Iframe App'
         run: |
+          # Strip 'v' prefix from tag name (e.g., 'v0.116.1' -> '0.116.1')
+          VERSION="${{ needs.create-release.outputs.tag_name }}"
+          VERSION="${VERSION#v}"
           mv apps/iframe-app/dist AgentChatIFrames
-          zip -r AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip AgentChatIFrames
+          zip -r AgentChatIFrames-${VERSION}.zip AgentChatIFrames
+          echo "IFRAME_VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: 'Upload Iframe App to Release'
         if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip --clobber
+          gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames-${IFRAME_VERSION}.zip --clobber
 
       # NPM Publishing
       - name: 'Azure login'
@@ -241,8 +245,10 @@ jobs:
 
       - name: 'Create Azure Blob Container for Iframe App'
         run: |
-          # Convert tag to valid container name (lowercase, replace dots with hyphens)
-          CONTAINER_NAME=$(echo "agentchatiframes-${{ needs.create-release.outputs.tag_name }}" | tr '[:upper:]' '[:lower:]' | tr '.' '-')
+          # Convert tag to valid container name (lowercase, replace dots with hyphens, strip 'v' prefix)
+          VERSION="${{ needs.create-release.outputs.tag_name }}"
+          VERSION="${VERSION#v}"
+          CONTAINER_NAME=$(echo "agentchatiframes-${VERSION}" | tr '[:upper:]' '[:lower:]' | tr '.' '-')
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
           
           # Check if container already exists
@@ -265,8 +271,8 @@ jobs:
           az storage blob upload \
             --account-name agentchatiframes \
             --container-name "$CONTAINER_NAME" \
-            --name AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip \
-            --file AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip \
+            --name AgentChatIFrames-${IFRAME_VERSION}.zip \
+            --file AgentChatIFrames-${IFRAME_VERSION}.zip \
             --auth-mode login
           
           # Upload all files from the unzipped folder
