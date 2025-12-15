@@ -1304,6 +1304,9 @@ importers:
       '@codemirror/legacy-modes':
         specifier: ^6.4.0
         version: 6.5.2
+      '@codemirror/lint':
+        specifier: ^6.8.0
+        version: 6.9.2
       '@codemirror/search':
         specifier: ^6.5.0
         version: 6.5.11

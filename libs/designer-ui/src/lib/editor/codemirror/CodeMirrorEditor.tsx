@@ -1,9 +1,12 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useMemo } from 'react';
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, lineNumbers as lineNumbersExtension, highlightActiveLine, highlightActiveLineGutter } from '@codemirror/view';
-import { history } from '@codemirror/commands';
+import { history, defaultKeymap } from '@codemirror/commands';
+import { keymap } from '@codemirror/view';
 import { bracketMatching, foldGutter, indentOnInput, StreamLanguage } from '@codemirror/language';
-import { json } from '@codemirror/lang-json';
+import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { linter } from '@codemirror/lint';
+import { json, jsonParseLinter } from '@codemirror/lang-json';
 import { python } from '@codemirror/lang-python';
 import { javascript } from '@codemirror/lang-javascript';
 import { xml } from '@codemirror/lang-xml';
@@ -27,7 +30,7 @@ const getLanguageExtension = (language?: string) => {
     case EditorLanguage.javascript:
       return javascript();
     case EditorLanguage.json:
-      return json();
+      return [json(), linter(jsonParseLinter())];
     case EditorLanguage.xml:
       return xml();
     case EditorLanguage.yaml:
@@ -43,6 +46,11 @@ const getLanguageExtension = (language?: string) => {
     default:
       return [];
   }
+};
+
+// Check if language already includes autocompletion (workflow has its own)
+const languageHasBuiltInCompletion = (language?: string) => {
+  return language === EditorLanguage.templateExpressionLanguage;
 };
 
 export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditorProps>(
@@ -143,12 +151,16 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
       const extensions = [
         history(),
         bracketMatching(),
+        closeBrackets(),
         indentOnInput(),
         highlightActiveLine(),
         highlightActiveLineGutter(),
+        keymap.of([...closeBracketsKeymap, ...completionKeymap, ...defaultKeymap]),
         themeCompartment.of(createFluentTheme(isInverted)),
         languageCompartment.of(getLanguageExtension(language)),
         readOnlyCompartment.of(EditorState.readOnly.of(readOnly)),
+        // Add autocompletion for languages that don't have built-in completion
+        ...(languageHasBuiltInCompletion(language) ? [] : [autocompletion()]),
         ...createEventExtensions({
           onFocus,
           onFocusText,
