@@ -57,7 +57,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
       label,
       readOnly = false,
       lineNumbers = 'on',
-      wordWrap = 'on',
+      wordWrap = 'off',
       folding = false,
       fontSize = 14,
       monacoContainerStyle,
