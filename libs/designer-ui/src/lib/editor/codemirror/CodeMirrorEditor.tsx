@@ -175,14 +175,22 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
           },
           '.cm-scroller': {
             overflow: 'auto',
-            fontFamily: 'Consolas, "Courier New", monospace',
+            fontFamily: '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            fontWeight: '500',
+            letterSpacing: '0.5px',
+            lineHeight: '1.4',
           },
           '.cm-content': {
             textAlign: 'left',
             padding: '4px 0',
+            fontVariantLigatures: 'none',
           },
           '.cm-line': {
             padding: '0 4px',
+          },
+          '.cm-gutterElement': {
+            fontFamily: '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            fontWeight: '500',
           },
           '.cm-gutters': {
             borderRight: `1px solid ${isInverted ? '#3b3a39' : '#e1e1e1'}`,
