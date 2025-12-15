@@ -17,7 +17,6 @@ function renameIndexHtml(): Plugin {
 
       if (existsSync(indexPath)) {
         renameSync(indexPath, iframePath);
-        console.log('Renamed index.html to iframe.html');
       }
     },
   };
