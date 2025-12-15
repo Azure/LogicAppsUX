@@ -12,6 +12,11 @@ on:
           - major
           - minor
           - patch
+      dry_run:
+        description: 'Dry Run (Skip tagging and GH Release)'
+        required: false
+        default: false
+        type: boolean
   repository_dispatch:
     types: [release]
   schedule:
@@ -80,6 +85,7 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: 'Create and Push Tag'
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           git tag -a ${{ steps.version.outputs.tag_name }} -m "Release ${{ steps.version.outputs.tag_name }}"
           git push origin ${{ steps.version.outputs.tag_name }}
@@ -145,6 +151,7 @@ jobs:
 
       - name: 'Create GitHub Release'
         id: create-release
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -164,7 +171,7 @@ jobs:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.create-release.outputs.tag_name }}
+          ref: ${{ github.event.inputs.dry_run == 'true' && github.ref || needs.create-release.outputs.tag_name }}
           fetch-depth: 0
 
       - name: 'Set up Node.js'
@@ -201,6 +208,7 @@ jobs:
             apps/vs-code-designer/dist/*.vsix
 
       - name: 'Upload VSIX to Release'
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -217,6 +225,7 @@ jobs:
           zip -r AgentChatIFrames-${{ needs.create-release.outputs.tag_name }}.zip AgentChatIFrames
 
       - name: 'Upload Iframe App to Release'
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -277,4 +286,5 @@ jobs:
           node ./productionNpmRCCreator.js
 
       - name: 'Publish to NPM'
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: pnpm run publish --no-git-checks --access public --tag latest
