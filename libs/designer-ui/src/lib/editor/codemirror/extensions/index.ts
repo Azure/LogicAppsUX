@@ -1,2 +1,3 @@
 // Extensions barrel export
-export {};
+export { createEventExtensions } from './events';
+export type { EventExtensionOptions } from './events';
