@@ -12,6 +12,11 @@ on:
           - major
           - minor
           - patch
+      enable_blob_upload:
+        description: 'Upload Iframe App to Azure Blob Storage'
+        required: false
+        default: true
+        type: boolean
   repository_dispatch:
     types: [release]
   schedule:
@@ -236,6 +241,7 @@ jobs:
 
       - name: 'Create Azure Blob Container for Iframe App'
         id: create-container
+        if: ${{ github.event.inputs.enable_blob_upload == 'true' }}
         continue-on-error: true
         run: |
           # Convert tag to valid container name (lowercase, replace dots with hyphens, strip 'v' prefix)
@@ -259,7 +265,7 @@ jobs:
           echo "Created container: $CONTAINER_NAME"
 
       - name: 'Upload Iframe App to Azure Blob Storage'
-        if: steps.create-container.outcome == 'success'
+        if: ${{ github.event.inputs.enable_blob_upload == 'true' && steps.create-container.outcome == 'success' }}
         run: |
           # Upload the zip file
           az storage blob upload \
