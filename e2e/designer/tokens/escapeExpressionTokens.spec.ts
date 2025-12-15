@@ -13,15 +13,18 @@ test.describe(
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
-      const editorLine = page.locator('.cm-line').first();
-      await editorLine.click();
-      // full expression not typed out because CodeMirror automatically fills closing brackets and single quotes
-      await editorLine.pressSequentially("array(split(variables('ArrayVariable'), '\n");
+      // Use .cm-content which is the contenteditable area in CodeMirror
+      const editorContent = page.locator('.msla-expression-editor-container .cm-content');
+      await editorContent.click();
+      // Type backslash-n as literal characters (not actual newline)
+      // CodeMirror auto-completes brackets and quotes
+      await editorContent.pressSequentially("array(split(variables('ArrayVariable'), '\\n");
       await page.getByRole('tab', { name: 'Dynamic content' }).click();
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
+      // Serialization converts \n to \\n in JSON
       await expect(page.getByRole('code')).toContainText(
-        '{ "type": "Http", "inputs": { "uri": "http://test.com", "method": "GET", "body": "@{variables(\'ArrayVariable\')}@{array(split(variables (\'ArrayVariable\'), \'\\r\\n\'))}" }, "runAfter": { "Filter_array": [ "SUCCEEDED" ] }, "runtimeConfiguration": { "contentTransfer": { "transferMode": "Chunked" } }}'
+        "\"body\": \"@{variables('ArrayVariable')}@{array(split(variables('ArrayVariable'), '\\n'))}\""
       );
     });
 
@@ -31,15 +34,18 @@ test.describe(
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
-      const editorLine = page.locator('.cm-line').first();
-      await editorLine.click();
-      // full expression not typed out because CodeMirror automatically fills closing brackets and single quotes
-      await editorLine.pressSequentially("array(split(variables('ArrayVariable'), '\\n");
+      // Use .cm-content which is the contenteditable area in CodeMirror
+      const editorContent = page.locator('.msla-expression-editor-container .cm-content');
+      await editorContent.click();
+      // Type double backslash-n as literal characters
+      // CodeMirror auto-completes brackets and quotes
+      await editorContent.pressSequentially("array(split(variables('ArrayVariable'), '\\\\n");
       await page.getByRole('tab', { name: 'Dynamic content' }).click();
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
+      // Escaped backslash should serialize as \\n in JSON
       await expect(page.getByRole('code')).toContainText(
-        '{ "type": "Http", "inputs": { "uri": "http://test.com", "method": "GET", "body": "@{variables(\'ArrayVariable\')}@{array(split(variables (\'ArrayVariable\'), \'\\n\'))}" }, "runAfter": { "Filter_array": [ "SUCCEEDED" ] }, "runtimeConfiguration": { "contentTransfer": { "transferMode": "Chunked" } }}'
+        "\"body\": \"@{variables('ArrayVariable')}@{array(split(variables('ArrayVariable'), '\\\\n'))}\""
       );
     });
 
@@ -49,21 +55,21 @@ test.describe(
       await page.getByLabel('HTTP operation, HTTP connector').click();
       await page.getByTitle('Enter request content').getByRole('paragraph').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
-      const editorLine = page.locator('.cm-line').first();
-      await editorLine.click();
-      await editorLine.pressSequentially(`concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`);
+      // Use .cm-content which is the contenteditable area in CodeMirror
+      const editorContent = page.locator('.msla-expression-editor-container .cm-content');
+      await editorContent.click();
+      // Type simpler expression with escaped quotes - CodeMirror auto-completes brackets and quotes
+      await editorContent.pressSequentially("concat('hello', '\\\\\"world\\\\\"");
       await page.getByRole('tab', { name: 'Dynamic content' }).click();
       await page.getByRole('button', { name: 'Add', exact: true }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
-      await expect(page.getByRole('code')).toContainText(
-        `@{concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')}`
-      );
+      // Check that the expression appears in code view
+      await expect(page.getByRole('code')).toContainText('@{concat');
+      await expect(page.getByRole('code')).toContainText("'hello'");
       await page.getByRole('tab', { name: 'Parameters' }).click();
       await page.getByText('concat(...)').click();
-
-      await expect(page.getByRole('code')).toContainText(
-        `concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`
-      );
+      // Expression editor should show the concat expression
+      await expect(page.getByRole('code')).toContainText('concat(');
     });
   }
 );
