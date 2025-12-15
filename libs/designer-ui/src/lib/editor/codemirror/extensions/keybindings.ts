@@ -1,5 +1,5 @@
 import type { Extension } from '@codemirror/state';
-import { keymap } from '@codemirror/view';
+import { keymap, EditorView } from '@codemirror/view';
 import { defaultKeymap, historyKeymap } from '@codemirror/commands';
 
 export interface KeybindingExtensionOptions {
@@ -10,6 +10,7 @@ export const createKeybindingExtensions = (options: KeybindingExtensionOptions):
   const extensions: Extension[] = [keymap.of(defaultKeymap), keymap.of(historyKeymap)];
 
   // Alt+/ to open token picker (matching Monaco behavior)
+  // On macOS, Option+/ produces ÷ character, so we need to handle the keydown event directly
   if (options.openTokenPicker) {
     extensions.push(
       keymap.of([
@@ -21,6 +22,22 @@ export const createKeybindingExtensions = (options: KeybindingExtensionOptions):
           },
         },
       ])
+    );
+
+    // Add DOM event handler to catch Alt+/ on macOS before character is produced
+    extensions.push(
+      EditorView.domEventHandlers({
+        keydown: (event: KeyboardEvent) => {
+          // Check for Alt+/ (Option+/ on Mac)
+          if (event.altKey && event.key === '/') {
+            event.preventDefault();
+            event.stopPropagation();
+            options.openTokenPicker?.();
+            return true;
+          }
+          return false;
+        },
+      })
     );
   }
 
