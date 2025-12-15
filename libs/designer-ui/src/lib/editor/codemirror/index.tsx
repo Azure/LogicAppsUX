@@ -1,2 +1,8 @@
 export { CodeMirrorEditor } from './CodeMirrorEditor';
-export type { CodeMirrorEditorProps, CodeMirrorEditorRef, EditorContentChangedEvent } from './types';
+export type {
+  CodeMirrorEditorProps,
+  CodeMirrorEditorRef,
+  EditorContentChangedEvent,
+  CursorPositionChangedEvent,
+  ScrollChangedEvent,
+} from './types';
