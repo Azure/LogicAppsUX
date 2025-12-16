@@ -168,8 +168,6 @@ test.describe('Complete Chat Flow', { tag: '@mock' }, () => {
           return;
         }
 
-        // Unknown method - log it for debugging
-        console.log('[MOCK] Unknown JSON-RPC method:', postData?.method);
         await route.continue();
       } catch (error) {
         console.error('[MOCK] Error parsing request:', error);

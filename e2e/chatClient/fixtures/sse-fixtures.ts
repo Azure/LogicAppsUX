@@ -114,7 +114,6 @@ async function setupSSEMocking(page: Page) {
 
       // Return error response if errorHistory flag is set
       if (shouldReturnError) {
-        console.log('[SSE FIXTURE] Returning error for errorHistory test');
         await route.fulfill({
           status: 500,
           contentType: 'application/json',
@@ -132,7 +131,6 @@ async function setupSSEMocking(page: Page) {
 
       // Return empty sessions array by default (unless withHistory flag is set)
       if (!shouldReturnMockHistory) {
-        console.log('[SSE FIXTURE] Returning empty sessions (default)');
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -262,14 +260,12 @@ async function setupSSEMocking(page: Page) {
     // Handle tasks/list
     if (method === 'tasks/list') {
       const contextId = params?.Id;
-      console.log('[SSE FIXTURE] tasks/list request for context:', contextId);
 
       // Check for error scenario
       const referer = request.headers()['referer'] || '';
       const shouldReturnTasksError = referer.includes('errorTasks=true');
 
       if (shouldReturnTasksError) {
-        console.log('[SSE FIXTURE] Returning error for errorTasks test');
         await route.fulfill({
           status: 500,
           contentType: 'application/json',
@@ -540,15 +536,11 @@ async function setupSSEMocking(page: Page) {
 
     // Handle message/stream with SSE
     if (method === 'message/stream') {
-      console.log(`message full: ${JSON.stringify(params?.message?.parts?.[0], null, 2)}`);
       const userMessage = params?.message?.parts?.[0]?.text ?? '';
       const messageType = params?.message.parts?.[0]?.data?.messageType ?? '';
-      console.log(`messageType ${messageType}`);
-      console.log('[SSE FIXTURE] Generating SSE response for message:', userMessage, messageType);
       const sseContent = generateSSEResponse(id, userMessage, messageType);
 
       // Log the first 500 chars of the response
-      console.log('[SSE FIXTURE] SSE response (first 500 chars):', sseContent.substring(0, 500));
 
       await route.fulfill({
         status: 200,

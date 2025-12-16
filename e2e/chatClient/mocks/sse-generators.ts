@@ -17,7 +17,6 @@ export function generateSSEResponse(requestId: string, userMessage: string, mess
   const artifactId = randomUUID();
 
   let messages: string[] = [];
-  console.log(`user message: ${userMessage}`);
   // Determine response type based on user message
 
   if (userMessage.toLowerCase().includes('code')) {

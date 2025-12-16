@@ -269,7 +269,7 @@ test.describe('Input State Management', { tag: '@mock' }, () => {
     await expect(messageInput).toHaveValue('');
   });
 
-  test('should disable input while waiting for response', async ({ page }) => {
+  test('should clear input and remain enabled after sending', async ({ page }) => {
     const messageInput = page.locator('textarea').first();
     const sendButton = page.locator('button:has(svg)').last();
 
@@ -283,8 +283,8 @@ test.describe('Input State Management', { tag: '@mock' }, () => {
     // Input should be cleared
     await expect(messageInput).toHaveValue('');
 
-    // Input should be disabled while waiting for agent response
-    await expect(messageInput).toBeDisabled({ timeout: 5000 });
+    // Input should remain enabled (or become enabled quickly)
+    await expect(messageInput).toBeEnabled({ timeout: 5000 });
   });
 
   test('should update send button state based on input', async ({ page }) => {

@@ -26,7 +26,7 @@ events.forEach((event, index) => {
     try {
       const parsed = JSON.parse(jsonStr);
       console.log(JSON.stringify(parsed, null, 2));
-    } catch (e) {
+    } catch (_e) {
       console.log('Failed to parse:', jsonStr);
     }
   } else {

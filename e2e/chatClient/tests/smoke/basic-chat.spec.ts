@@ -181,7 +181,7 @@ test.describe('Basic Chat Flow - CRITICAL', { tag: '@mock' }, () => {
     await expect(page.getByText(message)).toBeVisible({ timeout: 5000 });
 
     // Should show "You" label
-    await expect(page.getByText('You')).toBeVisible();
+    await expect(page.getByText('You').first()).toBeVisible();
 
     // Input should be cleared
     await expect(messageInput).toHaveValue('');

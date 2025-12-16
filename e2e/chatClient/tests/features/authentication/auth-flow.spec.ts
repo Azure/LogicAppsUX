@@ -20,8 +20,10 @@ test.describe('Authentication Flows', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
-    // Start new chat
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+    // Start new chat - wait for button to be visible and stable before clicking
+    const startChatButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startChatButton).toBeVisible({ timeout: 10000 });
+    await startChatButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 
@@ -218,7 +220,10 @@ test.describe('Authentication Completion Flow', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+    // Wait for button to be visible and stable before clicking
+    const startChatButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startChatButton).toBeVisible({ timeout: 10000 });
+    await startChatButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 
@@ -320,7 +325,10 @@ test.describe('Authentication Edge Cases', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+    // Wait for button to be visible and stable before clicking
+    const startChatButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startChatButton).toBeVisible({ timeout: 10000 });
+    await startChatButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 

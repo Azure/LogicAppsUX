@@ -65,7 +65,7 @@ test.describe('Username Display', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // User message should appear regardless of username
-    await expect(page.getByText('Test message')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Test message').first()).toBeVisible({ timeout: 5000 });
 
     // Chat interface should not crash and should be functional
     await expect(messageInput).toBeEnabled({ timeout: 10000 });

@@ -55,7 +55,7 @@ test.describe('Long Message Handling', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // User message should appear
-    await expect(page.getByText('Lorem ipsum dolor sit amet', { exact: false })).toBeVisible({
+    await expect(page.getByText('Lorem ipsum dolor sit amet', { exact: false }).first()).toBeVisible({
       timeout: 5000,
     });
 
@@ -255,7 +255,7 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(rtlMessage);
     await sendButton.click();
 
-    await expect(page.getByText(rtlMessage)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(rtlMessage).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle mathematical symbols and special characters', async ({ page }) => {
@@ -266,7 +266,7 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(mathMessage);
     await sendButton.click();
 
-    await expect(page.getByText(mathMessage)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(mathMessage).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle currency and special symbols', async ({ page }) => {
@@ -277,7 +277,7 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(symbolsMessage);
     await sendButton.click();
 
-    await expect(page.getByText(symbolsMessage)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(symbolsMessage).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle box drawing and block characters', async ({ page }) => {

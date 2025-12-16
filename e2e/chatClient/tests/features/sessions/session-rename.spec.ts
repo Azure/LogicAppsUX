@@ -61,8 +61,6 @@ test.describe('Session Rename Functionality', { tag: '@mock' }, () => {
           sessionNames.set(contextId, newName);
         }
 
-        console.log('[SSE FIXTURE] context/update:', { contextId, newName, isArchived });
-
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -506,8 +504,6 @@ test.describe('Session Archive Functionality', { tag: '@mock' }, () => {
         if (isArchived) {
           archivedSessions.add(contextId);
         }
-
-        console.log('[SSE FIXTURE] context/update (archive):', { contextId, isArchived });
 
         await route.fulfill({
           status: 200,
