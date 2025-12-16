@@ -7,6 +7,21 @@
 import { test as base, type Page } from '@playwright/test';
 import { generateSSEResponse, AGENT_CARD } from '../mocks/sse-generators';
 
+// Helper to create a mock JWT token with a given payload
+function createMockJwt(payload: Record<string, unknown>): string {
+  const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const payloadStr = btoa(JSON.stringify(payload));
+  const signature = 'mock-signature';
+  return `${header}.${payloadStr}.${signature}`;
+}
+
+// Default mock JWT with test user name
+const DEFAULT_MOCK_JWT = createMockJwt({
+  name: 'Test User',
+  sub: 'test-user-123',
+  exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+});
+
 async function setupSSEMocking(page: Page) {
   // Log browser console messages to see what's happening
   page.on('console', (msg) => {
@@ -18,11 +33,21 @@ async function setupSSEMocking(page: Page) {
   });
 
   // Mock authentication - return authenticated user to bypass login prompt
+  // Includes access_token JWT with 'name' claim for username extraction
   await page.route('**/.auth/me', async (route) => {
+    const url = route.request().url();
+    const urlParams = new URL(url).searchParams;
+    const customName = urlParams.get('mockUserName');
+
+    // Allow tests to override the username via query param
+    const mockJwt = customName
+      ? createMockJwt({ name: customName, sub: 'test-user-123', exp: Math.floor(Date.now() / 1000) + 3600 })
+      : DEFAULT_MOCK_JWT;
+
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user', access_token: mockJwt }]),
     });
   });
 
