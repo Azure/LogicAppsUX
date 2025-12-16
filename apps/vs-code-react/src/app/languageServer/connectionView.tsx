@@ -114,6 +114,7 @@ export const LanguageServerConnectionView = () => {
     return getDesignerServices(
       baseUrl,
       workflowRuntimeBaseUrl,
+      true,
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,
