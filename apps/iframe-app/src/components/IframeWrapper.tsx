@@ -25,7 +25,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [authenticatedUserName, setAuthenticatedUserName] = useState<string | undefined>(props.userName);
+  const [userName, setUserName] = useState<string | undefined>(props.userName);
   const chatHistoryRef = useRef<ChatHistoryData | null>(null);
 
   // Check if we should wait for postMessage
