@@ -425,6 +425,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
 
     try {
       let queryParams: AgentQueryParams | undefined = undefined;
+      let a2aKey = '';
       let a2aCodeForDraft = '';
       const authentication = await fetchAuthentication(siteResourceId);
 
@@ -440,7 +441,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         const oboData = await fetchOBOData(siteResourceId);
 
         // Add authentication tokens if available
-        const a2aKey = a2aData?.key;
+        a2aKey = a2aData?.key;
         if (a2aKey) {
           queryParams = { apiKey: a2aKey };
 
@@ -450,13 +451,15 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
             queryParams.oboUserToken = oboKey;
           }
         }
+
+        console.log('#> Vars:', { isDraftMode, a2aData, a2aKey, a2aCodeForDraft });
       }
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
       const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
       const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
-      const draftChatUrl = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/*?agentCard=${agentCardUrlForDraft}${a2aCodeForDraft ? `&${a2aCodeForDraft}` : ''}`;
+      const draftChatUrl = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/IFrame?agentCard=${agentCardUrlForDraft}${a2aKey ? `&x-api-key=${a2aKey}` : ''}${a2aCodeForDraft ? `&${a2aCodeForDraft}` : ''}`;
 
       return {
         agentUrl,

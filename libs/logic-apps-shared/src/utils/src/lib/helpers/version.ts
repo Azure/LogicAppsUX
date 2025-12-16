@@ -12,7 +12,7 @@ const parseVersion = (version: string): [number, number, number] => {
   }
 
   const parts = version.split('.');
-  if (parts.length !== 3) {
+  if (parts.length < 3) {
     throw new ArgumentException(`Invalid version format: "${version}". Expected format: "major.minor.patch"`);
   }
 
