@@ -15,7 +15,6 @@ import {
 } from '@fluentui/react-components';
 import { useAllRuns, useRunsInfiniteQuery } from '../../../core/queries/runs';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { useIntl } from 'react-intl';
 import { parseErrorMessage } from '@microsoft/logic-apps-shared';
 import RunHistoryEntry from './runHistoryEntry';
@@ -32,13 +31,13 @@ interface RunHistoryPanelProps {
 export const RunHistoryPanelInstance = (_props: RunHistoryPanelProps) => {
   const intl = useIntl();
   const styles = useRunHistoryPanelStyles();
-  const runsQuery = useRunsInfiniteQuery(true);
+  const runsQuery = useRunsInfiniteQuery();
   const runs = useAllRuns();
-  const selectedRunInstance = useRunInstance();
 
   useEffect(() => {
     runsQuery.refetch();
-  }, [runsQuery, selectedRunInstance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // FILTERING
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
@@ -199,7 +198,7 @@ export const RunHistoryPanelInstance = (_props: RunHistoryPanelProps) => {
                 <RunHistoryEntry
                   key={run.id}
                   runId={run.id}
-                  isSelected={selectedRunInstance?.id === run.id}
+                  isSelected={false}
                   onRunSelected={() => {}}
                   addFilterCallback={addFilterCallback}
                 />
