@@ -152,7 +152,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   }
 
   // Prepare final props
-  const finalProps: ChatWidgetProps = agentCard ? { ...props, agentCard, userName: userName } : { ...props, userName: userName };
+  const finalProps: ChatWidgetProps = { ...props, ...(agentCard && { agentCard }), userName };
 
   // Add auth token if available from Frame Blade
   // Also include OBO token if provided via URL or dataset

@@ -12,6 +12,17 @@ import { test, expect } from '../../../fixtures/sse-fixtures';
 // Agent card URL - intercepted by our fixture
 const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-card.json';
 
+// Helper to encode a string to Base64 with proper UTF-8 support (for Unicode characters)
+function utf8ToBase64(str: string): string {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(str);
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary);
+}
+
 test.describe('Username Display', { tag: '@mock' }, () => {
   test('should display username from JWT in user messages', async ({ page }) => {
     // Navigate to app - fixture will provide JWT with 'Test User' name
@@ -117,8 +128,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
   test('should handle username with special characters', async ({ page }) => {
     // Override the mock to return a username with special characters
     await page.route('**/.auth/me', async (route) => {
-      const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-      const payload = btoa(
+      const header = utf8ToBase64(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+      const payload = utf8ToBase64(
         JSON.stringify({ name: "José O'Connor-Smith <test>", sub: 'test-user', exp: Math.floor(Date.now() / 1000) + 3600 })
       );
       const mockJwt = `${header}.${payload}.mock-signature`;
