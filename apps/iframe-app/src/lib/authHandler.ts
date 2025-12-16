@@ -244,7 +244,6 @@ export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation>
     // /.auth/me returns an array of identity providers, empty array or null if not authenticated
     const isAuthenticated = Array.isArray(data) && data.length > 0;
 
-    // Extract username from JWT if access_token exists
     let username: string | undefined;
     const accessToken = data[0]?.access_token;
     if (accessToken) {

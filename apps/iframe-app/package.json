@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "build:chat": "vite build",
     "dev": "vite",
     "e2e": "E2E=true vite",
     "preview": "vite preview",
