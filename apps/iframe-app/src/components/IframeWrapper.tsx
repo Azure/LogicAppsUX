@@ -92,14 +92,13 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
 
       try {
         const { isAuthenticated, username } = await checkAuthStatus(baseUrl);
-        if (isAuthenticated) {
-          setNeedsLogin(false);
-          if (username) {
-            setAuthenticatedUserName(username);
-          }
+        setNeedsLogin(!isAuthenticated);
+        if (isAuthenticated && username) {
+          setUserName(username);
         }
       } catch (error) {
         console.error('[Auth] Failed to check authentication status:', error);
+        setNeedsLogin(true);
       } finally {
         setIsCheckingAuth(false);
       }
@@ -150,9 +149,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   }
 
   // Prepare final props
-  const finalProps: ChatWidgetProps = agentCard
-    ? { ...props, agentCard, userName: authenticatedUserName }
-    : { ...props, userName: authenticatedUserName };
+  const finalProps: ChatWidgetProps = agentCard ? { ...props, agentCard, userName: userName } : { ...props, userName: userName };
 
   // Add auth token if available from Frame Blade
   // Also include OBO token if provided via URL or dataset
