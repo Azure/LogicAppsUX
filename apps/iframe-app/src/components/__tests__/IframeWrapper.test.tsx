@@ -470,10 +470,10 @@ describe('IframeWrapper', () => {
     });
 
     it('should show chat widget after successful login', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
 
       // Capture the onSuccess callback
-      let onSuccessCallback: (() => void) | undefined;
+      let onSuccessCallback: ((authInfo: authHandler.AuthInformation) => void) | undefined;
       vi.mocked(authHandler.openLoginPopup).mockImplementation((options: any) => {
         onSuccessCallback = options.onSuccess;
       });
@@ -502,10 +502,10 @@ describe('IframeWrapper', () => {
         loginButton.click();
       });
 
-      // Simulate successful login callback
+      // Simulate successful login callback with auth info
       await act(async () => {
         if (onSuccessCallback) {
-          onSuccessCallback();
+          onSuccessCallback({ isAuthenticated: true, error: null, username: 'Test User' });
         }
       });
 

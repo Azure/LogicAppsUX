@@ -49,7 +49,10 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       openLoginPopup({
         baseUrl,
         signInEndpoint: provider.signInEndpoint,
-        onSuccess: () => {
+        onSuccess: (authInfo) => {
+          if (authInfo.username) {
+            setUserName(authInfo.username);
+          }
           setNeedsLogin(false);
           setIsLoggingIn(false);
           setLoginError(null);
