@@ -106,7 +106,6 @@ export const PseudoCommandBar = () => {
             lineNumbers="on"
             scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
             wordWrap="on"
-            wrappingIndent="same"
             height="800px"
             width="800px"
           />

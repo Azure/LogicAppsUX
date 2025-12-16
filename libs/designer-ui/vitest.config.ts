@@ -14,11 +14,5 @@ export default defineProject({
     exclude: ['node_modules', 'build'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
     restoreMocks: true,
-    alias: [
-      {
-        find: /^monaco-editor$/,
-        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
-      },
-    ],
   },
 });

@@ -2,7 +2,7 @@ import { TokenNode } from '../nodes/tokenNode';
 import { TooltipHost } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalEditor } from 'lexical';
-import type { editor } from 'monaco-editor';
+import type { CodeMirrorEditorRef } from '../../codemirror';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -17,7 +17,7 @@ export interface TokenPickerButtonProps {
   buttonOffset?: ButtonOffSet;
   customButton?: boolean;
   setShowTokenPicker?: () => void;
-  codeEditor?: editor.IStandaloneCodeEditor | null;
+  codeEditor?: CodeMirrorEditorRef | null;
 }
 
 interface ButtonProps extends TokenPickerButtonProps {
