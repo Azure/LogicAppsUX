@@ -115,13 +115,27 @@ test.describe('Username Display', { tag: '@mock' }, () => {
 
 test.describe('Username Edge Cases', { tag: '@mock' }, () => {
   test('should handle username with special characters', async ({ page }) => {
+    // Override the mock to return a username with special characters
+    await page.route('**/.auth/me', async (route) => {
+      const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+      const payload = btoa(
+        JSON.stringify({ name: "José O'Connor-Smith <test>", sub: 'test-user', exp: Math.floor(Date.now() / 1000) + 3600 })
+      );
+      const mockJwt = `${header}.${payload}.mock-signature`;
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user', access_token: mockJwt }]),
+      });
+    });
+
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
     await page.getByRole('button', { name: /start a new chat/i }).click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
 
-    // The fixture provides 'Test User' - verify it displays correctly
     const messageInput = page.locator('textarea').first();
     const sendButton = page.locator('button:has(svg)').last();
 
@@ -129,7 +143,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
     await sendButton.click();
 
     await expect(page.getByText('Testing username display')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Test User')).toBeVisible({ timeout: 5000 });
+    // Verify the special character username is displayed correctly
+    await expect(page.getByText("José O'Connor-Smith <test>")).toBeVisible({ timeout: 5000 });
   });
 
   test('should persist username across page interactions', async ({ page }) => {
@@ -154,5 +169,92 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
 
     // Username should still be visible
     await expect(page.getByText('Test User')).toBeVisible();
+  });
+
+  test('should handle missing name claim in JWT gracefully', async ({ page }) => {
+    // Override the mock to return a JWT without a 'name' claim
+    await page.route('**/.auth/me', async (route) => {
+      const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+      // JWT with no 'name' claim - only has sub and exp
+      const payload = btoa(JSON.stringify({ sub: 'test-user-123', exp: Math.floor(Date.now() / 1000) + 3600 }));
+      const mockJwt = `${header}.${payload}.mock-signature`;
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user', access_token: mockJwt }]),
+      });
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+    await page.waitForLoadState('networkidle');
+
+    await page.getByRole('button', { name: /start a new chat/i }).click();
+    await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
+
+    const messageInput = page.locator('textarea').first();
+    const sendButton = page.locator('button:has(svg)').last();
+
+    await messageInput.fill('Test message without username');
+    await sendButton.click();
+
+    // Message should still appear and chat should function normally
+    await expect(page.getByText('Test message without username')).toBeVisible({ timeout: 5000 });
+    // Chat should remain functional
+    await expect(messageInput).toBeEnabled({ timeout: 10000 });
+  });
+
+  test('should handle malformed JWT token gracefully', async ({ page }) => {
+    // Override the mock to return a malformed JWT (invalid base64 in payload)
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user', access_token: 'invalid.not-valid-base64!@#.signature' }]),
+      });
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+    await page.waitForLoadState('networkidle');
+
+    await page.getByRole('button', { name: /start a new chat/i }).click();
+    await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
+
+    const messageInput = page.locator('textarea').first();
+    const sendButton = page.locator('button:has(svg)').last();
+
+    await messageInput.fill('Test with malformed token');
+    await sendButton.click();
+
+    // Chat should still work despite malformed JWT
+    await expect(page.getByText('Test with malformed token')).toBeVisible({ timeout: 5000 });
+    await expect(messageInput).toBeEnabled({ timeout: 10000 });
+  });
+
+  test('should handle missing access_token in auth response', async ({ page }) => {
+    // Override the mock to return auth response without access_token
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
+    await page.waitForLoadState('networkidle');
+
+    await page.getByRole('button', { name: /start a new chat/i }).click();
+    await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
+
+    const messageInput = page.locator('textarea').first();
+    const sendButton = page.locator('button:has(svg)').last();
+
+    await messageInput.fill('Test without access token');
+    await sendButton.click();
+
+    // Chat should still function without username
+    await expect(page.getByText('Test without access token')).toBeVisible({ timeout: 5000 });
+    await expect(messageInput).toBeEnabled({ timeout: 10000 });
   });
 });
