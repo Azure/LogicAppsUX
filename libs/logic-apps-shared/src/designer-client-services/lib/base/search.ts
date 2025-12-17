@@ -202,7 +202,7 @@ export abstract class BaseSearchService implements ISearchService {
 
     const uri = `${connectorId}/apiOperations`;
 
-    const { value } = await this.getAzureResourceByPage(uri, queryParameters, 0, isCustomConnectorId(connectorId) ? 1000 : undefined);
+    const { value } = await this.getAzureResourceByPage(uri, queryParameters, 0, 1000);
 
     return this.removeUnsupportedOperations(value);
   }
