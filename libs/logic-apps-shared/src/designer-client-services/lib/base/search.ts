@@ -8,7 +8,7 @@ import type {
   DiscoveryWorkflowTrigger,
   BuiltInOperation,
 } from '../../../utils/src';
-import { ArgumentException, equals, getResourceNameFromId, isCustomConnectorId, normalizeConnectorIds } from '../../../utils/src';
+import { ArgumentException, equals, isCustomConnectorId, normalizeConnectorIds } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -184,7 +184,7 @@ export abstract class BaseSearchService implements ISearchService {
 
   async getOperationsByConnector(connectorId: string, actionType?: 'triggers' | 'actions'): Promise<DiscoveryOpArray> {
     const {
-      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+      apiHubServiceDetails: { apiVersion },
     } = this.options;
 
     let filter: string | undefined;
@@ -200,11 +200,7 @@ export abstract class BaseSearchService implements ISearchService {
       ...(filter ? { $filter: filter } : {}),
     };
 
-    const uri = isCustomConnectorId(connectorId)
-      ? `${connectorId}/apiOperations`
-      : `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/${getResourceNameFromId(
-          connectorId
-        )}/apiOperations`;
+    const uri = `${connectorId}/apiOperations`;
 
     const { value } = await this.getAzureResourceByPage(uri, queryParameters, 0, isCustomConnectorId(connectorId) ? 1000 : undefined);
 
