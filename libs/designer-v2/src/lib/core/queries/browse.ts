@@ -418,22 +418,14 @@ const filterOperationsByConnector = (
 export const useOperationsByConnector = (connectorId: string, actionType?: 'triggers' | 'actions') => {
   // Use the existing cached built-in operations
   const { data: builtInOperations } = useBuiltInOperationsQuery();
-  // Use the existing cached custom operations
-  const { data: customOperations } = useCustomOperationsLazyQuery();
 
   return useQuery(
     ['operationsByConnector', connectorId, actionType],
     async () => {
-      // For managed/Azure connectors - use specific API call
-      if (isManagedConnector(connectorId)) {
+      // For managed/Azure and custom connectors - use specific API call
+      if (isManagedConnector(connectorId) || isCustomConnectorId(connectorId)) {
         const data = await SearchService().getOperationsByConnector?.(connectorId, actionType);
         return data || [];
-      }
-
-      // For custom connectors - filter from cached custom operations
-      if (isCustomConnectorId(connectorId)) {
-        const allCustomOperations = customOperations?.pages.flatMap((page) => page.data) ?? [];
-        return filterOperationsByConnector(allCustomOperations, connectorId, actionType);
       }
 
       // For all built-in operations (both client and server) - filter from cached data
