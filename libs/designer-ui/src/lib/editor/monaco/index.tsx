@@ -5,6 +5,7 @@
 
 // Re-export the editor component with Monaco name
 export { CodeMirrorEditor as MonacoEditor } from '../codemirror';
+export { CodeMirrorEditor } from '../codemirror';
 
 // Re-export types with Monaco-compatible names
 export type {

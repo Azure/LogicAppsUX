@@ -32,6 +32,7 @@ export interface CodeMirrorEditorProps {
     vertical?: 'auto' | 'hidden' | 'visible';
   };
   monacoContainerStyle?: React.CSSProperties;
+  indentWithTab?: boolean;
 
   // Event callbacks
   onBlur?(): void;
