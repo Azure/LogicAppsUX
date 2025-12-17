@@ -80,6 +80,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
       onEditorRef,
       onMouseDown,
       openTokenPicker,
+      indentWithTab,
     },
     ref
   ) => {
@@ -171,7 +172,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
           onScrollChanged,
           onMouseDown,
         }),
-        keybindingsCompartment.of(createKeybindingExtensions({ openTokenPicker })),
+        keybindingsCompartment.of(createKeybindingExtensions({ openTokenPicker, indentWithTab })),
         EditorView.theme({
           '&': {
             fontSize: `${fontSize}px`,
@@ -275,10 +276,10 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
     useEffect(() => {
       if (viewRef.current) {
         viewRef.current.dispatch({
-          effects: keybindingsCompartment.reconfigure(createKeybindingExtensions({ openTokenPicker })),
+          effects: keybindingsCompartment.reconfigure(createKeybindingExtensions({ openTokenPicker, indentWithTab })),
         });
       }
-    }, [openTokenPicker]);
+    }, [openTokenPicker, indentWithTab]);
 
     // Update value when controlled value changes
     useEffect(() => {
