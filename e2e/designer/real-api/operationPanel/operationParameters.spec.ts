@@ -7,7 +7,6 @@ test.describe(
   },
   () => {
     test('Parameters sanity check', async ({ page, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow('OperationParameters');
 
       // Checks parameters are rendering correctly

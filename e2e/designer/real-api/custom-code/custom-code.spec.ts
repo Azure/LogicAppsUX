@@ -11,7 +11,6 @@ test.describe(
     });
 
     test('Inline Javascript', async ({ page, browserName, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow();
       await page.getByTestId('msla-plus-button-when_a_http_request_is_received-response').click();
       await page.getByTestId('msla-add-button-when_a_http_request_is_received-response').click({ force: true });

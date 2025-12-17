@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { LoadMockDirect } from '../utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from '../utils/designerFunctions';
 
 test.describe(
@@ -9,8 +9,7 @@ test.describe(
   },
   async () => {
     test('Tokens should be removed from parameters when operation is deleted', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       const serializedOld: any = await getSerializedWorkflowFromState(page);
       expect(serializedOld.definition.actions.Filter_array.inputs.from).toEqual("@{body('Parse_JSON')}test");
       await page.getByLabel('Parse JSON operation, Data').click({
@@ -24,9 +23,7 @@ test.describe(
       expect(JSON.stringify(serializedNew)).not.toContain("@{body('Parse_JSON')}");
     });
     test('Tokens should be removed from parameters when variable is deleted', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       const serializedOld: any = await getSerializedWorkflowFromState(page);
       expect(serializedOld.definition.actions.Parse_JSON.inputs.content).toEqual(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
@@ -47,9 +44,7 @@ test.describe(
     });
 
     test('Tokens should be removed from parameters when trigger is deleted', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       const serializedOld: any = await getSerializedWorkflowFromState(page);
       expect
         .soft(serializedOld.definition.actions.Parse_JSON.inputs.content)
@@ -70,9 +65,7 @@ test.describe(
     });
 
     test('Tokens should be removed from parameters when workflow parameter is deleted', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       const serializedOld: any = await getSerializedWorkflowFromState(page);
       expect(serializedOld.definition.actions.Parse_JSON.inputs.content).toEqual(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
@@ -96,9 +89,7 @@ test.describe(
       );
     });
     test('Output should be correct when multiple tokens get removed by removing source', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       const serializedOld: any = await getSerializedWorkflowFromState(page);
       expect(serializedOld.definition.actions.Parse_JSON.inputs.content).toEqual(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
