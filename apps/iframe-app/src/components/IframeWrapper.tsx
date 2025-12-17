@@ -5,6 +5,7 @@ import { LoadingDisplay } from './LoadingDisplay';
 import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
+import { useVSCodeCommunication } from '../lib/hooks/useVSCodeCommunication';
 import { getBaseUrl, openLoginPopup, createUnauthorizedHandler, checkAuthStatus } from '../lib/authHandler';
 import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
@@ -15,7 +16,7 @@ interface IframeWrapperProps {
 }
 
 export function IframeWrapper({ config }: IframeWrapperProps) {
-  const { props, multiSession, apiKey, oboUserToken, mode: initialMode = 'light', inPortal, trustedParentOrigin, contextId } = config;
+  const { props, multiSession, apiKey, oboUserToken, mode: initialMode = 'light', inPortal, inVSCode, trustedParentOrigin, contextId } = config;
 
   // State
   const [agentCard, setAgentCard] = useState<any>(null);
@@ -125,6 +126,19 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     onAgentCardReceived: setAgentCard,
   });
 
+  // VS Code communication for auth popups
+  const { openAuthPopup } = useVSCodeCommunication({
+    enabled: inVSCode || false,
+  });
+
+  // Create the onOpenAuthPopup handler for VS Code context
+  const handleOpenAuthPopup = useMemo(() => {
+    if (!inVSCode) {
+      return undefined; // Use default popup behavior
+    }
+    return openAuthPopup;
+  }, [inVSCode, openAuthPopup]);
+
   // Show loading states
   if (expectPostMessage && isWaitingForAgentCard) {
     return <LoadingDisplay title="Waiting for Configuration" message="Waiting for agent card data via postMessage..." />;
@@ -189,6 +203,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
           }}
           {...propsWithAuth}
           mode={mode}
+          onOpenAuthPopup={handleOpenAuthPopup}
         />
       </FluentProvider>
     );
@@ -210,6 +225,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         sessionKey={sessionKey}
         storageConfig={storageConfig}
         initialContextId={initialContextId}
+        onOpenAuthPopup={handleOpenAuthPopup}
       />
     </FluentProvider>
   );

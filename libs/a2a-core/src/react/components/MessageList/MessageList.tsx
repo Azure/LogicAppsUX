@@ -31,6 +31,7 @@ interface MessageListProps {
   onAuthCanceled?: () => void;
   sessionId?: string; // For multi-session mode
   contextId?: string; // For single-session mode (fallback)
+  onOpenAuthPopup?: (url: string, index: number) => Promise<{ success: boolean; error?: string }>;
 }
 
 export function MessageList({
@@ -41,6 +42,7 @@ export function MessageList({
   onAuthCanceled,
   sessionId,
   contextId,
+  onOpenAuthPopup,
 }: MessageListProps) {
   const styles = useStyles();
 
@@ -104,6 +106,7 @@ export function MessageList({
           userName={userName}
           onAuthCompleted={onAuthCompleted}
           onAuthCanceled={onAuthCanceled}
+          onOpenAuthPopup={onOpenAuthPopup}
         />
       ))}
 

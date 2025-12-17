@@ -1,9 +1,10 @@
 import type { AgentCard } from '../../types';
 import type { AuthConfig, AuthRequiredPart, IdentityProvider } from '../../client/types';
 import type { StorageConfig } from '../../storage/history-storage';
+import type { OpenAuthPopupHandler } from '../components/Message/AuthenticationMessage';
 
 // Re-export types from main module
-export type { AgentCard, AuthConfig, AuthRequiredPart, StorageConfig, IdentityProvider };
+export type { AgentCard, AuthConfig, AuthRequiredPart, StorageConfig, IdentityProvider, OpenAuthPopupHandler };
 
 // Define and export message roles and statuses
 export type MessageRole = 'user' | 'assistant' | 'system';
@@ -162,4 +163,5 @@ export interface ChatWidgetProps {
   initialContextId?: string; // Initial context ID for resuming existing server-side conversations
   sessionId?: string; // For multi-session mode - enables session-specific message isolation
   identityProviders?: Record<string, IdentityProvider>; // Identity providers configuration
+  onOpenAuthPopup?: OpenAuthPopupHandler; // Custom popup handler for environments that don't support window.open() (e.g., VS Code)
 }

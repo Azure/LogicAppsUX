@@ -8,6 +8,7 @@ export interface IframeConfig {
   oboUserToken?: string;
   mode?: 'light' | 'dark';
   inPortal?: boolean;
+  inVSCode?: boolean;
   trustedParentOrigin?: string;
   contextId?: string;
 }
@@ -187,6 +188,9 @@ export function parseIframeConfig(): IframeConfig {
     trustedParentOrigin = portalValidation.trustedParentOrigin;
   }
 
+  // Check VS Code context
+  const inVSCode = params.get('inVSCode') === 'true';
+
   // Get agent card URL
   const agentCard = extractAgentCardUrl(params, dataset);
 
@@ -250,6 +254,7 @@ export function parseIframeConfig(): IframeConfig {
     oboUserToken,
     mode,
     inPortal,
+    inVSCode,
     trustedParentOrigin,
     contextId,
   };

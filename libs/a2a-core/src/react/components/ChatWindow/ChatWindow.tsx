@@ -168,6 +168,7 @@ export function ChatWindow(props: ChatWindowProps) {
     storageConfig,
     initialContextId,
     mode = 'light',
+    onOpenAuthPopup,
   } = props;
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -299,6 +300,7 @@ export function ChatWindow(props: ChatWindowProps) {
           onAuthCanceled={handleAuthCanceled}
           sessionId={props.sessionId}
           contextId={contextId}
+          onOpenAuthPopup={onOpenAuthPopup}
         />
       </div>
 

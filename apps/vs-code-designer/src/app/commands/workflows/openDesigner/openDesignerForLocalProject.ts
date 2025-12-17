@@ -275,6 +275,23 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       }
       case ExtensionCommand.openOauthLoginPopup: {
         await env.openExternal(msg.url);
+        // If requestId is provided, this is a chat auth popup request from the iframe
+        // Since VS Code can't track external browser window closure, we use a delay-based approach:
+        // - Open the auth URL in the system browser
+        // - Wait a reasonable time for user to complete authentication
+        // - Send success response back to the iframe
+        // If auth actually failed, the user can click "Sign In" again
+        if (msg.requestId) {
+          setTimeout(() => {
+            this.sendMsgToWebview({
+              command: ExtensionCommand.completeOauthLogin,
+              value: {
+                requestId: msg.requestId,
+                code: 'valid',
+              },
+            });
+          }, 5000); // 5 seconds - gives user time to complete auth
+        }
         break;
       }
 

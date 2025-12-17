@@ -142,12 +142,7 @@ const useStyles = makeStyles({
     height: '0px',
     ...shorthands.borderStyle('solid'),
     ...shorthands.borderWidth('8px', '8px', '8px', '0px'),
-    ...shorthands.borderColor(
-      'transparent',
-      tokens.colorNeutralBackground1,
-      'transparent',
-      'transparent'
-    ),
+    ...shorthands.borderColor('transparent', tokens.colorNeutralBackground1, 'transparent', 'transparent'),
     '&::before': {
       content: '""',
       position: 'absolute',
@@ -157,12 +152,7 @@ const useStyles = makeStyles({
       height: '0px',
       ...shorthands.borderStyle('solid'),
       ...shorthands.borderWidth('8px', '8px', '8px', '0px'),
-      ...shorthands.borderColor(
-        'transparent',
-        tokens.colorNeutralStroke1,
-        'transparent',
-        'transparent'
-      ),
+      ...shorthands.borderColor('transparent', tokens.colorNeutralStroke1, 'transparent', 'transparent'),
     },
   },
   metadata: {
@@ -391,6 +381,7 @@ interface MessageProps {
   onAuthCompleted?: () => void;
   onAuthCanceled?: () => void;
   onRetry?: (messageId: string) => void;
+  onOpenAuthPopup?: (url: string, index: number) => Promise<{ success: boolean; error?: string }>;
 }
 
 function MessageComponent({
@@ -400,6 +391,7 @@ function MessageComponent({
   onAuthCompleted,
   onAuthCanceled,
   onRetry,
+  onOpenAuthPopup,
 }: MessageProps) {
   const styles = useStyles();
 
@@ -428,6 +420,7 @@ function MessageComponent({
             }
           }}
           onCancel={onAuthCanceled}
+          onOpenAuthPopup={onOpenAuthPopup}
         />
       </div>
     );
@@ -459,14 +452,12 @@ function MessageComponent({
 
   const handleDownloadAll = () => {
     if (isGroupedArtifact && message.metadata?.artifacts) {
-      message.metadata.artifacts.forEach(
-        (artifact: { name: string; rawContent: string }, index: number) => {
-          setTimeout(() => {
-            const mimeType = getMimeType(artifact.name);
-            downloadFile(artifact.rawContent, artifact.name, mimeType);
-          }, index * 100); // Small delay between downloads
-        }
-      );
+      message.metadata.artifacts.forEach((artifact: { name: string; rawContent: string }, index: number) => {
+        setTimeout(() => {
+          const mimeType = getMimeType(artifact.name);
+          downloadFile(artifact.rawContent, artifact.name, mimeType);
+        }, index * 100); // Small delay between downloads
+      });
     }
   };
 
@@ -483,20 +474,13 @@ function MessageComponent({
       const language = getLanguageFromFilename(artifactName || '');
       if (message.metadata?.isCodeFile && language && Prism.languages[language]) {
         try {
-          const highlighted = Prism.highlight(
-            message.metadata.rawContent,
-            Prism.languages[language],
-            language
-          );
+          const highlighted = Prism.highlight(message.metadata.rawContent, Prism.languages[language], language);
           return (
             <div className={styles.codeBlockWrapper}>
               <CodeBlockHeader language={language} code={message.metadata.rawContent} />
               <div className={styles.codeBlockContent}>
                 <pre>
-                  <code
-                    className={`language-${language}`}
-                    dangerouslySetInnerHTML={{ __html: highlighted }}
-                  />
+                  <code className={`language-${language}`} dangerouslySetInnerHTML={{ __html: highlighted }} />
                 </pre>
               </div>
             </div>
@@ -530,9 +514,7 @@ function MessageComponent({
         if (match.index > lastIndex) {
           const textContent = message.content.slice(lastIndex, match.index);
           const html = marked.parse(textContent, { gfm: true, breaks: true }) as string;
-          elements.push(
-            <div key={`text-${lastIndex}`} dangerouslySetInnerHTML={{ __html: html }} />
-          );
+          elements.push(<div key={`text-${lastIndex}`} dangerouslySetInnerHTML={{ __html: html }} />);
         }
 
         // Add the code block with header
@@ -553,10 +535,7 @@ function MessageComponent({
             <CodeBlockHeader language={language} code={code} />
             <div className={styles.codeBlockContent}>
               <pre>
-                <code
-                  className={language ? `language-${language}` : ''}
-                  dangerouslySetInnerHTML={{ __html: highlighted }}
-                />
+                <code className={language ? `language-${language}` : ''} dangerouslySetInnerHTML={{ __html: highlighted }} />
               </pre>
             </div>
           </div>
@@ -626,18 +605,8 @@ function MessageComponent({
   };
 
   return (
-    <div
-      className={mergeClasses(
-        styles.messageWrapper,
-        isUser ? styles.userMessage : styles.assistantMessage
-      )}
-    >
-      <div
-        className={mergeClasses(
-          styles.messageContainer,
-          message.files && message.files.length > 0 && styles.messageContainerWithFiles
-        )}
-      >
+    <div className={mergeClasses(styles.messageWrapper, isUser ? styles.userMessage : styles.assistantMessage)}>
+      <div className={mergeClasses(styles.messageContainer, message.files && message.files.length > 0 && styles.messageContainerWithFiles)}>
         <Text className={styles.senderName}>{senderName}</Text>
         <div className={styles.messageBubble}>
           <div className={isUser ? styles.userBubble : styles.assistantBubble}>
@@ -646,103 +615,69 @@ function MessageComponent({
                 <div className={styles.groupedHeader}>
                   <div className={styles.artifactInfo}>
                     <FolderRegular />
-                    <Text weight="semibold">
-                      {message.metadata.artifacts.length} files generated
-                    </Text>
+                    <Text weight="semibold">{message.metadata.artifacts.length} files generated</Text>
                   </div>
-                  <Button
-                    appearance="primary"
-                    icon={<ArrowDownloadRegular />}
-                    onClick={handleDownloadAll}
-                  >
+                  <Button appearance="primary" icon={<ArrowDownloadRegular />} onClick={handleDownloadAll}>
                     Download All
                   </Button>
                 </div>
                 <div className={styles.artifactList}>
-                  {message.metadata.artifacts.map(
-                    (
-                      artifact: { name: string; rawContent: string; isCodeFile?: boolean },
-                      index: number
-                    ) => (
-                      <div key={index} className={styles.artifactItem}>
-                        <div className={styles.artifactInfo}>
-                          <DocumentRegular />
-                          <Text>{artifact.name}</Text>
-                        </div>
-                        <div className={styles.artifactActions}>
-                          <Tooltip content={`Download ${artifact.name}`} relationship="label">
-                            <Button
-                              appearance="subtle"
-                              icon={<ArrowDownloadRegular />}
-                              onClick={() => handleDownload(index)}
-                            />
-                          </Tooltip>
-                          <Tooltip
-                            content={
-                              selectedArtifactIndex === index ? 'Hide content' : 'View content'
-                            }
-                            relationship="label"
-                          >
-                            <Button
-                              appearance="subtle"
-                              icon={
-                                selectedArtifactIndex === index ? <EyeOffRegular /> : <EyeRegular />
-                              }
-                              onClick={() =>
-                                setSelectedArtifactIndex(
-                                  selectedArtifactIndex === index ? null : index
-                                )
-                              }
-                            />
-                          </Tooltip>
-                        </div>
+                  {message.metadata.artifacts.map((artifact: { name: string; rawContent: string; isCodeFile?: boolean }, index: number) => (
+                    <div key={index} className={styles.artifactItem}>
+                      <div className={styles.artifactInfo}>
+                        <DocumentRegular />
+                        <Text>{artifact.name}</Text>
                       </div>
-                    )
-                  )}
-                </div>
-                {selectedArtifactIndex !== null &&
-                  message.metadata.artifacts[selectedArtifactIndex] && (
-                    <div className={styles.artifactContent}>
-                      {(() => {
-                        const artifact = message.metadata.artifacts[selectedArtifactIndex];
-                        const language = getLanguageFromFilename(artifact.name);
-                        if (artifact.isCodeFile && language && Prism.languages[language]) {
-                          try {
-                            const highlighted = Prism.highlight(
-                              artifact.rawContent,
-                              Prism.languages[language],
-                              language
-                            );
-                            return (
-                              <div className={styles.codeBlockWrapper}>
-                                <CodeBlockHeader language={language} code={artifact.rawContent} />
-                                <div className={styles.codeBlockContent}>
-                                  <pre>
-                                    <code
-                                      className={`language-${language}`}
-                                      dangerouslySetInnerHTML={{ __html: highlighted }}
-                                    />
-                                  </pre>
-                                </div>
-                              </div>
-                            );
-                          } catch (err) {
-                            console.error('Prism highlight error:', err);
-                          }
-                        }
-                        return (
-                          <div className={styles.codeBlockWrapper}>
-                            <CodeBlockHeader language="" code={artifact.rawContent} />
-                            <div className={styles.codeBlockContent}>
-                              <pre>
-                                <code>{artifact.rawContent}</code>
-                              </pre>
-                            </div>
-                          </div>
-                        );
-                      })()}
+                      <div className={styles.artifactActions}>
+                        <Tooltip content={`Download ${artifact.name}`} relationship="label">
+                          <Button appearance="subtle" icon={<ArrowDownloadRegular />} onClick={() => handleDownload(index)} />
+                        </Tooltip>
+                        <Tooltip content={selectedArtifactIndex === index ? 'Hide content' : 'View content'} relationship="label">
+                          <Button
+                            appearance="subtle"
+                            icon={selectedArtifactIndex === index ? <EyeOffRegular /> : <EyeRegular />}
+                            onClick={() => setSelectedArtifactIndex(selectedArtifactIndex === index ? null : index)}
+                          />
+                        </Tooltip>
+                      </div>
                     </div>
-                  )}
+                  ))}
+                </div>
+                {selectedArtifactIndex !== null && message.metadata.artifacts[selectedArtifactIndex] && (
+                  <div className={styles.artifactContent}>
+                    {(() => {
+                      const artifact = message.metadata.artifacts[selectedArtifactIndex];
+                      const language = getLanguageFromFilename(artifact.name);
+                      if (artifact.isCodeFile && language && Prism.languages[language]) {
+                        try {
+                          const highlighted = Prism.highlight(artifact.rawContent, Prism.languages[language], language);
+                          return (
+                            <div className={styles.codeBlockWrapper}>
+                              <CodeBlockHeader language={language} code={artifact.rawContent} />
+                              <div className={styles.codeBlockContent}>
+                                <pre>
+                                  <code className={`language-${language}`} dangerouslySetInnerHTML={{ __html: highlighted }} />
+                                </pre>
+                              </div>
+                            </div>
+                          );
+                        } catch (err) {
+                          console.error('Prism highlight error:', err);
+                        }
+                      }
+                      return (
+                        <div className={styles.codeBlockWrapper}>
+                          <CodeBlockHeader language="" code={artifact.rawContent} />
+                          <div className={styles.codeBlockContent}>
+                            <pre>
+                              <code>{artifact.rawContent}</code>
+                            </pre>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             ) : isArtifact && artifactName ? (
               <Card className={styles.artifactCard}>
@@ -751,12 +686,7 @@ function MessageComponent({
                   header={<Text weight="semibold">{artifactName}</Text>}
                   action={
                     <div className={styles.artifactActions}>
-                      <Button
-                        appearance="primary"
-                        size="small"
-                        icon={<ArrowDownloadRegular />}
-                        onClick={() => handleDownload()}
-                      >
+                      <Button appearance="primary" size="small" icon={<ArrowDownloadRegular />} onClick={() => handleDownload()}>
                         Download
                       </Button>
                       <Button
@@ -779,16 +709,8 @@ function MessageComponent({
               <div className={styles.fileContainer}>
                 {message.files.map((file, index) => {
                   // Validate that mimeType is a safe image type
-                  const allowedImageTypes = [
-                    'image/png',
-                    'image/jpeg',
-                    'image/jpg',
-                    'image/gif',
-                    'image/webp',
-                    'image/svg+xml',
-                  ];
-                  const isImage =
-                    file.mimeType && allowedImageTypes.includes(file.mimeType.toLowerCase());
+                  const allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
+                  const isImage = file.mimeType && allowedImageTypes.includes(file.mimeType.toLowerCase());
 
                   if (isImage) {
                     return (
@@ -832,9 +754,7 @@ function MessageComponent({
           <div className={styles.errorBanner} role="alert" aria-live="polite">
             <ErrorCircleRegular className={styles.errorIcon} />
             <Text className={styles.errorMessage}>
-              {message.error
-                ? getUserFriendlyErrorMessage(message.error)
-                : 'Failed to send message'}
+              {message.error ? getUserFriendlyErrorMessage(message.error) : 'Failed to send message'}
             </Text>
             {onRetry && (
               <Button

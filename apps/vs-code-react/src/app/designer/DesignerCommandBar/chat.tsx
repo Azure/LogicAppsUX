@@ -26,9 +26,11 @@ import {
   Info24Filled,
   Info24Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { useIntlFormatters, useIntlMessages, chatMessages } from '../../../intl';
+import { VSCodeContext } from '../../../webviewCommunication';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 
 const ChatIcon = bundleIcon(Chat24Filled, Chat24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -79,11 +81,84 @@ export const ChatButton = (props: ChatButtonProps) => {
   const [onDialogOpen, setOnDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const infoButtonRef = useRef<HTMLButtonElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const pendingAuthRequests = useRef<Map<string, { resolve: (success: boolean) => void }>>(new Map());
+
+  const vscode = useContext(VSCodeContext);
 
   const agentChatUrl = useMemo(() => data?.chatUrl, [data?.chatUrl]);
 
   const intlText = useIntlMessages(chatMessages);
   const format = useIntlFormatters(chatMessages);
+
+  // Handle messages from the chat iframe for auth popup requests
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const message = event.data;
+
+      // Handle auth popup request from iframe
+      if (message && message.type === 'VSCODE_OPEN_AUTH_POPUP') {
+        const { url, requestId } = message.data;
+        console.log('[ChatButton] Received auth popup request:', { url, requestId });
+
+        // Store the pending request
+        pendingAuthRequests.current.set(requestId, {
+          resolve: (success: boolean) => {
+            // Send result back to iframe
+            if (iframeRef.current?.contentWindow) {
+              iframeRef.current.contentWindow.postMessage(
+                {
+                  type: 'VSCODE_AUTH_POPUP_RESULT',
+                  data: { requestId, success, error: success ? undefined : 'Authentication failed or was cancelled' },
+                },
+                '*'
+              );
+            }
+          },
+        });
+
+        // Send message to VS Code extension to open the popup
+        vscode.postMessage({
+          command: ExtensionCommand.openOauthLoginPopup,
+          url,
+          requestId, // Pass requestId so extension can track it
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [vscode]);
+
+  // Listen for OAuth completion from extension
+  useEffect(() => {
+    const handleExtensionMessage = (event: MessageEvent) => {
+      const message = event.data;
+
+      // Handle OAuth completion from extension
+      if (message && message.command === ExtensionCommand.completeOauthLogin) {
+        const { requestId, code, error } = message.value || {};
+
+        // If we have a requestId, resolve the specific pending request
+        if (requestId && pendingAuthRequests.current.has(requestId)) {
+          const pending = pendingAuthRequests.current.get(requestId);
+          pending?.resolve(!error && !!code);
+          pendingAuthRequests.current.delete(requestId);
+        } else {
+          // Fallback: resolve the most recent pending request (for backward compatibility)
+          const entries = Array.from(pendingAuthRequests.current.entries());
+          if (entries.length > 0) {
+            const [lastRequestId, pending] = entries[entries.length - 1];
+            pending.resolve(!error);
+            pendingAuthRequests.current.delete(lastRequestId);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('message', handleExtensionMessage);
+    return () => window.removeEventListener('message', handleExtensionMessage);
+  }, []);
 
   const onOpenChange = useCallback(
     async (open?: boolean) => {
@@ -139,9 +214,15 @@ export const ChatButton = (props: ChatButtonProps) => {
       return <Spinner size="medium" label={intlText.LOADING} />;
     }
 
+    // Build the iframe URL with VS Code mode enabled
+    const baseUrl = agentChatUrl || '';
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    const iframeUrl = `${baseUrl}${separator}apiKey=${data?.queryParams?.apiKey}&inVSCode=true${isDarkMode ? '&mode=dark' : ''}`;
+
     return (
       <iframe
-        src={`${agentChatUrl}${agentChatUrl?.includes('?') ? '&' : '?'}apiKey=${data?.queryParams?.apiKey}${isDarkMode ? '&mode=dark' : ''}`}
+        ref={iframeRef}
+        src={iframeUrl}
         title={intlText.TITLE}
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
         referrerPolicy="strict-origin-when-cross-origin"

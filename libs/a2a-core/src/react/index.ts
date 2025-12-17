@@ -51,7 +51,7 @@ export { SessionList } from './components/SessionList';
 export type { SessionListProps } from './components/SessionList';
 // Authentication component
 export { AuthenticationMessage } from './components/Message/AuthenticationMessage';
-export type { AuthenticationMessageProps } from './components/Message/AuthenticationMessage';
+export type { AuthenticationMessageProps, AuthPopupResult, OpenAuthPopupHandler } from './components/Message/AuthenticationMessage';
 
 // Utilities (for advanced usage)
 export { generateMessageId, createMessage, formatCodeContent } from './utils/messageUtils';

@@ -78,6 +78,21 @@ const useStyles = makeStyles({
   },
 });
 
+/**
+ * Result of an authentication popup operation
+ */
+export interface AuthPopupResult {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Handler for opening authentication popups.
+ * Used to delegate popup handling to parent contexts (e.g., VS Code extension)
+ * that may not support window.open().
+ */
+export type OpenAuthPopupHandler = (url: string, index: number) => Promise<AuthPopupResult>;
+
 export interface AuthenticationMessageProps {
   authParts: AuthRequiredPart[];
   status: AuthenticationStatus;
@@ -85,6 +100,9 @@ export interface AuthenticationMessageProps {
   onAuthenticate?: (updatedParts: AuthRequiredPart[]) => void;
   // Called when user cancels authentication
   onCancel?: () => void;
+  // Optional custom popup handler for environments that don't support window.open()
+  // If provided, this will be used instead of the default openPopupWindow
+  onOpenAuthPopup?: OpenAuthPopupHandler;
 }
 
 interface AuthPartState extends AuthRequiredPart {
@@ -93,7 +111,7 @@ interface AuthPartState extends AuthRequiredPart {
   error?: string;
 }
 
-export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCancel }: AuthenticationMessageProps) => {
+export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCancel, onOpenAuthPopup }: AuthenticationMessageProps) => {
   const styles = useStyles();
   const [localStatus, setLocalStatus] = useState<AuthenticationStatus>(status);
   const [authStates, setAuthStates] = useState<AuthPartState[]>(() =>
@@ -118,6 +136,7 @@ export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCan
         consentLink: authPart?.consentLink,
         isAuthenticated: authPart?.isAuthenticated,
         isAuthenticating: authPart?.isAuthenticating,
+        hasCustomPopupHandler: !!onOpenAuthPopup,
       });
 
       if (!authPart || authPart.isAuthenticated || authPart.isAuthenticating) {
@@ -134,14 +153,28 @@ export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCan
 
       try {
         console.log('[AuthenticationMessage] Opening popup with URL:', authPart.consentLink);
-        // Open popup for authentication
-        const result = await openPopupWindow(authPart.consentLink, `auth-${index}`, {
-          width: 800,
-          height: 600,
-        });
-        console.log('[AuthenticationMessage] Popup closed with result:', result);
 
-        if (result.closed && !result.error) {
+        let success = false;
+        let errorMessage: string | undefined;
+
+        // Use custom popup handler if provided (e.g., for VS Code)
+        if (onOpenAuthPopup) {
+          console.log('[AuthenticationMessage] Using custom popup handler');
+          const result = await onOpenAuthPopup(authPart.consentLink, index);
+          success = result.success;
+          errorMessage = result.error;
+        } else {
+          // Default: Open popup for authentication using window.open
+          const result = await openPopupWindow(authPart.consentLink, `auth-${index}`, {
+            width: 800,
+            height: 600,
+          });
+          console.log('[AuthenticationMessage] Popup closed with result:', result);
+          success = result.closed && !result.error;
+          errorMessage = result.error?.message;
+        }
+
+        if (success) {
           // Authentication successful
           setAuthStates((prev) => {
             const newStates = [...prev];
@@ -161,7 +194,7 @@ export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCan
             return newStates;
           });
         } else {
-          throw result.error || new Error('Authentication was cancelled');
+          throw new Error(errorMessage || 'Authentication was cancelled');
         }
       } catch (error) {
         // Authentication failed
@@ -176,7 +209,7 @@ export const AuthenticationMessage = ({ authParts, status, onAuthenticate, onCan
         });
       }
     },
-    [authStates, onAuthenticate]
+    [authStates, onAuthenticate, onOpenAuthPopup]
   );
 
   const handleCancel = useCallback(() => {
