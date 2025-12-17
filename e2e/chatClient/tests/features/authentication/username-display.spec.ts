@@ -14,13 +14,8 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 // Helper to encode a string to Base64 with proper UTF-8 support (for Unicode characters)
 function utf8ToBase64(str: string): string {
-  const encoder = new TextEncoder();
-  const bytes = encoder.encode(str);
-  let binary = '';
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
-  }
-  return btoa(binary);
+  // Use Buffer in Node.js environment (Playwright runs in Node)
+  return Buffer.from(str, 'utf-8').toString('base64');
 }
 
 test.describe('Username Display', { tag: '@mock' }, () => {
@@ -185,9 +180,9 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
   test('should handle missing name claim in JWT gracefully', async ({ page }) => {
     // Override the mock to return a JWT without a 'name' claim
     await page.route('**/.auth/me', async (route) => {
-      const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+      const header = utf8ToBase64(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
       // JWT with no 'name' claim - only has sub and exp
-      const payload = btoa(JSON.stringify({ sub: 'test-user-123', exp: Math.floor(Date.now() / 1000) + 3600 }));
+      const payload = utf8ToBase64(JSON.stringify({ sub: 'test-user-123', exp: Math.floor(Date.now() / 1000) + 3600 }));
       const mockJwt = `${header}.${payload}.mock-signature`;
 
       await route.fulfill({
