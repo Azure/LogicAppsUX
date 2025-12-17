@@ -7,10 +7,26 @@
 import { test as base, type Page } from '@playwright/test';
 import { generateSSEResponse, AGENT_CARD } from '../mocks/sse-generators';
 
+// Helper to encode a string to Base64 with proper UTF-8 support (for Unicode characters)
+function utf8ToBase64(str: string): string {
+  // Use Buffer in Node.js environment (Playwright runs in Node)
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(str, 'utf-8').toString('base64');
+  }
+  // Fallback for browser environment
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(str);
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary);
+}
+
 // Helper to create a mock JWT token with a given payload
 function createMockJwt(payload: Record<string, unknown>): string {
-  const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-  const payloadStr = btoa(JSON.stringify(payload));
+  const header = utf8ToBase64(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const payloadStr = utf8ToBase64(JSON.stringify(payload));
   const signature = 'mock-signature';
   return `${header}.${payloadStr}.${signature}`;
 }
