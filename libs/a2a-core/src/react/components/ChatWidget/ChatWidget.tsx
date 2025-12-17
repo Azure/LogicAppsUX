@@ -26,7 +26,7 @@ const useStyles = makeStyles({
  *
  * @example
  * ```tsx
- * import { ChatWidget } from '@microsoft/logicAppsChat/react';
+ * import { ChatWidget } from '@microsoft/logic-apps-chat/react';
  *
  * function App() {
  *   return (
@@ -53,7 +53,9 @@ export function ChatWidget(
 
   // For backward compatibility, convert old theme to themeConfig
   const fluentThemeConfig: ThemeConfig | undefined = React.useMemo(() => {
-    if (themeConfig) return themeConfig;
+    if (themeConfig) {
+      return themeConfig;
+    }
 
     // Support new theme structure with colors object
     if (theme && 'colors' in theme && theme.colors && typeof theme.colors.primary === 'string') {
@@ -73,8 +75,7 @@ export function ChatWidget(
 
   // Check if we're in a single-session context by looking for the parent container
   // Default is multi-session unless explicitly set to single-session
-  const isSingleSession =
-    typeof window !== 'undefined' && window.location.search.includes('singleSession=true');
+  const isSingleSession = typeof window !== 'undefined' && window.location.search.includes('singleSession=true');
   const isMultiSession = !isSingleSession;
 
   return (

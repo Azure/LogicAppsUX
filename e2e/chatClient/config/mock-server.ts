@@ -22,23 +22,12 @@ export const A2A_ENDPOINT = 'http://localhost:3001/api/chat';
 /**
  * Mock server scenarios
  */
-export type MockScenario =
-  | 'success'
-  | 'streaming'
-  | 'auth-required'
-  | 'network-error'
-  | 'server-error'
-  | 'timeout'
-  | 'custom';
+export type MockScenario = 'success' | 'streaming' | 'auth-required' | 'network-error' | 'server-error' | 'timeout' | 'custom';
 
 /**
  * Setup mock server for a scenario
  */
-export const setupMockServer = async (
-  page: Page,
-  scenario: MockScenario,
-  customConfig?: SSEMockConfig
-) => {
+export const setupMockServer = async (page: Page, scenario: MockScenario, customConfig?: SSEMockConfig) => {
   let config: SSEMockConfig;
 
   switch (scenario) {
@@ -116,10 +105,7 @@ export const setupMockServerSequence = async (page: Page, responses: SSEMockConf
 
     let body = '';
     for (const event of events) {
-      const formatted =
-        (event.event ? `event: ${event.event}\n` : '') +
-        (event.id ? `id: ${event.id}\n` : '') +
-        `data: ${event.data}\n\n`;
+      const formatted = (event.event ? `event: ${event.event}\n` : '') + (event.id ? `id: ${event.id}\n` : '') + `data: ${event.data}\n\n`;
       body += formatted;
     }
 

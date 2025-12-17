@@ -2,12 +2,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { enableMapSet } from 'immer';
 import type { Message, Attachment } from '../types';
-import type {
-  AuthRequiredEvent,
-  AuthConfig,
-  AuthRequiredHandler,
-  UnauthorizedHandler,
-} from '../../client/types';
+import type { AuthRequiredEvent, AuthConfig, AuthRequiredHandler, UnauthorizedHandler } from '../../client/types';
 import type { ChatHistoryStorage } from '../../storage/history-storage';
 import type { ChatSession, Message as StorageMessage } from '../../api/history-types';
 import { transformStorageMessagesToUI } from '../utils/message-transformer';
@@ -245,7 +240,9 @@ export const useChatStore = create<ChatState>()(
 
     createNewSession: async (name?: string) => {
       const { storage } = get();
-      if (!storage) return;
+      if (!storage) {
+        return;
+      }
 
       try {
         const newSession = await storage.createSession(name);
@@ -262,7 +259,9 @@ export const useChatStore = create<ChatState>()(
 
     switchSession: async (sessionId: string) => {
       const { storage } = get();
-      if (!storage) return;
+      if (!storage) {
+        return;
+      }
 
       try {
         const storageMessages = await storage.listMessages(sessionId);
@@ -280,7 +279,9 @@ export const useChatStore = create<ChatState>()(
 
     deleteSession: async (sessionId: string) => {
       const { storage } = get();
-      if (!storage) return;
+      if (!storage) {
+        return;
+      }
 
       try {
         await storage.deleteSession(sessionId);
@@ -299,7 +300,9 @@ export const useChatStore = create<ChatState>()(
 
     renameSession: async (sessionId: string, name: string) => {
       const { storage } = get();
-      if (!storage) return;
+      if (!storage) {
+        return;
+      }
 
       try {
         const updatedSession = await storage.updateSession(sessionId, { name });
@@ -318,7 +321,9 @@ export const useChatStore = create<ChatState>()(
 
     loadMessagesForSession: async (sessionId: string) => {
       const { storage } = get();
-      if (!storage) return;
+      if (!storage) {
+        return;
+      }
 
       try {
         const storageMessages = await storage.listMessages(sessionId);
@@ -342,7 +347,9 @@ export const useChatStore = create<ChatState>()(
 
     saveMessage: async (message: StorageMessage) => {
       const { storage, currentSessionId } = get();
-      if (!storage || !currentSessionId) return;
+      if (!storage || !currentSessionId) {
+        return;
+      }
 
       // Optimistically add to local state
       const uiMessage = transformStorageMessagesToUI([message])[0];
@@ -361,7 +368,9 @@ export const useChatStore = create<ChatState>()(
 
     clearAllSessions: async () => {
       const { storage } = get();
-      if (!storage) return;
+      if (!storage) {
+        return;
+      }
 
       try {
         await storage.clear();
@@ -378,13 +387,17 @@ export const useChatStore = create<ChatState>()(
     },
 
     getIsTypingForContext: (contextId: string | undefined): boolean => {
-      if (!contextId) return false;
+      if (!contextId) {
+        return false;
+      }
       const state = get();
       return state.typingByContext.get(contextId) || false;
     },
 
     getAuthRequiredForContext: (contextId: string | undefined): AuthRequiredEvent | null => {
-      if (!contextId) return null;
+      if (!contextId) {
+        return null;
+      }
       const state = get();
       return state.authRequiredByContext.get(contextId) || null;
     },
@@ -473,9 +486,7 @@ export const useChatStore = create<ChatState>()(
 
             // ALSO add to pending session ID if different (during migration window)
             if (sessionId !== actualSessionId && sessionId.startsWith('pending-')) {
-              console.log(
-                '[chatStore] Adding auth message to BOTH pending and real session IDs for migration'
-              );
+              console.log('[chatStore] Adding auth message to BOTH pending and real session IDs for migration');
               const pendingMsgs = newSessionMessages.get(sessionId) || [];
               newSessionMessages.set(sessionId, [...pendingMsgs, authMessage]);
             }
@@ -572,9 +583,7 @@ export const useChatStore = create<ChatState>()(
 
       if (!client && isPendingSession) {
         // For pending sessions, start the connection first
-        console.log(
-          `[chatStore] Pending session ${sessionId} - starting connection for first message`
-        );
+        console.log(`[chatStore] Pending session ${sessionId} - starting connection for first message`);
         const sessionConfig = state.sessionConfigs.get(sessionId);
         if (sessionConfig) {
           await get().startSessionStream(sessionId, sessionConfig);
@@ -673,9 +682,7 @@ export const useChatStore = create<ChatState>()(
                 // Check if this is a pending session that needs migration
                 const isPendingSession = sessionId.startsWith('pending-');
                 if (isPendingSession) {
-                  console.log(
-                    `[chatStore] Context ID received for pending session ${sessionId}: ${contextId}`
-                  );
+                  console.log(`[chatStore] Context ID received for pending session ${sessionId}: ${contextId}`);
                   // Perform migration and wait for it to complete before continuing
                   // This prevents race conditions where messages are stored under the wrong ID
                   try {
@@ -711,7 +718,9 @@ export const useChatStore = create<ChatState>()(
             if (task.messages && task.messages.length > 0) {
               for (let i = 0; i < task.messages.length; i++) {
                 const message = task.messages[i];
-                if (!message) continue;
+                if (!message) {
+                  continue;
+                }
 
                 const contentParts = message.content || [];
                 const textContent = contentParts
@@ -728,9 +737,7 @@ export const useChatStore = create<ChatState>()(
 
                     // Skip if this is a user message that we already have
                     if (message.role === 'user') {
-                      const isDuplicate = sessionMsgs.some(
-                        (msg) => msg.sender === 'user' && msg.content === textContent
-                      );
+                      const isDuplicate = sessionMsgs.some((msg) => msg.sender === 'user' && msg.content === textContent);
                       if (isDuplicate) {
                         return {};
                       }
@@ -799,9 +806,7 @@ export const useChatStore = create<ChatState>()(
                   // Extract file parts (images, etc.)
                   // Extract text parts from artifacts (existing artifact handling for text files)
                   // Process text parts FIRST to match use-a2a.ts ordering
-                  const textParts = artifactAny.parts.filter(
-                    (p: any) => p.kind === 'text' && p.text
-                  );
+                  const textParts = artifactAny.parts.filter((p: any) => p.kind === 'text' && p.text);
 
                   if (textParts.length > 0) {
                     const artifactId = artifactAny.artifactId || artifactAny.id;
@@ -813,8 +818,7 @@ export const useChatStore = create<ChatState>()(
                     set((draft) => {
                       const sessionMsgs = draft.sessionMessages.get(sessionId) || [];
                       const existingIndex = sessionMsgs.findIndex(
-                        (msg) =>
-                          msg.metadata?.artifactId === artifactId || msg.id === artifactMessageId
+                        (msg) => msg.metadata?.artifactId === artifactId || msg.id === artifactMessageId
                       );
 
                       if (existingIndex < 0) {
@@ -846,9 +850,7 @@ export const useChatStore = create<ChatState>()(
 
                   // Handle file parts (images, etc.)
                   // Process file parts SECOND to match use-a2a.ts ordering
-                  const fileParts = artifactAny.parts.filter(
-                    (p: any) => p.kind === 'file' && p.bytes && p.mimeType
-                  );
+                  const fileParts = artifactAny.parts.filter((p: any) => p.kind === 'file' && p.bytes && p.mimeType);
 
                   if (fileParts.length > 0) {
                     const files = fileParts.map((part: any) => ({
@@ -922,7 +924,7 @@ export const useChatStore = create<ChatState>()(
         }
       } catch (error) {
         console.error(`[chatStore] Error sending message to session ${sessionId}:`, error);
-        console.log(`[chatStore] Error details:`, {
+        console.log('[chatStore] Error details:', {
           name: error instanceof Error ? error.name : 'unknown',
           message: error instanceof Error ? error.message : String(error),
           receivedMessageCount: addedMessageIds.size,
@@ -931,8 +933,7 @@ export const useChatStore = create<ChatState>()(
         // Note: typing indicator is cleared in finally block above
 
         // Detect if this is a navigation/connection abort
-        const errorMessage =
-          error instanceof Error ? error.message?.toLowerCase() : String(error).toLowerCase();
+        const errorMessage = error instanceof Error ? error.message?.toLowerCase() : String(error).toLowerCase();
         const errorName = error instanceof Error ? error.name : '';
         const isAbortError =
           errorName === 'AbortError' ||
@@ -962,7 +963,7 @@ export const useChatStore = create<ChatState>()(
         }
 
         // Only mark as error for genuine failures
-        console.log(`[chatStore] Marking message as error (not an abort or no messages received)`);
+        console.log('[chatStore] Marking message as error (not an abort or no messages received)');
         set((draft) => {
           const sessionMsgs = draft.sessionMessages.get(sessionId) || [];
           const msgIndex = sessionMsgs.findIndex((m) => m.id === userMessage.id);
@@ -1020,9 +1021,7 @@ export const useChatStore = create<ChatState>()(
     },
 
     migratePendingSessionToRealId: async (pendingSessionId: string, realContextId: string) => {
-      console.log(
-        `[chatStore] Migrating pending session ${pendingSessionId} to real context ID ${realContextId}`
-      );
+      console.log(`[chatStore] Migrating pending session ${pendingSessionId} to real context ID ${realContextId}`);
 
       const state = get();
 

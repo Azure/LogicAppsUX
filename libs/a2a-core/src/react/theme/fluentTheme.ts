@@ -1,11 +1,4 @@
-import {
-  createDarkTheme,
-  createLightTheme,
-  BrandVariants,
-  Theme,
-  webLightTheme,
-  webDarkTheme,
-} from '@fluentui/react-components';
+import { createDarkTheme, createLightTheme, type BrandVariants, type Theme, webLightTheme, webDarkTheme } from '@fluentui/react-components';
 
 export interface ThemeConfig {
   primaryColor?: string;
@@ -33,9 +26,7 @@ const defaultBrandColors: BrandVariants = {
 };
 
 export const createCustomTheme = (config?: ThemeConfig) => {
-  const brandColors = config?.primaryColor
-    ? generateBrandVariants(config.primaryColor)
-    : defaultBrandColors;
+  const brandColors = config?.primaryColor ? generateBrandVariants(config.primaryColor) : defaultBrandColors;
 
   const lightTheme = {
     ...createLightTheme(brandColors),
@@ -76,7 +67,7 @@ function generateBrandVariants(primaryColor: string): BrandVariants {
 // Simple brightness adjustment function
 function adjustBrightness(color: string, percent: number): string {
   // Convert hex to RGB
-  const num = parseInt(color.replace('#', ''), 16);
+  const num = Number.parseInt(color.replace('#', ''), 16);
   const r = (num >> 16) + percent;
   const g = ((num >> 8) & 0x00ff) + percent;
   const b = (num & 0x0000ff) + percent;
@@ -85,7 +76,7 @@ function adjustBrightness(color: string, percent: number): string {
   const clamp = (val: number) => Math.max(0, Math.min(255, val));
 
   // Convert back to hex
-  return '#' + (0x1000000 + clamp(r) * 0x10000 + clamp(g) * 0x100 + clamp(b)).toString(16).slice(1);
+  return `#${(0x1000000 + clamp(r) * 0x10000 + clamp(g) * 0x100 + clamp(b)).toString(16).slice(1)}`;
 }
 
 // Export default themes

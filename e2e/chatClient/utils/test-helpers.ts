@@ -8,32 +8,21 @@ import { expect } from '@playwright/test';
 /**
  * Wait for element to be visible with retry
  */
-export const waitForVisible = async (
-  locator: Locator,
-  options?: { timeout?: number }
-): Promise<void> => {
+export const waitForVisible = async (locator: Locator, options?: { timeout?: number }): Promise<void> => {
   await expect(locator).toBeVisible(options);
 };
 
 /**
  * Wait for element to have text
  */
-export const waitForText = async (
-  locator: Locator,
-  text: string | RegExp,
-  options?: { timeout?: number }
-): Promise<void> => {
+export const waitForText = async (locator: Locator, text: string | RegExp, options?: { timeout?: number }): Promise<void> => {
   await expect(locator).toHaveText(text, options);
 };
 
 /**
  * Wait for element to contain text
  */
-export const waitForContainsText = async (
-  locator: Locator,
-  text: string | RegExp,
-  options?: { timeout?: number }
-): Promise<void> => {
+export const waitForContainsText = async (locator: Locator, text: string | RegExp, options?: { timeout?: number }): Promise<void> => {
   await expect(locator).toContainText(text, options);
 };
 
@@ -60,11 +49,7 @@ export const waitForCondition = async (
 /**
  * Type text with realistic typing speed
  */
-export const typeRealistic = async (
-  locator: Locator,
-  text: string,
-  options?: { delay?: number }
-): Promise<void> => {
+export const typeRealistic = async (locator: Locator, text: string, options?: { delay?: number }): Promise<void> => {
   const delay = options?.delay ?? 50; // 50ms per character
   await locator.pressSequentially(text, { delay });
 };
@@ -80,21 +65,14 @@ export const clearAndType = async (locator: Locator, text: string): Promise<void
 /**
  * Wait for network idle
  */
-export const waitForNetworkIdle = async (
-  page: Page,
-  options?: { timeout?: number; maxInflightRequests?: number }
-): Promise<void> => {
+export const waitForNetworkIdle = async (page: Page, options?: { timeout?: number; maxInflightRequests?: number }): Promise<void> => {
   await page.waitForLoadState('networkidle', options);
 };
 
 /**
  * Take screenshot with name
  */
-export const takeScreenshot = async (
-  page: Page,
-  name: string,
-  options?: { fullPage?: boolean }
-): Promise<void> => {
+export const takeScreenshot = async (page: Page, name: string, options?: { fullPage?: boolean }): Promise<void> => {
   await page.screenshot({
     path: `test-results/screenshots/${name}.png`,
     fullPage: options?.fullPage ?? false,
@@ -119,11 +97,7 @@ export const scrollToBottom = async (page: Page, selector?: string): Promise<voi
 /**
  * Wait for element count
  */
-export const waitForElementCount = async (
-  locator: Locator,
-  count: number,
-  options?: { timeout?: number }
-): Promise<void> => {
+export const waitForElementCount = async (locator: Locator, count: number, options?: { timeout?: number }): Promise<void> => {
   await expect(locator).toHaveCount(count, options);
 };
 
@@ -172,11 +146,7 @@ export const pressKey = async (page: Page, key: string): Promise<void> => {
 /**
  * Press keyboard shortcut
  */
-export const pressShortcut = async (
-  page: Page,
-  modifiers: string[],
-  key: string
-): Promise<void> => {
+export const pressShortcut = async (page: Page, modifiers: string[], key: string): Promise<void> => {
   const shortcut = [...modifiers, key].join('+');
   await page.keyboard.press(shortcut);
 };
@@ -185,10 +155,7 @@ export const pressShortcut = async (
  * Get computed style
  */
 export const getComputedStyle = async (locator: Locator, property: string): Promise<string> => {
-  return locator.evaluate(
-    (el, prop) => window.getComputedStyle(el).getPropertyValue(prop),
-    property
-  );
+  return locator.evaluate((el, prop) => window.getComputedStyle(el).getPropertyValue(prop), property);
 };
 
 /**
@@ -239,11 +206,7 @@ export const clickAndNavigate = async (locator: Locator, page: Page): Promise<vo
 /**
  * Click and wait for response
  */
-export const clickAndWaitForResponse = async (
-  locator: Locator,
-  page: Page,
-  urlPattern: string | RegExp
-): Promise<void> => {
+export const clickAndWaitForResponse = async (locator: Locator, page: Page, urlPattern: string | RegExp): Promise<void> => {
   await Promise.all([page.waitForResponse(urlPattern), locator.click()]);
 };
 

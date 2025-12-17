@@ -6,7 +6,6 @@ import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared'
 import { useDiscoveryPanelIsAddingTrigger, useIsAddingAgentTool } from '../../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../../core/state/workflow/workflowSelectors';
 import { useOperationsByConnector } from '../../../../core/queries/browse';
-import { useShouldEnableParseDocumentWithMetadata } from '../hooks';
 import constants from '../../../../common/constants';
 import { useConnectorDetailsViewStyles } from './styles/ConnectorDetailsView.styles';
 import { OperationsAccordion } from './operationsAccordion';
@@ -20,7 +19,6 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
   const classes = useConnectorDetailsViewStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const isAgentTool = useIsAddingAgentTool();
-  const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
 
   // Fetch operations for this connector
   const connectorId = connector?.id || '';
@@ -55,13 +53,9 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
           }
         }
 
-        if (shouldEnableParseDocWithMetadata === false && data.id === 'parsedocumentwithmetadata') {
-          return false;
-        }
-
         return true;
       },
-    [isAgentTool, isRoot, isWithinAgenticLoop, shouldEnableParseDocWithMetadata]
+    [isAgentTool, isRoot, isWithinAgenticLoop]
   );
 
   const allOperations: OperationActionData[] = useMemo(() => {

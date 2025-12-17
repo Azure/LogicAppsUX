@@ -104,9 +104,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
         // If agentUrl not in config, we'll set it during connect
         // For now, just check if we can create storage
         if (options.storageConfig.type === 'server' && !options.storageConfig.agentUrl) {
-          console.log(
-            '[useA2A] Skipping storage initialization - no agentUrl, will initialize during connect'
-          );
+          console.log('[useA2A] Skipping storage initialization - no agentUrl, will initialize during connect');
           // Skip initialization until connect is called
           return;
         }
@@ -127,14 +125,18 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
 
   // Helper functions for storage keys
   const getMessagesStorageKey = useCallback(() => {
-    if (!options.sessionKey) return null;
+    if (!options.sessionKey) {
+      return null;
+    }
     return currentAgentUrlRef.current
       ? getAgentMessagesStorageKey(currentAgentUrlRef.current, options.sessionKey)
       : `a2a-messages-${options.sessionKey}`;
   }, [options.sessionKey]);
 
   const getContextStorageKey = useCallback(() => {
-    if (!options.sessionKey) return null;
+    if (!options.sessionKey) {
+      return null;
+    }
     return currentAgentUrlRef.current
       ? getAgentContextStorageKey(currentAgentUrlRef.current, options.sessionKey)
       : `a2a-context-${options.sessionKey}`;
@@ -270,9 +272,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
 
               // Find any auth messages (pending or completed) and update the ref
               const authMessage = parsedMessages.find(
-                (msg: ChatMessage) =>
-                  msg.authEvent &&
-                  (msg.authEvent.status === 'pending' || msg.authEvent.status === 'completed')
+                (msg: ChatMessage) => msg.authEvent && (msg.authEvent.status === 'pending' || msg.authEvent.status === 'completed')
               );
               if (authMessage) {
                 authMessageIdRef.current = authMessage.id;
@@ -295,16 +295,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
         throw err;
       }
     },
-    [
-      options.auth,
-      options.persistSession,
-      options.sessionKey,
-      options.agentUrl,
-      options.storageConfig,
-      getMessagesStorageKey,
-      getContextStorageKey,
-      initializeStorage,
-    ]
+    [options, initializeStorage, getMessagesStorageKey, getContextStorageKey]
   );
 
   const disconnect = useCallback(() => {
@@ -394,7 +385,9 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
             // Process all messages but check for duplicates
             for (let i = 0; i < task.messages.length; i++) {
               const message = task.messages[i];
-              if (!message) continue; // Skip if message is undefined
+              if (!message) {
+                continue; // Skip if message is undefined
+              }
 
               const contentParts = message.content || [];
 
@@ -411,9 +404,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
                 setMessages((prev) => {
                   // Skip if this is a user message that we already have
                   if (message.role === 'user') {
-                    const isDuplicate = prev.some(
-                      (msg) => msg.role === 'user' && msg.content === textContent
-                    );
+                    const isDuplicate = prev.some((msg) => msg.role === 'user' && msg.content === textContent);
                     if (isDuplicate) {
                       return prev; // Return unchanged messages
                     }
@@ -451,32 +442,31 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
                     }
 
                     return prev;
-                  } else {
-                    // Create new message for first chunk
-
-                    const chatMessage: ChatMessage = {
-                      id: messageId,
-                      role: message.role === 'assistant' ? 'assistant' : 'user',
-                      content: textContent,
-                      timestamp: new Date(),
-                      isStreaming,
-                      metadata: {
-                        taskId: task.id,
-                      },
-                    };
-
-                    const newMessages = [...prev, chatMessage];
-
-                    // Persist messages when assistant message is added
-                    if (options.persistSession && options.sessionKey) {
-                      const storageKey = getMessagesStorageKey();
-                      if (storageKey) {
-                        localStorage.setItem(storageKey, JSON.stringify(newMessages));
-                      }
-                    }
-
-                    return newMessages;
                   }
+                  // Create new message for first chunk
+
+                  const chatMessage: ChatMessage = {
+                    id: messageId,
+                    role: message.role === 'assistant' ? 'assistant' : 'user',
+                    content: textContent,
+                    timestamp: new Date(),
+                    isStreaming,
+                    metadata: {
+                      taskId: task.id,
+                    },
+                  };
+
+                  const newMessages = [...prev, chatMessage];
+
+                  // Persist messages when assistant message is added
+                  if (options.persistSession && options.sessionKey) {
+                    const storageKey = getMessagesStorageKey();
+                    if (storageKey) {
+                      localStorage.setItem(storageKey, JSON.stringify(newMessages));
+                    }
+                  }
+
+                  return newMessages;
                 });
               }
             }
@@ -496,12 +486,8 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
                   const artifactAny = artifact as any;
                   if (artifactAny.parts && artifactAny.parts.length > 0) {
                     // Extract text and file parts
-                    const textParts = artifactAny.parts.filter(
-                      (p: any) => p.kind === 'text' && p.text
-                    );
-                    const fileParts = artifactAny.parts.filter(
-                      (p: any) => p.kind === 'file' && p.bytes && p.mimeType
-                    );
+                    const textParts = artifactAny.parts.filter((p: any) => p.kind === 'text' && p.text);
+                    const fileParts = artifactAny.parts.filter((p: any) => p.kind === 'file' && p.bytes && p.mimeType);
 
                     // Collect text part messages (process text first to match chatStore ordering)
                     if (textParts.length > 0) {
@@ -583,9 +569,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
           // Update streaming state when complete
           if (task.state === 'completed' || task.state === 'failed') {
             setMessages((prev) => {
-              const newMessages = prev.map((msg) =>
-                msg.metadata?.taskId === task.id ? { ...msg, isStreaming: false } : msg
-              );
+              const newMessages = prev.map((msg) => (msg.metadata?.taskId === task.id ? { ...msg, isStreaming: false } : msg));
 
               // Persist messages when streaming state updates
               if (options.persistSession && options.sessionKey) {
@@ -606,7 +590,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
         setIsLoading(false);
       }
     },
-    [options.persistSession, options.sessionKey, getMessagesStorageKey]
+    [options.persistSession, options.sessionKey, getMessagesStorageKey, getContextStorageKey]
   );
 
   const clearMessages = useCallback(() => {
@@ -616,8 +600,12 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
     if (options.persistSession && options.sessionKey) {
       const messagesKey = getMessagesStorageKey();
       const contextKey = getContextStorageKey();
-      if (messagesKey) localStorage.removeItem(messagesKey);
-      if (contextKey) localStorage.removeItem(contextKey);
+      if (messagesKey) {
+        localStorage.removeItem(messagesKey);
+      }
+      if (contextKey) {
+        localStorage.removeItem(contextKey);
+      }
     }
   }, [options.persistSession, options.sessionKey, getMessagesStorageKey, getContextStorageKey]);
 
@@ -636,10 +624,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
 
     try {
       // Get the stream iterator from sendAuthenticationCompleted with both contextId and taskId
-      const stream = await clientRef.current.sendAuthenticationCompleted(
-        contextIdRef.current,
-        authTaskIdRef.current
-      );
+      const stream = await clientRef.current.sendAuthenticationCompleted(contextIdRef.current, authTaskIdRef.current);
 
       // Update the auth message to completed status immediately
       if (authMessageIdRef.current) {
@@ -691,7 +676,9 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
         if (task.messages && task.messages.length > 0) {
           for (let i = 0; i < task.messages.length; i++) {
             const message = task.messages[i];
-            if (!message) continue;
+            if (!message) {
+              continue;
+            }
 
             const contentParts = message.content || [];
             const textContent = contentParts
@@ -706,9 +693,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
               setMessages((prev) => {
                 // Skip duplicate user messages
                 if (message.role === 'user') {
-                  const isDuplicate = prev.some(
-                    (msg) => msg.role === 'user' && msg.content === textContent
-                  );
+                  const isDuplicate = prev.some((msg) => msg.role === 'user' && msg.content === textContent);
                   if (isDuplicate) {
                     return prev;
                   }
@@ -735,31 +720,30 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
                   }
 
                   return updatedMessages;
-                } else {
-                  // Create new message
-                  const chatMessage: ChatMessage = {
-                    id: messageId,
-                    role: message.role === 'assistant' ? 'assistant' : 'user',
-                    content: textContent,
-                    timestamp: new Date(),
-                    isStreaming,
-                    metadata: {
-                      taskId: task.id,
-                    },
-                  };
-
-                  const newMessages = [...prev, chatMessage];
-
-                  // Persist messages
-                  if (options.persistSession && options.sessionKey) {
-                    const storageKey = getMessagesStorageKey();
-                    if (storageKey) {
-                      localStorage.setItem(storageKey, JSON.stringify(newMessages));
-                    }
-                  }
-
-                  return newMessages;
                 }
+                // Create new message
+                const chatMessage: ChatMessage = {
+                  id: messageId,
+                  role: message.role === 'assistant' ? 'assistant' : 'user',
+                  content: textContent,
+                  timestamp: new Date(),
+                  isStreaming,
+                  metadata: {
+                    taskId: task.id,
+                  },
+                };
+
+                const newMessages = [...prev, chatMessage];
+
+                // Persist messages
+                if (options.persistSession && options.sessionKey) {
+                  const storageKey = getMessagesStorageKey();
+                  if (storageKey) {
+                    localStorage.setItem(storageKey, JSON.stringify(newMessages));
+                  }
+                }
+
+                return newMessages;
               });
             }
           }

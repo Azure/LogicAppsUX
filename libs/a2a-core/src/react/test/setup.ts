@@ -130,12 +130,12 @@ beforeEach(() => {
 // Mock TextDecoderStream for SSE parsing tests
 global.TextDecoderStream = class TextDecoderStream {
   readable: ReadableStream<string>;
-  writable: WritableStream<Uint8Array>;
+  writable: WritableStream;
   encoding: string;
   fatal: boolean;
   ignoreBOM: boolean;
 
-  constructor(label: string = 'utf-8', options?: TextDecoderOptions) {
+  constructor(label = 'utf-8', options?: TextDecoderOptions) {
     const { readable, writable } = new TransformStream<Uint8Array, string>({
       transform(chunk, controller) {
         controller.enqueue(new TextDecoder(label, options).decode(chunk));

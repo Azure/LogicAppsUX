@@ -13,11 +13,11 @@
  */
 
 import {
-  ServerContext,
-  ServerTask,
-  ListContextsParams,
-  ListTasksParams,
-  UpdateContextParams,
+  type ServerContext,
+  type ServerTask,
+  type ListContextsParams,
+  type ListTasksParams,
+  type UpdateContextParams,
   ListContextsResponseSchema,
   ListTasksResponseSchema,
   UpdateContextResponseSchema,

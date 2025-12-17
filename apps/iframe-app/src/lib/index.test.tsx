@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createRoot } from 'react-dom/client';
 import { mountChatWidget, ChatWidget } from '.';
-import type { ChatWidgetProps } from '@microsoft/logicAppsChat';
+import type { ChatWidgetProps } from '@microsoft/logic-apps-chat';
 
 // Mock dependencies
 vi.mock('react-dom/client');
-vi.mock('@microsoft/logicAppsChat', () => ({
+vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(() => null),
 }));
 vi.mock('../styles/base.css', () => ({}));

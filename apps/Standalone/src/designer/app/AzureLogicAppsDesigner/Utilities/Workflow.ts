@@ -1,4 +1,4 @@
-import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from '../Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionsData, NotesData, ParametersData } from '../Models/Workflow';
 import { isOpenApiSchemaVersion, type ConnectionReferences } from '@microsoft/logic-apps-designer';
 
 export class WorkflowUtility {
@@ -127,8 +127,10 @@ export const getDataForConsumption = (data: any) => {
   const workflow = { definition, connections };
   const connectionReferences = formatConnectionReferencesForConsumption(connections);
   const parameters: ParametersData = formatWorkflowParametersForConsumption(properties);
+  // TODO: Move notes out of metadata once backend is updated
+  const notes: NotesData = properties?.definition?.metadata?.notes;
 
-  return { workflow, connectionReferences, parameters };
+  return { workflow, connectionReferences, parameters, notes };
 };
 
 const removeProperties = (obj: any = {}, props: string[] = []): object => {

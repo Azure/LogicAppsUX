@@ -1,13 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import {
-  makeStyles,
-  shorthands,
-  tokens,
-  Button,
-  Input,
-  Spinner,
-  mergeClasses,
-} from '@fluentui/react-components';
+import type React from 'react';
+import { useState, useCallback } from 'react';
+import { makeStyles, shorthands, tokens, Button, Input, Spinner, mergeClasses } from '@fluentui/react-components';
 import { AddRegular, DeleteRegular, EditRegular, ChatRegular } from '@fluentui/react-icons';
 import type { ChatSession } from '../../../api/history-types';
 
@@ -133,17 +126,7 @@ export type SessionListProps = {
 };
 
 export function SessionList(props: SessionListProps) {
-  const {
-    sessions,
-    currentSessionId,
-    loading,
-    error,
-    onSessionClick,
-    onNewSession,
-    onDeleteSession,
-    onRenameSession,
-    onRetry,
-  } = props;
+  const { sessions, currentSessionId, loading, error, onSessionClick, onNewSession, onDeleteSession, onRenameSession, onRetry } = props;
 
   const styles = useStyles();
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
@@ -193,18 +176,28 @@ export function SessionList(props: SessionListProps) {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays === 0) {
+      return 'Today';
+    }
+    if (diffDays === 1) {
+      return 'Yesterday';
+    }
+    if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    }
 
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   const getLastMessagePreview = (session: ChatSession): string => {
-    if (!session.lastMessage) return '';
+    if (!session.lastMessage) {
+      return '';
+    }
 
     const textParts = session.lastMessage.content.filter((c) => c.type === 'text');
-    if (textParts.length === 0) return '';
+    if (textParts.length === 0) {
+      return '';
+    }
 
     const firstText = textParts[0];
     if (firstText.type === 'text') {
@@ -215,21 +208,13 @@ export function SessionList(props: SessionListProps) {
   };
 
   // Sort sessions by updatedAt descending
-  const sortedSessions = [...sessions].sort(
-    (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
-  );
+  const sortedSessions = [...sessions].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
   if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <Button
-            appearance="primary"
-            icon={<AddRegular />}
-            onClick={onNewSession}
-            className={styles.newChatButton}
-            disabled
-          >
+          <Button appearance="primary" icon={<AddRegular />} onClick={onNewSession} className={styles.newChatButton} disabled>
             New Chat
           </Button>
         </div>
@@ -244,12 +229,7 @@ export function SessionList(props: SessionListProps) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <Button
-            appearance="primary"
-            icon={<AddRegular />}
-            onClick={onNewSession}
-            className={styles.newChatButton}
-          >
+          <Button appearance="primary" icon={<AddRegular />} onClick={onNewSession} className={styles.newChatButton}>
             New Chat
           </Button>
         </div>
@@ -268,12 +248,7 @@ export function SessionList(props: SessionListProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Button
-          appearance="primary"
-          icon={<AddRegular />}
-          onClick={onNewSession}
-          className={styles.newChatButton}
-        >
+        <Button appearance="primary" icon={<AddRegular />} onClick={onNewSession} className={styles.newChatButton}>
           New Chat
         </Button>
       </div>
@@ -315,9 +290,7 @@ export function SessionList(props: SessionListProps) {
                 ) : (
                   <>
                     <div className={styles.sessionName}>{session.name}</div>
-                    {getLastMessagePreview(session) && (
-                      <div className={styles.sessionPreview}>{getLastMessagePreview(session)}</div>
-                    )}
+                    {getLastMessagePreview(session) && <div className={styles.sessionPreview}>{getLastMessagePreview(session)}</div>}
                     <div className={styles.sessionDate}>{formatDate(session.updatedAt)}</div>
                   </>
                 )}

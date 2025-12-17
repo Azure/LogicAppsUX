@@ -34,8 +34,8 @@ test.describe('SSE Response Integration Tests', { tag: '@mock' }, () => {
     await messageInput.fill('Hello, agent!');
     await sendButton.click();
 
-    // User message should appear
-    await expect(page.getByText('Hello, agent!')).toBeVisible({ timeout: 5000 });
+    // User message should appear - use first() to avoid strict mode violation
+    await expect(page.getByText('Hello, agent!').first()).toBeVisible({ timeout: 5000 });
 
     // Agent response should appear (with real SSE, this will work!)
     await expect(page.getByText(/I received your message: "Hello, agent!"/)).toBeVisible({
@@ -133,9 +133,7 @@ test.describe('SSE Response Integration Tests', { tag: '@mock' }, () => {
     await expect(page.getByText(/This is a/)).toBeVisible({ timeout: 3000 });
 
     // Full response should eventually appear
-    await expect(
-      page.getByText(/This is a streaming response that arrives word by word/)
-    ).toBeVisible({
+    await expect(page.getByText(/This is a streaming response that arrives word by word/)).toBeVisible({
       timeout: 15000,
     });
 

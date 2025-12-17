@@ -9,6 +9,15 @@ import { setupAgentCardMock, gotoWithAgentCard } from '../../fixtures/agent-card
 
 test.describe('Smoke Test', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await setupAgentCardMock(page);
 
     // Mock contexts/list to prevent 404 errors

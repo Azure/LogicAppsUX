@@ -1,6 +1,5 @@
-import React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { ChatWidget } from './ChatWidget';
 
 // Mock the ChatWindow component
@@ -22,15 +21,11 @@ describe('ChatWidget', () => {
   });
 
   it('should render ChatWindow component', () => {
-    render(
-      <ChatWidget agentCard="https://agent.example.com/agent-card.json" welcomeMessage="Welcome!" />
-    );
+    render(<ChatWidget agentCard="https://agent.example.com/agent-card.json" welcomeMessage="Welcome!" />);
 
     expect(screen.getByTestId('chat-window')).toBeInTheDocument();
     expect(screen.getByText('ChatWindow Component')).toBeInTheDocument();
-    expect(
-      screen.getByText('Agent: https://agent.example.com/agent-card.json')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Agent: https://agent.example.com/agent-card.json')).toBeInTheDocument();
     expect(screen.getByText('Welcome!')).toBeInTheDocument();
   });
 
@@ -102,9 +97,7 @@ describe('ChatWidget', () => {
     expect(themeData.primaryColor).toBe('#007bff');
 
     // Verify other props were passed
-    expect(
-      screen.getByText('Agent: https://agent.example.com/agent-card.json')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Agent: https://agent.example.com/agent-card.json')).toBeInTheDocument();
     expect(screen.getByText('Hello!')).toBeInTheDocument();
   });
 

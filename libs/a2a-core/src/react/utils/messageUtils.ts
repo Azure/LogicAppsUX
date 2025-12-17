@@ -28,11 +28,7 @@ export function generateMessageId(): string {
   return guid;
 }
 
-export function createMessage(
-  content: string,
-  sender: 'user' | 'assistant' | 'system',
-  attachments?: Attachment[]
-): Message {
+export function createMessage(content: string, sender: 'user' | 'assistant' | 'system', attachments?: Attachment[]): Message {
   const message: Message = {
     id: generateMessageId(),
     content,

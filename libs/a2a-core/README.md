@@ -1,4 +1,4 @@
-# @microsoft/logicAppsChat
+# @microsoft/logic-apps-chat
 
 React SDK for building chat interfaces that connect to AI agents.
 
@@ -22,11 +22,11 @@ React SDK for building chat interfaces that connect to AI agents.
 ## Installation
 
 ```bash
-npm install @microsoft/logicAppsChat
+npm install @microsoft/logic-apps-chat
 # or
-pnpm add @microsoft/logicAppsChat
+pnpm add @microsoft/logic-apps-chat
 # or
-yarn add @microsoft/logicAppsChat
+yarn add @microsoft/logic-apps-chat
 ```
 
 **Peer Dependencies:**
@@ -46,7 +46,7 @@ React components and hooks for building chat interfaces:
 **Import styles:**
 
 ```tsx
-import '@microsoft/logicAppsChat/styles.css';
+import '@microsoft/logic-apps-chat/styles.css';
 ```
 
 ## Quick Start
@@ -56,8 +56,8 @@ import '@microsoft/logicAppsChat/styles.css';
 Full-featured UI with built-in state management:
 
 ```tsx
-import { ChatWidget } from '@microsoft/logicAppsChat';
-import '@microsoft/logicAppsChat/styles.css';
+import { ChatWidget } from '@microsoft/logic-apps-chat';
+import '@microsoft/logic-apps-chat/styles.css';
 
 export default function App() {
   return (
@@ -90,7 +90,7 @@ export default function App() {
 For custom UI implementations:
 
 ```tsx
-import { useA2A } from '@microsoft/logicAppsChat';
+import { useA2A } from '@microsoft/logic-apps-chat';
 
 function CustomChat() {
   const { messages, isLoading, isConnected, sendMessage, clearMessages, authState } = useA2A({
@@ -326,7 +326,7 @@ interface ChatHistoryStorage {
 #### Usage
 
 ```typescript
-import { createHistoryStorage, ServerHistoryStorage } from '@microsoft/logicAppsChat';
+import { createHistoryStorage, ServerHistoryStorage } from '@microsoft/logic-apps-chat';
 
 // Client-side (IndexedDB)
 const clientStorage = createHistoryStorage({ type: 'indexeddb' });
@@ -404,7 +404,7 @@ import {
   defaultLightTheme,
   defaultDarkTheme,
   ChatThemeProvider,
-} from '@microsoft/logicAppsChat';
+} from '@microsoft/logic-apps-chat';
 
 // Create custom theme
 const myTheme = createCustomTheme({
@@ -423,7 +423,7 @@ const myTheme = createCustomTheme({
 #### Message Utilities
 
 ```typescript
-import { generateMessageId, createMessage, formatCodeContent } from '@microsoft/logicAppsChat';
+import { generateMessageId, createMessage, formatCodeContent } from '@microsoft/logic-apps-chat';
 
 // Generate unique message ID
 const id = generateMessageId();
@@ -441,7 +441,7 @@ const formatted = formatCodeContent(code, 'typescript');
 #### File Utilities
 
 ```typescript
-import { downloadFile, getMimeType } from '@microsoft/logicAppsChat';
+import { downloadFile, getMimeType } from '@microsoft/logic-apps-chat';
 
 // Download file
 downloadFile(blob, 'filename.txt');
@@ -453,7 +453,7 @@ const mimeType = getMimeType('.pdf'); // 'application/pdf'
 #### Popup Window
 
 ```typescript
-import { openPopupWindow } from '@microsoft/logicAppsChat';
+import { openPopupWindow } from '@microsoft/logic-apps-chat';
 
 // Open popup for OAuth or consent
 const popup = openPopupWindow({
@@ -496,13 +496,13 @@ import type {
   ChatHistoryStorage,
   SaveMessageOptions,
   ListSessionsOptions,
-} from '@microsoft/logicAppsChat';
+} from '@microsoft/logic-apps-chat';
 ```
 
 All types are derived from Zod schemas for runtime validation:
 
 ```typescript
-import { MessageSchema, AgentCardSchema } from '@microsoft/logicAppsChat';
+import { MessageSchema, AgentCardSchema } from '@microsoft/logic-apps-chat';
 
 // Validate at runtime
 const result = MessageSchema.safeParse(data);

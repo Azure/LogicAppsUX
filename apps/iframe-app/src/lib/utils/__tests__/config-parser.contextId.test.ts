@@ -18,9 +18,7 @@ describe('config-parser - contextId support', () => {
   });
 
   it('should parse contextId from URL parameters', () => {
-    (window as any).location = new URL(
-      'http://localhost:3000/iframe?agentCard=test&contextId=ctx-123'
-    );
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-123');
 
     const config = parseIframeConfig();
 
@@ -37,9 +35,7 @@ describe('config-parser - contextId support', () => {
   });
 
   it('should prefer URL parameter over data attribute for contextId', () => {
-    (window as any).location = new URL(
-      'http://localhost:3000/iframe?agentCard=test&contextId=ctx-url'
-    );
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-url');
     document.documentElement.dataset.contextId = 'ctx-data';
 
     const config = parseIframeConfig();
@@ -55,25 +51,24 @@ describe('config-parser - contextId support', () => {
     expect(config.contextId).toBeUndefined();
   });
 
-  it('should log when contextId is found', () => {
+  it('should handle contextId without logging', () => {
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    (window as any).location = new URL(
-      'http://localhost:3000/iframe?agentCard=test&contextId=ctx-789'
-    );
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-789');
 
-    parseIframeConfig();
+    const config = parseIframeConfig();
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Using contextId:', 'ctx-789');
+    // contextId should be parsed correctly
+    expect(config.contextId).toBe('ctx-789');
+    // No logging should occur for contextId (logging was removed)
+    expect(consoleLogSpy).not.toHaveBeenCalledWith('Using contextId:', expect.any(String));
 
     consoleLogSpy.mockRestore();
   });
 
   it('should handle contextId with special characters', () => {
     const contextId = 'ctx_123-456.789~abc';
-    (window as any).location = new URL(
-      `http://localhost:3000/iframe?agentCard=test&contextId=${encodeURIComponent(contextId)}`
-    );
+    (window as any).location = new URL(`http://localhost:3000/iframe?agentCard=test&contextId=${encodeURIComponent(contextId)}`);
 
     const config = parseIframeConfig();
 
@@ -82,9 +77,7 @@ describe('config-parser - contextId support', () => {
 
   it('should work with both single and multi-session modes', () => {
     // Single session with contextId
-    (window as any).location = new URL(
-      'http://localhost:3000/iframe?agentCard=test&contextId=ctx-single&singleSession=true'
-    );
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-single&singleSession=true');
 
     let config = parseIframeConfig();
 
@@ -92,9 +85,7 @@ describe('config-parser - contextId support', () => {
     expect(config.multiSession).toBe(false);
 
     // Multi-session with contextId (contextId will be available but not used)
-    (window as any).location = new URL(
-      'http://localhost:3000/iframe?agentCard=test&contextId=ctx-multi&singleSession=false'
-    );
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-multi&singleSession=false');
 
     config = parseIframeConfig();
 

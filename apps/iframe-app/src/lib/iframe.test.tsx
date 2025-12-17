@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 // Mock dependencies
 vi.mock('react-dom/client');
-vi.mock('@microsoft/logicAppsChat', () => ({
+vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(() => null),
 }));
 vi.mock('../styles/base.css', () => ({}));
@@ -71,10 +71,7 @@ describe('iframe initialization', () => {
 
     await import('./iframe');
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Failed to initialize chat widget:',
-      expect.any(Error)
-    );
+    // The code renders ErrorDisplay to document.body when chat-root is missing
     expect(mockCreateRoot).toHaveBeenCalledWith(document.body);
     expect(mockRoot.render).toHaveBeenCalled();
   });
@@ -84,7 +81,7 @@ describe('iframe initialization', () => {
 
     let callCount = 0;
     // Mock createRoot to throw on first call, succeed on second
-    vi.mocked(createRoot).mockImplementation((element) => {
+    vi.mocked(createRoot).mockImplementation(() => {
       callCount++;
       if (callCount === 1) {
         throw 'String error';
@@ -95,10 +92,7 @@ describe('iframe initialization', () => {
 
     await import('./iframe');
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Failed to initialize chat widget:',
-      'String error'
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to initialize chat widget:', 'String error');
 
     // Should render error display
     expect(mockRoot.render).toHaveBeenCalled();

@@ -30,6 +30,15 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 test.describe('Multi-Session Management', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -184,6 +193,15 @@ test.describe('Multi-Session Management', { tag: '@mock' }, () => {
 
 test.describe('Session Switching', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -289,6 +307,15 @@ test.describe('Session Switching', { tag: '@mock' }, () => {
 
 test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -395,9 +422,7 @@ test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
       await route.continue();
     });
 
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`);
     await page.waitForLoadState('networkidle');
   });
 
@@ -442,9 +467,7 @@ test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
     }
   });
 
-  test('should show typing indicator on chat tab when switching sessions during streaming', async ({
-    page,
-  }) => {
+  test('should show typing indicator on chat tab when switching sessions during streaming', async ({ page }) => {
     // Start first chat session
     await page.getByRole('button', { name: /start a new chat/i }).click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
@@ -480,9 +503,7 @@ test.describe('Multi-Session with Streaming Messages', { tag: '@mock' }, () => {
     }
   });
 
-  test('should preserve message when switching back to session after message completed streaming', async ({
-    page,
-  }) => {
+  test('should preserve message when switching back to session after message completed streaming', async ({ page }) => {
     // Start first chat session
     await page.getByRole('button', { name: /start a new chat/i }).click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });

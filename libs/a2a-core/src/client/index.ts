@@ -13,4 +13,5 @@ export type {
   AuthRequiredPart,
   UnauthorizedHandler,
   UnauthorizedEvent,
+  IdentityProvider,
 } from './types';

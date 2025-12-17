@@ -31,12 +31,9 @@ describe('AgentDiscovery', () => {
 
       const result = await discovery.fromWellKnownUri('agent.example.com');
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://agent.example.com/.well-known/agent-card.json',
-        {
-          headers: {},
-        }
-      );
+      expect(mockFetch).toHaveBeenCalledWith('https://agent.example.com/.well-known/agent-card.json', {
+        headers: {},
+      });
       expect(result).toEqual(mockAgentCard);
     });
 
@@ -56,12 +53,9 @@ describe('AgentDiscovery', () => {
 
       await discovery.fromWellKnownUri('https://agent.example.com');
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://agent.example.com/.well-known/agent-card.json',
-        {
-          headers: {},
-        }
-      );
+      expect(mockFetch).toHaveBeenCalledWith('https://agent.example.com/.well-known/agent-card.json', {
+        headers: {},
+      });
     });
 
     it('should include API key header when provided', async () => {
@@ -81,12 +75,9 @@ describe('AgentDiscovery', () => {
       discovery = new AgentDiscovery({ apiKey: 'test-api-key-123' });
       const result = await discovery.fromWellKnownUri('agent.example.com');
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://agent.example.com/.well-known/agent-card.json',
-        {
-          headers: { 'X-API-Key': 'test-api-key-123' },
-        }
-      );
+      expect(mockFetch).toHaveBeenCalledWith('https://agent.example.com/.well-known/agent-card.json', {
+        headers: { 'X-API-Key': 'test-api-key-123' },
+      });
       expect(result).toEqual(mockAgentCard);
     });
 
@@ -98,9 +89,7 @@ describe('AgentDiscovery', () => {
         statusText: 'Not Found',
       } as Response);
 
-      await expect(discovery.fromWellKnownUri('agent.example.com')).rejects.toThrow(
-        'Failed to fetch agent card'
-      );
+      await expect(discovery.fromWellKnownUri('agent.example.com')).rejects.toThrow('Failed to fetch agent card');
     });
 
     it('should validate agent card schema', async () => {
@@ -115,9 +104,7 @@ describe('AgentDiscovery', () => {
         json: async () => invalidAgentCard,
       } as Response);
 
-      await expect(discovery.fromWellKnownUri('agent.example.com')).rejects.toThrow(
-        'Invalid agent card'
-      );
+      await expect(discovery.fromWellKnownUri('agent.example.com')).rejects.toThrow('Invalid agent card');
     });
   });
 
@@ -209,9 +196,7 @@ describe('AgentDiscovery', () => {
         // Missing required fields
       };
 
-      await expect(discovery.fromDirect(invalidCard as AgentCard)).rejects.toThrow(
-        'Invalid agent card'
-      );
+      await expect(discovery.fromDirect(invalidCard as AgentCard)).rejects.toThrow('Invalid agent card');
     });
   });
 

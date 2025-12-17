@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
@@ -190,9 +190,7 @@ describe('SessionList', () => {
 
     it('should allow retry when error state is shown', () => {
       const onRetry = vi.fn();
-      renderWithProvider(
-        <SessionList {...defaultProps} error="Failed to load sessions" onRetry={onRetry} />
-      );
+      renderWithProvider(<SessionList {...defaultProps} error="Failed to load sessions" onRetry={onRetry} />);
 
       const retryButton = screen.getByRole('button', { name: /retry/i });
       fireEvent.click(retryButton);

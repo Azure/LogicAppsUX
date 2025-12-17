@@ -1,18 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import {
-  makeStyles,
-  shorthands,
-  tokens,
-  Button,
-  mergeClasses,
-  Input,
-  Tooltip,
-} from '@fluentui/react-components';
-import {
-  PanelLeftExpandRegular,
-  PanelLeftContractRegular,
-  EditRegular,
-} from '@fluentui/react-icons';
+import { makeStyles, shorthands, tokens, Button, mergeClasses, Input, Tooltip } from '@fluentui/react-components';
+import { PanelLeftExpandRegular, PanelLeftContractRegular, EditRegular } from '@fluentui/react-icons';
 import { MessageList } from '../MessageList';
 import { MessageInput } from '../MessageInput';
 import { CompanyLogo } from '../CompanyLogo';
@@ -188,15 +176,7 @@ export function ChatWindow(props: ChatWindowProps) {
   // Apply theme if provided
   useTheme(theme, mode);
 
-  const {
-    isConnected,
-    agentName,
-    agentDescription,
-    sendMessage,
-    handleAuthCompleted,
-    handleAuthCanceled,
-    contextId,
-  } = useChatWidget({
+  const { isConnected, agentName, agentDescription, sendMessage, handleAuthCompleted, handleAuthCanceled, contextId } = useChatWidget({
     agentCard,
     auth,
     onMessage,
@@ -263,13 +243,7 @@ export function ChatWindow(props: ChatWindowProps) {
         {onToggleSidebar && (
           <Button
             appearance="subtle"
-            icon={
-              isSidebarCollapsed ? (
-                <PanelLeftExpandRegular fontSize={20} />
-              ) : (
-                <PanelLeftContractRegular fontSize={20} />
-              )
-            }
+            icon={isSidebarCollapsed ? <PanelLeftExpandRegular fontSize={20} /> : <PanelLeftContractRegular fontSize={20} />}
             onClick={onToggleSidebar}
             title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           />
@@ -310,9 +284,7 @@ export function ChatWindow(props: ChatWindowProps) {
           {isConnected && (
             <div className={styles.agentInfoCompact}>
               <h3 className={styles.agentNameCompact}>{agentName}</h3>
-              {agentDescription && (
-                <p className={styles.agentDescriptionCompact}>{agentDescription}</p>
-              )}
+              {agentDescription && <p className={styles.agentDescriptionCompact}>{agentDescription}</p>}
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useChatStore } from '@microsoft/logicAppsChat';
+import { useChatStore } from '@microsoft/logic-apps-chat';
 
 // Local type definitions for session metadata
 export interface SessionMetadata {
@@ -41,9 +41,7 @@ export function useChatSessions() {
 
         // Preserve all real sessions (non-pending) that exist locally but not in serverSessions yet
         // This prevents sessions from disappearing during the race between creation and server sync
-        const localRealSessions = prevSessions.filter(
-          (s) => !s.id.startsWith('pending-') && !serverSessions.some((ss) => ss.id === s.id)
-        );
+        const localRealSessions = prevSessions.filter((s) => !s.id.startsWith('pending-') && !serverSessions.some((ss) => ss.id === s.id));
 
         if (localRealSessions.length > 0) {
           console.log(
@@ -61,18 +59,13 @@ export function useChatSessions() {
             createdAt: session.createdAt.getTime(),
             updatedAt: session.updatedAt.getTime(),
             status: session.status,
-            lastMessage:
-              session.lastMessage?.content
-                ?.map((part) => (part.type === 'text' ? part.text : ''))
-                .join(' ') || '',
+            lastMessage: session.lastMessage?.content?.map((part) => (part.type === 'text' ? part.text : '')).join(' ') || '',
           }));
 
         // Keep local sessions (pending and newly migrated) at the top, sorted by recency
         // Then add server sessions below, also sorted by recency
         // This ensures new chats always appear at the top
-        const localSessions = [...localRealSessions, ...pendingSessions].sort(
-          (a, b) => b.updatedAt - a.updatedAt
-        );
+        const localSessions = [...localRealSessions, ...pendingSessions].sort((a, b) => b.updatedAt - a.updatedAt);
         const sortedServerSessions = serverSessionsData.sort((a, b) => b.updatedAt - a.updatedAt);
         const result = [...localSessions, ...sortedServerSessions];
 
@@ -129,10 +122,14 @@ export function useChatSessions() {
 
     async function ensureActiveSession() {
       // Wait for sessions to be synced from server
-      if (isLoading) return;
+      if (isLoading) {
+        return;
+      }
 
       // If we already have an active session, nothing to do
-      if (activeSessionId) return;
+      if (activeSessionId) {
+        return;
+      }
 
       if (sessions.length > 0) {
         // Select the first session
@@ -172,9 +169,7 @@ export function useChatSessions() {
 
   useEffect(() => {
     if (lastMigration && lastMigration.from === activeSessionId) {
-      console.log(
-        `[useChatSessions] Migration detected: ${lastMigration.from} -> ${lastMigration.to}`
-      );
+      console.log(`[useChatSessions] Migration detected: ${lastMigration.from} -> ${lastMigration.to}`);
 
       // Find the pending session to preserve its name
       const pendingSession = sessions.find((s) => s.id === lastMigration.from);
@@ -195,9 +190,7 @@ export function useChatSessions() {
         const hasCustomName = pendingSession?.name && pendingSession.name !== 'New Chat';
         const realSessionData: SessionMetadata = {
           id: lastMigration.to,
-          name: hasCustomName
-            ? pendingSession!.name
-            : lastMigration.suggestedName || lastMigration.to,
+          name: hasCustomName ? pendingSession!.name : lastMigration.suggestedName || lastMigration.to,
           createdAt: pendingSession?.createdAt || Date.now(),
           updatedAt: Date.now(),
           status: 'Running', // Match server convention for active chats
@@ -225,9 +218,7 @@ export function useChatSessions() {
         const hasCustomName = pendingSession?.name && pendingSession.name !== 'New Chat';
         setActiveSession({
           id: lastMigration.to,
-          name: hasCustomName
-            ? pendingSession!.name
-            : lastMigration.suggestedName || lastMigration.to,
+          name: hasCustomName ? pendingSession!.name : lastMigration.suggestedName || lastMigration.to,
           createdAt: pendingSession?.createdAt || Date.now(),
           updatedAt: Date.now(),
         });
@@ -236,9 +227,7 @@ export function useChatSessions() {
       // If the pending session had a custom name, update it on the server
       // Migration is guaranteed to be complete when lastMigration is set
       if (pendingSession?.name && pendingSession.name !== 'New Chat') {
-        console.log(
-          `[useChatSessions] Pending session had custom name "${pendingSession.name}", updating on server`
-        );
+        console.log(`[useChatSessions] Pending session had custom name "${pendingSession.name}", updating on server`);
         (async () => {
           try {
             const chatStoreRenameSession = useChatStore.getState().renameSession;
@@ -352,36 +341,24 @@ export function useChatSessions() {
           console.log('[useChatSessions] Renaming pending session locally:', sessionId);
           // Update local state only - no server call
           setSessions((prev) =>
-            prev.map((session) =>
-              session.id === sessionId
-                ? { ...session, name: newName, updatedAt: Date.now() }
-                : session
-            )
+            prev.map((session) => (session.id === sessionId ? { ...session, name: newName, updatedAt: Date.now() } : session))
           );
 
           // Update active session if it's the one being renamed
           if (activeSessionId === sessionId) {
-            setActiveSession((prev) =>
-              prev ? { ...prev, name: newName, updatedAt: Date.now() } : prev
-            );
+            setActiveSession((prev) => (prev ? { ...prev, name: newName, updatedAt: Date.now() } : prev));
           }
         } else {
           console.log('[useChatSessions] Renaming server session:', sessionId);
 
           // Optimistically update local state immediately for instant UI feedback
           setSessions((prev) =>
-            prev.map((session) =>
-              session.id === sessionId
-                ? { ...session, name: newName, updatedAt: Date.now() }
-                : session
-            )
+            prev.map((session) => (session.id === sessionId ? { ...session, name: newName, updatedAt: Date.now() } : session))
           );
 
           // Update active session if it's the one being renamed
           if (activeSessionId === sessionId) {
-            setActiveSession((prev) =>
-              prev ? { ...prev, name: newName, updatedAt: Date.now() } : prev
-            );
+            setActiveSession((prev) => (prev ? { ...prev, name: newName, updatedAt: Date.now() } : prev));
           }
 
           // Then update the server - server sync will confirm the change later

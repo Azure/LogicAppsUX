@@ -15,10 +15,7 @@ interface UseParentCommunicationResult {
  * Custom hook to handle postMessage communication with parent window
  * Used for receiving agent card configuration and other messages
  */
-export function useParentCommunication({
-  enabled,
-  onAgentCardReceived,
-}: UseParentCommunicationOptions): UseParentCommunicationResult {
+export function useParentCommunication({ enabled, onAgentCardReceived }: UseParentCommunicationOptions): UseParentCommunicationResult {
   const [isWaitingForAgentCard, setIsWaitingForAgentCard] = useState(enabled);
 
   // Send message to parent window

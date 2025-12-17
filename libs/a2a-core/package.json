@@ -1,5 +1,5 @@
 {
-  "name": "@microsoft/logicAppsChat",
+  "name": "@microsoft/logic-apps-chat",
   "version": "0.1.0",
   "description": "React SDK for building chat interfaces that connect to AI agents",
   "type": "module",
@@ -20,12 +20,7 @@
       "require": "./dist/react/styles.css"
     }
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE",
-    "package.json"
-  ],
+  "files": ["dist", "README.md", "LICENSE", "package.json"],
   "scripts": {
     "build": "tsup",
     "build:lib": "tsup",
@@ -39,19 +34,7 @@
     "check": "npm run typecheck && npm run test -- --run && npm run build",
     "prepublishOnly": "npm run check"
   },
-  "keywords": [
-    "a2a",
-    "a2a-protocol",
-    "ai",
-    "agents",
-    "ai-agents",
-    "sdk",
-    "browser",
-    "typescript",
-    "react",
-    "chat",
-    "streaming"
-  ],
+  "keywords": ["a2a", "a2a-protocol", "ai", "agents", "ai-agents", "sdk", "browser", "typescript", "react", "chat", "streaming"],
   "author": "Travis Vu",
   "license": "MIT",
   "devDependencies": {
@@ -68,15 +51,15 @@
     "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "postcss-modules": "^6.0.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "vite": "^6.4.1",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "react": ">=19.2.0"
+    "react": ">=19.2.1"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -96,8 +79,5 @@
     "zod": "^4.0.2",
     "zustand": "^4.4.0"
   },
-  "sideEffects": [
-    "*.css",
-    "**/*.css"
-  ]
+  "sideEffects": ["*.css", "**/*.css"]
 }

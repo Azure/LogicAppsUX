@@ -26,6 +26,15 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 test.describe('Keyboard Navigation', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -171,6 +180,15 @@ test.describe('Keyboard Navigation', { tag: '@mock' }, () => {
 
 test.describe('ARIA Labels and Semantics', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -273,6 +291,15 @@ test.describe('ARIA Labels and Semantics', { tag: '@mock' }, () => {
 
 test.describe('Focus Management', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -360,10 +387,7 @@ test.describe('Focus Management', { tag: '@mock' }, () => {
     });
 
     // Should have some kind of focus indicator
-    const hasFocusIndicator =
-      focusStyle.outline !== 'none' ||
-      parseInt(focusStyle.outlineWidth) > 0 ||
-      focusStyle.boxShadow !== 'none';
+    const hasFocusIndicator = focusStyle.outline !== 'none' || parseInt(focusStyle.outlineWidth) > 0 || focusStyle.boxShadow !== 'none';
 
     expect(hasFocusIndicator).toBe(true);
   });
@@ -401,6 +425,15 @@ test.describe('Focus Management', { tag: '@mock' }, () => {
 
 test.describe('Color Contrast', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,

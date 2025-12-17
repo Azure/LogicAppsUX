@@ -32,6 +32,15 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 test.describe('Server Error Responses', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -157,8 +166,6 @@ test.describe('Server Error Responses', { tag: '@mock' }, () => {
   });
 
   test('should handle network timeout', async ({ page }) => {
-    let requestCount = 0;
-
     await page.route('**/api/agents/test', async (route: Route) => {
       const request = route.request();
       if (request.method() !== 'POST') {
@@ -177,7 +184,6 @@ test.describe('Server Error Responses', { tag: '@mock' }, () => {
       }
 
       if (postData?.method === 'message/stream') {
-        requestCount++;
         // Hang the request - don't respond at all (simulates timeout)
         // This will trigger client-side timeout handling
 
@@ -261,6 +267,15 @@ test.describe('Server Error Responses', { tag: '@mock' }, () => {
 
 test.describe('SSE Connection Failures', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -321,6 +336,15 @@ test.describe('Connection Recovery', { tag: '@mock' }, () => {
   test('should recover after temporary network failure', async ({ page }) => {
     let failCount = 0;
     const maxFails = 1;
+
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
 
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
@@ -472,6 +496,15 @@ test.describe('Connection Recovery', { tag: '@mock' }, () => {
 
 test.describe('Session Loading Errors', { tag: '@mock' }, () => {
   test('should handle session list loading failure gracefully', async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -530,6 +563,15 @@ test.describe('Session Loading Errors', { tag: '@mock' }, () => {
 
   test('should retry session loading after initial failure', async ({ page }) => {
     let loadAttempts = 0;
+
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
 
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
@@ -607,6 +649,15 @@ test.describe('Session Loading Errors', { tag: '@mock' }, () => {
 
 test.describe('Rate Limiting and Throttling', { tag: '@mock' }, () => {
   test('should handle 429 Too Many Requests', async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -658,9 +709,7 @@ test.describe('Rate Limiting and Throttling', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Should show rate limit error
-    await expect(
-      page.getByText(/too many requests|rate limit|slow down|try again later/i).first()
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/too many requests|rate limit|slow down|try again later/i).first()).toBeVisible({ timeout: 10000 });
 
     // Input should be re-enabled
     await expect(messageInput).toBeEnabled({ timeout: 5000 });

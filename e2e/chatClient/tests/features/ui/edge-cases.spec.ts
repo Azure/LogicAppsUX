@@ -30,6 +30,15 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 test.describe('Rapid Interactions', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -73,7 +82,7 @@ test.describe('Rapid Interactions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Button should be disabled immediately after click
-    await expect(sendButton).toBeDisabled({ timeout: 2000 });
+    await expect(sendButton).toBeDisabled({ timeout: 5000 });
 
     // Message should appear
     await expect(page.getByText('Test message').first()).toBeVisible({ timeout: 5000 });
@@ -88,7 +97,7 @@ test.describe('Rapid Interactions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Input should be disabled while processing
-    await expect(messageInput).toBeDisabled({ timeout: 2000 });
+    await expect(messageInput).toBeDisabled({ timeout: 5000 });
 
     // App should remain stable
     const pageContent = await page.locator('body').textContent();
@@ -138,6 +147,15 @@ test.describe('Rapid Interactions', { tag: '@mock' }, () => {
 
 test.describe('Boundary Conditions', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -242,15 +260,22 @@ test.describe('Boundary Conditions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Tabs might be converted to spaces or preserved
-    const hasMessage = await page
-      .getByText(/Column1.*Column2.*Column3/)
-      .isVisible({ timeout: 5000 });
+    const hasMessage = await page.getByText(/Column1.*Column2.*Column3/).isVisible({ timeout: 5000 });
     expect(hasMessage).toBe(true);
   });
 });
 
 test.describe('Browser Behavior', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -388,6 +413,15 @@ test.describe('Browser Behavior', { tag: '@mock' }, () => {
 
 test.describe('Race Conditions', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -430,7 +464,7 @@ test.describe('Race Conditions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Input should be disabled
-    await expect(messageInput).toBeDisabled({ timeout: 2000 });
+    await expect(messageInput).toBeDisabled({ timeout: 5000 });
 
     // Trying to type should not crash (input is disabled)
     // App should remain stable

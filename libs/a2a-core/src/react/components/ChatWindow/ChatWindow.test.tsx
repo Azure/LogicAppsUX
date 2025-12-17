@@ -1,4 +1,3 @@
-import React from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -28,9 +27,7 @@ vi.mock('../MessageInput', () => ({
 }));
 
 vi.mock('../CompanyLogo', () => ({
-  CompanyLogo: ({ branding }: any) => (
-    <div data-testid="company-logo">Logo {branding?.logoUrl}</div>
-  ),
+  CompanyLogo: ({ branding }: any) => <div data-testid="company-logo">Logo {branding?.logoUrl}</div>,
 }));
 
 vi.mock('../../hooks/useChatWidget', () => ({

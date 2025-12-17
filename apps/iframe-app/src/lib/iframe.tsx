@@ -14,17 +14,48 @@
  * - In development (localhost), allow common development ports
  */
 
+import { useState, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IframeWrapper } from '../components/IframeWrapper';
 import { ErrorDisplay } from '../components/ErrorDisplay';
-import { useIframeConfig } from './hooks/useIframeConfig';
-import '@microsoft/logicAppsChat/styles.css';
+import { parseIframeConfig, type IframeConfig } from './utils/config-parser';
 import '../styles/base.css';
 
 // Main application component that uses the configuration
 function App() {
-  const config = useIframeConfig();
-  return <IframeWrapper config={config} />;
+  const [error, setError] = useState<Error | null>(null);
+
+  const config = useMemo<IframeConfig | null>(() => {
+    try {
+      return parseIframeConfig();
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error(String(err)));
+      return null;
+    }
+  }, []);
+
+  if (error) {
+    return (
+      <ErrorDisplay
+        title="Configuration error"
+        message={error.message}
+        details={{
+          url: window.location.href,
+          parameters: window.location.search || 'none',
+        }}
+      />
+    );
+  }
+
+  if (!config) {
+    return null;
+  }
+
+  return (
+    <div style={{ height: '100vh' }}>
+      <IframeWrapper config={config} />
+    </div>
+  );
 }
 
 // Initialize the widget
@@ -38,16 +69,12 @@ function init() {
     const root = createRoot(container);
     root.render(<App />);
   } catch (error) {
-    console.error('Failed to initialize chat widget:', error);
-
     const errorDetails = {
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       location: window.location.href,
       search: window.location.search,
     };
-
-    console.error('Error details:', errorDetails);
 
     // Display error to user
     const root = createRoot(document.body);

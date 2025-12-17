@@ -4,10 +4,10 @@
  */
 
 // Example imports you would use:
-// import { A2AClient } from '@microsoft/logicAppsChat';
-// import { openPopupWindow } from '@microsoft/logicAppsChat';
-// import type { AuthRequiredEvent, AuthRequiredHandler } from '@microsoft/logicAppsChat';
-// import type { AgentCard } from '@microsoft/logicAppsChat';
+// import { A2AClient } from '@microsoft/logic-apps-chat';
+// import { openPopupWindow } from '@microsoft/logic-apps-chat';
+// import type { AuthRequiredEvent, AuthRequiredHandler } from '@microsoft/logic-apps-chat';
+// import type { AgentCard } from '@microsoft/logic-apps-chat';
 
 // Create an auth handler that opens the consent link in a popup
 // Example handler shown for documentation purposes
@@ -98,7 +98,7 @@ export function ExampleOBOComponent() {
 // Example usage with React hooks
 import { useA2A } from '../react/use-a2a';
 import { openPopupWindow } from '../utils/popup-window';
-import { A2AClient } from '../client/a2a-client';
+import type { A2AClient } from '../client/a2a-client';
 
 export function ExampleWithHooks() {
   // Using the useA2A hook with auth handler

@@ -217,11 +217,7 @@ describe('A2AClient', () => {
       };
 
       const mockHttpClient = (client as any).httpClient;
-      mockHttpClient.get = vi
-        .fn()
-        .mockResolvedValueOnce(mockTask)
-        .mockResolvedValueOnce(mockTask)
-        .mockResolvedValueOnce(completedTask);
+      mockHttpClient.get = vi.fn().mockResolvedValueOnce(mockTask).mockResolvedValueOnce(mockTask).mockResolvedValueOnce(completedTask);
 
       const result = await client.task.waitForCompletion('task-999', {
         pollingInterval: 100,
@@ -311,7 +307,7 @@ describe('A2AClient', () => {
       // Try to get the first value (this will trigger the SSE connection)
       try {
         await iterator.next();
-      } catch (e) {
+      } catch {
         // Expected to fail since we're mocking
       }
 

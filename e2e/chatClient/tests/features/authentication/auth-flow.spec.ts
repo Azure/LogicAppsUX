@@ -134,10 +134,7 @@ test.describe('Authentication Flows', { tag: '@mock' }, () => {
     const signInButton = page.getByRole('button', { name: /Sign In/i });
 
     // CRITICAL: Use Promise.all to ensure popup event is captured synchronously with the click
-    const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
-      signInButton.click(),
-    ]);
+    const [popup] = await Promise.all([context.waitForEvent('page', { timeout: 5000 }), signInButton.click()]);
 
     // The button should transition to "Authenticating..." state while popup is open
     const authenticatingButton = page.getByRole('button', { name: /Authenticating/i });
@@ -182,10 +179,7 @@ test.describe('Authentication Flows', { tag: '@mock' }, () => {
     const signInButton = page.getByRole('button', { name: /Sign In/i });
 
     // CRITICAL: Use Promise.all to ensure popup event is captured synchronously with the click
-    const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
-      signInButton.click(),
-    ]);
+    const [popup] = await Promise.all([context.waitForEvent('page', { timeout: 5000 }), signInButton.click()]);
 
     // While popup is open (during authentication), cancel button should be disabled
     await expect(cancelButton).toBeDisabled({ timeout: 2000 });
@@ -279,9 +273,7 @@ test.describe('Authentication Completion Flow', { tag: '@mock' }, () => {
 
     // The system should automatically resume the task after authentication
     // and return the secured data WITHOUT requiring manual user input
-    await expect(
-      page.getByText(/Authentication successful! Here is your secured data/i)
-    ).toBeVisible({
+    await expect(page.getByText(/Authentication successful! Here is your secured data/i)).toBeVisible({
       timeout: 10000,
     });
   });

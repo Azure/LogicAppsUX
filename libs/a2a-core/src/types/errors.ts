@@ -67,13 +67,15 @@ export class JsonRpcErrorResponse extends A2AError {
 /**
  * Standard JSON-RPC 2.0 error codes
  */
-export enum JsonRpcErrorCode {
-  ParseError = -32700,
-  InvalidRequest = -32600,
-  MethodNotFound = -32601,
-  InvalidParams = -32602,
-  InternalError = -32603,
-}
+export const JsonRpcErrorCode = {
+  ParseError: -32700,
+  InvalidRequest: -32600,
+  MethodNotFound: -32601,
+  InvalidParams: -32602,
+  InternalError: -32603,
+} as const;
+
+export type JsonRpcErrorCode = (typeof JsonRpcErrorCode)[keyof typeof JsonRpcErrorCode];
 
 /**
  * Error thrown when network communication fails
@@ -145,10 +147,7 @@ export class TaskError extends A2AError {
 /**
  * Helper function to create a JsonRpcErrorResponse from a JSON-RPC error object
  */
-export function createJsonRpcError(
-  errorObj: JsonRpcErrorObject,
-  id: string | number | null = null
-): JsonRpcErrorResponse {
+export function createJsonRpcError(errorObj: JsonRpcErrorObject, id: string | number | null = null): JsonRpcErrorResponse {
   return new JsonRpcErrorResponse({
     jsonrpc: '2.0',
     error: errorObj,

@@ -29,7 +29,7 @@ export function getAllowedOrigins(): string[] {
       if (!allowedOrigins.includes(referrerOrigin)) {
         allowedOrigins.push(referrerOrigin);
       }
-    } catch (e) {
+    } catch (_e) {
       // Invalid referrer URL, ignore
     }
   }
@@ -50,7 +50,7 @@ export function isOriginAllowed(origin: string, allowedOrigins: string[]): boole
       try {
         const originUrl = new URL(origin);
         // Check if it's a subdomain (not the domain itself)
-        if (originUrl.hostname.endsWith('.' + domain)) {
+        if (originUrl.hostname.endsWith(`.${domain}`)) {
           return true;
         }
       } catch {
@@ -67,7 +67,7 @@ export function getParentOrigin(): string {
   if (document.referrer) {
     try {
       return new URL(document.referrer).origin;
-    } catch (e) {
+    } catch (_e) {
       // Invalid referrer URL
     }
   }

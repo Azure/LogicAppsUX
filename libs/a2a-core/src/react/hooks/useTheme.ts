@@ -48,7 +48,9 @@ export function useTheme(customTheme?: Partial<ChatTheme>, mode: 'light' | 'dark
 }
 
 function mergeTheme(defaultTheme: ChatTheme, customTheme?: Partial<ChatTheme>): ChatTheme {
-  if (!customTheme) return defaultTheme;
+  if (!customTheme) {
+    return defaultTheme;
+  }
 
   const result: ChatTheme = {
     colors: { ...defaultTheme.colors, ...customTheme.colors },
@@ -94,24 +96,13 @@ function applyTheme(theme: ChatTheme, mode: 'light' | 'dark') {
     '--chat-color-background',
     isDark && theme.colors.backgroundDark ? theme.colors.backgroundDark : theme.colors.background
   );
-  root.style.setProperty(
-    '--chat-color-surface',
-    isDark && theme.colors.surfaceDark ? theme.colors.surfaceDark : theme.colors.surface
-  );
-  root.style.setProperty(
-    '--chat-color-text',
-    isDark && theme.colors.textDark ? theme.colors.textDark : theme.colors.text
-  );
+  root.style.setProperty('--chat-color-surface', isDark && theme.colors.surfaceDark ? theme.colors.surfaceDark : theme.colors.surface);
+  root.style.setProperty('--chat-color-text', isDark && theme.colors.textDark ? theme.colors.textDark : theme.colors.text);
   root.style.setProperty(
     '--chat-color-text-secondary',
-    isDark && theme.colors.textSecondaryDark
-      ? theme.colors.textSecondaryDark
-      : theme.colors.textSecondary
+    isDark && theme.colors.textSecondaryDark ? theme.colors.textSecondaryDark : theme.colors.textSecondary
   );
-  root.style.setProperty(
-    '--chat-color-border',
-    isDark && theme.colors.borderDark ? theme.colors.borderDark : theme.colors.border
-  );
+  root.style.setProperty('--chat-color-border', isDark && theme.colors.borderDark ? theme.colors.borderDark : theme.colors.border);
 
   // Typography
   root.style.setProperty('--chat-font-family', theme.typography.fontFamily);

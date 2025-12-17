@@ -87,9 +87,7 @@ export class AgentDiscovery {
 
     const response = await fetch(url, { headers });
     if (!response.ok) {
-      throw new Error(
-        `Failed to fetch agent card from registry: ${response.status} ${response.statusText}`
-      );
+      throw new Error(`Failed to fetch agent card from registry: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -149,16 +147,15 @@ export class AgentDiscovery {
       }
 
       return result.data;
-    } else {
-      // It's an inline agent card, validate it
-      const result = AgentCardSchema.safeParse(urlOrCard);
-
-      if (!result.success) {
-        throw new Error(`Invalid agent card: ${result.error.message}`);
-      }
-
-      return result.data;
     }
+    // It's an inline agent card, validate it
+    const result = AgentCardSchema.safeParse(urlOrCard);
+
+    if (!result.success) {
+      throw new Error(`Invalid agent card: ${result.error.message}`);
+    }
+
+    return result.data;
   }
 
   getCached(identifier: string): AgentCard | null {

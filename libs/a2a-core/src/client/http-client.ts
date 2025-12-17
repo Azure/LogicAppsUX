@@ -1,20 +1,12 @@
 import pRetry from 'p-retry';
-import type {
-  AuthConfig,
-  RequestConfig,
-  RequestInterceptor,
-  ResponseInterceptor,
-  HttpClientOptions,
-  UnauthorizedHandler,
-} from './types';
+import type { AuthConfig, RequestConfig, RequestInterceptor, ResponseInterceptor, HttpClientOptions, UnauthorizedHandler } from './types';
 import { isJsonRpcError, isJsonRpcResult } from '../types/schemas';
 import { JsonRpcErrorResponse } from '../types/errors';
 
 export class HttpClient {
   private readonly baseUrl: string;
   private readonly auth: AuthConfig | undefined;
-  private readonly options: Required<Omit<HttpClientOptions, 'onTokenRefreshRequired'>> &
-    Pick<HttpClientOptions, 'onTokenRefreshRequired'>;
+  private readonly options: Required<Omit<HttpClientOptions, 'onTokenRefreshRequired'>> & Pick<HttpClientOptions, 'onTokenRefreshRequired'>;
   private readonly apiKey?: string;
   private readonly oboUserToken?: string;
   private readonly onUnauthorized?: UnauthorizedHandler;
@@ -185,11 +177,8 @@ export class HttpClient {
       if (tokenRefreshHeader === 'refresh') {
         if (this.options.onTokenRefreshRequired) {
           await Promise.resolve(this.options.onTokenRefreshRequired());
-        } else {
-          // Default behavior: reload the page
-          if (typeof window !== 'undefined') {
-            window.location.reload();
-          }
+        } else if (typeof window !== 'undefined') {
+          window.location.reload();
         }
         // Return early to prevent further processing
         throw new Error(
@@ -214,33 +203,19 @@ export class HttpClient {
     return data as T;
   }
 
-  async get<T = unknown>(
-    path: string,
-    config?: Omit<RequestConfig, 'method' | 'body'>
-  ): Promise<T> {
+  async get<T = unknown>(path: string, config?: Omit<RequestConfig, 'method' | 'body'>): Promise<T> {
     return this.request<T>(path, { ...config, method: 'GET' });
   }
 
-  async post<T = unknown>(
-    path: string,
-    body?: unknown,
-    config?: Omit<RequestConfig, 'method' | 'body'>
-  ): Promise<T> {
+  async post<T = unknown>(path: string, body?: unknown, config?: Omit<RequestConfig, 'method' | 'body'>): Promise<T> {
     return this.request<T>(path, { ...config, method: 'POST', body });
   }
 
-  async put<T = unknown>(
-    path: string,
-    body?: unknown,
-    config?: Omit<RequestConfig, 'method' | 'body'>
-  ): Promise<T> {
+  async put<T = unknown>(path: string, body?: unknown, config?: Omit<RequestConfig, 'method' | 'body'>): Promise<T> {
     return this.request<T>(path, { ...config, method: 'PUT', body });
   }
 
-  async delete<T = unknown>(
-    path: string,
-    config?: Omit<RequestConfig, 'method' | 'body'>
-  ): Promise<T> {
+  async delete<T = unknown>(path: string, config?: Omit<RequestConfig, 'method' | 'body'>): Promise<T> {
     return this.request<T>(path, { ...config, method: 'DELETE' });
   }
 
@@ -254,10 +229,11 @@ export class HttpClient {
         request.headers.set('Authorization', `Bearer ${this.auth.token}`);
         break;
 
-      case 'oauth2':
+      case 'oauth2': {
         const tokenType = this.auth.tokenType || 'Bearer';
         request.headers.set('Authorization', `${tokenType} ${this.auth.accessToken}`);
         break;
+      }
 
       case 'api-key':
         request.headers.set(this.auth.header, this.auth.key);
@@ -277,14 +253,19 @@ export class HttpClient {
         const errorData = await response.json();
 
         // Try common error message patterns
-        if (errorData.error?.message) return errorData.error.message;
-        if (errorData.message) return errorData.message;
-        if (errorData.error) return errorData.error;
+        if (errorData.error?.message) {
+          return errorData.error.message;
+        }
+        if (errorData.message) {
+          return errorData.message;
+        }
+        if (errorData.error) {
+          return errorData.error;
+        }
 
         return JSON.stringify(errorData);
-      } else {
-        return await response.text();
       }
+      return await response.text();
     } catch {
       return null;
     }
@@ -294,12 +275,7 @@ export class HttpClient {
    * Check if the response looks like a JSON-RPC response
    */
   private isJsonRpcResponse(data: unknown): boolean {
-    return (
-      typeof data === 'object' &&
-      data !== null &&
-      'jsonrpc' in data &&
-      (data as any).jsonrpc === '2.0'
-    );
+    return typeof data === 'object' && data !== null && 'jsonrpc' in data && (data as any).jsonrpc === '2.0';
   }
 
   /**

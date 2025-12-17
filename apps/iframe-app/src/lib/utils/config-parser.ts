@@ -1,4 +1,4 @@
-import type { ChatWidgetProps, ChatTheme } from '@microsoft/logicAppsChat';
+import type { ChatWidgetProps, ChatTheme, IdentityProvider } from '@microsoft/logic-apps-chat';
 import { THEME_PRESETS } from './theme-presets';
 
 export interface IframeConfig {
@@ -15,6 +15,26 @@ export interface IframeConfig {
 interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
+
+// This is a temporary workaround for identity providers until we have a proper way to configure them through server side
+const DEFAULT_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
+  microsoft: {
+    signInEndpoint: '/.auth/login/aad',
+    name: 'Microsoft',
+  },
+  google: {
+    signInEndpoint: '/.auth/login/google',
+    name: 'Google',
+  },
+  facebook: {
+    signInEndpoint: '/.auth/login/facebook',
+    name: 'Facebook',
+  },
+  github: {
+    signInEndpoint: '/.auth/login/github',
+    name: 'GitHub',
+  },
+};
 
 const ALLOWED_PORTAL_AUTHORITIES = [
   'df.onecloud.azure-test.net',
@@ -36,10 +56,9 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
     if (allowedOrigin === parentTrustedAuthority) {
       return true;
     }
-    const subdomainSuffix = '.' + allowedOrigin;
+    const subdomainSuffix = `.${allowedOrigin}`;
     return (
-      parentTrustedAuthority.length > subdomainSuffix.length &&
-      parentTrustedAuthority.slice(-subdomainSuffix.length) === subdomainSuffix
+      parentTrustedAuthority.length > subdomainSuffix.length && parentTrustedAuthority.slice(-subdomainSuffix.length) === subdomainSuffix
     );
   });
 
@@ -73,13 +92,12 @@ function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): st
     const matchIndex = currentUrl.toLowerCase().indexOf('/api/agentschat/');
     const baseUrl = currentUrl.substring(0, matchIndex);
     return `${baseUrl}/api/agents/${agentKind}/.well-known/agent-card.json`;
-  } else if (consumptionMatch && consumptionMatch[1] && consumptionMatch[2]) {
+  }
+  if (consumptionMatch && consumptionMatch[1] && consumptionMatch[2]) {
     const scaleunit = consumptionMatch[1];
     const flowId = consumptionMatch[2];
     const scaleUnitId = scaleunit.match(/^cu/i) ? scaleunit.substring(2) : scaleunit;
-    const agentCardBackendHost = currentHost
-      .replace(currentHost.split('.')[0], 'app-' + scaleUnitId)
-      .split(':')[0]; // Remove port if any
+    const agentCardBackendHost = currentHost.replace(currentHost.split('.')[0], `app-${scaleUnitId}`).split(':')[0]; // Remove port if any
     return `${window.location.protocol}//${agentCardBackendHost}/api/agents/${flowId}/.well-known/agent-card.json`;
   }
 
@@ -90,10 +108,7 @@ function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): st
   );
 }
 
-function parseTheme(
-  params: URLSearchParams,
-  dataset: DOMStringMap
-): Partial<ChatTheme> | undefined {
+function parseTheme(params: URLSearchParams, dataset: DOMStringMap): Partial<ChatTheme> | undefined {
   const theme: Partial<ChatTheme> = {};
 
   // Check for preset theme
@@ -125,23 +140,15 @@ function parseTheme(
 
     theme.branding = {
       logoUrl,
-      logoSize: (['small', 'medium', 'large'].includes(logoSize as string)
-        ? logoSize
-        : 'medium') as 'small' | 'medium' | 'large',
-      logoPosition:
-        logoPosition === 'header' || logoPosition === 'footer'
-          ? (logoPosition as 'header' | 'footer')
-          : 'header',
+      logoSize: (['small', 'medium', 'large'].includes(logoSize as string) ? logoSize : 'medium') as 'small' | 'medium' | 'large',
+      logoPosition: logoPosition === 'header' || logoPosition === 'footer' ? (logoPosition as 'header' | 'footer') : 'header',
     };
   }
 
   return Object.keys(theme).length > 0 ? theme : undefined;
 }
 
-function parseMetadata(
-  params: URLSearchParams,
-  dataset: DOMStringMap
-): Record<string, unknown> | undefined {
+function parseMetadata(params: URLSearchParams, dataset: DOMStringMap): Record<string, unknown> | undefined {
   const metadataStr = dataset.metadata || params.get('metadata');
   if (!metadataStr) {
     return undefined;
@@ -162,7 +169,7 @@ function parseFileUploadConfig(params: URLSearchParams, dataset: DOMStringMap) {
 
   return {
     allowFileUpload,
-    maxFileSize: dataset.maxFileSize ? parseInt(dataset.maxFileSize) : undefined,
+    maxFileSize: dataset.maxFileSize ? Number.parseInt(dataset.maxFileSize) : undefined,
     allowedFileTypes: dataset.allowedFileTypes?.split(',').map((t) => t.trim()),
   };
 }
@@ -171,17 +178,13 @@ export function parseIframeConfig(): IframeConfig {
   const params = new URLSearchParams(window.location.search);
   const dataset = document.documentElement.dataset;
 
-  console.log('Parsing iframe config from URL:', window.location.href);
-
   // Check portal context
   const inPortal = params.get('inPortal') === 'true';
   let trustedParentOrigin: string | undefined;
 
   if (inPortal) {
-    console.log('Running in portal context, validating security...');
     const portalValidation = validatePortalSecurity(params);
     trustedParentOrigin = portalValidation.trustedParentOrigin;
-    console.log('Trusted parent origin:', trustedParentOrigin);
   }
 
   // Get agent card URL
@@ -222,10 +225,10 @@ export function parseIframeConfig(): IframeConfig {
     userId: dataset.userId || params.get('userId') || undefined,
     userName: dataset.userName || params.get('userName') || window.LOGGED_IN_USER_NAME || undefined,
     placeholder: dataset.placeholder || params.get('placeholder') || undefined,
-    welcomeMessage:
-      brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
+    welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
+    identityProviders: window.IDENTITY_PROVIDERS || DEFAULT_IDENTITY_PROVIDERS || undefined,
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };
@@ -239,9 +242,6 @@ export function parseIframeConfig(): IframeConfig {
 
   // Context ID for session linking
   const contextId = params.get('contextId') || dataset.contextId || undefined;
-  if (contextId) {
-    console.log('Using contextId:', contextId);
-  }
 
   return {
     props,
@@ -255,9 +255,20 @@ export function parseIframeConfig(): IframeConfig {
   };
 }
 
+// Create storage configuration for server-side chat history
+// Extract base agent URL (remove .well-known/agent-card.json if present)
+export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
+  if (!cardUrl) {
+    return '';
+  }
+  // Remove .well-known/agent-card.json from the URL, preserving query params and hash fragments
+  return cardUrl.replace(/\/\.well-known\/agent-card\.json(?=\?|#|$)/, '');
+};
+
 // Declare global type for TypeScript
 declare global {
   interface Window {
     LOGGED_IN_USER_NAME?: string;
+    IDENTITY_PROVIDERS?: Record<string, IdentityProvider>;
   }
 }

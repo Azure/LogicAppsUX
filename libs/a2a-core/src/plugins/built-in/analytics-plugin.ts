@@ -62,7 +62,9 @@ export class AnalyticsPlugin implements Plugin {
   }
 
   private async flush(): Promise<void> {
-    if (this.events.length === 0 || !this.config.endpoint) return;
+    if (this.events.length === 0 || !this.config.endpoint) {
+      return;
+    }
 
     const eventsToSend = [...this.events];
     this.events = [];

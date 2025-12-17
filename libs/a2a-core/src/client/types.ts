@@ -14,15 +14,11 @@ export interface RequestConfig {
   credentials?: RequestCredentials;
 }
 
-export interface RequestInterceptor {
-  (
-    config: RequestConfig & { url: string }
-  ): (RequestConfig & { url: string }) | Promise<RequestConfig & { url: string }>;
-}
+export type RequestInterceptor = (
+  config: RequestConfig & { url: string }
+) => (RequestConfig & { url: string }) | Promise<RequestConfig & { url: string }>;
 
-export interface ResponseInterceptor {
-  (response: unknown): unknown | Promise<unknown>;
-}
+export type ResponseInterceptor = (response: unknown) => unknown | Promise<unknown>;
 
 export interface HttpClientOptions {
   timeout?: number;
@@ -58,3 +54,8 @@ export interface UnauthorizedEvent {
 }
 
 export type UnauthorizedHandler = (event: UnauthorizedEvent) => Promise<void> | void;
+
+export interface IdentityProvider {
+  signInEndpoint: string;
+  name: string;
+}

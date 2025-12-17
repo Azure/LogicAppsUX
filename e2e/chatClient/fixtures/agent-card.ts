@@ -9,8 +9,7 @@ import type { Page, Route } from '@playwright/test';
 /**
  * Mock agent card URL for testing (HTTP for E2E testing)
  */
-export const MOCK_AGENT_CARD_URL =
-  'http://localhost:3001/api/agents/test/.well-known/agent-card.json';
+export const MOCK_AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-card.json';
 
 /**
  * Default mock agent card data

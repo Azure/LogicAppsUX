@@ -2,6 +2,7 @@
 import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
+import { AgentUtils } from '../../../common/utilities/Utils';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -387,6 +388,11 @@ export function createParameterInfo(
     dynamicParameterReference,
   };
 
+  // For agent operations, treat deploymentId and modelId as required when they're conditionally visible
+  // These parameters are mutually exclusive based on agentModelType
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameter.name);
+  const isRequired = !!parameter.required || (isAgentDeploymentOrModelParam && !shouldHideInUI(parameter));
+
   const parameterInfo: ParameterInfo = {
     alternativeKey,
     id: guid(),
@@ -402,7 +408,7 @@ export function createParameterInfo(
     parameterName: parameter.name,
     placeholder: parameter.description,
     preservedValue: getPreservedValue(parameter),
-    required: !!parameter.required,
+    required: isRequired,
     schema,
     showErrors: false,
     showTokens: parameter?.schema?.['x-ms-editor'] !== 'string',
@@ -4322,6 +4328,19 @@ export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId
 }
 
 export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
+  // Don't consider parameters as required if they're hidden in the UI
+  if (parameterInfo.hideInUI) {
+    return false;
+  }
+
+  // For parameters with x-ms-input-dependencies (like deploymentId/modelId),
+  // don't enforce as required during validation since only one is visible at a time
+  const hasInputDependencies = !!parameterInfo.schema?.['x-ms-input-dependencies'];
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameterInfo.parameterName);
+  if (isAgentDeploymentOrModelParam && hasInputDependencies) {
+    return false;
+  }
+
   return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
 }
 

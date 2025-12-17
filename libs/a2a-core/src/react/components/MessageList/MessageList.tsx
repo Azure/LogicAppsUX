@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Message } from '../Message';
 import { TypingIndicator } from '../TypingIndicator';
@@ -46,14 +46,10 @@ export function MessageList({
 
   // In multi-session mode, read session-specific messages
   // In single-session mode, read global messages
-  const messages = useChatStore((state) =>
-    sessionId ? state.sessionMessages.get(sessionId) || [] : state.messages
-  );
+  const messages = useChatStore((state) => (sessionId ? state.sessionMessages.get(sessionId) || [] : state.messages));
 
   const isTyping = useChatStore((state) =>
-    sessionId || contextId
-      ? state.typingByContext.get(sessionId || contextId || '') || false
-      : state.isTyping
+    sessionId || contextId ? state.typingByContext.get(sessionId || contextId || '') || false : state.isTyping
   );
   const scrollRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(true);
@@ -62,7 +58,9 @@ export function MessageList({
   // Check if user has scrolled up
   useEffect(() => {
     const handleScroll = () => {
-      if (!scrollRef.current) return;
+      if (!scrollRef.current) {
+        return;
+      }
       const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
       // If user is within 100px of bottom, enable auto-scroll
       isAutoScrolling.current = scrollHeight - scrollTop - clientHeight < 100;
@@ -96,9 +94,7 @@ export function MessageList({
 
   return (
     <div ref={scrollRef} className={styles.messageList}>
-      {messages.length === 0 && welcomeMessage && (
-        <div className={styles.welcomeMessage}>{welcomeMessage}</div>
-      )}
+      {messages.length === 0 && welcomeMessage && <div className={styles.welcomeMessage}>{welcomeMessage}</div>}
 
       {messages.map((message) => (
         <Message

@@ -84,10 +84,7 @@ describe('EnterpriseAgentRegistry', () => {
   let registry: EnterpriseAgentRegistry;
 
   beforeEach(() => {
-    registry = new EnterpriseAgentRegistry(
-      'https://enterprise.example.com/registry',
-      'api-key-123'
-    );
+    registry = new EnterpriseAgentRegistry('https://enterprise.example.com/registry', 'api-key-123');
     vi.clearAllMocks();
   });
 
@@ -148,6 +145,7 @@ describe('EnterpriseAgentRegistry', () => {
         },
       })
     );
+    expect(agentCard.name).toBe('Enterprise Agent');
   });
 
   it('should handle authentication errors', async () => {
@@ -158,8 +156,6 @@ describe('EnterpriseAgentRegistry', () => {
       statusText: 'Unauthorized',
     } as Response);
 
-    await expect(registry.searchAgents('test')).rejects.toThrow(
-      'Failed to search agents: 401 Unauthorized'
-    );
+    await expect(registry.searchAgents('test')).rejects.toThrow('Failed to search agents: 401 Unauthorized');
   });
 });

@@ -13,11 +13,7 @@ export interface PopupWindowResult {
 /**
  * Opens a popup window and returns a promise that resolves when the window is closed
  */
-export async function openPopupWindow(
-  url: string,
-  windowName: string = 'a2a-auth',
-  options: PopupWindowOptions = {}
-): Promise<PopupWindowResult> {
+export async function openPopupWindow(url: string, windowName = 'a2a-auth', options: PopupWindowOptions = {}): Promise<PopupWindowResult> {
   const {
     width = 600,
     height = 700,
@@ -69,7 +65,7 @@ export async function openPopupWindow(
         if (popup.closed) {
           handleClose();
         }
-      } catch (error) {
+      } catch (_error) {
         // Cross-origin errors are expected when checking the popup
         // We can safely ignore them and continue checking if the window is closed
       }

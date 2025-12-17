@@ -4,7 +4,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -35,12 +35,5 @@
     "useUnknownInCatchVariables": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.test.tsx",
-    "**/*.spec.tsx"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.test.tsx", "**/*.spec.tsx"]
 }

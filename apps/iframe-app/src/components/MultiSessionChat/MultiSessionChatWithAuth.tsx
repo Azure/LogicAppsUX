@@ -1,7 +1,7 @@
 import { MultiSessionChat } from './MultiSessionChat';
-import { SessionExpiredModal } from './SessionExpiredModal';
-import { useSessionExpiredHandler } from '../hooks/useSessionExpiredHandler';
-import type { ChatWidgetProps } from '@microsoft/logicAppsChat';
+import { SessionExpiredModal } from '../SessionExpiredModal';
+import { useSessionExpiredHandler } from '../../hooks/useSessionExpiredHandler';
+import type { ChatWidgetProps } from '@microsoft/logic-apps-chat';
 
 interface MultiSessionChatWithAuthProps extends Omit<ChatWidgetProps, 'agentCard'> {
   apiUrl: string;
@@ -13,12 +13,7 @@ interface MultiSessionChatWithAuthProps extends Omit<ChatWidgetProps, 'agentCard
  * Example wrapper component that shows how to handle session expiration
  * with a modal when a 302 redirect is detected.
  */
-export function MultiSessionChatWithAuth({
-  apiUrl,
-  apiKey,
-  mode = 'light',
-  ...chatWidgetProps
-}: MultiSessionChatWithAuthProps) {
+export function MultiSessionChatWithAuth({ apiUrl, apiKey, mode = 'light', ...chatWidgetProps }: MultiSessionChatWithAuthProps) {
   const { isSessionExpired, handleUnauthorized } = useSessionExpiredHandler();
 
   return (

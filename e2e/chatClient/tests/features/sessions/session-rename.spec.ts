@@ -114,9 +114,7 @@ test.describe('Session Rename Functionality', { tag: '@mock' }, () => {
     });
 
     // Navigate with multi-session mode
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`);
     await page.waitForLoadState('networkidle');
   });
 
@@ -530,9 +528,7 @@ test.describe('Session Archive Functionality', { tag: '@mock' }, () => {
       await route.continue();
     });
 
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`);
     await page.waitForLoadState('networkidle');
   });
 
@@ -557,11 +553,7 @@ test.describe('Session Archive Functionality', { tag: '@mock' }, () => {
 
       try {
         const postData = request.postDataJSON();
-        return (
-          postData?.method === 'context/update' &&
-          postData?.params?.Id === 'session-2' &&
-          postData?.params?.IsArchived === true
-        );
+        return postData?.method === 'context/update' && postData?.params?.Id === 'session-2' && postData?.params?.IsArchived === true;
       } catch {
         return false;
       }
@@ -732,9 +724,7 @@ test.describe('Rename and Archive Integration', { tag: '@mock' }, () => {
       await route.continue();
     });
 
-    await page.goto(
-      `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`
-    );
+    await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`);
     await page.waitForLoadState('networkidle');
   });
 

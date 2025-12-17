@@ -1,4 +1,3 @@
-import React from 'react';
 import { ChatWidget } from '../react';
 
 /**
@@ -41,11 +40,7 @@ export function AuthenticatedUsernameExample({ user }: { user?: { name: string; 
       agentCard="https://agent.example.com/agent-card.json"
       userName={user?.name || 'Guest'}
       userId={user?.email}
-      welcomeMessage={
-        user
-          ? `Welcome back, ${user.name}!`
-          : 'Welcome! Please sign in for a personalized experience.'
-      }
+      welcomeMessage={user ? `Welcome back, ${user.name}!` : 'Welcome! Please sign in for a personalized experience.'}
     />
   );
 }

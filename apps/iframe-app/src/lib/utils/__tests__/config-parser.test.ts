@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { parseIframeConfig } from '../config-parser';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { getAgentBaseUrl, parseIframeConfig } from '../config-parser';
 
 describe('parseIframeConfig', () => {
   let originalLocation: Location;
@@ -77,9 +77,7 @@ describe('parseIframeConfig', () => {
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe(
-        'https://example.com/api/agents/TestAgent/.well-known/agent-card.json'
-      );
+      expect(config.props.agentCard).toBe('https://example.com/api/agents/TestAgent/.well-known/agent-card.json');
     });
 
     it('handles case-insensitive URL pattern matching', () => {
@@ -87,9 +85,7 @@ describe('parseIframeConfig', () => {
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe(
-        'https://example.com/api/agents/MyAgent/.well-known/agent-card.json'
-      );
+      expect(config.props.agentCard).toBe('https://example.com/api/agents/MyAgent/.well-known/agent-card.json');
     });
 
     it('throws error when agent URL is missing and URL pattern does not match', () => {
@@ -223,6 +219,40 @@ describe('parseIframeConfig', () => {
 
       expect(config.contextId).toBe('ctx-123');
     });
+
+    it('includes default identity providers when window.IDENTITY_PROVIDERS is not set', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+    });
+
+    it('uses window.IDENTITY_PROVIDERS when set', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = {
+        custom: {
+          signInEndpoint: '/.auth/login/custom',
+          name: 'Custom Provider',
+        },
+      };
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toEqual({
+        custom: {
+          signInEndpoint: '/.auth/login/custom',
+          name: 'Custom Provider',
+        },
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
   });
 
   describe('portal security', () => {
@@ -250,9 +280,7 @@ describe('parseIframeConfig', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://evil.com';
 
-      expect(() => parseIframeConfig()).toThrow(
-        "The origin 'evil.com' is not trusted for Frame Blade"
-      );
+      expect(() => parseIframeConfig()).toThrow("The origin 'evil.com' is not trusted for Frame Blade");
     });
 
     it('allows localhost for development', () => {
@@ -264,5 +292,110 @@ describe('parseIframeConfig', () => {
       expect(config.inPortal).toBe(true);
       expect(config.trustedParentOrigin).toBe('https://localhost:3000');
     });
+  });
+});
+
+describe('getAgentBaseUrl', () => {
+  it('removes agent card suffix from URL', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent');
+  });
+
+  it('returns URL unchanged if no agent card suffix', () => {
+    const url = 'https://example.com/api/agents/TestAgent';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent');
+  });
+
+  it('returns empty string for undefined URL', () => {
+    const result = getAgentBaseUrl(undefined);
+
+    expect(result).toBe('');
+  });
+
+  it('handles URLs with query parameters after agent card suffix', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json?param=value';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent?param=value');
+  });
+
+  it('handles URLs with hash fragments', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json#section';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent#section');
+  });
+
+  it('handles URLs with both query parameters and hash fragments', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json?param=value#section';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent?param=value#section');
+  });
+
+  it('handles URLs with port numbers', () => {
+    const url = 'https://example.com:8080/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com:8080/api/agents/TestAgent');
+  });
+
+  it('handles URLs with special characters in agent name', () => {
+    const url = 'https://example.com/api/agents/Test-Agent_v2.0/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/Test-Agent_v2.0');
+  });
+
+  it('handles URLs with encoded characters', () => {
+    const url = 'https://example.com/api/agents/Test%20Agent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/Test%20Agent');
+  });
+
+  it('handles URLs with multiple path segments after agent', () => {
+    const url = 'https://example.com/api/v2/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/v2/agents/TestAgent');
+  });
+
+  it('handles protocol-relative URLs', () => {
+    const url = '//example.com/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('//example.com/api/agents/TestAgent');
+  });
+
+  it('handles relative URLs', () => {
+    const url = '/api/agents/TestAgent/.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('/api/agents/TestAgent');
+  });
+
+  it('only removes the exact suffix pattern', () => {
+    const url = 'https://example.com/api/agents/TestAgent/.well-known/other-file.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent/.well-known/other-file.json');
+  });
+
+  it('handles empty string', () => {
+    const result = getAgentBaseUrl('');
+
+    expect(result).toBe('');
+  });
+
+  it('handles URLs with trailing slashes before suffix', () => {
+    const url = 'https://example.com/api/agents/TestAgent//.well-known/agent-card.json';
+    const result = getAgentBaseUrl(url);
+
+    expect(result).toBe('https://example.com/api/agents/TestAgent/');
   });
 });

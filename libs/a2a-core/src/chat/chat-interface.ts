@@ -2,13 +2,7 @@ import { EventEmitter } from 'eventemitter3';
 import type { A2AClient } from '../client/a2a-client';
 import type { SessionManager } from '../session/session-manager';
 import type { Message, Part } from '../types';
-import type {
-  ChatMessage,
-  ChatOptions,
-  ChatEventMap,
-  StreamUpdate,
-  ConversationExport,
-} from './types';
+import type { ChatMessage, ChatOptions, ChatEventMap, StreamUpdate, ConversationExport } from './types';
 
 export interface ChatInterfaceConfig {
   client: A2AClient;
@@ -65,7 +59,9 @@ export class ChatInterface extends EventEmitter<ChatEventMap> {
   }
 
   private loadConversationHistory(): void {
-    if (!this.session) return;
+    if (!this.session) {
+      return;
+    }
 
     const historyKey = `a2a-chat-history-${this.conversationId}`;
     const history = this.session.get(historyKey) as ChatMessage[];
@@ -79,7 +75,9 @@ export class ChatInterface extends EventEmitter<ChatEventMap> {
   }
 
   private saveConversationHistory(): void {
-    if (!this.session || !this.options.persistMessages) return;
+    if (!this.session || !this.options.persistMessages) {
+      return;
+    }
 
     const historyKey = `a2a-chat-history-${this.conversationId}`;
 
@@ -96,11 +94,7 @@ export class ChatInterface extends EventEmitter<ChatEventMap> {
       .join(' ');
   }
 
-  private createChatMessage(
-    role: ChatMessage['role'],
-    parts: Part[],
-    messageId?: string
-  ): ChatMessage {
+  private createChatMessage(role: ChatMessage['role'], parts: Part[], messageId?: string): ChatMessage {
     return {
       id: messageId || this.generateMessageId(),
       role,
@@ -162,11 +156,7 @@ export class ChatInterface extends EventEmitter<ChatEventMap> {
       }
 
       // Create chat message from response
-      const responseMessage = this.createChatMessage(
-        'assistant',
-        assistantMessage.content,
-        `msg-${completedTask.id}`
-      );
+      const responseMessage = this.createChatMessage('assistant', assistantMessage.content, `msg-${completedTask.id}`);
 
       this.messages.push(responseMessage);
       this.emit('message', responseMessage);

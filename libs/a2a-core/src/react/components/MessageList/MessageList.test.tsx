@@ -1,4 +1,3 @@
-import React from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -20,9 +19,7 @@ vi.mock('../Message', () => ({
   ),
 }));
 vi.mock('../TypingIndicator', () => ({
-  TypingIndicator: ({ agentName }: any) => (
-    <div data-testid="typing-indicator">{agentName} is typing...</div>
-  ),
+  TypingIndicator: ({ agentName }: any) => <div data-testid="typing-indicator">{agentName} is typing...</div>,
 }));
 
 describe('MessageList', () => {
