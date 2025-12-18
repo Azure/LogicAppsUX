@@ -1,6 +1,8 @@
 import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
+import { setDiscoverySelectionState } from '../../../core/state/panel/panelSlice';
+import { SELECTION_STATES } from '../../../core/state/panel/panelTypes';
 import {
   useDiscoveryPanelIsAddingTrigger,
   useDiscoveryPanelIsParallelBranch,
@@ -97,6 +99,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     (props: AddResourceOperationParameters) => {
       const { name, presetParameterValues, actionMetadata } = props;
       const newNodeId = name.replaceAll(' ', '_').replaceAll('/', '-');
+      dispatch(setDiscoverySelectionState(SELECTION_STATES.SEARCH));
       dispatch(
         addOperation({
           operation,

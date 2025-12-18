@@ -8,9 +8,17 @@ import {
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
+  useDiscoveryPanelSelectedOperationId,
   useDiscoveryPanelSelectedBrowseCategory,
+  useDiscoveryPanelSelectionState,
 } from '../../../core/state/panel/panelSelectors';
-import { selectOperationGroupId, selectOperationId, selectBrowseCategory } from '../../../core/state/panel/panelSlice';
+import {
+  selectOperationGroupId,
+  selectOperationId,
+  selectBrowseCategory,
+  setDiscoverySelectionState,
+} from '../../../core/state/panel/panelSlice';
+import { SELECTION_STATES } from '../../../core/state/panel/panelTypes';
 import { AzureResourceSelection } from './azureResourceSelection';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { ConnectorDetailsView } from './details/connectorDetailsView';
@@ -22,7 +30,7 @@ import { OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useOnFavoriteClick } from './hooks';
@@ -31,14 +39,6 @@ import { useRecommendationPanelContextStyles } from './styles/RecommendationPane
 import { getNodeId } from './helpers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
-
-type SelectionState = (typeof SELECTION_STATES)[keyof typeof SELECTION_STATES];
-const SELECTION_STATES = {
-  SEARCH: 'SEARCH',
-  DETAILS: 'DETAILS',
-  AZURE_RESOURCE: 'AZURE_RESOURCE',
-  CUSTOM_SWAGGER: 'HTTP_SWAGGER',
-};
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
@@ -64,10 +64,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const contextValue = useMemo(() => ({ isOperationFavorited, onFavoriteClick }), [isOperationFavorited, onFavoriteClick]);
 
-  const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
+  const selectionState = useDiscoveryPanelSelectionState() ?? SELECTION_STATES.SEARCH;
 
   const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
-  const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
 
   // Searched terms, so we don't search the same term twice
   const [searchedTerms, setSearchedTerms] = useState(['']);
@@ -103,17 +102,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   );
 
   const selectedOperationGroupId = useDiscoveryPanelSelectedOperationGroupId();
+  const selectedOperationId = useDiscoveryPanelSelectedOperationId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
-  // effect to set the current list of operations by group
-  useEffect(() => {
-    if (!selectedOperationGroupId) {
-      setSelectionState(SELECTION_STATES.SEARCH);
-      return;
-    }
-    setSelectionState(SELECTION_STATES.DETAILS);
-  }, [selectedOperationGroupId]);
+  // Derive selectedOperation from Redux selectedOperationId to persist across component remounts
+  const selectedOperation = useMemo(() => allOperations?.find((o) => o.id === selectedOperationId), [allOperations, selectedOperationId]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
@@ -139,14 +133,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     return operation.properties.capabilities?.some((capability) => equals(capability, 'swaggerSelection'));
   }, []);
 
-  const startAzureResourceSelection = useCallback(() => {
-    setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
-  }, []);
-
-  const startSwaggerSelection = useCallback(() => {
-    setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
-  }, []);
-
   // Combined handler for both triggers and actions
   const onOperationClick = useCallback(
     (id: string, apiId?: string, forceAsTrigger?: boolean) => {
@@ -159,16 +145,16 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           return;
         }
         dispatch(selectOperationId(operation.id));
-        setSelectedOperation(operation);
         dispatch(selectOperationGroupId(''));
         if (hasAzureResourceSelection(operation)) {
-          startAzureResourceSelection();
+          dispatch(setDiscoverySelectionState(SELECTION_STATES.AZURE_RESOURCE));
           return;
         }
         if (hasSwaggerSelection(operation)) {
-          startSwaggerSelection();
+          dispatch(setDiscoverySelectionState(SELECTION_STATES.CUSTOM_SWAGGER));
           return;
         }
+        dispatch(setDiscoverySelectionState(SELECTION_STATES.SEARCH));
 
         const shouldAddAsTrigger = forceAsTrigger ?? operation?.properties?.trigger !== undefined;
 
@@ -225,17 +211,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         }
       });
     },
-    [
-      allOperations,
-      dispatch,
-      hasAzureResourceSelection,
-      hasSwaggerSelection,
-      isParallelBranch,
-      isTrigger,
-      relationshipIds,
-      startAzureResourceSelection,
-      startSwaggerSelection,
-    ]
+    [allOperations, dispatch, hasAzureResourceSelection, hasSwaggerSelection, isParallelBranch, isTrigger, relationshipIds]
   );
 
   const intl = useIntl();
