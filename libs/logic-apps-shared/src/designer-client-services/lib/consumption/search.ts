@@ -5,6 +5,7 @@ import type { BaseSearchServiceOptions } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import * as OperationsData from './operations';
+import { a2aRequestGroup } from './operations/operationgroups';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -101,6 +102,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.rosettaNetEncodeOperation,
       OperationsData.rosettaNetDecodeOperation,
       OperationsData.rosettaNetWairForResponseOperation,
+      OperationsData.a2aRequestOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
@@ -185,6 +187,7 @@ export const getBuiltInConnectorsInConsumption = (): Connector[] => {
     OperationsData.selectBatchWorkflowGroup,
     OperationsData.as2Group,
     OperationsData.rosettaNetGroup,
+    a2aRequestGroup,
   ];
   return [...clientBuiltInConnectors, ...consumptionBuiltIn];
 };
