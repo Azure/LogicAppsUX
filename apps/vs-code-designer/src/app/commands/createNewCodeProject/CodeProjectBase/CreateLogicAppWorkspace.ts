@@ -111,7 +111,37 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   }
 }
 
-const createAgentCodefulWorkflowFile = async (
+/**
+ * Adds a workflow Build() call to an existing Program.cs file.
+ */
+export const addWorkflowToProgram = async (programFilePath: string, workflowName: string): Promise<void> => {
+  const programContent = await fse.readFile(programFilePath, 'utf-8');
+
+  // Find the location to insert the new workflow builder
+  // Look for the "Build all workflows" comment or the CreateWorkflows() call
+  const buildCallRegex = /(\s*)(\/\/ Build all workflows\s*\n(?:\s*\/\/.*\n)*\s*)(.*?)(\s*WorkflowBuilderFactory\.CreateWorkflows\(\);)/s;
+
+  const match = programContent.match(buildCallRegex);
+  if (match) {
+    // Insert the new workflow builder before CreateWorkflows()
+    const indent = match[1];
+    const newBuildCall = `\n${indent}${workflowName}.AddWorkflow();`;
+    const updatedContent = programContent.replace(buildCallRegex, `$1$2$3${newBuildCall}\n$4`);
+    await fse.writeFile(programFilePath, updatedContent);
+  } else {
+    // Fallback: try to insert before CreateWorkflows() directly
+    const fallbackRegex = /(\s*)(WorkflowBuilderFactory\.CreateWorkflows\(\);)/;
+    const fallbackMatch = programContent.match(fallbackRegex);
+    if (fallbackMatch) {
+      const indent = fallbackMatch[1];
+      const newBuildCall = `${indent}${workflowName}.AddWorkflow();\n\n`;
+      const updatedContent = programContent.replace(fallbackRegex, `${newBuildCall}$1$2`);
+      await fse.writeFile(programFilePath, updatedContent);
+    }
+  }
+};
+
+export const createAgentCodefulWorkflowFile = async (
   logicAppFolderPath: string,
   logicAppName: string,
   workflowName: string,
@@ -121,28 +151,41 @@ const createAgentCodefulWorkflowFile = async (
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
-  // Create the .cs file inside the functions folder
+  // Create the workflow-specific .cs file
+  const capitalizedWorkflowName = workflowName.charAt(0).toUpperCase() + workflowName.slice(1);
   const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', agentFileName);
-  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8')).replace(/<%= flowName %>/g, `"${workflowName}"`);
+  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
+    .replace(/<%= flowNameClass %>/g, `${capitalizedWorkflowName}`)
+    .replace(/<%= flowName %>/g, `"${workflowName}"`);
 
-  const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
+  // Generate workflow file with workflow name, not Program.cs
+  const csFilePath = path.join(logicAppFolderPath, `${workflowName}.cs`);
   await fse.writeFile(csFilePath, templateCSContent);
 
-  // Create the .csproj file inside the functions folder
-  const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
-  const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+  // Create or update Program.cs with the shared entry point
+  const programFilePath = path.join(logicAppFolderPath, 'Program.cs');
+  if (await fse.pathExists(programFilePath)) {
+    // Program.cs exists, add this workflow to it
+    await addWorkflowToProgram(programFilePath, capitalizedWorkflowName);
+  } else {
+    // Create new Program.cs
+    const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
+    const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
+    const programContent = templateProgramContent.replace(/<%= workflowBuilders %>/g, `${capitalizedWorkflowName}.AddWorkflow();`);
+    await fse.writeFile(programFilePath, programContent);
 
-  const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+    // Create the .csproj file (only for first workflow)
+    const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
+    const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+    const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+    await fse.writeFile(csprojFilePath, templateProjContent);
 
-  await fse.writeFile(csprojFilePath, templateProjContent);
-
-  // Create nuget.config file
-  // Create the .cs file inside the functions folder
-  const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-  const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
-
-  const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
-  await fse.writeFile(nugetFilePath, templateNugetContent);
+    // Create nuget.config file (only for first workflow)
+    const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
+    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
+    const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
+    await fse.writeFile(nugetFilePath, templateNugetContent);
+  }
 };
 
 export async function createLocalConfigurationFiles(

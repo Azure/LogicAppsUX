@@ -6,7 +6,7 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../utils/codeless/common';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
+import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -83,22 +83,12 @@ export default class OpenConnectionView extends OpenDesignerBase {
     }
 
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+
     if (!this.projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    await startDesignTimeApi(this.projectPath);
-
-    if (!ext.designTimeInstances.has(this.projectPath)) {
-      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
-    }
-    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
-    if (!designTimePort) {
-      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
-    }
-    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
-
+    // Create webview panel first for immediate visual feedback
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
@@ -110,7 +100,24 @@ export default class OpenConnectionView extends OpenDesignerBase {
       dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
     };
 
-    this.panelMetadata = await this._getDesignerPanelMetadata();
+    // Show loading state in webview
+    this.panel.webview.html = this.getLoadingHtml();
+
+    // Start design time API and load metadata in parallel
+    const [_, panelMetadata] = await Promise.all([startDesignTimeApi(this.projectPath), this._getDesignerPanelMetadata()]);
+
+    if (!ext.designTimeInstances.has(this.projectPath)) {
+      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
+    }
+    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+    if (!designTimePort) {
+      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
+    }
+    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+
+    this.panelMetadata = panelMetadata;
+
     const callbackUri: Uri = await (env as any).asExternalUri(
       Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
     );
@@ -125,6 +132,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
       azureDetails: this.panelMetadata.azureDetails,
       workflowDetails: this.panelMetadata.workflowDetails,
     });
+
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
 
@@ -140,6 +148,47 @@ export default class OpenConnectionView extends OpenDesignerBase {
 
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
+  }
+
+  private getLoadingHtml(): string {
+    return `<!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                height: 100vh; 
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                color: var(--vscode-foreground);
+            }
+            .loader {
+                text-align: center;
+            }
+            .spinner {
+                border: 3px solid var(--vscode-editor-background);
+                border-top: 3px solid var(--vscode-progressBar-background);
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="loader">
+            <div class="spinner"></div>
+            <div>Loading connection view...</div>
+        </div>
+    </body>
+    </html>`;
   }
 
   private async _handleWebviewMsg(message: any) {
@@ -219,9 +268,18 @@ export default class OpenConnectionView extends OpenDesignerBase {
     workflowBaseManagementUri?: string
   ) {
     const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+
+    // Get the connection key from connections.json immediately for faster insertion
+    const connectionKey = await this.getConnectionKeyFromConnectionsJson(projectPath, connection.name);
+
+    // Insert the connection into the code FIRST for immediate user feedback
+    insertFunctionCallAtLocation(functionName, connection, insertionContext, connectionKey);
+
+    // Process connection references asynchronously (don't block the UI)
     const parametersFromDefinition = {} as any;
 
     if (connectionReferences) {
+      // Process connection references in the background
       const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
         this.context,
         projectPath,
@@ -244,8 +302,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
       await this.mergeJsonParameters(this.workflowFilePath, parametersFromDefinition);
       await saveWorkflowParameter(this.context, this.workflowFilePath, parametersFromDefinition);
     }
-
-    insertFunctionCallAtLocation(functionName, connection, insertionContext);
   }
 
   /**
@@ -266,23 +322,33 @@ export default class OpenConnectionView extends OpenDesignerBase {
   }
 
   private async _getDesignerPanelMetadata(): Promise<any> {
-    const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-    const artifacts = await getArtifactsInLocalProject(projectPath);
-    const bundleVersionNumber = await getBundleVersionNumber();
-    const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
 
-    let localSettings: Record<string, string>;
-    let azureDetails: AzureConnectorDetails;
-
-    if (projectPath) {
-      azureDetails = await getAzureConnectorDetailsForLocalProject(this.context, projectPath);
-      localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values;
-    } else {
+    if (!projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    return {
+    // Critical data needed immediately for UI rendering
+    const criticalDataPromises = [
+      getConnectionsFromFile(this.context, this.workflowFilePath),
+      getParametersFromFile(this.context, this.workflowFilePath),
+      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)).then((result) => result.Values),
+    ];
+
+    // Less critical data that can load slightly later
+    const deferredDataPromises = [
+      getArtifactsInLocalProject(projectPath),
+      getBundleVersionNumber(),
+      getAzureConnectorDetailsForLocalProject(this.context, projectPath),
+    ];
+
+    // Load critical data first
+    const [connectionsData, parametersData, localSettings] = await Promise.all(criticalDataPromises);
+
+    // Continue loading deferred data in background
+    const [artifacts, bundleVersionNumber, azureDetails] = await Promise.all(deferredDataPromises);
+
+    const metadata = {
       panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
       connectionsData,
@@ -297,6 +363,49 @@ export default class OpenConnectionView extends OpenDesignerBase {
       extensionBundleVersion: bundleVersionNumber,
       workflowDetails: {},
     };
+
+    return metadata;
+  }
+
+  /**
+   * Finds the key in connections.json that references the given connection name.
+   * @param projectPath The project path
+   * @param connectionName The connection name to find
+   * @returns The key from connections.json that references this connection, or the connection name if not found
+   */
+  private async getConnectionKeyFromConnectionsJson(projectPath: string | undefined, connectionName: string): Promise<string> {
+    if (!projectPath) {
+      return connectionName;
+    }
+
+    try {
+      const connectionsJsonString = await getConnectionsFromFile(this.context, this.workflowFilePath);
+      if (!connectionsJsonString) {
+        return connectionName;
+      }
+
+      const connectionsJson = JSON.parse(connectionsJsonString);
+      const managedApiConnections = connectionsJson?.managedApiConnections || {};
+
+      // Find the key where the connection.name matches the provided connectionName
+      for (const [key, connectionData] of Object.entries(managedApiConnections)) {
+        const connection = connectionData as any;
+        // Check if connection.connection.id ends with the connectionName after the last '/'
+        if (connection?.connection?.id) {
+          const idParts = connection.connection.id.split('/');
+          const lastPart = idParts[idParts.length - 1];
+          if (lastPart === connectionName) {
+            return key;
+          }
+        }
+      }
+
+      // If not found, return the connection name as fallback
+      return connectionName;
+    } catch {
+      // If parsing fails, return the connection name as fallback
+      return connectionName;
+    }
   }
 }
 
@@ -304,7 +413,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
 function insertFunctionCallAtLocation(
   _functionName: string,
   connection: Connection,
-  insertionContext: { documentUri: string; range: Range }
+  insertionContext: { documentUri: string; range: Range },
+  connectionKey?: string
 ) {
   // Find the document by URI
   const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.fsPath.toString() === insertionContext.documentUri);
@@ -323,7 +433,7 @@ function insertFunctionCallAtLocation(
     // Document is already open, just focus on it
     vscode.window.showTextDocument(existingEditor.document, existingEditor.viewColumn, false).then(
       (editor) => {
-        performTextReplacement(editor, connection, insertionContext);
+        performTextReplacement(editor, connection, insertionContext, connectionKey);
         // Save the document after successful insertion
         existingEditor.document.save().then(
           () => {
@@ -348,7 +458,8 @@ function insertFunctionCallAtLocation(
 const performTextReplacement = (
   editor: vscode.TextEditor,
   connection: Connection,
-  insertionContext: { documentUri: string; range: Range }
+  insertionContext: { documentUri: string; range: Range },
+  connectionKey?: string
 ) => {
   if (insertionContext.range) {
     // Normalize the range format - handle both Start/Line and start/line formats
@@ -369,19 +480,23 @@ const performTextReplacement = (
       return;
     }
 
-    // Use the normalized range to replace the text with the connection.id
+    // Use the connection key from connections.json if available, otherwise fall back to connection.name
+    const connectionIdToInsert = connectionKey || connection.name;
+
+    // Use the normalized range to replace the text with the connection key
     const startPos = new vscode.Position(startLine, startChar);
     const endPos = new vscode.Position(endLine, endChar);
     const rangeToReplace = new vscode.Range(startPos, endPos);
 
     editor
       .edit((editBuilder) => {
-        editBuilder.replace(rangeToReplace, `"${connection.name}"`);
+        editBuilder.replace(rangeToReplace, `"${connectionIdToInsert}"`);
       })
       .then((success) => {
         if (success) {
           // Position cursor after the inserted connection ID
-          const newCursorPos = new vscode.Position(startLine, startChar + connection.name.length);
+          const newCursorPos = new vscode.Position(startLine, startChar + connectionIdToInsert.length);
+          // const newCursorPos = new vscode.Position(startLine, startChar + connection.name.length);
           editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
         } else {
           vscode.window.showErrorMessage('Failed to insert connection ID');

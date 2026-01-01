@@ -713,6 +713,11 @@
           "group": "navigation@1"
         },
         {
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "logicApps.hasProject && resourceLangId==csharp && resourcePath in azureLogicAppsStandard.codefulWorkflowFiles",
+          "group": "navigation@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "logicApps.hasProject && resourceFilename==workflow.json",
           "group": "navigation@3"
@@ -787,6 +792,14 @@
         {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "logicApps.hasProject && resourceFilename==workflow.json"
+        },
+        {
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "logicApps.hasProject && resourceLangId==csharp && resourcePath in azureLogicAppsStandard.codefulWorkflowFiles"
+        },
+        {
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "logicApps.hasProject && resourceLangId==csharp && azureLogicAppsStandard.isCodefulWorkflowFile"
         },
         {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",

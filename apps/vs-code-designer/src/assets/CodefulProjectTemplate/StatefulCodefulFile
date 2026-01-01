@@ -2,52 +2,39 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
 
-using System;
-using Microsoft.Azure.Workflows.Sdk.Agents;
-using Microsoft.Azure.Workflows.Sdk.Agents.Connectors;
-using Microsoft.Azure.Workflows.Sdk.Agents.Connectors.Msnweather;
-using Microsoft.Extensions.Hosting;
-
-namespace AgentStatefulNamespace;
-
-
-/// <summary>
-/// Main Class.
-/// </summary>
-public class Program
+namespace harness
 {
+    using Microsoft.Azure.Workflows.Sdk.Agents;
+    using Microsoft.Azure.Workflows.Sdk.Agents.Connectors.Msnweather;
+
     /// <summary>
-    /// Main Class.
+    /// <%= flowName %> Stateful Workflow.
     /// </summary>
-    public static void Main()
+    public static class <%= flowNameClass %>
     {
-        // Configure the worker.
-        var host = new HostBuilder()
-            .ConfigureFunctionsWorkerDefaults()
-            .ConfigureServices(services => WorkflowBuilderFactory.ConfigureServices(services))
-            .Build();
-
-        var trigger = WorkflowTriggers.Managed.Msnweather("msnweather").WhenOnCurrentWeatherChange(
-            location: () => "Seattle, WA",
-            measure: () => OnCurrentWeatherChangeMeasureInput.Temperature,
-            when: () => OnCurrentWeatherChangeWhenInput.IsEqualTo,
-            target: () => 70,
-            units: () => "I"
-        );
-
-        trigger.WithName("weather_trigger");
-        trigger.WithRecurrence(new FlowRecurrence
+        /// <summary>
+        /// Configures and builds the <%= flowName %> stateful workflow.
+        /// </summary>
+        public static void AddWorkflow()
         {
-            Frequency = FlowRecurrenceFrequency.Minute,
-            Interval = 1
-        });
-        var builder = WorkflowBuilderFactory.CreateStatefulWorkflow( <%= flowName %>, trigger);
+            var trigger = WorkflowTriggers.Managed.Msnweather("msnweather").OnCurrentWeatherChange(
+                location: () => "Seattle, WA",
+                measure: () => measureInput.Temperature,
+                when: () => whenInput.IsEqualTo,
+                target: () => 70,
+                units: () => "I"
+            );
 
-        var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput}");
-        builder.AddAction(compose);
+            trigger.WithName("weather_trigger");
+            trigger.WithRecurrence(new FlowRecurrence
+            {
+                Frequency = FlowRecurrenceFrequency.Minute,
+                Interval = 1
+            });
+            var builder = WorkflowBuilderFactory.CreateStatefulWorkflow(<%= flowName %>, trigger);
 
-
-        WorkflowBuilderFactory.CreateWorkflows();
-        host.Run();
+            var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {trigger.TriggerOutput}");
+            builder.AddAction(compose);
+        }
     }
 }

@@ -184,7 +184,45 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private async _getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-    const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+
+    let workflowContent: any;
+
+    // Check if this is a codeful workflow file (.cs)
+    if (this.workflowFilePath.endsWith('.cs')) {
+      // For codeful workflows, fetch the workflow definition from the run data
+      try {
+        const runUrl = `${this.baseUrl}/workflows/${this.workflowName}/runs/${this.runId}?api-version=${this.apiVersion}`;
+        const runResponse: string = await sendRequest(this.context, {
+          url: runUrl,
+          method: HTTP_METHODS.GET,
+        });
+        const runData = JSON.parse(runResponse);
+
+        // Extract workflow definition from the run properties
+        if (runData.properties?.workflow?.properties?.definition) {
+          workflowContent = {
+            definition: runData.properties.workflow.properties.definition,
+            kind: runData.properties.workflow.properties.kind || 'Stateful',
+          };
+        } else {
+          // Fallback: create minimal structure
+          workflowContent = {
+            definition: {},
+            kind: 'Stateful',
+          };
+        }
+      } catch {
+        // If we can't fetch run data, create minimal structure
+        workflowContent = {
+          definition: {},
+          kind: 'Stateful',
+        };
+      }
+    } else {
+      // For regular workflow.json files, read from file
+      workflowContent = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+    }
+
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const bundleVersionNumber = await getBundleVersionNumber();

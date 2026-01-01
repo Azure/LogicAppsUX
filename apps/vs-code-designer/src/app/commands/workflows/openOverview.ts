@@ -39,6 +39,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../utils/startRuntimeApi';
+import { detectCodefulWorkflow, extractTriggerNameFromCodeful, hasHttpRequestTrigger, extractHttpTriggerName } from '../../utils/codeful';
 
 // TODO(aeldridge): We should split into remote and local open overview
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
@@ -63,21 +64,88 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
-    workflowName = basename(dirname(workflowFilePath));
+    let isCodefulWorkflow = false;
+    let hasRequestTrigger = false;
+
+    // Check if this is a codeful workflow file (.cs)
+    if (workflowFilePath.endsWith('.cs')) {
+      const fileContent = readFileSync(workflowFilePath, 'utf8');
+      const workflowInfo = detectCodefulWorkflow(fileContent);
+
+      if (!workflowInfo) {
+        throw new Error(localize('noCodefulWorkflow', 'Could not detect a workflow definition in this file.'));
+      }
+
+      isCodefulWorkflow = true;
+
+      // Extract workflow name from the codeful file
+      workflowName = workflowInfo.workflowName;
+
+      // Extract trigger name from the codeful file
+      const extractedTriggerName = extractTriggerNameFromCodeful(fileContent);
+      triggerName = extractedTriggerName || 'trigger';
+
+      // Check if this is an HTTP request trigger
+      hasRequestTrigger = hasHttpRequestTrigger(fileContent);
+      if (hasRequestTrigger) {
+        const httpTriggerName = extractHttpTriggerName(fileContent);
+        if (httpTriggerName) {
+          triggerName = httpTriggerName;
+        }
+      }
+
+      // For codeful workflows, create a minimal workflow content structure
+      // The actual workflow definition is in the C# code, not in a workflow.json
+      workflowContent = {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          triggers: {
+            [triggerName]: hasRequestTrigger
+              ? {
+                  type: 'Request',
+                  kind: 'Http',
+                  inputs: {
+                    schema: {},
+                  },
+                }
+              : {
+                  type: 'Unknown',
+                },
+          },
+          actions: {},
+          outputs: {},
+        },
+        kind: workflowInfo.workflowType === 'stateful' ? 'Stateful' : workflowInfo.workflowType === 'agent' ? 'Agent' : 'Stateful',
+      };
+    } else {
+      // Original logic for workflow.json files
+      workflowName = basename(dirname(workflowFilePath));
+      workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
+      triggerName = getTriggerName(workflowContent.definition);
+    }
+
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     if (!isNullOrUndefined(projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
       await launchProjectDebugger(context, projectPath);
     }
 
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
-    workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     getBaseUrl = () => (ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined);
     baseUrl = getBaseUrl?.();
     apiVersion = '2019-10-01-edge-preview';
     isLocal = true;
-    triggerName = getTriggerName(workflowContent.definition);
-    getCallbackInfo = async (baseUrl: string) =>
-      await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+
+    // For codeful workflows, use dedicated callback logic
+    if (isCodefulWorkflow) {
+      getCallbackInfo = async (baseUrl: string) =>
+        await getCodefulWorkflowCallbackInfo(context, baseUrl, workflowName, triggerName, apiVersion, hasRequestTrigger);
+    } else {
+      // For regular workflow.json files
+      getCallbackInfo = async (baseUrl: string) =>
+        await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
+    }
+
     callbackInfo = await getCallbackInfo(baseUrl);
 
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
@@ -246,23 +314,63 @@ async function getLocalWorkflowCallbackInfo(
 ): Promise<ICallbackUrlResponse | undefined> {
   const requestTriggerName = getRequestTriggerName(definition);
   if (requestTriggerName) {
+    if (baseUrl) {
+      try {
+        const url = `${baseUrl}/workflows/${workflowName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${apiVersion}`;
+        const response: string = await sendRequest(context, {
+          url,
+          method: HTTP_METHODS.POST,
+        });
+        return JSON.parse(response);
+      } catch {
+        // API call failed, return undefined
+        return undefined;
+      }
+    }
+  } else {
+    // For non-request triggers, provide the run endpoint
+    const fallbackBaseUrl = baseUrl || `http://localhost:7071${managementApiPrefix}`;
+    return {
+      value: `${fallbackBaseUrl}/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+      method: HTTP_METHODS.POST,
+    };
+  }
+}
+
+async function getCodefulWorkflowCallbackInfo(
+  context: IActionContext,
+  baseUrl: string,
+  workflowName: string,
+  triggerName: string,
+  apiVersion: string,
+  hasRequestTrigger: boolean
+): Promise<ICallbackUrlResponse | undefined> {
+  // For HTTP request triggers, try to get the callback URL from the API
+  if (hasRequestTrigger && baseUrl) {
     try {
-      const url = `${baseUrl}/workflows/${workflowName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${apiVersion}`;
+      const url = `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`;
       const response: string = await sendRequest(context, {
         url,
         method: HTTP_METHODS.POST,
       });
       return JSON.parse(response);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch {
+      // API call failed, return undefined
       return undefined;
     }
-  } else {
-    return {
-      value: `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
-      method: HTTP_METHODS.POST,
-    };
   }
+
+  // For cases where we can't get the callback URL from API, return undefined for request triggers
+  if (hasRequestTrigger) {
+    return undefined;
+  }
+
+  // For non-request triggers, provide the run endpoint
+  const fallbackBaseUrl = baseUrl || `http://localhost:7071${managementApiPrefix}`;
+  return {
+    value: `${fallbackBaseUrl}/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+    method: HTTP_METHODS.POST,
+  };
 }
 
 function normalizeLocation(location: string): string {

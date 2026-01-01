@@ -56,3 +56,138 @@ const isCodefulNet8Csproj = (csprojContent: string): boolean => {
     csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes('Microsoft.Azure.Workflows.Sdk.Agents')
   );
 };
+
+/**
+ * Detects if a C# file contains a CreateStatefulWorkflow call and extracts the workflow name.
+ * @param fileContent - The content of the C# file
+ * @returns The workflow name if detected, undefined otherwise
+ */
+export const detectStatefulCodefulWorkflow = (fileContent: string): string | undefined => {
+  // Pattern to match: WorkflowBuilderFactory.CreateStatefulWorkflow(<workflowName>, ...)
+  // This handles: variables, string literals, template placeholders like <%= flowName %>
+  // Using [\s\S]*? to match across line breaks
+  const pattern = /WorkflowBuilderFactory[\s\S]*?\.CreateStatefulWorkflow\s*\(\s*([^,)]+)/;
+  const match = fileContent.match(pattern);
+
+  if (match && match[1]) {
+    // Extract the workflow name and clean it up (remove quotes, trim whitespace)
+    let workflowName = match[1].trim();
+
+    // Remove string quotes if present
+    workflowName = workflowName.replace(/^["']|["']$/g, '');
+
+    // If it's a template placeholder like <%= flowName %>, we can't determine the actual name
+    // In this case, return undefined since it's a template
+    if (workflowName.includes('<%=') || workflowName.includes('%>')) {
+      return undefined;
+    }
+
+    return workflowName;
+  }
+
+  return undefined;
+};
+
+/**
+ * Detects if a C# file contains a CreateConversationalAgent call and extracts the workflow name.
+ * @param fileContent - The content of the C# file
+ * @returns The workflow name if detected, undefined otherwise
+ */
+export const detectAgentCodefulWorkflow = (fileContent: string): string | undefined => {
+  // Pattern to match: WorkflowBuilderFactory.CreateConversationalAgent(<workflowName>)
+  // This handles: variables, string literals, template placeholders like <%= flowName %>
+  // Using [\s\S]*? to match across line breaks
+  const pattern = /WorkflowBuilderFactory[\s\S]*?\.CreateConversationalAgent\s*\(\s*([^,)]+)/;
+  const match = fileContent.match(pattern);
+
+  if (match && match[1]) {
+    // Extract the workflow name and clean it up (remove quotes, trim whitespace)
+    let workflowName = match[1].trim();
+
+    // Remove string quotes if present
+    workflowName = workflowName.replace(/^["']|["']$/g, '');
+
+    // If it's a template placeholder like <%= flowName %>, we can't determine the actual name
+    // In this case, return undefined since it's a template
+    if (workflowName.includes('<%=') || workflowName.includes('%>')) {
+      return undefined;
+    }
+
+    return workflowName;
+  }
+
+  return undefined;
+};
+
+/**
+ * Detects if a C# file is a codeful workflow file and extracts the workflow name.
+ * Checks for both stateful and agent workflow patterns.
+ * @param fileContent - The content of the C# file
+ * @returns An object with the workflow name and type if detected, undefined otherwise
+ */
+export const detectCodefulWorkflow = (fileContent: string): { workflowName: string; workflowType: 'stateful' | 'agent' } | undefined => {
+  const statefulWorkflowName = detectStatefulCodefulWorkflow(fileContent);
+  if (statefulWorkflowName) {
+    return { workflowName: statefulWorkflowName, workflowType: 'stateful' };
+  }
+
+  const agentWorkflowName = detectAgentCodefulWorkflow(fileContent);
+  if (agentWorkflowName) {
+    return { workflowName: agentWorkflowName, workflowType: 'agent' };
+  }
+
+  return undefined;
+};
+
+/**
+ * Extracts the trigger name from a codeful C# file.
+ * Looks for WorkflowTriggers patterns and extracts the trigger name.
+ * @param fileContent - The content of the C# file
+ * @returns The trigger name if found, undefined otherwise
+ */
+export const extractTriggerNameFromCodeful = (fileContent: string): string | undefined => {
+  // Look for .WithName("triggerName") pattern which sets the trigger name
+  const withNamePattern = /\.WithName\s*\(\s*["']([^"']+)["']\s*\)/;
+  const withNameMatch = fileContent.match(withNamePattern);
+
+  if (withNameMatch && withNameMatch[1]) {
+    return withNameMatch[1];
+  }
+
+  // If no explicit name is set, try to extract from the trigger variable name
+  const triggerVarPattern = /var\s+(\w+)\s*=\s*WorkflowTriggers\./;
+  const triggerVarMatch = fileContent.match(triggerVarPattern);
+
+  if (triggerVarMatch && triggerVarMatch[1]) {
+    return triggerVarMatch[1];
+  }
+
+  return undefined;
+};
+
+/**
+ * Detects if the codeful workflow has an HTTP request trigger.
+ * @param fileContent - The content of the C# file
+ * @returns true if the workflow has an HTTP request trigger, false otherwise
+ */
+export const hasHttpRequestTrigger = (fileContent: string): boolean => {
+  return fileContent.includes('WorkflowTriggers.BuiltIn.CreateHttpTrigger');
+};
+
+/**
+ * Extracts the HTTP trigger name from WorkflowTriggers.BuiltIn.CreateHttpTrigger() call.
+ * @param fileContent - The content of the C# file
+ * @returns The HTTP trigger name if found, undefined otherwise
+ */
+export const extractHttpTriggerName = (fileContent: string): string | undefined => {
+  // Pattern to match: WorkflowTriggers.BuiltIn.CreateHttpTrigger("triggerName", ...)
+  // Using [\s\S]*? to match any characters including newlines between parts
+  const pattern = /WorkflowTriggers[\s\S]*?\.BuiltIn[\s\S]*?\.CreateHttpTrigger\s*\(\s*["']([^"']+)["']/;
+  const match = fileContent.match(pattern);
+
+  if (match && match[1]) {
+    return match[1];
+  }
+
+  return undefined;
+};

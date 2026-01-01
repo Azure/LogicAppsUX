@@ -19,6 +19,12 @@ import {
   appKindSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+
+// Cache validation results to avoid expensive process checks (3-4 seconds on Windows)
+// This balances safety (detecting wrong func process) with performance
+// Key: projectPath, Value: { timestamp, isValid }
+const processValidationCache = new Map<string, { timestamp: number; isValid: boolean }>();
+const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
@@ -167,8 +173,19 @@ function extractPinnedVersion(input: string): string | null {
 }
 
 async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+  // Check cache first to avoid expensive validation (3-4+ seconds on Windows)
+  const cached = processValidationCache.get(projectPath);
+  const now = Date.now();
+  if (cached && now - cached.timestamp < VALIDATION_CACHE_TTL) {
+    return;
+  }
+
   const correctFuncProcess = await checkFuncProcessId(projectPath);
-  if (!correctFuncProcess) {
+
+  if (correctFuncProcess) {
+    // Cache successful validation
+    processValidationCache.set(projectPath, { timestamp: now, isValid: true });
+  } else {
     ext.outputChannel.appendLog(
       localize(
         'invalidChildFuncPid',
@@ -176,6 +193,8 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
         projectPath
       )
     );
+    // Clear cache since we're restarting
+    processValidationCache.delete(projectPath);
     stopDesignTimeApi(projectPath);
     await startDesignTimeApi(projectPath);
   }
@@ -183,10 +202,17 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
 
 async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   let correctId = false;
-  let { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
+  const designTimeInst = ext.designTimeInstances.get(projectPath);
+  if (!designTimeInst) {
+    return false;
+  }
+
+  let { process, childFuncPid } = designTimeInst;
+
+  // Reduce retries and delay for faster checks (was 3 retries * 1000ms = 3s worst case)
   let retries = 0;
-  while (!childFuncPid && retries < 3) {
-    await delay(1000);
+  while (!childFuncPid && retries < 2) {
+    await delay(500); // Reduced from 1000ms to 500ms
     ({ process, childFuncPid } = ext.designTimeInstances.get(projectPath));
     retries++;
   }
@@ -196,7 +222,13 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
 
   if (os.platform() === Platform.windows) {
     const children = await getChildProcessesWithScript(process.pid);
-    correctId = children.some((p) => p.processId.toString() === childFuncPid && p.name === 'func.exe');
+    ext.outputChannel.appendLog(`Checking for func.exe child process. Looking for PID: ${childFuncPid}, Found ${children.length} children`);
+    correctId = children.some((p) => {
+      const matches = p.processId.toString() === childFuncPid && p.name === 'func.exe';
+      ext.outputChannel.appendLog(`  Child: PID=${p.processId}, Name=${p.name}, Matches=${matches}`);
+      return matches;
+    });
+    ext.outputChannel.appendLog(`Process validation result: ${correctId ? 'VALID' : 'INVALID'}`);
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {
