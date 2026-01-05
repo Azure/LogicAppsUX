@@ -20,7 +20,7 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
-  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true })),
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, error: null })),
   openLoginPopup: vi.fn(),
 }));
 
@@ -59,7 +59,7 @@ describe('IframeWrapper - contextId support', () => {
     vi.clearAllMocks();
 
     // Reset checkAuthStatus to return authenticated
-    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true });
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, error: null });
   });
 
   afterEach(() => {

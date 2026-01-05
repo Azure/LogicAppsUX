@@ -1,6 +1,6 @@
 import { useMount } from '@fluentui/react-hooks';
 import type { EditorContentChangedEventArgs } from '@microsoft/designer-ui';
-import { MonacoEditor } from '@microsoft/designer-ui';
+import { CodeMirrorEditor } from '@microsoft/designer-ui';
 import { serializeBJSWorkflow, store as DesignerStore, setIsWorkflowDirty, useIsWorkflowDirty } from '@microsoft/logic-apps-designer-v2';
 import type { AppDispatch } from '@microsoft/logic-apps-designer-v2';
 import { EditorLanguage, isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -60,14 +60,15 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
   return (
     <div>
       {isNullOrUndefined(code) ? null : (
-        <MonacoEditor
-          height="95vh"
+        <CodeMirrorEditor
+          height="100vh"
           language={EditorLanguage.json}
           value={code}
           overviewRulerBorder={true}
           scrollBeyondLastLine={false}
           fontSize={13}
           onContentChanged={handleContentChanged}
+          indentWithTab={true}
         />
       )}
     </div>
