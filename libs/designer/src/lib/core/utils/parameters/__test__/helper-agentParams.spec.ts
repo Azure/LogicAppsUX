@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { isParameterRequired, createParameterInfo } from '../helper';
-import type { ParameterInfo } from '@microsoft/logic-apps-shared';
-import type { ResolvedParameter } from '../types';
-
+import type { ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
 describe('Parameter validation logic for Agent operations', () => {
   describe('isParameterRequired', () => {
     it('should return false for hidden parameters', () => {
@@ -227,7 +225,7 @@ describe('Parameter validation logic for Agent operations', () => {
         },
       } as any;
 
-      const parameterInfo = createParameterInfo(parameter, true, {}, undefined, undefined, undefined, false);
+      const parameterInfo = createParameterInfo(parameter, {}, false, true);
 
       // Should be marked as required because it's deploymentId and not hidden
       expect(parameterInfo.required).toBe(true);
@@ -246,7 +244,7 @@ describe('Parameter validation logic for Agent operations', () => {
         },
       } as any;
 
-      const parameterInfo = createParameterInfo(parameter, true, {}, undefined, undefined, undefined, false);
+      const parameterInfo = createParameterInfo(parameter, {}, false, true);
 
       // Should be marked as required because it's modelId and not hidden
       expect(parameterInfo.required).toBe(true);
@@ -265,7 +263,7 @@ describe('Parameter validation logic for Agent operations', () => {
         },
       } as any;
 
-      const parameterInfo = createParameterInfo(parameter, true, {}, undefined, undefined, undefined, false);
+      const parameterInfo = createParameterInfo(parameter, {}, false, true);
 
       // Should not be marked as required because it's hidden
       expect(parameterInfo.required).toBe(false);
@@ -283,7 +281,7 @@ describe('Parameter validation logic for Agent operations', () => {
         },
       } as any;
 
-      const parameterInfo = createParameterInfo(parameter, true, {}, undefined, undefined, undefined, false);
+      const parameterInfo = createParameterInfo(parameter, {}, false, true);
 
       expect(parameterInfo.required).toBe(true);
     });
@@ -309,7 +307,7 @@ describe('Parameter validation logic for Agent operations', () => {
         },
       } as any;
 
-      const parameterInfo = createParameterInfo(parameter, true, {}, undefined, undefined, undefined, false);
+      const parameterInfo = createParameterInfo(parameter, {}, false, true);
 
       // Should be marked as required initially, but isParameterRequired should handle the validation
       expect(parameterInfo.required).toBe(true);
