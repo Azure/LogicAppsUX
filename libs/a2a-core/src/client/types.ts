@@ -54,3 +54,8 @@ export interface UnauthorizedEvent {
 }
 
 export type UnauthorizedHandler = (event: UnauthorizedEvent) => Promise<void> | void;
+
+export interface IdentityProvider {
+  signInEndpoint: string;
+  name: string;
+}

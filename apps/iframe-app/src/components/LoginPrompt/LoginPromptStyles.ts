@@ -34,11 +34,21 @@ export const useLoginPromptStyles = makeStyles({
     fontSize: tokens.fontSizeBase300,
     lineHeight: tokens.lineHeightBase300,
   },
+  messageBar: {
+    marginBottom: tokens.spacingVerticalM,
+    width: '100%',
+    textAlign: 'center',
+  },
   button: {
-    minWidth: '200px',
-    height: '44px',
+    minWidth: '250px',
+    fontSize: tokens.fontSizeBase300,
   },
   spinner: {
     marginRight: tokens.spacingHorizontalS,
+  },
+  identityProviders: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalL,
   },
 });

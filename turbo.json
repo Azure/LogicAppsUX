@@ -43,6 +43,9 @@
     "test:extension-unit": {
       "outputs": ["coverage/**"]
     },
+    "test:iframe-app": {
+      "outputs": ["coverage/**"]
+    },
     "vscode:designer:pack": {
       "cache": false,
       "dependsOn": ["vscode-react#build:extension"]

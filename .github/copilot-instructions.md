@@ -30,6 +30,9 @@ pnpm run build:extension
 # Run all unit tests
 pnpm run test:lib  # or pnpm turbo run test:lib
 
+# Run IFrame chat app unit tests
+pnpm run test:iframe-app
+
 # Run VS Code extension unit tests
 pnpm run test:extension-unit
 

@@ -15,7 +15,13 @@ import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@mi
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogTitle, DialogTrigger } from '@fluentui/react-components';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import { clearFocusElement, setFocusNode, setRunIndex, setTimelineRepetitionIndex } from '../../../core/state/workflow/workflowSlice';
+import {
+  clearFocusElement,
+  setFocusNode,
+  setRunIndex,
+  setTimelineRepetitionIndex,
+  setToolRunIndex,
+} from '../../../core/state/workflow/workflowSlice';
 import { parseChatHistory, useRefreshChatMutation } from '../agentChat/helper';
 // import constants from '../../../common/constants';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
@@ -71,13 +77,17 @@ export const AgentChatContent = () => {
   }, []);
 
   const toolResultCallback = useCallback(
-    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+    (agentName: string, toolName: string, iteration: number, subIteration: number, mcpToolName?: string) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
       } else {
         dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-        dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+        if (mcpToolName) {
+          dispatch(setToolRunIndex({ page: subIteration, nodeId: toolName }));
+        } else {
+          dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+        }
       }
 
       dispatch(setFocusNode(agentLastOperation));
