@@ -1,4 +1,4 @@
-import { type Resource, ResourceService, type LogicAppResource, equals } from '@microsoft/logic-apps-shared';
+import { type Resource, ResourceService, type LogicAppResource, equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
@@ -12,6 +12,40 @@ const queryOpts = {
   refetchOnMount: false,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
+};
+
+export const useAllMcpServers = (siteResourceId: string) => {
+  return useQuery({
+    queryKey: ['mcpServers', siteResourceId],
+    queryFn: async () => {
+      const fileContent: any = await ResourceService().getResource(
+        `${siteResourceId}/hostruntime/admin/vfs/mcpservers.json`,
+        {
+            'api-version': '2018-11-01',
+            '&relativepath': '1'
+        });
+
+      return getPropertyValue(fileContent?.value ?? fileContent, 'mcpServers') ?? [];
+    },
+    enabled: !!siteResourceId,
+    ...queryOpts,
+  });
+};
+
+export const useMcpEligibleWorkflows = (subscriptionId: string, resourceGroup: string, logicAppName: string) => {
+  return useQuery({
+    queryKey: ['mcpEligibleWorkflows', subscriptionId?.toLowerCase(), resourceGroup?.toLowerCase(), logicAppName?.toLowerCase()],
+    queryFn: async () => {
+      const allWorkflows = await ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, (workflowItem: any) => {
+        const trigger: any = Object.values(workflowItem.triggers).length === 1 ? Object.values(workflowItem.triggers)[0] : null;
+        return trigger && equals(trigger.type, 'request');
+      });
+
+      return allWorkflows.map((workflow) => workflow.name);    
+    },
+    enabled: !!subscriptionId && !!resourceGroup && !!logicAppName,
+    ...queryOpts,
+  });
 };
 
 export const useAllManagedConnectors = () => {
