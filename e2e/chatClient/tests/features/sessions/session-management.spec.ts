@@ -156,7 +156,7 @@ test.describe('Session Management', { tag: '@mock' }, () => {
     await expect(page.getByText(testMessage)).toBeVisible();
 
     // Should show "You" label
-    await expect(page.getByText('You')).toBeVisible();
+    await expect(page.getByText('You', { exact: true })).toBeVisible();
   });
 
   test('should show "Agent is typing..." indicator after sending message', async ({ page }) => {
