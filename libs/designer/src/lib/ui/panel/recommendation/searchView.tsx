@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
@@ -45,6 +46,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const enableNestedAgentLoops = useEnableNestedAgentLoops();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -94,9 +96,15 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      // Exclude agent operations unless it's the root of an agentic or A2A workflow
-      if (((!isAgenticWorkflow && !isA2AWorkflow) || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
-        return false;
+      // Exclude agent operations unless it's an agentic or A2A workflow
+      // When not at root, also require enableNestedAgentLoops to be true
+      if (equals(type, constants.NODE.TYPE.AGENT)) {
+        if (!isAgenticWorkflow && !isA2AWorkflow) {
+          return false;
+        }
+        if (!isRoot && !enableNestedAgentLoops) {
+          return false;
+        }
       }
 
       // Exclude variable initialization if not at the root
@@ -126,7 +134,7 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [passesA2AWorkflowFilter, isAgenticWorkflow, isA2AWorkflow, isRoot, isWithinAgenticLoop, isAgentTool]
+    [passesA2AWorkflowFilter, isAgenticWorkflow, isA2AWorkflow, isRoot, isWithinAgenticLoop, isAgentTool, enableNestedAgentLoops]
   );
 
   useDebouncedEffect(

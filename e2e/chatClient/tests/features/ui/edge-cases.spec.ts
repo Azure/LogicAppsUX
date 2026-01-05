@@ -30,6 +30,15 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 test.describe('Rapid Interactions', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -138,6 +147,15 @@ test.describe('Rapid Interactions', { tag: '@mock' }, () => {
 
 test.describe('Boundary Conditions', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -249,6 +267,15 @@ test.describe('Boundary Conditions', { tag: '@mock' }, () => {
 
 test.describe('Browser Behavior', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,
@@ -386,6 +413,15 @@ test.describe('Browser Behavior', { tag: '@mock' }, () => {
 
 test.describe('Race Conditions', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,

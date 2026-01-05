@@ -2,19 +2,26 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { IframeWrapper } from '../IframeWrapper';
 import type { IframeConfig } from '../../lib/utils/config-parser';
+import * as authHandler from '../../lib/authHandler';
 
 // Mock the dependencies
 vi.mock('@microsoft/logic-apps-chat', () => ({
   ChatWidget: vi.fn(({ sessionKey }) => <div data-testid="chat-widget">ChatWidget (sessionKey: {sessionKey})</div>),
+  useChatStore: vi.fn((selector) => {
+    const mockState = { sessions: [] };
+    return selector ? selector(mockState) : mockState;
+  }),
 }));
 
-vi.mock('../MultiSessionChat', () => ({
+vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
   MultiSessionChat: vi.fn(() => <div data-testid="multi-session-chat">MultiSessionChat</div>),
 }));
 
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, error: null })),
+  openLoginPopup: vi.fn(),
 }));
 
 vi.mock('../../lib/hooks/useFrameBlade', () => ({
@@ -50,6 +57,9 @@ describe('IframeWrapper - contextId support', () => {
 
     // Reset mocks
     vi.clearAllMocks();
+
+    // Reset checkAuthStatus to return authenticated
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, error: null });
   });
 
   afterEach(() => {
@@ -67,11 +77,14 @@ describe('IframeWrapper - contextId support', () => {
 
     render(<IframeWrapper config={configWithContextId} />);
 
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
+
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
         initialContextId: 'test-context-123',
       }),
-      undefined
+      {}
     );
   });
 
@@ -80,12 +93,13 @@ describe('IframeWrapper - contextId support', () => {
       ...defaultConfig,
       contextId: 'test-context-456',
       multiSession: true,
+      apiKey: 'test-api-key', // apiKey skips auth check
     };
 
     render(<IframeWrapper config={configWithContextId} />);
 
-    // Multi-session mode uses MultiSessionChat, not ChatWidget
-    expect(screen.getByTestId('multi-session-chat')).toBeInTheDocument();
+    // Wait for auth check to complete (apiKey skips auth check)
+    await screen.findByTestId('multi-session-chat');
   });
 
   it('should pass sessionKey to ChatWidget', async () => {
@@ -103,11 +117,14 @@ describe('IframeWrapper - contextId support', () => {
 
     render(<IframeWrapper config={configWithSessionKey} />);
 
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
+
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
         sessionKey: 'my-session',
       }),
-      undefined
+      {}
     );
   });
 
@@ -122,14 +139,15 @@ describe('IframeWrapper - contextId support', () => {
 
     render(<IframeWrapper config={configWithoutContextId} />);
 
-    expect(screen.getByTestId('chat-widget')).toBeInTheDocument();
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
 
     // Should still pass initialContextId prop, but it will be undefined
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
         initialContextId: undefined,
       }),
-      undefined
+      {}
     );
   });
 
@@ -148,12 +166,15 @@ describe('IframeWrapper - contextId support', () => {
 
     render(<IframeWrapper config={configWithSessionKey} />);
 
+    // Wait for auth check to complete
+    await screen.findByTestId('chat-widget');
+
     expect(ChatWidget).toHaveBeenCalledWith(
       expect.objectContaining({
         sessionKey: 'custom-session',
         initialContextId: 'test-context-abc',
       }),
-      undefined
+      {}
     );
   });
 });

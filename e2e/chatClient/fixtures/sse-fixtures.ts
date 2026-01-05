@@ -7,6 +7,37 @@
 import { test as base, type Page } from '@playwright/test';
 import { generateSSEResponse, AGENT_CARD } from '../mocks/sse-generators';
 
+// Helper to encode a string to Base64 with proper UTF-8 support (for Unicode characters)
+function utf8ToBase64(str: string): string {
+  // Use Buffer in Node.js environment (Playwright runs in Node)
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(str, 'utf-8').toString('base64');
+  }
+  // Fallback for browser environment
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(str);
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary);
+}
+
+// Helper to create a mock JWT token with a given payload
+function createMockJwt(payload: Record<string, unknown>): string {
+  const header = utf8ToBase64(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const payloadStr = utf8ToBase64(JSON.stringify(payload));
+  const signature = 'mock-signature';
+  return `${header}.${payloadStr}.${signature}`;
+}
+
+// Default mock JWT with test user name
+const DEFAULT_MOCK_JWT = createMockJwt({
+  name: 'Test User',
+  sub: 'test-user-123',
+  exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+});
+
 async function setupSSEMocking(page: Page) {
   // Log browser console messages to see what's happening
   page.on('console', (msg) => {
@@ -15,6 +46,25 @@ async function setupSSEMocking(page: Page) {
     if (text.includes('[MOCK]') || text.includes('[AUTH]')) {
       console.log(`[BROWSER ${type.toUpperCase()}]`, text);
     }
+  });
+
+  // Mock authentication - return authenticated user to bypass login prompt
+  // Includes access_token JWT with 'name' claim for username extraction
+  await page.route('**/.auth/me', async (route) => {
+    const url = route.request().url();
+    const urlParams = new URL(url).searchParams;
+    const customName = urlParams.get('mockUserName');
+
+    // Allow tests to override the username via query param
+    const mockJwt = customName
+      ? createMockJwt({ name: customName, sub: 'test-user-123', exp: Math.floor(Date.now() / 1000) + 3600 })
+      : DEFAULT_MOCK_JWT;
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user', access_token: mockJwt }]),
+    });
   });
 
   // Intercept mock consent page requests

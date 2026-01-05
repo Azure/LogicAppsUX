@@ -36,6 +36,7 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
   selectedOperationGroupId: '',
   selectedOperationId: '',
   favoriteOperations: [],
+  selectionState: undefined,
 });
 
 const getInitialErrorContentState = (): ErrorPanelContentState => ({
@@ -87,8 +88,10 @@ export const panelSlice = createSlice({
     },
     collapsePanel: (state) => {
       state.isCollapsed = true;
-      state.discoveryContent.selectedOperationGroupId = '';
       state.discoveryContent.selectedBrowseCategory = undefined;
+      state.discoveryContent.selectedOperationGroupId = '';
+      state.discoveryContent.selectedOperationId = '';
+      state.discoveryContent.selectionState = undefined;
       state.discoveryContent.isAddingTrigger = false;
     },
     clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean } | undefined>) => {
@@ -209,6 +212,8 @@ export const panelSlice = createSlice({
       state.discoveryContent.isAddingAgentTool = isAgentTool;
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
+      state.discoveryContent.selectedOperationId = '';
+      state.discoveryContent.selectionState = undefined;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -228,7 +233,13 @@ export const panelSlice = createSlice({
       state.discoveryContent.agentToolMetadata = { newAdditiveSubgraphId, subGraphManifest };
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
-      state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);
+      const cleanedId = cleanConnectorId(action.payload);
+      state.discoveryContent.selectedOperationGroupId = cleanedId;
+
+      const selectionState = cleanedId ? 'DETAILS' : 'SEARCH';
+      if (state.discoveryContent.selectionState !== selectionState) {
+        state.discoveryContent.selectionState = selectionState;
+      }
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -242,6 +253,9 @@ export const panelSlice = createSlice({
     },
     selectBrowseCategory: (state, action: PayloadAction<{ key: string; title: string } | undefined>) => {
       state.discoveryContent.selectedBrowseCategory = action.payload;
+    },
+    setDiscoverySelectionState: (state, action: PayloadAction<'SEARCH' | 'DETAILS' | 'AZURE_RESOURCE' | 'HTTP_SWAGGER' | undefined>) => {
+      state.discoveryContent.selectionState = action.payload;
     },
     setFavoriteOperations: (state, action: PayloadAction<ActionPanelFavoriteItem[]>) => {
       state.discoveryContent.favoriteOperations = action.payload;
@@ -353,6 +367,7 @@ export const {
   selectOperationGroupId,
   selectOperationId,
   selectBrowseCategory,
+  setDiscoverySelectionState,
   setFavoriteOperations,
   setPinnedPanelActiveTab,
   setSelectedPanelActiveTab,

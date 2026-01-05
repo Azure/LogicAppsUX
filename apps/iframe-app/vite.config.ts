@@ -1,18 +1,22 @@
+import { existsSync, renameSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mkcert from 'vite-plugin-mkcert';
 
-// Custom plugin to rename index.html to iframe.html
+// Custom plugin to rename index.html to iframe.html after build
 function renameIndexHtml(): Plugin {
   return {
     name: 'rename-index-html',
-    generateBundle(options, bundle) {
-      // Rename index.html to iframe.html in the bundle
-      const indexHtml = bundle['index.html'];
-      if (indexHtml && indexHtml.type === 'asset') {
-        bundle['iframe.html'] = indexHtml;
-        delete bundle['index.html'];
+    closeBundle() {
+      // closeBundle runs after all files are written to disk
+      const outDir = resolve(__dirname, 'dist');
+      const indexPath = resolve(outDir, 'index.html');
+      const iframePath = resolve(outDir, 'iframe.html');
+
+      if (existsSync(indexPath)) {
+        renameSync(indexPath, iframePath);
       }
     },
   };
