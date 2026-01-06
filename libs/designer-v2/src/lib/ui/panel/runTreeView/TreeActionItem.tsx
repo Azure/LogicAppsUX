@@ -158,8 +158,8 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
           );
         }
       } else if (
-        data?.repetition.type === 'workflows/runs/actions/agentRepetitions/tools' ||
-        data?.repetition.type === 'workflows/runs/actions/agentRepetitions/actions'
+        data?.repetition?.type === 'workflows/runs/actions/agentRepetitions/tools' ||
+        data?.repetition?.type === 'workflows/runs/actions/agentRepetitions/actions'
       ) {
         // Only update parent if the parent repetition index has changed
         const repetitionIndex = data?.repetition?.properties?.repetitionIndexes?.[0];
@@ -177,7 +177,7 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
           dispatch(updateAgenticMetadata(updatePayload));
         }
 
-        if (data?.repetition.type === 'workflows/runs/actions/agentRepetitions/tools') {
+        if (data?.repetition?.type === 'workflows/runs/actions/agentRepetitions/tools') {
           // Only update tool if the tool repetition index has changed
           if (itemRunIndex !== selectedRunIndexForItem) {
             dispatch(
