@@ -1,8 +1,9 @@
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isA2AWorkflow } from '../state/workflow/helper';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
-import { containsIdTag, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { containsIdTag, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface PasteScopeNodePayload {
   relationshipIds: RelationshipIds;
@@ -56,7 +57,7 @@ export const pasteScopeInWorkflow = (
 
   const parentMetadata = getRecordEntry(state.nodesMetadata, parentId);
   const isAfterTrigger = (parentMetadata?.isRoot && newGraphId === 'root') ?? false;
-  const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+  const allowRunAfterTrigger = isA2AWorkflow(state);
   const shouldAddRunAfters = allowRunAfterTrigger || (!isNewRoot && !isAfterTrigger);
 
   // clear the existing runAfter
