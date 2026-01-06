@@ -759,9 +759,19 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
       });
     });
 
-    // Set window.IDENTITY_PROVIDERS to empty object before page loads
-    await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS = {};
+    // Intercept the HTML page and replace the IDENTITY_PROVIDERS placeholder with empty object
+    // This simulates server-side injection of empty providers config
+    await page.route('**/*', async (route) => {
+      const request = route.request();
+      // Only intercept document requests (the main HTML page)
+      if (request.resourceType() === 'document') {
+        const response = await route.fetch();
+        let html = await response.text();
+        html = html.replace('window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"', 'window.IDENTITY_PROVIDERS = {}');
+        await route.fulfill({ response, body: html });
+      } else {
+        await route.continue();
+      }
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -786,11 +796,22 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
       });
     });
 
-    // Set window.IDENTITY_PROVIDERS to a single custom provider before page loads
-    await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS = {
-        okta: { signInEndpoint: '/.auth/login/okta', name: 'Okta SSO' },
-      };
+    // Intercept the HTML page and replace the IDENTITY_PROVIDERS placeholder with custom provider
+    // This simulates server-side injection of custom providers config
+    await page.route('**/*', async (route) => {
+      const request = route.request();
+      // Only intercept document requests (the main HTML page)
+      if (request.resourceType() === 'document') {
+        const response = await route.fetch();
+        let html = await response.text();
+        html = html.replace(
+          'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+          'window.IDENTITY_PROVIDERS = { okta: { signInEndpoint: "/.auth/login/okta", name: "Okta SSO" } }'
+        );
+        await route.fulfill({ response, body: html });
+      } else {
+        await route.continue();
+      }
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);

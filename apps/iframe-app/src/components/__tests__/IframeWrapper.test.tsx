@@ -20,7 +20,7 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
-  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true })),
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, error: null })),
   openLoginPopup: vi.fn(),
 }));
 
@@ -59,7 +59,7 @@ describe('IframeWrapper', () => {
     vi.clearAllMocks();
 
     // Reset checkAuthStatus to default (authenticated)
-    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true });
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, error: null });
 
     // Clear localStorage
     localStorage.clear();
@@ -335,8 +335,8 @@ describe('IframeWrapper', () => {
   describe('Authentication', () => {
     it('should show loading state during authentication check', async () => {
       // Create a promise that we can control
-      let resolveAuth: (value: { isAuthenticated: boolean }) => void;
-      const authPromise = new Promise<{ isAuthenticated: boolean }>((resolve) => {
+      let resolveAuth: (value: { isAuthenticated: boolean; error: null }) => void;
+      const authPromise = new Promise<{ isAuthenticated: boolean; error: null }>((resolve) => {
         resolveAuth = resolve;
       });
 
@@ -350,7 +350,7 @@ describe('IframeWrapper', () => {
 
       // Resolve auth check
       await act(async () => {
-        resolveAuth!({ isAuthenticated: true });
+        resolveAuth!({ isAuthenticated: true, error: null });
       });
 
       // Should now show the chat widget
@@ -358,7 +358,7 @@ describe('IframeWrapper', () => {
     });
 
     it('should show LoginPrompt when checkAuthStatus returns false', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
 
       const configWithProviders: IframeConfig = {
         ...defaultConfig,
@@ -435,7 +435,7 @@ describe('IframeWrapper', () => {
     });
 
     it('should call openLoginPopup when login button is clicked', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
 
       const configWithProviders: IframeConfig = {
         ...defaultConfig,
@@ -470,10 +470,10 @@ describe('IframeWrapper', () => {
     });
 
     it('should show chat widget after successful login', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
 
       // Capture the onSuccess callback
-      let onSuccessCallback: (() => void) | undefined;
+      let onSuccessCallback: ((authInfo: authHandler.AuthInformation) => void) | undefined;
       vi.mocked(authHandler.openLoginPopup).mockImplementation((options: any) => {
         onSuccessCallback = options.onSuccess;
       });
@@ -502,10 +502,10 @@ describe('IframeWrapper', () => {
         loginButton.click();
       });
 
-      // Simulate successful login callback
+      // Simulate successful login callback with auth info
       await act(async () => {
         if (onSuccessCallback) {
-          onSuccessCallback();
+          onSuccessCallback({ isAuthenticated: true, error: null, username: 'Test User' });
         }
       });
 
@@ -514,7 +514,7 @@ describe('IframeWrapper', () => {
     });
 
     it('should show error message when login fails', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
 
       // Capture the onFailed callback
       let onFailedCallback: ((error: Error) => void) | undefined;

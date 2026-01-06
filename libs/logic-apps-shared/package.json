@@ -2,7 +2,6 @@
   "name": "@microsoft/logic-apps-shared",
   "version": "5.110.0",
   "dependencies": {
-    "@apidevtools/swagger-parser": "10.0.3",
     "@formatjs/intl": "^2.10.1",
     "@xyflow/react": "^12.3.5",
     "@xyflow/system": "^0.0.37",
