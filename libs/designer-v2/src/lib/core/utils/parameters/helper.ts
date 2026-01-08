@@ -1882,12 +1882,14 @@ export const updateParameterAndDependencies = createAsyncThunk(
             });
             continue;
           }
+          // Preserve existing editorOptions (like multiSelect, serialization) when resetting options
+          const existingEditorOptions = dependentParameter.editorOptions ?? {};
           payload.parameters.push({
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
               dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
-              editorOptions: { options: [] },
+              editorOptions: { ...existingEditorOptions, options: [] },
             },
           });
         }
@@ -2476,9 +2478,12 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   dispatch(
@@ -2500,7 +2505,7 @@ export async function loadDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
@@ -2551,9 +2556,12 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   // Send the initial status update to the store
@@ -2576,7 +2584,7 @@ export async function fetchDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
