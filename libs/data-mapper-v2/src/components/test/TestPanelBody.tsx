@@ -145,7 +145,6 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
               height="200px"
               width="100%"
               wordWrap="on"
-              wrappingIndent="same"
               onContentChanged={onSampleDataChange}
               onEditorLoaded={onSampleDataEditorLoaded}
             />

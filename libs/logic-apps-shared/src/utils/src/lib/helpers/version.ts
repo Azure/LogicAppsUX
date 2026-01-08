@@ -1,6 +1,16 @@
 import { ArgumentException } from '../exception';
 
 /**
+ * Minimum bundle versions required for specific features.
+ */
+export const BundleVersionRequirements = {
+  /** Minimum version for multi-variable support in Initialize Variable action */
+  MULTI_VARIABLE: '1.114.22',
+  /** Minimum version for nested agent loops inside regular loops (TODO: update when actual version is known) */
+  NESTED_AGENT_LOOPS: '2.0.0',
+} as const;
+
+/**
  * Parses a semantic version string into its components.
  * @arg {string} version - The version string to parse (e.g., "1.114.23").
  * @return {[number, number, number]} - A tuple of [major, minor, patch] version numbers.
@@ -12,7 +22,7 @@ const parseVersion = (version: string): [number, number, number] => {
   }
 
   const parts = version.split('.');
-  if (parts.length !== 3) {
+  if (parts.length < 3) {
     throw new ArgumentException(`Invalid version format: "${version}". Expected format: "major.minor.patch"`);
   }
 

@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { collapseFlowTree } from '../helper'; // Adjust the import path as needed
+import { collapseFlowTree, isManagedMcpOperation } from '../helper'; // Adjust the import path as needed
 import { WorkflowNode } from '../../../parsers/models/workflowNode';
+import Constants from '../../../../common/constants';
 
 describe('collapseFlowTree', () => {
   test('should return the original tree when no collapsed nodes are provided', () => {
@@ -122,5 +123,45 @@ describe('collapseFlowTree', () => {
     const nodeA = (graph?.children ?? []).find((child) => child.id === 'A');
     expect(nodeA).toBeDefined();
     expect(nodeA?.edges).toBeUndefined();
+  });
+});
+
+describe('isManagedMcpOperation', () => {
+  test('should return true for MCP client operations with managed kind', () => {
+    const operation = {
+      type: Constants.NODE.TYPE.MCP_CLIENT,
+      kind: Constants.NODE.KIND.MANAGED
+    };
+
+    const result = isManagedMcpOperation(operation);
+
+    expect(result).toBe(true);
+  });
+
+  test('should return false for non-MCP operations', () => {
+    const operation = {
+      type: 'Http',
+    };
+
+    const result = isManagedMcpOperation(operation);
+
+    expect(result).toBe(false);
+  });
+
+  test('should return false for MCP operations with non-managed kind', () => {
+    const operation = {
+      type: Constants.NODE.TYPE.MCP_CLIENT,
+      kind: Constants.NODE.KIND.BUILTIN
+    };
+
+    const result = isManagedMcpOperation(operation);
+
+    expect(result).toBe(false);
+  });
+
+  test('should return false for operations with missing type or kind', () => {
+    expect(isManagedMcpOperation({})).toBe(false);
+    expect(isManagedMcpOperation({ type: Constants.NODE.TYPE.MCP_CLIENT })).toBe(false);
+    expect(isManagedMcpOperation({ kind: Constants.NODE.KIND.MANAGED })).toBe(false);
   });
 });

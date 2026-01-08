@@ -59,6 +59,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [operationParameterValues]
   );
 
+  const isV1ChatCompletionsService = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'V1ChatCompletionsService', true),
+    [operationParameterValues]
+  );
+
   const {
     isFetching: isFetchingAccount,
     data: allCognitiveServiceAccounts,
@@ -661,20 +666,39 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     );
   }
 
+  // Render other parameters (openAIEndpoint, openAIKey, clientCertificate*, etc.)
+  const shouldDisableField = (() => {
+    if (isAPIMGenAIGateway) {
+      // For APIM, disable until account is selected
+      return !parameterValues?.['cognitiveServiceAccountId'];
+    }
+    if (isV1ChatCompletionsService) {
+      // For V1ChatCompletions (BYO), always enable for user input
+      return false;
+    }
+    // For Azure OpenAI, disable (auto-filled from Azure resource)
+    return true;
+  })();
+
+  const fieldDescription = (() => {
+    if (loadingAccountDetails) {
+      return stringResources.FETCHING;
+    }
+    if (isAPIMGenAIGateway || isV1ChatCompletionsService) {
+      return stringResources.DEFAULT_PLACEHOLDER;
+    }
+    return parameter.uiDefinition?.description;
+  })();
+
   return (
     <UniversalConnectionParameter
       {...props}
-      // For APIM Gen AI Gateway, we want to show disabled only when subscriptions or APIM accounts are being fetched, for other types, we always auto-fill so it is disabled
-      isLoading={isAPIMGenAIGateway ? !parameterValues?.['cognitiveServiceAccountId'] : true}
+      isLoading={shouldDisableField}
       parameter={{
         ...parameter,
         uiDefinition: {
           ...(parameter.uiDefinition ?? {}),
-          description: loadingAccountDetails
-            ? stringResources.FETCHING
-            : isAPIMGenAIGateway
-              ? stringResources.DEFAULT_PLACEHOLDER
-              : parameter.uiDefinition?.description,
+          description: fieldDescription,
         },
       }}
     />

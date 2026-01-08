@@ -2,6 +2,7 @@
 import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
+import { AgentUtils } from '../../../common/utilities/Utils';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -387,6 +388,11 @@ export function createParameterInfo(
     dynamicParameterReference,
   };
 
+  // For agent operations, treat deploymentId and modelId as required when they're conditionally visible
+  // These parameters are mutually exclusive based on agentModelType
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameter.name);
+  const isRequired = !!parameter.required || (isAgentDeploymentOrModelParam && !shouldHideInUI(parameter));
+
   const parameterInfo: ParameterInfo = {
     alternativeKey,
     id: guid(),
@@ -402,7 +408,7 @@ export function createParameterInfo(
     parameterName: parameter.name,
     placeholder: parameter.description,
     preservedValue: getPreservedValue(parameter),
-    required: !!parameter.required,
+    required: isRequired,
     schema,
     showErrors: false,
     showTokens: parameter?.schema?.['x-ms-editor'] !== 'string',
@@ -1876,12 +1882,14 @@ export const updateParameterAndDependencies = createAsyncThunk(
             });
             continue;
           }
+          // Preserve existing editorOptions (like multiSelect, serialization) when resetting options
+          const existingEditorOptions = dependentParameter.editorOptions ?? {};
           payload.parameters.push({
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
               dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
-              editorOptions: { options: [] },
+              editorOptions: { ...existingEditorOptions, options: [] },
             },
           });
         }
@@ -2470,9 +2478,12 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   dispatch(
@@ -2494,7 +2505,7 @@ export async function loadDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
@@ -2545,9 +2556,12 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   // Send the initial status update to the store
@@ -2570,7 +2584,7 @@ export async function fetchDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
@@ -4322,6 +4336,19 @@ export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId
 }
 
 export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
+  // Don't consider parameters as required if they're hidden in the UI
+  if (parameterInfo.hideInUI) {
+    return false;
+  }
+
+  // For parameters with x-ms-input-dependencies (like deploymentId/modelId),
+  // don't enforce as required during validation since only one is visible at a time
+  const hasInputDependencies = !!parameterInfo.schema?.['x-ms-input-dependencies'];
+  const isAgentDeploymentOrModelParam = AgentUtils.isDeploymentOrModelIdParameter(parameterInfo.parameterName);
+  if (isAgentDeploymentOrModelParam && hasInputDependencies) {
+    return false;
+  }
+
   return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
 }
 

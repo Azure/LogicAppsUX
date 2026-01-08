@@ -51,6 +51,7 @@ export interface DesignerOptionsState {
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
+    enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
