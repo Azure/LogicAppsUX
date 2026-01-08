@@ -16,6 +16,7 @@ import {
   CreateLogicApp,
   CreateWorkspaceStructure,
 } from '../app/createWorkspace/createWorkspace';
+import { DeployApp } from '../app/deploy/deploy';
 import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -41,6 +42,7 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.createWorkspaceFromPackage}`} element={<CreateWorkspaceFromPackage />} />
         <Route path={`/${RouteName.createLogicApp}`} element={<CreateLogicApp />} />
         <Route path={`/${RouteName.createWorkspaceStructure}`} element={<CreateWorkspaceStructure />} />
+        <Route path={`/${RouteName.deploy}`} element={<DeployApp />} />
       </Routes>
     </MemoryRouter>
   );

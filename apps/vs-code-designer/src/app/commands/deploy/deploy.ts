@@ -75,7 +75,7 @@ export async function deploySlot(
   await deploy(context, target, functionAppId, new RegExp(LogicAppResourceTree.pickSlotContextValue));
 }
 
-async function deploy(
+export async function deploy(
   actionContext: IActionContext,
   target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,

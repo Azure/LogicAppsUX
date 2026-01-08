@@ -8,8 +8,48 @@ import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTreeItem';
 import { isString } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, type AzExtParentTreeItem, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ICreateLogicAppContext, ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { type MessageItem, window } from 'vscode';
+
+/**
+ * Creates a Logic App without showing wizard prompts - all required information must be provided in the context.
+ * @param context - Context with pre-filled values (newSiteName, location, resourceGroup or newResourceGroupName)
+ * @param subscription - Subscription ID or tree item
+ * @param skipNotification - If true, skips the completion notification
+ * @returns The created Logic App tree item
+ */
+export async function createLogicAppWithoutWizard(
+  context: IActionContext & Partial<ICreateLogicAppContext> & { newSiteName: string; location: string },
+  subscription: AzExtParentTreeItem | string,
+  skipNotification?: boolean
+): Promise<SlotTreeItem> {
+  let node: AzExtParentTreeItem | undefined;
+
+  if (isString(subscription)) {
+    node = await ext.rgApi.appResourceTree.findTreeItem(`/subscriptions/${subscription}`, context);
+    if (!node) {
+      throw new Error(localize('noMatchingSubscription', 'Failed to find a subscription matching id "{0}".', subscription));
+    }
+  } else {
+    node = subscription;
+  }
+
+  try {
+    // Call the subscription tree item's createChild with a special flag to skip prompts
+    const logicAppNode: SlotTreeItem = await SubscriptionTreeItem.createChildWithoutPrompts(
+      context as unknown as ICreateLogicAppContext & ILogicAppWizardContext,
+      node as SubscriptionTreeItem
+    );
+
+    if (!skipNotification) {
+      await notifyCreateLogicAppComplete(logicAppNode);
+    }
+
+    return logicAppNode;
+  } catch (error) {
+    throw new Error(`Error in creating logic app. ${error}`);
+  }
+}
 
 export async function createLogicApp(
   context: IActionContext & Partial<ICreateLogicAppContext>,

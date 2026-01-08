@@ -97,6 +97,7 @@ export namespace ext {
     createWorkspaceFromPackage: 'createWorkspaceFromPackage',
     createLogicApp: 'createLogicApp',
     createWorkspaceStructure: 'createWorkspaceStructure',
+    deploy: 'deploy',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
 
@@ -110,6 +111,7 @@ export namespace ext {
     [webViewKey.createWorkspaceStructure]: {},
     [webViewKey.createLogicApp]: {},
     [webViewKey.overview]: {},
+    [webViewKey.deploy]: {},
   };
 
   export const log = (text: string) => {

@@ -39,6 +39,7 @@ import {
   AppInsightsCreateStep,
   AppInsightsListStep,
   AppKind,
+  AppServicePlanCreateStep,
   CustomLocationListStep,
   ParsedSite,
   SiteNameStep,
@@ -58,6 +59,7 @@ import {
   uiUtils,
   VerifyProvidersStep,
   storageAccountNamingRules,
+  LocationListStep,
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -108,6 +110,258 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       }
     );
   }
+
+  /**
+   * Creates a Logic App child without showing wizard prompts.
+   * All required information must be provided in the context.
+   */
+  public static async createChildWithoutPrompts(
+    context: ICreateLogicAppContext & ILogicAppWizardContext,
+    subscription: SubscriptionTreeItem
+  ): Promise<SlotTreeItem> {
+    const version: FuncVersion = await getDefaultFuncVersion(context);
+    const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);
+
+    context.telemetry.properties.projectRuntime = version;
+    context.telemetry.properties.projectLanguage = language;
+
+    // Merge subscription info and required properties
+    const wizardContext: ILogicAppWizardContext = Object.assign(context, subscription.subscription, {
+      newSiteKind: AppKind.workflowapp,
+      resourceGroupDeferLocationStep: true,
+      version,
+      language,
+      newSiteRuntime: workflowappRuntime,
+      runtimeFilter: getFunctionsWorkerRuntime(language),
+      ...(await createActivityContext()),
+    });
+
+    if (version === FuncVersion.v1) {
+      wizardContext.newSiteOS = WebsiteOS.windows;
+    } else {
+      // Default to Windows for Logic Apps
+      wizardContext.newSiteOS = WebsiteOS.windows;
+    }
+
+    await setRegionsTask(wizardContext);
+
+    // Get full location objects from Azure using the LocationListStep utility
+    // This ensures we get the complete location data with all metadata
+    await LocationListStep.setLocation(wizardContext, wizardContext.location);
+
+    // Validate that the location was set properly
+    if (!wizardContext._location) {
+      throw new Error(localize('locationNotSet', 'Failed to resolve location "{0}".', wizardContext.location));
+    }
+
+    // Set location subset similar to createChild - this filters regions properly
+    const locations = await getWebLocations({ ...wizardContext, newPlanSku: wizardContext.newPlanSku ?? { tier: 'ElasticPremium' } });
+    CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
+
+    // Validate that the location is valid for Logic Apps
+    const providedLocation = wizardContext.location.toLowerCase().replace(/\s/g, '');
+    const isValidLocation = locations.some((loc) => {
+      const locName = (loc || '').toLowerCase().replace(/\s/g, '');
+      const locDisplayName = (loc || '').toLowerCase().replace(/\s/g, '');
+      return locName === providedLocation || locDisplayName === providedLocation;
+    });
+
+    if (!isValidLocation) {
+      throw new Error(localize('invalidLocation', 'Location "{0}" is not valid for Logic Apps.', wizardContext.location));
+    }
+
+    // Set up resource group - ensure proper format
+    if (wizardContext.newResourceGroupName) {
+      // Creating new resource group - need to create resource group object with location
+      wizardContext.resourceGroup = {
+        name: wizardContext.newResourceGroupName,
+        location: wizardContext._location.name,
+        id: '', // Will be set after creation
+        managedBy: undefined,
+        properties: undefined,
+        tags: undefined,
+        type: 'Microsoft.Resources/resourceGroups',
+      };
+    } else if (wizardContext.resourceGroup) {
+      // Existing resource group - ensure it has location set
+      if (!wizardContext.resourceGroup.location) {
+        wizardContext.resourceGroup.location = wizardContext._location.name;
+      }
+    } else {
+      throw new Error(localize('missingResourceGroup', 'Resource group is required to create a Logic App.'));
+    }
+
+    // Set up execute steps only (no prompt steps)
+    const executeSteps: AzureWizardExecuteStep<IAppServiceWizardContext>[] = [];
+
+    const storageAccountCreateOptions: INewStorageAccountDefaults = {
+      kind: StorageAccountKind.Storage,
+      performance: StorageAccountPerformance.Standard,
+      replication: StorageAccountReplication.LRS,
+    };
+
+    // Set default Workflow Standard hosting plan properties
+    wizardContext.useHybrid = false;
+    wizardContext.suppressCreate = false;
+    wizardContext.planSkuFamilyFilter = /^WS$/i; // Workflow Standard
+
+    // Handle App Service Plan - either use existing or create new
+    if (wizardContext.plan) {
+      // Using existing plan - fetch the full plan details
+      const client = await createWebSiteClient([context, subscription.subscription]);
+      const planId = wizardContext.plan.id;
+      const planIdParts = planId.split('/');
+      const planResourceGroup = planIdParts[4];
+      const planName = planIdParts[8];
+
+      const existingPlan = await client.appServicePlans.get(planResourceGroup, planName);
+      wizardContext.plan = existingPlan;
+    } else if (wizardContext.newPlanName) {
+      // Creating new plan - set up SKU based on user selection
+      const skuName = wizardContext.appServicePlanSku || 'WS1';
+      wizardContext.newPlanSku = {
+        name: skuName,
+        tier: 'WorkflowStandard',
+        size: skuName,
+        family: 'WS',
+      };
+      executeSteps.push(new AppServicePlanCreateStep());
+    } else {
+      // No plan specified - create a new one with default SKU
+      const skuName = wizardContext.appServicePlanSku || 'WS1';
+      wizardContext.newPlanSku = {
+        name: skuName,
+        tier: 'WorkflowStandard',
+        size: skuName,
+        family: 'WS',
+      };
+      executeSteps.push(new AppServicePlanCreateStep());
+    }
+
+    // Handle storage account - fetch if existing, or prepare for creation
+    if (wizardContext.storageAccount) {
+      // Using existing storage account - fetch the full details
+      const storageId = wizardContext.storageAccount.id;
+      const storageIdParts = storageId.split('/');
+      const storageResourceGroup = storageIdParts[4];
+      const storageName = storageIdParts[8];
+
+      // The storage account will be used as-is from the ID
+      wizardContext.storageAccount = {
+        ...wizardContext.storageAccount,
+        name: storageName,
+        resourceGroup: storageResourceGroup,
+      };
+    }
+
+    // Add all necessary execute steps
+    // executeSteps.push(new ResourceGroupListStep());
+
+    // Handle storage account - either use existing or create new
+    if (wizardContext.storageAccount) {
+      // Using existing storage account - no additional step needed
+      // The storageAccount is already set in context
+    } else {
+      // Creating new storage account
+      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+    }
+
+    // Add App Insights step only if requested
+    if (wizardContext.createAppInsights !== false) {
+      executeSteps.push(new AppInsightsCreateStep());
+    }
+
+    executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
+    executeSteps.push(new LogicAppCreateStep());
+
+    wizardContext.activityTitle = localize('logicAppCreateActivityTitle', 'Creating Logic App "{0}"', wizardContext.newSiteName);
+
+    context.telemetry.properties.os = wizardContext.newSiteOS;
+    context.telemetry.properties.runtime = wizardContext.newSiteRuntime;
+
+    // Generate related names for storage and app insights if creating new ones
+    if (!wizardContext.storageAccount && !wizardContext.newStorageAccountName) {
+      const baseName: string | undefined = wizardContext.newSiteName;
+      const newName = await generateRelatedName(wizardContext, baseName);
+      if (!newName) {
+        throw new Error(
+          localize(
+            'noUniqueName',
+            'Failed to generate unique name for storage account. Use advanced creation to manually enter resource names.'
+          )
+        );
+      }
+      wizardContext.newStorageAccountName = newName;
+    }
+
+    // Generate or use provided app insights name
+    if (wizardContext.createAppInsights !== false) {
+      if (!wizardContext.newAppInsightsName) {
+        const baseName: string | undefined = wizardContext.newSiteName;
+        const newName = await generateRelatedName(wizardContext, baseName);
+        if (!newName) {
+          throw new Error(
+            localize(
+              'noUniqueName',
+              'Failed to generate unique name for app insights. Use advanced creation to manually enter resource names.'
+            )
+          );
+        }
+        wizardContext.newAppInsightsName = newName;
+      }
+      // If newAppInsightsName is already set (from webview), use it as-is
+    }
+
+    if (ext.deploymentFolderPath) {
+      let resourceGroupName: string | undefined;
+
+      if (wizardContext.newResourceGroupName) {
+        resourceGroupName = wizardContext.newResourceGroupName;
+      } else if (wizardContext.resourceGroup && wizardContext.resourceGroup.name) {
+        resourceGroupName = wizardContext.resourceGroup.name;
+      }
+
+      if (resourceGroupName) {
+        await verifyDeploymentResourceGroup(context, resourceGroupName, ext.deploymentFolderPath);
+      }
+    }
+
+    // Execute steps without wizard prompts
+    const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, {
+      promptSteps: [], // No prompt steps
+      executeSteps: executeSteps,
+      title: localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure'),
+    });
+
+    await wizard.execute();
+
+    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+    const client: SiteClient = await site.createClient(context);
+
+    if (!client.isLinux) {
+      try {
+        await enableFileLogging(client);
+      } catch (error) {
+        context.telemetry.properties.fileLoggingError = parseError(error).message;
+      }
+    }
+
+    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+    const logicAppMap = ext.subscriptionLogicAppMap.get(subscription.subscription.subscriptionId);
+    if (logicAppMap) {
+      logicAppMap.set(wizardContext.site.id.toLowerCase(), wizardContext.site);
+    }
+    await ext.rgApi.appResourceTree.refresh(context);
+
+    const slotTreeItem = new SlotTreeItem(subscription, resolved, {
+      isHybridLogiApp: false,
+      resourceGroupName: wizardContext.resourceGroup.name,
+      location: wizardContext.location,
+    });
+
+    return slotTreeItem;
+  }
+
   public static async createChild(context: ICreateLogicAppContext, subscription: SubscriptionTreeItem): Promise<SlotTreeItem> {
     const version: FuncVersion = await getDefaultFuncVersion(context);
     const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);

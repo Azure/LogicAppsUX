@@ -67,6 +67,8 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       siteConfig: await this.getNewSiteConfig(context),
       reserved: context.newSiteOS === WebsiteOS.linux,
       identity: context.customLocation ? undefined : { type: 'SystemAssigned' },
+      httpsOnly: true,
+      vnetRouteAllEnabled: false, // Enable VNet route all for enhanced security
     };
 
     if (context.customLocation) {
