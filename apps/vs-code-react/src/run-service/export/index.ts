@@ -71,6 +71,14 @@ export class ApiService implements IApiService {
           subscriptions: [selectedSubscription],
         };
       }
+      case ResourceType.logicApps: {
+        const selectedSubscription = properties?.selectedSubscription;
+        return {
+          query:
+            "resources | where type =~ 'Microsoft.Web/sites' and kind contains 'workflowapp' | extend siteName=name | project id, siteName, location, subscriptionId, resourceGroup, kind | sort by (tolower(tostring(siteName))) asc",
+          subscriptions: [selectedSubscription],
+        };
+      }
       case ResourceType.workflows: {
         const subscriptionId = properties?.selectedSubscription;
         const selectedIse = properties?.selectedIse;
@@ -311,7 +319,7 @@ export class ApiService implements IApiService {
     return exportResponse;
   }
 
-  async getResourceGroups(selectedSubscription: string): Promise<any> {
+  async getResourceGroups(selectedSubscription: string): Promise<Array<{ name: string; location: string }>> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.resourcegroups, { selectedSubscription: selectedSubscription });
     const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
@@ -325,7 +333,133 @@ export class ApiService implements IApiService {
     const resourceGroupsResponse: any = await response.json();
     const { data: resourceGroups } = resourceGroupsResponse;
 
-    return { resourceGroups };
+    return resourceGroups.map((rg: any) => ({
+      name: rg.name,
+      location: rg.location,
+    }));
+  }
+
+  /**
+   * Retrieves the list of Logic Apps (Standard) for the selected subscription.
+   * @param {string} selectedSubscription - The ID of the selected subscription.
+   * @returns {Promise<Array<any>>} A promise that resolves to an array of Logic Apps.
+   */
+  async getLogicApps(selectedSubscription: string): Promise<any[]> {
+    const headers = this.getAccessTokenHeaders();
+    const payload = this.getPayload(ResourceType.logicApps, { selectedSubscription: selectedSubscription });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+
+    if (!response.ok) {
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
+    }
+
+    const logicAppsResponse: any = await response.json();
+    const { data: logicApps } = logicAppsResponse;
+
+    return logicApps.map((app: any) => ({
+      id: app.id,
+      name: app.siteName,
+      location: app.location,
+      subscriptionId: app.subscriptionId,
+      resourceGroup: app.resourceGroup,
+      kind: app.kind,
+    }));
+  }
+
+  /**
+   * Retrieves the list of available locations for the selected subscription.
+   * @param {string} selectedSubscription - The ID of the selected subscription.
+   * @returns {Promise<Array<{ name: string; displayName: string }>>} A promise that resolves to an array of locations.
+   */
+  async getLocations(selectedSubscription: string): Promise<Array<{ name: string; displayName: string }>> {
+    const locations = await this.getAllRegionWithDisplayName(selectedSubscription);
+
+    return locations.map((loc: any) => ({
+      name: loc.name,
+      displayName: loc.displayName,
+    }));
+  }
+
+  /**
+   * Get all app service plans for selected subscription
+   */
+  async getAppServicePlans(selectedSubscription: string): Promise<Array<{ id: string; name: string; location: string; sku: string }>> {
+    const headers = this.getAccessTokenHeaders();
+    const payload = {
+      query: `resources | where type =~ 'Microsoft.Web/serverfarms' | sort by (tolower(tostring(name))) asc`,
+      subscriptions: [selectedSubscription],
+    };
+
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
+
+    if (!response.ok) {
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
+    }
+
+    const responseBody = await response.json();
+    return responseBody.data.map((plan: any) => ({
+      id: plan.id,
+      name: plan.name,
+      location: plan.location,
+      sku: plan.sku,
+    }));
+  }
+
+  /**
+   * Get all storage accounts for selected subscription
+   */
+  async getStorageAccounts(selectedSubscription: string): Promise<Array<{ id: string; name: string; location: string }>> {
+    const headers = this.getAccessTokenHeaders();
+    const payload = {
+      query: `resources | where type =~ 'Microsoft.Storage/storageAccounts' | project id, name, location | sort by (tolower(tostring(name))) asc`,
+      subscriptions: [selectedSubscription],
+    };
+
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
+
+    if (!response.ok) {
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
+    }
+
+    const responseBody = await response.json();
+    return responseBody.data.map((storage: any) => ({
+      id: storage.id,
+      name: storage.name,
+      location: storage.location,
+    }));
+  }
+
+  /**
+   * Check if a storage account name is available (globally unique across Azure)
+   */
+  async checkStorageAccountNameAvailability(
+    subscriptionId: string,
+    name: string
+  ): Promise<{ available: boolean; reason?: string; message?: string }> {
+    const headers = this.getAccessTokenHeaders();
+    const url = `${this.baseGraphApi}/subscriptions/${subscriptionId}/providers/Microsoft.Storage/checkNameAvailability?api-version=2023-01-01`;
+    const body = JSON.stringify({ name, type: 'Microsoft.Storage/storageAccounts' });
+
+    const response = await fetch(url, { headers, method: HTTP_METHODS.POST, body });
+
+    if (!response.ok) {
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
+    }
+
+    const result = await response.json();
+    return {
+      available: result.nameAvailable,
+      reason: result.reason,
+      message: result.message,
+    };
   }
 
   private logTelemetryError = (error: any) => {
