@@ -108,6 +108,22 @@ jobs:
             **/manifest/**
             **/manifests/**
             **/swagger/**
+            # Service interfaces and base classes (tested via implementations)
+            **/designer-client-services/lib/*.ts
+            **/lib/base/**
+            # Environment-specific service index/barrel files
+            **/lib/consumption/index.ts
+            **/lib/standard/index.ts
+            # Static operation and schema definitions
+            **/operations/**
+            **/schemas/**
+            **/staticresultschema/**
+            # Application setup and providers (not business logic)
+            **/*Context.ts
+            **/*Context.tsx
+            **/*Provider.ts
+            **/*Provider.tsx
+            **/providers/**
 
       - name: Check coverage on changed files
         id: coverage-check
