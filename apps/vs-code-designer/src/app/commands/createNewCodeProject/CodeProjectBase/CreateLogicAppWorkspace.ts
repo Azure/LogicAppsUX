@@ -30,6 +30,7 @@ import {
   workspaceTemplatesFolderName,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
+import { ext } from '../../../../extensionVariables';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -246,6 +247,22 @@ export async function createLocalConfigurationFiles(
 export async function createWorkspaceStructure(webviewProjectContext: IWebviewProjectContext): Promise<void> {
   const { workspaceProjectPath, workspaceName, logicAppName, functionFolderName, logicAppType } = webviewProjectContext;
 
+  // Validate that workspaceProjectPath exists and has required properties
+  if (!workspaceProjectPath || !workspaceProjectPath.fsPath) {
+    const errorMessage = `[CreateWorkspaceStructure] Invalid workspaceProjectPath: ${JSON.stringify(
+      {
+        hasWorkspaceProjectPath: !!workspaceProjectPath,
+        workspaceProjectPathType: typeof workspaceProjectPath,
+        workspaceProjectPathValue: workspaceProjectPath,
+        contextKeys: Object.keys(webviewProjectContext || {}),
+      },
+      null,
+      2
+    )}`;
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(`workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(workspaceProjectPath)}`);
+  }
+
   //Create the workspace folder
   const workspaceFolder = path.join(workspaceProjectPath.fsPath, workspaceName);
   await fse.ensureDir(workspaceFolder);
@@ -300,6 +317,31 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
 
   const webviewProjectContext: IWebviewProjectContext = options;
 
+  // Add telemetry properties for debugging
+  context.telemetry.properties.fromPackage = String(fromPackage);
+  context.telemetry.properties.hasWorkspaceProjectPath = String(!!webviewProjectContext.workspaceProjectPath);
+  context.telemetry.properties.workspaceProjectPathType = typeof webviewProjectContext.workspaceProjectPath;
+  context.telemetry.properties.receivedOptionsKeys = Object.keys(options || {}).join(',');
+
+  // Validate that workspaceProjectPath exists and has required properties
+  if (!webviewProjectContext.workspaceProjectPath || !webviewProjectContext.workspaceProjectPath.fsPath) {
+    // Log the received options for debugging
+    const debugInfo = {
+      hasWorkspaceProjectPath: !!webviewProjectContext.workspaceProjectPath,
+      workspaceProjectPathType: typeof webviewProjectContext.workspaceProjectPath,
+      workspaceProjectPathValue: webviewProjectContext.workspaceProjectPath,
+      optionsKeys: Object.keys(options || {}),
+      fromPackage,
+      fullOptionsSnapshot: JSON.stringify(options, null, 2),
+    };
+    const errorMessage = `[CreateLogicAppWorkspace] Invalid workspaceProjectPath received: ${JSON.stringify(debugInfo, null, 2)}`;
+    ext.outputChannel.appendLog(errorMessage);
+
+    throw new Error(
+      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(webviewProjectContext.workspaceProjectPath)}. Full context keys: ${Object.keys(options || {}).join(', ')}`
+    );
+  }
+
   await createWorkspaceStructure(webviewProjectContext);
 
   // Create the workspace folder
@@ -319,6 +361,10 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   mySubContext.workspacePath = workspaceFolder;
 
   if (fromPackage) {
+    // Validate that packagePath exists and has required properties
+    if (!options.packagePath || !options.packagePath.fsPath) {
+      throw new Error('packagePath is required and must have an fsPath property when creating workspace from package');
+    }
     mySubContext.packagePath = options.packagePath.fsPath;
     await unzipLogicAppPackageIntoWorkspace(mySubContext);
   } else {

@@ -48,7 +48,10 @@ async function writeSettingsJson(context: IWebviewProjectContext, additionalSett
     settings.push(
       { prefix: 'azureFunctions', key: 'deploySubpath', value: deploySubPathValue },
       { prefix: 'azureFunctions', key: 'preDeployTask', value: 'publish' },
-      { prefix: 'azureFunctions', key: 'projectSubpath', value: deploySubPathValue }
+      { prefix: 'azureFunctions', key: 'projectSubpath', value: deploySubPathValue },
+      // Prevent OmniSharp from generating invalid solution files
+      { prefix: 'omnisharp', key: 'enableMsBuildLoadProjectsOnDemand', value: false },
+      { prefix: 'omnisharp', key: 'disableMSBuildDiagnosticWarning', value: true }
     );
   }
   await confirmEditJsonFile(context, settingsJsonPath, (data: Record<string, any>): Record<string, any> => {

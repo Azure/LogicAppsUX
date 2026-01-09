@@ -7,7 +7,7 @@ import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state/createWorkspaceSlice';
+import { nextStep, previousStep, setCurrentStep, setFlowType, resetState } from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
@@ -25,7 +25,9 @@ const FLOW_TYPES = {
   CREATE_WORKSPACE_STRUCTURE: 'createWorkspaceStructure',
 };
 
-export const CreateWorkspace = () => {
+// Internal component that contains the actual logic
+// This is rendered by all the wrapper components
+const CreateWorkspaceInternal = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
@@ -58,11 +60,6 @@ export const CreateWorkspace = () => {
     logicAppsWithoutCustomCode,
     separator,
   } = createWorkspaceState;
-
-  // Set flow type when component mounts
-  useEffect(() => {
-    dispatch(setFlowType(FLOW_TYPES.CREATE_WORKSPACE));
-  }, [dispatch]);
 
   // Calculate total steps - always 2: Setup and Review + Create
   const totalSteps = 2;
@@ -425,6 +422,34 @@ export const CreateWorkspace = () => {
   };
 
   const handleCreate = () => {
+    // Validate that required paths exist before proceeding
+    const requirements = getValidationRequirements(flowType, logicAppType);
+
+    if (requirements.needsWorkspacePath && (!workspaceProjectPath || !workspaceProjectPath.fsPath)) {
+      console.error('Cannot create workspace: workspaceProjectPath is missing or invalid', {
+        workspaceProjectPath,
+        flowType,
+        logicAppType,
+      });
+      return;
+    }
+
+    if (requirements.needsPackagePath && (!packagePath || !packagePath.fsPath)) {
+      console.error('Cannot create workspace: packagePath is missing or invalid', {
+        packagePath,
+        flowType,
+      });
+      return;
+    }
+
+    // Log what we're about to send for debugging
+    console.log('CreateWorkspace - Sending data:', {
+      workspaceProjectPath,
+      workspaceName,
+      logicAppType,
+      flowType,
+    });
+
     const baseData = {
       workspaceProjectPath,
       workspaceName,
@@ -526,7 +551,37 @@ export const CreateWorkspace = () => {
               ? ExtensionCommand.createWorkflow
               : ExtensionCommand.createWorkspace;
 
-    vscode.postMessage({ command, data });
+    // Prepare diagnostic data that will be sent to extension for logging
+    const diagnostics: Record<string, any> = {
+      command,
+      flowType,
+      timestamp: new Date().toISOString(),
+      dataKeys: Object.keys(data),
+      workspaceProjectPath: data.workspaceProjectPath,
+      workspaceName: data.workspaceName,
+      logicAppName: data.logicAppName,
+      logicAppType: data.logicAppType,
+      hasWorkspaceProjectPath: !!data.workspaceProjectPath,
+      hasWorkspaceProjectPathFsPath: !!data.workspaceProjectPath?.fsPath,
+      workspaceProjectPathFsPath: data.workspaceProjectPath?.fsPath,
+    };
+
+    // Try to serialize the full data to detect any issues
+    let serializationSuccess = false;
+    let dataSize = 0;
+    try {
+      const serialized = JSON.stringify(data);
+      dataSize = serialized.length;
+      serializationSuccess = true;
+    } catch (error) {
+      diagnostics['serializationError'] = error instanceof Error ? error.message : String(error);
+    }
+
+    diagnostics['serializationSuccess'] = serializationSuccess;
+    diagnostics['dataSize'] = dataSize;
+
+    // Include diagnostics in the message so extension can log it
+    vscode.postMessage({ command, data, _diagnostics: diagnostics });
   };
 
   const renderCurrentStep = () => {
@@ -627,44 +682,59 @@ export const CreateWorkspace = () => {
 };
 
 // Separate components for each flow type that set their flowType
+export const CreateWorkspace = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetState(undefined));
+    dispatch(setFlowType(FLOW_TYPES.CREATE_WORKSPACE));
+  }, [dispatch]);
+
+  return <CreateWorkspaceInternal />;
+};
+
 export const CreateWorkspaceFromPackage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(resetState(undefined));
     dispatch(setFlowType(FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE));
   }, [dispatch]);
 
-  return <CreateWorkspace />;
+  return <CreateWorkspaceInternal />;
 };
 
 export const CreateWorkspaceStructure = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(resetState(undefined));
     dispatch(setFlowType(FLOW_TYPES.CONVERT_TO_WORKSPACE));
   }, [dispatch]);
 
-  return <CreateWorkspace />;
+  return <CreateWorkspaceInternal />;
 };
 
 export const CreateLogicApp = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(resetState(undefined));
     dispatch(setFlowType(FLOW_TYPES.CREATE_LOGIC_APP));
   }, [dispatch]);
 
-  return <CreateWorkspace />;
+  return <CreateWorkspaceInternal />;
 };
 
 export const CreateWorkflow = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(resetState(undefined));
     dispatch(setFlowType(FLOW_TYPES.CREATE_WORKFLOW));
   }, [dispatch]);
 
-  return <CreateWorkspace />;
+  return <CreateWorkspaceInternal />;
 };
 
 export function useOutlet() {
