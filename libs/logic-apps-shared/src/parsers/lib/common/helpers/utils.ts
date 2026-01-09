@@ -227,9 +227,9 @@ export function getEditorOptionsForParameter(
     return editorOptions;
   }
 
-  // Dynamic Values
+  // Dynamic Values - preserve existing editorOptions (like multiSelect, serialization) and just set empty options
   if (dynamicValues) {
-    return { options: [] };
+    return { ...editorOptions, options: [] };
   }
 
   // Static Enum
