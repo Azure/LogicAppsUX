@@ -343,6 +343,14 @@ export abstract class BaseSearchService implements ISearchService {
     return this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
   }
 
+  public async getAgentWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
+    const requestWorkflows = await this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
+    return requestWorkflows.filter((workflow: any) => {
+      const triggers = workflow.properties?.definition?.triggers ?? {};
+      return Object.values(triggers).some((trigger: any) => trigger.kind?.toLowerCase() === 'agent');
+    });
+  }
+
   public async getBatchWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
     return this.getWorkflows(`contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`);
   }
