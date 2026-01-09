@@ -268,6 +268,15 @@ jobs:
           script: |
             const fs = require('fs');
 
+            // Check if this is a fork PR - forks don't have write permissions
+            const isFork = context.payload.pull_request?.head?.repo?.fork === true;
+
+            if (isFork) {
+              console.log('ℹ️ This PR is from a fork. Skipping PR comment (no write permissions).');
+              console.log('📊 Coverage results are available in the workflow summary above.');
+              return;
+            }
+
             // Read the step summary
             const summaryPath = process.env.GITHUB_STEP_SUMMARY;
             let summary = '';
@@ -277,34 +286,44 @@ jobs:
               summary = '📊 Coverage check completed. See workflow run for details.';
             }
 
-            // Find existing comment
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const botComment = comments.find(comment =>
-              comment.user.type === 'Bot' &&
-              comment.body.includes('📊 Coverage Report for Changed Files')
-            );
-
-            const commentBody = summary || '📊 Coverage check completed. See workflow run for details.';
-
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: commentBody
-              });
-            } else {
-              await github.rest.issues.createComment({
+            try {
+              // Find existing comment
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: commentBody
               });
+
+              const botComment = comments.find(comment =>
+                comment.user.type === 'Bot' &&
+                comment.body.includes('📊 Coverage Report for Changed Files')
+              );
+
+              const commentBody = summary || '📊 Coverage check completed. See workflow run for details.';
+
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: commentBody
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody
+                });
+              }
+            } catch (error) {
+              // Handle permission errors gracefully (e.g., for fork PRs)
+              if (error.status === 403) {
+                console.log('⚠️ Unable to post comment (permission denied). This is expected for fork PRs.');
+                console.log('📊 Coverage results are available in the workflow summary above.');
+              } else {
+                throw error;
+              }
             }
 
       - name: Fail if coverage is insufficient
