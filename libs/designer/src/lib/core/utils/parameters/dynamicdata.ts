@@ -118,7 +118,8 @@ export async function getDynamicValues(
       operationInfo.connectorId,
       operationInfo.operationId,
       operationParameters,
-      dynamicState
+      dynamicState,
+      operationInfo.operationPath
     );
   }
   if (isLegacyDynamicValuesExtension(definition)) {
