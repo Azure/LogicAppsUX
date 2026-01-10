@@ -61,8 +61,12 @@ import {
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { ILogicAppWizardContext, ICreateLogicAppContext, IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ILogicAppWizardContext,
+  ICreateLogicAppContext,
+  IIdentityWizardContext,
+  FuncVersion,
+} from '@microsoft/vscode-extension-logic-apps';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   public readonly childTypeLabel: string = localize('LogicApp', 'Logic App (Standard) in Azure');
@@ -123,11 +127,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       newSiteRuntime: workflowappRuntime,
       ...(await createActivityContext()),
     });
-
-    if (version === FuncVersion.v1) {
-      // v1 doesn't support linux
-      wizardContext.newSiteOS = WebsiteOS.windows;
-    }
 
     await setRegionsTask(wizardContext);
 

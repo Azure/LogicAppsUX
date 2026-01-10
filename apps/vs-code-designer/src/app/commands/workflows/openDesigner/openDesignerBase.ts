@@ -27,6 +27,7 @@ export abstract class OpenDesignerBase {
   protected apiVersion: string;
   protected panelGroupKey: string;
   protected baseUrl: string;
+  protected webviewBaseUrl: string;
   protected workflowRuntimeBaseUrl: string;
   protected connectionData: ConnectionsData;
   protected panel: WebviewPanel;

@@ -350,7 +350,7 @@ export function getWorkflowManagementBaseURI(node: RemoteWorkflowTreeItem): stri
   if (resourceManagerUri.endsWith('/')) {
     resourceManagerUri = resourceManagerUri.slice(0, -1);
   }
-  return `${resourceManagerUri}${node.parent.parent.id}/hostruntime${managementApiPrefix}`;
+  return `${resourceManagerUri}${node.parent.parent.id}/hostruntime/${managementApiPrefix}`;
 }
 
 /**
