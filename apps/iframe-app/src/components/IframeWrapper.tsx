@@ -1,11 +1,11 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
-import { ChatWidget, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import { ChatWidget, type IdentityProvider, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
 import { MultiSessionChat } from './MultiSessionChat/MultiSessionChat';
 import { LoadingDisplay } from './LoadingDisplay';
 import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
-import { getBaseUrl, openLoginPopup, createUnauthorizedHandler } from '../lib/authHandler';
+import { getBaseUrl, openLoginPopup, createUnauthorizedHandler, checkAuthStatus } from '../lib/authHandler';
 import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
@@ -21,9 +21,11 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const [agentCard, setAgentCard] = useState<any>(null);
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(initialMode);
   const [authToken, setAuthToken] = useState<string | null>(null);
-  const [needsLogin, setNeedsLogin] = useState(false);
+  const [needsLogin, setNeedsLogin] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | undefined>(props.userName);
   const chatHistoryRef = useRef<ChatHistoryData | null>(null);
 
   // Check if we should wait for postMessage
@@ -40,22 +42,29 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const theme = useMemo(() => (mode === 'dark' ? webDarkTheme : webLightTheme), [mode]);
 
   // Handle login button click
-  const handleLogin = useCallback(() => {
-    setIsLoggingIn(true);
-    setLoginError(null);
-    openLoginPopup({
-      baseUrl,
-      onSuccess: () => {
-        setNeedsLogin(false);
-        setIsLoggingIn(false);
-        setLoginError(null);
-      },
-      onFailed: (error: Error) => {
-        setIsLoggingIn(false);
-        setLoginError(error.message);
-      },
-    });
-  }, [baseUrl]);
+  const handleLogin = useCallback(
+    (provider: IdentityProvider) => {
+      setIsLoggingIn(true);
+      setLoginError(null);
+      openLoginPopup({
+        baseUrl,
+        signInEndpoint: provider.signInEndpoint,
+        onSuccess: (authInfo) => {
+          if (authInfo.username) {
+            setUserName(authInfo.username);
+          }
+          setNeedsLogin(false);
+          setIsLoggingIn(false);
+          setLoginError(null);
+        },
+        onFailed: (error: Error) => {
+          setIsLoggingIn(false);
+          setLoginError(error.message);
+        },
+      });
+    },
+    [baseUrl]
+  );
 
   // Create unauthorized handler - tries refresh first, then shows login UI
   const handleUnauthorized = useMemo(
@@ -73,6 +82,33 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const handleChatHistoryReceived = useCallback((history: ChatHistoryData) => {
     chatHistoryRef.current = history;
   }, []);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      // Skip auth check if in portal mode or if we have an API key
+      if (inPortal || apiKey) {
+        setIsCheckingAuth(false);
+        setNeedsLogin(false);
+        return;
+      }
+
+      try {
+        const { isAuthenticated, username } = await checkAuthStatus(baseUrl);
+        setNeedsLogin(!isAuthenticated);
+        if (isAuthenticated && username) {
+          setUserName(username);
+        }
+      } catch (error) {
+        console.error('[Auth] Failed to check authentication status:', error);
+        setNeedsLogin(true);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
+  }, [baseUrl, inPortal, apiKey]);
 
   // Frame Blade integration
   const { isReady: isFrameBladeReady } = useFrameBlade({
@@ -98,16 +134,25 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     return <LoadingDisplay title="Initializing Frame Blade..." message="Connecting to Azure Portal..." />;
   }
 
+  if (isCheckingAuth) {
+    return <LoadingDisplay title="Checking Authentication" message="Verifying authentication status..." />;
+  }
+
   if (needsLogin) {
     return (
       <FluentProvider theme={theme}>
-        <LoginPrompt onLogin={handleLogin} isLoading={isLoggingIn} error={loginError ?? undefined} />
+        <LoginPrompt
+          onLogin={handleLogin}
+          isLoading={isLoggingIn}
+          error={loginError ?? undefined}
+          identityProviders={props.identityProviders}
+        />
       </FluentProvider>
     );
   }
 
   // Prepare final props
-  const finalProps: ChatWidgetProps = agentCard ? { ...props, agentCard } : props;
+  const finalProps: ChatWidgetProps = { ...props, ...(agentCard && { agentCard }), userName };
 
   // Add auth token if available from Frame Blade
   // Also include OBO token if provided via URL or dataset

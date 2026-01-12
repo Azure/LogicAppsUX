@@ -27,6 +27,15 @@ const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-
 
 test.describe('Session Management', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     // Mock agent card
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
@@ -147,7 +156,7 @@ test.describe('Session Management', { tag: '@mock' }, () => {
     await expect(page.getByText(testMessage)).toBeVisible();
 
     // Should show "You" label
-    await expect(page.getByText('You')).toBeVisible();
+    await expect(page.getByText('You', { exact: true })).toBeVisible();
   });
 
   test('should show "Agent is typing..." indicator after sending message', async ({ page }) => {

@@ -51,14 +51,17 @@ describe('config-parser - contextId support', () => {
     expect(config.contextId).toBeUndefined();
   });
 
-  it('should log when contextId is found', () => {
+  it('should handle contextId without logging', () => {
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-789');
 
-    parseIframeConfig();
+    const config = parseIframeConfig();
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Using contextId:', 'ctx-789');
+    // contextId should be parsed correctly
+    expect(config.contextId).toBe('ctx-789');
+    // No logging should occur for contextId (logging was removed)
+    expect(consoleLogSpy).not.toHaveBeenCalledWith('Using contextId:', expect.any(String));
 
     consoleLogSpy.mockRestore();
   });

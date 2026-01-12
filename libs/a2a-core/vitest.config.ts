@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: ['./src/react/test/setup.ts'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.config.ts', '**/index.ts'],
       thresholds: {
         lines: 70,

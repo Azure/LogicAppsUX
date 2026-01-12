@@ -1,4 +1,4 @@
-import type { ChatWidgetProps, ChatTheme } from '@microsoft/logic-apps-chat';
+import type { ChatWidgetProps, ChatTheme, IdentityProvider } from '@microsoft/logic-apps-chat';
 import { THEME_PRESETS } from './theme-presets';
 
 export interface IframeConfig {
@@ -15,6 +15,26 @@ export interface IframeConfig {
 interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
+
+// This is a temporary workaround for identity providers until we have a proper way to configure them through server side
+const DEFAULT_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
+  microsoft: {
+    signInEndpoint: '/.auth/login/aad',
+    name: 'Microsoft',
+  },
+  google: {
+    signInEndpoint: '/.auth/login/google',
+    name: 'Google',
+  },
+  facebook: {
+    signInEndpoint: '/.auth/login/facebook',
+    name: 'Facebook',
+  },
+  github: {
+    signInEndpoint: '/.auth/login/github',
+    name: 'GitHub',
+  },
+};
 
 const ALLOWED_PORTAL_AUTHORITIES = [
   'df.onecloud.azure-test.net',
@@ -158,17 +178,13 @@ export function parseIframeConfig(): IframeConfig {
   const params = new URLSearchParams(window.location.search);
   const dataset = document.documentElement.dataset;
 
-  console.log('Parsing iframe config from URL:', window.location.href);
-
   // Check portal context
   const inPortal = params.get('inPortal') === 'true';
   let trustedParentOrigin: string | undefined;
 
   if (inPortal) {
-    console.log('Running in portal context, validating security...');
     const portalValidation = validatePortalSecurity(params);
     trustedParentOrigin = portalValidation.trustedParentOrigin;
-    console.log('Trusted parent origin:', trustedParentOrigin);
   }
 
   // Get agent card URL
@@ -212,6 +228,7 @@ export function parseIframeConfig(): IframeConfig {
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
+    identityProviders: window.IDENTITY_PROVIDERS || DEFAULT_IDENTITY_PROVIDERS || undefined,
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };
@@ -225,9 +242,6 @@ export function parseIframeConfig(): IframeConfig {
 
   // Context ID for session linking
   const contextId = params.get('contextId') || dataset.contextId || undefined;
-  if (contextId) {
-    console.log('Using contextId:', contextId);
-  }
 
   return {
     props,
@@ -255,5 +269,6 @@ export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
 declare global {
   interface Window {
     LOGGED_IN_USER_NAME?: string;
+    IDENTITY_PROVIDERS?: Record<string, IdentityProvider>;
   }
 }
