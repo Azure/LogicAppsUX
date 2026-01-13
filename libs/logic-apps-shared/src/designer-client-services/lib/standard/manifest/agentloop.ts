@@ -196,6 +196,48 @@ export default {
                   minimum: 0,
                   maximum: 2.0,
                 },
+                responseFormat: {
+                  type: 'object',
+                  properties: {
+                    type: {
+                      type: 'string',
+                      title: 'Response format type',
+                      'x-ms-editor': 'dropdown',
+                      'x-ms-editor-options': {
+                        options: [
+                          {
+                            value: 'json_schema',
+                            displayName: 'JSON Schema',
+                          },
+                          {
+                            value: 'json_object',
+                            displayName: 'JSON Object',
+                          },
+                          {
+                            value: 'text',
+                            displayName: 'Text',
+                          },
+                        ],
+                      },
+                    },
+                    json_schema: {
+                      title: 'Json Schema Response Format',
+                      description: 'Format of the response (Schema)',
+                      type: 'object',
+                      'x-ms-editor': 'schema',
+                      'x-ms-input-dependencies': {
+                        type: 'visibility',
+                        parameters: [
+                          {
+                            name: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                            values: ['json_schema'],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+
                 topP: {
                   title: 'Top P',
                   description: 'Nucleus sampling parameter (value should be between 0 and 1)',
