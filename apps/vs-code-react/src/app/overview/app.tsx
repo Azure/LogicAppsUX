@@ -113,7 +113,9 @@ export const OverviewApp = () => {
     isLoading: runTriggerLoading,
     error: runTriggerError,
   } = useMutation(async () => {
-    invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+    if (!workflowProperties.callbackInfo) {
+      throw new Error('Cannot run trigger: Workflow runtime is not running or callback URL is not available');
+    }
     await runService?.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
     return refetch();
   });
@@ -190,7 +192,7 @@ export const OverviewApp = () => {
         }}
         onRunTrigger={runTriggerCall}
         onVerifyRunId={onVerifyRunId}
-        supportsUnitTest={workflowState.isLocal}
+        supportsUnitTest={workflowState.supportsUnitTest ?? false}
         onCreateUnitTestFromRun={(run: RunDisplayItem) => {
           vscode.postMessage({
             command: ExtensionCommand.createUnitTestFromRun,

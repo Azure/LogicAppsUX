@@ -146,9 +146,14 @@ export const detectCodefulWorkflow = (fileContent: string): { workflowName: stri
  * @returns The trigger name if found, undefined otherwise
  */
 export const extractTriggerNameFromCodeful = (fileContent: string): string | undefined => {
+  // Remove single-line comments (//) and multi-line comments (/* */) to avoid matching commented code
+  const uncommentedContent = fileContent
+    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
+    .replace(/\/\/.*/g, ''); // Remove // comments
+
   // Look for .WithName("triggerName") pattern which sets the trigger name
   const withNamePattern = /\.WithName\s*\(\s*["']([^"']+)["']\s*\)/;
-  const withNameMatch = fileContent.match(withNamePattern);
+  const withNameMatch = uncommentedContent.match(withNamePattern);
 
   if (withNameMatch && withNameMatch[1]) {
     return withNameMatch[1];
@@ -156,7 +161,7 @@ export const extractTriggerNameFromCodeful = (fileContent: string): string | und
 
   // If no explicit name is set, try to extract from the trigger variable name
   const triggerVarPattern = /var\s+(\w+)\s*=\s*WorkflowTriggers\./;
-  const triggerVarMatch = fileContent.match(triggerVarPattern);
+  const triggerVarMatch = uncommentedContent.match(triggerVarPattern);
 
   if (triggerVarMatch && triggerVarMatch[1]) {
     return triggerVarMatch[1];
@@ -171,7 +176,12 @@ export const extractTriggerNameFromCodeful = (fileContent: string): string | und
  * @returns true if the workflow has an HTTP request trigger, false otherwise
  */
 export const hasHttpRequestTrigger = (fileContent: string): boolean => {
-  return fileContent.includes('WorkflowTriggers.BuiltIn.CreateHttpTrigger');
+  // Remove single-line comments (//) and multi-line comments (/* */) to avoid matching commented code
+  const uncommentedContent = fileContent
+    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
+    .replace(/\/\/.*/g, ''); // Remove // comments
+
+  return uncommentedContent.includes('WorkflowTriggers.BuiltIn.CreateHttpTrigger');
 };
 
 /**
@@ -180,14 +190,21 @@ export const hasHttpRequestTrigger = (fileContent: string): boolean => {
  * @returns The HTTP trigger name if found, undefined otherwise
  */
 export const extractHttpTriggerName = (fileContent: string): string | undefined => {
+  // Remove single-line comments (//) and multi-line comments (/* */) to avoid matching commented code
+  const uncommentedContent = fileContent
+    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
+    .replace(/\/\/.*/g, ''); // Remove // comments
+
   // Pattern to match: WorkflowTriggers.BuiltIn.CreateHttpTrigger("triggerName", ...)
   // Using [\s\S]*? to match any characters including newlines between parts
   const pattern = /WorkflowTriggers[\s\S]*?\.BuiltIn[\s\S]*?\.CreateHttpTrigger\s*\(\s*["']([^"']+)["']/;
-  const match = fileContent.match(pattern);
+  const match = uncommentedContent.match(pattern);
 
   if (match && match[1]) {
     return match[1];
   }
 
+  // If CreateHttpTrigger() is called without a name parameter, return undefined
+  // The caller should query the LSP server to get the SDK-generated default name
   return undefined;
 };

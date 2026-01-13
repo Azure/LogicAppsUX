@@ -32,6 +32,7 @@ export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
+  const { supportsUnitTest } = vscodeState;
   const styles = useAppStyles();
   const {
     panelMetaData,
@@ -349,6 +350,7 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
+              supportsUnitTest={supportsUnitTest}
             />
 
             {!isCodeView && (

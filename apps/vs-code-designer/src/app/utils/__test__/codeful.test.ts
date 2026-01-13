@@ -494,6 +494,43 @@ describe('codeful.ts', () => {
 
       expect(result).toBe('recurrenceTrigger');
     });
+
+    it('should ignore trigger names in single-line comments', () => {
+      const fileContent = `
+        // var oldTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+        // trigger.WithName("weather_trigger");
+        var httpTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      `;
+
+      const result = extractTriggerNameFromCodeful(fileContent);
+
+      expect(result).toBe('httpTrigger');
+    });
+
+    it('should ignore trigger names in multi-line block comments', () => {
+      const fileContent = `
+        /*
+        var oldTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+        trigger.WithName("weather_trigger");
+        */
+        var httpTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      `;
+
+      const result = extractTriggerNameFromCodeful(fileContent);
+
+      expect(result).toBe('httpTrigger');
+    });
+
+    it('should ignore trigger names in inline block comments', () => {
+      const fileContent = `
+        /* trigger.WithName("old_trigger"); */
+        var httpTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      `;
+
+      const result = extractTriggerNameFromCodeful(fileContent);
+
+      expect(result).toBe('httpTrigger');
+    });
   });
 
   describe('hasHttpRequestTrigger', () => {
@@ -542,6 +579,41 @@ describe('codeful.ts', () => {
 
       expect(result).toBe(false);
     });
+
+    it('should return false when HTTP trigger is only in single-line comments', () => {
+      const fileContent = `
+        // var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+        var trigger = WorkflowTriggers.BuiltIn.CreateRecurrenceTrigger();
+      `;
+
+      const result = hasHttpRequestTrigger(fileContent);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when HTTP trigger is only in multi-line block comments', () => {
+      const fileContent = `
+        /*
+        var oldTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+        */
+        var trigger = WorkflowTriggers.BuiltIn.CreateRecurrenceTrigger();
+      `;
+
+      const result = hasHttpRequestTrigger(fileContent);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when HTTP trigger is active and also present in comments', () => {
+      const fileContent = `
+        // var oldTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+        var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      `;
+
+      const result = hasHttpRequestTrigger(fileContent);
+
+      expect(result).toBe(true);
+    });
   });
 
   describe('extractHttpTriggerName', () => {
@@ -575,7 +647,7 @@ describe('codeful.ts', () => {
       expect(result).toBe('myTrigger');
     });
 
-    it('should return undefined when no HTTP trigger with name is found', () => {
+    it('should return "manual" when no HTTP trigger with explicit name is found', () => {
       const fileContent = `
         var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
       `;
@@ -611,6 +683,53 @@ describe('codeful.ts', () => {
       const result = extractHttpTriggerName(fileContent);
 
       expect(result).toBe('requestTrigger');
+    });
+
+    it('should ignore HTTP trigger names in single-line comments', () => {
+      const fileContent = `
+        // var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger("old_trigger");
+        var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger("new_trigger");
+      `;
+
+      const result = extractHttpTriggerName(fileContent);
+
+      expect(result).toBe('new_trigger');
+    });
+
+    it('should ignore HTTP trigger names in multi-line block comments', () => {
+      const fileContent = `
+        /*
+        var oldTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger("commented_trigger");
+        */
+        var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger("active_trigger");
+      `;
+
+      const result = extractHttpTriggerName(fileContent);
+
+      expect(result).toBe('active_trigger');
+    });
+
+    it('should return undefined when CreateHttpTrigger is called without name parameter', () => {
+      const fileContent = `
+        var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      `;
+
+      const result = extractHttpTriggerName(fileContent);
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined when CreateHttpTrigger is called with empty parentheses across lines', () => {
+      const fileContent = `
+        var trigger = WorkflowTriggers
+            .BuiltIn
+            .CreateHttpTrigger(
+            );
+      `;
+
+      const result = extractHttpTriggerName(fileContent);
+
+      expect(result).toBeUndefined();
     });
   });
 });

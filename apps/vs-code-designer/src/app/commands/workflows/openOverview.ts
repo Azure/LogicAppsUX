@@ -40,6 +40,7 @@ import * as vscode from 'vscode';
 import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../utils/startRuntimeApi';
 import { detectCodefulWorkflow, extractTriggerNameFromCodeful, hasHttpRequestTrigger, extractHttpTriggerName } from '../../utils/codeful';
+import { getCodefulWorkflowMetadata } from '../../languageServer/languageServer';
 
 // TODO(aeldridge): We should split into remote and local open overview
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
@@ -78,21 +79,42 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
       isCodefulWorkflow = true;
 
-      // Extract workflow name from the codeful file
+      // First, try to extract workflow and trigger names from the file content
       workflowName = workflowInfo.workflowName;
 
       // Extract trigger name from the codeful file
       const extractedTriggerName = extractTriggerNameFromCodeful(fileContent);
-      triggerName = extractedTriggerName || 'trigger';
 
       // Check if this is an HTTP request trigger
       hasRequestTrigger = hasHttpRequestTrigger(fileContent);
       if (hasRequestTrigger) {
+        // For HTTP triggers, try to get the explicit name
         const httpTriggerName = extractHttpTriggerName(fileContent);
-        if (httpTriggerName) {
-          triggerName = httpTriggerName;
+        triggerName = httpTriggerName || undefined;
+      } else {
+        // For non-HTTP triggers, use extracted name
+        triggerName = extractedTriggerName;
+      }
+
+      // If no explicit trigger name was found in the code, query LSP server for SDK-generated default
+      if (!triggerName) {
+        const lspMetadata = await getCodefulWorkflowMetadata(workflowFilePath);
+        if (lspMetadata?.triggerName) {
+          triggerName = lspMetadata.triggerName;
+          ext.outputChannel.appendLog(
+            localize('usingLspTriggerName', 'Using SDK-generated trigger name from LSP server: {0}', triggerName)
+          );
+        } else {
+          // Final fallback: use generic defaults
+          triggerName = hasRequestTrigger ? 'manual' : 'trigger';
+          ext.outputChannel.appendLog(
+            localize('usingFallbackTriggerName', 'LSP server not available, using fallback trigger name: {0}', triggerName)
+          );
         }
       }
+
+      // Check if this is an HTTP request trigger (needed for workflow content structure)
+      hasRequestTrigger = hasHttpRequestTrigger(fileContent);
 
       // For codeful workflows, create a minimal workflow content structure
       // The actual workflow definition is in the C# code, not in a workflow.json
@@ -146,7 +168,15 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
         await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
     }
 
-    callbackInfo = await getCallbackInfo(baseUrl);
+    if (!baseUrl) {
+      ext.outputChannel.appendLog(
+        localize(
+          'overviewCallbackUrlUnavailable',
+          'Callback URL is not available because the workflow runtime is not running. Start debugging or run "func host start" to enable the Run Trigger button.'
+        )
+      );
+    }
+    callbackInfo = baseUrl ? await getCallbackInfo(baseUrl) : undefined;
 
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
@@ -242,6 +272,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             isLocal: isLocal,
             azureDetails: azureDetails,
             kind: kind,
+            supportsUnitTest: isLocal && localSettings['WORKFLOW_CODEFUL_ENABLED'] !== 'true',
           },
         });
 
@@ -322,8 +353,16 @@ async function getLocalWorkflowCallbackInfo(
           method: HTTP_METHODS.POST,
         });
         return JSON.parse(response);
-      } catch {
-        // API call failed, return undefined
+      } catch (error) {
+        // API call failed, log error and return undefined
+        ext.outputChannel.appendLog(
+          localize(
+            'callbackUrlApiFailed',
+            'Failed to get callback URL for workflow "{0}": {1}',
+            workflowName,
+            error instanceof Error ? error.message : String(error)
+          )
+        );
         return undefined;
       }
     }
@@ -354,14 +393,30 @@ async function getCodefulWorkflowCallbackInfo(
         method: HTTP_METHODS.POST,
       });
       return JSON.parse(response);
-    } catch {
-      // API call failed, return undefined
+    } catch (error) {
+      // API call failed, log detailed error
+      ext.outputChannel.appendLog(
+        localize(
+          'codefulCallbackUrlApiFailed',
+          'Failed to get callback URL for codeful workflow "{0}" trigger "{1}": {2}. Make sure the workflow is built and published.',
+          workflowName,
+          triggerName,
+          error instanceof Error ? error.message : String(error)
+        )
+      );
       return undefined;
     }
   }
 
   // For cases where we can't get the callback URL from API, return undefined for request triggers
   if (hasRequestTrigger) {
+    ext.outputChannel.appendLog(
+      localize(
+        'codefulCallbackUrlNoBaseUrl',
+        'Cannot get callback URL for codeful workflow "{0}" with request trigger: baseUrl is not available. Make sure the workflow runtime is running.',
+        workflowName
+      )
+    );
     return undefined;
   }
 
