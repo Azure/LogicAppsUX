@@ -2,12 +2,11 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
 
-namespace AgentCodefulNamespace
+namespace <%= logicAppNamespace %>
 {
     using System;
-    using Microsoft.Azure.Workflows.Sdk.Agents;
+    using Microsoft.Azure.Workflows.Sdk;
     using Microsoft.Extensions.Hosting;
-    using harness;
 
     /// <summary>
     /// Main Program entry point.
@@ -28,7 +27,6 @@ namespace AgentCodefulNamespace
             // Build all workflows
             <%= workflowBuilders %>
 
-            WorkflowBuilderFactory.CreateWorkflows();
             host.Run();
         }
     }

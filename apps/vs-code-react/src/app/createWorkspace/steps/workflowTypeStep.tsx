@@ -79,7 +79,7 @@ export const WorkflowTypeStep: React.FC = () => {
       <Field required>
         <Label required>{intlText.WORKFLOW_TYPE}</Label>
         <Dropdown
-          value={workflowTypes[workflowType]}
+          value={workflowType ? selectWorkflowTypes[workflowType] || '' : ''}
           selectedOptions={workflowType ? [workflowType] : []}
           onOptionSelect={handleWorkflowTypeChange}
           placeholder={intlText.SELECT_WORKFLOW_TYPE}
@@ -94,18 +94,6 @@ export const WorkflowTypeStep: React.FC = () => {
             );
           })}
         </Dropdown>
-        {workflowType && (
-          <Text
-            size={200}
-            style={{
-              color: 'var(--colorNeutralForeground2)',
-              marginTop: '4px',
-              display: 'block',
-            }}
-          >
-            {workflowTypes[workflowType]}
-          </Text>
-        )}
       </Field>
     </div>
   );

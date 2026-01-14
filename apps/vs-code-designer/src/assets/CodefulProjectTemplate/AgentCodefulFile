@@ -2,12 +2,12 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
 
-namespace harness
+namespace <%= logicAppNamespace %>
 {
     using System;
-    using Microsoft.Azure.Workflows.Sdk.Agents;
-    using Microsoft.Azure.Workflows.Sdk.Agents.Connectors;
-    using Microsoft.Azure.Workflows.Sdk.Agents.Connectors.Msnweather;
+    using Microsoft.Azure.Workflows.Sdk;
+    using Microsoft.Azure.Workflows.Sdk.Connectors;
+    using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
     using Microsoft.Extensions.Hosting;
 
     /// <summary>

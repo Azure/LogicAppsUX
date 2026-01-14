@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
 
-namespace harness
+namespace <%= logicAppNamespace %>
 {
-    using Microsoft.Azure.Workflows.Sdk.Agents;
-    using Microsoft.Azure.Workflows.Sdk.Agents.Connectors.Msnweather;
+    using Microsoft.Azure.Workflows.Sdk;
+    using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
 
     /// <summary>
     /// <%= flowName %> Stateful Workflow.

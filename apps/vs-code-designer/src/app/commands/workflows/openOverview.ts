@@ -292,29 +292,56 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
           }
         }, 5000);
 
+        let lastCheckedBaseUrl: string | undefined;
+        let consecutiveCallbackErrors = 0;
+        const MAX_CALLBACK_ERRORS = 3;
+
         baseUrlInterval = setInterval(async () => {
           const updatedBaseUrl = getBaseUrl();
+
+          // Only process if baseUrl changed
           if (updatedBaseUrl !== baseUrl) {
             baseUrl = updatedBaseUrl;
+            lastCheckedBaseUrl = baseUrl;
             panel.webview.postMessage({
               command: ExtensionCommand.update_runtime_base_url,
               data: {
                 baseUrl,
               },
             });
+            // Reset error count when baseUrl changes
+            consecutiveCallbackErrors = 0;
           }
 
-          const updatedCallbackInfo = await getCallbackInfo(baseUrl);
-          if (updatedCallbackInfo?.value !== callbackInfo?.value || updatedCallbackInfo?.basePath !== callbackInfo?.basePath) {
-            callbackInfo = updatedCallbackInfo;
-            panel.webview.postMessage({
-              command: ExtensionCommand.update_callback_info,
-              data: {
-                callbackInfo,
-              },
-            });
+          // Only fetch callback info when baseUrl changes or we haven't fetched yet
+          if (
+            baseUrl &&
+            (lastCheckedBaseUrl !== baseUrl || (callbackInfo === undefined && consecutiveCallbackErrors < MAX_CALLBACK_ERRORS))
+          ) {
+            lastCheckedBaseUrl = baseUrl;
+            try {
+              const updatedCallbackInfo = await getCallbackInfo(baseUrl);
+              if (updatedCallbackInfo?.value !== callbackInfo?.value || updatedCallbackInfo?.basePath !== callbackInfo?.basePath) {
+                callbackInfo = updatedCallbackInfo;
+                panel.webview.postMessage({
+                  command: ExtensionCommand.update_callback_info,
+                  data: {
+                    callbackInfo,
+                  },
+                });
+              }
+              // Reset error count on success
+              consecutiveCallbackErrors = 0;
+            } catch {
+              consecutiveCallbackErrors++;
+              if (consecutiveCallbackErrors >= MAX_CALLBACK_ERRORS) {
+                ext.outputChannel.appendLog(
+                  `Stopped fetching callback URL after ${MAX_CALLBACK_ERRORS} consecutive errors. Trigger may not exist for workflow '${workflowName}'.`
+                );
+              }
+            }
           }
-        }, 3000);
+        }, 5000);
 
         break;
       }

@@ -174,7 +174,7 @@ export default class LogicAppsSeverLanguage {
     const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
     const files = await fse.readdir(sdkFolderPath);
     const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Sdk.Agents.') && file.endsWith('.nupkg');
+      return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
     });
 
     const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);

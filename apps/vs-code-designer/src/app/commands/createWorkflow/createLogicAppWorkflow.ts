@@ -5,6 +5,8 @@ import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import { createLogicAppAndWorkflow } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { localize } from '../../../localize';
+import { isCodefulProject } from '../../utils/codeful';
+import { ProjectType as ProjectTypeEnum } from '@microsoft/vscode-extension-logic-apps';
 
 export async function createLogicAppWorkflow(context: IActionContext, options: any, logicAppFolderPath: string) {
   addLocalFuncTelemetry(context);
@@ -13,6 +15,14 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
   const logicAppExists = await fse.pathExists(logicAppFolderPath);
   if (logicAppExists) {
     // Check if it's actually a Logic App project
+  }
+
+  // If logicAppType is not set in options, check if this is a codeful project
+  if (!webviewProjectContext.logicAppType) {
+    const isCodeful = await isCodefulProject(logicAppFolderPath);
+    if (isCodeful) {
+      webviewProjectContext.logicAppType = ProjectTypeEnum.agentCodeful;
+    }
   }
 
   // Check if we're in a workspace and get the workspace folder

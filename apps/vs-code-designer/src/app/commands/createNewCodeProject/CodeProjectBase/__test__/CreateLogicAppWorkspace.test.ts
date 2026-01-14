@@ -57,8 +57,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
   describe('createAgentCodefulWorkflowFile', () => {
     it('should create workflow file with workflow name (not Program.cs) for first workflow', async () => {
-      const agentCodefulTemplate = 'public static class <%= flowNameClass %> { }';
-      const programTemplate = 'class Program { <%= workflowBuilders %> }';
+      const agentCodefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
 
       mockReadFile.mockImplementation((filePath: string) => {
         if (filePath.includes('AgentCodefulFile')) {
@@ -100,18 +100,26 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         // Verify nuget.config was created
         expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
 
-        // Verify Program.cs contains the workflow
+        // Verify workflow file has correct namespace
+        const workflowWriteCall = mockWriteFile.mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+        expect(workflowWriteCall).toBeDefined();
+        expect(workflowWriteCall[1]).toContain(`namespace ${testProjectName}`);
+        expect(workflowWriteCall[1]).toContain(`${testWorkflowName}`);
+
+        // Verify Program.cs contains the workflow and correct namespace
         const programWriteCall = mockWriteFile.mock.calls.find((call: any) => call[0].includes('Program.cs'));
+        expect(programWriteCall).toBeDefined();
+        expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
         expect(programWriteCall[1]).toContain(`${testWorkflowName}.AddWorkflow()`);
       }
     });
 
     it('should add workflow to existing Program.cs when creating second workflow', async () => {
-      const agentCodefulTemplate = 'public static class <%= flowNameClass %> { }';
-      const existingProgramContent = `class Program {
+      const agentCodefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { }';
+      const existingProgramContent = `namespace ${testProjectName}\nclass Program {
         // Build all workflows
         FirstWorkflow.AddWorkflow();
-        WorkflowBuilderFactory.CreateWorkflows();
+        host.Run();
       }`;
 
       mockReadFile.mockImplementation((filePath: string) => {
@@ -135,12 +143,15 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       if (createAgentCodefulWorkflowFile) {
         await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
 
-        // Verify new workflow file was created
-        expect(mockWriteFile).toHaveBeenCalledWith(expect.stringContaining(`${testWorkflowName}.cs`), expect.anything());
+        // Verify new workflow file was created with correct namespace
+        const workflowWriteCall = mockWriteFile.mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+        expect(workflowWriteCall).toBeDefined();
+        expect(workflowWriteCall[1]).toContain(`namespace ${testProjectName}`);
 
-        // Verify Program.cs was updated with new workflow
+        // Verify Program.cs was updated with new workflow but namespace unchanged
         const programWriteCall = mockWriteFile.mock.calls.find((call: any) => call[0].includes('Program.cs'));
         expect(programWriteCall).toBeDefined();
+        expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
         expect(programWriteCall[1]).toContain('FirstWorkflow.AddWorkflow()');
         expect(programWriteCall[1]).toContain(`${testWorkflowName}.AddWorkflow()`);
       }
@@ -151,7 +162,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       const existingProgramContent = `class Program {
         // Build all workflows
         FirstWorkflow.AddWorkflow();
-        WorkflowBuilderFactory.CreateWorkflows();
+        host.Run();
       }`;
 
       mockReadFile.mockImplementation((filePath: string) => {
@@ -186,9 +197,9 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       }
     });
 
-    it('should create StatefulCodeful workflow file correctly', async () => {
-      const statefulTemplate = 'public static class <%= flowName %> { stateful content }';
-      const programTemplate = 'class Program { <%= workflowBuilders %> }';
+    it('should create StatefulCodeful workflow file correctly with namespace', async () => {
+      const statefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { stateful content }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
 
       mockReadFile.mockImplementation((filePath: string) => {
         if (filePath.includes('StatefulCodefulFile')) {
@@ -214,11 +225,16 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         // Verify correct template was used
         expect(mockReadFile).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulFile'), 'utf-8');
 
-        // Verify workflow file contains stateful content
-        expect(mockWriteFile).toHaveBeenCalledWith(
-          expect.stringContaining(`${testWorkflowName}.cs`),
-          expect.stringContaining('stateful content')
-        );
+        // Verify workflow file contains stateful content and correct namespace
+        const workflowWriteCall = mockWriteFile.mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+        expect(workflowWriteCall).toBeDefined();
+        expect(workflowWriteCall[1]).toContain('stateful content');
+        expect(workflowWriteCall[1]).toContain(`namespace ${testProjectName}`);
+
+        // Verify Program.cs has correct namespace
+        const programWriteCall = mockWriteFile.mock.calls.find((call: any) => call[0].includes('Program.cs'));
+        expect(programWriteCall).toBeDefined();
+        expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
       }
     });
 
@@ -267,13 +283,12 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   });
 
   describe('addWorkflowToProgram', () => {
-    it('should insert workflow before CreateWorkflows() call', async () => {
+    it('should insert workflow before host.Run() call', async () => {
       const programContent = `class Program {
         public static void Main() {
             // Build all workflows
             FirstWorkflow.AddWorkflow();
             
-            WorkflowBuilderFactory.CreateWorkflows();
             host.Run();
         }
       }`;
@@ -292,22 +307,21 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         // Verify new workflow was added
         expect(updatedContent).toContain('FirstWorkflow.AddWorkflow()');
         expect(updatedContent).toContain('SecondWorkflow.AddWorkflow()');
-        expect(updatedContent).toContain('WorkflowBuilderFactory.CreateWorkflows()');
+        expect(updatedContent).toContain('host.Run()');
 
-        // Verify SecondWorkflow comes after FirstWorkflow but before CreateWorkflows
+        // Verify SecondWorkflow comes after FirstWorkflow but before host.Run()
         const firstIndex = updatedContent.indexOf('FirstWorkflow.AddWorkflow()');
         const secondIndex = updatedContent.indexOf('SecondWorkflow.AddWorkflow()');
-        const createIndex = updatedContent.indexOf('WorkflowBuilderFactory.CreateWorkflows()');
+        const hostRunIndex = updatedContent.indexOf('host.Run()');
 
         expect(secondIndex).toBeGreaterThan(firstIndex);
-        expect(createIndex).toBeGreaterThan(secondIndex);
+        expect(hostRunIndex).toBeGreaterThan(secondIndex);
       }
     });
 
     it('should handle Program.cs without "Build all workflows" comment', async () => {
       const programContent = `class Program {
         public static void Main() {
-            WorkflowBuilderFactory.CreateWorkflows();
             host.Run();
         }
       }`;
@@ -323,13 +337,13 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         expect(mockWriteFile).toHaveBeenCalledOnce();
         const updatedContent = mockWriteFile.mock.calls[0][1];
 
-        // Verify workflow was added before CreateWorkflows
+        // Verify workflow was added before host.Run()
         expect(updatedContent).toContain('NewWorkflow.AddWorkflow()');
-        expect(updatedContent).toContain('WorkflowBuilderFactory.CreateWorkflows()');
+        expect(updatedContent).toContain('host.Run()');
 
         const workflowIndex = updatedContent.indexOf('NewWorkflow.AddWorkflow()');
-        const createIndex = updatedContent.indexOf('WorkflowBuilderFactory.CreateWorkflows()');
-        expect(createIndex).toBeGreaterThan(workflowIndex);
+        const hostRunIndex = updatedContent.indexOf('host.Run()');
+        expect(hostRunIndex).toBeGreaterThan(workflowIndex);
       }
     });
 
@@ -339,7 +353,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
             // Build all workflows
             FirstWorkflow.AddWorkflow();
             
-            WorkflowBuilderFactory.CreateWorkflows();
+            host.Run();
         }
       }`;
 
@@ -366,7 +380,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         WorkflowTwo.AddWorkflow();
         WorkflowThree.AddWorkflow();
         
-        WorkflowBuilderFactory.CreateWorkflows();
+        host.Run();
       }`;
 
       mockReadFile.mockResolvedValue(programContent);
@@ -384,7 +398,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         expect(updatedContent).toContain('WorkflowTwo.AddWorkflow()');
         expect(updatedContent).toContain('WorkflowThree.AddWorkflow()');
         expect(updatedContent).toContain('WorkflowFour.AddWorkflow()');
-        expect(updatedContent).toContain('WorkflowBuilderFactory.CreateWorkflows()');
+        expect(updatedContent).toContain('host.Run()');
       }
     });
   });

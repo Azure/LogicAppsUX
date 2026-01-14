@@ -49,12 +49,10 @@ export const isCodefulProject = async (folderPath: string): Promise<boolean> => 
  * Checks if a C# project file (.csproj) is configured for a codeful .NET 8 Azure Logic Apps workflow.
  *
  * @param csprojContent - The content of the .csproj file as a string
- * @returns `true` if the project targets .NET 8 and includes the Microsoft.Azure.Workflows.Sdk.Agents package, `false` otherwise
+ * @returns `true` if the project targets .NET 8 and includes the Microsoft.Azure.Workflows.Sdk package, `false` otherwise
  */
 const isCodefulNet8Csproj = (csprojContent: string): boolean => {
-  return (
-    csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes('Microsoft.Azure.Workflows.Sdk.Agents')
-  );
+  return csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes('Microsoft.Azure.Workflows.Sdk');
 };
 
 /**

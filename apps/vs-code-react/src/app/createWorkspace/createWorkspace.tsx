@@ -730,7 +730,7 @@ export const CreateWorkflow = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetState(undefined));
+    dispatch(resetState({ preserveLogicAppData: true }));
     dispatch(setFlowType(FLOW_TYPES.CREATE_WORKFLOW));
   }, [dispatch]);
 

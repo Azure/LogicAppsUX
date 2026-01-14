@@ -119,23 +119,23 @@ export const addWorkflowToProgram = async (programFilePath: string, workflowName
   const programContent = await fse.readFile(programFilePath, 'utf-8');
 
   // Find the location to insert the new workflow builder
-  // Look for the "Build all workflows" comment or the CreateWorkflows() call
-  const buildCallRegex = /(\s*)(\/\/ Build all workflows\s*\n(?:\s*\/\/.*\n)*\s*)(.*?)(\s*WorkflowBuilderFactory\.CreateWorkflows\(\);)/s;
+  // Look for the "Build all workflows" comment or insert before host.Run()
+  const buildCallRegex = /(\s*)(\/\/ Build all workflows\s*\n(?:\s*\/\/.*\n)*\s*)(.*?)(\s*host\.Run\(\);)/s;
 
   const match = programContent.match(buildCallRegex);
   if (match) {
-    // Insert the new workflow builder before CreateWorkflows()
+    // Insert the new workflow builder before host.Run()
     const indent = match[1];
     const newBuildCall = `\n${indent}${workflowName}.AddWorkflow();`;
     const updatedContent = programContent.replace(buildCallRegex, `$1$2$3${newBuildCall}\n$4`);
     await fse.writeFile(programFilePath, updatedContent);
   } else {
-    // Fallback: try to insert before CreateWorkflows() directly
-    const fallbackRegex = /(\s*)(WorkflowBuilderFactory\.CreateWorkflows\(\);)/;
+    // Fallback: try to insert before host.Run() directly
+    const fallbackRegex = /(\s*)(host\.Run\(\);)/;
     const fallbackMatch = programContent.match(fallbackRegex);
     if (fallbackMatch) {
       const indent = fallbackMatch[1];
-      const newBuildCall = `${indent}${workflowName}.AddWorkflow();\n\n`;
+      const newBuildCall = `${indent}${workflowName}.AddWorkflow();\n`;
       const updatedContent = programContent.replace(fallbackRegex, `${newBuildCall}$1$2`);
       await fse.writeFile(programFilePath, updatedContent);
     }
@@ -156,6 +156,7 @@ export const createAgentCodefulWorkflowFile = async (
   const capitalizedWorkflowName = workflowName.charAt(0).toUpperCase() + workflowName.slice(1);
   const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', agentFileName);
   const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
+    .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
     .replace(/<%= flowNameClass %>/g, `${capitalizedWorkflowName}`)
     .replace(/<%= flowName %>/g, `"${workflowName}"`);
 
@@ -172,7 +173,9 @@ export const createAgentCodefulWorkflowFile = async (
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
-    const programContent = templateProgramContent.replace(/<%= workflowBuilders %>/g, `${capitalizedWorkflowName}.AddWorkflow();`);
+    const programContent = templateProgramContent
+      .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
+      .replace(/<%= workflowBuilders %>/g, `${capitalizedWorkflowName}.AddWorkflow();`);
     await fse.writeFile(programFilePath, programContent);
 
     // Create the .csproj file (only for first workflow)
@@ -224,7 +227,7 @@ export async function createLocalConfigurationFiles(
   if (logicAppType === ProjectType.agentCodeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
     localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
-    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.141.0.12]';
+    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.160.0.18]';
     localSettingsJson.Values['FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI'] = 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test';
   }
 

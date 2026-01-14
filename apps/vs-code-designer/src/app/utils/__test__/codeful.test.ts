@@ -144,7 +144,7 @@ describe('codeful.ts', () => {
       const csprojContent = `
         <Project>
           <TargetFramework>net6.0</TargetFramework>
-          <PackageReference Include="Microsoft.Azure.Workflows.Sdk.Agents" />
+          <PackageReference Include="Microsoft.Azure.Workflows.Sdk" />
         </Project>
       `;
 
@@ -159,7 +159,7 @@ describe('codeful.ts', () => {
       expect(result).toBe(false);
     });
 
-    it('should return false when .csproj does not include Microsoft.Azure.Workflows.Sdk.Agents', async () => {
+    it('should return false when .csproj does not include Microsoft.Azure.Workflows.Sdk', async () => {
       const csprojContent = `
         <Project>
           <TargetFramework>net8</TargetFramework>
@@ -186,7 +186,7 @@ describe('codeful.ts', () => {
             <AzureFunctionsVersion>v4</AzureFunctionsVersion>
           </PropertyGroup>
           <ItemGroup>
-            <PackageReference Include="Microsoft.Azure.Workflows.Sdk.Agents" Version="1.0.0" />
+            <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview" />
           </ItemGroup>
         </Project>
       `;
@@ -206,7 +206,7 @@ describe('codeful.ts', () => {
       const csprojContent = `
         <Project>
           <TargetFramework>net8</TargetFramework>
-          <PackageReference Include="Microsoft.Azure.Workflows.Sdk.Agents" />
+          <PackageReference Include="Microsoft.Azure.Workflows.Sdk" />
         </Project>
       `;
 
