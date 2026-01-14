@@ -92,6 +92,21 @@ const DesignerEditorConsumption = () => {
     isError: isWorkflowAndArtifactsError,
     error: workflowAndArtifactsError,
   } = useWorkflowAndArtifactsConsumption(workflowId);
+
+  const {
+    workflow: prodWorkflow,
+    connectionReferences,
+    parameters,
+    notes,
+  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+
+  const { data: draftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
+    workflowId,
+    true
+  );
+
+  const { workflow: draftWorkflow } = useMemo(() => getDataForConsumption(draftWorkflowAndArtifactsData), [draftWorkflowAndArtifactsData]);
+
   const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
 
   const { data: tenantId } = useCurrentTenantId();
@@ -108,15 +123,6 @@ const DesignerEditorConsumption = () => {
   const switchWorkflowMode = useCallback((draftMode: boolean) => {
     setIsDraftMode(draftMode);
   }, []);
-
-  const {
-    workflow: prodWorkflow,
-    connectionReferences,
-    parameters,
-    notes,
-  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
-  // TODO: Implement draft workflow fetching properly
-  const draftWorkflow = useMemo(() => prodWorkflow, [prodWorkflow]);
 
   const [definition, setDefinition] = useState<any>();
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
@@ -371,7 +377,7 @@ const DesignerEditorConsumption = () => {
   }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
-    if (isWorkflowAndArtifactsLoading || !prodWorkflow) {
+    if (isWorkflowAndArtifactsLoading || !prodWorkflow || isDraftWorkflowAndArtifactsLoading) {
       return;
     }
 
@@ -384,7 +390,7 @@ const DesignerEditorConsumption = () => {
     } else {
       setWorkflow(prodWorkflow as any);
     }
-  }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
+  }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow, isDraftWorkflowAndArtifactsLoading]);
 
   if (isWorkflowAndArtifactsError) {
     throw workflowAndArtifactsError;
@@ -470,7 +476,8 @@ const DesignerEditorConsumption = () => {
                       saveDraftWorkflow={saveWorkflowFromDesigner}
                       onRun={onRun}
                       isDarkMode={isDarkMode}
-                      isDraftMode={false} // TODO: Support draft mode runs once backend is ready
+                      isDraftMode={isDraftMode}
+                      isConsumption={true}
                     />
                   </div>
                 )}
