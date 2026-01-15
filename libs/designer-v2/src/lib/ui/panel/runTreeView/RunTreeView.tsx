@@ -377,7 +377,6 @@ export const RunTreeView = () => {
           };
           addToCountRecord(toolId);
           addTreeItem(newToolTreeData);
-          console.log('#> Adding A2A Agent Tool Tree Item', agentName, newToolTreeData);
         }
       });
 
@@ -389,14 +388,12 @@ export const RunTreeView = () => {
           let hasHandedOff = false;
 
           const actions: any[] = (actionRepetition.properties as any)?.actionResults ?? [];
-          console.log('#> Processing A2A Agent Actions', agentName, repetitionName, actions);
           actions.forEach((action: any, index: number) => {
             if (action?.status === 'HandedOff') {
               // Tag the parent tool as a handoff tool
               const actionId = action?.name;
               const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
               const parentRepetitionId = `${parentId}-#${repetitionName}-#${repIndexToName(index)}`;
-              console.log('#> Tagging parent tool as handoff', parentRepetitionId);
 
               if (hasHandedOff) {
                 // Remove duplicate handoff tool

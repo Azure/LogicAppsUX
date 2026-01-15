@@ -454,14 +454,32 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       }
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
+
+      // const isDev = process.env.NODE_ENV === 'development';
+      // if (isDev) {
+      // 	agentBaseUrl = 'https://localhost:3001';
+      // }
+
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
       const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
-      const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/agentsChat/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
-      const draftChatUrl = `${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame?api-version=2022-05-01&agentCard=${agentCardUrlForDraft}${a2aKey ? `&x-api-key=${a2aKey}` : ''}${a2aCodeForDraft ? `&${a2aCodeForDraft}` : ''}`;
+
+      const agentCardUrlForDraft = new URL(
+        `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json`
+      );
+      if (a2aKey) {
+        agentCardUrlForDraft.searchParams.append('x-api-key', a2aKey);
+      }
+      if (a2aCodeForDraft) {
+        agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(a2aCodeForDraft.split('=')[1]));
+      }
+
+      const draftChatUrl = new URL(`${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame`);
+      draftChatUrl.searchParams.append('api-version', '2022-05-01');
+      draftChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
 
       return {
-        agentUrl,
-        chatUrl: isDraftMode ? draftChatUrl : prodChatUrl,
+        agentUrl: agentUrl,
+        chatUrl: isDraftMode ? draftChatUrl.href : prodChatUrl,
         queryParams,
         hostName,
       };
