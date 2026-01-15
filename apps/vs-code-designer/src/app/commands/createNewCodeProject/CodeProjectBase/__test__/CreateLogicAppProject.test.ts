@@ -83,6 +83,12 @@ describe('createLogicAppProject', () => {
     // Create workspace directory
     await fse.ensureDir(workspaceRootFolder);
 
+    // Create a basic workspace file that updateWorkspaceFile expects
+    await fse.writeJson(workspaceFilePath, {
+      folders: [],
+      settings: {},
+    });
+
     // Mock VS Code workspace
     (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
     (vscode.window.showInformationMessage as Mock) = vi.fn();
@@ -531,6 +537,13 @@ describe('createLogicAppProject', () => {
       await fse.ensureDir(specialWorkspaceRoot);
 
       const specialWorkspaceFile = path.join(specialWorkspaceRoot, 'Test-Workspace_123.code-workspace');
+
+      // Create the workspace file that updateWorkspaceFile expects
+      await fse.writeJson(specialWorkspaceFile, {
+        folders: [],
+        settings: {},
+      });
+
       (vscode.workspace as any).workspaceFile = { fsPath: specialWorkspaceFile };
 
       await createLogicAppProject(mockContext, specialCharsOptions, specialWorkspaceRoot);

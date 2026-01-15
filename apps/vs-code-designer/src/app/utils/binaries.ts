@@ -24,6 +24,7 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
+import { isDevContainerWorkspace } from './devContainerUtils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -282,8 +283,8 @@ export function getCpuArchitecture() {
  * @param dependencyName The name of the dependency.
  * @returns true if expected binaries folder directory path exists
  */
-export function binariesExist(dependencyName: string): boolean {
-  if (!useBinariesDependencies()) {
+export async function binariesExist(dependencyName: string): Promise<boolean> {
+  if (!(await useBinariesDependencies())) {
     return false;
   }
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
@@ -419,7 +420,7 @@ export function getDependencyTimeout(): number {
  * @param {IActionContext} context - Activation context.
  */
 export async function installBinaries(context: IActionContext) {
-  const useBinaries = useBinariesDependencies();
+  const useBinaries = await useBinariesDependencies();
 
   if (useBinaries) {
     await onboardBinaries(context);
@@ -434,8 +435,15 @@ export async function installBinaries(context: IActionContext) {
 
 /**
  * Returns boolean to determine if workspace uses binaries dependencies.
+ * Returns false for devContainer workspaces as they have pre-configured environments.
  */
-export const useBinariesDependencies = (): boolean => {
+export const useBinariesDependencies = async (): Promise<boolean> => {
+  // Always return false for devContainer workspaces
+  const isDevContainer = await isDevContainerWorkspace();
+  if (isDevContainer) {
+    return false;
+  }
+
   const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
   return !!binariesInstallation;
 };

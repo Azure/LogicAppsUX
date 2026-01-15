@@ -6,6 +6,20 @@ import * as cp from 'child_process';
 import { extensionBundleId } from '../../../constants';
 import * as cpUtils from '../funcCoreTools/cpUtils';
 
+// Mock axios
+vi.mock('axios', () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
+
+// Mock child_process
+vi.mock('child_process', () => ({
+  execSync: vi.fn(),
+  exec: vi.fn(),
+  spawn: vi.fn(),
+}));
+
 // Mock localize
 vi.mock('../../localize', () => ({
   localize: vi.fn((key: string, defaultValue: string) => defaultValue),
