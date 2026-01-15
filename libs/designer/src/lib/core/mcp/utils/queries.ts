@@ -1,4 +1,11 @@
-import { type Resource, ResourceService, type LogicAppResource, equals, getPropertyValue } from '@microsoft/logic-apps-shared';
+import {
+  type Resource,
+  ResourceService,
+  type LogicAppResource,
+  equals,
+  getPropertyValue,
+  type McpServer,
+} from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
@@ -17,13 +24,11 @@ const queryOpts = {
 export const useAllMcpServers = (siteResourceId: string) => {
   return useQuery({
     queryKey: ['mcpServers', siteResourceId],
-    queryFn: async () => {
-      const fileContent: any = await ResourceService().getResource(
-        `${siteResourceId}/hostruntime/admin/vfs/mcpservers.json`,
-        {
-            'api-version': '2018-11-01',
-            '&relativepath': '1'
-        });
+    queryFn: async (): Promise<McpServer[]> => {
+      const fileContent: any = await ResourceService().getResource(`${siteResourceId}/hostruntime/admin/vfs/mcpservers.json`, {
+        'api-version': '2018-11-01',
+        '&relativepath': '1',
+      });
 
       return getPropertyValue(fileContent?.value ?? fileContent, 'mcpServers') ?? [];
     },
@@ -41,7 +46,7 @@ export const useMcpEligibleWorkflows = (subscriptionId: string, resourceGroup: s
         return trigger && equals(trigger.type, 'request');
       });
 
-      return allWorkflows.map((workflow) => workflow.name);    
+      return allWorkflows.map((workflow) => workflow.name);
     },
     enabled: !!subscriptionId && !!resourceGroup && !!logicAppName,
     ...queryOpts,

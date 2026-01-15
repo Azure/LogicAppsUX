@@ -1,52 +1,115 @@
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../state/templates/store';
-import { useEffect, useMemo, useState } from 'react';
-import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@microsoft/designer-ui';
-import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
-import { selectWizardTab } from '../state/templates/tabSlice';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
-import type { TemplateInfoToasterProps } from '../../ui/configuretemplate/toasters';
 import { useIntl } from 'react-intl';
-import { equals, type Template } from '@microsoft/logic-apps-shared';
-import { useAllMcpServers } from 'lib/core/mcp/utils/queries';
-import { getStandardLogicAppId } from 'lib/core/configuretemplate/utils/helper';
+import { equals, type McpServer } from '@microsoft/logic-apps-shared';
+import { useAllMcpServers } from '../../../core/mcp/utils/queries';
+import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
+import { McpServerPanel } from '../panel/server/createpanel';
+import { closePanel, McpPanelView, openMcpPanelView } from 'lib/core/state/mcp/panel/mcpPanelSlice';
+import { DescriptionWithLink } from '../../configuretemplate/common';
+import { Image, Text } from '@fluentui/react-components';
+import { AddServerButtons } from '../servers/add';
+import { MCPServers, type ServerNotificationData, type ToolHandler } from '../servers/servers';
+import { Authentication } from '../servers/authentication';
 
-export const McpServersWizard = () => {
+export const McpServersWizard = ({
+  onUpdateServers,
+  onOpenWorkflow,
+  onOpenCreateTools,
+}: {
+  onUpdateServers: (servers: McpServer[], toasterData: ServerNotificationData) => Promise<void>;
+  onOpenWorkflow: ToolHandler;
+  onOpenCreateTools: () => void;
+}) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
-  const { selectedTabId, subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => ({
-    selectedTabId: state.tab.selectedTabId,
-    isPanelOpen: state.panel.isOpen,
+  const { subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => ({
     subscriptionId: state.resource.subscriptionId,
     resourceGroup: state.resource.resourceGroup,
     logicAppName: state.resource.logicAppName,
   }));
-  const logicAppId = useMemo(() => getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName), [subscriptionId, resourceGroup, logicAppName]);
+  const logicAppId = useMemo(
+    () => getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName ?? ''),
+    [subscriptionId, resourceGroup, logicAppName]
+  );
   const intl = useIntl();
-  const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
 
-  useEffect(() => {
-    if (selectedTabId) {
-      setToasterData({ title: '', content: '', show: false });
-    }
-  }, [selectedTabId]);
+  const { data: mcpServers, isLoading } = useAllMcpServers(logicAppId);
 
-  const mcpServers = useAllMcpServers(logicAppId);
+  const [selectedServer, setSelectedServer] = useState<McpServer | undefined>(undefined);
 
-  const handleSelectTab = (tabId: string): void => {
-    dispatch(selectWizardTab(tabId));
-  };
+  const handleManageServer = useCallback(
+    (serverName: string) => {
+      setSelectedServer(mcpServers?.find((server) => server.name === serverName) || undefined);
+      dispatch(openMcpPanelView({ panelView: McpPanelView.EditMcpServer }));
+    },
+    [dispatch, mcpServers]
+  );
 
-  const panelTabs: TemplateTabProps[] = useMcpServerTabs({ onSaveWorkflows, onSaveTemplate });
-  const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
+  const handleUpdateServer = useCallback(
+    async (updatedServer: McpServer) => {
+      if (!mcpServers) {
+        return;
+      }
+      const updatedServers = mcpServers.map((server) => (equals(server.name, updatedServer.name) ? updatedServer : server));
+      const toasterData: ServerNotificationData = {
+        title: intl.formatMessage({
+          defaultMessage: 'Server updated successfully',
+          id: 'RSsqSm',
+          description: 'Title for the toaster after updating a server',
+        }),
+        content: intl.formatMessage(
+          {
+            defaultMessage: 'The server {serverName} has been updated.',
+            id: '9sRgCm',
+            description: 'Content for the toaster after updating a server',
+          },
+          { serverName: updatedServer.name }
+        ),
+      };
+      await onUpdateServers(updatedServers, toasterData);
+      dispatch(closePanel());
+      setSelectedServer(undefined);
+    },
+    [dispatch, intl, mcpServers, onUpdateServers]
+  );
+
+  const handleClosePanel = useCallback(() => {
+    setSelectedServer(undefined);
+    dispatch(closePanel());
+  }, [dispatch]);
+
+  if (isLoading) {
+    return (
+      <div>
+        {intl.formatMessage({
+          defaultMessage: 'Loading...',
+          id: '9SDUXM',
+          description: 'Text displayed while loading MCP Servers',
+        })}
+      </div>
+    );
+  }
 
   return (
     <div>
-      <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
-      <div className="msla-template-overview-footer">
-        {selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null}
-      </div>
-
+      <McpServerPanel onUpdateServer={handleUpdateServer} server={selectedServer} onClose={handleClosePanel} />
+      {mcpServers?.length === 0 ? (
+        <EmptyMcpServersView onCreateTools={onOpenCreateTools} />
+      ) : (
+        <div>
+          <Authentication />
+          <MCPServers
+            servers={mcpServers ?? []}
+            onUpdateServers={onUpdateServers}
+            onManageTool={onOpenWorkflow}
+            onManageServer={handleManageServer}
+            openCreateTools={onOpenCreateTools}
+          />
+        </div>
+      )}
       <div
         id={'msla-layer-host'}
         style={{
@@ -55,6 +118,44 @@ export const McpServersWizard = () => {
           visibility: 'hidden',
         }}
       />
+    </div>
+  );
+};
+
+const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) => {
+  const intl = useIntl();
+  const INTL_TEXT = {
+    title: intl.formatMessage({
+      defaultMessage: 'Build and manage MCP servers',
+      id: 'TH6caA',
+      description: 'Title displayed when no MCP servers are found',
+    }),
+    description: intl.formatMessage({
+      defaultMessage: 'There are no servers in your app, please add new servers to get started.',
+      id: 'SOEhCs',
+      description: 'Description displayed when no MCP servers are found',
+    }),
+    learnMore: intl.formatMessage({
+      defaultMessage: 'Learn more about MCP servers',
+      id: 'M/q6Qo',
+      description: 'Link text for learning more about MCP servers',
+    }),
+  };
+
+  return (
+    <div style={{ height: '50%' }}>
+      <Image src={'Apps28Regular'} width={'20%'} height={'20%'} />
+      <Text weight="semibold" size={500} style={{ padding: '20px 0 10px 0' }}>
+        {INTL_TEXT.title}
+      </Text>
+      <DescriptionWithLink
+        text={INTL_TEXT.description}
+        linkText={INTL_TEXT.learnMore}
+        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
+      />
+      <div style={{ padding: '10px 0' }}>
+        <AddServerButtons onCreateTools={onCreateTools} />
+      </div>
     </div>
   );
 };

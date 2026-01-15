@@ -67,6 +67,7 @@ export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemp
 export { McpDataProvider } from './mcp/McpDataProvider';
 export { McpWizardProvider } from './mcp/McpWizardProvider';
 export { resetMcpStateOnResourceChange } from './actions/bjsworkflow/mcp';
+export { McpServerDataProvider } from './mcp/McpServerDataProvider';
 export type { McpServerCreateData } from './mcp/utils/serializer';
 export {
   validateParameter,

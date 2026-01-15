@@ -11,6 +11,8 @@ export const McpPanelView = {
   CreateConnection: 'createConnection',
   EditOperation: 'editOperation',
   CreateLogicApp: 'createLogicApp',
+  CreateMcpServer: 'createMcpServer',
+  EditMcpServer: 'editMcpServer',
 } as const;
 export type ConfigPanelView = (typeof McpPanelView)[keyof typeof McpPanelView];
 
