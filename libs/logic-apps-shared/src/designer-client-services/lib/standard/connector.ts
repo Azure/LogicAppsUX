@@ -1,13 +1,49 @@
-import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
-import { isArmResourceId, UnsupportedException } from '../../../utils/src';
+import type { Connector, OpenAPIV2, OperationManifest } from '../../../utils/src';
+import {
+  isArmResourceId,
+  UnsupportedException,
+  ResourceIdentityType,
+  equals,
+  optional,
+  getConnectionParametersWithType,
+  ConnectionParameterTypes,
+} from '../../../utils/src';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
+import { ConnectionService } from '../connection';
+import { WorkflowService } from '../workflow';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
+
+const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
+  let audience: string | undefined;
+  let additionalAudiences: string[] | undefined;
+  if (WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()) {
+    const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
+    const parameterType = isMultiAuth ? ConnectionParameterTypes.managedIdentity : ConnectionParameterTypes.oauthSetting;
+    const parameters = getConnectionParametersWithType(connector, parameterType);
+
+    if (isMultiAuth) {
+      audience = parameters?.[0]?.managedIdentitySettings?.resourceUri;
+      additionalAudiences = parameters?.[0]?.managedIdentitySettings?.additionalResourceUris;
+    } else {
+      audience = parameters?.[0]?.oAuthSettings?.properties?.AzureActiveDirectoryResourceId;
+    }
+  }
+
+  return {
+    authentication: {
+      type: 'ManagedServiceIdentity',
+      ...optional('identity', userAssignedIdentity),
+      ...optional('audience', audience),
+      ...optional('additionalAudiences', additionalAudiences),
+    },
+  };
+};
 
 type GetConfigurationFunction = (
   connectionId: string,
@@ -93,20 +129,60 @@ export class StandardConnectorService extends BaseConnectorService {
       const uri = `${baseUrl}/workflows/${this.options.workflowName}/listMcpTools`;
       let content: any;
 
-      if (configuration.isAgentMcpConnection) {
-        content = { connection: configuration.connection };
+      const builtinConnectionData = configuration?.isAgentMcpConnection ? configuration.connection : undefined;
+      if (builtinConnectionData) {
+        content = { connection: builtinConnectionData };
       } else {
-        // Workaround: Remove connectionRuntimeUrl from connectionProperties if it exists
-        // connectionRuntimeUrl should be at the root level, not inside connectionProperties
-        const connection = { ...configuration.connection };
-        if (connection?.connectionProperties?.connectionRuntimeUrl) {
-          delete connection.connectionProperties.connectionRuntimeUrl;
+        let connection: any;
+        if (configuration) {
+          // Workaround: Remove connectionRuntimeUrl from connectionProperties if it exists
+          // connectionRuntimeUrl should be at the root level, not inside connectionProperties
+          connection = { ...configuration.connection };
+          if (connection?.connectionProperties?.connectionRuntimeUrl) {
+            delete connection.connectionProperties.connectionRuntimeUrl;
+          }
+        } else if (connectionId && isArmResourceId(connectionId)) {
+          // Generate connection reference for managed connections when it's not found.
+          const connectionFromService = await ConnectionService().getConnection(connectionId);
+          if (connectionFromService) {
+            const identity = WorkflowService().getAppIdentity?.();
+            const userIdentity =
+              equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
+                ? Object.keys(identity.userAssignedIdentities)[0]
+                : undefined;
+            const properties = connectionFromService.properties as any;
+
+            let connectionProperties: any;
+            try {
+              const connector = await ConnectionService().getConnector(properties.api.id);
+              connectionProperties = getConnectionProperties(connector, userIdentity);
+            } catch {
+              connectionProperties = {
+                authentication: {
+                  type: 'ManagedServiceIdentity',
+                  ...optional('identity', userIdentity),
+                },
+              };
+            }
+            connection = {
+              api: { id: connectorId },
+              connection: { id: connectionId },
+              authentication: {
+                type: 'ManagedServiceIdentity',
+                ...optional('identity', userIdentity),
+              },
+              connectionRuntimeUrl: properties.connectionRuntimeUrl ?? '',
+              connectionProperties,
+            };
+          }
         }
+
         content = {
           managedConnection: connection,
           mcpServerPath: operationPath,
         };
       }
+
       const mcpToolsResponse = await httpClient.post({
         uri,
         queryParameters: { 'api-version': apiVersion },
