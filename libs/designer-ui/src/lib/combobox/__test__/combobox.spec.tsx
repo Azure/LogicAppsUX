@@ -429,4 +429,53 @@ describe('lib/combobox', () => {
       expect(optionTexts.slice(0, -1)).toEqual(sortedTexts);
     });
   });
+
+  it('updates selectedKeys when options change in multiSelect mode', async () => {
+    const initialOptions = [
+      { key: '1', value: 'one', displayName: 'Option One' },
+      { key: '2', value: 'two', displayName: 'Option Two' },
+    ];
+
+    const updatedOptions = [
+      { key: '1', value: 'one', displayName: 'Updated Option One' },
+      { key: '2', value: 'two', displayName: 'Updated Option Two' },
+      { key: '3', value: 'three', displayName: 'Option Three' },
+    ];
+
+    const initialValue = [createLiteralValueSegment(JSON.stringify(['one', 'two']))];
+
+    const tree = renderer.create(
+      <TestWrapper>
+        <Combobox
+          {...defaultProps}
+          options={initialOptions}
+          initialValue={initialValue}
+          multiSelect={true}
+          serialization={{ valueType: 'array' }}
+        />
+      </TestWrapper>
+    );
+
+    let comboboxInput = tree.root.findByProps({ role: 'combobox' });
+    expect(comboboxInput.props.value).toContain('Option One');
+    expect(comboboxInput.props.value).toContain('Option Two');
+
+    await act(async () => {
+      tree.update(
+        <TestWrapper>
+          <Combobox
+            {...defaultProps}
+            options={updatedOptions}
+            initialValue={initialValue}
+            multiSelect={true}
+            serialization={{ valueType: 'array' }}
+          />
+        </TestWrapper>
+      );
+    });
+
+    comboboxInput = tree.root.findByProps({ role: 'combobox' });
+    expect(comboboxInput.props.value).toContain('Updated Option One');
+    expect(comboboxInput.props.value).toContain('Updated Option Two');
+  });
 });
