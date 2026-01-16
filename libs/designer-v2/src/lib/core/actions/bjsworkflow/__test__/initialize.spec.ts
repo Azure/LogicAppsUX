@@ -140,5 +140,68 @@ describe('bjsworkflow initialize', () => {
       expect(inputParameters.inputs.parameterGroups.default.parameters.length).toBe(1);
       expect(inputParameters.inputs.parameterGroups.default.parameters[0].value[0].value).toBe('');
     });
+
+    test('should preserve multiSelect editorOptions for array parameters with dynamic list', () => {
+      const mockMultiSelectManifest: any = {
+        properties: {
+          description: 'Test MCP manifest',
+          summary: 'Test MCP',
+          iconUri: 'test.png',
+          brandColor: '#000000',
+          inputs: {
+            type: 'object',
+            properties: {
+              allowedTools: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+                title: 'Allowed tools',
+                'x-ms-editor': 'combobox',
+                'x-ms-editor-options': {
+                  multiSelect: true,
+                  titleSeparator: ',',
+                  serialization: {
+                    valueType: 'array',
+                  },
+                },
+                'x-ms-dynamic-list': {
+                  dynamicState: {
+                    apiType: 'mcp',
+                    operationId: 'listMcpTools',
+                  },
+                },
+              },
+            },
+          },
+          inputsLocation: ['inputs', 'parameters'],
+        },
+      };
+
+      const stepDefinition = {
+        type: 'McpClientTool',
+        inputs: {
+          parameters: {},
+        },
+      };
+
+      const inputParameters = initialize.getInputParametersFromManifest(
+        'test_node',
+        { type: 'McpClientTool', operationId: 'test', connectorId: 'test' },
+        mockMultiSelectManifest,
+        undefined,
+        undefined,
+        stepDefinition
+      );
+
+      const allowedToolsParam = inputParameters.inputs.parameterGroups.default.parameters.find(
+        (p: ParameterInfo) => p.parameterName === 'allowedTools'
+      );
+
+      expect(allowedToolsParam).toBeDefined();
+      expect(allowedToolsParam?.editor).toBe('combobox');
+      expect(allowedToolsParam?.editorOptions?.multiSelect).toBe(true);
+      expect(allowedToolsParam?.editorOptions?.serialization).toEqual({ valueType: 'array' });
+    });
   });
 });

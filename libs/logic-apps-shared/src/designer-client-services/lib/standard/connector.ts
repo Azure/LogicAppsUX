@@ -9,10 +9,15 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
-type GetConfigurationFunction = (connectionId: string, manifest?: OperationManifest) => Promise<Record<string, any>>;
+type GetConfigurationFunction = (
+  connectionId: string,
+  manifest?: OperationManifest,
+  useManagedConnections?: boolean
+) => Promise<Record<string, any>>;
 
 export interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
   getConfiguration: GetConfigurationFunction;
+  workflowName?: string;
 }
 
 export class StandardConnectorService extends BaseConnectorService {
@@ -60,11 +65,13 @@ export class StandardConnectorService extends BaseConnectorService {
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any,
-    configuration: Record<string, any>
+    connectionId: string | undefined,
+    operationPath?: string
   ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    const { baseUrl, apiVersion, httpClient, getConfiguration } = this.options;
+    const { operationId: dynamicOperation, apiType } = dynamicState;
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const isMcpConnection = apiType === 'mcp' && dynamicOperation === 'listMcpTools';
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       if (!this.options.valuesClient?.[dynamicOperation]) {
@@ -73,8 +80,45 @@ export class StandardConnectorService extends BaseConnectorService {
       return this.options.valuesClient?.[dynamicOperation]({
         operationId,
         parameters: invokeParameters,
-        configuration,
+        configuration: await getConfiguration(connectionId ?? ''),
       });
+    }
+
+    const configuration: any = await getConfiguration(connectionId ?? '', /* manifest */ undefined, !!isMcpConnection);
+    if (isMcpConnection) {
+      if (!this.options.workflowName) {
+        throw new Error('workflowName is required for MCP connections.');
+      }
+
+      const uri = `${baseUrl}/workflows/${this.options.workflowName}/listMcpTools`;
+      let content: any;
+
+      if (configuration.isAgentMcpConnection) {
+        content = { connection: configuration.connection };
+      } else {
+        // Workaround: Remove connectionRuntimeUrl from connectionProperties if it exists
+        // connectionRuntimeUrl should be at the root level, not inside connectionProperties
+        const connection = { ...configuration.connection };
+        if (connection?.connectionProperties?.connectionRuntimeUrl) {
+          delete connection.connectionProperties.connectionRuntimeUrl;
+        }
+        content = {
+          managedConnection: connection,
+          mcpServerPath: operationPath,
+        };
+      }
+      const mcpToolsResponse = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content,
+      });
+      const tools = this._getResponseFromDynamicApi(mcpToolsResponse, uri);
+
+      return (tools ?? []).map((tool: any) => ({
+        value: tool.name,
+        displayName: tool.name,
+        description: tool.description,
+      }));
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
@@ -106,11 +150,11 @@ export class StandardConnectorService extends BaseConnectorService {
     connectorId: string,
     operationId: string,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    _isManagedIdentityConnection?: boolean,
+    operationPath?: string
   ): Promise<ListDynamicValue[]> {
-    const { getConfiguration } = this.options;
-    const configuration = await getConfiguration(connectionId ?? '');
-    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, configuration);
+    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, connectionId, operationPath);
   }
 
   protected async _getDynamicSchema(
