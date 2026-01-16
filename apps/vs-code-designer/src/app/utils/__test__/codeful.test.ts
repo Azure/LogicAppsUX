@@ -186,7 +186,7 @@ describe('codeful.ts', () => {
             <AzureFunctionsVersion>v4</AzureFunctionsVersion>
           </PropertyGroup>
           <ItemGroup>
-            <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview" />
+            <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" />
           </ItemGroup>
         </Project>
       `;
