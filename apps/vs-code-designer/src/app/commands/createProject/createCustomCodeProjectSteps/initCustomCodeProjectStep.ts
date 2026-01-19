@@ -2,37 +2,25 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binariesExist } from '../../../utils/binaries';
-import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
+import { extensionCommand, funcWatchProblemMatcher } from '../../../../constants';
 import { InitCustomCodeScriptProjectStep } from './initCustomCodeScriptProjectStep';
 import type { ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
 import type { TaskDefinition } from 'vscode';
 
 export class InitCustomCodeProjectStep extends InitCustomCodeScriptProjectStep {
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
     return [
       {
         label: 'generateDebugSymbols',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        command: 'dotnet',
         args: ['${input:getDebugSymbolDll}'],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
-        type: funcBinariesExist ? 'shell' : func,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
-        ...binariesOptions,
+        type: 'shell',
+        command: 'func',
+        args: ['host', 'start'],
         problemMatcher: funcWatchProblemMatcher,
         isBackground: true,
         label: 'func: host start',

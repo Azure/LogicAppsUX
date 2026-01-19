@@ -37,6 +37,7 @@ import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { getPublicUrl } from '../../utils/extension';
 import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../utils/startRuntimeApi';
 
@@ -72,14 +73,22 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
-    getBaseUrl = () => (ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined);
-    baseUrl = getBaseUrl?.();
+    const publicUrl = await getPublicUrl(`http://localhost:${ext.workflowRuntimePort}`);
+    baseUrl = `${publicUrl}${managementApiPrefix}`;
+
     apiVersion = '2019-10-01-edge-preview';
     isLocal = true;
     triggerName = getTriggerName(workflowContent.definition);
-    getCallbackInfo = async (baseUrl: string) =>
-      await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
-    callbackInfo = await getCallbackInfo(baseUrl);
+    // Get callback info. Function will internalize rebasing to public origin.
+    callbackInfo = await getLocalWorkflowCallbackInfo(
+      context,
+      workflowContent.definition,
+      `http://localhost:${ext.workflowRuntimePort}/${managementApiPrefix}`,
+      workflowName,
+      triggerName,
+      apiVersion,
+      publicUrl
+    );
 
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     getAccessToken = async () => await getAuthorizationToken(localSettings[workflowTenantIdKey]);
@@ -247,7 +256,8 @@ async function getLocalWorkflowCallbackInfo(
   baseUrl: string,
   workflowName: string,
   triggerName: string,
-  apiVersion: string
+  apiVersion: string,
+  publicOrigin?: string
 ): Promise<ICallbackUrlResponse | undefined> {
   const requestTriggerName = getRequestTriggerName(definition);
   if (requestTriggerName) {
@@ -257,17 +267,54 @@ async function getLocalWorkflowCallbackInfo(
         url,
         method: HTTP_METHODS.POST,
       });
-      return JSON.parse(response);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+      const callbackInfo: ICallbackUrlResponse = JSON.parse(response);
+      return rebaseCallbackInfoOrigins(callbackInfo, baseUrl, publicOrigin);
+    } catch {
       return undefined;
     }
   } else {
-    return {
+    const fallback: ICallbackUrlResponse = {
       value: `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
       method: HTTP_METHODS.POST,
     };
+    return rebaseCallbackInfoOrigins(fallback, baseUrl, publicOrigin);
   }
+}
+
+function rebaseCallbackInfoOrigins(callbackInfo: ICallbackUrlResponse, localBaseUrl: string, publicOrigin?: string): ICallbackUrlResponse {
+  if (!publicOrigin) {
+    return callbackInfo;
+  }
+  try {
+    const localUrlObj = new URL(localBaseUrl);
+    const localOrigin = `${localUrlObj.protocol}//${localUrlObj.host}`;
+    // Normalize public origin to avoid trailing slash duplication (e.g. http://127.0.0.1:PORT/)
+    const normalizedPublicOrigin = publicOrigin.replace(/\/+$/, '');
+    const swap = (raw?: string) => {
+      if (!raw) {
+        return raw;
+      }
+      if (!raw.startsWith(localOrigin)) {
+        return raw;
+      }
+      const rest = raw.slice(localOrigin.length); // begins with '/'
+      return `${normalizedPublicOrigin}${rest}`; // normalizedPublicOrigin has no trailing '/'
+    };
+    callbackInfo.value = swap(callbackInfo.value)!;
+    if (callbackInfo.basePath) {
+      callbackInfo.basePath = swap(callbackInfo.basePath);
+    } else if (callbackInfo.value) {
+      try {
+        const vUrl = new URL(callbackInfo.value);
+        callbackInfo.basePath = `${vUrl.origin}${vUrl.pathname}`;
+      } catch {
+        // ignore
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return callbackInfo;
 }
 
 function normalizeLocation(location: string): string {
@@ -276,6 +323,7 @@ function normalizeLocation(location: string): string {
   }
   return location.toLowerCase().replace(/ /g, '');
 }
+
 
 function getWorkflowStateType(workflowName: string, kind: string, settings: Record<string, string>): string {
   const operationOptionsSetting = `Workflows.${workflowName}.OperationOptions`;

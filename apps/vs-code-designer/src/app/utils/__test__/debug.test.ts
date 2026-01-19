@@ -21,81 +21,9 @@ describe('debug', () => {
           isCodeless: true,
         });
       });
-
-      it('should return launch configuration for .NET Framework custom code with v1 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp', TargetFramework.NetFx);
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app with local function TestLogicApp',
-          type: 'logicapp',
-          request: 'launch',
-          funcRuntime: 'clr',
-          customCodeRuntime: 'clr',
-          isCodeless: true,
-        });
-      });
-
-      it('should return launch configuration for .NET Framework custom code with v3 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v3, 'TestLogicApp', TargetFramework.NetFx);
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app with local function TestLogicApp',
-          type: 'logicapp',
-          request: 'launch',
-          funcRuntime: 'coreclr',
-          customCodeRuntime: 'clr',
-          isCodeless: true,
-        });
-      });
-
-      it('should return launch configuration for .NET 8 custom code with v2 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v2, 'MyApp', TargetFramework.Net8);
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app with local function MyApp',
-          type: 'logicapp',
-          request: 'launch',
-          funcRuntime: 'coreclr',
-          customCodeRuntime: 'coreclr',
-          isCodeless: true,
-        });
-      });
     });
 
     describe('without custom code target framework', () => {
-      it('should return attach configuration for v1 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp');
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app TestLogicApp',
-          type: 'clr',
-          request: 'attach',
-          processId: `\${command:${extensionCommand.pickProcess}}`,
-        });
-      });
-
-      it('should return attach configuration for v2 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v2, 'TestLogicApp');
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app TestLogicApp',
-          type: 'coreclr',
-          request: 'attach',
-          processId: `\${command:${extensionCommand.pickProcess}}`,
-        });
-      });
-
-      it('should return attach configuration for v3 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v3, 'TestLogicApp');
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app TestLogicApp',
-          type: 'coreclr',
-          request: 'attach',
-          processId: `\${command:${extensionCommand.pickProcess}}`,
-        });
-      });
-
       it('should return attach configuration for v4 function runtime', () => {
         const result = getDebugConfiguration(FuncVersion.v4, 'MyLogicApp');
 
@@ -119,17 +47,6 @@ describe('debug', () => {
           funcRuntime: 'coreclr',
           customCodeRuntime: 'coreclr',
           isCodeless: true,
-        });
-      });
-
-      it('should handle empty logic app name without custom code', () => {
-        const result = getDebugConfiguration(FuncVersion.v3, '');
-
-        expect(result).toEqual({
-          name: 'Run/Debug logic app ',
-          type: 'coreclr',
-          request: 'attach',
-          processId: `\${command:${extensionCommand.pickProcess}}`,
         });
       });
 

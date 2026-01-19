@@ -21,13 +21,7 @@ const MAX_INLINE_MESSAGE_CHARS = 1000;
 const MAX_ISSUE_BODY_CHARS = 4000;
 
 // Whitelisted extension configuration settings
-const SETTINGS_WHITELIST: string[] = [
-  'dataMapperVersion',
-  'validateFuncCoreTools',
-  'autoRuntimeDependenciesPath',
-  'autoRuntimeDependenciesValidationAndInstallation',
-  'parameterizeConnectionsInProjectLoad',
-];
+const SETTINGS_WHITELIST: string[] = ['dataMapperVersion', 'parameterizeConnectionsInProjectLoad'];
 
 /**
  * Generates a "Report an Issue" link from the provided error context and opens it in the user's browser.
@@ -94,7 +88,6 @@ function buildIssueBody(errorContext: IErrorHandlerContext, issue: IParsedError,
     body += `\nSession id: ${vscode.env.sessionId}`;
   }
   body += `\nExtension version: ${ext.extensionVersion ?? 'unknown'}`;
-  body += `\nExtension bundle version: ${ext.latestBundleVersion ?? 'unknown'}`;
   body += `\nOS: ${process.platform} (${os.type()} ${os.release()})`;
   body += `\nOS arch: ${os.arch()}`;
   body += `\nProduct: ${vscode.env.appName}`;

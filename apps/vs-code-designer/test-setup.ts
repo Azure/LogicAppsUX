@@ -60,6 +60,7 @@ vi.mock('os', () => ({
   arch: vi.fn(() => 'x64'),
   homedir: vi.fn(() => '/Users/testuser'),
   tmpdir: vi.fn(() => '/tmp'),
+  EOL: '\n',
 }));
 
 vi.mock('fs', () => ({
@@ -94,6 +95,7 @@ vi.mock('vscode', () => ({
   window: {
     showInformationMessage: vi.fn(),
     showErrorMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
   },
   workspace: {
     workspaceFolders: [],
@@ -106,6 +108,7 @@ vi.mock('vscode', () => ({
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
+    parse: vi.fn(),
   },
   commands: {
     executeCommand: vi.fn(),
@@ -123,8 +126,12 @@ vi.mock('vscode', () => ({
     },
     sessionId: 'test-session-id',
     appName: 'Visual Studio Code',
+    asExternalUri: vi.fn(),
   },
   version: '1.85.0',
+  extensions: {
+    getExtension: vi.fn(),
+  },
 }));
 
 vi.mock('./src/extensionVariables', () => ({

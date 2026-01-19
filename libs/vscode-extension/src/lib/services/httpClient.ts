@@ -32,7 +32,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...(isArmId ? { Authorization: `${this._accessToken}` } : {}),
       },
     };
     const response = await axios({
@@ -58,7 +58,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...(isArmId ? { Authorization: `${this._accessToken}` } : {}),
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -115,7 +115,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        ...(isArmId ? { Authorization: `${this._accessToken}` } : {}),
         'Content-Type': 'application/json',
       },
       data: options.content,

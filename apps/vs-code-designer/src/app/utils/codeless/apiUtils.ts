@@ -64,7 +64,7 @@ export async function getWorkflow(
 }
 
 export async function listWorkflows(node: SlotTreeItem, context: IActionContext): Promise<Record<string, any>[]> {
-  const url = `${node.id}/hostruntime${managementApiPrefix}/workflows?api-version=${workflowAppApiVersion}`;
+  const url = `${node.id}/hostruntime/${managementApiPrefix}/workflows?api-version=${workflowAppApiVersion}`;
   try {
     const response = await sendAzureRequest(url, context, 'GET', node.site.subscription);
     return response.parsedBody;
