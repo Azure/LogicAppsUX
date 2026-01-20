@@ -263,13 +263,13 @@ export const RunTreeView = () => {
             // Get actions within the agent, and place them under tools
             getAgentActionsRepetition(id, selectedRun!.id, repetitionName, 0, isRunning).then((actionsRepetition) => {
               actionsRepetition.forEach((actionRepetition) => {
-                const actions = (actionRepetition.properties as any)?.actionResults ?? [];
-                actions.forEach((action: any) => {
+                const actions: any[] = (actionRepetition.properties as any)?.actionResults ?? [];
+                actions.forEach((action: any, index: number) => {
                   const actionId = action?.name;
                   const leafRepetitionIndex = getCountRecord(actionId);
                   const newActionId = `${actionId}-#${repIndexToName(leafRepetitionIndex)}`;
                   const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
-                  const parentRepetitionId = `${parentId}-#${repetitionName}-${repIndexToName(leafRepetitionIndex)}`;
+                  const parentRepetitionId = `${parentId}-#${repetitionName}-${repIndexToName(index)}`;
                   // Add new repetition node
                   const newTreeData = {
                     value: newActionId,
@@ -288,7 +288,7 @@ export const RunTreeView = () => {
                             },
                             {
                               scopeName: parentId,
-                              itemIndex: leafRepetitionIndex,
+                              itemIndex: index,
                             },
                           ],
                         },
@@ -351,7 +351,7 @@ export const RunTreeView = () => {
       const tools = (agentRepetition?.properties as any)?.tools ?? {};
       Object.entries(tools).forEach(([toolId, toolData]: [string, any]) => {
         for (let i = 0; i < toolData.iterations; i++) {
-          const toolRepetitionId = `${toolId}-#${repetitionName}`;
+          const toolRepetitionId = `${toolId}-#${repetitionName}-#${repIndexToName(i)}`;
           // Add new repetition node
           const newToolTreeData = {
             value: toolRepetitionId,
@@ -383,13 +383,30 @@ export const RunTreeView = () => {
       // Get actions within the agent, and place them under tools
       getAgentActionsRepetition(agentName, selectedRun!.id, repetitionName, 0, isRunning).then((actionsRepetition) => {
         actionsRepetition.forEach((actionRepetition) => {
-          const actions = (actionRepetition.properties as any)?.actionResults ?? [];
-          actions.forEach((action: any) => {
+          // TODO: We sometimes have multiple handoff iterations when we shouldn't
+          // Backend is investigating but for now we are removing the other handoff actions from the tree
+          let hasHandedOff = false;
+
+          const actions: any[] = (actionRepetition.properties as any)?.actionResults ?? [];
+          actions.forEach((action: any, index: number) => {
             if (action?.status === 'HandedOff') {
               // Tag the parent tool as a handoff tool
               const actionId = action?.name;
               const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
-              const parentRepetitionId = `${parentId}-#${repetitionName}`;
+              const parentRepetitionId = `${parentId}-#${repetitionName}-#${repIndexToName(index)}`;
+
+              if (hasHandedOff) {
+                // Remove duplicate handoff tool
+                setTreeItemsRecord((prev) => {
+                  const newRecord = { ...prev };
+                  delete newRecord[parentRepetitionId];
+                  return newRecord;
+                });
+                return;
+              }
+
+              hasHandedOff = true;
+
               setTreeItemsRecord((prev) => {
                 return {
                   ...prev,
@@ -406,10 +423,10 @@ export const RunTreeView = () => {
             }
 
             const actionId = action?.name;
-            // const leafRepetitionIndex = getCountRecord(actionId);
-            const newActionId = `${actionId}-#${repetitionName}`;
+            const leafRepetitionIndex = getCountRecord(actionId);
+            const newActionId = `${actionId}-#${repIndexToName(leafRepetitionIndex)}`;
             const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
-            const parentRepetitionId = `${parentId}-#${repetitionName}`;
+            const parentRepetitionId = `${parentId}-#${repetitionName}-#${repIndexToName(index)}`;
             // Add new repetition node
             const newTreeData = {
               value: newActionId,
@@ -428,7 +445,7 @@ export const RunTreeView = () => {
                       },
                       {
                         scopeName: parentId,
-                        itemIndex: 0,
+                        itemIndex: index,
                       },
                     ],
                   },
