@@ -455,11 +455,6 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
 
-      // const isDev = process.env.NODE_ENV === 'development';
-      // if (isDev) {
-      // 	agentBaseUrl = 'https://localhost:3001';
-      // }
-
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
       const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
 
