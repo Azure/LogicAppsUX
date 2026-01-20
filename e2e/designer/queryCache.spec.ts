@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'QueryCache Tests',
@@ -15,7 +15,7 @@ test.describe(
         localStorage.setItem('control-expand-collapse-button', 'true');
       });
 
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       expect(await page.getByText('manual', { exact: true }).isVisible()).toBeTruthy();
 
       // There should be no cache in local storage
@@ -32,7 +32,7 @@ test.describe(
       await page.getByRole('heading', { name: '▼ Context Settings' }).click();
       await page.locator('label').filter({ hasText: 'Query Cache Persist' }).locator('i').click();
 
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       expect(await page.getByText('manual', { exact: true }).isVisible()).toBeTruthy();
 
       await page.waitForFunction(() => localStorage.getItem('REACT_QUERY_OFFLINE_CACHE') !== null);

@@ -11,7 +11,6 @@ test.describe(
       await realDataApi.deployWorkflow(workflow);
     });
     test('Sanity Check', async ({ page, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow();
       await page.getByTestId('card-when_a_http_request_is_received').click();
       await page.getByRole('combobox', { name: 'Method' }).click();

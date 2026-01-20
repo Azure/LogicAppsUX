@@ -128,6 +128,28 @@ export const AzureStandardLogicAppSelector = ({
       })
       .sort((a, b) => a.text.localeCompare(b.text)) ?? [];
 
+  // If url query has preset values, set them on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const resourceId = urlParams.get('id');
+    if (resourceId) {
+      const appId = resourceId.substring(0, resourceId.lastIndexOf('/workflows'));
+      dispatch(setAppid(appId));
+      onLogicAppSelected?.();
+      const workflowName = resourceId.split('/').at(-1) ?? '';
+      dispatch(setWorkflowName(workflowName));
+      dispatch(
+        setResourcePath(
+          hostingPlan === 'hybrid' ? `${HybridAppUtility.getHybridAppBaseRelativeUrl(appId ?? '')}/workflows/${workflowName}` : resourceId
+        )
+      );
+    }
+    const runId = urlParams.get('runId');
+    if (runId) {
+      dispatch(changeRunId(runId));
+    }
+  }, [dispatch]);
+
   return (
     <Stack {...columnProps}>
       <div style={{ position: 'relative' }}>

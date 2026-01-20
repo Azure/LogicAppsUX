@@ -2,7 +2,13 @@ import { environment } from '../../../environments/environment';
 import { getStateHistory } from '../../state/historyHelpers';
 import type { AppDispatch } from '../../state/store';
 import { useIsLocal, useHostingPlan, useResourcePath } from '../../state/workflowLoadingSelectors';
-import { type HostingPlanTypes, loadLastWorkflow, setHostingPlan, setIsLocalSelected } from '../../state/workflowLoadingSlice';
+import {
+  type HostingPlanTypes,
+  loadLastWorkflow,
+  setHostingPlan,
+  setIsLocalSelected,
+  setMonitoringView,
+} from '../../state/workflowLoadingSlice';
 import { ChoiceGroup, IconButton } from '@fluentui/react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -32,6 +38,23 @@ const SourceSettings = ({
   if (showHybridPlan) {
     planOptions.push({ key: 'hybrid', text: 'Hybrid' });
   }
+
+  // If a plan is specified in the URL params, set it on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get('plan');
+    if (plan) {
+      dispatch(setHostingPlan(plan as HostingPlanTypes));
+    }
+    const localId = urlParams.get('localId');
+    if (localId) {
+      dispatch(setIsLocalSelected(true));
+    }
+    const runId = urlParams.get('localRunId') || urlParams.get('runId');
+    if (runId) {
+      dispatch(setMonitoringView(true));
+    }
+  }, [dispatch]);
 
   return (
     <div style={{ display: 'flex', gap: '24px' }}>

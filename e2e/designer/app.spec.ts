@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test(
   'Sanity Check',
@@ -7,9 +7,7 @@ test(
     tag: '@mock',
   },
   async ({ page }) => {
-    await page.goto('/');
-
-    await GoToMockWorkflow(page, 'Simple Big Workflow');
+    await LoadMockDirect(page, 'simpleBigworkflow.json');
 
     await page.getByTestId('card-increment_variable').getByRole('button').click();
     await page.getByLabel('Value').getByRole('paragraph').click();
