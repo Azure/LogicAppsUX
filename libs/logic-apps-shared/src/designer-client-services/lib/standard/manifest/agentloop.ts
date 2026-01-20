@@ -419,7 +419,20 @@ export default {
           title: 'Last Assistant Message',
           description: 'This is the final message returned by the model',
         },
+        body: {
+          title: 'Body',
+          description: 'Response body based on the configured schema',
+        },
       },
+    },
+    outputsSchema: {
+      outputPaths: [
+        {
+          outputLocation: ['properties', 'body'],
+          name: 'agentModelSettings.agentChatCompletionSettings.responseFormat.json_schema',
+          schema: 'Value',
+        },
+      ],
     },
     isOutputsOptional: false,
     channels: {
