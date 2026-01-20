@@ -87,21 +87,20 @@ export const useChatbotStyles = makeStyles({
     alignItems: 'center',
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorNeutralForegroundInverted,
-    backgroundColor: '#387a25', // Keep original green for protected mode
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    backgroundColor: tokens.colorPaletteGreenBorderActive,
+    borderRadius: tokens.borderRadiusCircular,
     ...shorthands.padding('3px', tokens.spacingHorizontalS),
     lineHeight: '10px',
   },
 
   protectedMessageLink: {
     color: tokens.colorNeutralForegroundInverted,
-    selectors: {
-      ':hover': {
-        color: tokens.colorNeutralForegroundInverted,
-      },
-      ':focus': {
-        color: `${tokens.colorNeutralForegroundInverted} !important`,
-      },
+    '&:hover': {
+      color: tokens.colorNeutralForegroundInverted,
+    },
+    '&:focus': {
+      color: `${tokens.colorNeutralForegroundInverted} !important`,
+      outlineColor: 'transparent !important',
     },
   },
 
