@@ -1,4 +1,4 @@
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { ext } from '../../../extensionVariables';
@@ -11,6 +11,7 @@ import { deploy } from './deploy';
 import { createLogicAppWithoutWizard } from '../createLogicApp/createLogicApp';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { getWebLocations, AppKind } from '@microsoft/vscode-azext-azureappservice';
+import type { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTreeItem';
 
 export async function deployViaWebview(context: IActionContext, target?: vscode.Uri): Promise<void> {
   // Get access token for Azure API calls
@@ -24,9 +25,24 @@ export async function deployViaWebview(context: IActionContext, target?: vscode.
     createCommand: ExtensionCommand.deploy,
     createHandler: async (actionContext: IActionContext, data: any) => {
       if (data.createNew) {
+        // Get subscription tree item to access environment info
+        const subscriptionNode = (await ext.rgApi.appResourceTree.findTreeItem(
+          `/subscriptions/${data.subscriptionId}`,
+          actionContext
+        )) as AzExtParentTreeItem;
+
+        if (!subscriptionNode) {
+          throw new Error(localize('noMatchingSubscription', 'Failed to find subscription "{0}".', data.subscriptionId));
+        }
+
+        // Get subscription context from the tree item
+        const subscriptionTreeItem = subscriptionNode as SubscriptionTreeItem;
+        const subscriptionContext = subscriptionTreeItem.subscription;
+
         // User wants to create a new Logic App without wizard prompts
         const createContext: any = {
           ...actionContext,
+          ...subscriptionContext, // Include subscription context with environment info
           newSiteName: data.newLogicAppName,
           location: data.location,
           newResourceGroupName: data.isCreatingNewResourceGroup ? data.resourceGroup : undefined,
@@ -47,11 +63,29 @@ export async function deployViaWebview(context: IActionContext, target?: vscode.
           true // Skip notification since we're deploying next
         );
 
+        // Mark as new app to skip overwrite confirmation and track webview deployment
+        (actionContext as any).isNewApp = true;
+        actionContext.telemetry.properties.deploymentSource = 'webview';
+        actionContext.telemetry.properties.isNewLogicApp = 'true';
+
+        await deploy(actionContext, target, node);
+
         // Now deploy to the newly created Logic App
-        await deploy(actionContext, node.fullId, node.fullId);
+        // Pass target (workspace Uri) and the node as functionAppId
+        // await deploy(actionContext, target, node);
       } else {
-        // Deploy to existing Logic App
-        await deploy(actionContext, data.logicAppId, data.logicAppId);
+        // Deploy to existing Logic App - find the node first
+        const logicAppNode = (await ext.rgApi.appResourceTree.findTreeItem(data.logicAppId, actionContext)) as SlotTreeItem;
+        if (!logicAppNode) {
+          throw new Error(localize('noMatchingLogicApp', 'Failed to find Logic App "{0}".', data.logicAppId));
+        }
+
+        // Track webview deployment to existing app
+        actionContext.telemetry.properties.deploymentSource = 'webview';
+        actionContext.telemetry.properties.isNewLogicApp = 'false';
+
+        // Pass target (workspace Uri) and logicAppNode as functionAppId
+        await deploy(actionContext, target, logicAppNode);
       }
     },
     extraHandlers: {

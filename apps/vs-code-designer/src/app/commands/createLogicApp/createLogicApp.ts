@@ -45,7 +45,12 @@ export async function createLogicAppWithoutWizard(
       await notifyCreateLogicAppComplete(logicAppNode);
     }
 
-    return logicAppNode;
+    // The node returned from creation may not have fully initialized fullId
+    // Look it up from the tree to ensure all properties are correctly set
+    const fullResourceId = `/subscriptions/${subscription}/resourceGroups/${context.newResourceGroupName ?? context.resourceGroup.name}/providers/Microsoft.Web/sites/${context.newSiteName}`;
+    const refetchedLogicAppNode = (await ext.rgApi.appResourceTree.findTreeItem(fullResourceId, context as IActionContext)) as SlotTreeItem;
+
+    return refetchedLogicAppNode;
   } catch (error) {
     throw new Error(`Error in creating logic app. ${error}`);
   }

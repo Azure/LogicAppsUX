@@ -100,7 +100,27 @@ export async function deploy(
 
   let node: SlotTreeItem;
 
-  if (expectedContextValue) {
+  // If functionAppId is a SlotTreeItem or LogicAppResourceTree, convert/use it directly
+  if (functionAppId && typeof functionAppId === 'object') {
+    const objWithConstructor = functionAppId as any;
+    if (objWithConstructor.constructor?.name === 'LogicAppResourceTree') {
+      // It's a LogicAppResourceTree, need to wrap it in SlotTreeItem
+      const resourceTree = functionAppId as any as LogicAppResourceTree;
+      const parentTreeItem = (resourceTree as any).parent;
+      if (!parentTreeItem) {
+        throw new Error('LogicAppResourceTree missing parent tree item');
+      }
+      node = new SlotTreeItem(parentTreeItem, resourceTree);
+    } else if ('resourceTree' in objWithConstructor && 'site' in objWithConstructor) {
+      // It's already a SlotTreeItem
+      node = functionAppId as SlotTreeItem;
+    } else {
+      // Unknown object type, fall through to normal path
+      node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+        getDeployLogicAppNode(actionContext)
+      );
+    }
+  } else if (expectedContextValue) {
     node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
       ext.rgApi.pickAppResource(
         { ...context, suppressCreatePick: false },
