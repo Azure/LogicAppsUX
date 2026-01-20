@@ -390,7 +390,7 @@ const DesignerEditorConsumption = () => {
     } else {
       setWorkflow(prodWorkflow as any);
     }
-  }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow, isDraftWorkflowAndArtifactsLoading]);
+  }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, isDraftWorkflowAndArtifactsLoading]);
 
   if (isWorkflowAndArtifactsError) {
     throw workflowAndArtifactsError;

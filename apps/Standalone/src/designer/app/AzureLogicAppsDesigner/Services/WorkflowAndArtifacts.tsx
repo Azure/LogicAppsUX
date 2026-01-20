@@ -465,7 +465,10 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         agentCardUrlForDraft.searchParams.append('x-api-key', a2aKey);
       }
       if (a2aCodeForDraft) {
-        agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(a2aCodeForDraft.split('=')[1]));
+        const codeParamParts = a2aCodeForDraft.split('=');
+        if (codeParamParts.length > 1 && codeParamParts[1]) {
+          agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(codeParamParts[1]));
+        }
       }
 
       const draftChatUrl = new URL(`${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame`);
