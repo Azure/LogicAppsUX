@@ -126,6 +126,13 @@ describe('ui/panelheader/CopilotPanelHeader', () => {
       expect(icon.tagName.toLowerCase()).toBe('img');
     });
 
+    it('should use semantic h2 heading for the header title', () => {
+      renderWithProviders(<CopilotPanelHeader closeCopilot={closeCopilotMock} />);
+
+      const heading = screen.getByRole('heading', { level: 2, name: 'Workflow assistant' });
+      expect(heading).toBeDefined();
+    });
+
     it('should have aria-label on protected pill tooltip for screen readers', () => {
       renderWithProviders(<CopilotPanelHeader closeCopilot={closeCopilotMock} />);
 
