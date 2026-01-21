@@ -136,7 +136,8 @@ describe('ui/templates/templatesDesigner', () => {
 
     renderWithProviders(<TemplateCard templateName="template1" />, { store });
 
-    const card = screen.getByRole('article', { name: 'Template 1' });
+    // DocumentCard has aria-label set to the template title
+    const card = screen.getByLabelText('Template 1');
     expect(card).toBeDefined();
     expect(card.getAttribute('tabindex')).toBe('0');
 
