@@ -207,8 +207,7 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: TemplateData
               menuProps={menuProps}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  e.preventDefault();
-                  // onSelectTemplate();
+                  e.stopPropagation();
                 }
               }}
             />
