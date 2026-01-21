@@ -201,7 +201,17 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: TemplateData
             <Text className="msla-template-card-connectors-emptyText">{noConnectorsMessage}</Text>
           )}
           {showOverflow ? (
-            <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+            <IconButton
+              className="msla-template-card-connector-overflow"
+              onRenderMenuIcon={onRenderMenuIcon}
+              menuProps={menuProps}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  // onSelectTemplate();
+                }
+              }}
+            />
           ) : null}
         </div>
         {publishState ? <PublishBadge publishedState={publishState} /> : null}
