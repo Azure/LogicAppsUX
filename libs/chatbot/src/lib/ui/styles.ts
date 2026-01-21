@@ -146,7 +146,7 @@ export const useChatbotStyles = makeStyles({
     fontSize: '10.5px',
     display: 'flex',
     fontWeight: tokens.fontWeightBold,
-    color: '#489d42', // Keep original green
+    color: tokens.colorPaletteGreenBorderActive,
     lineHeight: '12px',
   },
 
