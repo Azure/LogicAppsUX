@@ -135,5 +135,29 @@ test.describe(
       const tab = await page.getByRole('tab', { name: 'Parameters' });
       await expect(tab).toBeDisabled();
     });
+
+    test('Template cards should be keyboard accessible', async ({ page }) => {
+      await page.goto('/templates');
+      await GoToMockTemplatesGallery(page);
+
+      // Tab to the first template card (after Blank workflow)
+      const templateCard = page.getByRole('article', { name: '[Mock] Basic Workflow Only Template' });
+      await templateCard.focus();
+
+      // Verify the card is focusable
+      await expect(templateCard).toBeFocused();
+
+      // Press Enter to select the template
+      await page.keyboard.press('Enter');
+
+      // Verify the panel opened
+      await expect(page.getByRole('tab', { name: 'Summary' })).toBeVisible();
+
+      // Close the panel
+      await page.getByRole('button', { name: 'Close Panel' }).click();
+
+      // Verify focus returned to the card
+      await expect(templateCard).toBeFocused();
+    });
   }
 );

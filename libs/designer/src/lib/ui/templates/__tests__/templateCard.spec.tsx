@@ -3,7 +3,7 @@ import type { AppStore } from '../../../core/state/templates/store';
 import { setupStore, type RootState } from '../../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../__test__/template-test-utils';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { TemplateCard } from '../cards/templateCard';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
@@ -115,5 +115,33 @@ describe('ui/templates/templatesDesigner', () => {
     expect(store.getState().panel.currentPanelView).toBe('quickView');
     store.dispatch({ type: 'panel/closePanel' });
     expect(store.getState().panel.isOpen).toBe(false);
+  });
+
+  it('TemplateCard is keyboard accessible with tabIndex and responds to Enter key', async () => {
+    minimalStoreData = {
+      manifest: {
+        availableTemplateNames: ['template1'],
+        availableTemplates: {
+          template1: template1Manifest,
+        },
+        filters: {
+          sortKey: 'a-to-z',
+          connectors: undefined,
+          detailFilters: {},
+          pageNum: 0,
+        },
+      },
+    };
+    store = setupStore(minimalStoreData);
+
+    renderWithProviders(<TemplateCard templateName="template1" />, { store });
+
+    const card = screen.getByRole('article', { name: 'Template 1' });
+    expect(card).toBeDefined();
+    expect(card.getAttribute('tabindex')).toBe('0');
+
+    // Simulate Enter key press
+    fireEvent.keyDown(card, { key: 'Enter', code: 'Enter' });
+    expect(store.getState().template.templateName).toBe('template1');
   });
 });
