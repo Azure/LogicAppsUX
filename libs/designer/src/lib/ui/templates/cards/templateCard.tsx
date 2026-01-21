@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { changeCurrentTemplateName } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Divider, Tag, Text } from '@fluentui/react-components';
+import { Divider, Tag, Text, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
 import { css, DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
@@ -40,6 +40,7 @@ const templateCardBodyStyles = {
 export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, cssOverrides, onSelect }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+  const restoreFocusTargetAttribute = useRestoreFocusTarget();
   const { templateManifest, workflowAppName } = useSelector((state: RootState) => ({
     templateManifest: state.manifest.availableTemplates?.[templateName],
     workflowAppName: state.workflow.workflowAppName,
@@ -98,6 +99,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
 
   return (
     <DocumentCard
+      {...restoreFocusTargetAttribute}
       className={css('msla-template-card-wrapper', cssOverrides?.['card'])}
       styles={templateCardStyles}
       onClick={onSelectTemplate}
