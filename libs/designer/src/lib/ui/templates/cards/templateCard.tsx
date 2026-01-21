@@ -102,6 +102,13 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
       styles={templateCardStyles}
       onClick={onSelectTemplate}
       aria-label={title}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          onSelectTemplate();
+        }
+      }}
     >
       <div className="msla-template-card-authored-wrapper">
         <div className="msla-template-card-authored">

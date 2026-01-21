@@ -46,6 +46,13 @@ export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty
       styles={templateCardStyles}
       onClick={onBlankWorkflowClick}
       aria-label={intlText.BLANK_WORKFLOW}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          onBlankWorkflowClick();
+        }
+      }}
     >
       <div className="msla-blank-template-card">
         <Add16Regular className="msla-blank-template-card-add-icon" />
