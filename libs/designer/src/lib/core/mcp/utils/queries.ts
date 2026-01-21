@@ -1,11 +1,4 @@
-import {
-  type Resource,
-  ResourceService,
-  type LogicAppResource,
-  equals,
-  getPropertyValue,
-  type McpServer,
-} from '@microsoft/logic-apps-shared';
+import { type Resource, ResourceService, type LogicAppResource, equals, type McpServer } from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
@@ -23,14 +16,26 @@ const queryOpts = {
 
 export const useAllMcpServers = (siteResourceId: string) => {
   return useQuery({
-    queryKey: ['mcpServers', siteResourceId],
+    queryKey: ['mcpservers', siteResourceId.toLowerCase()],
     queryFn: async (): Promise<McpServer[]> => {
-      const fileContent: any = await ResourceService().getResource(`${siteResourceId}/hostruntime/admin/vfs/mcpservers.json`, {
-        'api-version': '2018-11-01',
-        '&relativepath': '1',
-      });
+      const response: any = await ResourceService().executeResourceAction(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers`,
+        'POST',
+        { 'api-version': '2024-11-01' }
+      );
 
-      return getPropertyValue(fileContent?.value ?? fileContent, 'mcpServers') ?? [];
+      return response.value ?? [];
+    },
+    enabled: !!siteResourceId,
+    ...queryOpts,
+  });
+};
+
+export const useMcpAuthentication = (siteResourceId: string) => {
+  return useQuery({
+    queryKey: ['mcpauth', siteResourceId.toLowerCase()],
+    queryFn: async (): Promise<any> => {
+      return { isAuthenticated: true };
     },
     enabled: !!siteResourceId,
     ...queryOpts,
@@ -207,6 +212,11 @@ export const resetQueriesOnRegisterMcpServer = (subscriptionId: string, resource
   const resourceId = `${getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName)}/workflowsconfiguration/connections`;
   queryClient.invalidateQueries([workflowAppConnectionsKey, resourceId.toLowerCase()]);
   queryClient.invalidateQueries(['mcp', 'logicapps', subscriptionId]);
+};
+
+export const resetQueriesOnUpdateServers = (siteResourceId: string) => {
+  const queryClient = getReactQueryClient();
+  queryClient.invalidateQueries(['mcpservers', siteResourceId.toLowerCase()]);
 };
 
 export const getLocationNormalized = (location: string): string => location.replace(/ /g, '').toLowerCase();

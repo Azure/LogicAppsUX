@@ -22,15 +22,16 @@ export const useMcpServerStyles = makeStyles({
     position: 'relative',
   },
   tableStyle: {
-    width: '100%',
-    margin: '0 auto',
+    width: '70%',
+    margin: 0,
   },
   iconsCell: {
     textAlign: 'right',
   },
   toolIcon: {
-    width: '32px',
-    height: '32px',
+    width: '20px',
+    height: '20px',
+    paddingRight: '8px',
     borderRadius: tokens.borderRadiusSmall,
     objectFit: 'contain',
     flexShrink: 0,

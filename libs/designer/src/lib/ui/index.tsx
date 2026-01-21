@@ -10,4 +10,4 @@ export * from './dialog/combineVariableDialog';
 export * from './dialog/triggerDescriptionDialog';
 export { getLogicAppsCategories } from './configuretemplate/resources';
 export { TemplateInfoToast, type TemplateInfoToasterProps } from './configuretemplate/toasters';
-export { ServerNotificationData } from './mcp/servers/servers';
+export type { ServerNotificationData } from './mcp/servers/servers';

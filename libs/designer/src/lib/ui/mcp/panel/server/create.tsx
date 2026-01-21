@@ -1,9 +1,9 @@
 import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { closePanel, McpPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { closePanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMcpPanelStyles } from '../styles';
+import { useMcpPanelStyles, useMcpServerPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
@@ -11,39 +11,14 @@ import { validateMcpServerDescription, validateMcpServerName } from '../../../..
 import { useMcpEligibleWorkflows } from '../../../../core/mcp/utils/queries';
 import type { McpServer } from '@microsoft/logic-apps-shared';
 
-export const McpServerPanel = ({
-  onUpdateServer,
-  server,
-  onClose,
-}: {
-  onUpdateServer: (servers: McpServer) => Promise<void>;
-  server?: McpServer;
-  onClose: () => void;
-}) => {
-  const { isOpen, panelView } = useSelector((state: RootState) => ({
-    isOpen: state.mcpPanel?.isOpen ?? false,
-    panelView: state.mcpPanel?.currentPanelView,
-  }));
-
-  if (!isOpen || (panelView !== McpPanelView.CreateMcpServer && panelView !== McpPanelView.EditMcpServer)) {
-    return null;
-  }
-
-  return panelView === McpPanelView.CreateMcpServer ? (
-    <CreateServer onUpdate={onUpdateServer} onClose={onClose} />
-  ) : server !== undefined ? (
-    <CreateServer onUpdate={onUpdateServer} server={server} onClose={onClose} />
-  ) : null;
-};
-
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-const CreateServer = ({
+export const CreateServer = ({
   onUpdate,
   server,
   onClose,
-}: { onUpdate: (servers: McpServer) => Promise<void>; server?: McpServer; onClose: () => void }) => {
-  const styles = useMcpPanelStyles();
+}: { onUpdate: (servers: Partial<McpServer>) => Promise<void>; server?: McpServer; onClose: () => void }) => {
+  const styles = { ...useMcpPanelStyles(), ...useMcpServerPanelStyles() };
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -92,6 +67,11 @@ const CreateServer = ({
       defaultMessage: 'Create',
       id: 'x+XxdZ',
       description: 'Button text for creating the MCP Server',
+    }),
+    updateButtonText: intl.formatMessage({
+      defaultMessage: 'Update',
+      id: 'KGvXUc',
+      description: 'Button text for updating the MCP Server',
     }),
     cancelButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
@@ -237,6 +217,7 @@ const CreateServer = ({
         selectedOptions: selectedTools,
         value: workflowsValue,
         errorMessage: workflowsError,
+        controlled: true,
         onOptionSelect: (selectedOptions) => {
           const isInvalid = selectedOptions.length === 0;
           if (isInvalid && !workflowsError) {
@@ -275,7 +256,7 @@ const CreateServer = ({
       buttonContents: [
         {
           type: 'action',
-          text: INTL_TEXT.createButtonText,
+          text: server ? INTL_TEXT.updateButtonText : INTL_TEXT.createButtonText,
           appearance: 'primary',
           onClick: handleCreateOrUpdate,
           disabled:
@@ -295,6 +276,8 @@ const CreateServer = ({
       ],
     };
   }, [
+    server,
+    INTL_TEXT.updateButtonText,
     INTL_TEXT.createButtonText,
     INTL_TEXT.cancelButtonText,
     handleCreateOrUpdate,
@@ -323,6 +306,7 @@ const CreateServer = ({
       </DrawerHeader>
       <DrawerBody className={styles.body}>
         <TemplatesSection
+          cssOverrides={{ sectionItems: styles.workflowSection }}
           title={INTL_TEXT.detailsTitle}
           description={INTL_TEXT.detailsDescription}
           descriptionLink={{
@@ -332,6 +316,7 @@ const CreateServer = ({
           items={serverSectionItems}
         />
         <TemplatesSection
+          cssOverrides={{ sectionItems: styles.workflowSection }}
           title={INTL_TEXT.workflowsTitle}
           description={INTL_TEXT.workflowsDescription}
           descriptionLink={{

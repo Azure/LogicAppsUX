@@ -13,6 +13,7 @@ export const McpPanelView = {
   CreateLogicApp: 'createLogicApp',
   CreateMcpServer: 'createMcpServer',
   EditMcpServer: 'editMcpServer',
+  GenerateKeys: 'generateKeys',
 } as const;
 export type ConfigPanelView = (typeof McpPanelView)[keyof typeof McpPanelView];
 

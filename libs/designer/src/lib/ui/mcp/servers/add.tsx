@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardPreview, Text } from '@fluentui/react-components';
-import WorkflowIcon from '../../common/images/templates/logicapps.svg';
+import { Card, CardHeader, CardPreview, Image, Text, tokens } from '@fluentui/react-components';
+import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import { useIntl } from 'react-intl';
 import { useMcpEligibleWorkflows } from '../../../core/mcp/utils/queries';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { useCallback, useMemo, useState } from 'react';
 import { EmptyWorkflowsModal } from './modals';
 import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
+import { Add28Filled } from '@fluentui/react-icons';
 
 export const AddServerButtons = ({ onCreateTools }: { onCreateTools: () => void }) => {
   const intl = useIntl();
@@ -50,17 +51,48 @@ export const AddServerButtons = ({ onCreateTools }: { onCreateTools: () => void 
     }
   }, [dispatch, hasEligibleWorkflows]);
 
+  const [existingSelected, setExistingSelected] = useState(false);
+  const [newSelected, setNewSelected] = useState(false);
+
   return (
-    <div>
-      <Card disabled={isLoading}>
-        <CardHeader image={<img src={WorkflowIcon} />} header={INTL_TEXT.useExistingTitle} onClick={handleUseExistingWorkflows} />
-        <CardPreview>
+    <div style={{ paddingTop: 20, display: 'flex', gap: 20 }}>
+      <Card
+        disabled={isLoading}
+        style={{ width: '80%' }}
+        selected={existingSelected}
+        onSelectionChange={(_, { selected }) => {
+          setExistingSelected(selected);
+          if (selected) {
+            handleUseExistingWorkflows();
+          }
+        }}
+        onClick={handleUseExistingWorkflows}
+      >
+        <CardHeader
+          style={{ fontWeight: 600 }}
+          image={<Image src={WorkflowIcon} style={{ width: 28, height: 28 }} />}
+          header={INTL_TEXT.useExistingTitle}
+        />
+        <CardPreview style={{ padding: '8px 10px' }}>
           <Text>{INTL_TEXT.useExistingDescription}</Text>
         </CardPreview>
       </Card>
-      <Card>
-        <CardHeader image={<img src={WorkflowIcon} />} header={INTL_TEXT.createNewTitle} onClick={onCreateTools} />
-        <CardPreview>
+      <Card
+        selected={newSelected}
+        onSelectionChange={(_, { selected }) => {
+          setNewSelected(selected);
+          if (selected) {
+            onCreateTools();
+          }
+        }}
+        onClick={onCreateTools}
+      >
+        <CardHeader
+          style={{ fontWeight: 600 }}
+          image={<Add28Filled style={{ width: 28, height: 28, color: tokens.colorCompoundBrandStroke }} />}
+          header={INTL_TEXT.createNewTitle}
+        />
+        <CardPreview style={{ padding: '8px 10px' }}>
           <Text>{INTL_TEXT.createNewDescription}</Text>
         </CardPreview>
       </Card>

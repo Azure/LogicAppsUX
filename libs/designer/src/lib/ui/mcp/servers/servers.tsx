@@ -8,12 +8,14 @@ import {
   Button,
   Divider,
   Field,
+  Image,
   Link,
   Menu,
   MenuItem,
   MenuList,
   MenuPopover,
   MenuTrigger,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +23,6 @@ import {
   TableHeaderCell,
   TableRow,
   Text,
-  ToggleButton,
 } from '@fluentui/react-components';
 import { useMcpServerStyles } from './styles';
 import { equals, type McpServer } from '@microsoft/logic-apps-shared';
@@ -36,7 +37,7 @@ import {
   Open20Regular,
   SubtractCircle20Regular,
 } from '@fluentui/react-icons';
-import WorkflowIcon from '../../common/images/templates/logicapps.svg';
+import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import { useIntl } from 'react-intl';
 import { AddServerModal, DeleteModal } from './modals';
 
@@ -45,6 +46,8 @@ export type ToolHandler = (tool: string) => void;
 const toolTableCellStyles = {
   border: 'none',
   paddingBottom: '8px',
+  borderBottom: '1px solid #ccc',
+  paddingLeft: 2,
 };
 const toolNameCellStyles = {
   paddingTop: '6px',
@@ -88,8 +91,8 @@ export const MCPServers = ({
       description: 'Description for the servers section',
     }),
     createButtonText: intl.formatMessage({
-      defaultMessage: 'Create server',
-      id: 'Y8GjeX',
+      defaultMessage: 'Create',
+      id: '8iX8Yu',
       description: 'Button text for creating a new server',
     }),
     refreshButtonText: intl.formatMessage({
@@ -196,31 +199,51 @@ export const MCPServers = ({
       </div>
       <DescriptionWithLink text={INTL_TEXT.description} />
       <div className={styles.buttonContainer}>
-        <Button title={INTL_TEXT.createButtonText} icon={<Add20Regular />} onClick={handleCreateServer} />
-        <Button title={INTL_TEXT.refreshButtonText} icon={<ArrowClockwise20Regular />} onClick={handleRefreshServers} />
+        <Button title={INTL_TEXT.createButtonText} appearance="subtle" icon={<Add20Regular />} onClick={handleCreateServer}>
+          {INTL_TEXT.createButtonText}
+        </Button>
+        <Button title={INTL_TEXT.refreshButtonText} appearance="subtle" icon={<ArrowClockwise20Regular />} onClick={handleRefreshServers}>
+          {INTL_TEXT.refreshButtonText}
+        </Button>
       </div>
       <div className={styles.section}>
         <Accordion multiple={true} defaultOpenItems={Object.keys(servers)}>
           {servers.map((server) => (
             <AccordionItem value={server.name} key={server.name}>
-              <div>
-                <AccordionHeader>
-                  <Text style={{ fontWeight: 'bold' }}>{server.name}</Text>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 0 }}>
+                <AccordionHeader style={{ marginLeft: -10 }} expandIconPosition="end">
+                  <Text style={{ fontWeight: 'bold', paddingLeft: 0 }}>{server.name}</Text>
                 </AccordionHeader>
-                <div>
-                  <Button title={INTL_TEXT.editButtonText} icon={<Edit20Regular />} onClick={() => onManageServer(server.name)} />
-                  <Button title={INTL_TEXT.deleteButtonText} icon={<Delete20Regular />} onClick={() => setServerToDelete(server.name)} />
-                  <Divider />
-                  <ToggleButton checked={true} />
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Button
+                    style={{ minWidth: '50px', padding: '0 4px' }}
+                    title={INTL_TEXT.editButtonText}
+                    appearance="subtle"
+                    icon={<Edit20Regular />}
+                    onClick={() => onManageServer(server.name)}
+                  >
+                    {INTL_TEXT.editButtonText}
+                  </Button>
+                  <Button
+                    style={{ minWidth: '50px', padding: '0 4px' }}
+                    title={INTL_TEXT.deleteButtonText}
+                    appearance="subtle"
+                    icon={<Delete20Regular />}
+                    onClick={() => setServerToDelete(server.name)}
+                  >
+                    {INTL_TEXT.deleteButtonText}
+                  </Button>
+                  <Divider style={{ padding: '0 8px' }} vertical={true} />
+                  <Switch checked={true} />
                 </div>
               </div>
 
-              <Text>{server.description}</Text>
-              <Field label={INTL_TEXT.endpointUrlLabel}>
+              <Text style={{ paddingLeft: 2 }}>{server.description}</Text>
+              <Field style={{ paddingTop: 10, paddingLeft: 2 }} label={INTL_TEXT.endpointUrlLabel} orientation="horizontal">
                 <CopyInputControl text={server.url ?? ''} />
               </Field>
 
-              <AccordionPanel>
+              <AccordionPanel style={{ paddingTop: 10 }}>
                 <ServerTools
                   tools={server.tools.map((tool) => tool.name)}
                   onRemove={(tool) => handleRemoveTool(server.name, tool)}
@@ -293,15 +316,15 @@ const ServerTools = ({ tools, onRemove, onManage }: { tools: string[]; onRemove:
         {items.map((item) => (
           <TableRow key={item} style={toolTableCellStyles}>
             <TableCell style={toolNameCellStyles}>
-              <img className={styles.toolIcon} src={WorkflowIcon} />
+              <Image className={styles.toolIcon} src={WorkflowIcon} />
               <Link as="button" onClick={() => onManage(item)}>
                 {item}
               </Link>
             </TableCell>
-            <TableCell className={styles.iconsCell} style={toolTableCellStyles}>
+            <TableCell className={styles.iconsCell} style={{ ...toolTableCellStyles, paddingTop: 6 }}>
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
-                  <Button icon={<MoreHorizontal20Regular />} />
+                  <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
                 </MenuTrigger>
                 <MenuPopover>
                   <MenuList>

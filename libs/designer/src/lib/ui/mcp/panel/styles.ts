@@ -30,3 +30,9 @@ export const useMcpPanelStyles = makeStyles({
     borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
   },
 });
+
+export const useMcpServerPanelStyles = makeStyles({
+  workflowSection: {
+    paddingBottom: '25px',
+  },
+});

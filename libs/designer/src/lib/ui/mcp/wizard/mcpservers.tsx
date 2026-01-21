@@ -4,24 +4,27 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { equals, type McpServer } from '@microsoft/logic-apps-shared';
-import { useAllMcpServers } from '../../../core/mcp/utils/queries';
+import { resetQueriesOnUpdateServers, useAllMcpServers } from '../../../core/mcp/utils/queries';
 import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
-import { McpServerPanel } from '../panel/server/createpanel';
-import { closePanel, McpPanelView, openMcpPanelView } from 'lib/core/state/mcp/panel/mcpPanelSlice';
+import { McpServerPanel } from '../panel/server/panel';
+import { closePanel, McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { Image, Text } from '@fluentui/react-components';
+import { Text } from '@fluentui/react-components';
 import { AddServerButtons } from '../servers/add';
 import { MCPServers, type ServerNotificationData, type ToolHandler } from '../servers/servers';
 import { Authentication } from '../servers/authentication';
+import { Apps28Regular } from '@fluentui/react-icons';
 
 export const McpServersWizard = ({
   onUpdateServers,
   onOpenWorkflow,
   onOpenCreateTools,
+  onOpenManageOAuth,
 }: {
   onUpdateServers: (servers: McpServer[], toasterData: ServerNotificationData) => Promise<void>;
   onOpenWorkflow: ToolHandler;
   onOpenCreateTools: () => void;
+  onOpenManageOAuth: () => void;
 }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
@@ -49,31 +52,52 @@ export const McpServersWizard = ({
   );
 
   const handleUpdateServer = useCallback(
-    async (updatedServer: McpServer) => {
+    async (updatedServer: Partial<McpServer>) => {
       if (!mcpServers) {
         return;
       }
-      const updatedServers = mcpServers.map((server) => (equals(server.name, updatedServer.name) ? updatedServer : server));
+      const isNew = mcpServers.find((server) => equals(server.name, updatedServer.name)) === undefined;
+
+      const updatedServers = isNew
+        ? [...mcpServers, updatedServer as McpServer]
+        : mcpServers.map((server) => (equals(server.name, updatedServer.name) ? { ...server, ...updatedServer } : server));
+
       const toasterData: ServerNotificationData = {
-        title: intl.formatMessage({
-          defaultMessage: 'Server updated successfully',
-          id: 'RSsqSm',
-          description: 'Title for the toaster after updating a server',
-        }),
-        content: intl.formatMessage(
-          {
-            defaultMessage: 'The server {serverName} has been updated.',
-            id: '9sRgCm',
-            description: 'Content for the toaster after updating a server',
-          },
-          { serverName: updatedServer.name }
-        ),
+        title: isNew
+          ? intl.formatMessage({
+              defaultMessage: 'Server created successfully',
+              id: 'wWdzfM',
+              description: 'Title for the toaster after creating a server',
+            })
+          : intl.formatMessage({
+              defaultMessage: 'Server updated successfully',
+              id: 'RSsqSm',
+              description: 'Title for the toaster after updating a server',
+            }),
+        content: isNew
+          ? intl.formatMessage(
+              {
+                defaultMessage: 'The server {serverName} has been created.',
+                id: '92h1A6',
+                description: 'Content for the toaster after creating a server',
+              },
+              { serverName: updatedServer.name }
+            )
+          : intl.formatMessage(
+              {
+                defaultMessage: 'The server {serverName} has been updated.',
+                id: '9sRgCm',
+                description: 'Content for the toaster after updating a server',
+              },
+              { serverName: updatedServer.name }
+            ),
       };
       await onUpdateServers(updatedServers, toasterData);
+      resetQueriesOnUpdateServers(logicAppId);
       dispatch(closePanel());
       setSelectedServer(undefined);
     },
-    [dispatch, intl, mcpServers, onUpdateServers]
+    [dispatch, intl, logicAppId, mcpServers, onUpdateServers]
   );
 
   const handleClosePanel = useCallback(() => {
@@ -100,7 +124,7 @@ export const McpServersWizard = ({
         <EmptyMcpServersView onCreateTools={onOpenCreateTools} />
       ) : (
         <div>
-          <Authentication />
+          <Authentication resourceId={logicAppId} onOpenManageOAuth={onOpenManageOAuth} />
           <MCPServers
             servers={mcpServers ?? []}
             onUpdateServers={onUpdateServers}
@@ -144,16 +168,18 @@ const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) =
 
   return (
     <div style={{ height: '50%' }}>
-      <Image src={'Apps28Regular'} width={'20%'} height={'20%'} />
-      <Text weight="semibold" size={500} style={{ padding: '20px 0 10px 0' }}>
-        {INTL_TEXT.title}
-      </Text>
-      <DescriptionWithLink
-        text={INTL_TEXT.description}
-        linkText={INTL_TEXT.learnMore}
-        linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
-      />
-      <div style={{ padding: '10px 0' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '50px' }}>
+        <Apps28Regular style={{ width: 48, height: 48 }} />
+        <Text weight="semibold" size={500} style={{ padding: '20px 0 10px 0' }}>
+          {INTL_TEXT.title}
+        </Text>
+        <DescriptionWithLink
+          text={INTL_TEXT.description}
+          linkText={INTL_TEXT.learnMore}
+          linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
+        />
+      </div>
+      <div style={{ padding: '10px 0', width: '550px', margin: '0 auto' }}>
         <AddServerButtons onCreateTools={onCreateTools} />
       </div>
     </div>

@@ -12,6 +12,7 @@ import {
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { AddServerButtons } from './add';
+import { Dismiss24Regular } from '@fluentui/react-icons';
 
 export const DeleteModal = ({ onDelete, onDismiss }: { onDelete: () => void; onDismiss: () => void }) => {
   const intl = useIntl();
@@ -125,7 +126,15 @@ export const AddServerModal = ({ onCreateTools, onDismiss }: { onCreateTools: ()
     <Dialog open={true} onOpenChange={onDismiss}>
       <DialogSurface>
         <DialogBody>
-          <DialogTitle>{INTL_TEXT.title}</DialogTitle>
+          <DialogTitle
+            action={
+              <DialogTrigger action="close">
+                <Button appearance="subtle" aria-label="close" icon={<Dismiss24Regular />} />
+              </DialogTrigger>
+            }
+          >
+            {INTL_TEXT.title}
+          </DialogTitle>
           <DialogContent>
             <Text>{INTL_TEXT.subtitle}</Text>
             <br />
