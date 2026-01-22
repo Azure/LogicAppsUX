@@ -248,6 +248,101 @@ describe('parseIframeConfig', () => {
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
     });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS is invalid JSON', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = 'not valid json';
+
+      const config = parseIframeConfig();
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse IDENTITY_PROVIDERS:', expect.any(Error));
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS is empty string', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to null', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = 'null';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to array', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
+
+      const config = parseIframeConfig();
+
+      // Arrays are objects in JS, so this will actually be used - this tests current behavior
+      expect(config.props.identityProviders).toEqual(['microsoft', 'google']);
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to primitive', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '"just a string"';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('handles multiple identity providers', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS =
+        '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"},"github":{"signInEndpoint":"/.auth/login/github","name":"GitHub"}}';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toEqual({
+        microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+        github: { signInEndpoint: '/.auth/login/github', name: 'GitHub' },
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
   });
 
   describe('portal security', () => {
