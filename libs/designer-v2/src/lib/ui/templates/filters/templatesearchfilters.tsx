@@ -72,8 +72,8 @@ const SortDropdown = () => {
 
   const intlText = {
     SORT_BY: intl.formatMessage({
-      defaultMessage: 'Sort By',
-      id: 'ZOIvqN',
+      defaultMessage: 'Sort by',
+      id: 'zLrEAG',
       description: 'Label text for sort by filter',
     }),
   };
@@ -130,8 +130,8 @@ export const TemplateSearchAndFilters = ({
       description: 'Label text for type filter',
     }),
     SORT_BY: intl.formatMessage({
-      defaultMessage: 'Sort By',
-      id: 'ZOIvqN',
+      defaultMessage: 'Sort by',
+      id: 'zLrEAG',
       description: 'Label text for sort by filter',
     }),
     MY_TEMPLATES: intl.formatMessage({
