@@ -146,7 +146,6 @@ const mockUseMcpWizardStep = vi.mocked(useMcpWizardStep);
 const mockUseMcpWizardConnectionId = vi.mocked(useMcpWizardConnectionId);
 const mockUseMcpWizardAllowedTools = vi.mocked(useMcpWizardAllowedTools);
 const mockUseMcpWizardHeaders = vi.mocked(useMcpWizardHeaders);
-const mockCloseMcpToolWizard = vi.mocked(closeMcpToolWizard);
 const mockSetMcpWizardStep = vi.mocked(setMcpWizardStep);
 const mockSetMcpWizardConnection = vi.mocked(setMcpWizardConnection);
 const mockUseConnectionsForConnector = vi.mocked(useConnectionsForConnector);
