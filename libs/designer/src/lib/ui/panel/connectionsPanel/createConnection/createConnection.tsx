@@ -1,13 +1,15 @@
-import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
-import { ActionList } from '../actionList/actionList';
-import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
-import ConnectionNameInput from './formInputs/connectionNameInput';
-import LegacyGatewayCheckbox from './formInputs/legacyGatewayCheckbox';
-import LegacyManagedIdentityDropdown from './formInputs/legacyManagedIdentityPicker';
-import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMultiAuth';
-import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
-import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
-import { css, findIndex, type IDropdownOption } from '@fluentui/react';
+import { needsOAuth } from "../../../../core/actions/bjsworkflow/connections";
+import { ActionList } from "../actionList/actionList";
+import ConnectionMultiAuthInput from "./formInputs/connectionMultiAuth";
+import ConnectionNameInput from "./formInputs/connectionNameInput";
+import LegacyGatewayCheckbox from "./formInputs/legacyGatewayCheckbox";
+import LegacyManagedIdentityDropdown from "./formInputs/legacyManagedIdentityPicker";
+import LegacyMultiAuth, {
+  LegacyMultiAuthOptions,
+} from "./formInputs/legacyMultiAuth";
+import type { ConnectionParameterProps } from "./formInputs/universalConnectionParameter";
+import { UniversalConnectionParameter } from "./formInputs/universalConnectionParameter";
+import { css, findIndex, type IDropdownOption } from "@fluentui/react";
 import {
   Body1Strong,
   Button,
@@ -17,7 +19,7 @@ import {
   MessageBar,
   MessageBarActions,
   MessageBarBody,
-} from '@fluentui/react-components';
+} from "@fluentui/react-components";
 import {
   ConnectionParameterEditorService,
   ConnectionService,
@@ -38,7 +40,8 @@ import {
   ExtensionProperties,
   LoggerService,
   LogEntryLevel,
-} from '@microsoft/logic-apps-shared';
+  isIndependentPublisherConnector,
+} from "@microsoft/logic-apps-shared";
 import type {
   GatewayServiceConfig,
   IConnectionCredentialMappingEditorProps,
@@ -53,18 +56,19 @@ import type {
   OperationParameterSetParameter,
   OperationManifest,
   ConsumptionWorkflowMetadata,
-} from '@microsoft/logic-apps-shared';
-import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
-import fromPairs from 'lodash.frompairs';
-import type { FormEvent } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { DismissRegular } from '@fluentui/react-icons';
-import TenantPicker from './formInputs/tenantPicker';
-import { useStyles } from './styles';
-import { isA2AKind } from '../../../../core/state/workflow/helper';
-import { useShouldEnableAPIMGatewayConnection } from '../../../../core/utils/experimentation';
+} from "@microsoft/logic-apps-shared";
+import type { AzureResourcePickerProps } from "@microsoft/designer-ui";
+import { AzureResourcePicker, Label } from "@microsoft/designer-ui";
+import fromPairs from "lodash.frompairs";
+import type { FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useIntl } from "react-intl";
+import { DismissRegular } from "@fluentui/react-icons";
+import TenantPicker from "./formInputs/tenantPicker";
+import { IndependentPublisherDisclaimer } from "./independentPublisherDisclaimer";
+import { useStyles } from "./styles";
+import { isA2AKind } from "../../../../core/state/workflow/helper";
+import { useShouldEnableAPIMGatewayConnection } from "../../../../core/utils/experimentation";
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -95,7 +99,7 @@ export interface CreateConnectionProps {
     identitySelected?: string,
     additionalParameterValues?: Record<string, any>,
     operationParameterValues?: Record<string, any>,
-    isUsingDynamicConnection?: boolean
+    isUsingDynamicConnection?: boolean,
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
@@ -107,7 +111,9 @@ export interface CreateConnectionProps {
   availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
   gatewayServiceConfig?: Partial<GatewayServiceConfig>;
-  checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
+  checkOAuthCallback: (
+    parameters: Record<string, ConnectionParameter>,
+  ) => boolean;
   resourceSelectorProps?: AzureResourcePickerProps;
   isAgentServiceConnection?: boolean;
   isAgentSubgraph?: boolean;
@@ -122,7 +128,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     createButtonTexts,
     nodeIds = [],
     showActionBar = true,
-    iconUri = '',
+    iconUri = "",
     connector,
     connectionParameterSets: _connectionParameterSets,
     description,
@@ -158,13 +164,24 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     displayName: connectorDisplayName,
   } = connector.properties;
 
-  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
-  const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(`new_conn_${customLengthGuid(5)}`.toLowerCase());
-  const operationParameterSetKeys = useMemo(() => Object.keys(operationParameterSets ?? {}), [operationParameterSets]);
-  const enableAPIMGenAIGatewayForAgents = useShouldEnableAPIMGatewayConnection();
+  const [parameterValues, setParameterValues] = useState<Record<string, any>>(
+    {},
+  );
+  const [operationParameterValues, setOperationParameterValues] = useState<
+    Record<string, any>
+  >({});
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>(
+    `new_conn_${customLengthGuid(5)}`.toLowerCase(),
+  );
+  const operationParameterSetKeys = useMemo(
+    () => Object.keys(operationParameterSets ?? {}),
+    [operationParameterSets],
+  );
+  const enableAPIMGenAIGatewayForAgents =
+    useShouldEnableAPIMGatewayConnection();
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
-  const [isUsingDynamicConnection, setIsUsingDynamicConnection] = useState<boolean>(true);
+  const [isUsingDynamicConnection, setIsUsingDynamicConnection] =
+    useState<boolean>(true);
   const onAuthDropdownChange = useCallback(
     (_event: FormEvent<HTMLDivElement>, item: any): void => {
       if (item.key !== selectedParamSetIndex) {
@@ -172,18 +189,23 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         setParameterValues({}); // Clear out the config params from previous set
       }
     },
-    [selectedParamSetIndex]
+    [selectedParamSetIndex],
   );
 
   const isConnectionParameterSupported = useCallback(
     (connectionParameterKey: string) => {
-      for (const [key, parameter] of Object.entries(operationParameterSets ?? {})) {
+      for (const [key, parameter] of Object.entries(
+        operationParameterSets ?? {},
+      )) {
         if (!operationParameterValues?.[key]) {
           return true;
         }
 
         const notSupportedConnectionParameters =
-          parameter?.uiDefinition?.constraints?.notSupportedConnectionParameters?.[operationParameterValues[key]] ?? [];
+          parameter?.uiDefinition?.constraints
+            ?.notSupportedConnectionParameters?.[
+            operationParameterValues[key]
+          ] ?? [];
 
         if (notSupportedConnectionParameters.length === 0) {
           return true;
@@ -197,149 +219,233 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       }
       return true;
     },
-    [operationParameterSets, operationParameterValues]
+    [operationParameterSets, operationParameterValues],
   );
 
   const isHiddenAuthKey = useCallback(
-    (key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) || !isConnectionParameterSupported(key),
-    [isConnectionParameterSupported]
+    (key: string) =>
+      ConnectionService().getAuthSetHideKeys?.()?.includes(key) ||
+      !isConnectionParameterSupported(key),
+    [isConnectionParameterSupported],
   );
 
-  const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
-    if (!_connectionParameterSets) {
-      return undefined;
-    }
+  const connectionParameterSets: ConnectionParameterSets | undefined =
+    useMemo(() => {
+      if (!_connectionParameterSets) {
+        return undefined;
+      }
 
-    const filteredValues = _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name));
-    return {
-      ..._connectionParameterSets,
-      values: filteredValues,
-    };
-  }, [_connectionParameterSets, isHiddenAuthKey]);
+      const filteredValues = _connectionParameterSets.values.filter(
+        (set) => !isHiddenAuthKey(set.name),
+      );
+      return {
+        ..._connectionParameterSets,
+        values: filteredValues,
+      };
+    }, [_connectionParameterSets, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
       ...(connectionParameters ?? {}),
       // ...connectionAlternativeParameters ?? {}, // TODO: Riley - This is where we would add in legacy MI params
     }),
-    [connectionParameters]
+    [connectionParameters],
   );
   const multiAuthParams = useMemo(
-    () => connectionParameterSets?.values[selectedParamSetIndex]?.parameters ?? {},
-    [connectionParameterSets, selectedParamSetIndex]
+    () =>
+      connectionParameterSets?.values[selectedParamSetIndex]?.parameters ?? {},
+    [connectionParameterSets, selectedParamSetIndex],
   );
-  const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
+  const isMultiAuth = useMemo(
+    () => (connectionParameterSets?.values?.length ?? 0) > 0,
+    [connectionParameterSets?.values],
+  );
 
   const hasOnlyOnPremGateway = useMemo(
-    () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
-    [connectorCapabilities]
+    () =>
+      (connectorCapabilities?.includes(Capabilities.gateway) &&
+        !connectorCapabilities?.includes(Capabilities.cloud)) ??
+      false,
+    [connectorCapabilities],
   );
 
-  const [enabledCapabilities, setEnabledCapabilities] = useState<Capabilities[]>([Capabilities.general, Capabilities.cloud]);
+  const [enabledCapabilities, setEnabledCapabilities] = useState<
+    Capabilities[]
+  >([Capabilities.general, Capabilities.cloud]);
   const toggleCapability = useCallback(
     (capability: Capabilities) => {
       if (enabledCapabilities.includes(capability)) {
-        setEnabledCapabilities(enabledCapabilities.filter((c) => c !== capability));
+        setEnabledCapabilities(
+          enabledCapabilities.filter((c) => c !== capability),
+        );
       } else {
         setEnabledCapabilities([...enabledCapabilities, capability]);
       }
     },
-    [enabledCapabilities]
+    [enabledCapabilities],
   );
 
   useEffect(() => {
-    if (hasOnlyOnPremGateway && !enabledCapabilities.includes(Capabilities.gateway)) {
+    if (
+      hasOnlyOnPremGateway &&
+      !enabledCapabilities.includes(Capabilities.gateway)
+    ) {
       toggleCapability(Capabilities.gateway);
     }
   }, [enabledCapabilities, hasOnlyOnPremGateway, toggleCapability]);
 
-  const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
+  const supportsOAuthConnection = useMemo(
+    () => !isHiddenAuthKey("legacyoauth"),
+    [isHiddenAuthKey],
+  );
 
   const supportsServicePrincipalConnection = useMemo(
-    () => connectorContainsAllServicePrincipalConnectionParameters(singleAuthParams) && !isHiddenAuthKey('legacyserviceprincipal'),
-    [isHiddenAuthKey, singleAuthParams]
+    () =>
+      connectorContainsAllServicePrincipalConnectionParameters(
+        singleAuthParams,
+      ) && !isHiddenAuthKey("legacyserviceprincipal"),
+    [isHiddenAuthKey, singleAuthParams],
   );
 
   const supportsClientCertificateConnection = useMemo(
-    () => isMultiAuth && connectorContainsAllClientCertificateConnectionParameters(multiAuthParams),
-    [isMultiAuth, multiAuthParams]
+    () =>
+      isMultiAuth &&
+      connectorContainsAllClientCertificateConnectionParameters(
+        multiAuthParams,
+      ),
+    [isMultiAuth, multiAuthParams],
   );
 
   const supportsLegacyManagedIdentityConnection = useMemo(
-    () => usesLegacyManagedIdentity(connectionAlternativeParameters) && !isHiddenAuthKey('legacymanagedidentity'),
-    [connectionAlternativeParameters, isHiddenAuthKey]
+    () =>
+      usesLegacyManagedIdentity(connectionAlternativeParameters) &&
+      !isHiddenAuthKey("legacymanagedidentity"),
+    [connectionAlternativeParameters, isHiddenAuthKey],
   );
 
   const showLegacyMultiAuth = useMemo(
-    () => !isMultiAuth && (supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
-    [isMultiAuth, supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+    () =>
+      !isMultiAuth &&
+      (supportsServicePrincipalConnection ||
+        supportsLegacyManagedIdentityConnection),
+    [
+      isMultiAuth,
+      supportsServicePrincipalConnection,
+      supportsLegacyManagedIdentityConnection,
+    ],
   );
 
   const legacyServicePrincipalSelected = useMemo(
-    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
-    [selectedParamSetIndex, showLegacyMultiAuth]
+    () =>
+      showLegacyMultiAuth &&
+      selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
+    [selectedParamSetIndex, showLegacyMultiAuth],
   );
 
   const legacyManagedIdentitySelected = useMemo(
-    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.managedIdentity,
-    [selectedParamSetIndex, showLegacyMultiAuth]
+    () =>
+      showLegacyMultiAuth &&
+      selectedParamSetIndex === LegacyMultiAuthOptions.managedIdentity,
+    [selectedParamSetIndex, showLegacyMultiAuth],
   );
 
-  const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
+  const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<
+    string | undefined
+  >(undefined);
 
-  const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
-    setSelectedManagedIdentity(option?.key.toString());
-  }, []);
+  const onLegacyManagedIdentityChange = useCallback(
+    (_: any, option?: IDropdownOption<any>) => {
+      setSelectedManagedIdentity(option?.key.toString());
+    },
+    [],
+  );
 
   const usingLegacyGatewayAuth = useMemo(
-    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
-    [enabledCapabilities, hasOnlyOnPremGateway]
+    () =>
+      !hasOnlyOnPremGateway &&
+      enabledCapabilities.includes(Capabilities.gateway),
+    [enabledCapabilities, hasOnlyOnPremGateway],
   );
 
   const hasOAuth = useMemo(
-    () => needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) && !usingLegacyGatewayAuth,
-    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth]
+    () =>
+      needsOAuth(isMultiAuth ? multiAuthParams : singleAuthParams) &&
+      !usingLegacyGatewayAuth,
+    [isMultiAuth, multiAuthParams, singleAuthParams, usingLegacyGatewayAuth],
   );
 
   const isUsingOAuth = useMemo(
-    () => hasOAuth && !legacyServicePrincipalSelected && !legacyManagedIdentitySelected && !supportsClientCertificateConnection,
-    [hasOAuth, legacyServicePrincipalSelected, legacyManagedIdentitySelected, supportsClientCertificateConnection]
+    () =>
+      hasOAuth &&
+      !legacyServicePrincipalSelected &&
+      !legacyManagedIdentitySelected &&
+      !supportsClientCertificateConnection,
+    [
+      hasOAuth,
+      legacyServicePrincipalSelected,
+      legacyManagedIdentitySelected,
+      supportsClientCertificateConnection,
+    ],
   );
 
   const isDynamicConnectionOptionValidForConnector = useMemo(() => {
     return (
-      isUsingOAuth && isAgentSubgraph && connector?.properties?.isDynamicConnectionAllowed && isA2AKind(workflowKind, workflowMetadata)
+      isUsingOAuth &&
+      isAgentSubgraph &&
+      connector?.properties?.isDynamicConnectionAllowed &&
+      isA2AKind(workflowKind, workflowMetadata)
     );
-  }, [connector?.properties?.isDynamicConnectionAllowed, isAgentSubgraph, isUsingOAuth, workflowKind, workflowMetadata]);
+  }, [
+    connector?.properties?.isDynamicConnectionAllowed,
+    isAgentSubgraph,
+    isUsingOAuth,
+    workflowKind,
+    workflowMetadata,
+  ]);
 
-  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+  const usingAadConnection = useMemo(
+    () => (connector ? isUsingAadAuthentication(connector) : false),
+    [connector],
+  );
 
   const showTenantIdSelection = useMemo(
     () =>
       isTenantServiceEnabled() &&
       usingAadConnection &&
       isUsingOAuth &&
-      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
+      Object.keys(
+        connectionParameters?.["token"]?.oAuthSettings?.customParameters ?? {},
+      ).some((key: string) => equals(key, "tenantId")) &&
       Object.keys(connectionParameters ?? {}).some((key: string) =>
-        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+        equals(
+          key,
+          SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID,
+        ),
       ),
-    [connectionParameters, isUsingOAuth, usingAadConnection]
+    [connectionParameters, isUsingOAuth, usingAadConnection],
   );
 
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
       if (legacyServicePrincipalSelected) {
-        return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
+        return (
+          isServicePrinicipalConnectionParameter(key) &&
+          isServicePrincipalParameterVisible(key, parameter)
+        );
       }
       if (legacyManagedIdentitySelected) {
         return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
       }
-      if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') {
+      if (constraints?.hidden === "true" || constraints?.hideInUI === "true") {
         return false;
       }
       const dependentParam = constraints?.dependentParameter;
-      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) {
+      if (
+        dependentParam?.parameter &&
+        getPropertyValue(parameterValues, dependentParam.parameter) !==
+          dependentParam.value
+      ) {
         return false;
       }
       if (parameter.type === ConnectionParameterTypes.oauthSetting) {
@@ -348,22 +454,42 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       if (parameter.type === ConnectionParameterTypes.managedIdentity) {
         return false;
       }
-      if (equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID) && showTenantIdSelection) {
+      if (
+        equals(
+          key,
+          SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID,
+        ) &&
+        showTenantIdSelection
+      ) {
         return false;
       }
       return true;
     },
-    [legacyServicePrincipalSelected, legacyManagedIdentitySelected, parameterValues, showTenantIdSelection]
+    [
+      legacyServicePrincipalSelected,
+      legacyManagedIdentitySelected,
+      parameterValues,
+      showTenantIdSelection,
+    ],
   );
 
-  const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
+  const unfilteredParameters: Record<
+    string,
+    ConnectionParameterSetParameter | ConnectionParameter
+  > = useMemo(
     () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }),
-    [isMultiAuth, multiAuthParams, singleAuthParams]
+    [isMultiAuth, multiAuthParams, singleAuthParams],
   );
 
-  const parameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
-    () => filterRecord<any>(unfilteredParameters, (key, value) => isParamVisible(key, value)),
-    [isParamVisible, unfilteredParameters]
+  const parameters: Record<
+    string,
+    ConnectionParameterSetParameter | ConnectionParameter
+  > = useMemo(
+    () =>
+      filterRecord<any>(unfilteredParameters, (key, value) =>
+        isParamVisible(key, value),
+      ),
+    [isParamVisible, unfilteredParameters],
   );
 
   // Parameters record, under a layer of singular capability, if it has none or more than one it's under "general"
@@ -376,8 +502,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
       const capability =
         (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
-          ? (parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general')
-          : 'general';
+          ? (parameter.uiDefinition?.constraints?.capability?.[0] ?? "general")
+          : "general";
       output[capability] = {
         ...output[capability],
         [key]: parameter,
@@ -387,20 +513,30 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   }, [parameters]);
 
   const getParametersByCapability = useCallback(
-    (capability: Capabilities) => parametersByCapability?.[Capabilities[capability]] ?? {},
-    [parametersByCapability]
+    (capability: Capabilities) =>
+      parametersByCapability?.[Capabilities[capability]] ?? {},
+    [parametersByCapability],
   );
 
   const capabilityEnabledParameters = useMemo(() => {
-    let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
-    Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
-      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any)) {
-        output = {
-          ...output,
-          ...parameters,
-        };
-      }
-    });
+    let output: Record<
+      string,
+      ConnectionParameterSetParameter | ConnectionParameter
+    > = parametersByCapability["general"];
+    Object.entries(parametersByCapability).forEach(
+      ([capabilityText, parameters]) => {
+        if (
+          enabledCapabilities
+            .map((c) => Capabilities[c])
+            .includes(capabilityText as any)
+        ) {
+          output = {
+            ...output,
+            ...parameters,
+          };
+        }
+      },
+    );
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
@@ -408,8 +544,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const showNameInput = useMemo(
     () =>
       !(isUsingOAuth && !isMultiAuth) &&
-      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected),
-    [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
+      (isMultiAuth ||
+        Object.keys(capabilityEnabledParameters ?? {}).length > 0 ||
+        legacyManagedIdentitySelected),
+    [
+      isUsingOAuth,
+      isMultiAuth,
+      capabilityEnabledParameters,
+      legacyManagedIdentitySelected,
+    ],
   );
 
   const validParams = useMemo(() => {
@@ -418,7 +561,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
     if (
       resourceSelectorProps &&
-      ((resourceSelectorProps?.fetchSubResourcesCallback && !resourceSelectorProps?.selectedSubResource) ||
+      ((resourceSelectorProps?.fetchSubResourcesCallback &&
+        !resourceSelectorProps?.selectedSubResource) ||
         !resourceSelectorProps?.selectedResourceId)
     ) {
       return false;
@@ -430,7 +574,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       return true;
     }
     return Object.entries(capabilityEnabledParameters).every(
-      ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
+      ([key, parameter]) =>
+        parameter?.uiDefinition?.constraints?.required !== "true" ||
+        !!parameterValues[key],
     );
   }, [
     showNameInput,
@@ -442,35 +588,51 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     parameterValues,
   ]);
 
-  const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
+  const canSubmit = useMemo(
+    () => !isLoading && validParams,
+    [isLoading, validParams],
+  );
 
   const submitCallback = useCallback(() => {
-    const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
+    const { visibleParameterValues, additionalParameterValues } =
+      parseParameterValues(parameterValues, capabilityEnabledParameters);
 
     // The OAuth tenant ID is passed a little strange, we need to manually add it here
-    const oauthTenantId = additionalParameterValues?.[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID];
+    const oauthTenantId =
+      additionalParameterValues?.[
+        SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID
+      ];
     if (showTenantIdSelection && oauthTenantId) {
-      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID] = oauthTenantId;
+      visibleParameterValues[
+        SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID
+      ] = oauthTenantId;
     }
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     const grantTypeParameter = Object.entries(unfilteredParameters).find(
-      ([key]) => key === SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE
+      ([key]) =>
+        key === SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE,
     )?.[1];
     if (supportsServicePrincipalConnection && grantTypeParameter) {
       const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
-      const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
+      const servicePrincipalValue =
+        SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
       let outputGrantType = oauthValue;
       if (isMultiAuth) {
-        const allowedValues = (grantTypeParameter as ConnectionParameterSetParameter)?.allowedValues;
+        const allowedValues = (
+          grantTypeParameter as ConnectionParameterSetParameter
+        )?.allowedValues;
         const allowedValue = allowedValues?.[0];
 
         if (allowedValues?.length !== 1) {
           LoggerService().log({
             level: LogEntryLevel.Warning,
-            area: 'createConnection.onCreate',
-            message: 'grantTypeParameter allowedValue is not a single value',
-            args: [`connectorId:${connectorId}`, `allowedValues:${allowedValues?.map((v) => v.value)?.join(',')}`],
+            area: "createConnection.onCreate",
+            message: "grantTypeParameter allowedValue is not a single value",
+            args: [
+              `connectorId:${connectorId}`,
+              `allowedValues:${allowedValues?.map((v) => v.value)?.join(",")}`,
+            ],
           });
         }
 
@@ -480,11 +642,17 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       } else if (legacyServicePrincipalSelected) {
         outputGrantType = servicePrincipalValue;
       }
-      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = outputGrantType;
+      visibleParameterValues[
+        SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE
+      ] = outputGrantType;
     }
 
-    const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
+    const alternativeParameterValues = legacyManagedIdentitySelected
+      ? {}
+      : undefined;
+    const identitySelected = legacyManagedIdentitySelected
+      ? selectedManagedIdentity
+      : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -495,7 +663,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       identitySelected,
       additionalParameterValues,
       operationParameterValues,
-      isDynamicConnectionOptionValidForConnector ? isUsingDynamicConnection : undefined // NOTE: Pass in the dynamic connection value only if the scenario is valid
+      isDynamicConnectionOptionValidForConnector
+        ? isUsingDynamicConnection
+        : undefined, // NOTE: Pass in the dynamic connection value only if the scenario is valid
     );
   }, [
     connectorId,
@@ -522,100 +692,102 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // INTL STRINGS
 
   const componentDescription = intl.formatMessage({
-    defaultMessage: 'Create a new connection',
-    id: '74e2xB',
-    description: 'General description for creating a new connection.',
+    defaultMessage: "Create a new connection",
+    id: "74e2xB",
+    description: "General description for creating a new connection.",
   });
 
   const createButtonText = intl.formatMessage({
-    defaultMessage: 'Create new',
-    id: 'JKfEGS',
-    description: 'Button to add a new connection',
+    defaultMessage: "Create new",
+    id: "JKfEGS",
+    description: "Button to add a new connection",
   });
 
   const createButtonLoadingText = intl.formatMessage({
-    defaultMessage: 'Creating...',
-    id: 'LMB8am',
-    description: 'Button text to show a connection is being created',
+    defaultMessage: "Creating...",
+    id: "LMB8am",
+    description: "Button text to show a connection is being created",
   });
 
   const createButtonAria = intl.formatMessage({
-    defaultMessage: 'Create a new connection',
-    id: 'TX4Kdr',
-    description: 'aria label description for create button',
+    defaultMessage: "Create a new connection",
+    id: "TX4Kdr",
+    description: "aria label description for create button",
   });
 
   const cancelButtonText = intl.formatMessage({
-    defaultMessage: 'Cancel',
-    id: '9EmN2M',
-    description: 'Button to cancel creating a connection',
+    defaultMessage: "Cancel",
+    id: "9EmN2M",
+    description: "Button to cancel creating a connection",
   });
 
   const cancelButtonAria = intl.formatMessage({
-    defaultMessage: 'Cancel creating a connection',
-    id: 'sFwHQc',
-    description: 'aria label description for cancel button',
+    defaultMessage: "Cancel creating a connection",
+    id: "sFwHQc",
+    description: "aria label description for cancel button",
   });
 
   const simpleDescriptionText = intl.formatMessage(
     {
-      defaultMessage: 'Create a connection for {connectorName}.',
-      id: 'vr70Gn',
-      description: 'Create a connection for selected connector',
+      defaultMessage: "Create a connection for {connectorName}.",
+      id: "vr70Gn",
+      description: "Create a connection for selected connector",
     },
     {
       connectorName: connectorDisplayName,
-    }
+    },
   );
 
   const authDescriptionText = intl.formatMessage(
     {
-      defaultMessage: 'Sign in to create a connection to {connectorDisplayName}.',
-      id: 'EiRMD4',
-      description: 'Description for creating an externally authenticated connection.',
+      defaultMessage:
+        "Sign in to create a connection to {connectorDisplayName}.",
+      id: "EiRMD4",
+      description:
+        "Description for creating an externally authenticated connection.",
     },
-    { connectorDisplayName }
+    { connectorDisplayName },
   );
 
   const signInButtonText = intl.formatMessage({
-    defaultMessage: 'Sign in',
-    id: 'y1e9yw',
-    description: 'Text for sign in button.',
+    defaultMessage: "Sign in",
+    id: "y1e9yw",
+    description: "Text for sign in button.",
   });
 
   const signInButtonAria = intl.formatMessage({
-    defaultMessage: 'Sign in to connector',
-    id: 'mca3Ml',
-    description: 'Aria label description for sign in button.',
+    defaultMessage: "Sign in to connector",
+    id: "mca3Ml",
+    description: "Aria label description for sign in button.",
   });
 
   const signInButtonLoadingText = intl.formatMessage({
-    defaultMessage: 'Signing in...',
-    id: 'E+HsWF',
-    description: 'Text for sign in button while loading.',
+    defaultMessage: "Signing in...",
+    id: "E+HsWF",
+    description: "Text for sign in button while loading.",
   });
 
   const closeErrorButtonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Close',
-    id: '9IDWMU',
-    description: 'Close button aria label',
+    defaultMessage: "Close",
+    id: "9IDWMU",
+    description: "Close button aria label",
   });
 
   const legacyManagedIdentityLabelText = intl.formatMessage({
-    defaultMessage: 'Managed identity',
-    id: 'uIgGKj',
-    description: 'Dropdown text for legacy managed identity connection',
+    defaultMessage: "Managed identity",
+    id: "uIgGKj",
+    description: "Dropdown text for legacy managed identity connection",
   });
 
   const stringResources = useMemo(
     () => ({
       USE_DYNAMIC_CONNECTIONS: intl.formatMessage({
-        defaultMessage: 'Create as per-user connection?',
-        id: '9yq5lv',
-        description: 'Dynamic connection checkbox text for consumption SKU',
+        defaultMessage: "Create as per-user connection?",
+        id: "9yq5lv",
+        description: "Dynamic connection checkbox text for consumption SKU",
       }),
     }),
-    [intl]
+    [intl],
   );
 
   const connectorDescription = useMemo(() => {
@@ -625,7 +797,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (Object.keys(parameters ?? {}).length === 0) {
       return simpleDescriptionText;
     }
-    return '';
+    return "";
   }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
 
   const submitButtonText = useMemo(() => {
@@ -634,7 +806,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         ? (createButtonTexts?.signingIn ?? signInButtonLoadingText)
         : (createButtonTexts?.creating ?? createButtonLoadingText);
     }
-    return isUsingOAuth ? (createButtonTexts?.signIn ?? signInButtonText) : (createButtonTexts?.create ?? createButtonText);
+    return isUsingOAuth
+      ? (createButtonTexts?.signIn ?? signInButtonText)
+      : (createButtonTexts?.create ?? createButtonText);
   }, [
     createButtonLoadingText,
     createButtonText,
@@ -655,16 +829,21 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // TODO -This check should be removed because backend has to fix their connection parameters if it should not be shown in UI.
   const showConfigParameters = useMemo(
     () => !resourceSelectorProps || (resourceSelectorProps && isMultiAuth),
-    [resourceSelectorProps, isMultiAuth]
+    [resourceSelectorProps, isMultiAuth],
   );
 
-  const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+  const renderConnectionParameter = (
+    key: string,
+    parameter: ConnectionParameterSetParameter | ConnectionParameter,
+  ) => {
     const connectionParameterProps: ConnectionParameterProps = {
       parameterKey: key,
       parameter,
       value: parameterValues[key],
-      setValue: (val: any) => setParameterValues((values) => ({ ...values, [key]: val })),
-      isSubscriptionDropdownDisabled: gatewayServiceConfig?.disableSubscriptionLookup,
+      setValue: (val: any) =>
+        setParameterValues((values) => ({ ...values, [key]: val })),
+      isSubscriptionDropdownDisabled:
+        gatewayServiceConfig?.disableSubscriptionLookup,
       isLoading,
       selectedSubscriptionId,
       selectSubscriptionCallback,
@@ -672,21 +851,35 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       availableSubscriptions,
       identity,
       parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
-      setKeyValue: (customKey: string, val: any) => setParameterValues((values) => ({ ...values, [customKey]: val })),
+      setKeyValue: (customKey: string, val: any) =>
+        setParameterValues((values) => ({ ...values, [customKey]: val })),
       operationParameterValues: operationParameterValues,
       parameterValues: parameterValues,
     };
 
-    const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
-      connectorId,
-      parameterKey: key,
-    });
+    const customParameterOptions =
+      ConnectionParameterEditorService()?.getConnectionParameterEditor({
+        connectorId,
+        parameterKey: key,
+      });
     if (customParameterOptions) {
       const CustomConnectionParameter = customParameterOptions.EditorComponent;
-      return <CustomConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
+      return (
+        <CustomConnectionParameter
+          key={key}
+          data-testId={key}
+          {...connectionParameterProps}
+        />
+      );
     }
 
-    return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
+    return (
+      <UniversalConnectionParameter
+        key={key}
+        data-testId={key}
+        {...connectionParameterProps}
+      />
+    );
   };
 
   // Connection parameters mapping allows grouping several parameters into one custom editor.
@@ -696,7 +889,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const renderCredentialsMappingParameter = (
     parameterKey: string,
     parameter: ConnectionParameterSetParameter | ConnectionParameter,
-    mappingName: string
+    mappingName: string,
   ) => {
     if (!allParameterMappings.has(mappingName)) {
       allParameterMappings.add(mappingName);
@@ -704,19 +897,25 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       // we need to check if there is an Editor for it - overriding each included parameters.
       const parameters = fromPairs(
         Object.entries(capabilityEnabledParameters).filter(
-          ([_, parameter]) => parameter.uiDefinition?.credentialMapping?.mappingName === mappingName
-        )
+          ([_, parameter]) =>
+            parameter.uiDefinition?.credentialMapping?.mappingName ===
+            mappingName,
+        ),
       );
 
-      const credentialMappingOptions = ConnectionParameterEditorService()?.getCredentialMappingEditorOptions?.({
-        connectorId,
-        mappingName,
-        parameters,
-      });
+      const credentialMappingOptions =
+        ConnectionParameterEditorService()?.getCredentialMappingEditorOptions?.(
+          {
+            connectorId,
+            mappingName,
+            parameters,
+          },
+        );
 
       if (credentialMappingOptions) {
         activeParameterMappings.add(mappingName);
-        const CredentialsMappingEditorComponent = credentialMappingOptions.EditorComponent;
+        const CredentialsMappingEditorComponent =
+          credentialMappingOptions.EditorComponent;
         const props: IConnectionCredentialMappingEditorProps = {
           connectorId,
           mappingName,
@@ -725,7 +924,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           renderParameter: renderConnectionParameter,
           isLoading,
         };
-        return <CredentialsMappingEditorComponent key={`mapping:${mappingName}`} {...props} />;
+        return (
+          <CredentialsMappingEditorComponent
+            key={`mapping:${mappingName}`}
+            {...props}
+          />
+        );
       }
     }
 
@@ -746,9 +950,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         if (!newValues[key]) {
           newValues[key] =
             getPropertyValue(
-              getPropertyValue(operationManifest?.properties.inputs.properties, operationParameterSets?.[key]?.name ?? ''),
-              'defaultValue'
-            ) ?? '';
+              getPropertyValue(
+                operationManifest?.properties.inputs.properties,
+                operationParameterSets?.[key]?.name ?? "",
+              ),
+              "defaultValue",
+            ) ?? "";
         }
       });
       return newValues;
@@ -758,20 +965,33 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // RENDER
 
   return (
-    <div className={classes?.['root'] ? css('msla-edit-connection-container', classes?.['root']) : 'msla-edit-connection-container'}>
-      {showActionBar ? <ActionList nodeIds={nodeIds} iconUri={iconUri} /> : null}
+    <div
+      className={
+        classes?.["root"]
+          ? css("msla-edit-connection-container", classes?.["root"])
+          : "msla-edit-connection-container"
+      }
+    >
+      {showActionBar ? (
+        <ActionList nodeIds={nodeIds} iconUri={iconUri} />
+      ) : null}
       {showActionBar ? <Divider /> : null}
 
       <Body1Strong>{description ?? componentDescription}</Body1Strong>
 
       <div
         className={
-          classes?.['content'] ? css('msla-create-connection-container', classes?.['content']) : 'msla-create-connection-container'
+          classes?.["content"]
+            ? css("msla-create-connection-container", classes?.["content"])
+            : "msla-create-connection-container"
         }
       >
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar intent={'error'} style={{ width: '100%', whiteSpace: 'normal' }}>
+          <MessageBar
+            intent={"error"}
+            style={{ width: "100%", whiteSpace: "normal" }}
+          >
             <MessageBarBody>{errorMessage}</MessageBarBody>
             <MessageBarActions
               containerAction={
@@ -791,20 +1011,26 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Legacy Multi-Auth */}
           {showLegacyMultiAuth && (
             <LegacyMultiAuth
-              data-testId={'legacy-multi-auth'}
+              data-testId={"legacy-multi-auth"}
               isLoading={isLoading}
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
               supportsOAuthConnection={supportsOAuthConnection}
-              supportsServicePrincipalConnection={supportsServicePrincipalConnection}
-              supportsLegacyManagedIdentityConnection={supportsLegacyManagedIdentityConnection}
+              supportsServicePrincipalConnection={
+                supportsServicePrincipalConnection
+              }
+              supportsLegacyManagedIdentityConnection={
+                supportsLegacyManagedIdentityConnection
+              }
             />
           )}
 
           {/* OptionalGateway Checkbox */}
-          {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(Capabilities.gateway)).length > 0 ? (
+          {!hasOnlyOnPremGateway &&
+          Object.entries(getParametersByCapability(Capabilities.gateway))
+            .length > 0 ? (
             <LegacyGatewayCheckbox
-              data-testId={'legacy-gateway-checkbox'}
+              data-testId={"legacy-gateway-checkbox"}
               isLoading={isLoading}
               value={enabledCapabilities.includes(Capabilities.gateway)}
               onChange={() => toggleCapability(Capabilities.gateway)}
@@ -814,71 +1040,102 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Name */}
           {showNameInput && (
             <ConnectionNameInput
-              data-testId={'connection-name-input'}
+              data-testId={"connection-name-input"}
               isLoading={isLoading}
               value={connectionDisplayName}
-              onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
+              onChange={(e: any, val?: string) =>
+                setConnectionDisplayName(val ?? "")
+              }
             />
           )}
 
           {/* Operation Parameters (Linked to operation manifest) */}
           {operationParameterSetKeys.length > 0
-            ? operationParameterSetKeys.map((parameter: string, index: number) => {
-                const keyValue = operationParameterSets?.[parameter]?.name ?? '';
-                const parameterFromManifest = getPropertyValue(operationManifest?.properties.inputs.properties, keyValue);
+            ? operationParameterSetKeys.map(
+                (parameter: string, index: number) => {
+                  const keyValue =
+                    operationParameterSets?.[parameter]?.name ?? "";
+                  const parameterFromManifest = getPropertyValue(
+                    operationManifest?.properties.inputs.properties,
+                    keyValue,
+                  );
 
-                // TODO(krmitta): Add support for operation parameters that are not dropdowns.
-                return (
-                  <span key={`operation-parameter-${index}`}>
-                    <UniversalConnectionParameter
-                      key={parameter}
-                      data-testId={parameter}
-                      parameterKey={parameter}
-                      value={operationParameterValues?.[parameter] ?? undefined}
-                      parameter={{
-                        ...operationParameterSets?.[parameter],
-                        type: 'dropdown',
-                        uiDefinition: {
-                          displayName: getPropertyValue(parameterFromManifest, 'title') ?? '',
-                          constraints: {
-                            ...operationParameterSets?.[parameter]?.uiDefinition?.constraints,
-                            ...parameterFromManifest,
-                            allowedValues: (getPropertyValue(parameterFromManifest, ExtensionProperties.EditorOptions)?.options ?? [])
-                              .filter(
-                                (option: any) =>
-                                  !((option.unSupportedWorkflowKind ?? []) as string[]).includes((workflowKind ?? '').toLowerCase())
+                  // TODO(krmitta): Add support for operation parameters that are not dropdowns.
+                  return (
+                    <span key={`operation-parameter-${index}`}>
+                      <UniversalConnectionParameter
+                        key={parameter}
+                        data-testId={parameter}
+                        parameterKey={parameter}
+                        value={
+                          operationParameterValues?.[parameter] ?? undefined
+                        }
+                        parameter={{
+                          ...operationParameterSets?.[parameter],
+                          type: "dropdown",
+                          uiDefinition: {
+                            displayName:
+                              getPropertyValue(
+                                parameterFromManifest,
+                                "title",
+                              ) ?? "",
+                            constraints: {
+                              ...operationParameterSets?.[parameter]
+                                ?.uiDefinition?.constraints,
+                              ...parameterFromManifest,
+                              allowedValues: (
+                                getPropertyValue(
+                                  parameterFromManifest,
+                                  ExtensionProperties.EditorOptions,
+                                )?.options ?? []
                               )
-                              .filter((option: any) => {
-                                if (option.value === 'APIMGenAIGateway' && !enableAPIMGenAIGatewayForAgents) {
-                                  return false;
-                                }
-                                return true;
-                              })
-                              .map((option: any) => ({
-                                value: option.value,
-                                text: option.displayName,
-                              })),
-                            required: `${
-                              findIndex<string>(operationManifest?.properties?.inputs?.required ?? [], (item, _index) =>
-                                equals(item, keyValue, true)
-                              ) >= 0
-                            }`,
+                                .filter(
+                                  (option: any) =>
+                                    !(
+                                      (option.unSupportedWorkflowKind ??
+                                        []) as string[]
+                                    ).includes(
+                                      (workflowKind ?? "").toLowerCase(),
+                                    ),
+                                )
+                                .filter((option: any) => {
+                                  if (
+                                    option.value === "APIMGenAIGateway" &&
+                                    !enableAPIMGenAIGatewayForAgents
+                                  ) {
+                                    return false;
+                                  }
+                                  return true;
+                                })
+                                .map((option: any) => ({
+                                  value: option.value,
+                                  text: option.displayName,
+                                })),
+                              required: `${
+                                findIndex<string>(
+                                  operationManifest?.properties?.inputs
+                                    ?.required ?? [],
+                                  (item, _index) =>
+                                    equals(item, keyValue, true),
+                                ) >= 0
+                              }`,
+                            },
                           },
-                        },
-                      }}
-                      setValue={(val: any) => {
-                        setOperationParameterValues((values) => {
-                          return {
-                            ...values,
-                            [parameter]: val ?? '',
-                          };
-                        });
-                      }}
-                      isLoading={isLoading}
-                    />
-                  </span>
-                );
-              })
+                        }}
+                        setValue={(val: any) => {
+                          setOperationParameterValues((values) => {
+                            return {
+                              ...values,
+                              [parameter]: val ?? "",
+                            };
+                          });
+                        }}
+                        isLoading={isLoading}
+                      />
+                    </span>
+                  );
+                },
+              )
             : null}
 
           {/* Legacy Managed Identity Selection */}
@@ -888,17 +1145,21 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 className="label"
                 isRequiredField={true}
                 text={legacyManagedIdentityLabelText}
-                htmlFor={'connection-param-set-select'}
+                htmlFor={"connection-param-set-select"}
                 disabled={isLoading}
               />
-              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+              <LegacyManagedIdentityDropdown
+                identity={identity}
+                onChange={onLegacyManagedIdentityChange}
+                disabled={isLoading}
+              />
             </div>
           )}
 
           {/* Authentication Selection */}
           {isMultiAuth && (
             <ConnectionMultiAuthInput
-              data-testId={'connection-multi-auth-input'}
+              data-testId={"connection-multi-auth-input"}
               isLoading={isLoading}
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
@@ -909,13 +1170,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* OAuth tenant ID selection */}
           {showTenantIdSelection && (
             <TenantPicker
-              data-testId={'connection-param-oauth-tenants'}
+              data-testId={"connection-param-oauth-tenants"}
               isLoading={isLoading}
-              value={parameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]}
+              value={
+                parameterValues[
+                  SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID
+                ]
+              }
               setValue={(val: string) =>
                 setParameterValues({
                   ...parameterValues,
-                  [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val,
+                  [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS
+                    .TOKEN_TENANT_ID]: val,
                 })
               }
             />
@@ -924,23 +1190,35 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Connector Parameters */}
           {showConfigParameters &&
             Object.entries(capabilityEnabledParameters)?.map(
-              ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-                const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
+              ([key, parameter]: [
+                string,
+                ConnectionParameterSetParameter | ConnectionParameter,
+              ]) => {
+                const mappingName =
+                  parameter?.uiDefinition?.credentialMapping?.mappingName;
                 if (mappingName) {
                   // This parameter belongs to a mapping - try to render a custom editor if supported.
-                  return renderCredentialsMappingParameter(key, parameter, mappingName);
+                  return renderCredentialsMappingParameter(
+                    key,
+                    parameter,
+                    mappingName,
+                  );
                 }
                 return renderConnectionParameter(key, parameter);
-              }
+              },
             )}
 
           {/* Resource Selector UI */}
-          {resourceSelectorProps && <AzureResourcePicker {...resourceSelectorProps} />}
+          {resourceSelectorProps && (
+            <AzureResourcePicker {...resourceSelectorProps} />
+          )}
         </div>
 
         {/* Descriptor text for simple and oauth */}
         {!isEmptyString(connectorDescription) && (
-          <div data-automation-id={'connector-connection-creation-description'}>{connectorDescription}</div>
+          <div data-automation-id={"connector-connection-creation-description"}>
+            {connectorDescription}
+          </div>
         )}
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
@@ -956,6 +1234,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
             checked={isUsingDynamicConnection}
           />
         </div>
+      )}
+
+      {/* Independent Publisher Disclaimer */}
+      {isIndependentPublisherConnector(connector) && (
+        <IndependentPublisherDisclaimer createButtonText={submitButtonText} />
       )}
 
       {/* Action Buttons */}
@@ -984,11 +1267,14 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 };
 
-const isServicePrincipalParameterVisible = (key: string, parameter: any): boolean => {
+const isServicePrincipalParameterVisible = (
+  key: string,
+  parameter: any,
+): boolean => {
   const hiddenOverrrideKeys = {
-    TOKEN_CLIENT_ID: 'token:clientId',
-    TOKEN_CLIENT_SECRET: 'token:clientSecret',
-    TOKEN_TENANT_ID: 'token:tenantId',
+    TOKEN_CLIENT_ID: "token:clientId",
+    TOKEN_CLIENT_SECRET: "token:clientSecret",
+    TOKEN_TENANT_ID: "token:tenantId",
   };
   if (
     Object.values(hiddenOverrrideKeys)
@@ -998,7 +1284,7 @@ const isServicePrincipalParameterVisible = (key: string, parameter: any): boolea
     return true;
   }
   const constraints = parameter?.uiDefinition?.constraints;
-  if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') {
+  if (constraints?.hidden === "true" || constraints?.hideInUI === "true") {
     return false;
   }
   return true;
@@ -1006,17 +1292,26 @@ const isServicePrincipalParameterVisible = (key: string, parameter: any): boolea
 
 export function parseParameterValues(
   parameterValues: Record<string, any>,
-  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>
+  capabilityEnabledParameters: Record<
+    string,
+    ConnectionParameter | ConnectionParameterSetParameter
+  >,
 ) {
   const visibleParameterValues = Object.fromEntries(
-    Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+    Object.entries(parameterValues).filter(([key]) =>
+      Object.keys(capabilityEnabledParameters).includes(key),
+    ) ?? [],
   );
   const additionalParameterValues = Object.fromEntries(
-    Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+    Object.entries(parameterValues).filter(
+      ([key]) => !Object.keys(capabilityEnabledParameters).includes(key),
+    ) ?? [],
   );
 
   return {
     visibleParameterValues,
-    additionalParameterValues: Object.keys(additionalParameterValues).length ? additionalParameterValues : undefined,
+    additionalParameterValues: Object.keys(additionalParameterValues).length
+      ? additionalParameterValues
+      : undefined,
   };
 }
