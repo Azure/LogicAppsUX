@@ -234,12 +234,7 @@ describe('parseIframeConfig', () => {
 
     it('uses window.IDENTITY_PROVIDERS when set', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
-      (window as any).IDENTITY_PROVIDERS = {
-        custom: {
-          signInEndpoint: '/.auth/login/custom',
-          name: 'Custom Provider',
-        },
-      };
+      (window as any).IDENTITY_PROVIDERS = '{"custom":{"signInEndpoint":"/.auth/login/custom","name":"Custom Provider"}}';
 
       const config = parseIframeConfig();
 
