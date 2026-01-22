@@ -126,6 +126,7 @@ export const ParameterField = ({
         onHandleRemoveError();
       }
 
+      console.log('-----3) Updating parameter ', parameterId, propertiesToUpdate);
       dispatch(
         updateParameterAndDependencies({
           nodeId,

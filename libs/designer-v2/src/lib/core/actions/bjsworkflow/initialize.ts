@@ -20,6 +20,7 @@ import {
   updateOutputs,
   updateErrorDetails,
   ErrorLevel,
+  updateParameterConditionalVisibility,
 } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
@@ -104,6 +105,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 import { setFavoriteOperations } from '../../state/panel/panelSlice';
 import { isA2AWorkflow } from '../../state/workflow/helper';
@@ -407,7 +409,8 @@ const processOutputsAndTokens = (
         operationInfo.type,
         nodeOutputs.outputs ?? {},
         { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
-        {}
+        {},
+        inputs
       ),
     ],
   };
@@ -431,7 +434,8 @@ const getSwaggerOutputAndTokenData = async (
       operationInfo.type,
       nodeOutputs.outputs ?? {},
       { iconUri: getIconUriFromConnector(connector), brandColor: getBrandColorFromConnector(connector) },
-      settings
+      settings,
+      inputs
     ),
   };
 };
@@ -772,3 +776,32 @@ export const initializeDiscoveryPanelFavoriteOperations = async (dispatch: Dispa
     dispatch(setFavoriteOperations([])); // fallback to empty if there's an error
   }
 };
+
+type UpdateParameterVisibilityPayload = {
+  nodeId: string;
+  groupId: string;
+  parameterId: string;
+  value: boolean;
+  operationInfo: NodeOperation;
+  isTrigger: boolean;
+};
+
+export const updateParameterConditionalVisibilityAndRefreshOutputs = createAsyncThunk(
+  'updateParameterConditionalVisibilityAndRefreshOutputs',
+  async (payload: UpdateParameterVisibilityPayload, { dispatch, getState }) => {
+    const { nodeId, groupId, parameterId, value, operationInfo, isTrigger } = payload;
+
+    // Store state for undo/redo
+    // dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
+
+    // Update parameter visibility
+    dispatch(updateParameterConditionalVisibility({ nodeId, groupId, parameterId, value }));
+
+    // Get updated inputs after the state change
+    const state = getState() as RootState;
+    const updatedNodeInputs = state.operations.inputParameters[nodeId];
+
+    // Update outputs and tokens with the updated inputs
+    await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, updatedNodeInputs, {});
+  }
+);

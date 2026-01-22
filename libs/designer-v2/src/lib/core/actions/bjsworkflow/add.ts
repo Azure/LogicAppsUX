@@ -552,7 +552,8 @@ export const addTokensAndVariables = (
       operationType,
       nodeOutputs.outputs ?? {},
       { iconUri, brandColor },
-      settings
+      settings,
+      nodeInputs
     )
   );
 

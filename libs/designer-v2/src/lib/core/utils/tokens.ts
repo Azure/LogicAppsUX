@@ -2,7 +2,7 @@ import Constants from '../../common/constants';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
-import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
+import type { NodeOperation, OutputInfo, NodeInputs } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokens/tokensSlice';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
@@ -30,6 +30,8 @@ import {
   ParameterIcon,
   remapTokenSegmentValue,
   shouldIncludeSelfForRepetitionReference,
+  getParameterFromName,
+  parameterHasValue,
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
 import { getSplitOnValue, hasSecureOutputs } from './setting';
@@ -124,12 +126,37 @@ export const getBuiltInTokens = (manifest?: OperationManifest): OutputToken[] =>
   }));
 };
 
+export const filterTokensForAgentPerInput = (inputs: NodeInputs, outputs: Record<string, OutputInfo>): Record<string, OutputInfo> => {
+  let filteredOutputs = outputs;
+
+  const responseFormatTypeParam = getParameterFromName(inputs, 'agentModelSettings.agentChatCompletionSettings.responseFormat.type');
+  const hasResponseFormatType = responseFormatTypeParam && parameterHasValue(responseFormatTypeParam);
+  console.log('-----responseFormatTypeParam, hasResponseFormatType ', responseFormatTypeParam, hasResponseFormatType);
+  console.log('-----inputs, outputs ', inputs, outputs);
+
+  if (hasResponseFormatType) {
+    // Filter out lastAssistantMessage when responseFormat.type is defined
+    filteredOutputs = Object.keys(outputs)
+      .filter((outputKey) => outputs[outputKey].name !== 'lastAssistantMessage')
+      .reduce(
+        (filtered, outputKey) => {
+          filtered[outputKey] = outputs[outputKey];
+          return filtered;
+        },
+        {} as Record<string, OutputInfo>
+      );
+  }
+
+  return filteredOutputs;
+};
+
 export const convertOutputsToTokens = (
   nodeId: string | undefined,
   nodeType: string,
   outputs: Record<string, OutputInfo>,
   operationMetadata: { iconUri: string; brandColor: string },
-  settings?: Settings
+  settings?: Settings,
+  inputs?: NodeInputs
 ): OutputToken[] => {
   const { iconUri: icon, brandColor } = operationMetadata;
   const isSecure = hasSecureOutputs(nodeType, settings);
@@ -146,8 +173,32 @@ export const convertOutputsToTokens = (
       tokenType = TokenType.OUTPUTS;
   }
 
+  // Filter outputs for agent operations when responseFormat.type is defined
+  console.log('1)', nodeType, outputs, inputs);
+  let filteredOutputs = outputs;
+  if (nodeType === 'Agent' && inputs) {
+    filteredOutputs = filterTokensForAgentPerInput(inputs, outputs);
+
+    console.log('----filteredOutputs )', filteredOutputs);
+
+    // const responseFormatTypeParam = getParameterFromName(inputs, 'agentModelSettings.agentChatCompletionSettings.responseFormat.type');
+    // console.log("---responseFormatTypeParam ", responseFormatTypeParam);
+    // const hasResponseFormatType = responseFormatTypeParam && parameterHasValue(responseFormatTypeParam);
+    // console.log("-----hasResponseFormatType ", hasResponseFormatType);
+
+    // if (hasResponseFormatType) {
+    //   // Filter out lastAssistantMessage when responseFormat.type is defined
+    //   filteredOutputs = Object.keys(outputs)
+    //     .filter(outputKey => outputs[outputKey].name !== 'lastAssistantMessage')
+    //     .reduce((filtered, outputKey) => {
+    //       filtered[outputKey] = outputs[outputKey];
+    //       return filtered;
+    //     }, {} as Record<string, OutputInfo>);
+    // }
+  }
+
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
-  return Object.keys(outputs).map((outputKey) => {
+  return Object.keys(filteredOutputs).map((outputKey) => {
     const {
       key,
       name,
@@ -164,7 +215,7 @@ export const convertOutputsToTokens = (
       value,
       alias,
       description,
-    } = outputs[outputKey];
+    } = filteredOutputs[outputKey];
     return {
       key: alias ? removeAliasingKeyRedundancies(key) : key,
       brandColor,
