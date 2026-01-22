@@ -23,21 +23,22 @@ export const useTemplateSearchFiltersStyles = makeStyles({
 
   filtersDropdowns: {
     display: 'flex',
-    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: '12px',
     marginBottom: '16px',
     width: '100%',
     '& > *': {
-      flex: '1 1 0',
-      minWidth: '0',
+      flex: '1 1 auto',
+      minWidth: '150px',
     },
   },
 
   filtersTabs: {
     display: 'flex',
-    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: '12px',
     width: '100%',
   },
 
@@ -45,16 +46,21 @@ export const useTemplateSearchFiltersStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     marginLeft: 'auto',
+    flexShrink: 0,
   },
 
   sortField: {
     display: 'flex',
+    flexWrap: 'wrap',
     alignItems: 'center',
+    gap: '8px',
+    padding: '10px',
     ...shorthands.margin('0'),
   },
 
   sortDropdown: {
-    width: '180px', // Reduced width
-    marginLeft: '8px',
+    minWidth: '120px',
+    maxWidth: '180px',
+    width: 'auto',
   },
 });
