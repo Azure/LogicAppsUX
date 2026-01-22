@@ -277,7 +277,7 @@ declare global {
  * Parses the IDENTITY_PROVIDERS global variable from a JSON string.
  * @returns The parsed identity providers or undefined if invalid/not set
  */
-function parseIdentityProviders(): Record<string, IdentityProvider> | undefined {
+export function parseIdentityProviders(): Record<string, IdentityProvider> | undefined {
   const identityProviders = window.IDENTITY_PROVIDERS;
 
   if (!identityProviders) {
