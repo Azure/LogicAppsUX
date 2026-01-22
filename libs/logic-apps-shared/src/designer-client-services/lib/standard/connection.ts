@@ -718,7 +718,7 @@ function convertServiceProviderConnectionDataToConnection(
 }
 
 function convertMcpConnectionDataToConnection(connectionKey: string, connectionData: AgentMcpConnectionModel): Connection {
-  const { displayName } = connectionData;
+  const { displayName, mcpServerUrl, authentication } = connectionData;
 
   return {
     name: connectionKey,
@@ -727,7 +727,22 @@ function convertMcpConnectionDataToConnection(connectionKey: string, connectionD
     properties: {
       api: { id: mcpclientConnectorId } as any,
       createdTime: '',
-      connectionParameters: {},
+      connectionParameters: {
+        mcpServerUrl: {
+          type: 'string',
+          metadata: {
+            value: mcpServerUrl,
+          },
+        },
+        ...(authentication && {
+          authentication: {
+            type: 'object',
+            metadata: {
+              value: authentication,
+            },
+          },
+        }),
+      },
       displayName: displayName as string,
       statuses: [{ status: 'Connected' }],
       overallStatus: 'Connected',
