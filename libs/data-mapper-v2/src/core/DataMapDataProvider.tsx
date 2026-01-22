@@ -6,6 +6,7 @@ import { changeTheme } from './state/AppSlice';
 import { changeIsTestDisabledForOS, setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
+import { updateTestOutput } from './state/PanelSlice';
 import type { AppDispatch } from './state/Store';
 import type { MapDefinitionEntry, DataMapSchema, IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
@@ -14,6 +15,14 @@ import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { MapDefinitionDeserializer } from '../mapHandling/MapDefinitionDeserializer';
 import { updateDeserializationMessages } from './state/ErrorsSlice';
+
+export interface TestXsltTransformResult {
+  success: boolean;
+  outputXml?: string;
+  error?: string;
+  statusCode: number;
+  statusText: string;
+}
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -28,6 +37,7 @@ export interface DataMapDataProviderProps {
   theme?: ThemeType;
   children?: React.ReactNode;
   isTestDisabledForOS?: boolean;
+  testXsltTransformResult?: TestXsltTransformResult;
 }
 
 const DataProviderInner = ({
@@ -41,6 +51,7 @@ const DataProviderInner = ({
   mapDefinition,
   dataMapMetadata,
   isTestDisabledForOS,
+  testXsltTransformResult,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
@@ -122,6 +133,32 @@ const DataProviderInner = ({
   useEffect(() => {
     dispatch(changeIsTestDisabledForOS(!!isTestDisabledForOS));
   }, [dispatch, isTestDisabledForOS]);
+
+  // Handle XSLT transform test results from the extension host
+  useEffect(() => {
+    if (testXsltTransformResult) {
+      if (testXsltTransformResult.success) {
+        dispatch(
+          updateTestOutput({
+            response: {
+              statusCode: testXsltTransformResult.statusCode,
+              statusText: testXsltTransformResult.statusText,
+              outputInstance: {
+                $content: testXsltTransformResult.outputXml ?? '',
+                '$content-type': 'application/xml',
+              },
+            },
+          })
+        );
+      } else {
+        dispatch(
+          updateTestOutput({
+            error: new Error(testXsltTransformResult.error ?? 'XSLT transformation failed'),
+          })
+        );
+      }
+    }
+  }, [dispatch, testXsltTransformResult]);
 
   return <>{children}</>;
 };

@@ -10,6 +10,7 @@ import {
   dataMapDefinitionsPath,
   dataMapsPath,
   draftMapDefinitionSuffix,
+  draftXsltExtension,
   mapDefinitionExtension,
   mapXsltExtension,
   schemasPath,
@@ -23,7 +24,7 @@ import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
-import { ExtensionCommand, Platform, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import {
   copyFileSync,
   existsSync as fileExistsSync,
@@ -33,13 +34,17 @@ import {
   readdirSync,
   readFileSync,
   mkdirSync,
+  writeFileSync,
 } from 'fs';
 import * as path from 'path';
+import * as os from 'os';
+import { execSync } from 'child_process';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
 import { copyOverImportedSchemas } from './DataMapperPanelUtils';
 import { switchToDataMapperV2 } from '../setDataMapperVersion';
+import SaxonJS from 'saxon-js';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -210,14 +215,143 @@ export default class DataMapperPanel {
         });
         break;
       }
+      case ExtensionCommand.testXsltTransform: {
+        this.handleTestXsltTransform(msg.data.xsltContent, msg.data.inputXml);
+        break;
+      }
     }
   }
 
   public isTestDisabledForOS() {
+    // Local XSLT transformation is now available on all platforms via SaxonJS
+    // So we no longer need to disable testing on macOS
     this.sendMsgToWebview({
       command: ExtensionCommand.isTestDisabledForOS,
-      data: process.platform === Platform.mac,
+      data: false,
     });
+  }
+
+  /**
+   * Handles XSLT 3.0 transformation locally using SaxonJS with xslt3 CLI compilation.
+   * This allows testing data maps on all platforms without requiring a .NET backend.
+   *
+   * The approach:
+   * 1. Write XSLT to a temp file
+   * 2. Use xslt3 CLI to compile XSLT to SEF (Stylesheet Export Format)
+   * 3. Parse SEF and use with SaxonJS.transform()
+   * 4. Return result and clean up temp files
+   */
+  public async handleTestXsltTransform(xsltContent: string, inputXml: string) {
+    const tempDir = os.tmpdir();
+    const uniqueId = Date.now().toString();
+    const xsltPath = path.join(tempDir, `datamap-${uniqueId}.xslt`);
+    const sefPath = path.join(tempDir, `datamap-${uniqueId}.sef.json`);
+
+    console.log('[DataMapper Test] Starting XSLT transformation test');
+    console.log('[DataMapper Test] Extension path:', ext.context.extensionPath);
+
+    try {
+      // Step 1: Write XSLT to temp file
+      console.log('[DataMapper Test] Writing XSLT to:', xsltPath);
+      writeFileSync(xsltPath, xsltContent, 'utf8');
+
+      // Step 2: Find xslt3 CLI path - use the .js file directly for cross-platform compatibility
+      const xslt3Path = path.join(ext.context.extensionPath, 'node_modules', 'xslt3', 'xslt3.js');
+      console.log('[DataMapper Test] xslt3 path:', xslt3Path);
+      console.log('[DataMapper Test] xslt3 exists:', fileExistsSync(xslt3Path));
+
+      if (!fileExistsSync(xslt3Path)) {
+        throw new Error(`xslt3 CLI not found at: ${xslt3Path}`);
+      }
+
+      // Step 3: Compile XSLT to SEF using xslt3 CLI via node
+      const compileCmd = `node "${xslt3Path}" -xsl:"${xsltPath}" -export:"${sefPath}" -nogo`;
+      console.log('[DataMapper Test] Compile command:', compileCmd);
+
+      try {
+        const compileResult = execSync(compileCmd, {
+          encoding: 'utf8',
+          timeout: 30000, // 30 second timeout
+          maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+        });
+        console.log('[DataMapper Test] Compile output:', compileResult || '(empty)');
+      } catch (execError: unknown) {
+        const err = execError as { stderr?: string; stdout?: string; message?: string };
+        console.error('[DataMapper Test] Compile failed:', err.stderr || err.message);
+        throw new Error(`XSLT compilation failed: ${err.stderr || err.message}`);
+      }
+
+      // Step 4: Check if SEF was created
+      console.log('[DataMapper Test] Checking SEF at:', sefPath);
+      console.log('[DataMapper Test] SEF exists:', fileExistsSync(sefPath));
+
+      if (!fileExistsSync(sefPath)) {
+        throw new Error('Failed to compile XSLT: SEF file was not created');
+      }
+
+      // Step 5: Read and parse SEF
+      const sefContent = readFileSync(sefPath, 'utf8');
+      console.log('[DataMapper Test] SEF size:', sefContent.length, 'bytes');
+      const sef = JSON.parse(sefContent);
+
+      // Step 6: Execute transformation using SaxonJS
+      console.log('[DataMapper Test] Starting SaxonJS transform');
+      const result = await SaxonJS.transform(
+        {
+          stylesheetInternal: sef,
+          sourceText: inputXml,
+          destination: 'serialized',
+        },
+        'async'
+      );
+      console.log('[DataMapper Test] Transform complete, result length:', result.principalResult?.length ?? 0);
+
+      // Send successful result back to webview
+      console.log('[DataMapper Test] Sending success result to webview');
+      this.sendMsgToWebview({
+        command: ExtensionCommand.testXsltTransformResult,
+        data: {
+          success: true,
+          outputXml: result.principalResult ?? '',
+          statusCode: 200,
+          statusText: 'OK',
+        },
+      });
+    } catch (error) {
+      // Send error result back to webview
+      console.error('[DataMapper Test] Error:', error);
+      let errorMessage = 'Unknown error during XSLT transformation';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        const execError = error as { stderr?: string; message?: string };
+        errorMessage = execError.stderr || execError.message || errorMessage;
+      }
+
+      console.log('[DataMapper Test] Sending error result to webview:', errorMessage);
+      this.sendMsgToWebview({
+        command: ExtensionCommand.testXsltTransformResult,
+        data: {
+          success: false,
+          error: errorMessage,
+          statusCode: 500,
+          statusText: 'Transformation Error',
+        },
+      });
+    } finally {
+      // Clean up temp files
+      try {
+        if (fileExistsSync(xsltPath)) {
+          removeFileSync(xsltPath);
+        }
+        if (fileExistsSync(sefPath)) {
+          removeFileSync(sefPath);
+        }
+        console.log('[DataMapper Test] Cleaned up temp files');
+      } catch {
+        // Ignore cleanup errors
+      }
+    }
   }
 
   public updateWebviewPanelTitle() {
@@ -236,7 +370,12 @@ export default class DataMapperPanel {
 
   public handleLoadMapDefinitionIfAny() {
     if (this.mapDefinitionData) {
-      const mapMetadata = this.readMapMetadataFile();
+      // Use embedded metadata if available, otherwise try to read from separate file (legacy)
+      let mapMetadata = this.mapDefinitionData.metadata;
+      if (!mapMetadata) {
+        mapMetadata = this.readMapMetadataFile();
+      }
+
       this.sendMsgToWebview({
         command: ExtensionCommand.loadDataMap,
         data: {
@@ -491,16 +630,20 @@ export default class DataMapperPanel {
     });
   }
 
-  public saveDraftDataMapDefinition(mapDefFileContents: string) {
-    const mapDefileName = `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
-    const dataMapDefFolderPath = path.join(ext.defaultLogicAppPath, dataMapDefinitionsPath);
-    const filePath = path.join(dataMapDefFolderPath, mapDefileName);
+  /**
+   * Saves a draft XSLT file with embedded metadata.
+   * The draft file is saved to the Maps folder with a .draft.xslt extension.
+   */
+  public saveDraftDataMapDefinition(draftXsltContent: string) {
+    const draftFileName = `${this.dataMapName}${draftXsltExtension}`;
+    const dataMapFolderPath = path.join(ext.defaultLogicAppPath, dataMapsPath);
+    const filePath = path.join(dataMapFolderPath, draftFileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
     // Harmless if directory already exists
-    fs.mkdir(dataMapDefFolderPath, { recursive: true })
+    fs.mkdir(dataMapFolderPath, { recursive: true })
       .then(() => {
-        fs.writeFile(filePath, mapDefFileContents, 'utf8');
+        fs.writeFile(filePath, draftXsltContent, 'utf8');
       })
       .catch(ext.showError);
   }
@@ -545,6 +688,13 @@ export default class DataMapperPanel {
   }
 
   public deleteDraftDataMapDefinition() {
+    // Delete new format draft XSLT file
+    const draftXsltPath = path.join(ext.defaultLogicAppPath, dataMapsPath, `${this.dataMapName}${draftXsltExtension}`);
+    if (fileExistsSync(draftXsltPath)) {
+      removeFileSync(draftXsltPath);
+    }
+
+    // Also delete legacy draft LML file if it exists
     const draftMapDefinitionPath = path.join(
       ext.defaultLogicAppPath,
       dataMapDefinitionsPath,

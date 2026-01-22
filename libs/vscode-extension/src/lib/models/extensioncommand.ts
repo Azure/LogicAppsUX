@@ -51,6 +51,8 @@ export const ExtensionCommand = {
   logTelemetry: 'logTelemetry',
   sendNotification: 'sendNotification',
   isTestDisabledForOS: 'isTestDisabledForOS',
+  testXsltTransform: 'testXsltTransform',
+  testXsltTransformResult: 'testXsltTransformResult',
   fileABug: 'fileABug',
   resetDesignerDirtyState: 'resetDesignerDirtyState',
   switchToDataMapperV2: 'switchToDataMapperV2',

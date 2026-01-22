@@ -14,19 +14,28 @@ export interface IDataMapperFileService {
   getSchemaFromFile(schemaType: SchemaType): void;
 
   /**
+   * @deprecated Use saveMapXsltCall instead. This method is kept for backward compatibility during migration.
    * Saves both the data map definition and metadata to the filesystem.
    * @arg {string} dataMapDefinition - The map definition as a string.
    * @arg {string} mapMetadata - Map metadata to be saved, as a string.
    * @return {null} we get the output from the store
    */
-  saveMapDefinitionCall(dataMapDefinition: string, mapMetadata: string): void;
+  saveMapDefinitionCall?(dataMapDefinition: string, mapMetadata: string): void;
 
   /**
-   * Saves the data map draft to the filesystem.
-   * @arg {string} dataMapDefinition - The map definition as a string.
+   * Saves the data map XSLT with embedded metadata to the filesystem.
+   * This is the primary save method - the XSLT contains all mapping information.
+   * @arg {string} xsltWithMetadata - The XSLT content with embedded metadata comment.
+   * @return {null}
+   */
+  saveMapXsltCall(xsltWithMetadata: string): void;
+
+  /**
+   * Saves the data map draft XSLT to the filesystem.
+   * @arg {string} xsltWithMetadata - The draft XSLT content with embedded metadata.
    * @return {null} we get the output from the store
    */
-  saveDraftStateCall(dataMapDefinition: string): void;
+  saveDraftStateCall(xsltWithMetadata: string): void;
 
   /**
    * Gets all schemas from the filesystem from the Schemas folder.
@@ -35,11 +44,12 @@ export interface IDataMapperFileService {
   readCurrentSchemaOptions(): void;
 
   /**
+   * @deprecated Use saveMapXsltCall instead. Kept for backward compatibility.
    * Saves the XSLT to the filesystem.
    * @arg {string} xslt - The map XLST as a string.
    * @return {null}
    */
-  saveXsltCall(xslt: string): void;
+  saveXsltCall?(xslt: string): void;
 
   /**
    * Gets custom XSLT paths from the filesystem.
@@ -56,6 +66,14 @@ export interface IDataMapperFileService {
   sendNotification(title: string, text: string, level: number): void;
 
   isTestDisabledForOS(): void;
+
+  /**
+   * Triggers an XSLT transformation test locally via the extension host.
+   * The result will be sent back via the testXsltTransformResult command.
+   * @arg {string} xsltContent - The XSLT content to transform with.
+   * @arg {string} inputXml - The input XML to transform.
+   */
+  testXsltTransform(xsltContent: string, inputXml: string): void;
 }
 
 let service: IDataMapperFileService;
