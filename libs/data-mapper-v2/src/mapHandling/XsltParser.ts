@@ -2,6 +2,44 @@ import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import { reservedMapDefinitionKeys } from '../constants/MapDefinitionConstants';
 
 /**
+ * Set of property names that could cause prototype pollution.
+ * These should never be used as object keys from untrusted input.
+ */
+const DANGEROUS_PROPERTY_NAMES = new Set(['__proto__', 'constructor', 'prototype']);
+
+/**
+ * Checks if a property name is safe to use as an object key.
+ * Prevents prototype pollution attacks.
+ *
+ * @param name - The property name to check
+ * @returns True if the property name is safe to use
+ */
+const isSafePropertyName = (name: string): boolean => {
+  return !DANGEROUS_PROPERTY_NAMES.has(name);
+};
+
+/**
+ * Safely assigns a value to an object property, preventing prototype pollution.
+ * Uses Object.defineProperty to ensure only own properties are set.
+ *
+ * @param obj - The object to assign to
+ * @param key - The property key
+ * @param value - The value to assign
+ */
+const safeAssign = (obj: MapDefinitionEntry, key: string, value: MapDefinitionEntry | string): void => {
+  if (!isSafePropertyName(key)) {
+    console.warn(`Skipping potentially dangerous property name: ${key}`);
+    return;
+  }
+  Object.defineProperty(obj, key, {
+    value,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  });
+};
+
+/**
  * Represents a parsed mapping from an XSLT element.
  */
 export interface ParsedMapping {
@@ -570,6 +608,7 @@ export class XsltParser {
 
   /**
    * Adds a mapping to the target tree structure.
+   * Uses safe property assignment to prevent prototype pollution.
    */
   private addMappingToTree(tree: MapDefinitionEntry, mapping: ParsedMapping): void {
     const pathParts = mapping.targetPath.split('/').filter((p) => p);
@@ -580,26 +619,32 @@ export class XsltParser {
       const part = pathParts[i];
       const isLast = i === pathParts.length - 1;
 
+      // Skip dangerous property names
+      if (!isSafePropertyName(part)) {
+        console.warn(`Skipping mapping with dangerous property name: ${part}`);
+        return;
+      }
+
       if (isLast) {
         // Handle loop wrapping
         if (mapping.isInLoop && mapping.loopSource) {
           const loopKey = `$for(${mapping.loopSource})`;
-          if (!current[loopKey]) {
-            current[loopKey] = {};
+          if (!Object.prototype.hasOwnProperty.call(current, loopKey)) {
+            safeAssign(current, loopKey, {});
           }
-          (current[loopKey] as MapDefinitionEntry)[part] = mapping.sourceExpression;
+          safeAssign(current[loopKey] as MapDefinitionEntry, part, mapping.sourceExpression);
         } else if (mapping.isConditional && mapping.condition) {
           const ifKey = `$if(${mapping.condition})`;
-          if (!current[ifKey]) {
-            current[ifKey] = {};
+          if (!Object.prototype.hasOwnProperty.call(current, ifKey)) {
+            safeAssign(current, ifKey, {});
           }
-          (current[ifKey] as MapDefinitionEntry)[part] = mapping.sourceExpression;
+          safeAssign(current[ifKey] as MapDefinitionEntry, part, mapping.sourceExpression);
         } else {
-          current[part] = mapping.sourceExpression;
+          safeAssign(current, part, mapping.sourceExpression);
         }
       } else {
-        if (!current[part]) {
-          current[part] = {};
+        if (!Object.prototype.hasOwnProperty.call(current, part)) {
+          safeAssign(current, part, {});
         }
         current = current[part] as MapDefinitionEntry;
       }

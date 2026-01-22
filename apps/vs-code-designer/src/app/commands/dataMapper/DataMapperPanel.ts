@@ -46,6 +46,52 @@ import { copyOverImportedSchemas } from './DataMapperPanelUtils';
 import { switchToDataMapperV2 } from '../setDataMapperVersion';
 import SaxonJS from 'saxon-js';
 
+/**
+ * Finds the xslt3 CLI path by checking multiple possible locations.
+ * The xslt3 package might be installed in the extension's node_modules,
+ * or hoisted to a parent node_modules directory.
+ *
+ * @param extensionPath - The extension's root path
+ * @returns The path to xslt3.js, or null if not found
+ */
+const findXslt3Path = (extensionPath: string): string | null => {
+  const xslt3File = 'xslt3.js';
+
+  // Possible locations to check in order of preference
+  const possiblePaths = [
+    // Direct dependency in extension's node_modules
+    path.join(extensionPath, 'node_modules', 'xslt3', xslt3File),
+    // Hoisted to workspace root node_modules (for development)
+    path.join(extensionPath, '..', '..', 'node_modules', 'xslt3', xslt3File),
+    // Try using require.resolve as fallback (handles various node_modules structures)
+  ];
+
+  for (const possiblePath of possiblePaths) {
+    if (fileExistsSync(possiblePath)) {
+      return possiblePath;
+    }
+  }
+
+  // Try require.resolve as a final fallback
+  try {
+    // require.resolve finds the module regardless of hoisting
+    const xslt3MainPath = require.resolve('xslt3');
+    const xslt3Dir = path.dirname(xslt3MainPath);
+    const xslt3JsPath = path.join(xslt3Dir, xslt3File);
+    if (fileExistsSync(xslt3JsPath)) {
+      return xslt3JsPath;
+    }
+    // Also check if the main IS xslt3.js
+    if (xslt3MainPath.endsWith(xslt3File)) {
+      return xslt3MainPath;
+    }
+  } catch {
+    // require.resolve failed, xslt3 not found
+  }
+
+  return null;
+};
+
 export default class DataMapperPanel {
   public panel: WebviewPanel;
   public dataMapVersion: number;
@@ -242,6 +288,17 @@ export default class DataMapperPanel {
    * 4. Return result and clean up temp files
    */
   public async handleTestXsltTransform(xsltContent: string, inputXml: string) {
+    // Validate XSLT size before processing to prevent memory issues
+    const MAX_XSLT_SIZE = 5 * 1024 * 1024; // 5MB limit
+    const xsltSize = Buffer.byteLength(xsltContent, 'utf8');
+    console.log('[DataMapper Test] XSLT size:', xsltSize, 'bytes');
+
+    if (xsltSize > MAX_XSLT_SIZE) {
+      const sizeMB = (xsltSize / (1024 * 1024)).toFixed(2);
+      const limitMB = (MAX_XSLT_SIZE / (1024 * 1024)).toFixed(0);
+      throw new Error(`XSLT content is too large (${sizeMB}MB). Maximum size is ${limitMB}MB.`);
+    }
+
     const tempDir = os.tmpdir();
     const uniqueId = Date.now().toString();
     const xsltPath = path.join(tempDir, `datamap-${uniqueId}.xslt`);
@@ -256,12 +313,14 @@ export default class DataMapperPanel {
       writeFileSync(xsltPath, xsltContent, 'utf8');
 
       // Step 2: Find xslt3 CLI path - use the .js file directly for cross-platform compatibility
-      const xslt3Path = path.join(ext.context.extensionPath, 'node_modules', 'xslt3', 'xslt3.js');
+      const xslt3Path = findXslt3Path(ext.context.extensionPath);
       console.log('[DataMapper Test] xslt3 path:', xslt3Path);
-      console.log('[DataMapper Test] xslt3 exists:', fileExistsSync(xslt3Path));
 
-      if (!fileExistsSync(xslt3Path)) {
-        throw new Error(`xslt3 CLI not found at: ${xslt3Path}`);
+      if (!xslt3Path) {
+        throw new Error(
+          'xslt3 CLI not found. Please ensure the xslt3 package is installed. ' +
+            'Checked locations: extension node_modules, workspace node_modules, and require.resolve paths.'
+        );
       }
 
       // Step 3: Compile XSLT to SEF using xslt3 CLI via node
@@ -341,15 +400,24 @@ export default class DataMapperPanel {
     } finally {
       // Clean up temp files
       try {
+        let cleanedXslt = false;
+        let cleanedSef = false;
+
         if (fileExistsSync(xsltPath)) {
           removeFileSync(xsltPath);
+          cleanedXslt = true;
         }
         if (fileExistsSync(sefPath)) {
           removeFileSync(sefPath);
+          cleanedSef = true;
         }
-        console.log('[DataMapper Test] Cleaned up temp files');
-      } catch {
-        // Ignore cleanup errors
+        console.log('[DataMapper Test] Temp file cleanup:', {
+          xsltPath: cleanedXslt ? 'deleted' : 'not found',
+          sefPath: cleanedSef ? 'deleted' : 'not found',
+        });
+      } catch (cleanupError) {
+        // Log cleanup errors for debugging but don't fail the operation
+        console.warn('[DataMapper Test] Temp file cleanup warning:', cleanupError);
       }
     }
   }

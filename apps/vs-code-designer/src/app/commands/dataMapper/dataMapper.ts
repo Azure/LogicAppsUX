@@ -113,8 +113,16 @@ async function loadFromXsltFile(context: IActionContext, xsltPath: string): Prom
 
   const fileContents = await fs.readFile(fileToLoad, 'utf-8');
 
-  // Try to extract embedded metadata
-  const loadedData = DataMapperExt.loadMapFromXslt(fileContents, ext);
+  // Try to extract embedded metadata with error handling
+  let loadedData: ReturnType<typeof DataMapperExt.loadMapFromXslt> = null;
+  try {
+    loadedData = DataMapperExt.loadMapFromXslt(fileContents, ext);
+  } catch (parseError) {
+    const errorMessage = parseError instanceof Error ? parseError.message : 'Unknown error';
+    ext.showError(localize('XsltParsingFailed', 'Failed to parse XSLT file: {0}. The file may be corrupted or malformed.', errorMessage));
+    context.telemetry.properties.xsltParsingError = errorMessage;
+    return;
+  }
 
   if (!loadedData) {
     // XSLT doesn't have embedded metadata - try to find and migrate from LML

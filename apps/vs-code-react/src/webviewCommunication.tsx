@@ -231,7 +231,9 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
                 dispatch(changeXsltContentV2(message.data.xsltContent));
               } else {
                 // v2 format: use embedded mapDefinition directly
-                dispatch(changeMapDefinitionV2(message.data.mapDefinition));
+                // Fallback to empty object if mapDefinition is undefined or null
+                const mapDefinition = message.data.mapDefinition ?? {};
+                dispatch(changeMapDefinitionV2(mapDefinition));
               }
 
               dispatch(changeDataMapFilename(message.data.mapDefinitionName));

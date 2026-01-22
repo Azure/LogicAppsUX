@@ -462,25 +462,25 @@ export const dataMapSlice = createSlice({
       state.sourceInEditState = false;
       state.targetInEditState = false;
     },
+    /**
+     * Updates a function node's position.
+     * NOTE: Position updates are applied directly without going through doDataMapOperation
+     * to avoid flooding the undo history during drag operations. The map is still marked dirty
+     * so unsaved changes are tracked, but intermediate drag positions don't create undo entries.
+     */
     updateFunctionPosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
       const node = state.curDataMapOperation.functionNodes[action.payload.id];
       if (!node) {
         return;
       }
-      const newState: DataMapState = {
-        ...state,
-        curDataMapOperation: {
-          ...state.curDataMapOperation,
-          functionNodes: {
-            ...state.curDataMapOperation.functionNodes,
-            [action.payload.id]: {
-              ...node,
-              position: action.payload.position,
-            },
-          },
-        },
+      // Update position directly without creating a full undo history entry
+      // This prevents flooding undo history during drag operations
+      state.curDataMapOperation.functionNodes[action.payload.id] = {
+        ...node,
+        position: action.payload.position,
       };
-      doDataMapOperation(state, newState, 'Update function position');
+      // Mark dirty but don't create full history entry for intermediate positions
+      state.isDirty = true;
     },
     deleteConnectionFromFunctionMenu: (state, action: PayloadAction<{ inputIndex: number; targetId: string }>) => {
       const newConnections = {
