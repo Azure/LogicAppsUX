@@ -228,7 +228,7 @@ export function parseIframeConfig(): IframeConfig {
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
-    identityProviders: window.IDENTITY_PROVIDERS || DEFAULT_IDENTITY_PROVIDERS || undefined,
+    identityProviders: parseIdentityProviders() || DEFAULT_IDENTITY_PROVIDERS,
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };
@@ -269,6 +269,29 @@ export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
 declare global {
   interface Window {
     LOGGED_IN_USER_NAME?: string;
-    IDENTITY_PROVIDERS?: Record<string, IdentityProvider>;
+    IDENTITY_PROVIDERS?: string;
   }
+}
+
+/**
+ * Parses the IDENTITY_PROVIDERS global variable from a JSON string.
+ * @returns The parsed identity providers or undefined if invalid/not set
+ */
+function parseIdentityProviders(): Record<string, IdentityProvider> | undefined {
+  const identityProviders = window.IDENTITY_PROVIDERS;
+
+  if (!identityProviders) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(identityProviders);
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed as Record<string, IdentityProvider>;
+    }
+  } catch (e) {
+    console.error('Failed to parse IDENTITY_PROVIDERS:', e);
+  }
+
+  return undefined;
 }
