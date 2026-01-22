@@ -421,7 +421,11 @@ export default {
         },
         body: {
           title: 'Body',
-          description: 'Response body based on the configured schema',
+          description: 'This is the response body based on the configured schema',
+        },
+        outputs: {
+          title: 'Outputs',
+          description: 'This is the response outputs based on the configured schema',
         },
       },
     },

@@ -1951,21 +1951,16 @@ export const updateParameterAndDependencies = createAsyncThunk(
       );
     }
 
-    console.log('2)', operationInfo, updatedParameter);
-    // For Agent operations, if the responseFormat.type parameter changes, update tokens
-    // even if there are no output dependencies
+    // For Agent operations, if the responseFormat.type parameter changes, update output tokens
     if (
       operationInfo?.type === 'Agent' &&
       updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
     ) {
-      console.log('Updating tokens for Agent operation responseFormat.type parameter change');
       const rootState = getState() as RootState;
       const nodeInputs = rootState.operations.inputParameters[nodeId];
       const settings = rootState.operations.settings[nodeId] || {};
 
-      if (nodeInputs) {
-        await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
-      }
+      await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
     }
   }
 );

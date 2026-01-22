@@ -457,8 +457,6 @@ export const ParameterSection = ({
           })
         );
 
-        console.log('**4)', nodeId, nodeMetadataInfo, agentParameterMap);
-
         const agentParameterUpdates = agentParameters
           .map(({ name, type, description }) => {
             const paramName = name?.[0]?.value;
@@ -477,8 +475,6 @@ export const ParameterSection = ({
           type: string;
           description: string;
         }>;
-
-        console.log('**4-1) agentParameterUpdates', agentParameterUpdates);
 
         dispatch(updateAgentParametersInNode(agentParameterUpdates));
       }
@@ -549,8 +545,6 @@ export const ParameterSection = ({
           }
         }
       }
-
-      console.log('**5) updateParameterAndDependencies', nodeId, propertiesToUpdate, updatedDependencies);
 
       // Final dispatch to update parameter and dependencies
       dispatch(

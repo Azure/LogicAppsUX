@@ -127,17 +127,27 @@ export const getBuiltInTokens = (manifest?: OperationManifest): OutputToken[] =>
 };
 
 export const filterTokensForAgentPerInput = (inputs: NodeInputs, outputs: Record<string, OutputInfo>): Record<string, OutputInfo> => {
-  let filteredOutputs = outputs;
-
   const responseFormatTypeParam = getParameterFromName(inputs, 'agentModelSettings.agentChatCompletionSettings.responseFormat.type');
   const hasResponseFormatType = responseFormatTypeParam && parameterHasValue(responseFormatTypeParam);
-  console.log('-----responseFormatTypeParam, hasResponseFormatType ', responseFormatTypeParam, hasResponseFormatType);
-  console.log('-----inputs, outputs ', inputs, outputs);
 
   if (hasResponseFormatType) {
-    // Filter out lastAssistantMessage when responseFormat.type is defined
-    filteredOutputs = Object.keys(outputs)
-      .filter((outputKey) => outputs[outputKey].name !== 'lastAssistantMessage')
+    const responseType = responseFormatTypeParam?.value?.[0]?.value || responseFormatTypeParam?.value;
+
+    if (responseType === 'json_schema') {
+      // Show only outputs that contain 'body' in their name
+      return Object.keys(outputs)
+        .filter((outputKey) => outputs[outputKey].name.includes('body'))
+        .reduce(
+          (filtered, outputKey) => {
+            filtered[outputKey] = outputs[outputKey];
+            return filtered;
+          },
+          {} as Record<string, OutputInfo>
+        );
+    }
+    // Show only 'outputs'
+    return Object.keys(outputs)
+      .filter((outputKey) => outputs[outputKey].name === 'outputs')
       .reduce(
         (filtered, outputKey) => {
           filtered[outputKey] = outputs[outputKey];
@@ -146,8 +156,16 @@ export const filterTokensForAgentPerInput = (inputs: NodeInputs, outputs: Record
         {} as Record<string, OutputInfo>
       );
   }
-
-  return filteredOutputs;
+  // Show only 'lastAssistantMessage'
+  return Object.keys(outputs)
+    .filter((outputKey) => outputs[outputKey].name === 'lastAssistantMessage')
+    .reduce(
+      (filtered, outputKey) => {
+        filtered[outputKey] = outputs[outputKey];
+        return filtered;
+      },
+      {} as Record<string, OutputInfo>
+    );
 };
 
 export const convertOutputsToTokens = (
@@ -174,27 +192,9 @@ export const convertOutputsToTokens = (
   }
 
   // Filter outputs for agent operations when responseFormat.type is defined
-  console.log('1)', nodeType, outputs, inputs);
   let filteredOutputs = outputs;
   if (nodeType === 'Agent' && inputs) {
     filteredOutputs = filterTokensForAgentPerInput(inputs, outputs);
-
-    console.log('----filteredOutputs )', filteredOutputs);
-
-    // const responseFormatTypeParam = getParameterFromName(inputs, 'agentModelSettings.agentChatCompletionSettings.responseFormat.type');
-    // console.log("---responseFormatTypeParam ", responseFormatTypeParam);
-    // const hasResponseFormatType = responseFormatTypeParam && parameterHasValue(responseFormatTypeParam);
-    // console.log("-----hasResponseFormatType ", hasResponseFormatType);
-
-    // if (hasResponseFormatType) {
-    //   // Filter out lastAssistantMessage when responseFormat.type is defined
-    //   filteredOutputs = Object.keys(outputs)
-    //     .filter(outputKey => outputs[outputKey].name !== 'lastAssistantMessage')
-    //     .reduce((filtered, outputKey) => {
-    //       filtered[outputKey] = outputs[outputKey];
-    //       return filtered;
-    //     }, {} as Record<string, OutputInfo>);
-    // }
   }
 
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
