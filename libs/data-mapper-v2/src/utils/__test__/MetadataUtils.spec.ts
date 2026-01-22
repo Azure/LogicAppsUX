@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { doesFunctionMetadataExist } from '../Metadata.Utils';
+import { doesFunctionMetadataExist } from '../Metadata.utils';
 import type { MapMetadataV2 } from '@microsoft/logic-apps-shared';
 
 describe('Metadata.Utils', () => {
