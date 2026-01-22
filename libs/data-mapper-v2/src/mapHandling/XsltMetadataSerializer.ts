@@ -61,10 +61,45 @@ export const isV3Metadata = (metadata: XsltMapMetadataAny): metadata is XsltMapM
 const METADATA_MARKER = 'LogicAppsDataMapper:';
 
 /**
- * Regex to extract metadata JSON from XSLT comment.
- * Captures the JSON content between the marker and closing comment.
+ * Extracts metadata content from XSLT using string-based parsing.
+ * Avoids regex to prevent potential catastrophic backtracking.
+ *
+ * @param xslt - The XSLT content to search
+ * @returns Object with content and indices, or null if not found
  */
-const METADATA_REGEX = /<!--\s*LogicAppsDataMapper:\s*([\s\S]*?)\s*-->/;
+const findMetadataComment = (xslt: string): { content: string; startIndex: number; endIndex: number } | null => {
+  const commentStart = '<!--';
+  const commentEnd = '-->';
+
+  // Find the metadata marker
+  const markerIndex = xslt.indexOf(METADATA_MARKER);
+  if (markerIndex === -1) {
+    return null;
+  }
+
+  // Find the opening comment before the marker
+  const searchStart = Math.max(0, markerIndex - 20); // Allow some whitespace before marker
+  const openIndex = xslt.lastIndexOf(commentStart, markerIndex);
+  if (openIndex === -1 || openIndex < searchStart) {
+    return null;
+  }
+
+  // Find the closing comment after the marker
+  const closeIndex = xslt.indexOf(commentEnd, markerIndex);
+  if (closeIndex === -1) {
+    return null;
+  }
+
+  // Extract content after the marker
+  const contentStart = markerIndex + METADATA_MARKER.length;
+  const content = xslt.substring(contentStart, closeIndex).trim();
+
+  return {
+    content,
+    startIndex: openIndex,
+    endIndex: closeIndex + commentEnd.length,
+  };
+};
 
 /**
  * Embeds metadata into an XSLT string as an XML comment at the top.
@@ -99,14 +134,14 @@ export const embedMetadataInXslt = (xslt: string, metadata: XsltMapMetadataAny):
  * @returns The extracted metadata, or null if not found or invalid
  */
 export const extractMetadataFromXslt = (xslt: string): XsltMapMetadataAny | null => {
-  const match = xslt.match(METADATA_REGEX);
+  const found = findMetadataComment(xslt);
 
-  if (!match || !match[1]) {
+  if (!found || !found.content) {
     return null;
   }
 
   try {
-    const metadata = JSON.parse(match[1]) as XsltMapMetadataAny;
+    const metadata = JSON.parse(found.content) as XsltMapMetadataAny;
 
     // Validate required fields (common to both v2 and v3)
     if (!metadata.version || !metadata.sourceSchema || !metadata.targetSchema) {
@@ -147,7 +182,7 @@ export const extractV2MetadataFromXslt = (xslt: string): XsltMapMetadata | null 
  * @returns True if metadata comment is present
  */
 export const hasEmbeddedMetadata = (xslt: string): boolean => {
-  return METADATA_REGEX.test(xslt);
+  return findMetadataComment(xslt) !== null;
 };
 
 /**
@@ -158,7 +193,16 @@ export const hasEmbeddedMetadata = (xslt: string): boolean => {
  * @returns XSLT with metadata comment removed
  */
 export const removeMetadataFromXslt = (xslt: string): string => {
-  return xslt.replace(METADATA_REGEX, '').replace(/^\s*\n/, '');
+  const found = findMetadataComment(xslt);
+  if (!found) {
+    return xslt;
+  }
+
+  const before = xslt.substring(0, found.startIndex);
+  const after = xslt.substring(found.endIndex);
+
+  // Clean up any leading newline from the remaining content
+  return (before + after).replace(/^\s*\n/, '');
 };
 
 /**
