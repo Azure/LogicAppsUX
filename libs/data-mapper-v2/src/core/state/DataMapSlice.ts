@@ -463,16 +463,24 @@ export const dataMapSlice = createSlice({
       state.targetInEditState = false;
     },
     updateFunctionPosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
-      const newOp = { ...state.curDataMapOperation };
-      const node = newOp.functionNodes[action.payload.id];
+      const node = state.curDataMapOperation.functionNodes[action.payload.id];
       if (!node) {
         return;
       }
-      newOp.functionNodes[action.payload.id] = {
-        ...node,
-        position: action.payload.position,
+      const newState: DataMapState = {
+        ...state,
+        curDataMapOperation: {
+          ...state.curDataMapOperation,
+          functionNodes: {
+            ...state.curDataMapOperation.functionNodes,
+            [action.payload.id]: {
+              ...node,
+              position: action.payload.position,
+            },
+          },
+        },
       };
-      state.curDataMapOperation = newOp;
+      doDataMapOperation(state, newState, 'Update function position');
     },
     deleteConnectionFromFunctionMenu: (state, action: PayloadAction<{ inputIndex: number; targetId: string }>) => {
       const newConnections = {
@@ -756,7 +764,8 @@ export const deleteConnectionFromConnections = (
 
   if (outputNode && isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     outputNodeInputs.forEach((input, inputIndex) => {
-      if (isNodeConnection(input) && input.reactFlowKey === inputKey) {
+      // Handle both node connections and custom value connections for unbounded inputs
+      if ((isNodeConnection(input) && input.reactFlowKey === inputKey) || (isCustomValueConnection(input) && input.value === inputKey)) {
         if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {
           outputNodeInputs[inputIndex] = createNewEmptyConnection();
         }

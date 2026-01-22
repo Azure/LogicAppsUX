@@ -11,8 +11,20 @@ export type MapDefinitionData = {
   targetSchemaFileName: string;
   mapDefinitionName?: string;
   metadata?: MapMetadata;
+  /** Raw XSLT content for v3 format - webview parses to derive connections */
+  xsltContent?: string;
+  /** Whether this is v3 format (XSLT is source of truth, no embedded mapDefinition) */
+  isV3Format?: boolean;
 };
 export type XsltData = { filename: string; fileContents: string };
+
+export type TestXsltTransformResultData = {
+  success: boolean;
+  outputXml?: string;
+  error?: string;
+  statusCode: number;
+  statusText: string;
+};
 
 export type MessageToWebview =
   | { command: typeof ExtensionCommand.initialize_frame; data: InitializeData }
@@ -35,7 +47,8 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.setRuntimePort; data: string }
   | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean }
   | { command: typeof ExtensionCommand.getDataMapperVersion; data: number }
-  | { command: typeof ExtensionCommand.isTestDisabledForOS; data: boolean };
+  | { command: typeof ExtensionCommand.isTestDisabledForOS; data: boolean }
+  | { command: typeof ExtensionCommand.testXsltTransformResult; data: TestXsltTransformResultData };
 
 export type MessageToVsix =
   | {
@@ -87,4 +100,8 @@ export type MessageToVsix =
     }
   | {
       command: typeof ExtensionCommand.switchToDataMapperV2;
+    }
+  | {
+      command: typeof ExtensionCommand.testXsltTransform;
+      data: { xsltContent: string; inputXml: string };
     };

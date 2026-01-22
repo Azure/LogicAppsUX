@@ -3,6 +3,14 @@ import type { DataMapSchema, MapDefinitionEntry, MapMetadataV2, IFileSysTreeItem
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
+export interface TestXsltTransformResult {
+  success: boolean;
+  outputXml?: string;
+  error?: string;
+  statusCode: number;
+  statusText: string;
+}
+
 export interface DataMapState {
   runtimePort?: string;
   armToken?: string;
@@ -22,6 +30,7 @@ export interface DataMapState {
   fetchedFunctions?: FunctionData[];
   useExpandedFunctionCards: boolean;
   isTestDisabledForOS?: boolean;
+  testXsltTransformResult?: TestXsltTransformResult;
 }
 
 const initialState: DataMapState = {
@@ -86,6 +95,9 @@ export const dataMapSlice = createSlice({
     changeIsTestDisabledForOS: (state, action: PayloadAction<boolean>) => {
       state.isTestDisabledForOS = action.payload;
     },
+    setTestXsltTransformResult: (state, action: PayloadAction<TestXsltTransformResult | undefined>) => {
+      state.testXsltTransformResult = action.payload;
+    },
   },
 });
 
@@ -107,6 +119,7 @@ export const {
   changeCustomXsltPathList,
   changeFetchedFunctions,
   changeUseExpandedFunctionCards,
+  setTestXsltTransformResult,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

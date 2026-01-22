@@ -13,8 +13,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
+import { createXsltMapMetadataV3, embedMetadataInXslt } from '../../mapHandling/XsltMetadataSerializer';
 import { DataMapperFileService, generateDataMapXslt } from '../../core';
-import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
+import { saveDataMap, setXsltContent, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory } from '../../utils/Logging.Utils';
 import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
@@ -36,7 +37,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
 
   const toasterId = useId('toaster');
 
@@ -90,10 +91,19 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       throw new Error('Canvas bounds are not defined, cannot save map metadata.');
     }
 
-    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections, canvasRect));
+    if (!sourceSchema || !targetSchema) {
+      DataMapperFileService().sendNotification(failedXsltMessage, 'Source or target schema is not defined.', LogEntryLevel.Error);
+      return;
+    }
 
     if (dataMapDefinition.isSuccess) {
-      DataMapperFileService().saveMapDefinitionCall(dataMapDefinition.definition, mapMetadata);
+      // Generate UI metadata (function positions, canvas state)
+      // Note: We no longer embed mapDefinition - XSLT is the source of truth for mappings
+      const uiMetadata = generateMapMetadata(functions, currentConnections, canvasRect);
+
+      // Create v3 metadata object (only UI layout, no mapDefinition)
+      // The actual mapping logic is derived from the XSLT content when loading
+      const xsltMetadata = createXsltMapMetadataV3(sourceSchema.name, targetSchema.name, uiMetadata);
 
       dispatch(
         saveDataMap({
@@ -102,19 +112,28 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         })
       );
 
+      // Generate XSLT from the backend, then embed metadata and save
       generateDataMapXslt(dataMapDefinition.definition)
         .then((xsltStr) => {
-          DataMapperFileService().saveXsltCall(xsltStr);
+          // Embed metadata into the XSLT as a comment
+          const xsltWithMetadata = embedMetadataInXslt(xsltStr, xsltMetadata);
+
+          // Update XSLT content in state for code view display
+          dispatch(setXsltContent(xsltWithMetadata));
+
+          // Save the combined XSLT file (this is now the only file we need)
+          DataMapperFileService().saveMapXsltCall(xsltWithMetadata);
+
           LoggerService().log({
             level: LogEntryLevel.Verbose,
-            area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
-            message: 'Successfully generated xslt',
+            area: `${LogCategory.DataMapperDesigner}/onSaveClick`,
+            message: 'Successfully saved map with embedded metadata',
           });
         })
         .catch((error: Error) => {
           LoggerService().log({
             level: LogEntryLevel.Error,
-            area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
+            area: `${LogCategory.DataMapperDesigner}/onSaveClick`,
             message: JSON.stringify(error.message),
           });
           DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
@@ -211,11 +230,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
       discard: !isDirty,
-      test: sourceInEditState || targetInEditState || !xsltFilename || isTestDisabledForOS,
+      test: sourceInEditState || targetInEditState || !xsltContent || isTestDisabledForOS,
       codeView: sourceInEditState || targetInEditState,
       mapChecker: sourceInEditState || targetInEditState,
     }),
-    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename, isTestDisabledForOS]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltContent, isTestDisabledForOS]
   );
 
   const mapCheckerIcon = useMemo(() => {
