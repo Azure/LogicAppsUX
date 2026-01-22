@@ -22,7 +22,7 @@
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
     "js-yaml": "4.1.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "pathfinding": "0.4.18",
     "react-arborist": "^3.4.0",
     "react-dnd": "16.0.1",

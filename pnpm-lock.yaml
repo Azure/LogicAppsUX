@@ -1066,8 +1066,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.17.23
+        version: 4.17.23
       pathfinding:
         specifier: 0.4.18
         version: 0.4.18
@@ -3110,6 +3110,10 @@ packages:
 
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.28.6':
+    resolution: {integrity: sha512-05WQkdpL9COIMz4LjTxGpPNCdlpyimKppYNoJ5Di5EUObifl8t4tuLuUBBZEpoLYOmfvIWrsp9fCl0HoPRVTdA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
@@ -5874,7 +5878,7 @@ packages:
 
   '@react-hookz/deep-equal@1.0.4':
     resolution: {integrity: sha512-N56fTrAPUDz/R423pag+n6TXWbvlBZDtTehaGFjK0InmN+V2OFWLE/WmORhmn6Ce7dlwH5+tQN1LJFw3ngTJVg==}
-    deprecated: Package is deprecated and will be deleted soon. Use @ver0/deep-equal instead.
+    deprecated: PACKAGE IS DEPRECATED AND WILL BE DETED SOON, USE @ver0/deep-equal INSTEAD
 
   '@react-hookz/web@22.0.0':
     resolution: {integrity: sha512-jl4JgUXaiSvvDVQD2z/rq2/RaykjjLrAZxHOEQj2H38j4UFWIVhv5oKUH8yrKF4wX6tMX9gdrj62f9yGq/nSaQ==}
@@ -10731,8 +10735,8 @@ packages:
   lexical@0.33.1:
     resolution: {integrity: sha512-+kiCS/GshQmCs/meMb8MQT4AMvw3S3Ef0lSCv2Xi6Itvs59OD+NjQWNfYkDteIbKtVE/w0Yiqh56VyGwIb8UcA==}
 
-  lib0@0.2.114:
-    resolution: {integrity: sha512-gcxmNFzA4hv8UYi8j43uPlQ7CGcyMJ2KQb5kZASw6SnAKAf10hK12i2fjrS3Cl/ugZa5Ui6WwIu1/6MIXiHttQ==}
+  lib0@0.2.117:
+    resolution: {integrity: sha512-DeXj9X5xDCjgKLU/7RR+/HQEVzuuEUiwldwOGsHK/sfAfELGWEyTcf0x+uOvCvK3O2zPmZePXWL85vtia6GyZw==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -10855,6 +10859,9 @@ packages:
 
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -14504,6 +14511,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@3.0.0:
     resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
@@ -16740,6 +16748,8 @@ snapshots:
 
   '@babel/runtime@7.28.4': {}
 
+  '@babel/runtime@7.28.6': {}
+
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -17192,7 +17202,7 @@ snapshots:
       cheerio: 1.0.0-rc.12
       feed: 4.2.2
       fs-extra: 11.2.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       reading-time: 1.5.0
@@ -17236,7 +17246,7 @@ snapshots:
       combine-promises: 1.2.0
       fs-extra: 11.2.0
       js-yaml: 4.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.8.1
@@ -17506,7 +17516,7 @@ snapshots:
       clsx: 2.1.1
       copy-text-to-clipboard: 3.2.0
       infima: 0.2.0-alpha.45
-      lodash: 4.17.21
+      lodash: 4.17.23
       nprogress: 0.2.0
       postcss: 8.5.6
       prism-react-renderer: 2.4.0(react@18.3.1)
@@ -17609,7 +17619,7 @@ snapshots:
       clsx: 2.1.1
       eta: 2.2.0
       fs-extra: 11.2.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.8.1
@@ -17685,7 +17695,7 @@ snapshots:
       fs-extra: 11.2.0
       joi: 17.12.2
       js-yaml: 4.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
@@ -17711,7 +17721,7 @@ snapshots:
       gray-matter: 4.0.3
       jiti: 1.21.0
       js-yaml: 4.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       micromatch: 4.0.8
       prompts: 2.4.2
       resolve-pathname: 3.0.0
@@ -22306,7 +22316,7 @@ snapshots:
       chalk: 4.1.2
       debug: 4.4.3
       js-yaml: 3.14.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       pluralize: 2.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
@@ -23575,7 +23585,7 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 2.0.1
       lazystream: 1.0.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       normalize-path: 3.0.0
       readable-stream: 4.5.2
 
@@ -23727,7 +23737,7 @@ snapshots:
 
   async@2.6.4:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   async@3.2.5: {}
 
@@ -24428,7 +24438,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       date-fns: 2.30.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       rxjs: 7.8.1
       shell-quote: 1.8.1
       spawn-command: 0.0.2
@@ -26642,7 +26652,7 @@ snapshots:
 
   history@5.3.0:
     dependencies:
-      '@babel/runtime': 7.28.4
+      '@babel/runtime': 7.28.6
 
   hmac-drbg@1.0.1:
     dependencies:
@@ -26714,7 +26724,7 @@ snapshots:
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
@@ -27535,7 +27545,7 @@ snapshots:
 
   lexical@0.33.1: {}
 
-  lib0@0.2.114:
+  lib0@0.2.117:
     dependencies:
       isomorphic.js: 0.2.5
 
@@ -27647,6 +27657,8 @@ snapshots:
   lodash.uniq@4.5.0: {}
 
   lodash@4.17.21: {}
+
+  lodash@4.17.23: {}
 
   log-symbols@4.1.0:
     dependencies:
@@ -29434,7 +29446,7 @@ snapshots:
 
   pretty-error@4.0.0:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       renderkid: 3.0.0
 
   pretty-format@27.5.1:
@@ -29938,7 +29950,7 @@ snapshots:
   react-virtualized-tree@3.4.1(react-dom@18.3.1(react@18.3.1))(react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
     dependencies:
       classnames: 2.5.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       lodash.debounce: 4.0.8
       lodash.findindex: 4.6.0
       lodash.isequal: 4.5.0
@@ -29952,7 +29964,7 @@ snapshots:
 
   react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.28.4
+      '@babel/runtime': 7.28.6
       clsx: 1.2.1
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
@@ -30235,7 +30247,7 @@ snapshots:
       css-select: 4.3.0
       dom-converter: 0.2.0
       htmlparser2: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       strip-ansi: 6.0.1
 
   repeat-string@1.6.1: {}
@@ -32502,7 +32514,7 @@ snapshots:
 
   yjs@13.6.14:
     dependencies:
-      lib0: 0.2.114
+      lib0: 0.2.117
 
   yn@3.1.1: {}
 
