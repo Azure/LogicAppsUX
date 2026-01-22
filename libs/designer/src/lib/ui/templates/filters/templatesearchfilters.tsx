@@ -72,8 +72,8 @@ const SortDropdown = () => {
 
   const intlText = {
     SORT_BY: intl.formatMessage({
-      defaultMessage: 'Sort By',
-      id: 'ZOIvqN',
+      defaultMessage: 'Sort by',
+      id: 'zLrEAG',
       description: 'Label text for sort by filter',
     }),
   };
