@@ -5,7 +5,8 @@ export const useTemplateSearchFiltersStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    maxWidth: 'calc(343px * 4 + 24px * 3)', // 4 cards + 3 gaps
+    maxWidth: 'min(calc(343px * 4 + 24px * 3), 100%)', // 4 cards + 3 gaps, but never exceed parent
+    boxSizing: 'border-box',
     ...shorthands.margin('0', 'auto'),
     ...shorthands.padding('0'),
   },
@@ -36,10 +37,21 @@ export const useTemplateSearchFiltersStyles = makeStyles({
   filtersTabs: {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
     alignItems: 'center',
     gap: '12px',
     width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+  },
+
+  tabListWrapper: {
+    flex: '1 1 auto',
+    minWidth: 0,
+    maxWidth: '100%',
+  },
+
+  tabList: {
+    flexWrap: 'wrap',
   },
 
   sortContainer: {
@@ -51,9 +63,10 @@ export const useTemplateSearchFiltersStyles = makeStyles({
 
   sortField: {
     display: 'flex',
-    flexWrap: 'wrap',
     alignItems: 'center',
     gap: '8px',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
     padding: '10px',
     ...shorthands.margin('0'),
   },
