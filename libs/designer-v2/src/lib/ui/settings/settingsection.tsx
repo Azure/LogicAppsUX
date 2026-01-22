@@ -344,8 +344,6 @@ const Setting = ({
     };
 
     const removeParamCallback = () => {
-      console.log('-----4) Removing parameter ', parameterId);
-
       dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
       dispatch(
         updateParameterConditionalVisibilityAndRefreshOutputs({

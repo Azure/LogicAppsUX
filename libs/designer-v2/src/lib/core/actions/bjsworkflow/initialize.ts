@@ -777,22 +777,20 @@ export const initializeDiscoveryPanelFavoriteOperations = async (dispatch: Dispa
   }
 };
 
-type UpdateParameterVisibilityPayload = {
-  nodeId: string;
-  groupId: string;
-  parameterId: string;
-  value: boolean;
-  operationInfo: NodeOperation;
-  isTrigger: boolean;
-};
-
 export const updateParameterConditionalVisibilityAndRefreshOutputs = createAsyncThunk(
   'updateParameterConditionalVisibilityAndRefreshOutputs',
-  async (payload: UpdateParameterVisibilityPayload, { dispatch, getState }) => {
+  async (
+    payload: {
+      nodeId: string;
+      groupId: string;
+      parameterId: string;
+      value: boolean;
+      operationInfo: NodeOperation;
+      isTrigger: boolean;
+    },
+    { dispatch, getState }
+  ) => {
     const { nodeId, groupId, parameterId, value, operationInfo, isTrigger } = payload;
-
-    // Store state for undo/redo
-    // dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
 
     // Update parameter visibility
     dispatch(updateParameterConditionalVisibility({ nodeId, groupId, parameterId, value }));
