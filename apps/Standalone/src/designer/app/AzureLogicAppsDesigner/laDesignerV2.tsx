@@ -598,7 +598,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly || isMonitoringView || !isDraftMode,
+          readOnly: isReadOnly || isMonitoringView,
           isMonitoringView,
           isDraft: isDraftMode,
           isUnitTest,
