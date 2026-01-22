@@ -101,10 +101,13 @@ export class XsltParser {
       }
 
       // Find the main template
-      const templates = this.doc.getElementsByTagNameNS('http://www.w3.org/1999/XSL/Transform', 'template');
-      if (templates.length === 0) {
+      const templatesCollection = this.doc.getElementsByTagNameNS('http://www.w3.org/1999/XSL/Transform', 'template');
+      if (templatesCollection.length === 0) {
         return { success: false, error: 'No xsl:template found in XSLT', mappings: [] };
       }
+
+      // Convert HTMLCollection to array for iteration
+      const templates = Array.from(templatesCollection);
 
       const mappings: ParsedMapping[] = [];
       let targetRoot: string | undefined;
