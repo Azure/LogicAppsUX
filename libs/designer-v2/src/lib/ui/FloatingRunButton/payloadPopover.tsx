@@ -47,7 +47,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
   });
 
   const [bodyValue, setBodyValue] = useState<string | undefined>(undefined);
-  const [jsonError, setJsonError] = useState<string | undefined>(undefined);
+  const [bodyError] = useState<string | undefined>(undefined);
   const bodyLabel = intl.formatMessage({
     defaultMessage: 'Body',
     id: 'aFZRms',
@@ -60,51 +60,19 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     description: 'Run with payload button text',
   });
 
-  const validateJson = useCallback((value: string | undefined): boolean => {
-    if (!value || value.trim() === '') {
-      setJsonError(undefined);
-      return true;
-    }
-    try {
-      JSON.parse(value);
-      setJsonError(undefined);
-      return true;
-    } catch (error) {
-      setJsonError((error as Error).message);
-      return false;
-    }
-  }, []);
-
-  const onBodyValueChange = useCallback(
-    (value: string | undefined) => {
-      setBodyValue(value);
-      if (isDraftMode) {
-        validateJson(value);
-      }
-    },
-    [isDraftMode, validateJson]
-  );
-
   const onRunClick = useCallback(() => {
-    if (isDraftMode) {
-      onSubmit({
-        body: bodyValue,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } else {
-      onSubmit({
-        method,
-        headers: headersValue,
-        queries: queriesValue,
-        body: bodyValue,
-      });
-    }
+    onSubmit({
+      method,
+      headers: headersValue,
+      queries: queriesValue,
+      body: bodyValue,
+    });
     setOpen(false);
-  }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen, isDraftMode]);
+  }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen]);
 
   const runDisabled = useMemo(
-    () => (isDraftMode ? !bodyValue || bodyValue.trim() === '' || !!jsonError : !method),
-    [isDraftMode, bodyValue, jsonError, method]
+    () => (isDraftMode ? !bodyValue || bodyValue.trim() === '' || !!bodyError : !method),
+    [isDraftMode, bodyValue, bodyError, method]
   );
 
   return (
@@ -118,34 +86,30 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     >
       <PopoverSurface>
         <div className={styles.root}>
-          {isDraftMode ? null : (
-            <>
-              {/* Method */}
-              <Field label={methodLabel}>
-                <Dropdown value={method} defaultSelectedOptions={[method]} onOptionSelect={onMethodSelect}>
-                  {methodOptions.map((option) => (
-                    <Option key={option} value={option}>
-                      {option}
-                    </Option>
-                  ))}
-                </Dropdown>
-              </Field>
-              {/* Headers */}
-              <Field label={headersLabel}>
-                <SimpleDictionary value={headersValue} onChange={setHeadersValue} />
-              </Field>
-              {/* Queries */}
-              <Field label={queriesLabel}>
-                <SimpleDictionary value={queriesValue} onChange={setQueriesValue} />
-              </Field>
-            </>
-          )}
+          {/* Method */}
+          <Field label={methodLabel}>
+            <Dropdown value={method} defaultSelectedOptions={[method]} onOptionSelect={onMethodSelect}>
+              {methodOptions.map((option) => (
+                <Option key={option} value={option}>
+                  {option}
+                </Option>
+              ))}
+            </Dropdown>
+          </Field>
+          {/* Headers */}
+          <Field label={headersLabel}>
+            <SimpleDictionary value={headersValue} onChange={setHeadersValue} />
+          </Field>
+          {/* Queries */}
+          <Field label={queriesLabel}>
+            <SimpleDictionary value={queriesValue} onChange={setQueriesValue} />
+          </Field>
           {/* Body */}
           <Field
             label={bodyLabel}
             className={styles.monacoEditor}
-            validationMessage={jsonError}
-            validationState={jsonError ? 'error' : 'none'}
+            validationMessage={bodyError}
+            validationState={bodyError ? 'error' : 'none'}
           >
             <MonacoEditor
               key={'body-editor'}
@@ -153,7 +117,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
               language={'json'}
               value={bodyValue}
               folding={true}
-              onContentChanged={(e) => onBodyValueChange(e.value)}
+              onContentChanged={(e) => setBodyValue(e.value)}
               lineNumbersMinChars={3}
             />
           </Field>
