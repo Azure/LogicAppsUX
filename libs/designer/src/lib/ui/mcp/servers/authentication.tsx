@@ -105,11 +105,11 @@ export const Authentication = ({
       },
     ];
 
-    if (authType === '1' || authType === '3') {
+    if (authType === 'apikey' || authType === 'both') {
       result.push(apiKeysItem);
     }
 
-    if (authType === '2' || authType === '3') {
+    if (authType === 'oauth2' || authType === 'both') {
       result.push(oAuthItem);
     }
 
@@ -158,6 +158,11 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
       id: 'IuTkQS',
       description: 'Label for key and OAuth authentication method',
     }),
+    anonymous: intl.formatMessage({
+      defaultMessage: 'Anonymous',
+      id: 'NQJ/jV',
+      description: 'Label for anonymous authentication method',
+    }),
     editButtonText: intl.formatMessage({
       defaultMessage: 'Edit',
       id: 'BYe/Dw',
@@ -168,35 +173,35 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
       id: 'jk2rY+',
       description: 'Button text for saving authentication settings',
     }),
+    savingButtonText: intl.formatMessage({
+      defaultMessage: 'Saving...',
+      id: 'oJebOR',
+      description: 'Button text displayed while saving authentication settings',
+    }),
     cancelButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
       id: 'XIUFQz',
       description: 'Button text for cancelling changes to authentication settings',
     }),
   };
-  const authOptions = useMemo(
-    () => [
-      { label: INTL_TEXT.keyBasedMethod, value: 'keybased', id: '0' },
-      { label: INTL_TEXT.oAuthMethod, value: 'oauth', id: '1' },
-    ],
-    [INTL_TEXT.keyBasedMethod, INTL_TEXT.oAuthMethod]
-  );
 
+  const authOptions = useMemo(() => {
+    const options = [
+      { label: INTL_TEXT.keyBasedMethod, value: 'apikey', id: '0' },
+      { label: INTL_TEXT.oAuthMethod, value: 'oauth2', id: '1' },
+    ];
+
+    if (selectedAuth === 'anonymous') {
+      options.push({ label: INTL_TEXT.anonymous, value: 'anonymous', id: '2' });
+    }
+
+    return options;
+  }, [INTL_TEXT.keyBasedMethod, INTL_TEXT.oAuthMethod, INTL_TEXT.anonymous, selectedAuth]);
+
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [isInvalidAuth, setIsInvalidAuth] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (selectedAuth && !isLoading) {
-      if (selectedAuth.isAuthenticated) {
-        setAuthType('2');
-        setSelectedOptions(['oauth']);
-      } else {
-        setAuthType('1');
-        setSelectedOptions(['keybased']);
-      }
-    }
-  }, [selectedAuth, isLoading, setAuthType]);
 
   const authValue = useMemo(() => {
     return selectedOptions.length === 0
@@ -205,31 +210,61 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
         ? authOptions.find((option) => option.value === selectedOptions[0])?.label
         : INTL_TEXT.keyAndOAuthMethod;
   }, [selectedOptions, authOptions, INTL_TEXT.keyAndOAuthMethod]);
+  const hasAuthChanged = useMemo(() => {
+    const newAuth = getAuthType(selectedOptions);
+    return newAuth !== selectedAuth;
+  }, [selectedAuth, selectedOptions]);
 
+  const getOptionsFromAuth = useCallback(
+    (auth: string): string[] => (auth === 'both' ? ['apikey', 'oauth2'] : auth === '' ? [] : [auth]),
+    []
+  );
   const enterEditing = useCallback(() => setIsEditing(true), []);
   const exitEditing = useCallback(() => setIsEditing(false), []);
   const handleSave = useCallback(async () => {
-    await updateAuthSettings(resourceId, selectedOptions);
-    setAuthType(selectedOptions.length === 1 ? (selectedOptions[0] === 'keybased' ? '1' : '2') : '3');
+    setIsSaving(true);
+    if (hasAuthChanged) {
+      await updateAuthSettings(resourceId, selectedOptions);
+      setAuthType(getAuthType(selectedOptions));
+    }
+
+    setIsSaving(false);
     exitEditing();
-  }, [exitEditing, resourceId, selectedOptions, setAuthType]);
+  }, [exitEditing, hasAuthChanged, resourceId, selectedOptions, setAuthType]);
+  const handleCancel = useCallback(() => {
+    const options = getOptionsFromAuth(selectedAuth as string);
+    setSelectedOptions(options);
+    setIsInvalidAuth(false);
+    exitEditing();
+  }, [getOptionsFromAuth, selectedAuth, exitEditing]);
+
+  useEffect(() => {
+    if (selectedAuth !== undefined && !isLoading) {
+      const options = getOptionsFromAuth(selectedAuth);
+      setSelectedOptions(options);
+      setAuthType(getAuthType(options));
+    }
+  }, [selectedAuth, isLoading, setAuthType, INTL_TEXT.anonymous, getOptionsFromAuth]);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <Dropdown
         style={isEditing ? undefined : { pointerEvents: 'none', backgroundColor: '#FFFF', color: '#000' }}
-        disabled={!isEditing}
+        disabled={!isEditing || isSaving}
         multiselect={true}
         selectedOptions={selectedOptions}
         value={authValue}
         onOptionSelect={(_, data) => {
-          if (data.selectedOptions.length === 0 && !isInvalidAuth) {
+          const options = data.selectedOptions;
+          if (options.length === 0 && !isInvalidAuth) {
             setIsInvalidAuth(true);
           } else if (isInvalidAuth) {
             setIsInvalidAuth(false);
           }
 
-          setSelectedOptions(data.selectedOptions);
+          const optionsToSet =
+            options.length > 1 && options.includes('anonymous') ? options.filter((option) => option !== 'anonymous') : options;
+          setSelectedOptions(optionsToSet);
         }}
       >
         {authOptions.map((option) => (
@@ -240,10 +275,10 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
       </Dropdown>
       {isEditing ? (
         <>
-          <Button appearance="primary" onClick={handleSave} disabled={isInvalidAuth}>
-            {INTL_TEXT.saveButtonText}
+          <Button appearance="primary" onClick={handleSave} disabled={isInvalidAuth || isSaving || !hasAuthChanged}>
+            {isSaving ? INTL_TEXT.savingButtonText : INTL_TEXT.saveButtonText}
           </Button>
-          <Button onClick={exitEditing}>{INTL_TEXT.cancelButtonText}</Button>
+          <Button onClick={handleCancel}>{INTL_TEXT.cancelButtonText}</Button>
         </>
       ) : (
         <Button appearance="subtle" icon={<Edit20Regular />} onClick={enterEditing}>
@@ -252,4 +287,16 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
       )}
     </div>
   );
+};
+
+const getAuthType = (selectedOptions: string[]): string => {
+  if (selectedOptions.length === 1) {
+    return selectedOptions[0];
+  }
+
+  if (selectedOptions.length === 2) {
+    return 'both';
+  }
+
+  return '';
 };

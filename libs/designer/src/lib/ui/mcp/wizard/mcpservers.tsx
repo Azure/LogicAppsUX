@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { equals, type McpServer } from '@microsoft/logic-apps-shared';
-import { resetQueriesOnUpdateServers, useAllMcpServers } from '../../../core/mcp/utils/queries';
+import { useAllMcpServers } from '../../../core/mcp/utils/queries';
 import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
 import { McpServerPanel } from '../panel/server/panel';
 import { closePanel, McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
@@ -14,6 +14,7 @@ import { AddServerButtons } from '../servers/add';
 import { MCPServers, type ServerNotificationData, type ToolHandler } from '../servers/servers';
 import { Authentication } from '../servers/authentication';
 import { Apps28Regular } from '@fluentui/react-icons';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const McpServersWizard = ({
   onUpdateServers,
@@ -28,6 +29,7 @@ export const McpServersWizard = ({
 }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
   const { subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => ({
     subscriptionId: state.resource.subscriptionId,
     resourceGroup: state.resource.resourceGroup,
@@ -39,9 +41,16 @@ export const McpServersWizard = ({
   );
   const intl = useIntl();
 
-  const { data: mcpServers, isLoading } = useAllMcpServers(logicAppId);
+  const { data: allServers, isLoading, refetch, isRefetching } = useAllMcpServers(logicAppId);
 
+  const [mcpServers, setMcpServers] = useState<McpServer[]>([]);
   const [selectedServer, setSelectedServer] = useState<McpServer | undefined>(undefined);
+
+  useEffect(() => {
+    if (allServers && !isLoading) {
+      setMcpServers(allServers);
+    }
+  }, [allServers, isLoading]);
 
   const handleManageServer = useCallback(
     (serverName: string) => {
@@ -49,6 +58,21 @@ export const McpServersWizard = ({
       dispatch(openMcpPanelView({ panelView: McpPanelView.EditMcpServer }));
     },
     [dispatch, mcpServers]
+  );
+
+  const handleRefreshServers = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  const updateServers = useCallback(
+    async (servers: McpServer[], toasterData: ServerNotificationData) => {
+      await onUpdateServers(servers, toasterData);
+
+      setMcpServers(servers);
+      // Update servers cache with new data
+      queryClient.setQueryData<McpServer[]>(['mcpservers'], () => [...servers]);
+    },
+    [onUpdateServers, queryClient]
   );
 
   const handleUpdateServer = useCallback(
@@ -92,12 +116,16 @@ export const McpServersWizard = ({
               { serverName: updatedServer.name }
             ),
       };
-      await onUpdateServers(updatedServers, toasterData);
-      resetQueriesOnUpdateServers(logicAppId);
+      await updateServers(updatedServers, toasterData);
+
+      if (isNew) {
+        refetch();
+      }
+
       dispatch(closePanel());
       setSelectedServer(undefined);
     },
-    [dispatch, intl, logicAppId, mcpServers, onUpdateServers]
+    [dispatch, intl, mcpServers, refetch, updateServers]
   );
 
   const handleClosePanel = useCallback(() => {
@@ -118,7 +146,7 @@ export const McpServersWizard = ({
   }
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <McpServerPanel onUpdateServer={handleUpdateServer} server={selectedServer} onClose={handleClosePanel} />
       {mcpServers?.length === 0 ? (
         <EmptyMcpServersView onCreateTools={onOpenCreateTools} />
@@ -127,7 +155,9 @@ export const McpServersWizard = ({
           <Authentication resourceId={logicAppId} onOpenManageOAuth={onOpenManageOAuth} />
           <MCPServers
             servers={mcpServers ?? []}
-            onUpdateServers={onUpdateServers}
+            isRefreshing={isRefetching}
+            onRefresh={handleRefreshServers}
+            onUpdateServers={updateServers}
             onManageTool={onOpenWorkflow}
             onManageServer={handleManageServer}
             openCreateTools={onOpenCreateTools}

@@ -105,6 +105,7 @@ export * from './queries/role';
 export * from './queries/runs';
 export * from './queries/template';
 export * from './queries/clone';
+export { getHostConfig } from './mcp/utils/queries';
 export {
   resetStateOnResourceChange,
   type WorkflowTemplateData,

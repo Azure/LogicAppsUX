@@ -7,7 +7,7 @@ import { useMcpPanelStyles, useMcpServerPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
-import { validateMcpServerDescription, validateMcpServerName } from '../../../../core/mcp/utils/helper';
+import { validateMcpServerDescription, validateMcpServerName } from '../../../../core/mcp/utils/server';
 import { useMcpEligibleWorkflows } from '../../../../core/mcp/utils/queries';
 import type { McpServer } from '@microsoft/logic-apps-shared';
 
@@ -23,10 +23,15 @@ export const CreateServer = ({
   const dispatch = useDispatch<AppDispatch>();
 
   const INTL_TEXT = {
-    title: intl.formatMessage({
+    createTitle: intl.formatMessage({
       defaultMessage: 'Create a MCP Server',
       id: 'ovGXkq',
       description: 'Title for the MCP Server creation panel',
+    }),
+    updateTitle: intl.formatMessage({
+      defaultMessage: 'Update MCP Server',
+      id: 'lbQ38S',
+      description: 'Title for the MCP Server update panel',
     }),
     subtitle: intl.formatMessage({
       defaultMessage: 'Standard logic app',
@@ -68,10 +73,20 @@ export const CreateServer = ({
       id: 'x+XxdZ',
       description: 'Button text for creating the MCP Server',
     }),
+    creatingButtonText: intl.formatMessage({
+      defaultMessage: 'Creating...',
+      id: '0b1xt5',
+      description: 'Button text for creating the MCP Server in progress',
+    }),
     updateButtonText: intl.formatMessage({
       defaultMessage: 'Update',
       id: 'KGvXUc',
       description: 'Button text for updating the MCP Server',
+    }),
+    updatingButtonText: intl.formatMessage({
+      defaultMessage: 'Updating...',
+      id: 'eJi0UT',
+      description: 'Button text for updating the MCP Server in progress',
     }),
     cancelButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
@@ -142,6 +157,7 @@ export const CreateServer = ({
   const [serverDescriptionError, setServerDescriptionError] = useState<string | undefined>(undefined);
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
   const [workflowsError, setWorkflowsError] = useState<string | undefined>(undefined);
+  const [isCreatingOrUpdating, setIsCreatingOrUpdating] = useState(false);
 
   useEffect(() => {
     if (server && Object.keys(server.tools ?? {}).length > 0) {
@@ -243,20 +259,39 @@ export const CreateServer = ({
   ]);
 
   const handleCreateOrUpdate = useCallback(async () => {
-    await onUpdate({
-      name: serverName,
-      description: serverDescription,
-      tools: selectedTools.map((toolName) => ({ name: toolName })),
-    });
+    setIsCreatingOrUpdating(true);
+    try {
+      await onUpdate({
+        name: serverName,
+        description: serverDescription,
+        tools: selectedTools.map((toolName) => ({ name: toolName })),
+      });
+    } finally {
+      setIsCreatingOrUpdating(false);
+    }
     dispatch(closePanel());
   }, [onUpdate, serverName, serverDescription, selectedTools, dispatch]);
+
+  const createOrUpdateButtonText = useMemo(() => {
+    if (isCreatingOrUpdating) {
+      return server ? INTL_TEXT.updatingButtonText : INTL_TEXT.creatingButtonText;
+    }
+    return server ? INTL_TEXT.updateButtonText : INTL_TEXT.createButtonText;
+  }, [
+    isCreatingOrUpdating,
+    server,
+    INTL_TEXT.updatingButtonText,
+    INTL_TEXT.creatingButtonText,
+    INTL_TEXT.updateButtonText,
+    INTL_TEXT.createButtonText,
+  ]);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
       buttonContents: [
         {
           type: 'action',
-          text: server ? INTL_TEXT.updateButtonText : INTL_TEXT.createButtonText,
+          text: createOrUpdateButtonText,
           appearance: 'primary',
           onClick: handleCreateOrUpdate,
           disabled:
@@ -266,7 +301,8 @@ export const CreateServer = ({
             !!serverDescriptionError ||
             selectedTools.length === 0 ||
             !!workflowsError ||
-            isLoading,
+            isCreatingOrUpdating,
+          isLoading,
         },
         {
           type: 'action',
@@ -276,10 +312,7 @@ export const CreateServer = ({
       ],
     };
   }, [
-    server,
-    INTL_TEXT.updateButtonText,
-    INTL_TEXT.createButtonText,
-    INTL_TEXT.cancelButtonText,
+    createOrUpdateButtonText,
     handleCreateOrUpdate,
     serverName,
     serverNameError,
@@ -287,7 +320,9 @@ export const CreateServer = ({
     serverDescriptionError,
     selectedTools.length,
     workflowsError,
+    isCreatingOrUpdating,
     isLoading,
+    INTL_TEXT.cancelButtonText,
     onClose,
   ]);
 
@@ -296,7 +331,7 @@ export const CreateServer = ({
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {INTL_TEXT.title}
+            {server ? INTL_TEXT.updateTitle : INTL_TEXT.createTitle}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={onClose} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>

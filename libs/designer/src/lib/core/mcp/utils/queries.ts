@@ -1,4 +1,11 @@
-import { type Resource, ResourceService, type LogicAppResource, equals, type McpServer } from '@microsoft/logic-apps-shared';
+import {
+  type Resource,
+  ResourceService,
+  type LogicAppResource,
+  equals,
+  type McpServer,
+  getObjectPropertyValue,
+} from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
 import { useMemo } from 'react';
@@ -24,18 +31,26 @@ export const useAllMcpServers = (siteResourceId: string) => {
         { 'api-version': '2024-11-01' }
       );
 
-      return response.value ?? [];
+      return (response.value ?? [])
+        .map((server: McpServer) => ({
+          ...server,
+          enabled: server.enabled === undefined ? true : server.enabled,
+        }))
+        .sort((a: McpServer, b: McpServer) => a.name.localeCompare(b.name));
     },
     enabled: !!siteResourceId,
     ...queryOpts,
   });
 };
 
+type AuthType = 'apikey' | 'oauth2' | 'anonymous' | 'both';
 export const useMcpAuthentication = (siteResourceId: string) => {
   return useQuery({
     queryKey: ['mcpauth', siteResourceId.toLowerCase()],
-    queryFn: async (): Promise<any> => {
-      return { isAuthenticated: true };
+    queryFn: async (): Promise<AuthType | ''> => {
+      const config = await getHostConfig(siteResourceId);
+      const authProperty = getObjectPropertyValue(config, ['properties', 'extensions', 'workflow', 'McpServerEndpoints', 'authentication']);
+      return authProperty === undefined ? '' : authProperty?.type ? authProperty.type : 'both';
     },
     enabled: !!siteResourceId,
     ...queryOpts,
@@ -206,6 +221,16 @@ const getAppInsights = async (subscriptionId: string): Promise<Resource[]> => {
   return result.map((item: any) => ({ id: item.id.toLowerCase(), name: item.name, displayName: `${item.name} (${item.location})` }));
 };
 
+export const getHostConfig = async (siteResourceId: string): Promise<any> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['hostconfig', siteResourceId], async () => {
+    const response = await ResourceService().getResource(`${siteResourceId}/host/default/properties/config`, {
+      'api-version': '2021-02-01',
+    });
+    return response;
+  });
+};
+
 export const resetQueriesOnRegisterMcpServer = (subscriptionId: string, resourceGroup: string, logicAppName: string) => {
   const queryClient = getReactQueryClient();
 
@@ -217,6 +242,12 @@ export const resetQueriesOnRegisterMcpServer = (subscriptionId: string, resource
 export const resetQueriesOnUpdateServers = (siteResourceId: string) => {
   const queryClient = getReactQueryClient();
   queryClient.invalidateQueries(['mcpservers', siteResourceId.toLowerCase()]);
+};
+
+export const resetQueriesOnServerAuthUpdate = (siteResourceId: string) => {
+  const queryClient = getReactQueryClient();
+  queryClient.invalidateQueries(['hostconfig', siteResourceId.toLowerCase()]);
+  queryClient.invalidateQueries(['mcpauth', siteResourceId.toLowerCase()]);
 };
 
 export const getLocationNormalized = (location: string): string => location.replace(/ /g, '').toLowerCase();

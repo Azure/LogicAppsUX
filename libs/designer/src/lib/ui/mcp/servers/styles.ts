@@ -6,7 +6,6 @@ const mainGap = '16px';
 export const useMcpServerStyles = makeStyles({
   buttonContainer: {
     display: 'flex',
-    gap: '8px',
     marginBottom: '16px',
   },
   section: {

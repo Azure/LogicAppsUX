@@ -27,7 +27,7 @@ import {
 import { useMcpServerStyles } from './styles';
 import { equals, type McpServer } from '@microsoft/logic-apps-shared';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Add20Regular,
   ArrowClockwise20Regular,
@@ -64,15 +64,19 @@ export interface ServerNotificationData {
 }
 
 export const MCPServers = ({
-  servers,
+  servers: _servers,
+  isRefreshing,
+  onRefresh,
   onUpdateServers,
   onManageTool,
   onManageServer,
   openCreateTools,
 }: {
   servers: McpServer[];
+  isRefreshing?: boolean;
   onManageTool: ToolHandler;
   onManageServer: ToolHandler;
+  onRefresh?: () => void;
   onUpdateServers: (servers: McpServer[], toasterData: ServerNotificationData) => Promise<void>;
   openCreateTools: () => void;
 }) => {
@@ -100,6 +104,11 @@ export const MCPServers = ({
       id: 'bcaiap',
       description: 'Button text for refreshing the server list',
     }),
+    refreshingButtonText: intl.formatMessage({
+      defaultMessage: 'Refreshing...',
+      id: 'TYVS2+',
+      description: 'Button text for refreshing the server list when in progress',
+    }),
     editButtonText: intl.formatMessage({
       defaultMessage: 'Edit',
       id: 'CrlPhs',
@@ -109,6 +118,16 @@ export const MCPServers = ({
       defaultMessage: 'Delete',
       id: 'zyaw99',
       description: 'Button text for deleting a server',
+    }),
+    enabledLabel: intl.formatMessage({
+      defaultMessage: 'On',
+      id: 'KY5eNe',
+      description: 'Label for the enabled switch',
+    }),
+    disabledLabel: intl.formatMessage({
+      defaultMessage: 'Off',
+      id: 'UJGUnc',
+      description: 'Label for the disabled switch',
     }),
     endpointUrlLabel: intl.formatMessage({
       defaultMessage: 'Endpoint URL',
@@ -127,22 +146,48 @@ export const MCPServers = ({
     }),
   };
 
+  const [servers, setServers] = useState<McpServer[]>(_servers);
   const [serverToDelete, setServerToDelete] = useState<string | undefined>(undefined);
   const [showAddServerModal, setShowAddServerModal] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (_servers) {
+      setServers(_servers);
+    }
+  }, [_servers]);
+
   const handleCreateServer = useCallback(() => {
     setShowAddServerModal(true);
-  }, []);
-
-  const handleRefreshServers = useCallback(() => {
-    // Implement refresh logic here
-    console.log('Refreshing servers...');
   }, []);
 
   const handleOpenCreateTools = useCallback(() => {
     openCreateTools();
     setShowAddServerModal(false);
   }, [openCreateTools]);
+
+  const handleUpdateServer = useCallback(
+    async (updatedServer: Partial<McpServer>) => {
+      const updatedServers = servers.map((server) => (equals(server.name, updatedServer.name) ? { ...server, ...updatedServer } : server));
+      setServers(updatedServers);
+
+      await onUpdateServers(updatedServers, {
+        title: intl.formatMessage({
+          defaultMessage: 'Server updated successfully',
+          id: 'RSsqSm',
+          description: 'Title for the toaster after updating a server',
+        }),
+        content: intl.formatMessage(
+          {
+            defaultMessage: 'Successfully updated the MCP server {serverName}.',
+            id: '4HB7lV',
+            description: 'Confirmation message for updating a server',
+          },
+          { serverName: updatedServer.name }
+        ),
+      });
+    },
+    [servers, intl, onUpdateServers]
+  );
 
   const handleDeleteServer = useCallback(async () => {
     if (serverToDelete) {
@@ -191,7 +236,7 @@ export const MCPServers = ({
   );
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <div className={styles.sectionHeader}>
         <Text size={400} weight="bold">
           {INTL_TEXT.title}
@@ -202,58 +247,68 @@ export const MCPServers = ({
         <Button title={INTL_TEXT.createButtonText} appearance="subtle" icon={<Add20Regular />} onClick={handleCreateServer}>
           {INTL_TEXT.createButtonText}
         </Button>
-        <Button title={INTL_TEXT.refreshButtonText} appearance="subtle" icon={<ArrowClockwise20Regular />} onClick={handleRefreshServers}>
-          {INTL_TEXT.refreshButtonText}
+        <Button
+          title={INTL_TEXT.refreshButtonText}
+          appearance="subtle"
+          icon={<ArrowClockwise20Regular />}
+          onClick={onRefresh}
+          disabled={isRefreshing}
+        >
+          {isRefreshing ? INTL_TEXT.refreshingButtonText : INTL_TEXT.refreshButtonText}
         </Button>
       </div>
-      <div className={styles.section}>
-        <Accordion multiple={true} defaultOpenItems={Object.keys(servers)}>
-          {servers.map((server) => (
-            <AccordionItem value={server.name} key={server.name}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 0 }}>
-                <AccordionHeader style={{ marginLeft: -10 }} expandIconPosition="end">
-                  <Text style={{ fontWeight: 'bold', paddingLeft: 0 }}>{server.name}</Text>
-                </AccordionHeader>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Button
-                    style={{ minWidth: '50px', padding: '0 4px' }}
-                    title={INTL_TEXT.editButtonText}
-                    appearance="subtle"
-                    icon={<Edit20Regular />}
-                    onClick={() => onManageServer(server.name)}
-                  >
-                    {INTL_TEXT.editButtonText}
-                  </Button>
-                  <Button
-                    style={{ minWidth: '50px', padding: '0 4px' }}
-                    title={INTL_TEXT.deleteButtonText}
-                    appearance="subtle"
-                    icon={<Delete20Regular />}
-                    onClick={() => setServerToDelete(server.name)}
-                  >
-                    {INTL_TEXT.deleteButtonText}
-                  </Button>
-                  <Divider style={{ padding: '0 8px' }} vertical={true} />
-                  <Switch checked={true} />
-                </div>
-              </div>
-
-              <Text style={{ paddingLeft: 2 }}>{server.description}</Text>
-              <Field style={{ paddingTop: 10, paddingLeft: 2 }} label={INTL_TEXT.endpointUrlLabel} orientation="horizontal">
-                <CopyInputControl text={server.url ?? ''} />
-              </Field>
-
-              <AccordionPanel style={{ paddingTop: 10 }}>
-                <ServerTools
-                  tools={server.tools.map((tool) => tool.name)}
-                  onRemove={(tool) => handleRemoveTool(server.name, tool)}
-                  onManage={onManageTool}
+      <Accordion multiple={true} defaultOpenItems={servers.map((server) => server.name)}>
+        {servers.map((server) => (
+          <AccordionItem className={styles.section} style={{ marginBottom: '12px' }} value={server.name} key={server.name}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 0 }}>
+              <AccordionHeader style={{ marginLeft: -10 }}>
+                <Text style={{ fontWeight: 'bold', paddingLeft: 0 }}>{server.name}</Text>
+              </AccordionHeader>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Button
+                  style={{ minWidth: '50px', padding: '0 4px' }}
+                  title={INTL_TEXT.editButtonText}
+                  appearance="subtle"
+                  icon={<Edit20Regular />}
+                  onClick={() => onManageServer(server.name)}
+                >
+                  {INTL_TEXT.editButtonText}
+                </Button>
+                <Button
+                  style={{ minWidth: '50px', padding: '0 4px' }}
+                  title={INTL_TEXT.deleteButtonText}
+                  appearance="subtle"
+                  icon={<Delete20Regular />}
+                  onClick={() => setServerToDelete(server.name)}
+                >
+                  {INTL_TEXT.deleteButtonText}
+                </Button>
+                <Divider style={{ padding: '0 8px' }} vertical={true} />
+                <Switch
+                  checked={server.enabled}
+                  label={server.enabled ? INTL_TEXT.enabledLabel : INTL_TEXT.disabledLabel}
+                  onChange={(data) => {
+                    handleUpdateServer({ name: server.name, enabled: data.currentTarget.checked });
+                  }}
                 />
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+              </div>
+            </div>
+
+            <Text style={{ paddingLeft: 28 }}>{server.description}</Text>
+            <Field style={{ paddingTop: 10, paddingLeft: 28 }} label={INTL_TEXT.endpointUrlLabel} orientation="horizontal">
+              <CopyInputControl text={server.url ?? ''} />
+            </Field>
+
+            <AccordionPanel style={{ paddingTop: 10, paddingLeft: 16 }}>
+              <ServerTools
+                tools={server.tools.map((tool) => tool.name)}
+                onRemove={(tool) => handleRemoveTool(server.name, tool)}
+                onManage={onManageTool}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+        ))}
+      </Accordion>
 
       {showAddServerModal ? <AddServerModal onCreateTools={handleOpenCreateTools} onDismiss={() => setShowAddServerModal(false)} /> : null}
       {serverToDelete ? <DeleteModal onDelete={handleDeleteServer} onDismiss={() => setServerToDelete(undefined)} /> : null}

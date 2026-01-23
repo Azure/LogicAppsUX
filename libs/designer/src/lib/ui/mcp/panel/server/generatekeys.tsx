@@ -16,8 +16,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMcpPanelStyles, useMcpServerPanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
-import { generateKeys } from '../../../../core/mcp/utils/server';
+import {
+  CopyInputControl,
+  type TemplatePanelFooterProps,
+  TemplatesPanelFooter,
+  TemplatesSection,
+  type TemplatesSectionItem,
+} from '@microsoft/designer-ui';
+import { addExpiryToCurrent, generateKeys } from '../../../../core/mcp/utils/server';
 import { getStandardLogicAppId } from '../../../../core/configuretemplate/utils/helper';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -130,11 +136,6 @@ export const GenerateKeys = () => {
       id: 'duhwio',
       description: 'Label for the API key',
     }),
-    generatedLabel: intl.formatMessage({
-      defaultMessage: 'Generated',
-      id: 'VTcDce',
-      description: 'Label for the generated key',
-    }),
     expiresLabel: intl.formatMessage({
       defaultMessage: 'Expires',
       id: 'GxdV2y',
@@ -153,11 +154,11 @@ export const GenerateKeys = () => {
   };
   const durationOptions = useMemo(() => {
     return [
-      { id: '1', label: `24 ${INTL_TEXT.hoursText}`, value: '1' },
-      { id: '2', label: `7 ${INTL_TEXT.daysText}`, value: '2' },
-      { id: '3', label: `30 ${INTL_TEXT.daysText}`, value: '3' },
-      { id: '4', label: `90 ${INTL_TEXT.daysText}`, value: '4' },
-      { id: '5', label: INTL_TEXT.neverExpiresText, value: '5' },
+      { id: '1', label: `24 ${INTL_TEXT.hoursText}`, value: '24h' },
+      { id: '2', label: `7 ${INTL_TEXT.daysText}`, value: '7d' },
+      { id: '3', label: `30 ${INTL_TEXT.daysText}`, value: '30d' },
+      { id: '4', label: `90 ${INTL_TEXT.daysText}`, value: '90d' },
+      { id: '5', label: INTL_TEXT.neverExpiresText, value: 'noexpiry' },
     ];
   }, [INTL_TEXT.daysText, INTL_TEXT.hoursText, INTL_TEXT.neverExpiresText]);
   const keysOptions = useMemo(() => {
@@ -171,7 +172,6 @@ export const GenerateKeys = () => {
   const [accessKey, setAccessKey] = useState('primary');
 
   const [generatedKey, setGeneratedKey] = useState<string | undefined>(undefined);
-  const [generatedTime, setGeneratedTime] = useState<string | undefined>(undefined);
   const [expiresTime, setExpiresTime] = useState<string | undefined>(undefined);
   const [showSuccessInfo, setShowSuccessInfo] = useState<boolean>(false);
 
@@ -206,12 +206,8 @@ export const GenerateKeys = () => {
       {
         label: INTL_TEXT.apiKeyLabel,
         value: generatedKey,
-        type: 'text',
-      },
-      {
-        label: INTL_TEXT.generatedLabel,
-        value: generatedTime,
-        type: 'text',
+        type: 'custom',
+        onRenderItem: () => <CopyInputControl text={generatedKey ?? ''} />,
       },
       {
         label: INTL_TEXT.expiresLabel,
@@ -219,13 +215,17 @@ export const GenerateKeys = () => {
         type: 'text',
       },
     ];
-  }, [INTL_TEXT.apiKeyLabel, INTL_TEXT.generatedLabel, INTL_TEXT.expiresLabel, generatedKey, generatedTime, expiresTime]);
+  }, [INTL_TEXT.apiKeyLabel, INTL_TEXT.expiresLabel, generatedKey, expiresTime]);
 
   const handleGenerate = useCallback(async () => {
-    const { key, generatedTime, expiresTime } = await generateKeys(logicAppId, duration, accessKey);
+    const expiryTime = duration.endsWith('h')
+      ? addExpiryToCurrent(Number.parseInt(duration.replace('h', '')))
+      : duration.endsWith('d')
+        ? addExpiryToCurrent(/* hours */ undefined, Number.parseInt(duration.replace('d', '')))
+        : 'noexpiry';
+    const key = await generateKeys(logicAppId, expiryTime, accessKey);
     setGeneratedKey(key);
-    setGeneratedTime(generatedTime);
-    setExpiresTime(expiresTime);
+    setExpiresTime(expiryTime);
     setShowSuccessInfo(true);
   }, [logicAppId, duration, accessKey]);
 

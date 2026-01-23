@@ -9,7 +9,7 @@ import { EmptyWorkflowsModal } from './modals';
 import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { Add28Filled } from '@fluentui/react-icons';
 
-export const AddServerButtons = ({ onCreateTools }: { onCreateTools: () => void }) => {
+export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateTools: () => void; onUseExisting?: () => void }) => {
   const intl = useIntl();
   const INTL_TEXT = {
     useExistingTitle: intl.formatMessage({
@@ -49,7 +49,9 @@ export const AddServerButtons = ({ onCreateTools }: { onCreateTools: () => void 
     } else {
       setShowEmptyWorkflowsModal(true);
     }
-  }, [dispatch, hasEligibleWorkflows]);
+
+    onUseExisting?.();
+  }, [dispatch, hasEligibleWorkflows, onUseExisting]);
 
   const [existingSelected, setExistingSelected] = useState(false);
   const [newSelected, setNewSelected] = useState(false);

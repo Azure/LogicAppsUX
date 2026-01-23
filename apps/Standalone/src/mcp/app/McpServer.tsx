@@ -38,6 +38,10 @@ export const McpServer = () => {
     window.alert(`Open workflow clicked for workflow id: ${workflowName}`);
   }, []);
 
+  const handleOpenManageOAuth = useCallback(() => {
+    window.alert('Open manage OAuth clicked');
+  }, []);
+
   const handleUpdateServers = useCallback(async (servers: McpServerType[], toasterData: ServerNotificationData) => {
     return updateMcpServers(appId, servers, toasterData);
   }, []);
@@ -53,6 +57,7 @@ export const McpServer = () => {
                   onUpdateServers={handleUpdateServers}
                   onOpenWorkflow={handleOpenWorkflow}
                   onOpenCreateTools={handleOpenCreateTools}
+                  onOpenManageOAuth={handleOpenManageOAuth}
                 />
                 <div id="mcp-layer-host" className={styles.layerHost} />
               </McpServerDataProvider>

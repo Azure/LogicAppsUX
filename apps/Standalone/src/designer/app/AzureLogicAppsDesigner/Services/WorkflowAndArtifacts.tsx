@@ -3,7 +3,7 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getHostConfig, getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -874,19 +874,6 @@ export const updateMcpServers = async (
     console.log(error);
     throw error;
   }
-};
-
-const getHostConfig = async (siteResourceId: string): Promise<any> => {
-  const queryClient = getReactQueryClient();
-  return queryClient.fetchQuery(['hostconfig', siteResourceId], async () => {
-    const uri = `${baseUrl}${siteResourceId}/host/default/properties/config?api-version=2021-02-01`;
-    const response = await axios.get(uri, {
-      headers: {
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-    });
-    return response.data;
-  });
 };
 
 export const saveWorkflowStandard = async (

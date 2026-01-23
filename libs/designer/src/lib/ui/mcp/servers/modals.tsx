@@ -13,6 +13,7 @@ import {
 import { useIntl } from 'react-intl';
 import { AddServerButtons } from './add';
 import { Dismiss24Regular } from '@fluentui/react-icons';
+import { useCallback } from 'react';
 
 export const DeleteModal = ({ onDelete, onDismiss }: { onDelete: () => void; onDismiss: () => void }) => {
   const intl = useIntl();
@@ -122,6 +123,11 @@ export const AddServerModal = ({ onCreateTools, onDismiss }: { onCreateTools: ()
     }),
   };
 
+  const handleCreateTools = useCallback(() => {
+    onCreateTools();
+    onDismiss();
+  }, [onCreateTools, onDismiss]);
+
   return (
     <Dialog open={true} onOpenChange={onDismiss}>
       <DialogSurface>
@@ -138,7 +144,7 @@ export const AddServerModal = ({ onCreateTools, onDismiss }: { onCreateTools: ()
           <DialogContent>
             <Text>{INTL_TEXT.subtitle}</Text>
             <br />
-            <AddServerButtons onCreateTools={onCreateTools} />
+            <AddServerButtons onCreateTools={handleCreateTools} onUseExisting={onDismiss} />
           </DialogContent>
         </DialogBody>
       </DialogSurface>
