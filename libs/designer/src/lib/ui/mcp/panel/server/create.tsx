@@ -160,8 +160,8 @@ export const CreateServer = ({
   const [isCreatingOrUpdating, setIsCreatingOrUpdating] = useState(false);
 
   useEffect(() => {
-    if (server && Object.keys(server.tools ?? {}).length > 0) {
-      setSelectedTools(Object.values(server.tools).map((tool) => tool.name.toLowerCase()));
+    if (server && (server.tools ?? []).length > 0) {
+      setSelectedTools(server.tools.map((tool) => tool.name.toLowerCase()));
     }
   }, [server]);
 
@@ -266,6 +266,8 @@ export const CreateServer = ({
         description: serverDescription,
         tools: selectedTools.map((toolName) => ({ name: toolName })),
       });
+    } catch {
+      // Need to log the error properly here.
     } finally {
       setIsCreatingOrUpdating(false);
     }

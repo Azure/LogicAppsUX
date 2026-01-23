@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { IntlProvider } from 'react-intl';
 import { InitResourceService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../../../../core';
+import { executeReducerBuilderCallback } from '@reduxjs/toolkit/dist/mapBuilders';
 
 // Mock the queries
 const mockUseMcpAuthentication = vi.fn();
@@ -22,7 +23,6 @@ vi.mock('../../../core/mcp/utils/server', () => ({
   updateAuthSettings: mockUpdateAuthSettings,
 }));
 
-const mockDispatch = vi.fn();
 const mockOpenMcpPanelView = vi.fn();
 
 vi.mock('../../../core/state/mcp/panel/mcpPanelSlice', () => ({
@@ -44,13 +44,10 @@ vi.mock('../../configuretemplate/common', () => ({
   DescriptionWithLink: ({ text }: { text: string }) => <p data-testid="description">{text}</p>,
 }));
 
-const mockService = {
-  getResource: mockUseMcpAuthentication,
-  executeResourceAction: mockUpdateAuthSettings,
-};
 const setupServiceForAuthType = (auth: any) => {
   InitResourceService({
     getResource: () => Promise.resolve({ properties: { extensions: { workflow: { McpServerEndpoints: { authentication: auth } } } } }),
+    executeResourceAction: () => Promise.resolve(),
   } as any);
 };
 
@@ -103,6 +100,7 @@ describe('Authentication', () => {
 
   describe('Component Rendering', () => {
     it('renders the component with title and description', () => {
+      setupServiceForAuthType({ type: 'apikey' });
       renderComponent();
 
       expect(screen.getByText('Authentication')).toBeInTheDocument();
@@ -110,6 +108,7 @@ describe('Authentication', () => {
     });
 
     it('renders the main authentication control', () => {
+      setupServiceForAuthType({ type: 'apikey' });
       renderComponent();
 
       expect(screen.getByText('Method')).toBeInTheDocument();

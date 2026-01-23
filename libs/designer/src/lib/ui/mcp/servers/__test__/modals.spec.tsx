@@ -142,7 +142,7 @@ describe('Modal Components', () => {
       renderWithProviders(<EmptyWorkflowsModal {...defaultProps} />);
 
       expect(screen.getByText('No workflows are available')).toBeInTheDocument();
-      expect(screen.getByText(/You need atleast one workflow in this logic app/)).toBeInTheDocument();
+      expect(screen.getByText(/You need at least one workflow in this logic app/)).toBeInTheDocument();
     });
 
     it('renders close button', () => {
@@ -344,7 +344,7 @@ describe('Modal Components', () => {
       const emptyProps = { onDismiss: vi.fn() };
       const addProps = { onCreateTools: vi.fn(), onDismiss: vi.fn() };
 
-      const { container } = renderWithProviders(
+      renderWithProviders(
         <>
           <DeleteModal {...deleteProps} />
           <EmptyWorkflowsModal {...emptyProps} />

@@ -87,8 +87,8 @@ export const GenerateKeys = () => {
       description: 'Info message title about key generation',
     }),
     infoMessage: intl.formatMessage({
-      defaultMessage: 'Copy and save this key. It wont be displayed again.',
-      id: 'nK7yfo',
+      defaultMessage: `Copy and save this key. It won't be displayed again.`,
+      id: 'x/zASM',
       description: 'Info message about key generation',
     }),
     durationLabel: intl.formatMessage({

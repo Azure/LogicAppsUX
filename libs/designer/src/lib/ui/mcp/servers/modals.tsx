@@ -78,8 +78,8 @@ export const EmptyWorkflowsModal = ({ onDismiss }: { onDismiss: () => void }) =>
     }),
     content: intl.formatMessage({
       defaultMessage:
-        "You need atleast one workflow in this logic app to create an MCP server from existing workflows. Select the 'Create new workflows' to build tools from connector actions on your server.",
-      id: 'sKS42Y',
+        "You need at least one workflow in this logic app to create an MCP server from existing workflows. Select the 'Create new workflows' to build tools from connector actions on your server.",
+      id: 'ixoJF3',
       description: 'Content for the empty workflows modal',
     }),
     closeButtonText: intl.formatMessage({

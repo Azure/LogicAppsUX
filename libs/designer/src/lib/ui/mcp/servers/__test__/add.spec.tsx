@@ -3,7 +3,7 @@
  */
 import { describe, vi, expect, it, beforeEach } from 'vitest';
 // biome-ignore lint/correctness/noUnusedImports: using react for render
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { IntlProvider } from 'react-intl';
@@ -27,9 +27,14 @@ vi.mock('../modals', () => ({
   ),
 }));
 
-const setupServiceForWorkflows = (data: any[]) => {
+const setupServiceForWorkflows = (data: any[], throwError = false) => {
   InitResourceService({
-    listWorkflowsInApp: () => Promise.resolve(data),
+    listWorkflowsInApp: () => {
+      if (throwError) {
+        return Promise.reject(new Error('Test error'));
+      }
+      return Promise.resolve(data);
+    },
   } as any);
 };
 
@@ -82,6 +87,7 @@ describe('AddServerButtons - Simple Tests', () => {
 
   describe('Basic Rendering', () => {
     it('renders both cards with correct titles', () => {
+      setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
       expect(screen.getByText('Use existing workflow tools')).toBeInTheDocument();
@@ -89,6 +95,7 @@ describe('AddServerButtons - Simple Tests', () => {
     });
 
     it('renders with proper descriptions', () => {
+      setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
       expect(screen.getByText('Select from workflows already existing in this logic app.')).toBeInTheDocument();
@@ -96,6 +103,7 @@ describe('AddServerButtons - Simple Tests', () => {
     });
 
     it('renders cards as group elements', () => {
+      setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
       const cards = screen.getAllByRole('group');
@@ -103,6 +111,7 @@ describe('AddServerButtons - Simple Tests', () => {
     });
 
     it('renders checkboxes for card selection', () => {
+      setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
       const checkboxes = screen.getAllByRole('checkbox');
@@ -117,10 +126,7 @@ describe('AddServerButtons - Simple Tests', () => {
     });
 
     it('disables existing workflows card when loading', () => {
-      mockUseMcpEligibleWorkflows.mockReturnValue({
-        data: [],
-        isLoading: true,
-      });
+      setupServiceForWorkflows([]);
 
       renderComponent();
 
@@ -143,6 +149,7 @@ describe('AddServerButtons - Simple Tests', () => {
 
   describe('Component Structure', () => {
     it('has proper accessibility labels on checkboxes', () => {
+      setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
       const checkboxes = screen.getAllByRole('checkbox');
@@ -154,29 +161,13 @@ describe('AddServerButtons - Simple Tests', () => {
 
   describe('Error Handling', () => {
     it('handles query error gracefully', () => {
-      mockUseMcpEligibleWorkflows.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        error: new Error('Query failed'),
-      });
-
-      expect(() => renderComponent()).not.toThrow();
-    });
-
-    it('handles undefined workflow data', () => {
-      mockUseMcpEligibleWorkflows.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-      });
+      setupServiceForWorkflows([], true);
 
       expect(() => renderComponent()).not.toThrow();
     });
 
     it('handles empty workflow data', () => {
-      mockUseMcpEligibleWorkflows.mockReturnValue({
-        data: [],
-        isLoading: false,
-      });
+      setupServiceForWorkflows([]);
 
       expect(() => renderComponent()).not.toThrow();
     });

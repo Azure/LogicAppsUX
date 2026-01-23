@@ -441,8 +441,6 @@ describe('CreateServer', () => {
 
   describe('Form Submission', () => {
     it('calls onUpdate with correct data when form is submitted', async () => {
-      const user = userEvent.setup();
-
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
       const nameInput = screen.getByTestId('textfield-name');

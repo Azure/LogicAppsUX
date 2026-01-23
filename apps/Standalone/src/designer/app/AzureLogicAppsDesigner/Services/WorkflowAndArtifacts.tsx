@@ -846,7 +846,7 @@ export const updateMcpServers = async (
             ...(hostConfig.properties.extensions?.workflow ?? {}),
             McpServerEndpoints: {
               ...(hostConfig.properties.extensions?.workflow?.McpServerEndpoints ?? {}),
-              enable: true,
+              enabled: true,
             },
           },
         },
@@ -860,7 +860,7 @@ export const updateMcpServers = async (
             ...(hostConfig.properties.extensions?.workflow ?? {}),
             McpServerEndpoints: {
               ...(hostConfig.properties.extensions?.workflow?.McpServerEndpoints ?? {}),
-              enable: false,
+              enabled: false,
             },
           },
         },
