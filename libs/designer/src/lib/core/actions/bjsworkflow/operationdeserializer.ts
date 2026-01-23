@@ -607,6 +607,7 @@ const initializeOutputTokensForOperations = (
       const {
         manifest,
         nodeOutputs,
+        nodeInputs,
         operationMetadata: { iconUri, brandColor },
       } = nodeData;
 
@@ -617,7 +618,8 @@ const initializeOutputTokensForOperations = (
           operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodesWithData[operationId]?.settings
+          nodesWithData[operationId]?.settings,
+          nodeInputs
         )
       );
     } catch (error: any) {
