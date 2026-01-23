@@ -33,8 +33,8 @@ vi.mock(import('@xyflow/react'), async (importOriginal) => {
       zoomIn: vi.fn(),
       zoomOut: vi.fn(),
     }),
-    useNodes: () => mockNodes,
-    useEdges: () => mockEdges,
+    useStore: (selector: (state: { nodes: { id: string }[]; edges: { id: string }[] }) => number) =>
+      selector({ nodes: mockNodes, edges: mockEdges }),
     Controls: ({ children }: { children: React.ReactNode }) => <div data-testid="controls">{children}</div>,
     ControlButton: ({
       children,

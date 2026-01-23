@@ -4,7 +4,8 @@ import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { ControlButton, Controls, useReactFlow, useNodes, useEdges } from '@xyflow/react';
+import { ControlButton, Controls, useReactFlow, useStore } from '@xyflow/react';
+import type { ReactFlowState } from '@xyflow/react';
 import CollapseExpandControl from './common/controls/collapseExpandControl';
 import { AddRegular, MapFilled, MapRegular, SearchRegular, SubtractRegular, ZoomFitRegular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
@@ -23,14 +24,16 @@ const CustomControls = () => {
 
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
+  // Select only node/edge counts to avoid re-renders on every node/edge update (e.g., drag/move)
+  const nodeCount = useStore((state: ReactFlowState) => state.nodes.length);
+  const edgeCount = useStore((state: ReactFlowState) => state.edges.length);
+
   // Calculate toolbar tabIndex to come after all workflow elements
   // Each node has nodeIndex and nodeLeafIndex, edges have edgeIndex
   // So we need: (nodes * 2) + edges + 1 to ensure toolbar comes last
-  const nodes = useNodes();
-  const edges = useEdges();
   const toolbarTabIndex = useMemo(() => {
-    return nodes.length * 2 + edges.length + 1;
-  }, [nodes.length, edges.length]);
+    return nodeCount * 2 + edgeCount + 1;
+  }, [nodeCount, edgeCount]);
 
   const minimapToggleClick = () => {
     LoggerService().log({
