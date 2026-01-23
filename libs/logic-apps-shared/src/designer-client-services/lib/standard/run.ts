@@ -416,8 +416,8 @@ export class StandardRunService implements IRunService {
 
       // Merge with options?.queries (options take precedence)
       const mergedParams = { ...uriParams, ...(options?.queries ?? {}) };
-      let noAuth = true;
 
+      let noAuth = true;
       if (isArmResourceId(baseUri)) {
         baseUri = `${baseUri}?api-version=${apiVersion}`;
         noAuth = false;
@@ -425,7 +425,7 @@ export class StandardRunService implements IRunService {
 
       return await this.getHttpRequestByMethod(httpClient, method, {
         uri: baseUri,
-        noAuth: noAuth,
+        noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,

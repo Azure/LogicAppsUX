@@ -29,6 +29,8 @@ export const useRunTreeViewStyles = makeStyles({
     flexDirection: 'row',
   },
   treeItemIcon: {
+    minWidth: '24px',
+    minHeight: '24px',
     width: '24px',
     height: '24px',
     borderRadius: '2px',
@@ -36,6 +38,8 @@ export const useRunTreeViewStyles = makeStyles({
     background: tokens.colorNeutralBackground3,
   },
   treeItemToolIcon: {
+    minWidth: '16px',
+    minHeight: '16px',
     width: '16px',
     height: '16px',
     margin: '4px',

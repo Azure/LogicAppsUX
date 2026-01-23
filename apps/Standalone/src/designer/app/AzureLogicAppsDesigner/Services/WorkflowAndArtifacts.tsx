@@ -163,16 +163,16 @@ const getAllCustomCodeFiles = async (
   return customCodeFiles;
 };
 
-export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
-  return useQuery(['workflowArtifactsConsumption', workflowId], () => getWorkflowAndArtifactsConsumption(workflowId), {
+export const useWorkflowAndArtifactsConsumption = (workflowId: string, isDraft = false) => {
+  return useQuery(['workflowArtifactsConsumption', workflowId, isDraft], () => getWorkflowAndArtifactsConsumption(workflowId, isDraft), {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
 };
 
-export const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
-  const uri = `${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`;
+export const getWorkflowAndArtifactsConsumption = async (workflowId: string, isDraft = false): Promise<Workflow> => {
+  const uri = `${baseUrl}${workflowId}${isDraft ? '/drafts/default' : ''}?api-version=${consumptionApiVersion}`;
   const response = await axios.get(uri, {
     headers: {
       Authorization: `Bearer ${environment.armToken}`,
@@ -425,6 +425,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
 
     try {
       let queryParams: AgentQueryParams | undefined = undefined;
+      let a2aKey = '';
       let a2aCodeForDraft = '';
       const authentication = await fetchAuthentication(siteResourceId);
 
@@ -440,7 +441,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         const oboData = await fetchOBOData(siteResourceId);
 
         // Add authentication tokens if available
-        const a2aKey = a2aData?.key;
+        a2aKey = a2aData?.key;
         if (a2aKey) {
           queryParams = { apiKey: a2aKey };
 
@@ -453,13 +454,30 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       }
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
+
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-      const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
-      const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame${isDraftMode ? `?agentCard=${agentCardUrlForDraft}` : ''}`;
+      const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
+
+      const agentCardUrlForDraft = new URL(
+        `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json`
+      );
+      if (a2aKey) {
+        agentCardUrlForDraft.searchParams.append('x-api-key', a2aKey);
+      }
+      if (a2aCodeForDraft) {
+        const codeParamParts = a2aCodeForDraft.split('=');
+        if (codeParamParts.length > 1 && codeParamParts[1]) {
+          agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(codeParamParts[1]));
+        }
+      }
+
+      const draftChatUrl = new URL(`${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame`);
+      draftChatUrl.searchParams.append('api-version', '2022-05-01');
+      draftChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
 
       return {
-        agentUrl,
-        chatUrl,
+        agentUrl: agentUrl,
+        chatUrl: isDraftMode ? draftChatUrl.href : prodChatUrl,
         queryParams,
         hostName,
       };

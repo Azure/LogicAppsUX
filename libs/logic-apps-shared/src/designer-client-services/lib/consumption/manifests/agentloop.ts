@@ -218,6 +218,35 @@ export default {
                     },
                   },
                 },
+                reasoningEffort: {
+                  type: 'string',
+                  title: 'Reasoning effort',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'low',
+                        displayName: 'Low',
+                      },
+                      {
+                        value: 'medium',
+                        displayName: 'Medium',
+                      },
+                      {
+                        value: 'high',
+                        displayName: 'High',
+                      },
+                      {
+                        value: 'none',
+                        displayName: 'None',
+                      },
+                      {
+                        value: 'minimal',
+                        displayName: 'Minimal',
+                      },
+                    ],
+                  },
+                },
               },
             },
           },
