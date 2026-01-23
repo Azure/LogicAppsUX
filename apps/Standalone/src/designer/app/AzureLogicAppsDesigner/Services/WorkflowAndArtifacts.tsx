@@ -3,15 +3,15 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getHostConfig, getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
-import type { AgentQueryParams, AgentURL, LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
+import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
-import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, ServerNotificationData } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
@@ -163,16 +163,16 @@ const getAllCustomCodeFiles = async (
   return customCodeFiles;
 };
 
-export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
-  return useQuery(['workflowArtifactsConsumption', workflowId], () => getWorkflowAndArtifactsConsumption(workflowId), {
+export const useWorkflowAndArtifactsConsumption = (workflowId: string, isDraft = false) => {
+  return useQuery(['workflowArtifactsConsumption', workflowId, isDraft], () => getWorkflowAndArtifactsConsumption(workflowId, isDraft), {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
 };
 
-export const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
-  const uri = `${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`;
+export const getWorkflowAndArtifactsConsumption = async (workflowId: string, isDraft = false): Promise<Workflow> => {
+  const uri = `${baseUrl}${workflowId}${isDraft ? '/drafts/default' : ''}?api-version=${consumptionApiVersion}`;
   const response = await axios.get(uri, {
     headers: {
       Authorization: `Bearer ${environment.armToken}`,
@@ -425,6 +425,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
 
     try {
       let queryParams: AgentQueryParams | undefined = undefined;
+      let a2aKey = '';
       let a2aCodeForDraft = '';
       const authentication = await fetchAuthentication(siteResourceId);
 
@@ -440,7 +441,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
         const oboData = await fetchOBOData(siteResourceId);
 
         // Add authentication tokens if available
-        const a2aKey = a2aData?.key;
+        a2aKey = a2aData?.key;
         if (a2aKey) {
           queryParams = { apiKey: a2aKey };
 
@@ -453,13 +454,30 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       }
 
       const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
+
       const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-      const agentCardUrlForDraft = `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json${a2aCodeForDraft ? `${encodeURIComponent(`?${a2aCodeForDraft}`)}` : ''}`;
-      const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame${isDraftMode ? `?agentCard=${agentCardUrlForDraft}` : ''}`;
+      const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
+
+      const agentCardUrlForDraft = new URL(
+        `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json`
+      );
+      if (a2aKey) {
+        agentCardUrlForDraft.searchParams.append('x-api-key', a2aKey);
+      }
+      if (a2aCodeForDraft) {
+        const codeParamParts = a2aCodeForDraft.split('=');
+        if (codeParamParts.length > 1 && codeParamParts[1]) {
+          agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(codeParamParts[1]));
+        }
+      }
+
+      const draftChatUrl = new URL(`${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame`);
+      draftChatUrl.searchParams.append('api-version', '2022-05-01');
+      draftChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
 
       return {
-        agentUrl,
-        chatUrl,
+        agentUrl: agentUrl,
+        chatUrl: isDraftMode ? draftChatUrl.href : prodChatUrl,
         queryParams,
         hostName,
       };
@@ -784,6 +802,7 @@ export const createMcpServer = async (
       connectionsData,
       /* parametersData */ undefined,
       /* settingsProperties */ undefined,
+      /* hostConfig */ undefined,
       /* customCodeData */ undefined,
       /* notes */ undefined,
       { mcpServers },
@@ -800,6 +819,81 @@ export const createMcpServer = async (
   }
 };
 
+export const updateMcpServers = async (
+  siteResourceId: string,
+  servers: McpServer[],
+  notificationData: ServerNotificationData
+): Promise<void> => {
+  const mcpServers = servers.map((server) => ({
+    name: server.name,
+    description: server.description,
+    tools: server.tools,
+    enabled: server.enabled,
+  }));
+
+  try {
+    const hostConfig = await getHostConfig(siteResourceId);
+    const areAllServersDeleted = servers.length === 0;
+    let updatedHostConfig: any;
+    const queryClient = getReactQueryClient();
+
+    if (!areAllServersDeleted && hostConfig?.extensions?.workflow?.McpServerEndpoints?.enabled === false) {
+      updatedHostConfig = {
+        ...(hostConfig.properties ?? {}),
+        extensions: {
+          ...(hostConfig.properties.extensions ?? {}),
+          workflow: {
+            ...(hostConfig.properties.extensions?.workflow ?? {}),
+            McpServerEndpoints: {
+              ...(hostConfig.properties.extensions?.workflow?.McpServerEndpoints ?? {}),
+              enabled: true,
+            },
+          },
+        },
+      };
+    } else if (areAllServersDeleted && hostConfig?.extensions?.workflow?.McpServerEndpoints?.enabled === true) {
+      updatedHostConfig = {
+        ...(hostConfig.properties ?? {}),
+        extensions: {
+          ...(hostConfig.properties.extensions ?? {}),
+          workflow: {
+            ...(hostConfig.properties.extensions?.workflow ?? {}),
+            McpServerEndpoints: {
+              ...(hostConfig.properties.extensions?.workflow?.McpServerEndpoints ?? {}),
+              enabled: false,
+            },
+          },
+        },
+      };
+    }
+
+    if (updatedHostConfig) {
+      await queryClient.invalidateQueries(['hostconfig', siteResourceId]);
+    }
+
+    await saveWorkflowStandard(
+      siteResourceId,
+      /* workflows */ [],
+      /* connectionsData */ undefined,
+      /* parametersData */ undefined,
+      /* settingsProperties */ undefined,
+      updatedHostConfig,
+      /* customCodeData */ undefined,
+      /* notes */ undefined,
+      { mcpServers },
+      /* clearDirtyState */ () => {},
+      { skipValidation: true, throwError: true }
+    );
+
+    const message = `${notificationData.title} \n\n${notificationData.content}`;
+    console.log(message);
+    window.alert(message);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const saveWorkflowStandard = async (
   siteResourceId: string,
   workflows: {
@@ -809,6 +903,7 @@ export const saveWorkflowStandard = async (
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
+  hostConfig: any | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   notesData: Record<string, Note> | undefined,
   mcpServers: { mcpServers: any[] } | undefined,
@@ -840,6 +935,10 @@ export const saveWorkflowStandard = async (
 
   if (parametersData) {
     data.files['parameters.json'] = parametersData;
+  }
+
+  if (hostConfig) {
+    data.files['host.json'] = hostConfig;
   }
 
   if (mcpServers) {

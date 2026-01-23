@@ -42,7 +42,10 @@ jobs:
         run: pnpm turbo run build --cache-dir=.turbo
 
       - name: Run tests with coverage
-        run: pnpm turbo run test:lib --cache-dir=.turbo
+        run: |
+          pnpm turbo run test:lib --cache-dir=.turbo
+          pnpm turbo run test:iframe-app --cache-dir=.turbo
+          pnpm turbo run test:extension-unit --cache-dir=.turbo
 
       - name: Merge coverage reports
         run: |
@@ -85,6 +88,7 @@ jobs:
             **/*Interfaces.ts
             **/types.ts
             **/types.tsx
+            **/styles.ts
             **/constants.ts
             **/constants/**
             # Config files
@@ -100,6 +104,30 @@ jobs:
             **/node_modules/**
             **/dist/**
             **/build/**
+            # Standalone app (dev environment, not covered by tests)
+            apps/Standalone/**
+            # Documentation site
+            apps/docs/**
+            # Manifest and swagger files (configuration/data, not logic)
+            **/manifest/**
+            **/manifests/**
+            **/swagger/**
+            # Service interfaces and base classes (tested via implementations)
+            **/designer-client-services/lib/*.ts
+            **/lib/base/**
+            # Environment-specific service index/barrel files
+            **/lib/consumption/index.ts
+            **/lib/standard/index.ts
+            # Static operation and schema definitions
+            **/operations/**
+            **/schemas/**
+            **/staticresultschema/**
+            # Application setup and providers (not business logic)
+            **/*Context.ts
+            **/*Context.tsx
+            **/*Provider.ts
+            **/*Provider.tsx
+            **/providers/**
 
       - name: Check coverage on changed files
         id: coverage-check
@@ -141,6 +169,10 @@ jobs:
           UNCOVERED_FILES=""
           COVERED_FILES=""
           PARTIAL_FILES=""
+          SKIPPED_FILES=""
+
+          # Define packages that require coverage (libs with vitest configs)
+          COVERED_PACKAGES="libs/designer libs/designer-ui libs/designer-v2 libs/logic-apps-shared libs/data-mapper libs/data-mapper-v2 libs/chatbot libs/a2a-core libs/vscode-extension apps/vs-code-designer apps/vs-code-react apps/iframe-app"
 
           for file in $CHANGED_FILES; do
             # Skip if file doesn't exist (might have been deleted)
@@ -153,11 +185,24 @@ jobs:
             PKG_DIR=$(echo "$file" | sed 's|/src/.*||')
             LCOV_FILE="$PKG_DIR/coverage/lcov.info"
 
+            # Check if this package requires coverage
+            PKG_REQUIRES_COVERAGE=false
+            for pkg in $COVERED_PACKAGES; do
+              if [ "$PKG_DIR" = "$pkg" ]; then
+                PKG_REQUIRES_COVERAGE=true
+                break
+              fi
+            done
+
             if [ -f "$LCOV_FILE" ]; then
-              # Check if this file is mentioned in the coverage report
-              if grep -q "SF:.*$(basename $file)" "$LCOV_FILE" 2>/dev/null; then
-                # Get line coverage for this file
-                FILE_SECTION=$(awk "/SF:.*$(basename $file)/,/end_of_record/" "$LCOV_FILE" 2>/dev/null || true)
+              # Get the absolute path pattern to match in lcov (lcov uses paths relative to package root or absolute)
+              # Extract the path after PKG_DIR to match against lcov SF entries
+              FILE_RELATIVE_PATH=$(echo "$file" | sed "s|^$PKG_DIR/||")
+
+              # Check if this file is mentioned in the coverage report using the relative path
+              if grep -q "SF:.*${FILE_RELATIVE_PATH}$" "$LCOV_FILE" 2>/dev/null; then
+                # Get line coverage for this file - use the full relative path for accurate matching
+                FILE_SECTION=$(awk "/SF:.*${FILE_RELATIVE_PATH//\//\\/}\$/,/end_of_record/" "$LCOV_FILE" 2>/dev/null || true)
 
                 if [ -n "$FILE_SECTION" ]; then
                   LINES_FOUND=$(echo "$FILE_SECTION" | grep "^LF:" | cut -d: -f2 || echo "0")
@@ -177,9 +222,12 @@ jobs:
               else
                 UNCOVERED_FILES="$UNCOVERED_FILES\n❌ \`$file\` - Not covered by tests"
               fi
+            elif [ "$PKG_REQUIRES_COVERAGE" = true ]; then
+              # Package should have coverage but doesn't - this is a problem
+              UNCOVERED_FILES="$UNCOVERED_FILES\n❌ \`$file\` - No coverage data (package should have tests)"
             else
-              # No coverage file found for this package - might be acceptable
-              echo "ℹ️ No coverage data for package: $PKG_DIR" >> $GITHUB_STEP_SUMMARY
+              # Package doesn't require coverage (not in the list)
+              SKIPPED_FILES="$SKIPPED_FILES\n⏭️ \`$file\` - Package not configured for coverage"
             fi
           done
 
@@ -195,6 +243,12 @@ jobs:
           if [ -n "$PARTIAL_FILES" ]; then
             echo "#### ⚠️ Partially Covered (< 80%):" >> $GITHUB_STEP_SUMMARY
             echo -e "$PARTIAL_FILES" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -n "$SKIPPED_FILES" ]; then
+            echo "#### ⏭️ Skipped (package not configured for coverage):" >> $GITHUB_STEP_SUMMARY
+            echo -e "$SKIPPED_FILES" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
@@ -218,6 +272,15 @@ jobs:
           script: |
             const fs = require('fs');
 
+            // Check if this is a fork PR - forks don't have write permissions
+            const isFork = context.payload.pull_request?.head?.repo?.fork === true;
+
+            if (isFork) {
+              console.log('ℹ️ This PR is from a fork. Skipping PR comment (no write permissions).');
+              console.log('📊 Coverage results are available in the workflow summary above.');
+              return;
+            }
+
             // Read the step summary
             const summaryPath = process.env.GITHUB_STEP_SUMMARY;
             let summary = '';
@@ -227,34 +290,44 @@ jobs:
               summary = '📊 Coverage check completed. See workflow run for details.';
             }
 
-            // Find existing comment
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const botComment = comments.find(comment =>
-              comment.user.type === 'Bot' &&
-              comment.body.includes('📊 Coverage Report for Changed Files')
-            );
-
-            const commentBody = summary || '📊 Coverage check completed. See workflow run for details.';
-
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: commentBody
-              });
-            } else {
-              await github.rest.issues.createComment({
+            try {
+              // Find existing comment
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: commentBody
               });
+
+              const botComment = comments.find(comment =>
+                comment.user.type === 'Bot' &&
+                comment.body.includes('📊 Coverage Report for Changed Files')
+              );
+
+              const commentBody = summary || '📊 Coverage check completed. See workflow run for details.';
+
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: commentBody
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody
+                });
+              }
+            } catch (error) {
+              // Handle permission errors gracefully (e.g., for fork PRs)
+              if (error.status === 403) {
+                console.log('⚠️ Unable to post comment (permission denied). This is expected for fork PRs.');
+                console.log('📊 Coverage results are available in the workflow summary above.');
+              } else {
+                throw error;
+              }
             }
 
       - name: Fail if coverage is insufficient

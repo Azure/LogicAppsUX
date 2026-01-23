@@ -64,6 +64,7 @@ export interface FloatingRunButtonProps {
     disabled?: boolean;
     tooltipText?: string;
   };
+  isConsumption?: boolean;
 }
 
 export const FloatingRunButton = ({
@@ -76,6 +77,7 @@ export const FloatingRunButton = ({
   isDisabled,
   tooltipOverride,
   chatProps,
+  isConsumption,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
@@ -162,9 +164,11 @@ export const FloatingRunButton = ({
       }
 
       try {
+        const standardUrl = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`;
+        const consumptionUrl = `${siteResourceId}/drafts/default/run`;
         const callbackInfo: any = {
-          value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`,
-          method: HTTP_METHODS.POST,
+          value: isConsumption ? consumptionUrl : standardUrl,
+          method: payload?.method ?? HTTP_METHODS.POST,
         };
 
         // Wait 0.5 seconds, running too fast after saving causes 500 error
@@ -182,7 +186,7 @@ export const FloatingRunButton = ({
 
       setRunStatusMessage(null);
     },
-    [runStatusMessages, siteResourceId, workflowName, onRun]
+    [runStatusMessages, siteResourceId, workflowName, onRun, isConsumption]
   );
 
   const saveWorkflow = useCallback(async () => {
