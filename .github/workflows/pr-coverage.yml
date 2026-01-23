@@ -42,7 +42,10 @@ jobs:
         run: pnpm turbo run build --cache-dir=.turbo
 
       - name: Run tests with coverage
-        run: pnpm turbo run test:lib --cache-dir=.turbo
+        run: |
+          pnpm turbo run test:lib --cache-dir=.turbo
+          pnpm turbo run test:iframe-app --cache-dir=.turbo
+          pnpm turbo run test:extension-unit --cache-dir=.turbo
 
       - name: Merge coverage reports
         run: |
