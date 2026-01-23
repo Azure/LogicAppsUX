@@ -143,14 +143,14 @@ describe('binaries', () => {
       vscode.window.showErrorMessage = showErrorMessage;
 
       const result = await getLatestDotNetVersion(context, majorVersion);
-      expect(result).toBe(DependencyVersion.dotnet6);
+      expect(result).toBe(DependencyVersion.dotnet8);
       expect(showErrorMessage).toHaveBeenCalled();
     });
 
     it('should return fallback dotnet version when no major version is sent', async () => {
       const result = await getLatestDotNetVersion(context);
 
-      expect(result).toBe(DependencyVersion.dotnet6);
+      expect(result).toBe(DependencyVersion.dotnet8);
     });
   });
 
