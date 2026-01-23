@@ -656,11 +656,8 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
 
     // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
     await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS = {
-        aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
-        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
-        github: { signInEndpoint: '/.auth/login/github', name: 'GitHub' },
-      };
+      (window as any).IDENTITY_PROVIDERS =
+        '{"aad":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"},"github":{"signInEndpoint":"/.auth/login/github","name":"GitHub"}}';
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -686,10 +683,8 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
 
     // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
     await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS = {
-        aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
-        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
-      };
+      (window as any).IDENTITY_PROVIDERS =
+        '{"aad":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"}}';
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -720,10 +715,8 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
 
     // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
     await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS = {
-        aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
-        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
-      };
+      (window as any).IDENTITY_PROVIDERS =
+        '{"aad":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"}}';
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -767,7 +760,7 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
       if (request.resourceType() === 'document') {
         const response = await route.fetch();
         let html = await response.text();
-        html = html.replace('window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"', 'window.IDENTITY_PROVIDERS = {}');
+        html = html.replace('window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"', 'window.IDENTITY_PROVIDERS = "{}"');
         await route.fulfill({ response, body: html });
       } else {
         await route.continue();
@@ -806,7 +799,7 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
         let html = await response.text();
         html = html.replace(
           'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
-          'window.IDENTITY_PROVIDERS = { okta: { signInEndpoint: "/.auth/login/okta", name: "Okta SSO" } }'
+          'window.IDENTITY_PROVIDERS = \'{"okta":{"signInEndpoint":"/.auth/login/okta","name":"Okta SSO"}}\''
         );
         await route.fulfill({ response, body: html });
       } else {
