@@ -17,7 +17,11 @@ import { useIsEverythingExpanded } from '../../../core/state/workflow/workflowSe
 
 export const expandCollapseControlId = 'control-expand-collapse-button';
 
-const CollapseExpandControl = () => {
+interface CollapseExpandControlProps {
+  tabIndex?: number;
+}
+
+const CollapseExpandControl = ({ tabIndex }: CollapseExpandControlProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const designerNodesExpanded = useIsEverythingExpanded();
@@ -50,7 +54,13 @@ const CollapseExpandControl = () => {
   };
 
   return (
-    <ControlButton id={expandCollapseControlId} aria-label={controlLabel} title={controlLabel} onClick={expandCollapseToggleClick}>
+    <ControlButton
+      id={expandCollapseControlId}
+      aria-label={controlLabel}
+      title={controlLabel}
+      onClick={expandCollapseToggleClick}
+      tabIndex={tabIndex}
+    >
       {designerNodesExpanded ? <ArrowMinimizeVerticalRegular /> : <ArrowMaximizeVerticalRegular />}
     </ControlButton>
   );

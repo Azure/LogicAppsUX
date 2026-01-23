@@ -4,9 +4,10 @@ import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { ControlButton, Controls, useReactFlow } from '@xyflow/react';
+import { ControlButton, Controls, useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import CollapseExpandControl from './common/controls/collapseExpandControl';
 import { AddRegular, MapFilled, MapRegular, SearchRegular, SubtractRegular, ZoomFitRegular } from '@fluentui/react-icons';
+import { useMemo } from 'react';
 
 export const searchControlId = 'control-search-button';
 export const minimapControlId = 'control-minimap-button';
@@ -21,6 +22,16 @@ const CustomControls = () => {
   const searchId = 'control-search-button';
 
   const { fitView, zoomIn, zoomOut } = useReactFlow();
+
+  // Calculate toolbar tabIndex to come after all workflow elements
+  // Each node has nodeIndex and nodeLeafIndex, edges have edgeIndex
+  // So we need: (nodes * 2) + edges + 1 to ensure toolbar comes last
+  const nodes = useNodes();
+  const edges = useEdges();
+  const toolbarTabIndex = useMemo(() => {
+    return nodes.length * 2 + edges.length + 1;
+  }, [nodes.length, edges.length]);
+
   const minimapToggleClick = () => {
     LoggerService().log({
       area: 'CustomControls:onToggleMiniMapClick',
@@ -96,20 +107,26 @@ const CustomControls = () => {
 
   return (
     <Controls showFitView={false} showInteractive={false} showZoom={false}>
-      <CollapseExpandControl />
-      <ControlButton id={zoomInControlId} aria-label={zoomInAria} title={zoomInAria} onClick={zoomInClick}>
+      <CollapseExpandControl tabIndex={toolbarTabIndex} />
+      <ControlButton id={zoomInControlId} aria-label={zoomInAria} title={zoomInAria} onClick={zoomInClick} tabIndex={toolbarTabIndex}>
         <AddRegular />
       </ControlButton>
-      <ControlButton id={zoomOutControlId} aria-label={zoomOutAria} title={zoomOutAria} onClick={zoomOutClick}>
+      <ControlButton id={zoomOutControlId} aria-label={zoomOutAria} title={zoomOutAria} onClick={zoomOutClick} tabIndex={toolbarTabIndex}>
         <SubtractRegular />
       </ControlButton>
-      <ControlButton id={zoomFitControlId} aria-label={zoomFitAria} title={zoomFitAria} onClick={zoomFitClick}>
+      <ControlButton id={zoomFitControlId} aria-label={zoomFitAria} title={zoomFitAria} onClick={zoomFitClick} tabIndex={toolbarTabIndex}>
         <ZoomFitRegular />
       </ControlButton>
-      <ControlButton id={searchId} aria-label={searchAria} title={searchAria} onClick={searchToggleClick}>
+      <ControlButton id={searchId} aria-label={searchAria} title={searchAria} onClick={searchToggleClick} tabIndex={toolbarTabIndex}>
         <SearchRegular />
       </ControlButton>
-      <ControlButton aria-label={minimapAria} title={minimapAria} onClick={minimapToggleClick}>
+      <ControlButton
+        id={minimapControlId}
+        aria-label={minimapAria}
+        title={minimapAria}
+        onClick={minimapToggleClick}
+        tabIndex={toolbarTabIndex}
+      >
         {showMinimap ? <MapFilled /> : <MapRegular />}
       </ControlButton>
     </Controls>
