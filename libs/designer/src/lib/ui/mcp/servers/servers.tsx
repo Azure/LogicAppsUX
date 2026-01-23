@@ -43,21 +43,6 @@ import { AddServerModal, DeleteModal } from './modals';
 
 export type ToolHandler = (tool: string) => void;
 
-const toolTableCellStyles = {
-  border: 'none',
-  paddingBottom: '8px',
-  borderBottom: '1px solid #ccc',
-  paddingLeft: 2,
-};
-const toolNameCellStyles = {
-  paddingTop: '6px',
-  alignItems: 'center',
-  display: 'flex',
-};
-const lastCellStyles = {
-  width: '8%',
-};
-
 export interface ServerNotificationData {
   title: string;
   content: string;
@@ -236,7 +221,7 @@ export const MCPServers = ({
   );
 
   return (
-    <div style={{ height: '100%' }}>
+    <div>
       <div className={styles.sectionHeader}>
         <Text size={400} weight="bold">
           {INTL_TEXT.title}
@@ -259,14 +244,16 @@ export const MCPServers = ({
       </div>
       <Accordion multiple={true} defaultOpenItems={servers.map((server) => server.name)}>
         {servers.map((server) => (
-          <AccordionItem className={styles.section} style={{ marginBottom: '12px' }} value={server.name} key={server.name}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 0 }}>
-              <AccordionHeader style={{ marginLeft: -10 }}>
-                <Text style={{ fontWeight: 'bold', paddingLeft: 0 }}>{server.name}</Text>
+          <AccordionItem className={styles.server} value={server.name} key={server.name}>
+            <div className={styles.serverHeader}>
+              <AccordionHeader className={styles.serverHeaderTextSection}>
+                <Text weight="bold" className={styles.serverHeaderText}>
+                  {server.name}
+                </Text>
               </AccordionHeader>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div className={styles.serverHeaderActions}>
                 <Button
-                  style={{ minWidth: '50px', padding: '0 4px' }}
+                  className={styles.serverHeaderButtons}
                   title={INTL_TEXT.editButtonText}
                   appearance="subtle"
                   icon={<Edit20Regular />}
@@ -275,7 +262,7 @@ export const MCPServers = ({
                   {INTL_TEXT.editButtonText}
                 </Button>
                 <Button
-                  style={{ minWidth: '50px', padding: '0 4px' }}
+                  className={styles.serverHeaderButtons}
                   title={INTL_TEXT.deleteButtonText}
                   appearance="subtle"
                   icon={<Delete20Regular />}
@@ -283,7 +270,7 @@ export const MCPServers = ({
                 >
                   {INTL_TEXT.deleteButtonText}
                 </Button>
-                <Divider style={{ padding: '0 8px' }} vertical={true} />
+                <Divider className={styles.serverHeaderDivider} vertical={true} />
                 <Switch
                   checked={server.enabled}
                   label={server.enabled ? INTL_TEXT.enabledLabel : INTL_TEXT.disabledLabel}
@@ -294,12 +281,12 @@ export const MCPServers = ({
               </div>
             </div>
 
-            <Text style={{ paddingLeft: 28 }}>{server.description}</Text>
-            <Field style={{ paddingTop: 10, paddingLeft: 28 }} label={INTL_TEXT.endpointUrlLabel} orientation="horizontal">
+            <Text className={styles.serverDescription}>{server.description}</Text>
+            <Field className={styles.serverField} label={INTL_TEXT.endpointUrlLabel} orientation="horizontal">
               <CopyInputControl text={server.url ?? ''} />
             </Field>
 
-            <AccordionPanel style={{ paddingTop: 10, paddingLeft: 16 }}>
+            <AccordionPanel className={styles.serverContent}>
               <ServerTools
                 tools={server.tools.map((tool) => tool.name)}
                 onRemove={(tool) => handleRemoveTool(server.name, tool)}
@@ -359,24 +346,24 @@ const ServerTools = ({ tools, onRemove, onManage }: { tools: string[]; onRemove:
   return (
     <Table className={styles.tableStyle} aria-label={INTL_TEXT.toolsAriaLabel} size="small">
       <TableHeader>
-        <TableRow style={toolTableCellStyles}>
+        <TableRow className={styles.rowStyle}>
           {columns.map((column, i) => (
-            <TableHeaderCell key={column.columnKey} style={i === columns.length - 1 ? lastCellStyles : toolTableCellStyles}>
+            <TableHeaderCell key={column.columnKey} className={i === columns.length - 1 ? styles.lastCell : styles.rowStyle}>
               <Text weight="semibold">{column.label}</Text>
             </TableHeaderCell>
           ))}
         </TableRow>
       </TableHeader>
-      <TableBody style={toolTableCellStyles}>
+      <TableBody className={styles.rowStyle}>
         {items.map((item) => (
-          <TableRow key={item} style={toolTableCellStyles}>
-            <TableCell style={toolNameCellStyles}>
+          <TableRow key={item} className={styles.rowStyle}>
+            <TableCell className={styles.nameCell}>
               <Image className={styles.toolIcon} src={WorkflowIcon} />
               <Link as="button" onClick={() => onManage(item)}>
                 {item}
               </Link>
             </TableCell>
-            <TableCell className={styles.iconsCell} style={{ ...toolTableCellStyles, paddingTop: 6 }}>
+            <TableCell className={styles.iconsCell}>
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
                   <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />

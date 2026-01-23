@@ -128,10 +128,11 @@ export const generateKeys = async (siteResourceId: string, duration: string, acc
 export const addExpiryToCurrent = (hours?: number, days?: number): string => {
   const now = new Date();
   if (hours) {
-    now.setHours(now.getHours() + hours);
+    return new Date(now.setHours(now.getHours() + hours)).toISOString();
   }
   if (days) {
-    now.setDate(now.getDate() + days);
+    return new Date(now.setDate(now.getDate() + days)).toISOString();
   }
+
   return now.toISOString();
 };

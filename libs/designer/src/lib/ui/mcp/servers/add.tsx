@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardPreview, Image, Text, tokens } from '@fluentui/react-components';
+import { Card, CardHeader, CardPreview, Image, Text } from '@fluentui/react-components';
 import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import { useIntl } from 'react-intl';
 import { useMcpEligibleWorkflows } from '../../../core/mcp/utils/queries';
@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { EmptyWorkflowsModal } from './modals';
 import { McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { Add28Filled } from '@fluentui/react-icons';
+import { useMcpServerAddStyles } from './styles';
 
 export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateTools: () => void; onUseExisting?: () => void }) => {
   const intl = useIntl();
@@ -34,6 +35,7 @@ export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateToo
     }),
   };
 
+  const styles = useMcpServerAddStyles();
   const dispatch = useDispatch<AppDispatch>();
   const [showEmptyWorkflowsModal, setShowEmptyWorkflowsModal] = useState<boolean>(false);
   const { subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => ({
@@ -57,10 +59,10 @@ export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateToo
   const [newSelected, setNewSelected] = useState(false);
 
   return (
-    <div style={{ paddingTop: 20, display: 'flex', gap: 20 }}>
+    <div className={styles.container}>
       <Card
+        className={styles.firstCard}
         disabled={isLoading}
-        style={{ width: '80%' }}
         selected={existingSelected}
         onSelectionChange={(_, { selected }) => {
           setExistingSelected(selected);
@@ -71,11 +73,11 @@ export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateToo
         onClick={handleUseExistingWorkflows}
       >
         <CardHeader
-          style={{ fontWeight: 600 }}
-          image={<Image src={WorkflowIcon} style={{ width: 28, height: 28 }} />}
+          className={styles.cardHeader}
+          image={<Image src={WorkflowIcon} className={styles.cardIcon} />}
           header={INTL_TEXT.useExistingTitle}
         />
-        <CardPreview style={{ padding: '8px 10px' }}>
+        <CardPreview className={styles.cardContent}>
           <Text>{INTL_TEXT.useExistingDescription}</Text>
         </CardPreview>
       </Card>
@@ -90,11 +92,11 @@ export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateToo
         onClick={onCreateTools}
       >
         <CardHeader
-          style={{ fontWeight: 600 }}
-          image={<Add28Filled style={{ width: 28, height: 28, color: tokens.colorCompoundBrandStroke }} />}
+          className={styles.cardHeader}
+          image={<Add28Filled className={styles.secondCardIcon} />}
           header={INTL_TEXT.createNewTitle}
         />
-        <CardPreview style={{ padding: '8px 10px' }}>
+        <CardPreview className={styles.cardContent}>
           <Text>{INTL_TEXT.createNewDescription}</Text>
         </CardPreview>
       </Card>

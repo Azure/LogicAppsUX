@@ -168,7 +168,7 @@ export const GenerateKeys = () => {
     ];
   }, [INTL_TEXT.primaryKeyText, INTL_TEXT.secondaryKeyText]);
 
-  const [duration, setDuration] = useState('1');
+  const [duration, setDuration] = useState('24h');
   const [accessKey, setAccessKey] = useState('primary');
 
   const [generatedKey, setGeneratedKey] = useState<string | undefined>(undefined);
@@ -225,9 +225,9 @@ export const GenerateKeys = () => {
         : 'noexpiry';
     const key = await generateKeys(logicAppId, expiryTime, accessKey);
     setGeneratedKey(key);
-    setExpiresTime(expiryTime);
+    setExpiresTime(expiryTime === 'noexpiry' ? INTL_TEXT.neverExpiresText : expiryTime);
     setShowSuccessInfo(true);
-  }, [logicAppId, duration, accessKey]);
+  }, [duration, logicAppId, accessKey, INTL_TEXT.neverExpiresText]);
 
   const handleClose = useCallback(() => {
     dispatch(closePanel());
@@ -235,7 +235,7 @@ export const GenerateKeys = () => {
 
   const renderInfoBar = useCallback(() => {
     return (
-      <div style={{ padding: '15px 0 0px 0' }}>
+      <div className={styles.messageBar}>
         <MessageBar intent={'success'}>
           <MessageBarBody>
             <MessageBarTitle>{INTL_TEXT.infoTitle}</MessageBarTitle>
@@ -244,7 +244,7 @@ export const GenerateKeys = () => {
         </MessageBar>
       </div>
     );
-  }, [INTL_TEXT.infoTitle, INTL_TEXT.infoMessage]);
+  }, [styles.messageBar, INTL_TEXT.infoTitle, INTL_TEXT.infoMessage]);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -266,13 +266,7 @@ export const GenerateKeys = () => {
   }, [INTL_TEXT.generateButtonText, INTL_TEXT.closeButtonText, handleGenerate, duration, accessKey, handleClose]);
 
   return (
-    <Drawer
-      className={styles.drawer}
-      open={true}
-      onOpenChange={(_, { open }) => !open && handleClose()}
-      position="end"
-      style={{ width: '650px' }}
-    >
+    <Drawer className={styles.generateKeysContainer} open={true} onOpenChange={(_, { open }) => !open && handleClose()} position="end">
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>

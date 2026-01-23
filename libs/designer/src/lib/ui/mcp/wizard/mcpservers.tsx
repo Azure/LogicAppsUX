@@ -9,12 +9,13 @@ import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/hel
 import { McpServerPanel } from '../panel/server/panel';
 import { closePanel, McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { Text } from '@fluentui/react-components';
+import { Spinner, Text } from '@fluentui/react-components';
 import { AddServerButtons } from '../servers/add';
 import { MCPServers, type ServerNotificationData, type ToolHandler } from '../servers/servers';
 import { Authentication } from '../servers/authentication';
 import { Apps28Regular } from '@fluentui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
+import { useMcpServerWizardStyles } from './styles';
 
 export const McpServersWizard = ({
   onUpdateServers,
@@ -28,6 +29,7 @@ export const McpServersWizard = ({
   onOpenManageOAuth: () => void;
 }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
+  const styles = useMcpServerWizardStyles();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
   const { subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => ({
@@ -135,7 +137,8 @@ export const McpServersWizard = ({
 
   if (isLoading) {
     return (
-      <div>
+      <div className={styles.loadingContainer}>
+        <Spinner size="large" />
         {intl.formatMessage({
           defaultMessage: 'Loading...',
           id: '9SDUXM',
@@ -146,7 +149,7 @@ export const McpServersWizard = ({
   }
 
   return (
-    <div style={{ height: '100%' }}>
+    <div>
       <McpServerPanel onUpdateServer={handleUpdateServer} server={selectedServer} onClose={handleClosePanel} />
       {mcpServers?.length === 0 ? (
         <EmptyMcpServersView onCreateTools={onOpenCreateTools} />
@@ -177,6 +180,7 @@ export const McpServersWizard = ({
 };
 
 const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) => {
+  const styles = useMcpServerWizardStyles();
   const intl = useIntl();
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -197,10 +201,10 @@ const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) =
   };
 
   return (
-    <div style={{ height: '50%' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '50px' }}>
-        <Apps28Regular style={{ width: 48, height: 48 }} />
-        <Text weight="semibold" size={500} style={{ padding: '20px 0 10px 0' }}>
+    <div className={styles.emptyViewContainer}>
+      <div className={styles.emptyViewContent}>
+        <Apps28Regular className={styles.icon} />
+        <Text weight="semibold" size={500} className={styles.emptyViewTitle}>
           {INTL_TEXT.title}
         </Text>
         <DescriptionWithLink
@@ -209,7 +213,7 @@ const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) =
           linkUrl="https://go.microsoft.com/fwlink/?linkid=2321817"
         />
       </div>
-      <div style={{ padding: '10px 0', width: '550px', margin: '0 auto' }}>
+      <div className={styles.emptyViewButtons}>
         <AddServerButtons onCreateTools={onCreateTools} />
       </div>
     </div>

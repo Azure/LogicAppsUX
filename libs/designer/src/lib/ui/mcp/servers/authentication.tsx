@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/mcp/store';
 import { openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { useMcpServerStyles } from './styles';
+import { useMcpAuthenticationStyles } from './styles';
 
 export type ToolHandler = (tool: string) => void;
 
@@ -23,7 +23,7 @@ export const Authentication = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const styles = useMcpServerStyles();
+  const styles = useMcpAuthenticationStyles();
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -79,7 +79,7 @@ export const Authentication = ({
       type: 'custom' as const,
       value: undefined,
       onRenderItem: () => (
-        <Button style={{ width: '140px' }} appearance="secondary" icon={<ArrowClockwise20Regular />} onClick={handleGenerateKey}>
+        <Button className={styles.keysButton} icon={<ArrowClockwise20Regular />} onClick={handleGenerateKey}>
           {INTL_TEXT.generateKeyButtonText}
         </Button>
       ),
@@ -91,7 +91,7 @@ export const Authentication = ({
       onRenderItem: () => (
         <Link onClick={onOpenManageOAuth}>
           {INTL_TEXT.manageOAuthLinkText}
-          <Open16Regular style={{ marginLeft: '4px', verticalAlign: 'middle' }} />
+          <Open16Regular className={styles.authLink} />
         </Link>
       ),
     };
@@ -124,6 +124,8 @@ export const Authentication = ({
     handleGenerateKey,
     onOpenManageOAuth,
     resourceId,
+    styles.authLink,
+    styles.keysButton,
   ]);
 
   return (
@@ -140,6 +142,7 @@ export const Authentication = ({
 };
 
 const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: string; setAuthType: (authType: string) => void }) => {
+  const styles = useMcpAuthenticationStyles();
   const intl = useIntl();
   const { data: selectedAuth, isLoading } = useMcpAuthentication(resourceId);
   const INTL_TEXT = {
@@ -247,7 +250,7 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
   }, [selectedAuth, isLoading, setAuthType, INTL_TEXT.anonymous, getOptionsFromAuth]);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <div className={styles.methodContainer}>
       <Dropdown
         style={isEditing ? undefined : { pointerEvents: 'none', backgroundColor: '#FFFF', color: '#000' }}
         disabled={!isEditing || isSaving}

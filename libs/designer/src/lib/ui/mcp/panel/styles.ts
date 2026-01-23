@@ -35,4 +35,12 @@ export const useMcpServerPanelStyles = makeStyles({
   workflowSection: {
     paddingBottom: '25px',
   },
+
+  generateKeysContainer: {
+    zIndex: 1000,
+    height: '100%',
+    width: '650px',
+  },
+
+  messageBar: { padding: '15px 0 0px 0' },
 });
