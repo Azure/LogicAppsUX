@@ -171,7 +171,7 @@ describe('trySetDefaultConnectionForNode', () => {
 
       // updateNodeConnection should not be called
       expect(mockUpdateNodeConnection).not.toHaveBeenCalled();
-      
+
       // Should dispatch initEmptyConnectionMap and openPanel
       expect(mockDispatch).toHaveBeenCalledTimes(2);
       expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({ type: 'mock/initEmptyConnectionMap' }));

@@ -166,7 +166,7 @@ import type {
   OperationInfo,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
-import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
+import { getInputDependencies, updateOutputsAndTokens } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
 
@@ -1949,6 +1949,18 @@ export const updateParameterAndDependencies = createAsyncThunk(
         loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
         loadDefaultValues !== undefined ? loadDefaultValues : true
       );
+    }
+
+    // For Agent operations, if the responseFormat.type parameter changes, update output tokens
+    if (
+      operationInfo?.type === 'Agent' &&
+      updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
+    ) {
+      const rootState = getState() as RootState;
+      const nodeInputs = rootState.operations.inputParameters[nodeId];
+      const settings = rootState.operations.settings[nodeId] || {};
+
+      await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
     }
   }
 );
