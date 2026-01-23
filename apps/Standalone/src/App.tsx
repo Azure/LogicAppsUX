@@ -21,6 +21,7 @@ export const App = () => {
       <Route path="/templates" element={<TemplatesStandalone />} />
       <Route path="/configuretemplate" element={<ConfigureTemplateStandalone />} />
       <Route path="/mcp" element={<McpStandalone />} />
+      <Route path="/mcpserver" element={<McpServerStandalone />} />
       <Route path="/clonetostandard" element={<CloneToStandard />} />
       <Route path="/vscode/*" element={<VSCodeStandalone />} />
       {/* Using path="*"" means "match anything", so this route
@@ -103,6 +104,15 @@ const McpStandalone = () => (
   </Provider>
 );
 const McpWrapperLazy = lazy(() => import('./mcp/app/McpShell').then((m) => ({ default: m.McpWrapper as any })));
+
+const McpServerStandalone = () => (
+  <Provider store={mcpStore}>
+    <Suspense fallback={null}>
+      <McpServerWrapperLazy />
+    </Suspense>
+  </Provider>
+);
+const McpServerWrapperLazy = lazy(() => import('./mcp/app/McpShell').then((m) => ({ default: m.McpServerWrapper as any })));
 
 const CloneToStandard = () => (
   <Provider store={cloneToStandardStore}>

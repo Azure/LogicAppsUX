@@ -149,3 +149,38 @@ export const useConnectorSectionStyles = makeStyles({
     textAlign: 'right',
   },
 });
+
+export const useMcpServerWizardStyles = makeStyles({
+  loadingContainer: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  emptyViewContainer: {
+    height: '50%',
+  },
+
+  emptyViewContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingTop: '50px',
+  },
+
+  icon: {
+    width: '48px',
+    height: '48px',
+  },
+
+  emptyViewTitle: {
+    padding: '20px 0 10px 0',
+  },
+
+  emptyViewButtons: {
+    padding: '10px 0',
+    width: '550px',
+    margin: '0 auto',
+  },
+});
