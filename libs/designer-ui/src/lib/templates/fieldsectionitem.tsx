@@ -106,6 +106,7 @@ const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
           resize="vertical"
           value={item.value}
           disabled={item.disabled}
+          placeholder={item.placeholder}
           onChange={(_event, data) => item.onChange(data.value ?? '')}
         />
       );

@@ -85,6 +85,7 @@ jobs:
             **/*Interfaces.ts
             **/types.ts
             **/types.tsx
+            **/styles.ts
             **/constants.ts
             **/constants/**
             # Config files

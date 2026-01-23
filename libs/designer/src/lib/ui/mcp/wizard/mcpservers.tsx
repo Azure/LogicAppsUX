@@ -72,9 +72,9 @@ export const McpServersWizard = ({
 
       setMcpServers(servers);
       // Update servers cache with new data
-      queryClient.setQueryData<McpServer[]>(['mcpservers'], () => [...servers]);
+      queryClient.setQueryData<McpServer[]>(['mcpservers', logicAppId.toLowerCase()], () => [...servers]);
     },
-    [onUpdateServers, queryClient]
+    [onUpdateServers, queryClient, logicAppId]
   );
 
   const handleUpdateServer = useCallback(
