@@ -16,6 +16,7 @@ export interface DownloadChunkMetadata {
 export interface OperationInfo {
   connectorId: string;
   operationId: string;
+  operationPath?: string;
 }
 
 export interface SecureDataOptions {

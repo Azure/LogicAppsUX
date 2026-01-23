@@ -50,6 +50,7 @@ import {
   UserPreferenceService,
   LoggerService,
   LogEntryLevel,
+  removeConnectionPrefix,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connection,
@@ -187,10 +188,16 @@ export const initializeOperationDetails = async (
 
   if (isManagedMcpClient) {
     // managed mcp client ignores the swagger and uses a fixed set of parameters similar to manifest based native mcp client
-    const { connector: swaggerConnector } = await getConnectorWithSwagger(connectorId);
+    const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     connector = swaggerConnector;
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
+
+    const swaggerOperation = parsedSwagger.getOperationByOperationId(operationId);
+    const operationPath = swaggerOperation ? removeConnectionPrefix(swaggerOperation.path) : undefined;
+    if (operationPath) {
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, operationPath }));
+    }
 
     const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
     const nativeMcpManifest = await getOperationManifest(nativeMcpOperationInfo);

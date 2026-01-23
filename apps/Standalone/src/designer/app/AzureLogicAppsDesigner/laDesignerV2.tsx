@@ -156,19 +156,39 @@ const DesignerEditor = () => {
     setIsDraftMode(draftMode);
   }, []);
 
-  const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
+  const getConnectionConfiguration = async (connectionId: string, _manifest: any, useMcpConnections?: boolean): Promise<any> => {
     if (!connectionId) {
       return Promise.resolve();
     }
 
     const connectionName = connectionId.split('/').splice(-1)[0];
-    const connectionInfo =
-      connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
+    let connectionInfo: any;
+    let isAgentMcpConnection = false;
+
+    if (useMcpConnections) {
+      connectionInfo = connectionsData?.agentMcpConnections?.[connectionName];
+
+      if (connectionInfo) {
+        isAgentMcpConnection = true;
+      }
+
+      connectionInfo = connectionInfo ?? connectionsData?.managedApiConnections?.[connectionName];
+    } else {
+      connectionInfo =
+        connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
+    }
 
     if (connectionInfo) {
       // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
       const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData?.properties);
       delete resolvedConnectionInfo.displayName;
+
+      if (useMcpConnections) {
+        return {
+          isAgentMcpConnection,
+          connection: resolvedConnectionInfo,
+        };
+      }
 
       return {
         connection: resolvedConnectionInfo,
@@ -773,6 +793,7 @@ const getDesignerServices = (
   });
   const connectorService = new StandardConnectorService({
     ...defaultServiceParams,
+    workflowName,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],

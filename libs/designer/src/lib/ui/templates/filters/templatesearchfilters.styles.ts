@@ -5,7 +5,8 @@ export const useTemplateSearchFiltersStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    maxWidth: 'calc(343px * 4 + 24px * 3)', // 4 cards + 3 gaps
+    maxWidth: 'min(calc(343px * 4 + 24px * 3), 100%)', // 4 cards + 3 gaps, but never exceed parent
+    boxSizing: 'border-box',
     ...shorthands.margin('0', 'auto'),
     ...shorthands.padding('0'),
   },
@@ -23,38 +24,56 @@ export const useTemplateSearchFiltersStyles = makeStyles({
 
   filtersDropdowns: {
     display: 'flex',
-    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: '12px',
     marginBottom: '16px',
     width: '100%',
     '& > *': {
-      flex: '1 1 0',
-      minWidth: '0',
+      flex: '1 1 auto',
+      minWidth: '150px',
     },
   },
 
   filtersTabs: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
     alignItems: 'center',
+    gap: '12px',
     width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+  },
+
+  tabListWrapper: {
+    flex: '1 1 auto',
+    minWidth: 0,
+    maxWidth: '100%',
+  },
+
+  tabList: {
+    flexWrap: 'wrap',
   },
 
   sortContainer: {
     display: 'flex',
     alignItems: 'center',
     marginLeft: 'auto',
+    flexShrink: 0,
   },
 
   sortField: {
     display: 'flex',
     alignItems: 'center',
+    gap: '8px',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+    padding: '10px',
     ...shorthands.margin('0'),
   },
 
   sortDropdown: {
-    width: '180px', // Reduced width
-    marginLeft: '8px',
+    minWidth: '120px',
+    maxWidth: '180px',
+    width: 'auto',
   },
 });
