@@ -14,13 +14,14 @@ export const CodeViewPanelBody = (_props: CodeViewPanelBodyProps) => {
   const editorRef = useRef<any>(null);
   const styles = useStyles();
 
-  const dataMapDefinition = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
+  // Show XSLT content (the actual saved format) instead of LML
+  const xsltContent = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
   const resources = useMemo(
     () => ({
-      EMPTY_MAP_DEFINITION: intl.formatMessage({
-        defaultMessage: 'Unable to generate data map definition',
-        id: 'sv+IcU',
-        description: `Message to display when the data map definition can't be generated`,
+      EMPTY_XSLT_CONTENT: intl.formatMessage({
+        defaultMessage: 'XSLT not yet generated. Save the map to generate XSLT output.',
+        id: '7V737/',
+        description: `Message to display when XSLT content hasn't been generated yet`,
       }),
     }),
     [intl]
@@ -37,8 +38,8 @@ export const CodeViewPanelBody = (_props: CodeViewPanelBodyProps) => {
   return (
     <div className={styles.bodyContainer} ref={bodyContainerRef}>
       <MonacoEditor
-        language={EditorLanguage.yaml}
-        value={dataMapDefinition === '' ? resources.EMPTY_MAP_DEFINITION : dataMapDefinition}
+        language={EditorLanguage.xml}
+        value={xsltContent === '' ? resources.EMPTY_XSLT_CONTENT : xsltContent}
         ref={editorRef}
         monacoContainerStyle={{ height: '100%' }}
         className={styles.editorStyle}

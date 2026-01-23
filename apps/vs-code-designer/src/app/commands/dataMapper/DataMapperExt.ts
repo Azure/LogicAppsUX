@@ -15,6 +15,63 @@ import { parse } from 'yaml';
 import { localize } from '../../../localize';
 import { assetsFolderName, dataMapNameValidation } from '../../../constants';
 
+/**
+ * UI metadata for function positions and canvas state.
+ */
+interface XsltUiMetadata {
+  functionNodes: Array<{
+    reactFlowGuid: string;
+    functionKey: string;
+    position: { x: number; y: number };
+    connections: Array<{ name: string; inputOrder: number }>;
+    connectionShorthand: string;
+  }>;
+  canvasRect?: { x: number; y: number; width: number; height: number };
+}
+
+/**
+ * Metadata embedded in XSLT files for Data Mapper v2.
+ * Contains mapDefinition in the metadata (legacy format).
+ * @deprecated Use XsltMapMetadataV3 which doesn't embed mapDefinition
+ */
+interface XsltMapMetadataV2 {
+  version: '2.0';
+  sourceSchema: string;
+  targetSchema: string;
+  mapDefinition: MapDefinitionEntry;
+  metadata: XsltUiMetadata;
+}
+
+/**
+ * Metadata embedded in XSLT files for Data Mapper v3.
+ * Only embeds layout metadata - mapping logic is derived from XSLT content.
+ */
+interface XsltMapMetadataV3 {
+  version: '3.0';
+  sourceSchema: string;
+  targetSchema: string;
+  metadata: XsltUiMetadata;
+}
+
+/**
+ * Union type supporting both v2 and v3 metadata formats.
+ */
+type XsltMapMetadata = XsltMapMetadataV2 | XsltMapMetadataV3;
+
+/**
+ * Type guard to check if metadata is v2 format (with mapDefinition).
+ */
+const isV2Metadata = (metadata: XsltMapMetadata): metadata is XsltMapMetadataV2 => {
+  return metadata.version === '2.0' && 'mapDefinition' in metadata;
+};
+
+/**
+ * Type guard to check if metadata is v3 format (without mapDefinition).
+ */
+const isV3Metadata = (metadata: XsltMapMetadata): metadata is XsltMapMetadataV3 => {
+  return metadata.version === '3.0';
+};
+
 export default class DataMapperExt {
   public static async openDataMapperPanel(
     context: IActionContext,
@@ -118,5 +175,102 @@ export default class DataMapperExt {
         mapDefinition[key] = curElement.replaceAll('\\"', '"');
       }
     }
+  }
+
+  /**
+   * Regex to extract metadata JSON from XSLT comment.
+   */
+  private static readonly METADATA_REGEX = /<!--\s*LogicAppsDataMapper:\s*([\s\S]*?)\s*-->/;
+
+  /**
+   * Checks if an XSLT string has embedded metadata.
+   */
+  public static hasEmbeddedMetadata(xslt: string): boolean {
+    return DataMapperExt.METADATA_REGEX.test(xslt);
+  }
+
+  /**
+   * Extracts metadata from an XSLT string if present.
+   * Supports both v2 (with mapDefinition) and v3 (without mapDefinition) formats.
+   */
+  public static extractMetadataFromXslt(xslt: string): XsltMapMetadata | null {
+    const match = xslt.match(DataMapperExt.METADATA_REGEX);
+
+    if (!match || !match[1]) {
+      return null;
+    }
+
+    try {
+      const metadata = JSON.parse(match[1]) as XsltMapMetadata;
+
+      // Validate required fields (common to both v2 and v3)
+      if (!metadata.version || !metadata.sourceSchema || !metadata.targetSchema) {
+        console.warn('XSLT metadata missing required fields');
+        return null;
+      }
+
+      // v2 requires mapDefinition, v3 does not
+      if (metadata.version === '2.0' && !('mapDefinition' in metadata)) {
+        console.warn('XSLT metadata v2.0 missing mapDefinition');
+        return null;
+      }
+
+      return metadata;
+    } catch (error) {
+      console.error('Failed to parse XSLT metadata JSON:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Return type for loadMapFromXslt
+   */
+  public static loadMapFromXslt(
+    xsltContent: string,
+    _extInstance: typeof ext
+  ): {
+    mapDefinition: MapDefinitionEntry;
+    sourceSchemaFileName: string;
+    targetSchemaFileName: string;
+    metadata?: XsltUiMetadata;
+    xsltContent?: string;
+    isV3Format?: boolean;
+  } | null {
+    const metadata = DataMapperExt.extractMetadataFromXslt(xsltContent);
+
+    if (!metadata) {
+      return null;
+    }
+
+    // Handle v2 format (with embedded mapDefinition)
+    if (isV2Metadata(metadata)) {
+      // Fix custom values in the map definition (same processing as LML)
+      DataMapperExt.fixMapDefinitionCustomValues(metadata.mapDefinition);
+
+      return {
+        mapDefinition: metadata.mapDefinition,
+        sourceSchemaFileName: metadata.sourceSchema,
+        targetSchemaFileName: metadata.targetSchema,
+        metadata: metadata.metadata,
+        isV3Format: false,
+      };
+    }
+
+    // Handle v3 format (without embedded mapDefinition)
+    // For v3, we pass the raw XSLT content so the webview can parse it
+    // to derive the mapping connections from the actual XSLT
+    if (isV3Metadata(metadata)) {
+      return {
+        // Empty mapDefinition - webview will derive from XSLT
+        mapDefinition: {},
+        sourceSchemaFileName: metadata.sourceSchema,
+        targetSchemaFileName: metadata.targetSchema,
+        metadata: metadata.metadata,
+        xsltContent: xsltContent,
+        isV3Format: true,
+      };
+    }
+
+    return null;
   }
 }

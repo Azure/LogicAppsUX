@@ -26,6 +26,7 @@ import type {
   PackageExistenceResultMessage,
   UpdateRuntimeBaseUrlMessage,
   UpdateCallbackInfoMessage,
+  TestXsltTransformResultMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -52,7 +53,9 @@ import {
   changeUseExpandedFunctionCards as changeUseExpandedFunctionCardsV2,
   changeXsltContent as changeXsltContentV2,
   changeXsltFilename as changeXsltFilenameV2,
+  setTestXsltTransformResult,
 } from './state/DataMapSliceV2';
+import { xsltToMapDefinition } from '@microsoft/logic-apps-data-mapper-v2';
 import {
   initializeDesigner,
   updateCallbackUrl,
@@ -109,7 +112,8 @@ type DataMapperMessageType =
   | SetRuntimePortMessage
   | GetConfigurationSettingMessage
   | GetDataMapperVersionMessage
-  | GetTestFeatureEnablementStatus;
+  | GetTestFeatureEnablementStatus
+  | TestXsltTransformResultMessage;
 type WorkflowMessageType =
   | UpdateCallbackInfoMessage
   | UpdateRuntimeBaseUrlMessage
@@ -213,7 +217,25 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
               dispatch(changeSourceSchemaFilenameV2(message.data.sourceSchemaFileName));
               dispatch(changeTargetSchemaFilenameV2(message.data.targetSchemaFileName));
-              dispatch(changeMapDefinitionV2(message.data.mapDefinition));
+
+              // For v3 format, parse the XSLT to derive the mapDefinition
+              // This makes XSLT the source of truth for mapping logic
+              if (message.data.isV3Format && message.data.xsltContent) {
+                const derivedMapDefinition = xsltToMapDefinition(
+                  message.data.xsltContent,
+                  message.data.sourceSchemaFileName,
+                  message.data.targetSchemaFileName
+                );
+                dispatch(changeMapDefinitionV2(derivedMapDefinition ?? {}));
+                // Also store the raw XSLT content for display in code view
+                dispatch(changeXsltContentV2(message.data.xsltContent));
+              } else {
+                // v2 format: use embedded mapDefinition directly
+                // Fallback to empty object if mapDefinition is undefined or null
+                const mapDefinition = message.data.mapDefinition ?? {};
+                dispatch(changeMapDefinitionV2(mapDefinition));
+              }
+
               dispatch(changeDataMapFilename(message.data.mapDefinitionName));
               dispatch(changeDataMapMetadataV2(message.data.metadata));
               break;
@@ -241,6 +263,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             }
             case ExtensionCommand.isTestDisabledForOS: {
               dispatch(changeIsTestDisabledForOS(message.data));
+              break;
+            }
+            case ExtensionCommand.testXsltTransformResult: {
+              dispatch(setTestXsltTransformResult(message.data));
               break;
             }
             default:

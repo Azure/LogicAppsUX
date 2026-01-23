@@ -23,6 +23,9 @@ export class DataMapperFileService implements IDataMapperFileService {
     });
   };
 
+  /**
+   * @deprecated Use saveMapXsltCall instead. Kept for backward compatibility.
+   */
   public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.saveDataMapDefinition,
@@ -34,10 +37,21 @@ export class DataMapperFileService implements IDataMapperFileService {
     });
   };
 
-  public saveDraftStateCall(dataMapDefinition: string): void {
+  /**
+   * Saves the XSLT with embedded metadata to the filesystem.
+   * This is the primary save method.
+   */
+  public saveMapXsltCall = (xsltWithMetadata: string) => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.saveDataMapXslt,
+      data: xsltWithMetadata,
+    });
+  };
+
+  public saveDraftStateCall(xsltWithMetadata: string): void {
     this.sendMsgToVsix({
       command: ExtensionCommand.saveDraftDataMapDefinition,
-      data: dataMapDefinition,
+      data: xsltWithMetadata,
     });
   }
 
@@ -47,6 +61,9 @@ export class DataMapperFileService implements IDataMapperFileService {
     });
   };
 
+  /**
+   * @deprecated Use saveMapXsltCall instead. Kept for backward compatibility.
+   */
   public saveXsltCall = (xslt: string) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.saveDataMapXslt,
@@ -76,4 +93,11 @@ export class DataMapperFileService implements IDataMapperFileService {
       data: { title, text, level },
     });
   }
+
+  public testXsltTransform = (xsltContent: string, inputXml: string) => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.testXsltTransform,
+      data: { xsltContent, inputXml },
+    });
+  };
 }

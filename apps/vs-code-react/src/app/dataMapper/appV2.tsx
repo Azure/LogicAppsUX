@@ -40,6 +40,7 @@ export const DataMapperAppV2 = () => {
   const fetchedFunctions = useSelector((state: RootState) => state.dataMap.fetchedFunctions);
   const dataMapperVersion = useSelector((state: RootState) => state.project.dataMapperVersion);
   const isTestDisabledForOS = useSelector((state: RootState) => state.dataMap.isTestDisabledForOS);
+  const testXsltTransformResult = useSelector((state: RootState) => state.dataMap.testXsltTransformResult);
 
   const runtimePort = useSelector((state: RootState) => state.dataMap.runtimePort);
 
@@ -186,6 +187,7 @@ export const DataMapperAppV2 = () => {
           // Passed in here too so it can be managed in the Redux store so components can track the current theme
           theme={theme}
           isTestDisabledForOS={isTestDisabledForOS}
+          testXsltTransformResult={testXsltTransformResult}
         >
           <div style={{ height: '100vh', overflow: 'hidden' }}>
             <DataMapperDesigner

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Button, Spinner } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,7 +7,7 @@ import { Panel } from '../common/panel/Panel';
 import { toggleTestPanel, updateTestOutput } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 import { TestPanelBody } from './TestPanelBody';
-import { testDataMap } from '../../core/queries/datamap';
+import { DataMapperFileService } from '../../core/services/dataMapperFileService/dataMapperFileService';
 import { LogCategory } from '../../utils/Logging.Utils';
 import { guid, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { PanelXButton } from '../common/panel/PanelXButton';
@@ -18,8 +18,11 @@ export const TestPanel = (_props: TestPanelProps) => {
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(false);
-  const { testMapInput, isOpen } = useSelector((state: RootState) => state.panel.testPanel);
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const { testMapInput, testMapOutput, testMapOutputError, isOpen } = useSelector((state: RootState) => state.panel.testPanel);
+  const xsltContent = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
+
+  // Track if we're waiting for a test result
+  const waitingForResultRef = useRef(false);
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -47,62 +50,83 @@ export const TestPanel = (_props: TestPanelProps) => {
         id: 'ldn/IC',
         description: 'Test button',
       }),
+      SAVE_BEFORE_TEST: intl.formatMessage({
+        defaultMessage: 'Please save the map before testing',
+        id: 'aulGxd',
+        description: 'Message when XSLT content is not available',
+      }),
     }),
     [intl]
   );
 
+  // Watch for test results to stop loading
+  useEffect(() => {
+    if (waitingForResultRef.current && (testMapOutput || testMapOutputError)) {
+      waitingForResultRef.current = false;
+      setLoading(false);
+
+      if (testMapOutput) {
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: `${LogCategory.TestMapPanel}/testDataMap`,
+          message: 'Successfully tested data map',
+          args: [
+            {
+              statusCode: testMapOutput.statusCode,
+              statusText: testMapOutput.statusText,
+            },
+          ],
+        });
+      } else if (testMapOutputError) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: `${LogCategory.TestMapPanel}/testDataMap`,
+          message: testMapOutputError.message,
+        });
+      }
+    }
+  }, [testMapOutput, testMapOutputError]);
+
   const onTestClick = useCallback(() => {
-    if (!!xsltFilename && !!testMapInput) {
+    if (!!xsltContent && !!testMapInput) {
       const attempt = guid();
       setLoading(true);
-      // Clear out test output
+      waitingForResultRef.current = true;
+
+      // Clear out previous test output
       dispatch(updateTestOutput({}));
 
-      testDataMap(xsltFilename, testMapInput)
-        .then((response) => {
-          dispatch(
-            updateTestOutput({
-              response: response,
-            })
-          );
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: `${LogCategory.TestMapPanel}/testDataMap`,
+        message: 'Starting local XSLT transformation test',
+        args: [{ attempt }],
+      });
 
-          LoggerService().log({
-            level: LogEntryLevel.Verbose,
-            area: `${LogCategory.TestMapPanel}/testDataMap`,
-            message: 'Successfully tested data map',
-            args: [
-              {
-                attempt,
-                statusCode: response.statusCode,
-                statusText: response.statusText,
-              },
-            ],
-          });
-
-          setLoading(false);
-        })
-        .catch((error: Error) => {
-          LoggerService().log({
-            level: LogEntryLevel.Error,
-            area: `${LogCategory.TestMapPanel}/testDataMap`,
-            message: error.message,
-            args: [
-              {
-                attempt,
-              },
-            ],
-          });
-
-          dispatch(
-            updateTestOutput({
-              error: error,
-            })
-          );
-
-          setLoading(false);
+      // Use local XSLT transformation via the file service
+      // The result will come back through the DataMapDataProvider -> Redux flow
+      try {
+        DataMapperFileService().testXsltTransform(xsltContent, testMapInput);
+      } catch (error) {
+        // Handle synchronous errors (e.g., service not initialized)
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: `${LogCategory.TestMapPanel}/testDataMap`,
+          message: error instanceof Error ? error.message : 'Failed to start transformation',
+          args: [{ attempt }],
         });
+
+        dispatch(
+          updateTestOutput({
+            error: error instanceof Error ? error : new Error('Failed to start transformation'),
+          })
+        );
+
+        waitingForResultRef.current = false;
+        setLoading(false);
+      }
     }
-  }, [testMapInput, xsltFilename, dispatch]);
+  }, [testMapInput, xsltContent, dispatch]);
 
   return (
     <Panel
@@ -117,7 +141,12 @@ export const TestPanel = (_props: TestPanelProps) => {
       body={<TestPanelBody loading={loading} />}
       footer={
         <div>
-          <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput || loading}>
+          <Button
+            appearance="primary"
+            onClick={onTestClick}
+            disabled={!testMapInput || !xsltContent || loading}
+            title={xsltContent ? undefined : resources.SAVE_BEFORE_TEST}
+          >
             {loading ? <Spinner size={'small'}>{resources.TEST}</Spinner> : resources.TEST}
           </Button>
           <Button appearance="secondary" onClick={onCloseClick} className={styles.closeButton}>

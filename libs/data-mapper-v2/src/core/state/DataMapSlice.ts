@@ -462,17 +462,25 @@ export const dataMapSlice = createSlice({
       state.sourceInEditState = false;
       state.targetInEditState = false;
     },
+    /**
+     * Updates a function node's position.
+     * NOTE: Position updates are applied directly without going through doDataMapOperation
+     * to avoid flooding the undo history during drag operations. The map is still marked dirty
+     * so unsaved changes are tracked, but intermediate drag positions don't create undo entries.
+     */
     updateFunctionPosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
-      const newOp = { ...state.curDataMapOperation };
-      const node = newOp.functionNodes[action.payload.id];
+      const node = state.curDataMapOperation.functionNodes[action.payload.id];
       if (!node) {
         return;
       }
-      newOp.functionNodes[action.payload.id] = {
+      // Update position directly without creating a full undo history entry
+      // This prevents flooding undo history during drag operations
+      state.curDataMapOperation.functionNodes[action.payload.id] = {
         ...node,
         position: action.payload.position,
       };
-      state.curDataMapOperation = newOp;
+      // Mark dirty but don't create full history entry for intermediate positions
+      state.isDirty = true;
     },
     deleteConnectionFromFunctionMenu: (state, action: PayloadAction<{ inputIndex: number; targetId: string }>) => {
       const newConnections = {
@@ -756,7 +764,8 @@ export const deleteConnectionFromConnections = (
 
   if (outputNode && isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     outputNodeInputs.forEach((input, inputIndex) => {
-      if (isNodeConnection(input) && input.reactFlowKey === inputKey) {
+      // Handle both node connections and custom value connections for unbounded inputs
+      if ((isNodeConnection(input) && input.reactFlowKey === inputKey) || (isCustomValueConnection(input) && input.value === inputKey)) {
         if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {
           outputNodeInputs[inputIndex] = createNewEmptyConnection();
         }

@@ -3,6 +3,7 @@ import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkfl
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import {
   supportedDataMapDefinitionFileExts,
+  supportedDataMapFileExts,
   supportedDataMapperFolders,
   supportedSchemaFileExts,
 } from './app/commands/dataMapper/extensionConfig';
@@ -54,14 +55,12 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(workspaceWatcher);
 
   // Data Mapper context
-  vscode.commands.executeCommand(
-    'setContext',
-    extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
-    supportedDataMapDefinitionFileExts
-  );
+  // Include both XSLT (new) and LML/YAML (legacy) file extensions for opening Data Mapper
+  const allSupportedDataMapExts = [...supportedDataMapFileExts, ...supportedDataMapDefinitionFileExts];
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts, allSupportedDataMapExts);
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedSchemaFileExts, supportedSchemaFileExts);
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedFileExts, [
-    ...supportedDataMapDefinitionFileExts,
+    ...allSupportedDataMapExts,
     ...supportedSchemaFileExts,
   ]);
   vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);

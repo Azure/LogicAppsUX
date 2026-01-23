@@ -1057,6 +1057,8 @@
   "publisher": "ms-azuretools",
   "icon": "assets/logicapp.png",
   "dependencies": {
-    "tslib": "2.4.0"
+    "saxon-js": "^2.6.0",
+    "tslib": "2.4.0",
+    "xslt3": "^2.7.0"
   }
 }

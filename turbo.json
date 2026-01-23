@@ -16,6 +16,7 @@
       "outputs": ["build/**"]
     },
     "build:lib": {
+      "dependsOn": ["^build:lib"],
       "outputs": ["build/**", "dist/**"]
     },
     "vscode-designer#build:extension": {
