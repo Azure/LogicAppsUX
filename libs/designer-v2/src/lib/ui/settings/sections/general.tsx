@@ -131,7 +131,7 @@ export const General = ({
       })
     : intl.formatMessage({
         defaultMessage:
-          'For each loops execute sequentially by default. Override the default setting to customize the degree of parallelism`',
+          'For each loops run in parallel by default. Use this setting to control how many items are processed in parallel, or set the limit to 1 to run the loop sequentially.',
         id: 'RvT4mt',
         description: 'description of concurrency setting',
       });
