@@ -245,6 +245,17 @@ describe('binaries', () => {
       expect(showErrorMessage).toHaveBeenCalled();
     });
 
+    it('should return fallback nodejs version when requested version is not found in the list', async () => {
+      const response = [{ tag_name: 'v20.0.0' }, { tag_name: 'v18.0.0' }, { tag_name: 'v16.0.0' }];
+      (axios.get as any).mockResolvedValue({ data: response, status: 200 });
+
+      const result = await getLatestNodeJsVersion(context, '99');
+
+      expect(result).toBe(DependencyVersion.nodeJs);
+      expect(context.telemetry.properties.latestNodeJSVersion).toBe('fallback-no-match');
+      expect(context.telemetry.properties.errorLatestNodeJsVersion).toBe('No matching Node JS version found.');
+    });
+
     it('should return fallback nodejs version when no major version is sent', async () => {
       const result = await getLatestNodeJsVersion(context);
       expect(result).toBe(DependencyVersion.nodeJs);
