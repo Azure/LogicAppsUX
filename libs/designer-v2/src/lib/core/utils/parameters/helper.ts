@@ -5,6 +5,7 @@ import type { ConnectionReference, WorkflowParameter } from '../../../common/mod
 import { AgentUtils } from '../../../common/utilities/Utils';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
+import { updateOutputsAndTokens, getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
@@ -166,7 +167,6 @@ import type {
   OperationInfo,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
-import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
 
@@ -1949,6 +1949,18 @@ export const updateParameterAndDependencies = createAsyncThunk(
         loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
         loadDefaultValues !== undefined ? loadDefaultValues : true
       );
+    }
+
+    // For Agent operations, if the responseFormat.type parameter changes, update output tokens
+    if (
+      operationInfo?.type === 'Agent' &&
+      updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
+    ) {
+      const rootState = getState() as RootState;
+      const nodeInputs = rootState.operations.inputParameters[nodeId];
+      const settings = rootState.operations.settings[nodeId] || {};
+
+      await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
     }
   }
 );

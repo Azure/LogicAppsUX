@@ -515,7 +515,8 @@ export const loadDynamicOutputsInNode = async (
                 operationInfo.type,
                 dynamicOutputs,
                 { iconUri, brandColor },
-                settings
+                settings,
+                nodeInputs
               ),
             })
           );

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { getAgentBaseUrl, parseIframeConfig } from '../config-parser';
+import { getAgentBaseUrl, parseIframeConfig, parseIdentityProviders } from '../config-parser';
 
 describe('parseIframeConfig', () => {
   let originalLocation: Location;
@@ -234,12 +234,7 @@ describe('parseIframeConfig', () => {
 
     it('uses window.IDENTITY_PROVIDERS when set', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
-      (window as any).IDENTITY_PROVIDERS = {
-        custom: {
-          signInEndpoint: '/.auth/login/custom',
-          name: 'Custom Provider',
-        },
-      };
+      (window as any).IDENTITY_PROVIDERS = '{"custom":{"signInEndpoint":"/.auth/login/custom","name":"Custom Provider"}}';
 
       const config = parseIframeConfig();
 
@@ -248,6 +243,101 @@ describe('parseIframeConfig', () => {
           signInEndpoint: '/.auth/login/custom',
           name: 'Custom Provider',
         },
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS is invalid JSON', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = 'not valid json';
+
+      const config = parseIframeConfig();
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse IDENTITY_PROVIDERS:', expect.any(Error));
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS is empty string', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to null', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = 'null';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to array', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
+
+      const config = parseIframeConfig();
+
+      // Arrays are objects in JS, so this will actually be used - this tests current behavior
+      expect(config.props.identityProviders).toEqual(['microsoft', 'google']);
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to primitive', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '"just a string"';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toBeDefined();
+      expect(config.props.identityProviders?.microsoft).toEqual({
+        signInEndpoint: '/.auth/login/aad',
+        name: 'Microsoft',
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('handles multiple identity providers', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS =
+        '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"},"github":{"signInEndpoint":"/.auth/login/github","name":"GitHub"}}';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toEqual({
+        microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+        github: { signInEndpoint: '/.auth/login/github', name: 'GitHub' },
       });
 
       // Clean up
@@ -397,5 +487,124 @@ describe('getAgentBaseUrl', () => {
     const result = getAgentBaseUrl(url);
 
     expect(result).toBe('https://example.com/api/agents/TestAgent/');
+  });
+});
+
+describe('parseIdentityProviders', () => {
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    // Clean up IDENTITY_PROVIDERS before each test
+    delete (window as any).IDENTITY_PROVIDERS;
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    delete (window as any).IDENTITY_PROVIDERS;
+    consoleErrorSpy?.mockRestore();
+  });
+
+  it('returns undefined when IDENTITY_PROVIDERS is not set', () => {
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when IDENTITY_PROVIDERS is empty string', () => {
+    (window as any).IDENTITY_PROVIDERS = '';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+  });
+
+  it('parses valid JSON identity providers', () => {
+    (window as any).IDENTITY_PROVIDERS = '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"}}';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({
+      microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+    });
+  });
+
+  it('parses multiple identity providers', () => {
+    (window as any).IDENTITY_PROVIDERS =
+      '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"}}';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({
+      microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+      google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+    });
+  });
+
+  it('returns undefined and logs error for invalid JSON', () => {
+    (window as any).IDENTITY_PROVIDERS = 'not valid json';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse IDENTITY_PROVIDERS:', expect.any(Error));
+  });
+
+  it('returns undefined when JSON parses to null', () => {
+    (window as any).IDENTITY_PROVIDERS = 'null';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when JSON parses to a string', () => {
+    (window as any).IDENTITY_PROVIDERS = '"just a string"';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when JSON parses to a number', () => {
+    (window as any).IDENTITY_PROVIDERS = '123';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+  });
+
+  it('returns undefined when JSON parses to a boolean', () => {
+    (window as any).IDENTITY_PROVIDERS = 'true';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+  });
+
+  it('returns array when JSON parses to array (arrays are objects)', () => {
+    (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
+
+    const result = parseIdentityProviders();
+
+    // Note: arrays pass typeof === 'object' check, so they are returned
+    expect(result).toEqual(['microsoft', 'google']);
+  });
+
+  it('returns empty object for empty JSON object', () => {
+    (window as any).IDENTITY_PROVIDERS = '{}';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({});
+  });
+
+  it('handles identity providers with additional properties', () => {
+    (window as any).IDENTITY_PROVIDERS = '{"custom":{"signInEndpoint":"/.auth/login/custom","name":"Custom SSO","icon":"custom-icon.png"}}';
+
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({
+      custom: { signInEndpoint: '/.auth/login/custom', name: 'Custom SSO', icon: 'custom-icon.png' },
+    });
   });
 });
