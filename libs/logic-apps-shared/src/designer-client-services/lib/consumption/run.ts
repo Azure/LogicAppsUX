@@ -5,7 +5,6 @@ import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
   ArgumentException,
-  isCallbackInfoWithRelativePath,
   HTTP_METHODS,
   getCallbackUrl,
   getRecordEntry,
@@ -390,7 +389,7 @@ export class ConsumptionRunService implements IRunService {
    */
   async runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any> {
     const { httpClient, apiVersion } = this.options;
-    const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
+    const method = callbackInfo?.method ?? HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
     if (!uri) {
       throw new Error();
