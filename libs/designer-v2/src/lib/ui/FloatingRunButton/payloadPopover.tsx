@@ -86,6 +86,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     });
     setQueriesValue(undefined);
     setBodyValue(undefined);
+    setBodyError(undefined);
   }, []);
 
   useEffect(() => {
