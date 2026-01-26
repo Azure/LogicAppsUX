@@ -363,7 +363,7 @@ export default {
                   type: 'integer',
                   title: 'Threshold message count',
                   description:
-                    'The number of messages beyond the Target message count that must be present in order to trigger reduction in the agent history',
+                    'The number of messages beyond the target message count that must be present in order to trigger reduction in the agent history',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
