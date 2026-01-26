@@ -51,6 +51,10 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.createWorkspaceStructure}`, { replace: true });
           break;
         }
+        case ProjectName.deploy: {
+          navigate(`/${ProjectName.deploy}`, { replace: true });
+          break;
+        }
         default: {
           break;
         }

@@ -27,7 +27,8 @@ import { createWorkflow } from './createWorkflow/createWorkflow';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
-import { deployProductionSlot, deploySlot } from './deploy/deploy';
+import { deploySlot } from './deploy/deploy';
+import { deployViaWebview } from './deploy/deployWebview';
 import { connectToGitHub } from './deployments/connectToGitHub';
 import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
@@ -91,7 +92,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
-  registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
+  registerCommand(extensionCommand.deploy, deployViaWebview);
   registerSiteCommand(extensionCommand.deploySlot, unwrapTreeNodeCommandCallback(deploySlot));
   registerCommand(extensionCommand.generateDeploymentScripts, generateDeploymentScripts);
   registerSiteCommand(extensionCommand.redeploy, unwrapTreeNodeCommandCallback(redeployDeployment));

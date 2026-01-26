@@ -67,6 +67,9 @@ export const ExtensionCommand = {
   package_file: 'package-file',
   workspace_existence_result: 'workspace-existence-result',
   package_existence_result: 'package-existence-result',
+  deploy: 'deploy',
+  cancel_deploy: 'cancel-deploy',
+  getFilteredLocations: 'getFilteredLocations',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

@@ -5,6 +5,7 @@ import { unitTestSlice } from './UnitTestSlice';
 import { workflowSlice } from './WorkflowSlice';
 import { projectSlice } from './projectSlice';
 import { createWorkspaceSlice } from './createWorkspaceSlice';
+import { deploySlice } from './deploySlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
@@ -16,6 +17,7 @@ export const store = configureStore({
     dataMapDataLoader: dataMapSliceV1.reducer, // Data Mapper V1
     dataMap: dataMapSliceV2.reducer, // Data Mapper V2
     createWorkspace: createWorkspaceSlice.reducer,
+    deploy: deploySlice.reducer,
   },
 });
 

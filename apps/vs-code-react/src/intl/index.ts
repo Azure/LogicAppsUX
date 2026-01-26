@@ -30,4 +30,5 @@ export {
   designerMessages,
   overviewMessages,
   chatMessages,
+  deployMessages,
 } from './messages';
