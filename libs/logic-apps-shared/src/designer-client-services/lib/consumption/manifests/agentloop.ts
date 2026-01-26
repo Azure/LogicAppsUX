@@ -132,6 +132,10 @@ export default {
                         value: 'maximumTokenCountReduction',
                         displayName: 'Token count reduction',
                       },
+                      {
+                        value: 'summarizationReduction',
+                        displayName: 'Summarization reduction',
+                      },
                     ],
                   },
                 },
@@ -160,6 +164,35 @@ export default {
                       {
                         name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
                         values: ['maximumTokenCountReduction'],
+                      },
+                    ],
+                  },
+                },
+                targetMessageCount: {
+                  type: 'integer',
+                  title: 'Target message count',
+                  description: 'The desired number of target messages in the agent history',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['summarizationReduction'],
+                      },
+                    ],
+                  },
+                },
+                thresholdMessageCount: {
+                  type: 'integer',
+                  title: 'Threshold message count',
+                  description:
+                    'The number of messages beyond the target message count that must be present in order to trigger reduction in the agent history',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['summarizationReduction'],
                       },
                     ],
                   },
