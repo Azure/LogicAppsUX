@@ -429,7 +429,7 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       let a2aCodeForDraft = '';
       const authentication = await fetchAuthentication(siteResourceId);
 
-      if (!authentication?.properties?.enabled) {
+      if (!authentication?.properties?.enabled || isDraftMode) {
         // Get A2A authentication key
         const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName, isDraftMode);
         const endpoint = a2aData?.endpoint as string;
@@ -475,9 +475,20 @@ export const fetchAgentUrl = (siteResourceId: string, workflowName: string, host
       draftChatUrl.searchParams.append('api-version', '2022-05-01');
       draftChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
 
+      const localChatUrl = new URL('https://localhost:3001');
+      if (isDraftMode) {
+        localChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
+      } else {
+        const agentCardUrlForLocal = new URL(`${agentBaseUrl}/api/agents/${workflowName}/.well-known/agent-card.json`);
+        localChatUrl.searchParams.append('agentCard', agentCardUrlForLocal.href);
+      }
+
+      const isDev = process.env.NODE_ENV === 'development';
+      const chatUrl = isDev ? localChatUrl.href : isDraftMode ? draftChatUrl.href : prodChatUrl;
+
       return {
-        agentUrl: agentUrl,
-        chatUrl: isDraftMode ? draftChatUrl.href : prodChatUrl,
+        agentUrl,
+        chatUrl,
         queryParams,
         hostName,
       };

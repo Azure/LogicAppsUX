@@ -169,7 +169,7 @@ describe('FloatingRunButton', () => {
   describe('Draft Mode', () => {
     it('should render in draft mode', () => {
       renderWithProviders({ ...defaultProps, isDraftMode: true });
-      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
 
     it('should render split button in draft mode', () => {
@@ -191,7 +191,7 @@ describe('FloatingRunButton', () => {
           isConsumption: true,
         });
       }).not.toThrow();
-      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
 
     it('should accept isConsumption prop without error when false', () => {
@@ -202,7 +202,7 @@ describe('FloatingRunButton', () => {
           isConsumption: false,
         });
       }).not.toThrow();
-      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
 
     it('should accept isConsumption prop without error when undefined', () => {
@@ -213,7 +213,7 @@ describe('FloatingRunButton', () => {
           isConsumption: undefined,
         });
       }).not.toThrow();
-      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
 
     it('should render correctly with isConsumption=true in non-draft mode', () => {
@@ -276,7 +276,7 @@ describe('FloatingRunButton', () => {
       renderWithProviders(props);
 
       // Component renders without error with consumption props
-      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
 
     it('should pass isConsumption prop to component for standard workflow draft run', () => {
@@ -291,7 +291,7 @@ describe('FloatingRunButton', () => {
       renderWithProviders(props);
 
       // Component renders without error with standard props
-      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
   });
 });
