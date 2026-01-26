@@ -3,15 +3,15 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getHostConfig, getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
-import type { AgentQueryParams, AgentURL, LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
+import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
-import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, ServerNotificationData } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
@@ -813,6 +813,7 @@ export const createMcpServer = async (
       connectionsData,
       /* parametersData */ undefined,
       /* settingsProperties */ undefined,
+      /* hostConfig */ undefined,
       /* customCodeData */ undefined,
       /* notes */ undefined,
       { mcpServers },
@@ -829,6 +830,81 @@ export const createMcpServer = async (
   }
 };
 
+export const updateMcpServers = async (
+  siteResourceId: string,
+  servers: McpServer[],
+  notificationData: ServerNotificationData
+): Promise<void> => {
+  const mcpServers = servers.map((server) => ({
+    name: server.name,
+    description: server.description,
+    tools: server.tools,
+    enabled: server.enabled,
+  }));
+
+  try {
+    const hostConfig = await getHostConfig(siteResourceId);
+    const areAllServersDeleted = servers.length === 0;
+    let updatedHostConfig: any;
+    const queryClient = getReactQueryClient();
+
+    if (!areAllServersDeleted && hostConfig?.extensions?.workflow?.McpServerEndpoints?.enabled === false) {
+      updatedHostConfig = {
+        ...(hostConfig.properties ?? {}),
+        extensions: {
+          ...(hostConfig.properties.extensions ?? {}),
+          workflow: {
+            ...(hostConfig.properties.extensions?.workflow ?? {}),
+            McpServerEndpoints: {
+              ...(hostConfig.properties.extensions?.workflow?.McpServerEndpoints ?? {}),
+              enabled: true,
+            },
+          },
+        },
+      };
+    } else if (areAllServersDeleted && hostConfig?.extensions?.workflow?.McpServerEndpoints?.enabled === true) {
+      updatedHostConfig = {
+        ...(hostConfig.properties ?? {}),
+        extensions: {
+          ...(hostConfig.properties.extensions ?? {}),
+          workflow: {
+            ...(hostConfig.properties.extensions?.workflow ?? {}),
+            McpServerEndpoints: {
+              ...(hostConfig.properties.extensions?.workflow?.McpServerEndpoints ?? {}),
+              enabled: false,
+            },
+          },
+        },
+      };
+    }
+
+    if (updatedHostConfig) {
+      await queryClient.invalidateQueries(['hostconfig', siteResourceId]);
+    }
+
+    await saveWorkflowStandard(
+      siteResourceId,
+      /* workflows */ [],
+      /* connectionsData */ undefined,
+      /* parametersData */ undefined,
+      /* settingsProperties */ undefined,
+      updatedHostConfig,
+      /* customCodeData */ undefined,
+      /* notes */ undefined,
+      { mcpServers },
+      /* clearDirtyState */ () => {},
+      { skipValidation: true, throwError: true }
+    );
+
+    const message = `${notificationData.title} \n\n${notificationData.content}`;
+    console.log(message);
+    window.alert(message);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const saveWorkflowStandard = async (
   siteResourceId: string,
   workflows: {
@@ -838,6 +914,7 @@ export const saveWorkflowStandard = async (
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
+  hostConfig: any | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   notesData: Record<string, Note> | undefined,
   mcpServers: { mcpServers: any[] } | undefined,
@@ -869,6 +946,10 @@ export const saveWorkflowStandard = async (
 
   if (parametersData) {
     data.files['parameters.json'] = parametersData;
+  }
+
+  if (hostConfig) {
+    data.files['host.json'] = hostConfig;
   }
 
   if (mcpServers) {

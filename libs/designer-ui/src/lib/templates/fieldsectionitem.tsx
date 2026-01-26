@@ -1,6 +1,7 @@
 import {
   Divider,
   Dropdown,
+  type DropdownProps,
   Field,
   InfoLabel,
   Input,
@@ -105,23 +106,28 @@ const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
           resize="vertical"
           value={item.value}
           disabled={item.disabled}
+          placeholder={item.placeholder}
           onChange={(_event, data) => item.onChange(data.value ?? '')}
         />
       );
 
-    case 'dropdown':
+    case 'dropdown': {
+      let props: DropdownProps = {
+        style: { width: '100%' },
+        id: item.id,
+        disabled: item.disabled,
+        placeholder: item.placeholder,
+        onBlur: item.onBlur,
+        multiselect: item.multiselect,
+        onOptionSelect: (e, option) => item.onOptionSelect(option?.selectedOptions),
+      };
+
+      props = item.controlled
+        ? { ...props, selectedOptions: item.selectedOptions, value: item.value }
+        : { ...props, defaultSelectedOptions: item.selectedOptions, defaultValue: item.value };
+
       return (
-        <Dropdown
-          style={{ width: '100%' }}
-          id={item.id}
-          onOptionSelect={(e, option) => item.onOptionSelect(option?.selectedOptions)}
-          disabled={item.disabled}
-          defaultValue={item.value}
-          defaultSelectedOptions={item.selectedOptions}
-          placeholder={item.placeholder}
-          onBlur={item.onBlur}
-          multiselect={item.multiselect}
-        >
+        <Dropdown {...props}>
           {item.options.map((option) => (
             <Option key={option.id} value={option.value}>
               {option.label}
@@ -129,6 +135,7 @@ const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
           ))}
         </Dropdown>
       );
+    }
 
     case 'radiogroup':
       return (

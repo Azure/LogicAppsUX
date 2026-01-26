@@ -40,10 +40,6 @@ export const useChatbotStyles = makeStyles({
     ...shorthands.margin(0, 0, '5px', '5px'),
   },
 
-  headerTitleContainer: {
-    // Nested styles handled in separate classes
-  },
-
   headerTitle: {
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase400,
@@ -56,9 +52,10 @@ export const useChatbotStyles = makeStyles({
     width: 'fit-content',
     fontSize: tokens.fontSizeBase200,
     fontWeight: tokens.fontWeightRegular,
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    borderRadius: tokens.borderRadiusCircular,
     lineHeight: '15px',
     color: tokens.colorNeutralForeground2,
+    display: 'block',
   },
 
   // Mode pill styles
@@ -149,7 +146,7 @@ export const useChatbotStyles = makeStyles({
     fontSize: '10.5px',
     display: 'flex',
     fontWeight: tokens.fontWeightBold,
-    color: '#489d42', // Keep original green
+    color: tokens.colorPaletteGreenBorderActive,
     lineHeight: '12px',
   },
 

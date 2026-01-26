@@ -135,5 +135,83 @@ test.describe(
       const tab = await page.getByRole('tab', { name: 'Parameters' });
       await expect(tab).toBeDisabled();
     });
+
+    test('Template cards should be keyboard accessible', async ({ page }) => {
+      await page.goto('/templates');
+      await GoToMockTemplatesGallery(page);
+
+      // Get the template card by its aria-label (set on the DocumentCard)
+      const templateCard = page.locator('.msla-template-card-wrapper[aria-label="[Mock] Basic Workflow Only Template"]');
+      await templateCard.focus();
+
+      // Verify the card is focusable
+      await expect(templateCard).toBeFocused();
+
+      // Press Enter to select the template
+      await page.keyboard.press('Enter');
+
+      // Verify the panel opened
+      await expect(page.getByRole('tab', { name: 'Summary' })).toBeVisible();
+
+      // Close the panel
+      await page.getByRole('button', { name: 'Close Panel' }).click();
+
+      // Verify focus returned to the card
+      await expect(templateCard).toBeFocused();
+    });
+
+    test('Template cards grid should support arrow key navigation', async ({ page }) => {
+      await page.goto('/templates');
+      await GoToMockTemplatesGallery(page);
+
+      // Focus on the first template card
+      const firstCard = page.locator('.msla-template-card-wrapper[aria-label="[Mock] Basic Workflow Only Template"]');
+      const secondCard = page.locator('.msla-template-card-wrapper[aria-label="[Mock] Simple Accelerator Template"]');
+      const thirdCard = page.locator('.msla-template-card-wrapper[aria-label="[Mock] Simple Connection Parameter Template"]');
+
+      await firstCard.focus();
+      await expect(firstCard).toBeFocused();
+
+      // Navigate right to the next card
+      await page.keyboard.press('ArrowRight');
+      await expect(secondCard).toBeFocused();
+
+      // Navigate right again
+      await page.keyboard.press('ArrowRight');
+      await expect(thirdCard).toBeFocused();
+
+      // Navigate left back to the second card
+      await page.keyboard.press('ArrowLeft');
+      await expect(secondCard).toBeFocused();
+
+      // Navigate left back to the first card
+      await page.keyboard.press('ArrowLeft');
+      await expect(firstCard).toBeFocused();
+    });
+
+    test('Template cards should be accessible via Tab key', async ({ page }) => {
+      await page.goto('/templates');
+      await GoToMockTemplatesGallery(page);
+
+      // Focus on the search input first
+      const searchInput = page.getByPlaceholder('Search');
+      await searchInput.focus();
+      await expect(searchInput).toBeFocused();
+
+      // Tab through to reach the template cards grid
+      // The exact number of tabs depends on the UI, but we should eventually reach a card
+      let foundCard = false;
+      for (let i = 0; i < 20; i++) {
+        await page.keyboard.press('Tab');
+        const focusedElement = page.locator(':focus');
+        const classList = await focusedElement.getAttribute('class');
+        if (classList?.includes('msla-template-card-wrapper')) {
+          foundCard = true;
+          break;
+        }
+      }
+
+      expect(foundCard).toBe(true);
+    });
   }
 );
