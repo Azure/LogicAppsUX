@@ -23,6 +23,7 @@
     "@fluentui/react-icons": "2.0.224",
     "@fluentui/utilities": "8.15.0",
     "@microsoft/logic-apps-chat": "workspace:*",
+    "@tanstack/react-query": "4.36.1",
     "idb": "^8.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",

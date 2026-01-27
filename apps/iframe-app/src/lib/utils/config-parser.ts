@@ -255,16 +255,6 @@ export function parseIframeConfig(): IframeConfig {
   };
 }
 
-// Create storage configuration for server-side chat history
-// Extract base agent URL (remove .well-known/agent-card.json if present)
-export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
-  if (!cardUrl) {
-    return '';
-  }
-  // Remove .well-known/agent-card.json from the URL, preserving query params and hash fragments
-  return cardUrl.replace(/\/\.well-known\/agent-card\.json(?=\?|#|$)/, '');
-};
-
 // Declare global type for TypeScript
 declare global {
   interface Window {

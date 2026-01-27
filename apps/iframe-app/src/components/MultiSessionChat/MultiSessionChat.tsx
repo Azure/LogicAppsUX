@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
-import type { ChatWidgetProps, StorageConfig, AgentCard } from '@microsoft/logic-apps-chat';
-import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage, isDirectAgentCardUrl } from '@microsoft/logic-apps-chat';
+import type { ChatWidgetProps, StorageConfig } from '@microsoft/logic-apps-chat';
+import { ChatWidget, ChatThemeProvider, useChatStore, ServerHistoryStorage } from '@microsoft/logic-apps-chat';
+import { useAgentCard } from '../../hooks/useAgentCard';
 import { Spinner, mergeClasses } from '@fluentui/react-components';
 import { useChatSessions } from '../../hooks/useChatSessions';
 import { useMultiSessionChatStyles } from './MultiSessionChatStyles';
@@ -19,9 +20,18 @@ interface MultiSessionChatProps extends Omit<ChatWidgetProps, 'agentCard'> {
 
 export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }: MultiSessionChatProps) {
   const styles = useMultiSessionChatStyles();
-  const [agentCard, setAgentCard] = useState<AgentCard | undefined>();
-  const [isLoadingAgent, setIsLoadingAgent] = useState(true);
-  const [agentError, setAgentError] = useState<Error | undefined>();
+
+  const {
+    data: agentCard,
+    isLoading: isLoadingAgent,
+    error: agentError,
+  } = useAgentCard({
+    apiUrl: config.apiUrl,
+    apiKey: config.apiKey,
+    oboUserToken: config.oboUserToken,
+    onUnauthorized: config.onUnauthorized,
+  });
+
   const [sidebarWidth, setSidebarWidth] = useState(260);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -29,28 +39,27 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
 
   // Initialize storage on mount
   useEffect(() => {
-    async function initializeStorage() {
-      try {
-        const { initializeStorage, loadSessions } = useChatStore.getState();
-
-        if (config.storageConfig && config.storageConfig.type === 'server') {
-          // Create ServerHistoryStorage instance from config
-          const storage = new ServerHistoryStorage({
-            agentUrl: config.storageConfig.agentUrl || config.apiUrl,
-            apiKey: config.storageConfig.apiKey || config.apiKey,
-            oboUserToken: config.storageConfig.oboUserToken || config.oboUserToken,
-          });
-
-          initializeStorage(storage);
-          await loadSessions();
-        }
-      } catch (error) {
-        console.error('[MultiSessionChat] Error initializing storage:', error);
-      }
+    if (!agentCard?.url) {
+      return;
     }
+    try {
+      const { initializeStorage, loadSessions } = useChatStore.getState();
 
-    initializeStorage();
-  }, [config.storageConfig, config.apiUrl, config.apiKey, config.oboUserToken]);
+      if (config.storageConfig && config.storageConfig.type === 'server') {
+        // Create ServerHistoryStorage instance from config
+        const storage = new ServerHistoryStorage({
+          agentUrl: config.storageConfig.agentUrl || config.apiUrl,
+          apiKey: config.storageConfig.apiKey || config.apiKey,
+          oboUserToken: config.storageConfig.oboUserToken || config.oboUserToken,
+        });
+
+        initializeStorage(storage);
+        loadSessions();
+      }
+    } catch (error) {
+      console.error('[MultiSessionChat] Error initializing storage:', error);
+    }
+  }, [agentCard, config.storageConfig, config.apiUrl, config.apiKey, config.oboUserToken]);
 
   const { sessions, activeSessionId, createNewSession, switchSession, renameSession, deleteSession } = useChatSessions();
 
@@ -125,66 +134,6 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
   const toggleSidebar = useCallback(() => {
     setIsCollapsed(!isCollapsed);
   }, [isCollapsed]);
-
-  // Fetch agent card once on mount
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchAgentCard() {
-      try {
-        setIsLoadingAgent(true);
-        setAgentError(undefined);
-
-        const url = isDirectAgentCardUrl(config.apiUrl) ? config.apiUrl : `${config.apiUrl}/.well-known/agent-card.json`;
-
-        const requestInit: RequestInit = {};
-        const headers: HeadersInit = {};
-        if (config.apiKey) {
-          headers['X-API-Key'] = config.apiKey;
-        }
-        if (config.oboUserToken) {
-          headers['x-ms-obo-userToken'] = `Key ${config.oboUserToken}`;
-        }
-
-        if (headers['X-API-Key'] || headers['x-ms-obo-userToken']) {
-          requestInit.headers = headers;
-        } else {
-          requestInit.credentials = 'include';
-        }
-
-        const response = await fetch(url, requestInit);
-        if (!response.ok) {
-          if (response.statusText === 'Unauthorized') {
-            if (config.onUnauthorized) {
-              await config.onUnauthorized();
-            }
-          } else {
-            throw new Error(`Failed to fetch agent card: ${response.statusText}`);
-          }
-        }
-
-        const card = (await response.json()) as AgentCard;
-
-        if (!cancelled) {
-          setAgentCard(card);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setAgentError(err as Error);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoadingAgent(false);
-        }
-      }
-    }
-
-    fetchAgentCard();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [config, config.apiKey, config.apiUrl, config.oboUserToken]);
 
   const handleNewSession = useCallback(async () => {
     try {
