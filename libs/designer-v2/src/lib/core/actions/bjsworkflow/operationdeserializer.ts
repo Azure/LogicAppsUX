@@ -615,7 +615,8 @@ const initializeOutputTokensForOperations = (
           operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodesWithData[operationId]?.settings
+          nodesWithData[operationId]?.settings,
+          nodesWithData[operationId]?.nodeInputs
         )
       );
     } catch (error: any) {

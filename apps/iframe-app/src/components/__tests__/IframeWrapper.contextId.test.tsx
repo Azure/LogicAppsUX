@@ -38,6 +38,14 @@ vi.mock('../../lib/hooks/useParentCommunication', () => ({
   })),
 }));
 
+vi.mock('../../hooks/useAgentCard', () => ({
+  useAgentCard: vi.fn(() => ({
+    data: undefined,
+    isLoading: false,
+    error: null,
+  })),
+}));
+
 describe('IframeWrapper - contextId support', () => {
   const defaultConfig: IframeConfig = {
     props: {

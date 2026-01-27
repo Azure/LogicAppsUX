@@ -190,8 +190,8 @@ export function parseIframeConfig(): IframeConfig {
   // Get agent card URL
   const agentCard = extractAgentCardUrl(params, dataset);
 
-  // Get API key
-  const apiKey = params.get('apiKey') || dataset.apiKey;
+  // Get API key (case-insensitive for URL normalization by servers)
+  const apiKey = params.get('apiKey') || params.get('apikey') || dataset.apiKey;
 
   // Get OBO user token
   const oboUserToken = params.get('oboUserToken') || dataset.oboUserToken;
@@ -228,7 +228,7 @@ export function parseIframeConfig(): IframeConfig {
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
-    identityProviders: window.IDENTITY_PROVIDERS || DEFAULT_IDENTITY_PROVIDERS || undefined,
+    identityProviders: parseIdentityProviders() || DEFAULT_IDENTITY_PROVIDERS,
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };
@@ -255,20 +255,33 @@ export function parseIframeConfig(): IframeConfig {
   };
 }
 
-// Create storage configuration for server-side chat history
-// Extract base agent URL (remove .well-known/agent-card.json if present)
-export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
-  if (!cardUrl) {
-    return '';
-  }
-  // Remove .well-known/agent-card.json from the URL, preserving query params and hash fragments
-  return cardUrl.replace(/\/\.well-known\/agent-card\.json(?=\?|#|$)/, '');
-};
-
 // Declare global type for TypeScript
 declare global {
   interface Window {
     LOGGED_IN_USER_NAME?: string;
-    IDENTITY_PROVIDERS?: Record<string, IdentityProvider>;
+    IDENTITY_PROVIDERS?: string;
   }
+}
+
+/**
+ * Parses the IDENTITY_PROVIDERS global variable from a JSON string.
+ * @returns The parsed identity providers or undefined if invalid/not set
+ */
+export function parseIdentityProviders(): Record<string, IdentityProvider> | undefined {
+  const identityProviders = window.IDENTITY_PROVIDERS;
+
+  if (!identityProviders) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(identityProviders);
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed as Record<string, IdentityProvider>;
+    }
+  } catch (e) {
+    console.error('Failed to parse IDENTITY_PROVIDERS:', e);
+  }
+
+  return undefined;
 }

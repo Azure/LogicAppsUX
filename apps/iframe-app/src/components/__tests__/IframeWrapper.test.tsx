@@ -38,6 +38,14 @@ vi.mock('../../lib/hooks/useParentCommunication', () => ({
   })),
 }));
 
+vi.mock('../../hooks/useAgentCard', () => ({
+  useAgentCard: vi.fn(() => ({
+    data: undefined,
+    isLoading: false,
+    error: null,
+  })),
+}));
+
 describe('IframeWrapper', () => {
   const defaultConfig: IframeConfig = {
     props: {
@@ -555,6 +563,226 @@ describe('IframeWrapper', () => {
 
       // Should show error message
       await screen.findByText('Login popup was blocked');
+    });
+  });
+
+  describe('Storage Config Initialization', () => {
+    it('should not create storageConfig when agentCardData is undefined', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        error: null,
+      } as any);
+
+      render(<IframeWrapper config={defaultConfig} />);
+
+      await screen.findByTestId('chat-widget');
+
+      expect(ChatWidget).toHaveBeenCalledWith(
+        expect.objectContaining({
+          storageConfig: undefined,
+        }),
+        {}
+      );
+    });
+
+    it('should not create storageConfig when agentCardData.url is missing', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: { name: 'Test Agent' }, // No url property
+        isLoading: false,
+        error: null,
+      } as any);
+
+      render(<IframeWrapper config={defaultConfig} />);
+
+      await screen.findByTestId('chat-widget');
+
+      expect(ChatWidget).toHaveBeenCalledWith(
+        expect.objectContaining({
+          storageConfig: undefined,
+        }),
+        {}
+      );
+    });
+
+    it('should create storageConfig with server type when agentCardData has url', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: {
+          name: 'Test Agent',
+          url: 'https://agent.example.com/api',
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      render(<IframeWrapper config={defaultConfig} />);
+
+      await screen.findByTestId('chat-widget');
+
+      expect(ChatWidget).toHaveBeenCalledWith(
+        expect.objectContaining({
+          storageConfig: {
+            type: 'server',
+            agentUrl: 'https://agent.example.com/api',
+            apiKey: undefined,
+            oboUserToken: undefined,
+          },
+        }),
+        {}
+      );
+    });
+
+    it('should include apiKey in storageConfig when provided', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: {
+          name: 'Test Agent',
+          url: 'https://agent.example.com/api',
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      const configWithApiKey: IframeConfig = {
+        ...defaultConfig,
+        apiKey: 'test-api-key-123',
+      };
+
+      render(<IframeWrapper config={configWithApiKey} />);
+
+      await screen.findByTestId('chat-widget');
+
+      expect(ChatWidget).toHaveBeenCalledWith(
+        expect.objectContaining({
+          storageConfig: {
+            type: 'server',
+            agentUrl: 'https://agent.example.com/api',
+            apiKey: 'test-api-key-123',
+            oboUserToken: undefined,
+          },
+        }),
+        {}
+      );
+    });
+
+    it('should include oboUserToken in storageConfig when provided', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: {
+          name: 'Test Agent',
+          url: 'https://agent.example.com/api',
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      const configWithOboToken: IframeConfig = {
+        ...defaultConfig,
+        oboUserToken: 'test-obo-token-456',
+      };
+
+      render(<IframeWrapper config={configWithOboToken} />);
+
+      await screen.findByTestId('chat-widget');
+
+      expect(ChatWidget).toHaveBeenCalledWith(
+        expect.objectContaining({
+          storageConfig: {
+            type: 'server',
+            agentUrl: 'https://agent.example.com/api',
+            apiKey: undefined,
+            oboUserToken: 'test-obo-token-456',
+          },
+        }),
+        {}
+      );
+    });
+
+    it('should include both apiKey and oboUserToken in storageConfig when both provided', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { ChatWidget } = vi.mocked(await import('@microsoft/logic-apps-chat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: {
+          name: 'Test Agent',
+          url: 'https://agent.example.com/api',
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      const configWithBothTokens: IframeConfig = {
+        ...defaultConfig,
+        apiKey: 'test-api-key-123',
+        oboUserToken: 'test-obo-token-456',
+      };
+
+      render(<IframeWrapper config={configWithBothTokens} />);
+
+      await screen.findByTestId('chat-widget');
+
+      expect(ChatWidget).toHaveBeenCalledWith(
+        expect.objectContaining({
+          storageConfig: {
+            type: 'server',
+            agentUrl: 'https://agent.example.com/api',
+            apiKey: 'test-api-key-123',
+            oboUserToken: 'test-obo-token-456',
+          },
+        }),
+        {}
+      );
+    });
+
+    it('should pass storageConfig to MultiSessionChat in multi-session mode', async () => {
+      const { useAgentCard } = await import('../../hooks/useAgentCard');
+      const { MultiSessionChat } = vi.mocked(await import('../MultiSessionChat/MultiSessionChat'));
+
+      vi.mocked(useAgentCard).mockReturnValue({
+        data: {
+          name: 'Test Agent',
+          url: 'https://agent.example.com/api',
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      const multiSessionConfig: IframeConfig = {
+        ...defaultConfig,
+        multiSession: true,
+        apiKey: 'test-api-key',
+      };
+
+      render(<IframeWrapper config={multiSessionConfig} />);
+
+      await screen.findByTestId('multi-session-chat');
+
+      expect(MultiSessionChat).toHaveBeenCalledWith(
+        expect.objectContaining({
+          config: expect.objectContaining({
+            storageConfig: {
+              type: 'server',
+              agentUrl: 'https://agent.example.com/api',
+              apiKey: 'test-api-key',
+              oboUserToken: undefined,
+            },
+          }),
+        }),
+        {}
+      );
     });
   });
 });
