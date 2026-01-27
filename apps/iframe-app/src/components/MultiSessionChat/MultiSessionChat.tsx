@@ -42,23 +42,26 @@ export function MultiSessionChat({ config, mode = 'light', ...chatWidgetProps }:
     if (!agentCard?.url) {
       return;
     }
-    try {
-      const { initializeStorage, loadSessions } = useChatStore.getState();
+    const initialize = async () => {
+      try {
+        const { initializeStorage, loadSessions } = useChatStore.getState();
 
-      if (config.storageConfig && config.storageConfig.type === 'server') {
-        // Create ServerHistoryStorage instance from config
-        const storage = new ServerHistoryStorage({
-          agentUrl: config.storageConfig.agentUrl || config.apiUrl,
-          apiKey: config.storageConfig.apiKey || config.apiKey,
-          oboUserToken: config.storageConfig.oboUserToken || config.oboUserToken,
-        });
+        if (config.storageConfig && config.storageConfig.type === 'server') {
+          // Create ServerHistoryStorage instance from config
+          const storage = new ServerHistoryStorage({
+            agentUrl: config.storageConfig.agentUrl || config.apiUrl,
+            apiKey: config.storageConfig.apiKey || config.apiKey,
+            oboUserToken: config.storageConfig.oboUserToken || config.oboUserToken,
+          });
 
-        initializeStorage(storage);
-        loadSessions();
+          initializeStorage(storage);
+          await loadSessions();
+        }
+      } catch (error) {
+        console.error('[MultiSessionChat] Error initializing storage:', error);
       }
-    } catch (error) {
-      console.error('[MultiSessionChat] Error initializing storage:', error);
-    }
+    };
+    initialize();
   }, [agentCard, config.storageConfig, config.apiUrl, config.apiKey, config.oboUserToken]);
 
   const { sessions, activeSessionId, createNewSession, switchSession, renameSession, deleteSession } = useChatSessions();
