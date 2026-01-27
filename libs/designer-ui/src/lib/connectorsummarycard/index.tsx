@@ -65,7 +65,20 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
 
   if (isCard) {
     return (
-      <div className="msla-connector-summary-card" onClick={handleClick} aria-label={connectorName} data-automation-id={id}>
+      <div
+        className="msla-connector-summary-card"
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={connectorName}
+        data-automation-id={id}
+      >
         <Content />
       </div>
     );
