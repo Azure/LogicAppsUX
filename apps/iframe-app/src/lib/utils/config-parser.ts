@@ -190,8 +190,8 @@ export function parseIframeConfig(): IframeConfig {
   // Get agent card URL
   const agentCard = extractAgentCardUrl(params, dataset);
 
-  // Get API key
-  const apiKey = params.get('apiKey') || dataset.apiKey;
+  // Get API key (case-insensitive for URL normalization by servers)
+  const apiKey = params.get('apiKey') || params.get('apikey') || dataset.apiKey;
 
   // Get OBO user token
   const oboUserToken = params.get('oboUserToken') || dataset.oboUserToken;
