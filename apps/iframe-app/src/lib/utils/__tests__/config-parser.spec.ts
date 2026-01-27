@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { parseIframeConfig, getAgentBaseUrl, parseIdentityProviders } from '../config-parser';
+import { parseIframeConfig, parseIdentityProviders } from '../config-parser';
 
 describe('config-parser', () => {
   const originalLocation = window.location;
@@ -177,32 +177,6 @@ describe('config-parser', () => {
       const config = parseIframeConfig();
 
       expect(config.mode).toBe('dark');
-    });
-  });
-
-  describe('getAgentBaseUrl', () => {
-    it('should remove .well-known/agent-card.json from URL', () => {
-      const result = getAgentBaseUrl('https://example.com/api/agents/myAgent/.well-known/agent-card.json');
-
-      expect(result).toBe('https://example.com/api/agents/myAgent');
-    });
-
-    it('should preserve query params when removing agent-card.json', () => {
-      const result = getAgentBaseUrl('https://example.com/api/agents/myAgent/.well-known/agent-card.json?param=value');
-
-      expect(result).toBe('https://example.com/api/agents/myAgent?param=value');
-    });
-
-    it('should return empty string for undefined input', () => {
-      const result = getAgentBaseUrl(undefined);
-
-      expect(result).toBe('');
-    });
-
-    it('should return URL unchanged if no agent-card.json pattern', () => {
-      const result = getAgentBaseUrl('https://example.com/api/agents/myAgent');
-
-      expect(result).toBe('https://example.com/api/agents/myAgent');
     });
   });
 
