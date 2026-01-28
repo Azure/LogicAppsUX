@@ -56,8 +56,8 @@ export interface SchemaProcessorOptions extends InternalSchemaProcessorOptions {
 
   /**
    * @member {any} metadata
-   * Metadata returned by swagger-parser for the entire API definition with a possibly empty set of cyclical schema
-   * definitions.
+   * Metadata from swagger dereferencing containing cyclical schema definitions.
+   * The $refs property maps cyclical JSON references to their type information.
    */
   metadata?: any;
 
@@ -431,8 +431,8 @@ export class SchemaProcessor {
     }
 
     /**
-     * $ref exists in a schema only after inlining $refs when the $ref would have introduced a cyclical schema
-     * definition so look up the $ref in swagger-parser metadata and resolve its type as follows:
+     * $ref exists in a schema only after dereferencing when the $ref would have introduced a cyclical schema
+     * definition. Look up the $ref in metadata and resolve its type as follows:
      * - type === 'object' → Treat the schema as an object schema with no known properties.
      */
     const { $ref } = schema;
@@ -602,21 +602,26 @@ export class SchemaProcessor {
   private _sortProperties(parameters: SchemaProperty[]): SchemaProperty[] {
     const sortedParameters: SchemaProperty[] = [];
 
+    // Helper to check if parameter is effectively required (either explicitly required or has conditional visibility via x-ms-input-dependencies)
+    const isEffectivelyRequired = (parameter: SchemaProperty) => {
+      return parameter.required || !!parameter.schema?.['x-ms-input-dependencies'];
+    };
+
     parameters.forEach((parameter) => {
-      if (parameter.required) {
+      if (isEffectivelyRequired(parameter)) {
         sortedParameters.push(parameter);
       }
     });
 
     parameters.forEach((parameter) => {
-      if (!parameter.required && equals(parameter.visibility, SwaggerConstants.Visibility.Important)) {
+      if (!isEffectivelyRequired(parameter) && equals(parameter.visibility, SwaggerConstants.Visibility.Important)) {
         sortedParameters.push(parameter);
       }
     });
 
     parameters.forEach((parameter) => {
       if (
-        !parameter.required &&
+        !isEffectivelyRequired(parameter) &&
         !equals(parameter.visibility, SwaggerConstants.Visibility.Important) &&
         !equals(parameter.visibility, SwaggerConstants.Visibility.Advanced)
       ) {
@@ -626,7 +631,7 @@ export class SchemaProcessor {
 
     parameters.forEach((parameter) => {
       if (
-        !parameter.required &&
+        !isEffectivelyRequired(parameter) &&
         !equals(parameter.visibility, SwaggerConstants.Visibility.Important) &&
         equals(parameter.visibility, SwaggerConstants.Visibility.Advanced)
       ) {

@@ -100,6 +100,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.rosettaNetEncodeOperation,
       OperationsData.rosettaNetDecodeOperation,
       OperationsData.rosettaNetWairForResponseOperation,
+      OperationsData.a2aRequestOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
@@ -184,6 +185,7 @@ export const getBuiltInConnectorsInConsumption = (): Connector[] => {
     OperationsData.selectBatchWorkflowGroup,
     OperationsData.as2Group,
     OperationsData.rosettaNetGroup,
+    OperationsData.a2aRequestGroup,
   ];
   return [...clientBuiltInConnectors, ...consumptionBuiltIn];
 };

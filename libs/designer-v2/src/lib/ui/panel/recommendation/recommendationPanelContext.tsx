@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useMcpServersQuery } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -8,9 +8,20 @@ import {
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
+  useDiscoveryPanelSelectedOperationId,
   useDiscoveryPanelSelectedBrowseCategory,
+  useDiscoveryPanelSelectionState,
+  useMcpToolWizard,
+  useIsAddingAgentTool,
 } from '../../../core/state/panel/panelSelectors';
-import { selectOperationGroupId, selectOperationId, selectBrowseCategory } from '../../../core/state/panel/panelSlice';
+import {
+  selectOperationGroupId,
+  selectOperationId,
+  selectBrowseCategory,
+  setDiscoverySelectionState,
+  openMcpToolWizard,
+} from '../../../core/state/panel/panelSlice';
+import { SELECTION_STATES } from '../../../core/state/panel/panelTypes';
 import { AzureResourceSelection } from './azureResourceSelection';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { ConnectorDetailsView } from './details/connectorDetailsView';
@@ -22,23 +33,16 @@ import { OperationSearchHeaderV2, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useOnFavoriteClick } from './hooks';
 import { BrowseView } from './browse/browseView';
+import { McpToolWizard } from './browse/mcpToolWizard';
 import { useRecommendationPanelContextStyles } from './styles/RecommendationPanelContext.styles';
-import { getNodeId } from './helpers';
+import { getNodeId, MCP_CLIENT_CONNECTOR_ID } from './helpers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
-
-type SelectionState = (typeof SELECTION_STATES)[keyof typeof SELECTION_STATES];
-const SELECTION_STATES = {
-  SEARCH: 'SEARCH',
-  DETAILS: 'DETAILS',
-  AZURE_RESOURCE: 'AZURE_RESOURCE',
-  CUSTOM_SWAGGER: 'HTTP_SWAGGER',
-};
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
@@ -49,6 +53,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
+  const mcpToolWizard = useMcpToolWizard();
 
   const [isGrouped, setIsGrouped] = useState(true);
 
@@ -64,10 +69,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const contextValue = useMemo(() => ({ isOperationFavorited, onFavoriteClick }), [isOperationFavorited, onFavoriteClick]);
 
-  const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
+  const selectionState = useDiscoveryPanelSelectionState() ?? SELECTION_STATES.SEARCH;
 
   const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
-  const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
+
+  const { data: mcpServersData } = useMcpServersQuery();
+  const mcpServers = useMemo(() => mcpServersData?.data ?? [], [mcpServersData?.data]);
+  const isAgentTool = useIsAddingAgentTool();
 
   // Searched terms, so we don't search the same term twice
   const [searchedTerms, setSearchedTerms] = useState(['']);
@@ -103,17 +111,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   );
 
   const selectedOperationGroupId = useDiscoveryPanelSelectedOperationGroupId();
+  const selectedOperationId = useDiscoveryPanelSelectedOperationId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
-  // effect to set the current list of operations by group
-  useEffect(() => {
-    if (!selectedOperationGroupId) {
-      setSelectionState(SELECTION_STATES.SEARCH);
-      return;
-    }
-    setSelectionState(SELECTION_STATES.DETAILS);
-  }, [selectedOperationGroupId]);
+  // Derive selectedOperation from Redux selectedOperationId to persist across component remounts
+  const selectedOperation = useMemo(() => allOperations?.find((o) => o.id === selectedOperationId), [allOperations, selectedOperationId]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
@@ -139,36 +142,41 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     return operation.properties.capabilities?.some((capability) => equals(capability, 'swaggerSelection'));
   }, []);
 
-  const startAzureResourceSelection = useCallback(() => {
-    setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
-  }, []);
-
-  const startSwaggerSelection = useCallback(() => {
-    setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
-  }, []);
-
   // Combined handler for both triggers and actions
   const onOperationClick = useCallback(
     (id: string, apiId?: string, forceAsTrigger?: boolean) => {
-      const searchResultPromise = Promise.resolve(
-        (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
-      );
+      const operations = isAgentTool ? [...allOperations, ...mcpServers] : allOperations;
+      const operation = operations.find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id));
+
+      if (!operation) {
+        return;
+      }
+
+      // Handle MCP operations synchronously to ensure immediate re-render
+      if (isAgentTool && operation.properties?.operationType === 'McpClientTool') {
+        const isBuiltinMcp = operation.properties?.api?.id === MCP_CLIENT_CONNECTOR_ID;
+        dispatch(openMcpToolWizard({ operation, forceCreateConnection: isBuiltinMcp }));
+        return;
+      }
+
+      const searchResultPromise = Promise.resolve(operation);
 
       searchResultPromise.then((operation) => {
         if (!operation) {
           return;
         }
+
         dispatch(selectOperationId(operation.id));
-        setSelectedOperation(operation);
         dispatch(selectOperationGroupId(''));
         if (hasAzureResourceSelection(operation)) {
-          startAzureResourceSelection();
+          dispatch(setDiscoverySelectionState(SELECTION_STATES.AZURE_RESOURCE));
           return;
         }
         if (hasSwaggerSelection(operation)) {
-          startSwaggerSelection();
+          dispatch(setDiscoverySelectionState(SELECTION_STATES.CUSTOM_SWAGGER));
           return;
         }
+        dispatch(setDiscoverySelectionState(SELECTION_STATES.SEARCH));
 
         const shouldAddAsTrigger = forceAsTrigger ?? operation?.properties?.trigger !== undefined;
 
@@ -230,11 +238,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       dispatch,
       hasAzureResourceSelection,
       hasSwaggerSelection,
+      isAgentTool,
       isParallelBranch,
       isTrigger,
+      mcpServers,
       relationshipIds,
-      startAzureResourceSelection,
-      startSwaggerSelection,
     ]
   );
 
@@ -247,24 +255,27 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   // Show category title when in subcategory, otherwise show main heading
   const isInSubcategory = selectedBrowseCategory ?? selectedOperationGroupId;
-  const headingText = isInSubcategory
-    ? (selectedBrowseCategory?.title ??
-      intl.formatMessage({
-        defaultMessage: 'Action Details',
-        id: 'h2OdHF',
-        description: 'Text for the Action Details header',
-      }))
-    : isTrigger
-      ? intl.formatMessage({
-          defaultMessage: 'Add a trigger',
-          id: '89kLK1',
-          description: 'Text for the Trigger page header',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Add an action',
-          id: 'Heod+8',
-          description: 'Title text for browse/search experience',
-        });
+
+  const headingText = mcpToolWizard?.operation
+    ? mcpToolWizard.operation.properties.summary
+    : isInSubcategory
+      ? (selectedBrowseCategory?.title ??
+        intl.formatMessage({
+          defaultMessage: 'Action Details',
+          id: 'h2OdHF',
+          description: 'Text for the Action Details header',
+        }))
+      : isTrigger
+        ? intl.formatMessage({
+            defaultMessage: 'Add a trigger',
+            id: '89kLK1',
+            description: 'Text for the Trigger page header',
+          })
+        : intl.formatMessage({
+            defaultMessage: 'Add an action',
+            id: 'Heod+8',
+            description: 'Title text for browse/search experience',
+          });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
@@ -277,7 +288,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       <div className={`msla-app-action-header-v2 ${classes.container}`} ref={recommendationPanelRef}>
         <div className={classes.header}>
           <div className={classes.row}>
-            {isInSubcategory && (
+            {isInSubcategory && !mcpToolWizard?.operation && (
               <Button
                 aria-label={returnToSearchText}
                 appearance="subtle"
@@ -286,11 +297,20 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 className={classes.backButton}
               />
             )}
+            {mcpToolWizard?.operation?.properties?.api?.iconUri && (
+              <img
+                src={mcpToolWizard.operation.properties.api.iconUri}
+                alt=""
+                style={{ width: '24px', height: '24px', marginRight: '8px', borderRadius: '4px' }}
+              />
+            )}
             <XLargeText text={headingText} as="h2" style={{ flexGrow: 1 }} />
             <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
           </div>
         </div>
-        <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
+        {!mcpToolWizard?.operation && (
+          <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
+        )}
       </div>
       {
         {
@@ -301,7 +321,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           ) : null,
           [SELECTION_STATES.SEARCH]: (
             <>
-              {searchTerm ? (
+              {mcpToolWizard?.operation ? (
+                <div className={classes.wizardWrapper}>
+                  <McpToolWizard />
+                </div>
+              ) : searchTerm ? (
                 <SearchView
                   searchTerm={searchTerm}
                   allOperations={allOperations ?? []}

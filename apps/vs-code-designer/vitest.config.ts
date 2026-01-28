@@ -14,7 +14,7 @@ export default defineConfig({
     name: packageJson.name,
     environment: 'node',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
     restoreMocks: true,
     // Exclude E2E tests that use Mocha instead of Vitest
     exclude: [

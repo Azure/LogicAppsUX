@@ -1,0 +1,11 @@
+{
+  "name": "Test Agent",
+  "description": "A test agent for development",
+  "type": "assistant",
+  "instructions": "You are a helpful assistant.",
+  "samplePrompts": ["How can I help you?", "What would you like to know?"],
+  "conversationStarters": ["Hello! How can I assist you today?"],
+  "capabilities": ["text"],
+  "owner": "test",
+  "version": "1.0.0"
+}

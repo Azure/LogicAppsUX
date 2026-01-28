@@ -63,6 +63,10 @@ export default {
                 value: 'APIMGenAIGateway',
                 displayName: 'APIM Gen AI Gateway (Preview)',
               },
+              {
+                value: 'V1ChatCompletionsService',
+                displayName: 'V1 Chat Completions Service (Preview)',
+              },
             ],
           },
           type: 'string',
@@ -79,12 +83,52 @@ export default {
           'x-ms-connection-options': {
             'x-ms-visibility': 'subLabelOnly',
           },
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['AzureOpenAI', 'FoundryAgentService', 'APIMGenAIGateway'],
+              },
+            ],
+          },
+        },
+        modelId: {
+          type: 'string',
+          title: 'Model Id',
+          description: 'The model identifier to use (e.g., claude-3-5-sonnet, gpt-4, etc.).',
+          'x-ms-visibility': 'important',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['V1ChatCompletionsService'],
+              },
+            ],
+          },
         },
         messages: {
           title: 'Instructions for agent',
           'x-ms-visibility': 'important',
           'x-ms-editor': 'agentinstruction',
           type: 'array',
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+          description: 'Custom headers to include in the request',
+          'x-ms-editor': 'dictionary',
+          'x-ms-visibility': 'important',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['V1ChatCompletionsService'],
+              },
+            ],
+          },
         },
         agentModelSettings: {
           type: 'object',
@@ -152,6 +196,48 @@ export default {
                   minimum: 0,
                   maximum: 2.0,
                 },
+                responseFormat: {
+                  type: 'object',
+                  properties: {
+                    type: {
+                      type: 'string',
+                      title: 'Response format type',
+                      'x-ms-editor': 'dropdown',
+                      'x-ms-editor-options': {
+                        options: [
+                          {
+                            value: 'json_schema',
+                            displayName: 'JSON Schema',
+                          },
+                          {
+                            value: 'json_object',
+                            displayName: 'JSON Object',
+                          },
+                          {
+                            value: 'text',
+                            displayName: 'Text',
+                          },
+                        ],
+                      },
+                    },
+                    json_schema: {
+                      title: 'Json Schema Response Format',
+                      description: 'Format of the response (Schema)',
+                      type: 'object',
+                      'x-ms-editor': 'schema',
+                      'x-ms-input-dependencies': {
+                        type: 'visibility',
+                        parameters: [
+                          {
+                            name: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                            values: ['json_schema'],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+
                 topP: {
                   title: 'Top P',
                   description: 'Nucleus sampling parameter (value should be between 0 and 1)',
@@ -187,6 +273,54 @@ export default {
                     ],
                   },
                 },
+                reasoningEffort: {
+                  type: 'string',
+                  title: 'Reasoning effort',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'low',
+                        displayName: 'Low',
+                      },
+                      {
+                        value: 'medium',
+                        displayName: 'Medium',
+                      },
+                      {
+                        value: 'high',
+                        displayName: 'High',
+                      },
+                      {
+                        value: 'none',
+                        displayName: 'None',
+                      },
+                      {
+                        value: 'minimal',
+                        displayName: 'Minimal',
+                      },
+                    ],
+                  },
+                },
+                metadata: {
+                  type: 'object',
+                  title: 'Metadata',
+                  description: 'Additional metadata to pass to the model',
+                  'x-ms-editor': 'dictionary',
+                  'x-ms-editor-options': {
+                    valueType: 'string',
+                  },
+                  'x-ms-visibility': 'important',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelType',
+                        values: ['V1ChatCompletionsService'],
+                      },
+                    ],
+                  },
+                },
               },
             },
             agentHistoryReductionSettings: {
@@ -217,6 +351,10 @@ export default {
                         value: 'maximumTokenCountReduction',
                         displayName: 'Token count reduction',
                       },
+                      {
+                        value: 'summarizationReduction',
+                        displayName: 'Summarization reduction',
+                      },
                     ],
                   },
                 },
@@ -245,6 +383,35 @@ export default {
                       {
                         name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
                         values: ['maximumTokenCountReduction'],
+                      },
+                    ],
+                  },
+                },
+                targetMessageCount: {
+                  type: 'integer',
+                  title: 'Target message count',
+                  description: 'The desired number of target messages in the agent history',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['summarizationReduction'],
+                      },
+                    ],
+                  },
+                },
+                thresholdMessageCount: {
+                  type: 'integer',
+                  title: 'Threshold message count',
+                  description:
+                    'The number of messages beyond the target message count that must be present in order to trigger reduction in the agent history',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['summarizationReduction'],
                       },
                     ],
                   },
@@ -304,7 +471,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'deploymentId', 'messages', 'deploymentModelProperties'],
+      required: ['agentModelType', 'messages'],
     },
     outputs: {
       type: 'object',
@@ -314,7 +481,24 @@ export default {
           title: 'Last Assistant Message',
           description: 'This is the final message returned by the model',
         },
+        body: {
+          title: 'Body',
+          description: 'This is the response body based on the configured schema',
+        },
+        outputs: {
+          title: 'Outputs',
+          description: 'This is the response outputs based on the configured schema',
+        },
       },
+    },
+    outputsSchema: {
+      outputPaths: [
+        {
+          outputLocation: ['properties', 'body'],
+          name: 'agentModelSettings.agentChatCompletionSettings.responseFormat.json_schema',
+          schema: 'Value',
+        },
+      ],
     },
     isOutputsOptional: false,
     channels: {

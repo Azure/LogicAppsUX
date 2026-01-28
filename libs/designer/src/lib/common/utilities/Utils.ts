@@ -31,22 +31,19 @@ export class AgentUtils {
   public static ModelType = {
     AzureOpenAI: 'Azure OpenAI',
     FoundryService: 'Foundry Agent Service',
-    APIM: 'APIM Gen AI Gateway ',
+    APIM: 'APIM Gen AI Gateway',
+    V1ChatCompletionsService: 'V1 Chat Completions Service',
   };
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
   };
 
-  public static isDeploymentIdParameter = (parameterName?: string): boolean => {
-    return equals(parameterName ?? '', 'deploymentId', true);
+  public static isDeploymentOrModelIdParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'deploymentId', true) || equals(parameterName ?? '', 'modelId', true);
   };
 
   public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
     return equals(parameterName ?? '', 'agentModelType', true);
-  };
-
-  public static isConsumptionAgentModelTypeParameter = (operationId: string, parameterName?: string): boolean => {
-    return equals(operationId, 'connectionProviders/agent', true) && equals(parameterName ?? '', 'modelId', true);
   };
 
   public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {

@@ -65,15 +65,19 @@ export const SelectConnectionWrapper = () => {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
         let modelType = AgentUtils.ModelType.AzureOpenAI;
+
         if (connectionReference?.resourceId) {
           if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
             modelType = AgentUtils.ModelType.FoundryService;
           } else if (apimanagementRegex.test(connectionReference.resourceId ?? '')) {
             modelType = AgentUtils.ModelType.APIM;
           }
+        } else if (!c.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value) {
+          // No cognitive serviceAccountId means this is a V1ChatCompletionsService connection (BYO)
+          modelType = AgentUtils.ModelType.V1ChatCompletionsService;
         }
 
-        // Add a tag for Foundry Service/OpenAI
+        // Add a tag for model type
         c.properties.connectionParameters = {
           ...(c.properties.connectionParameters ?? {}),
           agentModelType: {
@@ -82,7 +86,7 @@ export const SelectConnectionWrapper = () => {
         };
 
         // For A2A, hide the foundry connection from the list
-        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI : true;
+        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI || modelType === AgentUtils.ModelType.V1ChatCompletionsService : true;
       });
     }
 

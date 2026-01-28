@@ -1,8 +1,7 @@
-import type { EditorContentChangedEventArgs } from '../editor/monaco';
+import type { EditorContentChangedEventArgs, CodeMirrorEditorRef } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
 import { EditorLanguage, clamp } from '@microsoft/logic-apps-shared';
-import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect } from 'react';
 
@@ -14,7 +13,7 @@ export interface ExpressionEditorEvent {
 
 export interface ExpressionEditorProps {
   initialValue: string;
-  editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  editorRef?: MutableRefObject<CodeMirrorEditorRef | null>;
   isDragging: boolean;
   dragDistance?: number;
   currentHeight: number;
@@ -52,13 +51,14 @@ export function ExpressionEditor({
   const handleBlur = (): void => {
     if (onBlur && editorRef?.current) {
       const currentSelection = editorRef.current.getSelection();
-      const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1 - 1;
+      const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1;
       if (currentSelection) {
-        const { startLineNumber, startColumn, endLineNumber, endColumn } = currentSelection;
-        const isValidSelection = startLineNumber === endLineNumber;
-        const selectionStart = isValidSelection ? startColumn - 1 : currentCursorPosition;
-        const selectionEnd = isValidSelection ? endColumn - 1 : currentCursorPosition;
+        // CodeMirror selection uses character offsets (from, to)
+        const selectionStart = currentSelection.from;
+        const selectionEnd = currentSelection.to;
         onBlur({ value: editorRef.current.getValue(), selectionStart, selectionEnd });
+      } else {
+        onBlur({ value: editorRef.current.getValue(), selectionStart: currentCursorPosition, selectionEnd: currentCursorPosition });
       }
     }
   };

@@ -718,7 +718,7 @@ function convertServiceProviderConnectionDataToConnection(
 }
 
 function convertMcpConnectionDataToConnection(connectionKey: string, connectionData: AgentMcpConnectionModel): Connection {
-  const { displayName } = connectionData;
+  const { displayName, mcpServerUrl, authentication } = connectionData;
 
   return {
     name: connectionKey,
@@ -727,7 +727,22 @@ function convertMcpConnectionDataToConnection(connectionKey: string, connectionD
     properties: {
       api: { id: mcpclientConnectorId } as any,
       createdTime: '',
-      connectionParameters: {},
+      connectionParameters: {
+        mcpServerUrl: {
+          type: 'string',
+          metadata: {
+            value: mcpServerUrl,
+          },
+        },
+        ...(authentication && {
+          authentication: {
+            type: 'object',
+            metadata: {
+              value: authentication,
+            },
+          },
+        }),
+      },
       displayName: displayName as string,
       statuses: [{ status: 'Connected' }],
       overallStatus: 'Connected',
@@ -821,17 +836,33 @@ function convertToAgentConnectionsData(
     equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) &&
     foundryServiceConnectionRegex.test(cognitiveServiceAccountId);
   const isAPIMManagementConnection = apimanagementRegex.test(cognitiveServiceAccountId);
+  const isClientCertificateAuth = equals(connectionParametersSetValues?.name ?? '', 'ClientCertificate', true);
+  const isBringYourOwnKeyAuth = equals(connectionParametersSetValues?.name ?? '', 'BringYourOwnKey', true);
+
+  // Map BringYourOwnKey parameter set to Key authentication type
+  const authType = isBringYourOwnKeyAuth ? 'Key' : connectionParametersSetValues?.name;
 
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
       displayName,
       authentication: {
-        type: connectionParametersSetValues?.name,
-        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
+        type: authType,
+        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true)
+          ? undefined
+          : isClientCertificateAuth
+            ? undefined
+            : isBringYourOwnKeyAuth
+              ? parameterValues?.['key']
+              : parameterValues?.['openAIKey'],
+        ...(isClientCertificateAuth && {
+          pfx: parameterValues?.['clientCertificatePfx'],
+          password: parameterValues?.['clientCertificatePassword'],
+        }),
       },
-      endpoint: parameterValues?.['openAIEndpoint'],
-      resourceId: cognitiveServiceAccountId,
+      endpoint: isBringYourOwnKeyAuth || isClientCertificateAuth ? parameterValues?.['endpoint'] : parameterValues?.['openAIEndpoint'],
+      // Only include resourceId if it has a value
+      ...(cognitiveServiceAccountId && { resourceId: cognitiveServiceAccountId }),
       type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,

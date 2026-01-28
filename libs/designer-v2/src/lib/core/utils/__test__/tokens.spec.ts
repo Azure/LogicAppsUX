@@ -1,6 +1,7 @@
 import { createWorkflowEdge, createWorkflowNode } from '../graph';
-import { getTokenNodeIds } from '../tokens';
+import { getTokenNodeIds, filterTokensForAgentPerInput, convertOutputsToTokens } from '../tokens';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { TokenType } from '@microsoft/designer-ui';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Token Picker Utilities', () => {
   const graph = {
@@ -186,6 +187,177 @@ describe('Token Picker Utilities', () => {
         'Compose_8',
         'Compose_9',
       ]);
+    });
+  });
+
+  describe('filterTokensForAgentPerInput', () => {
+    it('should return only body outputs when responseFormat.type is json_schema', () => {
+      const mockInputs = {
+        parameterGroups: {
+          default: {
+            parameters: [
+              {
+                parameterName: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                value: [{ value: 'json_schema' }],
+              },
+            ],
+          },
+        },
+      };
+
+      const mockOutputs = {
+        body1: { name: 'body', type: 'string' },
+        body2: { name: 'response_body', type: 'object' },
+        output1: { name: 'outputs', type: 'object' },
+        message1: { name: 'lastAssistantMessage', type: 'string' },
+      };
+
+      const result = filterTokensForAgentPerInput(mockInputs as any, mockOutputs as any);
+
+      expect(Object.keys(result)).toEqual(['body1', 'body2']);
+      expect(result.body1).toEqual(mockOutputs.body1);
+      expect(result.body2).toEqual(mockOutputs.body2);
+    });
+
+    it('should return only outputs when responseFormat.type is json_object or text', () => {
+      const mockInputsJsonObject = {
+        parameterGroups: {
+          default: {
+            parameters: [
+              {
+                parameterName: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                value: [{ value: 'json_object' }],
+              },
+            ],
+          },
+        },
+      };
+
+      const mockInputsText = {
+        parameterGroups: {
+          default: {
+            parameters: [
+              {
+                parameterName: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                value: [{ value: 'text' }],
+              },
+            ],
+          },
+        },
+      };
+
+      const mockOutputs = {
+        body1: { name: 'body', type: 'string' },
+        output1: { name: 'outputs', type: 'object' },
+        message1: { name: 'lastAssistantMessage', type: 'string' },
+      };
+
+      let result = filterTokensForAgentPerInput(mockInputsJsonObject as any, mockOutputs as any);
+      expect(Object.keys(result)).toEqual(['output1']);
+      expect(result.output1).toEqual(mockOutputs.output1);
+
+      result = filterTokensForAgentPerInput(mockInputsText as any, mockOutputs as any);
+      expect(Object.keys(result)).toEqual(['output1']);
+      expect(result.output1).toEqual(mockOutputs.output1);
+    });
+
+    it('should return only lastAssistantMessage when no responseFormat.type or default case', () => {
+      const mockInputsNoParam = { parameterGroups: { default: { parameters: [] } } };
+      const mockInputsEmptyValue = {
+        parameterGroups: {
+          default: {
+            parameters: [
+              {
+                parameterName: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                value: [],
+              },
+            ],
+          },
+        },
+      };
+
+      const mockOutputs = {
+        body1: { name: 'body', type: 'string' },
+        output1: { name: 'outputs', type: 'object' },
+        message1: { name: 'lastAssistantMessage', type: 'string' },
+        message2: { name: 'anotherAssistantMessage', type: 'string' },
+      };
+
+      let result = filterTokensForAgentPerInput(mockInputsNoParam as any, mockOutputs as any);
+      expect(Object.keys(result)).toEqual(['message1']);
+      expect(result.message1).toEqual(mockOutputs.message1);
+
+      result = filterTokensForAgentPerInput(mockInputsEmptyValue as any, mockOutputs as any);
+      expect(Object.keys(result)).toEqual(['message1']);
+      expect(result.message1).toEqual(mockOutputs.message1);
+    });
+  });
+
+  describe('convertOutputsToTokens', () => {
+    const mockOperationMetadata = {
+      iconUri: 'test-icon',
+      brandColor: '#123456',
+    };
+
+    it('should filter outputs for Agent node type when inputs are provided', () => {
+      const mockInputs = {
+        parameterGroups: {
+          default: {
+            parameters: [
+              {
+                parameterName: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                value: [{ value: 'json_schema' }],
+              },
+            ],
+          },
+        },
+      };
+
+      const mockOutputs = {
+        body1: { key: 'body1', name: 'body', type: 'string', isAdvanced: false, required: true },
+        output1: { key: 'output1', name: 'outputs', type: 'object', isAdvanced: false, required: false },
+        message1: { key: 'message1', name: 'lastAssistantMessage', type: 'string', isAdvanced: false, required: false },
+      };
+
+      const result = convertOutputsToTokens('test-node', 'Agent', mockOutputs as any, mockOperationMetadata, undefined, mockInputs as any);
+
+      // Should only include body output due to filtering
+      expect(result).toHaveLength(1);
+      expect(result[0].key).toBe('body1');
+      expect(result[0].name).toBe('body');
+      expect(result[0].brandColor).toBe('#123456');
+      expect(result[0].icon).toBe('test-icon');
+    });
+
+    it('should set correct token type for different node types', () => {
+      const mockOutputs = {
+        output1: { key: 'output1', name: 'outputs', type: 'object', isAdvanced: false, required: false },
+      };
+
+      // Test FOREACH node type - the convertOutputsToTokens function uses nodeType.toLowerCase()
+      let result = convertOutputsToTokens('test-node', 'foreach', mockOutputs as any, mockOperationMetadata);
+      expect(result[0].outputInfo.type).toBe(TokenType.ITEM);
+
+      // Test AGENT_CONDITION node type
+      result = convertOutputsToTokens('test-node', 'agentcondition', mockOutputs as any, mockOperationMetadata);
+      expect(result[0].outputInfo.type).toBe(TokenType.AGENTPARAMETER);
+
+      // Test default case
+      result = convertOutputsToTokens('test-node', 'Compose', mockOutputs as any, mockOperationMetadata);
+      expect(result[0].outputInfo.type).toBe(TokenType.OUTPUTS);
+    });
+
+    it('should not filter outputs for non-Agent node types', () => {
+      const mockOutputs = {
+        body1: { key: 'body1', name: 'body', type: 'string', isAdvanced: false, required: true },
+        output1: { key: 'output1', name: 'outputs', type: 'object', isAdvanced: false, required: false },
+      };
+
+      const result = convertOutputsToTokens('test-node', 'Compose', mockOutputs as any, mockOperationMetadata);
+
+      // Should include all outputs for non-Agent types
+      expect(result).toHaveLength(2);
+      expect(result.map((r) => r.key)).toEqual(['body1', 'output1']);
     });
   });
 });

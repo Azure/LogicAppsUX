@@ -1,7 +1,7 @@
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { Button, Dropdown, Field, Option, Popover, PopoverSurface } from '@fluentui/react-components';
 import { MonacoEditor, SimpleDictionary } from '@microsoft/designer-ui';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { usePayloadPopoverStyles } from './styles';
 import type { PayloadData } from './index';
@@ -47,30 +47,24 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
   });
 
   const [bodyValue, setBodyValue] = useState<string | undefined>(undefined);
-  const [jsonError, setJsonError] = useState<string | undefined>(undefined);
+  const [bodyError, setBodyError] = useState<string | undefined>(undefined);
   const bodyLabel = intl.formatMessage({
     defaultMessage: 'Body',
     id: 'aFZRms',
     description: 'HTTP body label',
   });
 
-  const runButtonText = intl.formatMessage({
-    defaultMessage: 'Run with payload',
-    id: '+Uz9M+',
-    description: 'Run with payload button text',
-  });
-
   const validateJson = useCallback((value: string | undefined): boolean => {
     if (!value || value.trim() === '') {
-      setJsonError(undefined);
+      setBodyError(undefined);
       return true;
     }
     try {
       JSON.parse(value);
-      setJsonError(undefined);
+      setBodyError(undefined);
       return true;
     } catch (error) {
-      setJsonError((error as Error).message);
+      setBodyError((error as Error).message);
       return false;
     }
   }, []);
@@ -78,34 +72,52 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
   const onBodyValueChange = useCallback(
     (value: string | undefined) => {
       setBodyValue(value);
-      if (isDraftMode) {
+      if (headersValue?.['Content-Type'] === 'application/json') {
         validateJson(value);
       }
     },
-    [isDraftMode, validateJson]
+    [headersValue, validateJson]
   );
+
+  const resetPayload = useCallback(() => {
+    setMethod('POST');
+    setHeadersValue({
+      'Content-Type': 'application/json',
+    });
+    setQueriesValue(undefined);
+    setBodyValue(undefined);
+    setBodyError(undefined);
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      resetPayload();
+    }
+  }, [open, resetPayload]);
+
+  const runButtonText = intl.formatMessage({
+    defaultMessage: 'Run with payload',
+    id: '+Uz9M+',
+    description: 'Run with payload button text',
+  });
+
+  const runDraftButtonText = intl.formatMessage({
+    defaultMessage: 'Run draft with payload',
+    id: 'X8pCBI',
+    description: 'Run draft with payload button text',
+  });
 
   const onRunClick = useCallback(() => {
-    if (isDraftMode) {
-      onSubmit({
-        body: bodyValue,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } else {
-      onSubmit({
-        method,
-        headers: headersValue,
-        queries: queriesValue,
-        body: bodyValue,
-      });
-    }
+    onSubmit({
+      method,
+      headers: headersValue,
+      queries: queriesValue,
+      body: bodyValue,
+    });
     setOpen(false);
-  }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen, isDraftMode]);
+  }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen]);
 
-  const runDisabled = useMemo(
-    () => (isDraftMode ? !bodyValue || bodyValue.trim() === '' || !!jsonError : !method),
-    [isDraftMode, bodyValue, jsonError, method]
-  );
+  const runDisabled = useMemo(() => !!bodyError || !method, [bodyError, method]);
 
   return (
     <Popover
@@ -118,34 +130,36 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     >
       <PopoverSurface>
         <div className={styles.root}>
-          {isDraftMode ? null : (
-            <>
-              {/* Method */}
-              <Field label={methodLabel}>
-                <Dropdown value={method} defaultSelectedOptions={[method]} onOptionSelect={onMethodSelect}>
-                  {methodOptions.map((option) => (
-                    <Option key={option} value={option}>
-                      {option}
-                    </Option>
-                  ))}
-                </Dropdown>
-              </Field>
-              {/* Headers */}
-              <Field label={headersLabel}>
-                <SimpleDictionary value={headersValue} onChange={setHeadersValue} />
-              </Field>
-              {/* Queries */}
-              <Field label={queriesLabel}>
-                <SimpleDictionary value={queriesValue} onChange={setQueriesValue} />
-              </Field>
-            </>
-          )}
+          {/* Method */}
+          <Field label={methodLabel}>
+            <Dropdown
+              value={method}
+              defaultValue={method}
+              defaultSelectedOptions={[method]}
+              onOptionSelect={onMethodSelect}
+              disabled={isDraftMode}
+            >
+              {methodOptions.map((option) => (
+                <Option key={option} value={option}>
+                  {option}
+                </Option>
+              ))}
+            </Dropdown>
+          </Field>
+          {/* Headers */}
+          <Field label={headersLabel}>
+            <SimpleDictionary value={headersValue} onChange={setHeadersValue} />
+          </Field>
+          {/* Queries */}
+          <Field label={queriesLabel}>
+            <SimpleDictionary value={queriesValue} onChange={setQueriesValue} />
+          </Field>
           {/* Body */}
           <Field
             label={bodyLabel}
             className={styles.monacoEditor}
-            validationMessage={jsonError}
-            validationState={jsonError ? 'error' : 'none'}
+            validationMessage={bodyError}
+            validationState={bodyError ? 'error' : 'none'}
           >
             <MonacoEditor
               key={'body-editor'}
@@ -158,7 +172,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
             />
           </Field>
           <Button appearance={'primary'} onClick={onRunClick} className={styles.runButton} disabled={runDisabled}>
-            {runButtonText}
+            {isDraftMode ? runDraftButtonText : runButtonText}
           </Button>
         </div>
       </PopoverSurface>

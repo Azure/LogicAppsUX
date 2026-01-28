@@ -2,10 +2,7 @@ import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from 
 import Fuse from 'fuse.js';
 
 export class DefaultSearchOperationsService {
-  constructor(
-    private allOperations: DiscoveryOpArray,
-    private showParseDocWithMetadata: boolean
-  ) {}
+  constructor(private allOperations: DiscoveryOpArray) {}
 
   // Comparison function for sorting Fuse results
   private compareItems(
@@ -59,11 +56,6 @@ export class DefaultSearchOperationsService {
 
     const filterItems = (result: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>): boolean => {
       const { item } = result;
-
-      // Skip if document with metadata should not be shown
-      if (!this.showParseDocWithMetadata && item.id === 'parsedocumentwithmetadata') {
-        return false;
-      }
 
       // Apply any additional filter provided
       return additionalFilter ? additionalFilter(item) : true;
