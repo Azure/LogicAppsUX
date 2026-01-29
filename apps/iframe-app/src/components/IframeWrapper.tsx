@@ -124,8 +124,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         }
       } catch (error) {
         console.error('[Auth] Failed to check authentication status:', error);
-        // On error, let it fail naturally
-        setNeedsLogin(false);
+        setNeedsLogin(true);
       } finally {
         setIsCheckingAuth(false);
       }
