@@ -95,21 +95,44 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       }
 
       try {
-        const { isAuthenticated, username } = await checkAuthStatus(baseUrl);
-        setNeedsLogin(!isAuthenticated);
-        if (isAuthenticated && username) {
-          setUserName(username);
+        const { isAuthenticated, isEasyAuthConfigured, username } = await checkAuthStatus(baseUrl);
+
+        // Easy Auth is NOT configured (404 from /.auth/me)
+        // Let it fail naturally - the API calls will fail without apiKey
+        if (!isEasyAuthConfigured) {
+          setIsCheckingAuth(false);
+          setNeedsLogin(false);
+          return;
+        }
+
+        // Easy Auth IS configured
+        // Check if identity providers are configured
+        const hasIdentityProviders = props.identityProviders && Object.keys(props.identityProviders).length > 0;
+
+        if (!hasIdentityProviders) {
+          // No identity providers configured - skip login, show chat directly
+          setNeedsLogin(false);
+        } else if (isAuthenticated) {
+          // User is already authenticated
+          setNeedsLogin(false);
+          if (username) {
+            setUserName(username);
+          }
+        } else {
+          // Identity providers configured but user not authenticated - show login
+          setNeedsLogin(true);
         }
       } catch (error) {
         console.error('[Auth] Failed to check authentication status:', error);
-        setNeedsLogin(true);
+        // On error, let it fail naturally
+        setNeedsLogin(false);
       } finally {
         setIsCheckingAuth(false);
       }
     };
 
     checkAuth();
-  }, [baseUrl, inPortal, apiKey]);
+  }, [baseUrl, inPortal, apiKey, props.identityProviders]);
 
   // Frame Blade integration
   const { isReady: isFrameBladeReady } = useFrameBlade({

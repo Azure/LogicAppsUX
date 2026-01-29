@@ -18,6 +18,7 @@ interface JwtPayload {
 
 export interface AuthInformation {
   isAuthenticated: boolean;
+  isEasyAuthConfigured: boolean;
   error: Error | null;
   username?: string;
 }
@@ -147,8 +148,13 @@ export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation>
       credentials: 'include', // Important: include cookies for cross-origin
     });
 
+    // 404 means Easy Auth is not configured on this Logic App
+    if (response.status === 404) {
+      return { isAuthenticated: false, isEasyAuthConfigured: false, error: null };
+    }
+
     if (!response.ok) {
-      return { isAuthenticated: false, error: new Error('Failed to fetch authentication status') };
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: new Error('Failed to fetch authentication status') };
     }
 
     const data = await response.json();
@@ -156,9 +162,10 @@ export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation>
     const isAuthenticated = Array.isArray(data) && data.length > 0;
     const username = extractUsernameFromToken(data[0]?.access_token);
 
-    return { isAuthenticated, error: null, username };
+    return { isAuthenticated, isEasyAuthConfigured: true, error: null, username };
   } catch (error) {
-    return { isAuthenticated: false, error: error as Error };
+    // Network errors or other failures - assume Easy Auth is not configured
+    return { isAuthenticated: false, isEasyAuthConfigured: false, error: error as Error };
   }
 }
 

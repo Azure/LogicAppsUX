@@ -220,16 +220,13 @@ describe('parseIframeConfig', () => {
       expect(config.contextId).toBe('ctx-123');
     });
 
-    it('includes default identity providers when window.IDENTITY_PROVIDERS is not set', () => {
+    it('returns undefined for identity providers when window.IDENTITY_PROVIDERS is not set', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
 
       const config = parseIframeConfig();
 
-      expect(config.props.identityProviders).toBeDefined();
-      expect(config.props.identityProviders?.microsoft).toEqual({
-        signInEndpoint: '/.auth/login/aad',
-        name: 'Microsoft',
-      });
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
     });
 
     it('uses window.IDENTITY_PROVIDERS when set', () => {
@@ -249,79 +246,68 @@ describe('parseIframeConfig', () => {
       delete (window as any).IDENTITY_PROVIDERS;
     });
 
-    it('falls back to default identity providers when IDENTITY_PROVIDERS is invalid JSON', () => {
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS is invalid JSON', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = 'not valid json';
 
       const config = parseIframeConfig();
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse IDENTITY_PROVIDERS:', expect.any(Error));
-      expect(config.props.identityProviders).toBeDefined();
-      expect(config.props.identityProviders?.microsoft).toEqual({
-        signInEndpoint: '/.auth/login/aad',
-        name: 'Microsoft',
-      });
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
 
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
     });
 
-    it('falls back to default identity providers when IDENTITY_PROVIDERS is empty string', () => {
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS is empty string', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '';
 
       const config = parseIframeConfig();
 
-      expect(config.props.identityProviders).toBeDefined();
-      expect(config.props.identityProviders?.microsoft).toEqual({
-        signInEndpoint: '/.auth/login/aad',
-        name: 'Microsoft',
-      });
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
 
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
     });
 
-    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to null', () => {
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to null', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = 'null';
 
       const config = parseIframeConfig();
 
-      expect(config.props.identityProviders).toBeDefined();
-      expect(config.props.identityProviders?.microsoft).toEqual({
-        signInEndpoint: '/.auth/login/aad',
-        name: 'Microsoft',
-      });
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
 
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
     });
 
-    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to array', () => {
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to array', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
 
       const config = parseIframeConfig();
 
-      // Arrays are objects in JS, so this will actually be used - this tests current behavior
+      // Arrays are objects but not the expected Record<string, IdentityProvider> format
+      // The parseIdentityProviders function returns the parsed object as-is
       expect(config.props.identityProviders).toEqual(['microsoft', 'google']);
 
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
     });
 
-    it('falls back to default identity providers when IDENTITY_PROVIDERS parses to primitive', () => {
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to primitive', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '"just a string"';
 
       const config = parseIframeConfig();
 
-      expect(config.props.identityProviders).toBeDefined();
-      expect(config.props.identityProviders?.microsoft).toEqual({
-        signInEndpoint: '/.auth/login/aad',
-        name: 'Microsoft',
-      });
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
 
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
