@@ -848,7 +848,7 @@ export const updateMcpServers = async (
     let updatedHostConfig: any;
     const queryClient = getReactQueryClient();
 
-    if (!areAllServersDeleted && hostConfig?.extensions?.workflow?.McpServerEndpoints?.enabled === false) {
+    if (!areAllServersDeleted && !hostConfig?.extensions?.workflow?.McpServerEndpoints?.enabled) {
       updatedHostConfig = {
         ...(hostConfig.properties ?? {}),
         extensions: {

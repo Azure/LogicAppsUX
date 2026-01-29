@@ -192,6 +192,9 @@ describe('McpServersWizard', () => {
           isOpen: false,
           panelView: null,
         }),
+        mcpOptions: () => ({
+          isDarkMode: false,
+        }),
       },
     });
 
