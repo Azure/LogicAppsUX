@@ -290,10 +290,10 @@ describe('McpServersWizard', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Build and manage MCP servers')).toBeInTheDocument();
-        expect(screen.getByText('There are no servers in your app, please add new servers to get started.')).toBeInTheDocument();
-        expect(screen.getByText('Use existing workflow tools')).toBeInTheDocument();
-        expect(screen.getByText('Create new workflow tools')).toBeInTheDocument();
+        expect(screen.getByText('Create an MCP server')).toBeInTheDocument();
+        expect(screen.getByText('Start by choosing or creating workflows as tools for agents to perform tasks.')).toBeInTheDocument();
+        expect(screen.getByText('Use existing workflows')).toBeInTheDocument();
+        expect(screen.getByText('Create new workflows')).toBeInTheDocument();
       });
     });
   });
@@ -446,10 +446,10 @@ describe('McpServersWizard', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Create new workflow tools')).toBeInTheDocument();
+        expect(screen.getByText('Create new workflows')).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('Create new workflow tools'));
+      fireEvent.click(screen.getByText('Create new workflows'));
 
       expect(mockProps.onOpenCreateTools).toHaveBeenCalled();
     });
@@ -508,9 +508,9 @@ describe('McpServersWizard', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle server update when mcpServers is undefined', async () => {
+    it('should handle server update when mcpServers is not present', async () => {
       mockUseAllMcpServers.mockReturnValue({
-        data: undefined,
+        data: [],
         isLoading: false,
         refetch: vi.fn(),
         isRefetching: false,
@@ -520,7 +520,7 @@ describe('McpServersWizard', () => {
 
       // When no servers exist, the empty view should be shown
       await waitFor(() => {
-        expect(screen.getByText('Build and manage MCP servers')).toBeInTheDocument();
+        expect(screen.getByText('Create an MCP server')).toBeInTheDocument();
       });
 
       // There should be no update server button since no servers exist
@@ -583,7 +583,7 @@ describe('McpServersWizard', () => {
 
       // The resource ID may not be directly displayed in the UI
       // Check that the Authentication component is rendering with proper content
-      expect(screen.getByText('Manage your authentication for the MCP servers here.')).toBeInTheDocument();
+      expect(screen.getByText('Manage authentication for your MCP servers.')).toBeInTheDocument();
     });
   });
 
@@ -634,8 +634,8 @@ describe('McpServersWizard', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Build and manage MCP servers')).toBeInTheDocument();
-        expect(screen.getByText('There are no servers in your app, please add new servers to get started.')).toBeInTheDocument();
+        expect(screen.getByText('Create an MCP server')).toBeInTheDocument();
+        expect(screen.getByText('Start by choosing or creating workflows as tools for agents to perform tasks.')).toBeInTheDocument();
         expect(screen.getByText('Learn more about MCP servers')).toBeInTheDocument();
       });
     });
@@ -654,8 +654,8 @@ describe('McpServersWizard', () => {
 
       await waitFor(() => {
         // All text content should be present (indicating intl.formatMessage was called)
-        expect(screen.getByText('Build and manage MCP servers')).toBeInTheDocument();
-        expect(screen.getByText('There are no servers in your app, please add new servers to get started.')).toBeInTheDocument();
+        expect(screen.getByText('Create an MCP server')).toBeInTheDocument();
+        expect(screen.getByText('Start by choosing or creating workflows as tools for agents to perform tasks.')).toBeInTheDocument();
         expect(screen.getByText('Learn more about MCP servers')).toBeInTheDocument();
       });
     });

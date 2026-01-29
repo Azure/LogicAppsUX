@@ -24,8 +24,8 @@ export const CreateServer = ({
 
   const INTL_TEXT = {
     createTitle: intl.formatMessage({
-      defaultMessage: 'Create a MCP Server',
-      id: 'ovGXkq',
+      defaultMessage: 'Create an MCP server',
+      id: 's5Cidf',
       description: 'Title for the MCP Server creation panel',
     }),
     updateTitle: intl.formatMessage({
@@ -35,13 +35,13 @@ export const CreateServer = ({
     }),
     subtitle: intl.formatMessage({
       defaultMessage: 'Standard logic app',
-      id: 'mmxY4p',
-      description: 'Subtitle for the MCP Server creation panel',
+      id: 'DIDL6K',
+      description: 'Subtitle for the MCP server creation panel',
     }),
     closeAriaLabel: intl.formatMessage({
-      defaultMessage: 'Close MCP Server creation panel',
-      id: '4KUsgB',
-      description: 'Aria label for closing the MCP Server creation panel',
+      defaultMessage: 'Close MCP server creation panel',
+      id: 'w2VjJS',
+      description: 'Aria label for closing the MCP server creation panel',
     }),
     detailsTitle: intl.formatMessage({
       defaultMessage: 'MCP server details',
@@ -49,8 +49,8 @@ export const CreateServer = ({
       description: 'Title for the MCP Server details section',
     }),
     detailsDescription: intl.formatMessage({
-      defaultMessage: 'Provide the details for your MCP server.',
-      id: 'qreQ/W',
+      defaultMessage: 'Provide the details about your MCP server.',
+      id: 'VgIOTh',
       description: 'Description for the MCP Server details section',
     }),
     workflowsTitle: intl.formatMessage({
@@ -59,8 +59,8 @@ export const CreateServer = ({
       description: 'Title for the MCP Server workflows section',
     }),
     workflowsDescription: intl.formatMessage({
-      defaultMessage: 'Only workflows with actions and request triggers are listed. Select the workflows you want to use.',
-      id: 'Qc7pvR',
+      defaultMessage: 'This list shows only workflows with actions and request triggers. Select the workflows you want to use.',
+      id: 'yF0g+n',
       description: 'Description for the MCP Server workflows section',
     }),
     learnMoreLinkText: intl.formatMessage({

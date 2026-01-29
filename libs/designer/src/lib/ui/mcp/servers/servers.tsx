@@ -1,13 +1,11 @@
-import { CopyInputControl } from '@microsoft/designer-ui';
-
 import {
   Accordion,
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
+  Body1Strong,
   Button,
   Divider,
-  Field,
   Image,
   Link,
   Menu,
@@ -15,6 +13,7 @@ import {
   MenuList,
   MenuPopover,
   MenuTrigger,
+  Subtitle2,
   Switch,
   Table,
   TableBody,
@@ -31,6 +30,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Add20Regular,
   ArrowClockwise20Regular,
+  Copy20Regular,
   Delete20Regular,
   Edit20Regular,
   MoreHorizontal20Regular,
@@ -48,6 +48,7 @@ export interface ServerNotificationData {
   content: string;
 }
 
+const showEnableSwitch = false;
 export const MCPServers = ({
   servers: _servers,
   isRefreshing,
@@ -78,6 +79,11 @@ export const MCPServers = ({
       defaultMessage: 'Manage your MCP servers here. You can create, edit, and delete servers as needed.',
       id: 'NuG1jf',
       description: 'Description for the servers section',
+    }),
+    learnMoreLinkText: intl.formatMessage({
+      defaultMessage: 'Learn More',
+      id: 'VxtMJ+',
+      description: 'Link text for learning more about MCP servers',
     }),
     createButtonText: intl.formatMessage({
       defaultMessage: 'Create',
@@ -114,10 +120,10 @@ export const MCPServers = ({
       id: 'UJGUnc',
       description: 'Label for the disabled switch',
     }),
-    endpointUrlLabel: intl.formatMessage({
-      defaultMessage: 'Endpoint URL',
-      id: 'Rvaeew',
-      description: 'Label for the endpoint URL field',
+    copyUrlButtonText: intl.formatMessage({
+      defaultMessage: 'Copy URL',
+      id: '4yDTpq',
+      description: 'Label for the copying the endpoint URL button',
     }),
     deleteServerTitle: intl.formatMessage({
       defaultMessage: 'Deleted MCP server',
@@ -125,8 +131,8 @@ export const MCPServers = ({
       description: 'Title for the delete server confirmation',
     }),
     removeToolTitle: intl.formatMessage({
-      defaultMessage: 'Workflow tool removed',
-      id: 'rRZIWd',
+      defaultMessage: 'Removed workflow tool.',
+      id: 'q3pTzv',
       description: 'Title for the remove tool from server confirmation',
     }),
   };
@@ -150,6 +156,10 @@ export const MCPServers = ({
     setShowAddServerModal(false);
   }, [openCreateTools]);
 
+  const handleCopyUrl = useCallback((url: string) => {
+    navigator.clipboard.writeText(url);
+  }, []);
+
   const handleUpdateServer = useCallback(
     async (updatedServer: Partial<McpServer>) => {
       const updatedServers = servers.map((server) => (equals(server.name, updatedServer.name) ? { ...server, ...updatedServer } : server));
@@ -163,8 +173,8 @@ export const MCPServers = ({
         }),
         content: intl.formatMessage(
           {
-            defaultMessage: 'Successfully updated the MCP server {serverName}.',
-            id: '4HB7lV',
+            defaultMessage: `Successfully updated MCP server: ''{serverName}''.`,
+            id: '7BVryg',
             description: 'Confirmation message for updating a server',
           },
           { serverName: updatedServer.name }
@@ -182,8 +192,8 @@ export const MCPServers = ({
           title: INTL_TEXT.deleteServerTitle,
           content: intl.formatMessage(
             {
-              defaultMessage: 'Successfully deleted the MCP server {serverName}.',
-              id: '1Eg3qv',
+              defaultMessage: `Successfully deleted MCP server: ''{serverName}''.`,
+              id: 'kxv92S',
               description: 'Confirmation message for deleting a server',
             },
             { serverName: serverToDelete }
@@ -222,34 +232,37 @@ export const MCPServers = ({
 
   return (
     <div>
-      <div className={styles.sectionHeader}>
-        <Text size={400} weight="bold">
-          {INTL_TEXT.title}
-        </Text>
+      <div className={styles.sectionHeaderContainer}>
+        <div className={styles.sectionHeader}>
+          <Subtitle2>{INTL_TEXT.title}</Subtitle2>
+        </div>
+        <DescriptionWithLink
+          className={styles.description}
+          text={INTL_TEXT.description}
+          linkText={INTL_TEXT.learnMoreLinkText}
+          linkUrl={'https://go.microsoft.com/fwlink/?linkid=2348013'}
+        />
+        <div className={styles.buttonContainer}>
+          <Button title={INTL_TEXT.createButtonText} appearance="subtle" icon={<Add20Regular />} onClick={handleCreateServer}>
+            {INTL_TEXT.createButtonText}
+          </Button>
+          <Button
+            title={INTL_TEXT.refreshButtonText}
+            appearance="subtle"
+            icon={<ArrowClockwise20Regular />}
+            onClick={onRefresh}
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? INTL_TEXT.refreshingButtonText : INTL_TEXT.refreshButtonText}
+          </Button>
+        </div>
       </div>
-      <DescriptionWithLink text={INTL_TEXT.description} />
-      <div className={styles.buttonContainer}>
-        <Button title={INTL_TEXT.createButtonText} appearance="subtle" icon={<Add20Regular />} onClick={handleCreateServer}>
-          {INTL_TEXT.createButtonText}
-        </Button>
-        <Button
-          title={INTL_TEXT.refreshButtonText}
-          appearance="subtle"
-          icon={<ArrowClockwise20Regular />}
-          onClick={onRefresh}
-          disabled={isRefreshing}
-        >
-          {isRefreshing ? INTL_TEXT.refreshingButtonText : INTL_TEXT.refreshButtonText}
-        </Button>
-      </div>
-      <Accordion multiple={true} defaultOpenItems={servers.map((server) => server.name)}>
+      <Accordion className={styles.sectionContent} multiple={true} defaultOpenItems={servers.map((server) => server.name)}>
         {servers.map((server) => (
           <AccordionItem className={styles.server} value={server.name} key={server.name}>
             <div className={styles.serverHeader}>
               <AccordionHeader className={styles.serverHeaderTextSection}>
-                <Text weight="bold" className={styles.serverHeaderText}>
-                  {server.name}
-                </Text>
+                <Body1Strong className={styles.serverHeaderText}>{server.name}</Body1Strong>
               </AccordionHeader>
               <div className={styles.serverHeaderActions}>
                 <Button
@@ -263,6 +276,15 @@ export const MCPServers = ({
                 </Button>
                 <Button
                   className={styles.serverHeaderButtons}
+                  title={INTL_TEXT.copyUrlButtonText}
+                  appearance="subtle"
+                  icon={<Copy20Regular />}
+                  onClick={() => handleCopyUrl(server.url ?? '')}
+                >
+                  {INTL_TEXT.copyUrlButtonText}
+                </Button>
+                <Button
+                  className={styles.serverHeaderButtons}
                   title={INTL_TEXT.deleteButtonText}
                   appearance="subtle"
                   icon={<Delete20Regular />}
@@ -270,21 +292,22 @@ export const MCPServers = ({
                 >
                   {INTL_TEXT.deleteButtonText}
                 </Button>
-                <Divider className={styles.serverHeaderDivider} vertical={true} />
-                <Switch
-                  checked={server.enabled}
-                  label={server.enabled ? INTL_TEXT.enabledLabel : INTL_TEXT.disabledLabel}
-                  onChange={(data) => {
-                    handleUpdateServer({ name: server.name, enabled: data.currentTarget.checked });
-                  }}
-                />
+                {showEnableSwitch ? (
+                  <>
+                    <Divider className={styles.serverHeaderDivider} vertical={true} />
+                    <Switch
+                      checked={server.enabled}
+                      label={server.enabled ? INTL_TEXT.enabledLabel : INTL_TEXT.disabledLabel}
+                      onChange={(data) => {
+                        handleUpdateServer({ name: server.name, enabled: data.currentTarget.checked });
+                      }}
+                    />
+                  </>
+                ) : null}
               </div>
             </div>
 
             <Text className={styles.serverDescription}>{server.description}</Text>
-            <Field className={styles.serverField} label={INTL_TEXT.endpointUrlLabel} orientation="horizontal">
-              <CopyInputControl text={server.url ?? ''} />
-            </Field>
 
             <AccordionPanel className={styles.serverContent}>
               <ServerTools
@@ -349,7 +372,7 @@ const ServerTools = ({ tools, onRemove, onManage }: { tools: string[]; onRemove:
         <TableRow className={styles.rowStyle}>
           {columns.map((column, i) => (
             <TableHeaderCell key={column.columnKey} className={i === columns.length - 1 ? styles.lastCell : styles.rowStyle}>
-              <Text weight="semibold">{column.label}</Text>
+              <Body1Strong>{column.label}</Body1Strong>
             </TableHeaderCell>
           ))}
         </TableRow>

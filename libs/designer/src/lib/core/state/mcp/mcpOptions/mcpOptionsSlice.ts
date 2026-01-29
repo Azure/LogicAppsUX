@@ -5,6 +5,7 @@ import { initializeMcpData, resetMcpStateOnResourceChange } from '../../../actio
 
 export interface McpOptionsState {
   servicesInitialized: boolean;
+  isDarkMode?: boolean;
   disableConfiguration: boolean;
   reInitializeServices?: boolean;
   resourceDetails?: {
@@ -17,12 +18,17 @@ export interface McpOptionsState {
 const initialState: McpOptionsState = {
   servicesInitialized: false,
   disableConfiguration: true,
+  isDarkMode: false,
 };
 
 export const mcpOptionsSlice = createSlice({
   name: 'mcpOptions',
   initialState,
-  reducers: {},
+  reducers: {
+    setDarkMode: (state, action) => {
+      state.isDarkMode = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(resetMcpState, () => initialState);
     builder.addCase(resetMcpStateOnResourceChange.fulfilled, (state, action) => {
@@ -49,4 +55,5 @@ export const mcpOptionsSlice = createSlice({
   },
 });
 
+export const { setDarkMode } = mcpOptionsSlice.actions;
 export default mcpOptionsSlice.reducer;

@@ -9,13 +9,14 @@ import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/hel
 import { McpServerPanel } from '../panel/server/panel';
 import { closePanel, McpPanelView, openMcpPanelView } from '../../../core/state/mcp/panel/mcpPanelSlice';
 import { DescriptionWithLink } from '../../configuretemplate/common';
-import { Spinner, Text } from '@fluentui/react-components';
+import { Spinner, Text, Image } from '@fluentui/react-components';
 import { AddServerButtons } from '../servers/add';
 import { MCPServers, type ServerNotificationData, type ToolHandler } from '../servers/servers';
 import { Authentication } from '../servers/authentication';
-import { Apps28Regular } from '@fluentui/react-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMcpServerWizardStyles } from './styles';
+import McpServerIcon_Light from '../../../common/images/mcp/server_light.svg';
+import McpServerIcon_Dark from '../../../common/images/mcp/server_dark.svg';
 
 export const McpServersWizard = ({
   onUpdateServers,
@@ -45,7 +46,7 @@ export const McpServersWizard = ({
 
   const { data: allServers, isLoading, refetch, isRefetching } = useAllMcpServers(logicAppId);
 
-  const [mcpServers, setMcpServers] = useState<McpServer[]>([]);
+  const [mcpServers, setMcpServers] = useState<McpServer[] | undefined>(undefined);
   const [selectedServer, setSelectedServer] = useState<McpServer | undefined>(undefined);
 
   useEffect(() => {
@@ -91,8 +92,8 @@ export const McpServersWizard = ({
       const toasterData: ServerNotificationData = {
         title: isNew
           ? intl.formatMessage({
-              defaultMessage: 'Server created successfully',
-              id: 'wWdzfM',
+              defaultMessage: 'Successfully created the server.',
+              id: 'cru2+f',
               description: 'Title for the toaster after creating a server',
             })
           : intl.formatMessage({
@@ -135,15 +136,17 @@ export const McpServersWizard = ({
     dispatch(closePanel());
   }, [dispatch]);
 
-  if (isLoading) {
+  if (mcpServers === undefined || isLoading) {
     return (
       <div className={styles.loadingContainer}>
-        <Spinner size="large" />
-        {intl.formatMessage({
-          defaultMessage: 'Loading...',
-          id: '9SDUXM',
-          description: 'Text displayed while loading MCP Servers',
-        })}
+        <Spinner size="huge" />
+        <Text weight="medium" size={500} className={styles.loadingText}>
+          {intl.formatMessage({
+            defaultMessage: 'Loading...',
+            id: '9SDUXM',
+            description: 'Text displayed while loading MCP Servers',
+          })}
+        </Text>
       </div>
     );
   }
@@ -151,7 +154,7 @@ export const McpServersWizard = ({
   return (
     <div>
       <McpServerPanel onUpdateServer={handleUpdateServer} server={selectedServer} onClose={handleClosePanel} />
-      {mcpServers?.length === 0 ? (
+      {mcpServers.length === 0 ? (
         <EmptyMcpServersView onCreateTools={onOpenCreateTools} />
       ) : (
         <div>
@@ -184,13 +187,13 @@ const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) =
   const intl = useIntl();
   const INTL_TEXT = {
     title: intl.formatMessage({
-      defaultMessage: 'Build and manage MCP servers',
-      id: 'TH6caA',
+      defaultMessage: 'Create an MCP server',
+      id: 'iLIiyR',
       description: 'Title displayed when no MCP servers are found',
     }),
     description: intl.formatMessage({
-      defaultMessage: 'There are no servers in your app, please add new servers to get started.',
-      id: 'SOEhCs',
+      defaultMessage: 'Start by choosing or creating workflows as tools for agents to perform tasks.',
+      id: 'oo72Za',
       description: 'Description displayed when no MCP servers are found',
     }),
     learnMore: intl.formatMessage({
@@ -200,10 +203,12 @@ const EmptyMcpServersView = ({ onCreateTools }: { onCreateTools: () => void }) =
     }),
   };
 
+  const isDarkMode = useSelector((state: RootState) => state.mcpOptions.isDarkMode);
+
   return (
     <div className={styles.emptyViewContainer}>
       <div className={styles.emptyViewContent}>
-        <Apps28Regular className={styles.icon} />
+        <Image src={isDarkMode ? McpServerIcon_Dark : McpServerIcon_Light} className={styles.icon} />
         <Text weight="semibold" size={500} className={styles.emptyViewTitle}>
           {INTL_TEXT.title}
         </Text>

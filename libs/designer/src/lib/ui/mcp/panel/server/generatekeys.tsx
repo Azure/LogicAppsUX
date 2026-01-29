@@ -82,13 +82,13 @@ export const GenerateKeys = () => {
       description: 'Link text for learn more',
     }),
     infoTitle: intl.formatMessage({
-      defaultMessage: 'Key generated successfully.',
-      id: 'oDa/YD',
+      defaultMessage: 'Successfully generated the key.',
+      id: 'Tfsaaf',
       description: 'Info message title about key generation',
     }),
     infoMessage: intl.formatMessage({
-      defaultMessage: `Copy and save this key. It won't be displayed again.`,
-      id: 'x/zASM',
+      defaultMessage: `Copy and save this key in a secure location. The key won't be shown again.`,
+      id: 'jz3Z3W',
       description: 'Info message about key generation',
     }),
     durationLabel: intl.formatMessage({
@@ -97,8 +97,8 @@ export const GenerateKeys = () => {
       description: 'Label for the key duration input field',
     }),
     accessKeyLabel: intl.formatMessage({
-      defaultMessage: 'Access Key',
-      id: '7vrHE/',
+      defaultMessage: 'Access key',
+      id: 'ORqQxz',
       description: 'Label for the access key',
     }),
     accessKeyInfoText: intl.formatMessage({
@@ -237,14 +237,14 @@ export const GenerateKeys = () => {
     return (
       <div className={styles.messageBar}>
         <MessageBar intent={'success'}>
-          <MessageBarBody>
+          <MessageBarBody className={styles.messageBarBody}>
             <MessageBarTitle>{INTL_TEXT.infoTitle}</MessageBarTitle>
             {INTL_TEXT.infoMessage}
           </MessageBarBody>
         </MessageBar>
       </div>
     );
-  }, [styles.messageBar, INTL_TEXT.infoTitle, INTL_TEXT.infoMessage]);
+  }, [styles.messageBar, styles.messageBarBody, INTL_TEXT.infoTitle, INTL_TEXT.infoMessage]);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -282,7 +282,7 @@ export const GenerateKeys = () => {
           description={INTL_TEXT.detailsDescription}
           descriptionLink={{
             text: INTL_TEXT.learnMoreLinkText,
-            href: 'https://learn.microsoft.com/en-us/azure/logic-apps/microsoft-cloud-platform/mcp-overview',
+            href: 'https://go.microsoft.com/fwlink/?linkid=2348014',
           }}
           items={keySectionItems}
         />
@@ -293,7 +293,7 @@ export const GenerateKeys = () => {
             description={INTL_TEXT.resultDescription}
             descriptionLink={{
               text: INTL_TEXT.learnMoreLinkText,
-              href: 'https://learn.microsoft.com/en-us/azure/logic-apps/microsoft-cloud-platform/mcp-overview',
+              href: 'https://go.microsoft.com/fwlink/?linkid=2347946',
             }}
             items={generatedSectionItems}
             onRenderInfoBar={renderInfoBar}
