@@ -27,6 +27,7 @@ export const useStyles = makeStyles({
     fontSize: '24px',
     fontWeight: 600,
     lineHeight: '32px',
+    margin: 0,
     ...shorthands.flex(1),
   },
   rightActionWrapper: {
