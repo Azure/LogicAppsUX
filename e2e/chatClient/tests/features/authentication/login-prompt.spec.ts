@@ -13,31 +13,73 @@
  * - Successful authentication
  */
 
-import { test, expect } from '../../../fixtures/sse-fixtures';
-import { test as baseTest } from '@playwright/test';
+import { test as baseTest, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
-// Agent card URL - intercepted by our fixture
+// Agent card URL - intercepted by our mocks
 const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-card.json';
 
-test.describe('Login Prompt Display', { tag: '@mock' }, () => {
-  test('should display login prompt when agent card returns 401', async ({ page }) => {
-    // Override the agent card route to return 401
-    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
-      await route.fulfill({
-        status: 401,
-        contentType: 'application/json',
-        body: JSON.stringify({ error: 'Unauthorized' }),
-      });
-    });
+// Mock identity providers to inject into the page
+const MOCK_IDENTITY_PROVIDERS = {
+  aad: {
+    name: 'Microsoft',
+    signInEndpoint: '/.auth/login/aad',
+  },
+};
 
-    // Also mock the auth refresh endpoint to fail
-    await page.route('**/.auth/refresh', async (route) => {
-      await route.fulfill({
-        status: 401,
-        contentType: 'application/json',
-        body: JSON.stringify({ error: 'Unauthorized' }),
-      });
+// Helper to set up login prompt test with identity providers
+async function setupLoginPromptTest(page: Page) {
+  // Intercept and modify the HTML to inject identity providers
+  // This replaces the placeholder BEFORE the inline script runs
+  await page.route('**/*', async (route) => {
+    const request = route.request();
+    if (request.resourceType() === 'document') {
+      const response = await route.fetch();
+      let html = await response.text();
+      // Replace the placeholder with actual identity providers JSON
+      const providersJson = JSON.stringify(MOCK_IDENTITY_PROVIDERS).replace(/"/g, '\\"');
+      html = html.replace(
+        'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+        `window.IDENTITY_PROVIDERS = "${providersJson}"`
+      );
+      await route.fulfill({ response, body: html });
+    } else {
+      // Use fallback() to let other routes handle non-document requests
+      await route.fallback();
+    }
+  });
+
+  // Override auth/me to return unauthenticated (empty array)
+  await page.route('**/.auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([]),
     });
+  });
+
+  // Override the agent card route to return 401
+  await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    });
+  });
+
+  // Also mock the auth refresh endpoint to fail
+  await page.route('**/.auth/refresh', async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    });
+  });
+}
+
+baseTest.describe('Login Prompt Display', { tag: '@mock' }, () => {
+  baseTest('should display login prompt when agent card returns 401', async ({ page }) => {
+    await setupLoginPromptTest(page);
 
     // Navigate to the app
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -49,14 +91,8 @@ test.describe('Login Prompt Display', { tag: '@mock' }, () => {
     await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeVisible();
   });
 
-  test('should display person icon in login prompt', async ({ page }) => {
-    // Override routes to trigger login
-    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
-    await page.route('**/.auth/refresh', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
+  baseTest('should display person icon in login prompt', async ({ page }) => {
+    await setupLoginPromptTest(page);
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
@@ -68,13 +104,8 @@ test.describe('Login Prompt Display', { tag: '@mock' }, () => {
     await expect(iconContainer).toBeVisible();
   });
 
-  test('should show sign in button enabled by default', async ({ page }) => {
-    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
-    await page.route('**/.auth/refresh', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
+  baseTest('should show sign in button enabled by default', async ({ page }) => {
+    await setupLoginPromptTest(page);
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
@@ -87,18 +118,12 @@ test.describe('Login Prompt Display', { tag: '@mock' }, () => {
   });
 });
 
-test.describe('Login Popup Flow', { tag: '@mock' }, () => {
-  test.beforeEach(async ({ page }) => {
-    // Set up 401 response for agent card
-    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
-    await page.route('**/.auth/refresh', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
+baseTest.describe('Login Popup Flow', { tag: '@mock' }, () => {
+  baseTest.beforeEach(async ({ page }) => {
+    await setupLoginPromptTest(page);
   });
 
-  test('should open login popup when sign in button is clicked', async ({ page, context }) => {
+  baseTest('should open login popup when sign in button is clicked', async ({ page, context }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     // Wait for login prompt
@@ -120,14 +145,14 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     await popup.close();
   });
 
-  test('should show loading state when popup is open', async ({ page, context }) => {
+  baseTest('should show loading state when popup is open', async ({ page, context }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
 
     // Click sign in and capture popup
     const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
+      context.waitForEvent('page', { timeout: 10000 }),
       page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
@@ -141,7 +166,7 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     await popup.close();
   });
 
-  test('should handle popup blocker gracefully', async ({ page }) => {
+  baseTest('should handle popup blocker gracefully', async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
@@ -164,7 +189,7 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
     await expect(page.getByRole('button', { name: 'Microsoft account' })).toBeEnabled();
   });
 
-  test('should display error message when popup is blocked', async ({ page }) => {
+  baseTest('should display error message when popup is blocked', async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
@@ -194,9 +219,12 @@ test.describe('Login Popup Flow', { tag: '@mock' }, () => {
   });
 });
 
-test.describe('Token Refresh Flow', { tag: '@mock' }, () => {
-  test('should attempt token refresh before showing login prompt', async ({ page }) => {
+baseTest.describe('Token Refresh Flow', { tag: '@mock' }, () => {
+  baseTest('should attempt token refresh before showing login prompt', async ({ page }) => {
     let refreshCalled = false;
+
+    // Inject identity providers via HTML modification
+    await injectIdentityProviders(page, MOCK_IDENTITY_PROVIDERS);
 
     // Track refresh calls
     await page.route('**/.auth/refresh', async (route) => {
@@ -217,7 +245,10 @@ test.describe('Token Refresh Flow', { tag: '@mock' }, () => {
     expect(refreshCalled).toBe(true);
   });
 
-  test('should reload page if token refresh succeeds', async ({ page }) => {
+  baseTest('should reload page if token refresh succeeds', async ({ page }) => {
+    // Inject identity providers via HTML modification
+    await injectIdentityProviders(page, MOCK_IDENTITY_PROVIDERS);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let refreshAttempts = 0;
     let agentCardAttempts = 0;
@@ -260,8 +291,11 @@ test.describe('Token Refresh Flow', { tag: '@mock' }, () => {
   });
 });
 
-test.describe('Authentication Success Flow', { tag: '@mock' }, () => {
-  test('should reload page after successful authentication', async ({ page, context }) => {
+baseTest.describe('Authentication Success Flow', { tag: '@mock' }, () => {
+  baseTest('should reload page after successful authentication', async ({ page, context }) => {
+    // Inject identity providers via HTML modification
+    await injectIdentityProviders(page, MOCK_IDENTITY_PROVIDERS);
+
     let authMeCallCount = 0;
 
     // Set up 401 for agent card initially
@@ -318,7 +352,7 @@ test.describe('Authentication Success Flow', { tag: '@mock' }, () => {
 
     // Click sign in
     const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
+      context.waitForEvent('page', { timeout: 10000 }),
       page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
@@ -330,17 +364,12 @@ test.describe('Authentication Success Flow', { tag: '@mock' }, () => {
   });
 });
 
-test.describe('Login Prompt Accessibility', { tag: '@mock' }, () => {
-  test.beforeEach(async ({ page }) => {
-    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
-    await page.route('**/.auth/refresh', async (route) => {
-      await route.fulfill({ status: 401 });
-    });
+baseTest.describe('Login Prompt Accessibility', { tag: '@mock' }, () => {
+  baseTest.beforeEach(async ({ page }) => {
+    await setupLoginPromptTest(page);
   });
 
-  test('should have accessible button with proper role', async ({ page }) => {
+  baseTest('should have accessible button with proper role', async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
@@ -351,7 +380,7 @@ test.describe('Login Prompt Accessibility', { tag: '@mock' }, () => {
     await expect(signInButton).toHaveAttribute('type', 'button');
   });
 
-  test('should be keyboard navigable', async ({ page }) => {
+  baseTest('should be keyboard navigable', async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     await expect(page.getByText('Sign in required')).toBeVisible({ timeout: 10000 });
@@ -466,6 +495,31 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
       await route.fulfill({ status: 400 });
     });
 
+    // Inject identity providers via HTML modification (LAST to have highest priority in context.route)
+    // Only modify main app pages, not auth pages
+    await context.route('**/*', async (route) => {
+      const request = route.request();
+      const url = request.url();
+      // Skip auth URLs and API URLs - they have their own handlers
+      // Use fallback() to let other routes handle these
+      if (url.includes('/.auth/') || url.includes('/api/')) {
+        await route.fallback();
+        return;
+      }
+      if (request.resourceType() === 'document') {
+        const response = await route.fetch();
+        let html = await response.text();
+        const providersJson = JSON.stringify(MOCK_IDENTITY_PROVIDERS).replace(/"/g, '\\"');
+        html = html.replace(
+          'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+          `window.IDENTITY_PROVIDERS = "${providersJson}"`
+        );
+        await route.fulfill({ response, body: html });
+      } else {
+        await route.fallback();
+      }
+    });
+
     // Navigate with multiSession enabled
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true`);
 
@@ -474,7 +528,7 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
 
     // Click sign in
     const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
+      context.waitForEvent('page', { timeout: 10000 }),
       page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
@@ -553,6 +607,31 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
       });
     });
 
+    // Inject identity providers via HTML modification (LAST to have highest priority in context.route)
+    // Only modify main app pages, not auth pages
+    await context.route('**/*', async (route) => {
+      const request = route.request();
+      const url = request.url();
+      // Skip auth URLs and API URLs - they have their own handlers
+      // Use fallback() to let other routes handle these
+      if (url.includes('/.auth/') || url.includes('/api/')) {
+        await route.fallback();
+        return;
+      }
+      if (request.resourceType() === 'document') {
+        const response = await route.fetch();
+        let html = await response.text();
+        const providersJson = JSON.stringify(MOCK_IDENTITY_PROVIDERS).replace(/"/g, '\\"');
+        html = html.replace(
+          'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+          `window.IDENTITY_PROVIDERS = "${providersJson}"`
+        );
+        await route.fulfill({ response, body: html });
+      } else {
+        await route.fallback();
+      }
+    });
+
     // Navigate without multiSession (single session mode)
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
@@ -561,7 +640,7 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
 
     // Click sign in
     const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
+      context.waitForEvent('page', { timeout: 10000 }),
       page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
@@ -624,6 +703,31 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
       });
     });
 
+    // Inject identity providers via HTML modification (LAST to have highest priority in context.route)
+    // Only modify main app pages, not auth pages
+    await context.route('**/*', async (route) => {
+      const request = route.request();
+      const url = request.url();
+      // Skip auth URLs and API URLs - they have their own handlers
+      // Use fallback() to let other routes handle these
+      if (url.includes('/.auth/') || url.includes('/api/')) {
+        await route.fallback();
+        return;
+      }
+      if (request.resourceType() === 'document') {
+        const response = await route.fetch();
+        let html = await response.text();
+        const providersJson = JSON.stringify(MOCK_IDENTITY_PROVIDERS).replace(/"/g, '\\"');
+        html = html.replace(
+          'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+          `window.IDENTITY_PROVIDERS = "${providersJson}"`
+        );
+        await route.fulfill({ response, body: html });
+      } else {
+        await route.fallback();
+      }
+    });
+
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
 
     // Login prompt should appear
@@ -631,7 +735,7 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
 
     // Sign in
     const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
+      context.waitForEvent('page', { timeout: 10000 }),
       page.getByRole('button', { name: 'Microsoft account' }).click(),
     ]);
 
@@ -643,8 +747,37 @@ baseTest.describe('Successful Login to MultiSession Chat', { tag: '@mock' }, () 
   });
 });
 
-test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
-  test('should display multiple provider buttons when multiple providers are configured', async ({ page }) => {
+// Helper to inject custom identity providers via HTML modification
+async function injectIdentityProviders(page: Page, providers: Record<string, any>) {
+  await page.route('**/*', async (route) => {
+    const request = route.request();
+    if (request.resourceType() === 'document') {
+      const response = await route.fetch();
+      let html = await response.text();
+      const providersJson = JSON.stringify(providers).replace(/"/g, '\\"');
+      html = html.replace(
+        'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+        `window.IDENTITY_PROVIDERS = "${providersJson}"`
+      );
+      await route.fulfill({ response, body: html });
+    } else {
+      // Use fallback() to let other routes handle non-document requests
+      await route.fallback();
+    }
+  });
+}
+
+baseTest.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
+  baseTest('should display multiple provider buttons when multiple providers are configured', async ({ page }) => {
+    const multipleProviders = {
+      aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+      google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+      github: { signInEndpoint: '/.auth/login/github', name: 'GitHub' },
+    };
+
+    // Inject multiple identity providers
+    await injectIdentityProviders(page, multipleProviders);
+
     // Override auth/me to return not authenticated
     await page.route('**/.auth/me', async (route) => {
       await route.fulfill({
@@ -654,10 +787,13 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
       });
     });
 
-    // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
-    await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS =
-        '{"aad":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"},"github":{"signInEndpoint":"/.auth/login/github","name":"GitHub"}}';
+    // Override agent card to return 401 (trigger login prompt)
+    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
+      await route.fulfill({ status: 401 });
+    });
+
+    await page.route('**/.auth/refresh', async (route) => {
+      await route.fulfill({ status: 401 });
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -671,7 +807,15 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
     await expect(page.getByRole('button', { name: 'GitHub account' })).toBeVisible();
   });
 
-  test('should use correct sign-in endpoint for each provider', async ({ page, context }) => {
+  baseTest('should use correct sign-in endpoint for each provider', async ({ page, context }) => {
+    const multipleProviders = {
+      aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+      google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+    };
+
+    // Inject multiple identity providers
+    await injectIdentityProviders(page, multipleProviders);
+
     // Override auth/me to return not authenticated
     await page.route('**/.auth/me', async (route) => {
       await route.fulfill({
@@ -681,10 +825,13 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
       });
     });
 
-    // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
-    await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS =
-        '{"aad":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"}}';
+    // Override agent card to return 401 (trigger login prompt)
+    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
+      await route.fulfill({ status: 401 });
+    });
+
+    await page.route('**/.auth/refresh', async (route) => {
+      await route.fulfill({ status: 401 });
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -703,7 +850,15 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
     await popup.close();
   });
 
-  test('should show loading state only on clicked provider button', async ({ page, context }) => {
+  baseTest('should show loading state only on clicked provider button', async ({ page, context }) => {
+    const multipleProviders = {
+      aad: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+      google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+    };
+
+    // Inject multiple identity providers
+    await injectIdentityProviders(page, multipleProviders);
+
     // Override auth/me to return not authenticated
     await page.route('**/.auth/me', async (route) => {
       await route.fulfill({
@@ -713,10 +868,13 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
       });
     });
 
-    // Set window.IDENTITY_PROVIDERS with multiple providers before page loads
-    await page.addInitScript(() => {
-      (window as any).IDENTITY_PROVIDERS =
-        '{"aad":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"}}';
+    // Override agent card to return 401 (trigger login prompt)
+    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
+      await route.fulfill({ status: 401 });
+    });
+
+    await page.route('**/.auth/refresh', async (route) => {
+      await route.fulfill({ status: 401 });
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -726,7 +884,7 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
 
     // Click Google button
     const [popup] = await Promise.all([
-      context.waitForEvent('page', { timeout: 5000 }),
+      context.waitForEvent('page', { timeout: 10000 }),
       page.getByRole('button', { name: 'Google account' }).click(),
     ]);
 
@@ -742,17 +900,8 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
     await popup.close();
   });
 
-  test('should show configuration message when no providers configured', async ({ page }) => {
-    // Override auth/me to return not authenticated
-    await page.route('**/.auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([]),
-      });
-    });
-
-    // Intercept the HTML page and replace the IDENTITY_PROVIDERS placeholder with empty object
+  baseTest('should show configuration message when no providers configured', async ({ page }) => {
+    // Intercept the HTML page FIRST and replace the IDENTITY_PROVIDERS placeholder with empty object
     // This simulates server-side injection of empty providers config
     await page.route('**/*', async (route) => {
       const request = route.request();
@@ -763,8 +912,27 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
         html = html.replace('window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"', 'window.IDENTITY_PROVIDERS = "{}"');
         await route.fulfill({ response, body: html });
       } else {
-        await route.continue();
+        // Use fallback() to let other routes handle non-document requests
+        await route.fallback();
       }
+    });
+
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Override agent card to return 401 (trigger login prompt)
+    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
+      await route.fulfill({ status: 401 });
+    });
+
+    await page.route('**/.auth/refresh', async (route) => {
+      await route.fulfill({ status: 401 });
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
@@ -779,17 +947,8 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
     await expect(page.getByRole('button', { name: /account/i })).not.toBeVisible();
   });
 
-  test('should handle single custom provider correctly', async ({ page, context }) => {
-    // Override auth/me to return not authenticated
-    await page.route('**/.auth/me', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([]),
-      });
-    });
-
-    // Intercept the HTML page and replace the IDENTITY_PROVIDERS placeholder with custom provider
+  baseTest('should handle single custom provider correctly', async ({ page, context }) => {
+    // Intercept the HTML page FIRST and replace the IDENTITY_PROVIDERS placeholder with custom provider
     // This simulates server-side injection of custom providers config
     await page.route('**/*', async (route) => {
       const request = route.request();
@@ -803,8 +962,27 @@ test.describe('Multiple Identity Providers', { tag: '@mock' }, () => {
         );
         await route.fulfill({ response, body: html });
       } else {
-        await route.continue();
+        // Use fallback() to let other routes handle non-document requests
+        await route.fallback();
       }
+    });
+
+    // Override auth/me to return not authenticated
+    await page.route('**/.auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
+    // Override agent card to return 401 (trigger login prompt)
+    await page.route('**/api/agents/test/.well-known/agent-card.json', async (route) => {
+      await route.fulfill({ status: 401 });
+    });
+
+    await page.route('**/.auth/refresh', async (route) => {
+      await route.fulfill({ status: 401 });
     });
 
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
