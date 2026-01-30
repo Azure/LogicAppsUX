@@ -255,6 +255,36 @@ describe('authHandler', () => {
 
       expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: false, error: null });
     });
+
+    it('should return isEasyAuthConfigured true with error when 500 Internal Server Error', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result.isAuthenticated).toBe(false);
+      expect(result.isEasyAuthConfigured).toBe(true);
+      expect(result.error).toBeInstanceOf(Error);
+      expect(result.error?.message).toBe('Failed to fetch authentication status');
+    });
+
+    it('should return isEasyAuthConfigured true with error when 503 Service Unavailable', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result.isAuthenticated).toBe(false);
+      expect(result.isEasyAuthConfigured).toBe(true);
+      expect(result.error).toBeInstanceOf(Error);
+      expect(result.error?.message).toBe('Failed to fetch authentication status');
+    });
   });
 
   describe('openLoginPopup', () => {

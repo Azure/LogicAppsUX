@@ -293,8 +293,7 @@ describe('parseIframeConfig', () => {
       const config = parseIframeConfig();
 
       // Arrays are objects but not the expected Record<string, IdentityProvider> format
-      // The parseIdentityProviders function returns the parsed object as-is
-      expect(config.props.identityProviders).toEqual(['microsoft', 'google']);
+      expect(config.props.identityProviders).toBeUndefined();
 
       // Clean up
       delete (window as any).IDENTITY_PROVIDERS;
@@ -462,13 +461,13 @@ describe('parseIdentityProviders', () => {
     expect(result).toBeUndefined();
   });
 
-  it('returns array when JSON parses to array (arrays are objects)', () => {
+  it('returns undefined when JSON parses to array (arrays are not valid Record format)', () => {
     (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
 
     const result = parseIdentityProviders();
 
-    // Note: arrays pass typeof === 'object' check, so they are returned
-    expect(result).toEqual(['microsoft', 'google']);
+    // Arrays are objects but not valid Record<string, IdentityProvider> format
+    expect(result).toBeUndefined();
   });
 
   it('returns empty object for empty JSON object', () => {

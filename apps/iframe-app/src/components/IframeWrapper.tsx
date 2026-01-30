@@ -100,7 +100,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         // Easy Auth is NOT configured (404 from /.auth/me)
         // Let it fail naturally - the API calls will fail without apiKey
         if (!isEasyAuthConfigured) {
-          setIsCheckingAuth(false);
           setNeedsLogin(false);
           return;
         }

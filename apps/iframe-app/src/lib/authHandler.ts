@@ -18,6 +18,13 @@ interface JwtPayload {
 
 export interface AuthInformation {
   isAuthenticated: boolean;
+  /**
+   * Indicates whether Azure App Service EasyAuth is configured on the Logic App.
+   * - `true`: EasyAuth is configured (/.auth/me returns 401, 403, 302, or 200)
+   * - `false`: EasyAuth is NOT configured (/.auth/me returns 404 or network error)
+   *
+   * When false, the application should skip authentication flows entirely.
+   */
   isEasyAuthConfigured: boolean;
   error: Error | null;
   username?: string;

@@ -256,7 +256,8 @@ export function parseIdentityProviders(): Record<string, IdentityProvider> | und
 
   try {
     const parsed = JSON.parse(identityProviders);
-    if (typeof parsed === 'object' && parsed !== null) {
+    // Arrays are objects but not valid Record<string, IdentityProvider> format
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
       return parsed as Record<string, IdentityProvider>;
     }
   } catch (e) {
