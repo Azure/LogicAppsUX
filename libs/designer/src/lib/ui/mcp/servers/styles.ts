@@ -81,7 +81,7 @@ export const useMcpServerStyles = makeStyles({
   serverHeaderActions: { display: 'flex', alignItems: 'center', gap: '6px' },
   serverHeaderButtons: { minWidth: '50px', padding: '0 4px' },
   serverHeaderDivider: { padding: '0 8px' },
-  serverDescription: { paddingLeft: '28px', maxWidth: '778px', paddingTop: '8px' },
+  serverDescription: { paddingLeft: '28px', maxWidth: '778px', paddingTop: '8px', display: 'block' },
   serverField: { paddingTop: '10px', paddingLeft: '28px' },
   serverContent: { paddingTop: '16px', paddingLeft: '16px' },
 });

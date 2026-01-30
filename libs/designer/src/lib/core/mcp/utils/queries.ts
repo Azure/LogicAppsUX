@@ -5,6 +5,8 @@ import {
   equals,
   type McpServer,
   getObjectPropertyValue,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
@@ -26,18 +28,35 @@ export const useAllMcpServers = (siteResourceId: string) => {
   return useQuery({
     queryKey: ['mcpservers', siteResourceId.toLowerCase()],
     queryFn: async (): Promise<McpServer[]> => {
-      const response: any = await ResourceService().executeResourceAction(
-        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers`,
-        'POST',
-        { 'api-version': '2024-11-01' }
-      );
+      try {
+        const response: any = await ResourceService().executeResourceAction(
+          `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers`,
+          'POST',
+          { 'api-version': '2024-11-01' }
+        );
 
-      return (response.value ?? [])
-        .map((server: McpServer) => ({
-          ...server,
-          enabled: server.enabled === undefined ? true : server.enabled,
-        }))
-        .sort((a: McpServer, b: McpServer) => a.name.localeCompare(b.name));
+        return (response.value ?? [])
+          .map((server: McpServer) => ({
+            ...server,
+            enabled: server.enabled === undefined ? true : server.enabled,
+          }))
+          .sort((a: McpServer, b: McpServer) => a.name.localeCompare(b.name));
+      } catch (errorResponse: any) {
+        const error = errorResponse?.error || {};
+
+        if (equals(error.code, 'McpServerNotEnabled')) {
+          return [];
+        }
+
+        // For now log the error and return empty list
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'McpServer.listServers',
+          error,
+          message: `Error while fetching mcp servers for the app: ${siteResourceId}`,
+        });
+        return [];
+      }
     },
     enabled: !!siteResourceId,
     ...queryOpts,
