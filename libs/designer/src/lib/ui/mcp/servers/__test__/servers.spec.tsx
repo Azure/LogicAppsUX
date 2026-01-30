@@ -59,6 +59,15 @@ vi.mock('../../../common/images/templates/logicapps.svg', () => ({
   default: 'workflow-icon.svg',
 }));
 
+const mockWriteClipboard = vi.fn();
+Object.defineProperty(navigator, 'clipboard', {
+  value: {
+    writeText: mockWriteClipboard,
+    readText: vi.fn(), // Mock the readText method
+  },
+  configurable: true,
+});
+
 describe('MCPServers', () => {
   const mockOnRefresh = vi.fn();
   const mockOnUpdateServers = vi.fn();
@@ -127,15 +136,6 @@ describe('MCPServers', () => {
       expect(screen.getByText('Description for test server 2')).toBeInTheDocument();
     });
 
-    it('renders server endpoint URLs in copy input controls', () => {
-      renderComponent();
-
-      const copyInputs = screen.getAllByTestId('copy-input');
-      expect(copyInputs).toHaveLength(2);
-      expect(copyInputs[0]).toHaveValue('https://example.com/server1');
-      expect(copyInputs[1]).toHaveValue('https://example.com/server2');
-    });
-
     it('renders server tools correctly', () => {
       renderComponent();
 
@@ -181,6 +181,15 @@ describe('MCPServers', () => {
       expect(mockOnManageServer).toHaveBeenCalledWith('Test Server 1');
     });
 
+    it('should copy server endpoint url in clipboard when copy url button is clicked', () => {
+      renderComponent();
+
+      const copyUrlButtons = screen.getAllByRole('button', { name: /copy url/i });
+      fireEvent.click(copyUrlButtons[0]);
+
+      expect(mockWriteClipboard).toHaveBeenCalledWith('https://example.com/server1');
+    });
+
     it('opens delete modal when delete button is clicked', () => {
       renderComponent();
 
@@ -190,7 +199,8 @@ describe('MCPServers', () => {
       expect(screen.getByTestId('delete-modal')).toBeInTheDocument();
     });
 
-    it('toggles server enabled state when switch is clicked', async () => {
+    // TODO: Will enable this test once feature to show this control is added after backend is deployed.
+    it.skip('toggles server enabled state when switch is clicked', async () => {
       renderComponent();
 
       const switches = screen.getAllByRole('switch');
@@ -343,9 +353,7 @@ describe('MCPServers', () => {
       renderComponent({ servers: serversWithUndefinedProps });
 
       expect(screen.getByText('Test Server')).toBeInTheDocument();
-      // Should render empty copy input for undefined URL
-      const copyInputs = screen.getAllByTestId('copy-input');
-      expect(copyInputs[0]).toHaveValue('');
+      expect(screen.getByRole('button', { name: /copy url/i })).toBeInTheDocument();
     });
 
     it('handles tool removal for non-existent tool', () => {
@@ -407,7 +415,7 @@ describe('MCPServers', () => {
   });
 
   describe('Accessibility', () => {
-    it('has proper ARIA labels for interactive elements', () => {
+    it.skip('has proper ARIA labels for interactive elements', () => {
       renderComponent();
 
       const switches = screen.getAllByRole('switch');

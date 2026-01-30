@@ -189,7 +189,7 @@ describe('CreateServer', () => {
     it('renders create mode with correct title', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      expect(screen.getByText('Create a MCP Server')).toBeInTheDocument();
+      expect(screen.getByText('Create an MCP server')).toBeInTheDocument();
       expect(screen.getByText('Standard logic app')).toBeInTheDocument();
     });
 
@@ -242,7 +242,7 @@ describe('CreateServer', () => {
     it('renders close button in header', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      const closeButton = screen.getByLabelText('Close MCP Server creation panel');
+      const closeButton = screen.getByLabelText('Close MCP server creation panel');
       expect(closeButton).toBeInTheDocument();
     });
   });
@@ -526,7 +526,7 @@ describe('CreateServer', () => {
     it('calls onClose when close button is clicked', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      const closeButton = screen.getByLabelText('Close MCP Server creation panel');
+      const closeButton = screen.getByLabelText('Close MCP server creation panel');
       fireEvent.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalled();
@@ -590,7 +590,7 @@ describe('CreateServer', () => {
     it('has proper aria-label for close button', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      const closeButton = screen.getByLabelText('Close MCP Server creation panel');
+      const closeButton = screen.getByLabelText('Close MCP server creation panel');
       expect(closeButton).toBeInTheDocument();
     });
 

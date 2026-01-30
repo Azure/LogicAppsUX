@@ -6,14 +6,29 @@ const mainGap = '16px';
 export const useMcpServerStyles = makeStyles({
   buttonContainer: {
     display: 'flex',
-    marginBottom: '16px',
+    padding: '8px 0 16px 0',
   },
   server: {
     borderRadius: '8px',
     border: borderStyle,
     padding: mainGap,
     backgroundColor: tokens.colorNeutralBackground1,
-    marginBottom: '12px',
+  },
+
+  description: {
+    margin: 0,
+    padding: '8px 0',
+  },
+
+  sectionItems: {
+    padding: '16px 0 24px 0',
+    gap: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  sectionHeaderContainer: {
+    maxWidth: '778px',
   },
   sectionHeader: {
     display: 'flex',
@@ -21,8 +36,13 @@ export const useMcpServerStyles = makeStyles({
     justifyContent: 'space-between',
     position: 'relative',
   },
+  sectionContent: {
+    width: '925px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
   tableStyle: {
-    width: '70%',
     margin: 0,
   },
   rowStyle: {
@@ -51,21 +71,25 @@ export const useMcpServerStyles = makeStyles({
     objectFit: 'contain',
     flexShrink: 0,
   },
-  serverHeader: { display: 'flex', justifyContent: 'space-between', paddingLeft: 0 },
+  serverHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '0 0 4px 0',
+  },
   serverHeaderTextSection: { marginLeft: '-10px' },
   serverHeaderText: { paddingLeft: 0 },
-  serverHeaderActions: { display: 'flex', alignItems: 'center' },
+  serverHeaderActions: { display: 'flex', alignItems: 'center', gap: '6px' },
   serverHeaderButtons: { minWidth: '50px', padding: '0 4px' },
   serverHeaderDivider: { padding: '0 8px' },
-  serverDescription: { paddingLeft: '28px' },
+  serverDescription: { paddingLeft: '28px', maxWidth: '778px', paddingTop: '8px' },
   serverField: { paddingTop: '10px', paddingLeft: '28px' },
-  serverContent: { paddingTop: '10px', paddingLeft: '16px' },
+  serverContent: { paddingTop: '16px', paddingLeft: '16px' },
 });
 
 export const useMcpServerAddStyles = makeStyles({
   container: { paddingTop: '20px', display: 'flex', gap: '20px' },
 
-  firstCard: { width: '80%' },
+  firstCard: { width: '115%' },
 
   cardHeader: { fontWeight: 600 },
   cardIcon: { width: '28px', height: '28px' },
@@ -75,6 +99,10 @@ export const useMcpServerAddStyles = makeStyles({
 });
 
 export const useMcpAuthenticationStyles = makeStyles({
+  container: {
+    maxWidth: '778px',
+  },
+
   sectionHeader: {
     display: 'flex',
     alignItems: 'center',
@@ -82,7 +110,39 @@ export const useMcpAuthenticationStyles = makeStyles({
     position: 'relative',
   },
 
+  description: {
+    margin: 0,
+    padding: '8px 0',
+  },
+
+  sectionContent: {
+    maxWidth: '596px',
+  },
+
+  sectionItems: {
+    padding: '16px 0 24px 0',
+    gap: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  sectionItem: {
+    paddingBottom: 0,
+  },
+
+  itemLabel: {
+    width: '150px',
+    minWidth: '150px',
+  },
+
   methodContainer: { display: 'flex', alignItems: 'center', gap: '10px' },
+
+  dropdownDisabled: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    pointerEvents: 'none',
+    color: tokens.colorStrokeFocus2,
+    minWidth: '300px',
+  },
 
   keysButton: { width: '140px' },
 

@@ -13,6 +13,7 @@ import { SearchService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { workflowAppConnectionsKey } from '../../configuretemplate/utils/queries';
 import { getStandardLogicAppId } from '../../configuretemplate/utils/helper';
+import { isHttpRequestTrigger } from './helper';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 60 * 24,
@@ -63,7 +64,7 @@ export const useMcpEligibleWorkflows = (subscriptionId: string, resourceGroup: s
     queryFn: async () => {
       const allWorkflows = await ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, (workflowItem: any) => {
         const trigger: any = Object.values(workflowItem.triggers).length === 1 ? Object.values(workflowItem.triggers)[0] : null;
-        return trigger && equals(trigger.type, 'request');
+        return trigger && isHttpRequestTrigger(trigger);
       });
 
       return allWorkflows.map((workflow) => workflow.name);
