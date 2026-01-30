@@ -297,6 +297,10 @@ export const DesignerApp = () => {
     }
   }, [isMonitoringView, isDesignerView, isCodeView, validateAndSaveCodeView]);
 
+  const derivedIsReadOnly = useMemo(() => {
+    return readOnly || isMonitoringView;
+  }, [readOnly, isMonitoringView]);
+
   /////////////////////////////////////////////////////////////////////////////
   // Rendering
 
@@ -317,7 +321,7 @@ export const DesignerApp = () => {
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
           isUnitTest,
-          readOnly: readOnly || isMonitoringView,
+          readOnly: derivedIsReadOnly,
           isMonitoringView,
           services: services,
           hostOptions: {
@@ -361,13 +365,13 @@ export const DesignerApp = () => {
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                 <Designer />
                 <FloatingRunButton
-                  id={workflowDefinitionId}
                   saveDraftWorkflow={saveWorkflowFromDesigner}
                   onRun={(newRunId: string | undefined) => {
                     switchToMonitoringView();
                     setRunId(newRunId ?? '');
                   }}
                   isDarkMode={theme === Theme.Dark}
+                  workflowReadOnly={derivedIsReadOnly}
                 />
               </div>
             )}

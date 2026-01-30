@@ -392,6 +392,10 @@ const DesignerEditorConsumption = () => {
     }
   }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, isDraftWorkflowAndArtifactsLoading]);
 
+  const derivedIsReadOnly = useMemo(() => {
+    return readOnly || isMonitoringView || !isDraftMode;
+  }, [readOnly, isMonitoringView, isDraftMode]);
+
   if (isWorkflowAndArtifactsError) {
     throw workflowAndArtifactsError;
   }
@@ -409,7 +413,7 @@ const DesignerEditorConsumption = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: readOnly || isMonitoringView || !isDraftMode,
+          readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
           useLegacyWorkflowParameters: true,
@@ -450,7 +454,7 @@ const DesignerEditorConsumption = () => {
                   saveWorkflow={saveWorkflowFromDesigner}
                   discard={discardAllChanges}
                   location={canonicalLocation}
-                  isReadOnly={readOnly}
+                  isReadOnly={derivedIsReadOnly}
                   isDarkMode={isDarkMode}
                   isUnitTest={false}
                   isMonitoringView={isMonitoringView}
@@ -478,6 +482,7 @@ const DesignerEditorConsumption = () => {
                       isDarkMode={isDarkMode}
                       isDraftMode={isDraftMode}
                       isConsumption={true}
+                      workflowReadOnly={derivedIsReadOnly}
                     />
                   </div>
                 )}
