@@ -72,8 +72,8 @@ export const EmptyWorkflowsModal = ({ onDismiss }: { onDismiss: () => void }) =>
   const intl = useIntl();
   const INTL_TEXT = {
     title: intl.formatMessage({
-      defaultMessage: 'No workflows are available',
-      id: '8LqCdK',
+      defaultMessage: 'No workflows are available.',
+      id: 'nhHgag',
       description: 'Title for the empty workflows modal',
     }),
     content: intl.formatMessage({
