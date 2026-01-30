@@ -52,7 +52,7 @@ export const McpServer = () => {
         <div className={styles.wizardContainer}>
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
-              <McpServerDataProvider resourceDetails={resourceDetails} services={services}>
+              <McpServerDataProvider resourceDetails={resourceDetails} services={services} isDarkMode={theme === 'dark'}>
                 <McpServersWizard
                   onUpdateServers={handleUpdateServers}
                   onOpenWorkflow={handleOpenWorkflow}

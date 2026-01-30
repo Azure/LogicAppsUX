@@ -43,4 +43,6 @@ export const useMcpServerPanelStyles = makeStyles({
   },
 
   messageBar: { padding: '15px 0 0px 0' },
+
+  messageBarBody: { textWrap: 'wrap', padding: '4px 0' },
 });
