@@ -20,7 +20,7 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
-  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, error: null })),
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, isEasyAuthConfigured: true, error: null })),
   openLoginPopup: vi.fn(),
 }));
 
@@ -66,8 +66,8 @@ describe('IframeWrapper', () => {
     // Reset mocks - this clears call history
     vi.clearAllMocks();
 
-    // Reset checkAuthStatus to default (authenticated)
-    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, error: null });
+    // Reset checkAuthStatus to default (authenticated with Easy Auth)
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, isEasyAuthConfigured: true, error: null });
 
     // Clear localStorage
     localStorage.clear();
@@ -343,8 +343,8 @@ describe('IframeWrapper', () => {
   describe('Authentication', () => {
     it('should show loading state during authentication check', async () => {
       // Create a promise that we can control
-      let resolveAuth: (value: { isAuthenticated: boolean; error: null }) => void;
-      const authPromise = new Promise<{ isAuthenticated: boolean; error: null }>((resolve) => {
+      let resolveAuth: (value: { isAuthenticated: boolean; isEasyAuthConfigured: boolean; error: null }) => void;
+      const authPromise = new Promise<{ isAuthenticated: boolean; isEasyAuthConfigured: boolean; error: null }>((resolve) => {
         resolveAuth = resolve;
       });
 
@@ -358,15 +358,15 @@ describe('IframeWrapper', () => {
 
       // Resolve auth check
       await act(async () => {
-        resolveAuth!({ isAuthenticated: true, error: null });
+        resolveAuth!({ isAuthenticated: true, isEasyAuthConfigured: true, error: null });
       });
 
       // Should now show the chat widget
       await screen.findByTestId('chat-widget');
     });
 
-    it('should show LoginPrompt when checkAuthStatus returns false', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
+    it('should show LoginPrompt when checkAuthStatus returns false and Easy Auth is configured', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
 
       const configWithProviders: IframeConfig = {
         ...defaultConfig,
@@ -389,7 +389,7 @@ describe('IframeWrapper', () => {
       expect(screen.getByRole('button', { name: 'Microsoft account' })).toBeInTheDocument();
     });
 
-    it('should show LoginPrompt when checkAuthStatus throws an error', async () => {
+    it('should show login when checkAuthStatus throws an error and identity providers are configured', async () => {
       vi.mocked(authHandler.checkAuthStatus).mockRejectedValue(new Error('Network error'));
 
       const configWithProviders: IframeConfig = {
@@ -407,8 +407,48 @@ describe('IframeWrapper', () => {
 
       render(<IframeWrapper config={configWithProviders} />);
 
-      // Should show login prompt after error
+      // Should show login UI on error when identity providers are configured
       await screen.findByText('Sign in required');
+    });
+
+    it('should skip login when Easy Auth is not configured (404)', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, isEasyAuthConfigured: false, error: null });
+
+      const configWithProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: {
+            aad: {
+              signInEndpoint: '/.auth/login/aad',
+              name: 'Microsoft',
+            },
+          },
+        },
+      };
+
+      render(<IframeWrapper config={configWithProviders} />);
+
+      // Should go directly to chat widget (let it fail naturally without apiKey)
+      await screen.findByTestId('chat-widget');
+    });
+
+    it('should skip login when Easy Auth is configured but no identity providers', async () => {
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
+
+      // No identity providers configured
+      const configWithoutProviders: IframeConfig = {
+        ...defaultConfig,
+        props: {
+          ...defaultConfig.props,
+          identityProviders: undefined,
+        },
+      };
+
+      render(<IframeWrapper config={configWithoutProviders} />);
+
+      // Should go directly to chat widget (no sign-in required when no providers)
+      await screen.findByTestId('chat-widget');
     });
 
     it('should skip auth check when in portal mode', async () => {
@@ -443,7 +483,7 @@ describe('IframeWrapper', () => {
     });
 
     it('should call openLoginPopup when login button is clicked', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
 
       const configWithProviders: IframeConfig = {
         ...defaultConfig,
@@ -478,7 +518,7 @@ describe('IframeWrapper', () => {
     });
 
     it('should show chat widget after successful login', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
 
       // Capture the onSuccess callback
       let onSuccessCallback: ((authInfo: authHandler.AuthInformation) => void) | undefined;
@@ -513,7 +553,7 @@ describe('IframeWrapper', () => {
       // Simulate successful login callback with auth info
       await act(async () => {
         if (onSuccessCallback) {
-          onSuccessCallback({ isAuthenticated: true, error: null, username: 'Test User' });
+          onSuccessCallback({ isAuthenticated: true, isEasyAuthConfigured: true, error: null, username: 'Test User' });
         }
       });
 
@@ -522,7 +562,7 @@ describe('IframeWrapper', () => {
     });
 
     it('should show error message when login fails', async () => {
-      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, error: null });
+      vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
 
       // Capture the onFailed callback
       let onFailedCallback: ((error: Error) => void) | undefined;

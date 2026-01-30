@@ -38,7 +38,34 @@ const DEFAULT_MOCK_JWT = createMockJwt({
   exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
 });
 
+// Default identity providers for testing
+const DEFAULT_IDENTITY_PROVIDERS = {
+  aad: {
+    name: 'Microsoft',
+    loginPath: '/.auth/login/aad',
+  },
+};
+
 async function setupSSEMocking(page: Page) {
+  // Intercept and modify the HTML to inject identity providers
+  // This replaces the placeholder BEFORE the inline script runs
+  await page.route('**/*', async (route) => {
+    const request = route.request();
+    if (request.resourceType() === 'document') {
+      const response = await route.fetch();
+      let html = await response.text();
+      // Replace the placeholder with actual identity providers JSON
+      const providersJson = JSON.stringify(DEFAULT_IDENTITY_PROVIDERS).replace(/"/g, '\\"');
+      html = html.replace(
+        'window.IDENTITY_PROVIDERS = "REPLACE_ME_WITH_IDENTITY_PROVIDERS"',
+        `window.IDENTITY_PROVIDERS = "${providersJson}"`
+      );
+      await route.fulfill({ response, body: html });
+    } else {
+      await route.continue();
+    }
+  });
+
   // Log browser console messages to see what's happening
   page.on('console', (msg) => {
     const type = msg.type();
