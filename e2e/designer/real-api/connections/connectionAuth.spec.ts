@@ -7,7 +7,6 @@ test.describe(
   },
   () => {
     test('OAuth check', async ({ page, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow('OperationParameters');
 
       await page.getByLabel('Insert a new step after').click();
@@ -23,7 +22,6 @@ test.describe(
       await expect(page.getByLabel('Sign in to connector')).toBeVisible();
     });
     test('Legacy service principal + client cert check', async ({ page, realDataApi }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow('OperationParameters');
       await page.getByLabel('Insert a new step after').click();
       await page.getByText('Add an action').click();

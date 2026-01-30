@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { LoadMockDirect } from '../utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from '../utils/designerFunctions';
 
 test(
@@ -8,8 +8,7 @@ test(
     tag: '@mock',
   },
   async ({ page }) => {
-    await page.goto('/');
-    await GoToMockWorkflow(page, 'Recurrence');
+    await LoadMockDirect(page, 'Recurrence.json');
     await page.getByLabel('Insert a new step after').click();
     await page.getByText('Add an action').click();
     await page.getByPlaceholder('Search for an action or').fill('initialize variable');
