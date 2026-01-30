@@ -81,8 +81,8 @@ export const MCPServers = ({
       description: 'Description for the servers section',
     }),
     learnMoreLinkText: intl.formatMessage({
-      defaultMessage: 'Learn More',
-      id: 'VxtMJ+',
+      defaultMessage: 'Learn more',
+      id: 'DSgKuF',
       description: 'Link text for learning more about MCP servers',
     }),
     createButtonText: intl.formatMessage({

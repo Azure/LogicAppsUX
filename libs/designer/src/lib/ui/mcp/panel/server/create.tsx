@@ -60,8 +60,8 @@ export const CreateServer = ({
     }),
     workflowsDescription: intl.formatMessage({
       defaultMessage: 'This list shows only workflows with actions and request triggers. Select the workflows you want to use.',
-      id: 'yF0g+n',
-      description: 'Description for the MCP Server workflows section',
+      id: 'mc9MCq',
+      description: 'Description for the MCP server workflows section',
     }),
     learnMoreLinkText: intl.formatMessage({
       defaultMessage: 'Learn more',

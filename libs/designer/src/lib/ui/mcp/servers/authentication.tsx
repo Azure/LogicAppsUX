@@ -37,8 +37,8 @@ export const Authentication = ({
       description: 'Description for the authentication section',
     }),
     learnMoreLinkText: intl.formatMessage({
-      defaultMessage: 'Learn More',
-      id: 'q+Y0ff',
+      defaultMessage: 'Learn more',
+      id: '5iMM2U',
       description: 'Link text for learning more about authentication',
     }),
     methodLabel: intl.formatMessage({
