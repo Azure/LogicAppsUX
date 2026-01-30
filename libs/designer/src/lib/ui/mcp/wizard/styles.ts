@@ -157,7 +157,7 @@ export const useMcpServerWizardStyles = makeStyles({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: '30%',
+    paddingTop: '10%',
   },
 
   loadingText: {
