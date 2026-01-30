@@ -337,7 +337,7 @@ describe('GenerateKeys', () => {
       renderWithProviders();
 
       expect(screen.getByText('Duration (days)')).toBeTruthy();
-      expect(screen.getByText('Access Key')).toBeTruthy();
+      expect(screen.getByText('Access key')).toBeTruthy();
     });
   });
 
@@ -349,7 +349,7 @@ describe('GenerateKeys', () => {
       expect(screen.getAllByText('Generate MCP API key').length).toBeGreaterThan(0);
       expect(screen.getByText('Key access duration')).toBeTruthy();
       expect(screen.getByText('Duration (days)')).toBeTruthy();
-      expect(screen.getByText('Access Key')).toBeTruthy();
+      expect(screen.getByText('Access key')).toBeTruthy();
       expect(screen.getAllByText('Primary key').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Secondary key').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Never expires').length).toBeGreaterThan(0);

@@ -14,24 +14,24 @@ export const AddServerButtons = ({ onCreateTools, onUseExisting }: { onCreateToo
   const intl = useIntl();
   const INTL_TEXT = {
     useExistingTitle: intl.formatMessage({
-      defaultMessage: 'Use existing workflow tools',
-      id: 'eXmI5S',
-      description: 'Button text for using existing server',
+      defaultMessage: 'Use existing workflows',
+      id: 'gOKtki',
+      description: 'Button text for using existing workflows as tools',
     }),
     useExistingDescription: intl.formatMessage({
-      defaultMessage: 'Select from workflows already existing in this logic app.',
-      id: 'dPqgon',
-      description: 'Description for using existing server',
+      defaultMessage: 'Set up your MCP server with existing workflows. Select them from this logic app.',
+      id: 'C3taj3',
+      description: 'Description for using existing workflows as tools',
     }),
     createNewTitle: intl.formatMessage({
-      defaultMessage: 'Create new workflow tools',
-      id: 'ugN7mQ',
-      description: 'Button text for creating new server',
+      defaultMessage: 'Create new workflows',
+      id: 'lLhS3T',
+      description: 'Button text for creating new workflows',
     }),
     createNewDescription: intl.formatMessage({
-      defaultMessage: 'Create tools that run connector actions so your server can perform tasks.',
-      id: 'o9xzn9',
-      description: 'Description for creating new server',
+      defaultMessage: 'Set up your MCP server with new workflows. Build them with connectors and actions from our catalog.',
+      id: '6+7YiX',
+      description: 'Description for creating new workflows',
     }),
   };
 

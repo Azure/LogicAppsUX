@@ -90,16 +90,18 @@ describe('AddServerButtons - Simple Tests', () => {
       setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
-      expect(screen.getByText('Use existing workflow tools')).toBeInTheDocument();
-      expect(screen.getByText('Create new workflow tools')).toBeInTheDocument();
+      expect(screen.getByText('Use existing workflows')).toBeInTheDocument();
+      expect(screen.getByText('Create new workflows')).toBeInTheDocument();
     });
 
     it('renders with proper descriptions', () => {
       setupServiceForWorkflows([{ triggers: { Request: { type: 'Request' } }, name: 'Test' }]);
       renderComponent();
 
-      expect(screen.getByText('Select from workflows already existing in this logic app.')).toBeInTheDocument();
-      expect(screen.getByText('Create tools that run connector actions so your server can perform tasks.')).toBeInTheDocument();
+      expect(screen.getByText('Set up your MCP server with existing workflows. Select them from this logic app.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Set up your MCP server with new workflows. Build them with connectors and actions from our catalog.')
+      ).toBeInTheDocument();
     });
 
     it('renders cards as group elements', () => {
@@ -130,7 +132,7 @@ describe('AddServerButtons - Simple Tests', () => {
 
       renderComponent();
 
-      const existingCard = screen.getByText('Use existing workflow tools').closest('[role="group"]');
+      const existingCard = screen.getByText('Use existing workflows').closest('[role="group"]');
       expect(existingCard).toHaveAttribute('aria-disabled', 'true');
     });
 
@@ -139,7 +141,7 @@ describe('AddServerButtons - Simple Tests', () => {
 
       renderComponent();
 
-      const existingCard = screen.getByText('Use existing workflow tools').closest('[role="group"]');
+      const existingCard = screen.getByText('Use existing workflows').closest('[role="group"]');
 
       await waitFor(() => {
         expect(existingCard).not.toHaveAttribute('aria-disabled', 'true');

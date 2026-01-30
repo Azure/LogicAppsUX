@@ -10,6 +10,8 @@ import {
   type ConnectionsData,
   getIntl,
   ResourceService,
+  type LogicAppsV2,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
@@ -207,4 +209,8 @@ export const validateNameAvailability = async (name: string, resourceIdPrefix: s
     }
     return error.message ?? generalErrorMessage;
   }
+};
+
+export const isHttpRequestTrigger = (trigger: LogicAppsV2.Trigger): boolean => {
+  return equals(trigger.type, 'request') && (!trigger.kind || equals(trigger.kind, 'Http'));
 };

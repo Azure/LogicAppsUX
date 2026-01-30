@@ -37,7 +37,7 @@ export const TemplatesSection = ({
       <div className={css('msla-templates-section-items', cssOverrides?.['sectionItems'])}>
         {items
           ? items.map((item, index) => {
-              return <FieldSectionItem key={index} item={item} />;
+              return <FieldSectionItem key={index} item={item} cssOverrides={cssOverrides} />;
             })
           : children}
       </div>
