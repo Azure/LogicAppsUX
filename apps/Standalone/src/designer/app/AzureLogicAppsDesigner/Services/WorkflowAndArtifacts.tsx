@@ -848,7 +848,7 @@ export const updateMcpServers = async (
     let updatedHostConfig: any;
     const queryClient = getReactQueryClient();
 
-    if (!areAllServersDeleted && !hostConfig?.extensions?.workflow?.McpServerEndpoints?.enable) {
+    if (!areAllServersDeleted && !hostConfig?.properties.extensions?.workflow?.McpServerEndpoints?.enable) {
       updatedHostConfig = {
         ...(hostConfig.properties ?? {}),
         extensions: {
@@ -862,7 +862,7 @@ export const updateMcpServers = async (
           },
         },
       };
-    } else if (areAllServersDeleted && hostConfig?.extensions?.workflow?.McpServerEndpoints?.enable === true) {
+    } else if (areAllServersDeleted && hostConfig?.properties.extensions?.workflow?.McpServerEndpoints?.enable === true) {
       updatedHostConfig = {
         ...(hostConfig.properties ?? {}),
         extensions: {
