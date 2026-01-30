@@ -140,17 +140,39 @@ export function getBaseUrl(agentCardUrl?: string): string {
 /**
  * Checks the current authentication status via EasyAuth /.auth/me endpoint
  * Also extracts username from the JWT token if available
+ *
+ * Easy Auth can be configured to return different status codes for unauthenticated requests:
+ * - 401 Unauthorized
+ * - 403 Forbidden
+ * - 404 Not Found (this means Easy Auth is NOT configured)
+ * - 302 Redirect
+ *
+ * Any of 401, 403, or 302 indicates Easy Auth IS configured but user is not authenticated.
  */
 export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation> {
   try {
     const response = await fetch(`${baseUrl}/.auth/me`, {
       method: 'GET',
       credentials: 'include', // Important: include cookies for cross-origin
+      redirect: 'manual', // Don't follow redirects - we want to detect 302
     });
 
+    const status = response.status;
+
     // 404 means Easy Auth is not configured on this Logic App
-    if (response.status === 404) {
+    if (status === 404) {
       return { isAuthenticated: false, isEasyAuthConfigured: false, error: null };
+    }
+
+    // 401, 403 mean Easy Auth is configured but user is not authenticated
+    if (status === 401 || status === 403) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: null };
+    }
+
+    // 0 status with opaqueredirect type means a 302 redirect was attempted
+    // This happens when redirect: 'manual' is set and server tries to redirect
+    if (response.type === 'opaqueredirect' || status === 0) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: null };
     }
 
     if (!response.ok) {

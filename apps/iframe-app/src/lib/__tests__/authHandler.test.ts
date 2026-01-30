@@ -150,6 +150,7 @@ describe('authHandler', () => {
       expect(mockFetch).toHaveBeenCalledWith('https://example.com/.auth/me', {
         method: 'GET',
         credentials: 'include',
+        redirect: 'manual',
       });
     });
 
@@ -198,18 +199,40 @@ describe('authHandler', () => {
       expect(result).toEqual({ isAuthenticated: true, isEasyAuthConfigured: true, error: null, username: undefined });
     });
 
-    it('should return false when response is not ok', async () => {
+    it('should return isEasyAuthConfigured true and not authenticated when 401', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
+        type: 'basic',
       });
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result.isAuthenticated).toBe(false);
-      expect(result.isEasyAuthConfigured).toBe(true);
-      expect(result.error).toBeInstanceOf(Error);
-      expect(result.error?.message).toBe('Failed to fetch authentication status');
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
+    });
+
+    it('should return isEasyAuthConfigured true and not authenticated when 403', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
+    });
+
+    it('should return isEasyAuthConfigured true and not authenticated on opaqueredirect (302)', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 0,
+        type: 'opaqueredirect',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
     });
 
     it('should return false on network error', async () => {
@@ -225,6 +248,7 @@ describe('authHandler', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
+        type: 'basic',
       });
 
       const result = await checkAuthStatus('https://example.com');

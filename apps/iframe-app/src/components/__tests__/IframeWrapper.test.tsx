@@ -389,7 +389,7 @@ describe('IframeWrapper', () => {
       expect(screen.getByRole('button', { name: 'Microsoft account' })).toBeInTheDocument();
     });
 
-    it('should skip login when checkAuthStatus throws an error', async () => {
+    it('should show login when checkAuthStatus throws an error and identity providers are configured', async () => {
       vi.mocked(authHandler.checkAuthStatus).mockRejectedValue(new Error('Network error'));
 
       const configWithProviders: IframeConfig = {
@@ -407,8 +407,8 @@ describe('IframeWrapper', () => {
 
       render(<IframeWrapper config={configWithProviders} />);
 
-      // Should go directly to chat widget on error (let it fail naturally)
-      await screen.findByTestId('chat-widget');
+      // Should show login UI on error when identity providers are configured
+      await screen.findByText('Sign in required');
     });
 
     it('should skip login when Easy Auth is not configured (404)', async () => {
