@@ -228,6 +228,71 @@ describe('FloatingRunButton', () => {
     });
   });
 
+  describe('workflowReadOnly prop', () => {
+    it('should accept workflowReadOnly prop without error when true', () => {
+      expect(() => {
+        renderWithProviders({
+          ...defaultProps,
+          workflowReadOnly: true,
+        });
+      }).not.toThrow();
+      expect(screen.getByText('Run')).toBeInTheDocument();
+    });
+
+    it('should accept workflowReadOnly prop without error when false', () => {
+      expect(() => {
+        renderWithProviders({
+          ...defaultProps,
+          workflowReadOnly: false,
+        });
+      }).not.toThrow();
+      expect(screen.getByText('Run')).toBeInTheDocument();
+    });
+
+    it('should accept workflowReadOnly prop without error when undefined', () => {
+      expect(() => {
+        renderWithProviders({
+          ...defaultProps,
+          workflowReadOnly: undefined,
+        });
+      }).not.toThrow();
+      expect(screen.getByText('Run')).toBeInTheDocument();
+    });
+
+    it('should render correctly with workflowReadOnly=true in draft mode', () => {
+      expect(() => {
+        renderWithProviders({
+          ...defaultProps,
+          isDraftMode: true,
+          workflowReadOnly: true,
+        });
+      }).not.toThrow();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
+    });
+
+    it('should render correctly with workflowReadOnly=true and isDisabled=false', () => {
+      renderWithProviders({
+        ...defaultProps,
+        workflowReadOnly: true,
+        isDisabled: false,
+      });
+      // Verifies that workflowReadOnly does not interfere with button rendering
+      expect(screen.getByText('Run')).toBeInTheDocument();
+    });
+
+    it('should render correctly with both workflowReadOnly and isConsumption props', () => {
+      expect(() => {
+        renderWithProviders({
+          ...defaultProps,
+          workflowReadOnly: true,
+          isConsumption: true,
+          isDraftMode: true,
+        });
+      }).not.toThrow();
+      expect(screen.getByText('Run draft')).toBeInTheDocument();
+    });
+  });
+
   describe('A2A Workflow', () => {
     it('should render chat button for A2A workflows instead of run button', () => {
       (DesignerViewSelectors.useIsA2AWorkflow as Mock).mockReturnValue(true);
