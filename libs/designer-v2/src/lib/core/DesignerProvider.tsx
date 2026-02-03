@@ -56,7 +56,7 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
                 <div
                   data-color-scheme={themeName}
                   className={`msla-theme-${themeName}`}
-                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'hidden' }}
+                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'clip' }}
                 >
                   <IntlProvider
                     locale={locale}
