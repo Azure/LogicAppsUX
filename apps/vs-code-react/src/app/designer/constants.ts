@@ -1,9 +1,5 @@
 export const clientSupportedOperations = [
   {
-    connectorId: 'connectionProviders/localWorkflowOperation',
-    operationId: 'invokeWorkflow',
-  },
-  {
     connectorId: 'connectionProviders/xmlOperations',
     operationId: 'xmlValidation',
   },

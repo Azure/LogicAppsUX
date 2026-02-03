@@ -1,6 +1,6 @@
 {
   "name": "vscode-designer",
-  "version": "3.3.0",
+  "version": "0.23.0",
   "devDependencies": {
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@azure/arm-appinsights": "^5.0.0-beta.7",
