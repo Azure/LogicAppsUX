@@ -12,20 +12,22 @@ import {
   Switch,
   Text,
   Textarea,
+  mergeClasses,
 } from '@fluentui/react-components';
 import type { BaseFieldItem, TemplatesSectionItem } from './templatesSectionModel';
 import { useTemplatesStyles } from './styles';
 
 interface FieldSectionItemProps {
   item: TemplatesSectionItem;
+  cssOverrides?: Record<string, string>;
 }
 
-export const FieldSectionItem = ({ item }: FieldSectionItemProps) => {
+export const FieldSectionItem = ({ item, cssOverrides }: FieldSectionItemProps) => {
   const styles = useTemplatesStyles();
 
   return (
-    <div className={styles.fieldSectionItem}>
-      <SectionLabel item={item} />
+    <div className={mergeClasses(styles.fieldSectionItem, cssOverrides?.['sectionItem'])}>
+      <SectionLabel item={item} cssOverrides={cssOverrides} />
       <div className={styles.fieldSectionItemValue}>
         <SectionItemInner item={item} />
       </div>
@@ -33,7 +35,7 @@ export const FieldSectionItem = ({ item }: FieldSectionItemProps) => {
   );
 };
 
-const SectionLabel = ({ item }: { item: TemplatesSectionItem }) => {
+const SectionLabel = ({ item, cssOverrides }: { item: TemplatesSectionItem; cssOverrides?: Record<string, string> }) => {
   const styles = useTemplatesStyles();
 
   if (!item.label) {
@@ -41,15 +43,22 @@ const SectionLabel = ({ item }: { item: TemplatesSectionItem }) => {
   }
 
   if (typeof item.label !== 'string') {
-    return <div className={styles.fieldSectionItemLabel}>{item.label}</div>;
+    return <div className={mergeClasses(styles.fieldSectionItemLabel, cssOverrides?.['itemLabel'])}>{item.label}</div>;
   }
 
   return item.description ? (
-    <InfoLabel info={item.description} className={styles.fieldSectionItemLabel} required={(item as BaseFieldItem)?.required ?? false}>
+    <InfoLabel
+      info={item.description}
+      className={mergeClasses(styles.fieldSectionItemLabel, cssOverrides?.['itemLabel'])}
+      required={(item as BaseFieldItem)?.required ?? false}
+    >
       {item.label}
     </InfoLabel>
   ) : (
-    <Label className={styles.fieldSectionItemLabel} required={(item as BaseFieldItem)?.required ?? false}>
+    <Label
+      className={mergeClasses(styles.fieldSectionItemLabel, cssOverrides?.['itemLabel'])}
+      required={(item as BaseFieldItem)?.required ?? false}
+    >
       {item.label}
     </Label>
   );

@@ -1,6 +1,6 @@
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 
-import { Button, Dropdown, Option, Link, Text } from '@fluentui/react-components';
+import { Button, Dropdown, Option, Link, Subtitle2 } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowClockwise20Regular, Edit20Regular, Open16Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
@@ -32,9 +32,14 @@ export const Authentication = ({
       description: 'Title for the authentication section',
     }),
     description: intl.formatMessage({
-      defaultMessage: 'Manage your authentication for the MCP servers here.',
-      id: 'qXBuPL',
+      defaultMessage: 'Manage authentication for your MCP servers.',
+      id: 'APfopx',
       description: 'Description for the authentication section',
+    }),
+    learnMoreLinkText: intl.formatMessage({
+      defaultMessage: 'Learn more',
+      id: '5iMM2U',
+      description: 'Link text for learning more about authentication',
     }),
     methodLabel: intl.formatMessage({
       defaultMessage: 'Method',
@@ -128,15 +133,28 @@ export const Authentication = ({
     styles.keysButton,
   ]);
 
+  const sectionStyles = useMemo(
+    () => ({
+      sectionContainer: styles.sectionContent,
+      sectionItems: styles.sectionItems,
+      sectionItem: styles.sectionItem,
+      itemLabel: styles.itemLabel,
+    }),
+    [styles.itemLabel, styles.sectionContent, styles.sectionItem, styles.sectionItems]
+  );
+
   return (
-    <div>
+    <div className={styles.container}>
       <div className={styles.sectionHeader}>
-        <Text size={400} weight="bold">
-          {INTL_TEXT.title}
-        </Text>
+        <Subtitle2>{INTL_TEXT.title}</Subtitle2>
       </div>
-      <DescriptionWithLink text={INTL_TEXT.description} />
-      <TemplatesSection items={items} />
+      <DescriptionWithLink
+        className={styles.description}
+        text={INTL_TEXT.description}
+        linkText={INTL_TEXT.learnMoreLinkText}
+        linkUrl={'https://go.microsoft.com/fwlink/?linkid=2347945'}
+      />
+      <TemplatesSection items={items} cssOverrides={sectionStyles} />
     </div>
   );
 };
@@ -252,7 +270,7 @@ const AuthenticationSettings = ({ resourceId, setAuthType }: { resourceId: strin
   return (
     <div className={styles.methodContainer}>
       <Dropdown
-        style={isEditing ? undefined : { pointerEvents: 'none', backgroundColor: '#FFFF', color: '#000' }}
+        className={isEditing ? undefined : styles.dropdownDisabled}
         disabled={!isEditing || isSaving}
         multiselect={true}
         selectedOptions={selectedOptions}

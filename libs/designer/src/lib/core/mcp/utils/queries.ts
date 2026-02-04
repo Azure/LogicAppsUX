@@ -5,6 +5,8 @@ import {
   equals,
   type McpServer,
   getObjectPropertyValue,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
@@ -13,6 +15,7 @@ import { SearchService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { workflowAppConnectionsKey } from '../../configuretemplate/utils/queries';
 import { getStandardLogicAppId } from '../../configuretemplate/utils/helper';
+import { isHttpRequestTrigger } from './helper';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 60 * 24,
@@ -25,18 +28,35 @@ export const useAllMcpServers = (siteResourceId: string) => {
   return useQuery({
     queryKey: ['mcpservers', siteResourceId.toLowerCase()],
     queryFn: async (): Promise<McpServer[]> => {
-      const response: any = await ResourceService().executeResourceAction(
-        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers`,
-        'POST',
-        { 'api-version': '2024-11-01' }
-      );
+      try {
+        const response: any = await ResourceService().executeResourceAction(
+          `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers`,
+          'POST',
+          { 'api-version': '2024-11-01' }
+        );
 
-      return (response.value ?? [])
-        .map((server: McpServer) => ({
-          ...server,
-          enabled: server.enabled === undefined ? true : server.enabled,
-        }))
-        .sort((a: McpServer, b: McpServer) => a.name.localeCompare(b.name));
+        return (response.value ?? [])
+          .map((server: McpServer) => ({
+            ...server,
+            enabled: server.enabled === undefined ? true : server.enabled,
+          }))
+          .sort((a: McpServer, b: McpServer) => a.name.localeCompare(b.name));
+      } catch (errorResponse: any) {
+        const error = errorResponse?.error || {};
+
+        if (equals(error.code, 'McpServerNotEnabled')) {
+          return [];
+        }
+
+        // For now log the error and return empty list
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'McpServer.listServers',
+          error,
+          message: `Error while fetching mcp servers for the app: ${siteResourceId}`,
+        });
+        return [];
+      }
     },
     enabled: !!siteResourceId,
     ...queryOpts,
@@ -63,7 +83,7 @@ export const useMcpEligibleWorkflows = (subscriptionId: string, resourceGroup: s
     queryFn: async () => {
       const allWorkflows = await ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, (workflowItem: any) => {
         const trigger: any = Object.values(workflowItem.triggers).length === 1 ? Object.values(workflowItem.triggers)[0] : null;
-        return trigger && equals(trigger.type, 'request');
+        return trigger && isHttpRequestTrigger(trigger);
       });
 
       return allWorkflows.map((workflow) => workflow.name);

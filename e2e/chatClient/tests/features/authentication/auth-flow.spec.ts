@@ -20,8 +20,14 @@ test.describe('Authentication Flows', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
 
-    // Start new chat
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+    // Wait for empty state to be visible first
+    await expect(page.getByText('No chats yet')).toBeVisible({ timeout: 10000 });
+
+    // Start new chat - wait for button to be visible and enabled before clicking
+    const startChatButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startChatButton).toBeVisible({ timeout: 5000 });
+    await expect(startChatButton).toBeEnabled({ timeout: 5000 });
+    await startChatButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 
@@ -153,13 +159,20 @@ test.describe('Authentication Flows', { tag: '@mock' }, () => {
 
     await expect(page.getByText(/Authentication Required/i)).toBeVisible({ timeout: 10000 });
 
+    // Wait a moment for the UI to stabilize
+    await page.waitForTimeout(500);
+
     // Find and click cancel button
     const cancelButton = page.getByRole('button', { name: /Cancel Authentication/i });
     await expect(cancelButton).toBeVisible({ timeout: 5000 });
     await cancelButton.click();
 
-    // Should show canceled state
-    await expect(page.getByText(/Authentication Canceled/i)).toBeVisible({ timeout: 5000 });
+    // After canceling, the authentication message should be removed from the UI
+    // (the parent component clears the auth required state)
+    await expect(page.getByText(/Authentication Required/i)).not.toBeVisible({ timeout: 5000 });
+
+    // The chat should remain functional - input should still be available
+    await expect(page.locator('textarea').first()).toBeVisible();
   });
 
   test('should disable cancel button while authenticating', async ({ page, context }) => {
@@ -218,7 +231,15 @@ test.describe('Authentication Completion Flow', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+
+    // Wait for empty state to be visible first
+    await expect(page.getByText('No chats yet')).toBeVisible({ timeout: 10000 });
+
+    // Start new chat - wait for button to be visible and enabled before clicking
+    const startChatButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startChatButton).toBeVisible({ timeout: 5000 });
+    await expect(startChatButton).toBeEnabled({ timeout: 5000 });
+    await startChatButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 
@@ -320,7 +341,15 @@ test.describe('Authentication Edge Cases', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}`);
     await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: /start a new chat/i }).click();
+
+    // Wait for empty state to be visible first
+    await expect(page.getByText('No chats yet')).toBeVisible({ timeout: 10000 });
+
+    // Start new chat - wait for button to be visible and enabled before clicking
+    const startChatButton = page.getByRole('button', { name: /start a new chat/i });
+    await expect(startChatButton).toBeVisible({ timeout: 5000 });
+    await expect(startChatButton).toBeEnabled({ timeout: 5000 });
+    await startChatButton.click();
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 5000 });
   });
 
