@@ -62,9 +62,9 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   });
 
   const agentNodeTitle = intl.formatMessage({
-    defaultMessage: 'Delete agentic loop',
-    id: 'VVp8sL',
-    description: 'Title for agentic loop node',
+    defaultMessage: 'Delete agent',
+    id: 'EAAlZ9',
+    description: 'Title for agent node',
   });
 
   const switchCaseTitle = intl.formatMessage({
@@ -74,8 +74,8 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   });
 
   const agentToolTitle = intl.formatMessage({
-    defaultMessage: 'Delete agentic loop tool',
-    id: 'BwwhOM',
+    defaultMessage: 'Delete agent tool',
+    id: 'blpdoG',
     description: 'Title for agent tool',
   });
 
@@ -133,8 +133,8 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
 
   const agentBodyMessage = intl.formatMessage({
     defaultMessage: "This will also delete the agent's tools and actions.",
-    id: '4gOrfY',
-    description: 'Text for delete agentic loop modal body',
+    id: 'wK023m',
+    description: 'Text for delete agent modal body',
   });
 
   const bodyMessage =
