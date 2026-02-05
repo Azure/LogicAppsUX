@@ -190,6 +190,7 @@ export const GenerateKeys = () => {
   const [expiresTime, setExpiresTime] = useState<string | undefined>(undefined);
   const [showSuccessInfo, setShowSuccessInfo] = useState<boolean>(false);
   const [dateTimeError, setDateTimeError] = useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const onDurationSelect = useCallback((options: string[]) => {
     setDuration(options[0]);
@@ -282,10 +283,16 @@ export const GenerateKeys = () => {
         : duration.endsWith('d')
           ? addExpiryToCurrent(/* hours */ undefined, Number.parseInt(duration.replace('d', '')))
           : 'noexpiry';
-    const key = await generateKeys(logicAppId, expiryTime, accessKey);
-    setGeneratedKey(key);
-    setExpiresTime(expiryTime === 'noexpiry' ? INTL_TEXT.neverExpiresText : expiryTime);
-    setShowSuccessInfo(true);
+
+    try {
+      const key = await generateKeys(logicAppId, expiryTime, accessKey);
+      setGeneratedKey(key);
+      setExpiresTime(expiryTime === 'noexpiry' ? INTL_TEXT.neverExpiresText : expiryTime);
+      setShowSuccessInfo(true);
+      setErrorMessage(undefined);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
   }, [duration, customDateTime, logicAppId, accessKey, INTL_TEXT.neverExpiresText]);
 
   const handleClose = useCallback(() => {
@@ -304,6 +311,14 @@ export const GenerateKeys = () => {
       </div>
     );
   }, [styles.messageBar, styles.messageBarBody, INTL_TEXT.infoTitle, INTL_TEXT.infoMessage]);
+
+  const renderErrorBar = useCallback(() => {
+    return (
+      <MessageBar intent={'error'}>
+        <MessageBarBody className={styles.messageBarBody}>{errorMessage}</MessageBarBody>
+      </MessageBar>
+    );
+  }, [styles.messageBarBody, errorMessage]);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -353,7 +368,8 @@ export const GenerateKeys = () => {
           }}
           items={keySectionItems}
         />
-        {showSuccessInfo ? (
+        {errorMessage ? renderErrorBar() : null}
+        {showSuccessInfo && !errorMessage ? (
           <TemplatesSection
             cssOverrides={{ sectionItems: styles.workflowSection }}
             title={INTL_TEXT.resultTitle}

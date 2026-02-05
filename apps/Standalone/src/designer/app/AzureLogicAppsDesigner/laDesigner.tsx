@@ -651,7 +651,6 @@ const getDesignerServices = (
     ...defaultServiceParams,
     workflowName,
     clientSupportedOperations: [
-      ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
