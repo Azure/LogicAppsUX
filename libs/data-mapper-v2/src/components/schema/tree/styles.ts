@@ -48,6 +48,13 @@ export const useTreeNodeStyles = makeStyles({
     ':hover': {
       backgroundColor: customTokens['listElemHover'],
     },
+    ':focus-visible': {
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+      outlineColor: tokens.colorStrokeFocus2,
+      outlineOffset: '-2px',
+      borderRadius: '4px',
+    },
   },
   targetSchemaContainer: {
     marginLeft: '30px',

@@ -131,7 +131,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   ]);
 
   return (
-    <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
+    <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)} role="tree">
       {ref?.current ? (
         <>
           {isSourceSchema ? (

@@ -72,6 +72,41 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [nodeId, dispatch]
   );
 
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.stopPropagation();
+        e.preventDefault();
+        dispatch(setSelectedItem(nodeId));
+      } else if (e.key === 'ArrowRight' && !isLeaf && !openKeys[key]) {
+        e.stopPropagation();
+        e.preventDefault();
+        node.toggle();
+      } else if (e.key === 'ArrowLeft' && !isLeaf && openKeys[key]) {
+        e.stopPropagation();
+        e.preventDefault();
+        node.toggle();
+      }
+    },
+    [dispatch, nodeId, isLeaf, openKeys, key, node]
+  );
+
+  const onFocus = useCallback(() => {
+    if (!isHover) {
+      dispatch(
+        setHoverState({
+          id: key,
+          isSourceSchema: isSourceSchema,
+          type: 'node',
+        })
+      );
+    }
+  }, [dispatch, isSourceSchema, key, isHover]);
+
+  const onBlur = useCallback(() => {
+    dispatch(setHoverState());
+  }, [dispatch]);
+
   const onMouseEnter = useCallback(
     (_e?: any) => {
       if (isHover) {
@@ -142,9 +177,16 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
           isSourceSchema ? styles.sourceSchemaContainer : styles.targetSchemaContainer,
           isSelected || isHover ? styles.active : ''
         )}
+        role="treeitem"
+        tabIndex={0}
+        aria-selected={isSelected}
+        aria-expanded={isLeaf ? undefined : !!openKeys[key]}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onMouseOut={onMouseLeave}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
       >
         <div style={style} className={mergeClasses(styles.wrapper)} onClick={onClick}>
           {isLeaf ? (
