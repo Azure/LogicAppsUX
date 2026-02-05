@@ -191,6 +191,15 @@ export const GenerateKeys = () => {
   const [showSuccessInfo, setShowSuccessInfo] = useState<boolean>(false);
   const [dateTimeError, setDateTimeError] = useState<string | undefined>(undefined);
 
+  const onDurationSelect = useCallback((options: string[]) => {
+    setDuration(options[0]);
+
+    if (options[0] !== 'custom') {
+      setCustomDateTime(undefined);
+      setDateTimeError(undefined);
+    }
+  }, []);
+
   const keySectionItems: TemplatesSectionItem[] = useMemo(() => {
     const items: TemplatesSectionItem[] = [
       {
@@ -201,7 +210,7 @@ export const GenerateKeys = () => {
         options: durationOptions,
         controlled: true,
         selectedOptions: duration ? [duration] : [],
-        onOptionSelect: (options) => setDuration(options[0]),
+        onOptionSelect: onDurationSelect,
       },
       {
         label: INTL_TEXT.accessKeyLabel,
@@ -243,6 +252,7 @@ export const GenerateKeys = () => {
     INTL_TEXT.selectDateTimeLabel,
     duration,
     durationOptions,
+    onDurationSelect,
     accessKey,
     keysOptions,
     dateTimeError,
@@ -303,7 +313,7 @@ export const GenerateKeys = () => {
           text: INTL_TEXT.generateButtonText,
           appearance: 'primary',
           onClick: handleGenerate,
-          disabled: !duration || !accessKey || (duration === 'custom' && !!dateTimeError),
+          disabled: !duration || !accessKey || (duration === 'custom' && (!customDateTime || !!dateTimeError)),
         },
         {
           type: 'action',
@@ -312,8 +322,16 @@ export const GenerateKeys = () => {
         },
       ],
     };
-  }, [INTL_TEXT.generateButtonText, INTL_TEXT.closeButtonText, handleGenerate, duration, accessKey, dateTimeError, handleClose]);
-
+  }, [
+    INTL_TEXT.generateButtonText,
+    INTL_TEXT.closeButtonText,
+    handleGenerate,
+    duration,
+    accessKey,
+    customDateTime,
+    dateTimeError,
+    handleClose,
+  ]);
   return (
     <Drawer className={styles.generateKeysContainer} open={true} onOpenChange={(_, { open }) => !open && handleClose()} position="end">
       <DrawerHeader className={styles.header}>
@@ -378,6 +396,11 @@ const TimePickerWithDatePicker = ({
       id: 'gl0im8',
       description: 'Error message for selecting past time',
     }),
+    invalidTimeFormatErrorText: intl.formatMessage({
+      defaultMessage: 'Please enter a valid time format (e.g., 2:30 PM).',
+      id: '3c7eHH',
+      description: 'Error message for invalid time format',
+    }),
   };
 
   const minDate = useMemo(() => new Date(), []);
@@ -404,6 +427,12 @@ const TimePickerWithDatePicker = ({
     },
     [INTL_TEXT.futureTimeErrorText, onSelect, setError]
   );
+
+  const handleInvalidTimeSelection = useCallback(() => {
+    setSelectedTime(null);
+    handleDateTimeSelection(selectedDate, null);
+    setError(INTL_TEXT.invalidTimeFormatErrorText);
+  }, [INTL_TEXT.invalidTimeFormatErrorText, handleDateTimeSelection, selectedDate, setError]);
 
   const onSelectDate = useCallback(
     (date: Date | null | undefined) => {
@@ -438,13 +467,16 @@ const TimePickerWithDatePicker = ({
 
       if (timeParts.length === 0) {
         // Invalid time format, so time change won't be processed
-        setSelectedTime(null);
-        handleDateTimeSelection(selectedDate, null);
-        return;
+        return handleInvalidTimeSelection();
       }
 
       let hours = Number.parseInt(timeParts[0]);
       const minutes = timeParts.length > 1 ? Number.parseInt(timeParts[1]) : 0;
+
+      if (Number.isNaN(hours) || Number.isNaN(minutes) || hours < 0 || hours > 12 || minutes < 0 || minutes > 59) {
+        return handleInvalidTimeSelection();
+      }
+
       if (eveningTime && hours < 12) {
         hours += 12;
       } else if (morningTime && hours === 12) {
@@ -458,7 +490,7 @@ const TimePickerWithDatePicker = ({
         handleDateTimeSelection(selectedDate, newTime);
       }
     }
-  }, [handleDateTimeSelection, selectedDate, timePickerValue]);
+  }, [handleDateTimeSelection, handleInvalidTimeSelection, selectedDate, timePickerValue]);
   return (
     <div className={styles.dateTimeContainer}>
       <DatePicker

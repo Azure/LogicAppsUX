@@ -671,6 +671,50 @@ describe('GenerateKeys', () => {
       });
     });
 
+    it('handles invalid time correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type an invalid time
+      fireEvent.change(timePickerInput, { target: { value: '13:00pm' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('null');
+        expect(minutes).toBe('null');
+      });
+    });
+
+    it('handles invalid text in time correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type an invalid time
+      fireEvent.change(timePickerInput, { target: { value: '13:00pp' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('null');
+        expect(minutes).toBe('null');
+      });
+    });
+
     it('does not show custom date picker for non-custom durations', () => {
       renderWithProviders();
 
