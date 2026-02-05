@@ -257,7 +257,12 @@ export const MCPServers = ({
           </Button>
         </div>
       </div>
-      <Accordion className={styles.sectionContent} multiple={true} defaultOpenItems={servers.map((server) => server.name)}>
+      <Accordion
+        className={styles.sectionContent}
+        collapsible={true}
+        multiple={true}
+        defaultOpenItems={servers.map((server) => server.name)}
+      >
         {servers.map((server) => (
           <AccordionItem className={styles.server} value={server.name} key={server.name}>
             <div className={styles.serverHeader}>

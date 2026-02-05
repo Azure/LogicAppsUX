@@ -264,7 +264,7 @@ export const CreateServer = ({
       await onUpdate({
         name: serverName,
         description: serverDescription,
-        tools: selectedTools.map((toolName) => ({ name: toolName })),
+        tools: selectedTools.map((toolName) => ({ name: workflowOptions.find((option) => option.value === toolName)?.label ?? toolName })),
       });
     } catch {
       // Need to log the error properly here.
@@ -272,7 +272,7 @@ export const CreateServer = ({
       setIsCreatingOrUpdating(false);
     }
     dispatch(closePanel());
-  }, [onUpdate, serverName, serverDescription, selectedTools, dispatch]);
+  }, [dispatch, onUpdate, serverName, serverDescription, selectedTools, workflowOptions]);
 
   const createOrUpdateButtonText = useMemo(() => {
     if (isCreatingOrUpdating) {
