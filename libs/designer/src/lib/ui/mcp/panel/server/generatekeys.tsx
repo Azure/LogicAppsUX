@@ -189,6 +189,7 @@ export const GenerateKeys = () => {
   const [generatedKey, setGeneratedKey] = useState<string | undefined>(undefined);
   const [expiresTime, setExpiresTime] = useState<string | undefined>(undefined);
   const [showSuccessInfo, setShowSuccessInfo] = useState<boolean>(false);
+  const [dateTimeError, setDateTimeError] = useState<string | undefined>(undefined);
 
   const keySectionItems: TemplatesSectionItem[] = useMemo(() => {
     const items: TemplatesSectionItem[] = [
@@ -221,11 +222,14 @@ export const GenerateKeys = () => {
         value: '',
         type: 'custom',
         required: true,
+        errorMessage: dateTimeError,
         onRenderItem: () => (
           <TimePickerWithDatePicker
             onSelect={(selectedTime: string) => {
               setCustomDateTime(selectedTime);
+              setDateTimeError(undefined);
             }}
+            setError={setDateTimeError}
           />
         ),
       });
@@ -241,6 +245,7 @@ export const GenerateKeys = () => {
     durationOptions,
     accessKey,
     keysOptions,
+    dateTimeError,
   ]);
 
   const generatedSectionItems: TemplatesSectionItem[] = useMemo(() => {
@@ -298,7 +303,7 @@ export const GenerateKeys = () => {
           text: INTL_TEXT.generateButtonText,
           appearance: 'primary',
           onClick: handleGenerate,
-          disabled: !duration || !accessKey,
+          disabled: !duration || !accessKey || (duration === 'custom' && !!dateTimeError),
         },
         {
           type: 'action',
@@ -307,7 +312,7 @@ export const GenerateKeys = () => {
         },
       ],
     };
-  }, [INTL_TEXT.generateButtonText, INTL_TEXT.closeButtonText, handleGenerate, duration, accessKey, handleClose]);
+  }, [INTL_TEXT.generateButtonText, INTL_TEXT.closeButtonText, handleGenerate, duration, accessKey, dateTimeError, handleClose]);
 
   return (
     <Drawer className={styles.generateKeysContainer} open={true} onOpenChange={(_, { open }) => !open && handleClose()} position="end">
@@ -351,7 +356,10 @@ export const GenerateKeys = () => {
   );
 };
 
-const TimePickerWithDatePicker = ({ onSelect }: { onSelect: (selectedTime: string) => void }): JSX.Element => {
+const TimePickerWithDatePicker = ({
+  onSelect,
+  setError,
+}: { onSelect: (selectedTime: string) => void; setError: (error: string | undefined) => void }): JSX.Element => {
   const styles = useMcpServerPanelStyles();
   const intl = useIntl();
   const INTL_TEXT = {
@@ -365,10 +373,15 @@ const TimePickerWithDatePicker = ({ onSelect }: { onSelect: (selectedTime: strin
       id: '96v4Tz',
       description: 'Placeholder text for time picker',
     }),
+    futureTimeErrorText: intl.formatMessage({
+      defaultMessage: 'Please select a future time.',
+      id: 'gl0im8',
+      description: 'Error message for selecting past time',
+    }),
   };
 
+  const minDate = useMemo(() => new Date(), []);
   const [selectedDate, setSelectedDate] = useState<Date | null | undefined>(null);
-
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [timePickerValue, setTimePickerValue] = useState<string>(selectedTime ? formatDateToTimeString(selectedTime) : '');
 
@@ -376,12 +389,20 @@ const TimePickerWithDatePicker = ({ onSelect }: { onSelect: (selectedTime: strin
     (date: Date | null | undefined, time: Date | null | undefined) => {
       if (date && time) {
         const newDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes());
+
+        const today = new Date();
+
+        if (today.getDate() === date.getDate() && today.getTime() > time.getTime()) {
+          setError(INTL_TEXT.futureTimeErrorText);
+          return;
+        }
+
         onSelect(newDateTime.toISOString());
       } else if (date) {
         onSelect(date.toISOString());
       }
     },
-    [onSelect]
+    [INTL_TEXT.futureTimeErrorText, onSelect, setError]
   );
 
   const onSelectDate = useCallback(
@@ -440,7 +461,13 @@ const TimePickerWithDatePicker = ({ onSelect }: { onSelect: (selectedTime: strin
   }, [handleDateTimeSelection, selectedDate, timePickerValue]);
   return (
     <div className={styles.dateTimeContainer}>
-      <DatePicker placeholder={INTL_TEXT.selectDateText} value={selectedDate} inlinePopup={true} onSelectDate={onSelectDate} />
+      <DatePicker
+        placeholder={INTL_TEXT.selectDateText}
+        value={selectedDate}
+        inlinePopup={true}
+        minDate={minDate}
+        onSelectDate={onSelectDate}
+      />
       <TimePicker
         className={styles.timePicker}
         placeholder={INTL_TEXT.selectTimeText}
@@ -449,6 +476,7 @@ const TimePickerWithDatePicker = ({ onSelect }: { onSelect: (selectedTime: strin
         onTimeChange={onTimeChange}
         value={timePickerValue}
         inlinePopup={true}
+        freeform={true}
         onInput={onTimePickerInput}
         onBlur={onTimePickerBlur}
       />
