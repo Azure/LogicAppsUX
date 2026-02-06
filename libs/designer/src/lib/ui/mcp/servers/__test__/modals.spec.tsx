@@ -141,7 +141,7 @@ describe('Modal Components', () => {
     it('renders with correct title and content', () => {
       renderWithProviders(<EmptyWorkflowsModal {...defaultProps} />);
 
-      expect(screen.getByText('No workflows are available')).toBeInTheDocument();
+      expect(screen.getByText('No workflows are available.')).toBeInTheDocument();
       expect(screen.getByText(/You need at least one workflow in this logic app/)).toBeInTheDocument();
     });
 
@@ -358,7 +358,7 @@ describe('Modal Components', () => {
 
       // Specific content should be present
       expect(screen.getByText('Delete this MCP server group')).toBeInTheDocument();
-      expect(screen.getByText('No workflows are available')).toBeInTheDocument();
+      expect(screen.getByText('No workflows are available.')).toBeInTheDocument();
       expect(screen.getByText('Create options for MCP servers')).toBeInTheDocument();
     });
 

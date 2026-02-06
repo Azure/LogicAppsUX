@@ -153,9 +153,15 @@ export const useConnectorSectionStyles = makeStyles({
 export const useMcpServerWizardStyles = makeStyles({
   loadingContainer: {
     display: 'flex',
+    flexDirection: 'column',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: '10%',
+  },
+
+  loadingText: {
+    paddingTop: '10px',
   },
 
   emptyViewContainer: {
@@ -170,8 +176,8 @@ export const useMcpServerWizardStyles = makeStyles({
   },
 
   icon: {
-    width: '48px',
-    height: '48px',
+    width: '80px',
+    height: '80px',
   },
 
   emptyViewTitle: {

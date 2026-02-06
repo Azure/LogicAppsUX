@@ -16,26 +16,6 @@ interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
 
-// This is a temporary workaround for identity providers until we have a proper way to configure them through server side
-const DEFAULT_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
-  microsoft: {
-    signInEndpoint: '/.auth/login/aad',
-    name: 'Microsoft',
-  },
-  google: {
-    signInEndpoint: '/.auth/login/google',
-    name: 'Google',
-  },
-  facebook: {
-    signInEndpoint: '/.auth/login/facebook',
-    name: 'Facebook',
-  },
-  github: {
-    signInEndpoint: '/.auth/login/github',
-    name: 'GitHub',
-  },
-};
-
 const ALLOWED_PORTAL_AUTHORITIES = [
   'df.onecloud.azure-test.net',
   'portal.azure.com',
@@ -228,7 +208,7 @@ export function parseIframeConfig(): IframeConfig {
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
-    identityProviders: parseIdentityProviders() || DEFAULT_IDENTITY_PROVIDERS,
+    identityProviders: parseIdentityProviders(),
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };
@@ -276,7 +256,8 @@ export function parseIdentityProviders(): Record<string, IdentityProvider> | und
 
   try {
     const parsed = JSON.parse(identityProviders);
-    if (typeof parsed === 'object' && parsed !== null) {
+    // Arrays are objects but not valid Record<string, IdentityProvider> format
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
       return parsed as Record<string, IdentityProvider>;
     }
   } catch (e) {

@@ -1,6 +1,7 @@
 name: '🐞 Logic Apps Bug Report'
 description: Create a report to help us improve Logic Apps
-labels: ['bug', 'triage']
+labels: ['triage']
+type: 'Bug'
 body:
   - type: markdown
     attributes:

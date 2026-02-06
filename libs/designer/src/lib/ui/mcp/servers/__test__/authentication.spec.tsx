@@ -104,7 +104,7 @@ describe('Authentication', () => {
       renderComponent();
 
       expect(screen.getByText('Authentication')).toBeInTheDocument();
-      expect(screen.getByText('Manage your authentication for the MCP servers here.')).toBeInTheDocument();
+      expect(screen.getByText('Manage authentication for your MCP servers.')).toBeInTheDocument();
     });
 
     it('renders the main authentication control', () => {

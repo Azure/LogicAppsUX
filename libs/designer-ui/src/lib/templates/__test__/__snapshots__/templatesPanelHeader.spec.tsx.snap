@@ -1,0 +1,230 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/templates/templatesPanelHeader > should render children content 1`] = `
+<div
+  className="___7lfq060_0000000 fqag9an fat0sn4 fp67ikv f1cnd47f fly5x3f"
+>
+  <div
+    className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+  >
+    <div
+      className="___gjo2j80_0000000 f22iagw f1vx9l62 f4px1ci fn67r4l fqerorx f1neuvcm f1pztt34"
+    >
+      <div
+        className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+      >
+        <h2
+          className="fui-Text ___sut7700_184u8bg fk6fouc f1rt2boy f1dsjtc7 fhuq1gn fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649 f1s184ao fqerorx f1neuvcm f1pztt34"
+        >
+          Test Title
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div>
+    Child 1
+  </div>
+  <div>
+    Child 2
+  </div>
+</div>
+`;
+
+exports[`ui/templates/templatesPanelHeader > should render title as h2 element 1`] = `
+<div
+  className="___7lfq060_0000000 fqag9an fat0sn4 fp67ikv f1cnd47f fly5x3f"
+>
+  <div
+    className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+  >
+    <div
+      className="___gjo2j80_0000000 f22iagw f1vx9l62 f4px1ci fn67r4l fqerorx f1neuvcm f1pztt34"
+    >
+      <div
+        className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+      >
+        <h2
+          className="fui-Text ___sut7700_184u8bg fk6fouc f1rt2boy f1dsjtc7 fhuq1gn fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649 f1s184ao fqerorx f1neuvcm f1pztt34"
+        >
+          Test Title
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div>
+    Test Content
+  </div>
+</div>
+`;
+
+exports[`ui/templates/templatesPanelHeader > should render with all props 1`] = `
+<div
+  className="___7lfq060_0000000 fqag9an fat0sn4 fp67ikv f1cnd47f fly5x3f"
+>
+  <div
+    className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+  >
+    <div
+      className="___gjo2j80_0000000 f22iagw f1vx9l62 f4px1ci fn67r4l fqerorx f1neuvcm f1pztt34"
+    >
+      <div
+        className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+      >
+        <h2
+          className="fui-Text ___sut7700_184u8bg fk6fouc f1rt2boy f1dsjtc7 fhuq1gn fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649 f1s184ao fqerorx f1neuvcm f1pztt34"
+        >
+          Full Title
+        </h2>
+        <div
+          className="___wzvtph0_0000000 fi64zpg"
+        >
+          <button
+            type="button"
+          >
+            Action
+          </button>
+        </div>
+      </div>
+      <button
+        className="fui-Link ___pdlu0f0_sy2zz10 f2hkw1w f3rmtva f1ewtqcl fyind8e f1k6fduh f22iagw fk6fouc fkhj508 f1hd9hm2 f1s184ao f1mk8lai fnbmjn9 f1o700av f1iuv45f f1cmlufx f9n3di6 f1ids18y f1tx3yz7 f1deo86v f1eh06m1 f1iescvh fhgqx19 f1olyrje f1p93eir f1nev41a f1ern45e f1n71otn f1h8hb77 f1deefiw f122n59 f1q8lukm f1ma2n7n"
+        disabled={false}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        type="button"
+      >
+        <svg
+          aria-hidden={true}
+          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M14 8c0 .41-.34.75-.75.75H4.46l3.29 2.94a.75.75 0 1 1-1 1.12L2 8.56a.75.75 0 0 1 0-1.12L6.75 3.2a.75.75 0 1 1 1 1.12L4.46 7.25h8.79c.41 0 .75.34.75.75Z"
+            fill="currentColor"
+          />
+        </svg>
+        Back to template library
+      </button>
+    </div>
+  </div>
+  <div>
+    Full Content
+  </div>
+</div>
+`;
+
+exports[`ui/templates/templatesPanelHeader > should render with back button when onBackClick is provided 1`] = `
+<div
+  className="___7lfq060_0000000 fqag9an fat0sn4 fp67ikv f1cnd47f fly5x3f"
+>
+  <div
+    className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+  >
+    <div
+      className="___gjo2j80_0000000 f22iagw f1vx9l62 f4px1ci fn67r4l fqerorx f1neuvcm f1pztt34"
+    >
+      <div
+        className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+      >
+        <h2
+          className="fui-Text ___sut7700_184u8bg fk6fouc f1rt2boy f1dsjtc7 fhuq1gn fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649 f1s184ao fqerorx f1neuvcm f1pztt34"
+        >
+          Test Title
+        </h2>
+      </div>
+      <button
+        className="fui-Link ___pdlu0f0_sy2zz10 f2hkw1w f3rmtva f1ewtqcl fyind8e f1k6fduh f22iagw fk6fouc fkhj508 f1hd9hm2 f1s184ao f1mk8lai fnbmjn9 f1o700av f1iuv45f f1cmlufx f9n3di6 f1ids18y f1tx3yz7 f1deo86v f1eh06m1 f1iescvh fhgqx19 f1olyrje f1p93eir f1nev41a f1ern45e f1n71otn f1h8hb77 f1deefiw f122n59 f1q8lukm f1ma2n7n"
+        disabled={false}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        type="button"
+      >
+        <svg
+          aria-hidden={true}
+          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M14 8c0 .41-.34.75-.75.75H4.46l3.29 2.94a.75.75 0 1 1-1 1.12L2 8.56a.75.75 0 0 1 0-1.12L6.75 3.2a.75.75 0 1 1 1 1.12L4.46 7.25h8.79c.41 0 .75.34.75.75Z"
+            fill="currentColor"
+          />
+        </svg>
+        Back to template library
+      </button>
+    </div>
+  </div>
+  <div>
+    Test Content
+  </div>
+</div>
+`;
+
+exports[`ui/templates/templatesPanelHeader > should render with minimal props 1`] = `
+<div
+  className="___7lfq060_0000000 fqag9an fat0sn4 fp67ikv f1cnd47f fly5x3f"
+>
+  <div
+    className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+  >
+    <div
+      className="___gjo2j80_0000000 f22iagw f1vx9l62 f4px1ci fn67r4l fqerorx f1neuvcm f1pztt34"
+    >
+      <div
+        className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+      >
+        <h2
+          className="fui-Text ___sut7700_184u8bg fk6fouc f1rt2boy f1dsjtc7 fhuq1gn fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649 f1s184ao fqerorx f1neuvcm f1pztt34"
+        >
+          Test Title
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div>
+    Test Content
+  </div>
+</div>
+`;
+
+exports[`ui/templates/templatesPanelHeader > should render with right action when provided 1`] = `
+<div
+  className="___7lfq060_0000000 fqag9an fat0sn4 fp67ikv f1cnd47f fly5x3f"
+>
+  <div
+    className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+  >
+    <div
+      className="___gjo2j80_0000000 f22iagw f1vx9l62 f4px1ci fn67r4l fqerorx f1neuvcm f1pztt34"
+    >
+      <div
+        className="___144xl30_0000000 f22iagw f1869bpl f6jr5hl f5wq1k0 f1k5ttpu"
+      >
+        <h2
+          className="fui-Text ___sut7700_184u8bg fk6fouc f1rt2boy f1dsjtc7 fhuq1gn fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649 f1s184ao fqerorx f1neuvcm f1pztt34"
+        >
+          Test Title
+        </h2>
+        <div
+          className="___wzvtph0_0000000 fi64zpg"
+        >
+          <button
+            type="button"
+          >
+            Action
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    Test Content
+  </div>
+</div>
+`;

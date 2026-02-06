@@ -189,7 +189,7 @@ describe('CreateServer', () => {
     it('renders create mode with correct title', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      expect(screen.getByText('Create a MCP Server')).toBeInTheDocument();
+      expect(screen.getByText('Create an MCP server')).toBeInTheDocument();
       expect(screen.getByText('Standard logic app')).toBeInTheDocument();
     });
 
@@ -197,9 +197,7 @@ describe('CreateServer', () => {
       const mockServer: Partial<McpServer> = {
         name: 'TestServer',
         description: 'Test Description',
-        tools: {
-          workflow1: { name: 'Workflow1' },
-        },
+        tools: [{ name: 'Workflow1' }],
       };
 
       renderWithProviders({ server: mockServer as McpServer, onUpdate: mockOnUpdate, onClose: mockOnClose });
@@ -242,7 +240,7 @@ describe('CreateServer', () => {
     it('renders close button in header', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      const closeButton = screen.getByLabelText('Close MCP Server creation panel');
+      const closeButton = screen.getByLabelText('Close MCP server creation panel');
       expect(closeButton).toBeInTheDocument();
     });
   });
@@ -358,10 +356,7 @@ describe('CreateServer', () => {
       const mockServer: Partial<McpServer> = {
         name: 'Existing Server',
         description: 'Existing Description',
-        tools: {
-          workflow1: { name: 'Workflow1' },
-          workflow2: { name: 'Workflow2' },
-        },
+        tools: [{ name: 'Workflow1' }, { name: 'Workflow2' }],
       };
 
       renderWithProviders({ server: mockServer as McpServer, onUpdate: mockOnUpdate, onClose: mockOnClose });
@@ -462,7 +457,7 @@ describe('CreateServer', () => {
         expect(mockOnUpdate).toHaveBeenCalledWith({
           name: 'TestServer',
           description: 'Test Description',
-          tools: [{ name: 'workflow1' }],
+          tools: [{ name: 'Workflow1' }],
         });
       });
     });
@@ -526,7 +521,7 @@ describe('CreateServer', () => {
     it('calls onClose when close button is clicked', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      const closeButton = screen.getByLabelText('Close MCP Server creation panel');
+      const closeButton = screen.getByLabelText('Close MCP server creation panel');
       fireEvent.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalled();
@@ -590,7 +585,7 @@ describe('CreateServer', () => {
     it('has proper aria-label for close button', () => {
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      const closeButton = screen.getByLabelText('Close MCP Server creation panel');
+      const closeButton = screen.getByLabelText('Close MCP server creation panel');
       expect(closeButton).toBeInTheDocument();
     });
 

@@ -59,6 +59,7 @@ export interface FloatingRunButtonProps {
   isDarkMode: boolean;
   isDraftMode?: boolean;
   isDisabled?: boolean;
+  workflowReadOnly?: boolean;
   tooltipOverride?: string;
   chatProps?: {
     disabled?: boolean;
@@ -75,6 +76,7 @@ export const FloatingRunButton = ({
   isDarkMode,
   isDraftMode,
   isDisabled,
+  workflowReadOnly,
   tooltipOverride,
   chatProps,
   isConsumption,
@@ -182,6 +184,12 @@ export const FloatingRunButton = ({
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
+
+    // If workflowReadOnly is true, skip the actual save and just return the serialized workflow
+    if (workflowReadOnly) {
+      return serializedWorkflow;
+    }
+
     const customCodeData = getCustomCodeFilesWithData(designerState.customCode);
 
     const validationErrorsList: Record<string, boolean> = {};
@@ -211,7 +219,7 @@ export const FloatingRunButton = ({
         isDraftMode
       );
     }
-  }, [dispatch, saveDraftWorkflow, isDraftMode]);
+  }, [workflowReadOnly, dispatch, saveDraftWorkflow, isDraftMode]);
 
   const {
     mutate: runMutate,

@@ -42,5 +42,17 @@ export const useMcpServerPanelStyles = makeStyles({
     width: '650px',
   },
 
+  dateTimeContainer: {
+    display: 'flex',
+    gap: '4px',
+  },
+
+  timePicker: {
+    minWidth: '215px',
+    maxWidth: '215px',
+  },
+
   messageBar: { padding: '15px 0 0px 0' },
+
+  messageBarBody: { textWrap: 'wrap', padding: '4px 0' },
 });
