@@ -348,7 +348,7 @@ export const CreateServer = ({
           description={INTL_TEXT.detailsDescription}
           descriptionLink={{
             text: INTL_TEXT.learnMoreLinkText,
-            href: 'https://learn.microsoft.com/en-us/azure/logic-apps/microsoft-cloud-platform/mcp-overview',
+            href: 'https://go.microsoft.com/fwlink/?linkid=2350302',
           }}
           items={serverSectionItems}
         />
@@ -358,7 +358,7 @@ export const CreateServer = ({
           description={INTL_TEXT.workflowsDescription}
           descriptionLink={{
             text: INTL_TEXT.learnMoreLinkText,
-            href: 'https://learn.microsoft.com/en-us/azure/logic-apps/microsoft-cloud-platform/mcp-overview',
+            href: 'https://go.microsoft.com/fwlink/?linkid=2350400',
           }}
           items={workflowSectionItems}
         />

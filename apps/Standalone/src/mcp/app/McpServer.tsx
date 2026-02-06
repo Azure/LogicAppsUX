@@ -17,14 +17,14 @@ export const McpServer = () => {
     theme: state.workflowLoader.theme,
   }));
 
-  const appId = '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/Microsoft.Web/sites/pritimcpserver';
+  const appId = '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/TestACSRG/providers/Microsoft.Web/sites/prititemplates';
   const resourceDetails = useMemo(() => {
     const parser = new ArmParser(appId);
     return {
       subscriptionId: parser.subscriptionId || '',
       resourceGroup: parser.resourceGroup || '',
       logicAppName: parser.resourceName || '',
-      location: 'westus',
+      location: 'westus2',
     };
   }, []);
 

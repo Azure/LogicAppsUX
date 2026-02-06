@@ -1,4 +1,4 @@
-import { equals, getIntl, getPropertyValue, isNullOrEmpty, ResourceService } from '@microsoft/logic-apps-shared';
+import { equals, getIntl, getObjectPropertyValue, getPropertyValue, isNullOrEmpty, ResourceService } from '@microsoft/logic-apps-shared';
 import { getHostConfig, resetQueriesOnServerAuthUpdate } from './queries';
 
 export const validateMcpServerName = (serverName: string): string | undefined => {
@@ -86,16 +86,18 @@ export const updateAuthSettings = async (siteResourceId: string, options: string
       { 'api-version': '2020-06-01' },
       { files: { 'host.json': updatedConfig } }
     );
-  } catch (error) {
-    const errorMessage = getIntl().formatMessage(
-      {
-        defaultMessage: 'An error occurred while updating authentication settings. Error details: {error}',
-        id: 'Z1p3Yh',
-        description: 'General error message for authentication settings update failure',
-      },
-      { error: (error as any).message }
+  } catch (error: any) {
+    const errorMessage = error?.error?.message ?? error?.message ?? undefined;
+    throw new Error(
+      getIntl().formatMessage(
+        {
+          defaultMessage: 'An error occurred while updating authentication settings. Error details: {errorMessage}',
+          id: 'Z1p3Yh',
+          description: 'General error message for authentication settings update failure',
+        },
+        { errorMessage }
+      )
     );
-    throw new Error(errorMessage);
   } finally {
     resetQueriesOnServerAuthUpdate(siteResourceId);
   }
@@ -112,16 +114,18 @@ export const generateKeys = async (siteResourceId: string, duration: string, acc
     );
 
     return getPropertyValue(response.headers, 'X-API-Key') as string;
-  } catch (error) {
-    const errorMessage = getIntl().formatMessage(
-      {
-        defaultMessage: 'An error occurred while generating keys. Error details: {error}',
-        id: 'Q2p4Zh',
-        description: 'General error message for key generation failure',
-      },
-      { error: (error as any).message }
+  } catch (error: any) {
+    const errorMessage = getObjectPropertyValue(error, ['error', 'message']) ?? getObjectPropertyValue(error, ['message']) ?? undefined;
+    throw new Error(
+      getIntl().formatMessage(
+        {
+          defaultMessage: 'An error occurred while generating keys. Error details: {errorMessage}',
+          id: 'Q2p4Zh',
+          description: 'General error message for key generation failure',
+        },
+        { errorMessage }
+      )
     );
-    throw new Error(errorMessage);
   }
 };
 

@@ -11,6 +11,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
     formatMessage: vi.fn(({ defaultMessage }) => defaultMessage),
   })),
   getPropertyValue: vi.fn(),
+  getObjectPropertyValue: vi.fn(),
   isNullOrEmpty: vi.fn(),
   ResourceService: vi.fn(() => ({
     executeResourceAction: vi.fn(),
@@ -26,6 +27,7 @@ describe('server utils', () => {
   let mockEquals: any;
   let mockGetIntl: any;
   let mockGetPropertyValue: any;
+  let mockGetObjectPropertyValue: any;
   let mockIsNullOrEmpty: any;
   let mockResourceService: any;
   let mockExecuteResourceAction: any;
@@ -43,6 +45,7 @@ describe('server utils', () => {
     mockEquals = shared.equals as any;
     mockGetIntl = shared.getIntl as any;
     mockGetPropertyValue = shared.getPropertyValue as any;
+    mockGetObjectPropertyValue = shared.getObjectPropertyValue as any;
     mockIsNullOrEmpty = shared.isNullOrEmpty as any;
     mockResourceService = shared.ResourceService as any;
     mockGetHostConfig = queries.getHostConfig as any;
@@ -370,7 +373,7 @@ describe('server utils', () => {
       mockExecuteResourceAction.mockRejectedValue(new Error(errorMessage));
 
       await expect(updateAuthSettings(siteResourceId, ['apikey'])).rejects.toThrow(
-        `An error occurred while updating authentication settings. Error details: ${errorMessage}`
+        /An error occurred while updating authentication settings./
       );
 
       expect(mockResetQueriesOnServerAuthUpdate).toHaveBeenCalledWith(siteResourceId);
@@ -443,10 +446,11 @@ describe('server utils', () => {
 
     it('should throw error when key generation fails', async () => {
       const errorMessage = 'Key generation failed';
+      mockGetObjectPropertyValue.mockReturnValue(errorMessage);
       mockExecuteResourceAction.mockRejectedValue(new Error(errorMessage));
 
       await expect(generateKeys(siteResourceId, '2024-12-31T23:59:59Z', 'primary')).rejects.toThrow(
-        `An error occurred while generating keys. Error details: ${errorMessage}`
+        /An error occurred while generating keys/
       );
     });
 
