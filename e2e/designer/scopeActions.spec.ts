@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'Scope actions tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Should collapse condition actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await LoadMockDirect(page, 'AllScopeNodes.json');
 
       // Check items inside conditions exist in true side are visible
       await expect(page.getByTestId('card-terminate').getByRole('button', { name: 'Terminate' })).toBeVisible();
@@ -48,8 +47,7 @@ test.describe(
     });
 
     test('Should collapse for each actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await LoadMockDirect(page, 'AllScopeNodes.json');
 
       // Collapse empty foreach
       await page.getByTestId('ForEach_empty-collapse-toggle').click();
@@ -85,8 +83,7 @@ test.describe(
     });
 
     test('Should collapse do until actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await LoadMockDirect(page, 'AllScopeNodes.json');
 
       // Check items inside do until actions are visible
       await expect(page.getByTestId('card-until_action_1').getByRole('button', { name: 'Until Action' })).toBeVisible();
@@ -114,8 +111,7 @@ test.describe(
     });
 
     test('Should collapse switch actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await LoadMockDirect(page, 'AllScopeNodes.json');
 
       // Check items inside conditions exist in true side are visible
       await expect(page.getByTestId('card-terminate').getByRole('button', { name: 'Terminate' })).toBeVisible();

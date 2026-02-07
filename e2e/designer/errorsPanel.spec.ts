@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'ErrorsPanel Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Should show operation errors in errors panel', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       await page.getByRole('button', { name: 'zoom out' }).click();
 
@@ -35,8 +34,7 @@ test.describe(
     });
 
     test('Should show workflow parameters errors in errors panel', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Open workflow parameters panel
       await page.getByText('Workflow Parameters', { exact: true }).click();

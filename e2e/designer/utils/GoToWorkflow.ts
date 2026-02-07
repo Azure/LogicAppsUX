@@ -12,6 +12,7 @@ export const GoToRealWorkflow = async (page: Page, appName: string, workflowName
 };
 
 export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
+  await page.goto('/');
   await page.getByText('Local', { exact: true }).click();
   await page.getByText('Select an option').click();
   await page.getByRole('option', { name: workflowName, exact: true }).click();
@@ -27,4 +28,12 @@ export const LoadRunFile = async (page: Page, runName: string) => {
   await page.getByText('Select a run file to load').click();
   await page.getByRole('option', { name: runName, exact: true }).click();
   await page.getByRole('button', { name: 'Toolbox' }).click();
+};
+
+export const LoadMockDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard') => {
+  await page.goto(`/?localId=${workflowName}${runName ? `&localRunId=${runName}` : ''}&plan=${plan}`);
+};
+
+export const LoadDirect = async (page: Page, workflowName: string, runName?: string, plan = 'standard') => {
+  await page.goto(`/?id=${workflowName}${runName ? `&runId=${runName}` : ''}&plan=${plan}`);
 };

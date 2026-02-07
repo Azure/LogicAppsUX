@@ -11,7 +11,6 @@ test.describe(
       await realDataApi.deployWorkflow(workflow);
     });
     test('Variable Functionality works', async ({ page, realDataApi, browserName }) => {
-      await page.goto('/');
       await realDataApi.goToWorkflow();
 
       await page.getByTestId('msla-plus-button-when_a_http_request_is_received-response').click();

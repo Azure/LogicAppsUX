@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'WorkflowParametersPanel Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Should open workflow parameters panel and add / edit / delete parameter', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Standard Workflow Parameters');
+      await LoadMockDirect(page, 'StandardWorkflowParameters.json');
 
       // Open workflow parameters panel
       await page.getByText('Workflow Parameters', { exact: true }).click();

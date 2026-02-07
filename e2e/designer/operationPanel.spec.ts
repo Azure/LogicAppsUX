@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'OperationPanel Tests',
@@ -19,8 +19,7 @@ test.describe(
         await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
       };
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Left-click on 'Initialize ArrayVariable' node.
       await page.getByTestId('card-initialize_arrayvariable').click();
@@ -45,8 +44,7 @@ test.describe(
         await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
       };
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Left-click on 'Initialize ArrayVariable' node.
       await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
@@ -81,8 +79,7 @@ test.describe(
         await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
       };
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Left-click on 'Parse JSON' node.
       await page.getByTestId('card-parse_json').click();
@@ -100,8 +97,7 @@ test.describe(
     });
 
     test('Can switch between different tabs independently in selected/pinned panels', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Left-click on 'Parse JSON' node.
       await page.getByTestId('card-parse_json').click();
@@ -120,8 +116,7 @@ test.describe(
     });
 
     test('Should only show the panel info message when trigger type is request', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       // Left-click on 'manual' trigger.
       await page.getByTestId('card-manual').click();
@@ -138,8 +133,7 @@ test.describe(
     });
 
     test('Should show proper operation panel tabs', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       // Left-click on 'manual' trigger.
       await page.getByTestId('card-manual').click();
       await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();

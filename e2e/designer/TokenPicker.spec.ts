@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test.describe(
   'Token Picker Tests',
@@ -8,9 +8,7 @@ test.describe(
   },
   async () => {
     test('Token picker search should have robust name matching', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
 
       await page.getByLabel('Parse JSON operation, Data').click();
       await page.getByLabel('Content').click();
@@ -28,9 +26,7 @@ test.describe(
     });
 
     test('Expression Editor works with dynamic content', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Panel');
+      await LoadMockDirect(page, 'Panel.json');
       await page.getByLabel('Parse JSON operation, Data').click();
       await page.getByLabel('Content').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
