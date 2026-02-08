@@ -18,6 +18,8 @@ import {
   createRulesFiles,
   updateWorkspaceFile,
 } from './CreateLogicAppWorkspace';
+import { getAzureConnectorDetailsForLocalProject } from '../../../utils/codeless/common';
+import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -83,5 +85,9 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
+
+  getAzureConnectorDetailsForLocalProject(context, logicAppFolderPath);
+  startDesignTimeApi(logicAppFolderPath);
+
   vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
