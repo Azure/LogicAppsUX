@@ -58,7 +58,7 @@ describe('useAgentCard', () => {
     expect(result.current.data).toEqual(mockAgentCard);
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.example.com/.well-known/agent-card.json',
-      expect.objectContaining({ credentials: 'include' })
+      expect.objectContaining({ credentials: 'include', redirect: 'manual' })
     );
   });
 
@@ -186,6 +186,48 @@ describe('useAgentCard', () => {
     expect(result.current.error?.message).toBe('Unauthorized');
   });
 
+  it('should call onUnauthorized on network/CORS error (e.g., EasyAuth 302 redirect)', async () => {
+    const onUnauthorized = vi.fn();
+    mockFetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+    const config: UseAgentCardConfig = {
+      apiUrl: 'https://api.example.com',
+      onUnauthorized,
+    };
+
+    const { result } = renderHook(() => useAgentCard(config), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(onUnauthorized).toHaveBeenCalled();
+    expect(result.current.error?.message).toBe('Unauthorized');
+  });
+
+  it('should call onUnauthorized on opaque redirect response', async () => {
+    const onUnauthorized = vi.fn();
+    mockFetch.mockResolvedValueOnce({
+      type: 'opaqueredirect',
+      status: 0,
+      ok: false,
+    });
+
+    const config: UseAgentCardConfig = {
+      apiUrl: 'https://api.example.com',
+      onUnauthorized,
+    };
+
+    const { result } = renderHook(() => useAgentCard(config), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(onUnauthorized).toHaveBeenCalled();
+    expect(result.current.error?.message).toBe('Unauthorized');
+  });
+
   it('should handle non-unauthorized error responses', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
@@ -238,6 +280,7 @@ describe('useAgentCard', () => {
       expect.any(String),
       expect.objectContaining({
         credentials: 'include',
+        redirect: 'manual',
       })
     );
   });
