@@ -35,12 +35,11 @@ async function fetchAgentCard(config: UseAgentCardConfig): Promise<AgentCard> {
     requestInit.credentials = 'include';
   }
 
-  requestInit.redirect = 'manual';
-
   let response: Response;
   try {
     response = await fetch(url, requestInit);
-  } catch {
+  } catch (er) {
+    console.log('charlie error:', er);
     // Network error or CORS failure (e.g., EasyAuth 302 redirect to login page)
     return handleUnauthorized(config);
   }

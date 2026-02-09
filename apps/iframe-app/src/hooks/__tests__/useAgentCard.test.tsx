@@ -58,7 +58,7 @@ describe('useAgentCard', () => {
     expect(result.current.data).toEqual(mockAgentCard);
     expect(mockFetch).toHaveBeenCalledWith(
       'https://api.example.com/.well-known/agent-card.json',
-      expect.objectContaining({ credentials: 'include', redirect: 'manual' })
+      expect.objectContaining({ credentials: 'include' })
     );
   });
 
@@ -104,7 +104,6 @@ describe('useAgentCard', () => {
         headers: expect.objectContaining({
           'X-API-Key': 'test-api-key',
         }),
-        redirect: 'manual',
       })
     );
   });
@@ -299,7 +298,6 @@ describe('useAgentCard', () => {
       expect.any(String),
       expect.objectContaining({
         credentials: 'include',
-        redirect: 'manual',
       })
     );
   });
