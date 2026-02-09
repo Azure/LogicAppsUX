@@ -61,7 +61,7 @@
     "vscode:designer:pack": "pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
     "vscode:designer:e2e:ui": "pnpm run build:ui && cd dist && extest setup-and-run ../out/test/**/*.js --coverage",
     "vscode:designer:e2e:headless": "pnpm run build:ui && cd dist && extest setup-and-run ../out/test/**/*.js --coverage"
