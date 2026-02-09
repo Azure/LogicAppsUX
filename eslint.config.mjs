@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import reactRefresh from "eslint-plugin-react-refresh";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,8 @@ export default [
             "**/coverage/**",
             "**/__mocks__/**",
             "Localize/**",
+            "apps/vs-code-designer/src/test/**",
+            "apps/vs-code-react/**/test/**",
         ],
     },
 
@@ -138,6 +141,20 @@ export default [
         ],
         rules: {
             "@typescript-eslint/no-require-imports": "off",
+        },
+    },
+
+    // Standalone app: react-refresh plugin (from apps/Standalone/.eslintrc.cjs)
+    {
+        files: [
+            "apps/Standalone/src/**/*.ts",
+            "apps/Standalone/src/**/*.tsx",
+        ],
+        plugins: {
+            "react-refresh": reactRefresh,
+        },
+        rules: {
+            "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
         },
     },
 ];
