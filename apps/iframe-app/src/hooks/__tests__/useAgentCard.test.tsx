@@ -104,6 +104,7 @@ describe('useAgentCard', () => {
         headers: expect.objectContaining({
           'X-API-Key': 'test-api-key',
         }),
+        redirect: 'manual',
       })
     );
   });
@@ -168,6 +169,7 @@ describe('useAgentCard', () => {
     const onUnauthorized = vi.fn();
     mockFetch.mockResolvedValueOnce({
       ok: false,
+      status: 401,
       statusText: 'Unauthorized',
     });
 
@@ -205,12 +207,28 @@ describe('useAgentCard', () => {
     expect(result.current.error?.message).toBe('Unauthorized');
   });
 
-  it('should call onUnauthorized on opaque redirect response', async () => {
+  it('should error with Unauthorized on network failure even without onUnauthorized callback', async () => {
+    mockFetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+    const config: UseAgentCardConfig = {
+      apiUrl: 'https://api.example.com',
+    };
+
+    const { result } = renderHook(() => useAgentCard(config), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(result.current.error?.message).toBe('Unauthorized');
+  });
+
+  it('should handle 403 forbidden response and call onUnauthorized', async () => {
     const onUnauthorized = vi.fn();
     mockFetch.mockResolvedValueOnce({
-      type: 'opaqueredirect',
-      status: 0,
       ok: false,
+      status: 403,
+      statusText: 'Forbidden',
     });
 
     const config: UseAgentCardConfig = {
@@ -231,6 +249,7 @@ describe('useAgentCard', () => {
   it('should handle non-unauthorized error responses', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
+      status: 500,
       statusText: 'Internal Server Error',
     });
 
@@ -244,7 +263,7 @@ describe('useAgentCard', () => {
       expect(result.current.isError).toBe(true);
     });
 
-    expect(result.current.error?.message).toBe('Failed to fetch agent card: Internal Server Error');
+    expect(result.current.error?.message).toBe('Failed to fetch agent card: 500 Internal Server Error');
   });
 
   it('should not fetch when disabled', async () => {

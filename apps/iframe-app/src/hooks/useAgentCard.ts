@@ -45,16 +45,11 @@ async function fetchAgentCard(config: UseAgentCardConfig): Promise<AgentCard> {
     return handleUnauthorized(config);
   }
 
-  // An opaque redirect (e.g., EasyAuth 302 to login) caught via manual redirect mode
-  if (response.type === 'opaqueredirect' || response.status === 0) {
-    return handleUnauthorized(config);
-  }
-
   if (!response.ok) {
-    if (response.statusText === 'Unauthorized') {
+    if (response.status === 401 || response.status === 403) {
       return handleUnauthorized(config);
     }
-    throw new Error(`Failed to fetch agent card: ${response.statusText}`);
+    throw new Error(`Failed to fetch agent card: ${response.status} ${response.statusText}`.trim());
   }
 
   return (await response.json()) as AgentCard;
