@@ -10,6 +10,7 @@ import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 import { GenerateKeys } from '../generatekeys';
+import { InitResourceService } from '@microsoft/logic-apps-shared';
 
 // Mock external dependencies
 vi.mock('../../../../core/state/mcp/panel/mcpPanelSlice', () => ({
@@ -240,6 +241,13 @@ describe('GenerateKeys', () => {
   let mockGenerateKeys: any;
   let mockGetStandardLogicAppId: any;
 
+  const setupService = (throwError?: boolean) => {
+    InitResourceService({
+      executeResourceAction: () =>
+        throwError ? Promise.reject(new Error('Test error')) : Promise.resolve({ headers: { 'X-API-Key': 'generated-test-key-12345' } }),
+    } as any);
+  };
+
   const renderWithProviders = (initialState = {}) => {
     mockStore = configureStore({
       reducer: {
@@ -377,6 +385,30 @@ describe('GenerateKeys', () => {
 
       expect(durationDropdown?.value).toBe('24 hours');
       expect(accessKeyDropdown?.value).toBe('Primary key');
+    });
+
+    it('show success message when generateKeys is successful', async () => {
+      setupService();
+      renderWithProviders();
+
+      fireEvent.click(screen.getByText('Generate'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('message-bar')).toBeTruthy();
+        expect(screen.getByText('Successfully generated the key.')).toBeTruthy();
+      });
+    });
+
+    it('show error message when generateKeys fails', async () => {
+      setupService(/* throwError */ true);
+      renderWithProviders();
+
+      fireEvent.click(screen.getByText('Generate'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('message-bar-body')).toBeTruthy();
+        expect(screen.getByText(/An error occurred while generating keys./)).toBeTruthy();
+      });
     });
   });
 
