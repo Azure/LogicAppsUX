@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
 import { designerVersionSetting, defaultDesignerVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
