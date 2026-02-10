@@ -106,6 +106,13 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
         break;
       }
+      case ExtensionCommand.getDesignerVersion: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.getDesignerVersion,
+          data: this.getDesignerVersion(),
+        });
+        break;
+      }
       default:
         break;
     }
@@ -130,6 +137,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
         tenantId: this.node?.parent?.subscription?.tenantId,
         resourceGroupName: this.node?.parent?.parent?.site.resourceGroup,
+        defaultHostName: this.node?.parent?.parent?.site.defaultHostName,
       },
       workflowName: this.workflowName,
       standardApp: getStandardAppData(this.workflowName, this.workflow),

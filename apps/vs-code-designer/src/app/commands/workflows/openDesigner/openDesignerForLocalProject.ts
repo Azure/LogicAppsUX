@@ -312,6 +312,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
 
+      case ExtensionCommand.getDesignerVersion: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.getDesignerVersion,
+          data: this.getDesignerVersion(),
+        });
+        break;
+      }
+
       default:
         break;
     }

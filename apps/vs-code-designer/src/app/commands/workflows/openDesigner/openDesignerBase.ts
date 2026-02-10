@@ -8,8 +8,10 @@ import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { getRecordEntry, isEmptyString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
-import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
+import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion } from '../../../../constants';
+import { ext } from '../../../../extensionVariables';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
+import { workspace } from 'vscode';
 
 export interface IDesignerOptions {
   references?: any;
@@ -178,5 +180,10 @@ export abstract class OpenDesignerBase {
       return '';
     }
     return location.toLowerCase().replace(/ /g, '');
+  }
+
+  protected getDesignerVersion(): number {
+    const config = workspace.getConfiguration(ext.prefix);
+    return config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
   }
 }
