@@ -33,7 +33,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       isReadOnly={readOnly}
       useLegacy={useLegacy}
       onDismiss={props.toggleCollapse}
-      validationErrors={workflowParametersValidationErrors as any}
+      validationErrors={workflowParametersValidationErrors}
       onAddParameter={onWorkflowParameterAdd}
       onDeleteParameter={onDeleteWorkflowParameter}
       onUpdateParameter={onUpdateParameter}
