@@ -3,85 +3,122 @@ import * as vscode from 'vscode';
 import { designerVersionSetting, defaultDesignerVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 
-// ConfigurationTarget.Global = 1 in VS Code
-const ConfigurationTargetGlobal = 1;
+// Mock dependencies before importing the class
+vi.mock('../../../../../localize', () => ({
+  localize: (_key: string, defaultMsg: string) => defaultMsg,
+}));
 
-// Since OpenDesignerBase is abstract, we test the static helper behavior through mocking
-describe('openDesignerBase', () => {
-  describe('getDesignerVersion', () => {
-    const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
-    const mockConfig = {
-      get: vi.fn(),
-      update: vi.fn(),
-    };
+vi.mock('../../../../utils/codeless/common', () => ({
+  tryGetWebviewPanel: vi.fn(),
+}));
 
-    beforeEach(() => {
-      vi.clearAllMocks();
-      mockGetConfiguration.mockReturnValue(mockConfig as any);
-    });
+vi.mock('../../../../utils/codeless/getWebViewHTML', () => ({
+  getWebViewHTML: vi.fn().mockResolvedValue('<html></html>'),
+}));
 
-    it('should return version 1 when setting is 1', () => {
-      mockConfig.get.mockReturnValue(1);
+vi.mock('@microsoft/logic-apps-shared', () => ({
+  getRecordEntry: vi.fn((obj: any, key: string) => obj?.[key]),
+  isEmptyString: vi.fn((s: any) => !s || (typeof s === 'string' && s.trim().length === 0)),
+  resolveConnectionsReferences: vi.fn(() => ({})),
+}));
 
-      const config = vscode.workspace.getConfiguration(ext.prefix);
-      const version = config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
+// Import the actual class after mocks
+import { OpenDesignerBase } from '../openDesignerBase';
 
-      expect(mockGetConfiguration).toHaveBeenCalledWith(ext.prefix);
-      expect(mockConfig.get).toHaveBeenCalledWith(designerVersionSetting);
-      expect(version).toBe(1);
-    });
+// Concrete subclass to test the abstract class
+class TestDesigner extends OpenDesignerBase {
+  constructor(context?: any) {
+    super(
+      context ?? { telemetry: { properties: {}, measurements: {} } },
+      'test-workflow',
+      'test-panel',
+      '2018-11-01',
+      'test-key',
+      false,
+      true,
+      false,
+      ''
+    );
+  }
 
-    it('should return version 2 when setting is 2', () => {
-      mockConfig.get.mockReturnValue(2);
+  async createPanel(): Promise<void> {}
 
-      const config = vscode.workspace.getConfiguration(ext.prefix);
-      const version = config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
+  // Expose protected methods for testing
+  public testGetDesignerVersion() {
+    return this.getDesignerVersion();
+  }
+  public async testShowDesignerVersionNotification() {
+    return this.showDesignerVersionNotification();
+  }
+  public testNormalizeLocation(location: string) {
+    return this.normalizeLocation(location);
+  }
+  public testGetPanelOptions() {
+    return this.getPanelOptions();
+  }
+  public testGetApiHubServiceDetails(azureDetails: any, localSettings: any) {
+    return this.getApiHubServiceDetails(azureDetails, localSettings);
+  }
+  public testGetInterpolateConnectionData(data: string) {
+    return this.getInterpolateConnectionData(data);
+  }
+  public setTestPanel(panel: any) {
+    this.panel = panel;
+  }
+}
 
-      expect(version).toBe(2);
-    });
+describe('OpenDesignerBase', () => {
+  const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
+  const mockShowInformationMessage = vi.mocked(vscode.window.showInformationMessage);
+  const mockConfig = {
+    get: vi.fn(),
+    update: vi.fn().mockResolvedValue(undefined),
+  };
+  let designer: TestDesigner;
 
-    it('should return default version when setting is undefined', () => {
-      mockConfig.get.mockReturnValue(undefined);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetConfiguration.mockReturnValue(mockConfig as any);
+    designer = new TestDesigner();
+  });
 
-      const config = vscode.workspace.getConfiguration(ext.prefix);
-      const version = config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
-
-      expect(version).toBe(defaultDesignerVersion);
-    });
-
-    it('should return default version when setting is null', () => {
-      mockConfig.get.mockReturnValue(null);
-
-      const config = vscode.workspace.getConfiguration(ext.prefix);
-      const version = config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
-
-      expect(version).toBe(defaultDesignerVersion);
+  describe('constructor', () => {
+    it('should initialize with correct properties', () => {
+      expect(designer).toBeDefined();
     });
   });
 
-  describe('showDesignerVersionNotification behavior', () => {
-    const mockShowInformationMessage = vi.mocked(vscode.window.showInformationMessage);
-    const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
-    const mockConfig = {
-      get: vi.fn(),
-      update: vi.fn().mockResolvedValue(undefined),
-    };
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-      mockGetConfiguration.mockReturnValue(mockConfig as any);
+  describe('getDesignerVersion', () => {
+    it('should return version from config when set to 2', () => {
+      mockConfig.get.mockReturnValue(2);
+      expect(designer.testGetDesignerVersion()).toBe(2);
+      expect(mockGetConfiguration).toHaveBeenCalledWith(ext.prefix);
+      expect(mockConfig.get).toHaveBeenCalledWith(designerVersionSetting);
     });
 
+    it('should return version from config when set to 1', () => {
+      mockConfig.get.mockReturnValue(1);
+      expect(designer.testGetDesignerVersion()).toBe(1);
+    });
+
+    it('should return default version when config is undefined', () => {
+      mockConfig.get.mockReturnValue(undefined);
+      expect(designer.testGetDesignerVersion()).toBe(defaultDesignerVersion);
+    });
+
+    it('should return default version when config is null', () => {
+      mockConfig.get.mockReturnValue(null);
+      expect(designer.testGetDesignerVersion()).toBe(defaultDesignerVersion);
+    });
+  });
+
+  describe('showDesignerVersionNotification', () => {
     it('should show preview available message when version is 1', async () => {
       mockConfig.get.mockReturnValue(1);
       mockShowInformationMessage.mockResolvedValue(undefined);
+      designer.setTestPanel({ dispose: vi.fn() });
 
-      // Simulate showing the message
-      const version = mockConfig.get(designerVersionSetting) ?? defaultDesignerVersion;
-
-      if (version === 1) {
-        await vscode.window.showInformationMessage('A new Logic Apps experience is available for preview!', 'Enable preview');
-      }
+      await designer.testShowDesignerVersionNotification();
 
       expect(mockShowInformationMessage).toHaveBeenCalledWith('A new Logic Apps experience is available for preview!', 'Enable preview');
     });
@@ -89,12 +126,9 @@ describe('openDesignerBase', () => {
     it('should show previewing message when version is 2', async () => {
       mockConfig.get.mockReturnValue(2);
       mockShowInformationMessage.mockResolvedValue(undefined);
+      designer.setTestPanel({ dispose: vi.fn() });
 
-      const version = mockConfig.get(designerVersionSetting) ?? defaultDesignerVersion;
-
-      if (version === 2) {
-        await vscode.window.showInformationMessage('You are previewing the new Logic Apps experience.', 'Go back to previous version');
-      }
+      await designer.testShowDesignerVersionNotification();
 
       expect(mockShowInformationMessage).toHaveBeenCalledWith(
         'You are previewing the new Logic Apps experience.',
@@ -104,59 +138,101 @@ describe('openDesignerBase', () => {
 
     it('should update setting to version 2 when Enable preview is clicked', async () => {
       mockConfig.get.mockReturnValue(1);
-      mockShowInformationMessage.mockResolvedValueOnce('Enable preview' as any);
+      mockShowInformationMessage.mockResolvedValueOnce('Enable preview' as any).mockResolvedValueOnce(undefined);
+      designer.setTestPanel({ dispose: vi.fn() });
 
-      const version = mockConfig.get(designerVersionSetting) ?? defaultDesignerVersion;
+      await designer.testShowDesignerVersionNotification();
 
-      if (version === 1) {
-        const selection = await vscode.window.showInformationMessage(
-          'A new Logic Apps experience is available for preview!',
-          'Enable preview'
-        );
-        if (selection === 'Enable preview') {
-          await mockConfig.update(designerVersionSetting, 2, ConfigurationTargetGlobal);
-        }
-      }
-
-      expect(mockConfig.update).toHaveBeenCalledWith(designerVersionSetting, 2, ConfigurationTargetGlobal);
+      expect(mockConfig.update).toHaveBeenCalledWith(designerVersionSetting, 2, expect.anything());
     });
 
     it('should update setting to version 1 when Go back is clicked', async () => {
       mockConfig.get.mockReturnValue(2);
-      mockShowInformationMessage.mockResolvedValueOnce('Go back to previous version' as any);
+      mockShowInformationMessage.mockResolvedValueOnce('Go back to previous version' as any).mockResolvedValueOnce(undefined);
+      designer.setTestPanel({ dispose: vi.fn() });
 
-      const version = mockConfig.get(designerVersionSetting) ?? defaultDesignerVersion;
+      await designer.testShowDesignerVersionNotification();
 
-      if (version === 2) {
-        const selection = await vscode.window.showInformationMessage(
-          'You are previewing the new Logic Apps experience.',
-          'Go back to previous version'
-        );
-        if (selection === 'Go back to previous version') {
-          await mockConfig.update(designerVersionSetting, 1, ConfigurationTargetGlobal);
-        }
-      }
-
-      expect(mockConfig.update).toHaveBeenCalledWith(designerVersionSetting, 1, ConfigurationTargetGlobal);
+      expect(mockConfig.update).toHaveBeenCalledWith(designerVersionSetting, 1, expect.anything());
     });
 
-    it('should not update setting when message is dismissed', async () => {
+    it('should not update setting when notification is dismissed', async () => {
       mockConfig.get.mockReturnValue(1);
-      mockShowInformationMessage.mockResolvedValueOnce(undefined);
+      mockShowInformationMessage.mockResolvedValue(undefined);
+      designer.setTestPanel({ dispose: vi.fn() });
 
-      const version = mockConfig.get(designerVersionSetting) ?? defaultDesignerVersion;
-
-      if (version === 1) {
-        const selection = await vscode.window.showInformationMessage(
-          'A new Logic Apps experience is available for preview!',
-          'Enable preview'
-        );
-        if (selection === 'Enable preview') {
-          await mockConfig.update(designerVersionSetting, 2, ConfigurationTargetGlobal);
-        }
-      }
+      await designer.testShowDesignerVersionNotification();
 
       expect(mockConfig.update).not.toHaveBeenCalled();
+    });
+
+    it('should dispose panel when Close is clicked after enabling preview', async () => {
+      mockConfig.get.mockReturnValue(1);
+      const mockDispose = vi.fn();
+      mockShowInformationMessage.mockResolvedValueOnce('Enable preview' as any).mockResolvedValueOnce('Close' as any);
+      designer.setTestPanel({ dispose: mockDispose });
+
+      await designer.testShowDesignerVersionNotification();
+
+      expect(mockDispose).toHaveBeenCalled();
+    });
+  });
+
+  describe('normalizeLocation', () => {
+    it('should lowercase and remove spaces', () => {
+      expect(designer.testNormalizeLocation('West US')).toBe('westus');
+    });
+
+    it('should handle already normalized location', () => {
+      expect(designer.testNormalizeLocation('westus')).toBe('westus');
+    });
+
+    it('should return empty string for empty input', () => {
+      expect(designer.testNormalizeLocation('')).toBe('');
+    });
+  });
+
+  describe('getPanelOptions', () => {
+    it('should return options with scripts enabled and context retained', () => {
+      const options = designer.testGetPanelOptions();
+      expect(options.enableScripts).toBe(true);
+      expect(options.retainContextWhenHidden).toBe(true);
+    });
+  });
+
+  describe('getApiHubServiceDetails', () => {
+    it('should return service details when API hub is enabled', () => {
+      const azureDetails = {
+        enabled: true,
+        subscriptionId: 'sub-123',
+        location: 'westus',
+        resourceGroupName: 'rg-test',
+        tenantId: 'tenant-123',
+        accessToken: 'token-123',
+      };
+      const result = designer.testGetApiHubServiceDetails(azureDetails, {});
+
+      expect(result).toBeDefined();
+      expect(result.subscriptionId).toBe('sub-123');
+      expect(result.apiVersion).toBe('2018-07-01-preview');
+    });
+
+    it('should return undefined when API hub is disabled', () => {
+      const azureDetails = { enabled: false };
+      const result = designer.testGetApiHubServiceDetails(azureDetails, {});
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('getInterpolateConnectionData', () => {
+    it('should return falsy data as-is', () => {
+      expect(designer.testGetInterpolateConnectionData('')).toBe('');
+    });
+
+    it('should handle connections data with no managed API connections', () => {
+      const data = JSON.stringify({ serviceProviderConnections: {} });
+      const result = designer.testGetInterpolateConnectionData(data);
+      expect(JSON.parse(result)).toEqual({ serviceProviderConnections: {} });
     });
   });
 });

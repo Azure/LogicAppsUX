@@ -8,7 +8,13 @@ export default defineProject({
     name: packageJson.name,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/app/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/webviewCommunication.tsx'],
+      reporter: ['html', 'cobertura', 'lcov'],
+    },
     restoreMocks: true,
   },
 });
