@@ -437,3 +437,14 @@ export interface GetTestFeatureEnablementStatus {
   command: typeof ExtensionCommand.isTestDisabledForOS;
   data: boolean;
 }
+
+export interface TestXsltTransformResultMessage {
+  command: typeof ExtensionCommand.testXsltTransformResult;
+  data: {
+    success: boolean;
+    outputXml?: string;
+    error?: string;
+    statusCode: number;
+    statusText: string;
+  };
+}
