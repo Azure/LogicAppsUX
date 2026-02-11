@@ -25,7 +25,7 @@ export function dereferenceJsonSchema(schema: SchemaObject): SchemaObject {
   const defs: Record<string, SchemaObject> | undefined = schema.$defs ?? schema.definitions;
 
   // If there are no definitions, nothing to resolve
-  if (!defs || typeof defs !== 'object' || Object.keys(defs).length === 0) {
+  if (!defs || typeof defs !== 'object') {
     return schema;
   }
 
