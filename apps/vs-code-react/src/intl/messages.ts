@@ -1149,3 +1149,276 @@ export const chatMessages = defineMessages({
     description: 'Debug project error message',
   },
 });
+
+export const deployMessages = defineMessages({
+  DEPLOY_TO_AZURE: {
+    defaultMessage: 'Deploy to Azure',
+    id: 'qyCdsU',
+    description: 'Deploy to Azure page title',
+  },
+  SELECT_SUBSCRIPTION: {
+    defaultMessage: 'Select Subscription',
+    id: 'oC7SJf',
+    description: 'Select subscription section title',
+  },
+  SELECT_SUBSCRIPTION_PLACEHOLDER: {
+    defaultMessage: 'Select a subscription',
+    id: 'gVJJb9',
+    description: 'Select subscription dropdown placeholder',
+  },
+  LOADING_SUBSCRIPTIONS: {
+    defaultMessage: 'Loading subscriptions...',
+    id: 'qmJ4fl',
+    description: 'Loading subscriptions message',
+  },
+  SELECT_LOGIC_APP: {
+    defaultMessage: 'Select Logic App (Standard)',
+    id: 'WT3rmZ',
+    description: 'Select logic app section title',
+  },
+  SELECT_LOGIC_APP_PLACEHOLDER: {
+    defaultMessage: 'Select a Logic App or create new',
+    id: 'Lyal9O',
+    description: 'Select logic app dropdown placeholder',
+  },
+  CREATE_NEW_LOGIC_APP: {
+    defaultMessage: 'Create new Logic App...',
+    id: '0L/IsP',
+    description: 'Create new logic app option',
+  },
+  LOADING_LOGIC_APPS: {
+    defaultMessage: 'Loading Logic Apps...',
+    id: 'X1Edk0',
+    description: 'Loading logic apps message',
+  },
+  LOGIC_APP_NAME: {
+    defaultMessage: 'Logic App Name',
+    id: 'JS7xBY',
+    description: 'Logic app name field label',
+  },
+  LOGIC_APP_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter Logic App name',
+    id: 'Ec6eYa',
+    description: 'Logic app name field placeholder',
+  },
+  LOGIC_APP_NAME_EXISTS: {
+    defaultMessage: 'A Logic App with this name already exists in the subscription',
+    id: 'XhIjby',
+    description: 'Logic app name already exists error',
+  },
+  LOGIC_APP_NAME_LENGTH_ERROR: {
+    defaultMessage: 'Logic App name must be 1-43 characters',
+    id: '86EIs+',
+    description: 'Logic app name length validation error',
+  },
+  LOGIC_APP_NAME_CHARS_ERROR: {
+    defaultMessage: 'Logic App name can only contain letters, numbers, and hyphens',
+    id: 'BSrw3e',
+    description: 'Logic app name characters validation error',
+  },
+  RESOURCE_GROUP: {
+    defaultMessage: 'Resource Group',
+    id: 'b0O0kA',
+    description: 'Resource group section title',
+  },
+  RESOURCE_GROUP_PLACEHOLDER: {
+    defaultMessage: 'Select a resource group or create new',
+    id: 'lFeQ3D',
+    description: 'Resource group dropdown placeholder',
+  },
+  CREATE_NEW_RESOURCE_GROUP: {
+    defaultMessage: 'Create new resource group...',
+    id: 'gsVmMc',
+    description: 'Create new resource group option',
+  },
+  LOADING_RESOURCE_GROUPS: {
+    defaultMessage: 'Loading resource groups...',
+    id: 'acZfqv',
+    description: 'Loading resource groups message',
+  },
+  NEW_RESOURCE_GROUP_NAME: {
+    defaultMessage: 'New Resource Group Name',
+    id: 'MFakiI',
+    description: 'New resource group name field label',
+  },
+  NEW_RESOURCE_GROUP_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter resource group name',
+    id: '/eXdxq',
+    description: 'New resource group name field placeholder',
+  },
+  RESOURCE_GROUP_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter resource group name',
+    id: 'rJ0jxe',
+    description: 'Resource group name field placeholder',
+  },
+  LOCATION: {
+    defaultMessage: 'Location',
+    id: '4w3/SG',
+    description: 'Location section title',
+  },
+  LOCATION_PLACEHOLDER: {
+    defaultMessage: 'Select a location',
+    id: 'a6tmNg',
+    description: 'Location dropdown placeholder',
+  },
+  LOADING_LOCATIONS: {
+    defaultMessage: 'Loading locations...',
+    id: 'reaWnc',
+    description: 'Loading locations message',
+  },
+  APP_SERVICE_PLAN: {
+    defaultMessage: 'App Service Plan',
+    id: '/xX/S0',
+    description: 'App service plan section title',
+  },
+  APP_SERVICE_PLAN_PLACEHOLDER: {
+    defaultMessage: 'Select an app service plan or create new',
+    id: 'rDqeFZ',
+    description: 'App service plan dropdown placeholder',
+  },
+  CREATE_NEW_APP_SERVICE_PLAN: {
+    defaultMessage: 'Create new app service plan...',
+    id: 'R/Mtnd',
+    description: 'Create new app service plan option',
+  },
+  LOADING_APP_SERVICE_PLANS: {
+    defaultMessage: 'Loading app service plans...',
+    id: 'xOME2s',
+    description: 'Loading app service plans message',
+  },
+  NEW_APP_SERVICE_PLAN_NAME: {
+    defaultMessage: 'New App Service Plan Name',
+    id: 'X9i5z8',
+    description: 'New app service plan name field label',
+  },
+  APP_SERVICE_PLAN_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter app service plan name',
+    id: '/1MeIz',
+    description: 'App service plan name input placeholder',
+  },
+  APP_SERVICE_PLAN_NAME_EXISTS: {
+    defaultMessage: 'An App Service Plan with this name already exists in the subscription',
+    id: 'nYMxSN',
+    description: 'App service plan name already exists error',
+  },
+  APP_SERVICE_PLAN_NAME_LENGTH_ERROR: {
+    defaultMessage: 'App Service Plan name must be 1-60 characters',
+    id: 'GASpMu',
+    description: 'App service plan name length validation error',
+  },
+  APP_SERVICE_PLAN_NAME_HYPHEN_ERROR: {
+    defaultMessage: 'App Service Plan name cannot start or end with a hyphen',
+    id: 'pb0mAB',
+    description: 'App service plan name hyphen validation error',
+  },
+  APP_SERVICE_PLAN_NAME_CHARS_ERROR: {
+    defaultMessage: 'App Service Plan name can only contain letters, numbers, and hyphens',
+    id: '6fUN/I',
+    description: 'App service plan name characters validation error',
+  },
+  APP_SERVICE_PLAN_SKU: {
+    defaultMessage: 'App Service Plan SKU',
+    id: 'mKrP3D',
+    description: 'App service plan SKU section title',
+  },
+  SELECT_SKU_PLACEHOLDER: {
+    defaultMessage: 'Select SKU',
+    id: 'K/eK9y',
+    description: 'Select SKU dropdown placeholder',
+  },
+  STORAGE_ACCOUNT: {
+    defaultMessage: 'Storage Account',
+    id: 'JNr5XL',
+    description: 'Storage account section title',
+  },
+  STORAGE_ACCOUNT_PLACEHOLDER: {
+    defaultMessage: 'Select a storage account or create new',
+    id: 'Q3v+MD',
+    description: 'Storage account dropdown placeholder',
+  },
+  CREATE_NEW_STORAGE_ACCOUNT: {
+    defaultMessage: 'Create new storage account...',
+    id: 'XCw/Zq',
+    description: 'Create new storage account option',
+  },
+  LOADING_STORAGE_ACCOUNTS: {
+    defaultMessage: 'Loading storage accounts...',
+    id: 'iQVHMv',
+    description: 'Loading storage accounts message',
+  },
+  NEW_STORAGE_ACCOUNT_NAME: {
+    defaultMessage: 'New Storage Account Name',
+    id: 'nM6NU5',
+    description: 'New storage account name field label',
+  },
+  NEW_STORAGE_ACCOUNT_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter storage account name (3-24 lowercase letters/numbers)',
+    id: 'Y9O3Qo',
+    description: 'New storage account name field placeholder',
+  },
+  STORAGE_ACCOUNT_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter storage account name (3-24 lowercase letters/numbers)',
+    id: 'CSoIzV',
+    description: 'Storage account name field placeholder',
+  },
+  CHECKING_AVAILABILITY: {
+    defaultMessage: 'Checking availability...',
+    id: 'W0L2Pw',
+    description: 'Checking storage account name availability message',
+  },
+  STORAGE_ACCOUNT_NAME_LENGTH_ERROR: {
+    defaultMessage: 'Storage account name must be 3-24 characters',
+    id: 'ZrQ3wQ',
+    description: 'Storage account name length validation error',
+  },
+  STORAGE_ACCOUNT_NAME_CHARS_ERROR: {
+    defaultMessage: 'Storage account name can only contain lowercase letters and numbers',
+    id: '6B9lt7',
+    description: 'Storage account name characters validation error',
+  },
+  STORAGE_ACCOUNT_NAME_TAKEN: {
+    defaultMessage: 'This storage account name is already taken',
+    id: 'qPxlLl',
+    description: 'Storage account name already taken error',
+  },
+  STORAGE_ACCOUNT_NAME_AVAILABLE: {
+    defaultMessage: '✓ Storage account name is available',
+    id: 'OBtZng',
+    description: 'Storage account name available success message',
+  },
+  CREATE_APP_INSIGHTS: {
+    defaultMessage: 'Create Application Insights',
+    id: '5YtO/R',
+    description: 'Create application insights checkbox label',
+  },
+  APP_INSIGHTS_NAME: {
+    defaultMessage: 'Application Insights Name',
+    id: 'cHEUmj',
+    description: 'Application insights name field label',
+  },
+  DEPLOY_BUTTON: {
+    defaultMessage: 'Deploy',
+    id: 'A90OoF',
+    description: 'Deploy button label',
+  },
+  CANCEL_BUTTON: {
+    defaultMessage: 'Cancel',
+    id: '0GT0SI',
+    description: 'Cancel button label',
+  },
+  DEPLOYING: {
+    defaultMessage: 'Deploying...',
+    id: 'RZt22h',
+    description: 'Deploying message',
+  },
+  DEPLOYMENT_SUCCESS: {
+    defaultMessage: 'Deployment completed successfully!',
+    id: '6FuXLA',
+    description: 'Deployment success message',
+  },
+  DEPLOYMENT_FAILED: {
+    defaultMessage: 'Deployment failed. Please check the output.',
+    id: '70rcZ3',
+    description: 'Deployment failed message',
+  },
+});

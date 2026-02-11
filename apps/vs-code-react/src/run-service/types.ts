@@ -110,6 +110,7 @@ export const ResourceType = {
   subscriptions: 'subscriptions',
   ise: 'ise',
   resourcegroups: 'resourcegroups',
+  logicApps: 'logicApps',
 };
 export type ResourceType = (typeof ResourceType)[keyof typeof ResourceType];
 
@@ -157,6 +158,7 @@ export const RouteName = {
   createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   createLogicApp: 'createLogicApp',
   createWorkspaceStructure: 'createWorkspaceStructure',
+  deploy: 'deploy',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
