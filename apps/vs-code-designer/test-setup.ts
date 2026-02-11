@@ -67,6 +67,12 @@ vi.mock('fs', () => ({
   mkdirSync: vi.fn(),
   chmodSync: vi.fn(),
   createWriteStream: vi.fn(),
+  readFileSync: vi.fn(() => '{}'),
+  writeFileSync: vi.fn(),
+  promises: {
+    readFile: vi.fn(() => Promise.resolve('{}')),
+    writeFile: vi.fn(() => Promise.resolve()),
+  },
   dirent: vi.fn().mockImplementation(() => ({
     isDirectory: vi.fn().mockImplementation(() => {
       return true;
@@ -94,9 +100,20 @@ vi.mock('vscode', () => ({
   window: {
     showInformationMessage: vi.fn(),
     showErrorMessage: vi.fn(),
+    createWebviewPanel: vi.fn(() => ({
+      webview: { html: '', postMessage: vi.fn(), onDidReceiveMessage: vi.fn() },
+      onDidDispose: vi.fn(),
+      onDidChangeViewState: vi.fn(),
+      iconPath: undefined,
+      reveal: vi.fn(),
+      active: true,
+      dispose: vi.fn(),
+    })),
+    withProgress: vi.fn((_opts: unknown, cb: () => Promise<unknown>) => cb()),
   },
   workspace: {
     workspaceFolders: [],
+    name: 'test-workspace',
     updateWorkspaceFolders: vi.fn(),
     fs: {
       readFile: vi.fn(),
@@ -106,6 +123,7 @@ vi.mock('vscode', () => ({
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
+    parse: (s: string) => ({ toString: () => s }),
   },
   commands: {
     executeCommand: vi.fn(),
@@ -117,12 +135,28 @@ vi.mock('vscode', () => ({
     File: 'file',
     Directory: 'directory',
   },
+  ConfigurationTarget: {
+    Global: 1,
+    Workspace: 2,
+    WorkspaceFolder: 3,
+  },
+  ViewColumn: {
+    Active: -1,
+    Beside: -2,
+    One: 1,
+    Two: 2,
+  },
+  ProgressLocation: {
+    Notification: 15,
+  },
   env: {
     clipboard: {
       writeText: vi.fn(),
     },
     sessionId: 'test-session-id',
     appName: 'Visual Studio Code',
+    uriScheme: 'vscode',
+    asExternalUri: vi.fn((uri: unknown) => Promise.resolve(uri)),
   },
   version: '1.85.0',
 }));
