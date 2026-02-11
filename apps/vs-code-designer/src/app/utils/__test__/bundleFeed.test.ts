@@ -1,9 +1,10 @@
-import { getBundleVersionNumber, getExtensionBundleFolder } from '../bundleFeed';
+import { getBundleVersionNumber, getExtensionBundleFolder, getLatestVersionRange, addDefaultBundle } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { extensionBundleId } from '../../../constants';
+import { extensionBundleId, defaultVersionRange } from '../../../constants';
+import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as cpUtils from '../funcCoreTools/cpUtils';
 
 // Mock localize
@@ -377,5 +378,63 @@ describe('getBundleVersionNumber', () => {
     await getBundleVersionNumber();
 
     expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/mock/workspace', 'func', 'GetExtensionBundlePath');
+  });
+});
+
+describe('getLatestVersionRange', () => {
+  it('should return the default version range constant', () => {
+    const result = getLatestVersionRange();
+    expect(result).toBe(defaultVersionRange);
+  });
+
+  it('should return a valid semver range string', () => {
+    const result = getLatestVersionRange();
+    expect(result).toMatch(/^\[.*\)$/);
+  });
+});
+
+describe('addDefaultBundle', () => {
+  it('should add extension bundle configuration to host.json', () => {
+    const hostJson: IHostJsonV2 = {
+      version: '2.0',
+    };
+
+    addDefaultBundle(hostJson);
+
+    expect(hostJson.extensionBundle).toBeDefined();
+    expect(hostJson.extensionBundle?.id).toBe(extensionBundleId);
+    expect(hostJson.extensionBundle?.version).toBe(defaultVersionRange);
+  });
+
+  it('should overwrite existing extension bundle configuration', () => {
+    const hostJson: IHostJsonV2 = {
+      version: '2.0',
+      extensionBundle: {
+        id: 'old-bundle-id',
+        version: '[1.0.0, 2.0.0)',
+      },
+    };
+
+    addDefaultBundle(hostJson);
+
+    expect(hostJson.extensionBundle?.id).toBe(extensionBundleId);
+    expect(hostJson.extensionBundle?.version).toBe(defaultVersionRange);
+  });
+
+  it('should preserve other host.json properties', () => {
+    const hostJson: IHostJsonV2 = {
+      version: '2.0',
+      logging: {
+        logLevel: {
+          default: 'Information',
+        },
+      },
+    };
+
+    addDefaultBundle(hostJson);
+
+    expect(hostJson.version).toBe('2.0');
+    expect(hostJson.logging).toBeDefined();
+    expect(hostJson.extensionBundle).toBeDefined();
   });
 });
