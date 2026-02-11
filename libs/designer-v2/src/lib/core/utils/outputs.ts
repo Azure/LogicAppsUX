@@ -320,7 +320,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           if (segment.type === ValueSegmentType.LITERAL) {
             try {
               const parsedSchema = JSON.parse(segment.value);
-              schemaToReplace = dereferenceJsonSchema(parsedSchema);
+              schemaToReplace = dereferenceJsonSchema(parsedSchema) ?? undefined;
             } catch {} // eslint-disable-line no-empty
           }
           break;

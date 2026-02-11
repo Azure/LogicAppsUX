@@ -151,13 +151,16 @@ describe('dereferenceJsonSchema', () => {
       type: 'object',
       properties: {
         external: { $ref: 'https://example.com/schemas/Foo.json' },
+        local: { $ref: '#/$defs/Bar' },
       },
-      $defs: {},
+      $defs: {
+        Bar: { type: 'string', title: 'Bar Type' },
+      },
     };
 
-    // Empty $defs means nothing to resolve, so schema passes through as-is
     const result = dereferenceJsonSchema(schema) as any;
     expect(result.properties.external.$ref).toBe('https://example.com/schemas/Foo.json');
+    expect(result.properties.local.title).toBe('Bar Type');
   });
 
   it('should keep $ref when pointing to non-existent definition', () => {
@@ -257,6 +260,40 @@ describe('dereferenceJsonSchema', () => {
     expect(result.properties.items.items.description).toBe('A product in the catalog');
   });
 
+  it('should resolve refs from both $defs and definitions in the same schema', () => {
+    const schema: any = {
+      type: 'object',
+      properties: {
+        address: { $ref: '#/$defs/Address' },
+        user: { $ref: '#/definitions/User' },
+      },
+      $defs: {
+        Address: {
+          type: 'object',
+          title: 'Mailing Address',
+          properties: {
+            street: { type: 'string' },
+          },
+        },
+      },
+      definitions: {
+        User: {
+          type: 'object',
+          title: 'User Profile',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+      },
+    };
+
+    const result = dereferenceJsonSchema(schema) as any;
+    expect(result.properties.address.title).toBe('Mailing Address');
+    expect(result.properties.user.title).toBe('User Profile');
+    expect(result.$defs).toBeUndefined();
+    expect(result.definitions).toBeUndefined();
+  });
+
   it('should return null/undefined/non-object values as-is', () => {
     expect(dereferenceJsonSchema(null as any)).toBeNull();
     expect(dereferenceJsonSchema(undefined as any)).toBeUndefined();
@@ -273,12 +310,9 @@ describe('dereferenceJsonSchema', () => {
     };
 
     const result = dereferenceJsonSchema(schema) as any;
-    expect(result).toEqual({
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-      },
-    });
+    // With empty $defs and no refs to resolve, the schema is returned as-is
+    expect(result.type).toBe('object');
+    expect(result.properties.name).toEqual({ type: 'string' });
   });
 
   it('should handle indirect cyclical $refs (A -> B -> A)', () => {
@@ -318,18 +352,25 @@ describe('dereferenceJsonSchema', () => {
     const schema: any = {
       type: 'object',
       properties: {
-        item: { $ref: '#/$defs/Type~1With~1Slashes' },
+        slashed: { $ref: '#/$defs/Type~1With~1Slashes' },
+        tilded: { $ref: '#/$defs/Type~0With~0Tildes' },
       },
       $defs: {
         'Type/With/Slashes': {
           type: 'string',
-          title: 'Encoded Type',
+          title: 'Slash Type',
+        },
+        'Type~With~Tildes': {
+          type: 'number',
+          title: 'Tilde Type',
         },
       },
     };
 
     const result = dereferenceJsonSchema(schema) as any;
-    expect(result.properties.item.title).toBe('Encoded Type');
-    expect(result.properties.item.type).toBe('string');
+    expect(result.properties.slashed.title).toBe('Slash Type');
+    expect(result.properties.slashed.type).toBe('string');
+    expect(result.properties.tilded.title).toBe('Tilde Type');
+    expect(result.properties.tilded.type).toBe('number');
   });
 });

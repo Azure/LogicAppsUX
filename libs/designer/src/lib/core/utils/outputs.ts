@@ -322,7 +322,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
               const parsedSchema = JSON.parse(segment.value);
               // Resolve $ref pointers against $defs/definitions so titles, descriptions,
               // and other metadata from referenced definitions are preserved in the UI.
-              schemaToReplace = dereferenceJsonSchema(parsedSchema);
+              schemaToReplace = dereferenceJsonSchema(parsedSchema) ?? undefined;
             } catch {} // eslint-disable-line no-empty
           }
           break;

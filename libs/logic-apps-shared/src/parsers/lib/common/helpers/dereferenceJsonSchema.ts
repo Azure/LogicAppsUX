@@ -16,16 +16,19 @@ type SchemaObject = OpenAPIV2.SchemaObject;
  * @param schema - The JSON schema to dereference
  * @returns A new schema with all local `$ref` pointers resolved inline
  */
-export function dereferenceJsonSchema(schema: SchemaObject): SchemaObject {
+export function dereferenceJsonSchema(schema: SchemaObject | null | undefined): SchemaObject | null | undefined {
   if (!schema || typeof schema !== 'object') {
     return schema;
   }
 
-  // Get the definitions container - support both $defs (2019-09+) and definitions (Draft 4/7)
-  const defs: Record<string, SchemaObject> | undefined = schema.$defs ?? schema.definitions;
+  // Merge both $defs (2019-09+) and definitions (Draft 4/7). $defs takes precedence for duplicate keys.
+  const defs: Record<string, SchemaObject> = {
+    ...(schema.definitions || {}),
+    ...(schema.$defs || {}),
+  };
 
-  // If there are no definitions, nothing to resolve
-  if (!defs || typeof defs !== 'object') {
+  // If there are no definitions in either container, nothing to resolve
+  if (Object.keys(defs).length === 0) {
     return schema;
   }
 
@@ -48,6 +51,8 @@ export function dereferenceJsonSchema(schema: SchemaObject): SchemaObject {
       .split('/')
       .map(decodeJsonPointer);
 
+    // For the first two segments (e.g., '$defs'/'definitions' + key), resolve from merged defs.
+    // For deeper paths, traverse from the root schema.
     let current: unknown = schema;
     for (const part of parts) {
       if (current === null || typeof current !== 'object') {
