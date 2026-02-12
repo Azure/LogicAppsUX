@@ -17,12 +17,14 @@ import {
   type RootState,
   resetDesignerView,
   collapsePanel,
+  useChangeCount,
 } from '@microsoft/logic-apps-designer-v2';
-import { isNullOrEmpty, type Workflow } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, useThrottledEffect, type Workflow } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import {
+  Badge,
   Button,
   Card,
   Divider,
@@ -36,6 +38,7 @@ import {
   Spinner,
   Toolbar,
   ToolbarButton,
+  Tooltip,
 } from '@fluentui/react-components';
 import {
   SaveRegular,
@@ -57,10 +60,16 @@ import {
   CheckmarkFilled,
   ArrowUndoFilled,
   ArrowUndoRegular,
+  ArrowSyncFilled,
+  CheckmarkCircleRegular,
+  DocumentOnePageAddFilled,
+  DocumentOnePageAddRegular,
+  DocumentOnePageColumnsFilled,
+  DocumentOnePageColumnsRegular,
 } from '@fluentui/react-icons';
 import { useCommandBarStyles } from './styles';
 import { useSelector } from 'react-redux';
-import { useIntlMessages, designerMessages } from '../../../intl';
+import { useIntlMessages, useIntlFormatters, designerMessages } from '../../../intl';
 
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
@@ -77,6 +86,10 @@ const MoreHorizontalIcon = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegula
 // Unit test icons
 const AssertionsIcon = bundleIcon(CheckmarkFilled, CheckmarkRegular);
 
+// Draft/publish icons
+const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
+const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
+
 export interface DesignerCommandBarProps {
   isDarkMode: boolean;
   isUnitTest: boolean;
@@ -91,6 +104,14 @@ export interface DesignerCommandBarProps {
   switchToDesignerView: () => void;
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
+  isDraftMode: boolean;
+  saveDraftWorkflow: (definition: any, parameters: any, connectionReferences: any) => void;
+  discardDraft: () => void;
+  switchWorkflowMode: (toDraftMode: boolean) => void;
+  lastDraftSaveTime: number | null;
+  draftSaveError: string | null;
+  isDraftSaving: boolean;
+  hasDraft: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -107,14 +128,26 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToDesignerView,
   switchToCodeView,
   switchToMonitoringView,
+  isDraftMode,
+  saveDraftWorkflow,
+  discardDraft,
+  switchWorkflowMode,
+  lastDraftSaveTime,
+  draftSaveError,
+  isDraftSaving,
+  hasDraft,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
 
   const styles = useCommandBarStyles();
   const intlText = useIntlMessages(designerMessages);
+  const formatters = useIntlFormatters(designerMessages);
 
   const designerIsDirty = useIsDesignerDirty();
+
+  const [autoSaving, setAutoSaving] = useState(false);
+  const [autosaveError, setAutosaveError] = useState<string>();
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     try {
@@ -151,6 +184,48 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       console.error('Error saving workflow:', error);
     }
   });
+
+  // Auto-save draft mutation
+  const { mutate: autoSaveMutate } = useMutation(async () => {
+    try {
+      setAutoSaving(true);
+      setAutosaveError(undefined);
+      const designerState = DesignerStore.getState();
+      const serializedWorkflow = await serializeBJSWorkflow(designerState, {
+        skipValidation: true,
+        ignoreNonCriticalErrors: true,
+      });
+      saveDraftWorkflow(serializedWorkflow.definition, serializedWorkflow.parameters, serializedWorkflow.connectionReferences);
+    } catch (error: any) {
+      console.error('Error auto-saving draft:', error);
+      setAutosaveError(error?.message ?? 'Unknown error during auto-save');
+    } finally {
+      setAutoSaving(false);
+    }
+  });
+
+  // When any change is made, set needsSaved to true
+  const changeCount = useChangeCount();
+  const [needsSaved, setNeedsSaved] = useState(false);
+  useEffect(() => {
+    if (changeCount === 0) {
+      return;
+    }
+    setNeedsSaved(true);
+  }, [changeCount]);
+
+  // Auto-save every 5 seconds if needed
+  useThrottledEffect(
+    () => {
+      if (!needsSaved || !isDraftMode || isSaving || isMonitoringView) {
+        return;
+      }
+      setNeedsSaved(false);
+      autoSaveMutate();
+    },
+    [isDraftMode, isSaving, isMonitoringView, needsSaved, autoSaveMutate],
+    5000
+  );
 
   const { mutate: saveWorkflowFromCode, isLoading: isSavingFromCode } = useMutation(async () => {
     _saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
@@ -233,8 +308,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   );
 
   const isSaveDisabled = useMemo(
-    () => isMonitoringView || isSaving || isSavingFromCode || haveErrors || !designerIsDirty,
-    [isMonitoringView, isSaving, isSavingFromCode, haveErrors, designerIsDirty]
+    () => isMonitoringView || isSaving || isSavingFromCode || haveErrors || (!designerIsDirty && !hasDraft) || !isDraftMode,
+    [isMonitoringView, isSaving, isSavingFromCode, haveErrors, designerIsDirty, hasDraft, isDraftMode]
   );
 
   const ViewModeSelect = () => (
@@ -249,7 +324,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           switchToDesignerView();
         }}
       >
-        Workflow
+        {intlText.WORKFLOW_TAB}
       </Button>
       <Button
         appearance={isCodeView ? 'primary' : 'subtle'}
@@ -261,7 +336,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           switchToCodeView();
         }}
       >
-        Code
+        {intlText.CODE_TAB}
       </Button>
       <Button
         appearance={isMonitoringView ? 'primary' : 'subtle'}
@@ -273,36 +348,109 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           switchToMonitoringView();
         }}
       >
-        Run history
+        {intlText.RUN_HISTORY_TAB}
       </Button>
     </Card>
   );
 
-  const SaveButton = () => (
-    <ToolbarButton
-      appearance="primary"
-      disabled={isSaveDisabled}
-      onClick={() => {
-        if (isDesignerView) {
-          saveWorkflowMutate();
-        } else {
-          saveWorkflowFromCode();
-        }
-      }}
-      icon={isSaving ? <Spinner size={'extra-tiny'} /> : undefined}
-    >
-      {isSaving ? 'Saving' : 'Save'}
-    </ToolbarButton>
-  );
+  const SaveButton = () => {
+    const publishLoading = !autoSaving && isSaving;
+    return (
+      <ToolbarButton
+        appearance="primary"
+        disabled={isSaveDisabled}
+        onClick={() => {
+          if (isDesignerView) {
+            saveWorkflowMutate();
+          } else {
+            saveWorkflowFromCode();
+          }
+        }}
+        icon={publishLoading ? <Spinner size={'extra-tiny'} /> : undefined}
+      >
+        {publishLoading ? intlText.PUBLISHING : intlText.PUBLISH}
+      </ToolbarButton>
+    );
+  };
 
-  const DiscardButton = () => (
-    <ToolbarButton
-      aria-label={intlText.DISCARD}
-      icon={<DiscardIcon />}
-      onClick={discard}
-      disabled={isSaving || isMonitoringView || !designerIsDirty}
-    />
-  );
+  const DiscardButton = () => {
+    if (hasDraft) {
+      return (
+        <Menu>
+          <MenuTrigger>
+            <ToolbarButton aria-label={intlText.DISCARD} icon={<DiscardIcon />} disabled={isSaving || isMonitoringView} />
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuList>
+              <MenuItem onClick={discard} disabled={!designerIsDirty}>
+                {intlText.DISCARD_SESSION_CHANGES}
+              </MenuItem>
+              <MenuItem onClick={discardDraft}>{intlText.DISCARD_DRAFT}</MenuItem>
+            </MenuList>
+          </MenuPopover>
+        </Menu>
+      );
+    }
+
+    return (
+      <ToolbarButton
+        aria-label={intlText.DISCARD}
+        icon={<DiscardIcon />}
+        onClick={discard}
+        disabled={isSaving || isMonitoringView || !designerIsDirty}
+      />
+    );
+  };
+
+  const DraftSaveNotification = () => {
+    const [, setTick] = useState(0);
+
+    useEffect(() => {
+      if (isDraftMode && lastDraftSaveTime) {
+        const interval = setInterval(() => {
+          setTick((prev) => prev + 1);
+        }, 2000);
+
+        return () => clearInterval(interval);
+      }
+      return undefined;
+    }, []);
+
+    if (isDraftMode && (isDesignerView || isCodeView)) {
+      const style = { fontStyle: 'italic' as const, fontSize: '12px' };
+      const iconStyle = { fontSize: '16px' };
+
+      if (isDraftSaving || autoSaving || needsSaved) {
+        return (
+          <Badge appearance="ghost" color="informative" size="small" style={style} icon={<ArrowSyncFilled style={iconStyle} />}>
+            {intlText.SAVING_DRAFT}
+          </Badge>
+        );
+      }
+
+      const savedTime = lastDraftSaveTime ? new Date(lastDraftSaveTime) : null;
+
+      return savedTime ? (
+        <Tooltip content={formatters.DRAFT_AUTOSAVED_AT({ time: savedTime.toLocaleTimeString() })} relationship="label" withArrow>
+          <Badge appearance="ghost" color="informative" size="small" style={style} icon={<CheckmarkCircleRegular style={iconStyle} />}>
+            {getRelativeTimeString(savedTime, {
+              secondsAgo: intlText.AUTOSAVED_SECONDS_AGO,
+              minutesAgo: intlText.AUTOSAVED_MINUTES_AGO,
+              oneHourAgo: intlText.AUTOSAVED_ONE_HOUR_AGO,
+              hoursAgo: formatters.AUTOSAVED_HOURS_AGO,
+            })}
+          </Badge>
+        </Tooltip>
+      ) : draftSaveError || autosaveError ? (
+        <Tooltip content={draftSaveError || autosaveError || ''} relationship="label" withArrow>
+          <Badge appearance="ghost" color="danger" size="small" style={style} icon={<ErrorCircleFilled style={iconStyle} />}>
+            {intlText.ERROR_AUTOSAVING_DRAFT}
+          </Badge>
+        </Tooltip>
+      ) : null;
+    }
+    return null;
+  };
 
   const UnitTestItems = () => (
     <>
@@ -356,10 +504,21 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const OverflowMenu = () => (
     <Menu>
       <MenuTrigger>
-        <ToolbarButton aria-label="More" icon={<MoreHorizontalIcon />} />
+        <ToolbarButton aria-label={intlText.MORE_ACTIONS} icon={<MoreHorizontalIcon />} />
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
+          {hasDraft && isDraftMode && (
+            <MenuItem disabled={!isDesignerView} onClick={() => switchWorkflowMode(false)} icon={<DocumentOnePageAddIcon />}>
+              {intlText.SWITCH_TO_PUBLISHED}
+            </MenuItem>
+          )}
+          {hasDraft && !isDraftMode && (
+            <MenuItem disabled={!isDesignerView} onClick={() => switchWorkflowMode(true)} icon={<DocumentOnePageColumnsIcon />}>
+              {intlText.SWITCH_TO_DRAFT}
+            </MenuItem>
+          )}
+          {hasDraft && <MenuDivider />}
           {isLocal && (
             <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
               {intlText.CREATE_UNIT_TEST_FROM_RUN}
@@ -395,10 +554,35 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     >
       <ViewModeSelect />
       <div style={{ flexGrow: 1 }} />
+      <DraftSaveNotification />
       <SaveButton />
       <DiscardButton />
       <Divider vertical style={{ flexGrow: 0 }} />
       <OverflowMenu />
     </Toolbar>
   );
+};
+
+const getRelativeTimeString = (
+  savedTime: Date,
+  messages: {
+    secondsAgo: string;
+    minutesAgo: string;
+    oneHourAgo: string;
+    hoursAgo: (values?: Record<string, any>) => string;
+  }
+) => {
+  const now = new Date();
+  const diffMs = now.getTime() - savedTime.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+
+  if (diffHours > 0) {
+    return diffHours === 1 ? messages.oneHourAgo : messages.hoursAgo({ count: diffHours });
+  }
+  if (diffMinutes > 0) {
+    return messages.minutesAgo;
+  }
+  return messages.secondsAgo;
 };

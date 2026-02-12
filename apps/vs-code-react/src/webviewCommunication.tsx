@@ -19,6 +19,8 @@ import type {
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
   ResetDesignerDirtyStateMessage,
+  DraftLoadedMessage,
+  DraftSaveResultMessage,
   UpdateWorkspacePathMessage,
   UpdateWorkspacePackageMessage,
   ValidateWorkspacePathMessage,
@@ -59,6 +61,8 @@ import {
   updateFileSystemConnection,
   updatePanelMetadata,
   updateRuntimeBaseUrl,
+  loadDraftState,
+  updateDraftSaveResult,
 } from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
 import {
@@ -97,7 +101,9 @@ type DesignerMessageType =
   | ReceiveCallbackMessage
   | ResetDesignerDirtyStateMessage
   | CompleteFileSystemConnectionMessage
-  | UpdatePanelMetadataMessage;
+  | UpdatePanelMetadataMessage
+  | DraftLoadedMessage
+  | DraftSaveResultMessage;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -185,6 +191,14 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.resetDesignerDirtyState: {
             designerDispatch(resetDesignerDirtyState(undefined));
+            break;
+          }
+          case ExtensionCommand.draftLoaded: {
+            dispatch(loadDraftState(message.data));
+            break;
+          }
+          case ExtensionCommand.draftSaveResult: {
+            dispatch(updateDraftSaveResult(message.data));
             break;
           }
           case ExtensionCommand.getDesignerVersion: {

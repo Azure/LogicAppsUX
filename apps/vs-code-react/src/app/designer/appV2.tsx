@@ -1,4 +1,13 @@
-import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
+import {
+  createFileSystemConnection,
+  updateUnitTestDefinition,
+  clearDraftState,
+  setDraftMode,
+  setDraftSaving,
+  updateDraftWorkflow,
+  updateDraftConnections,
+  updateDraftParameters,
+} from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar/indexV2';
@@ -48,6 +57,14 @@ export const DesignerApp = () => {
     isUnitTest,
     unitTestDefinition,
     workflowRuntimeBaseUrl,
+    isDraftMode,
+    hasDraft,
+    draftWorkflow,
+    draftConnections,
+    draftParameters,
+    lastDraftSaveTime,
+    draftSaveError,
+    isDraftSaving,
   } = vscodeState;
 
   const [currentView, setCurrentView] = useState(_isMonitoringView ? DesignerViewType.Monitoring : DesignerViewType.Workflow);
@@ -85,6 +102,55 @@ export const DesignerApp = () => {
   const discardAllChanges = useCallback(() => {
     setDesignerID(guid());
   }, []);
+
+  const saveDraftWorkflow = useCallback(
+    (definition: any, parameters: any, connectionReferences: any) => {
+      dispatch(setDraftSaving(true));
+      // Keep all draft artifacts in Redux so switchWorkflowMode has fresh data
+      dispatch(updateDraftWorkflow(definition));
+      dispatch(updateDraftConnections(connectionReferences));
+      dispatch(updateDraftParameters(parameters));
+      vscode.postMessage({
+        command: ExtensionCommand.saveDraft,
+        definition,
+        parameters,
+        connectionReferences,
+      });
+    },
+    [vscode, dispatch]
+  );
+
+  const discardDraft = useCallback(() => {
+    vscode.postMessage({
+      command: ExtensionCommand.discardDraft,
+    });
+    dispatch(clearDraftState());
+    setWorkflow(initialWorkflow);
+    setDesignerID(guid());
+  }, [vscode, dispatch, initialWorkflow]);
+
+  const switchWorkflowMode = useCallback(
+    (toDraftMode: boolean) => {
+      dispatch(setDraftMode(toDraftMode));
+      if (toDraftMode) {
+        // Switching to draft: restore latest draft workflow from Redux
+        const currentDraftWorkflow = vscodeState.draftWorkflow;
+        if (vscodeState.hasDraft && currentDraftWorkflow && panelMetaData?.standardApp) {
+          const draftApp = {
+            ...panelMetaData.standardApp,
+            definition: currentDraftWorkflow,
+          } as StandardApp;
+          setWorkflow(draftApp);
+        }
+      } else {
+        // Switching to published: restore initial (published) workflow
+        setWorkflow(initialWorkflow);
+      }
+      setWorkflowDefinitionId(guid());
+      setDesignerID(guid());
+    },
+    [dispatch, vscodeState, panelMetaData?.standardApp, initialWorkflow]
+  );
 
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
@@ -134,8 +200,20 @@ export const DesignerApp = () => {
   ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
+    // Draft connections are already in ConnectionReferences format (from serialization).
+    // Published connections need conversion from ConnectionsData format.
+    if (isDraftMode && hasDraft && draftConnections) {
+      return draftConnections;
+    }
     return convertConnectionsDataToReferences(connectionData);
-  }, [connectionData]);
+  }, [connectionData, isDraftMode, hasDraft, draftConnections]);
+
+  const parametersData = useMemo(() => {
+    if (isDraftMode && hasDraft && draftParameters) {
+      return draftParameters;
+    }
+    return panelMetaData?.parametersData;
+  }, [panelMetaData?.parametersData, isDraftMode, hasDraft, draftParameters]);
 
   const isMultiVariableSupportEnabled = useMemo(
     () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.MULTI_VARIABLE),
@@ -170,9 +248,27 @@ export const DesignerApp = () => {
   }, [runInstance, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
 
   useEffect(() => {
-    setWorkflow(panelMetaData?.standardApp);
-    setCustomCode(panelMetaData?.customCodeData);
-  }, [panelMetaData]);
+    if (!panelMetaData?.standardApp) {
+      return;
+    }
+    const publishedApp = panelMetaData.standardApp;
+    setInitialWorkflow(publishedApp);
+    setCustomCode(panelMetaData.customCodeData);
+
+    // If a draft exists and we're in draft mode, show the draft workflow.
+    // Draft data arrives atomically with panelMetaData (via initializeDesigner),
+    // so hasDraft and draftWorkflow are already set when this effect runs.
+    if (hasDraft && draftWorkflow && isDraftMode) {
+      const draftApp = {
+        ...publishedApp,
+        definition: draftWorkflow,
+      } as StandardApp;
+      setWorkflow(draftApp);
+    } else {
+      setWorkflow(publishedApp);
+    }
+    setWorkflowDefinitionId(guid());
+  }, [panelMetaData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (runInstance) {
@@ -206,6 +302,7 @@ export const DesignerApp = () => {
       setWorkflow(newWorkflow);
       setInitialWorkflow(newWorkflow);
       clearDirtyState?.();
+      dispatch(clearDraftState());
       return {
         definition,
         parameters,
@@ -213,7 +310,7 @@ export const DesignerApp = () => {
         customCodeData,
       };
     },
-    [vscode, workflow]
+    [vscode, workflow, dispatch]
   );
 
   const validateAndSaveCodeView = useCallback(
@@ -317,7 +414,7 @@ export const DesignerApp = () => {
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
           isUnitTest,
-          readOnly: readOnly || isMonitoringView,
+          readOnly: readOnly || isMonitoringView || (hasDraft && !isDraftMode),
           isMonitoringView,
           services: services,
           hostOptions: {
@@ -332,7 +429,7 @@ export const DesignerApp = () => {
             workflow={{
               definition: workflow.definition,
               connectionReferences,
-              parameters: panelMetaData?.parametersData,
+              parameters: parametersData,
               kind: workflow.kind,
             }}
             workflowId={workflowDefinitionId}
@@ -355,6 +452,14 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
+              isDraftMode={isDraftMode}
+              saveDraftWorkflow={saveDraftWorkflow}
+              discardDraft={discardDraft}
+              switchWorkflowMode={switchWorkflowMode}
+              lastDraftSaveTime={lastDraftSaveTime}
+              draftSaveError={draftSaveError}
+              isDraftSaving={isDraftSaving}
+              hasDraft={hasDraft}
             />
 
             {!isCodeView && (
