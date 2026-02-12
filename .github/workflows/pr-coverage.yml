@@ -128,6 +128,8 @@ jobs:
             **/*Provider.ts
             **/*Provider.tsx
             **/providers/**
+            # VS Code webview communication (uses acquireVsCodeApi runtime global, cannot be unit tested)
+            **/webviewCommunication.tsx
 
       - name: Check coverage on changed files
         id: coverage-check

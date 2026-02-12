@@ -8,8 +8,11 @@ import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { getRecordEntry, isEmptyString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
-import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
+import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion } from '../../../../constants';
+import { ext } from '../../../../extensionVariables';
+import { localize } from '../../../../localize';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
+import { workspace, window, ConfigurationTarget } from 'vscode';
 
 export interface IDesignerOptions {
   references?: any;
@@ -178,5 +181,48 @@ export abstract class OpenDesignerBase {
       return '';
     }
     return location.toLowerCase().replace(/ /g, '');
+  }
+
+  protected getDesignerVersion(): number {
+    const config = workspace.getConfiguration(ext.prefix);
+    return config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
+  }
+
+  protected async showDesignerVersionNotification(): Promise<void> {
+    const currentVersion = this.getDesignerVersion();
+    const config = workspace.getConfiguration(ext.prefix);
+
+    if (currentVersion === 1) {
+      const enablePreview = localize('enablePreview', 'Enable preview');
+      const message = localize('previewAvailable', 'A new Logic Apps experience is available for preview!');
+
+      const selection = await window.showInformationMessage(message, enablePreview);
+      if (selection === enablePreview) {
+        await config.update(designerVersionSetting, 2, ConfigurationTarget.Global);
+        const closeButton = localize('close', 'Close');
+        const reopenMessage = localize(
+          'closeToApply',
+          'Setting updated. Please close and reopen the workflow to apply the new experience.'
+        );
+        const reopenSelection = await window.showInformationMessage(reopenMessage, closeButton);
+        if (reopenSelection === closeButton) {
+          this.panel?.dispose();
+        }
+      }
+    } else {
+      const goBack = localize('goBack', 'Go back to previous version');
+      const message = localize('previewingNew', 'You are previewing the new Logic Apps experience.');
+
+      const selection = await window.showInformationMessage(message, goBack);
+      if (selection === goBack) {
+        await config.update(designerVersionSetting, 1, ConfigurationTarget.Global);
+        const closeButton = localize('close', 'Close');
+        const reopenMessage = localize('closeToApply', 'Setting updated. Please close and reopen the workflow to apply the change.');
+        const reopenSelection = await window.showInformationMessage(reopenMessage, closeButton);
+        if (reopenSelection === closeButton) {
+          this.panel?.dispose();
+        }
+      }
+    }
   }
 }
