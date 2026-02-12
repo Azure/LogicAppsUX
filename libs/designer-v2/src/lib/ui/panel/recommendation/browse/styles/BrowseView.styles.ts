@@ -4,6 +4,7 @@ export const useBrowseViewStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
+    border: '2px solid red',
   },
   backButton: {
     alignSelf: 'flex-start',
