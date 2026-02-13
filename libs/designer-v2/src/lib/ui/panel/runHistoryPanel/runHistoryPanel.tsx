@@ -577,6 +577,7 @@ export const RunHistoryPanel = () => {
                   icon={<FilterIcon />}
                   onClick={() => setFiltersExpanded((prev) => !prev)}
                   aria-label={toggleFiltersAria}
+                  aria-expanded={filtersExpanded}
                   style={{ marginRight: '-8px' }}
                 />
               </Tooltip>
