@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { designerSlice } from '../DesignerSlice';
 import type { DesignerState } from '../DesignerSlice';
 import {
@@ -11,6 +11,12 @@ import {
   updateDraftParameters,
   setDraftMode,
   clearDraftState,
+  updateRuntimeBaseUrl,
+  updateCallbackUrl,
+  updatePanelMetadata,
+  createFileSystemConnection,
+  updateFileSystemConnection,
+  updateUnitTestDefinition,
 } from '../DesignerSlice';
 
 const reducer = designerSlice.reducer;
@@ -54,6 +60,110 @@ const getInitialState = (): DesignerState => ({
 const mockDraftWorkflow = { triggers: {}, actions: { action1: { type: 'Http' } } };
 const mockDraftConnections = { conn1: { api: { id: '/providers/test' }, connection: { id: '/connections/conn1' } } };
 const mockDraftParameters = { param1: { type: 'String', value: 'hello' } };
+
+describe('DesignerSlice - core reducers', () => {
+  describe('updateRuntimeBaseUrl', () => {
+    it('should update workflowRuntimeBaseUrl', () => {
+      const result = reducer(getInitialState(), updateRuntimeBaseUrl('https://new-runtime.test.com'));
+      expect(result.workflowRuntimeBaseUrl).toBe('https://new-runtime.test.com');
+    });
+
+    it('should set empty string when payload is undefined', () => {
+      const state = { ...getInitialState(), workflowRuntimeBaseUrl: 'https://old.com' };
+      const result = reducer(state, updateRuntimeBaseUrl(undefined));
+      expect(result.workflowRuntimeBaseUrl).toBe('');
+    });
+  });
+
+  describe('updateCallbackUrl', () => {
+    it('should update callbackInfo from payload', () => {
+      const callbackInfo = { value: 'https://callback.test.com/trigger', method: 'POST' };
+      const result = reducer(getInitialState(), updateCallbackUrl({ callbackInfo }));
+      expect(result.callbackInfo).toEqual(callbackInfo);
+    });
+  });
+
+  describe('updatePanelMetadata', () => {
+    it('should update panelMetaData, connectionData, and apiHubServiceDetails', () => {
+      const panelMetadata = { standardApp: { definition: { triggers: {} } } } as any;
+      const connectionData = { conn1: { api: { id: '/test' } } } as any;
+      const apiHubServiceDetails = {
+        apiVersion: '2020-06-01',
+        baseUrl: 'https://hub.test.com',
+        subscriptionId: 'sub-123',
+        resourceGroup: 'rg',
+        location: 'eastus',
+        tenantId: 'tenant-123',
+        httpClient: null as any,
+      };
+
+      const result = reducer(getInitialState(), updatePanelMetadata({ panelMetadata, connectionData, apiHubServiceDetails }));
+
+      expect(result.panelMetaData).toEqual(panelMetadata);
+      expect(result.connectionData).toEqual(connectionData);
+      expect(result.apiHubServiceDetails).toEqual(apiHubServiceDetails);
+    });
+  });
+
+  describe('createFileSystemConnection', () => {
+    it('should store resolve and reject callbacks for the connection', () => {
+      const resolve = vi.fn();
+      const reject = vi.fn();
+      const result = reducer(getInitialState(), createFileSystemConnection({ connectionName: 'myConn', resolve, reject }));
+
+      expect(result.fileSystemConnections['myConn']).toBeDefined();
+      expect(result.fileSystemConnections['myConn'].resolveConnection).toBe(resolve);
+      expect(result.fileSystemConnections['myConn'].rejectConnection).toBe(reject);
+    });
+  });
+
+  describe('updateFileSystemConnection', () => {
+    it('should resolve the connection and remove it from state', () => {
+      const resolve = vi.fn();
+      const reject = vi.fn();
+      const state = {
+        ...getInitialState(),
+        fileSystemConnections: { myConn: { resolveConnection: resolve, rejectConnection: reject } },
+      };
+      const connection = { id: '/connections/myConn', name: 'myConn' };
+
+      const result = reducer(state, updateFileSystemConnection({ connectionName: 'myConn', connection } as any));
+
+      expect(resolve).toHaveBeenCalledWith(connection);
+      expect(reject).not.toHaveBeenCalled();
+      expect(result.fileSystemConnections['myConn']).toBeUndefined();
+    });
+
+    it('should reject the connection on error and remove it from state', () => {
+      const resolve = vi.fn();
+      const reject = vi.fn();
+      const state = {
+        ...getInitialState(),
+        fileSystemConnections: { myConn: { resolveConnection: resolve, rejectConnection: reject } },
+      };
+
+      const result = reducer(state, updateFileSystemConnection({ connectionName: 'myConn', error: 'Connection failed' } as any));
+
+      expect(reject).toHaveBeenCalledWith({ message: 'Connection failed' });
+      expect(resolve).not.toHaveBeenCalled();
+      expect(result.fileSystemConnections['myConn']).toBeUndefined();
+    });
+  });
+
+  describe('updateUnitTestDefinition', () => {
+    it('should update unitTestDefinition', () => {
+      const unitTestDefinition = {
+        triggerMocks: { manual: { outputs: {} } },
+        actionMocks: {},
+        assertions: [{ name: 'test', description: '', expression: { operand1: '', operator: 'equals', operand2: '' } }],
+      } as any;
+
+      const result = reducer(getInitialState(), updateUnitTestDefinition({ unitTestDefinition }));
+
+      expect(result.unitTestDefinition).toEqual(unitTestDefinition);
+    });
+  });
+});
 
 describe('DesignerSlice - draft reducers', () => {
   describe('initializeDesigner', () => {
