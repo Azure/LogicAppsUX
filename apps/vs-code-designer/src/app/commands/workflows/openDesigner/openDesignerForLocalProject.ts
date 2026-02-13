@@ -52,6 +52,7 @@ import { createUnitTest } from '../unitTest/codefulUnitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 import { saveUnitTestDefinition } from '../../../utils/unitTest/codelessUnitTest';
+import * as DraftManager from '../../../utils/codeless/draftManager';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -203,6 +204,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           }
         }, 3000);
 
+        // Check for existing draft before sending init data
+        const draftResult = DraftManager.loadDraft(this.workflowFilePath);
+
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
@@ -222,6 +226,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             isUnitTest: this.isUnitTest,
             unitTestDefinition: this.unitTestDefinition,
             runId: this.runId,
+            draftInfo: draftResult.hasDraft
+              ? {
+                  hasDraft: true,
+                  draftWorkflow: draftResult.draftWorkflow,
+                  draftConnections: draftResult.draftConnections,
+                  draftParameters: draftResult.draftParameters,
+                }
+              : undefined,
           },
         });
 
@@ -231,6 +243,46 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         //     await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
         //   }
         // });
+        break;
+      }
+      case ExtensionCommand.saveDraft: {
+        try {
+          DraftManager.saveDraft(this.workflowFilePath, {
+            definition: msg.definition,
+            connectionReferences: msg.connectionReferences,
+            parameters: msg.parameters,
+          });
+          this.sendMsgToWebview({
+            command: ExtensionCommand.draftSaveResult,
+            data: {
+              success: true,
+              timestamp: Date.now(),
+            },
+          });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error saving draft';
+          this.sendMsgToWebview({
+            command: ExtensionCommand.draftSaveResult,
+            data: {
+              success: false,
+              error: errorMessage,
+              timestamp: Date.now(),
+            },
+          });
+        }
+        break;
+      }
+      case ExtensionCommand.discardDraft: {
+        DraftManager.discardDraft(this.workflowFilePath);
+        this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+        this.sendMsgToWebview({
+          command: ExtensionCommand.update_panel_metadata,
+          data: {
+            panelMetadata: this.panelMetadata,
+            connectionData: this.connectionData,
+            apiHubServiceDetails: this.apiHubServiceDetails,
+          },
+        });
         break;
       }
       case ExtensionCommand.save: {
@@ -247,6 +299,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             this.panelMetadata.azureDetails?.tenantId,
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
+          // Clean up draft files after successful publish
+          DraftManager.discardDraft(this.workflowFilePath);
           // const savedLocalSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
           // let savedWorkflow: any;
 

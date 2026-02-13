@@ -1044,6 +1044,91 @@ export const designerMessages = defineMessages({
     id: 'JBRP7/',
     description: 'Chat button tooltip content',
   },
+  WORKFLOW_TAB: {
+    defaultMessage: 'Workflow',
+    id: 'eBUll8',
+    description: 'Workflow view tab label',
+  },
+  CODE_TAB: {
+    defaultMessage: 'Code',
+    id: '51R+Yi',
+    description: 'Code view tab label',
+  },
+  RUN_HISTORY_TAB: {
+    defaultMessage: 'Run history',
+    id: 'VX+NSO',
+    description: 'Run history view tab label',
+  },
+  PUBLISH: {
+    defaultMessage: 'Publish',
+    id: '/G2PKx',
+    description: 'Publish workflow button text',
+  },
+  PUBLISHING: {
+    defaultMessage: 'Publishing...',
+    id: 't+O3cA',
+    description: 'Publishing workflow in progress text',
+  },
+  DISCARD_SESSION_CHANGES: {
+    defaultMessage: 'Discard session changes',
+    id: 'G/cgpt',
+    description: 'Discard session changes menu item',
+  },
+  DISCARD_DRAFT: {
+    defaultMessage: 'Discard draft (revert to published)',
+    id: '/Z4h+e',
+    description: 'Discard draft and revert to published menu item',
+  },
+  SAVING_DRAFT: {
+    defaultMessage: 'Saving...',
+    id: 'WX0qjz',
+    description: 'Draft saving in progress text',
+  },
+  ERROR_AUTOSAVING_DRAFT: {
+    defaultMessage: 'Error autosaving draft',
+    id: 'qPTkCH',
+    description: 'Draft auto-save error badge text',
+  },
+  SWITCH_TO_PUBLISHED: {
+    defaultMessage: 'Switch to published version',
+    id: 'pEYjPM',
+    description: 'Switch to published version menu item',
+  },
+  SWITCH_TO_DRAFT: {
+    defaultMessage: 'Switch to draft version',
+    id: 'WcfWf+',
+    description: 'Switch to draft version menu item',
+  },
+  MORE_ACTIONS: {
+    defaultMessage: 'More',
+    id: 'RJt+Xc',
+    description: 'More actions overflow button aria label',
+  },
+  AUTOSAVED_SECONDS_AGO: {
+    defaultMessage: 'Autosaved a few seconds ago',
+    id: 'eQH2yV',
+    description: 'Autosaved a few seconds ago text',
+  },
+  AUTOSAVED_MINUTES_AGO: {
+    defaultMessage: 'Autosaved a few minutes ago',
+    id: 'PLsANU',
+    description: 'Autosaved a few minutes ago text',
+  },
+  AUTOSAVED_ONE_HOUR_AGO: {
+    defaultMessage: 'Autosaved 1 hour ago',
+    id: 'usAOQT',
+    description: 'Autosaved one hour ago text',
+  },
+  AUTOSAVED_HOURS_AGO: {
+    defaultMessage: 'Autosaved {count} hours ago',
+    id: 'PdiacD',
+    description: 'Autosaved multiple hours ago text',
+  },
+  DRAFT_AUTOSAVED_AT: {
+    defaultMessage: 'Draft autosaved at: {time}',
+    id: '2EPQQD',
+    description: 'Draft autosaved tooltip showing exact time',
+  },
 });
 
 export const overviewMessages = defineMessages({

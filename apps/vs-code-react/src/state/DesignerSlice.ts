@@ -26,6 +26,14 @@ export interface DesignerState {
   hostVersion: string;
   isUnitTest: boolean;
   unitTestDefinition: UnitTestDefinition | null;
+  isDraftMode: boolean;
+  hasDraft: boolean;
+  draftWorkflow: any | null;
+  draftConnections: any | null;
+  draftParameters: any | null;
+  lastDraftSaveTime: number | null;
+  draftSaveError: string | null;
+  isDraftSaving: boolean;
 }
 
 const initialState: DesignerState = {
@@ -57,6 +65,14 @@ const initialState: DesignerState = {
   hostVersion: '',
   isUnitTest: false,
   unitTestDefinition: null,
+  isDraftMode: true,
+  hasDraft: false,
+  draftWorkflow: null,
+  draftConnections: null,
+  draftParameters: null,
+  lastDraftSaveTime: null,
+  draftSaveError: null,
+  isDraftSaving: false,
 };
 
 export const designerSlice = createSlice({
@@ -80,6 +96,7 @@ export const designerSlice = createSlice({
         isUnitTest,
         unitTestDefinition,
         workflowRuntimeBaseUrl,
+        draftInfo,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -96,6 +113,22 @@ export const designerSlice = createSlice({
       state.hostVersion = hostVersion;
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
+
+      // Process draft info if included in initialization
+      if (draftInfo?.hasDraft) {
+        state.hasDraft = true;
+        state.isDraftMode = true;
+        state.draftWorkflow = draftInfo.draftWorkflow ?? null;
+        state.draftConnections = draftInfo.draftConnections ?? null;
+        state.draftParameters = draftInfo.draftParameters ?? null;
+      } else {
+        // No draft exists - still in draft mode (editable) but no draft files
+        state.hasDraft = false;
+        state.isDraftMode = true;
+        state.draftWorkflow = null;
+        state.draftConnections = null;
+        state.draftParameters = null;
+      }
     },
     updateRuntimeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
       state.workflowRuntimeBaseUrl = action.payload ?? '';
@@ -135,6 +168,62 @@ export const designerSlice = createSlice({
       const { unitTestDefinition } = action.payload;
       state.unitTestDefinition = unitTestDefinition;
     },
+    loadDraftState: (
+      state,
+      action: PayloadAction<{
+        hasDraft: boolean;
+        draftWorkflow?: any;
+        draftConnections?: any;
+        draftParameters?: any;
+      }>
+    ) => {
+      state.hasDraft = action.payload.hasDraft;
+      state.draftWorkflow = action.payload.draftWorkflow ?? null;
+      state.draftConnections = action.payload.draftConnections ?? null;
+      state.draftParameters = action.payload.draftParameters ?? null;
+    },
+    updateDraftSaveResult: (
+      state,
+      action: PayloadAction<{
+        success: boolean;
+        timestamp: number;
+        error?: string;
+      }>
+    ) => {
+      state.isDraftSaving = false;
+      if (action.payload.success) {
+        state.lastDraftSaveTime = action.payload.timestamp;
+        state.draftSaveError = null;
+        state.hasDraft = true;
+      } else {
+        state.draftSaveError = action.payload.error ?? 'Unknown error';
+      }
+    },
+    setDraftSaving: (state, action: PayloadAction<boolean>) => {
+      state.isDraftSaving = action.payload;
+    },
+    updateDraftWorkflow: (state, action: PayloadAction<any>) => {
+      state.draftWorkflow = action.payload;
+    },
+    updateDraftConnections: (state, action: PayloadAction<any>) => {
+      state.draftConnections = action.payload;
+    },
+    updateDraftParameters: (state, action: PayloadAction<any>) => {
+      state.draftParameters = action.payload;
+    },
+    setDraftMode: (state, action: PayloadAction<boolean>) => {
+      state.isDraftMode = action.payload;
+    },
+    clearDraftState: (state) => {
+      state.hasDraft = false;
+      state.draftWorkflow = null;
+      state.draftConnections = null;
+      state.draftParameters = null;
+      state.lastDraftSaveTime = null;
+      state.draftSaveError = null;
+      state.isDraftSaving = false;
+      state.isDraftMode = true;
+    },
   },
 });
 
@@ -146,4 +235,12 @@ export const {
   updateFileSystemConnection,
   updatePanelMetadata,
   updateUnitTestDefinition,
+  loadDraftState,
+  updateDraftSaveResult,
+  setDraftSaving,
+  updateDraftWorkflow,
+  updateDraftConnections,
+  updateDraftParameters,
+  setDraftMode,
+  clearDraftState,
 } = designerSlice.actions;
