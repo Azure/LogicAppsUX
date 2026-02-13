@@ -93,6 +93,40 @@ export const RunHistoryPanel = () => {
   const [customStart, setCustomStart] = useState<Date | null>(null);
   const [customEnd, setCustomEnd] = useState<Date | null>(null);
 
+  const onCustomDateSelect = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (date: Date | null | undefined) => {
+      if (!date) {
+        setter(null);
+        return;
+      }
+      setter((prev) => {
+        const updated = new Date(date);
+        if (prev) {
+          updated.setHours(prev.getHours(), prev.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
+        } else if (isEnd) {
+          updated.setHours(23, 59, 59, 999);
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
+  const onCustomTimeChange = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (_e: unknown, data: { selectedTime: Date | null }) => {
+      setter((prev) => {
+        const base = prev ? new Date(prev) : new Date();
+        if (data.selectedTime) {
+          base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
+        } else {
+          base.setHours(isEnd ? 23 : 0, isEnd ? 59 : 0, isEnd ? 59 : 0, isEnd ? 999 : 0);
+        }
+        return base;
+      });
+    },
+    []
+  );
+
   const filteredRuns = useMemo(() => {
     return (
       runs?.filter((run) => {
@@ -616,17 +650,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customStart}
                         isMonthPickerVisible={false}
-                        onSelectDate={(date) => {
-                          if (!date) {
-                            setCustomStart(null);
-                            return;
-                          }
-                          const updated = new Date(date);
-                          if (customStart) {
-                            updated.setHours(customStart.getHours(), customStart.getMinutes(), 0, 0);
-                          }
-                          setCustomStart(updated);
-                        }}
+                        onSelectDate={onCustomDateSelect(setCustomStart, false)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
@@ -635,17 +659,7 @@ export const RunHistoryPanel = () => {
                         size="small"
                         placeholder={selectTimePlaceholder}
                         selectedTime={customStart}
-                        onTimeChange={(_e, data) => {
-                          setCustomStart((prev) => {
-                            const base = prev ? new Date(prev) : new Date();
-                            if (data.selectedTime) {
-                              base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), 0, 0);
-                            } else {
-                              base.setHours(0, 0, 0, 0);
-                            }
-                            return base;
-                          });
-                        }}
+                        onTimeChange={onCustomTimeChange(setCustomStart, false)}
                         clearable
                         mountNode={compatMountNode}
                       />
@@ -657,19 +671,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customEnd}
                         isMonthPickerVisible={false}
-                        onSelectDate={(date) => {
-                          if (!date) {
-                            setCustomEnd(null);
-                            return;
-                          }
-                          const updated = new Date(date);
-                          if (customEnd) {
-                            updated.setHours(customEnd.getHours(), customEnd.getMinutes(), 59, 999);
-                          } else {
-                            updated.setHours(23, 59, 59, 999);
-                          }
-                          setCustomEnd(updated);
-                        }}
+                        onSelectDate={onCustomDateSelect(setCustomEnd, true)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
@@ -678,17 +680,7 @@ export const RunHistoryPanel = () => {
                         size="small"
                         placeholder={selectTimePlaceholder}
                         selectedTime={customEnd}
-                        onTimeChange={(_e, data) => {
-                          setCustomEnd((prev) => {
-                            const base = prev ? new Date(prev) : new Date();
-                            if (data.selectedTime) {
-                              base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), 59, 999);
-                            } else {
-                              base.setHours(23, 59, 59, 999);
-                            }
-                            return base;
-                          });
-                        }}
+                        onTimeChange={onCustomTimeChange(setCustomEnd, true)}
                         clearable
                         mountNode={compatMountNode}
                       />
