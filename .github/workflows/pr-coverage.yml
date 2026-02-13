@@ -89,6 +89,9 @@ jobs:
             **/types.ts
             **/types.tsx
             **/styles.ts
+            **/styles.tsx
+            **/*.styles.ts
+            **/*.styles.tsx
             **/constants.ts
             **/constants/**
             # Config files
