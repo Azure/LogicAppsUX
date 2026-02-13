@@ -71,8 +71,8 @@ importers:
         specifier: ^20.0.2
         version: 20.0.2
       react-window:
-        specifier: ^1.8.11
-        version: 1.8.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^2.2.6
+        version: 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.12.7)(typescript@5.7.2)
@@ -123,8 +123,8 @@ importers:
         specifier: ^18.0.7
         version: 18.0.7
       '@types/react-window':
-        specifier: ^1.8.8
-        version: 1.8.8
+        specifier: ^2.0.0
+        version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.15.0
         version: 8.15.0(@typescript-eslint/parser@8.29.1(eslint@9.26.0(jiti@1.21.0))(typescript@5.7.2))(eslint@9.26.0(jiti@1.21.0))(typescript@5.7.2)
@@ -1567,8 +1567,8 @@ importers:
         specifier: 8.0.2
         version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1)
       react-window:
-        specifier: ^1.8.11
-        version: 1.8.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^2.2.6
+        version: 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       redux-thunk:
         specifier: 2.4.2
         version: 2.4.2(redux@4.2.1)
@@ -3133,7 +3133,7 @@ packages:
     engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.28.6':
-    resolution: {integrity: sha512-05WQkdpL9COIMz4LjTxGpPNCdlpyimKppYNoJ5Di5EUObifl8t4tuLuUBBZEpoLYOmfvIWrsp9fCl0HoPRVTdA==}
+    resolution: {integrity: sha1-0mekPLGDbcTRgszpOudbqVTvbSs=}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
@@ -7004,8 +7004,9 @@ packages:
   '@types/react-test-renderer@18.0.7':
     resolution: {integrity: sha512-1+ANPOWc6rB3IkSnElhjv6VLlKg2dSv/OWClUyZimbLsQyBn8Js9Vtdsi3UICJ2rIQ3k2la06dkB+C92QfhKmg==}
 
-  '@types/react-window@1.8.8':
-    resolution: {integrity: sha512-8Ls660bHR1AUA2kuRvVG9D/4XpRC6wjAaPT9dil7Ckc76eP9TKWZwwmgfq8Q1LANX3QNDnoU4Zp48A3w+zK69Q==}
+  '@types/react-window@2.0.0':
+    resolution: {integrity: sha1-n+RQFdb5jsmKBpNiUYyFX8wfqNA=}
+    deprecated: This is a stub types definition. react-window provides its own type definitions, so you do not need this installed.
 
   '@types/react@18.3.0':
     resolution: {integrity: sha512-DiUcKjzE6soLyln8NNZmyhcQjVv+WsUIFSqetMN0p8927OztKT4VTfFTqsbAi5oAGIcgOmOajlfBqyptDDjZRw==}
@@ -13124,6 +13125,12 @@ packages:
   react-window@1.8.11:
     resolution: {integrity: sha512-+SRbUVT2scadgFSWx+R1P754xHPEqvcfSfVX10QYg6POOz+WNgkN48pS+BtZNIMGiL1HYrSEiCkwsMS15QogEQ==}
     engines: {node: '>8.0.0'}
+    peerDependencies:
+      react: 18.3.1
+      react-dom: 18.3.1
+
+  react-window@2.2.6:
+    resolution: {integrity: sha1-AMoXQ0a1FG08M6dS2IgYElDHHZ8=}
     peerDependencies:
       react: 18.3.1
       react-dom: 18.3.1
@@ -23582,9 +23589,12 @@ snapshots:
     dependencies:
       '@types/react': 18.3.0
 
-  '@types/react-window@1.8.8':
+  '@types/react-window@2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@types/react': 18.3.0
+      react-window: 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   '@types/react@18.3.0':
     dependencies:
@@ -31179,6 +31189,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.27.6
       memoize-one: 5.2.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  react-window@2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
