@@ -12,6 +12,7 @@ import { xml } from '@codemirror/lang-xml';
 import { yaml } from '@codemirror/lang-yaml';
 import { csharp } from '@codemirror/legacy-modes/mode/clike';
 import { powerShell } from '@codemirror/legacy-modes/mode/powershell';
+import { MergeView } from '@codemirror/merge';
 import { useTheme } from '@fluentui/react';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { createFluentTheme } from './themes/fluent';
@@ -59,6 +60,8 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
       className,
       defaultValue = '',
       value,
+      originalValue,
+      showMerge,
       language,
       height,
       width,
@@ -87,6 +90,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
     const { isInverted } = useTheme();
     const containerRef = useRef<HTMLDivElement>(null);
     const viewRef = useRef<EditorView | null>(null);
+    const mergeViewRef = useRef<MergeView | null>(null);
     const isInitializedRef = useRef(false);
 
     // Create ref methods
@@ -149,6 +153,54 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
       }
       isInitializedRef.current = true;
 
+      const baseThemeSpec = {
+        '&': {
+          fontSize: `${fontSize}px`,
+          height: '100%',
+          minHeight: '100px',
+          boxSizing: 'border-box',
+        },
+        '.cm-scroller': {
+          overflow: 'auto',
+          fontFamily: '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          fontWeight: '500',
+          letterSpacing: '0.5px',
+          lineHeight: '1.4',
+        },
+        '.cm-content': {
+          textAlign: 'left',
+          padding: '4px 0',
+          fontVariantLigatures: 'none',
+        },
+        '.cm-line': {
+          padding: '0 4px',
+        },
+        '.cm-gutterElement': {
+          fontFamily: '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          fontWeight: '500',
+        },
+        '.cm-changedLine': {
+          backgroundColor: 'rgba(100, 255, 128, .12) !important',
+        },
+      };
+
+      const editorTheme = EditorView.theme({
+        ...baseThemeSpec,
+        '&': {
+          ...baseThemeSpec['&'],
+          border: `1px solid ${isInverted ? '#605e5c' : '#8a8886'}`,
+          borderRadius: '2px',
+        },
+        '&.cm-focused': {
+          outline: 'none',
+          borderColor: '#0078d4',
+        },
+        '.cm-gutters': {
+          borderRight: `1px solid ${isInverted ? '#3b3a39' : '#e1e1e1'}`,
+          backgroundColor: isInverted ? '#252423' : '#f3f3f3',
+        },
+      });
+
       const extensions = [
         history(),
         bracketMatching(),
@@ -173,43 +225,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
           onMouseDown,
         }),
         keybindingsCompartment.of(createKeybindingExtensions({ openTokenPicker, indentWithTab })),
-        EditorView.theme({
-          '&': {
-            fontSize: `${fontSize}px`,
-            height: '100%',
-            minHeight: '100px',
-            border: `1px solid ${isInverted ? '#605e5c' : '#8a8886'}`,
-            borderRadius: '2px',
-            boxSizing: 'border-box',
-          },
-          '&.cm-focused': {
-            outline: 'none',
-            borderColor: '#0078d4',
-          },
-          '.cm-scroller': {
-            overflow: 'auto',
-            fontFamily: '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-            fontWeight: '500',
-            letterSpacing: '0.5px',
-            lineHeight: '1.4',
-          },
-          '.cm-content': {
-            textAlign: 'left',
-            padding: '4px 0',
-            fontVariantLigatures: 'none',
-          },
-          '.cm-line': {
-            padding: '0 4px',
-          },
-          '.cm-gutterElement': {
-            fontFamily: '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-            fontWeight: '500',
-          },
-          '.cm-gutters': {
-            borderRight: `1px solid ${isInverted ? '#3b3a39' : '#e1e1e1'}`,
-            backgroundColor: isInverted ? '#252423' : '#f3f3f3',
-          },
-        }),
+        editorTheme,
       ];
 
       if (lineNumbers === 'on') {
@@ -222,6 +238,47 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
 
       if (wordWrap === 'on' || wordWrap === 'bounded') {
         extensions.push(EditorView.lineWrapping);
+      }
+
+      if (showMerge) {
+        const mergeView = new MergeView({
+          a: {
+            doc: originalValue ?? '',
+            extensions: [
+              EditorView.editable.of(false),
+              EditorState.readOnly.of(true),
+              themeCompartment.of(createFluentTheme(isInverted)),
+              languageCompartment.of(getLanguageExtension(language)),
+              EditorView.theme({
+                ...baseThemeSpec,
+                '.cm-changedLine': {
+                  backgroundColor: 'rgba(255, 128, 100, .12) !important',
+                },
+                '.cm-content': {
+                  backgroundColor: isInverted ? '#252423' : '#f3f3f3',
+                },
+              }),
+              ...(lineNumbers === 'on' ? [lineNumbersExtension()] : []),
+            ],
+          },
+          b: {
+            doc: value ?? defaultValue,
+            extensions,
+          },
+          parent: containerRef.current,
+        });
+
+        mergeViewRef.current = mergeView;
+        viewRef.current = mergeView.b;
+        onEditorRef?.(editorRef);
+        onEditorLoaded?.();
+
+        return () => {
+          mergeView.destroy();
+          mergeViewRef.current = null;
+          viewRef.current = null;
+          isInitializedRef.current = false;
+        };
       }
 
       const state = EditorState.create({
@@ -296,6 +353,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
     const containerStyle: React.CSSProperties = {
       height: height ?? '100%',
       width: width ?? '100%',
+      overflow: 'auto',
       ...monacoContainerStyle,
     };
 
