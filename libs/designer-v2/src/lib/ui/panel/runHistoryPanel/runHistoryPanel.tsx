@@ -18,6 +18,7 @@ import {
   Tab,
   Dropdown,
   Option,
+  Tooltip,
 } from '@fluentui/react-components';
 import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
@@ -40,6 +41,8 @@ import {
   ChevronDoubleLeftRegular,
   ArrowLeftFilled,
   ArrowLeftRegular,
+  FilterFilled,
+  FilterRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
 import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
@@ -47,16 +50,19 @@ import { AgentChatContent } from './agentChatContent';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
 import { RunMenu } from './runMenu';
 import StatusIndicator from './statusIndicator';
+import { DatePicker } from '@fluentui/react-datepicker-compat';
+import { TimePicker } from '@fluentui/react-timepicker-compat';
 
 // MARK: End Imports
 
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const CollapseIcon = bundleIcon(ChevronDoubleLeftFilled, ChevronDoubleLeftRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
+const FilterIcon = bundleIcon(FilterFilled, FilterRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
-export type FilterTypes = 'runId' | 'workflowVersion' | 'status' | 'mode';
+export type FilterTypes = 'runId' | 'workflowVersion' | 'status' | 'mode' | 'timeInterval';
 
 export const RunHistoryPanel = () => {
   const intl = useIntl();
@@ -82,6 +88,45 @@ export const RunHistoryPanel = () => {
 
   // MARK: Filtering
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+
+  const [customStart, setCustomStart] = useState<Date | null>(null);
+  const [customEnd, setCustomEnd] = useState<Date | null>(null);
+
+  const onCustomDateSelect = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (date: Date | null | undefined) => {
+      if (!date) {
+        setter(null);
+        return;
+      }
+      setter((prev) => {
+        const updated = new Date(date);
+        if (prev) {
+          updated.setHours(prev.getHours(), prev.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
+        } else if (isEnd) {
+          updated.setHours(23, 59, 59, 999);
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
+  const onCustomTimeChange = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (_e: unknown, data: { selectedTime: Date | null }) => {
+      setter((prev) => {
+        const base = prev ? new Date(prev) : new Date();
+        if (data.selectedTime) {
+          base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
+        } else {
+          base.setHours(isEnd ? 23 : 0, isEnd ? 59 : 0, isEnd ? 59 : 0, isEnd ? 999 : 0);
+        }
+        return base;
+      });
+    },
+    []
+  );
+
   const filteredRuns = useMemo(() => {
     return (
       runs?.filter((run) => {
@@ -100,10 +145,39 @@ export const RunHistoryPanel = () => {
         if (filters?.['mode'] === 'Prod' && (run.properties.workflow as any)?.mode !== undefined) {
           return false;
         }
+        // Time interval filter
+        if (filters?.['timeInterval'] && run.properties.startTime) {
+          const runTime = new Date(run.properties.startTime).getTime();
+          const now = Date.now();
+          const interval = filters['timeInterval'];
+          if (interval === 'last24h' && runTime < now - Durations.day) {
+            return false;
+          }
+          if (interval === 'last48h' && runTime < now - 2 * Durations.day) {
+            return false;
+          }
+          if (interval === 'last7d' && runTime < now - Durations.week) {
+            return false;
+          }
+          if (interval === 'last14d' && runTime < now - 2 * Durations.week) {
+            return false;
+          }
+          if (interval === 'last30d' && runTime < now - 30 * Durations.day) {
+            return false;
+          }
+          if (interval === 'custom') {
+            if (customStart && runTime < customStart.getTime()) {
+              return false;
+            }
+            if (customEnd && runTime > customEnd.getTime()) {
+              return false;
+            }
+          }
+        }
         return true;
       }) ?? []
     );
-  }, [filters, runs]);
+  }, [filters, runs, customStart, customEnd]);
 
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
@@ -120,6 +194,8 @@ export const RunHistoryPanel = () => {
   // Clear filters when switching views
   useEffect(() => {
     setFilters({});
+    setCustomStart(null);
+    setCustomEnd(null);
   }, [isMonitoringView]);
 
   // MARK: INTL
@@ -178,6 +254,12 @@ export const RunHistoryPanel = () => {
     id: 'ob2fSf',
   });
 
+  const toggleFiltersAria = intl.formatMessage({
+    defaultMessage: 'Toggle filters',
+    description: 'Aria label for the toggle filters button',
+    id: 'ldBi4y',
+  });
+
   const statusFilterLabel = intl.formatMessage({
     defaultMessage: 'Status',
     description: 'Status filter label',
@@ -188,6 +270,36 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Version',
     description: 'Mode filter label',
     id: 'RXZ+9a',
+  });
+
+  const timeIntervalFilterLabel = intl.formatMessage({
+    defaultMessage: 'Time range',
+    description: 'Time interval filter label',
+    id: 'oglOen',
+  });
+
+  const customStartLabel = intl.formatMessage({
+    defaultMessage: 'From',
+    description: 'Custom time range start label',
+    id: '3nbg4r',
+  });
+
+  const customEndLabel = intl.formatMessage({
+    defaultMessage: 'To',
+    description: 'Custom time range end label',
+    id: 'BOD0+G',
+  });
+
+  const selectDatePlaceholder = intl.formatMessage({
+    defaultMessage: 'Select date',
+    description: 'Placeholder for date picker input',
+    id: 'IU8Zu9',
+  });
+
+  const selectTimePlaceholder = intl.formatMessage({
+    defaultMessage: 'Select time',
+    description: 'Placeholder for time picker input',
+    id: 'sqeFva',
   });
 
   const runStatusTexts: Record<string, string> = {
@@ -202,6 +314,16 @@ export const RunHistoryPanel = () => {
     All: intl.formatMessage({ defaultMessage: 'All', description: 'All run modes', id: 'cZqrL1' }),
     Prod: intl.formatMessage({ defaultMessage: 'Production', description: 'Production run mode', id: 'sZw20A' }),
     Draft: intl.formatMessage({ defaultMessage: 'Draft', description: 'Draft run mode', id: 'YGKVSj' }),
+  };
+
+  const timeIntervalTexts: Record<string, string> = {
+    All: intl.formatMessage({ defaultMessage: 'All', description: 'All time intervals', id: 'sXFMqZ' }),
+    last24h: intl.formatMessage({ defaultMessage: 'Last 24 hours', description: 'Last 24 hours filter', id: 'rbVW+z' }),
+    last48h: intl.formatMessage({ defaultMessage: 'Last 48 hours', description: 'Last 48 hours filter', id: 'Ul4k7r' }),
+    last7d: intl.formatMessage({ defaultMessage: 'Last 7 days', description: 'Last 7 days filter', id: 'v80mnx' }),
+    last14d: intl.formatMessage({ defaultMessage: 'Last 14 days', description: 'Last 14 days filter', id: 'W7l+j+' }),
+    last30d: intl.formatMessage({ defaultMessage: 'Last 30 days', description: 'Last 30 days filter', id: 'X0/aJy' }),
+    custom: intl.formatMessage({ defaultMessage: 'Custom range', description: 'Custom time range filter', id: 'PPssRb' }),
   };
 
   const treeViewTitle = intl.formatMessage({
@@ -304,6 +426,37 @@ export const RunHistoryPanel = () => {
     [addFilterCallback]
   );
 
+  const timeIntervalTags = useMemo(
+    () => [
+      { value: 'All', children: timeIntervalTexts['All'] },
+      { value: 'last24h', children: timeIntervalTexts['last24h'] },
+      { value: 'last48h', children: timeIntervalTexts['last48h'] },
+      { value: 'last7d', children: timeIntervalTexts['last7d'] },
+      { value: 'last14d', children: timeIntervalTexts['last14d'] },
+      { value: 'last30d', children: timeIntervalTexts['last30d'] },
+      { value: 'custom', children: timeIntervalTexts['custom'] },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const onTimeIntervalSelect = useCallback(
+    (value: string) => {
+      if (!value || equals(value, 'All')) {
+        addFilterCallback({ key: 'timeInterval', value: undefined });
+        setCustomStart(null);
+        setCustomEnd(null);
+      } else {
+        addFilterCallback({ key: 'timeInterval', value });
+        if (value !== 'custom') {
+          setCustomStart(null);
+          setCustomEnd(null);
+        }
+      }
+    },
+    [addFilterCallback]
+  );
+
   const chatEnabled = useWorkflowHasAgentLoop();
   const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
 
@@ -322,6 +475,10 @@ export const RunHistoryPanel = () => {
   // If a runId filter is set, prefetch that run's data
   const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
 
+  const compatMountNode = useMemo(() => {
+    return document.getElementById('fluent-compat-component-mount') ?? undefined;
+  }, []);
+
   // MARK: Components
 
   const CollapseButton = () => (
@@ -329,17 +486,19 @@ export const RunHistoryPanel = () => {
   );
 
   const RefreshButton = () => (
-    <Button
-      appearance="subtle"
-      disabled={runsQuery.isFetching}
-      onClick={() => {
-        runsQuery.refetch();
-        runQuery.refetch();
-      }}
-      icon={(runsQuery.isRefetching && !runsQuery.isLoading) || isFetchingFilteredRun ? <Spinner size={'tiny'} /> : <RefreshIcon />}
-      aria-label={refreshAria}
-      style={{ marginRight: '-8px' }}
-    />
+    <Tooltip content={refreshAria} relationship="label">
+      <Button
+        appearance="subtle"
+        disabled={runsQuery.isFetching}
+        onClick={() => {
+          runsQuery.refetch();
+          runQuery.refetch();
+        }}
+        icon={(runsQuery.isRefetching && !runsQuery.isLoading) || isFetchingFilteredRun ? <Spinner size={'tiny'} /> : <RefreshIcon />}
+        aria-label={refreshAria}
+        style={{ marginRight: '-8px' }}
+      />
+    </Tooltip>
   );
 
   // MARK: Render
@@ -412,45 +571,125 @@ export const RunHistoryPanel = () => {
                 />
               </Field>
               <RefreshButton />
+              <Tooltip content={toggleFiltersAria} relationship="label">
+                <Button
+                  appearance="subtle"
+                  icon={<FilterIcon />}
+                  onClick={() => setFiltersExpanded((prev) => !prev)}
+                  aria-label={toggleFiltersAria}
+                  aria-expanded={filtersExpanded}
+                  style={{ marginRight: '-8px' }}
+                />
+              </Tooltip>
             </div>
-            <div className={styles.flexbox}>
-              <Field label={statusFilterLabel} style={{ flex: 1 }}>
-                <Dropdown
-                  size="small"
-                  value={filters?.['status'] ?? 'All'}
-                  defaultValue={'All'}
-                  defaultSelectedOptions={[filters?.['status'] ?? 'All']}
-                  onActiveOptionChange={(_, data) => {
-                    onStatusSelect(data.nextOption?.value as string);
-                  }}
-                  style={{ minWidth: '0px' }}
-                >
-                  {statusTags.map((tag) => (
-                    <Option key={tag.value} value={tag.value} text={tag.children}>
-                      <StatusIndicator status={tag.value} />
-                    </Option>
-                  ))}
-                </Dropdown>
-              </Field>
-              <Field label={modeFilterLabel} style={{ flex: 1 }}>
-                <Dropdown
-                  size="small"
-                  value={filters?.['mode'] ?? 'All'}
-                  defaultValue={'All'}
-                  defaultSelectedOptions={[filters?.['mode'] ?? 'All']}
-                  onActiveOptionChange={(_, data) => {
-                    onModeSelect(data.nextOption?.value as string);
-                  }}
-                  style={{ minWidth: '0px' }}
-                >
-                  {modeTags.map((tag) => (
-                    <Option key={tag.value} value={tag.value}>
-                      {tag.children}
-                    </Option>
-                  ))}
-                </Dropdown>
-              </Field>
-            </div>
+            {filtersExpanded && (
+              <div className={styles.filterContainer}>
+                <div className={styles.flexbox}>
+                  <Field label={statusFilterLabel} style={{ flex: 1 }}>
+                    <Dropdown
+                      size="small"
+                      value={filters?.['status'] ?? 'All'}
+                      defaultValue={'All'}
+                      defaultSelectedOptions={[filters?.['status'] ?? 'All']}
+                      onActiveOptionChange={(_, data) => {
+                        onStatusSelect(data.nextOption?.value as string);
+                      }}
+                      style={{ minWidth: '0px' }}
+                    >
+                      {statusTags.map((tag) => (
+                        <Option key={tag.value} value={tag.value} text={tag.children}>
+                          <StatusIndicator status={tag.value} />
+                        </Option>
+                      ))}
+                    </Dropdown>
+                  </Field>
+                  <Field label={modeFilterLabel} style={{ flex: 1 }}>
+                    <Dropdown
+                      size="small"
+                      value={filters?.['mode'] ?? 'All'}
+                      defaultValue={'All'}
+                      defaultSelectedOptions={[filters?.['mode'] ?? 'All']}
+                      onActiveOptionChange={(_, data) => {
+                        onModeSelect(data.nextOption?.value as string);
+                      }}
+                      style={{ minWidth: '0px' }}
+                    >
+                      {modeTags.map((tag) => (
+                        <Option key={tag.value} value={tag.value}>
+                          {tag.children}
+                        </Option>
+                      ))}
+                    </Dropdown>
+                  </Field>
+                </div>
+                <div className={styles.flexbox}>
+                  <Field label={timeIntervalFilterLabel} style={{ flex: 1 }}>
+                    <Dropdown
+                      size="small"
+                      value={filters?.['timeInterval'] ? timeIntervalTexts[filters['timeInterval']] : 'All'}
+                      defaultValue={'All'}
+                      defaultSelectedOptions={[filters?.['timeInterval'] ?? 'All']}
+                      onActiveOptionChange={(_, data) => {
+                        onTimeIntervalSelect(data.nextOption?.value as string);
+                      }}
+                      style={{ minWidth: '0px' }}
+                    >
+                      {timeIntervalTags.map((tag) => (
+                        <Option key={tag.value} value={tag.value}>
+                          {tag.children}
+                        </Option>
+                      ))}
+                    </Dropdown>
+                  </Field>
+                </div>
+                {filters?.['timeInterval'] === 'custom' && (
+                  <div className={styles.flexbox}>
+                    <Field label={customStartLabel} style={{ flex: 1 }}>
+                      <DatePicker
+                        className={styles.smallInput}
+                        size="small"
+                        placeholder={selectDatePlaceholder}
+                        value={customStart}
+                        isMonthPickerVisible={false}
+                        onSelectDate={onCustomDateSelect(setCustomStart, false)}
+                        style={{ marginBottom: '4px' }}
+                        mountNode={compatMountNode}
+                      />
+                      <TimePicker
+                        className={styles.smallInput}
+                        size="small"
+                        placeholder={selectTimePlaceholder}
+                        selectedTime={customStart}
+                        onTimeChange={onCustomTimeChange(setCustomStart, false)}
+                        clearable
+                        mountNode={compatMountNode}
+                      />
+                    </Field>
+                    <Field label={customEndLabel} style={{ flex: 1, minWidth: 0 }}>
+                      <DatePicker
+                        className={styles.smallInput}
+                        size="small"
+                        placeholder={selectDatePlaceholder}
+                        value={customEnd}
+                        isMonthPickerVisible={false}
+                        onSelectDate={onCustomDateSelect(setCustomEnd, true)}
+                        style={{ marginBottom: '4px' }}
+                        mountNode={compatMountNode}
+                      />
+                      <TimePicker
+                        className={styles.smallInput}
+                        size="small"
+                        placeholder={selectTimePlaceholder}
+                        selectedTime={customEnd}
+                        onTimeChange={onCustomTimeChange(setCustomEnd, true)}
+                        clearable
+                        mountNode={compatMountNode}
+                      />
+                    </Field>
+                  </div>
+                )}
+              </div>
+            )}
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
                 <MessageBarBody>
@@ -529,4 +768,10 @@ export const RunHistoryPanel = () => {
       </DrawerBody>
     </Drawer>
   );
+};
+
+const Durations = {
+  day: 24 * 60 * 60 * 1000,
+  week: 7 * 24 * 60 * 60 * 1000,
+  year: 365 * 24 * 60 * 60 * 1000,
 };

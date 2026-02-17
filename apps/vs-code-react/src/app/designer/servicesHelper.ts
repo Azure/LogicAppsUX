@@ -345,7 +345,8 @@ export const getDesignerServices = (
         httpClient,
         clientId,
         tenantId,
-        isWorkflowRuntimeRunning
+        isWorkflowRuntimeRunning,
+        panelMetadata?.azureDetails?.defaultHostName
       ),
   };
 
