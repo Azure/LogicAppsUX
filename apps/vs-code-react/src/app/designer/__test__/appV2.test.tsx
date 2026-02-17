@@ -332,4 +332,198 @@ describe('DesignerApp (V2)', () => {
 
     expect(mockPostMessage).toHaveBeenCalledWith({ command: 'discardDraft' });
   });
+
+  it('should dispatch setDraftSaving and update draft artifacts when saveDraftWorkflow is called', () => {
+    const store = createTestStore({ isDraftMode: true });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    const definition = { triggers: {}, actions: { a1: { type: 'Http' } } };
+    const params = { p: { type: 'String' } };
+    const conns = { c: { api: { id: '/test' } } };
+    capturedCommandBarProps.saveDraftWorkflow(definition, params, conns);
+
+    // Verify Redux state was updated
+    const state = store.getState().designer;
+    expect(state.isDraftSaving).toBe(true);
+    expect(state.draftWorkflow).toEqual(definition);
+    expect(state.draftConnections).toEqual(conns);
+    expect(state.draftParameters).toEqual(params);
+  });
+
+  it('should clear draft state after discardDraft', () => {
+    const store = createTestStore({
+      isDraftMode: true,
+      hasDraft: true,
+      draftWorkflow: mockWorkflowDefinition,
+    });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    capturedCommandBarProps.discardDraft();
+
+    const state = store.getState().designer;
+    expect(state.hasDraft).toBe(false);
+    expect(state.draftWorkflow).toBeNull();
+    expect(state.draftConnections).toBeNull();
+    expect(state.draftParameters).toBeNull();
+  });
+
+  it('should dispatch setDraftMode when switchWorkflowMode is called with false', () => {
+    const store = createTestStore({
+      isDraftMode: true,
+      hasDraft: true,
+      draftWorkflow: mockDraftDefinition,
+    });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    capturedCommandBarProps.switchWorkflowMode(false);
+
+    const state = store.getState().designer;
+    expect(state.isDraftMode).toBe(false);
+  });
+
+  it('should dispatch setDraftMode when switchWorkflowMode is called with true', () => {
+    const store = createTestStore({
+      isDraftMode: false,
+      hasDraft: true,
+      draftWorkflow: mockDraftDefinition,
+    });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    capturedCommandBarProps.switchWorkflowMode(true);
+
+    const state = store.getState().designer;
+    expect(state.isDraftMode).toBe(true);
+  });
+
+  it('should pass isMonitoringView to DesignerCommandBar', () => {
+    const store = createTestStore({ isMonitoringView: true });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    expect(capturedCommandBarProps.isMonitoringView).toBe(true);
+  });
+
+  it('should pass isUnitTest and isLocal to DesignerCommandBar', () => {
+    const store = createTestStore({ isUnitTest: true, isLocal: false });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    expect(capturedCommandBarProps.isUnitTest).toBe(true);
+    expect(capturedCommandBarProps.isLocal).toBe(false);
+  });
+
+  it('should render floating run button', () => {
+    const store = createTestStore();
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    expect(screen.getByTestId('floating-run-button')).toBeDefined();
+  });
+
+  it('should use published connections when hasDraft but draftConnections is null', () => {
+    const store = createTestStore({
+      isDraftMode: true,
+      hasDraft: true,
+      draftConnections: null,
+    });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    // Falls through to published since draftConnections is null
+    expect(mockConvertConnectionsDataToReferences).toHaveBeenCalled();
+  });
+
+  it('should use published parameters when hasDraft but draftParameters is null', () => {
+    const store = createTestStore({
+      isDraftMode: true,
+      hasDraft: true,
+      draftParameters: null,
+    });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    const provider = screen.getByTestId('bjs-workflow-provider');
+    const workflowData = JSON.parse(provider.getAttribute('data-workflow') || '{}');
+    expect(workflowData.parameters).toEqual({ publishedParam: { type: 'String', value: 'pub' } });
+  });
+
+  it('should pass saveWorkflow and discard callbacks to command bar', () => {
+    const store = createTestStore();
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    expect(typeof capturedCommandBarProps.saveWorkflow).toBe('function');
+    expect(typeof capturedCommandBarProps.saveWorkflowFromCode).toBe('function');
+    expect(typeof capturedCommandBarProps.discard).toBe('function');
+    expect(typeof capturedCommandBarProps.switchToDesignerView).toBe('function');
+    expect(typeof capturedCommandBarProps.switchToCodeView).toBe('function');
+    expect(typeof capturedCommandBarProps.switchToMonitoringView).toBe('function');
+  });
+
+  it('should post save command and clear draft when saveWorkflow is called', async () => {
+    const store = createTestStore({
+      isDraftMode: true,
+      hasDraft: true,
+      draftWorkflow: mockWorkflowDefinition,
+    });
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    const workflow = {
+      definition: { triggers: {}, actions: {} },
+      parameters: { p: { type: 'String' } },
+      connectionReferences: { c: { api: { id: '/test' } } },
+    };
+    const clearDirtyState = vi.fn();
+    await capturedCommandBarProps.saveWorkflow(workflow, undefined, clearDirtyState);
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      command: 'save',
+      definition: workflow.definition,
+      parameters: workflow.parameters,
+      connectionReferences: workflow.connectionReferences,
+      customCodeData: undefined,
+    });
+    expect(clearDirtyState).toHaveBeenCalled();
+    // Draft state should be cleared
+    const state = store.getState().designer;
+    expect(state.hasDraft).toBe(false);
+    expect(state.draftWorkflow).toBeNull();
+  });
 });

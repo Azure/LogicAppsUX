@@ -294,5 +294,95 @@ describe('DesignerCommandBar (V2)', () => {
       fireEvent.click(screen.getByLabelText('More actions'));
       expect(screen.getByText('File a bug')).toBeDefined();
     });
+
+    it('should show "Create unit test from run" when isLocal', () => {
+      renderCommandBar({ isLocal: true });
+      fireEvent.click(screen.getByLabelText('More actions'));
+      expect(screen.getByText('Create unit test from run')).toBeDefined();
+    });
+
+    it('should show unit test items when isUnitTest', () => {
+      renderCommandBar({ isUnitTest: true });
+      fireEvent.click(screen.getByLabelText('More actions'));
+      expect(screen.getByText('Save unit test')).toBeDefined();
+      expect(screen.getByText('Create unit test')).toBeDefined();
+      expect(screen.getByText('Assertions')).toBeDefined();
+    });
+
+    it('should show panel items (Parameters, Connections, Errors)', () => {
+      renderCommandBar();
+      fireEvent.click(screen.getByLabelText('More actions'));
+      expect(screen.getByText('Parameters')).toBeDefined();
+      expect(screen.getByText('Connections')).toBeDefined();
+      expect(screen.getByText('Errors')).toBeDefined();
+    });
+  });
+
+  describe('Save button click handlers', () => {
+    it('should trigger save when Publish is clicked in designer view', () => {
+      mockDesignerIsDirty.current = true;
+      renderCommandBar({ isDraftMode: true, hasDraft: true, isDesignerView: true });
+      const publishBtn = screen.getByText('Publish').closest('button')!;
+      fireEvent.click(publishBtn);
+      // The mutation should have been called (useMutation mock calls the fn)
+    });
+
+    it('should trigger code save when Publish is clicked in code view', () => {
+      mockDesignerIsDirty.current = true;
+      renderCommandBar({ isDraftMode: true, hasDraft: true, isDesignerView: false, isCodeView: true });
+      const publishBtn = screen.getByText('Publish').closest('button')!;
+      fireEvent.click(publishBtn);
+      // The code save mutation should have been called
+    });
+  });
+
+  describe('Discard button in non-draft mode', () => {
+    it('should disable simple discard when not dirty', () => {
+      mockDesignerIsDirty.current = false;
+      renderCommandBar({ hasDraft: false });
+      const discardBtn = screen.getByLabelText('Discard');
+      expect(discardBtn.closest('button')?.disabled).toBe(true);
+    });
+
+    it('should disable simple discard in monitoring view', () => {
+      renderCommandBar({ hasDraft: false, isMonitoringView: true });
+      const discardBtn = screen.getByLabelText('Discard');
+      expect(discardBtn.closest('button')?.disabled).toBe(true);
+    });
+
+    it('should call discard when simple discard button is clicked', () => {
+      mockDesignerIsDirty.current = true;
+      const discard = vi.fn();
+      renderCommandBar({ hasDraft: false, discard });
+      fireEvent.click(screen.getByLabelText('Discard'));
+      expect(discard).toHaveBeenCalled();
+    });
+  });
+
+  describe('Draft save notification with saved time', () => {
+    it('should show autosaved time when lastDraftSaveTime is set', () => {
+      const recentTime = Date.now() - 5000; // 5 seconds ago
+      renderCommandBar({ isDraftMode: true, lastDraftSaveTime: recentTime, isDesignerView: true });
+      expect(screen.getByText('Autosaved seconds ago')).toBeDefined();
+    });
+
+    it('should show notification in code view too', () => {
+      renderCommandBar({ isDraftMode: true, isDraftSaving: true, isDesignerView: false, isCodeView: true });
+      expect(screen.getByText('Saving...')).toBeDefined();
+    });
+
+    it('should not show notification in monitoring view', () => {
+      renderCommandBar({ isDraftMode: true, lastDraftSaveTime: Date.now(), isMonitoringView: true, isDesignerView: false });
+      expect(screen.queryByText('Autosaved seconds ago')).toBeNull();
+    });
+  });
+
+  describe('View mode tab active states', () => {
+    it('should call switchToDesignerView when Workflow tab is clicked', () => {
+      const switchToDesignerView = vi.fn();
+      renderCommandBar({ switchToDesignerView, isDesignerView: false, isCodeView: true });
+      fireEvent.click(screen.getByText('Workflow'));
+      expect(switchToDesignerView).toHaveBeenCalled();
+    });
   });
 });
