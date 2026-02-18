@@ -300,25 +300,52 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         viewRef.current = null;
         isInitializedRef.current = false;
       };
-    }, []); // Only run once on mount
+    }, [showMerge, originalValue]); // Recreate editor when merge values change
 
     // Update theme when inverted changes
     useEffect(() => {
+      const newTheme = createFluentTheme(isInverted);
       if (viewRef.current) {
         viewRef.current.dispatch({
-          effects: themeCompartment.reconfigure(createFluentTheme(isInverted)),
+          effects: themeCompartment.reconfigure(newTheme),
+        });
+      }
+      // Also update panel A in merge view
+      if (mergeViewRef.current) {
+        mergeViewRef.current.a.dispatch({
+          effects: themeCompartment.reconfigure(newTheme),
         });
       }
     }, [isInverted]);
 
     // Update language when it changes
     useEffect(() => {
+      const newLang = getLanguageExtension(language);
       if (viewRef.current) {
         viewRef.current.dispatch({
-          effects: languageCompartment.reconfigure(getLanguageExtension(language)),
+          effects: languageCompartment.reconfigure(newLang),
+        });
+      }
+      // Also update panel A in merge view
+      if (mergeViewRef.current) {
+        mergeViewRef.current.a.dispatch({
+          effects: languageCompartment.reconfigure(newLang),
         });
       }
     }, [language]);
+
+    // Update originalValue in merge view panel A when it changes
+    useEffect(() => {
+      if (mergeViewRef.current && originalValue !== undefined) {
+        const panelA = mergeViewRef.current.a;
+        const currentValue = panelA.state.doc.toString();
+        if (originalValue !== currentValue) {
+          panelA.dispatch({
+            changes: { from: 0, to: panelA.state.doc.length, insert: originalValue },
+          });
+        }
+      }
+    }, [originalValue]);
 
     // Update readOnly when it changes
     useEffect(() => {
