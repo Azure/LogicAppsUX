@@ -264,7 +264,7 @@ export const CreateServer = ({
       await onUpdate({
         name: serverName,
         description: serverDescription,
-        tools: selectedTools.map((toolName) => ({ name: toolName })),
+        tools: selectedTools.map((toolName) => ({ name: workflowOptions.find((option) => option.value === toolName)?.label ?? toolName })),
       });
     } catch {
       // Need to log the error properly here.
@@ -272,7 +272,7 @@ export const CreateServer = ({
       setIsCreatingOrUpdating(false);
     }
     dispatch(closePanel());
-  }, [onUpdate, serverName, serverDescription, selectedTools, dispatch]);
+  }, [dispatch, onUpdate, serverName, serverDescription, selectedTools, workflowOptions]);
 
   const createOrUpdateButtonText = useMemo(() => {
     if (isCreatingOrUpdating) {
@@ -348,7 +348,7 @@ export const CreateServer = ({
           description={INTL_TEXT.detailsDescription}
           descriptionLink={{
             text: INTL_TEXT.learnMoreLinkText,
-            href: 'https://learn.microsoft.com/en-us/azure/logic-apps/microsoft-cloud-platform/mcp-overview',
+            href: 'https://go.microsoft.com/fwlink/?linkid=2350302',
           }}
           items={serverSectionItems}
         />
@@ -358,7 +358,7 @@ export const CreateServer = ({
           description={INTL_TEXT.workflowsDescription}
           descriptionLink={{
             text: INTL_TEXT.learnMoreLinkText,
-            href: 'https://learn.microsoft.com/en-us/azure/logic-apps/microsoft-cloud-platform/mcp-overview',
+            href: 'https://go.microsoft.com/fwlink/?linkid=2350400',
           }}
           items={workflowSectionItems}
         />

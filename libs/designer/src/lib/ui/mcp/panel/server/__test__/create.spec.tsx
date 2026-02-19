@@ -197,9 +197,7 @@ describe('CreateServer', () => {
       const mockServer: Partial<McpServer> = {
         name: 'TestServer',
         description: 'Test Description',
-        tools: {
-          workflow1: { name: 'Workflow1' },
-        },
+        tools: [{ name: 'Workflow1' }],
       };
 
       renderWithProviders({ server: mockServer as McpServer, onUpdate: mockOnUpdate, onClose: mockOnClose });
@@ -358,10 +356,7 @@ describe('CreateServer', () => {
       const mockServer: Partial<McpServer> = {
         name: 'Existing Server',
         description: 'Existing Description',
-        tools: {
-          workflow1: { name: 'Workflow1' },
-          workflow2: { name: 'Workflow2' },
-        },
+        tools: [{ name: 'Workflow1' }, { name: 'Workflow2' }],
       };
 
       renderWithProviders({ server: mockServer as McpServer, onUpdate: mockOnUpdate, onClose: mockOnClose });
@@ -462,7 +457,7 @@ describe('CreateServer', () => {
         expect(mockOnUpdate).toHaveBeenCalledWith({
           name: 'TestServer',
           description: 'Test Description',
-          tools: [{ name: 'workflow1' }],
+          tools: [{ name: 'Workflow1' }],
         });
       });
     });

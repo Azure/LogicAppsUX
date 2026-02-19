@@ -77,9 +77,9 @@ test.describe(
       await expect(page.getByLabel('Default Agent operation')).toBeVisible();
       await page.getByLabel('Default Agent operation').click();
 
-      // Change the model type to Foundry Agent Service
+      // Change the model type to Foundry project
       await page.getByTestId('msla-setting-token-editor-dropdowneditor-agent_model_type').click();
-      await page.getByText('Foundry Agent Service').click();
+      await page.getByText('Foundry project').click();
 
       await startConnectionCreation(page);
 

@@ -3,13 +3,14 @@
  */
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 import { GenerateKeys } from '../generatekeys';
+import { InitResourceService } from '@microsoft/logic-apps-shared';
 
 // Mock external dependencies
 vi.mock('../../../../core/state/mcp/panel/mcpPanelSlice', () => ({
@@ -147,6 +148,84 @@ vi.mock('@fluentui/react-components', () => ({
   MessageBarTitle: ({ children }: any) => <div data-testid="message-bar-title">{children}</div>,
 }));
 
+// Mock DatePicker with proper state handling
+let mockDatePickerOnSelectDate: ((date: Date | null | undefined) => void) | undefined;
+let mockDatePickerValue: Date | null | undefined;
+
+vi.mock('@fluentui/react-datepicker-compat', () => ({
+  DatePicker: ({ placeholder, value, onSelectDate, inlinePopup }: any) => {
+    mockDatePickerOnSelectDate = onSelectDate;
+    mockDatePickerValue = value;
+    return (
+      <div data-testid="date-picker" data-inline-popup={inlinePopup}>
+        <input
+          type="text"
+          placeholder={placeholder}
+          value={value ? value.toLocaleDateString() : ''}
+          readOnly
+          data-testid="date-picker-input"
+        />
+        <button
+          data-testid="date-picker-trigger"
+          onClick={() => {
+            const testDate = new Date(2025, 1, 15);
+            onSelectDate?.(testDate);
+          }}
+        >
+          Select Date
+        </button>
+      </div>
+    );
+  },
+}));
+
+// Mock TimePicker with proper state handling
+let mockTimePickerOnTimeChange: ((event: any, data: any) => void) | undefined;
+let mockTimePickerOnInput: ((event: any) => void) | undefined;
+let mockTimePickerOnBlur: (() => void) | undefined;
+let mockTimePickerValue: string;
+
+vi.mock('@fluentui/react-timepicker-compat', () => ({
+  TimePicker: ({ placeholder, selectedTime, onTimeChange, value, onInput, onBlur, inlinePopup, className, dateAnchor }: any) => {
+    mockTimePickerOnTimeChange = onTimeChange;
+    mockTimePickerOnInput = onInput;
+    mockTimePickerOnBlur = onBlur;
+    mockTimePickerValue = value;
+    return (
+      <div data-testid="time-picker" className={className} data-inline-popup={inlinePopup} data-date-anchor={dateAnchor?.toISOString()}>
+        <div data-testid="time-picker-hours">{selectedTime ? selectedTime.getHours() : 'null'}</div>
+        <div data-testid="time-picker-minutes">{selectedTime ? selectedTime.getMinutes() : 'null'}</div>
+        <input
+          type="text"
+          placeholder={placeholder}
+          value={value || ''}
+          onChange={(e) => onInput?.(e)}
+          onBlur={onBlur}
+          data-testid="time-picker-input"
+        />
+        <button
+          data-testid="time-picker-trigger"
+          onClick={() => {
+            const testTime = new Date();
+            testTime.setHours(14, 30);
+            onTimeChange?.({} as any, { selectedTime: testTime, selectedTimeText: '2:30 PM' });
+          }}
+        >
+          Select Time
+        </button>
+      </div>
+    );
+  },
+  formatDateToTimeString: (date: Date) => {
+    if (!date) return '';
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  },
+}));
+
 // Mock Fluent UI icons
 vi.mock('@fluentui/react-icons', () => ({
   bundleIcon: vi.fn(() => () => <svg data-testid="close-icon" />),
@@ -161,6 +240,13 @@ describe('GenerateKeys', () => {
   let mockAddExpiryToCurrent: any;
   let mockGenerateKeys: any;
   let mockGetStandardLogicAppId: any;
+
+  const setupService = (throwError?: boolean) => {
+    InitResourceService({
+      executeResourceAction: () =>
+        throwError ? Promise.reject(new Error('Test error')) : Promise.resolve({ headers: { 'X-API-Key': 'generated-test-key-12345' } }),
+    } as any);
+  };
 
   const renderWithProviders = (initialState = {}) => {
     mockStore = configureStore({
@@ -300,6 +386,30 @@ describe('GenerateKeys', () => {
       expect(durationDropdown?.value).toBe('24 hours');
       expect(accessKeyDropdown?.value).toBe('Primary key');
     });
+
+    it('show success message when generateKeys is successful', async () => {
+      setupService();
+      renderWithProviders();
+
+      fireEvent.click(screen.getByText('Generate'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('message-bar')).toBeTruthy();
+        expect(screen.getByText('Successfully generated the key.')).toBeTruthy();
+      });
+    });
+
+    it('show error message when generateKeys fails', async () => {
+      setupService(/* throwError */ true);
+      renderWithProviders();
+
+      fireEvent.click(screen.getByText('Generate'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('message-bar-body')).toBeTruthy();
+        expect(screen.getByText(/An error occurred while generating keys./)).toBeTruthy();
+      });
+    });
   });
 
   describe('Button States', () => {
@@ -372,6 +482,335 @@ describe('GenerateKeys', () => {
       // The component currently doesn't have explicit learn more links
       // Check that the component structure is present
       expect(screen.getByTestId('templates-section')).toBeTruthy();
+    });
+  });
+
+  describe('Custom DatePicker - TimePickerWithDatePicker Component', () => {
+    beforeEach(() => {
+      // Reset mock function references
+      mockDatePickerOnSelectDate = undefined;
+      mockTimePickerOnTimeChange = undefined;
+      mockTimePickerOnInput = undefined;
+      mockTimePickerOnBlur = undefined;
+    });
+
+    it('displays custom date time picker when custom duration is selected', () => {
+      renderWithProviders();
+
+      // Select 'Custom' option (option-6)
+      fireEvent.click(screen.getByTestId('option-6'));
+
+      // Verify the custom date time picker section is rendered
+      expect(screen.getByTestId('custom-select-date-and-time')).toBeTruthy();
+      expect(screen.getByTestId('date-picker')).toBeTruthy();
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+    });
+
+    it('renders date picker with correct placeholder text', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const datePickerInput = screen.getByTestId('date-picker-input');
+      expect(datePickerInput.getAttribute('placeholder')).toBe('Select a date...');
+    });
+
+    it('renders time picker with correct placeholder text', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input');
+      expect(timePickerInput.getAttribute('placeholder')).toBe('Select a time...');
+    });
+
+    it('renders date picker with inline popup enabled', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const datePicker = screen.getByTestId('date-picker');
+      expect(datePicker.getAttribute('data-inline-popup')).toBe('true');
+    });
+
+    it('renders time picker with inline popup enabled', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePicker = screen.getByTestId('time-picker');
+      expect(timePicker.getAttribute('data-inline-popup')).toBe('true');
+    });
+
+    it('calls onSelect with date when date is selected', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      // Click the date picker trigger to select a date
+      const datePickerTrigger = screen.getByTestId('date-picker-trigger');
+      fireEvent.click(datePickerTrigger);
+
+      // Verify that date picker is rendered and can be interacted with
+      expect(screen.getByTestId('date-picker')).toBeTruthy();
+    });
+
+    it('calls onSelect with combined date and time when both are selected', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      // Select date first
+      const datePickerTrigger = screen.getByTestId('date-picker-trigger');
+      fireEvent.click(datePickerTrigger);
+
+      // Select time
+      const timePickerTrigger = screen.getByTestId('time-picker-trigger');
+      fireEvent.click(timePickerTrigger);
+
+      // Verify both components are rendered
+      expect(screen.getByTestId('date-picker')).toBeTruthy();
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+    });
+
+    it('allows manual time input in time picker', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Simulate typing a time
+      fireEvent.change(timePickerInput, { target: { value: '3:45 PM' } });
+
+      expect(timePickerInput.value).toBe('3:45 PM');
+    });
+
+    it('handles time picker blur event for manual input', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Simulate typing a time and then blurring
+      fireEvent.change(timePickerInput, { target: { value: '10:00 AM' } });
+      fireEvent.blur(timePickerInput);
+
+      // The blur event should trigger parsing of the manual input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+    });
+
+    it('updates time picker date anchor when date is selected', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      // Select a date
+      const datePickerTrigger = screen.getByTestId('date-picker-trigger');
+      fireEvent.click(datePickerTrigger);
+
+      // Verify that the date anchor is updated on time picker
+      const timePicker = screen.getByTestId('time-picker');
+      expect(timePicker.getAttribute('data-date-anchor')).toBeTruthy();
+    });
+
+    it('handles AM time parsing correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type an AM time
+      fireEvent.change(timePickerInput, { target: { value: '9:30am' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('9');
+        expect(minutes).toBe('30');
+      });
+    });
+
+    it('handles PM time parsing correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type a PM time
+      fireEvent.change(timePickerInput, { target: { value: '3:45pm' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('15');
+        expect(minutes).toBe('45');
+      });
+    });
+
+    it('handles 12 AM time parsing correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type 12:00 AM (midnight)
+      fireEvent.change(timePickerInput, { target: { value: '12:00am' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('0');
+        expect(minutes).toBe('0');
+      });
+    });
+
+    it('handles 12 PM time parsing correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type 12:00 PM (noon)
+      fireEvent.change(timePickerInput, { target: { value: '12:00pm' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('12');
+        expect(minutes).toBe('0');
+      });
+    });
+
+    it('handles invalid time correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type an invalid time
+      fireEvent.change(timePickerInput, { target: { value: '13:00pm' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('null');
+        expect(minutes).toBe('null');
+      });
+    });
+
+    it('handles invalid text in time correctly on blur', async () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      const timePickerInput = screen.getByTestId('time-picker-input') as HTMLInputElement;
+
+      // Type an invalid time
+      fireEvent.change(timePickerInput, { target: { value: '13:00pp' } });
+      fireEvent.blur(timePickerInput);
+
+      // The component should handle the input
+      expect(screen.getByTestId('time-picker')).toBeTruthy();
+
+      await waitFor(() => {
+        const hours = screen.getByTestId('time-picker-hours').textContent;
+        const minutes = screen.getByTestId('time-picker-minutes').textContent;
+        expect(hours).toBe('null');
+        expect(minutes).toBe('null');
+      });
+    });
+
+    it('does not show custom date picker for non-custom durations', () => {
+      renderWithProviders();
+
+      // Select '7 days' option (option-2)
+      fireEvent.click(screen.getByTestId('option-2'));
+
+      // Custom date picker should not be shown
+      expect(screen.queryByTestId('custom-select-date-and-time')).toBeNull();
+      expect(screen.queryByTestId('date-picker')).toBeNull();
+      expect(screen.queryByTestId('time-picker')).toBeNull();
+    });
+
+    it('hides custom date picker when switching from custom to preset duration', () => {
+      renderWithProviders();
+
+      // First select Custom
+      fireEvent.click(screen.getByTestId('option-6'));
+      expect(screen.getByTestId('custom-select-date-and-time')).toBeTruthy();
+
+      // Then switch to 24 hours
+      fireEvent.click(screen.getByTestId('option-1'));
+
+      // Custom date picker should be hidden
+      expect(screen.queryByTestId('custom-select-date-and-time')).toBeNull();
+    });
+
+    it('preserves custom date time values when switching back to custom duration', () => {
+      renderWithProviders();
+
+      // Select Custom
+      fireEvent.click(screen.getByTestId('option-6'));
+
+      // Select a date
+      fireEvent.click(screen.getByTestId('date-picker-trigger'));
+
+      // Switch to 7 days
+      fireEvent.click(screen.getByTestId('option-2'));
+
+      // Switch back to Custom
+      fireEvent.click(screen.getByTestId('option-6'));
+
+      // The custom picker should be visible again
+      expect(screen.getByTestId('custom-select-date-and-time')).toBeTruthy();
+    });
+
+    it('includes Select date and time label for custom picker', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      // The section should have the appropriate label
+      expect(screen.getByText('Select date and time')).toBeTruthy();
+    });
+
+    it('correctly positions custom date picker between duration and access key dropdowns', () => {
+      renderWithProviders();
+
+      fireEvent.click(screen.getByTestId('option-6')); // Custom option
+
+      // Get all template items
+      const templateItems = screen.getAllByTestId(/^template-item-/);
+
+      // Verify order: Duration (0), Custom DateTime (1), Access Key (2)
+      expect(templateItems.length).toBe(3);
     });
   });
 });

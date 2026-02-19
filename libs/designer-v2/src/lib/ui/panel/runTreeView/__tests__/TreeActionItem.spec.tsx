@@ -174,7 +174,7 @@ describe('TreeActionItem', () => {
       renderWithProviders(defaultProps);
 
       // Duration should be displayed (5 seconds)
-      const durationBadge = screen.getByText(/5/);
+      const durationBadge = screen.getByText('5s');
       expect(durationBadge).toBeInTheDocument();
     });
   });

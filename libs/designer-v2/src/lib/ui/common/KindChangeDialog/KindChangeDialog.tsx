@@ -17,8 +17,8 @@ export const KindChangeDialog = () => {
 
   const toA2ADescription = intl.formatMessage({
     defaultMessage:
-      "Using a chat message trigger means your workflow will be conversational, which doesn't support actions running after an agentic loop. Delete any actions running after an agent to use this trigger.",
-    id: '+jvca5',
+      "Using a chat message trigger means your workflow will be conversational, which doesn't support actions running after an agent. Delete any actions running after an agent to use this trigger.",
+    id: 'Sy5Gcz',
     description: 'Description for dialog that appears when changing the kind of a node',
   });
 

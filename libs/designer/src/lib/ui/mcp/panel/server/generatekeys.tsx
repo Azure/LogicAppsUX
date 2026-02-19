@@ -10,6 +10,8 @@ import {
   Text,
 } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
+import { DatePicker } from '@fluentui/react-datepicker-compat';
+import { TimePicker, type TimeSelectionData, type TimeSelectionEvents, formatDateToTimeString } from '@fluentui/react-timepicker-compat';
 import { closePanel } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import type { AppDispatch, RootState } from '../../../../core/state/mcp/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +27,7 @@ import {
 } from '@microsoft/designer-ui';
 import { addExpiryToCurrent, generateKeys } from '../../../../core/mcp/utils/server';
 import { getStandardLogicAppId } from '../../../../core/configuretemplate/utils/helper';
+import { equals } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -121,6 +124,16 @@ export const GenerateKeys = () => {
       id: 'crvmH2',
       description: 'Text for never expires',
     }),
+    customText: intl.formatMessage({
+      defaultMessage: 'Custom',
+      id: '8DgDf+',
+      description: 'Text for custom option',
+    }),
+    selectDateTimeLabel: intl.formatMessage({
+      defaultMessage: 'Select date and time',
+      id: 'S2KtbJ',
+      description: 'Label for custom date time picker',
+    }),
     primaryKeyText: intl.formatMessage({
       defaultMessage: 'Primary key',
       id: 'HOwcCC',
@@ -159,8 +172,9 @@ export const GenerateKeys = () => {
       { id: '3', label: `30 ${INTL_TEXT.daysText}`, value: '30d' },
       { id: '4', label: `90 ${INTL_TEXT.daysText}`, value: '90d' },
       { id: '5', label: INTL_TEXT.neverExpiresText, value: 'noexpiry' },
+      { id: '6', label: INTL_TEXT.customText, value: 'custom' },
     ];
-  }, [INTL_TEXT.daysText, INTL_TEXT.hoursText, INTL_TEXT.neverExpiresText]);
+  }, [INTL_TEXT.daysText, INTL_TEXT.hoursText, INTL_TEXT.neverExpiresText, INTL_TEXT.customText]);
   const keysOptions = useMemo(() => {
     return [
       { id: 'primary', label: INTL_TEXT.primaryKeyText, value: 'primary' },
@@ -170,13 +184,25 @@ export const GenerateKeys = () => {
 
   const [duration, setDuration] = useState('24h');
   const [accessKey, setAccessKey] = useState('primary');
+  const [customDateTime, setCustomDateTime] = useState<string | undefined>(undefined);
 
   const [generatedKey, setGeneratedKey] = useState<string | undefined>(undefined);
   const [expiresTime, setExpiresTime] = useState<string | undefined>(undefined);
   const [showSuccessInfo, setShowSuccessInfo] = useState<boolean>(false);
+  const [dateTimeError, setDateTimeError] = useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+
+  const onDurationSelect = useCallback((options: string[]) => {
+    setDuration(options[0]);
+
+    if (options[0] !== 'custom') {
+      setCustomDateTime(undefined);
+      setDateTimeError(undefined);
+    }
+  }, []);
 
   const keySectionItems: TemplatesSectionItem[] = useMemo(() => {
-    return [
+    const items: TemplatesSectionItem[] = [
       {
         label: INTL_TEXT.durationLabel,
         value: duration ? durationOptions.find((option) => option.value === duration)?.label : undefined,
@@ -185,7 +211,7 @@ export const GenerateKeys = () => {
         options: durationOptions,
         controlled: true,
         selectedOptions: duration ? [duration] : [],
-        onOptionSelect: (options) => setDuration(options[0]),
+        onOptionSelect: onDurationSelect,
       },
       {
         label: INTL_TEXT.accessKeyLabel,
@@ -199,7 +225,39 @@ export const GenerateKeys = () => {
         onOptionSelect: (options) => setAccessKey(options[0]),
       },
     ];
-  }, [INTL_TEXT.durationLabel, INTL_TEXT.accessKeyLabel, INTL_TEXT.accessKeyInfoText, duration, durationOptions, accessKey, keysOptions]);
+
+    if (duration === 'custom') {
+      items.splice(1, 0, {
+        label: INTL_TEXT.selectDateTimeLabel,
+        value: '',
+        type: 'custom',
+        required: true,
+        errorMessage: dateTimeError,
+        onRenderItem: () => (
+          <TimePickerWithDatePicker
+            onSelect={(selectedTime: string) => {
+              setCustomDateTime(selectedTime);
+              setDateTimeError(undefined);
+            }}
+            setError={setDateTimeError}
+          />
+        ),
+      });
+    }
+
+    return items;
+  }, [
+    INTL_TEXT.durationLabel,
+    INTL_TEXT.accessKeyLabel,
+    INTL_TEXT.accessKeyInfoText,
+    INTL_TEXT.selectDateTimeLabel,
+    duration,
+    durationOptions,
+    onDurationSelect,
+    accessKey,
+    keysOptions,
+    dateTimeError,
+  ]);
 
   const generatedSectionItems: TemplatesSectionItem[] = useMemo(() => {
     return [
@@ -218,16 +276,24 @@ export const GenerateKeys = () => {
   }, [INTL_TEXT.apiKeyLabel, INTL_TEXT.expiresLabel, generatedKey, expiresTime]);
 
   const handleGenerate = useCallback(async () => {
-    const expiryTime = duration.endsWith('h')
-      ? addExpiryToCurrent(Number.parseInt(duration.replace('h', '')))
-      : duration.endsWith('d')
-        ? addExpiryToCurrent(/* hours */ undefined, Number.parseInt(duration.replace('d', '')))
-        : 'noexpiry';
-    const key = await generateKeys(logicAppId, expiryTime, accessKey);
-    setGeneratedKey(key);
-    setExpiresTime(expiryTime === 'noexpiry' ? INTL_TEXT.neverExpiresText : expiryTime);
-    setShowSuccessInfo(true);
-  }, [duration, logicAppId, accessKey, INTL_TEXT.neverExpiresText]);
+    const expiryTime = equals(duration, 'custom')
+      ? (customDateTime as string)
+      : duration.endsWith('h')
+        ? addExpiryToCurrent(Number.parseInt(duration.replace('h', '')))
+        : duration.endsWith('d')
+          ? addExpiryToCurrent(/* hours */ undefined, Number.parseInt(duration.replace('d', '')))
+          : 'noexpiry';
+
+    try {
+      const key = await generateKeys(logicAppId, expiryTime, accessKey);
+      setGeneratedKey(key);
+      setExpiresTime(expiryTime === 'noexpiry' ? INTL_TEXT.neverExpiresText : expiryTime);
+      setShowSuccessInfo(true);
+      setErrorMessage(undefined);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
+  }, [duration, customDateTime, logicAppId, accessKey, INTL_TEXT.neverExpiresText]);
 
   const handleClose = useCallback(() => {
     dispatch(closePanel());
@@ -246,6 +312,14 @@ export const GenerateKeys = () => {
     );
   }, [styles.messageBar, styles.messageBarBody, INTL_TEXT.infoTitle, INTL_TEXT.infoMessage]);
 
+  const renderErrorBar = useCallback(() => {
+    return (
+      <MessageBar intent={'error'}>
+        <MessageBarBody className={styles.messageBarBody}>{errorMessage}</MessageBarBody>
+      </MessageBar>
+    );
+  }, [styles.messageBarBody, errorMessage]);
+
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
       buttonContents: [
@@ -254,7 +328,7 @@ export const GenerateKeys = () => {
           text: INTL_TEXT.generateButtonText,
           appearance: 'primary',
           onClick: handleGenerate,
-          disabled: !duration || !accessKey,
+          disabled: !duration || !accessKey || (duration === 'custom' && (!customDateTime || !!dateTimeError)),
         },
         {
           type: 'action',
@@ -263,8 +337,16 @@ export const GenerateKeys = () => {
         },
       ],
     };
-  }, [INTL_TEXT.generateButtonText, INTL_TEXT.closeButtonText, handleGenerate, duration, accessKey, handleClose]);
-
+  }, [
+    INTL_TEXT.generateButtonText,
+    INTL_TEXT.closeButtonText,
+    handleGenerate,
+    duration,
+    accessKey,
+    customDateTime,
+    dateTimeError,
+    handleClose,
+  ]);
   return (
     <Drawer className={styles.generateKeysContainer} open={true} onOpenChange={(_, { open }) => !open && handleClose()} position="end">
       <DrawerHeader className={styles.header}>
@@ -286,7 +368,8 @@ export const GenerateKeys = () => {
           }}
           items={keySectionItems}
         />
-        {showSuccessInfo ? (
+        {errorMessage ? renderErrorBar() : null}
+        {showSuccessInfo && !errorMessage ? (
           <TemplatesSection
             cssOverrides={{ sectionItems: styles.workflowSection }}
             title={INTL_TEXT.resultTitle}
@@ -304,5 +387,147 @@ export const GenerateKeys = () => {
         <TemplatesPanelFooter {...footerContent} />
       </DrawerFooter>
     </Drawer>
+  );
+};
+
+const TimePickerWithDatePicker = ({
+  onSelect,
+  setError,
+}: { onSelect: (selectedTime: string) => void; setError: (error: string | undefined) => void }): JSX.Element => {
+  const styles = useMcpServerPanelStyles();
+  const intl = useIntl();
+  const INTL_TEXT = {
+    selectDateText: intl.formatMessage({
+      defaultMessage: 'Select a date...',
+      id: 'hbmiUp',
+      description: 'Placeholder text for date picker',
+    }),
+    selectTimeText: intl.formatMessage({
+      defaultMessage: 'Select a time...',
+      id: '96v4Tz',
+      description: 'Placeholder text for time picker',
+    }),
+    futureTimeErrorText: intl.formatMessage({
+      defaultMessage: 'Please select a future time.',
+      id: 'gl0im8',
+      description: 'Error message for selecting past time',
+    }),
+    invalidTimeFormatErrorText: intl.formatMessage({
+      defaultMessage: 'Please enter a valid time format (e.g., 2:30 PM).',
+      id: '3c7eHH',
+      description: 'Error message for invalid time format',
+    }),
+  };
+
+  const minDate = useMemo(() => new Date(), []);
+  const [selectedDate, setSelectedDate] = useState<Date | null | undefined>(null);
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+  const [timePickerValue, setTimePickerValue] = useState<string>(selectedTime ? formatDateToTimeString(selectedTime) : '');
+
+  const handleDateTimeSelection = useCallback(
+    (date: Date | null | undefined, time: Date | null | undefined) => {
+      if (date && time) {
+        const newDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes());
+
+        const today = new Date();
+
+        if (today.getDate() === date.getDate() && today.getTime() > time.getTime()) {
+          setError(INTL_TEXT.futureTimeErrorText);
+          return;
+        }
+
+        onSelect(newDateTime.toISOString());
+      } else if (date) {
+        onSelect(date.toISOString());
+      }
+    },
+    [INTL_TEXT.futureTimeErrorText, onSelect, setError]
+  );
+
+  const handleInvalidTimeSelection = useCallback(() => {
+    setSelectedTime(null);
+    handleDateTimeSelection(selectedDate, null);
+    setError(INTL_TEXT.invalidTimeFormatErrorText);
+  }, [INTL_TEXT.invalidTimeFormatErrorText, handleDateTimeSelection, selectedDate, setError]);
+
+  const onSelectDate = useCallback(
+    (date: Date | null | undefined) => {
+      setSelectedDate(date);
+      handleDateTimeSelection(date, selectedTime);
+    },
+    [handleDateTimeSelection, selectedTime]
+  );
+
+  const onTimeChange = useCallback(
+    (_: TimeSelectionEvents, data: TimeSelectionData) => {
+      setSelectedTime(data.selectedTime);
+      setTimePickerValue(data.selectedTimeText ?? '');
+
+      if (selectedDate && data.selectedTime) {
+        handleDateTimeSelection(selectedDate, data.selectedTime);
+      }
+    },
+    [handleDateTimeSelection, selectedDate]
+  );
+
+  const onTimePickerInput = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    setTimePickerValue(ev.target.value);
+  }, []);
+
+  const onTimePickerBlur = useCallback(() => {
+    if (timePickerValue) {
+      const normalizedTime = timePickerValue.toLowerCase().replace(/\s+/g, '');
+      const morningTime = normalizedTime.endsWith('am') ? normalizedTime.replace('am', '') : undefined;
+      const eveningTime = normalizedTime.endsWith('pm') ? normalizedTime.replace('pm', '') : undefined;
+      const timeParts = morningTime ? morningTime.split(':') : eveningTime ? eveningTime.split(':') : [];
+
+      if (timeParts.length === 0) {
+        // Invalid time format, so time change won't be processed
+        return handleInvalidTimeSelection();
+      }
+
+      let hours = Number.parseInt(timeParts[0]);
+      const minutes = timeParts.length > 1 ? Number.parseInt(timeParts[1]) : 0;
+
+      if (Number.isNaN(hours) || Number.isNaN(minutes) || hours < 0 || hours > 12 || minutes < 0 || minutes > 59) {
+        return handleInvalidTimeSelection();
+      }
+
+      if (eveningTime && hours < 12) {
+        hours += 12;
+      } else if (morningTime && hours === 12) {
+        hours = 0;
+      }
+
+      const newTime = new Date(new Date().setHours(hours, minutes));
+      setSelectedTime(newTime);
+
+      if (selectedDate && newTime) {
+        handleDateTimeSelection(selectedDate, newTime);
+      }
+    }
+  }, [handleDateTimeSelection, handleInvalidTimeSelection, selectedDate, timePickerValue]);
+  return (
+    <div className={styles.dateTimeContainer}>
+      <DatePicker
+        placeholder={INTL_TEXT.selectDateText}
+        value={selectedDate}
+        inlinePopup={true}
+        minDate={minDate}
+        onSelectDate={onSelectDate}
+      />
+      <TimePicker
+        className={styles.timePicker}
+        placeholder={INTL_TEXT.selectTimeText}
+        dateAnchor={selectedDate ?? undefined}
+        selectedTime={selectedTime}
+        onTimeChange={onTimeChange}
+        value={timePickerValue}
+        inlinePopup={true}
+        freeform={true}
+        onInput={onTimePickerInput}
+        onBlur={onTimePickerBlur}
+      />
+    </div>
   );
 };

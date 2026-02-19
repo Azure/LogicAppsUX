@@ -69,6 +69,7 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
                   </IntlProvider>
                 </div>
               </LayoutProvider>
+              <div id="fluent-compat-component-mount" />
             </FluentProvider>
           </ThemeProvider>
         </ProviderWrappedContext.Provider>
