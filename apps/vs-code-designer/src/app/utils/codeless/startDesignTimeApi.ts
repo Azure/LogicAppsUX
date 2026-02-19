@@ -425,9 +425,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
           await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
         }
 
-        const isCodeful = (await isCodefulProject(projectPath)) ?? false;
-
-        if (autoStartDesignTime && !isCodeful) {
+        if (autoStartDesignTime) {
           startDesignTimeApi(projectPath);
         }
       }
