@@ -295,6 +295,25 @@ export interface UpdatePanelMetadataMessage {
   };
 }
 
+export interface DraftLoadedMessage {
+  command: typeof ExtensionCommand.draftLoaded;
+  data: {
+    hasDraft: boolean;
+    draftWorkflow?: any;
+    draftConnections?: any;
+    draftParameters?: any;
+  };
+}
+
+export interface DraftSaveResultMessage {
+  command: typeof ExtensionCommand.draftSaveResult;
+  data: {
+    success: boolean;
+    timestamp: number;
+    error?: string;
+  };
+}
+
 // Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;

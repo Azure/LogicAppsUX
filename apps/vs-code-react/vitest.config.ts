@@ -11,7 +11,7 @@ export default defineProject({
     coverage: {
       enabled: true,
       provider: 'istanbul',
-      include: ['src/app/**/*', 'src/state/**/*'],
+      include: ['src/app/**/*', 'src/state/**/*', 'src/intl/**/*'],
       reporter: ['html', 'cobertura', 'lcov'],
     },
     restoreMocks: true,
