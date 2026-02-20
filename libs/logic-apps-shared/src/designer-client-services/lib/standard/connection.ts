@@ -89,6 +89,26 @@ export interface AgentConnectionModel {
   displayName?: string;
 }
 
+export interface KnowledgeHubConnectionModel {
+  openAI: {
+    completionsModel: string;
+    embeddingsModel: string;
+    authentication: {
+      type: string;
+      key?: string;
+    };
+    endpoint: string;
+  };
+  cosmosDB: {
+    authentication: {
+      type: string;
+      key?: string;
+    };
+    endpoint: string;
+  };
+  displayName: string;
+}
+
 export interface ConnectionAndAppSetting<T> {
   connectionKey: string;
   connectionData: T;
@@ -109,6 +129,7 @@ export interface ConnectionsData {
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
   agentConnections?: Record<string, AgentConnectionModel>;
   agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
+  knowledgeHubConnections?: Record<string, KnowledgeHubConnectionModel>;
 }
 
 export type LocalConnectionModel =
@@ -116,7 +137,8 @@ export type LocalConnectionModel =
   | ServiceProviderConnectionModel
   | APIManagementConnectionModel
   | AgentMcpConnectionModel
-  | AgentConnectionModel;
+  | AgentConnectionModel
+  | KnowledgeHubConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
@@ -124,6 +146,7 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
 const agentLocation = 'agentConnections';
+const knowledgeHubLocation = 'knowledgeHubConnections';
 const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+\/apis\/[^/]+/;
@@ -206,17 +229,18 @@ export class StandardConnectionService extends BaseConnectionService implements 
     return this._getAzureConnector(connectorId);
   }
 
-  override async getConnections(connectorId?: string, queryClient?: QueryClient): Promise<Connection[]> {
+  override async getConnections(connectorId?: string, queryClient?: QueryClient, fetchOnlyLocal?: boolean): Promise<Connection[]> {
     if (connectorId) {
       return this.getConnectionsForConnector(connectorId, queryClient);
     }
 
-    const [localConnections, apiHubConnections] = await Promise.all([this._options.readConnections(), this.getConnectionsInApiHub()]);
+    const [localConnections, apiHubConnections] = await Promise.all([this._options.readConnections(), fetchOnlyLocal ? [] : this.getConnectionsInApiHub()]);
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
     const agentConnections = (localConnections[agentLocation] || {}) as Record<string, AgentConnectionModel>;
     const agentMcpConnections = (localConnections[mcpLocation] || {}) as Record<string, AgentMcpConnectionModel>;
+    const knowledgeHubConnections = (localConnections[knowledgeHubLocation] || {}) as Record<string, KnowledgeHubConnectionModel>;
 
     this._allConnectionsInitialized = true;
     return [
@@ -242,6 +266,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
       }),
       ...Object.keys(agentMcpConnections).map((key) => {
         const connection = convertMcpConnectionDataToConnection(key, agentMcpConnections[key]);
+        this._connections[connection.id] = connection;
+        return connection;
+      }),
+      ...Object.keys(knowledgeHubConnections).map((key) => {
+        const connection = convertKnowledgeHubConnectionDataToConnection(key, knowledgeHubConnections[key]);
         this._connections[connection.id] = connection;
         return connection;
       }),
@@ -593,6 +622,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       | ServiceProviderConnectionModel
       | AgentConnectionModel
       | AgentMcpConnectionModel
+      | KnowledgeHubConnectionModel
     >;
     let connection: Connection;
     switch (connectionType) {
@@ -626,6 +656,15 @@ export class StandardConnectionService extends BaseConnectionService implements 
         connection = convertMcpConnectionDataToConnection(
           connectionsData.connectionKey,
           connectionsData.connectionData as AgentMcpConnectionModel
+        );
+        break;
+      }
+      case ConnectionType.KnowledgeHub: {
+        const { connectionAndSettings, rawConnection } = convertToKnowledgeHubConnectionsData(connectionName, connectionInfo, parametersMetadata);
+        connectionsData = connectionAndSettings;
+        connection = convertKnowledgeHubConnectionDataToConnection(
+          connectionsData.connectionKey,
+          rawConnection
         );
         break;
       }
@@ -713,6 +752,38 @@ function convertServiceProviderConnectionDataToConnection(
       overallStatus: 'Connected',
       testLinks: [],
       ...optional('parameterValues', connectionData.parameterValues),
+    },
+  };
+}
+
+function convertKnowledgeHubConnectionDataToConnection(connectionKey: string, connectionData: KnowledgeHubConnectionModel): Connection {
+  const { displayName, openAI, cosmosDB } = connectionData;
+
+  return {
+    name: connectionKey,
+    id: `/knowledgehub/connections/${connectionKey}`,
+    type: 'connections/knowledgehub',
+    properties: {
+      api: { id: '/knowledgehub' } as any,
+      createdTime: '',
+      connectionParameters: {
+        openAI: {
+          type: 'object',
+          metadata: {
+            value: openAI,
+          },
+        },
+        cosmosDB: {
+          type: 'object',
+          metadata: {
+            value: cosmosDB,
+          },
+        },
+      },
+      displayName: displayName as string,
+      statuses: [{ status: 'Connected' }],
+      overallStatus: 'Connected',
+      testLinks: [],
     },
   };
 }
@@ -867,6 +938,35 @@ function convertToAgentConnectionsData(
     },
     settings,
     pathLocation: [agentLocation],
+  };
+  const rawConnection = createCopy(connectionsData.connectionData);
+  rawConnection.parameterValues = rawParameterValues;
+
+  return { connectionAndSettings: connectionsData, rawConnection };
+}
+
+function convertToKnowledgeHubConnectionsData(
+  connectionKey: string,
+  connectionInfo: ConnectionCreationInfo,
+  connectionParameterMetadata: ConnectionParametersMetadata
+): {
+  connectionAndSettings: ConnectionAndAppSetting<KnowledgeHubConnectionModel>;
+  rawConnection: KnowledgeHubConnectionModel;
+} {
+  const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
+    connectionKey,
+    connectionInfo,
+    connectionParameterMetadata
+  );
+
+  const connectionsData: ConnectionAndAppSetting<KnowledgeHubConnectionModel> = {
+    connectionKey,
+    connectionData: {
+      ...(parameterValues as any),
+      displayName: displayName as string,
+    },
+    settings,
+    pathLocation: [knowledgeHubLocation],
   };
   const rawConnection = createCopy(connectionsData.connectionData);
   rawConnection.parameterValues = rawParameterValues;

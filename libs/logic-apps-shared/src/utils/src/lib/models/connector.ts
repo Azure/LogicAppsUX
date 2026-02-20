@@ -83,6 +83,11 @@ export interface ConnectionParameterUIDefinitionBase {
     };
     requiresConnectionNamePrefix?: string;
     notSupportedConnectionParameters?: Record<string, string[]>;
+
+    /**
+     * Indicates that the parameter value should be serialized and stored in connection payload. Default is true
+     */
+    serialize?: boolean;
   };
   tooltip?: string;
   /**

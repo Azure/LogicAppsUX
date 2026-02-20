@@ -76,6 +76,7 @@ export const ConnectionType = {
   ApiConnection: 'apiconnection',
   Agent: 'agent',
   Mcp: 'mcp',
+  KnowledgeHub: 'knowledgehub',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 

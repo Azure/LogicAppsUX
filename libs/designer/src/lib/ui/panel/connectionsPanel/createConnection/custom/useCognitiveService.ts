@@ -1,5 +1,5 @@
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { ApiManagementService, CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
+import { ApiManagementService, CognitiveServiceService, ResourceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
@@ -161,6 +161,21 @@ export const useAllBuiltInRoleDefinitions = () => {
     {
       ...queryOpts,
       retryOnMount: true,
+    }
+  );
+};
+
+export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = true) => {
+  return useQuery(
+    ['allCosmosDbServiceAccounts', { subscriptionId }],
+    async () => {
+      const allCosmosDbServiceAccounts = await ResourceService().listResources(subscriptionId, `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | extend capabilities = todynamic(properties.capabilities) | mv-apply capabilities on ( mv-expand capabilities | extend capabilityName = tostring(capabilities.name) | where capabilityName =~ 'EnableNoSQLVectorSearch')`);
+      return allCosmosDbServiceAccounts ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId && enabled,
     }
   );
 };

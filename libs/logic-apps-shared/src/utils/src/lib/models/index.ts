@@ -29,5 +29,6 @@ import * as Swagger from './swagger';
 import * as Template from './template';
 export * from './agent';
 export * from './mcp';
+export * from './knowledge';
 
 export { LogicApps, LogicAppsV2, OpenAPIV2, Swagger, Template };
