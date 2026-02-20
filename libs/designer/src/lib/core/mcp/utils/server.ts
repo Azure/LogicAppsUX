@@ -23,7 +23,7 @@ export const validateMcpServerName = (serverName: string, existingNames: string[
   if (existingNames.some((name) => equals(name, serverName))) {
     return intl.formatMessage({
       defaultMessage: 'Server name must be unique. A server with this name already exists.',
-      id: 'W7qGQ2',
+      id: 'r4u9Zd',
       description: 'Error message when the server name is not unique.',
     });
   }
