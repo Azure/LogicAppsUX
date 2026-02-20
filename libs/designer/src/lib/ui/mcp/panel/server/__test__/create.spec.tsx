@@ -202,7 +202,7 @@ describe('CreateServer', () => {
 
       renderWithProviders({ server: mockServer as McpServer, onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      expect(screen.getByText('Update MCP Server')).toBeInTheDocument();
+      expect(screen.getByText('Update MCP server')).toBeInTheDocument();
     });
 
     it('renders both template sections', () => {
@@ -258,7 +258,7 @@ describe('CreateServer', () => {
       await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Check that validation was called with the final complete value
-      expect(mockValidateMcpServerName).toHaveBeenLastCalledWith('TestServerName');
+      expect(mockValidateMcpServerName).toHaveBeenLastCalledWith('TestServerName', []);
     });
 
     it('updates server description when typing in description field', async () => {
@@ -548,7 +548,7 @@ describe('CreateServer', () => {
       fireEvent.click(workflow1Option);
 
       await waitFor(() => {
-        expect(screen.getByText('At least one workflow must be selected.')).toBeInTheDocument();
+        expect(screen.getByText('Select at least one workflow to continue.')).toBeInTheDocument();
       });
     });
 
@@ -562,14 +562,14 @@ describe('CreateServer', () => {
       fireEvent.click(workflow1Option);
 
       await waitFor(() => {
-        expect(screen.getByText('At least one workflow must be selected.')).toBeInTheDocument();
+        expect(screen.getByText('Select at least one workflow to continue.')).toBeInTheDocument();
       });
 
       // Select again to clear error
       fireEvent.click(workflow1Option);
 
       await waitFor(() => {
-        expect(screen.queryByText('At least one workflow must be selected.')).not.toBeInTheDocument();
+        expect(screen.queryByText('Select at least one workflow to continue.')).not.toBeInTheDocument();
       });
     });
   });
