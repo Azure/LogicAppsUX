@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { validateMcpServerDescription, validateMcpServerName } from '../../../../core/mcp/utils/server';
 import { useMcpEligibleWorkflows } from '../../../../core/mcp/utils/queries';
-import type { McpServer } from '@microsoft/logic-apps-shared';
+import { type McpServer, equals } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -159,6 +159,10 @@ export const CreateServer = ({
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
   const [workflowsError, setWorkflowsError] = useState<string | undefined>(undefined);
   const [isCreatingOrUpdating, setIsCreatingOrUpdating] = useState(false);
+  const existingServerNames = useMemo(
+    () => (server ? (existingServers?.filter((name) => !equals(name, server.name)) ?? []) : (existingServers ?? [])),
+    [existingServers, server]
+  );
 
   useEffect(() => {
     if (server && (server.tools ?? []).length > 0) {
@@ -178,10 +182,10 @@ export const CreateServer = ({
   const setMcpServerName = useCallback(
     (value: string) => {
       setServerName(value);
-      const errorMessage = validateMcpServerName(value, existingServers ?? []);
+      const errorMessage = validateMcpServerName(value, existingServerNames);
       setServerNameError(errorMessage);
     },
-    [existingServers]
+    [existingServerNames]
   );
 
   const setMcpServerDescription = useCallback((value: string) => {
