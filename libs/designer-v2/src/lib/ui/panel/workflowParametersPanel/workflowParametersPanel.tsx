@@ -8,6 +8,7 @@ import {
 } from '../../../core/state/workflowparameters/workflowparametersselector';
 import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { WorkflowParameters } from '@microsoft/designer-ui';
+import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {
@@ -17,13 +18,18 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   const workflowParameters = useWorkflowParameters();
   const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
 
-  const onWorkflowParameterAdd = () => dispatch(addParameter());
-  const onDeleteWorkflowParameter = (event: { id: string }) => dispatch(deleteWorkflowParameter(event.id));
-  const onUpdateParameter = (event: WorkflowParameterUpdateEvent) => dispatch(updateParameter(event));
+  const mappedWorkflowParameters = useMemo(
+    () => Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value })),
+    [workflowParameters]
+  );
+
+  const onWorkflowParameterAdd = useCallback(() => dispatch(addParameter()), [dispatch]);
+  const onDeleteWorkflowParameter = useCallback((event: { id: string }) => dispatch(deleteWorkflowParameter(event.id)), [dispatch]);
+  const onUpdateParameter = useCallback((event: WorkflowParameterUpdateEvent) => dispatch(updateParameter(event)), [dispatch]);
 
   return (
     <WorkflowParameters
-      parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
+      parameters={mappedWorkflowParameters}
       isReadOnly={readOnly}
       useLegacy={useLegacy}
       onDismiss={props.toggleCollapse}

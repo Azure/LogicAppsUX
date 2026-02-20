@@ -86,7 +86,6 @@ const httpClient = new HttpClient();
 
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -380,6 +379,7 @@ const DesignerEditor = () => {
       connectionsToUpdate,
       parametersToUpdate,
       settingsToUpdate,
+      /*hostConfig*/ undefined,
       customCodeToUpdate,
       /*notes*/ undefined,
       /*mcpServer*/ undefined,
@@ -397,6 +397,7 @@ const DesignerEditor = () => {
         /*connections*/ undefined,
         /*parameters*/ undefined,
         /*settings*/ undefined,
+        /*hostConfig*/ undefined,
         /*customcode*/ undefined,
         /*notes*/ undefined,
         /*mcpServer*/ undefined,
@@ -1039,7 +1040,6 @@ const getConnectionsToUpdate = (
   if (hasNewServiceProviderKeys) {
     for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
       if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
         (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
           originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
       }
@@ -1049,7 +1049,6 @@ const getConnectionsToUpdate = (
   if (hasNewAgentKeys) {
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
       }
     }

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
@@ -607,6 +606,7 @@ const initializeOutputTokensForOperations = (
       const {
         manifest,
         nodeOutputs,
+        nodeInputs,
         operationMetadata: { iconUri, brandColor },
       } = nodeData;
 
@@ -617,7 +617,8 @@ const initializeOutputTokensForOperations = (
           operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodesWithData[operationId]?.settings
+          nodesWithData[operationId]?.settings,
+          nodeInputs
         )
       );
     } catch (error: any) {

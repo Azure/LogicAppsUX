@@ -83,7 +83,7 @@ export async function downloadAndExtractDependency(
 
       // Extract to targetFolder
       if (dependencyName === dotnetDependencyName) {
-        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
+        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
         if (process.platform === Platform.windows) {
           await executeCommand(
             ext.outputChannel,
@@ -217,12 +217,12 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
       .catch((error) => {
         context.telemetry.properties.latestVersionSource = 'fallback';
         context.telemetry.properties.errorNewestDotNetVersion = `Error getting latest .NET SDK version: ${error}`;
-        return DependencyVersion.dotnet6;
+        return DependencyVersion.dotnet8;
       });
   }
 
   context.telemetry.properties.latestVersionSource = 'fallback';
-  return DependencyVersion.dotnet6;
+  return DependencyVersion.dotnet8;
 }
 
 export async function getLatestNodeJsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
@@ -239,6 +239,9 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
             return releaseVersion;
           }
         }
+        context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
+        context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
+        return DependencyVersion.nodeJs;
       })
       .catch((error) => {
         context.telemetry.properties.latestNodeJSVersion = 'fallback';

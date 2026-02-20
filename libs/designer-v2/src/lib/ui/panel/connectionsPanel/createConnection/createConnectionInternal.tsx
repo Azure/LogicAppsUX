@@ -197,7 +197,11 @@ export const CreateConnectionInternal = (props: {
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
           connectionParametersSet: selectedParameterSet
-            ? getConnectionParameterSetValues(selectedParameterSet.name, outputParameterValues)
+            ? getConnectionParameterSetValues(
+                selectedParameterSet.name,
+                outputParameterValues,
+                Object.keys(selectedParameterSet.parameters ?? {})
+              )
             : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
@@ -322,14 +326,20 @@ export const CreateConnectionInternal = (props: {
 
 export function getConnectionParameterSetValues(
   selectedParameterSetName: string,
-  outputParameterValues: Record<string, any>
+  outputParameterValues: Record<string, any>,
+  validParameterKeys?: string[]
 ): ConnectionParameterSetValues {
+  // Filter to only include parameters that are defined in the parameter set
+  // This prevents sending parameters that the connector API doesn't recognize
+  const filteredParameterValues = validParameterKeys
+    ? Object.fromEntries(Object.entries(outputParameterValues).filter(([key]) => validParameterKeys.includes(key)))
+    : outputParameterValues;
+
   return {
     name: selectedParameterSetName,
-    values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
-      // eslint-disable-next-line no-param-reassign
+    values: Object.keys(filteredParameterValues).reduce((acc: any, key) => {
       acc[key] = {
-        value: outputParameterValues[key],
+        value: filteredParameterValues[key],
       };
       return acc;
     }, {}),

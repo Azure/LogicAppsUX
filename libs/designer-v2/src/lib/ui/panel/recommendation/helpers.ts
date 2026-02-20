@@ -1,12 +1,48 @@
 import type { OperationActionData, OperationGroupCardData } from '@microsoft/designer-ui';
 import { getConnectorCategoryString, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft/logic-apps-shared';
+import type {
+  BuiltInOperation,
+  Connection,
+  Connector,
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  OperationApi,
+} from '@microsoft/logic-apps-shared';
 import {
   getBrandColorFromConnector,
   getDescriptionFromConnector,
   getDisplayNameFromConnector,
   getIconUriFromConnector,
 } from '@microsoft/logic-apps-shared';
+
+export const MCP_CLIENT_CONNECTOR_ID = 'connectionProviders/mcpclient';
+const MCP_CLIENT_BRAND_COLOR = '#000000';
+const MCP_CLIENT_ICON_URI =
+  'data:image/svg+xml,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23242424%22%2F%3E%0A%3Cg%20clip-path%3D%22url(%23clip0_1258_56822)%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20transform%3D%22translate(2%202)%22%20fill%3D%22%23242424%22%2F%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M15.0733%203.9524C14.6707%203.56054%2014.131%203.34127%2013.5691%203.34127C13.0073%203.34127%2012.4676%203.56054%2012.065%203.9524L4.04331%2011.8191C3.90907%2011.9495%203.72926%2012.0225%203.54206%2012.0225C3.35486%2012.0225%203.17504%2011.9495%203.04081%2011.8191C2.97509%2011.7552%202.92285%2011.6787%202.88718%2011.5943C2.85151%2011.5098%202.83313%2011.4191%202.83313%2011.3274C2.83313%2011.2357%202.85151%2011.145%202.88718%2011.0605C2.92285%2010.9761%202.97509%2010.8996%203.04081%2010.8357L11.0625%202.96907C11.7335%202.31606%2012.6328%201.95068%2013.5691%201.95068C14.5055%201.95068%2015.4048%202.31606%2016.0758%202.96907C16.4641%203.34665%2016.7574%203.81081%2016.9318%204.32356C17.1062%204.8363%2017.1567%205.38306%2017.0791%205.91907C17.6223%205.84182%2018.1759%205.89031%2018.6973%206.06079C19.2187%206.23128%2019.6941%206.51921%2020.0866%206.9024L20.1283%206.94407C20.4569%207.26363%2020.7181%207.64584%2020.8965%208.06808C21.0748%208.49032%2021.1667%208.94404%2021.1667%209.4024C21.1667%209.86077%2021.0748%2010.3145%2020.8965%2010.7367C20.7181%2011.159%2020.4569%2011.5412%2020.1283%2011.8607L12.8733%2018.9749C12.8514%2018.9962%2012.834%2019.0216%2012.8221%2019.0498C12.8102%2019.0779%2012.8041%2019.1081%2012.8041%2019.1387C12.8041%2019.1692%2012.8102%2019.1994%2012.8221%2019.2275C12.834%2019.2557%2012.8514%2019.2811%2012.8733%2019.3024L14.3633%2020.7641C14.429%2020.828%2014.4813%2020.9044%2014.5169%2020.9889C14.5526%2021.0733%2014.571%2021.1641%2014.571%2021.2557C14.571%2021.3474%2014.5526%2021.4381%2014.5169%2021.5226C14.4813%2021.607%2014.429%2021.6835%2014.3633%2021.7474C14.2291%2021.8779%2014.0493%2021.9509%2013.8621%2021.9509C13.6749%2021.9509%2013.495%2021.8779%2013.3608%2021.7474L11.8708%2020.2866C11.7173%2020.1374%2011.5953%2019.9591%2011.512%2019.762C11.4287%2019.5649%2011.3858%2019.353%2011.3858%2019.1391C11.3858%2018.9251%2011.4287%2018.7133%2011.512%2018.5162C11.5953%2018.3191%2011.7173%2018.1407%2011.8708%2017.9916L19.1258%2010.8766C19.3229%2010.6848%2019.4795%2010.4554%2019.5864%2010.2021C19.6934%209.94875%2019.7485%209.67655%2019.7485%209.40157C19.7485%209.12658%2019.6934%208.85438%2019.5864%208.60104C19.4795%208.34771%2019.3229%208.11837%2019.1258%207.92657L19.0841%207.88573C18.6819%207.49428%2018.143%207.27504%2017.5817%207.27457C17.0205%207.27411%2016.4812%207.49245%2016.0783%207.88323L10.1016%2013.7449L10.1%2013.7466L10.0183%2013.8274C9.88404%2013.9581%209.70404%2014.0313%209.51664%2014.0313C9.32925%2014.0313%209.14925%2013.9581%209.01498%2013.8274C8.94926%2013.7635%208.89702%2013.687%208.86135%2013.6026C8.82568%2013.5182%208.8073%2013.4274%208.8073%2013.3357C8.8073%2013.2441%208.82568%2013.1533%208.86135%2013.0689C8.89702%2012.9844%208.94926%2012.908%209.01498%2012.8441L15.0758%206.8999C15.2723%206.70797%2015.4284%206.47866%2015.5349%206.22546C15.6414%205.97226%2015.6962%205.70031%2015.696%205.42562C15.6957%205.15094%2015.6405%204.87908%2015.5336%204.62606C15.4266%204.37305%2015.2701%204.14399%2015.0733%203.9524Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M14.0708%205.91914C14.1365%205.85522%2014.1887%205.77878%2014.2244%205.69433C14.2601%205.60989%2014.2785%205.51914%2014.2785%205.42747C14.2785%205.3358%2014.2601%205.24505%2014.2244%205.1606C14.1887%205.07616%2014.1365%204.99972%2014.0708%204.9358C13.9365%204.80508%2013.7565%204.73193%2013.5691%204.73193C13.3817%204.73193%2013.2017%204.80508%2013.0675%204.9358L7.13495%2010.7541C6.80636%2011.0737%206.54516%2011.4559%206.36681%2011.8781C6.18845%2012.3004%206.09656%2012.7541%206.09656%2013.2125C6.09656%2013.6708%206.18845%2014.1245%206.36681%2014.5468C6.54516%2014.969%206.80636%2015.3512%207.13495%2015.6708C7.80607%2016.3236%208.70538%2016.6889%209.64162%2016.6889C10.5779%2016.6889%2011.4772%2016.3236%2012.1483%2015.6708L18.0816%209.85247C18.1473%209.78856%2018.1996%209.71212%2018.2352%209.62767C18.2709%209.54322%2018.2893%209.45248%2018.2893%209.3608C18.2893%209.26913%2018.2709%209.17839%2018.2352%209.09394C18.1996%209.00949%2018.1473%208.93305%2018.0816%208.86914C17.9473%208.73841%2017.7674%208.66527%2017.58%208.66527C17.3926%208.66527%2017.2126%208.73841%2017.0783%208.86914L11.1458%2014.6875C10.7431%2015.0793%2010.2035%2015.2986%209.64162%2015.2986C9.07977%2015.2986%208.5401%2015.0793%208.13745%2014.6875C7.9404%2014.4957%207.78377%2014.2663%207.67683%2014.013C7.56988%2013.7597%207.51478%2013.4875%207.51478%2013.2125C7.51478%2012.9375%207.56988%2012.6653%207.67683%2012.4119C7.78377%2012.1586%207.9404%2011.9293%208.13745%2011.7375L14.0708%205.91914Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3Cdefs%3E%0A%3CclipPath%20id%3D%22clip0_1258_56822%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22white%22%20transform%3D%22translate(2%202)%22%2F%3E%0A%3C%2FclipPath%3E%0A%3C%2Fdefs%3E%0A%3C%2Fsvg%3E%0A';
+
+export const builtinMcpServerOperation: DiscoveryOperation<BuiltInOperation> = {
+  name: 'nativemcpclient',
+  id: 'nativemcpclient',
+  type: 'nativemcpclient',
+  properties: {
+    api: {
+      id: MCP_CLIENT_CONNECTOR_ID,
+      name: 'mcpclient',
+      description: 'MCP Client Operations',
+      displayName: 'Connect to an MCP server',
+      iconUri:
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+    },
+    summary: 'Add new MCP server',
+    description: 'Uses an MCP server',
+    visibility: 'Important',
+    operationType: 'McpClientTool',
+    operationKind: 'Builtin',
+    brandColor: MCP_CLIENT_BRAND_COLOR,
+    iconUri:
+      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+DQogIDxyZWN0IHg9IjQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIiBmaWxsPSJibGFjayIvPg0KICA8cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4NCjwvc3ZnPg==',
+  },
+};
 
 export const getOperationGroupCardDataFromConnector = (connector: Connector | OperationApi): OperationGroupCardData => ({
   description: getDescriptionFromConnector(connector),
@@ -17,20 +53,52 @@ export const getOperationGroupCardDataFromConnector = (connector: Connector | Op
   isCustom: isCustomConnector(connector),
 });
 
-export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
-  id: operation.id,
-  title: operation.properties.summary,
-  description: operation.properties.description,
-  brandColor: operation.properties.api.brandColor,
-  iconUri: operation.properties.api.iconUri,
-  connectorName: operation.properties.api.displayName,
-  category: getConnectorCategoryString(operation.properties.api),
-  isTrigger: !!operation.properties?.trigger,
-  isBuiltIn: isBuiltInConnector(operation.properties.api),
-  isCustom: isCustomConnector(operation.properties.api),
-  apiId: operation.properties.api.id,
-  releaseStatus: operation.properties.annotation?.status,
-});
+export const connectionToOperation = (connection: Connection): DiscoveryOperation<DiscoveryResultTypes> => {
+  const serverUrl =
+    (connection.properties?.connectionParameters as any)?.mcpServerUrl?.metadata?.value ??
+    connection.properties?.displayName ??
+    connection.name;
+  return {
+    name: connection.name,
+    id: connection.id,
+    type: 'builtinMcpClientToolConnection',
+    properties: {
+      api: {
+        id: MCP_CLIENT_CONNECTOR_ID,
+        name: 'mcpclient',
+        description: 'MCP Client Connection',
+        displayName: 'MCP Connection',
+        iconUri: MCP_CLIENT_ICON_URI,
+        brandColor: MCP_CLIENT_BRAND_COLOR,
+      },
+      summary: serverUrl,
+      description: connection.properties?.displayName ? `${connection.properties.displayName}` : `MCP connection: ${connection.name}`,
+      visibility: 'Important',
+      operationType: 'McpClientTool',
+      operationKind: 'Builtin',
+      brandColor: MCP_CLIENT_BRAND_COLOR,
+      iconUri: MCP_CLIENT_ICON_URI,
+    },
+  };
+};
+
+export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => {
+  const isMcpClientTool = operation.properties.operationType === 'McpClientTool' && operation.id !== 'nativemcpclient';
+  return {
+    id: operation.id,
+    title: operation.properties.summary + (isMcpClientTool ? ' (MCP)' : ''),
+    description: operation.properties.description,
+    brandColor: operation.properties.api.brandColor,
+    iconUri: operation.properties.api.iconUri,
+    connectorName: operation.properties.api.displayName,
+    category: getConnectorCategoryString(operation.properties.api),
+    isTrigger: !!operation.properties?.trigger,
+    isBuiltIn: isBuiltInConnector(operation.properties.api),
+    isCustom: isCustomConnector(operation.properties.api),
+    apiId: operation.properties.api.id,
+    releaseStatus: operation.properties.annotation?.status,
+  };
+};
 
 export const ALLOWED_A2A_CONNECTOR_NAMES = new Set([
   'http',

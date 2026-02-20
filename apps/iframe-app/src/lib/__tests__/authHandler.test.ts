@@ -146,10 +146,11 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toEqual({ isAuthenticated: true, error: null, username: 'John Doe' });
+      expect(result).toEqual({ isAuthenticated: true, isEasyAuthConfigured: true, error: null, username: 'John Doe' });
       expect(mockFetch).toHaveBeenCalledWith('https://example.com/.auth/me', {
         method: 'GET',
         credentials: 'include',
+        redirect: 'manual',
       });
     });
 
@@ -162,7 +163,7 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toEqual({ isAuthenticated: true, error: null, username: undefined });
+      expect(result).toEqual({ isAuthenticated: true, isEasyAuthConfigured: true, error: null, username: undefined });
     });
 
     it('should return false when user is not authenticated (empty array)', async () => {
@@ -173,7 +174,7 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toEqual({ isAuthenticated: false, error: null, username: undefined });
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null, username: undefined });
     });
 
     it('should handle invalid JWT token gracefully', async () => {
@@ -184,7 +185,7 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toEqual({ isAuthenticated: true, error: null, username: undefined });
+      expect(result).toEqual({ isAuthenticated: true, isEasyAuthConfigured: true, error: null, username: undefined });
     });
 
     it('should handle missing access_token gracefully', async () => {
@@ -195,20 +196,43 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toEqual({ isAuthenticated: true, error: null, username: undefined });
+      expect(result).toEqual({ isAuthenticated: true, isEasyAuthConfigured: true, error: null, username: undefined });
     });
 
-    it('should return false when response is not ok', async () => {
+    it('should return isEasyAuthConfigured true and not authenticated when 401', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
+        type: 'basic',
       });
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result.isAuthenticated).toBe(false);
-      expect(result.error).toBeInstanceOf(Error);
-      expect(result.error?.message).toBe('Failed to fetch authentication status');
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
+    });
+
+    it('should return isEasyAuthConfigured true and not authenticated when 403', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
+    });
+
+    it('should return isEasyAuthConfigured true and not authenticated on opaqueredirect (302)', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 0,
+        type: 'opaqueredirect',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: true, error: null });
     });
 
     it('should return false on network error', async () => {
@@ -217,7 +241,49 @@ describe('authHandler', () => {
 
       const result = await checkAuthStatus('https://example.com');
 
-      expect(result).toEqual({ isAuthenticated: false, error: networkError });
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: false, error: networkError });
+    });
+
+    it('should return isEasyAuthConfigured false when /.auth/me returns 404', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result).toEqual({ isAuthenticated: false, isEasyAuthConfigured: false, error: null });
+    });
+
+    it('should return isEasyAuthConfigured true with error when 500 Internal Server Error', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result.isAuthenticated).toBe(false);
+      expect(result.isEasyAuthConfigured).toBe(true);
+      expect(result.error).toBeInstanceOf(Error);
+      expect(result.error?.message).toBe('Failed to fetch authentication status');
+    });
+
+    it('should return isEasyAuthConfigured true with error when 503 Service Unavailable', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        type: 'basic',
+      });
+
+      const result = await checkAuthStatus('https://example.com');
+
+      expect(result.isAuthenticated).toBe(false);
+      expect(result.isEasyAuthConfigured).toBe(true);
+      expect(result.error).toBeInstanceOf(Error);
+      expect(result.error?.message).toBe('Failed to fetch authentication status');
     });
   });
 

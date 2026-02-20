@@ -81,6 +81,26 @@ describe('combineSequentialInitializeVariables', () => {
       const value = "prefix @{variables('test')} suffix";
       expect(hasVariableReference(value)).toBe(true);
     });
+
+    it('should detect variables() nested inside other functions (issue #1447)', () => {
+      const value = "@{substring(variables('alert-resource-name'), 0, sub(length(variables('alert-resource-name')), 4)) }";
+      expect(hasVariableReference(value)).toBe(true);
+    });
+
+    it('should detect variables() inside length()', () => {
+      const value = "@{length(variables('myList'))}";
+      expect(hasVariableReference(value)).toBe(true);
+    });
+
+    it('should detect variables() inside concat()', () => {
+      const value = "@{concat('prefix-', variables('name'), '-suffix')}";
+      expect(hasVariableReference(value)).toBe(true);
+    });
+
+    it('should detect variables() inside toLower()', () => {
+      const value = "@{toLower(variables('myVar'))}";
+      expect(hasVariableReference(value)).toBe(true);
+    });
   });
 
   describe('sequential variable combining', () => {
@@ -336,6 +356,33 @@ describe('combineSequentialInitializeVariables', () => {
         Initialize_var2: createInitializeVariableAction([{ name: 'var2', type: 'string', value: "prefix @{variables('var1')} suffix" }], {
           Initialize_var1: ['SUCCEEDED'],
         }),
+      };
+
+      const result = combineSequentialInitializeVariables(definition);
+      expect(result.actions).toBeDefined();
+      expect(Object.keys(result.actions!)).toHaveLength(2);
+      expect(result.actions!.Initialize_var1).toBeDefined();
+      expect(result.actions!.Initialize_var2).toBeDefined();
+    });
+
+    it('should NOT combine when variable references another variable inside nested functions (issue #1447)', () => {
+      const definition = createBaseWorkflowDefinition();
+      definition.actions = {
+        Initialize_var1: createInitializeVariableAction([
+          { name: 'alert-resource-name', type: 'string', value: 'thhhhhhhhhhhhhhhhhhhhhhhh' },
+        ]),
+        Initialize_var2: createInitializeVariableAction(
+          [
+            {
+              name: 'alert-logic-app-name',
+              type: 'string',
+              value: "@{substring(variables('alert-resource-name'), 0, sub(length(variables('alert-resource-name')), 4)) }",
+            },
+          ],
+          {
+            Initialize_var1: ['SUCCEEDED'],
+          }
+        ),
       };
 
       const result = combineSequentialInitializeVariables(definition);

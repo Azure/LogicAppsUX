@@ -42,7 +42,10 @@ jobs:
         run: pnpm turbo run build --cache-dir=.turbo
 
       - name: Run tests with coverage
-        run: pnpm turbo run test:lib --cache-dir=.turbo
+        run: |
+          pnpm turbo run test:lib --cache-dir=.turbo
+          pnpm turbo run test:iframe-app --cache-dir=.turbo
+          pnpm turbo run test:extension-unit --cache-dir=.turbo
 
       - name: Merge coverage reports
         run: |
@@ -85,6 +88,10 @@ jobs:
             **/*Interfaces.ts
             **/types.ts
             **/types.tsx
+            **/styles.ts
+            **/styles.tsx
+            **/*.styles.ts
+            **/*.styles.tsx
             **/constants.ts
             **/constants/**
             # Config files
@@ -124,6 +131,8 @@ jobs:
             **/*Provider.ts
             **/*Provider.tsx
             **/providers/**
+            # VS Code webview communication (uses acquireVsCodeApi runtime global, cannot be unit tested)
+            **/webviewCommunication.tsx
 
       - name: Check coverage on changed files
         id: coverage-check
@@ -137,6 +146,7 @@ jobs:
           if [ -z "$CHANGED_FILES" ]; then
             echo "No source files changed in this PR." >> $GITHUB_STEP_SUMMARY
             echo "coverage_status=skip" >> $GITHUB_OUTPUT
+            printf '%s\n\n%s\n' "## 📊 Coverage Check" "No source files changed in this PR." > ./coverage-comment.md
             exit 0
           fi
 
@@ -157,6 +167,7 @@ jobs:
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "❌ **No coverage data found.** Please ensure tests generate coverage reports." >> $GITHUB_STEP_SUMMARY
               echo "coverage_status=no_data" >> $GITHUB_OUTPUT
+              printf '%s\n\n%s\n' "## 📊 Coverage Check" "⚠️ No coverage data found. Please ensure tests generate coverage reports." > ./coverage-comment.md
               exit 0
             fi
           fi
@@ -261,6 +272,27 @@ jobs:
             echo "coverage_status=pass" >> $GITHUB_OUTPUT
           fi
 
+          # Build a concise PR comment with failing files
+          {
+            echo "## 📊 Coverage Check"
+            echo ""
+            if [ -n "$UNCOVERED_FILES" ] || [ -n "$PARTIAL_FILES" ]; then
+              echo "The following changed files need attention:"
+              echo ""
+              if [ -n "$UNCOVERED_FILES" ]; then
+                echo -e "$UNCOVERED_FILES"
+                echo ""
+              fi
+              if [ -n "$PARTIAL_FILES" ]; then
+                echo -e "$PARTIAL_FILES"
+                echo ""
+              fi
+              echo "**Please add tests for the uncovered files before merging.**"
+            else
+              echo "🎉 **All changed files have adequate test coverage!**"
+            fi
+          } > ./coverage-comment.md
+
       - name: Post coverage comment on PR
         if: always()
         uses: actions/github-script@v7
@@ -277,17 +309,18 @@ jobs:
               return;
             }
 
-            // Read the step summary
-            const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+            const COMMENT_MARKER = '<!-- pr-coverage-check-comment -->';
+
+            // Read the coverage comment built by the coverage-check step
             let summary = '';
             try {
-              summary = fs.readFileSync(summaryPath, 'utf8');
+              summary = fs.readFileSync('./coverage-comment.md', 'utf8');
             } catch (e) {
               summary = '📊 Coverage check completed. See workflow run for details.';
             }
 
             try {
-              // Find existing comment
+              // Find existing comment by hidden marker
               const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -296,10 +329,10 @@ jobs:
 
               const botComment = comments.find(comment =>
                 comment.user.type === 'Bot' &&
-                comment.body.includes('📊 Coverage Report for Changed Files')
+                comment.body.includes(COMMENT_MARKER)
               );
 
-              const commentBody = summary || '📊 Coverage check completed. See workflow run for details.';
+              const commentBody = COMMENT_MARKER + '\n' + (summary || '📊 Coverage check completed. See workflow run for details.');
 
               if (botComment) {
                 await github.rest.issues.updateComment({

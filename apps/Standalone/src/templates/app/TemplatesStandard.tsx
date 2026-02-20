@@ -7,10 +7,12 @@ import {
   TemplatesDataProvider,
   templateStore,
   TemplatesView,
+  TemplatesDesigner,
+  TemplatesDesignerProvider,
+  parseWorkflowParameterValue,
 } from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../state/Store';
-import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -40,19 +42,17 @@ import {
   useCurrentObjectId,
   useCurrentTenantId,
   useWorkflowApp,
+  saveWorkflowStandard,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import type { ConnectionAndAppSetting, ConnectionsData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
-import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
-import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { useFunctionalState } from '@react-hookz/web';
 import { ArtifactService } from '../../designer/app/AzureLogicAppsDesigner/Services/Artifact';
 import { ChildWorkflowService } from '../../designer/app/AzureLogicAppsDesigner/Services/ChildWorkflow';
@@ -191,6 +191,7 @@ export const TemplatesStandard = () => {
           updatedConnectionsData,
           updatedParametersData,
           updatedSettingProperties,
+          /*hostConfig*/ undefined,
           /*customCodeData*/ undefined,
           /*notesData*/ undefined,
           /*mcpServer*/ undefined,

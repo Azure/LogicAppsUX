@@ -827,6 +827,13 @@
             "enumDescriptions": ["Version 1 (Deprecated)", "Version 2"],
             "default": 2
           },
+          "azureLogicAppsStandard.designerVersion": {
+            "type": "number",
+            "enum": [1, 2],
+            "description": "The version of the Logic Apps Designer to use.",
+            "enumDescriptions": ["Version 1", "Version 2 (Preview)"],
+            "default": 1
+          },
           "azureLogicAppsStandard.deploySubpath": {
             "scope": "resource",
             "type": "string",

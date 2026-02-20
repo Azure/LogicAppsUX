@@ -101,7 +101,7 @@ export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
-export const workflowappRuntime = 'node|18';
+export const workflowappRuntime = 'node|20';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
 export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
@@ -243,6 +243,7 @@ export const gitCommand = 'git';
 // Project settings
 export const projectLanguageSetting = 'projectLanguage';
 export const dataMapperVersionSetting = 'dataMapperVersion';
+export const designerVersionSetting = 'designerVersion';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
@@ -312,12 +313,13 @@ export const defaultExtensionBundlePathValue = path.join(
   extensionBundleId
 );
 export const defaultDataMapperVersion = 2;
+export const defaultDesignerVersion = 1;
 
 // Fallback Dependency Versions
 export const DependencyVersion = {
-  dotnet6: '6.0.413',
+  dotnet8: '8.0.318',
   funcCoreTools: '4.0.7030',
-  nodeJs: '18.17.1',
+  nodeJs: '20.18.3',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
