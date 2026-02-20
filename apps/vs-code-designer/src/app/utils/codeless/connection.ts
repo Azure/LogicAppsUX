@@ -669,7 +669,8 @@ async function updateConnectionReferencesLocalMSI(
   const errors: Array<{ referenceKey: string; error: string }> = [];
   let successCount = 0;
 
-  for (const [referenceKey, reference] of Object.entries(connectionReferences)) {
+  // Process all connections in parallel for better performance
+  const connectionPromises = Object.entries(connectionReferences).map(async ([referenceKey, reference]) => {
     const connectionStartTime = Date.now();
 
     try {
@@ -677,8 +678,7 @@ async function updateConnectionReferencesLocalMSI(
 
       if (!isApiHubConnectionId(connectionId)) {
         context.telemetry.properties[`msiSkipped_${referenceKey}`] = 'Not an API Hub connection';
-        updatedReferences[referenceKey] = reference;
-        continue;
+        return { referenceKey, reference, skipped: true };
       }
 
       context.telemetry.properties[`msiProcessing_${referenceKey}`] = connectionId;
@@ -692,20 +692,32 @@ async function updateConnectionReferencesLocalMSI(
         localSettings,
         policyNamePrefix
       );
-      successCount++;
+
       context.telemetry.properties[`msiSuccess_${referenceKey}`] = `Completed in ${Date.now() - connectionStartTime}ms`;
+      return { referenceKey, reference, success: true };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      errors.push({ referenceKey, error: errorMessage });
-
       context.telemetry.properties[`msiError_${referenceKey}`] = errorMessage;
-
-      // Still include the reference but with original authentication
-      updatedReferences[referenceKey] = reference;
 
       ext.outputChannel.appendLog(
         localize('msiConnectionError', 'Failed to configure MSI for connection {0}: {1}', referenceKey, errorMessage)
       );
+
+      return { referenceKey, reference, error: errorMessage };
+    }
+  });
+
+  // Wait for all connections to be processed
+  const results = await Promise.all(connectionPromises);
+
+  // Aggregate results
+  for (const result of results) {
+    updatedReferences[result.referenceKey] = result.reference;
+
+    if (result.success) {
+      successCount++;
+    } else if (result.error) {
+      errors.push({ referenceKey: result.referenceKey, error: result.error });
     }
   }
 

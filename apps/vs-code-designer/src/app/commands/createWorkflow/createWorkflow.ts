@@ -11,11 +11,15 @@ import { createLogicAppWorkflow } from './createLogicAppWorkflow';
 import { getWorkspaceRoot } from '../../utils/workspace';
 import { isCodefulProject } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import * as path from 'path';
 
 export const createWorkflow = async (context: IActionContext) => {
   const workspaceFolderPath = await getWorkspaceRoot(context);
   const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true);
   const isCodeful = await isCodefulProject(projectRoot);
+  const logicAppName = path.basename(projectRoot);
+
+  const logicAppType = isCodeful ? ProjectType.agentCodeful : '';
 
   await createWorkspaceWebviewCommandHandler({
     panelName: localize('createWorkflow', 'Create workflow'),
@@ -26,7 +30,8 @@ export const createWorkflow = async (context: IActionContext) => {
       await createLogicAppWorkflow(context, data, projectRoot);
     },
     extraInitializeData: {
-      logicAppType: isCodeful ? ProjectType.agentCodeful : '',
+      logicAppType,
+      logicAppName,
     },
   });
 };

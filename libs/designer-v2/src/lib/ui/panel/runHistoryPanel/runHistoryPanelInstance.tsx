@@ -26,9 +26,10 @@ type FilterTypes = 'runId' | 'workflowVersion' | 'status';
 
 interface RunHistoryPanelProps {
   onRefresh?: () => void;
+  onRunSelected?: (runId: string) => void;
 }
 
-export const RunHistoryPanelInstance = (_props: RunHistoryPanelProps) => {
+export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
   const intl = useIntl();
   const styles = useRunHistoryPanelStyles();
   const runsQuery = useRunsInfiniteQuery();
@@ -199,7 +200,7 @@ export const RunHistoryPanelInstance = (_props: RunHistoryPanelProps) => {
                   key={run.id}
                   runId={run.id}
                   isSelected={false}
-                  onRunSelected={() => {}}
+                  onRunSelected={props.onRunSelected ? () => props.onRunSelected?.(run.id) : () => {}}
                   addFilterCallback={addFilterCallback}
                 />
               ))}

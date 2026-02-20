@@ -224,6 +224,8 @@ export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionC
 // Extension context
 export const customExtensionContext = {
   isAgentCodeful: 'azureLogicAppsStandard.isAgentCodeful',
+  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
+  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
 } as const;
 export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 

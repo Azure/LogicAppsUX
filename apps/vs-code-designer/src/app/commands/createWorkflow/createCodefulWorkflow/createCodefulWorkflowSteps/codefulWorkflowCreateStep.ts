@@ -174,6 +174,21 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     await this.updateHostJson(context, hostFileName);
 
     await this.updateAppSettings(context);
+
+    // Configure OmniSharp to prevent invalid solution file generation
+    await this.configureOmniSharpSettings(context);
+  }
+
+  private async configureOmniSharpSettings(context: IFunctionWizardContext): Promise<void> {
+    try {
+      // Prevent OmniSharp from generating solution files that can cause build failures
+      const { updateWorkspaceSetting } = await import('../../../../utils/vsCodeConfig/settings');
+      await updateWorkspaceSetting('enableMsBuildLoadProjectsOnDemand', false, context.projectPath, 'omnisharp');
+      await updateWorkspaceSetting('disableMSBuildDiagnosticWarning', true, context.projectPath, 'omnisharp');
+    } catch (error) {
+      // Log but don't fail if OmniSharp settings can't be updated
+      console.warn('Failed to configure OmniSharp settings:', error);
+    }
   }
 
   private addNugetConfig(projectPath: string) {

@@ -19,6 +19,7 @@ export interface InitializePayload {
   workflowNames?: string[];
   azureDetails?: AzureConnectorDetails;
   kind?: string;
+  supportsUnitTest?: boolean;
 }
 
 export interface UpdateCallbackInfoPayload {
@@ -48,6 +49,7 @@ export interface WorkflowState {
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
   workflowNames?: string[];
+  supportsUnitTest?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
 }
@@ -97,6 +99,7 @@ export const workflowSlice = createSlice({
         workflowNames,
         azureDetails,
         kind,
+        supportsUnitTest,
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -130,6 +133,7 @@ export const workflowSlice = createSlice({
       initializedState.workflowNames = workflowNames;
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
+      initializedState.supportsUnitTest = supportsUnitTest;
     },
     updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.baseUrl = action.payload ?? '';

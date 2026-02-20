@@ -25,6 +25,7 @@ export interface DesignerState {
   hostVersion: string;
   isUnitTest: boolean;
   unitTestDefinition: UnitTestDefinition | null;
+  supportsUnitTest: boolean;
 }
 
 const initialState: DesignerState = {
@@ -56,6 +57,7 @@ const initialState: DesignerState = {
   hostVersion: '',
   isUnitTest: false,
   unitTestDefinition: null,
+  supportsUnitTest: false,
 };
 
 export const designerSlice: Slice<DesignerState> = createSlice({
@@ -78,6 +80,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
         isUnitTest,
         unitTestDefinition,
         workflowRuntimeBaseUrl,
+        supportsUnitTest,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -94,6 +97,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       state.hostVersion = hostVersion;
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
+      state.supportsUnitTest = supportsUnitTest ?? (isLocal && !isMonitoringView);
     },
     updateRuntimeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
       state.workflowRuntimeBaseUrl = action.payload ?? '';

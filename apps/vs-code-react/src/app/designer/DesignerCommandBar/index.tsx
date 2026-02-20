@@ -71,6 +71,7 @@ export interface DesignerCommandBarProps {
   runId: string;
   kind?: string;
   getAgentUrl?: () => Promise<AgentURL>;
+  supportsUnitTest?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -80,9 +81,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   onRefresh,
   isDarkMode,
   isUnitTest,
-  isLocal,
   runId,
   getAgentUrl,
+  supportsUnitTest,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -309,7 +310,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         onResubmit();
       },
     },
-    ...(isLocal
+    ...(supportsUnitTest
       ? [
           {
             key: 'CreateUnitTestFromRun',

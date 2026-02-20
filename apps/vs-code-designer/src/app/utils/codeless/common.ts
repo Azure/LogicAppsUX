@@ -187,10 +187,22 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
   return artifacts;
 }
 
+// Cache Azure connector details to avoid repeated auth calls (expensive operation)
+// Key: projectPath, Value: { timestamp, details }
+const azureDetailsCache = new Map<string, { timestamp: number; details: AzureConnectorDetails }>();
+const AZURE_DETAILS_CACHE_TTL = 300000; // 5 minutes
+
 export async function getAzureConnectorDetailsForLocalProject(
   context: IActionContext,
   projectPath: string
 ): Promise<AzureConnectorDetails> {
+  // Check cache first
+  const cached = azureDetailsCache.get(projectPath);
+  const now = Date.now();
+  if (cached && now - cached.timestamp < AZURE_DETAILS_CACHE_TTL) {
+    return cached.details;
+  }
+
   const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
   const connectorsContext = context as IAzureConnectorsContext;
   const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
@@ -222,7 +234,7 @@ export async function getAzureConnectorDetailsForLocalProject(
     clientId = parsedClientId;
   }
 
-  return {
+  const details: AzureConnectorDetails = {
     enabled,
     accessToken: accessToken,
     subscriptionId: enabled ? subscriptionId : undefined,
@@ -232,6 +244,11 @@ export async function getAzureConnectorDetailsForLocalProject(
     clientId: enabled ? clientId : undefined,
     workflowManagementBaseUrl: enabled ? workflowManagementBaseUrl : undefined,
   };
+
+  // Cache the result
+  azureDetailsCache.set(projectPath, { timestamp: now, details });
+
+  return details;
 }
 
 export async function getManualWorkflowsInLocalProject(projectPath: string, workflowToExclude: string): Promise<Record<string, any>> {

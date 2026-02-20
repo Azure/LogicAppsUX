@@ -32,6 +32,7 @@ import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { publishCodefulProject } from './publishCodefulProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
 
@@ -86,9 +87,11 @@ export async function pickFuncProcessInternal(
     throw new UserCancelledError('preDebugValidate');
   }
 
-  await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
-
+  // Stop previous func host BEFORE building/publishing to avoid file locks
   await waitForPrevFuncTaskToStop(workspaceFolder);
+
+  await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+  await publishCodefulProject(context, workspaceFolder.uri);
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 

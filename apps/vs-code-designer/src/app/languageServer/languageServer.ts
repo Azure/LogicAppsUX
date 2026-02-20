@@ -174,7 +174,7 @@ export default class LogicAppsSeverLanguage {
     const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
     const files = await fse.readdir(sdkFolderPath);
     const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Sdk.Agents.') && file.endsWith('.nupkg');
+      return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
     });
 
     const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
@@ -241,3 +241,36 @@ export const startLanguageServerProtocol = async () => {
     languageServer.start();
   });
 };
+
+/**
+ * Gets workflow metadata from the LSP server including trigger names.
+ * Uses a custom LSP request to query the workflow structure.
+ * @param workflowFilePath - The absolute path to the codeful workflow .cs file
+ * @returns Workflow metadata including workflow name and trigger name, or undefined if not available
+ */
+export async function getCodefulWorkflowMetadata(
+  workflowFilePath: string
+): Promise<{ workflowName: string; triggerName: string } | undefined> {
+  if (!ext.languageClient) {
+    console.warn('[LSP] Language client not initialized');
+    return undefined;
+  }
+
+  try {
+    // Use the custom LSP request to get workflow metadata
+    const response = await ext.languageClient.sendRequest<{ workflowName: string; triggerName: string } | null>(
+      'custom/getWorkflowMetadata',
+      { uri: workflowFilePath }
+    );
+
+    if (!response) {
+      console.warn('[LSP] No workflow metadata returned from server');
+      return undefined;
+    }
+
+    return response;
+  } catch (error) {
+    console.error('[LSP] Failed to get workflow metadata:', error);
+    return undefined;
+  }
+}

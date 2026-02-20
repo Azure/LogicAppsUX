@@ -1,7 +1,8 @@
 import type { RootState } from '../../state/store';
+import { VSCodeContext } from '../../webviewCommunication';
 import { InitRunService, StandardRunService } from '@microsoft/logic-apps-shared';
-import { HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useEffect, useMemo, useState } from 'react';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRunHistoryStyles } from './runHistoryStyles';
 import { RunHistoryPanelInstance } from '@microsoft/logic-apps-designer-v2';
@@ -15,6 +16,7 @@ export interface CallbackInfo {
 }
 export const RunHistoryApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
+  const vscode = useContext(VSCodeContext);
   const styles = useRunHistoryStyles();
   const dropdownId = useId('dropdown-workflows');
   const intl = useIntl();
@@ -69,6 +71,13 @@ export const RunHistoryApp = () => {
     InitRunService(runService);
   }, [runService]);
 
+  const handleRunSelected = (runId: string) => {
+    vscode.postMessage({
+      command: ExtensionCommand.loadRun,
+      item: { id: runId },
+    });
+  };
+
   return (
     <div className={styles.runHistoryContainer}>
       <Title1 className={styles.runHistoryTitle}>{intlText.RUN_HISTORY_TITLE}</Title1>
@@ -80,7 +89,7 @@ export const RunHistoryApp = () => {
           ))}
         </Dropdown>
       </div>
-      <RunHistoryPanelInstance />
+      <RunHistoryPanelInstance onRunSelected={handleRunSelected} />
     </div>
   );
 };
