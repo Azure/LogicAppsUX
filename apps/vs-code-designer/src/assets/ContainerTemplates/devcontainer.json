@@ -1,6 +1,6 @@
 {
-  "name": "LogicAppContain",
-  "image": "carloscastrotrejo/logicapps-dev:latest",
+  "name": "LogicAppContainer",
+  "image": "mcr.microsoft.com/azurelogicapps/logicapps-devcontainer:latest",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "customizations": {
