@@ -34,8 +34,9 @@ import { XLargeText } from '@microsoft/designer-ui';
 import { Spinner } from '@fluentui/react-components';
 import { useAppStyles } from './appStyles';
 import { useIntlMessages, commonMessages } from '../../intl';
+import { DesignerApp as DesignerAppV2 } from './appV2';
 
-export const DesignerApp = () => {
+const DesignerAppV1 = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
@@ -295,4 +296,26 @@ export const DesignerApp = () => {
       </DesignerProvider>
     </div>
   );
+};
+
+export const DesignerApp = () => {
+  const vscode = useContext(VSCodeContext);
+  const designerVersion = useSelector((state: RootState) => state.project.designerVersion);
+
+  const sendMsgToVsix = useCallback(
+    (msg: MessageToVsix) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
+  useEffect(() => {
+    sendMsgToVsix({ command: ExtensionCommand.getDesignerVersion });
+  }, [sendMsgToVsix]);
+
+  if (designerVersion === undefined) {
+    return null;
+  }
+
+  return designerVersion === 2 ? <DesignerAppV2 /> : <DesignerAppV1 />;
 };
