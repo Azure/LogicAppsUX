@@ -338,6 +338,7 @@ export function getConnectionParameterSetValues(
   return {
     name: selectedParameterSetName,
     values: Object.keys(filteredParameterValues).reduce((acc: any, key) => {
+      // eslint-disable-next-line no-param-reassign
       acc[key] = {
         value: filteredParameterValues[key],
       };

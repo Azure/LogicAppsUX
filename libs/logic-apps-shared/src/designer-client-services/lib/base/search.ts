@@ -307,8 +307,9 @@ export abstract class BaseSearchService implements ISearchService {
   private moveGeneralInformation(connectors: Connector[]): Connector[] {
     connectors.forEach((connector) => {
       if (connector.properties.generalInformation) {
+        // eslint-disable-next-line no-param-reassign
         connector.properties.displayName = connector.properties.generalInformation.displayName ?? '';
-
+        // eslint-disable-next-line no-param-reassign
         connector.properties.iconUri = connector.properties.generalInformation.iconUrl ?? '';
       }
     });

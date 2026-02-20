@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';

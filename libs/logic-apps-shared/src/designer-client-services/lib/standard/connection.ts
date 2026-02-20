@@ -305,6 +305,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const connectionCreationClientName = parametersMetadata.connectionMetadata?.connectionCreationClient;
     if (connectionCreationClientName) {
       if (connectionCreationClients?.[connectionCreationClientName]) {
+        // eslint-disable-next-line no-param-reassign
         connectionInfo = await connectionCreationClients[connectionCreationClientName].connectionCreationFunc(
           connectionInfo,
           connectionName

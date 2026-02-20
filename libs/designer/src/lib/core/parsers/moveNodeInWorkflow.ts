@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { isA2AWorkflow } from '../state/workflow/helper';

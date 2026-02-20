@@ -368,9 +368,7 @@ describe('combineSequentialInitializeVariables', () => {
     it('should NOT combine when variable references another variable inside nested functions (issue #1447)', () => {
       const definition = createBaseWorkflowDefinition();
       definition.actions = {
-        Initialize_var1: createInitializeVariableAction([
-          { name: 'alert-resource-name', type: 'string', value: 'thhhhhhhhhhhhhhhhhhhhhhhh' },
-        ]),
+        Initialize_var1: createInitializeVariableAction([{ name: 'alert-resource-name', type: 'string', value: 'thhhhhhhhhhhhhhhhhhhhhhhh' }]),
         Initialize_var2: createInitializeVariableAction(
           [
             {

@@ -907,6 +907,7 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.OpenApiConnection: {
+      // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
         host: {
@@ -969,8 +970,10 @@ const serializeHost = (
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
   for (const [key, value] of Object.entries(hostInfo)) {
     if (inputs[key]) {
+      // eslint-disable-next-line no-param-reassign
       inputs[key] = { ...inputs[key], ...value };
     } else {
+      // eslint-disable-next-line no-param-reassign
       inputs[key] = value;
     }
   }

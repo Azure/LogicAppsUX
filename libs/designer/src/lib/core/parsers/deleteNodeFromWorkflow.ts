@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { isA2AWorkflow } from '../state/workflow/helper';
 import type { WorkflowNode } from './models/workflowNode';
