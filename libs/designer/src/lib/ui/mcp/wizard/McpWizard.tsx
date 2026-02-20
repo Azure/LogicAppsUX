@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { McpPanelRoot } from '../panel/mcpPanelRoot';
 import { type McpServerCreateData, serializeMcpWorkflows } from '../../../core/mcp/utils/serializer';
-import { resetQueriesOnRegisterMcpServer } from '../../../core/mcp/utils/queries';
+import { resetQueriesOnRegisterMcpServer, useAllMcpServersFromVfs } from '../../../core/mcp/utils/queries';
 import { LogicAppSelector } from '../details/logicAppSelector';
 import { useMemo, useCallback, useState } from 'react';
 import type { TemplatePanelFooterProps, TemplatesSectionItem } from '@microsoft/designer-ui';
@@ -21,6 +21,7 @@ import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shar
 import { selectConnectorId, selectOperations } from '../../../core/state/mcp/mcpselectionslice';
 import { SuccessToast } from '../logicapps/common';
 import { useValidMcpConnection } from '../hooks/connection';
+import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
 
 export type RegisterMcpServerHandler = (workflowsData: McpServerCreateData, onCompleted?: () => void) => Promise<void>;
 
@@ -40,6 +41,12 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
     mcpOptions: { disableConfiguration },
     mcpSelection: { selectedConnectorId, disableConnectorSelection },
   } = useSelector((state: RootState) => state);
+
+  const logicAppId = useMemo(
+    () => getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName ?? ''),
+    [subscriptionId, resourceGroup, logicAppName]
+  );
+  const { data: existingServers } = useAllMcpServersFromVfs(logicAppId);
 
   const [serverName, setServerName] = useState('');
   const [serverDescription, setServerDescription] = useState('');
@@ -314,11 +321,14 @@ export const McpWizard = ({ registerMcpServer, onClose }: McpWizardProps) => {
     }),
   };
 
-  const setMcpServerName = useCallback((value: string) => {
-    setServerName(value);
-    const errorMessage = validateMcpServerName(value);
-    setServerNameError(errorMessage);
-  }, []);
+  const setMcpServerName = useCallback(
+    (value: string) => {
+      setServerName(value);
+      const errorMessage = validateMcpServerName(value, existingServers ?? []);
+      setServerNameError(errorMessage);
+    },
+    [existingServers]
+  );
 
   const setMcpServerDescription = useCallback((value: string) => {
     setServerDescription(value);

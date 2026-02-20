@@ -68,8 +68,8 @@ describe('Modal Components', () => {
     it('renders with correct title and content', () => {
       renderWithProviders(<DeleteModal {...defaultProps} />);
 
-      expect(screen.getByText('Delete this MCP server group')).toBeInTheDocument();
-      expect(screen.getByText('Are you sure you want to delete this MCP server group? This action cannot be undone.')).toBeInTheDocument();
+      expect(screen.getByText('Delete this MCP server group.')).toBeInTheDocument();
+      expect(screen.getByText(`Confirm that you want to delete this MCP server group? You can't undo this action.`)).toBeInTheDocument();
     });
 
     it('renders delete and continue editing buttons', () => {
@@ -357,7 +357,7 @@ describe('Modal Components', () => {
       expect(dialogs).toHaveLength(3);
 
       // Specific content should be present
-      expect(screen.getByText('Delete this MCP server group')).toBeInTheDocument();
+      expect(screen.getByText('Delete this MCP server group.')).toBeInTheDocument();
       expect(screen.getByText('No workflows are available.')).toBeInTheDocument();
       expect(screen.getByText('Create options for MCP servers')).toBeInTheDocument();
     });
@@ -366,7 +366,7 @@ describe('Modal Components', () => {
       renderWithProviders(<DeleteModal onDelete={vi.fn()} onDismiss={vi.fn()} />);
 
       // Verify that intl messages are being used
-      expect(screen.getByText('Delete this MCP server group')).toBeInTheDocument();
+      expect(screen.getByText('Delete this MCP server group.')).toBeInTheDocument();
       expect(screen.getByText('Continue editing')).toBeInTheDocument();
     });
   });
