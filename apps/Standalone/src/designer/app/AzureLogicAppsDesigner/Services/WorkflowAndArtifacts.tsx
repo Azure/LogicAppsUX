@@ -3,7 +3,7 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { getHostConfig, getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getHostConfig, getReactQueryClient, runsQueriesKeys } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -11,7 +11,7 @@ import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
-import type { CustomCodeFileNameMapping, ServerNotificationData } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, ServerNotificationData, AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
@@ -294,19 +294,22 @@ export const listCallbackUrl = async (
 // Helper function to fetch A2A authentication key
 const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isDraftMode?: boolean) => {
   const currentDate: Date = new Date();
+  const data = {
+    expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
+    keyType: 'Primary',
+  };
+  const authToken = {
+    Authorization: `Bearer ${environment.armToken}`,
+  };
+  const endpoint = `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/${isDraftMode ? 'listDraftApiKeys' : 'listApiKeys'}`;
 
-  const response = await axios.post(
-    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/${isDraftMode ? 'listDraftApiKeys' : 'listApiKeys'}?api-version=2018-11-01`,
-    {
-      expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
-      keyType: 'Primary',
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-    }
-  );
+  if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+    return HybridAppUtility.postProxy(endpoint, data, authToken);
+  }
+
+  const response = await axios.post(`${endpoint}?api-version=2018-11-01`, data, {
+    headers: authToken,
+  });
   return response.data;
 };
 
