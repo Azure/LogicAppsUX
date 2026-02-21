@@ -162,6 +162,7 @@ vi.mock('./src/extensionVariables', () => ({
     outputChannel: {
       show: vi.fn(),
       appendLog: vi.fn(),
+      appendLine: vi.fn(),
     },
     designTimeInstances: new Map(),
     pinnedBundleVersion: new Map(),
