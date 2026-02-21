@@ -133,6 +133,8 @@ jobs:
             **/providers/**
             # VS Code webview communication (uses acquireVsCodeApi runtime global, cannot be unit tested)
             **/webviewCommunication.tsx
+            # VS Code React intl files (localization catalog, not unit-test target)
+            apps/vs-code-react/src/intl/**
 
       - name: Check coverage on changed files
         id: coverage-check

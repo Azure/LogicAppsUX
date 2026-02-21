@@ -243,6 +243,11 @@ export const workspaceMessages = defineMessages({
     id: 'RRuHNc',
     description: 'Workspace name validation message text',
   },
+  USE_DEV_CONTAINER_LABEL: {
+    defaultMessage: 'Use Dev Container',
+    id: '0Va6gs',
+    description: 'Label for dev container toggle option',
+  },
   // Logic app details messages
   LOGIC_APP_DETAILS: {
     defaultMessage: 'Logic app details',
