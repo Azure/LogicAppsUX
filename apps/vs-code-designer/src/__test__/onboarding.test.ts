@@ -6,38 +6,25 @@ import { validateTasksJson } from '../app/utils/vsCodeConfig/tasks';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
+// Factory mocks required to break problematic import chains:
+// - binaries: circular dep with onboarding.ts
+// - startDesignTimeApi: breaks chain → common.ts → azureConnectorWizard.ts → AzureWizardPromptStep
 vi.mock('../app/utils/binaries', () => ({
   installBinaries: vi.fn(),
   useBinariesDependencies: vi.fn(),
   binariesExist: vi.fn(),
 }));
-vi.mock('../app/commands/binaries/validateAndInstallBinaries', () => ({
-  validateAndInstallBinaries: vi.fn(),
+vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
+  promptStartDesignTimeOption: vi.fn(),
 }));
-vi.mock('../app/utils/vsCodeConfig/tasks', () => ({
-  validateTasksJson: vi.fn(),
-}));
-vi.mock('../app/utils/devContainerUtils', () => ({
-  isDevContainerWorkspace: vi.fn(),
-}));
+// Auto-mocks: no problematic transitive imports once the above chains are broken.
+vi.mock('../app/commands/binaries/validateAndInstallBinaries');
+vi.mock('../app/utils/vsCodeConfig/tasks');
+vi.mock('../app/utils/devContainerUtils');
 vi.mock('../app/utils/telemetry', () => ({
   runWithDurationTelemetry: vi.fn(async (ctx, cmd, callback) => await callback()),
 }));
-vi.mock('@microsoft/vscode-azext-utils', () => ({
-  callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
-    return await callback({
-      telemetry: { properties: {}, measurements: {} },
-      errorHandling: {},
-      ui: {},
-      valuesToMask: [],
-    });
-  }),
-}));
-vi.mock('vscode', () => ({
-  workspace: {
-    workspaceFolders: [],
-  },
-}));
+// @microsoft/vscode-azext-utils is already mocked in test-setup.ts with AzureWizardPromptStep, etc.
 
 describe('onboardBinaries', () => {
   let mockContext: IActionContext;

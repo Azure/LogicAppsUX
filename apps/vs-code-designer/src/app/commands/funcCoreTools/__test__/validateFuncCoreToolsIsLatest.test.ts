@@ -3,25 +3,35 @@ import { validateFuncCoreToolsIsLatest } from '../validateFuncCoreToolsIsLatest'
 import { useBinariesDependencies, binariesExist } from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 
+// Factory mocks required to break problematic import chains:
+// - binaries: circular dep with onboarding.ts
+// - startDesignTimeApi: breaks chain → common.ts → azureConnectorWizard.ts → AzureWizardPromptStep
 vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
   binariesExist: vi.fn(),
   getLatestFunctionCoreToolsVersion: vi.fn(),
   installBinaries: vi.fn(),
+  getCpuArchitecture: vi.fn(),
 }));
-vi.mock('../../../utils/devContainerUtils', () => ({
-  isDevContainerWorkspace: vi.fn(),
+vi.mock('../../../utils/codeless/startDesignTimeApi', () => ({
+  startAllDesignTimeApis: vi.fn(),
+  stopAllDesignTimeApis: vi.fn(),
 }));
-vi.mock('@microsoft/vscode-azext-utils', () => ({
-  callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
-    return await callback({
-      telemetry: { properties: {}, measurements: {} },
-      errorHandling: { suppressDisplay: true },
-      ui: {},
-      valuesToMask: [],
-    });
-  }),
-}));
+// Auto-mocks for modules directly imported by validateFuncCoreToolsIsLatest.ts.
+// Without these, the real code runs and hits unmocked vscode APIs (e.g. workspace.getConfiguration).
+vi.mock('../../../utils/devContainerUtils');
+vi.mock('../../../utils/vsCodeConfig/settings');
+vi.mock('../../../utils/funcCoreTools/funcVersion');
+vi.mock('../installFuncCoreTools');
+vi.mock('../uninstallFuncCoreTools');
+vi.mock('../updateFuncCoreTools');
+vi.mock('../../../utils/funcCoreTools/getFuncPackageManagers');
+vi.mock('../../../utils/funcCoreTools/getNpmDistTag');
+vi.mock('../../../utils/funcCoreTools/getBrewPackageName');
+vi.mock('../../../utils/requestUtils');
+vi.mock('../../../functionsExtension/executeOnFunctionsExt');
+// @microsoft/vscode-azext-utils is already mocked in test-setup.ts with
+// AzureWizardPromptStep, DialogResponses, parseError, callWithTelemetryAndErrorHandling, etc.
 
 describe('validateFuncCoreToolsIsLatest', () => {
   beforeEach(() => {
@@ -84,7 +94,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
 
       await validateFuncCoreToolsIsLatest('4');
 
-      expect(binariesExist).toHaveBeenCalledWith('func');
+      expect(binariesExist).toHaveBeenCalledWith('FuncCoreTools');
     });
 
     it('should not call binariesExist when not using binaries', async () => {
