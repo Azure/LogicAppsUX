@@ -3,14 +3,39 @@ import { validateFuncCoreToolsInstalled } from '../validateFuncCoreToolsInstalle
 import { useBinariesDependencies } from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 
-vi.mock('../../../utils/binaries');
-vi.mock('../../../utils/devContainerUtils');
+vi.mock('../../../utils/binaries', () => ({
+  useBinariesDependencies: vi.fn(),
+  binariesExist: vi.fn(),
+  installBinaries: vi.fn(),
+}));
+vi.mock('../../../utils/devContainerUtils', () => ({
+  isDevContainerWorkspace: vi.fn(),
+}));
 vi.mock('../../../utils/vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(() => true),
+  getGlobalSetting: vi.fn(),
+  updateGlobalSetting: vi.fn(),
+}));
+vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
+  getFunctionsCommand: vi.fn(() => 'func'),
+  tryParseFuncVersion: vi.fn(),
+  tryGetLocalFuncVersion: vi.fn(),
+  getLocalFuncCoreToolsVersion: vi.fn(),
+  setFunctionsCommand: vi.fn(),
 }));
 vi.mock('../funcVersion', () => ({
   tryGetLocalFuncVersion: vi.fn(),
   isFuncToolsInstalled: vi.fn(() => Promise.resolve(false)),
+}));
+vi.mock('../../../utils/funcCoreTools/cpUtils', () => ({
+  executeCommand: vi.fn(() => Promise.reject(new Error('not installed'))),
+}));
+vi.mock('../../../utils/funcCoreTools/getFuncPackageManagers', () => ({
+  getFuncPackageManagers: vi.fn(() => Promise.resolve([])),
+}));
+vi.mock('../installFuncCoreTools', () => ({
+  installFuncCoreToolsBinaries: vi.fn(),
+  installFuncCoreToolsSystem: vi.fn(),
 }));
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {

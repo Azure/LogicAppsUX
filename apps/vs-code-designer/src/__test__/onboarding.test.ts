@@ -6,10 +6,20 @@ import { validateTasksJson } from '../app/utils/vsCodeConfig/tasks';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-vi.mock('../app/utils/binaries');
-vi.mock('../app/commands/binaries/validateAndInstallBinaries');
-vi.mock('../app/utils/vsCodeConfig/tasks');
-vi.mock('../app/utils/devContainerUtils');
+vi.mock('../app/utils/binaries', () => ({
+  installBinaries: vi.fn(),
+  useBinariesDependencies: vi.fn(),
+  binariesExist: vi.fn(),
+}));
+vi.mock('../app/commands/binaries/validateAndInstallBinaries', () => ({
+  validateAndInstallBinaries: vi.fn(),
+}));
+vi.mock('../app/utils/vsCodeConfig/tasks', () => ({
+  validateTasksJson: vi.fn(),
+}));
+vi.mock('../app/utils/devContainerUtils', () => ({
+  isDevContainerWorkspace: vi.fn(),
+}));
 vi.mock('../app/utils/telemetry', () => ({
   runWithDurationTelemetry: vi.fn(async (ctx, cmd, callback) => await callback()),
 }));

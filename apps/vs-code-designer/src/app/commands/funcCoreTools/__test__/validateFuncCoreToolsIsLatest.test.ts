@@ -3,8 +3,15 @@ import { validateFuncCoreToolsIsLatest } from '../validateFuncCoreToolsIsLatest'
 import { useBinariesDependencies, binariesExist } from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 
-vi.mock('../../../utils/binaries');
-vi.mock('../../../utils/devContainerUtils');
+vi.mock('../../../utils/binaries', () => ({
+  useBinariesDependencies: vi.fn(),
+  binariesExist: vi.fn(),
+  getLatestFunctionCoreToolsVersion: vi.fn(),
+  installBinaries: vi.fn(),
+}));
+vi.mock('../../../utils/devContainerUtils', () => ({
+  isDevContainerWorkspace: vi.fn(),
+}));
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
     return await callback({
