@@ -1,1 +1,1 @@
-export default ['libs/'];
+export default ['libs/', 'apps/Standalone/'];

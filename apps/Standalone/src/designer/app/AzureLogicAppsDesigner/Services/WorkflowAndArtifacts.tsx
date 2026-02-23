@@ -292,7 +292,7 @@ export const listCallbackUrl = async (
 };
 
 // Helper function to fetch A2A authentication key
-const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isDraftMode?: boolean) => {
+export const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isDraftMode?: boolean) => {
   const currentDate: Date = new Date();
   const data = {
     expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
