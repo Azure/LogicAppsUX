@@ -1,0 +1,121 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AssistantGreeting > snapshots > should match snapshot with dark theme 1`] = `
+<div
+  className="fui-FluentProvider fui-FluentProviderr1 ___jdtuxv0_17k0bs4 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"
+  dir="ltr"
+>
+  <div>
+    <div
+      className="msla-bubble-container assistantMessageEnter-114 messageBorderGlint-117"
+    >
+      <div
+        className="msla-bubble"
+      >
+        <div
+          className="___1ov5pqt_0000000 f1jlhsmd"
+        >
+          Welcome to the workflow assistant!
+        </div>
+        <div
+          className="___1ov5pqt_0000000 f1jlhsmd"
+        >
+          This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors.
+        </div>
+        <div
+          className="___8xiy8a0_0000000 fd1gkq"
+        >
+          Some things you can ask:
+        </div>
+        <ul
+          className="___fqnvug0_0000000 f2zxqi f11qmguv f1jlhsmd f1tyq0we f1g0x7ka fhxju0i f1qch9an fekwl8i fuxrj8o"
+        >
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            Describe this workflow.
+          </li>
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            Explain how to receive files from SFTP server.
+          </li>
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            How can I call an external endpoint?
+          </li>
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            What is the concurrency setting of this workflow?
+          </li>
+        </ul>
+        <div>
+          The workflow assistant is designed only to provide help and doesn't support workflow creation or editing.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AssistantGreeting > snapshots > should match snapshot with light theme 1`] = `
+<div
+  className="fui-FluentProvider fui-FluentProviderr0 ___jdtuxv0_17k0bs4 f19n0e5 fxugw4r f1o700av fk6fouc fkhj508 figsok6 f1i3iumi"
+  dir="ltr"
+>
+  <div>
+    <div
+      className="msla-bubble-container assistantMessageEnter-114 messageBorderGlint-117"
+    >
+      <div
+        className="msla-bubble"
+      >
+        <div
+          className="___1ov5pqt_0000000 f1jlhsmd"
+        >
+          Welcome to the workflow assistant!
+        </div>
+        <div
+          className="___1ov5pqt_0000000 f1jlhsmd"
+        >
+          This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors.
+        </div>
+        <div
+          className="___8xiy8a0_0000000 fd1gkq"
+        >
+          Some things you can ask:
+        </div>
+        <ul
+          className="___fqnvug0_0000000 f2zxqi f11qmguv f1jlhsmd f1tyq0we f1g0x7ka fhxju0i f1qch9an fekwl8i fuxrj8o"
+        >
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            Describe this workflow.
+          </li>
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            Explain how to receive files from SFTP server.
+          </li>
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            How can I call an external endpoint?
+          </li>
+          <li
+            className="___8xiy8a0_0000000 fd1gkq"
+          >
+            What is the concurrency setting of this workflow?
+          </li>
+        </ul>
+        <div>
+          The workflow assistant is designed only to provide help and doesn't support workflow creation or editing.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

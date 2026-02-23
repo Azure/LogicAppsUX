@@ -92,6 +92,26 @@ const DesignerEditorConsumption = () => {
     isError: isWorkflowAndArtifactsError,
     error: workflowAndArtifactsError,
   } = useWorkflowAndArtifactsConsumption(workflowId);
+
+  const {
+    workflow: prodWorkflow,
+    connectionReferences: prodConnectionReferences,
+    parameters: prodParameters,
+    notes: prodNotes,
+  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+
+  const { data: draftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
+    workflowId,
+    true
+  );
+
+  const {
+    workflow: draftWorkflow,
+    connectionReferences: draftConnectionReferences,
+    parameters: draftParameters,
+    notes: draftNotes,
+  } = useMemo(() => getDataForConsumption(draftWorkflowAndArtifactsData), [draftWorkflowAndArtifactsData]);
+
   const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
 
   const { data: tenantId } = useCurrentTenantId();
@@ -101,6 +121,10 @@ const DesignerEditorConsumption = () => {
   const [designerID, setDesignerID] = useState(guid());
 
   const [workflow, setWorkflow] = useState<any>(); // Current workflow on the designer
+  const [connectionReferences, setConnectionReferences] = useState<any>();
+  const [parameters, setParameters] = useState<any>();
+  const [notes, setNotes] = useState<any>();
+
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
 
@@ -109,16 +133,8 @@ const DesignerEditorConsumption = () => {
     setIsDraftMode(draftMode);
   }, []);
 
-  const {
-    workflow: prodWorkflow,
-    connectionReferences,
-    parameters,
-    notes,
-  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
-  // TODO: Implement draft workflow fetching properly
-  const draftWorkflow = useMemo(() => prodWorkflow, [prodWorkflow]);
-
   const [definition, setDefinition] = useState<any>();
+
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
 
   // TODO: Implement saveDraftWorkflow properly
@@ -166,12 +182,15 @@ const DesignerEditorConsumption = () => {
   const hideMonitoringView = useCallback(() => {
     if (isMonitoringView) {
       toggleMonitoringView();
+      setConnectionReferences(draftConnectionReferences);
+      setParameters(draftParameters);
+      setNotes(draftNotes);
       setWorkflow({
         ...draftWorkflow,
         id: guid(),
       });
     }
-  }, [draftWorkflow, isMonitoringView, toggleMonitoringView]);
+  }, [draftConnectionReferences, draftNotes, draftParameters, draftWorkflow, isMonitoringView, toggleMonitoringView]);
 
   const onRun = useCallback(
     (runId: string) => {
@@ -329,6 +348,9 @@ const DesignerEditorConsumption = () => {
         if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, { definition: workflow?.definition, kind: workflow?.kind })) {
           await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
         }
+        setConnectionReferences(codeToConvert?.connectionReferences ?? draftConnectionReferences ?? {});
+        setParameters(codeToConvert?.parameters ?? draftParameters ?? {});
+        setNotes(codeToConvert?.notes ?? draftNotes ?? {});
         setWorkflow((prevState: any) => ({
           ...prevState,
           definition: codeToConvert.definition,
@@ -336,6 +358,7 @@ const DesignerEditorConsumption = () => {
           connectionReferences: codeToConvert.connectionReferences ?? {},
           id: guid(),
         }));
+
         setIsDesignerView(true);
         setIsCodeView(false);
       } catch (error: any) {
@@ -371,20 +394,38 @@ const DesignerEditorConsumption = () => {
   }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
-    if (isWorkflowAndArtifactsLoading || !prodWorkflow) {
+    if (isWorkflowAndArtifactsLoading || !prodWorkflow || isDraftWorkflowAndArtifactsLoading) {
       return;
     }
 
-    if (isDraftMode) {
-      if (draftWorkflow) {
-        setWorkflow(draftWorkflow as any);
-      } else {
-        setWorkflow(prodWorkflow as any);
-      }
+    if (isDraftMode && draftWorkflow) {
+      setConnectionReferences(draftConnectionReferences);
+      setParameters(draftParameters);
+      setNotes(draftNotes);
+      setWorkflow(draftWorkflow as any);
     } else {
+      setConnectionReferences(prodConnectionReferences);
+      setParameters(prodParameters);
+      setNotes(prodNotes);
       setWorkflow(prodWorkflow as any);
     }
-  }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
+  }, [
+    isWorkflowAndArtifactsLoading,
+    draftWorkflow,
+    isDraftMode,
+    prodWorkflow,
+    isDraftWorkflowAndArtifactsLoading,
+    draftConnectionReferences,
+    draftParameters,
+    draftNotes,
+    prodConnectionReferences,
+    prodParameters,
+    prodNotes,
+  ]);
+
+  const derivedIsReadOnly = useMemo(() => {
+    return readOnly || isMonitoringView || !isDraftMode;
+  }, [readOnly, isMonitoringView, isDraftMode]);
 
   if (isWorkflowAndArtifactsError) {
     throw workflowAndArtifactsError;
@@ -403,7 +444,7 @@ const DesignerEditorConsumption = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: readOnly || isMonitoringView || !isDraftMode,
+          readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
           useLegacyWorkflowParameters: true,
@@ -444,7 +485,7 @@ const DesignerEditorConsumption = () => {
                   saveWorkflow={saveWorkflowFromDesigner}
                   discard={discardAllChanges}
                   location={canonicalLocation}
-                  isReadOnly={readOnly}
+                  isReadOnly={derivedIsReadOnly}
                   isDarkMode={isDarkMode}
                   isUnitTest={false}
                   isMonitoringView={isMonitoringView}
@@ -470,7 +511,9 @@ const DesignerEditorConsumption = () => {
                       saveDraftWorkflow={saveWorkflowFromDesigner}
                       onRun={onRun}
                       isDarkMode={isDarkMode}
-                      isDraftMode={false} // TODO: Support draft mode runs once backend is ready
+                      isDraftMode={isDraftMode}
+                      isConsumption={true}
+                      workflowReadOnly={derivedIsReadOnly}
                     />
                   </div>
                 )}

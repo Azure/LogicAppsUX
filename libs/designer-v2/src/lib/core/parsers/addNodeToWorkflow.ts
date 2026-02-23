@@ -2,6 +2,7 @@
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isA2AWorkflow } from '../state/workflow/helper';
 import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
@@ -13,7 +14,6 @@ import {
   isScopeOperation,
   WORKFLOW_NODE_TYPES,
   getRecordEntry,
-  equals,
 } from '@microsoft/logic-apps-shared';
 
 export interface AddNodePayload {
@@ -53,7 +53,7 @@ export const addNodeToWorkflow = (
   state.isDirty = true;
 
   const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isTrigger;
-  const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+  const allowRunAfterTrigger = isA2AWorkflow(state);
   const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
   nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot, isTrigger };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type, kind: operation.kind };

@@ -17,7 +17,7 @@ export const agentOperation = {
     },
     summary: 'Agent',
     description:
-      'Loop in which the AI agent decides at each step which tools to use and how, and which text to generate to respond to the user.',
+      'Action in which the AI agent decides at each step which tools to use and how, and which text to generate to respond to the user.',
     visibility: 'Important',
     operationType: 'Agent',
     brandColor,

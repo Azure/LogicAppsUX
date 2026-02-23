@@ -34,8 +34,8 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
       // Simply invoke the callback with a fake telemetry context.
       return callback({
         telemetry: { properties: {}, measurements: {} },
-        errorHandling: undefined,
-        ui: undefined,
+        errorHandling: {},
+        ui: {},
         valuesToMask: [],
       });
     },
@@ -60,6 +60,7 @@ vi.mock('os', () => ({
   arch: vi.fn(() => 'x64'),
   homedir: vi.fn(() => '/Users/testuser'),
   tmpdir: vi.fn(() => '/tmp'),
+  EOL: '\n',
 }));
 
 vi.mock('fs', () => ({
@@ -94,9 +95,18 @@ vi.mock('vscode', () => ({
   window: {
     showInformationMessage: vi.fn(),
     showErrorMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
+    createWebviewPanel: vi.fn(() => ({
+      webview: { html: '', onDidReceiveMessage: vi.fn(), postMessage: vi.fn() },
+      onDidDispose: vi.fn(),
+      onDidChangeViewState: vi.fn(),
+      iconPath: undefined,
+    })),
+    withProgress: vi.fn((_opts: any, task: any) => task({ report: vi.fn() })),
   },
   workspace: {
     workspaceFolders: [],
+    name: 'test-workspace',
     updateWorkspaceFolders: vi.fn(),
     fs: {
       readFile: vi.fn(),
@@ -106,6 +116,7 @@ vi.mock('vscode', () => ({
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
+    parse: (s: string) => ({ fsPath: s, toString: () => s }),
   },
   commands: {
     executeCommand: vi.fn(),
@@ -117,12 +128,31 @@ vi.mock('vscode', () => ({
     File: 'file',
     Directory: 'directory',
   },
+  ConfigurationTarget: {
+    Global: 1,
+    Workspace: 2,
+    WorkspaceFolder: 3,
+  },
+  ViewColumn: {
+    Active: -1,
+    Beside: -2,
+    One: 1,
+    Two: 2,
+  },
+  ProgressLocation: {
+    Notification: 15,
+    SourceControl: 1,
+    Window: 10,
+  },
   env: {
     clipboard: {
       writeText: vi.fn(),
     },
     sessionId: 'test-session-id',
     appName: 'Visual Studio Code',
+    uriScheme: 'vscode',
+    asExternalUri: vi.fn((uri: any) => Promise.resolve(uri)),
+    openExternal: vi.fn(),
   },
   version: '1.85.0',
 }));
@@ -132,6 +162,7 @@ vi.mock('./src/extensionVariables', () => ({
     outputChannel: {
       show: vi.fn(),
       appendLog: vi.fn(),
+      appendLine: vi.fn(),
     },
     designTimeInstances: new Map(),
     pinnedBundleVersion: new Map(),

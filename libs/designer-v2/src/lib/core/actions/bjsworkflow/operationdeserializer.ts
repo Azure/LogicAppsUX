@@ -273,7 +273,7 @@ export const initializeOperationDetailsForManagedMcpServer = async (
     };
     const builtinMcpServerManifest = await getOperationManifest(builtinMcpServerOperationInfo);
 
-    const operationInfo = { connectorId, operationId, type: operation.type, kind: operation.kind };
+    const operationInfo = { connectorId, operationId, type: operation.type, kind: operation.kind, operationPath: mcpServerPath };
     dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
 
     const operationForParameters = {
@@ -615,7 +615,8 @@ const initializeOutputTokensForOperations = (
           operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodesWithData[operationId]?.settings
+          nodesWithData[operationId]?.settings,
+          nodesWithData[operationId]?.nodeInputs
         )
       );
     } catch (error: any) {

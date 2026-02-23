@@ -11,6 +11,7 @@ export const TemplatesSection = ({
   description,
   descriptionLink,
   items,
+  onRenderInfoBar,
   cssOverrides = {},
   children = null,
 }: TemplatesSectionProps) => {
@@ -32,11 +33,11 @@ export const TemplatesSection = ({
           )}
         </Text>
       ) : null}
-
+      {onRenderInfoBar ? onRenderInfoBar() : null}
       <div className={css('msla-templates-section-items', cssOverrides?.['sectionItems'])}>
         {items
           ? items.map((item, index) => {
-              return <FieldSectionItem key={index} item={item} />;
+              return <FieldSectionItem key={index} item={item} cssOverrides={cssOverrides} />;
             })
           : children}
       </div>

@@ -232,12 +232,12 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
   const Icon = () =>
     data?.chatMessage ? (
       <ChatFilled className={mergeClasses(styles.treeItemToolIcon, data?.chatRole === 'User' && styles.userChatIcon)} />
+    ) : data?.isHandoff ? (
+      <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
     ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
       <WrenchFilled className={styles.treeItemToolIcon} />
     ) : (hasRepetitionData && !data) || !icon ? (
       <div className={styles.treeItemIcon} />
-    ) : data?.isHandoff ? (
-      <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
     ) : (
       <img src={icon} alt={id} className={styles.treeItemIcon} />
     );

@@ -6886,7 +6886,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copilot chat canceled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[De Copilot-chat is geannuleerd]]></Val>
+            <Val><![CDATA[Copilot Chat is geannuleerd]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -6,9 +6,10 @@ import { LoginPrompt } from './LoginPrompt';
 import { useFrameBlade } from '../lib/hooks/useFrameBlade';
 import { useParentCommunication } from '../lib/hooks/useParentCommunication';
 import { getBaseUrl, openLoginPopup, createUnauthorizedHandler, checkAuthStatus } from '../lib/authHandler';
-import { getAgentBaseUrl, type IframeConfig } from '../lib/utils/config-parser';
+import type { IframeConfig } from '../lib/utils/config-parser';
 import type { ChatHistoryData } from '../lib/types/chat-history';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { useAgentCard } from '../hooks/useAgentCard';
 
 interface IframeWrapperProps {
   config: IframeConfig;
@@ -94,10 +95,31 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       }
 
       try {
-        const { isAuthenticated, username } = await checkAuthStatus(baseUrl);
-        setNeedsLogin(!isAuthenticated);
-        if (isAuthenticated && username) {
-          setUserName(username);
+        const { isAuthenticated, isEasyAuthConfigured, username } = await checkAuthStatus(baseUrl);
+
+        // Easy Auth is NOT configured (404 from /.auth/me)
+        // Let it fail naturally - the API calls will fail without apiKey
+        if (!isEasyAuthConfigured) {
+          setNeedsLogin(false);
+          return;
+        }
+
+        // Easy Auth IS configured
+        // Check if identity providers are configured
+        const hasIdentityProviders = props.identityProviders && Object.keys(props.identityProviders).length > 0;
+
+        if (!hasIdentityProviders) {
+          // No identity providers configured - skip login, show chat directly
+          setNeedsLogin(false);
+        } else if (isAuthenticated) {
+          // User is already authenticated
+          setNeedsLogin(false);
+          if (username) {
+            setUserName(username);
+          }
+        } else {
+          // Identity providers configured but user not authenticated - show login
+          setNeedsLogin(true);
         }
       } catch (error) {
         console.error('[Auth] Failed to check authentication status:', error);
@@ -108,7 +130,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     };
 
     checkAuth();
-  }, [baseUrl, inPortal, apiKey]);
+  }, [baseUrl, inPortal, apiKey, props.identityProviders]);
 
   // Frame Blade integration
   const { isReady: isFrameBladeReady } = useFrameBlade({
@@ -124,6 +146,40 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     enabled: expectPostMessage,
     onAgentCardReceived: setAgentCard,
   });
+
+  // Prepare final props
+  const finalProps: ChatWidgetProps = { ...props, ...(agentCard && { agentCard }), userName };
+
+  // Add auth token if available from Frame Blade
+  // Also include OBO token if provided via URL or dataset
+  const propsWithAuth =
+    authToken && inPortal
+      ? { ...finalProps, apiKey: authToken, oboUserToken: oboUserToken }
+      : { ...finalProps, oboUserToken: oboUserToken };
+
+  const agentCardConfig = useMemo(
+    () => ({
+      apiUrl: typeof propsWithAuth.agentCard === 'string' ? propsWithAuth.agentCard : propsWithAuth.agentCard.url,
+      apiKey: apiKey || propsWithAuth.apiKey || '',
+      oboUserToken: oboUserToken || propsWithAuth.oboUserToken || '',
+      onUnauthorized: handleUnauthorized,
+    }),
+    [propsWithAuth.agentCard, propsWithAuth.apiKey, propsWithAuth.oboUserToken, apiKey, oboUserToken, handleUnauthorized]
+  );
+
+  const { data: agentCardData } = useAgentCard(agentCardConfig);
+
+  const storageConfig: StorageConfig | undefined = useMemo(() => {
+    if (!agentCardData?.url) {
+      return undefined;
+    }
+    return {
+      type: 'server',
+      agentUrl: agentCardData?.url,
+      apiKey: apiKey || propsWithAuth.apiKey,
+      oboUserToken: oboUserToken || propsWithAuth.oboUserToken,
+    };
+  }, [agentCardData, apiKey, propsWithAuth.apiKey, oboUserToken, propsWithAuth.oboUserToken]);
 
   // Show loading states
   if (expectPostMessage && isWaitingForAgentCard) {
@@ -151,40 +207,13 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
     );
   }
 
-  // Prepare final props
-  const finalProps: ChatWidgetProps = { ...props, ...(agentCard && { agentCard }), userName };
-
-  // Add auth token if available from Frame Blade
-  // Also include OBO token if provided via URL or dataset
-  const propsWithAuth =
-    authToken && inPortal
-      ? { ...finalProps, apiKey: authToken, oboUserToken: oboUserToken }
-      : { ...finalProps, oboUserToken: oboUserToken };
-
-  const agentBaseUrl =
-    typeof propsWithAuth.agentCard === 'string'
-      ? getAgentBaseUrl(propsWithAuth.agentCard)
-      : propsWithAuth.agentCard
-        ? getAgentBaseUrl(propsWithAuth.agentCard.url)
-        : '';
-
-  const storageConfig: StorageConfig = {
-    type: 'server',
-    agentUrl: agentBaseUrl,
-    apiKey: apiKey || propsWithAuth.apiKey,
-    oboUserToken: oboUserToken || propsWithAuth.oboUserToken,
-  };
-
   // Render appropriate chat component
   if (multiSession) {
     return (
       <FluentProvider theme={theme}>
         <MultiSessionChat
           config={{
-            apiUrl: typeof propsWithAuth.agentCard === 'string' ? propsWithAuth.agentCard : propsWithAuth.agentCard.url,
-            apiKey: apiKey || propsWithAuth.apiKey || '',
-            oboUserToken: oboUserToken || propsWithAuth.oboUserToken || '',
-            onUnauthorized: handleUnauthorized,
+            ...agentCardConfig,
             storageConfig,
           }}
           {...propsWithAuth}
