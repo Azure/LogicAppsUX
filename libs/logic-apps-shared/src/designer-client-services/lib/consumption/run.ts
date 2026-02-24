@@ -5,13 +5,13 @@ import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
   ArgumentException,
-  isCallbackInfoWithRelativePath,
   HTTP_METHODS,
   getCallbackUrl,
   getRecordEntry,
   UnsupportedException,
   isNullOrUndefined,
   parseErrorMessage,
+  isArmResourceId,
 } from '../../../utils/src';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
@@ -66,7 +66,8 @@ export class ConsumptionRunService implements IRunService {
         noAuth: true,
         headers: { 'Access-Control-Allow-Origin': '*' },
       });
-      return response;
+      // API may return 204 No Content (empty response) — normalize to empty object
+      return response || {};
     } catch (e: any) {
       throw new Error(e.message);
     }
@@ -388,8 +389,8 @@ export class ConsumptionRunService implements IRunService {
    * @param {any} options - Options for the trigger call including headers, queries and body.
    */
   async runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any> {
-    const { httpClient } = this.options;
-    const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
+    const { httpClient, apiVersion } = this.options;
+    const method = callbackInfo?.method ?? HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
     if (!uri) {
       throw new Error();
@@ -397,7 +398,7 @@ export class ConsumptionRunService implements IRunService {
 
     try {
       // Parse query params from uri
-      const [baseUri, queryString] = uri.split('?');
+      let [baseUri, queryString] = uri.split('?');
       const urlSearchParams = new URLSearchParams(queryString ?? '');
       const uriParams: Record<string, string> = {};
       urlSearchParams.forEach((value, key) => {
@@ -407,13 +408,19 @@ export class ConsumptionRunService implements IRunService {
       // Merge with options?.queries (options take precedence)
       const mergedParams = { ...uriParams, ...(options?.queries ?? {}) };
 
+      let noAuth = true;
+      if (isArmResourceId(baseUri)) {
+        baseUri = `${baseUri}?api-version=${apiVersion}`;
+        noAuth = false;
+      }
+
       return await this.getHttpRequestByMethod(httpClient, method, {
         uri: baseUri,
+        noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,
         content: options?.body,
-        noAuth: true,
       });
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));

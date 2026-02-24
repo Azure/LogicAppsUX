@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isA2AWorkflow } from '../state/workflow/helper';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
 import { equals, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -80,7 +81,7 @@ export const deleteNodeFromWorkflow = (
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     const parentMetadata = getRecordEntry(nodesMetadata, parentId);
     const isAfterTrigger = parentMetadata?.isTrigger;
-    const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+    const allowRunAfterTrigger = isA2AWorkflow(state);
     const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
     reassignEdgeSources(state, nodeId, parentId, workflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, workflowGraph);

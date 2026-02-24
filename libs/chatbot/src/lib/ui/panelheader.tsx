@@ -1,6 +1,6 @@
 import Workflow from '../images/Workflow.svg';
 import { FontSizes, Link, useTheme } from '@fluentui/react';
-import { Tooltip, mergeClasses } from '@fluentui/react-components';
+import { Tooltip, mergeClasses, Subtitle2 } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
@@ -50,9 +50,9 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
       <div className={styles.headerIcon}>
         <img src={Workflow} alt="Logic Apps" />
       </div>
-      <div className={styles.headerTitleContainer}>
-        <div className={styles.headerTitle}>{headerTitle}</div>
-        <div className={mergeClasses(styles.headerSubtitle, isInverted && darkStyles.headerSubtitle)}>{subtitleText}</div>
+      <div>
+        <h2 className={styles.headerTitle}>{headerTitle}</h2>
+        <Subtitle2 className={mergeClasses(styles.headerSubtitle, isInverted && darkStyles.headerSubtitle)}>{subtitleText}</Subtitle2>
       </div>
       <div>
         <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>

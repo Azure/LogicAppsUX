@@ -1224,7 +1224,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
+      it('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
         simpleMap['ns0:Root'] = {
           LoopingWithIndex: {
             WeatherSummary: {

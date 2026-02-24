@@ -5,6 +5,7 @@ import type { ConnectionReference, WorkflowParameter } from '../../../common/mod
 import { AgentUtils } from '../../../common/utilities/Utils';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
+import { updateOutputsAndTokens, getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
@@ -166,7 +167,6 @@ import type {
   OperationInfo,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
-import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
 
@@ -1882,12 +1882,14 @@ export const updateParameterAndDependencies = createAsyncThunk(
             });
             continue;
           }
+          // Preserve existing editorOptions (like multiSelect, serialization) when resetting options
+          const existingEditorOptions = dependentParameter.editorOptions ?? {};
           payload.parameters.push({
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
               dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
-              editorOptions: { options: [] },
+              editorOptions: { ...existingEditorOptions, options: [] },
             },
           });
         }
@@ -1947,6 +1949,18 @@ export const updateParameterAndDependencies = createAsyncThunk(
         loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
         loadDefaultValues !== undefined ? loadDefaultValues : true
       );
+    }
+
+    // For Agent operations, if the responseFormat.type parameter changes, update output tokens
+    if (
+      operationInfo?.type === 'Agent' &&
+      updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
+    ) {
+      const rootState = getState() as RootState;
+      const nodeInputs = rootState.operations.inputParameters[nodeId];
+      const settings = rootState.operations.settings[nodeId] || {};
+
+      await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
     }
   }
 );
@@ -2476,9 +2490,12 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   dispatch(
@@ -2500,7 +2517,7 @@ export async function loadDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
@@ -2551,9 +2568,12 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   // Send the initial status update to the store
@@ -2576,7 +2596,7 @@ export async function fetchDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);

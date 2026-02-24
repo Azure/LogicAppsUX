@@ -156,19 +156,39 @@ const DesignerEditor = () => {
     setIsDraftMode(draftMode);
   }, []);
 
-  const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
+  const getConnectionConfiguration = async (connectionId: string, _manifest: any, useMcpConnections?: boolean): Promise<any> => {
     if (!connectionId) {
       return Promise.resolve();
     }
 
     const connectionName = connectionId.split('/').splice(-1)[0];
-    const connectionInfo =
-      connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
+    let connectionInfo: any;
+    let isAgentMcpConnection = false;
+
+    if (useMcpConnections) {
+      connectionInfo = connectionsData?.agentMcpConnections?.[connectionName];
+
+      if (connectionInfo) {
+        isAgentMcpConnection = true;
+      }
+
+      connectionInfo = connectionInfo ?? connectionsData?.managedApiConnections?.[connectionName];
+    } else {
+      connectionInfo =
+        connectionsData?.serviceProviderConnections?.[connectionName] ?? connectionsData?.apiManagementConnections?.[connectionName];
+    }
 
     if (connectionInfo) {
       // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
       const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, settingsData?.properties);
       delete resolvedConnectionInfo.displayName;
+
+      if (useMcpConnections) {
+        return {
+          isAgentMcpConnection,
+          connection: resolvedConnectionInfo,
+        };
+      }
 
       return {
         connection: resolvedConnectionInfo,
@@ -400,6 +420,7 @@ const DesignerEditor = () => {
         connectionsToUpdate,
         parametersToUpdate,
         settingsToUpdate,
+        /*hostConfig*/ undefined,
         customCodeToUpdate,
         notesToUpdate,
         /*mcpServer*/ undefined,
@@ -435,6 +456,7 @@ const DesignerEditor = () => {
         /*connections*/ undefined,
         /*parameters*/ undefined,
         /*settings*/ undefined,
+        /*hostConfig*/ undefined,
         /*customcode*/ undefined,
         /*notes*/ undefined,
         /*mcpServer*/ undefined,
@@ -561,6 +583,10 @@ const DesignerEditor = () => {
     }
   }, [artifactsLoading, customCodeLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
 
+  const derivedIsReadOnly = useMemo(() => {
+    return isReadOnly || isMonitoringView || !isDraftMode;
+  }, [isReadOnly, isMonitoringView, isDraftMode]);
+
   if (isError || settingsIsError) {
     throw error ?? settingsError;
   }
@@ -578,7 +604,7 @@ const DesignerEditor = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: isReadOnly || isMonitoringView || !isDraftMode,
+          readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
           isUnitTest,
@@ -635,7 +661,7 @@ const DesignerEditor = () => {
                   saveWorkflow={saveWorkflowFromDesigner}
                   discard={discardAllChanges}
                   location={canonicalLocation}
-                  isReadOnly={isReadOnly}
+                  isReadOnly={derivedIsReadOnly}
                   isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isMonitoringView={isMonitoringView}
@@ -660,6 +686,7 @@ const DesignerEditor = () => {
                       onRun={onRun}
                       isDarkMode={isDarkMode}
                       isDraftMode={isDraftMode}
+                      workflowReadOnly={derivedIsReadOnly}
                     />
                   </div>
                 )}
@@ -771,6 +798,7 @@ const getDesignerServices = (
   });
   const connectorService = new StandardConnectorService({
     ...defaultServiceParams,
+    workflowName,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],

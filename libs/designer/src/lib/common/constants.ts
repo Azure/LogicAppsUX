@@ -984,6 +984,7 @@ export default {
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+    SELECT_NESTED_AGENT_WORKFLOW_ACTION: 'invokenestedagent',
   },
   CHANNELS: {
     INPUT: '-inputchannel-',
