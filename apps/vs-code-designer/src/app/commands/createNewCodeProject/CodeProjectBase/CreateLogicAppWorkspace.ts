@@ -219,7 +219,7 @@ export async function createWorkspaceStructure(webviewProjectContext: IWebviewPr
   }
 
   // Add .devcontainer folder for devcontainer projects
-  if (myWebviewProjectContext.isDevContainerProject) {
+  if (webviewProjectContext.isDevContainerProject) {
     workspaceFolders.push({ name: devContainerFolderName, path: devContainerFolderName });
   }
 

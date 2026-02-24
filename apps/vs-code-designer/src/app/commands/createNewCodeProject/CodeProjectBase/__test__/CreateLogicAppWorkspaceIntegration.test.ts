@@ -5,9 +5,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowType, devContainerFolderName, devContainerFileName } from '../../../../../constants';
+import { devContainerFolderName, devContainerFileName } from '../../../../../constants';
 
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');

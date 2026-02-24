@@ -237,8 +237,8 @@ export async function createLogicAppVsCodeContents(webviewProjectContext: IWebvi
   await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName, targetFramework as TargetFramework);
 }
 
-export async function createDevContainerContents(myWebviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {
-  if (myWebviewProjectContext.isDevContainerProject) {
+export async function createDevContainerContents(webviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {
+  if (webviewProjectContext.isDevContainerProject) {
     const devContainerPath: string = path.join(workspaceFolder, devContainerFolderName);
     await fse.ensureDir(devContainerPath);
     await writeDevContainerJson(devContainerPath);
