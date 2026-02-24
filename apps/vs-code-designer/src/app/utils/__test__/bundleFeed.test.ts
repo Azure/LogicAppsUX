@@ -1,4 +1,4 @@
-import { getBundleVersionNumber, getExtensionBundleFolder } from '../bundleFeed';
+import { getBundleVersionNumber, getExtensionBundleFolder, resetCachedBundleVersion } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -282,6 +282,7 @@ describe('getBundleVersionNumber', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    resetCachedBundleVersion();
     // Mock getExtensionBundleFolder to return a proper Windows path
     const mockCommandOutput = `C:\\mock\\bundle\\root\\ExtensionBundles\\${extensionBundleId}\\1.0.0\n`;
     mockedExecuteCommand.mockResolvedValue(mockCommandOutput);
