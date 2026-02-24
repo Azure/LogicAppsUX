@@ -64,6 +64,11 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     id: 'DXwS7e',
     description: "Select workflow with 'An HTTP Request' trigger",
   });
+  const nestedAgentWorkflowTitleText = intl.formatMessage({
+    defaultMessage: 'Select workflow with an Agent loop',
+    id: 'QMuDPI',
+    description: 'Select workflow with an Agent loop',
+  });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',
     id: 'gvDMuq',
@@ -213,6 +218,21 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         break;
       }
 
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_NESTED_AGENT_WORKFLOW_ACTION: {
+        setTitleText(nestedAgentWorkflowTitleText);
+        setResourceTypes(['agentWorkflow']);
+        setGetResourcesCallbacks(() => [() => SearchService().getAgentWorkflows?.()]);
+        setSubmitCallback(() => () => {
+          addResourceOperation({
+            name: getResourceName(selectedResources[0]),
+            presetParameterValues: {
+              'host.workflow.id': selectedResources[0].id,
+            },
+          });
+        });
+        break;
+      }
+
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION: {
         setTitleText(batchWorkflowTitleText);
         setResourceTypes(['batchWorkflow', 'trigger']);
@@ -244,6 +264,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     swaggerFunctionAppTitleText,
     getOptionsFromPaths,
     manualWorkflowTitleText,
+    nestedAgentWorkflowTitleText,
     operation.id,
     selectedResources,
   ]);

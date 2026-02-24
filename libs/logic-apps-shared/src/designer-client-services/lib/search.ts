@@ -13,6 +13,7 @@ export interface ISearchService {
   getBuiltInConnectors(): Promise<Connector[]>;
   getAllOperations(): Promise<DiscoveryOpArray>;
   getRequestWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
+  getAgentWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
   getBatchWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
   getWorkflowTriggers?(workflowId: string): Promise<ArmResource<DiscoveryWorkflowTrigger>[]>;
   getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray>;
