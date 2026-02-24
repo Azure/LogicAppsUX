@@ -322,6 +322,7 @@ export const TokenField = ({
           onMenuOpen={onComboboxMenuOpen}
           multiSelect={getPropertyValue(editorOptions, 'multiSelect')}
           serialization={editorOptions?.serialization}
+          shouldSort={editorOptions?.shouldSort}
           dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}

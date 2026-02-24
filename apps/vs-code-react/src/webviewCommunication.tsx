@@ -70,7 +70,7 @@ import {
   updateCallbackInfo,
   updateBaseUrl,
 } from './state/WorkflowSlice';
-import { changeDataMapperVersion, initialize } from './state/projectSlice';
+import { changeDataMapperVersion, changeDesignerVersion, initialize } from './state/projectSlice';
 import type { AppDispatch, RootState } from './state/store';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -186,6 +186,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.resetDesignerDirtyState: {
             designerDispatch(resetDesignerDirtyState(undefined));
+            break;
+          }
+          case ExtensionCommand.getDesignerVersion: {
+            dispatch(changeDesignerVersion(message.data));
             break;
           }
           default:

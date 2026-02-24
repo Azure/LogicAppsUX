@@ -2,6 +2,7 @@ import type { TemplateSearchAndFilterProps } from '../filters/templatesearchfilt
 import { TemplateSearchAndFilters } from '../filters/templatesearchfilters';
 import { TemplatesGallery } from './templatesgallery';
 import type { TemplateSelectHandler } from '../cards/templateCard';
+import { useTemplatesGalleryWithSearchStyles } from './templatesgallerywithsearch.styles';
 
 export interface TemplatesGalleryWithSearchProps {
   searchAndFilterProps: TemplateSearchAndFilterProps;
@@ -20,8 +21,10 @@ export const TemplatesGalleryWithSearch = ({
   cssOverrides,
   onTemplateSelect,
 }: TemplatesGalleryWithSearchProps) => {
+  const styles = useTemplatesGalleryWithSearchStyles();
+
   return (
-    <>
+    <div className={styles.wrapper}>
       <TemplateSearchAndFilters {...searchAndFilterProps} />
       <br />
       <TemplatesGallery
@@ -31,6 +34,6 @@ export const TemplatesGalleryWithSearch = ({
         cssOverrides={cssOverrides}
         onTemplateSelect={onTemplateSelect}
       />
-    </>
+    </div>
   );
 };

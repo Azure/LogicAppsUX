@@ -8,13 +8,13 @@ export default defineProject({
     name: packageJson.name,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/app/**/*'], reporter: ['html', 'cobertura'] },
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/app/**/*', 'src/state/**/*'],
+      exclude: ['src/intl/**/*'],
+      reporter: ['html', 'cobertura', 'lcov'],
+    },
     restoreMocks: true,
-    alias: [
-      {
-        find: /^monaco-editor$/,
-        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
-      },
-    ],
   },
 });

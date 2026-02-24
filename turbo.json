@@ -16,7 +16,7 @@
       "outputs": ["build/**"]
     },
     "build:lib": {
-      "outputs": ["build/**"]
+      "outputs": ["build/**", "dist/**"]
     },
     "vscode-designer#build:extension": {
       "cache": false,
@@ -41,6 +41,9 @@
       "outputs": ["coverage/**"]
     },
     "test:extension-unit": {
+      "outputs": ["coverage/**"]
+    },
+    "test:iframe-app": {
       "outputs": ["coverage/**"]
     },
     "vscode:designer:pack": {

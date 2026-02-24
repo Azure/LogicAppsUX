@@ -38,6 +38,7 @@ import {
   ExtensionProperties,
   LoggerService,
   LogEntryLevel,
+  isIndependentPublisherConnector,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -62,6 +63,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
+import { IndependentPublisherDisclaimer } from './independentPublisherDisclaimer';
 import { useStyles } from './styles';
 import { isA2AKind } from '../../../../core/state/workflow/helper';
 import { useShouldEnableAPIMGatewayConnection } from '../../../../core/utils/experimentation';
@@ -957,6 +959,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           />
         </div>
       )}
+
+      {/* Independent Publisher Disclaimer */}
+      {isIndependentPublisherConnector(connector) && <IndependentPublisherDisclaimer createButtonText={submitButtonText} />}
 
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">

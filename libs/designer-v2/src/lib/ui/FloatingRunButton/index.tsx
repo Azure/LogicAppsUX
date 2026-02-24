@@ -20,6 +20,7 @@ import {
   resetDesignerDirtyState,
   store,
   updateParameterValidation,
+  useIsDesignerDirty,
   validateParameter,
   type RootState,
 } from '../../core';
@@ -59,11 +60,13 @@ export interface FloatingRunButtonProps {
   isDarkMode: boolean;
   isDraftMode?: boolean;
   isDisabled?: boolean;
+  workflowReadOnly?: boolean;
   tooltipOverride?: string;
   chatProps?: {
     disabled?: boolean;
     tooltipText?: string;
   };
+  isConsumption?: boolean;
 }
 
 export const FloatingRunButton = ({
@@ -74,10 +77,14 @@ export const FloatingRunButton = ({
   isDarkMode,
   isDraftMode,
   isDisabled,
+  workflowReadOnly,
   tooltipOverride,
   chatProps,
+  isConsumption,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
+
+  const isDirty = useIsDesignerDirty();
 
   const [runHasPayload, setRunHasPayload] = useState<boolean>(false);
 
@@ -143,28 +150,17 @@ export const FloatingRunButton = ({
 
   const runDraftWorkflow = useCallback(
     async (triggerId: string, payload?: PayloadData) => {
-      let contentBody = payload?.body;
+      const contentBody = payload?.body;
       const headers = payload?.headers ?? {};
 
       setRunStatusMessage(runStatusMessages.runningDraft);
 
-      // Try to parse body as JSON
       try {
-        contentBody = contentBody ? JSON.parse(contentBody) : undefined;
-      } catch (err) {
-        contentBody = payload?.body;
-        console.error('Error parsing JSON body:', err);
-      }
-
-      // Set Content-Type header if body is JSON
-      if (contentBody && typeof contentBody === 'object') {
-        headers['Content-Type'] = 'application/json';
-      }
-
-      try {
+        const standardUrl = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`;
+        const consumptionUrl = `${siteResourceId}/drafts/default/run`;
         const callbackInfo: any = {
-          value: `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`,
-          method: HTTP_METHODS.POST,
+          value: isConsumption ? consumptionUrl : standardUrl,
+          method: payload?.method ?? HTTP_METHODS.POST,
         };
 
         // Wait 0.5 seconds, running too fast after saving causes 500 error
@@ -182,7 +178,7 @@ export const FloatingRunButton = ({
 
       setRunStatusMessage(null);
     },
-    [runStatusMessages, siteResourceId, workflowName, onRun]
+    [runStatusMessages, siteResourceId, workflowName, onRun, isConsumption]
   );
 
   const saveWorkflow = useCallback(async () => {
@@ -191,6 +187,12 @@ export const FloatingRunButton = ({
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
+
+    // If workflowReadOnly is true, skip the actual save and just return the serialized workflow
+    if (workflowReadOnly || !isDirty) {
+      return serializedWorkflow;
+    }
+
     const customCodeData = getCustomCodeFilesWithData(designerState.customCode);
 
     const validationErrorsList: Record<string, boolean> = {};
@@ -220,7 +222,7 @@ export const FloatingRunButton = ({
         isDraftMode
       );
     }
-  }, [dispatch, saveDraftWorkflow, isDraftMode]);
+  }, [workflowReadOnly, dispatch, saveDraftWorkflow, isDraftMode, isDirty]);
 
   const {
     mutate: runMutate,
@@ -286,6 +288,11 @@ export const FloatingRunButton = ({
         defaultMessage: 'Run',
         id: 'd8JU5h',
         description: 'Run button text',
+      }),
+      RUN_DRAFT_TEXT: intl.formatMessage({
+        defaultMessage: 'Run draft',
+        id: 'Wmc3Ux',
+        description: 'Run draft button text',
       }),
       RUN_PAYLOAD_TOOLTIP: intl.formatMessage({
         defaultMessage: 'Run with payload',
@@ -366,7 +373,7 @@ export const FloatingRunButton = ({
               disabled: isDisabled || runIsLoading || !canBeRunWithPayload || !triggerId,
             }}
           >
-            {strings.RUN_TEXT}
+            {isDraftMode ? strings.RUN_DRAFT_TEXT : strings.RUN_TEXT}
           </SplitButton>
         </Tooltip>
         <PayloadPopover
@@ -385,7 +392,7 @@ export const FloatingRunButton = ({
     <div className={styles.container}>
       <Tooltip withArrow content={tooltipText} relationship="description">
         <Button {...buttonCommonProps} icon={runIsLoading ? <Spinner size="tiny" /> : <RunIcon />} onClick={runMutate}>
-          {strings.RUN_TEXT}
+          {isDraftMode ? strings.RUN_DRAFT_TEXT : strings.RUN_TEXT}
         </Button>
       </Tooltip>
       <ErrorBadge />

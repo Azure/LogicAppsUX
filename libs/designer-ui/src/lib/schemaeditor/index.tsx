@@ -2,7 +2,7 @@ import { formatValue, getEditorHeight, getInitialValue } from '../code/util';
 import type { ValueSegment } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
-import type { EditorContentChangedEventArgs } from '../editor/monaco';
+import type { EditorContentChangedEventArgs, CodeMirrorEditorRef } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import { ModalDialog } from '../modaldialog';
 import { generateSchemaFromJsonString } from '../workflow/schema/generator';
@@ -12,7 +12,6 @@ import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
-import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSchemaEditorStyles } from './schemaeditor.styles';
@@ -49,7 +48,7 @@ export function SchemaEditor({ className, readonly, label, initialValue, onChang
   const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
   const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
   const [samplePayload, setSamplePayload] = useState<string | undefined>('');
-  const modalEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const modalEditorRef = useRef<CodeMirrorEditorRef | null>(null);
 
   const getStyles = (): Partial<IDialogStyles> => {
     return {

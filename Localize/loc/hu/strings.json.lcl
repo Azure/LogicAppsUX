@@ -6886,7 +6886,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copilot chat canceled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot-csevegés megszakítva]]></Val>
+            <Val><![CDATA[Copilot Chat megszakítva]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

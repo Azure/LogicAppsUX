@@ -18,6 +18,7 @@ import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
 import { useIsAgenticWorkflow, useEdgeContextMenuData, useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { changePanelNode, expandDiscoveryPanel, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
@@ -58,6 +59,7 @@ export const EdgeContextualMenu = () => {
   const menuData = useEdgeContextMenuData();
   const isAgenticWorkflow = useIsAgenticWorkflow();
   const isA2AWorkflow = useIsA2AWorkflow();
+  const enableNestedAgentLoops = useEnableNestedAgentLoops();
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
@@ -203,15 +205,15 @@ export const EdgeContextualMenu = () => {
   });
 
   const newAgentText = intl.formatMessage({
-    defaultMessage: 'Add an agentic loop',
-    id: 'Wq8rLF',
-    description: 'Button text for adding an agentic loop',
+    defaultMessage: 'Add an agent',
+    id: 'hj/ald',
+    description: 'Button text for adding an agent',
   });
 
   const newHandOffAgentText = intl.formatMessage({
     defaultMessage: 'Add a hand-off agent',
-    id: 'MbUEdr',
-    description: 'Text for button to add an agentic loop',
+    id: '1YUi9I',
+    description: 'Text for button to add an agent',
   });
 
   const pasteFromClipboard = intl.formatMessage({
@@ -227,9 +229,9 @@ export const EdgeContextualMenu = () => {
   });
 
   const a2aAgentLoopDisabledText = intl.formatMessage({
-    defaultMessage: 'Cannot add subsequent actions below agentic loops in agent to agent workflows',
-    id: 'KFFF+N',
-    description: 'Message shown when action addition is disabled within agentic loops in A2A workflows',
+    defaultMessage: 'Cannot add subsequent actions below agents in agent to agent workflows',
+    id: 'HMJPEj',
+    description: 'Message shown when action addition is disabled within agents in A2A workflows',
   });
 
   const a2aParallelBranchDisabledText = intl.formatMessage({
@@ -239,9 +241,9 @@ export const EdgeContextualMenu = () => {
   });
 
   const a2aPasteDisabledText = intl.formatMessage({
-    defaultMessage: 'Cannot paste actions below agentic loops in agent to agent workflows',
-    id: 'VPVCkv',
-    description: 'Message shown when paste is disabled below agentic loops in A2A workflows',
+    defaultMessage: 'Cannot paste actions below agents in agent to agent workflows',
+    id: 'F3q0Hk',
+    description: 'Message shown when paste is disabled below agents in A2A workflows',
   });
 
   const editHandoffText = intl.formatMessage({
@@ -447,7 +449,7 @@ export const EdgeContextualMenu = () => {
                   ) : (
                     addParallelBranchMenuItem
                   ))}
-                {(isAgenticWorkflow || isA2AWorkflow) && graphId === 'root' && addAgentMenuItem}
+                {(isAgenticWorkflow || isA2AWorkflow) && (graphId === 'root' || enableNestedAgentLoops) && addAgentMenuItem}
                 {isPasteEnabled &&
                   (isPasteDisabledForUpstreamAgent ? (
                     <Tooltip content={a2aPasteDisabledText} relationship="description">

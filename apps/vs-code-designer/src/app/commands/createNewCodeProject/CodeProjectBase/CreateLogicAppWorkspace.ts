@@ -6,6 +6,7 @@ import {
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
   defaultVersionRange,
+  devContainerFolderName,
   extensionBundleId,
   extensionCommand,
   funcIgnoreFileName,
@@ -49,7 +50,7 @@ import type {
   StandardApp,
 } from '@microsoft/vscode-extension-logic-apps';
 import { WorkerRuntime, ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
-import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
+import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
@@ -217,6 +218,11 @@ export async function createWorkspaceStructure(webviewProjectContext: IWebviewPr
     workspaceFolders.push({ name: functionFolderName, path: `./${functionFolderName}` });
   }
 
+  // Add .devcontainer folder for devcontainer projects
+  if (myWebviewProjectContext.isDevContainerProject) {
+    workspaceFolders.push({ name: devContainerFolderName, path: devContainerFolderName });
+  }
+
   const workspaceData = {
     folders: workspaceFolders,
   };
@@ -284,6 +290,8 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
 
   // .vscode folder
   await createLogicAppVsCodeContents(webviewProjectContext, logicAppFolderPath);
+
+  await createDevContainerContents(webviewProjectContext, workspaceFolder);
 
   await createLocalConfigurationFiles(webviewProjectContext, logicAppFolderPath);
 

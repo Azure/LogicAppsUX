@@ -76,11 +76,16 @@ import {
   parseErrorMessage,
   cleanResourceId,
   deepCompareObjects,
+  unmap,
+  removeConnectionPrefix,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { operationSupportsSplitOn } from '../../utils/outputs';
 import { initializeConnectorOperationDetails } from './agent';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
@@ -135,7 +140,10 @@ export const initializeOperationMetadata = async (
     if (isTrigger) {
       triggerNodeId = operationId;
     }
-    if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
+
+    if (isManagedMcpOperation(operation)) {
+      promises.push(initializeOperationDetailsForManagedMcpServer(operationId, operation, references, workflowKind, dispatch));
+    } else if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
       promises.push(initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch));
     } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch));
@@ -219,6 +227,120 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
   }
 
   return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithParsedSwagger[];
+};
+
+export const initializeOperationDetailsForManagedMcpServer = async (
+  nodeId: string,
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  references: ConnectionReferences,
+  workflowKind: WorkflowKind,
+  dispatch: Dispatch
+): Promise<NodeDataWithOperationMetadata[] | undefined> => {
+  try {
+    const referenceName = (operation as any)?.inputs?.connectionReference?.connectionName || '';
+
+    const reference = references[referenceName];
+    if (!reference || !reference.api || !reference.api.id) {
+      throw new Error(`Incomplete information for operation '${nodeId}'`);
+    }
+    const connectorId = cleanResourceId(reference.api.id);
+
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    if (!parsedSwagger) {
+      throw new Error(`Could not fetch swagger for connector - ${connectorId}`);
+    }
+
+    const mcpServerPath = (operation as any).inputs?.parameters?.mcpServerPath;
+    if (!mcpServerPath) {
+      throw new Error('Could not fetch operation input info from swagger and definition');
+    }
+
+    const filteredOperations: any = unmap(parsedSwagger.getOperations())
+      .filter((operation) => equals(removeConnectionPrefix(operation.path), mcpServerPath))
+      .map((operation) => operation.operationId);
+
+    const operationId = filteredOperations && filteredOperations.length > 0 ? filteredOperations[0] : null;
+
+    if (!operationId) {
+      throw new Error('Operation Id cannot be determined from definition and swagger');
+    }
+
+    const builtinMcpServerOperationInfo = {
+      connectorId: 'connectionProviders/mcpclient',
+      operationId: 'nativemcpclient',
+      type: 'McpClientTool',
+      kind: 'Builtin',
+    };
+    const builtinMcpServerManifest = await getOperationManifest(builtinMcpServerOperationInfo);
+
+    const operationInfo = { connectorId, operationId, type: operation.type, kind: operation.kind, operationPath: mcpServerPath };
+    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+
+    const operationForParameters = {
+      inputs: {
+        parameters: {
+          ...(operation as any).inputs.parameters,
+        },
+      },
+    };
+    // Remove mcpServerPath from parameters so it's not treated as a user parameter
+    if (operationForParameters.inputs?.parameters?.mcpServerPath) {
+      delete operationForParameters.inputs.parameters.mcpServerPath;
+    }
+
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      builtinMcpServerOperationInfo,
+      builtinMcpServerManifest,
+      /* presetParameterValues */ undefined,
+      /* customSwagger */ undefined,
+      operationForParameters
+    );
+
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
+      builtinMcpServerManifest,
+      /* isTrigger */ false,
+      nodeInputs,
+      builtinMcpServerOperationInfo,
+      dispatch
+    );
+
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+
+    const settings = getOperationSettings(
+      /* isTrigger */ false,
+      builtinMcpServerOperationInfo,
+      builtinMcpServerManifest,
+      undefined /* swagger */,
+      operation,
+      workflowKind
+    );
+
+    return [
+      {
+        id: nodeId,
+        nodeInputs,
+        nodeOutputs,
+        nodeDependencies,
+        operationMetadata: { brandColor: getBrandColorFromConnector(connector), iconUri: getIconUriFromConnector(connector) },
+        settings,
+        staticResult: operation?.runtimeConfiguration?.staticResult,
+      },
+    ];
+  } catch (error: any) {
+    const errorString = parseErrorMessage(error);
+    const message = `Unable to initialize operation details for managed MCP server operation - ${nodeId}. Error details - ${errorString}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message,
+      error,
+    });
+
+    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
+    return;
+  }
 };
 
 export const initializeOperationDetailsForManifest = async (
@@ -493,7 +615,8 @@ const initializeOutputTokensForOperations = (
           operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodesWithData[operationId]?.settings
+          nodesWithData[operationId]?.settings,
+          nodesWithData[operationId]?.nodeInputs
         )
       );
     } catch (error: any) {

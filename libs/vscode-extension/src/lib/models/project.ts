@@ -109,6 +109,7 @@ export interface IWebviewProjectContext extends IActionContext {
   functionName?: string;
   functionNamespace?: string;
   shouldCreateLogicAppProject: boolean;
+  isDevContainerProject: boolean;
 }
 
 export const OpenBehavior = {

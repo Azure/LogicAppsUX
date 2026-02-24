@@ -191,6 +191,7 @@ export const TemplatesStandard = () => {
           updatedConnectionsData,
           updatedParametersData,
           updatedSettingProperties,
+          /*hostConfig*/ undefined,
           /*customCodeData*/ undefined,
           /*notesData*/ undefined,
           /*mcpServer*/ undefined,

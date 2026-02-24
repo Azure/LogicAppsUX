@@ -15,54 +15,51 @@ import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
- * Builds a custom code functions project.
+ * Builds a custom code functions project if exists.
  * @param {IActionContext} context - The action context.
  * @param {vscode.Uri} node - The URI of the project to build or the corresponding logic app project.
- * @returns {Promise<void>} - A promise that resolves when the build process is complete.
+ * @returns {Promise<boolean>} - A promise that resolves to true if a custom code functions project was built, otherwise false.
  */
-export async function buildCustomCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<void> {
+export async function tryBuildCustomCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<boolean> {
   const workspaceFolderPath = await getWorkspaceRoot(context);
   const nodePath = node?.fsPath || workspaceFolderPath;
-  const isCustomCodeProject = await isCustomCodeFunctionsProject(nodePath);
-  if (!isCustomCodeProject) {
-    return;
-  }
 
   if (isNullOrUndefined(nodePath)) {
-    const errorMessage = 'No project path found to build custom code functions project.';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.errorMessage = errorMessage;
-    ext.outputChannel.appendLog(localize('noProjectPathBuildCustomCode', errorMessage));
-    return;
+    return false;
   }
 
   context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
-  try {
-    context.telemetry.properties.lastStep = 'buildCustomCodeProject';
-    await buildCustomCodeProject(nodePath);
-    context.telemetry.properties.result = 'Succeeded';
-  } catch (error) {
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.errorMessage = error.message ?? error;
+  if (await isCustomCodeFunctionsProject(nodePath)) {
+    try {
+      context.telemetry.properties.lastStep = 'buildCustomCodeProject';
+      await buildCustomCodeProject(nodePath);
+    } catch (error) {
+      context.telemetry.properties.errorMessage = error.message ?? error;
+      return false;
+    }
+    return true;
   }
 
   context.telemetry.properties.lastStep = 'tryGetLogicAppCustomCodeFunctionsProjects';
   const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(nodePath);
   if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
-    const errorMessage = 'No custom code functions projects found for the logic app folder "{0}".';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', nodePath);
-    ext.outputChannel.appendLog(localize('azureLogicAppsStandard.noCustomCodeFunctionsProjectsFound', errorMessage, nodePath));
-    return;
+    return false;
   }
 
   try {
     context.telemetry.properties.lastStep = 'buildLogicAppCustomCodeProjects';
     await Promise.all(customCodeProjectPaths.map((functionsProjectPath) => buildCustomCodeProject(functionsProjectPath)));
-    context.telemetry.properties.result = 'Succeeded';
+    return true;
   } catch (error) {
-    context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = error.message ?? error;
+    ext.outputChannel.appendLog(
+      localize(
+        'azureLogicAppsStandard.buildCustomCodeFunctionsProjectError',
+        'Error building custom code functions projects: {0}',
+        error.message ?? error
+      )
+    );
+    return false;
   }
 }
 
