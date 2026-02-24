@@ -12,6 +12,11 @@ on:
           - major
           - minor
           - patch
+      enable_blob_upload:
+        description: 'Upload Iframe App to Azure Blob Storage'
+        required: false
+        default: true
+        type: boolean
   repository_dispatch:
     types: [release]
   schedule:
@@ -206,6 +211,26 @@ jobs:
         run: |
           gh release upload ${{ needs.create-release.outputs.tag_name }} apps/vs-code-designer/dist/*.vsix --clobber
 
+      - name: 'Build Iframe App'
+        run: pnpm run build --filter @a2achat/iframe-app
+        env:
+          BUILD_VERSION: ${{ needs.create-release.outputs.tag_name }}
+
+      - name: 'Archive Iframe App'
+        run: |
+          # Strip 'v' prefix from tag name (e.g., 'v0.116.1' -> '0.116.1')
+          VERSION="${{ needs.create-release.outputs.tag_name }}"
+          VERSION="${VERSION#v}"
+          mv apps/iframe-app/dist AgentChatIFrames
+          zip -r AgentChatIFrames-${VERSION}.zip AgentChatIFrames
+          echo "IFRAME_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: 'Upload Iframe App to Release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames-${IFRAME_VERSION}.zip --clobber
+
       # NPM Publishing
       - name: 'Azure login'
         uses: azure/login@v2
@@ -213,6 +238,51 @@ jobs:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+
+      - name: 'Create Azure Blob Container for Iframe App'
+        id: create-container
+        if: ${{ github.event.inputs.enable_blob_upload == 'true' }}
+        continue-on-error: true
+        run: |
+          # Convert tag to valid container name (lowercase, replace dots with hyphens, strip 'v' prefix)
+          VERSION="${{ needs.create-release.outputs.tag_name }}"
+          VERSION="${VERSION#v}"
+          CONTAINER_NAME=$(echo "agentchatiframes-${VERSION}" | tr '[:upper:]' '[:lower:]' | tr '.' '-')
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+          
+          # Check if container already exists
+          if az storage container exists --account-name agentchatiframes --name "$CONTAINER_NAME" --auth-mode login --query exists -o tsv | grep -q true; then
+            echo "::warning::Container $CONTAINER_NAME already exists. Skipping blob storage upload."
+            exit 1
+          fi
+          
+          # Create the container
+          az storage container create \
+            --account-name agentchatiframes \
+            --name "$CONTAINER_NAME" \
+            --auth-mode login
+          
+          echo "Created container: $CONTAINER_NAME"
+
+      - name: 'Upload Iframe App to Azure Blob Storage'
+        if: ${{ github.event.inputs.enable_blob_upload == 'true' && steps.create-container.outcome == 'success' }}
+        run: |
+          # Upload the zip file
+          az storage blob upload \
+            --account-name agentchatiframes \
+            --container-name "$CONTAINER_NAME" \
+            --name AgentChatIFrames-${IFRAME_VERSION}.zip \
+            --file AgentChatIFrames-${IFRAME_VERSION}.zip \
+            --auth-mode login
+          
+          # Upload all files from the unzipped folder
+          az storage blob upload-batch \
+            --account-name agentchatiframes \
+            --destination "$CONTAINER_NAME" \
+            --source AgentChatIFrames \
+            --auth-mode login
+          
+          echo "Uploaded zip file and folder contents to container: $CONTAINER_NAME"
 
       - name: 'Generate NPMRC'
         shell: bash

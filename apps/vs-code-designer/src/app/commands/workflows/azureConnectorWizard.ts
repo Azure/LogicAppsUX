@@ -8,10 +8,12 @@ import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@micro
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import {
+  defaultMsiAudience,
   workflowAuthenticationMethodKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
   workflowResourceGroupNameKey,
+  workflowsDynamicConnectionDefaultAuthAudienceKey,
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
 } from '../../../constants';
@@ -102,6 +104,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       // Save the authentication method to local settings
       if (context.authenticationMethod) {
         valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
+        valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
       }
 
       // Then send notifications for runtime updates

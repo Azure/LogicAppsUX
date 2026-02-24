@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isA2AWorkflow } from '../state/workflow/helper';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
 import { equals, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -80,11 +81,46 @@ export const deleteNodeFromWorkflow = (
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     const parentMetadata = getRecordEntry(nodesMetadata, parentId);
     const isAfterTrigger = parentMetadata?.isTrigger;
-    const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+    const allowRunAfterTrigger = isA2AWorkflow(state);
     const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
     reassignEdgeSources(state, nodeId, parentId, workflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, workflowGraph);
   }
+
+  // Delete Node Data
+  deleteWorkflowNode(nodeId, workflowGraph);
+  delete nodesMetadata[nodeId];
+  delete state.operations[nodeId];
+  delete state.newlyAddedOperations[nodeId];
+  delete state.idReplacements[nodeId];
+  state.isDirty = true;
+
+  // Decrease action count of graph
+  const currentActionCount = getRecordEntry(nodesMetadata, workflowGraph.id)?.actionCount;
+  if (currentActionCount) {
+    nodesMetadata[workflowGraph.id].actionCount = (currentActionCount ?? 1) - 1;
+  }
+};
+
+export const deleteMcpServerNodeFromWorkflow = (
+  payload: { toolId: string; agentId: string },
+  workflowGraph: WorkflowNode,
+  nodesMetadata: NodesMetadata,
+  state: WorkflowState
+) => {
+  if (!workflowGraph.id) {
+    throw new Error('Workflow graph is missing an id');
+  }
+  const { toolId: nodeId } = payload;
+
+  const node = workflowGraph.children?.find((child: WorkflowNode) => child.id === nodeId);
+  if (!node) {
+    return;
+  }
+
+  // Adjust edges
+  const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
+  removeEdge(state, parentId, nodeId, workflowGraph);
 
   // Delete Node Data
   deleteWorkflowNode(nodeId, workflowGraph);

@@ -67,6 +67,7 @@ export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemp
 export { McpDataProvider } from './mcp/McpDataProvider';
 export { McpWizardProvider } from './mcp/McpWizardProvider';
 export { resetMcpStateOnResourceChange } from './actions/bjsworkflow/mcp';
+export { McpServerDataProvider } from './mcp/McpServerDataProvider';
 export type { McpServerCreateData } from './mcp/utils/serializer';
 export {
   validateParameter,
@@ -104,6 +105,7 @@ export * from './queries/role';
 export * from './queries/runs';
 export * from './queries/template';
 export * from './queries/clone';
+export { getHostConfig } from './mcp/utils/queries';
 export {
   resetStateOnResourceChange,
   type WorkflowTemplateData,

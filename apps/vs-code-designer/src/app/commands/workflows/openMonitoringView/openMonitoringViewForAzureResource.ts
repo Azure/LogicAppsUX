@@ -75,6 +75,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         resourceGroupName: this.node?.parent?.parent?.site.resourceGroup,
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+        defaultHostName: this.node?.parent?.parent?.site.defaultHostName,
       },
       artifacts: await this.node.getArtifacts(),
     });
@@ -140,6 +141,13 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
         break;
       }
+      case ExtensionCommand.getDesignerVersion: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.getDesignerVersion,
+          data: this.getDesignerVersion(),
+        });
+        break;
+      }
       default:
         break;
     }
@@ -182,6 +190,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
         tenantId: this.node?.parent?.subscription?.tenantId,
+        defaultHostName: this.node?.parent?.parent?.site.defaultHostName,
       },
       workflowName: this.workflowName,
       standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }),

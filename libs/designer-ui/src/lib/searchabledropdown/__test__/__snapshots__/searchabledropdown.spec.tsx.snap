@@ -27,7 +27,7 @@ exports[`SearchableDropdown > should render dropdown with a search box when opti
   >
     <svg
       aria-hidden={true}
-      className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
       fill="currentColor"
       height="1em"
       viewBox="0 0 20 20"
@@ -70,7 +70,7 @@ exports[`SearchableDropdown > should render dropdown without a search box when o
   >
     <svg
       aria-hidden={true}
-      className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
       fill="currentColor"
       height="1em"
       viewBox="0 0 20 20"

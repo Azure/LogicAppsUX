@@ -187,7 +187,7 @@ export function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
   return result;
 }
 
-const detectSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
+export const detectSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   const actions = definition.actions || {};
   let foundSequential = false;
 
@@ -207,7 +207,30 @@ const detectSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDef
   return foundSequential;
 };
 
-const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDefinition): LogicAppsV2.WorkflowDefinition => {
+/**
+ * Checks if a variable value contains references to other variables.
+ * Detects variables() calls in any context including:
+ * - Direct references: @variables('name') or @{variables('name')}
+ * - Nested in expressions: @{substring(variables('name'), ...)}
+ * - Inside other functions: @{length(variables('name'))}
+ */
+export const hasVariableReference = (value: any): boolean => {
+  if (typeof value === 'string') {
+    // Check for variable(s)(...) anywhere in the string, including nested in expressions.
+    // This catches @variable('x'), @variables('x'), @{variables('x')}, and @{substring(variables('x'), ...)} etc.
+    const variableReferencePattern = /\bvariables?\s*\(/i;
+    return variableReferencePattern.test(value);
+  }
+  if (Array.isArray(value)) {
+    return value.some((item) => hasVariableReference(item));
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Object.values(value).some((v) => hasVariableReference(v));
+  }
+  return false;
+};
+
+export const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDefinition): LogicAppsV2.WorkflowDefinition => {
   if (!definition.actions) {
     return definition;
   }
@@ -273,10 +296,43 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
     if (currentAction?.inputs?.variables) {
       mergedVariables.unshift(...currentAction.inputs.variables);
     }
+
+    // Add the top-most action's trackedProperties
+    if (currentAction?.trackedProperties) {
+      trackedProperties = { ...trackedProperties, ...currentAction.trackedProperties };
+    }
+
     sequenceActionsToRemove.add(currentName);
 
     // If the merged variables exceed the maximum limit, don't combine this sequence
     if (mergedVariables.length > VARIABLE_EDITOR_MAX_VARIABLES) {
+      return;
+    }
+
+    // If any variable value references another variable, don't combine this sequence (not supported by backend)
+    const hasVariableReferences = mergedVariables.some((variable) => hasVariableReference(variable.value));
+    if (hasVariableReferences) {
+      return;
+    }
+
+    // Check if any action in the sequence (except the bottom-most) is referenced by other actions outside the sequence
+    // This prevents breaking runAfter references when we remove actions from the sequence
+    const isReferencedByExternalActions = Array.from(sequenceActionsToRemove).some((actionName) => {
+      if (actionName === bottomActionName) {
+        return false; // Bottom-most action is okay to be referenced since it won't be removed
+      }
+
+      // Check if any action (that we're not removing) references this action
+      return Object.entries(actionsCopy).some(([otherActionName, otherAction]) => {
+        if (sequenceActionsToRemove.has(otherActionName)) {
+          return false; // Actions we're removing don't count
+        }
+
+        return otherAction.runAfter && Object.keys(otherAction.runAfter).includes(actionName);
+      });
+    });
+
+    if (isReferencedByExternalActions) {
       return;
     }
 

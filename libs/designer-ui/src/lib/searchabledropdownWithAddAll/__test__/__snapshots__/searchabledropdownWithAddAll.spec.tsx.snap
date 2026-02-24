@@ -33,7 +33,7 @@ exports[`SearchableDropdownWithAddAll > renders a dropdown with both Add All and
       >
         <svg
           aria-hidden={true}
-          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -116,7 +116,7 @@ exports[`SearchableDropdownWithAddAll > renders a dropdown with only Add All but
       >
         <svg
           aria-hidden={true}
-          className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+          className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"

@@ -11,14 +11,13 @@ import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
-import type { EditorContentChangedEventArgs } from '../editor/monaco';
+import type { EditorContentChangedEventArgs, CodeMirrorEditorRef } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getCodeEditorHeight, getInitialValue } from './util';
 import EditableFileName from './EditableFileName';
 import { TokenPickerMode } from '../tokenpicker';
 import { EditorLanguage, getFileExtensionName } from '@microsoft/logic-apps-shared';
-import type { editor, IRange } from 'monaco-editor';
 
 const customCodeIconStyle = {
   root: {
@@ -53,7 +52,7 @@ export function CodeEditor({
 }: CodeEditorProps): JSX.Element {
   const intl = useIntl();
   const styles = useCodeEditorStyles();
-  const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const codeEditorRef = useRef<CodeMirrorEditorRef | null>(null);
 
   const editorId = useId('msla-tokenpicker-callout-location');
   const callOutLabelId = useId('msla-tokenpicker-callout-label');
@@ -129,20 +128,43 @@ export function CodeEditor({
     if (codeEditorRef.current && valueSegment.token) {
       const newText = buildInlineCodeTextFromToken(valueSegment.token, language);
 
-      codeEditorRef.current.executeEdits(null, [
-        {
-          range: codeEditorRef.current.getSelection() as IRange,
-          text: newText,
-        },
-      ]);
-
+      // Get current selection or cursor position
       const selection = codeEditorRef.current.getSelection();
-      if (selection) {
-        setTimeout(() => {
-          const { lineNumber, column } = selection.getEndPosition();
-          codeEditorRef.current?.setSelection(selection.setStartPosition(lineNumber, column));
-          codeEditorRef.current?.focus();
-        }, 50);
+      const position = codeEditorRef.current.getPosition();
+
+      if (selection && position) {
+        // Calculate line/column from selection range
+        const view = codeEditorRef.current.getView();
+        if (view) {
+          const startLine = view.state.doc.lineAt(selection.from);
+          const endLine = view.state.doc.lineAt(selection.to);
+
+          codeEditorRef.current.executeEdits(null, [
+            {
+              range: {
+                startLineNumber: startLine.number,
+                startColumn: selection.from - startLine.from + 1,
+                endLineNumber: endLine.number,
+                endColumn: selection.to - endLine.from + 1,
+              },
+              text: newText,
+            },
+          ]);
+
+          // Move cursor to end of inserted text
+          setTimeout(() => {
+            const newPos = codeEditorRef.current?.getPosition();
+            if (newPos) {
+              codeEditorRef.current?.setSelection({
+                startLineNumber: newPos.lineNumber,
+                startColumn: newPos.column,
+                endLineNumber: newPos.lineNumber,
+                endColumn: newPos.column,
+              });
+            }
+            codeEditorRef.current?.focus();
+          }, 50);
+        }
       }
     }
   };

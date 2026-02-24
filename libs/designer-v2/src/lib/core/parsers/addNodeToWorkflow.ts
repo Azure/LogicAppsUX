@@ -2,6 +2,7 @@
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isA2AWorkflow } from '../state/workflow/helper';
 import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
@@ -13,7 +14,6 @@ import {
   isScopeOperation,
   WORKFLOW_NODE_TYPES,
   getRecordEntry,
-  equals,
 } from '@microsoft/logic-apps-shared';
 
 export interface AddNodePayload {
@@ -53,7 +53,7 @@ export const addNodeToWorkflow = (
   state.isDirty = true;
 
   const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isTrigger;
-  const allowRunAfterTrigger = equals(state.workflowKind, 'agent');
+  const allowRunAfterTrigger = isA2AWorkflow(state);
   const shouldAddRunAfters = allowRunAfterTrigger || (!isRoot && !isAfterTrigger);
   nodesMetadata[newNodeId] = { graphId: subgraphId ?? graphId, parentNodeId, isRoot, isTrigger };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type, kind: operation.kind };
@@ -266,6 +266,36 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
   };
 
   // Increase action count of graph
+  if (nodesMetadata[agentNode.id]) {
+    nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
+  }
+};
+
+export const addMcpServerToWorkflow = (
+  toolId: string,
+  agentNode: WorkflowNode,
+  nodesMetadata: NodesMetadata,
+  state: WorkflowState,
+  operation?: DiscoveryOperation<DiscoveryResultTypes>
+) => {
+  const toolNode = createWorkflowNode(toolId, WORKFLOW_NODE_TYPES.OPERATION_NODE);
+  toolNode.subGraphLocation = 'tools';
+  agentNode.children?.splice(agentNode.children.length - 2, 0, toolNode);
+
+  nodesMetadata[toolId] = {
+    graphId: agentNode.id,
+    parentNodeId: agentNode.id,
+    subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+  };
+
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+
+  if (operation) {
+    state.operations[toolId] = { ...state.operations[toolId], type: operation.type };
+    state.newlyAddedOperations[toolId] = toolId;
+    state.isDirty = true;
+  }
+
   if (nodesMetadata[agentNode.id]) {
     nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
   }

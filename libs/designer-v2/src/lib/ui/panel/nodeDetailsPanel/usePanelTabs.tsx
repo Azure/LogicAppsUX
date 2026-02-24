@@ -115,9 +115,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const testingTabItem = useMemo(
     () => ({
       ...testingTab(intl, tabProps),
-      visible: !isTriggerNode && hasSchema && !isMonitoringView,
+      visible: !isTrigger && hasSchema && !isMonitoringView,
     }),
-    [intl, isTriggerNode, hasSchema, isMonitoringView, tabProps]
+    [intl, isTrigger, hasSchema, isMonitoringView, tabProps]
   );
 
   const aboutTabItem = useMemo(() => aboutTab(intl, tabProps), [intl, tabProps]);
@@ -150,18 +150,23 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       return [parametersTabItem];
     }
 
-    return [
-      monitoringTabItem,
-      parametersTabItem,
-      settingsTabItem,
-      channelsTabItem,
-      handoffTabItem,
-      codeViewTabItem,
-      testingTabItem,
-      aboutTabItem,
-      monitorRetryTabItem,
-      scratchTabItem,
-    ]
+    const availableTabs =
+      nodeMetaData?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
+        ? [monitoringTabItem, parametersTabItem, codeViewTabItem, aboutTabItem, scratchTabItem, testingTabItem]
+        : [
+            monitoringTabItem,
+            parametersTabItem,
+            settingsTabItem,
+            channelsTabItem,
+            handoffTabItem,
+            codeViewTabItem,
+            testingTabItem,
+            aboutTabItem,
+            monitorRetryTabItem,
+            scratchTabItem,
+          ];
+
+    return availableTabs
       .filter((a) => !panelTabHideKeys.includes(a.id as any))
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);

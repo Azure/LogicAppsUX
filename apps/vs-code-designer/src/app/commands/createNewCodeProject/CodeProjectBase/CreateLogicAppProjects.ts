@@ -18,6 +18,7 @@ import {
   createRulesFiles,
   updateWorkspaceFile,
 } from './CreateLogicAppWorkspace';
+import { devContainerFolderName, devContainerFileName } from '../../../../constants';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -42,6 +43,12 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const workspaceFilePath = vscode.workspace.workspaceFile.fsPath;
     webviewProjectContext.workspaceFilePath = workspaceFilePath;
     webviewProjectContext.shouldCreateLogicAppProject = !doesLogicAppExist;
+
+    // Detect if this is a devcontainer project by checking:
+    // 1. If .devcontainer folder exists in workspace file
+    // 2. If devcontainer.json exists in that folder
+    webviewProjectContext.isDevContainerProject = await isDevContainerWorkspace(workspaceFilePath, workspaceFolder);
+
     // need to get logic app in projects
     await updateWorkspaceFile(webviewProjectContext);
   } else {
@@ -84,4 +91,33 @@ export async function createLogicAppProject(context: IActionContext, options: an
     await createFunctionAppFilesStep.setup(mySubContext);
   }
   vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+}
+
+/**
+ * Checks if the workspace is a devcontainer project by:
+ * 1. Checking if .devcontainer folder is listed in the workspace file
+ * 2. Verifying that devcontainer.json exists in that folder
+ * @param workspaceFilePath - Path to the .code-workspace file
+ * @param workspaceFolder - Root folder of the workspace
+ * @returns true if this is a devcontainer workspace, false otherwise
+ */
+async function isDevContainerWorkspace(workspaceFilePath: string, workspaceFolder: string): Promise<boolean> {
+  // Read the workspace file
+  const workspaceFileContent = await fse.readJSON(workspaceFilePath);
+
+  // Check if .devcontainer folder is in the workspace folders
+  const folders = workspaceFileContent.folders || [];
+  const hasDevContainerFolder = folders.some(
+    (folder: any) => folder.path === devContainerFolderName || folder.path === `./${devContainerFolderName}`
+  );
+
+  if (!hasDevContainerFolder) {
+    return false;
+  }
+
+  // Verify devcontainer.json actually exists
+  const devContainerJsonPath = path.join(workspaceFolder, devContainerFolderName, devContainerFileName);
+  const devContainerJsonExists = await fse.pathExists(devContainerJsonPath);
+
+  return devContainerJsonExists;
 }

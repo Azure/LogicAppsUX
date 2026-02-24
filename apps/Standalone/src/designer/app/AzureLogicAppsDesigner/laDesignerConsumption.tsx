@@ -13,7 +13,6 @@ import {
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
   validateWorkflowConsumption,
-  fetchAgentModelIds,
   fetchAgentUrlConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
@@ -428,6 +427,7 @@ const getDesignerServices = (
     ...defaultServiceParams,
     clientSupportedOperations: [
       ['/connectionProviders/workflow', 'invokeWorkflow'],
+      ['/connectionProviders/workflow', 'invokenestedagent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
@@ -548,7 +548,6 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint);
     },
-    getAgentModelId: () => fetchAgentModelIds(workflowId),
     getAppIdentity: () => workflow?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {

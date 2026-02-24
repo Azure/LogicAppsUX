@@ -86,10 +86,12 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
       const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, false);
 
       if (autoStartAzurite && !isAzuriteRunning) {
-        await updateWorkspaceSetting(azuriteLocationSetting, azuriteLocationExtSetting, projectPath, azuriteExtensionPrefix);
+        // Use the configured location, or default to the global default path
+        const azuriteLocation = azuriteLocationExtSetting || defaultAzuritePathValue;
+        await updateWorkspaceSetting(azuriteLocationSetting, azuriteLocation, projectPath, azuriteExtensionPrefix);
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
-        context.telemetry.properties.azuriteLocation = azuriteLocationExtSetting;
+        context.telemetry.properties.azuriteLocation = azuriteLocation;
       }
     }
   }

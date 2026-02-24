@@ -30,7 +30,6 @@ import { isConnectionRequiredForOperation, isConnectionAutoSelectionDisabled, up
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
-  initializeAgentModelIds,
   initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
@@ -51,6 +50,7 @@ import {
   UserPreferenceService,
   LoggerService,
   LogEntryLevel,
+  removeConnectionPrefix,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connection,
@@ -188,10 +188,16 @@ export const initializeOperationDetails = async (
 
   if (isManagedMcpClient) {
     // managed mcp client ignores the swagger and uses a fixed set of parameters similar to manifest based native mcp client
-    const { connector: swaggerConnector } = await getConnectorWithSwagger(connectorId);
+    const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     connector = swaggerConnector;
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
+
+    const swaggerOperation = parsedSwagger.getOperationByOperationId(operationId);
+    const operationPath = swaggerOperation ? removeConnectionPrefix(swaggerOperation.path) : undefined;
+    if (operationPath) {
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, operationPath }));
+    }
 
     const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
     const nativeMcpManifest = await getOperationManifest(nativeMcpOperationInfo);
@@ -257,14 +263,6 @@ export const initializeOperationDetails = async (
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
-    }
-
-    const agentModelIdParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT);
-    if (
-      agentModelIdParameter &&
-      AgentUtils.isConsumptionAgentModelTypeParameter(operationInfo?.connectorId, agentModelIdParameter.parameterName)
-    ) {
-      await initializeAgentModelIds(agentModelIdParameter);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -544,7 +542,8 @@ export const addTokensAndVariables = (
       operationType,
       nodeOutputs.outputs ?? {},
       { iconUri, brandColor },
-      settings
+      settings,
+      nodeInputs
     )
   );
 

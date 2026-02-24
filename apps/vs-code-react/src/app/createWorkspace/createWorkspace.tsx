@@ -57,6 +57,7 @@ export const CreateWorkspace = () => {
     packageValidationResults,
     logicAppsWithoutCustomCode,
     separator,
+    isDevContainerProject,
   } = createWorkspaceState;
 
   // Set flow type when component mounts
@@ -428,6 +429,7 @@ export const CreateWorkspace = () => {
     const baseData = {
       workspaceProjectPath,
       workspaceName,
+      isDevContainerProject,
       projectType,
     };
 

@@ -16,7 +16,15 @@ import {
   getReactQueryClient,
   runsQueriesKeys,
 } from '@microsoft/logic-apps-designer';
-import { equals, isEmptyString, isNullOrUndefined, isRuntimeUp, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
+import {
+  BundleVersionRequirements,
+  equals,
+  isEmptyString,
+  isNullOrUndefined,
+  isRuntimeUp,
+  isVersionSupported,
+  Theme,
+} from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback } from 'react';
@@ -26,8 +34,9 @@ import { XLargeText } from '@microsoft/designer-ui';
 import { Spinner } from '@fluentui/react-components';
 import { useAppStyles } from './appStyles';
 import { useIntlMessages, commonMessages } from '../../intl';
+import { DesignerApp as DesignerAppV2 } from './appV2';
 
-export const DesignerApp = () => {
+const DesignerAppV1 = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
@@ -144,7 +153,12 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const isMultiVariableSupportEnabled = useMemo(
-    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', '1.114.22'),
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.MULTI_VARIABLE),
+    [panelMetaData?.extensionBundleVersion]
+  );
+
+  const isNestedAgentLoopsSupportEnabled = useMemo(
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.NESTED_AGENT_LOOPS),
     [panelMetaData?.extensionBundleVersion]
   );
 
@@ -273,6 +287,7 @@ export const DesignerApp = () => {
           hostOptions: {
             displayRuntimeInfo: true,
             enableMultiVariable: isMultiVariableSupportEnabled,
+            enableNestedAgentLoops: isNestedAgentLoopsSupportEnabled,
           },
         }}
       >
@@ -281,4 +296,26 @@ export const DesignerApp = () => {
       </DesignerProvider>
     </div>
   );
+};
+
+export const DesignerApp = () => {
+  const vscode = useContext(VSCodeContext);
+  const designerVersion = useSelector((state: RootState) => state.project.designerVersion);
+
+  const sendMsgToVsix = useCallback(
+    (msg: MessageToVsix) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
+  useEffect(() => {
+    sendMsgToVsix({ command: ExtensionCommand.getDesignerVersion });
+  }, [sendMsgToVsix]);
+
+  if (designerVersion === undefined) {
+    return null;
+  }
+
+  return designerVersion === 2 ? <DesignerAppV2 /> : <DesignerAppV1 />;
 };

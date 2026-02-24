@@ -1816,6 +1816,27 @@ export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes
     },
   },
   {
+    name: 'invokeNestedAgent',
+    id: 'invokenestedagent',
+    type: 'nestedagent',
+    properties: {
+      api: {
+        id: 'connectionProviders/workflow',
+        name: 'connectionProviders/workflow',
+        displayName: 'Azure Logic Apps',
+        iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/workflow.svg',
+        brandColor: '#59b2d9',
+        description: 'Azure Logic Apps',
+      },
+      summary: 'Choose a Logic Apps workflow',
+      description: 'Send a task to a nested agent workflow in the same region',
+      visibility: 'Important',
+      operationType: 'NestedAgent',
+      brandColor: '#59b2d9',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/workflow.svg',
+    },
+  },
+  {
     name: 'xmlTransform',
     id: 'xmlTransform',
     type: 'xslt',

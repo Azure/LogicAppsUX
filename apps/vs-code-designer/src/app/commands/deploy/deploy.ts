@@ -58,7 +58,7 @@ import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp'
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
-import { buildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from '../publishCodefulProject';
 
 export async function deployProductionSlot(
@@ -95,7 +95,7 @@ async function deploy(
     const logicAppNode = workspaceFolder.uri;
     const customFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
     if (!customFolderExists) {
-      await buildCustomCodeFunctionsProject(actionContext, logicAppNode);
+      await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
     }
 
     const agentIsolatedExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'codeful'));

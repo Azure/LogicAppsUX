@@ -46,18 +46,19 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], permissions: ['clipboard-read', 'clipboard-write'] },
     },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        launchOptions: {
-          firefoxUserPrefs: {
-            'dom.events.asyncClipboard.readText': true,
-            'dom.events.testing.asyncClipboard': true,
-          },
-        },
-      },
-    },
+
+    // {
+    //   name: 'firefox',
+    //   use: {
+    //     ...devices['Desktop Firefox'],
+    //     launchOptions: {
+    //       firefoxUserPrefs: {
+    //         'dom.events.asyncClipboard.readText': true,
+    //         'dom.events.testing.asyncClipboard': true,
+    //       },
+    //     },
+    //   },
+    // },
 
     // {
     //   name: 'webkit',

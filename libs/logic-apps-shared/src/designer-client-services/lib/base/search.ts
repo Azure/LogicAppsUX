@@ -8,7 +8,7 @@ import type {
   DiscoveryWorkflowTrigger,
   BuiltInOperation,
 } from '../../../utils/src';
-import { ArgumentException, equals, getResourceNameFromId, normalizeConnectorIds } from '../../../utils/src';
+import { ArgumentException, equals, normalizeConnectorIds } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -184,11 +184,8 @@ export abstract class BaseSearchService implements ISearchService {
 
   async getOperationsByConnector(connectorId: string, actionType?: 'triggers' | 'actions'): Promise<DiscoveryOpArray> {
     const {
-      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+      apiHubServiceDetails: { apiVersion },
     } = this.options;
-
-    const connectorName = getResourceNameFromId(connectorId);
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/${connectorName}/apiOperations`;
 
     let filter: string | undefined;
 
@@ -203,7 +200,10 @@ export abstract class BaseSearchService implements ISearchService {
       ...(filter ? { $filter: filter } : {}),
     };
 
-    const { value } = await this.getAzureResourceByPage(uri, queryParameters);
+    const uri = `${connectorId}/apiOperations`;
+
+    const { value } = await this.getAzureResourceByPage(uri, queryParameters, 0, 1000);
+
     return this.removeUnsupportedOperations(value);
   }
 
@@ -343,6 +343,14 @@ export abstract class BaseSearchService implements ISearchService {
     return this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
   }
 
+  public async getAgentWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
+    const requestWorkflows = await this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
+    return requestWorkflows.filter((workflow: any) => {
+      const triggers = workflow.properties?.definition?.triggers ?? {};
+      return Object.values(triggers).some((trigger: any) => trigger.kind?.toLowerCase() === 'agent');
+    });
+  }
+
   public async getBatchWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
     return this.getWorkflows(`contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`);
   }
@@ -455,7 +463,6 @@ export function getClientBuiltInOperations(
     ClientOperationsData.untilOperation,
     ClientOperationsData.switchOperation,
     ClientOperationsData.agentOperation,
-    ClientOperationsData.handoffOperation,
     ClientOperationsData.recurrenceOperation,
     ClientOperationsData.delayOperation,
     ClientOperationsData.delayUntilOperation,

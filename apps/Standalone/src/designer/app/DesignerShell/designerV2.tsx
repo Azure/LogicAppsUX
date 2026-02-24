@@ -3,7 +3,7 @@ import { loadSubscriptionIds, loadToken } from '../../../environments/environmen
 import { SettingsBox } from '../../components/settings_box';
 import { useHostingPlan, useIsLocal, useQueryCachePersist, useResourcePath } from '../../state/workflowLoadingSelectors';
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesignerV2';
-import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
+import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumptionV2';
 import { LocalDesigner } from '../LocalDesigner/localDesignerV2';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer-v2';
 import { useQuery } from '@tanstack/react-query';
