@@ -248,18 +248,16 @@ export default {
                 },
                 builtinTools: {
                   type: 'array',
-                  title: 'Built in tools',
-                  'x-ms-editor': 'dropdown',
+                  title: 'Built-in Tools',
+                  'x-ms-visibility': 'important',
+                  'x-ms-editor': 'builtintools',
                   'x-ms-editor-options': {
-                    multiSelect: true,
-                    titleSeparator: ',',
-                    serialization: {
-                      valueType: 'array',
-                    },
                     options: [
                       {
                         value: 'code_interpreter',
-                        displayName: 'Code interpreter',
+                        displayName: 'Code Interpreter',
+                        description:
+                          'Enable the agent to write and execute JavaScript code for calculations, data analysis, and file processing.',
                       },
                     ],
                   },
@@ -268,7 +266,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['FoundryAgentService'],
+                        values: ['AzureOpenAI'],
                       },
                     ],
                   },
