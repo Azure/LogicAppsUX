@@ -13,6 +13,7 @@ interface CodeViewProps {
   isConsumption?: boolean;
 }
 
+// eslint-disable-next-line react/display-name
 const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProps, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const isWorkflowIsDirty = useIsWorkflowDirty();

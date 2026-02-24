@@ -37,3 +37,26 @@ export const invokeWorkflowOperation = {
     iconUri,
   },
 };
+
+export const invokeNestedAgentOperation = {
+  id: 'invokenestedagent',
+  name: 'invokenestedagent',
+  type: 'nestedagent',
+  properties: {
+    api: {
+      id: '/connectionProviders/workflow',
+      name: 'connectionProviders/workflow',
+      displayName: 'Azure Logic Apps',
+      iconUri,
+      brandColor,
+      description: 'Azure Logic Apps',
+    },
+    capabilities: ['azureResourceSelection'],
+    summary: 'Choose a Nested Agent workflow',
+    description: 'Send a task to a nested agent workflow in the same region',
+    visibility: 'Important',
+    operationType: 'NestedAgent',
+    brandColor,
+    iconUri,
+  },
+};

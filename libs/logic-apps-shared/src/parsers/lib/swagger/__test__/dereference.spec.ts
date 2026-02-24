@@ -622,8 +622,9 @@ describe('dereferenceSwagger', () => {
       expect(schema.type).toBe('object');
       expect(schema.description).toBe('Table metadata');
 
-      // Performance check - should complete in reasonable time (< 100ms for this size)
-      expect(duration).toBeLessThan(100);
+      // Performance check - should complete in reasonable time
+      // Using 500ms to account for slower CI runners (locally ~20-50ms, CI can be 150-260ms)
+      expect(duration).toBeLessThan(500);
     });
 
     it('should handle the Outlook swagger without memory issues', () => {

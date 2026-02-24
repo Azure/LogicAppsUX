@@ -181,6 +181,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
+
+    // Show notification about designer version
+    this.showDesignerVersionNotification();
   }
 
   private async _handleWebviewMsg(msg: any) {
@@ -309,6 +312,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       }
       case ExtensionCommand.fileABug: {
         await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
+
+      case ExtensionCommand.getDesignerVersion: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.getDesignerVersion,
+          data: this.getDesignerVersion(),
+        });
         break;
       }
 

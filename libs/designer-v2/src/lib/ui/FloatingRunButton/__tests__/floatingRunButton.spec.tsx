@@ -1,6 +1,10 @@
+/**
+ * @vitest-environment jsdom
+ */
+import '@testing-library/jest-dom/vitest';
 import type { ComponentProps } from 'react';
-import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
@@ -37,6 +41,7 @@ vi.mock('../../../core', async (importOriginal) => {
     resetDesignerDirtyState: vi.fn(),
     updateParameterValidation: vi.fn(),
     validateParameter: vi.fn().mockReturnValue([]),
+    useIsDesignerDirty: vi.fn().mockReturnValue(false),
     store: {
       getState: vi.fn().mockReturnValue({
         operations: {
@@ -84,6 +89,10 @@ describe('FloatingRunButton', () => {
       },
     });
   };
+
+  afterEach(() => {
+    cleanup();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();

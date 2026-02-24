@@ -1,7 +1,7 @@
 import { Link, Text, makeStyles, tokens } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
-const CERTIFICATION_DOCS_URL = 'https://learn.microsoft.com/en-us/connectors/custom-connectors/submit-certification';
+const CERTIFICATION_DOCS_URL = 'https://learn.microsoft.com/connectors/custom-connectors/submit-certification';
 const MIT_LICENSE_URL = 'https://mit-license.org/';
 
 const useStyles = makeStyles({

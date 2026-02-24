@@ -13,7 +13,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:multi-session": "tsx test-multi-session.ts",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

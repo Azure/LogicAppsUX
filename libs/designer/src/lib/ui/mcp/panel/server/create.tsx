@@ -9,15 +9,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { validateMcpServerDescription, validateMcpServerName } from '../../../../core/mcp/utils/server';
 import { useMcpEligibleWorkflows } from '../../../../core/mcp/utils/queries';
-import type { McpServer } from '@microsoft/logic-apps-shared';
+import { type McpServer, equals } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const CreateServer = ({
   onUpdate,
   server,
+  existingServers,
   onClose,
-}: { onUpdate: (servers: Partial<McpServer>) => Promise<void>; server?: McpServer; onClose: () => void }) => {
+}: { onUpdate: (servers: Partial<McpServer>) => Promise<void>; server?: McpServer; existingServers?: string[]; onClose: () => void }) => {
   const styles = { ...useMcpPanelStyles(), ...useMcpServerPanelStyles() };
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -25,13 +26,13 @@ export const CreateServer = ({
   const INTL_TEXT = {
     createTitle: intl.formatMessage({
       defaultMessage: 'Create an MCP server',
-      id: 's5Cidf',
-      description: 'Title for the MCP Server creation panel',
+      id: 'jQaCtz',
+      description: 'Title for the MCP server creation panel',
     }),
     updateTitle: intl.formatMessage({
-      defaultMessage: 'Update MCP Server',
-      id: 'lbQ38S',
-      description: 'Title for the MCP Server update panel',
+      defaultMessage: 'Update MCP server',
+      id: '1bUFmg',
+      description: 'Title for the MCP server update panel',
     }),
     subtitle: intl.formatMessage({
       defaultMessage: 'Standard logic app',
@@ -45,13 +46,13 @@ export const CreateServer = ({
     }),
     detailsTitle: intl.formatMessage({
       defaultMessage: 'MCP server details',
-      id: 'nmKIZt',
-      description: 'Title for the MCP Server details section',
+      id: 'kg1OtO',
+      description: 'Title for the MCP server details section',
     }),
     detailsDescription: intl.formatMessage({
       defaultMessage: 'Provide the details about your MCP server.',
-      id: 'VgIOTh',
-      description: 'Description for the MCP Server details section',
+      id: 'vgQIlQ',
+      description: 'Description for the MCP server details section',
     }),
     workflowsTitle: intl.formatMessage({
       defaultMessage: 'Workflows',
@@ -70,33 +71,33 @@ export const CreateServer = ({
     }),
     createButtonText: intl.formatMessage({
       defaultMessage: 'Create',
-      id: 'x+XxdZ',
-      description: 'Button text for creating the MCP Server',
+      id: 'f0AONI',
+      description: 'Button text for creating the MCP server',
     }),
     creatingButtonText: intl.formatMessage({
       defaultMessage: 'Creating...',
-      id: '0b1xt5',
-      description: 'Button text for creating the MCP Server in progress',
+      id: 'ahRW+0',
+      description: 'Button text for creating the MCP server in progress',
     }),
     updateButtonText: intl.formatMessage({
       defaultMessage: 'Update',
-      id: 'KGvXUc',
-      description: 'Button text for updating the MCP Server',
+      id: 'K2WO6e',
+      description: 'Button text for updating the MCP server',
     }),
     updatingButtonText: intl.formatMessage({
       defaultMessage: 'Updating...',
-      id: 'eJi0UT',
-      description: 'Button text for updating the MCP Server in progress',
+      id: '+4hb/h',
+      description: 'Button text for updating the MCP server in progress',
     }),
     cancelButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
-      id: '6JfSVt',
-      description: 'Button text for canceling MCP Server creation',
+      id: 'nrC4o4',
+      description: 'Button text for canceling creation for MCP server',
     }),
     nameLabel: intl.formatMessage({
       defaultMessage: 'Name',
-      id: 'pZL0u1',
-      description: 'Label for the MCP Server name field',
+      id: 'B2N49Y',
+      description: 'Label for the MCP server name field',
     }),
     namePlaceholder: intl.formatMessage({
       id: 'qKVOwV',
@@ -105,8 +106,8 @@ export const CreateServer = ({
     }),
     descriptionLabel: intl.formatMessage({
       defaultMessage: 'Description',
-      id: 'W5bj8F',
-      description: 'Label for the MCP Server description field',
+      id: '0l+F9w',
+      description: 'Label for the MCP server description field',
     }),
     descriptionPlaceholder: intl.formatMessage({
       id: 'SYDKyg',
@@ -115,8 +116,8 @@ export const CreateServer = ({
     }),
     workflowsLabel: intl.formatMessage({
       defaultMessage: 'Workflows',
-      id: 'KeakaX',
-      description: 'Label for the MCP Server workflows field',
+      id: 'ayaW+i',
+      description: 'Label for the MCP server workflows field',
     }),
     workflowsPlaceholder: intl.formatMessage({
       id: 'wy+LF2',
@@ -124,8 +125,8 @@ export const CreateServer = ({
       description: 'Placeholder text for the MCP server workflows field',
     }),
     workflowsErrorMessage: intl.formatMessage({
-      id: 'XsCwp/',
-      defaultMessage: 'At least one workflow must be selected.',
+      id: '6d4J74',
+      defaultMessage: 'Select at least one workflow to continue.',
       description: 'Error message when no workflows are selected for the MCP server',
     }),
     workflowsLoadingMessage: intl.formatMessage({
@@ -158,6 +159,10 @@ export const CreateServer = ({
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
   const [workflowsError, setWorkflowsError] = useState<string | undefined>(undefined);
   const [isCreatingOrUpdating, setIsCreatingOrUpdating] = useState(false);
+  const existingServerNames = useMemo(
+    () => (server ? (existingServers?.filter((name) => !equals(name, server.name)) ?? []) : (existingServers ?? [])),
+    [existingServers, server]
+  );
 
   useEffect(() => {
     if (server && (server.tools ?? []).length > 0) {
@@ -174,11 +179,14 @@ export const CreateServer = ({
     [selectedTools, workflowOptions]
   );
 
-  const setMcpServerName = useCallback((value: string) => {
-    setServerName(value);
-    const errorMessage = validateMcpServerName(value);
-    setServerNameError(errorMessage);
-  }, []);
+  const setMcpServerName = useCallback(
+    (value: string) => {
+      setServerName(value);
+      const errorMessage = validateMcpServerName(value, existingServerNames);
+      setServerNameError(errorMessage);
+    },
+    [existingServerNames]
+  );
 
   const setMcpServerDescription = useCallback((value: string) => {
     setServerDescription(value);

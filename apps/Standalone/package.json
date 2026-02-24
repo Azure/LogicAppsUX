@@ -31,7 +31,7 @@
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
     "@tanstack/react-query-persist-client": "4.36.1",
-    "axios": "^1.12.0",
+    "axios": "^1.13.5",
     "axios-retry": "^3.5.0",
     "core-js": "3.24.1",
     "jwt-decode": "^3.1.2",
@@ -57,7 +57,7 @@
     "build": "vite build",
     "dev": "vite --force",
     "e2e": "vite --config vite.e2e.config.ts",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "type": "module"

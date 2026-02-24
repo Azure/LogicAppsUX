@@ -9,6 +9,13 @@ export interface UseAgentCardConfig {
   onUnauthorized?: () => void | Promise<void>;
 }
 
+async function handleUnauthorized(config: UseAgentCardConfig): Promise<never> {
+  if (config.onUnauthorized) {
+    await config.onUnauthorized();
+  }
+  throw new Error('Unauthorized');
+}
+
 async function fetchAgentCard(config: UseAgentCardConfig): Promise<AgentCard> {
   const url = isDirectAgentCardUrl(config.apiUrl) ? config.apiUrl : `${config.apiUrl}/.well-known/agent-card.json`;
 
@@ -28,16 +35,19 @@ async function fetchAgentCard(config: UseAgentCardConfig): Promise<AgentCard> {
     requestInit.credentials = 'include';
   }
 
-  const response = await fetch(url, requestInit);
+  let response: Response;
+  try {
+    response = await fetch(url, requestInit);
+  } catch {
+    // Network error or CORS failure (e.g., EasyAuth 302 redirect to login page)
+    return handleUnauthorized(config);
+  }
 
   if (!response.ok) {
-    if (response.statusText === 'Unauthorized') {
-      if (config.onUnauthorized) {
-        await config.onUnauthorized();
-      }
-      throw new Error('Unauthorized');
+    if (response.status === 401 || response.status === 403) {
+      return handleUnauthorized(config);
     }
-    throw new Error(`Failed to fetch agent card: ${response.statusText}`);
+    throw new Error(`Failed to fetch agent card: ${response.status} ${response.statusText}`.trim());
   }
 
   return (await response.json()) as AgentCard;

@@ -20,7 +20,7 @@ import { ext } from '../../../extensionVariables';
 import { DependencyVersion } from '../../../constants';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
-import { getGlobalSetting, getWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { isNodeJsInstalled } from '../../commands/nodeJs/validateNodeJsInstalled';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
@@ -30,6 +30,7 @@ vi.mock('../nodeJs/nodeJsVersion');
 vi.mock('../../../onboarding');
 vi.mock('../vsCodeConfig/settings');
 vi.mock('../../commands/nodeJs/validateNodeJsInstalled');
+vi.mock('../devContainerUtils');
 
 describe('binaries', () => {
   describe('downloadAndExtractDependency', () => {
@@ -88,28 +89,49 @@ describe('binaries', () => {
     beforeEach(() => {
       (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
     });
-    it('should return true if binaries exist', () => {
+    it('should return true if binaries exist', async () => {
       (fs.existsSync as Mock).mockReturnValue(true);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
 
-      const result = binariesExist('dependencyName');
+      const result = await binariesExist('dependencyName');
 
       expect(result).toBe(true);
     });
 
-    it('should return false if binaries do not exist', () => {
+    it('should return false if binaries do not exist', async () => {
       (fs.existsSync as Mock).mockReturnValue(false);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
 
-      const result = binariesExist('dependencyName');
+      const result = await binariesExist('dependencyName');
 
       expect(result).toBe(false);
     });
 
-    it('should return false if useBinariesDependencies returns false', () => {
+    it('should return false if useBinariesDependencies returns false', async () => {
       (fs.existsSync as Mock).mockReturnValue(false);
       (getGlobalSetting as Mock).mockReturnValue(false);
-      const result = binariesExist('dependencyName');
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+
+      const result = await binariesExist('dependencyName');
 
       expect(result).toBe(false);
+    });
+
+    it('should return false for devContainer workspace regardless of binary existence', async () => {
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
+
+      const result = await binariesExist('dependencyName');
+
+      expect(result).toBe(false);
+      expect(fs.existsSync).not.toHaveBeenCalled();
     });
   });
 
@@ -381,38 +403,101 @@ describe('binaries', () => {
         },
       } as IActionContext;
     });
-    it('should install binaries', async () => {
+
+    it('should install binaries when setting is enabled and not in devContainer', async () => {
       (getGlobalSetting as Mock).mockReturnValue(true);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
 
       await installBinaries(context);
 
       expect(context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting).toBe('true');
     });
 
-    it('should not install binaries', async () => {
+    it('should not install binaries when setting is disabled', async () => {
       (getGlobalSetting as Mock).mockReturnValue(false);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
 
       await installBinaries(context);
 
       expect(context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting).toBe('false');
     });
+
+    it('should not install binaries in devContainer workspace even when setting is enabled', async () => {
+      (getGlobalSetting as Mock).mockReturnValue(true);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
+
+      await installBinaries(context);
+
+      expect(context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting).toBe('false');
+    });
+
+    it('should set default paths when not installing binaries', async () => {
+      (getGlobalSetting as Mock).mockReturnValue(false);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+
+      await installBinaries(context);
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotnetBinaryPath', 'dotnet');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', 'node');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+    });
+
+    it('should set default paths in devContainer workspace', async () => {
+      (getGlobalSetting as Mock).mockReturnValue(true);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
+
+      await installBinaries(context);
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotnetBinaryPath', 'dotnet');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', 'node');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+    });
   });
 
   describe('useBinariesDependencies', () => {
-    it('should return true if binaries dependencies are used', () => {
+    it('should return true if binaries dependencies are used', async () => {
       (getGlobalSetting as Mock).mockReturnValue(true);
 
-      const result = useBinariesDependencies();
+      const result = await useBinariesDependencies();
 
       expect(result).toBe(true);
     });
 
-    it('should return false if binaries dependencies are not used', () => {
+    it('should return false if binaries dependencies are not used', async () => {
       (getGlobalSetting as Mock).mockReturnValue(false);
 
-      const result = useBinariesDependencies();
+      const result = await useBinariesDependencies();
 
       expect(result).toBe(false);
+    });
+
+    it('should return false for devContainer workspace regardless of setting', async () => {
+      (getGlobalSetting as Mock).mockReturnValue(true);
+
+      // Mock devContainer detection
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
+
+      const result = await useBinariesDependencies();
+
+      expect(result).toBe(false);
+    });
+
+    it('should respect setting when not in devContainer workspace', async () => {
+      (getGlobalSetting as Mock).mockReturnValue(true);
+
+      // Mock devContainer detection
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+
+      const result = await useBinariesDependencies();
+
+      expect(result).toBe(true);
     });
   });
 });

@@ -126,8 +126,8 @@ export const MCPServers = ({
       description: 'Label for the copying the endpoint URL button',
     }),
     deleteServerTitle: intl.formatMessage({
-      defaultMessage: 'Deleted MCP server',
-      id: 'I8lbqy',
+      defaultMessage: 'Deleted the MCP server',
+      id: 'TZhxdI',
       description: 'Title for the delete server confirmation',
     }),
     removeToolTitle: intl.formatMessage({
@@ -167,8 +167,8 @@ export const MCPServers = ({
 
       await onUpdateServers(updatedServers, {
         title: intl.formatMessage({
-          defaultMessage: 'Server updated successfully',
-          id: 'RSsqSm',
+          defaultMessage: 'Successfully updated the server.',
+          id: 'Xoz0Np',
           description: 'Title for the toaster after updating a server',
         }),
         content: intl.formatMessage(
@@ -219,8 +219,8 @@ export const MCPServers = ({
         title: INTL_TEXT.removeToolTitle,
         content: intl.formatMessage(
           {
-            defaultMessage: 'Successfully removed the workflow tool {toolName} from the server {serverName}.',
-            id: 'N/ENAb',
+            defaultMessage: `Successfully removed the ''{toolName}'' workflow tool from the ''{serverName}'' server.`,
+            id: 'wcW5LP',
             description: 'Confirmation message for removing a tool from the server',
           },
           { toolName, serverName }

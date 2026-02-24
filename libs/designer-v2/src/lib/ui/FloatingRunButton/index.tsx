@@ -20,6 +20,7 @@ import {
   resetDesignerDirtyState,
   store,
   updateParameterValidation,
+  useIsDesignerDirty,
   validateParameter,
   type RootState,
 } from '../../core';
@@ -82,6 +83,8 @@ export const FloatingRunButton = ({
   isConsumption,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
+
+  const isDirty = useIsDesignerDirty();
 
   const [runHasPayload, setRunHasPayload] = useState<boolean>(false);
 
@@ -186,7 +189,7 @@ export const FloatingRunButton = ({
     });
 
     // If workflowReadOnly is true, skip the actual save and just return the serialized workflow
-    if (workflowReadOnly) {
+    if (workflowReadOnly || !isDirty) {
       return serializedWorkflow;
     }
 
@@ -219,7 +222,7 @@ export const FloatingRunButton = ({
         isDraftMode
       );
     }
-  }, [workflowReadOnly, dispatch, saveDraftWorkflow, isDraftMode]);
+  }, [workflowReadOnly, dispatch, saveDraftWorkflow, isDraftMode, isDirty]);
 
   const {
     mutate: runMutate,

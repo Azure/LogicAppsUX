@@ -8,6 +8,8 @@ export interface CodeMirrorEditorProps {
   className?: string;
   defaultValue?: string;
   value?: string;
+  originalValue?: string;
+  showMerge?: boolean;
   language?: string;
   height?: string;
   width?: string;
