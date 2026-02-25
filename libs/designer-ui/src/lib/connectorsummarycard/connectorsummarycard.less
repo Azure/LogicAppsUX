@@ -1,6 +1,5 @@
 .msla-connector-summary-card {
   position: relative;
-  background-color: #fff;
   border-radius: 2px;
   border: none;
   outline: none;
@@ -22,11 +21,6 @@
   border: 2px solid #ffffff00;
   &:focus {
     outline: 0;
-    border: 2px solid rgba(96, 94, 92, 1);
-  }
-
-  &:active {
-    border: 2px solid rgba(0, 120, 212, 1);
   }
 }
 
@@ -96,20 +90,3 @@
   }
 }
 
-.msla-theme-dark {
-  .msla-connector-summary-card {
-    background: @ms-color-primaryBackground;
-
-    &:focus {
-      outline: 1px solid #fff;
-    }
-
-    &:hover {
-      background: @ms-color-primaryBackgroundHover;
-    }
-  }
-
-  .msla-connector-summary-title {
-    color: @ms-color-black;
-  }
-}
