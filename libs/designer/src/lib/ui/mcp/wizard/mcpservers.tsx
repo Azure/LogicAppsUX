@@ -48,6 +48,7 @@ export const McpServersWizard = ({
 
   const [mcpServers, setMcpServers] = useState<McpServer[] | undefined>(undefined);
   const [selectedServer, setSelectedServer] = useState<McpServer | undefined>(undefined);
+  const allServerNames = useMemo(() => mcpServers?.map((server) => server.name) ?? [], [mcpServers]);
 
   useEffect(() => {
     if (allServers && !isLoading) {
@@ -97,23 +98,23 @@ export const McpServersWizard = ({
               description: 'Title for the toaster after creating a server',
             })
           : intl.formatMessage({
-              defaultMessage: 'Server updated successfully',
-              id: 'RSsqSm',
+              defaultMessage: 'Successfully updated the server.',
+              id: 'Xoz0Np',
               description: 'Title for the toaster after updating a server',
             }),
         content: isNew
           ? intl.formatMessage(
               {
-                defaultMessage: 'The server {serverName} has been created.',
-                id: '92h1A6',
+                defaultMessage: `The ''{serverName}'' server was created.`,
+                id: '7o0h6R',
                 description: 'Content for the toaster after creating a server',
               },
               { serverName: updatedServer.name }
             )
           : intl.formatMessage(
               {
-                defaultMessage: 'The server {serverName} has been updated.',
-                id: '9sRgCm',
+                defaultMessage: `The ''{serverName}'' server was updated.`,
+                id: '1ypa9A',
                 description: 'Content for the toaster after updating a server',
               },
               { serverName: updatedServer.name }
@@ -143,8 +144,8 @@ export const McpServersWizard = ({
         <Text weight="medium" size={500} className={styles.loadingText}>
           {intl.formatMessage({
             defaultMessage: 'Loading...',
-            id: '9SDUXM',
-            description: 'Text displayed while loading MCP Servers',
+            id: '66kCUP',
+            description: 'Text displayed while loading MCP servers',
           })}
         </Text>
       </div>
@@ -153,7 +154,12 @@ export const McpServersWizard = ({
 
   return (
     <div>
-      <McpServerPanel onUpdateServer={handleUpdateServer} server={selectedServer} onClose={handleClosePanel} />
+      <McpServerPanel
+        onUpdateServer={handleUpdateServer}
+        server={selectedServer}
+        existingServers={allServerNames}
+        onClose={handleClosePanel}
+      />
       {mcpServers.length === 0 ? (
         <EmptyMcpServersView onCreateTools={onOpenCreateTools} />
       ) : (

@@ -5,6 +5,7 @@ export * from './announcedmatches';
 export * from './arrayeditor';
 export * from './authentication';
 export * from './azureResourcePicker';
+export * from './builtintools';
 export * from './card';
 export * from './card/addActionCard';
 export * from './card/addActionCard/AddActionCardV2';

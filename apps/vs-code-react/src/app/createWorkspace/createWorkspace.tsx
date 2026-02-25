@@ -47,6 +47,7 @@ export const CreateWorkspace: React.FC = () => {
     packageValidationResults,
     logicAppsWithoutCustomCode,
     separator,
+    isDevContainerProject,
   } = createWorkspaceState;
 
   // Set flow type when component mounts
@@ -434,6 +435,7 @@ export const CreateWorkspace: React.FC = () => {
     const baseData = {
       workspaceProjectPath,
       workspaceName,
+      isDevContainerProject,
       projectType,
     };
 

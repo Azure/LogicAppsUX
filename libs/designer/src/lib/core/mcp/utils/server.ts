@@ -1,7 +1,7 @@
 import { equals, getIntl, getObjectPropertyValue, getPropertyValue, isNullOrEmpty, ResourceService } from '@microsoft/logic-apps-shared';
 import { getHostConfig, resetQueriesOnServerAuthUpdate } from './queries';
 
-export const validateMcpServerName = (serverName: string): string | undefined => {
+export const validateMcpServerName = (serverName: string, existingNames: string[]): string | undefined => {
   const intl = getIntl();
 
   if (isNullOrEmpty(serverName)) {
@@ -17,6 +17,14 @@ export const validateMcpServerName = (serverName: string): string | undefined =>
       defaultMessage: `Can't use "default" as the server name.`,
       id: 'tZT3Wl',
       description: 'Error message when the server name is "default".',
+    });
+  }
+
+  if (existingNames.some((name) => equals(name, serverName))) {
+    return intl.formatMessage({
+      defaultMessage: 'Server name must be unique. A server with this name already exists.',
+      id: 'r4u9Zd',
+      description: 'Error message when the server name is not unique.',
     });
   }
 

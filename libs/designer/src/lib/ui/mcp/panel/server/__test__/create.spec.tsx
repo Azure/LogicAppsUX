@@ -202,7 +202,7 @@ describe('CreateServer', () => {
 
       renderWithProviders({ server: mockServer as McpServer, onUpdate: mockOnUpdate, onClose: mockOnClose });
 
-      expect(screen.getByText('Update MCP Server')).toBeInTheDocument();
+      expect(screen.getByText('Update MCP server')).toBeInTheDocument();
     });
 
     it('renders both template sections', () => {
@@ -258,7 +258,41 @@ describe('CreateServer', () => {
       await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Check that validation was called with the final complete value
-      expect(mockValidateMcpServerName).toHaveBeenLastCalledWith('TestServerName');
+      expect(mockValidateMcpServerName).toHaveBeenLastCalledWith('TestServerName', []);
+    });
+
+    it('validates server name with existing servers in create mode', async () => {
+      renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose, existingServers: ['server1', 'server2'] });
+
+      const nameInput = screen.getByTestId('textfield-name');
+
+      // Use fireEvent.change for more direct control
+      fireEvent.change(nameInput, { target: { value: 'TestServerName' } });
+
+      // Add a small delay to ensure change completes
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Check that validation was called with the final complete value
+      expect(mockValidateMcpServerName).toHaveBeenLastCalledWith('TestServerName', ['server1', 'server2']);
+    });
+
+    it('excludes server name with existing servers in update mode', async () => {
+      renderWithProviders({
+        onUpdate: mockOnUpdate,
+        onClose: mockOnClose,
+        server: { name: 'server1', description: 'Test description', tools: [{ name: 'tool1' }] },
+        existingServers: ['server1', 'server2'],
+      });
+      const nameInput = screen.getByTestId('textfield-name');
+
+      // Use fireEvent.change for more direct control
+      fireEvent.change(nameInput, { target: { value: 'TestServerName' } });
+
+      // Add a small delay to ensure change completes
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Check that validation was called with the final complete value
+      expect(mockValidateMcpServerName).toHaveBeenLastCalledWith('TestServerName', ['server2']);
     });
 
     it('updates server description when typing in description field', async () => {
@@ -548,7 +582,7 @@ describe('CreateServer', () => {
       fireEvent.click(workflow1Option);
 
       await waitFor(() => {
-        expect(screen.getByText('At least one workflow must be selected.')).toBeInTheDocument();
+        expect(screen.getByText('Select at least one workflow to continue.')).toBeInTheDocument();
       });
     });
 
@@ -562,14 +596,14 @@ describe('CreateServer', () => {
       fireEvent.click(workflow1Option);
 
       await waitFor(() => {
-        expect(screen.getByText('At least one workflow must be selected.')).toBeInTheDocument();
+        expect(screen.getByText('Select at least one workflow to continue.')).toBeInTheDocument();
       });
 
       // Select again to clear error
       fireEvent.click(workflow1Option);
 
       await waitFor(() => {
-        expect(screen.queryByText('At least one workflow must be selected.')).not.toBeInTheDocument();
+        expect(screen.queryByText('Select at least one workflow to continue.')).not.toBeInTheDocument();
       });
     });
   });
