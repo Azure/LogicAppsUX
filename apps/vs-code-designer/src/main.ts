@@ -8,6 +8,7 @@ import {
 } from './app/commands/dataMapper/extensionConfig';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
+import { registerChatParticipant } from './app/chat';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
@@ -148,6 +149,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
+    activateContext.telemetry.properties.lastStep = 'registerChatParticipant';
+    registerChatParticipant(context);
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 

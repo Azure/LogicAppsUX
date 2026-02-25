@@ -47,6 +47,240 @@
         "onResolve": ["microsoft.web/sites"]
       }
     },
+    "chatParticipants": [
+      {
+        "id": "vscode-azurelogicapps.logicapps",
+        "name": "logicapps",
+        "fullName": "Azure Logic Apps",
+        "description": "Create and manage Logic Apps workflows",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "createWorkflow",
+            "description": "Create a new Logic Apps workflow"
+          },
+          {
+            "name": "createProject",
+            "description": "Create a new Logic Apps project"
+          },
+          {
+            "name": "modifyAction",
+            "description": "Modify an action in an existing workflow"
+          },
+          {
+            "name": "help",
+            "description": "Show help and available commands"
+          }
+        ],
+        "disambiguation": [
+          {
+            "category": "logicapps_create",
+            "description": "The user wants to create a Logic Apps workflow, project, or automation",
+            "examples": [
+              "Create a new Logic App workflow",
+              "I need to build an automated workflow",
+              "Create a stateful workflow called OrderProcessor",
+              "Set up a new Logic App project",
+              "Create a workflow that processes orders"
+            ]
+          },
+          {
+            "category": "logicapps_modify",
+            "description": "The user wants to modify or update an existing Logic App workflow or action",
+            "examples": [
+              "Change the HTTP trigger to use POST",
+              "Update the email action timeout",
+              "Modify the condition in my workflow",
+              "Add a new action to my workflow"
+            ]
+          }
+        ]
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "logicapps_createWorkflow",
+        "displayName": "Create Logic Apps Workflow",
+        "toolReferenceName": "createWorkflow",
+        "description": "Creates a new Logic Apps workflow with the specified name and type (stateful, stateless, agentic, or agent)",
+        "modelDescription": "Creates a new Logic Apps workflow. Use this when the user wants to create a new workflow in their Logic App project. Requires a workflow name and type (stateful, stateless, agentic, or agent).",
+        "canBeReferencedInPrompt": true,
+        "tags": ["logicapps", "workflow", "create", "azure"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the workflow. Must start with a letter and can only contain letters, digits, underscores, and hyphens."
+            },
+            "type": {
+              "type": "string",
+              "enum": ["stateful", "stateless", "agentic", "agent"],
+              "description": "The type of workflow to create. Stateful maintains run history, stateless is for high-throughput scenarios."
+            },
+            "description": {
+              "type": "string",
+              "description": "Optional description of what the workflow does"
+            }
+          },
+          "required": ["name", "type"]
+        }
+      },
+      {
+        "name": "logicapps_createProject",
+        "displayName": "Create Logic Apps Project",
+        "toolReferenceName": "createProject",
+        "description": "Creates a new Logic Apps project with all necessary files and configuration",
+        "modelDescription": "Creates a new Logic Apps project with all necessary files. Use this when the user wants to create a new Logic App project. Requires a project name and type (logicApp or logicAppCustomCode).",
+        "canBeReferencedInPrompt": true,
+        "tags": ["logicapps", "project", "create", "azure"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "projectName": {
+              "type": "string",
+              "description": "The name of the project. Must start with a letter and can only contain letters, digits, underscores, and hyphens."
+            },
+            "projectType": {
+              "type": "string",
+              "enum": ["logicApp", "logicAppCustomCode"],
+              "description": "The type of project. logicAppCustomCode includes Azure Functions support for custom code."
+            },
+            "createWorkspace": {
+              "type": "boolean",
+              "description": "Whether to create a VS Code workspace file for the project"
+            },
+            "includeCustomCode": {
+              "type": "boolean",
+              "description": "Whether to include a custom code (Azure Functions) project"
+            }
+          },
+          "required": ["projectName", "projectType"]
+        }
+      },
+      {
+        "name": "logicapps_listWorkflows",
+        "displayName": "List Logic Apps Workflows",
+        "toolReferenceName": "listWorkflows",
+        "description": "Lists all workflows in the current Logic Apps project",
+        "modelDescription": "Lists all workflows in the current Logic Apps project. Use this when the user wants to see what workflows exist in their project.",
+        "canBeReferencedInPrompt": true,
+        "tags": ["logicapps", "workflow", "list", "azure"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "logicapps_getWorkflowDefinition",
+        "displayName": "Get Workflow Definition",
+        "toolReferenceName": "getWorkflow",
+        "description": "Gets the JSON definition of a specific workflow",
+        "modelDescription": "Gets the JSON definition of a specific workflow. Use this when the user wants to view or inspect a workflow's configuration.",
+        "canBeReferencedInPrompt": true,
+        "tags": ["logicapps", "workflow", "read", "azure"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflowName": {
+              "type": "string",
+              "description": "The name of the workflow to retrieve"
+            },
+            "projectName": {
+              "type": "string",
+              "description": "Optional project name when the workflow exists in multiple projects"
+            }
+          },
+          "required": ["workflowName"]
+        }
+      },
+      {
+        "name": "logicapps_addAction",
+        "displayName": "Add Action to Workflow",
+        "toolReferenceName": "addAction",
+        "description": "Adds a new action to an existing workflow",
+        "modelDescription": "Adds a new action to an existing workflow. Use this when the user wants to add a trigger, action, or step to their workflow.",
+        "canBeReferencedInPrompt": true,
+        "tags": ["logicapps", "workflow", "action", "modify", "azure"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflowName": {
+              "type": "string",
+              "description": "The name of the workflow to modify"
+            },
+            "projectName": {
+              "type": "string",
+              "description": "Optional project name when the workflow exists in multiple projects"
+            },
+            "actionType": {
+              "type": "string",
+              "description": "The type of action to add (e.g., Http, Response, Compose)"
+            },
+            "actionName": {
+              "type": "string",
+              "description": "The name for the new action"
+            },
+            "connectorReference": {
+              "type": "string",
+              "description": "Optional managed connector reference from connections.json (for ApiConnection actions, e.g., sql, servicebus, office365)"
+            },
+            "connectorId": {
+              "type": "string",
+              "description": "Optional connector id hint (e.g., /managedApis/sql or sql) used to resolve a managed connector reference"
+            },
+            "operationId": {
+              "type": "string",
+              "description": "Optional operation id from connector metadata/swagger"
+            },
+            "method": {
+              "type": "string",
+              "description": "Optional HTTP method for ApiConnection operation (e.g., get, post)"
+            },
+            "path": {
+              "type": "string",
+              "description": "Optional operation path for ApiConnection action (e.g., /v2/datasets/default/tables/Orders/items)"
+            },
+            "configuration": {
+              "type": "object",
+              "description": "Optional configuration for the action"
+            }
+          },
+          "required": ["workflowName", "actionType", "actionName"]
+        }
+      },
+      {
+        "name": "logicapps_modifyAction",
+        "displayName": "Modify Workflow Action",
+        "toolReferenceName": "modifyAction",
+        "description": "Modifies an existing action in a workflow",
+        "modelDescription": "Modifies an existing action in a workflow. Use this when the user wants to change or update an action's configuration.",
+        "canBeReferencedInPrompt": true,
+        "tags": ["logicapps", "workflow", "action", "modify", "azure"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflowName": {
+              "type": "string",
+              "description": "The name of the workflow containing the action"
+            },
+            "projectName": {
+              "type": "string",
+              "description": "Optional project name when the workflow exists in multiple projects"
+            },
+            "actionName": {
+              "type": "string",
+              "description": "The name of the action to modify"
+            },
+            "modification": {
+              "type": "string",
+              "description": "JSON string with the properties to modify"
+            }
+          },
+          "required": ["workflowName", "actionName", "modification"]
+        }
+      }
+    ],
     "commands": [
       {
         "command": "azureLogicAppsStandard.openDesigner",

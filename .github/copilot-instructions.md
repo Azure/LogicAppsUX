@@ -144,12 +144,22 @@ pnpm run vscode:designer:pack
 # Run a single unit test file
 pnpm vitest run path/to/file.spec.ts
 
-# Run E2E tests with specific grep pattern
+# Run tests in a specific directory (Vitest)
+pnpm run test:extension-unit -- src/app/chat/__test__/
+
+# Filter by test name pattern (Vitest uses -t, NOT --grep)
+pnpm run test:extension-unit -- -t "parseWorkflowRequest"
+
+# Run E2E tests with specific grep pattern (Playwright uses --grep)
 pnpm run test:e2e --grep "test name"
 
 # Debug tests in VS Code
 # Install Vitest Explorer extension and use the test panel
 ```
+
+**Important**: Vitest and Playwright use different CLI flags:
+- **Vitest**: Use `-t "pattern"` for test name filtering, or pass file/directory path directly
+- **Playwright**: Use `--grep "pattern"` for test name filtering
 
 ## Development Workflow
 
