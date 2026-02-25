@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionBundleId, hostFileName, extensionCommand, workflowFileName, codefulWorkflowFileName } from '../../constants';
+import {
+  extensionBundleId,
+  hostFileName,
+  extensionCommand,
+  workflowFileName,
+  codefulWorkflowFileName,
+  customExtensionContext,
+} from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -12,6 +19,7 @@ import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
 import { NoWorkspaceError } from './errors';
 import * as vscode from 'vscode';
+import { hasCodefulWorkflowSetting } from './codeful';
 
 const projectSubpathKey = 'projectSubpath';
 
@@ -87,15 +95,22 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   );
 
   const hasValidCodefulWorkflow = validCodefulWorkflowChecks.some((valid) => valid);
+  const hasValidCodelessWorkflow = validWorkflowChecks.some((valid) => valid);
+  const isCodefulAgent = await hasCodefulWorkflowSetting(folderPath);
 
-  if (!(validWorkflowChecks.some((valid) => valid) || hasValidCodefulWorkflow)) {
+  if (isCodefulAgent) {
+    vscode.commands.executeCommand('setContext', customExtensionContext.isAgentCodeful, true);
+  }
+
+  // Only return false if none of the possible validation mechanisms are present
+  if (!(hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodefulAgent)) {
     return false;
   }
 
   try {
     const hostJsonData = await fse.readFile(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
-    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow;
+    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow || isCodefulAgent;
   } catch {
     return false;
   }

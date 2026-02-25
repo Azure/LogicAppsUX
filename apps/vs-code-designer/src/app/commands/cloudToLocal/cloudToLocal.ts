@@ -14,7 +14,7 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 
 export async function cloudToLocal(): Promise<void> {
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createWorkspaceFromPackage', 'Create Workspace From Package'),
+    panelName: localize('createWorkspaceFromPackage', 'Create workspace from package'),
     panelGroupKey: ext.webViewKey.createWorkspaceFromPackage,
     projectName: ProjectName.createWorkspaceFromPackage,
     createCommand: ExtensionCommand.createWorkspaceFromPackage,

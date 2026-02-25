@@ -109,7 +109,7 @@ if ((await isGitInstalled(workspaceFolder)) &&
 
 **Logic Tested:**
 ```typescript
-if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
+if (webviewProjectContext.logicAppType !== ProjectType.logicApp) {
   const createFunctionAppFilesStep = new CreateFunctionAppFiles();
   await createFunctionAppFilesStep.setup(mySubContext);
 }
@@ -264,7 +264,7 @@ it('should populate IFunctionWizardContext with correct values', async () => {
 ```typescript
 mySubContext.logicAppName = options.logicAppName;
 mySubContext.projectPath = logicAppFolderPath;
-mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
+mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
 // ... more properties
 ```
 

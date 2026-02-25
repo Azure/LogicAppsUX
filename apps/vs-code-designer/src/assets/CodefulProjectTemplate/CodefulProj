@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\lib\codeful</LogicAppFolderToPublish>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.21.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.19.0" />
+    <PackageReference Include="Microsoft.Azure.Workflows.Sdk.Agents" Version="1.141.0.12"/>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+    <None Update="connections.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="parameters.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Target Name="ReplaceLanguageNetCore" AfterTargets="Build;Publish">
+    <PropertyGroup>
+      <WorkerConfigPath>$(PublishDir)worker.config.json</WorkerConfigPath>
+      <WorkerConfigPath Condition="!Exists('$(WorkerConfigPath)')">$(OutputPath)worker.config.json</WorkerConfigPath>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(WorkerConfigPath)" Lines="$([System.IO.File]::ReadAllText($(WorkerConfigPath)).Replace('dotnet-isolated','dotnet'))" Overwrite="true" Condition="Exists('$(WorkerConfigPath)')"/>
+  </Target>
+   <Target Name="CopyToCodefulFolder" AfterTargets="Build;Publish" Condition="'$(LogicAppFolderToPublish)' != ''">
+    <PropertyGroup>
+      <SourcePath>$(PublishDir)</SourcePath>
+      <SourcePath Condition="!Exists('$(PublishDir)')">$(OutputPath)</SourcePath>
+    </PropertyGroup>
+    <ItemGroup>
+      <FilesToCopyCodeful Include="$(SourcePath)**\*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(FilesToCopyCodeful)" DestinationFolder="$(LogicAppFolderToPublish)\%(RecursiveDir)"/>
+  </Target>
+</Project>

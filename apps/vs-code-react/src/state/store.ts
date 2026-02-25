@@ -1,6 +1,7 @@
 import { dataMapSlice as dataMapSliceV1 } from './DataMapSlice';
 import { dataMapSlice as dataMapSliceV2 } from './DataMapSliceV2';
 import { designerSlice } from './DesignerSlice';
+import { languageServerSlice } from './LanguageServerSlice';
 import { unitTestSlice } from './UnitTestSlice';
 import { workflowSlice } from './WorkflowSlice';
 import { projectSlice } from './projectSlice';
@@ -15,6 +16,7 @@ export const store = configureStore({
     unitTest: unitTestSlice.reducer,
     dataMapDataLoader: dataMapSliceV1.reducer, // Data Mapper V1
     dataMap: dataMapSliceV2.reducer, // Data Mapper V2
+    languageServer: languageServerSlice.reducer,
     createWorkspace: createWorkspaceSlice.reducer,
   },
 });

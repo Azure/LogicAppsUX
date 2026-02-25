@@ -4,25 +4,29 @@
  *--------------------------------------------------------------------------------------------*/
 import { Option, Text, Field, Input, Label, Dropdown } from '@fluentui/react-components';
 import type { DropdownProps } from '@fluentui/react-components';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
-import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setWorkflowType, setWorkflowName } from '../../../state/createWorkspaceSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { validateWorkflowName } from '../validation/helper';
+import { validateWorkflowName } from '../utils/validation';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { useIntlMessages, workspaceMessages } from '../../../intl';
+
+const logicAppCodeTypes = {
+  CODELESS: 'CODELESS',
+  CODEFUL: 'CODEFUL',
+};
 
 export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
-  const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { workflowType, workflowName } = createWorkspaceState;
+  const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace);
+  const { workflowType, workflowName, logicAppType } = createWorkspaceState;
+  const intlText = useIntlMessages(workspaceMessages);
 
   // Validation state
   const [workflowNameError, setWorkflowNameError] = useState<string | undefined>(undefined);
-
-  const intlText = useIntlMessages(workspaceMessages);
 
   const handleWorkflowTypeChange: DropdownProps['onOptionSelect'] = (event, data) => {
     if (data.optionValue) {
@@ -30,15 +34,34 @@ export const WorkflowTypeStep: React.FC = () => {
     }
   };
 
+  const workflowTypes: Record<string, any> = useMemo(() => {
+    return {
+      [logicAppCodeTypes.CODELESS]: {
+        [WorkflowType.stateful]: intlText.STATEFUL_TITLE,
+        [WorkflowType.stateless]: intlText.STATELESS_TITLE,
+        [WorkflowType.agentic]: intlText.AUTONOMOUS_TITLE,
+        [WorkflowType.agent]: intlText.AGENT_TITLE,
+      },
+      [logicAppCodeTypes.CODEFUL]: {
+        [WorkflowType.statefulCodeful]: intlText.STATEFUL_TITLE,
+        [WorkflowType.agentCodeful]: intlText.AGENT_TITLE,
+      },
+    };
+  }, [intlText]);
+
   const handleWorkflowNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setWorkflowName(event.target.value));
     setWorkflowNameError(validateWorkflowName(event.target.value, intlText));
   };
 
+  const selectWorkflowTypes = useMemo(() => {
+    const logicAppCodeType = logicAppType === ProjectType.agentCodeful ? logicAppCodeTypes.CODEFUL : logicAppCodeTypes.CODELESS;
+    return workflowTypes[logicAppCodeType];
+  }, [logicAppType, workflowTypes]);
+
   return (
     <div className={styles.formSection}>
       <Text className={styles.sectionTitle}>{intlText.WORKFLOW_CONFIGURATION}</Text>
-
       <Field
         label={intlText.WORKFLOW_NAME}
         className={styles.workflowNameField}
@@ -53,38 +76,23 @@ export const WorkflowTypeStep: React.FC = () => {
           className={styles.inputControl}
         />
       </Field>
-
       <Field required>
         <Label required>{intlText.WORKFLOW_TYPE}</Label>
         <Dropdown
-          value={
-            workflowType === 'Stateful-Codeless'
-              ? 'Stateful'
-              : workflowType === 'Stateless-Codeless'
-                ? 'Stateless'
-                : workflowType === 'Agentic-Codeless'
-                  ? 'Autonomous Agents (Preview)'
-                  : workflowType === 'Agent-Codeless'
-                    ? 'Conversational Agents (Preview)'
-                    : ''
-          }
+          value={workflowTypes[workflowType]}
           selectedOptions={workflowType ? [workflowType] : []}
           onOptionSelect={handleWorkflowTypeChange}
           placeholder={intlText.SELECT_WORKFLOW_TYPE}
           className={styles.inputControl}
         >
-          <Option value="Stateful-Codeless" text="Stateful">
-            Stateful
-          </Option>
-          <Option value="Stateless-Codeless" text="Stateless">
-            Stateless
-          </Option>
-          <Option value="Agentic-Codeless" text="Autonomous Agents (Preview)">
-            Autonomous Agents (Preview)
-          </Option>
-          <Option value="Agent-Codeless" text="Conversational Agents">
-            Conversational Agents
-          </Option>
+          {Object.keys(selectWorkflowTypes).map((optionKey, index) => {
+            const optionText = selectWorkflowTypes[optionKey];
+            return (
+              <Option value={optionKey} key={`${optionText}-${index}`} text={optionText}>
+                {optionText}
+              </Option>
+            );
+          })}
         </Dropdown>
         {workflowType && (
           <Text
@@ -95,10 +103,7 @@ export const WorkflowTypeStep: React.FC = () => {
               display: 'block',
             }}
           >
-            {workflowType === 'Stateful-Codeless' && intlText.STATEFUL_DESCRIPTION}
-            {workflowType === 'Stateless-Codeless' && intlText.STATELESS_DESCRIPTION}
-            {workflowType === 'Agentic-Codeless' && intlText.AUTONOMOUS_DESCRIPTION}
-            {workflowType === 'Agent-Codeless' && intlText.AGENT_DESCRIPTION}
+            {workflowTypes[workflowType]}
           </Text>
         )}
       </Field>

@@ -54,6 +54,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.openRunHistory",
+        "title": "Open run history",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.viewContent",
         "title": "View content",
         "category": "Azure Logic Apps"
@@ -371,6 +376,11 @@
         "title": "Parameterize connections",
         "category": "Azure Logic Apps",
         "when": "config.myExtension.enableCommand"
+      },
+      {
+        "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
+        "title": "Open language server connection view",
+        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.enableDevContainer",
@@ -713,6 +723,11 @@
           "group": "navigation@3"
         },
         {
+          "command": "azureLogicAppsStandard.openRunHistory",
+          "when": "resourceFilename==Program.cs && azureLogicAppsStandard.isAgentCodeful == true",
+          "group": "navigation@3"
+        },
+        {
           "command": "azureLogicAppsStandard.switchToDotnetProject",
           "when": "logicApps.hasProject && explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
@@ -759,6 +774,10 @@
           "when": "logicApps.hasProject && resourceFilename==workflow.json"
         },
         {
+          "command": "azureLogicAppsStandard.openRunHistory",
+          "when": "resourceFilename==Program.cs"
+        },
+        {
           "command": "azureLogicAppsStandard.viewContent",
           "when": "never"
         },
@@ -792,6 +811,10 @@
         },
         {
           "command": "azureLogicAppsStandard.createProject",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
           "when": "never"
         }
       ]
@@ -1005,6 +1028,16 @@
             "type": "boolean",
             "description": "Enable to use SMB deployment for hybrid logic apps.",
             "default": false
+          },
+          "azureLogicAppsStandard.languageServerDLLPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Absolute path to the server DLL."
+          },
+          "azureLogicAppsStandard.languageServerNupkgPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Absolute path to the .nupkg file."
           }
         }
       }
@@ -1052,7 +1085,9 @@
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations",
-    "onStartupFinished"
+    "onStartupFinished",
+    "onLanguage:csharp",
+    "onLanguage:json"
   ],
   "galleryBanner": {
     "color": "#015cda",

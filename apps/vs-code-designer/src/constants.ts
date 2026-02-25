@@ -23,6 +23,7 @@ export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
+export const sdkLspServer = 'SdkLspServer';
 
 // Directory names
 export const deploymentDirectory = 'deployment';
@@ -31,9 +32,11 @@ export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
+export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
+export const lspDirectory = 'LanguageServerLogicApps';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
@@ -109,14 +112,8 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-
-export const WorkflowType = {
-  stateful: 'Stateful-Codeless',
-  stateless: 'Stateless-Codeless',
-  agentic: 'Agentic-Codeless',
-  agent: 'Agent-Codeless',
-} as const;
-export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
+// Codeful settings
+export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
 
 export const workflowCodeType = {
   codeful: 'Codeful',
@@ -140,6 +137,7 @@ export const designerApiLoadTimeout = 300000;
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',
+  openRunHistory: 'azureLogicAppsStandard.openRunHistory',
   activate: 'azureLogicAppsStandard.activate',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
@@ -223,9 +221,17 @@ export const extensionCommand = {
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
+  openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
+  sdkLspApplyEdits: 'sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
+
+// Extension context
+export const customExtensionContext = {
+  isAgentCodeful: 'azureLogicAppsStandard.isAgentCodeful',
+} as const;
+export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
@@ -275,6 +281,7 @@ export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
+export const onStartLanguageServerProtocol = 'onStartLanguageServerProtocol';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';

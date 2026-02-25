@@ -51,18 +51,13 @@ export class CreateFunctionAppFiles {
    */
   public async setup(context: IProjectWizardContext): Promise<void> {
     // Set the functionAppName and namespaceName properties from the context wizard
-    const functionAppName = context.functionAppName;
-    const namespace = context.functionAppNamespace;
-    const targetFramework = context.targetFramework;
+    const { targetFramework, functionAppName, functionAppNamespace: namespace, projectType } = context;
     const logicAppName = context.logicAppName || 'LogicApp';
     // const funcVersion = context.version ?? (await tryGetLocalFuncVersion());
 
     // Define the functions folder path using the context property of the wizard
     const functionFolderPath = path.join(context.workspacePath, context.functionFolderName);
     await fs.ensureDir(functionFolderPath);
-
-    // Define the type of project in the workspace
-    const projectType = context.projectType;
 
     // Create the .cs file inside the functions folder
     await this.createCsFile(functionFolderPath, functionAppName, namespace, projectType, targetFramework);
@@ -276,15 +271,16 @@ export class CreateFunctionAppFiles {
    */
   private async generateSettingsJson(folderPath: string, targetFramework: TargetFramework): Promise<void> {
     const filePath = path.join(folderPath, settingsFileName);
+    const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     const content = {
-      'azureFunctions.deploySubpath': `bin/Release/${targetFramework ?? TargetFramework.NetFx}/publish`,
+      'azureFunctions.deploySubpath': deploySubPathValue,
       'azureFunctions.projectLanguage': 'C#',
       'azureFunctions.projectRuntime': '~4',
       'debug.internalConsoleOptions': 'neverOpen',
       'azureFunctions.preDeployTask': 'publish (functions)',
       'azureFunctions.templateFilter': 'Core',
       'azureFunctions.showTargetFrameworkWarning': false,
-      'azureFunctions.projectSubpath': `bin\\Release\\${targetFramework ?? TargetFramework.NetFx}\\publish`,
+      'azureFunctions.projectSubpath': deploySubPathValue,
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }

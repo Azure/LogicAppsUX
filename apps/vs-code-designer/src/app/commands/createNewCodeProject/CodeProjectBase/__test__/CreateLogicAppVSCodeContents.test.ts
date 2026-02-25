@@ -1,16 +1,19 @@
-import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach, type Mock } from 'vitest';
 import * as CreateLogicAppVSCodeContentsModule from '../CreateLogicAppVSCodeContents';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as fsUtils from '../../../../utils/fs';
 import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import { assetsFolderName, workspaceTemplatesFolderName } from '../../../../../constants';
 
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(),
   copyFile: vi.fn(),
   pathExists: vi.fn(),
+  readFile: vi.fn(),
   readJson: vi.fn(),
+  writeJson: vi.fn(),
   writeJSON: vi.fn(),
 }));
 vi.mock('../../../../utils/fs', () => ({
@@ -47,6 +50,19 @@ describe('CreateLogicAppVSCodeContents', () => {
 
   const logicAppFolderPath = path.join('test', 'workspace', 'TestLogicApp');
 
+  let extensionsJsonFileContent: string;
+  let tasksJsonFileContent: string;
+  let devContainerTasksJsonFileContent: string;
+
+  beforeAll(async () => {
+    const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+    const templatesFolderPath = path.join(__dirname, '..', '..', '..', '..', '..', assetsFolderName, workspaceTemplatesFolderName);
+
+    extensionsJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'ExtensionsJsonFile'), 'utf8');
+    tasksJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'TasksJsonFile'), 'utf8');
+    devContainerTasksJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'DevContainerTasksJsonFile'), 'utf8');
+  });
+
   beforeEach(() => {
     vi.resetAllMocks();
 
@@ -54,7 +70,21 @@ describe('CreateLogicAppVSCodeContents', () => {
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
     vi.mocked(fse.pathExists).mockResolvedValue(false); // File doesn't exist
+    vi.mocked(fse.readFile).mockImplementation(async (filePath: any) => {
+      const filePathStr = String(filePath);
+      if (filePathStr.endsWith('ExtensionsJsonFile')) {
+        return extensionsJsonFileContent;
+      }
+      if (filePathStr.endsWith('DevContainerTasksJsonFile')) {
+        return devContainerTasksJsonFileContent;
+      }
+      if (filePathStr.endsWith('TasksJsonFile')) {
+        return tasksJsonFileContent;
+      }
+      return '{}';
+    });
     vi.mocked(fse.readJson).mockResolvedValue({});
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
     vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
 
     // Mock confirmEditJsonFile to capture what would be written
@@ -241,7 +271,7 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const extensionsJsonPath = path.join(logicAppFolderPath, '.vscode', 'extensions.json');
-      expect(fse.copyFile).toHaveBeenCalledWith(expect.stringContaining('ExtensionsJsonFile'), extensionsJsonPath);
+      expect(fse.writeJson).toHaveBeenCalledWith(extensionsJsonPath, JSON.parse(extensionsJsonFileContent), { spaces: 2 });
     });
 
     it('should copy tasks.json from template', async () => {

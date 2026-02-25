@@ -19,8 +19,8 @@ import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { cloudToLocal } from './cloudToLocal/cloudToLocal';
-import { createNewCodeProjectFromCommand } from './createWorkspace/createWorkspace';
-import { createNewProjectFromCommand } from './createProject/createProject';
+import { createWorkspace } from './createWorkspace/createWorkspace';
+import { createNewProject } from './createProject/createProject';
 import { createCustomCodeFunction } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createWorkflow } from './createWorkflow/createWorkflow';
@@ -68,8 +68,8 @@ import {
   UserCancelledError,
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
-import type { Uri } from 'vscode';
-import { pickCustomCodeNetHostProcess } from './pickCustomCodeWorkerProcess';
+import * as vscode from 'vscode';
+import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/debug';
@@ -78,16 +78,19 @@ import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
+import { openLanguageServerConnectionView } from './workflows/languageServer/connectionView';
+import { openRunHistory } from './workflows/openRunHistory';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openRunHistory, openRunHistory);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
-  registerCommand(extensionCommand.createProject, createNewProjectFromCommand);
-  registerCommand(extensionCommand.createWorkspace, createNewCodeProjectFromCommand);
+  registerCommand(extensionCommand.createProject, createNewProject);
+  registerCommand(extensionCommand.createWorkspace, createWorkspace);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
@@ -161,7 +164,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
-  registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
+  registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: vscode.Uri) => loadDataMapFileCmd(context, uri));
   // Custom code commands
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
@@ -169,6 +172,10 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
   registerCommand(extensionCommand.enableDevContainer, enableDevContainer);
 
+  // Language server protocol
+  registerCommand(extensionCommand.openLanguageServerConnectionView, openLanguageServerConnectionView);
+
+  // Error handler
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
     // Suppress "Report an Issue" button for all errors since then we are going to render our custom button
     errorContext.errorHandling.suppressReportIssue = true;
@@ -201,4 +208,27 @@ export function registerCommands(): void {
     });
   });
   registerReportIssueCommand(extensionCommand.reportIssue);
+
+  // Register LSP custom commands
+  registerCommand(extensionCommand.sdkLspApplyEdits, async (_context: IActionContext, args: any) => {
+    const edits = args?.edits;
+    if (!edits || !Array.isArray(edits)) {
+      return;
+    }
+
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+      return;
+    }
+
+    await activeEditor.edit((editBuilder) => {
+      for (const edit of edits) {
+        const range = new vscode.Range(
+          new vscode.Position(edit.range.start.line, edit.range.start.character),
+          new vscode.Position(edit.range.end.line, edit.range.end.character)
+        );
+        editBuilder.replace(range, edit.newText);
+      }
+    });
+  });
 }

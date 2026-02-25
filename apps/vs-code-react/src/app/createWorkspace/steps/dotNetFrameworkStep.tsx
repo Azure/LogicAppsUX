@@ -11,7 +11,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionFolderName } from '../../../state/createWorkspaceSlice';
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
+import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../utils/validation';
 import { Platform, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const DotNetFrameworkStep: React.FC = () => {
@@ -169,7 +169,6 @@ export const DotNetFrameworkStep: React.FC = () => {
     return (
       <div className={styles.formSection}>
         <Text className={styles.sectionTitle}>{intlText.RULES_ENGINE_CONFIGURATION}</Text>
-
         <div className={styles.fieldContainer}>
           <Field required validationState={functionFolderNameError ? 'error' : undefined} validationMessage={functionFolderNameError}>
             <Label required htmlFor={functionFolderNameId}>

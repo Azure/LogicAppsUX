@@ -1,5 +1,5 @@
-import { ProjectType, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { assetsFolderName, WorkflowKind, WorkflowType } from '../../../constants';
+import { ProjectType, WorkflowType, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import { assetsFolderName, WorkflowKind } from '../../../constants';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { equals } from '@microsoft/logic-apps-shared';

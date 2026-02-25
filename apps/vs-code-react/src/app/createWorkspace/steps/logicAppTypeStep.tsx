@@ -10,8 +10,8 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../state/createWorkspaceSlice';
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { nameValidation } from '../validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { nameValidation } from '../utils/validation';
 
 export const LogicAppTypeStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ export const LogicAppTypeStep: React.FC = () => {
   // Validation state
   const [logicAppNameError, setLogicAppNameError] = useState<string | undefined>(undefined);
 
-  const handleLogicAppTypeChange = (event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
+  const handleLogicAppTypeChange = (_event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
     dispatch(setLogicAppType(data.value));
     if (data.value === 'rulesEngine') {
       dispatch(setTargetFramework('net472'));
@@ -169,6 +169,12 @@ export const LogicAppTypeStep: React.FC = () => {
               <Radio value={ProjectType.logicApp} label={intlText.LOGIC_APP_STANDARD} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
                 {intlText.LOGIC_APP_STANDARD_DESCRIPTION}
+              </Text>
+            </div>
+            <div className={styles.radioOption}>
+              <Radio value={ProjectType.agentCodeful} label={intlText.CODEFUL_LABEL} />
+              <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
+                {intlText.CODEFUL_DESCRIPTION}
               </Text>
             </div>
             <div className={styles.radioOption}>

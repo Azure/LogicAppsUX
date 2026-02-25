@@ -47,7 +47,8 @@ export const ReviewCreateStep: React.FC = () => {
     flowType === 'createWorkspace' || flowType === 'convertToWorkspace' || flowType === 'createWorkspaceFromPackage';
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
-  const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
+  const shouldShowWorkflowSection =
+    (flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkflow') && !isUsingExistingLogicApp;
 
   const getWorkspaceFilePath = () => {
     if (!workspaceProjectPath.fsPath || !workspaceName) {
@@ -153,7 +154,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {shouldShowLogicAppSection && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Logic App Details</div>
+            <div className={styles.reviewSectionTitle}>Logic app details</div>
             {renderSettingRow(intlText.LOGIC_APP_NAME_REVIEW, logicAppName)}
             {flowType !== 'createLogicApp' && renderSettingRow(intlText.LOGIC_APP_LOCATION, getLogicAppLocationPath())}
             {renderSettingRow(intlText.LOGIC_APP_TYPE_REVIEW, getLogicAppTypeDisplay(logicAppType))}
@@ -162,7 +163,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {needsDotNetFrameworkStep && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Custom Code Configuration</div>
+            <div className={styles.reviewSectionTitle}>Custom code configuration</div>
             {renderSettingRow(intlText.DOTNET_FRAMEWORK_REVIEW, getDotNetFrameworkDisplay(targetFramework))}
             {renderSettingRow(intlText.CUSTOM_CODE_FOLDER, functionFolderName)}
             {renderSettingRow(intlText.CUSTOM_CODE_LOCATION, getFunctionLocationPath())}
@@ -173,7 +174,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {needsFunctionConfiguration && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Function Configuration</div>
+            <div className={styles.reviewSectionTitle}>Function configuration</div>
             {renderSettingRow(intlText.RULES_ENGINE_FOLDER, functionFolderName)}
             {renderSettingRow(intlText.RULES_ENGINE_LOCATION, getFunctionLocationPath())}
             {renderSettingRow(intlText.FUNCTION_WORKSPACE, functionNamespace)}
@@ -183,7 +184,7 @@ export const ReviewCreateStep: React.FC = () => {
 
         {shouldShowWorkflowSection && (
           <div className={styles.reviewSection}>
-            <div className={styles.reviewSectionTitle}>Workflow Configuration</div>
+            <div className={styles.reviewSectionTitle}>Workflow configuration</div>
             {renderSettingRow(intlText.WORKFLOW_NAME_REVIEW, workflowName)}
             {renderSettingRow(intlText.WORKFLOW_TYPE_REVIEW, getWorkflowTypeDisplay(workflowType))}
           </div>

@@ -21,6 +21,7 @@ import {
   isZipDeployEnabledSetting,
   useSmbDeployment,
   libDirectory,
+  customDirectory,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -58,6 +59,7 @@ import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { publishCodefulProject } from '../publishCodefulProject';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -91,8 +93,14 @@ async function deploy(
 
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'custom')))) {
+    const customFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
+    if (!customFolderExists) {
       await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+    }
+
+    const agentIsolatedExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'codeful'));
+    if (!agentIsolatedExists) {
+      await publishCodefulProject(actionContext, logicAppNode);
     }
   }
 

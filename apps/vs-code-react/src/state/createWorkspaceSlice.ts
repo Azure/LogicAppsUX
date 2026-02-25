@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import type { Platform } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { ITargetDirectory } from 'run-service';
+import type { ITargetDirectory } from '../run-service';
 
 export interface CreateWorkspaceState {
   currentStep: number;
@@ -28,7 +28,7 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
-  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace';
+  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace' | 'createWorkflow';
   pathValidationResults: Record<string, boolean>;
   packageValidationResults: Record<string, boolean>;
   workspaceExistenceResults: Record<string, boolean>;
@@ -75,7 +75,7 @@ const initialState: CreateWorkspaceState = {
   isDevContainerProject: false,
 };
 
-export const createWorkspaceSlice = createSlice({
+export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
   name: 'createWorkspace',
   initialState,
   reducers: {
@@ -85,9 +85,10 @@ export const createWorkspaceSlice = createSlice({
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform } = action.payload;
+      const { separator, platform, logicAppType } = action.payload;
       state.separator = separator;
       state.platform = platform;
+      state.logicAppType = logicAppType || '';
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -235,8 +236,9 @@ export const {
   setError,
   setComplete,
   resetState,
-  nextStep,
-  previousStep,
 } = createWorkspaceSlice.actions;
+
+export const nextStep = createWorkspaceSlice.actions.nextStep as () => { type: string; payload: undefined };
+export const previousStep = createWorkspaceSlice.actions.previousStep as () => { type: string; payload: undefined };
 
 export default createWorkspaceSlice.reducer;

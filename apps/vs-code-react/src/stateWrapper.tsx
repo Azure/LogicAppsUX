@@ -1,5 +1,5 @@
 import type { RootState } from './state/store';
-import { ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ export const StateWrapper: React.FC = () => {
     if (projectState.initialized) {
       switch (projectState.project) {
         case ProjectName.export: {
-          navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
+          navigate(`/${ProjectName.export}/${RouteName.instance_selection}`, { replace: true });
           break;
         }
         case ProjectName.review: {
@@ -35,6 +35,22 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.unitTest}`, { replace: true });
           break;
         }
+        case ProjectName.runHistory: {
+          navigate(`/${ProjectName.runHistory}`, { replace: true });
+          break;
+        }
+        case ProjectName.languageServer: {
+          switch (projectState.route) {
+            case RouteName.connectionView: {
+              navigate(`/${RouteName.languageServer}/${RouteName.connectionView}`, { replace: true });
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+          break;
+        }
         case ProjectName.createWorkspace: {
           navigate(`/${ProjectName.createWorkspace}`, { replace: true });
           break;
@@ -45,6 +61,10 @@ export const StateWrapper: React.FC = () => {
         }
         case ProjectName.createLogicApp: {
           navigate(`/${ProjectName.createLogicApp}`, { replace: true });
+          break;
+        }
+        case ProjectName.createWorkflow: {
+          navigate(`/${ProjectName.createWorkflow}`, { replace: true });
           break;
         }
         case ProjectName.createWorkspaceStructure: {

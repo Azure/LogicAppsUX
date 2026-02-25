@@ -141,25 +141,6 @@ export interface IResourceGroup {
   text?: string;
 }
 
-export const RouteName = {
-  export: 'export',
-  instance_selection: 'instance-selection',
-  workflows_selection: 'workflows-selection',
-  validation: 'validation',
-  overview: 'overview',
-  summary: 'summary',
-  status: 'status',
-  review: 'review',
-  designer: 'designer',
-  dataMapper: 'dataMapper',
-  unitTest: 'unitTest',
-  createWorkspace: 'createWorkspace',
-  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
-  createLogicApp: 'createLogicApp',
-  createWorkspaceStructure: 'createWorkspaceStructure',
-};
-
-export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
 export const ValidationStatus = {
   succeeded: 'Succeeded',
   succeeded_with_warnings: 'SucceededWithWarning',

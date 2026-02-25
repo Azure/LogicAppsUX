@@ -25,12 +25,12 @@ import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewC
 export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  const myWebviewProjectContext: IWebviewProjectContext = options;
+  const webviewProjectContext: IWebviewProjectContext = options;
 
-  const workspaceFolderPath = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+  const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
 
   await fse.ensureDir(workspaceFolderPath);
-  const workspaceFilePath = path.join(workspaceFolderPath, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+  const workspaceFilePath = path.join(workspaceFolderPath, `${webviewProjectContext.workspaceName}.code-workspace`);
 
   // Start with an empty folders array
   const workspaceFolders = [];
@@ -68,7 +68,7 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
 async function createWorkspaceStructureWebview(_context: IActionContext): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     createWorkspaceWebviewCommandHandler({
-      panelName: localize('createWorkspaceStructure', 'Create Workspace Structure'),
+      panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
       panelGroupKey: ext.webViewKey.createWorkspaceStructure,
       projectName: ProjectName.createWorkspaceStructure,
       createCommand: ExtensionCommand.createWorkspaceStructure,

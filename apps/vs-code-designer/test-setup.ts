@@ -91,6 +91,13 @@ vi.mock('util');
 
 vi.mock('axios');
 
+vi.mock('vscode-languageclient/node', () => ({
+  LanguageClient: vi.fn().mockImplementation(() => ({
+    start: vi.fn(),
+    stop: vi.fn(),
+  })),
+}));
+
 vi.mock('vscode', () => ({
   window: {
     showInformationMessage: vi.fn(),

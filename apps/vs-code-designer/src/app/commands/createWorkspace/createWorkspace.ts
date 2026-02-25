@@ -9,9 +9,9 @@ import { localize } from '../../../localize';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 
-export async function createNewCodeProjectFromCommand(): Promise<void> {
+export async function createWorkspace(): Promise<void> {
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createWorkspace', 'Create Workspace'),
+    panelName: localize('createWorkspace', 'Create workspace'),
     panelGroupKey: ext.webViewKey.createWorkspace,
     projectName: ProjectName.createWorkspace,
     createCommand: ExtensionCommand.createWorkspace,

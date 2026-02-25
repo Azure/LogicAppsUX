@@ -80,6 +80,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
+import { initializeLanguageServer } from './state/LanguageServerSlice';
 import {
   initializeProject,
   setProjectPath,
@@ -157,7 +158,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     // }
 
     if (message.command === ExtensionCommand.initialize_frame) {
-      dispatch(initialize(message.data.project));
+      dispatch(initialize(message.data));
     }
 
     switch (projectState?.project ?? message?.data?.project) {
@@ -295,8 +296,18 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         }
         break;
       }
+      case ProjectName.languageServer: {
+        switch (message.command) {
+          case ExtensionCommand.initialize_frame: {
+            dispatch(initializeLanguageServer(message.data));
+            break;
+          }
+        }
+        break;
+      }
       case ProjectName.createWorkspace:
       case ProjectName.createWorkspaceFromPackage:
+      case ProjectName.createWorkflow:
       case ProjectName.createWorkspaceStructure: {
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {

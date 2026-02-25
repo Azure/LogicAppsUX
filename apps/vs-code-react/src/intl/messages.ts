@@ -152,8 +152,8 @@ export const workspaceMessages = defineMessages({
     description: 'Autonomous agents workflow description',
   },
   AGENT_TITLE: {
-    defaultMessage: 'Conversational agents',
-    id: '6sEsIN',
+    defaultMessage: 'Conversational agents (Preview)',
+    id: 'M9LjqI',
     description: 'Conversational agent workflow option',
   },
   AGENT_DESCRIPTION: {
@@ -288,6 +288,16 @@ export const workspaceMessages = defineMessages({
     defaultMessage: 'Logic app that allows custom code integration and advanced scenarios',
     id: 'kkKTEH',
     description: 'Logic app with custom code description',
+  },
+  CODEFUL_LABEL: {
+    defaultMessage: 'Logic app (codeful)',
+    id: 'mjCsxB',
+    description: 'Logic app codeful option',
+  },
+  CODEFUL_DESCRIPTION: {
+    defaultMessage: 'Standard logic app codeful with built-in connectors and triggers',
+    id: 'qZPmZV',
+    description: 'Standard logic app description',
   },
   LOGIC_APP_RULES_ENGINE: {
     defaultMessage: 'Logic app with rules engine',
@@ -547,6 +557,11 @@ export const workspaceMessages = defineMessages({
     id: 'Wxan/5',
     description: 'Create logic app project text.',
   },
+  CREATE_WORKFLOW: {
+    defaultMessage: 'Create workflow',
+    id: 'CBQYkl',
+    description: 'Create logic app workflow text.',
+  },
   CREATE_PROJECT_BUTTON: {
     defaultMessage: 'Create project',
     id: 'u+VFmh',
@@ -576,6 +591,11 @@ export const workspaceMessages = defineMessages({
     defaultMessage: 'Logic app created successfully!',
     id: '8YVpN7',
     description: 'Logic app creation success message',
+  },
+  WORKFLOW_CREATED: {
+    defaultMessage: 'Workflow created successfully!',
+    id: 'WXclF7',
+    description: 'Workflow creation success message',
   },
   WORKSPACE_CREATED: {
     defaultMessage: 'Workspace created successfully!',
