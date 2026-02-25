@@ -153,6 +153,13 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
         break;
       }
+      case ExtensionCommand.getDesignerVersion: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.getDesignerVersion,
+          data: this.getDesignerVersion(),
+        });
+        break;
+      }
       default:
         break;
     }

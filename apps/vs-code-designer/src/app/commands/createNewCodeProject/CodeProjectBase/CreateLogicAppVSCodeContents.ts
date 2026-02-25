@@ -2,9 +2,12 @@ import { latestGAVersion, ProjectLanguage, ProjectType, TargetFramework } from '
 import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import {
   assetsFolderName,
+  containerTemplatesFolderName,
   deploySubpathSetting,
   dotnetExtensionId,
   dotnetPublishTaskLabel,
+  devContainerFileName,
+  devContainerFolderName,
   extensionCommand,
   extensionsFileName,
   func,
@@ -146,7 +149,7 @@ const getAgentCodefulTasks = (targetFramework: string) => {
 async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string) {
   const { targetFramework, logicAppType } = context;
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
-  const tasksJsonFile = 'TasksJsonFile';
+  const tasksJsonFile = context.isDevContainerProject ? 'DevContainerTasksJsonFile' : 'TasksJsonFile';
   const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, tasksJsonFile);
 
   // Read the template file
@@ -166,6 +169,12 @@ async function writeTasksJson(context: IWebviewProjectContext, vscodePath: strin
     // For non-agentCodeful projects, just copy the template
     await fse.copyFile(templatePath, tasksJsonPath);
   }
+}
+
+export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
+  const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
+  const templatePath = path.join(__dirname, assetsFolderName, containerTemplatesFolderName, devContainerFileName);
+  await fse.copyFile(templatePath, devContainerJsonPath);
 }
 
 export function getDebugConfiguration(logicAppName: string, customCodeTargetFramework?: TargetFramework): DebugConfiguration {
@@ -229,4 +238,12 @@ export async function createLogicAppVsCodeContents(webviewProjectContext: IWebvi
   await writeExtensionsJson(webviewProjectContext, vscodePath);
   await writeTasksJson(webviewProjectContext, vscodePath);
   await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName, targetFramework as TargetFramework);
+}
+
+export async function createDevContainerContents(webviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {
+  if (webviewProjectContext.isDevContainerProject) {
+    const devContainerPath: string = path.join(workspaceFolder, devContainerFolderName);
+    await fse.ensureDir(devContainerPath);
+    await writeDevContainerJson(devContainerPath);
+  }
 }

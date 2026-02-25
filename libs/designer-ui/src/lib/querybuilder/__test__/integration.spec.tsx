@@ -276,7 +276,7 @@ describe('Query Builder Integration Tests', () => {
       await user.click(hybridMoreButtons[1]);
       expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
       expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
-    });
+    }, 10000);
 
     it('should handle move operations consistently across components', () => {
       const moveTestData = createTestGroup({

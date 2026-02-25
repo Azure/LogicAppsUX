@@ -1,5 +1,21 @@
 import type { PanelLocation } from '@microsoft/designer-ui';
-import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOperation, DiscoveryResultTypes, OperationManifest } from '@microsoft/logic-apps-shared';
+
+export const MCP_WIZARD_STEP = {
+  CONNECTION: 'CONNECTION',
+  CREATE_CONNECTION: 'CREATE_CONNECTION',
+  PARAMETERS: 'PARAMETERS',
+} as const;
+export type McpWizardStep = (typeof MCP_WIZARD_STEP)[keyof typeof MCP_WIZARD_STEP];
+
+export interface McpToolWizardState {
+  operation: DiscoveryOperation<DiscoveryResultTypes>;
+  currentStep: McpWizardStep;
+  connectionId?: string;
+  allowedTools?: string[];
+  headers?: Record<string, string>;
+  isConnectionLocked?: boolean;
+}
 
 export interface PanelState {
   connectionContent: ConnectionPanelContentState;
@@ -36,6 +52,14 @@ export type ActionPanelFavoriteItem = {
   operationId?: string;
 };
 
+export const SELECTION_STATES = {
+  SEARCH: 'SEARCH',
+  DETAILS: 'DETAILS',
+  AZURE_RESOURCE: 'AZURE_RESOURCE',
+  CUSTOM_SWAGGER: 'HTTP_SWAGGER',
+} as const;
+export type DiscoveryPanelSelectionState = (typeof SELECTION_STATES)[keyof typeof SELECTION_STATES];
+
 export interface DiscoveryPanelContentState {
   favoriteOperations: ActionPanelFavoriteItem[];
   isAddingTrigger: boolean;
@@ -48,6 +72,8 @@ export interface DiscoveryPanelContentState {
   selectedOperationGroupId: string;
   selectedOperationId: string;
   selectedBrowseCategory?: { key: string; title: string };
+  selectionState?: DiscoveryPanelSelectionState;
+  mcpToolWizard?: McpToolWizardState;
 }
 
 export interface ErrorPanelContentState {

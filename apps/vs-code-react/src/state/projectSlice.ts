@@ -6,6 +6,7 @@ export interface ProjectState {
   project?: string;
   route?: string;
   dataMapperVersion?: number;
+  designerVersion?: number;
 }
 
 const initialState: ProjectState = {
@@ -30,9 +31,12 @@ export const projectSlice: Slice<ProjectState> = createSlice({
     changeDataMapperVersion: (state, action: PayloadAction<number>) => {
       state.dataMapperVersion = action.payload;
     },
+    changeDesignerVersion: (state, action: PayloadAction<number>) => {
+      state.designerVersion = action.payload;
+    },
   },
 });
 
-export const { initialize, changeDataMapperVersion } = projectSlice.actions;
+export const { initialize, changeDataMapperVersion, changeDesignerVersion } = projectSlice.actions;
 
 export default projectSlice.reducer;

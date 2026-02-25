@@ -14,7 +14,7 @@ interface CategorizedConnections {
 export const agentModelTypeParameterKey = 'inputs.$.agentModelType';
 
 export const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && AgentUtils.isDeploymentIdParameter(key);
+  return AgentUtils.isConnector(id) && AgentUtils.isDeploymentOrModelIdParameter(key);
 };
 
 export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean => {
@@ -22,7 +22,7 @@ export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean 
 };
 
 export const isAgentConnectorAndConsumptionAgentModel = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && AgentUtils.isConsumptionAgentModelTypeParameter(key);
+  return AgentUtils.isConnector(id) && AgentUtils.isAgentModelTypeParameter(key);
 };
 
 export const isAgentConnectorAndAgentServiceModel = (
@@ -62,8 +62,11 @@ export const getDeploymentIdParameter = (state: RootState, nodeId: string): Para
   const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
   const defaultGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
 
-  // Find the parameter that holds the connection reference (named 'agentConnection' in metadata)
-  return defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId');
+  // Find either deploymentId (for Azure OpenAI/Foundry/APIM) or modelId (for V1ChatCompletionsService)
+  return (
+    defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.deploymentId') ||
+    defaultGroup.parameters.find((param) => param.parameterKey === 'inputs.$.modelId')
+  );
 };
 
 export const getConnectionToAssign = (

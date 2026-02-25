@@ -381,6 +381,11 @@
         "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
         "title": "Open language server connection view",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.enableDevContainer",
+        "title": "Enable Dev Container For Project",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -857,6 +862,13 @@
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
             "enumDescriptions": ["Version 1 (Deprecated)", "Version 2"],
             "default": 2
+          },
+          "azureLogicAppsStandard.designerVersion": {
+            "type": "number",
+            "enum": [1, 2],
+            "description": "The version of the Logic Apps Designer to use.",
+            "enumDescriptions": ["Version 1", "Version 2 (Preview)"],
+            "default": 1
           },
           "azureLogicAppsStandard.deploySubpath": {
             "scope": "resource",

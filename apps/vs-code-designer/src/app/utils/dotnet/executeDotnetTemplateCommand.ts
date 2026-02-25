@@ -90,7 +90,7 @@ export async function getFramework(context: IActionContext, workingDirectory: st
     let versions = '';
     const dotnetBinariesLocation = getDotNetCommand();
 
-    versions = useBinariesDependencies() ? await getLocalDotNetVersionFromBinaries() : versions;
+    versions = (await useBinariesDependencies()) ? await getLocalDotNetVersionFromBinaries() : versions;
 
     try {
       versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');

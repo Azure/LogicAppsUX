@@ -15,6 +15,7 @@ import {
 } from './constants';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 
 /**
  * Prompts warning message for installing the installing/validate binaries and taks.json.
@@ -23,7 +24,7 @@ import * as vscode from 'vscode';
 export const onboardBinaries = async (activateContext: IActionContext) => {
   await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-      const binariesInstallation = useBinariesDependencies();
+      const binariesInstallation = await useBinariesDependencies();
       if (binariesInstallation) {
         activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
         await validateAndInstallBinaries(actionContext);
@@ -36,9 +37,18 @@ export const onboardBinaries = async (activateContext: IActionContext) => {
 /**
  * Start onboarding experience prompting inputs for user.
  * This function will propmpt/install dependencies binaries, start design time api and start azurite.
+ * Skips onboarding for devContainer workspaces as they have pre-configured environments.
  * @param {IActionContext} activateContext - Activation context.
  */
 export const startOnboarding = async (activateContext: IActionContext) => {
+  // Skip onboarding for devContainer workspaces
+  const isDevContainer = await isDevContainerWorkspace();
+  if (isDevContainer) {
+    activateContext.telemetry.properties.skippedOnboarding = 'true';
+    activateContext.telemetry.properties.skippedReason = 'devContainer';
+    return;
+  }  
+
   await callWithTelemetryAndErrorHandling(
     autoRuntimeDependenciesValidationAndInstallationSetting,
     async (actionContext: IActionContext) => {

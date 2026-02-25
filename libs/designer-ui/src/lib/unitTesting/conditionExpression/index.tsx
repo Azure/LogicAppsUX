@@ -1,4 +1,4 @@
-import type { editor } from 'monaco-editor';
+import type { CodeMirrorEditorRef, EditorContentChangedEventArgs } from '../../editor/monaco';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -9,7 +9,6 @@ import { TokenPickerPivot } from '../../tokenpicker/tokenpickerpivot';
 import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
-import type { EditorContentChangedEventArgs } from '../../editor/monaco';
 import constants from '../../constants';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { useConditionExpressionStyles } from './conditionExpression.styles';
@@ -63,7 +62,7 @@ export function ConditionExpression({
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(TokenPickerMode.EXPRESSION);
 
   const searchBoxRef = useRef<ISearchBox | null>(null);
-  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const expressionEditorRef = useRef<CodeMirrorEditorRef | null>(null);
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',

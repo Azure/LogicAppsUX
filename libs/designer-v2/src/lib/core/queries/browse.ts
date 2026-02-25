@@ -1,4 +1,4 @@
-import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import type { Connector, DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import {
   SearchService,
   cleanConnectorId,
@@ -155,6 +155,31 @@ const useBuiltInOperationsQuery = () =>
     async () => {
       const data = await SearchService().getBuiltInOperations();
       return { data };
+    },
+    queryOpts
+  );
+
+export const useMcpServersQuery = () =>
+  useQuery(
+    ['allOperations', 'mcpServers'],
+    async () => {
+      const searchService = SearchService();
+      if (searchService.getMcpServers) {
+        const data = await searchService.getMcpServers();
+
+        const processedData = data.map<DiscoveryOperation<DiscoveryResultTypes>>((operation: any) => ({
+          ...operation,
+          properties: {
+            ...operation.properties,
+            operationType: 'McpClientTool',
+            operationKind: 'Managed',
+          },
+        }));
+
+        return { data: processedData };
+      }
+
+      return { data: [] as DiscoveryOpArray };
     },
     queryOpts
   );
@@ -418,22 +443,14 @@ const filterOperationsByConnector = (
 export const useOperationsByConnector = (connectorId: string, actionType?: 'triggers' | 'actions') => {
   // Use the existing cached built-in operations
   const { data: builtInOperations } = useBuiltInOperationsQuery();
-  // Use the existing cached custom operations
-  const { data: customOperations } = useCustomOperationsLazyQuery();
 
   return useQuery(
     ['operationsByConnector', connectorId, actionType],
     async () => {
-      // For managed/Azure connectors - use specific API call
-      if (isManagedConnector(connectorId)) {
+      // For managed/Azure and custom connectors - use specific API call
+      if (isManagedConnector(connectorId) || isCustomConnectorId(connectorId)) {
         const data = await SearchService().getOperationsByConnector?.(connectorId, actionType);
         return data || [];
-      }
-
-      // For custom connectors - filter from cached custom operations
-      if (isCustomConnectorId(connectorId)) {
-        const allCustomOperations = customOperations?.pages.flatMap((page) => page.data) ?? [];
-        return filterOperationsByConnector(allCustomOperations, connectorId, actionType);
       }
 
       // For all built-in operations (both client and server) - filter from cached data

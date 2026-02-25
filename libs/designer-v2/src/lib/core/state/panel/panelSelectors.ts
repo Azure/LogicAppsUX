@@ -33,6 +33,9 @@ export const useDiscoveryPanelFavoriteOperations = () =>
 export const useDiscoveryPanelSelectedBrowseCategory = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedBrowseCategory));
 
+export const useDiscoveryPanelSelectionState = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectionState));
+
 export const useDiscoveryPanelIsOperationFavorited = (connectorId: string, operationId?: string) =>
   useDiscoveryPanelFavoriteOperations().some((favorite) => favorite.connectorId === connectorId && favorite.operationId === operationId);
 
@@ -91,3 +94,20 @@ export const usePreviousPanelMode = () => useSelector(createSelector(getPanelSta
 export const useIsAddingAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingAgentTool));
 
 export const useIsRunHistoryCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.runHistoryCollapsed));
+
+export const useMcpToolWizard = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard));
+
+export const useMcpWizardStep = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.currentStep));
+
+export const useMcpWizardOperation = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.operation));
+
+export const useMcpWizardConnectionId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.connectionId));
+
+export const useMcpWizardAllowedTools = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.allowedTools));
+
+export const useMcpWizardHeaders = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.headers));

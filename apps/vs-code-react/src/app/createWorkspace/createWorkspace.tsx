@@ -59,6 +59,7 @@ const CreateWorkspaceInternal = () => {
     packageValidationResults,
     logicAppsWithoutCustomCode,
     separator,
+    isDevContainerProject,
   } = createWorkspaceState;
 
   // Calculate total steps - always 2: Setup and Review + Create
@@ -453,6 +454,7 @@ const CreateWorkspaceInternal = () => {
     const baseData = {
       workspaceProjectPath,
       workspaceName,
+      isDevContainerProject,
       projectType,
     };
 

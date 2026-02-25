@@ -1,10 +1,12 @@
 import { useFeedbackMessage } from '../feedbackHelper';
+import { useAssistantGreetingStyles } from './assistantGreeting.styles';
 import { ChatBubble } from './chatBubble';
 import type { AssistantGreetingItem } from './conversationItem';
 import { FlowOrigin } from './conversationItem';
 import { useIntl } from 'react-intl';
 
 export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => {
+  const styles = useAssistantGreetingStyles();
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const intl = useIntl();
   const intlText = {
@@ -50,6 +52,13 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
     }),
   };
 
+  const suggestedPrompts = [
+    intlText.suggestedPromptItem1,
+    intlText.suggestedPromptItem2,
+    intlText.suggestedPromptItem3,
+    intlText.suggestedPromptItem4,
+  ];
+
   const getSpecificGreetingPart = (origin: FlowOrigin) => {
     switch (origin) {
       case FlowOrigin.Default:
@@ -70,14 +79,17 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
         isEmphasized={true}
         hideFooter={true}
       >
-        <div style={{ marginBottom: 12 }}>{getSpecificGreetingPart(item.origin)}</div>
-        <div style={{ marginBottom: 12 }}>{intlText.subHeading1}</div>
-        <div>{intlText.subHeading2}</div>
-        <li>{intlText.suggestedPromptItem1}</li>
-        <li>{intlText.suggestedPromptItem2}</li>
-        <li>{intlText.suggestedPromptItem3}</li>
-        <li>{intlText.suggestedPromptItem4}</li>
-        <div style={{ marginTop: 12 }}>{intlText.outroMessage}</div>
+        <div className={styles.textBlock}>{getSpecificGreetingPart(item.origin)}</div>
+        <div className={styles.textBlock}>{intlText.subHeading1}</div>
+        <div className={styles.subHeading}>{intlText.subHeading2}</div>
+        <ul className={styles.suggestedPromptsList}>
+          {suggestedPrompts.map((prompt, index) => (
+            <li key={index} className={styles.suggestedPromptItem}>
+              {prompt}
+            </li>
+          ))}
+        </ul>
+        <div>{intlText.outroMessage}</div>
       </ChatBubble>
       {feedbackMessage}
     </div>

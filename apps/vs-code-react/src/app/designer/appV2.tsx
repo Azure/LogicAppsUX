@@ -16,7 +16,7 @@ import {
   FloatingRunButton,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
-import { guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
+import { BundleVersionRequirements, guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
@@ -139,7 +139,12 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const isMultiVariableSupportEnabled = useMemo(
-    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', '1.114.22'),
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.MULTI_VARIABLE),
+    [panelMetaData?.extensionBundleVersion]
+  );
+
+  const isNestedAgentLoopsSupportEnabled = useMemo(
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.NESTED_AGENT_LOOPS),
     [panelMetaData?.extensionBundleVersion]
   );
 
@@ -319,6 +324,7 @@ export const DesignerApp = () => {
           hostOptions: {
             displayRuntimeInfo: true,
             enableMultiVariable: isMultiVariableSupportEnabled,
+            enableNestedAgentLoops: isNestedAgentLoopsSupportEnabled,
           },
         }}
       >

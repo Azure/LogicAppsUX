@@ -136,7 +136,7 @@ export async function switchToDotnetProject(
   const projectPath: string = target.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
-  const useBinaries = useBinariesDependencies();
+  const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
 
   await deleteBundleProjectFiles(target);

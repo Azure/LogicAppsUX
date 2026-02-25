@@ -3,6 +3,7 @@ import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
+import { isManagedMcpOperation } from '../../state/workflow/helper';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import {
   changeConnectionMapping,
@@ -11,7 +12,7 @@ import {
 } from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
+import { updateErrorDetails, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
 import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
 import {
@@ -20,7 +21,7 @@ import {
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
 import { isTriggerNode } from '../../utils/graph';
-import { updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { updateDynamicDataInNode, ParameterGroupKeys } from '../../utils/parameters/helper';
 import type {
   IOperationManifestService,
   Connection,
@@ -51,6 +52,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -108,12 +110,97 @@ export const updateTemplateConnection = createAsyncThunk(
   }
 );
 
+const updateAgentParametersForConnection = (
+  nodeId: string,
+  dispatch: Dispatch,
+  getState: () => RootState,
+  connection: Connection
+): void => {
+  const state = getState();
+
+  // Extract modelType from connection
+  const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
+
+  // Map display name back to manifest value
+  const ModelTypeReverseMap = Object.fromEntries(Object.entries(AgentUtils.ModelType).map(([key, val]) => [val.trim(), key]));
+  const agentModelTypeValue = ModelTypeReverseMap[rawModelType] ?? 'AzureOpenAI';
+
+  // Get current parameter groups
+  const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+  if (!parameterGroups) {
+    return;
+  }
+
+  const defaultGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
+  if (!defaultGroup) {
+    return;
+  }
+
+  const agentModelTypeParam = defaultGroup.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
+  const deploymentIdParam = defaultGroup.parameters?.find((p) => p.parameterKey === 'inputs.$.deploymentId');
+  const modelIdParam = defaultGroup.parameters?.find((p) => p.parameterKey === 'inputs.$.modelId');
+
+  // Both deploymentId and modelId should exist (they're just conditionally hidden)
+  if (!agentModelTypeParam || !deploymentIdParam || !modelIdParam) {
+    return;
+  }
+
+  const parametersToUpdate = [];
+
+  // Update agentModelType parameter
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: agentModelTypeParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment(agentModelTypeValue)],
+      preservedValue: undefined,
+    },
+  });
+
+  // Update visibility and clear values based on model type
+  const isV1 = agentModelTypeValue === 'V1ChatCompletionsService';
+
+  if (isV1) {
+    // V1 Chat Completions: show modelId, hide deploymentId
+    parametersToUpdate.push({
+      groupId: ParameterGroupKeys.DEFAULT,
+      parameterId: deploymentIdParam.id,
+      propertiesToUpdate: {
+        value: [createLiteralValueSegment('')],
+        preservedValue: undefined,
+      },
+    });
+  } else {
+    // AzureOpenAI/Foundry/APIM: show deploymentId, hide modelId
+    parametersToUpdate.push({
+      groupId: ParameterGroupKeys.DEFAULT,
+      parameterId: modelIdParam.id,
+      propertiesToUpdate: {
+        value: [createLiteralValueSegment('')],
+        preservedValue: undefined,
+      },
+    });
+  }
+
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: parametersToUpdate,
+    })
+  );
+};
+
 export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
     const { nodeId, connector, connection, connectionProperties, authentication } = payload;
 
     dispatch(updateErrorDetails({ id: nodeId, clear: true }));
+
+    // For agent connections, update agentModelType and clear inappropriate deployment/model parameters
+    if (AgentUtils.isConnector(connector.id)) {
+      updateAgentParametersForConnection(nodeId, dispatch, getState as () => RootState, connection);
+    }
 
     UserPreferenceService()?.setMostRecentlyUsedConnectionId(connector.id, connection.id);
     return updateNodeConnectionAndProperties(
@@ -358,6 +445,13 @@ export const getConnectionMappingForNode = (
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
       return getManifestBasedConnectionMapping(nodeId, isTrigger, operation);
     }
+    if (isManagedMcpOperation(operation)) {
+      const connectionReferenceKey = (operation as any).inputs.connectionReference.connectionName;
+      if (connectionReferenceKey !== undefined) {
+        const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });
+        return mapping;
+      }
+    }
     if (isApiConnectionType(operation.type)) {
       const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
       if (connectionReferenceKey !== undefined) {
@@ -579,6 +673,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
 
     case ConnectionReferenceKeyFormat.HybridTrigger:
       return getHybridTriggerConnectionReferenceKey((operationDefinition as LogicAppsV2.HybridTriggerOperation).inputs);
+
+    case ConnectionReferenceKeyFormat.McpConnection:
+      return (operationDefinition as any).inputs.connectionReference.connectionName;
     default:
       throw Error('No known connection reference key type');
   }

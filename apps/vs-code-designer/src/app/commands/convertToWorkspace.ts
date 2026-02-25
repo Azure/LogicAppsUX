@@ -25,20 +25,20 @@ import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewC
 export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  const myWebviewProjectContext: IWebviewProjectContext = options;
+  const webviewProjectContext: IWebviewProjectContext = options;
 
   // Add telemetry properties for debugging
-  context.telemetry.properties.hasWorkspaceProjectPath = String(!!myWebviewProjectContext.workspaceProjectPath);
-  context.telemetry.properties.workspaceProjectPathType = typeof myWebviewProjectContext.workspaceProjectPath;
+  context.telemetry.properties.hasWorkspaceProjectPath = String(!!webviewProjectContext.workspaceProjectPath);
+  context.telemetry.properties.workspaceProjectPathType = typeof webviewProjectContext.workspaceProjectPath;
   context.telemetry.properties.receivedOptionsKeys = Object.keys(options || {}).join(',');
 
   // Validate that workspaceProjectPath exists and has required properties
-  if (!myWebviewProjectContext.workspaceProjectPath || !myWebviewProjectContext.workspaceProjectPath.fsPath) {
+  if (!webviewProjectContext.workspaceProjectPath || !webviewProjectContext.workspaceProjectPath.fsPath) {
     const errorMessage = `[ConvertToWorkspace] Invalid workspaceProjectPath: ${JSON.stringify(
       {
-        hasWorkspaceProjectPath: !!myWebviewProjectContext.workspaceProjectPath,
-        workspaceProjectPathType: typeof myWebviewProjectContext.workspaceProjectPath,
-        workspaceProjectPathValue: myWebviewProjectContext.workspaceProjectPath,
+        hasWorkspaceProjectPath: !!webviewProjectContext.workspaceProjectPath,
+        workspaceProjectPathType: typeof webviewProjectContext.workspaceProjectPath,
+        workspaceProjectPathValue: webviewProjectContext.workspaceProjectPath,
         contextKeys: Object.keys(options || {}),
       },
       null,
@@ -46,14 +46,14 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
     )}`;
     ext.outputChannel.appendLog(errorMessage);
     throw new Error(
-      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(myWebviewProjectContext.workspaceProjectPath)}`
+      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(webviewProjectContext.workspaceProjectPath)}`
     );
   }
 
-  const workspaceFolderPath = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+  const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
 
   await fse.ensureDir(workspaceFolderPath);
-  const workspaceFilePath = path.join(workspaceFolderPath, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+  const workspaceFilePath = path.join(workspaceFolderPath, `${webviewProjectContext.workspaceName}.code-workspace`);
 
   // Start with an empty folders array
   const workspaceFolders = [];

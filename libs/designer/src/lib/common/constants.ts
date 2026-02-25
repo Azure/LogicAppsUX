@@ -205,7 +205,6 @@ export default {
     },
   },
   DEFAULT_CUSTOM_CODE_INPUT: 'CodeFile',
-  DEFAULT_CONSUMPTION_AGENT_MODEL_INPUT: 'modelId',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',
@@ -985,6 +984,7 @@ export default {
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+    SELECT_NESTED_AGENT_WORKFLOW_ACTION: 'invokenestedagent',
   },
   CHANNELS: {
     INPUT: '-inputchannel-',

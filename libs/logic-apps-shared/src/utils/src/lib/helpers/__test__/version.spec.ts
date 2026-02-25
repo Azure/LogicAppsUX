@@ -82,6 +82,11 @@ describe('version helpers', () => {
         expect(isVersionSupported('1.160.0.99', '1.160.1')).toBe(false); // 1.160.0 < 1.160.1
         expect(isVersionSupported('2.0.0.1', '1.114.22')).toBe(true); // 2.0.0 > 1.114.22
       });
+
+      it('should handle versions with >3 parts by ignoring extra parts', () => {
+        expect(isVersionSupported('2.0.1.0', '2.0.1')).toBe(true);
+        expect(isVersionSupported('1.0.0.2', '2.0.1')).toBe(false);
+      });
     });
   });
 });

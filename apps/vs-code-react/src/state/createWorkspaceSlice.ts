@@ -36,6 +36,7 @@ export interface CreateWorkspaceState {
   isValidatingPackage: boolean;
   separator: string;
   platform: Platform | null;
+  isDevContainerProject: boolean;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -71,6 +72,7 @@ const initialState: CreateWorkspaceState = {
   isValidatingPackage: false,
   separator: '/',
   platform: null,
+  isDevContainerProject: false,
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -115,6 +117,9 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
     },
     setWorkspaceName: (state, action: PayloadAction<string>) => {
       state.workspaceName = action.payload;
+    },
+    setIsDevContainerProject: (state, action: PayloadAction<boolean>) => {
+      state.isDevContainerProject = action.payload;
     },
     setLogicAppType: (state, action: PayloadAction<string>) => {
       state.logicAppType = action.payload;
@@ -224,6 +229,7 @@ export const {
   setProjectPath,
   setPackagePath,
   setWorkspaceName,
+  setIsDevContainerProject,
   setLogicAppType,
   setFunctionNamespace,
   setFunctionName,

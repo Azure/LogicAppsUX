@@ -2,13 +2,12 @@
   "name": "@microsoft/vscode-extension-logic-apps",
   "version": "5.110.0",
   "dependencies": {
-    "@apidevtools/swagger-parser": "10.0.3",
-    "@microsoft/logic-apps-shared": "workspace:*",
-    "@microsoft/vscode-azext-azureappservice": "^3.6.7",
-    "@microsoft/vscode-azext-utils": "^3.5.0",
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "@microsoft/vscode-azext-azureappservice": "^3.6.6",
+    "@microsoft/vscode-azext-utils": "^3.5.0",
     "@xyflow/react": "^12.3.5",
-    "axios": "^1.12.0",
+    "axios": "^1.13.5",
     "react-intl": "6.3.0",
     "tslib": "2.4.0"
   },
@@ -17,10 +16,10 @@
     "@types/vscode-webview": "1.57.1"
   },
   "peerDependencies": {
+    "@tanstack/query-sync-storage-persister": "4.36.1",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
     "@tanstack/react-query-persist-client": "4.36.1",
-    "@tanstack/query-sync-storage-persister": "4.36.1",
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
