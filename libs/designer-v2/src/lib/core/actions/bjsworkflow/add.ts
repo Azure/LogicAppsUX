@@ -42,6 +42,7 @@ import {
   StaticResultService,
   ManifestParser,
   equals,
+  isAgentLoopType,
   getBrandColorFromConnector,
   getIconUriFromConnector,
   getRecordEntry,
@@ -114,9 +115,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
           }
         }
       } else if (isA2ATrigger) {
-        const allAgentIds = Object.keys(workflowState.operations).filter((id) =>
-          equals(workflowState.operations[id]?.type, constants.NODE.TYPE.AGENT)
-        );
+        const allAgentIds = Object.keys(workflowState.operations).filter((id) => isAgentLoopType(workflowState.operations[id]?.type));
         const workflowHasActionsAfterAgent = Object.values(workflowState.operations).some((node: any) => {
           const runningAfter = Object.keys(node?.runAfter ?? {});
           return runningAfter.some((id) => allAgentIds.includes(id));
@@ -181,7 +180,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
           const triggerChildId = edges.find((edge) => edge.source === constants.NODE.TYPE.PLACEHOLDER_TRIGGER)?.target;
           if (triggerChildId) {
             const childNodeOperationData = workflowState.operations?.[triggerChildId];
-            const childIsAgent = equals(childNodeOperationData.type, constants.NODE.TYPE.AGENT);
+            const childIsAgent = isAgentLoopType(childNodeOperationData.type);
             const currentRunAfterId = Object.keys((childNodeOperationData as any).runAfter)?.[0];
             if (childIsAgent && currentRunAfterId) {
               dispatch(
@@ -200,7 +199,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
         const triggerChildId = edges.find((edge) => edge.source === constants.NODE.TYPE.PLACEHOLDER_TRIGGER)?.target;
         if (triggerChildId) {
           const childNodeOperationData = workflowState.operations?.[triggerChildId];
-          const childIsAgent = equals(childNodeOperationData.type, constants.NODE.TYPE.AGENT);
+          const childIsAgent = isAgentLoopType(childNodeOperationData.type);
           if (childIsAgent) {
             dispatch(
               addOperationRunAfter({

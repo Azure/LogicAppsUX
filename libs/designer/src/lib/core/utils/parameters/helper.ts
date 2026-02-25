@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations  */
 import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
@@ -116,6 +115,7 @@ import {
   isBodySegment,
   canStringBeConverted,
   TryGetOperationManifestService,
+  isAgentLoopType,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -286,10 +286,8 @@ export function addRecurrenceParametersInGroup(
   if (recurrenceParameters.length) {
     const intl = getIntl();
     if (recurrence.useLegacyParameterGroup) {
-      // eslint-disable-next-line no-param-reassign
       parameterGroups[ParameterGroupKeys.DEFAULT].parameters = recurrenceParameters;
     } else {
-      // eslint-disable-next-line no-param-reassign
       parameterGroups[ParameterGroupKeys.RECURRENCE] = {
         id: ParameterGroupKeys.RECURRENCE,
         description: intl.formatMessage({
@@ -1079,7 +1077,6 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
 
 export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
-    // eslint-disable-next-line no-param-reassign
     valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
   }
 }
@@ -1953,7 +1950,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
 
     // For Agent operations, if the responseFormat.type parameter changes, update output tokens
     if (
-      operationInfo?.type === 'Agent' &&
+      isAgentLoopType(operationInfo?.type) &&
       updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
     ) {
       const rootState = getState() as RootState;
@@ -3697,7 +3694,6 @@ export function getExpressionTokenTitle(expression: Expression): string {
     case ExpressionType.StringLiteral:
       return (expression as ExpressionLiteral).value;
     case ExpressionType.Function: {
-      // eslint-disable-next-line no-case-declarations
       const functionExpression = expression as ExpressionFunction;
       return `${functionExpression.name}(${functionExpression.arguments.length > 0 ? '...' : ''})`;
     }
@@ -4025,9 +4021,9 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
-        // eslint-disable-next-line no-useless-escape
+
         tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        // eslint-disable-next-line no-useless-escape
+
         tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 

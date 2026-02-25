@@ -1,4 +1,5 @@
 import constants from '../../common/constants';
+import { isAgentLoopType, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
@@ -42,7 +43,6 @@ import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName, getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -88,7 +88,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(scopeId);
   const normalizedType = node?.type.toLowerCase();
-  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
+  const isAgent = isAgentLoopType(normalizedType);
   const isSwitch = normalizedType === constants.NODE.TYPE.SWITCH;
   const isConditional = normalizedType === constants.NODE.TYPE.IF;
   const runIndex = useRunIndex(scopeId);

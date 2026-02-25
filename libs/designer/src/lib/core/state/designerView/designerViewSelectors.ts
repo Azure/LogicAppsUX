@@ -1,4 +1,4 @@
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, isAgentLoopType } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import { useMemo } from 'react';
@@ -46,7 +46,5 @@ export const useIsA2AWorkflow = () => {
 };
 
 export const useWorkflowHasAgentLoop = () => {
-  return useSelector((state: RootState) =>
-    Object.values(state.workflow.operations).some((operation) => equals(operation.type, 'Agent', true))
-  );
+  return useSelector((state: RootState) => Object.values(state.workflow.operations).some((operation) => isAgentLoopType(operation.type)));
 };

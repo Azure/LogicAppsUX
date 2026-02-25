@@ -4,7 +4,15 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
+import {
+  labelCase,
+  WORKFLOW_NODE_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  getRecordEntry,
+  SUBGRAPH_TYPES,
+  equals,
+  isAgentLoopType,
+} from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -180,7 +188,7 @@ const handoffToolAdjustment = (
   // Iterate over graph, if any agent action tools only have a single handoff action, log it
   const handoffToolIds: string[] = [];
   for (const child of graph.children ?? []) {
-    if (equals(operations[child.id]?.type, commonConstants.NODE.TYPE.AGENT)) {
+    if (isAgentLoopType(operations[child.id]?.type)) {
       // Check if the agent action has tools with only a handoff action
       const tools = child?.children?.filter((_child) => _child.subGraphLocation === 'tools');
       for (const tool of tools ?? []) {
@@ -598,7 +606,7 @@ export const useIsAgentLoop = (id?: string): boolean => {
         return false;
       }
       const type = getRecordEntry(state.operations, id)?.type;
-      return equals(type, commonConstants.NODE.TYPE.AGENT);
+      return isAgentLoopType(type);
     })
   );
 };
@@ -610,7 +618,7 @@ export const useIsWithinAgenticLoop = (id?: string): boolean => {
 
       while (currentId) {
         const type = getRecordEntry(state.operations, currentId)?.type;
-        if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
+        if (isAgentLoopType(type)) {
           return true;
         }
         const parentId = getRecordEntry(state.nodesMetadata, currentId)?.parentNodeId;
@@ -632,7 +640,7 @@ export const useHasUpstreamAgenticLoop = (upstreamNodes: string[]): boolean => {
     createSelector(getWorkflowState, (state: WorkflowState) => {
       for (const nodeId of upstreamNodes) {
         const type = getRecordEntry(state.operations, nodeId)?.type;
-        if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
+        if (isAgentLoopType(type)) {
           return true;
         }
       }
@@ -646,7 +654,7 @@ export const useAgentOperations = () => {
     () =>
       createSelector(getWorkflowState, (state: WorkflowState) => {
         return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
-          if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
+          if (isAgentLoopType(node.type)) {
             acc.push(id);
           }
           return acc;
@@ -729,7 +737,7 @@ export const getAgentFromCondition = (state: WorkflowState, nodeId: string): str
 export const useAllAgentIds = (): string[] => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      return Object.keys(state.operations).filter((id) => equals(state.operations[id]?.type, commonConstants.NODE.TYPE.AGENT));
+      return Object.keys(state.operations).filter((id) => isAgentLoopType(state.operations[id]?.type));
     })
   );
 };
@@ -759,7 +767,7 @@ export const useHandoffActionsForAgent = (agentId: string): any[] => {
       () =>
         createSelector([getWorkflowState, getOperationsState], (workflowState: WorkflowState, operationsState: OperationMetadataState) => {
           // Check the action is an agent action
-          if (!equals(workflowState.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
+          if (!isAgentLoopType(workflowState.operations[agentId]?.type)) {
             return [];
           }
           const toolNodeIds = Object.keys(workflowState.nodesMetadata[agentId]?.handoffs ?? {});

@@ -11,6 +11,7 @@ export {
   foreachOperationInfo,
   supportedBaseManifestObjects,
   isBuiltInOperation,
+  isAgentLoopType,
   getBuiltInOperationInfo,
 } from './operationmanifest';
 export type { BaseOperationManifestServiceOptions } from './operationmanifest';

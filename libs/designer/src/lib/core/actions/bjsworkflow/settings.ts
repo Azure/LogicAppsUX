@@ -19,6 +19,7 @@ import {
   convertToStringLiteral,
   getSplitOnArrayAliasMetadata,
   equals,
+  isAgentLoopType,
   getObjectPropertyValue,
   getPropertyValue,
   OperationOptions,
@@ -698,7 +699,7 @@ const isCountSupported = (isTrigger: boolean, nodeType: string, manifest?: Opera
   }
 
   // Agent nodes in agent workflows don't support count
-  const isAgentNode = equals(nodeType, Constants.NODE.TYPE.AGENT);
+  const isAgentNode = isAgentLoopType(nodeType);
   const isAgentWorkflow = equals(workflowKind, WorkflowKind.AGENT);
 
   if (isAgentNode && isAgentWorkflow) {

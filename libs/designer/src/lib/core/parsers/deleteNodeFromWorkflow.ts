@@ -1,9 +1,8 @@
-/* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { isA2AWorkflow } from '../state/workflow/helper';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
-import { equals, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { isAgentLoopType, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface DeleteNodePayload {
   nodeId: string;
@@ -46,9 +45,9 @@ export const deleteNodeFromWorkflow = (
     });
   }
 
-  const isAgent = equals(getRecordEntry(state.operations, nodeId)?.type, 'agent');
+  const isAgent = isAgentLoopType(getRecordEntry(state.operations, nodeId)?.type);
   if (isAgent) {
-    const allAgents = Object.keys(state.operations).filter((opId) => equals(getRecordEntry(state.operations, opId)?.type, 'agent'));
+    const allAgents = Object.keys(state.operations).filter((opId) => isAgentLoopType(getRecordEntry(state.operations, opId)?.type));
     for (const sourceId of allAgents) {
       // Delete any handoff tools that are targetting the node
       const sourceToolIds = Object.entries((state.nodesMetadata[sourceId] as any)?.handoffs ?? {})

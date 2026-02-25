@@ -1,4 +1,5 @@
 import constants from '../../common/constants';
+import { isAgentLoopType, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { getMonitoringError } from '../../common/utilities/error';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -46,7 +47,6 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName, getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -90,7 +90,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(scopeId);
   const normalizedType = node?.type.toLowerCase();
-  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
+  const isAgent = isAgentLoopType(normalizedType);
   const runIndex = useRunIndex(scopeId);
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);

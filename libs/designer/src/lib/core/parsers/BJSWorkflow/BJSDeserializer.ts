@@ -355,7 +355,7 @@ export const deserializeUnitTestDefinition = (
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
-  return ['scope', 'foreach', 'until', 'if', 'switch', 'agent'].includes(action?.type?.toLowerCase());
+  return ['scope', 'foreach', 'until', 'if', 'switch', 'agent', 'githubcopilotagent'].includes(action?.type?.toLowerCase());
 };
 
 const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.IfAction => {
@@ -375,7 +375,7 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
 };
 
 const isAgentAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.AgentAction => {
-  return equals(action?.type, 'agent');
+  return equals(action?.type, 'agent') || equals(action?.type, 'githubcopilotagent');
 };
 
 const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';

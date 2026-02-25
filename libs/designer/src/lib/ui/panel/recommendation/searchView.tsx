@@ -1,7 +1,13 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { equals, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  isAgentLoopType,
+  type DiscoveryOpArray,
+  type DiscoveryOperation,
+  type DiscoveryResultTypes,
+} from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
@@ -98,7 +104,7 @@ export const SearchView: FC<SearchViewProps> = ({
 
       // Exclude agent operations unless it's an agentic or A2A workflow
       // When not at root, also require enableNestedAgentLoops to be true
-      if (equals(type, constants.NODE.TYPE.AGENT)) {
+      if (isAgentLoopType(type)) {
         if (!isAgenticWorkflow && !isA2AWorkflow) {
           return false;
         }

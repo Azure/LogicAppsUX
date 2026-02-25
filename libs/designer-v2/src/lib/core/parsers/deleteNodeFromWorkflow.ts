@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { isA2AWorkflow } from '../state/workflow/helper';
 import type { WorkflowNode } from './models/workflowNode';
@@ -46,9 +45,13 @@ export const deleteNodeFromWorkflow = (
     });
   }
 
-  const isAgent = equals(getRecordEntry(state.operations, nodeId)?.type, 'agent');
+  const nodeType = getRecordEntry(state.operations, nodeId)?.type;
+  const isAgent = equals(nodeType, 'agent') || equals(nodeType, 'githubcopilotagent');
   if (isAgent) {
-    const allAgents = Object.keys(state.operations).filter((opId) => equals(getRecordEntry(state.operations, opId)?.type, 'agent'));
+    const allAgents = Object.keys(state.operations).filter((opId) => {
+      const t = getRecordEntry(state.operations, opId)?.type;
+      return equals(t, 'agent') || equals(t, 'githubcopilotagent');
+    });
     for (const sourceId of allAgents) {
       // Delete any handoff tools that are targetting the node
       const sourceToolIds = Object.entries((state.nodesMetadata[sourceId] as any)?.handoffs ?? {})

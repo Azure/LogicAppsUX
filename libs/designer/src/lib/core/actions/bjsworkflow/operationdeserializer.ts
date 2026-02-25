@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
@@ -72,6 +71,7 @@ import {
   map,
   aggregate,
   equals,
+  isAgentLoopType,
   getRecordEntry,
   parseErrorMessage,
   cleanResourceId,
@@ -739,7 +739,7 @@ export const initializeDynamicDataInNodes = async (
       const isFreshCreatedAgent =
         (Object.keys(connections.connectionReferences).length === 0 ||
           deepCompareObjects(connectionReference, mockEmptyConnectionReference)) &&
-        equals(operation.type, Constants.NODE.TYPE.AGENT);
+        isAgentLoopType(operation.type);
 
       return updateDynamicDataForValidConnection(
         nodeId,

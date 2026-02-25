@@ -387,6 +387,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      GITHUB_COPILOT_AGENT: 'githubcopilotagent',
       NESTED_AGENT: 'nestedagent',
       AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',

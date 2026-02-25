@@ -1,4 +1,5 @@
 import constants from '../../../common/constants';
+import { isAgentLoopType, equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { useIsA2AWorkflow, useIsAgenticWorkflowOnly } from '../../../core/state/designerView/designerViewSelectors';
@@ -19,7 +20,6 @@ import { scratchTab } from './tabs/scratchTab';
 import { settingsTab } from './tabs/settingsTab';
 import { testingTab } from './tabs/testingTab';
 import type { PanelTabProps } from '@microsoft/designer-ui';
-import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -39,7 +39,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
-  const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
+  const isAgentNode = useMemo(() => isAgentLoopType(operationInfo?.type ?? ''), [operationInfo?.type]);
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAgenticWorkflowOnly = useIsAgenticWorkflowOnly();
   const parameterValidationErrors = useParameterValidationErrors(nodeId);

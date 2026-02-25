@@ -6,7 +6,7 @@ import type {
   ParameterInfo,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { equals, BindingMode } from '@microsoft/logic-apps-shared';
+import { equals, BindingMode, isAgentLoopType } from '@microsoft/logic-apps-shared';
 import { ApiConnectionInputsBinder, DefaultInputsBinder, ManifestInputsBinder } from './inputs/index';
 import constants from '../../../../common/constants';
 
@@ -40,7 +40,7 @@ export default class InputsBinder {
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION) &&
-        !equals(type, constants.NODE.TYPE.AGENT)
+        !isAgentLoopType(type)
       ) {
         const binder = new ManifestInputsBinder(manifest, nodeParameters ?? {}, operationMetadata);
         return binder.bind(input, inputParametersByName, customSwagger);

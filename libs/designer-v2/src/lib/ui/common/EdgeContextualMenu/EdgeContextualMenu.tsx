@@ -7,7 +7,7 @@ import {
   UiInteractionsService,
   agentOperation,
   customLengthGuid,
-  equals,
+  isAgentLoopType,
   guid,
   isUiInteractionsServiceEnabled,
   normalizeAutomationId,
@@ -102,7 +102,7 @@ export const EdgeContextualMenu = () => {
   const isAddActionDisabled = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
   const isAddParallelBranchDisabled = (isA2AWorkflow && graphId === 'root') || isLeaf;
   const isPasteDisabledForUpstreamAgent = isA2AWorkflow && graphId === 'root' && hasUpstreamAgenticLoop;
-  const isPasteDisabledForNonRootAgent = graphId !== 'root' && equals(copiedNode?.serializedOperation?.type, 'agent');
+  const isPasteDisabledForNonRootAgent = graphId !== 'root' && isAgentLoopType(copiedNode?.serializedOperation?.type);
 
   const dispatch = useDispatch<AppDispatch>();
 

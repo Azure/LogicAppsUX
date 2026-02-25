@@ -1,4 +1,4 @@
-import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { equals, isAgentLoopType, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import { isA2AWorkflow } from '../workflow/helper';
@@ -40,6 +40,9 @@ export const useIsA2AWorkflow = () => {
 
 export const useWorkflowHasAgentLoop = () => {
   return useSelector((state: RootState) => {
-    return Object.values(state.workflow.nodesMetadata).some((node) => node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION);
+    return (
+      Object.values(state.workflow.nodesMetadata).some((node) => node.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) ||
+      Object.values(state.workflow.operations).some((operation) => isAgentLoopType(operation.type))
+    );
   });
 };

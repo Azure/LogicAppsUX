@@ -1,5 +1,5 @@
 import type { BoundParameters, OperationManifest, OutputParameter, ParameterInfo } from '@microsoft/logic-apps-shared';
-import { BindingMode, equals } from '@microsoft/logic-apps-shared';
+import { BindingMode, equals, isAgentLoopType } from '@microsoft/logic-apps-shared';
 import constants from '../../../../common/constants';
 import { ManifestOutputsBinder, DefaultOutputsBinder, ApiConnectionOutputsBinder } from './outputs/index';
 
@@ -34,7 +34,7 @@ export default class OutputsBinder {
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION) &&
-        !equals(type, constants.NODE.TYPE.AGENT)
+        !isAgentLoopType(type)
       ) {
         const binder = new ManifestOutputsBinder(manifest, nodeParameters ?? {}, operationMetadata);
         return binder.bind(output, outputParametersByName);

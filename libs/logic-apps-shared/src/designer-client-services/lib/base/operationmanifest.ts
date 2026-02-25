@@ -86,6 +86,7 @@ const foreach = 'foreach';
 const condition = 'if';
 const switchType = 'switch';
 export const agentType = 'agent';
+export const githubCopilotAgentType = 'githubcopilotagent';
 export const handoff = 'agenthandoff';
 const request = 'request';
 const a2arequest = 'a2arequest';
@@ -204,6 +205,7 @@ export const supportedBaseManifestTypes = [
   slidingwindow,
   switchType,
   agentType,
+  githubCopilotAgentType,
   handoff,
   serviceprovider,
   table,
@@ -298,6 +300,14 @@ export abstract class BaseOperationManifestService implements IOperationManifest
   abstract getBuiltInConnector(connectorId: string): any;
 }
 
+/**
+ * Returns true if the given type represents an agent loop operation.
+ * This matches both the standard 'Agent' type and the 'GitHubCopilotAgent' type.
+ */
+export function isAgentLoopType(type?: string | null): boolean {
+  return equals(type, agentType) || equals(type, githubCopilotAgentType);
+}
+
 export function isBuiltInOperation(definition: any): boolean {
   if (!definition?.type) {
     return false;
@@ -342,6 +352,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case slidingwindow:
     case switchType:
     case agentType:
+    case githubCopilotAgentType:
     case handoff:
     case workflow:
     case xslt:
@@ -657,6 +668,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: agentConnectorId,
     operationId: agentType,
   },
+  [githubCopilotAgentType]: {
+    connectorId: agentConnectorId,
+    operationId: agentType,
+  },
   [handoff]: {
     connectorId: agentConnectorId,
     operationId: handoff,
@@ -832,6 +847,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [agentType, agentloopManifest],
+  [githubCopilotAgentType, agentloopManifest],
   [handoff, handoffManifest],
   [terminate, terminateManifest],
   [until, untilManifest],

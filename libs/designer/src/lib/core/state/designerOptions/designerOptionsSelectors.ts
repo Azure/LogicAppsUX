@@ -3,9 +3,8 @@ import { useSelector } from 'react-redux';
 import { useIsAgenticWorkflow } from '../designerView/designerViewSelectors';
 import { useOperationInfo } from '../selectors/actionMetadataSelector';
 import { useEffect, useState } from 'react';
-import { equals } from '@microsoft/logic-apps-shared';
+import { isAgentLoopType } from '@microsoft/logic-apps-shared';
 import { getSupportedChannels } from '../../utils/agent';
-import constants from '../../../common/constants';
 
 export const useReadOnly = () => {
   return useSelector((state: RootState) => state.designerOptions.readOnly);
@@ -85,7 +84,7 @@ export const useSupportedChannels = (nodeId: string) => {
 
   useEffect(() => {
     const refreshChannels = async () => {
-      if (equals(operationInfo.type ?? '', constants.NODE.TYPE.AGENT) && isAgenticWorkflow) {
+      if (isAgentLoopType(operationInfo.type ?? '') && isAgenticWorkflow) {
         const channels = await getSupportedChannels(nodeId, operationInfo);
         setSupportedChannels(channels);
       }

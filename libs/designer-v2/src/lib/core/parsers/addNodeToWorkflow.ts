@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
@@ -184,7 +183,10 @@ const handleExtraScopeNodeSetup = (
 
   // Handle Agent Loops
 
-  if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.AGENT) {
+  if (
+    operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.AGENT ||
+    operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.GITHUB_COPILOT_AGENT
+  ) {
     // Add Case Graph
     const addCaseGraphId = `${node.id}-addCase`;
     const addCaseGraph = createWorkflowNode(addCaseGraphId, WORKFLOW_NODE_TYPES.HIDDEN_NODE);

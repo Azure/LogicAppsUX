@@ -44,6 +44,7 @@ import {
   labelCase,
   unmap,
   equals,
+  isAgentLoopType,
   filterRecord,
   getRecordEntry,
   TOKEN_PICKER_OUTPUT_SECTIONS,
@@ -193,7 +194,7 @@ export const convertOutputsToTokens = (
 
   // Filter outputs for agent operations when responseFormat.type is defined
   let filteredOutputs = outputs;
-  if (nodeType === 'Agent' && inputs) {
+  if (isAgentLoopType(nodeType) && inputs) {
     filteredOutputs = filterTokensForAgentPerInput(inputs, outputs);
   }
 

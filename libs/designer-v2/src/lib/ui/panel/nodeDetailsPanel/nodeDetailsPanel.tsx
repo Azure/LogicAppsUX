@@ -26,6 +26,7 @@ import {
   getObjectPropertyValue,
   getRecordEntry,
   HostService,
+  isAgentLoopType,
   isNullOrEmpty,
   isNullOrUndefined,
   SUBGRAPH_TYPES,
@@ -54,7 +55,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const runMode = useRunMode();
   const runData = useRunData(selectedNode);
   const { isTrigger, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
-    const isAgent = equals(getRecordEntry(state.workflow.operations, selectedNode)?.type, 'agent');
+    const isAgent = isAgentLoopType(getRecordEntry(state.workflow.operations, selectedNode)?.type);
     const isTrigger = isTriggerNode(selectedNode, state.workflow.nodesMetadata) && !isAgent;
     const operationInfo = state.operations.operationInfo[selectedNode];
     return {
@@ -284,5 +285,5 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 const handleTrackEvent = (_data: PageActionTelemetryData): void => {};

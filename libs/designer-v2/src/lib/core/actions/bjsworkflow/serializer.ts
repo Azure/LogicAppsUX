@@ -42,6 +42,7 @@ import {
   deleteObjectProperty,
   getObjectPropertyValue,
   equals,
+  isAgentLoopType,
   isNullOrUndefined,
   safeSetObjectPropertyValue,
   AssertionErrorCode,
@@ -372,7 +373,7 @@ const serializeAllChannels = async (rootState: RootState, operationId: string): 
   }
 
   // NOTE: Channels is applicable for Agents only so keeping it strictly specific for now
-  if (!equals(operation.type, Constants.NODE.TYPE.AGENT, true)) {
+  if (!isAgentLoopType(operation.type)) {
     return undefined;
   }
 
@@ -907,7 +908,6 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.OpenApiConnection: {
-      // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
         host: {
@@ -970,10 +970,8 @@ const serializeHost = (
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
   for (const [key, value] of Object.entries(hostInfo)) {
     if (inputs[key]) {
-      // eslint-disable-next-line no-param-reassign
       inputs[key] = { ...inputs[key], ...value };
     } else {
-      // eslint-disable-next-line no-param-reassign
       inputs[key] = value;
     }
   }
@@ -1376,7 +1374,7 @@ const getSplitOn = (
 const removeRunAfterTriggerFromOperation = (operation: LogicAppsV2.ActionDefinition, triggerId: string): void => {
   // If the action has a runAfter property pointing to the trigger, remove it
   //   (only for non-agent actions)
-  if (operation?.runAfter?.[triggerId] && !equals(operation.type, 'agent')) {
+  if (operation?.runAfter?.[triggerId] && !isAgentLoopType(operation.type)) {
     delete operation?.runAfter[triggerId];
   }
 };
