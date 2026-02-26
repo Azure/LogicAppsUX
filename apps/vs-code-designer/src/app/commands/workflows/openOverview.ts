@@ -39,6 +39,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { launchProjectDebugger } from '../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../utils/startRuntimeApi';
+import { delay } from '../../utils/delay';
 import { detectCodefulWorkflow, extractTriggerNameFromCodeful, extractHttpTriggerName, hasHttpRequestTrigger } from '../../utils/codeful';
 import { getCodefulWorkflowMetadata } from '../../languageServer/languageServer';
 
@@ -451,12 +452,27 @@ async function getCodefulWorkflowData(
   apiVersion: string
 ): Promise<{ workflowName: string; workflowKind: string; triggerName?: string; triggerType?: string; triggerKind?: string }> {
   const workflowsUrl = `${baseUrl}/workflows?api-version=${apiVersion}`;
-  const workflowsResponse = await sendRequest(context, {
-    url: workflowsUrl,
-    method: HTTP_METHODS.GET,
-  });
-  const workflows: { name: string; kind: string; triggers?: Record<string, { type?: string; kind?: string }> }[] =
-    JSON.parse(workflowsResponse);
+
+  // Retry fetching workflows with exponential backoff. The runtime may be up but still registering workflows.
+  const maxRetries = 4;
+  const initialDelayMs = 1000;
+  let workflows: { name: string; kind: string; triggers?: Record<string, { type?: string; kind?: string }> }[] = [];
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const workflowsResponse = await sendRequest(context, {
+      url: workflowsUrl,
+      method: HTTP_METHODS.GET,
+    });
+    const parsed = JSON.parse(workflowsResponse);
+    workflows = Array.isArray(parsed) ? parsed : (parsed?.value ?? []);
+    if (workflows.length > 0) {
+      break;
+    }
+    if (attempt < maxRetries - 1) {
+      await delay(initialDelayMs * 2 ** attempt);
+    }
+  }
+
   if (!workflows || workflows.length === 0) {
     throw new Error(localize('noWorkflowsFound', 'No workflows found in the workflow runtime.'));
   }
