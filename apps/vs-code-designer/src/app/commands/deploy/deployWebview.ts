@@ -39,6 +39,9 @@ export async function deployViaWebview(context: IActionContext, target?: vscode.
         const subscriptionTreeItem = subscriptionNode as SubscriptionTreeItem;
         const subscriptionContext = subscriptionTreeItem.subscription;
 
+        // Determine if this is a hybrid Logic App
+        const isHybrid = data.hostingPlanType === 'hybrid';
+
         // User wants to create a new Logic App without wizard prompts
         const createContext: any = {
           ...actionContext,
@@ -47,14 +50,30 @@ export async function deployViaWebview(context: IActionContext, target?: vscode.
           location: data.location,
           newResourceGroupName: data.isCreatingNewResourceGroup ? data.resourceGroup : undefined,
           resourceGroup: data.isCreatingNewResourceGroup ? undefined : { name: data.resourceGroup },
-          newPlanName: data.isCreatingNewAppServicePlan ? data.appServicePlan : undefined,
-          plan: data.isCreatingNewAppServicePlan ? undefined : { id: data.appServicePlan },
-          appServicePlanSku: data.appServicePlanSku || 'WS1',
-          newStorageAccountName: data.isCreatingNewStorageAccount ? data.storageAccount : undefined,
-          storageAccount: data.isCreatingNewStorageAccount ? undefined : { id: data.storageAccount },
-          createAppInsights: data.createAppInsights,
-          newAppInsightsName: data.appInsightsName,
+          useHybrid: isHybrid,
         };
+
+        // Add Workflow Standard specific properties
+        if (isHybrid) {
+          // Add Hybrid specific properties
+          createContext.connectedEnvironment = { id: data.connectedEnvironment };
+          createContext.containerAppName = data.containerAppName;
+          createContext.fileShare = {
+            hostname: data.fileShareHostname,
+            shareName: data.fileSharePath,
+            username: data.fileShareUsername,
+            password: data.fileSharePassword,
+          };
+          createContext.sqlConnectionString = data.sqlConnectionString;
+        } else {
+          createContext.newPlanName = data.isCreatingNewAppServicePlan ? data.appServicePlan : undefined;
+          createContext.plan = data.isCreatingNewAppServicePlan ? undefined : { id: data.appServicePlan };
+          createContext.appServicePlanSku = data.appServicePlanSku || 'WS1';
+          createContext.newStorageAccountName = data.isCreatingNewStorageAccount ? data.storageAccount : undefined;
+          createContext.storageAccount = data.isCreatingNewStorageAccount ? undefined : { id: data.storageAccount };
+          createContext.createAppInsights = data.createAppInsights;
+          createContext.newAppInsightsName = data.appInsightsName;
+        }
 
         // Create the Logic App using the wizard-free method
         const node: SlotTreeItem = await createLogicAppWithoutWizard(
@@ -67,6 +86,7 @@ export async function deployViaWebview(context: IActionContext, target?: vscode.
         (actionContext as any).isNewApp = true;
         actionContext.telemetry.properties.deploymentSource = 'webview';
         actionContext.telemetry.properties.isNewLogicApp = 'true';
+        actionContext.telemetry.properties.hostingPlanType = data.hostingPlanType || 'workflowstandard';
 
         await deploy(actionContext, target, node);
 

@@ -66,17 +66,25 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csFilePath = path.join(functionsFolderPath, `${functionName}.cs`);
-    if (await fs.pathExists(csFilePath)) {
-      ext.outputChannel.appendLog(`The file ${csFilePath} already exists.`);
+    // Sanitize names for C# identifiers: replace hyphens with underscores
+    const safeFunctionName = functionName.replace(/-/g, '_');
+    const safeNamespace = namespace.replace(/-/g, '_');
+    const safeCsFilePath = path.join(functionsFolderPath, `${safeFunctionName}.cs`);
+
+    // Check both original and sanitized file names for existence
+    if ((await fs.pathExists(csFilePath)) || (await fs.pathExists(safeCsFilePath))) {
+      const existingPath = (await fs.pathExists(csFilePath)) ? csFilePath : safeCsFilePath;
+      ext.outputChannel.appendLog(`The file ${existingPath} already exists.`);
       window.showErrorMessage(
         localize(
           'azureLogicAppsStandard.functionFileAlreadyExists',
-          `The file ${csFilePath} already exists in the target functions project.`
+          `The file ${existingPath} already exists in the target functions project.`
         )
       );
       return;
     }
-    const csFileContent = templateContent.replace(/<%= methodName %>/g, functionName).replace(/<%= namespace %>/g, namespace);
-    await fs.writeFile(csFilePath, csFileContent);
+
+    const csFileContent = templateContent.replace(/<%= methodName %>/g, safeFunctionName).replace(/<%= namespace %>/g, safeNamespace);
+    await fs.writeFile(safeCsFilePath, csFileContent);
   }
 }

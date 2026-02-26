@@ -42,8 +42,10 @@ debug.log
 # vscode e2e exTester artifacts
 /apps/vs-code-designer/test-resources
 test-resources
+test-extensions
 /apps/vs-code-designer/out
 /apps/vs-code-designer/*.vsix
+.vscode-test
 
 # System Files
 .DS_Store

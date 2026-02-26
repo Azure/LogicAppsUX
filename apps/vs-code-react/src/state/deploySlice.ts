@@ -14,6 +14,7 @@ export interface DeployState {
   newResourceGroupName: string;
   isCreatingNewResourceGroup: boolean;
   selectedLocation: string;
+  hostingPlanType: 'workflowstandard' | 'hybrid';
   selectedAppServicePlan: string;
   newAppServicePlanName: string;
   isCreatingNewAppServicePlan: boolean;
@@ -24,6 +25,14 @@ export interface DeployState {
   createAppInsights: boolean;
   newAppInsightsName: string;
   appInsightsNameManuallyChanged: boolean;
+  // Hybrid-specific fields
+  selectedConnectedEnvironment: string;
+  containerAppName: string;
+  fileShareHostname: string;
+  fileSharePath: string;
+  fileShareUsername: string;
+  fileSharePassword: string;
+  sqlConnectionString: string;
   resourceGroups: Array<{ name: string; location: string }>;
   locations: Array<{ name: string; displayName: string }>;
   appServicePlans: Array<{
@@ -53,6 +62,7 @@ const initialState: DeployState = {
   newResourceGroupName: '',
   isCreatingNewResourceGroup: false,
   selectedLocation: '',
+  hostingPlanType: 'workflowstandard',
   selectedAppServicePlan: '',
   newAppServicePlanName: '',
   isCreatingNewAppServicePlan: true,
@@ -63,6 +73,14 @@ const initialState: DeployState = {
   createAppInsights: true,
   newAppInsightsName: '',
   appInsightsNameManuallyChanged: false,
+  // Hybrid-specific fields
+  selectedConnectedEnvironment: '',
+  containerAppName: '',
+  fileShareHostname: '',
+  fileSharePath: '',
+  fileShareUsername: '',
+  fileSharePassword: '',
+  sqlConnectionString: '',
   resourceGroups: [],
   locations: [],
   appServicePlans: [],
@@ -113,6 +131,15 @@ export const deploySlice = createSlice({
     setSelectedLocation: (state, action: PayloadAction<string>) => {
       state.selectedLocation = action.payload;
     },
+    setHostingPlanType: (state, action: PayloadAction<'workflowstandard' | 'hybrid'>) => {
+      state.hostingPlanType = action.payload;
+      // Reset app service plan selections when hosting type changes
+      state.selectedAppServicePlan = '';
+      state.isCreatingNewAppServicePlan = true;
+      if (action.payload === 'workflowstandard') {
+        state.selectedAppServicePlanSku = 'WS1';
+      }
+    },
     setResourceGroups: (state, action: PayloadAction<Array<{ name: string; location: string }>>) => {
       state.resourceGroups = action.payload;
     },
@@ -156,6 +183,27 @@ export const deploySlice = createSlice({
       state.newAppInsightsName = action.payload;
       state.appInsightsNameManuallyChanged = true;
     },
+    setSelectedConnectedEnvironment(state, action: PayloadAction<string>) {
+      state.selectedConnectedEnvironment = action.payload;
+    },
+    setContainerAppName(state, action: PayloadAction<string>) {
+      state.containerAppName = action.payload;
+    },
+    setFileShareHostname(state, action: PayloadAction<string>) {
+      state.fileShareHostname = action.payload;
+    },
+    setFileSharePath(state, action: PayloadAction<string>) {
+      state.fileSharePath = action.payload;
+    },
+    setFileShareUsername(state, action: PayloadAction<string>) {
+      state.fileShareUsername = action.payload;
+    },
+    setFileSharePassword(state, action: PayloadAction<string>) {
+      state.fileSharePassword = action.payload;
+    },
+    setSqlConnectionString(state, action: PayloadAction<string>) {
+      state.sqlConnectionString = action.payload;
+    },
     setStorageAccounts(state, action: PayloadAction<Array<{ id: string; name: string; location: string }>>) {
       state.storageAccounts = action.payload;
     },
@@ -194,6 +242,7 @@ export const {
   setSelectedResourceGroup,
   setNewResourceGroupName,
   setSelectedLocation,
+  setHostingPlanType,
   setResourceGroups,
   setLocations,
   setSelectedAppServicePlan,
@@ -204,6 +253,13 @@ export const {
   setNewStorageAccountName,
   setCreateAppInsights,
   setNewAppInsightsName,
+  setSelectedConnectedEnvironment,
+  setContainerAppName,
+  setFileShareHostname,
+  setFileSharePath,
+  setFileShareUsername,
+  setFileSharePassword,
+  setSqlConnectionString,
   setStorageAccounts,
   setSelectedSlot,
   setLoadingSubscriptions,

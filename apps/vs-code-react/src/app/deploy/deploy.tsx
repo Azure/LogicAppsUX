@@ -16,6 +16,13 @@ import {
   setNewStorageAccountName,
   setCreateAppInsights,
   setNewAppInsightsName,
+  setSelectedConnectedEnvironment,
+  setContainerAppName,
+  setFileShareHostname,
+  setFileSharePath,
+  setFileShareUsername,
+  setFileSharePassword,
+  setSqlConnectionString,
   setDeploying,
 } from '../../state/deploySlice';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,6 +61,7 @@ export const DeployApp: React.FC = () => {
     newResourceGroupName,
     isCreatingNewResourceGroup,
     selectedLocation,
+    hostingPlanType,
     selectedAppServicePlan,
     newAppServicePlanName,
     isCreatingNewAppServicePlan,
@@ -64,6 +72,13 @@ export const DeployApp: React.FC = () => {
     createAppInsights,
     newAppInsightsName,
     appInsightsNameManuallyChanged,
+    selectedConnectedEnvironment,
+    containerAppName,
+    fileShareHostname,
+    fileSharePath,
+    fileShareUsername,
+    fileSharePassword,
+    sqlConnectionString,
     isDeploying,
     deploymentStatus,
     deploymentMessage,
@@ -155,11 +170,27 @@ export const DeployApp: React.FC = () => {
     }
   );
 
-  // Filter app service plans by selected location and WorkflowStandard tier
-  const appServicePlansList = useMemo(
-    () => allAppServicePlans.filter((plan) => plan.location === selectedLocation && plan.sku?.tier === 'WorkflowStandard'),
-    [allAppServicePlans, selectedLocation]
+  // Fetch connected environments for hybrid Logic Apps
+  const { data: allConnectedEnvironments = [], isLoading: isConnectedEnvironmentsLoading } = useQuery<
+    Array<{ id: string; name: string; location: string }>
+  >(
+    [QueryKeys.resourceGroupsData, 'connectedEnvironments', { subscriptionId: selectedSubscription, location: selectedLocation }],
+    () => apiService.getConnectedEnvironments(selectedSubscription, selectedLocation),
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!selectedSubscription && isCreatingNew && hostingPlanType === 'hybrid' && !!selectedLocation,
+      retry: 4,
+    }
   );
+
+  // Filter app service plans by selected location and hosting plan type
+  const appServicePlansList = useMemo(() => {
+    if (hostingPlanType === 'workflowstandard') {
+      return allAppServicePlans.filter((plan) => plan.location === selectedLocation && plan.sku?.tier === 'WorkflowStandard');
+    }
+    // For hybrid, show all app service plans in the selected location
+    return allAppServicePlans.filter((plan) => plan.location === selectedLocation);
+  }, [allAppServicePlans, selectedLocation, hostingPlanType]);
 
   // Filter storage accounts by selected location
   const storageAccountsList = useMemo(
@@ -203,29 +234,37 @@ export const DeployApp: React.FC = () => {
       const guid = generateGuid();
 
       // App Service Plan: ASP-{logicappname}-{guid}
-      if (isCreatingNewAppServicePlan) {
+      if (isCreatingNewAppServicePlan && hostingPlanType === 'workflowstandard') {
         const aspName = `ASP-${newLogicAppName}-${guid}`;
         dispatch(setNewAppServicePlanName(aspName));
       }
 
+      // Container App Name: for hybrid (lowercase, alphanumeric and hyphens)
+      if (hostingPlanType === 'hybrid' && !containerAppName) {
+        const containerName = newLogicAppName.toLowerCase().replace(/[^a-z0-9-]/g, '');
+        dispatch(setContainerAppName(containerName));
+      }
+
       // Storage Account: lowercase alphanumeric only, max 24 chars
-      if (isCreatingNewStorageAccount) {
+      if (isCreatingNewStorageAccount && hostingPlanType === 'workflowstandard') {
         const storageName = `${newLogicAppName.toLowerCase().replace(/[^a-z0-9]/g, '')}${guid}`.substring(0, 24);
         dispatch(setNewStorageAccountName(storageName));
       }
 
       // App Insights: same as Logic App name (only update if not manually changed)
-      if (createAppInsights && !appInsightsNameManuallyChanged) {
+      if (createAppInsights && !appInsightsNameManuallyChanged && hostingPlanType === 'workflowstandard') {
         dispatch(setNewAppInsightsName(newLogicAppName));
       }
     }
   }, [
     newLogicAppName,
     isCreatingNew,
+    hostingPlanType,
     isCreatingNewAppServicePlan,
     isCreatingNewStorageAccount,
     createAppInsights,
     appInsightsNameManuallyChanged,
+    containerAppName,
     dispatch,
   ]);
 
@@ -438,23 +477,39 @@ export const DeployApp: React.FC = () => {
 
       dispatch(setDeploying(true));
 
+      const deploymentData: any = {
+        subscriptionId: selectedSubscription,
+        createNew: true,
+        newLogicAppName,
+        resourceGroup: finalResourceGroup,
+        isCreatingNewResourceGroup,
+        location: selectedLocation,
+        hostingPlanType,
+      };
+
+      if (hostingPlanType === 'workflowstandard') {
+        // Workflow Standard specific parameters
+        deploymentData.appServicePlan = finalAppServicePlan;
+        deploymentData.isCreatingNewAppServicePlan = isCreatingNewAppServicePlan;
+        deploymentData.appServicePlanSku = selectedAppServicePlanSku;
+        deploymentData.storageAccount = finalStorageAccount;
+        deploymentData.isCreatingNewStorageAccount = isCreatingNewStorageAccount;
+        deploymentData.createAppInsights = createAppInsights;
+        deploymentData.appInsightsName = createAppInsights ? newAppInsightsName : undefined;
+      } else {
+        // Hybrid specific parameters
+        deploymentData.connectedEnvironment = selectedConnectedEnvironment;
+        deploymentData.containerAppName = containerAppName;
+        deploymentData.fileShareHostname = fileShareHostname;
+        deploymentData.fileSharePath = fileSharePath;
+        deploymentData.fileShareUsername = fileShareUsername;
+        deploymentData.fileSharePassword = fileSharePassword;
+        deploymentData.sqlConnectionString = sqlConnectionString;
+      }
+
       vscode.postMessage({
         command: ExtensionCommand.deploy,
-        data: {
-          subscriptionId: selectedSubscription,
-          createNew: true,
-          newLogicAppName,
-          resourceGroup: finalResourceGroup,
-          isCreatingNewResourceGroup,
-          location: selectedLocation,
-          appServicePlan: finalAppServicePlan,
-          isCreatingNewAppServicePlan,
-          appServicePlanSku: selectedAppServicePlanSku,
-          storageAccount: finalStorageAccount,
-          isCreatingNewStorageAccount,
-          createAppInsights,
-          appInsightsName: createAppInsights ? newAppInsightsName : undefined,
-        },
+        data: deploymentData,
       });
     } else {
       // Deploying to existing Logic App
@@ -494,7 +549,12 @@ export const DeployApp: React.FC = () => {
       !isCheckingStorageName &&
       (isCreatingNewResourceGroup ? newResourceGroupName : selectedResourceGroup) &&
       selectedLocation &&
-      (isCreatingNewStorageAccount ? newStorageAccountName : selectedStorageAccount) &&
+      // Workflow Standard specific validations
+      (hostingPlanType === 'workflowstandard' ? (isCreatingNewStorageAccount ? newStorageAccountName : selectedStorageAccount) : true) &&
+      // Hybrid specific validations
+      (hostingPlanType === 'hybrid'
+        ? selectedConnectedEnvironment && containerAppName && fileShareHostname && fileSharePath && sqlConnectionString
+        : true) &&
       !isDeploying
     : selectedSubscription && selectedLogicApp && !isDeploying;
 
@@ -649,6 +709,128 @@ export const DeployApp: React.FC = () => {
 
             {selectedLocation && (
               <div className={styles.deploySection}>
+                <Text className={styles.sectionTitle}>{intlText.HOSTING_PLAN_TYPE}</Text>
+                <Dropdown
+                  className={styles.dropdown}
+                  placeholder={intlText.HOSTING_PLAN_TYPE_PLACEHOLDER}
+                  value={hostingPlanType === 'workflowstandard' ? intlText.WORKFLOW_STANDARD : intlText.HYBRID}
+                  onOptionSelect={handleHostingPlanTypeChange}
+                  disabled={isDeploying}
+                >
+                  <Option key="workflowstandard" value="workflowstandard" text={intlText.WORKFLOW_STANDARD}>
+                    {intlText.WORKFLOW_STANDARD}
+                  </Option>
+                  <Option key="hybrid" value="hybrid" text={intlText.HYBRID}>
+                    {intlText.HYBRID}
+                  </Option>
+                </Dropdown>
+              </div>
+            )}
+
+            {/* Hybrid-specific fields */}
+            {selectedLocation && hostingPlanType === 'hybrid' && (
+              <>
+                <div className={styles.deploySection}>
+                  <Text className={styles.sectionTitle}>{intlText.CONNECTED_ENVIRONMENT}</Text>
+                  {isConnectedEnvironmentsLoading ? (
+                    <div className={styles.loadingContainer}>
+                      <Spinner size="small" />
+                      <Text>{intlText.LOADING_CONNECTED_ENVIRONMENTS}</Text>
+                    </div>
+                  ) : (
+                    <Dropdown
+                      className={styles.dropdown}
+                      placeholder={intlText.CONNECTED_ENVIRONMENT_PLACEHOLDER}
+                      value={allConnectedEnvironments?.find((env) => env.id === selectedConnectedEnvironment)?.name || ''}
+                      onOptionSelect={(_: any, data: any) => dispatch(setSelectedConnectedEnvironment(data.optionValue))}
+                      disabled={isDeploying}
+                    >
+                      {allConnectedEnvironments?.map((env) => (
+                        <Option key={env.id} value={env.id} text={env.name}>
+                          {env.name}
+                        </Option>
+                      ))}
+                    </Dropdown>
+                  )}
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Label htmlFor="containerAppName">{intlText.CONTAINER_APP_NAME}</Label>
+                  <Input
+                    id="containerAppName"
+                    className={styles.dropdown}
+                    placeholder={intlText.CONTAINER_APP_NAME_PLACEHOLDER}
+                    value={containerAppName}
+                    onChange={(_: any, data: any) => dispatch(setContainerAppName(data.value))}
+                    disabled={isDeploying}
+                  />
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Text className={styles.sectionTitle}>{intlText.FILE_SHARE_DETAILS}</Text>
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Label htmlFor="fileShareHostname">{intlText.FILE_SHARE_HOSTNAME}</Label>
+                  <Input
+                    id="fileShareHostname"
+                    className={styles.dropdown}
+                    value={fileShareHostname}
+                    onChange={(_: any, data: any) => dispatch(setFileShareHostname(data.value))}
+                    disabled={isDeploying}
+                  />
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Label htmlFor="fileSharePath">{intlText.FILE_SHARE_PATH}</Label>
+                  <Input
+                    id="fileSharePath"
+                    className={styles.dropdown}
+                    value={fileSharePath}
+                    onChange={(_: any, data: any) => dispatch(setFileSharePath(data.value))}
+                    disabled={isDeploying}
+                  />
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Label htmlFor="fileShareUsername">{intlText.FILE_SHARE_USERNAME}</Label>
+                  <Input
+                    id="fileShareUsername"
+                    className={styles.dropdown}
+                    value={fileShareUsername}
+                    onChange={(_: any, data: any) => dispatch(setFileShareUsername(data.value))}
+                    disabled={isDeploying}
+                  />
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Label htmlFor="fileSharePassword">{intlText.FILE_SHARE_PASSWORD}</Label>
+                  <Input
+                    id="fileSharePassword"
+                    type="password"
+                    className={styles.dropdown}
+                    value={fileSharePassword}
+                    onChange={(_: any, data: any) => dispatch(setFileSharePassword(data.value))}
+                    disabled={isDeploying}
+                  />
+                </div>
+
+                <div className={styles.deploySection}>
+                  <Label htmlFor="sqlConnectionString">{intlText.SQL_CONNECTION_STRING}</Label>
+                  <Input
+                    id="sqlConnectionString"
+                    className={styles.dropdown}
+                    placeholder={intlText.SQL_CONNECTION_STRING_PLACEHOLDER}
+                    value={sqlConnectionString}
+                    onChange={(_: any, data: any) => dispatch(setSqlConnectionString(data.value))}
+                    disabled={isDeploying}
+                  />
+                </div>
+              </>
+            )}
+
+            {selectedLocation && hostingPlanType === 'workflowstandard' && (
+              <div className={styles.deploySection}>
                 <Text className={styles.sectionTitle}>{intlText.APP_SERVICE_PLAN}</Text>
                 {isAppServicePlansLoading ? (
                   <div className={styles.loadingContainer}>
@@ -704,26 +886,28 @@ export const DeployApp: React.FC = () => {
                   )}
                 </div>
 
-                <div className={styles.deploySection}>
-                  <Text className={styles.sectionTitle}>{intlText.APP_SERVICE_PLAN_SKU}</Text>
-                  <Dropdown
-                    className={styles.dropdown}
-                    placeholder={intlText.SELECT_SKU_PLACEHOLDER}
-                    value={selectedAppServicePlanSku}
-                    onOptionSelect={handleAppServicePlanSkuChange}
-                    disabled={isDeploying}
-                  >
-                    <Option key="WS1" value="WS1" text="WS1 (Workflow Standard 1)">
-                      WS1 (Workflow Standard 1)
-                    </Option>
-                    <Option key="WS2" value="WS2" text="WS2 (Workflow Standard 2)">
-                      WS2 (Workflow Standard 2)
-                    </Option>
-                    <Option key="WS3" value="WS3" text="WS3 (Workflow Standard 3)">
-                      WS3 (Workflow Standard 3)
-                    </Option>
-                  </Dropdown>
-                </div>
+                {hostingPlanType === 'workflowstandard' && (
+                  <div className={styles.deploySection}>
+                    <Text className={styles.sectionTitle}>{intlText.APP_SERVICE_PLAN_SKU}</Text>
+                    <Dropdown
+                      className={styles.dropdown}
+                      placeholder={intlText.SELECT_SKU_PLACEHOLDER}
+                      value={selectedAppServicePlanSku}
+                      onOptionSelect={handleAppServicePlanSkuChange}
+                      disabled={isDeploying}
+                    >
+                      <Option key="WS1" value="WS1" text="WS1 (Workflow Standard 1)">
+                        WS1 (Workflow Standard 1)
+                      </Option>
+                      <Option key="WS2" value="WS2" text="WS2 (Workflow Standard 2)">
+                        WS2 (Workflow Standard 2)
+                      </Option>
+                      <Option key="WS3" value="WS3" text="WS3 (Workflow Standard 3)">
+                        WS3 (Workflow Standard 3)
+                      </Option>
+                    </Dropdown>
+                  </div>
+                )}
               </>
             )}
 

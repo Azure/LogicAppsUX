@@ -200,116 +200,128 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       replication: StorageAccountReplication.LRS,
     };
 
-    // Set default Workflow Standard hosting plan properties
-    wizardContext.useHybrid = false;
+    // Set hosting plan properties based on context or default to Workflow Standard
+    wizardContext.useHybrid = context.useHybrid || false;
     wizardContext.suppressCreate = false;
-    wizardContext.planSkuFamilyFilter = /^WS$/i; // Workflow Standard
 
-    // Handle App Service Plan - either use existing or create new
-    if (wizardContext.plan) {
-      // Using existing plan - fetch the full plan details
-      const client = await createWebSiteClient([context, subscription.subscription]);
-      const planId = wizardContext.plan.id;
-      const planIdParts = planId.split('/');
-      const planResourceGroup = planIdParts[4];
-      const planName = planIdParts[8];
+    if (wizardContext.useHybrid) {
+      // Hybrid Logic App creation
+      // Set hybrid-specific properties from context
+      wizardContext.connectedEnvironment = context.connectedEnvironment;
+      wizardContext.fileShare = context.fileShare;
+      wizardContext.sqlConnectionString = context.sqlConnectionString;
+      wizardContext.newSiteName = context.newSiteName.toLowerCase(); // Hybrid requires lowercase
 
-      const existingPlan = await client.appServicePlans.get(planResourceGroup, planName);
-      wizardContext.plan = existingPlan;
-    } else if (wizardContext.newPlanName) {
-      // Creating new plan - set up SKU based on user selection
-      const skuName = wizardContext.appServicePlanSku || 'WS1';
-      wizardContext.newPlanSku = {
-        name: skuName,
-        tier: 'WorkflowStandard',
-        size: skuName,
-        family: 'WS',
-      };
-      executeSteps.push(new AppServicePlanCreateStep());
+      // Add hybrid execute steps
+      executeSteps.push(new ConnectEnvironmentStep());
+      executeSteps.push(new HybridAppCreateStep());
     } else {
-      // No plan specified - create a new one with default SKU
-      const skuName = wizardContext.appServicePlanSku || 'WS1';
-      wizardContext.newPlanSku = {
-        name: skuName,
-        tier: 'WorkflowStandard',
-        size: skuName,
-        family: 'WS',
-      };
-      executeSteps.push(new AppServicePlanCreateStep());
+      // Workflow Standard specific settings
+      wizardContext.planSkuFamilyFilter = /^WS$/i; // Workflow Standard
+
+      // Handle App Service Plan - either use existing or create new
+      if (wizardContext.plan) {
+        // Using existing plan - fetch the full plan details
+        const client = await createWebSiteClient([context, subscription.subscription]);
+        const planId = wizardContext.plan.id;
+        const planIdParts = planId.split('/');
+        const planResourceGroup = planIdParts[4];
+        const planName = planIdParts[8];
+
+        const existingPlan = await client.appServicePlans.get(planResourceGroup, planName);
+        wizardContext.plan = existingPlan;
+      } else if (wizardContext.newPlanName) {
+        // Creating new plan - set up SKU based on user selection
+        const skuName = wizardContext.appServicePlanSku || 'WS1';
+        wizardContext.newPlanSku = {
+          name: skuName,
+          tier: 'WorkflowStandard',
+          size: skuName,
+          family: 'WS',
+        };
+        executeSteps.push(new AppServicePlanCreateStep());
+      } else {
+        // No plan specified - create a new one with default SKU
+        const skuName = wizardContext.appServicePlanSku || 'WS1';
+        wizardContext.newPlanSku = {
+          name: skuName,
+          tier: 'WorkflowStandard',
+          size: skuName,
+          family: 'WS',
+        };
+        executeSteps.push(new AppServicePlanCreateStep());
+      }
+
+      // Handle storage account - fetch if existing, or prepare for creation
+      if (wizardContext.storageAccount) {
+        // Using existing storage account - fetch the full details
+        const storageId = wizardContext.storageAccount.id;
+        const storageIdParts = storageId.split('/');
+        const storageResourceGroup = storageIdParts[4];
+        const storageName = storageIdParts[8];
+
+        // The storage account will be used as-is from the ID
+        wizardContext.storageAccount = {
+          ...wizardContext.storageAccount,
+          name: storageName,
+          resourceGroup: storageResourceGroup,
+        };
+      }
+
+      // Handle storage account - either use existing or create new
+      if (wizardContext.storageAccount) {
+        // Using existing storage account - no additional step needed
+      } else {
+        // Creating new storage account
+        executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      }
+
+      // Add App Insights step only if requested
+      if (wizardContext.createAppInsights !== false) {
+        executeSteps.push(new AppInsightsCreateStep());
+      }
+
+      executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
+      executeSteps.push(new LogicAppCreateStep());
     }
-
-    // Handle storage account - fetch if existing, or prepare for creation
-    if (wizardContext.storageAccount) {
-      // Using existing storage account - fetch the full details
-      const storageId = wizardContext.storageAccount.id;
-      const storageIdParts = storageId.split('/');
-      const storageResourceGroup = storageIdParts[4];
-      const storageName = storageIdParts[8];
-
-      // The storage account will be used as-is from the ID
-      wizardContext.storageAccount = {
-        ...wizardContext.storageAccount,
-        name: storageName,
-        resourceGroup: storageResourceGroup,
-      };
-    }
-
-    // Add all necessary execute steps
-    // executeSteps.push(new ResourceGroupListStep());
-
-    // Handle storage account - either use existing or create new
-    if (wizardContext.storageAccount) {
-      // Using existing storage account - no additional step needed
-      // The storageAccount is already set in context
-    } else {
-      // Creating new storage account
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-    }
-
-    // Add App Insights step only if requested
-    if (wizardContext.createAppInsights !== false) {
-      executeSteps.push(new AppInsightsCreateStep());
-    }
-
-    executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
-    executeSteps.push(new LogicAppCreateStep());
-
     wizardContext.activityTitle = localize('logicAppCreateActivityTitle', 'Creating Logic App "{0}"', wizardContext.newSiteName);
 
     context.telemetry.properties.os = wizardContext.newSiteOS;
     context.telemetry.properties.runtime = wizardContext.newSiteRuntime;
 
-    // Generate related names for storage and app insights if creating new ones
-    if (!wizardContext.storageAccount && !wizardContext.newStorageAccountName) {
-      const baseName: string | undefined = wizardContext.newSiteName;
-      const newName = await generateRelatedName(wizardContext, baseName);
-      if (!newName) {
-        throw new Error(
-          localize(
-            'noUniqueName',
-            'Failed to generate unique name for storage account. Use advanced creation to manually enter resource names.'
-          )
-        );
-      }
-      wizardContext.newStorageAccountName = newName;
-    }
-
-    // Generate or use provided app insights name
-    if (wizardContext.createAppInsights !== false) {
-      if (!wizardContext.newAppInsightsName) {
+    // Generate related names for storage and app insights if creating new ones (Workflow Standard only)
+    if (!wizardContext.useHybrid) {
+      if (!wizardContext.storageAccount && !wizardContext.newStorageAccountName) {
         const baseName: string | undefined = wizardContext.newSiteName;
         const newName = await generateRelatedName(wizardContext, baseName);
         if (!newName) {
           throw new Error(
             localize(
               'noUniqueName',
-              'Failed to generate unique name for app insights. Use advanced creation to manually enter resource names.'
+              'Failed to generate unique name for storage account. Use advanced creation to manually enter resource names.'
             )
           );
         }
-        wizardContext.newAppInsightsName = newName;
+        wizardContext.newStorageAccountName = newName;
       }
-      // If newAppInsightsName is already set (from webview), use it as-is
+
+      // Generate or use provided app insights name
+      if (wizardContext.createAppInsights !== false) {
+        if (!wizardContext.newAppInsightsName) {
+          const baseName: string | undefined = wizardContext.newSiteName;
+          const newName = await generateRelatedName(wizardContext, baseName);
+          if (!newName) {
+            throw new Error(
+              localize(
+                'noUniqueName',
+                'Failed to generate unique name for app insights. Use advanced creation to manually enter resource names.'
+              )
+            );
+          }
+          wizardContext.newAppInsightsName = newName;
+        }
+        // If newAppInsightsName is already set (from webview), use it as-is
+      }
     }
 
     if (ext.deploymentFolderPath) {

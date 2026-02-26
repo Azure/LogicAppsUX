@@ -109,8 +109,12 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
-    const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
-    const csFileContent = templateContent.replace(/<%= methodName %>/g, methodName).replace(/<%= namespace %>/g, namespace);
+    // Sanitize names for C# identifiers: replace hyphens with underscores
+    const safeMethodName = methodName.replace(/-/g, '_');
+    const safeNamespace = namespace.replace(/-/g, '_');
+
+    const csFilePath = path.join(functionFolderPath, `${safeMethodName}.cs`);
+    const csFileContent = templateContent.replace(/<%= methodName %>/g, safeMethodName).replace(/<%= namespace %>/g, safeNamespace);
     await fs.writeFile(csFilePath, csFileContent);
   }
 

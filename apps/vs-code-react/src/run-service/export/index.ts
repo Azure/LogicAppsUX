@@ -436,6 +436,36 @@ export class ApiService implements IApiService {
   }
 
   /**
+   * Get all connected environments (managed environments) for hybrid Logic Apps
+   */
+  async getConnectedEnvironments(
+    selectedSubscription: string,
+    location?: string
+  ): Promise<Array<{ id: string; name: string; location: string }>> {
+    const headers = this.getAccessTokenHeaders();
+    const locationFilter = location ? `| where location =~ '${location}'` : '';
+    const payload = {
+      query: `resources | where type =~ 'Microsoft.App/managedEnvironments' ${locationFilter} | project id, name, location | sort by (tolower(tostring(name))) asc`,
+      subscriptions: [selectedSubscription],
+    };
+
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
+
+    if (!response.ok) {
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
+    }
+
+    const responseBody = await response.json();
+    return responseBody.data.map((env: any) => ({
+      id: env.id,
+      name: env.name,
+      location: env.location,
+    }));
+  }
+
+  /**
    * Check if a storage account name is available (globally unique across Azure)
    */
   async checkStorageAccountNameAvailability(

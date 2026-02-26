@@ -214,9 +214,9 @@ export async function getAzureConnectorDetailsForLocalProject(
     resourceGroupName = connectorsContext.resourceGroup?.name || '';
     location = connectorsContext.resourceGroup?.location || '';
     workflowManagementBaseUrl = connectorsContext.environment?.resourceManagerEndpointUrl;
-  } else {
+  } else if (enabled) {
     const authData = await getAuthData(tenantId);
-    accessToken = enabled ? `Bearer ${authData?.accessToken}` : undefined;
+    accessToken = `Bearer ${authData?.accessToken}`;
     const [parsedClientId, parsedTenantId] = authData.account.id.split('.');
     tenantId = parsedTenantId;
     clientId = parsedClientId;

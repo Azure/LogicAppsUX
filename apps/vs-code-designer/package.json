@@ -28,6 +28,7 @@
     "@types/vscode": "1.103.0",
     "@types/vscode-webview": "1.57.1",
     "@vscode/extension-telemetry": "^0.9.8",
+    "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.1.1",
     "adm-zip": "^0.5.10",
@@ -47,7 +48,7 @@
     "semver": "^6.3.1",
     "tslib": "2.4.0",
     "uuid": "^10.0.0",
-    "vscode-extension-tester": "^8.17.0",
+    "vscode-extension-tester": "^8.21.0",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
     "yaml": "^2.7.0",
@@ -65,7 +66,10 @@
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3",
-    "vscode:designer:e2e:ui": "pnpm run build:ui && cd dist && extest setup-and-run ../out/test/**/*.js --coverage",
-    "vscode:designer:e2e:headless": "pnpm run build:ui && cd dist && extest setup-and-run ../out/test/**/*.js --coverage"
+    "test:e2e-cli": "vscode-test",
+    "test:e2e-cli:compile": "tsc -p ./tsconfig.e2e.json",
+    "pretest:e2e-cli": "pnpm run test:e2e-cli:compile",
+    "vscode:designer:e2e:ui": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node src/test/ui/run-e2e.js",
+    "vscode:designer:e2e:headless": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node src/test/ui/run-e2e.js"
   }
 }

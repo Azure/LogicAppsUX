@@ -385,14 +385,20 @@ export const workspaceMessages = defineMessages({
     id: 'ZY5ygq',
     description: 'Function namespace empty text',
   },
+  FUNCTION_NAMESPACE_VALIDATION: {
+    defaultMessage:
+      'Function namespace must be a valid C# namespace (use letters, digits, "_", and optional "." separators; each segment must start with a letter or "_").',
+    id: 'TSPZJZ',
+    description: 'Function namespace validation message text',
+  },
   FUNCTION_NAME_EMPTY: {
     defaultMessage: 'Function name cannot be empty.',
     id: 'MbFszg',
     description: 'Function name empty text',
   },
   FUNCTION_NAME_VALIDATION: {
-    defaultMessage: 'Function name must start with a letter and can only contain letters, digits, "_" and "-".',
-    id: 'DdAlJ9',
+    defaultMessage: 'Function name must start with a letter and can only contain letters, digits, and underscores ("_").',
+    id: 'Gc9xqQ',
     description: 'Function name validation message text',
   },
   FUNCTION_FOLDER_NAME_EMPTY: {
@@ -1265,6 +1271,92 @@ export const deployMessages = defineMessages({
     defaultMessage: 'Loading locations...',
     id: 'reaWnc',
     description: 'Loading locations message',
+  },
+  HOSTING_PLAN_TYPE: {
+    defaultMessage: 'Hosting Plan Type',
+    id: 'QnEwOG',
+    description: 'Hosting plan type section title',
+  },
+  HOSTING_PLAN_TYPE_PLACEHOLDER: {
+    defaultMessage: 'Select hosting plan type',
+    id: '/tmJ8s',
+    description: 'Hosting plan type dropdown placeholder',
+  },
+  WORKFLOW_STANDARD: {
+    defaultMessage: 'Workflow Standard',
+    id: 'P9sdn1',
+    description: 'Workflow Standard hosting plan type option',
+  },
+  HYBRID: {
+    defaultMessage: 'Hybrid',
+    id: '8pd0he',
+    description: 'Hybrid hosting plan type option',
+  },
+  HYBRID_NOT_SUPPORTED_WARNING: {
+    defaultMessage:
+      'Note: Hybrid Logic App creation through this deployment wizard is not yet fully supported. Please use the command palette (Create New Logic App Advanced) for hybrid deployments.',
+    id: 'Lmf6k3',
+    description: 'Warning message when hybrid hosting plan type is selected',
+  },
+  CONNECTED_ENVIRONMENT: {
+    defaultMessage: 'Connected Environment',
+    id: 'nptWvD',
+    description: 'Connected environment section title',
+  },
+  CONNECTED_ENVIRONMENT_PLACEHOLDER: {
+    defaultMessage: 'Select a connected environment',
+    id: 'P1QE9G',
+    description: 'Connected environment dropdown placeholder',
+  },
+  LOADING_CONNECTED_ENVIRONMENTS: {
+    defaultMessage: 'Loading connected environments...',
+    id: 'z9LZcc',
+    description: 'Loading connected environments message',
+  },
+  CONTAINER_APP_NAME: {
+    defaultMessage: 'Container App Name',
+    id: 'ZnueEq',
+    description: 'Container app name field label',
+  },
+  CONTAINER_APP_NAME_PLACEHOLDER: {
+    defaultMessage: 'Enter container app name',
+    id: 'MIZ4NZ',
+    description: 'Container app name field placeholder',
+  },
+  FILE_SHARE_DETAILS: {
+    defaultMessage: 'File Share Details',
+    id: 'QDcm2c',
+    description: 'File share details section title',
+  },
+  FILE_SHARE_HOSTNAME: {
+    defaultMessage: 'File Share Hostname',
+    id: 'U45cJn',
+    description: 'File share hostname field label',
+  },
+  FILE_SHARE_PATH: {
+    defaultMessage: 'File Share Path',
+    id: 'W53/cI',
+    description: 'File share path field label',
+  },
+  FILE_SHARE_USERNAME: {
+    defaultMessage: 'File Share Username',
+    id: 'D2TBZK',
+    description: 'File share username field label',
+  },
+  FILE_SHARE_PASSWORD: {
+    defaultMessage: 'File Share Password',
+    id: 'Yw4Lid',
+    description: 'File share password field label',
+  },
+  SQL_CONNECTION_STRING: {
+    defaultMessage: 'SQL Connection String',
+    id: '45RhTR',
+    description: 'SQL connection string field label',
+  },
+  SQL_CONNECTION_STRING_PLACEHOLDER: {
+    defaultMessage: 'Enter SQL connection string',
+    id: 'UtEyDe',
+    description: 'SQL connection string field placeholder',
   },
   APP_SERVICE_PLAN: {
     defaultMessage: 'App Service Plan',

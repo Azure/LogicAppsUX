@@ -2,12 +2,14 @@
 
 This directory contains UI tests for the Logic Apps VS Code Extension using [vscode-extension-tester (ExTester)](https://github.com/redhat-developer/vscode-extension-tester).
 
+> **Current Status (2026-02-26)**: Phase 4.1 (workspace creation): **63 passing, 1 failing** (known product bug). Phase 4.3 smoke/demo suite: **14 passing**. Phase 4.2 varies with workspace freshness; strict `designerActions` validations are currently **11 passing** in actions-only runs. See [SKILL.md](SKILL.md) for details.
+
 ## Overview
 
 ExTester allows you to write automated UI tests for VS Code extensions using Selenium WebDriver. It provides:
 
 - **Page Object APIs** for VS Code UI elements
-- **Selenium WebDriver** integration for complex interactions  
+- **Selenium WebDriver** integration for complex interactions
 - **Headless and UI modes** for different testing scenarios
 - **Automatic VS Code and ChromeDriver management**
 
@@ -15,52 +17,78 @@ ExTester allows you to write automated UI tests for VS Code extensions using Sel
 
 ### Prerequisites ✅
 
-Make sure you're in the correct directory:
+- **Node.js** v18+ and **pnpm** v9+
+- **Windows** (recommended — primary development/test OS)
+- Extension built via `pnpm run build:extension` from repo root
+
 ```bash
-cd /Users/carloscastrotrejo/Documents/static/LogicAppsUX/apps/vs-code-designer
+cd apps/vs-code-designer
 ```
 
 ### 1. Install Dependencies
 
-Dependencies are already configured in `package.json`. Run:
+Dependencies are already configured in `package.json`. Run from repo root:
 
 ```bash
 pnpm install
 ```
 
-### 2. Setup Test Environment
+### 2. Build Test Files
 
-Before running tests for the first time, set up the test environment:
+Tests are compiled from TypeScript to CommonJS using **tsup**:
 
 ```bash
-# This downloads VS Code and ChromeDriver binaries
-pnpm run test:ui:setup
+# Build test TypeScript → CJS (required before running)
+npx tsup --config tsup.e2e.test.config.ts
+
+# Or use the npm script:
+pnpm run build:ui
+```
+
+### 3. Build the Extension
+
+Tests require the built extension in `dist/`:
+
+```bash
+cd ../../  # repo root
+pnpm run build:extension
+cd apps/vs-code-designer
 ```
 
 ## Running Tests
 
-### UI Mode (with visible VS Code window)
-
-Perfect for development and debugging:
+### Full Test Suite (Phase 4.1 + Phase 4.2)
 
 ```bash
-# Build and run tests with VS Code UI visible
-pnpm run test:ui
+# Build and run all phases
+node src/test/ui/run-e2e.js
 
-# Or run tests without building (if already built)
-pnpm run test:ui:run
+# Or use npm script:
+pnpm run test:ui
 ```
 
-### Headless Mode (no UI)
+### Phase 4.2 Only (Designer Tests)
 
-Ideal for CI/CD pipelines:
+Requires workspaces from a previous Phase 4.1 run:
+
+```powershell
+# PowerShell
+$env:E2E_MODE="designeronly"
+node src/test/ui/run-e2e.js
+```
 
 ```bash
-# Build and run tests in headless mode
-pnpm run test:ui:headless
+# bash/zsh
+export E2E_MODE=designeronly
+node src/test/ui/run-e2e.js
+```
 
-# Or run tests without building (if already built) 
-pnpm run test:ui:run:headless
+### PowerShell Helper (Recommended on Windows)
+
+Kills stuck processes, compiles, and runs:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File src/test/ui/run-clean.ps1
 ```
 
 ### Step-by-Step Execution
@@ -123,108 +151,117 @@ npx mocha out/test/standalone.test.js --timeout 10000
 ### Test Files Location
 ```
 src/test/ui/
-├── demo.test.ts          # Basic VS Code functionality tests
-├── smoke.test.ts         # Extension smoke tests  
-├── commands.test.ts      # Logic Apps command tests
-├── basic.test.ts         # Extended UI interaction tests
-└── standalone.test.ts    # Framework validation tests
+├── createWorkspace.test.ts   # Phase 4.1: Workspace creation wizard (63 tests)
+├── designerOpen.test.ts      # Phase 4.2: Open designer for each workspace type
+├── designerActions.test.ts   # Phase 4.2: Add trigger/action flows in designer
+├── workspaceManifest.ts      # Shared manifest types & utilities
+├── run-e2e.js                # Test orchestrator (extension copy, deps, execution)
+├── run-clean.ps1             # Windows process cleanup helper
+├── smoke.test.ts             # Extension smoke tests
+├── commands.test.ts          # Logic Apps command tests
+├── basic.test.ts             # Extended UI interaction tests
+├── demo.test.ts              # Basic VS Code functionality tests
+├── standalone.test.ts        # Framework validation tests (no VS Code)
+├── SKILL.md                  # Detailed knowledge base & lessons learned
+└── README.md                 # This file
 ```
 
 ### Built Test Files
 ```
 out/test/
-├── demo.test.js         # Compiled test files
-├── smoke.test.js        
-├── commands.test.js     
-├── basic.test.js        
-└── standalone.test.js   
+├── createWorkspace.test.js   # Compiled via tsup (CJS format)
+├── designerOpen.test.js
+├── designerActions.test.js
+├── workspaceManifest.js
+├── smoke.test.js
+├── commands.test.js
+├── basic.test.js
+├── demo.test.js
+└── standalone.test.js
 ```
 
-### Test Categories
+### Test Phases
 
-1. **Smoke Tests** (`smoke.test.ts`)
-   - VS Code loads successfully
-   - Activity bar is functional
-   - Command palette works
-   - Basic navigation
+Tests are organized into three phases:
 
-2. **Command Tests** (`commands.test.ts`)
-   - Logic Apps specific commands
-   - Azure command availability
-   - Command palette search functionality
+#### Phase 4.1 — Workspace Creation (`createWorkspace.test.ts`)
+- Creates 12 workspace types: Standard × {Stateful, Stateless, Agent, Conversational} × {Codeless, CustomCode}
+- Tests the full Create Workspace wizard: form fields, validation, navigation, disk verification
+- Writes a workspace manifest (`created-workspaces.json`) consumed by Phase 4.2
+- **63 passing, 1 failing** (namespace validation product bug)
 
-3. **Basic Tests** (`basic.test.ts`)
-   - Extension-specific UI elements
-   - Azure views and panels
-   - File explorer interaction
+#### Phase 4.2 — Designer Tests (`designerOpen.test.ts` + `designerActions.test.ts`)
+- Opens the workflow designer for each workspace type
+- Tests adding triggers and actions via the designer UI
+- Requires workspaces from Phase 4.1 (reads `created-workspaces.json`)
+- Strict add-flow validation now requires successful selection and visible insertion of core nodes (for example, Request trigger and Compose action)
 
-4. **Demo Tests** (`demo.test.ts`)
-   - Basic VS Code functionality tests
-   - Framework validation
+#### Phase 4.3 — Smoke/Demo/Standalone (`demo.test.ts` + `smoke.test.ts` + `standalone.test.ts`)
+- Runs generic extension smoke and framework checks
+- Useful for fast baseline confidence and environment sanity
+- Does **not** validate trigger/action insertion flows in the discovery panel
 
-5. **Standalone Tests** (`standalone.test.ts`)
-   - Framework validation tests (no VS Code required)
+### Supporting Files
 
-### 🔍 What Each Test File Does
-
-| Test File | Description | Complexity |
-|-----------|-------------|------------|
-| `standalone.test.ts` | Basic framework validation (no VS Code) | ⭐ Simple |
-| `demo.test.ts` | Basic VS Code functionality tests | ⭐⭐ Medium |
-| `smoke.test.ts` | Extension loading and basic checks | ⭐⭐ Medium |
-| `commands.test.ts` | Logic Apps specific command tests | ⭐⭐⭐ Advanced |
-| `basic.test.ts` | Extended UI interaction tests | ⭐⭐⭐ Advanced |
+| File | Purpose |
+|------|---------|
+| `run-e2e.js` | Orchestrates: extension copy → dependency install → process cleanup → test execution |
+| `workspaceManifest.ts` | TypeScript types for `created-workspaces.json`; shared between Phase 4.1 and 4.2 |
+| `run-clean.ps1` | PowerShell script: kills stuck language servers, rebuilds, runs tests |
 
 ### File Structure After Execution
 
 ```
 apps/vs-code-designer/
-├── src/test/ui/           # Source test files (TypeScript)
-├── out/test/              # Compiled test files (JavaScript)
-├── test-resources/        # ExTester downloads (VS Code, ChromeDriver)
-├── .extester.json         # ExTester configuration
-├── demo-extester.sh       # Demo script
-└── README-ExTester.md     # This documentation
+├── src/test/ui/              # Source test files (TypeScript)
+├── out/test/                 # Compiled test files (CJS via tsup)
+├── dist/test-extensions/     # Extension + dependencies installed by run-e2e.js
+├── test-resources/           # ExTester downloads (VS Code, ChromeDriver)
+├── tsup.e2e.test.config.ts   # tsup build config for tests
+├── created-workspaces.json   # Workspace manifest (generated by Phase 4.1)
+└── SKILL.md                  # Deep technical reference
 ```
 
 ## 📋 Command Reference & Available Scripts
 
-| Command | Description | Mode | When to Use |
-|---------|-------------|------|-------------|
-| `pnpm run build:ui` | Compile TypeScript test files | - | Before running any tests |
-| `npx mocha out/test/standalone.test.js` | Framework validation | - | Test setup works |
-| `pnpm run test:ui:setup` | Download VS Code & ChromeDriver | - | One-time setup |
-| `pnpm run test:ui` | Run tests with visible UI | Visual | Development/debugging |
-| `pnpm run test:ui:headless` | Run tests without UI | Headless | CI/CD pipelines |
-| `pnpm run test:ui:run` | Run pre-built tests (UI) | Visual | After build |
-| `pnpm run test:ui:run:headless` | Run pre-built tests (headless) | Headless | After build |
-| `./demo-extester.sh` | Runs complete demo | - | Quick validation |
+| Command | Description | When to Use |
+|---------|-------------|-------------|
+| `pnpm run build:ui` | Compile tests via tsup (TS → CJS) | Before running tests |
+| `pnpm run test:ui` | Run `node src/test/ui/run-e2e.js` | Full test suite (Phase 4.1 + 4.2) |
+| `npx tsup --config tsup.e2e.test.config.ts` | Direct tsup build | Manual build |
+| `node src/test/ui/run-e2e.js` | Direct test execution | All phases |
+| `E2E_MODE=designeronly node src/test/ui/run-e2e.js` | Phase 4.2 only | Designer iteration |
+| `powershell -File src/test/ui/run-clean.ps1` | Clean + rebuild + run | Windows recovery |
+| `npx mocha out/test/standalone.test.js --timeout 10000` | Framework validation | Quick sanity check |
 
-### 🎯 Recommended Execution Order
+### Recommended Execution Order
 
-**For First Time Setup:**
+**First Time Setup:**
 ```bash
-# 1. Validate framework works
-pnpm run build:ui
-npx mocha out/test/standalone.test.js --timeout 10000
+# 1. Build the extension (from repo root)
+pnpm run build:extension
 
-# 2. Run demo script
-./demo-extester.sh
+# 2. Build the tests (from apps/vs-code-designer/)
+cd apps/vs-code-designer
+npx tsup --config tsup.e2e.test.config.ts
 
-# 3. Setup VS Code environment (optional)
-pnpm run test:ui:setup
-
-# 4. Try UI tests (optional)
-pnpm run test:ui
+# 3. Run all tests (Phase 4.1 + Phase 4.2)
+node src/test/ui/run-e2e.js
 ```
 
-**For Daily Development:**
-```bash
-# Quick test after making changes
-pnpm run build:ui && npx mocha out/test/standalone.test.js
+**Iterating on Designer Tests:**
+```powershell
+# Rebuild tests after changes
+npx tsup --config tsup.e2e.test.config.ts
 
-# Full test suite
-pnpm run test:ui:headless
+# Run only Phase 4.2 (uses existing workspaces)
+$env:E2E_MODE="designeronly"
+node src/test/ui/run-e2e.js
+```
+
+**Quick Framework Validation (No VS Code):**
+```bash
+npx mocha out/test/standalone.test.js --timeout 10000
 ```
 
 ## 📋 Test Examples
@@ -438,29 +475,48 @@ ExTester provides many pre-built page objects for VS Code elements:
 
 1. **Tests don't build:**
    ```bash
-   # Check TypeScript errors
-   npx tsc --noEmit
-   
-   # Clean and rebuild
-   rm -rf out/test/
-   pnpm run build:ui
+   # Clean and rebuild with tsup
+   Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
+   npx tsup --config tsup.e2e.test.config.ts
    ```
 
-2. **VS Code setup fails:**
-   ```bash
-   # Clean test resources
-   rm -rf test-resources/
-   
-   # Try setup again
-   pnpm run test:ui:setup
+2. **Extension not loading (`.obsolete` file):**
+   VS Code writes `.obsolete` to mark extensions for removal. `run-e2e.js` handles this automatically, but if running manually:
+   ```powershell
+   Remove-Item "dist/test-extensions/.obsolete" -ErrorAction SilentlyContinue
    ```
 
-3. **Extension packaging errors:**
-   - The full VS Code tests require the extension to be built
-   - Standalone tests work without the extension
-   - Use standalone tests for framework validation
+3. **Duplicate extension versions (auto-update):**
+   VS Code downloads a newer version from the marketplace, causing duplicate commands. Check `out/test/vscode-settings.json` has `"extensions.autoUpdate": false`.
 
-4. **Tests timeout:**
+4. **EBUSY / locked files on Windows:**
+   Language servers from previous test runs hold file locks:
+   ```powershell
+   # Kill stuck processes
+   Get-Process -Name "Microsoft.CodeAnalysis.LanguageServer" -ErrorAction SilentlyContinue | Stop-Process -Force
+   Get-Process -Name "Azure.Deployments.Express.LanguageServer" -ErrorAction SilentlyContinue | Stop-Process -Force
+   Get-Process | Where-Object { $_.Path -like "*test-resources*" } | Stop-Process -Force
+   Start-Sleep -Seconds 5
+   ```
+   Or use the helper: `powershell -ExecutionPolicy Bypass -File src/test/ui/run-clean.ps1`
+
+5. **Command palette not opening:**
+   The `workbench.openCommandPrompt()` API is unreliable after workspace switching. See SKILL.md Section 5 "Command palette fails to open" and Section 11 P0 items for potential solutions.
+
+6. **Wrong webview opened ("Create Workspace From Package"):**
+   Two commands match "create workspace". The test code filters picks to exclude labels containing "package". If you see a "Package path" field, you're in the wrong webview.
+
+7. **Designer never loads (Azure connector prompts):**
+   When `WORKFLOWS_SUBSCRIPTION_ID` is undefined in `local.settings.json`, the extension shows blocking QuickPick prompts. Fix: ensure `local.settings.json` contains `"WORKFLOWS_SUBSCRIPTION_ID": ""`.
+
+8. **Command palette `setText()` clears the `>` prefix:**
+   Always prefix search text with `> ` when typing in the command palette:
+   ```typescript
+   await input.setText('> logic app workspace');  // ✅ stays in command mode
+   await input.setText('logic app workspace');    // ❌ switches to file search
+   ```
+
+9. **Tests timeout:**
    Increase timeout in test:
    ```typescript
    it('slow test', async function () {
@@ -469,94 +525,52 @@ ExTester provides many pre-built page objects for VS Code elements:
    });
    ```
 
-5. **Element not found:**
-   Add waits before interacting with elements:
-   ```typescript
-   await VSBrowser.instance.driver.sleep(2000);
-   const element = await workbench.getElement();
-   ```
+10. **Phase 4.2 fails with "Missing workspace directories":**
+    `E2E_MODE=designeronly` requires workspaces from a previous Phase 4.1 run. Run the full suite first (`node src/test/ui/run-e2e.js` without `E2E_MODE`).
 
-6. **Extension not loaded:**
-   Ensure extension is built and available:
-   ```bash
-   pnpm run build:extension
-   ```
+### Full Clean Restart
 
-7. **Node.js version warning:**
-   - ExTester officially supports Node.js 20.x.x
-   - Tests should still work with newer versions
-   - Warning can be ignored for development
+```powershell
+# Remove all test artifacts
+Remove-Item -Recurse -Force dist/test-extensions -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force "$env:TEMP\test-resources" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
+Remove-Item -Force created-workspaces.json -ErrorAction SilentlyContinue
 
-8. **"Warning: You are using the untested NodeJS version"**
-   - ExTester officially supports Node.js 20.x.x
-   - Tests should still work with newer versions
+# Kill any stuck processes
+Get-Process | Where-Object { $_.Path -like "*test-resources*" } | Stop-Process -Force
 
-9. **"Extension entrypoint(s) missing"**
-   - ExTester is trying to package the extension
-   - For basic tests, set `"extensions": []` in .extester.json
-
-10. **ChromeDriver issues:**
-    - Delete `test-resources/` folder and run setup again
-    - Make sure VS Code and ChromeDriver versions are compatible
-
-### Integration with CI/CD
-
-For automated testing in GitHub Actions or similar:
-
-```yaml
-- name: Run UI Tests
-  run: |
-    pnpm run build:extension
-    pnpm run test:ui:headless
+# Full rebuild and run
+pnpm run build:extension  # from repo root
+npx tsup --config tsup.e2e.test.config.ts
+node src/test/ui/run-e2e.js
 ```
 
-The headless mode is perfect for CI environments as it doesn't require a display.
+## 📝 Lessons Learned (2026-02-24)
 
-### Test Resources
+### Key Gotchas for ExTester UI Testing
 
-ExTester stores downloaded binaries in:
-- `test-resources/` - VS Code and ChromeDriver binaries
-- `.vscode-test/` - VS Code test instances
+1. **Workspace creation tests are reliable; designer interaction is not.** Phase 4.1 achieves 98.4% pass rate. Phase 4.2 sits at 20%. The bottleneck is ExTester's command palette API after workspace switching. If you're writing new tests, invest in making the command execution path more robust before adding more test coverage.
 
-These directories are excluded from git and can be deleted to force re-download.
+2. **ExTester's `openCommandPrompt()` is the weakest link.** It uses `By.css('.quick-input-widget')` with a fixed ~5s timeout that can't be configured. After VS Code loads a new workspace and activates extensions, the command palette may simply not respond to keyboard shortcuts for 10-60 seconds.
 
-### 🎉 Success Indicators
+3. **Azure connector wizard prompts block the designer.** When `WORKFLOWS_SUBSCRIPTION_ID` is undefined, the extension launches a blocking wizard before the designer can open. The fix is non-obvious: set `WORKFLOWS_SUBSCRIPTION_ID: ""` (empty string, not absent) in `local.settings.json`.
 
-**✅ Framework Working:**
-- Standalone tests pass (4 passing tests)
-- Build completes without errors
-- Demo script runs successfully
+4. **Process cleanup is critical on Windows.** Roslyn Language Server, Azure Deployment Express Language Server, and other child processes persist after test VS Code instances close. They hold file locks that cause `EBUSY` errors on subsequent runs. The `run-e2e.js` script has multi-layered cleanup, but you may need manual intervention if tests crash.
 
-**✅ Full Setup Working:**
-- VS Code launches in test mode
-- UI tests interact with VS Code elements
-- Tests complete with results
+5. **`tsc` was replaced with `tsup`.** ExTester uses Mocha, which requires CommonJS format. `tsc` produced inconsistent module formats depending on TypeScript config. `tsup` (via `tsup.e2e.test.config.ts`) reliably produces CJS output.
 
-**✅ Ready for Production:**
-- Headless tests run in CI/CD
-- All test files pass
-- No timeout or WebDriver errors
+6. **Webview iframe switching is fragile.** You must call `switchToFrame()` before interacting with webview elements and `switchBack()` before interacting with VS Code chrome. Getting the direction wrong produces confusing "element not found" errors with no indication that you're in the wrong context.
 
-## 🚀 Next Steps After Setup
+7. **Hyphens in generated code are a real bug class.** Test utilities like `uniqueName()` originally generated names like `myfunc-abc123`, which produce invalid C# identifiers. Always use underscores for identifiers that will appear in generated code.
 
-1. **Write Your Own Tests:**
-   - Copy `standalone.test.ts` as a template
-   - Add your Logic Apps specific test cases
-   - Use ExTester Page Objects for VS Code interaction
+8. **Two test systems coexist — know which to use.**
+   - `src/test/ui/` (ExTester + Selenium) → Real GUI webview interaction, form filling, visual verification
+   - `src/test/e2e/` (@vscode/test-cli) → Extension host API testing, file operations, programmatic commands
+   
+   Neither replaces the other. Use ExTester for things you'd do manually in VS Code. Use @vscode/test-cli for programmatic extension behavior.
 
-2. **Integrate with CI/CD:**
-   - Use `pnpm run test:ui:headless` in pipelines
-   - Add test results reporting
-   - Set up screenshot capture on failures
-
-3. **Expand Test Coverage:**
-   - Test extension commands
-   - Test UI workflows
-   - Test error scenarios
-
----
-
-**Start here:** Run `./demo-extester.sh` to see everything in action! 🎯
+### For detailed technical reference, see [SKILL.md](SKILL.md) — it contains the full debugging guide, known issues, architecture details, and test inventory.
 
 ## 📚 Resources
 
@@ -570,28 +584,13 @@ These directories are excluded from git and can be deleted to force re-download.
 
 ## 🎯 Best Practices
 
-1. **Use Page Objects**: Leverage ExTester's built-in page objects
-2. **Wait for Elements**: Always wait for UI elements to load
-3. **Clean Tests**: Each test should be independent
-4. **Descriptive Names**: Use clear test and describe block names
-5. **Proper Timeouts**: Set appropriate timeouts for different test types
-6. **Error Handling**: Add try-catch blocks for flaky UI interactions
-7. **Screenshots**: Take screenshots on failures for debugging
-
-Example with error handling:
-```typescript
-it('should handle errors gracefully', async () => {
-  try {
-    // Potentially flaky operation
-    await workbench.executeCommand('some.command');
-    await driver.sleep(1000);
-  } catch (error) {
-    console.error('Test failed:', error.message);
-    // Take screenshot for debugging
-    await driver.takeScreenshot();
-    throw error;
-  }
-});
-```
+1. **Use `VSBrowser.instance.openResources(path)`** to open files — don't build custom Quick Open logic
+2. **Always prefix command palette input with `> `** — `setText('> my command')` to stay in command mode
+3. **Call `switchToFrame()` / `switchBack()`** correctly — webview elements are invisible from VS Code chrome context and vice versa
+4. **Set `WORKFLOWS_SUBSCRIPTION_ID: ""`** in `local.settings.json` before opening designer — prevents blocking Azure connector prompts
+5. **Use underscores (not hyphens)** in generated identifiers — hyphens are invalid in C# names
+6. **Kill language servers** before subsequent runs on Windows — they hold file locks
+7. **Use `run-e2e.js`** as the entry point — it handles extension copying, dependency installation, `.obsolete` cleanup, and process management
+8. **Separate creation from consumption** — Phase 4.1 creates workspaces and writes a manifest; Phase 4.2 reads the manifest. This allows fast iteration on designer tests.
 
 Happy testing! 🎉
