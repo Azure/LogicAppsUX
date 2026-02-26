@@ -780,6 +780,9 @@ importers:
       '@fluentui/react-icons':
         specifier: ^2.0.306
         version: 2.0.315(react@18.3.1)
+      dompurify:
+        specifier: 3.2.4
+        version: 3.2.4
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -817,6 +820,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.0.0)
+      '@types/dompurify':
+        specifier: 3.0.5
+        version: 3.0.5
       '@types/events':
         specifier: ^3.0.3
         version: 3.0.3

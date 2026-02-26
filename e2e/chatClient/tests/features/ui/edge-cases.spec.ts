@@ -73,7 +73,7 @@ test.describe('Rapid Interactions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Button should be disabled immediately after click
-    await expect(sendButton).toBeDisabled({ timeout: 5000 });
+    await expect(sendButton).toBeDisabled({ timeout: 2000 });
 
     // Message should appear
     await expect(page.getByText('Test message').first()).toBeVisible({ timeout: 5000 });
@@ -88,7 +88,7 @@ test.describe('Rapid Interactions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Input should be disabled while processing
-    await expect(messageInput).toBeDisabled({ timeout: 5000 });
+    await expect(messageInput).toBeDisabled({ timeout: 2000 });
 
     // App should remain stable
     const pageContent = await page.locator('body').textContent();
@@ -428,7 +428,7 @@ test.describe('Race Conditions', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Input should be disabled
-    await expect(messageInput).toBeDisabled({ timeout: 5000 });
+    await expect(messageInput).toBeDisabled({ timeout: 2000 });
 
     // Trying to type should not crash (input is disabled)
     // App should remain stable

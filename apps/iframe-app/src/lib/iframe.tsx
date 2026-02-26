@@ -19,6 +19,7 @@ import { createRoot } from 'react-dom/client';
 import { IframeWrapper } from '../components/IframeWrapper';
 import { ErrorDisplay } from '../components/ErrorDisplay';
 import { parseIframeConfig, type IframeConfig } from './utils/config-parser';
+import '@microsoft/logicAppsChat/styles.css';
 import '../styles/base.css';
 
 // Main application component that uses the configuration
