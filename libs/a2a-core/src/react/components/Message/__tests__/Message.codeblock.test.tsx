@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
 import { Message } from '../Message';
 import type { Message as MessageType } from '../../../types';

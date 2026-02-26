@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Message } from '../Message';
 import type { Message as MessageType } from '../../../types';
+import { describe, it, expect } from 'vitest';
 
 describe('Message - link attribute escaping', () => {
   const createAssistantMessage = (content: string): MessageType => ({
