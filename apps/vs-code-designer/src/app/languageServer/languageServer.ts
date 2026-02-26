@@ -19,6 +19,7 @@ import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
 import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
 import * as vscode from 'vscode';
+import { filterCompletionResult } from './completionFilter';
 
 export default class LogicAppsSeverLanguage {
   protected lspServerPath: string;
@@ -143,6 +144,10 @@ export default class LogicAppsSeverLanguage {
       },
       middleware: {
         provideHover: hoverMiddleware.provideHover,
+        provideCompletionItem: async (document, position, context, token, next) => {
+          const result = await next(document, position, context, token);
+          return filterCompletionResult(result);
+        },
         sendRequest: generalMiddleware.sendRequest,
         sendNotification: generalMiddleware.sendNotification,
       },
