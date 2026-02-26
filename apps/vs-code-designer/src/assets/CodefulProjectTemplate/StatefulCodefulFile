@@ -5,6 +5,7 @@
 namespace <%= logicAppNamespace %>
 {
     using Microsoft.Azure.Workflows.Sdk;
+    using Microsoft.Azure.Workflows.Sdk.Connectors;
     using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
 
     /// <summary>
@@ -13,28 +14,21 @@ namespace <%= logicAppNamespace %>
     public static class <%= flowNameClass %>
     {
         /// <summary>
-        /// Configures and builds the <%= flowName %> stateful workflow.
+        /// Adds the HTTP request/response workflow.
         /// </summary>
         public static void AddWorkflow()
         {
-            var trigger = WorkflowTriggers.Managed.Msnweather("msnweather").OnCurrentWeatherChange(
-                location: () => "Seattle, WA",
-                measure: () => measureInput.Temperature,
-                when: () => whenInput.IsEqualTo,
-                target: () => 70,
-                units: () => "I"
-            );
-
-            trigger.WithName("weather_trigger");
-            trigger.WithRecurrence(new FlowRecurrence
-            {
-                Frequency = FlowRecurrenceFrequency.Minute,
-                Interval = 1
-            });
-            var builder = WorkflowBuilderFactory.CreateStatefulWorkflow(<%= flowName %>, trigger);
-
-            var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {trigger.TriggerOutput}");
+            var builder = WorkflowBuilderFactory.CreateStatefulWorkflow(<%= flowName %>, WorkflowTriggers.BuiltIn.CreateHttpTrigger());
+            var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput.Body}");
             builder.AddAction(compose);
+
+            var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+                location: () => $"{builder.TriggerOutput.Body}",
+                units: () => CurrentWeatherunitsInput.Imperial);
+            builder.AddAction(getCurrentWeatherAction);
+
+            var response = WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}");
+            builder.AddAction(response);
         }
     }
 }
