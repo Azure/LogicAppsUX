@@ -33,7 +33,7 @@ test.describe('Long Message Handling', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // User message should appear (check for beginning and end)
-    await expect(page.getByText('This is a very long message.', { exact: false })).toBeVisible({
+    await expect(page.getByText('This is a very long message.', { exact: false }).first()).toBeVisible({
       timeout: 5000,
     });
     await expect(page.getByText('End of long message.')).toBeVisible({ timeout: 5000 });
@@ -104,8 +104,8 @@ test.describe('Long Message Handling', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Check for first and last lines
-    await expect(page.getByText('Line 1: This is line number 1')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Line 20: This is line number 20')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Line 1: This is line number 1').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Line 20: This is line number 20').first()).toBeVisible({ timeout: 5000 });
   });
 });
 
