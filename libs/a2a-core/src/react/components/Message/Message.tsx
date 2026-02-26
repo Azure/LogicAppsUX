@@ -27,6 +27,7 @@ import Prism from 'prismjs';
 import { AuthenticationMessage } from './AuthenticationMessage';
 import { CodeBlockHeader } from './CodeBlockHeader';
 import { getUserFriendlyErrorMessage } from '../../utils/errorUtils';
+import { sanitizeHtml } from '../../../utils/sanitize';
 import 'prismjs/themes/prism.css';
 // Import all Prism language components
 import 'prismjs/components/prism-clike';
@@ -79,8 +80,9 @@ marked.use(
 marked.use({
   renderer: {
     link(href, title, text) {
+      const safeHref = href && /^\s*javascript:/i.test(href) ? '#' : href;
       const titleAttr = title ? ` title="${title}"` : '';
-      return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
+      return `<a href="${safeHref}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
     },
   },
 });
@@ -495,7 +497,7 @@ function MessageComponent({
                 <pre>
                   <code
                     className={`language-${language}`}
-                    dangerouslySetInnerHTML={{ __html: highlighted }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(highlighted) }}
                   />
                 </pre>
               </div>
@@ -529,7 +531,7 @@ function MessageComponent({
         // Add content before the code block
         if (match.index > lastIndex) {
           const textContent = message.content.slice(lastIndex, match.index);
-          const html = marked.parse(textContent, { gfm: true, breaks: true }) as string;
+          const html = sanitizeHtml(marked.parse(textContent, { gfm: true, breaks: true }) as string);
           elements.push(
             <div key={`text-${lastIndex}`} dangerouslySetInnerHTML={{ __html: html }} />
           );
@@ -555,7 +557,7 @@ function MessageComponent({
               <pre>
                 <code
                   className={language ? `language-${language}` : ''}
-                  dangerouslySetInnerHTML={{ __html: highlighted }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(highlighted) }}
                 />
               </pre>
             </div>
@@ -568,13 +570,13 @@ function MessageComponent({
       // Add any remaining content after the last code block
       if (lastIndex < message.content.length) {
         const remainingContent = message.content.slice(lastIndex);
-        const html = marked.parse(remainingContent, { gfm: true, breaks: true }) as string;
+        const html = sanitizeHtml(marked.parse(remainingContent, { gfm: true, breaks: true }) as string);
         elements.push(<div key={`text-${lastIndex}`} dangerouslySetInnerHTML={{ __html: html }} />);
       }
 
       // If no code blocks were found, just return the parsed markdown
       if (elements.length === 0) {
-        const html = marked.parse(message.content, { gfm: true, breaks: true }) as string;
+        const html = sanitizeHtml(marked.parse(message.content, { gfm: true, breaks: true }) as string);
         return <div dangerouslySetInnerHTML={{ __html: html }} />;
       }
 
@@ -720,7 +722,7 @@ function MessageComponent({
                                   <pre>
                                     <code
                                       className={`language-${language}`}
-                                      dangerouslySetInnerHTML={{ __html: highlighted }}
+                                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(highlighted) }}
                                     />
                                   </pre>
                                 </div>
