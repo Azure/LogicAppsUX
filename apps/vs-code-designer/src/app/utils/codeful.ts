@@ -11,7 +11,7 @@ import { localSettingsFileName } from '../../constants';
  * folder path and checks for the WORKFLOW_CODEFUL_ENABLED flag in the Values section.
  * Returns false if the file doesn't exist, cannot be read, or doesn't contain valid JSON.
  */
-export const hasCodefulWorkflowSetting = async (folderPath: string) => {
+export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boolean> => {
   const localSettingsFilePath = path.join(folderPath, localSettingsFileName);
   if (!(await fse.pathExists(localSettingsFilePath))) {
     return false;
@@ -20,7 +20,7 @@ export const hasCodefulWorkflowSetting = async (folderPath: string) => {
   try {
     const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
     const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED;
+    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED ? true : false;
   } catch {
     return false;
   }

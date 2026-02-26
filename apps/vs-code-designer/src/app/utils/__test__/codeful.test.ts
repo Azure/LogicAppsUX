@@ -83,7 +83,7 @@ describe('codeful.ts', () => {
       expect(result).toBe(false);
     });
 
-    it('should return undefined when WORKFLOW_CODEFUL_ENABLED is undefined', async () => {
+    it('should return false when WORKFLOW_CODEFUL_ENABLED is undefined', async () => {
       const localSettings = {
         IsEncrypted: false,
         Values: {},
@@ -94,7 +94,7 @@ describe('codeful.ts', () => {
 
       const result = await hasCodefulWorkflowSetting(testFolderPath);
 
-      expect(result).toBeUndefined();
+      expect(result).toBeFalsy();
     });
 
     it('should return false when JSON parsing fails', async () => {
