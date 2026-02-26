@@ -68,7 +68,6 @@ import {
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
-  isAgentWorkflow,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
@@ -87,7 +86,6 @@ const httpClient = new HttpClient();
 
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -373,7 +371,7 @@ const DesignerEditor = () => {
           ...connectionsData?.serviceProviderConnections,
           ...newServiceProviderConnections,
         };
-        if (isAgentWorkflow(workflow?.kind ?? '')) {
+        if (Object.keys(newAgentConnections).length > 0) {
           (connectionsData as ConnectionsData).agentConnections = {
             ...connectionsData?.agentConnections,
             ...newAgentConnections,
@@ -1076,6 +1074,7 @@ const getDesignerServices = (
     httpClient,
     identity: workflowApp?.identity,
   });
+  cognitiveServiceService.getFoundryAccessToken = async () => environment.foundryToken ?? environment.armToken ?? '';
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
@@ -1184,7 +1183,6 @@ const getConnectionsToUpdate = (
   if (hasNewServiceProviderKeys) {
     for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
       if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
         (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
           originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
       }
@@ -1194,7 +1192,6 @@ const getConnectionsToUpdate = (
   if (hasNewAgentKeys) {
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
       }
     }

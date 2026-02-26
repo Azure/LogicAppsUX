@@ -12,6 +12,8 @@ export interface BaseCognitiveServiceServiceOptions {
 }
 
 export class BaseCognitiveServiceService implements ICognitiveServiceService {
+  getFoundryAccessToken?: () => Promise<string>;
+
   constructor(public readonly options: BaseCognitiveServiceServiceOptions) {
     const { apiVersion, httpClient } = options;
     if (!apiVersion) {

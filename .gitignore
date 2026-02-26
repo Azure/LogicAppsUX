@@ -61,6 +61,7 @@ __azurite_db_queue_extent__.json
 
 # ARM Token
 **/armToken.json
+**/foundryToken.json
 **/subscriptionIds.json
 
 # Generated Docusaurus files

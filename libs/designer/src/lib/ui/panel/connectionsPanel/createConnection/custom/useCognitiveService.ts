@@ -1,5 +1,11 @@
-import type { Connection } from '@microsoft/logic-apps-shared';
-import { ApiManagementService, CognitiveServiceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
+import type { Connection, FoundryAgent } from '@microsoft/logic-apps-shared';
+import {
+  ApiManagementService,
+  CognitiveServiceService,
+  foundryServiceConnectionRegex,
+  buildProjectEndpointFromResourceId,
+  listAllFoundryAgents,
+} from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
@@ -18,6 +24,7 @@ export const queryKeys = {
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
   allAPIMServiceAccounts: 'allAPIMServiceAccounts',
   allAPIMServiceAccountApis: 'allAPIMServiceAccountApis',
+  allFoundryAgents: 'allFoundryAgents',
 };
 
 export const useAllAPIMServiceAccounts = (subscriptionId: string, enabled = true) => {
@@ -161,6 +168,50 @@ export const useAllBuiltInRoleDefinitions = () => {
     {
       ...queryOpts,
       retryOnMount: true,
+    }
+  );
+};
+
+/**
+ * Returns the Foundry project endpoint for a node's selected connection, or undefined
+ * if the connection is not a Foundry connection.
+ */
+export const useFoundryProjectEndpointForNode = (nodeId: string): string | undefined => {
+  const selectedConnection = useSelectedConnection(nodeId);
+  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
+  if (!isFoundry || !resourceId) {
+    return undefined;
+  }
+  return buildProjectEndpointFromResourceId(resourceId);
+};
+
+/**
+ * Fetches all v2 Foundry agents for the node's selected connection.
+ * Only runs when the connection is a Foundry connection and a token getter is available.
+ */
+export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+
+  return useQuery(
+    [queryKeys.allFoundryAgents, { projectEndpoint }],
+    async () => {
+      if (!projectEndpoint) {
+        return [];
+      }
+      const getToken = CognitiveServiceService().getFoundryAccessToken;
+      if (!getToken) {
+        return [];
+      }
+      const token = await getToken();
+      return listAllFoundryAgents(projectEndpoint, token);
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      enabled: !!projectEndpoint,
     }
   );
 };

@@ -46,6 +46,7 @@ export { FloatingActionMenuKind } from './floatingactionmenu/constants';
 export type { FloatingActionMenuOutputViewModel } from './floatingactionmenu/floatingactionmenuoutputs';
 export * from './flyout';
 export * from './flyout2';
+export * from './foundryagentpicker';
 export * from './html';
 export * from './identitydropdown';
 export * from './infoDot';

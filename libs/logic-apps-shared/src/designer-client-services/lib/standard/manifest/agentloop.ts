@@ -72,6 +72,53 @@ export default {
           type: 'string',
           default: 'AzureOpenAI',
         },
+        foundryAgentId: {
+          type: 'string',
+          title: 'Agent ID',
+          description: 'The ID of the Foundry agent to use.',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['FoundryAgentService'],
+              },
+            ],
+          },
+        },
+        foundryAgentName: {
+          type: 'string',
+          title: 'Agent name',
+          description: 'The display name of the selected Foundry agent.',
+          'x-ms-visibility': 'internal',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['FoundryAgentService'],
+              },
+            ],
+          },
+        },
+        foundryAgentVersion: {
+          type: 'string',
+          title: 'Agent version',
+          description: 'Foundry agent API version (v2).',
+          default: 'v2',
+          'x-ms-visibility': 'internal',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['FoundryAgentService'],
+              },
+            ],
+          },
+        },
         deploymentId: {
           type: 'string',
           title: 'AI model',
@@ -88,7 +135,7 @@ export default {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'FoundryAgentService', 'APIMGenAIGateway'],
+                values: ['AzureOpenAI', 'APIMGenAIGateway'],
               },
             ],
           },
@@ -469,7 +516,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'messages'],
+      required: ['agentModelType', 'messages', 'foundryAgentId'],
     },
     outputs: {
       type: 'object',

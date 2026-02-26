@@ -96,6 +96,7 @@ import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
+  useFoundryAgentsForNode,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import {
   categorizeConnections,
@@ -105,6 +106,7 @@ import {
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
+  isAgentConnectorAndFoundryAgentId,
 } from './helpers';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -368,6 +370,7 @@ export const ParameterSection = ({
     nodeId,
     operationInfo?.connectorId
   );
+  const { data: foundryAgentsForNode } = useFoundryAgentsForNode(nodeId);
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
       return {
@@ -546,6 +549,46 @@ export const ParameterSection = ({
         }
       }
 
+      // Auto-populate dependent fields when foundryAgentId changes
+      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
+      if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
+        const selectedAgentName = value?.length ? value[0]?.value : undefined;
+        const selectedAgent = selectedAgentName ? foundryAgentsForNode.find((a: any) => (a.name ?? a.id) === selectedAgentName) : undefined;
+
+        updatedDependencies.inputs ??= {};
+
+        const getFoundryDependentParam = (key: string, val?: string) => {
+          const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+          const resolvedValue = val ?? targetParam?.schema?.default;
+          if (!resolvedValue) {
+            return undefined;
+          }
+          return {
+            definition: targetParam?.schema,
+            dependencyType: 'AgentSchema' as const,
+            dependentParameters: { [id]: { isValid: true } },
+            parameter: {
+              key,
+              name: targetParam?.parameterName ?? '',
+              type: targetParam?.type ?? '',
+              value: [createLiteralValueSegment(resolvedValue)],
+            },
+          };
+        };
+
+        const foundryDependentKeys = [
+          { key: 'inputs.$.foundryAgentName', default: selectedAgent?.name ?? selectedAgentName },
+          { key: 'inputs.$.foundryAgentVersion', default: 'v2' },
+        ];
+
+        for (const { key, default: defaultValue } of foundryDependentKeys) {
+          const dependency = getFoundryDependentParam(key, defaultValue);
+          if (dependency) {
+            updatedDependencies.inputs[key] = dependency;
+          }
+        }
+      }
+
       // Final dispatch to update parameter and dependencies
       dispatch(
         updateParameterAndDependencies({
@@ -576,6 +619,7 @@ export const ParameterSection = ({
       operationDefinition,
       connector,
       deploymentsForCognitiveServiceAccount,
+      foundryAgentsForNode,
     ]
   );
 
@@ -846,7 +890,8 @@ export const ParameterSection = ({
         upstreamNodeIds ?? [],
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
-        isA2AWorkflow
+        isA2AWorkflow,
+        foundryAgentsForNode ?? []
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -978,7 +1023,8 @@ export const getEditorAndOptions = (
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
-  isA2AWorkflow?: boolean
+  isA2AWorkflow?: boolean,
+  foundryAgents: any[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1015,6 +1061,20 @@ export const getEditorAndOptions = (
         value: deployment.name,
         displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,
       }));
+
+    return {
+      editor,
+      editorOptions: { options },
+    };
+  }
+
+  // Handle Foundry agent picker combobox
+  const isFoundryAgent = isAgentConnectorAndFoundryAgentId(operationInfo?.connectorId, parameter.parameterName);
+  if (equals(editor, 'combobox') && isFoundryAgent) {
+    const options = foundryAgents.map((agent: any) => ({
+      value: agent.name ?? agent.id,
+      displayName: `${agent.name ?? agent.id}${agent.model ? ` (${agent.model})` : ''}`,
+    }));
 
     return {
       editor,

@@ -16,6 +16,7 @@ const getAccessToken = async (fileName: string): Promise<string | undefined> => 
 export interface EnvironmentVars {
   production: boolean;
   armToken?: string;
+  foundryToken?: string;
   subscriptionIds?: string[];
   chatbotEndpoint?: string;
 }
@@ -27,6 +28,10 @@ export const environment: EnvironmentVars = {
 export const loadToken = async () => {
   const token = await getAccessToken('armToken');
   environment.armToken = token;
+
+  const fToken = await getAccessToken('foundryToken');
+  environment.foundryToken = fToken;
+
   return token ?? null;
 };
 
