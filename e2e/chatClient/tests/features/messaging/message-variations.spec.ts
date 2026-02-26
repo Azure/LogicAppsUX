@@ -103,10 +103,9 @@ test.describe('Long Message Handling', { tag: '@mock' }, () => {
     await messageInput.fill(multiLineMessage);
     await sendButton.click();
 
-    // Check for first and last lines - use first() to avoid strict mode violation
-    // since agent response may also contain the message text
-    await expect(page.getByText('Line 1: This is line number 1').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Line 20: This is line number 20').first()).toBeVisible({ timeout: 5000 });
+    // Check for first and last lines
+    await expect(page.getByText('Line 1: This is line number 1')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Line 20: This is line number 20')).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -231,8 +230,7 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(complexEmoji);
     await sendButton.click();
 
-    // Use first() to avoid strict mode violation - message appears in user bubble and possibly agent response
-    await expect(page.getByText(complexEmoji).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(complexEmoji)).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle mixed scripts in one message', async ({ page }) => {

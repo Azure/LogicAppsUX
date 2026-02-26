@@ -34,8 +34,8 @@ test.describe('SSE Response Integration Tests', { tag: '@mock' }, () => {
     await messageInput.fill('Hello, agent!');
     await sendButton.click();
 
-    // User message should appear - use first() to avoid strict mode violation
-    await expect(page.getByText('Hello, agent!').first()).toBeVisible({ timeout: 5000 });
+    // User message should appear
+    await expect(page.getByText('Hello, agent!')).toBeVisible({ timeout: 5000 });
 
     // Agent response should appear (with real SSE, this will work!)
     await expect(page.getByText(/I received your message: "Hello, agent!"/)).toBeVisible({

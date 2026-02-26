@@ -16,7 +16,7 @@
       "outputs": ["build/**"]
     },
     "build:lib": {
-      "outputs": ["build/**", "dist/**"]
+      "outputs": ["build/**"]
     },
     "vscode-designer#build:extension": {
       "cache": false,
