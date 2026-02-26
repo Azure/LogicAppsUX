@@ -88,4 +88,70 @@ describe('sanitizeHtml - XSS prevention', () => {
   it('should handle empty input', () => {
     expect(sanitizeHtml('')).toBe('');
   });
+
+  it('should strip style tags', () => {
+    const result = sanitizeHtml('<style>body{display:none}</style><p>visible</p>');
+    expect(result).not.toContain('<style');
+    expect(result).toContain('<p>visible</p>');
+  });
+
+  it('should strip form elements', () => {
+    const result = sanitizeHtml('<form action="https://evil.com"><input type="text"><button>Submit</button></form>');
+    expect(result).not.toContain('<form');
+    expect(result).not.toContain('<input');
+    expect(result).not.toContain('<button');
+  });
+
+  it('should strip object and embed tags', () => {
+    const result = sanitizeHtml('<object data="evil.swf"></object><embed src="evil.swf">');
+    expect(result).not.toContain('<object');
+    expect(result).not.toContain('<embed');
+  });
+
+  it('should strip onclick and other event handlers', () => {
+    const result = sanitizeHtml('<div onclick="alert(1)">click me</div>');
+    expect(result).not.toContain('onclick');
+    expect(result).toContain('click me');
+  });
+
+  it('should strip onmouseover handler', () => {
+    const result = sanitizeHtml('<span onmouseover="alert(1)">hover</span>');
+    expect(result).not.toContain('onmouseover');
+    expect(result).toContain('hover');
+  });
+
+  it('should handle nested dangerous content', () => {
+    const result = sanitizeHtml('<div><p><script>alert(1)</script></p></div>');
+    expect(result).not.toContain('<script');
+    expect(result).toContain('<div>');
+    expect(result).toContain('<p>');
+  });
+
+  it('should strip meta tags', () => {
+    const result = sanitizeHtml('<meta http-equiv="refresh" content="0;url=evil.com">');
+    expect(result).not.toContain('<meta');
+  });
+
+  it('should strip base tags', () => {
+    const result = sanitizeHtml('<base href="https://evil.com">');
+    expect(result).not.toContain('<base');
+  });
+
+  it('should preserve details/summary elements', () => {
+    const result = sanitizeHtml('<details open><summary>Title</summary><p>Content</p></details>');
+    expect(result).toContain('<details');
+    expect(result).toContain('<summary>Title</summary>');
+    expect(result).toContain('<p>Content</p>');
+  });
+
+  it('should preserve allowed attributes and strip disallowed ones', () => {
+    const result = sanitizeHtml('<a href="https://example.com" style="color:red">link</a>');
+    expect(result).toContain('href="https://example.com"');
+    expect(result).not.toContain('style=');
+  });
+
+  it('should handle plain text without HTML', () => {
+    const result = sanitizeHtml('Just plain text');
+    expect(result).toBe('Just plain text');
+  });
 });
