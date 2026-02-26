@@ -23,13 +23,22 @@ function getGitVersion(): { tag: string; sha: string; branch: string; buildTime:
   };
 }
 
+// HTML-escape a string for safe insertion into HTML attributes
+function escapeHtmlAttr(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 // Custom plugin to inject build version as a <meta> tag in HTML
 function injectBuildVersion(version: ReturnType<typeof getGitVersion>): Plugin {
   return {
     name: 'inject-build-version',
     transformIndexHtml(html) {
-      const versionString = `${version.tag}+${version.sha}`;
-      const meta = `<meta name="build-version" content="${versionString}" data-tag="${version.tag}" data-sha="${version.sha}" data-branch="${version.branch}" data-build-time="${version.buildTime}" />`;
+      const tag = escapeHtmlAttr(version.tag);
+      const sha = escapeHtmlAttr(version.sha);
+      const branch = escapeHtmlAttr(version.branch);
+      const buildTime = escapeHtmlAttr(version.buildTime);
+      const versionString = `${tag}+${sha}`;
+      const meta = `<meta name="build-version" content="${versionString}" data-tag="${tag}" data-sha="${sha}" data-branch="${branch}" data-build-time="${buildTime}" />`;
       return html.replace('</head>', `  ${meta}\n</head>`);
     },
   };

@@ -76,12 +76,17 @@ marked.use(
   })
 );
 
+// HTML-escape a string for safe insertion into HTML attributes
+function escapeAttr(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 // Configure marked to open links in new tabs
 marked.use({
   renderer: {
     link(href, title, text) {
-      const safeHref = href && /^\s*javascript:/i.test(href) ? '#' : href;
-      const titleAttr = title ? ` title="${title}"` : '';
+      const safeHref = href && /^\s*javascript:/i.test(href) ? '#' : escapeAttr(href);
+      const titleAttr = title ? ` title="${escapeAttr(title)}"` : '';
       return `<a href="${safeHref}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
     },
   },
