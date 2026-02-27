@@ -49,6 +49,10 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private readonly range: Range;
   private readonly connectorType: string;
   private readonly currentConnectionId: string;
+  // Tracks in-flight addConnection writes so insert_connection can wait for
+  // them to complete before reading connections.json, avoiding a race where a
+  // stale read overwrites the newly-added connection data.
+  private _pendingConnectionWrite: Promise<void> | undefined;
 
   constructor(
     context: IActionContext,
@@ -222,6 +226,13 @@ export default class OpenConnectionView extends OpenDesignerBase {
       }
       case ExtensionCommand.insert_connection: {
         await callWithTelemetryAndErrorHandling('InsertConnectionView', async () => {
+          // Wait for any pending addConnection write to finish so that the
+          // subsequent file read in saveConnection sees the latest data.
+          if (this._pendingConnectionWrite) {
+            await this._pendingConnectionWrite;
+            this._pendingConnectionWrite = undefined;
+          }
+
           const { connection, connectionReferences } = message;
 
           await this.saveConnection(
@@ -249,9 +260,12 @@ export default class OpenConnectionView extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.addConnection: {
-        await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
-          await addConnectionData(activateContext, this.workflowFilePath, message.connectionAndSetting);
-        });
+        this._pendingConnectionWrite = callWithTelemetryAndErrorHandling(
+          'AddConnectionFromDesigner',
+          async (activateContext: IActionContext) => {
+            await addConnectionData(activateContext, this.workflowFilePath, message.connectionAndSetting);
+          }
+        ).then(() => undefined);
         break;
       }
       default:
