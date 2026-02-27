@@ -10,7 +10,7 @@ describe('Message - link attribute escaping', () => {
     content,
     sender: 'assistant',
     timestamp: new Date(),
-    status: 'delivered',
+    status: 'sent',
   });
 
   it('should escape double quotes in link title attributes', () => {

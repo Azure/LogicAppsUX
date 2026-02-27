@@ -19,6 +19,7 @@ describe('AuthenticationMessage', () => {
     {
       serviceName: 'External Service',
       consentLink: 'https://example.com/auth',
+      status: 'pending',
       description: 'This action requires authentication with an external service.',
     },
   ];

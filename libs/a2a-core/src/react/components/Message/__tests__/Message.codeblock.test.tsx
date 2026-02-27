@@ -22,7 +22,7 @@ describe('Message - Code Block Headers', () => {
       content: '```javascript\nconsole.log("Hello, World!");\n```',
       sender: 'assistant',
       timestamp: new Date(),
-      status: 'delivered',
+      status: 'sent',
     };
 
     render(<Message message={message} />);
@@ -48,7 +48,7 @@ greeting = "Hello"
 \`\`\``,
       sender: 'assistant',
       timestamp: new Date(),
-      status: 'delivered',
+      status: 'sent',
     };
 
     render(<Message message={message} />);
@@ -69,7 +69,7 @@ greeting = "Hello"
       content: `\`\`\`javascript\n${codeContent}\n\`\`\``,
       sender: 'assistant',
       timestamp: new Date(),
-      status: 'delivered',
+      status: 'sent',
     };
 
     render(<Message message={message} />);
@@ -86,7 +86,7 @@ greeting = "Hello"
       content: '```\nplain code block\n```',
       sender: 'assistant',
       timestamp: new Date(),
-      status: 'delivered',
+      status: 'sent',
     };
 
     render(<Message message={message} />);
@@ -101,7 +101,7 @@ greeting = "Hello"
       content: 'Use the `console.log()` function to debug.',
       sender: 'assistant',
       timestamp: new Date(),
-      status: 'delivered',
+      status: 'sent',
     };
 
     render(<Message message={message} />);
@@ -117,7 +117,7 @@ greeting = "Hello"
       content: 'Generated code',
       sender: 'assistant',
       timestamp: new Date(),
-      status: 'delivered',
+      status: 'sent',
       metadata: {
         isArtifact: true,
         artifactName: 'test.js',
