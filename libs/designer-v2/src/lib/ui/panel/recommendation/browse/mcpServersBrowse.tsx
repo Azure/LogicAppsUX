@@ -55,10 +55,29 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
     description: 'Text shown when no MCP servers are available',
   });
 
-  const descriptionText = intl.formatMessage({
+  const allTabDescriptionText = intl.formatMessage({
     defaultMessage: 'Choose a Model Context Protocol (MCP) server to invoke.',
     id: 'EvgBRe',
     description: 'Description text for MCP server selection',
+  });
+
+  const microsoftTabDescriptionText = intl.formatMessage({
+    defaultMessage: 'MCP servers provided and managed by Microsoft.',
+    id: 'WIIV8A',
+    description: 'Description text for Microsoft MCP servers tab',
+  });
+
+  const customTabDescriptionText = intl.formatMessage({
+    defaultMessage:
+      'MCP servers created or managed by your organization for reuse across logic apps, with enterprise-level authentication.',
+    id: 'dfYgIR',
+    description: 'Description text for Custom MCP servers tab',
+  });
+
+  const othersTabDescriptionText = intl.formatMessage({
+    defaultMessage: 'MCP servers added directly to a single logic app for quick setup, experiments, or proofs of concept.',
+    id: 'V1U5Gz',
+    description: 'Description text for Others MCP servers tab',
   });
 
   const allTabText = intl.formatMessage({
@@ -132,7 +151,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
       return [builtinMcpServerOperation, ...filtered];
     }
     if (selectedTab === 'others') {
-      return [...filtered, builtinMcpServerOperation];
+      return [builtinMcpServerOperation, ...filtered];
     }
     return filtered;
   }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer]);
@@ -145,6 +164,15 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
     },
     { count: filteredAndSortedServers.length }
   );
+
+  const descriptionText =
+    selectedTab === 'microsoft'
+      ? microsoftTabDescriptionText
+      : selectedTab === 'custom'
+        ? customTabDescriptionText
+        : selectedTab === 'others'
+          ? othersTabDescriptionText
+          : allTabDescriptionText;
 
   if (isLoading) {
     return (
