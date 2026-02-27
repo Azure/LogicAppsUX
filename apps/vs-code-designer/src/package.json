@@ -146,6 +146,15 @@
               "enum": ["logicApp", "logicAppCustomCode"],
               "description": "The type of project. logicAppCustomCode includes Azure Functions support for custom code."
             },
+            "workflowName": {
+              "type": "string",
+              "description": "The initial workflow name to create in the project. Must start with a letter and can only contain letters, digits, underscores, and hyphens."
+            },
+            "workflowType": {
+              "type": "string",
+              "enum": ["stateful", "stateless", "agentic", "agent"],
+              "description": "The initial workflow type for the project."
+            },
             "createWorkspace": {
               "type": "boolean",
               "description": "Whether to create a VS Code workspace file for the project"
@@ -155,7 +164,7 @@
               "description": "Whether to include a custom code (Azure Functions) project"
             }
           },
-          "required": ["projectName", "projectType"]
+          "required": ["projectName", "projectType", "workflowName", "workflowType"]
         }
       },
       {

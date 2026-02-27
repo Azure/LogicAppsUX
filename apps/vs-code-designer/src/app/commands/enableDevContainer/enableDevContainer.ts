@@ -33,7 +33,8 @@ export async function enableDevContainer(context: IActionContext, workspaceFileP
   if (!workspaceFile) {
     const message = localize('noWorkspace', 'No workspace is currently open. Please open a Logic App workspace first.');
     vscode.window.showErrorMessage(message);
-    context.telemetry.properties.result = 'NoWorkspace';
+    context.telemetry.properties.result = 'Canceled';
+    context.telemetry.properties.noWorkspace = 'true';
     return;
   }
 

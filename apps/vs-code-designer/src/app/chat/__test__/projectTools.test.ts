@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isValidProjectName } from '../tools/projectTools';
+import { isValidProjectName, isValidWorkflowName } from '../tools/projectTools';
 
 describe('isValidProjectName', () => {
   describe('valid names', () => {
@@ -73,5 +73,21 @@ describe('isValidProjectName', () => {
       expect(isValidProjectName('My/App')).toBe(false);
       expect(isValidProjectName('My\\App')).toBe(false);
     });
+  });
+});
+
+describe('isValidWorkflowName', () => {
+  it('accepts workflow names with letters, digits, underscores and hyphens', () => {
+    expect(isValidWorkflowName('OrderProcessing')).toBe(true);
+    expect(isValidWorkflowName('Order_Processing_2')).toBe(true);
+    expect(isValidWorkflowName('Order-Processing-2')).toBe(true);
+  });
+
+  it('rejects invalid workflow names', () => {
+    expect(isValidWorkflowName('')).toBe(false);
+    expect(isValidWorkflowName('123Workflow')).toBe(false);
+    expect(isValidWorkflowName('_Workflow')).toBe(false);
+    expect(isValidWorkflowName('Workflow Name')).toBe(false);
+    expect(isValidWorkflowName('Workflow.Name')).toBe(false);
   });
 });

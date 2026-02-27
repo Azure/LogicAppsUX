@@ -13,12 +13,14 @@ import {
   connectionsFileName,
   extensionCommand,
   localSettingsFileName,
+  managementApiPrefix,
   workflowFileName,
   workflowManagementBaseURIKey,
   workflowTenantIdKey,
 } from '../../../constants';
 import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
 import { HttpClient } from '@microsoft/vscode-extension-logic-apps';
+import { ext } from '../../../extensionVariables';
 
 /**
  * Parameters for creating a workflow
@@ -69,9 +71,32 @@ interface ProjectConnectionsInfo {
   managedApiReferences: string[];
   managedApiReferencesWithApiId: string[];
   managedApiIdByReference: Record<string, string>;
+  serviceProviderReferences: string[];
+  serviceProviderIdByReference: Record<string, string>;
+  managedApiBasePath?: string;
   workflowManagementBaseUri?: string;
   workflowTenantId?: string;
   weatherManagedReference?: string;
+  projectPath?: string;
+  localSettingsValues?: Record<string, string>;
+}
+
+/**
+ * Resolve @appsetting('KEY') expressions in a string using local.settings.json Values.
+ * @internal Exported for testing
+ */
+export function resolveAppSettingExpressions(value: string, localSettingsValues: Record<string, string>): string {
+  return value.replace(/@appsetting\('([^']+)'\)/gi, (_match, key: string) => {
+    const resolved = localSettingsValues[key];
+    return resolved ?? _match;
+  });
+}
+
+function resolveApiIdFromAppSettings(apiId: string, localSettingsValues?: Record<string, string>): string {
+  if (!localSettingsValues || !apiId.includes('@appsetting(')) {
+    return apiId;
+  }
+  return resolveAppSettingExpressions(apiId, localSettingsValues);
 }
 
 export interface ApiConnectionHints {
@@ -95,6 +120,266 @@ function getManagedApiId(connectionValue: unknown): string | undefined {
       : undefined;
 
   return typeof apiId === 'string' && apiId.trim() ? apiId : undefined;
+}
+
+function getServiceProviderConnections(connectionsData: Record<string, unknown>): Record<string, unknown> {
+  return typeof connectionsData.serviceProviderConnections === 'object' && connectionsData.serviceProviderConnections !== null
+    ? (connectionsData.serviceProviderConnections as Record<string, unknown>)
+    : {};
+}
+
+function getServiceProviderId(connectionValue: unknown): string | undefined {
+  const spId =
+    typeof connectionValue === 'object' && connectionValue !== null
+      ? ((connectionValue as Record<string, unknown>).serviceProvider as Record<string, unknown> | undefined)?.id
+      : undefined;
+  return typeof spId === 'string' && spId.trim() ? spId : undefined;
+}
+
+function extractManagedApiBasePath(managedApiIdByReference: Record<string, string>): string | undefined {
+  for (const apiId of Object.values(managedApiIdByReference)) {
+    const match = apiId.match(/^(\/subscriptions\/[^/]+\/providers\/Microsoft\.Web\/locations\/[^/]+\/managedApis\/).+$/i);
+    if (match) {
+      return match[1];
+    }
+  }
+  return undefined;
+}
+
+function constructManagedApiConnectorId(basePath: string, connectorShortName: string): string {
+  return `${basePath.replace(/\/+$/, '')}/${connectorShortName.toLowerCase()}`;
+}
+
+async function addPlaceholderManagedApiConnection(projectPath: string, referenceName: string, connectorId: string): Promise<void> {
+  const connectionsPath = path.join(projectPath, connectionsFileName);
+  let connectionsData: Record<string, unknown> = {};
+  try {
+    if (await fse.pathExists(connectionsPath)) {
+      connectionsData = (await fse.readJson(connectionsPath)) as Record<string, unknown>;
+    }
+  } catch {
+    connectionsData = {};
+  }
+  if (typeof connectionsData.managedApiConnections !== 'object' || connectionsData.managedApiConnections === null) {
+    connectionsData.managedApiConnections = {};
+  }
+  const managed = connectionsData.managedApiConnections as Record<string, unknown>;
+  if (managed[referenceName]) {
+    return;
+  }
+  managed[referenceName] = {
+    api: { id: connectorId },
+    connection: { id: '' },
+    authentication: { type: 'Raw', scheme: 'Key', parameter: `@appsetting('${referenceName}-connectionKey')` },
+  };
+  await fse.writeJson(connectionsPath, connectionsData, { spaces: 2 });
+  console.log(`[chat-tools] Added placeholder managed API connection for "${referenceName}"`);
+}
+
+async function addPlaceholderServiceProviderConnection(
+  projectPath: string,
+  connectionName: string,
+  serviceProviderId: string
+): Promise<void> {
+  const connectionsPath = path.join(projectPath, connectionsFileName);
+  let connectionsData: Record<string, unknown> = {};
+  try {
+    if (await fse.pathExists(connectionsPath)) {
+      connectionsData = (await fse.readJson(connectionsPath)) as Record<string, unknown>;
+    }
+  } catch {
+    connectionsData = {};
+  }
+  if (typeof connectionsData.serviceProviderConnections !== 'object' || connectionsData.serviceProviderConnections === null) {
+    connectionsData.serviceProviderConnections = {};
+  }
+  const spConns = connectionsData.serviceProviderConnections as Record<string, unknown>;
+  if (spConns[connectionName]) {
+    return;
+  }
+  spConns[connectionName] = {
+    serviceProvider: { id: serviceProviderId },
+    parameterValues: {},
+    displayName: connectionName,
+  };
+  await fse.writeJson(connectionsPath, connectionsData, { spaces: 2 });
+  console.log(`[chat-tools] Added placeholder service provider connection for "${connectionName}"`);
+}
+
+/**
+ * Build a ServiceProvider action shape.
+ * @internal Exported for testing
+ */
+export function buildServiceProviderAction(
+  connectionName: string,
+  serviceProviderOperationId: string,
+  serviceProviderId: string,
+  parameters?: Record<string, unknown>,
+  runAfter?: Record<string, unknown>
+): Record<string, unknown> {
+  return {
+    type: 'ServiceProvider',
+    inputs: {
+      parameters: parameters ?? {},
+      serviceProviderConfiguration: {
+        connectionName,
+        operationId: serviceProviderOperationId,
+        serviceProviderId,
+      },
+    },
+    runAfter: runAfter ?? {},
+  };
+}
+
+interface BuiltInConnectorInfo {
+  name: string;
+  id: string;
+  displayName?: string;
+}
+
+interface BuiltInConnectorOperation {
+  name: string;
+  id: string;
+  properties?: {
+    api?: { id?: string; name?: string; displayName?: string };
+    summary?: string;
+    description?: string;
+    trigger?: string;
+  };
+}
+
+function getDesignTimeBaseUrl(projectPath: string): string | undefined {
+  const designTimeInst = ext.designTimeInstances.get(projectPath);
+  if (!designTimeInst?.port) {
+    return undefined;
+  }
+  return `http://localhost:${designTimeInst.port}${managementApiPrefix}`;
+}
+
+async function listBuiltInConnectorOperations(baseUrl: string, connectorName: string): Promise<BuiltInConnectorOperation[]> {
+  try {
+    const response = await fetch(`${baseUrl}/operationGroups/${connectorName}/operations?api-version=2018-11-01`);
+    if (!response.ok) {
+      console.error(`[chat-tools] Built-in operations fetch failed: ${response.status}`);
+      return [];
+    }
+    const data = (await response.json()) as { value?: BuiltInConnectorOperation[] } | BuiltInConnectorOperation[];
+    return Array.isArray(data) ? data : Array.isArray(data.value) ? data.value : [];
+  } catch (error) {
+    console.error(
+      `[chat-tools] Failed to list built-in operations for ${connectorName}:`,
+      error instanceof Error ? error.message : String(error)
+    );
+    return [];
+  }
+}
+
+async function listBuiltInConnectors(baseUrl: string): Promise<BuiltInConnectorInfo[]> {
+  try {
+    const response = await fetch(`${baseUrl}/operationGroups?api-version=2018-11-01`);
+    if (!response.ok) {
+      return [];
+    }
+    const data = (await response.json()) as { value?: Array<{ name: string; id: string; properties?: { displayName?: string } }> };
+    return (data.value ?? []).map((c) => ({ name: c.name, id: c.id, displayName: c.properties?.displayName }));
+  } catch {
+    return [];
+  }
+}
+
+function matchBuiltInConnector(hint: string, connectors: BuiltInConnectorInfo[]): BuiltInConnectorInfo | undefined {
+  const n = hint
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+  if (!n) {
+    return undefined;
+  }
+  return connectors.find((c) => {
+    const cn = c.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const dn = (c.displayName ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return cn === n || dn === n || cn.includes(n) || n.includes(cn);
+  });
+}
+
+async function resolveBuiltInServiceProviderAction(
+  actionName: string,
+  connectorHint: string,
+  projectConnections: ProjectConnectionsInfo,
+  configuration?: Record<string, unknown>
+): Promise<{ action?: Record<string, unknown>; completionSuffix?: string; error?: string } | undefined> {
+  if (!projectConnections.projectPath) {
+    return undefined;
+  }
+  const baseUrl = getDesignTimeBaseUrl(projectConnections.projectPath);
+  if (!baseUrl) {
+    console.log('[chat-tools] Design time runtime not available for built-in connector discovery');
+    return undefined;
+  }
+
+  const connectors = await listBuiltInConnectors(baseUrl);
+  const matched = matchBuiltInConnector(connectorHint, connectors);
+  if (!matched) {
+    return undefined;
+  }
+
+  console.log(`[chat-tools] Matched built-in connector: ${matched.name} (${matched.id})`);
+
+  const operations = await listBuiltInConnectorOperations(baseUrl, matched.name);
+  const actionOps = operations.filter((op) => !op.properties?.trigger);
+  if (actionOps.length === 0) {
+    return { error: `Built-in connector "${matched.displayName ?? matched.name}" has no action operations.` };
+  }
+
+  const actionTokens = tokenizeOperationText(actionName);
+  let bestOp = actionOps[0];
+  let bestScore = 0;
+  for (const op of actionOps) {
+    const text = `${op.name} ${op.properties?.summary ?? ''} ${op.properties?.description ?? ''}`.toLowerCase();
+    let score = 0;
+    for (const t of actionTokens) {
+      if (text.includes(t)) {
+        score += 10;
+      }
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestOp = op;
+    }
+  }
+
+  const connectionName = matched.name;
+  const serviceProviderId = matched.id;
+  const operationId = bestOp.name;
+
+  if (!projectConnections.serviceProviderIdByReference[connectionName] && projectConnections.projectPath) {
+    try {
+      await addPlaceholderServiceProviderConnection(projectConnections.projectPath, connectionName, serviceProviderId);
+    } catch (error) {
+      console.error(`[chat-tools] Failed to add SP placeholder: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  const params =
+    typeof configuration?.parameters === 'object' && configuration.parameters !== null
+      ? (configuration.parameters as Record<string, unknown>)
+      : typeof configuration?.inputs === 'object' && (configuration.inputs as Record<string, unknown>)?.parameters
+        ? ((configuration.inputs as Record<string, unknown>).parameters as Record<string, unknown>)
+        : {};
+  const runAfter =
+    typeof configuration?.runAfter === 'object' && configuration.runAfter !== null
+      ? (configuration.runAfter as Record<string, unknown>)
+      : {};
+
+  const action = buildServiceProviderAction(connectionName, operationId, serviceProviderId, params, runAfter);
+  const note = projectConnections.serviceProviderIdByReference[connectionName]
+    ? ''
+    : ` Added placeholder service provider connection for "${connectionName}". Open designer to configure.`;
+
+  return {
+    action,
+    completionSuffix: ` Used built-in connector "${matched.displayName ?? matched.name}" (${bestOp.properties?.summary ?? operationId}).${note}`,
+  };
 }
 
 function normalizeTypeToken(actionType: string): string {
@@ -475,6 +760,11 @@ export interface SwaggerOperationResolution {
   path: string;
   operationId?: string;
 }
+interface ManagedConnectorOfflineResolution {
+  method: string;
+  path: string;
+  operationId?: string;
+}
 
 interface SwaggerOperationCandidate {
   method: string;
@@ -482,6 +772,17 @@ interface SwaggerOperationCandidate {
   operationId: string;
   summary?: string;
   description?: string;
+}
+
+function normalizeManagedConnectorPath(pathValue: string): string {
+  const withoutConnectionPrefix = pathValue.replace(/\{connectionid\}/gi, '');
+  const compacted = withoutConnectionPrefix.replace(/\/{2,}/g, '/').trim();
+
+  if (!compacted) {
+    return '/';
+  }
+
+  return compacted.startsWith('/') ? compacted : `/${compacted}`;
 }
 
 function normalizeManagementBaseUri(baseUri?: string): string {
@@ -494,16 +795,197 @@ function normalizeManagementBaseUri(baseUri?: string): string {
   return normalized.replace(/\/+$/, '');
 }
 
+function getManagedApiShortName(connectorId: string): string {
+  return connectorId.toLowerCase().split('/').filter(Boolean).pop() ?? '';
+}
+
+function inferEntityNameFromActionName(actionName: string, fallback: string): string {
+  const candidates = actionName
+    .replace(/[_-]+/g, ' ')
+    .split(/\s+/)
+    .map((word) => word.trim())
+    .filter(Boolean);
+
+  const stopWords = new Set([
+    'list',
+    'get',
+    'fetch',
+    'read',
+    'query',
+    'find',
+    'row',
+    'rows',
+    'item',
+    'items',
+    'record',
+    'records',
+    'sql',
+    'servicebus',
+    'service',
+    'bus',
+    'send',
+    'receive',
+    'peek',
+    'message',
+    'messages',
+    'by',
+    'id',
+    'to',
+    'from',
+    'in',
+    'the',
+    'a',
+    'an',
+  ]);
+
+  for (const candidate of candidates) {
+    const normalized = candidate.toLowerCase();
+    if (!stopWords.has(normalized) && /^[a-z][a-z0-9_]*$/i.test(candidate)) {
+      return candidate.charAt(0).toUpperCase() + candidate.slice(1);
+    }
+  }
+
+  return fallback;
+}
+
+function buildCanonicalSqlItemsPath(tableName: string): string {
+  const encodedDefault = "@{encodeURIComponent(encodeURIComponent('default'))}";
+  const encodedTable = `@{encodeURIComponent(encodeURIComponent('[dbo].[${tableName}]'))}`;
+  return `/v2/datasets/${encodedDefault},${encodedDefault}/tables/${encodedTable}/items`;
+}
+
+function normalizeSqlPathFromHint(pathHint: string): string | undefined {
+  if (!pathHint || pathHint.includes('encodeURIComponent')) {
+    return pathHint;
+  }
+
+  const plainPattern = /^\/v2\/datasets\/default\/tables\/(?:\[dbo\]\.\[([^\]]+)\]|([^/]+))\/items(?:\/(.+))?$/i;
+  const plainMatch = pathHint.match(plainPattern);
+  if (!plainMatch) {
+    return undefined;
+  }
+
+  const tableName = (plainMatch[1] || plainMatch[2] || 'Orders').trim();
+  const canonicalItemsPath = buildCanonicalSqlItemsPath(tableName);
+  const itemTail = plainMatch[3];
+
+  if (!itemTail) {
+    return canonicalItemsPath;
+  }
+
+  const encodedId = "@{encodeURIComponent(encodeURIComponent(triggerBody()?['id']))}";
+  return `${canonicalItemsPath}/${encodedId}`;
+}
+
+function isSingleEntityIntent(actionName: string): boolean {
+  const normalized = actionName.toLowerCase();
+  return /\b(row|item|record)\b/.test(normalized) && /\b(id|key)\b/.test(normalized);
+}
+
+function isServiceBusSendIntent(actionName: string): boolean {
+  return /\b(send|publish|enqueue|post)\b/i.test(actionName);
+}
+
+function isServiceBusPeekIntent(actionName: string): boolean {
+  return /\b(peek|peeklock|browse)\b/i.test(actionName);
+}
+
+function isServiceBusReceiveIntent(actionName: string): boolean {
+  return /\b(receive|read|dequeue|consume|pull)\b/i.test(actionName);
+}
+
+export function resolveOfflineManagedConnectorOperation(
+  connectorId: string,
+  actionName: string,
+  hints: ApiConnectionHints
+): ManagedConnectorOfflineResolution | undefined {
+  const connectorShortName = getManagedApiShortName(connectorId);
+
+  if (connectorShortName === 'sql') {
+    const hintedPath = typeof hints.path === 'string' ? hints.path.trim() : '';
+    const normalizedHintPath = hintedPath ? (normalizeSqlPathFromHint(hintedPath) ?? hintedPath) : '';
+
+    if (normalizedHintPath) {
+      const inferredOperationId = /\/items\//i.test(normalizedHintPath) ? 'GetItem_V2' : 'GetItems_V2';
+      return {
+        method: (hints.method || 'get').toLowerCase(),
+        path: normalizedHintPath,
+        operationId: hints.operationId || inferredOperationId,
+      };
+    }
+
+    const inferredTableName = inferEntityNameFromActionName(actionName, 'Orders');
+    const itemsPath = buildCanonicalSqlItemsPath(inferredTableName);
+
+    if (isSingleEntityIntent(actionName)) {
+      const encodedId = "@{encodeURIComponent(encodeURIComponent(triggerBody()?['id']))}";
+      return {
+        method: 'get',
+        path: `${itemsPath}/${encodedId}`,
+        operationId: hints.operationId || 'GetItem_V2',
+      };
+    }
+
+    return {
+      method: 'get',
+      path: itemsPath,
+      operationId: hints.operationId || 'GetItems_V2',
+    };
+  }
+
+  if (connectorShortName === 'servicebus') {
+    if (hints.path && hints.method) {
+      return {
+        method: hints.method.toLowerCase(),
+        path: hints.path,
+        operationId: hints.operationId,
+      };
+    }
+
+    const queueRef = "@{encodeURIComponent(encodeURIComponent('queue-name'))}";
+
+    if (isServiceBusSendIntent(actionName)) {
+      return {
+        method: 'post',
+        path: `/${queueRef}/messages`,
+        operationId: hints.operationId || 'SendMessage',
+      };
+    }
+
+    if (isServiceBusPeekIntent(actionName)) {
+      return {
+        method: 'get',
+        path: `/${queueRef}/messages/head/peek`,
+        operationId: hints.operationId || 'PeekLockMessages',
+      };
+    }
+
+    if (isServiceBusReceiveIntent(actionName)) {
+      return {
+        method: 'get',
+        path: `/${queueRef}/messages/batch/peek`,
+        operationId: hints.operationId || 'ReceiveMessages',
+      };
+    }
+  }
+
+  return undefined;
+}
+
 async function createArmHttpClient(projectConnections: ProjectConnectionsInfo): Promise<HttpClient | undefined> {
   try {
     const accessToken = await getAuthorizationToken(projectConnections.workflowTenantId);
     const managementBaseUri = normalizeManagementBaseUri(projectConnections.workflowManagementBaseUri);
+    console.log(
+      `[chat-tools] ARM client: baseUri=${managementBaseUri}, tenantId=${projectConnections.workflowTenantId ?? '(none)'}, tokenLength=${accessToken?.length ?? 0}`
+    );
     return new HttpClient({
       accessToken,
       baseUrl: managementBaseUri,
       apiHubBaseUrl: managementBaseUri,
     });
-  } catch {
+  } catch (error) {
+    console.error('[chat-tools] Failed to create ARM HttpClient:', error instanceof Error ? error.message : String(error));
     return undefined;
   }
 }
@@ -743,7 +1225,7 @@ function listSwaggerOperationCandidates(swagger: Record<string, unknown>): Swagg
 
       candidates.push({
         method,
-        path: pathValue,
+        path: normalizeManagedConnectorPath(pathValue),
         operationId,
         summary: typeof operationRecord.summary === 'string' ? operationRecord.summary : undefined,
         description: typeof operationRecord.description === 'string' ? operationRecord.description : undefined,
@@ -960,6 +1442,7 @@ function getOperationSearchText(operation: ManagedApiOperation): string {
 
 async function listManagedApiOperations(connectorId: string, client: HttpClient): Promise<ManagedApiOperation[]> {
   try {
+    console.log(`[chat-tools] Listing operations: ${connectorId}/apiOperations`);
     const response = await client.get<{ value?: ManagedApiOperation[] } | ManagedApiOperation[]>({
       uri: `${connectorId}/apiOperations`,
       queryParameters: {
@@ -969,17 +1452,22 @@ async function listManagedApiOperations(connectorId: string, client: HttpClient)
     });
 
     if (Array.isArray(response)) {
+      console.log(`[chat-tools] Operations response: ${response.length} items (array)`);
       return response;
     }
 
-    return Array.isArray(response.value) ? response.value : [];
-  } catch {
+    const items = Array.isArray(response.value) ? response.value : [];
+    console.log(`[chat-tools] Operations response: ${items.length} items (value)`);
+    return items;
+  } catch (error) {
+    console.error('[chat-tools] Failed to list operations:', error instanceof Error ? error.message : String(error));
     return [];
   }
 }
 
 async function fetchConnectorSwagger(connectorId: string, client: HttpClient): Promise<Record<string, unknown> | undefined> {
   try {
+    console.log(`[chat-tools] Fetching swagger: ${connectorId}?export=true`);
     const swagger = await client.get<Record<string, unknown>>({
       uri: connectorId,
       queryParameters: {
@@ -988,8 +1476,11 @@ async function fetchConnectorSwagger(connectorId: string, client: HttpClient): P
       },
     });
 
+    const topKeys = swagger ? Object.keys(swagger).slice(0, 10).join(', ') : '(null)';
+    console.log(`[chat-tools] Swagger response top-level keys: ${topKeys}`);
     return swagger;
-  } catch {
+  } catch (error) {
+    console.error('[chat-tools] Failed to fetch swagger:', error instanceof Error ? error.message : String(error));
     return undefined;
   }
 }
@@ -999,10 +1490,13 @@ async function resolveManagedApiOperationFromSwagger(
   actionName: string,
   hints: ApiConnectionHints,
   projectConnections: ProjectConnectionsInfo
-): Promise<{ method: string; path: string; operationId?: string } | undefined> {
+): Promise<{ method: string; path: string; operationId?: string; failureReason?: string } | undefined> {
+  let failureReason = '';
+
   const client = await createArmHttpClient(projectConnections);
   if (!client) {
-    return undefined;
+    failureReason = `ARM client creation failed (managementBaseUri=${projectConnections.workflowManagementBaseUri ?? 'NOT SET'}, tenantId=${projectConnections.workflowTenantId ?? 'NOT SET'})`;
+    return { method: '', path: '', failureReason };
   }
 
   const operations = await listManagedApiOperations(connectorId, client);
@@ -1021,12 +1515,16 @@ async function resolveManagedApiOperationFromSwagger(
 
   const swagger = await fetchConnectorSwagger(connectorId, client);
   if (!swagger) {
-    return undefined;
+    failureReason = `Swagger fetch failed for ${connectorId} (operations found: ${operations.length})`;
+    return { method: '', path: '', failureReason };
   }
+
+  const pathCount = swagger.paths ? Object.keys(swagger.paths as Record<string, unknown>).length : 0;
 
   const resolved = resolveSwaggerOperation(swagger, actionName, uniqueOperationHints, hints);
   if (!resolved) {
-    return undefined;
+    failureReason = `No matching swagger operation for "${actionName}" (paths: ${pathCount}, operations: ${operations.length}, hints: ${uniqueOperationHints.join(', ') || 'none'})`;
+    return { method: '', path: '', failureReason };
   }
 
   return {
@@ -1041,7 +1539,8 @@ async function resolveGenericApiConnectionAction(
   actionName: string,
   configuration: Record<string, unknown> | undefined,
   projectConnections: ProjectConnectionsInfo,
-  overrideHints?: Partial<ApiConnectionHints>
+  overrideHints?: Partial<ApiConnectionHints>,
+  requireCanonicalSwaggerResolution = false
 ): Promise<{ action?: Record<string, unknown>; completionSuffix?: string; error?: string }> {
   const normalizedType = normalizeTypeToken(actionType);
   if (normalizedType !== 'http' && normalizedType !== 'apiconnection') {
@@ -1064,37 +1563,73 @@ async function resolveGenericApiConnectionAction(
   let pathValue = typeof hints.path === 'string' ? hints.path.trim() : '';
   let operationId = hints.operationId;
 
-  if ((hints.connectorReference || hints.connectorId) && !resolvedReference) {
-    const refsHint =
-      projectConnections.managedApiReferencesWithApiId.length > 0
-        ? ` Available managed connection references with api.id: ${projectConnections.managedApiReferencesWithApiId.join(', ')}.`
-        : ' No managed connection references with api.id were found in connections.json.';
+  let resolvedConnectorId: string | undefined;
+  let effectiveReference = resolvedReference;
+  let isNewConnectorReference = false;
 
-    const unresolvedHint = hints.connectorReference || hints.connectorId;
-    return {
-      error: `Managed connector hint "${unresolvedHint}" could not be resolved to a connection reference in connections.json.${refsHint}`,
-    };
+  if (resolvedReference) {
+    resolvedConnectorId =
+      projectConnections.managedApiIdByReference[resolvedReference] ??
+      (typeof hints.connectorId === 'string' && hints.connectorId.startsWith('/subscriptions/') ? hints.connectorId : undefined);
+  } else if (hints.connectorReference || hints.connectorId) {
+    const connectorHint = (hints.connectorReference || hints.connectorId || '').trim().toLowerCase();
+
+    if (connectorHint.startsWith('/subscriptions/')) {
+      resolvedConnectorId = connectorHint;
+      effectiveReference = getManagedApiShortName(connectorHint);
+      isNewConnectorReference = true;
+    } else if (projectConnections.managedApiBasePath && connectorHint) {
+      resolvedConnectorId = constructManagedApiConnectorId(projectConnections.managedApiBasePath, connectorHint);
+      effectiveReference = connectorHint;
+      isNewConnectorReference = true;
+      console.log(`[chat-tools] Constructed connector ID for "${connectorHint}": ${resolvedConnectorId}`);
+    } else {
+      const refsHint =
+        projectConnections.managedApiReferencesWithApiId.length > 0
+          ? ` Available managed connection references: ${projectConnections.managedApiReferencesWithApiId.join(', ')}.`
+          : '';
+      return {
+        error: `Managed connector "${connectorHint}" not found and no existing connections to derive Azure location.${refsHint}`,
+      };
+    }
   }
 
-  if (!resolvedReference) {
+  if (!effectiveReference) {
     return {};
   }
-
-  const resolvedConnectorId =
-    projectConnections.managedApiIdByReference[resolvedReference] ??
-    (typeof hints.connectorId === 'string' && hints.connectorId.startsWith('/subscriptions/') ? hints.connectorId : undefined);
 
   const shouldAttemptSwaggerResolution =
     Boolean(resolvedConnectorId) && (!method || !pathValue || !operationId || normalizedType === 'apiconnection');
 
+  let swaggerResolutionApplied = false;
+  let swaggerFailureReason = '';
   if (shouldAttemptSwaggerResolution && resolvedConnectorId) {
     const swaggerResolution = await resolveManagedApiOperationFromSwagger(resolvedConnectorId, actionName, hints, projectConnections);
 
-    if (swaggerResolution) {
+    if (swaggerResolution && swaggerResolution.method && swaggerResolution.path) {
       method = swaggerResolution.method;
       pathValue = swaggerResolution.path;
       operationId = operationId ?? swaggerResolution.operationId;
+      swaggerResolutionApplied = true;
+    } else if (swaggerResolution?.failureReason) {
+      swaggerFailureReason = swaggerResolution.failureReason;
     }
+  }
+  if (!swaggerResolutionApplied && resolvedConnectorId) {
+    const offlineFallback = resolveOfflineManagedConnectorOperation(resolvedConnectorId, actionName, hints);
+    if (offlineFallback) {
+      method = offlineFallback.method;
+      pathValue = offlineFallback.path;
+      operationId = operationId ?? offlineFallback.operationId;
+      swaggerResolutionApplied = true;
+    }
+  }
+
+  if (requireCanonicalSwaggerResolution && resolvedConnectorId && !swaggerResolutionApplied) {
+    const diagDetail = swaggerFailureReason ? ` Diagnostic: ${swaggerFailureReason}` : ' No diagnostic detail available.';
+    return {
+      error: `Unable to resolve connector operation metadata for "${effectiveReference}" (connectorId: ${resolvedConnectorId}).${diagDetail}`,
+    };
   }
 
   if (!method || !pathValue) {
@@ -1108,12 +1643,23 @@ async function resolveGenericApiConnectionAction(
     return {};
   }
 
-  const action = buildManagedApiConnectionAction(resolvedReference, method, pathValue, configuration);
+  if (isNewConnectorReference && resolvedConnectorId && projectConnections.projectPath) {
+    try {
+      await addPlaceholderManagedApiConnection(projectConnections.projectPath, effectiveReference, resolvedConnectorId);
+    } catch (error) {
+      console.error(`[chat-tools] Failed to add managed API placeholder: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  const action = buildManagedApiConnectionAction(effectiveReference, method, pathValue, configuration);
   if (operationId) {
     action.operationId = operationId;
   }
 
-  const completionSuffix = ` Resolved managed connector reference "${resolvedReference}" for action "${actionName}".`;
+  const connectionNote = isNewConnectorReference
+    ? ` Added placeholder connection for "${effectiveReference}" in connections.json. Open designer to authenticate.`
+    : '';
+  const completionSuffix = ` Resolved managed connector reference "${effectiveReference}" for action "${actionName}".${connectionNote}`;
 
   return {
     action,
@@ -1173,6 +1719,7 @@ async function getProjectConnectionsInfo(projectPath: string): Promise<ProjectCo
 
   let workflowManagementBaseUri: string | undefined;
   let workflowTenantId: string | undefined;
+  let localSettingsMap: Record<string, string> = {};
 
   try {
     if (await fse.pathExists(localSettingsPath)) {
@@ -1185,6 +1732,16 @@ async function getProjectConnectionsInfo(projectPath: string): Promise<ProjectCo
       workflowManagementBaseUri =
         typeof values?.[workflowManagementBaseURIKey] === 'string' ? (values[workflowManagementBaseURIKey] as string) : undefined;
       workflowTenantId = typeof values?.[workflowTenantIdKey] === 'string' ? (values[workflowTenantIdKey] as string) : undefined;
+
+      // Collect all string values for @appsetting() resolution
+      if (values) {
+        localSettingsMap = Object.entries(values).reduce<Record<string, string>>((result, [key, val]) => {
+          if (typeof val === 'string') {
+            result[key] = val;
+          }
+          return result;
+        }, {});
+      }
     }
   } catch {
     // Ignore local settings read errors and continue with connection-only metadata
@@ -1195,8 +1752,12 @@ async function getProjectConnectionsInfo(projectPath: string): Promise<ProjectCo
       managedApiReferences: [],
       managedApiReferencesWithApiId: [],
       managedApiIdByReference: {},
+      serviceProviderReferences: [],
+      serviceProviderIdByReference: {},
       workflowManagementBaseUri,
       workflowTenantId,
+      projectPath,
+      localSettingsValues: localSettingsMap,
     };
   }
 
@@ -1205,29 +1766,48 @@ async function getProjectConnectionsInfo(projectPath: string): Promise<ProjectCo
     const managedApiConnections = getManagedApiConnections(connectionsData);
     const managedApiReferences = Object.keys(managedApiConnections);
     const managedApiIdByReference = managedApiReferences.reduce<Record<string, string>>((result, referenceName) => {
-      const apiId = getManagedApiId(managedApiConnections[referenceName]);
-      if (apiId) {
-        result[referenceName] = apiId;
+      const rawApiId = getManagedApiId(managedApiConnections[referenceName]);
+      if (rawApiId) {
+        result[referenceName] = resolveApiIdFromAppSettings(rawApiId, localSettingsMap);
       }
       return result;
     }, {});
     const managedApiReferencesWithApiId = Object.keys(managedApiIdByReference);
 
+    const serviceProviderConnectionsData = getServiceProviderConnections(connectionsData);
+    const serviceProviderReferences = Object.keys(serviceProviderConnectionsData);
+    const serviceProviderIdByReference = serviceProviderReferences.reduce<Record<string, string>>((result, refName) => {
+      const spId = getServiceProviderId(serviceProviderConnectionsData[refName]);
+      if (spId) {
+        result[refName] = spId;
+      }
+      return result;
+    }, {});
+
     return {
       managedApiReferences,
       managedApiReferencesWithApiId,
       managedApiIdByReference,
+      serviceProviderReferences,
+      serviceProviderIdByReference,
+      managedApiBasePath: extractManagedApiBasePath(managedApiIdByReference),
       workflowManagementBaseUri,
       workflowTenantId,
       weatherManagedReference: detectWeatherManagedApiReference(connectionsData),
+      projectPath,
+      localSettingsValues: localSettingsMap,
     };
   } catch {
     return {
       managedApiReferences: [],
       managedApiReferencesWithApiId: [],
       managedApiIdByReference: {},
+      serviceProviderReferences: [],
+      serviceProviderIdByReference: {},
       workflowManagementBaseUri,
       workflowTenantId,
+      projectPath,
+      localSettingsValues: localSettingsMap,
     };
   }
 }
@@ -1480,13 +2060,46 @@ class AddActionTool implements vscode.LanguageModelTool<AddActionParams> {
       } else {
         const normalizedType = normalizeTypeToken(actionType);
 
-        const genericResolvedAction = await resolveGenericApiConnectionAction(actionType, actionName, configuration, projectConnections, {
-          connectorReference,
-          connectorId,
-          operationId,
-          method,
-          path: operationPath,
-        });
+        // Try built-in ServiceProvider connector first
+        const connectorHint = connectorReference || connectorId || '';
+        if (connectorHint) {
+          const builtInResult = await resolveBuiltInServiceProviderAction(actionName, connectorHint, projectConnections, configuration);
+          if (builtInResult?.action) {
+            nodeToWrite = builtInResult.action;
+            operationTypeName = 'ServiceProvider';
+            completionSuffix = builtInResult.completionSuffix ?? '';
+
+            if (!definition.definition.actions) {
+              definition.definition.actions = {};
+            }
+            definition.definition.actions[actionName] = nodeToWrite;
+            await fse.writeJson(workflowPath, definition, { spaces: 2 });
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart(
+                `Successfully added action "${actionName}" of type "${operationTypeName}" to workflow "${workflowName}". Open the designer to configure additional settings.${completionSuffix}`
+              ),
+            ]);
+          }
+          if (builtInResult?.error) {
+            return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(builtInResult.error)]);
+          }
+        }
+
+        // Then try managed ApiConnection path
+        const genericResolvedAction = await resolveGenericApiConnectionAction(
+          actionType,
+          actionName,
+          configuration,
+          projectConnections,
+          {
+            connectorReference,
+            connectorId,
+            operationId,
+            method,
+            path: operationPath,
+          },
+          true
+        );
         if (genericResolvedAction.error) {
           return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(genericResolvedAction.error)]);
         }

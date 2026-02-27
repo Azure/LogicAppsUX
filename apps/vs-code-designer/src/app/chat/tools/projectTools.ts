@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import type { ProjectTypeOption } from '../chatConstants';
-import { ToolName } from '../chatConstants';
+import type { ProjectTypeOption, WorkflowTypeOption } from '../chatConstants';
+import { ToolName, WorkflowTypeOption as WorkflowTypeOptionValue } from '../chatConstants';
 import { WorkflowType } from '../../../constants';
 import { createLogicAppProject } from '../../commands/createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
@@ -18,6 +18,8 @@ import * as fse from 'fs-extra';
 export interface CreateProjectParams {
   projectName: string;
   projectType: ProjectTypeOption;
+  workflowName?: string;
+  workflowType?: WorkflowTypeOption;
   workspacePath?: string;
   createWorkspace?: boolean;
   includeCustomCode?: boolean;
@@ -53,6 +55,8 @@ class CreateProjectTool implements vscode.LanguageModelTool<CreateProjectParams>
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelToolResult> {
     const { projectName } = options.input;
+    const workflowName = typeof options.input.workflowName === 'string' ? options.input.workflowName.trim() : '';
+    const workflowType = options.input.workflowType;
 
     try {
       // Validate project name
@@ -60,6 +64,45 @@ class CreateProjectTool implements vscode.LanguageModelTool<CreateProjectParams>
         return new vscode.LanguageModelToolResult([
           new vscode.LanguageModelTextPart(
             `Invalid project name "${projectName}". Project name must start with a letter and can only contain letters, digits, "_" and "-".`
+          ),
+        ]);
+      }
+
+      if (!workflowName && !workflowType) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            'Please specify the initial workflow name and type for this project. For example: workflowName="OrderProcessing", workflowType="stateful".'
+          ),
+        ]);
+      }
+
+      if (!workflowName) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            'Please specify an initial workflow name for this project (for example: workflowName="OrderProcessing").'
+          ),
+        ]);
+      }
+
+      if (!isValidWorkflowName(workflowName)) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            `Invalid workflow name "${workflowName}". Workflow name must start with a letter and can only contain letters, digits, "_" and "-".`
+          ),
+        ]);
+      }
+
+      if (!workflowType) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart('Please specify the initial workflow type: "stateful", "stateless", "agentic", or "agent".'),
+        ]);
+      }
+
+      const mappedWorkflowType = mapWorkflowTypeToProjectType(workflowType);
+      if (!mappedWorkflowType) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(
+            `Invalid workflow type "${String(workflowType)}". Valid values are: stateful, stateless, agentic, agent.`
           ),
         ]);
       }
@@ -102,8 +145,8 @@ class CreateProjectTool implements vscode.LanguageModelTool<CreateProjectParams>
         const projectContext: any = {
           logicAppName: projectName,
           logicAppType: projectType,
-          workflowName: 'Workflow1',
-          workflowType: WorkflowType.stateful,
+          workflowName,
+          workflowType: mappedWorkflowType,
           workspaceFilePath: vscode.workspace.workspaceFile.fsPath,
           shouldCreateLogicAppProject: true,
           targetFramework: targetFramework,
@@ -141,4 +184,28 @@ class CreateProjectTool implements vscode.LanguageModelTool<CreateProjectParams>
 export function isValidProjectName(name: string): boolean {
   const projectNameValidation = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
   return projectNameValidation.test(name);
+}
+
+/**
+ * Validate workflow name
+ * @internal Exported for testing
+ */
+export function isValidWorkflowName(name: string): boolean {
+  const workflowNameValidation = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
+  return workflowNameValidation.test(name);
+}
+
+function mapWorkflowTypeToProjectType(workflowType: WorkflowTypeOption): WorkflowType | undefined {
+  switch (workflowType) {
+    case WorkflowTypeOptionValue.stateful:
+      return WorkflowType.stateful;
+    case WorkflowTypeOptionValue.stateless:
+      return WorkflowType.stateless;
+    case WorkflowTypeOptionValue.agentic:
+      return WorkflowType.agentic;
+    case WorkflowTypeOptionValue.agent:
+      return WorkflowType.agent;
+    default:
+      return undefined;
+  }
 }

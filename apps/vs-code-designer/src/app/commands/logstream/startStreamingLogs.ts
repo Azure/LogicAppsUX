@@ -7,7 +7,6 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { enableFileLogging } from './enableFileLogging';
-import type { ApplicationInsightsManagementClient, ApplicationInsightsComponent } from '@azure/arm-appinsights';
 import type { SiteLogsConfig, StringDictionary } from '@azure/arm-appservice';
 import * as appservice from '@microsoft/vscode-azext-azureappservice';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -68,9 +67,9 @@ async function openLiveMetricsStream(context: IActionContext, site: ParsedSite, 
     // https://github.com/microsoft/vscode-azurefunctions/issues/1432
     throw new Error(localize('mustConfigureAI', 'You must configure Application Insights to stream logs on Linux Function Apps.'));
   }
-  const aiClient: ApplicationInsightsManagementClient = await createAppInsightsClient([context, node]);
+  const aiClient = await createAppInsightsClient([context, node]);
   const components = await aiClient.components.list();
-  let component: ApplicationInsightsComponent | undefined = undefined;
+  let component: { instrumentationKey?: string; id?: string } | undefined = undefined;
 
   for await (const itemComponent of components) {
     if (itemComponent.instrumentationKey === aiKey) {

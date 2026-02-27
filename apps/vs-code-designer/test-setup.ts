@@ -34,10 +34,17 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
       // Simply invoke the callback with a fake telemetry context.
       return callback({
         telemetry: { properties: {}, measurements: {} },
-        errorHandling: {},
-        ui: {},
+        errorHandling: { issueProperties: {} },
+        ui: {
+          onDidFinishPrompt: (_listener: unknown) => ({ dispose: () => undefined }),
+          showQuickPick: vi.fn(),
+          showInputBox: vi.fn(),
+          showWarningMessage: vi.fn(),
+          showOpenDialog: vi.fn(),
+          showWorkspaceFolderPick: vi.fn(),
+        } as any,
         valuesToMask: [],
-      });
+      } as IActionContext);
     },
     parseError: vi.fn(() => {
       return { message: 'error' };

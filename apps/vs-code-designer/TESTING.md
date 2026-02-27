@@ -83,6 +83,11 @@ pnpm vitest run --coverage
 
 ## Troubleshooting
 
+### Chat-generated connector actions (SQL / Service Bus)
+- If designer nodes show "Unable to initialize operation details" after chat-added actions, see:
+	- `CHAT_CONNECTOR_ACTION_LEARNINGS.md`
+- The note includes root causes, fixes, and a repair runbook for existing workflows.
+
 ### Tests timing out
 - Increase timeout for specific test: `it('test name', { timeout: 30000 }, async () => { ... })`
 - Check for missing `await` keywords in async operations

@@ -14,6 +14,9 @@ import {
   validateApiConnectionReferenceExists,
   selectOperationByActionName,
   resolveSwaggerOperation,
+  resolveOfflineManagedConnectorOperation,
+  buildServiceProviderAction,
+  resolveAppSettingExpressions,
 } from '../tools/workflowTools';
 import { WorkflowTypeOption } from '../chatConstants';
 
@@ -680,5 +683,127 @@ describe('trigger/action definitions', () => {
       path: '/queues/{queueName}/messages/peeklock',
       operationId: 'PeekLockMessages',
     });
+  });
+
+  it('normalizes connector swagger paths that include {connectionId} prefix', () => {
+    const resolved = resolveSwaggerOperation(
+      {
+        paths: {
+          '/{connectionId}/v2/datasets/{dataset}/tables/{table}/items': {
+            get: {
+              operationId: 'GetItems_V2',
+              summary: 'List rows',
+            },
+          },
+        },
+      },
+      'List SQL rows',
+      ['GetItems_V2'],
+      {}
+    );
+
+    expect(resolved).toEqual({
+      method: 'get',
+      path: '/v2/datasets/{dataset}/tables/{table}/items',
+      operationId: 'GetItems_V2',
+    });
+  });
+
+  it('resolves offline SQL list operation to canonical encoded path', () => {
+    const resolved = resolveOfflineManagedConnectorOperation(
+      '/subscriptions/abc/providers/Microsoft.Web/locations/westus/managedApis/sql',
+      'List SQL Orders',
+      {}
+    );
+
+    expect(resolved).toEqual({
+      method: 'get',
+      path: "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[Orders]'))}/items",
+      operationId: 'GetItems_V2',
+    });
+  });
+
+  it('normalizes plain SQL path hint in offline fallback', () => {
+    const resolved = resolveOfflineManagedConnectorOperation(
+      '/subscriptions/abc/providers/Microsoft.Web/locations/westus/managedApis/sql',
+      'List SQL Orders',
+      {
+        method: 'GET',
+        path: '/v2/datasets/default/tables/[dbo].[Orders]/items',
+      }
+    );
+
+    expect(resolved).toEqual({
+      method: 'get',
+      path: "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[Orders]'))}/items",
+      operationId: 'GetItems_V2',
+    });
+  });
+
+  it('builds ServiceProvider action with correct shape', () => {
+    const action = buildServiceProviderAction('AzureBlob', 'readBlob', '/serviceProviders/AzureBlob', {
+      containerName: 'container1',
+      blobName: 'blob1',
+    });
+
+    expect(action).toEqual({
+      type: 'ServiceProvider',
+      inputs: {
+        parameters: {
+          containerName: 'container1',
+          blobName: 'blob1',
+        },
+        serviceProviderConfiguration: {
+          connectionName: 'AzureBlob',
+          operationId: 'readBlob',
+          serviceProviderId: '/serviceProviders/AzureBlob',
+        },
+      },
+      runAfter: {},
+    });
+  });
+
+  it('builds ServiceProvider action with custom runAfter', () => {
+    const action = buildServiceProviderAction(
+      'serviceBus',
+      'sendMessage',
+      '/serviceProviders/serviceBus',
+      { message: 'hello' },
+      { Previous_Action: ['Succeeded'] }
+    );
+
+    expect(action.type).toBe('ServiceProvider');
+    expect((action.inputs as any).serviceProviderConfiguration.connectionName).toBe('serviceBus');
+    expect((action.inputs as any).serviceProviderConfiguration.operationId).toBe('sendMessage');
+    expect(action.runAfter).toEqual({ Previous_Action: ['Succeeded'] });
+  });
+
+  it('builds ServiceProvider action with empty parameters when none provided', () => {
+    const action = buildServiceProviderAction('AzureBlob', 'readBlob', '/serviceProviders/AzureBlob');
+    expect((action.inputs as any).parameters).toEqual({});
+    expect(action.runAfter).toEqual({});
+  });
+
+  it('resolves @appsetting() expressions in api.id paths', () => {
+    const input =
+      "/subscriptions/@appsetting('WORKFLOWS_SUBSCRIPTION_ID')/providers/Microsoft.Web/locations/@appsetting('WORKFLOWS_LOCATION_NAME')/managedApis/office365";
+    const result = resolveAppSettingExpressions(input, {
+      WORKFLOWS_SUBSCRIPTION_ID: 'abc-123',
+      WORKFLOWS_LOCATION_NAME: 'westus',
+    });
+    expect(result).toBe('/subscriptions/abc-123/providers/Microsoft.Web/locations/westus/managedApis/office365');
+  });
+
+  it('leaves @appsetting() expressions unresolved when values are missing', () => {
+    const input =
+      "/subscriptions/@appsetting('WORKFLOWS_SUBSCRIPTION_ID')/providers/Microsoft.Web/locations/@appsetting('WORKFLOWS_LOCATION_NAME')/managedApis/sql";
+    const result = resolveAppSettingExpressions(input, {});
+    expect(result).toBe(input);
+  });
+
+  it('returns string unchanged when no @appsetting() expressions are present', () => {
+    const input = '/subscriptions/abc-123/providers/Microsoft.Web/locations/westus/managedApis/sql';
+    const result = resolveAppSettingExpressions(input, { WORKFLOWS_SUBSCRIPTION_ID: 'other' });
+    expect(result).toBe(input);
   });
 });

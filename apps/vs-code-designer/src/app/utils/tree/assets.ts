@@ -1,6 +1,7 @@
 import { ext } from '../../../extensionVariables';
 import { Theme } from '@microsoft/logic-apps-shared';
 import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import * as vscode from 'vscode';
 import * as path from 'path';
 import { assetsFolderName } from '../../../constants';
 
@@ -10,7 +11,7 @@ import { assetsFolderName } from '../../../constants';
  * @returns {TreeItemIconPath} Icon path.
  */
 export function getIconPath(iconName: string): TreeItemIconPath {
-  return path.join(getResourcesPath(), `${iconName}.svg`);
+  return vscode.Uri.file(path.join(getResourcesPath(), `${iconName}.svg`));
 }
 
 /**
@@ -20,8 +21,8 @@ export function getIconPath(iconName: string): TreeItemIconPath {
  */
 export function getThemedIconPath(iconName: string): TreeItemIconPath {
   return {
-    light: path.join(getResourcesPath(), Theme.Light, `${iconName}.svg`),
-    dark: path.join(getResourcesPath(), Theme.Dark, `${iconName}.svg`),
+    light: vscode.Uri.file(path.join(getResourcesPath(), Theme.Light, `${iconName}.svg`)),
+    dark: vscode.Uri.file(path.join(getResourcesPath(), Theme.Dark, `${iconName}.svg`)),
   };
 }
 
