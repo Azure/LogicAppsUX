@@ -125,19 +125,24 @@ export const useMcpToolWizardStyles = makeStyles({
     ...shorthands.gap('12px'),
     alignItems: 'flex-start',
   },
-  addConnectionLink: {
-    marginTop: '8px',
-    cursor: 'pointer',
-    color: tokens.colorBrandForeground1,
-    fontSize: tokens.fontSizeBase300,
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
   createConnectionContainer: {
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
     overflowY: 'auto',
+  },
+  connectionStepContainer: {
+    width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+    '& .msla-connection-table': {
+      width: '100%',
+      maxWidth: '100%',
+      boxSizing: 'border-box',
+    },
+  },
+  connectionStepActionContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });

@@ -506,14 +506,9 @@ export const McpToolWizard = () => {
         description: 'Retry button text',
       }),
       addConnectionLink: intl.formatMessage({
-        defaultMessage: 'Add new',
+        defaultMessage: 'Create a new connection',
         id: 'YW1rx0',
-        description: 'Link text to add a new connection',
-      }),
-      createConnectionDescription: intl.formatMessage({
-        defaultMessage: 'Create a new connection for the MCP server.',
-        id: 'lPj8hf',
-        description: 'Description for create connection step',
+        description: 'Button text to create a new connection',
       }),
     }),
     [intl]
@@ -532,22 +527,12 @@ export const McpToolWizard = () => {
 
     const buttonContents: TemplatePanelFooterProps['buttonContents'] = [
       {
-        type: 'navigation',
+        type: 'action',
         text: INTL_TEXT.backButton,
         onClick: handleBack,
         appearance: 'subtle',
       },
     ];
-
-    // Add "Add a connection" button on connection step
-    if (isConnectionStep) {
-      buttonContents.push({
-        type: 'action',
-        text: INTL_TEXT.addConnectionLink,
-        onClick: handleAddConnectionClick,
-        appearance: 'subtle',
-      });
-    }
 
     // Disable Done button if in "selected tools" mode with no tools selected
     const isDoneDisabled =
@@ -600,12 +585,14 @@ export const McpToolWizard = () => {
     }
 
     return (
-      <ConnectionTable
-        connections={validConnections}
-        currentConnectionId={localConnectionId}
-        saveSelectionCallback={handleConnectionTableSelect}
-        isXrmConnectionReferenceMode={false}
-      />
+      <div className={classes.connectionStepContainer}>
+        <ConnectionTable
+          connections={validConnections}
+          currentConnectionId={localConnectionId}
+          saveSelectionCallback={handleConnectionTableSelect}
+          isXrmConnectionReferenceMode={false}
+        />
+      </div>
     );
   };
 
@@ -749,9 +736,6 @@ export const McpToolWizard = () => {
     if (isConnectionStep) {
       return INTL_TEXT.step1Description;
     }
-    if (isCreateConnectionStep) {
-      return INTL_TEXT.createConnectionDescription;
-    }
     if (isParametersStep) {
       return INTL_TEXT.step2Description;
     }
@@ -778,6 +762,7 @@ export const McpToolWizard = () => {
   // When step 1 is completed but not locked, show checkmark with brand color
   const isStep1Locked = (isConnectionLocked || wasOpenedAtCreateConnection) && isParametersStep;
   const isStep1Completed = !isConnectionLocked && !wasOpenedAtCreateConnection && isParametersStep;
+  const stepDescription = getStepDescription();
 
   return (
     <div className={classes.container}>
@@ -841,7 +826,7 @@ export const McpToolWizard = () => {
           </div>
           <Text weight={currentStepNumber === 2 ? 'semibold' : 'regular'}>{INTL_TEXT.step2Label}</Text>
         </div>
-        <Text className={classes.stepDescription}>{getStepDescription()}</Text>
+        {stepDescription ? <Text className={classes.stepDescription}>{stepDescription}</Text> : null}
         {isParametersStep && toolsErrorMessage && (
           <div className={classes.warningContainer}>
             <MessageBar intent="warning">
@@ -857,6 +842,13 @@ export const McpToolWizard = () => {
           </div>
         )}
         {renderCurrentStep()}
+        {isConnectionStep ? (
+          <div className={classes.connectionStepActionContainer}>
+            <Button onClick={handleAddConnectionClick} size="small">
+              {INTL_TEXT.addConnectionLink}
+            </Button>
+          </div>
+        ) : null}
       </div>
       {(footerContent.buttonContents?.length ?? 0) > 0 && (
         <div className={classes.footer}>

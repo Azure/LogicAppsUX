@@ -295,6 +295,34 @@ describe('McpServersBrowse', () => {
     expect(screen.getByTestId('grid-item-nativemcpclient')).toBeDefined();
   });
 
+  test('should list builtin MCP server operation first in Others tab', async () => {
+    const mockConnection = {
+      id: 'conn-123',
+      name: 'my-connection',
+      type: 'builtinMcpClientToolConnection',
+      properties: {
+        displayName: 'My Connection',
+        api: {
+          id: 'connectionProviders/mcpclient',
+        },
+      },
+    };
+
+    mockUseConnectionsForConnector.mockReturnValue({
+      data: [mockConnection],
+      isLoading: false,
+    } as any);
+
+    render(<McpServersBrowse />, { wrapper: createWrapper() });
+    fireEvent.click(screen.getByRole('tab', { name: 'Others' }));
+
+    await waitFor(() => {
+      const gridItems = document.querySelectorAll('[data-testid^="grid-item-"]');
+      expect(gridItems.length).toBeGreaterThan(0);
+      expect(gridItems[0]?.getAttribute('data-testid')).toBe('grid-item-nativemcpclient');
+    });
+  });
+
   test('should force create connection for builtin MCP server', async () => {
     render(<McpServersBrowse />, { wrapper: createWrapper() });
 
