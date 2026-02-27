@@ -29,19 +29,15 @@ export const runsQueriesKeys = {
   useCancelRun: 'useCancelRun',
 };
 
-export const useRunsInfiniteQuery = (enabled = false) => {
+export const useRunsInfiniteQuery = (enabled = false, filter?: string) => {
   const queryClient = useQueryClient();
 
   return useInfiniteQuery(
-    [runsQueriesKeys.runs],
+    [runsQueriesKeys.runs, filter],
     async ({ pageParam }: { pageParam?: string }) => {
       // pageParam is the nextLink when provided
-      if (!pageParam) {
-        const firstRuns = await RunService().getRuns();
-        return { runs: firstRuns.runs ?? [], nextLink: firstRuns?.nextLink };
-      }
-      const moreRuns = await RunService().getMoreRuns(pageParam);
-      return { runs: moreRuns.runs ?? [], nextLink: moreRuns.nextLink };
+      const runs = await RunService().getRuns(filter, pageParam);
+      return { runs: runs.runs ?? [], nextLink: runs?.nextLink };
     },
     {
       enabled,
@@ -51,8 +47,8 @@ export const useRunsInfiniteQuery = (enabled = false) => {
       // them without an extra fetch when available.
       onSuccess: (data) => {
         try {
-          queryClient.invalidateQueries([runsQueriesKeys.allRuns]);
-          queryClient.setQueryData([runsQueriesKeys.allRuns], (_currentRuns: Record<string, Run> = {}) => {
+          queryClient.invalidateQueries([runsQueriesKeys.allRuns, filter]);
+          queryClient.setQueryData([runsQueriesKeys.allRuns, filter], (_currentRuns: Record<string, Run> = {}) => {
             const allRuns: Run[] = (data?.pages ?? []).flatMap((p: any) => p.runs ?? []);
             const currentRuns = { ..._currentRuns } as Record<string, Run>;
             allRuns.forEach((run) => {
@@ -71,8 +67,8 @@ export const useRunsInfiniteQuery = (enabled = false) => {
   );
 };
 
-export const useAllRuns = () => {
-  const { data: allRuns = {} } = useQuery<Record<string, Run>>([runsQueriesKeys.allRuns], () => ({}), {
+export const useAllRuns = (filter?: string) => {
+  const { data: allRuns = {} } = useQuery<Record<string, Run>>([runsQueriesKeys.allRuns, filter], () => ({}), {
     ...queryOpts,
     // This query is populated by useRunsInfiniteQuery, not fetched directly
     enabled: false,
@@ -88,7 +84,7 @@ export const useAllRuns = () => {
   }, [allRuns]);
 };
 
-export const useRun = (runId: string | undefined, enabled = true) => {
+export const useRun = (runId: string | undefined, enabled = true, filter?: string) => {
   const queryClient = useQueryClient();
   return useQuery(
     [runsQueriesKeys.run, runId],
@@ -101,7 +97,7 @@ export const useRun = (runId: string | undefined, enabled = true) => {
         throw new Error('Run not found');
       }
       // Set in all runs object
-      queryClient.setQueryData([runsQueriesKeys.allRuns], (old: Record<string, Run> | undefined) => ({
+      queryClient.setQueryData([runsQueriesKeys.allRuns, filter], (old: Record<string, Run> | undefined) => ({
         ...old,
         [fetchedRun.id]: fetchedRun,
       }));

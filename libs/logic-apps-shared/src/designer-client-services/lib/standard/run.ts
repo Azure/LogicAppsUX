@@ -121,13 +121,13 @@ export class StandardRunService implements IRunService {
    * Gets workflow run history
    * @returns {Promise<Runs>} Workflow runs.
    */
-  async getRuns(): Promise<Runs> {
+  async getRuns(filters?: string, continuationToken?: string): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
+    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}${filters ? `&$filter=${filters}` : ''}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
-        uri,
+        uri: continuationToken ?? uri,
       });
 
       const { nextLink, value: runs }: ArmResources<Run> = response;

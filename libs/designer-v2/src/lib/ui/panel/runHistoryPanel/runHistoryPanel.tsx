@@ -73,25 +73,79 @@ export const RunHistoryPanel = () => {
 
   const styles = useRunHistoryPanelStyles();
 
-  const runsQuery = useRunsInfiniteQuery(isMonitoringView);
-  const runs = useAllRuns();
-  const selectedRunInstance = useRunInstance();
-  const runQuery = useRun(selectedRunInstance?.id);
-
-  // Refetch the runs when the panel is expanded
-  useEffect(() => {
-    if (isMonitoringView) {
-      runsQuery.refetch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMonitoringView, selectedRunInstance]);
-
   // MARK: Filtering
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
   const [filtersExpanded, setFiltersExpanded] = useState(false);
 
   const [customStart, setCustomStart] = useState<Date | null>(null);
   const [customEnd, setCustomEnd] = useState<Date | null>(null);
+
+  const [filterString, setFilterString] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    let filter = '';
+
+    const addFilter = (value: string) => {
+      if (filter) {
+        filter += ' and ';
+      }
+      filter += value;
+    };
+
+    if (filters['runId']) {
+      addFilter(`runId eq '${filters['runId']}'`);
+    }
+    if (filters['workflowVersion']) {
+      addFilter(`workflowVersion eq '${filters['workflowVersion']}'`);
+    }
+    if (filters['status']) {
+      addFilter(`status eq '${filters['status']}'`);
+    }
+    if (filters['mode']) {
+      if (filters['mode'] === 'Draft') {
+        addFilter(`workflow/mode eq 'Draft'`);
+      } else if (filters['mode'] === 'Prod') {
+        addFilter(`(workflow/mode eq null or workflow/mode eq 'Prod')`);
+      }
+    }
+    if (filters['timeInterval']) {
+      const now = new Date();
+      let startTime: Date | null = null;
+      let endTime: Date | null = null;
+      switch (filters['timeInterval']) {
+        case 'last24h':
+          startTime = new Date(now.getTime() - Durations.day);
+          break;
+        case 'last48h':
+          startTime = new Date(now.getTime() - 2 * Durations.day);
+          break;
+        case 'last7d':
+          startTime = new Date(now.getTime() - Durations.week);
+          break;
+        case 'last14d':
+          startTime = new Date(now.getTime() - 2 * Durations.week);
+          break;
+        case 'last30d':
+          startTime = new Date(now.getTime() - 30 * Durations.day);
+          break;
+        case 'custom': {
+          if (customStart) {
+            startTime = customStart;
+          }
+          if (customEnd) {
+            endTime = customEnd;
+          }
+          break;
+        }
+      }
+      if (startTime) {
+        addFilter(`startTime ge ${startTime.toISOString()}`);
+      }
+      if (endTime) {
+        addFilter(`startTime le ${endTime.toISOString()}`);
+      }
+    }
+    setFilterString(filter);
+  }, [filters, customStart, customEnd]);
 
   const onCustomDateSelect = useCallback(
     (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (date: Date | null | undefined) => {
@@ -127,57 +181,18 @@ export const RunHistoryPanel = () => {
     []
   );
 
-  const filteredRuns = useMemo(() => {
-    return (
-      runs?.filter((run) => {
-        if (filters?.['runId'] && run.name !== filters['runId']) {
-          return false;
-        }
-        if (filters?.['workflowVersion'] && (run.properties.workflow as any)?.name !== filters['workflowVersion']) {
-          return false;
-        }
-        if (filters?.['status'] && run.properties.status !== filters['status']) {
-          return false;
-        }
-        if (filters?.['mode'] === 'Draft' && (run.properties.workflow as any)?.mode !== 'Draft') {
-          return false;
-        }
-        if (filters?.['mode'] === 'Prod' && (run.properties.workflow as any)?.mode !== undefined) {
-          return false;
-        }
-        // Time interval filter
-        if (filters?.['timeInterval'] && run.properties.startTime) {
-          const runTime = new Date(run.properties.startTime).getTime();
-          const now = Date.now();
-          const interval = filters['timeInterval'];
-          if (interval === 'last24h' && runTime < now - Durations.day) {
-            return false;
-          }
-          if (interval === 'last48h' && runTime < now - 2 * Durations.day) {
-            return false;
-          }
-          if (interval === 'last7d' && runTime < now - Durations.week) {
-            return false;
-          }
-          if (interval === 'last14d' && runTime < now - 2 * Durations.week) {
-            return false;
-          }
-          if (interval === 'last30d' && runTime < now - 30 * Durations.day) {
-            return false;
-          }
-          if (interval === 'custom') {
-            if (customStart && runTime < customStart.getTime()) {
-              return false;
-            }
-            if (customEnd && runTime > customEnd.getTime()) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }) ?? []
-    );
-  }, [filters, runs, customStart, customEnd]);
+  const runsQuery = useRunsInfiniteQuery(isMonitoringView, filterString);
+  const runs = useAllRuns(filterString);
+  const selectedRunInstance = useRunInstance();
+  const runQuery = useRun(selectedRunInstance?.id, !!selectedRunInstance, filterString);
+
+  // Refetch the runs when the panel is expanded
+  useEffect(() => {
+    if (isMonitoringView) {
+      runsQuery.refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMonitoringView, selectedRunInstance]);
 
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
@@ -396,13 +411,16 @@ export const RunHistoryPanel = () => {
 
   const onStatusSelect = useCallback(
     (value: string) => {
+      if (value === filters?.['status']) {
+        return;
+      }
       if (!value || equals(value, 'All')) {
         addFilterCallback({ key: 'status', value: undefined });
       } else {
         addFilterCallback({ key: 'status', value });
       }
     },
-    [addFilterCallback]
+    [addFilterCallback, filters]
   );
 
   const modeTags = useMemo(
@@ -417,13 +435,16 @@ export const RunHistoryPanel = () => {
 
   const onModeSelect = useCallback(
     (value: string) => {
+      if (value === filters?.['mode']) {
+        return;
+      }
       if (!value || equals(value, 'All')) {
         addFilterCallback({ key: 'mode', value: undefined });
       } else {
         addFilterCallback({ key: 'mode', value });
       }
     },
-    [addFilterCallback]
+    [addFilterCallback, filters]
   );
 
   const timeIntervalTags = useMemo(
@@ -442,6 +463,9 @@ export const RunHistoryPanel = () => {
 
   const onTimeIntervalSelect = useCallback(
     (value: string) => {
+      if (value === filters?.['timeInterval']) {
+        return;
+      }
       if (!value || equals(value, 'All')) {
         addFilterCallback({ key: 'timeInterval', value: undefined });
         setCustomStart(null);
@@ -454,7 +478,7 @@ export const RunHistoryPanel = () => {
         }
       }
     },
-    [addFilterCallback]
+    [addFilterCallback, filters]
   );
 
   const chatEnabled = useWorkflowHasAgentLoop();
@@ -715,13 +739,13 @@ export const RunHistoryPanel = () => {
       <DrawerBody>
         {inRunList ? (
           <div style={{ margin: '4px -16px' }}>
-            {!runsQuery.isFetching && filteredRuns?.length === 0 ? (
+            {!runsQuery.isFetching && runs?.length === 0 ? (
               <Text className={styles.noRunsText} align={'center'}>
                 {noRunsText}
               </Text>
             ) : (
               <>
-                {filteredRuns.map((run) => (
+                {runs.map((run) => (
                   <RunHistoryEntry
                     key={run.id}
                     runId={run.id}

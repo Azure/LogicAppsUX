@@ -124,14 +124,14 @@ export class ConsumptionRunService implements IRunService {
    * Gets workflow run history
    * @returns {Promise<Runs>} Workflow runs.
    */
-  async getRuns(): Promise<Runs> {
+  async getRuns(filters?: string, continuationToken?: string): Promise<Runs> {
     const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}${filters ? `&$filter=${filters}` : ''}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
-        uri,
+        uri: continuationToken ?? uri,
         headers: headers as Record<string, any>,
       });
 
