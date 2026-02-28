@@ -13,7 +13,7 @@ namespace <%= logicAppNamespace %>
     public static class <%= flowNameClass %>
     {
         /// <summary>
-        /// Configures and builds the <%= flowName %> stateful workflow.
+        /// Configures the <%= flowName %> stateful workflow.
         /// </summary>
         public static void AddWorkflow()
         {
@@ -25,12 +25,6 @@ namespace <%= logicAppNamespace %>
                 units: () => "I"
             );
 
-            trigger.WithName("weather_trigger");
-            trigger.WithRecurrence(new FlowRecurrence
-            {
-                Frequency = FlowRecurrenceFrequency.Minute,
-                Interval = 1
-            });
             var builder = WorkflowBuilderFactory.CreateStatefulWorkflow(<%= flowName %>, trigger);
 
             var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {trigger.TriggerOutput}");
