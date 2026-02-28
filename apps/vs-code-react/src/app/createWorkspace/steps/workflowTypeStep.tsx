@@ -55,7 +55,7 @@ export const WorkflowTypeStep: React.FC = () => {
   };
 
   const selectWorkflowTypes = useMemo(() => {
-    const logicAppCodeType = logicAppType === ProjectType.agentCodeful ? logicAppCodeTypes.CODEFUL : logicAppCodeTypes.CODELESS;
+    const logicAppCodeType = logicAppType === ProjectType.codeful ? logicAppCodeTypes.CODEFUL : logicAppCodeTypes.CODELESS;
     return workflowTypes[logicAppCodeType];
   }, [logicAppType, workflowTypes]);
 

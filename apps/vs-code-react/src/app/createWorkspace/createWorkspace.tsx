@@ -527,7 +527,7 @@ const CreateWorkspaceInternal = () => {
         logicAppName,
         workflowType,
         workflowName,
-        targetFramework: logicAppType === ProjectType.agentCodeful ? 'net8' : targetFramework,
+        targetFramework: logicAppType === ProjectType.codeful ? 'net8' : targetFramework,
         ...(logicAppType === ProjectType.customCode && {
           functionFolderName,
           functionNamespace,

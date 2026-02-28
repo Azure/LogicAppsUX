@@ -99,7 +99,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   const isCodefulAgent = await hasCodefulWorkflowSetting(folderPath);
 
   if (isCodefulAgent) {
-    vscode.commands.executeCommand('setContext', customExtensionContext.isAgentCodeful, true);
+    vscode.commands.executeCommand('setContext', customExtensionContext.isCodeful, true);
   }
 
   // Only return false if none of the possible validation mechanisms are present

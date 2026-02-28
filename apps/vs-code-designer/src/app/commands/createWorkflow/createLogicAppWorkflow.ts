@@ -1,12 +1,11 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IWebviewProjectContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { type IFunctionWizardContext, type IWebviewProjectContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import { createLogicAppAndWorkflow } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { localize } from '../../../localize';
 import { isCodefulProject } from '../../utils/codeful';
-import { ProjectType as ProjectTypeEnum } from '@microsoft/vscode-extension-logic-apps';
 
 export async function createLogicAppWorkflow(context: IActionContext, options: any, logicAppFolderPath: string) {
   addLocalFuncTelemetry(context);
@@ -21,7 +20,7 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
   if (!webviewProjectContext.logicAppType) {
     const isCodeful = await isCodefulProject(logicAppFolderPath);
     if (isCodeful) {
-      webviewProjectContext.logicAppType = ProjectTypeEnum.agentCodeful;
+      webviewProjectContext.logicAppType = ProjectType.codeful;
     }
   }
 
@@ -35,7 +34,7 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
     const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
     mySubContext.logicAppName = options.logicAppName;
     mySubContext.projectPath = logicAppFolderPath;
-    mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
+    mySubContext.projectType = webviewProjectContext.logicAppType;
     mySubContext.functionFolderName = options.functionFolderName;
     mySubContext.targetFramework = options.targetFramework;
 

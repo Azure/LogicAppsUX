@@ -100,7 +100,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
-        if (filePath.includes('AgentCodefulFile')) {
+        if (filePath.includes('AgentCodefulWorkflow')) {
           return Promise.resolve(agentCodefulTemplate);
         }
         if (filePath.includes('ProgramFile')) {
@@ -162,7 +162,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       }`;
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
-        if (filePath.includes('AgentCodefulFile')) {
+        if (filePath.includes('AgentCodefulWorkflow')) {
           return Promise.resolve(agentCodefulTemplate);
         }
         if (filePath.includes('Program.cs')) {
@@ -205,7 +205,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       }`;
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
-        if (filePath.includes('AgentCodefulFile')) {
+        if (filePath.includes('AgentCodefulWorkflow')) {
           return Promise.resolve(agentCodefulTemplate);
         }
         if (filePath.includes('Program.cs')) {
@@ -241,7 +241,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
-        if (filePath.includes('StatefulCodefulFile')) {
+        if (filePath.includes('StatefulCodefulWorkflow')) {
           return Promise.resolve(statefulTemplate);
         }
         if (filePath.includes('ProgramFile')) {
@@ -262,7 +262,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.statefulCodeful);
 
         // Verify correct template was used
-        expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulFile'), 'utf-8');
+        expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulWorkflow'), 'utf-8');
 
         // Verify workflow file contains stateful content and correct namespace
         const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
@@ -284,7 +284,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       const nugetTemplate = '<configuration><%= lspDirectory %></configuration>';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
-        if (filePath.includes('AgentCodefulFile')) {
+        if (filePath.includes('AgentCodefulWorkflow')) {
           return Promise.resolve(agentCodefulTemplate);
         }
         if (filePath.includes('ProgramFile')) {

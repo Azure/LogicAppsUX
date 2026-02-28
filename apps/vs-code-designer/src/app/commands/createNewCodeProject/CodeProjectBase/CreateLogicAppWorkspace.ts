@@ -101,10 +101,10 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   const { logicAppType, workflowType, functionName, workflowName, logicAppName } = webviewProjectContext;
 
   await fse.ensureDir(logicAppFolderPath);
-  if (logicAppType === ProjectType.agentCodeful) {
-    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName, workflowType);
+  if (logicAppType === ProjectType.codeful) {
+    await createCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName, workflowType);
   } else {
-    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(logicAppType as ProjectType, workflowType, functionName);
+    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(logicAppType, workflowType, functionName);
     const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, workflowName);
     await fse.ensureDir(logicAppWorkflowFolderPath);
 
@@ -143,19 +143,19 @@ export const addWorkflowToProgram = async (programFilePath: string, workflowName
   }
 };
 
-export const createAgentCodefulWorkflowFile = async (
+export const createCodefulWorkflowFile = async (
   logicAppFolderPath: string,
   logicAppName: string,
   workflowName: string,
   workflowType: WorkflowType
 ) => {
-  const agentFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulFile' : 'AgentCodefulFile';
+  const workflowTemplateFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulWorkflow' : 'AgentCodefulWorkflow';
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
   // Create the workflow-specific .cs file
   const capitalizedWorkflowName = workflowName.charAt(0).toUpperCase() + workflowName.slice(1);
-  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', agentFileName);
+  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', workflowTemplateFileName);
   const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
     .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
     .replace(/<%= flowNameClass %>/g, `${capitalizedWorkflowName}`)
@@ -225,7 +225,8 @@ export async function createLocalConfigurationFiles(
     localSettingsJson.Values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
 
-  if (logicAppType === ProjectType.agentCodeful) {
+  // TODO(aeldridge): Update to point to codeful private bundle once it's published.
+  if (logicAppType === ProjectType.codeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
     localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
     localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.160.0.18]';
@@ -277,7 +278,7 @@ export async function createWorkspaceStructure(webviewProjectContext: IWebviewPr
   workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
   // push functions folder
-  if (logicAppType !== ProjectType.logicApp && logicAppType !== ProjectType.agentCodeful) {
+  if (logicAppType !== ProjectType.logicApp && logicAppType !== ProjectType.codeful) {
     workspaceFolders.push({ name: functionFolderName, path: `./${functionFolderName}` });
   }
 
@@ -362,7 +363,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
+  mySubContext.projectType = webviewProjectContext.logicAppType;
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
@@ -445,7 +446,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
   const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
+  mySubContext.projectType = webviewProjectContext.logicAppType;
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
