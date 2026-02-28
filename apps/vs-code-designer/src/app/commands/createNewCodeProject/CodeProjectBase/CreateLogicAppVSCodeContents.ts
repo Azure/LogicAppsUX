@@ -218,7 +218,7 @@ export function getDebugConfiguration(
 export async function writeLaunchJson(context: IWebviewProjectContext, vscodePath: string, logicAppName: string): Promise<void> {
   const customCodeTargetFramework =
     context.logicAppType === ProjectType.customCode || context.logicAppType === ProjectType.rulesEngine
-      ? ((context.targetFramework as TargetFramework) ?? (await tryGetCustomCodeTargetFramework(context)))
+      ? (context.targetFramework ?? (await tryGetCustomCodeTargetFramework(context)))
       : undefined;
   const isCodeful = context.logicAppType === ProjectType.codeful;
   const newDebugConfig: DebugConfiguration = getDebugConfiguration(logicAppName, customCodeTargetFramework, isCodeful);
