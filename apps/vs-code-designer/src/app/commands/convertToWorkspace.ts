@@ -27,6 +27,29 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
 
   const webviewProjectContext: IWebviewProjectContext = options;
 
+  // Add telemetry properties for debugging
+  context.telemetry.properties.hasWorkspaceProjectPath = String(!!webviewProjectContext.workspaceProjectPath);
+  context.telemetry.properties.workspaceProjectPathType = typeof webviewProjectContext.workspaceProjectPath;
+  context.telemetry.properties.receivedOptionsKeys = Object.keys(options || {}).join(',');
+
+  // Validate that workspaceProjectPath exists and has required properties
+  if (!webviewProjectContext.workspaceProjectPath || !webviewProjectContext.workspaceProjectPath.fsPath) {
+    const errorMessage = `[ConvertToWorkspace] Invalid workspaceProjectPath: ${JSON.stringify(
+      {
+        hasWorkspaceProjectPath: !!webviewProjectContext.workspaceProjectPath,
+        workspaceProjectPathType: typeof webviewProjectContext.workspaceProjectPath,
+        workspaceProjectPathValue: webviewProjectContext.workspaceProjectPath,
+        contextKeys: Object.keys(options || {}),
+      },
+      null,
+      2
+    )}`;
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(
+      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(webviewProjectContext.workspaceProjectPath)}`
+    );
+  }
+
   const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
 
   await fse.ensureDir(workspaceFolderPath);

@@ -91,12 +91,12 @@ export interface DesignerCommandBarProps {
   switchToDesignerView: () => void;
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
+  supportsUnitTest?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isDarkMode,
   isUnitTest,
-  isLocal,
   runId,
   saveWorkflow: _saveWorkflow,
   saveWorkflowFromCode: _saveWorkflowFromCode,
@@ -107,6 +107,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToDesignerView,
   switchToCodeView,
   switchToMonitoringView,
+  supportsUnitTest,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -360,7 +361,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
-          {isLocal && (
+          {supportsUnitTest && (
             <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
               {intlText.CREATE_UNIT_TEST_FROM_RUN}
             </MenuItem>

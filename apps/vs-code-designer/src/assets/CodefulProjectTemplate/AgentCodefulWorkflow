@@ -1,0 +1,92 @@
+// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace <%= logicAppNamespace %>
+{
+    using System;
+    using Microsoft.Azure.Workflows.Sdk;
+    using Microsoft.Azure.Workflows.Sdk.Connectors;
+    using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
+    using Microsoft.Extensions.Hosting;
+
+    /// <summary>
+    /// <%= flowName %> Agent Workflow.
+    /// </summary>
+    public static class <%= flowNameClass %>
+    {
+        /// <summary>
+        /// Main Class.
+        /// </summary>
+        public static void AddWorkflow()
+        {
+            // Create a workflow agent builder for the "TestFlow" workflow.
+            var builder = WorkflowBuilderFactory.CreateConversationalAgent(<%= flowName %>);
+
+            #region agent configuration
+            var agent = new AgentBuilder
+            {
+                AgentModelType = AgentModelType.AzureOpenAI,
+                DeploymentId = "gpt-4.1",
+                AgentModelSettings = new AgentModelSettings
+                {
+                    AgentChatCompletionSettings = new AgentChatCompletionSettings
+                    {
+                        MaxTokens = 3000,
+                        Temperature = 0,
+                        FrequencyPenalty = 0.1,
+                        PresencePenalty = 0.1,
+                        TopP = 0.1,
+                    },
+                    DeploymentModelProperties = new AgentDeploymentModelProperties
+                    {
+                        Name = "gpt-4o",
+                        Format = "OpenAI",
+                        Version = "2024-11-20"
+                    }
+                },
+                Messages = new AgentPromptMessage[]
+                    {
+                        new AgentPromptMessage
+                        {
+                            Role = MessageRole.System,
+                            Content = "You are an agent to get the weather. Greet the user warmly and provide the current weather conditions for their location, including temperature, weather type (e.g., sunny, cloudy, rainy), humidity, and wind speed. If a forecast is available, summarize the expected weather for the next 24 hours. Make the response clear and conversational, and suggest whether it’s a good day for outdoor activities based on the weather.\r\n\r\n"
+                        }
+                    },
+                ConnectionName = "agent-2",
+            };
+            #endregion
+
+            #region Add tool to the agent
+            agent.AddTool(b =>
+                {
+                    var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+                        location: () => "WA",
+                        units: () => unitsInput.Imperial);
+                    b.AddAction(getCurrentWeatherAction);
+
+                },
+            description: "Gets the weather",
+            parameters: new WeatherObject());
+            #endregion
+
+            builder.AddAgent(agent);
+        }
+    }
+
+    /// <summary>
+    /// Weather agent parameter class.
+    /// </summary>
+    public class WeatherObject
+    {
+        /// <summary>
+        /// current weather location property.
+        /// </summary>
+        public string CurrentWeatherLocation { get; set; } = string.Empty;
+
+        /// <summary>
+        /// current weather location property.
+        /// </summary>
+        public string Weatherdetails { get; set; } = string.Empty;
+    }
+}

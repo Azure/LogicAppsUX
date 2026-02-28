@@ -56,6 +56,7 @@ const DesignerAppV1 = () => {
     isUnitTest,
     unitTestDefinition,
     workflowRuntimeBaseUrl,
+    supportsUnitTest,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
@@ -251,6 +252,7 @@ const DesignerAppV1 = () => {
         isLocal={isLocal}
         runId={runId}
         getAgentUrl={getAgentUrl}
+        supportsUnitTest={supportsUnitTest}
       />
     );
 

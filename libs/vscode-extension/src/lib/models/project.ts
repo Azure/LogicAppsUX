@@ -100,11 +100,10 @@ export interface IWebviewProjectContext extends IActionContext {
   workspaceProjectPath: ITargetDirectory;
   workspaceName: string;
   logicAppName: string;
-  logicAppType: string;
-  projectType: string;
-  targetFramework: string;
+  logicAppType: ProjectType;
+  targetFramework?: TargetFramework;
   workflowName: string;
-  workflowType: WorkflowType;
+  workflowType?: WorkflowType;
   functionFolderName?: string;
   functionName?: string;
   functionNamespace?: string;
@@ -125,7 +124,7 @@ export const ProjectType = {
   logicApp: 'logicApp',
   customCode: 'customCode',
   rulesEngine: 'rulesEngine',
-  agentCodeful: 'agentCodeful',
+  codeful: 'codeful',
 } as const;
 export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
 

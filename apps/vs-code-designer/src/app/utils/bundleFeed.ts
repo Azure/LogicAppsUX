@@ -260,6 +260,12 @@ function getMaxVersion(version1, version2): string {
   return maxVersion;
 }
 
+let cachedBundleVersion: string | null = null;
+
+export function resetCachedBundleVersion(): void {
+  cachedBundleVersion = null;
+}
+
 /**
  * Retrieves the highest version number of the extension bundle available in the bundle folder.
  *
@@ -271,6 +277,11 @@ function getMaxVersion(version1, version2): string {
  * @throws {Error} If the extension bundle folder is missing or contains no subdirectories.
  */
 export async function getBundleVersionNumber(): Promise<string> {
+  // Return cached version if available (saves ~450ms on subsequent calls)
+  if (cachedBundleVersion) {
+    return cachedBundleVersion;
+  }
+
   const bundleFolderRoot = await getExtensionBundleFolder();
   const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
   let bundleVersionNumber = '0.0.0';
@@ -287,6 +298,8 @@ export async function getBundleVersionNumber(): Promise<string> {
     }
   }
 
+  // Cache the result
+  cachedBundleVersion = bundleVersionNumber;
   return bundleVersionNumber;
 }
 

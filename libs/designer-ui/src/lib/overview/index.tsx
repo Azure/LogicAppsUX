@@ -140,6 +140,7 @@ export const Overview: React.FC<OverviewProps> = ({
         agentUrlLoading={agentUrlLoading}
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+        hasCallbackInfo={!!workflowProperties.callbackInfo}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />

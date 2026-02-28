@@ -31,6 +31,7 @@ import {
   workspaceTemplatesFolderName,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
+import { ext } from '../../../../extensionVariables';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -100,10 +101,10 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   const { logicAppType, workflowType, functionName, workflowName, logicAppName } = webviewProjectContext;
 
   await fse.ensureDir(logicAppFolderPath);
-  if (logicAppType === ProjectType.agentCodeful) {
-    await createAgentCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName, workflowType);
+  if (logicAppType === ProjectType.codeful) {
+    await createCodefulWorkflowFile(logicAppFolderPath, logicAppName, workflowName, workflowType);
   } else {
-    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(logicAppType as ProjectType, workflowType, functionName);
+    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(logicAppType, workflowType, functionName);
     const logicAppWorkflowFolderPath = path.join(logicAppFolderPath, workflowName);
     await fse.ensureDir(logicAppWorkflowFolderPath);
 
@@ -112,38 +113,84 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   }
 }
 
-const createAgentCodefulWorkflowFile = async (
+/**
+ * Adds a workflow Build() call to an existing Program.cs file.
+ */
+export const addWorkflowToProgram = async (programFilePath: string, workflowName: string): Promise<void> => {
+  const programContent = await fse.readFile(programFilePath, 'utf-8');
+
+  // Find the location to insert the new workflow builder
+  // Look for the "Build all workflows" comment or insert before host.Run()
+  const buildCallRegex = /(\s*)(\/\/ Build all workflows\s*\n(?:\s*\/\/.*\n)*\s*)(.*?)(\s*host\.Run\(\);)/s;
+
+  const match = programContent.match(buildCallRegex);
+  if (match) {
+    // Insert the new workflow builder before host.Run()
+    const indent = match[1];
+    const newBuildCall = `\n${indent}${workflowName}.AddWorkflow();`;
+    const updatedContent = programContent.replace(buildCallRegex, `$1$2$3${newBuildCall}\n$4`);
+    await fse.writeFile(programFilePath, updatedContent);
+  } else {
+    // Fallback: try to insert before host.Run() directly
+    const fallbackRegex = /(\s*)(host\.Run\(\);)/;
+    const fallbackMatch = programContent.match(fallbackRegex);
+    if (fallbackMatch) {
+      const indent = fallbackMatch[1];
+      const newBuildCall = `${indent}${workflowName}.AddWorkflow();\n`;
+      const updatedContent = programContent.replace(fallbackRegex, `${newBuildCall}$1$2`);
+      await fse.writeFile(programFilePath, updatedContent);
+    }
+  }
+};
+
+export const createCodefulWorkflowFile = async (
   logicAppFolderPath: string,
   logicAppName: string,
   workflowName: string,
   workflowType: WorkflowType
 ) => {
-  const agentFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulFile' : 'AgentCodefulFile';
+  const workflowTemplateFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulWorkflow' : 'AgentCodefulWorkflow';
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
-  // Create the .cs file inside the functions folder
-  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', agentFileName);
-  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8')).replace(/<%= flowName %>/g, `"${workflowName}"`);
+  // Create the workflow-specific .cs file
+  const capitalizedWorkflowName = workflowName.charAt(0).toUpperCase() + workflowName.slice(1);
+  const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', workflowTemplateFileName);
+  const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
+    .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
+    .replace(/<%= flowNameClass %>/g, `${capitalizedWorkflowName}`)
+    .replace(/<%= flowName %>/g, `"${workflowName}"`);
 
-  const csFilePath = path.join(logicAppFolderPath, 'Program.cs');
+  // Generate workflow file with workflow name, not Program.cs
+  const csFilePath = path.join(logicAppFolderPath, `${workflowName}.cs`);
   await fse.writeFile(csFilePath, templateCSContent);
 
-  // Create the .csproj file inside the functions folder
-  const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
-  const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+  // Create or update Program.cs with the shared entry point
+  const programFilePath = path.join(logicAppFolderPath, 'Program.cs');
+  if (await fse.pathExists(programFilePath)) {
+    // Program.cs exists, add this workflow to it
+    await addWorkflowToProgram(programFilePath, capitalizedWorkflowName);
+  } else {
+    // Create new Program.cs
+    const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
+    const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
+    const programContent = templateProgramContent
+      .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
+      .replace(/<%= workflowBuilders %>/g, `${capitalizedWorkflowName}.AddWorkflow();`);
+    await fse.writeFile(programFilePath, programContent);
 
-  const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+    // Create the .csproj file (only for first workflow)
+    const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
+    const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+    const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+    await fse.writeFile(csprojFilePath, templateProjContent);
 
-  await fse.writeFile(csprojFilePath, templateProjContent);
-
-  // Create nuget.config file
-  // Create the .cs file inside the functions folder
-  const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-  const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
-
-  const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
-  await fse.writeFile(nugetFilePath, templateNugetContent);
+    // Create nuget.config file (only for first workflow)
+    const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
+    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
+    const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
+    await fse.writeFile(nugetFilePath, templateNugetContent);
+  }
 };
 
 export async function createLocalConfigurationFiles(
@@ -178,10 +225,11 @@ export async function createLocalConfigurationFiles(
     localSettingsJson.Values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
 
-  if (logicAppType === ProjectType.agentCodeful) {
+  // TODO(aeldridge): Update to point to codeful private bundle once it's published.
+  if (logicAppType === ProjectType.codeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
     localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
-    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.141.0.12]';
+    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.160.0.18]';
     localSettingsJson.Values['FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI'] = 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test';
   }
 
@@ -204,6 +252,22 @@ export async function createLocalConfigurationFiles(
 export async function createWorkspaceStructure(webviewProjectContext: IWebviewProjectContext): Promise<void> {
   const { workspaceProjectPath, workspaceName, logicAppName, functionFolderName, logicAppType } = webviewProjectContext;
 
+  // Validate that workspaceProjectPath exists and has required properties
+  if (!workspaceProjectPath || !workspaceProjectPath.fsPath) {
+    const errorMessage = `[CreateWorkspaceStructure] Invalid workspaceProjectPath: ${JSON.stringify(
+      {
+        hasWorkspaceProjectPath: !!workspaceProjectPath,
+        workspaceProjectPathType: typeof workspaceProjectPath,
+        workspaceProjectPathValue: workspaceProjectPath,
+        contextKeys: Object.keys(webviewProjectContext || {}),
+      },
+      null,
+      2
+    )}`;
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(`workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(workspaceProjectPath)}`);
+  }
+
   //Create the workspace folder
   const workspaceFolder = path.join(workspaceProjectPath.fsPath, workspaceName);
   await fse.ensureDir(workspaceFolder);
@@ -214,7 +278,7 @@ export async function createWorkspaceStructure(webviewProjectContext: IWebviewPr
   workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
   // push functions folder
-  if (logicAppType !== ProjectType.logicApp && logicAppType !== ProjectType.agentCodeful) {
+  if (logicAppType !== ProjectType.logicApp && logicAppType !== ProjectType.codeful) {
     workspaceFolders.push({ name: functionFolderName, path: `./${functionFolderName}` });
   }
 
@@ -263,6 +327,31 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
 
   const webviewProjectContext: IWebviewProjectContext = options;
 
+  // Add telemetry properties for debugging
+  context.telemetry.properties.fromPackage = String(fromPackage);
+  context.telemetry.properties.hasWorkspaceProjectPath = String(!!webviewProjectContext.workspaceProjectPath);
+  context.telemetry.properties.workspaceProjectPathType = typeof webviewProjectContext.workspaceProjectPath;
+  context.telemetry.properties.receivedOptionsKeys = Object.keys(options || {}).join(',');
+
+  // Validate that workspaceProjectPath exists and has required properties
+  if (!webviewProjectContext.workspaceProjectPath || !webviewProjectContext.workspaceProjectPath.fsPath) {
+    // Log the received options for debugging
+    const debugInfo = {
+      hasWorkspaceProjectPath: !!webviewProjectContext.workspaceProjectPath,
+      workspaceProjectPathType: typeof webviewProjectContext.workspaceProjectPath,
+      workspaceProjectPathValue: webviewProjectContext.workspaceProjectPath,
+      optionsKeys: Object.keys(options || {}),
+      fromPackage,
+      fullOptionsSnapshot: JSON.stringify(options, null, 2),
+    };
+    const errorMessage = `[CreateLogicAppWorkspace] Invalid workspaceProjectPath received: ${JSON.stringify(debugInfo, null, 2)}`;
+    ext.outputChannel.appendLog(errorMessage);
+
+    throw new Error(
+      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(webviewProjectContext.workspaceProjectPath)}. Full context keys: ${Object.keys(options || {}).join(', ')}`
+    );
+  }
+
   await createWorkspaceStructure(webviewProjectContext);
 
   // Create the workspace folder
@@ -274,7 +363,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
+  mySubContext.projectType = webviewProjectContext.logicAppType;
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
@@ -282,6 +371,10 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   mySubContext.workspacePath = workspaceFolder;
 
   if (fromPackage) {
+    // Validate that packagePath exists and has required properties
+    if (!options.packagePath || !options.packagePath.fsPath) {
+      throw new Error('packagePath is required and must have an fsPath property when creating workspace from package');
+    }
     mySubContext.packagePath = options.packagePath.fsPath;
     await unzipLogicAppPackageIntoWorkspace(mySubContext);
   } else {
@@ -353,7 +446,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
   const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
+  mySubContext.projectType = webviewProjectContext.logicAppType;
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
