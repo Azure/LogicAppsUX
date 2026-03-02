@@ -92,7 +92,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
           if (debugConfig.type === 'logicapp') {
             return {
               ...debugConfig,
-              customCodeRuntime: 'coreclr',
               funcRuntime: 'coreclr',
               isCodeless: false,
             };
@@ -100,7 +99,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
           return debugConfig;
         })
       : [
-          getDebugConfiguration(funcVersion, logicAppName, targetFramework),
+          getDebugConfiguration(funcVersion, logicAppName, targetFramework, false),
           ...debugConfigs.filter(
             (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`
           ),

@@ -48,6 +48,13 @@ describe('CreateLogicAppVSCodeContents', () => {
     isDevContainerProject: false,
   } as any;
 
+  const mockContextCodeful: IWebviewProjectContext = {
+    logicAppName: 'TestLogicAppCodeful',
+    logicAppType: ProjectType.agentCodeful,
+    targetFramework: TargetFramework.Net8,
+    isDevContainerProject: false,
+  } as any;
+
   const logicAppFolderPath = path.join('test', 'workspace', 'TestLogicApp');
 
   let extensionsJsonFileContent: string;
@@ -267,6 +274,25 @@ describe('CreateLogicAppVSCodeContents', () => {
       });
     });
 
+    it('should create launch.json with logicapp configuration without customCodeRuntime for codeful projects', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
+
+      const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
+      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
+      const launchCallback = launchCall[2];
+      const launchData = launchCallback({ configurations: [] });
+
+      const config = launchData.configurations[0];
+      expect(config).toMatchObject({
+        name: expect.stringContaining('Run/Debug logic app TestLogicAppCodeful'),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      });
+      expect(config).not.toHaveProperty('customCodeRuntime');
+    });
+
     it('should copy extensions.json from template', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
@@ -354,6 +380,22 @@ describe('CreateLogicAppVSCodeContents', () => {
         customCodeRuntime: 'clr',
         isCodeless: true,
       });
+    });
+
+    it('should return logicapp configuration without customCodeRuntime for codeful project', () => {
+      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration(
+        'TestLogicApp',
+        TargetFramework.Net8,
+        ProjectType.agentCodeful
+      );
+
+      expect(config).toMatchObject({
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      });
+      expect(config).not.toHaveProperty('customCodeRuntime');
     });
   });
 });

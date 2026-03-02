@@ -177,7 +177,23 @@ export async function writeDevContainerJson(devContainerPath: string): Promise<v
   await fse.copyFile(templatePath, devContainerJsonPath);
 }
 
-export function getDebugConfiguration(logicAppName: string, customCodeTargetFramework?: TargetFramework): DebugConfiguration {
+export function getDebugConfiguration(
+  logicAppName: string,
+  customCodeTargetFramework?: TargetFramework,
+  logicAppType?: string
+): DebugConfiguration {
+  const isCodeful = logicAppType === ProjectType.agentCodeful;
+
+  if (isCodeful) {
+    return {
+      name: localize('debugLogicApp', `Run/Debug logic app ${logicAppName}`),
+      type: 'logicapp',
+      request: 'launch',
+      funcRuntime: 'coreclr',
+      isCodeless: false,
+    };
+  }
+
   if (customCodeTargetFramework) {
     return {
       name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
@@ -201,9 +217,10 @@ export async function writeLaunchJson(
   context: IActionContext,
   vscodePath: string,
   logicAppName: string,
-  customCodeTargetFramework?: TargetFramework
+  customCodeTargetFramework?: TargetFramework,
+  logicAppType?: string
 ): Promise<void> {
-  const newDebugConfig: DebugConfiguration = getDebugConfiguration(logicAppName, customCodeTargetFramework);
+  const newDebugConfig: DebugConfiguration = getDebugConfiguration(logicAppName, customCodeTargetFramework, logicAppType);
 
   // otherwise manually edit json
   const launchJsonPath: string = path.join(vscodePath, launchFileName);
@@ -237,7 +254,7 @@ export async function createLogicAppVsCodeContents(webviewProjectContext: IWebvi
   await writeSettingsJson(webviewProjectContext, additionalSettings, vscodePath);
   await writeExtensionsJson(webviewProjectContext, vscodePath);
   await writeTasksJson(webviewProjectContext, vscodePath);
-  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName, targetFramework as TargetFramework);
+  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName, targetFramework as TargetFramework, logicAppType);
 }
 
 export async function createDevContainerContents(webviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {
