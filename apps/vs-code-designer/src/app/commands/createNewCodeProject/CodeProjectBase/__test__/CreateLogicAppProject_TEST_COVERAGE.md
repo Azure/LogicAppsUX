@@ -264,7 +264,7 @@ it('should populate IFunctionWizardContext with correct values', async () => {
 ```typescript
 mySubContext.logicAppName = options.logicAppName;
 mySubContext.projectPath = logicAppFolderPath;
-mySubContext.projectType = webviewProjectContext.logicAppType as ProjectType;
+mySubContext.projectType = webviewProjectContext.logicAppType;
 // ... more properties
 ```
 
