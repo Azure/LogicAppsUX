@@ -6,7 +6,7 @@ import type { HeadlessFlatTreeItemProps, TreeItemValue, TreeOpenChangeData, Tree
 import { FlatTree, Spinner, useHeadlessFlatTree_unstable, useRestoreFocusTarget } from '@fluentui/react-components';
 import { useAllIcons } from '../../../core/state/operation/operationSelector';
 import { getAgentActionsRepetition, getAgentRepetitions, getNodeRepetitions, useChatHistory } from '../../../core';
-import { equals, idDisplayCase, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { equals, idDisplayCase, isBuiltInAgentTool, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useTimelineRepetitions } from '../../MonitoringTimeline/hooks';
 import { TreeActionItem } from './TreeActionItem';
@@ -239,6 +239,7 @@ export const RunTreeView = () => {
                   parentValue: newAgentId,
                   data: {
                     repIndex: i,
+                    isBuiltInTool: isBuiltInAgentTool(toolId),
                     repetition: {
                       id: toolRepetitionId,
                       name: toolId,
@@ -359,6 +360,7 @@ export const RunTreeView = () => {
             parentValue: newAgentId,
             data: {
               repIndex: i,
+              isBuiltInTool: isBuiltInAgentTool(toolId),
               repetition: {
                 id: toolRepetitionId,
                 name: toolId,
@@ -520,9 +522,13 @@ export const RunTreeView = () => {
     return null;
   }
 
+  // console.log("--flatTree ", JSON.stringify(flatTree));
+  // console.log("--treeItems ", JSON.stringify(treeItems));
+
   return (
     <>
       <FlatTree {...flatTree.getTreeProps()} aria-label="Flat Tree">
+        {'----IN THE RUNTREEVIEW----'}
         {Array.from(flatTree.items(), (flatTreeItem) => {
           if (!flatTreeItem?.value) {
             return null;

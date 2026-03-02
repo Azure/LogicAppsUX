@@ -20,6 +20,7 @@ import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import OutputsBinder from '../../utils/monitoring/binders/outputs';
+import { getAgentRepetition } from '../../queries/runs';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -120,3 +121,25 @@ const getParametersToBind = (type: string, payloadInputs: any, isInputs: boolean
   }
   return payloadInputs;
 };
+
+/**
+ * Fetches iteration-level content links for built-in agent tools (e.g. code_interpreter).
+ * Built-in tools don't have action-level content links, so we fetch the parent agent
+ * repetition which contains the inputsLink/outputsLink needed to display run data.
+ */
+export const fetchBuiltInToolRunData = createAsyncThunk(
+  'fetchBuiltInToolRunData',
+  async (payload: { toolNodeId: string; agentNodeId: string; runId: string; repetitionName: string }) => {
+    const { toolNodeId, agentNodeId, runId, repetitionName } = payload;
+    const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
+    return {
+      toolNodeId,
+      inputsLink: repetition.properties.inputsLink,
+      outputsLink: repetition.properties.outputsLink,
+      startTime: repetition.properties.startTime,
+      endTime: repetition.properties.endTime,
+      status: repetition.properties.status,
+      correlation: repetition.properties.correlation,
+    };
+  }
+);

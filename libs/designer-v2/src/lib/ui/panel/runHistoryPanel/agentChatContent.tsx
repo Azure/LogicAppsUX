@@ -224,6 +224,7 @@ export const AgentChatContent = () => {
 
   return (
     <>
+      {'----IN THE AGENTCHAT CONTENT----'}
       <ChatbotUI
         panel={{}}
         inputBox={{
