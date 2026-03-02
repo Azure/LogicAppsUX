@@ -1,5 +1,5 @@
-import { Panel, PanelType, useTheme } from '@fluentui/react';
-import { mergeClasses } from '@fluentui/react-components';
+import { Button, Drawer, DrawerBody, DrawerHeader, DrawerHeaderTitle } from '@fluentui/react-components';
+import { DismissRegular, ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
   type ChatInputHandle,
@@ -12,8 +12,7 @@ import {
 } from '@microsoft/designer-ui';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { useChatbotStyles, useChatbotDarkStyles } from './styles';
-import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
+import { useChatbotStyles } from './styles';
 
 export const defaultChatbotPanelWidth = '360px';
 
@@ -73,12 +72,10 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
   const intl = useIntl();
-  const { isInverted } = useTheme();
   const textInputRef = useRef<ChatInputHandle>(null);
 
   // Styles
   const styles = useChatbotStyles();
-  const darkStyles = useChatbotDarkStyles();
 
   useEffect(() => {
     if (focus) {
@@ -131,9 +128,8 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   const showFooter = protectedMessage || canSave || canTest || !readOnly;
 
   return (
-    <div className={mergeClasses(styles.container, isInverted && darkStyles.container)}>
-      {props?.panel?.header}
-      <div className={mergeClasses(styles.content, isInverted && darkStyles.content)}>
+    <div className={styles.container}>
+      <div className={styles.content}>
         {answerGenerationInProgress && (
           <ProgressCardWithStopButton onStopButtonClick={abort} progressState={progressState} stopButtonLabel={progressStop} />
         )}
@@ -180,20 +176,38 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
 
 export const AssistantChat = (props: ChatbotUIProps) => {
   const {
-    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, hasCloseButton = false, isBlocking, onDismiss },
+    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, isBlocking, onDismiss, header },
   } = props;
 
+  const intl = useIntl();
+  const closeButtonLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    id: 'ZihyUf',
+    description: 'Label for the close button in the chatbot header',
+  });
+
   return (
-    <Panel
-      type={location === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
-      isOpen={isOpen}
-      customWidth={width}
-      hasCloseButton={hasCloseButton}
-      isBlocking={isBlocking}
-      layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
-      onDismiss={onDismiss}
+    <Drawer
+      modalType={isBlocking ? 'modal' : 'non-modal'}
+      open={isOpen}
+      onOpenChange={(_, { open }) => {
+        if (!open) {
+          onDismiss?.();
+        }
+      }}
+      position={location === PanelLocation.Right ? 'end' : 'start'}
+      style={{ width, zIndex: 0 }}
     >
-      <ChatbotUI {...props} />
-    </Panel>
+      <DrawerHeader>
+        <DrawerHeaderTitle
+          action={<Button appearance="subtle" aria-label={closeButtonLabel} icon={<DismissRegular />} onClick={onDismiss} />}
+        >
+          {header}
+        </DrawerHeaderTitle>
+      </DrawerHeader>
+      <DrawerBody style={{ padding: 0 }}>
+        <ChatbotUI {...props} />
+      </DrawerBody>
+    </Drawer>
   );
 };

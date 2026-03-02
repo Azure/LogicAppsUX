@@ -671,7 +671,7 @@ export const CoPilotChatbot = ({
         width: chatbotWidth,
         isOpen: !collapsed,
         onDismiss: dismissCopilot,
-        header: <CopilotPanelHeader closeCopilot={dismissCopilot} />,
+        header: <CopilotPanelHeader />,
       }}
       inputBox={{
         value: inputQuery,
