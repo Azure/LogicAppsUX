@@ -6,11 +6,15 @@ import {
   OperationManifestService,
   Status,
   type BoundParameters,
+  type BoundParameter,
   map,
   type LogicAppsV2,
+  RunService,
+  type ContentLink,
+  labelCase,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { RootState } from '../..';
+import { getAgentRepetition, type RootState } from '../..';
 import { getOperationManifest } from '../../queries/operation';
 import InputsBinder from '../../utils/monitoring/binders/inputs';
 import constants from '../../../common/constants';
@@ -20,6 +24,21 @@ import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import OutputsBinder from '../../utils/monitoring/binders/outputs';
+
+/**
+ * Converts raw JSON data into BoundParameters format for display in ValuesPanel.
+ * Each top-level key becomes a BoundParameter with proper displayName and value.
+ */
+const convertToBoundParameters = (data: Record<string, any>): BoundParameters => {
+  const result: BoundParameters = {};
+  for (const [key, value] of Object.entries(data)) {
+    result[key] = {
+      displayName: labelCase(key),
+      value: value,
+    } as BoundParameter;
+  }
+  return result;
+};
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -120,3 +139,56 @@ const getParametersToBind = (type: string, payloadInputs: any, isInputs: boolean
   }
   return payloadInputs;
 };
+
+/**
+ * Fetches iteration-level data for built-in agent tools (e.g. code_interpreter).
+ * Built-in tools don't have action-level content links, so we fetch the parent agent
+ * repetition which contains the inputsLink/outputsLink needed to display run data.
+ * We also fetch the actual content from those links to avoid CORS issues.
+ */
+export const fetchBuiltInToolRunData = createAsyncThunk(
+  'fetchBuiltInToolRunData',
+  async (payload: { toolNodeId: string; agentNodeId: string; runId: string; repetitionName: string }) => {
+    const { toolNodeId, agentNodeId, runId, repetitionName } = payload;
+    const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
+
+    // Fetch the actual content from the links
+    let inputs: Record<string, any> = {};
+    let outputs: Record<string, any> = {};
+
+    try {
+      if (repetition.properties.inputsLink?.uri) {
+        inputs = (await RunService().getContent(repetition.properties.inputsLink as ContentLink)) ?? {};
+      }
+    } catch (e) {
+      // Content fetch failed - continue with empty inputs
+      console.warn('[fetchBuiltInToolRunData] Failed to fetch built-in tool inputs:', e);
+    }
+
+    try {
+      if (repetition.properties.outputsLink?.uri) {
+        outputs = (await RunService().getContent(repetition.properties.outputsLink as ContentLink)) ?? {};
+      }
+    } catch (e) {
+      // Content fetch failed - continue with empty outputs
+      console.warn('[fetchBuiltInToolRunData] Failed to fetch built-in tool outputs:', e);
+    }
+
+    // Convert raw inputs/outputs to BoundParameters format for display
+    const boundInputs = convertToBoundParameters(inputs);
+    const boundOutputs = convertToBoundParameters(outputs);
+
+    const result = {
+      toolNodeId,
+      inputsLink: repetition.properties.inputsLink,
+      outputsLink: repetition.properties.outputsLink,
+      inputs: boundInputs,
+      outputs: boundOutputs,
+      startTime: repetition.properties.startTime,
+      endTime: repetition.properties.endTime,
+      status: repetition.properties.status,
+      correlation: repetition.properties.correlation,
+    };
+    return result;
+  }
+);

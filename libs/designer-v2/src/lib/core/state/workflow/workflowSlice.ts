@@ -123,7 +123,6 @@ export const workflowSlice = createSlice({
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
-              // eslint-disable-next-line no-param-reassign
               edge.id = `${action.payload.nodeId}-${edge.target}`;
               edge.source = action.payload.nodeId;
             }
@@ -833,10 +832,18 @@ export const workflowSlice = createSlice({
       if (!nodeMetadata) {
         return;
       }
+      const existingInputs = nodeMetadata.runData?.inputs;
+      const existingOutputs = nodeMetadata.runData?.outputs;
+
+      // Don't overwrite existing inputs/outputs with empty values
+      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData)
+      const hasNewInputs = inputs && Object.keys(inputs).length > 0;
+      const hasNewOutputs = outputs && Object.keys(outputs).length > 0;
+
       const nodeRunData = {
         ...nodeMetadata.runData,
-        inputs: inputs,
-        outputs: outputs,
+        inputs: hasNewInputs ? inputs : existingInputs,
+        outputs: hasNewOutputs ? outputs : existingOutputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
