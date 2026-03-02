@@ -275,6 +275,20 @@ export const DesignerCommandBar = ({
     () => [
       ...baseStartItems,
       {
+        key: 'copilot',
+        text: 'Assistant',
+        iconProps: { iconName: 'Chat' },
+        disabled: !isCopilotReady,
+        onClick: () => {
+          enableCopilot?.();
+          LoggerService().log({
+            level: LogEntryLevel.Warning,
+            area: 'chatbot',
+            message: 'workflow assistant opened',
+          });
+        },
+      },
+      {
         key: 'run',
         text: 'Run',
         disabled: !isDesignerView || isRunLoading,
@@ -401,20 +415,6 @@ export const DesignerCommandBar = ({
             : undefined,
         },
         onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
-      },
-      {
-        key: 'copilot',
-        text: 'Assistant',
-        iconProps: { iconName: 'Chat' },
-        disabled: !isCopilotReady,
-        onClick: () => {
-          enableCopilot?.();
-          LoggerService().log({
-            level: LogEntryLevel.Warning,
-            area: 'chatbot',
-            message: 'workflow assistant opened',
-          });
-        },
       },
       {
         key: 'document',

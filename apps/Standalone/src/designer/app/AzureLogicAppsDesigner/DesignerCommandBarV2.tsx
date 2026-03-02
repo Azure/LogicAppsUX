@@ -74,6 +74,8 @@ import {
   DocumentOnePageColumnsRegular,
   ArrowSyncFilled,
   CheckmarkCircleRegular,
+  ChatFilled,
+  ChatRegular,
 } from '@fluentui/react-icons';
 
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
@@ -84,6 +86,7 @@ const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
 const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
+const ChatIcon = bundleIcon(ChatFilled, ChatRegular);
 
 const useStyles = makeStyles({
   viewModeContainer: {
@@ -465,9 +468,6 @@ export const DesignerCommandBar = ({
             Assertions
           </MenuItem>
           <MenuDivider />
-          <MenuItem disabled={!isCopilotReady} onClick={() => enableCopilot?.()}>
-            Assistant
-          </MenuItem>
           <MenuItem
             disabled={haveErrors || isDownloadingDocument}
             onClick={() => downloadDocument()}
@@ -498,6 +498,9 @@ export const DesignerCommandBar = ({
         }}
       >
         <ViewModeSelect />
+        <ToolbarButton aria-label="Assistant" icon={<ChatIcon />} disabled={!isCopilotReady} onClick={() => enableCopilot?.()}>
+          Assistant
+        </ToolbarButton>
         <div style={{ flexGrow: 1 }} />
         <DraftSaveNotification />
         <SaveButton />
