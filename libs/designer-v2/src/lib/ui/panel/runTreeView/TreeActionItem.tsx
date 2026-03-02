@@ -33,7 +33,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useRunTreeViewStyles } from './RunTreeView.styles';
 import StatusIndicator from './StatusIndicator';
-import { ChatFilled, WrenchFilled } from '@fluentui/react-icons';
+import { ChatFilled, WrenchFilled, CodeFilled } from '@fluentui/react-icons';
 import HandoffIcon from '../../../common/images/handoff_icon.svg';
 import Markdown from 'react-markdown';
 
@@ -255,6 +255,8 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
       <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
     ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
       <WrenchFilled className={styles.treeItemToolIcon} />
+    ) : data?.isBuiltInTool ? (
+      <CodeFilled className={styles.treeItemToolIcon} />
     ) : (hasRepetitionData && !data) || !icon ? (
       <div className={styles.treeItemIcon} />
     ) : (

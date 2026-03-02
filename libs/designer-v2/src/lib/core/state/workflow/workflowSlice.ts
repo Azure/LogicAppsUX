@@ -839,27 +839,40 @@ export const workflowSlice = createSlice({
       if (!nodeMetadata) {
         return;
       }
+      const existingInputs = nodeMetadata.runData?.inputs;
+      const existingOutputs = nodeMetadata.runData?.outputs;
+
+      // Don't overwrite existing inputs/outputs with empty values
+      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData)
+      const hasNewInputs = inputs && Object.keys(inputs).length > 0;
+      const hasNewOutputs = outputs && Object.keys(outputs).length > 0;
+
       const nodeRunData = {
         ...nodeMetadata.runData,
-        inputs: inputs,
-        outputs: outputs,
+        inputs: hasNewInputs ? inputs : existingInputs,
+        outputs: hasNewOutputs ? outputs : existingOutputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(fetchBuiltInToolRunData.fulfilled, (state, action) => {
-      const { toolNodeId, inputsLink, outputsLink, startTime, endTime, status, correlation } = action.payload;
-      const nodeMetadata = getRecordEntry(state.nodesMetadata, toolNodeId);
-      if (nodeMetadata) {
-        nodeMetadata.runData = {
-          ...nodeMetadata.runData,
-          inputsLink,
-          outputsLink,
-          startTime,
-          endTime,
-          status,
-          correlation,
-        } as LogicAppsV2.WorkflowRunAction;
+      const { toolNodeId, inputsLink, outputsLink, inputs, outputs, startTime, endTime, status, correlation } = action.payload;
+
+      // Create nodesMetadata entry if it doesn't exist (for built-in tools like code_interpreter)
+      if (!state.nodesMetadata[toolNodeId]) {
+        state.nodesMetadata[toolNodeId] = {} as NodeMetadata;
       }
+
+      state.nodesMetadata[toolNodeId].runData = {
+        ...state.nodesMetadata[toolNodeId].runData,
+        inputsLink,
+        outputsLink,
+        inputs,
+        outputs,
+        startTime,
+        endTime,
+        status,
+        correlation,
+      } as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addCase(updateNodeSettings, (state, action: PayloadAction<AddSettingsPayload>) => {
