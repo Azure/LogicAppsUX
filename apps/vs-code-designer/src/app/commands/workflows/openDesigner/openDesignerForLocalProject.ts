@@ -46,8 +46,8 @@ import axios from 'axios';
 import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
-import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ProgressOptions } from 'vscode';
+import { env, ProgressLocation, RelativePattern, Uri, ViewColumn, window, workspace } from 'vscode';
+import type { FileSystemWatcher, WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../unitTest/codefulUnitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
@@ -60,6 +60,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private panelMetadata: IDesignerPanelMetadata;
   private workflowRuntimeBaseUrlInterval: NodeJS.Timeout;
   private getWorkflowRuntimeBaseUrl: () => string | undefined;
+  private workflowFileWatcher: FileSystemWatcher | undefined;
+  private suppressNextFileWatchRefresh = false;
+  private fileWatchDebounceTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -173,11 +176,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.onDidDispose(
       () => {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
+        this.disposeWorkflowFileWatcher();
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
       },
       null,
       ext.context.subscriptions
     );
+
+    this.setupWorkflowFileWatcher();
 
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
@@ -234,6 +240,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.save: {
+        // Suppress file watcher refresh since the designer itself is writing
+        this.suppressNextFileWatchRefresh = true;
         await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
           // TODO(aeldridge): Temporarily removed validation due to 500 responses from validatePartial endpoint. Re-add once fixed.
           // const projectPath = await getLogicAppProjectRoot(activateContext, this.workflowFilePath);
@@ -630,5 +638,70 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         apiHubServiceDetails: this.apiHubServiceDetails,
       },
     });
+  }
+
+  /**
+   * Sets up a file system watcher for workflow.json to enable hot refresh.
+   * When workflow.json changes on disk (e.g., by chat tools), the designer
+   * will automatically refresh to show the updated workflow.
+   */
+  private setupWorkflowFileWatcher(): void {
+    const workflowDir = path.dirname(this.workflowFilePath);
+    const workflowFileName = path.basename(this.workflowFilePath);
+
+    this.workflowFileWatcher = workspace.createFileSystemWatcher(new RelativePattern(workflowDir, workflowFileName));
+
+    this.workflowFileWatcher.onDidChange(async () => {
+      if (this.suppressNextFileWatchRefresh) {
+        this.suppressNextFileWatchRefresh = false;
+        return;
+      }
+
+      // Debounce: multiple change events can fire for a single save
+      if (this.fileWatchDebounceTimer) {
+        clearTimeout(this.fileWatchDebounceTimer);
+      }
+
+      this.fileWatchDebounceTimer = setTimeout(async () => {
+        this.fileWatchDebounceTimer = undefined;
+        await this.refreshWorkflowFromDisk();
+      }, 500);
+    });
+  }
+
+  /**
+   * Disposes the workflow file watcher and any pending debounce timer.
+   */
+  private disposeWorkflowFileWatcher(): void {
+    if (this.fileWatchDebounceTimer) {
+      clearTimeout(this.fileWatchDebounceTimer);
+      this.fileWatchDebounceTimer = undefined;
+    }
+    if (this.workflowFileWatcher) {
+      this.workflowFileWatcher.dispose();
+      this.workflowFileWatcher = undefined;
+    }
+  }
+
+  /**
+   * Lightweight refresh: re-reads workflow.json from disk and sends
+   * a refresh command to the webview without a full HTML reset.
+   * The webview will dispatch resetWorkflowState + re-initialize.
+   */
+  private async refreshWorkflowFromDisk(): Promise<void> {
+    try {
+      this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+      this.sendMsgToWebview({
+        command: ExtensionCommand.refresh_workflow,
+        data: {
+          panelMetadata: this.panelMetadata,
+          connectionData: this.connectionData,
+          apiHubServiceDetails: this.apiHubServiceDetails,
+        },
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      ext.outputChannel.appendLine(`[hot-refresh] Failed to refresh workflow from disk: ${errorMessage}`);
+    }
   }
 }

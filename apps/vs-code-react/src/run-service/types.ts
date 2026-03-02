@@ -295,6 +295,15 @@ export interface UpdatePanelMetadataMessage {
   };
 }
 
+export interface RefreshWorkflowMessage {
+  command: typeof ExtensionCommand.refresh_workflow;
+  data: {
+    panelMetadata: IDesignerPanelMetadata;
+    connectionData: ConnectionsData;
+    apiHubServiceDetails: ApiHubServiceDetails;
+  };
+}
+
 // Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;

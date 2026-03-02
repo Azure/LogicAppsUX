@@ -68,6 +68,7 @@ export const ExtensionCommand = {
   package_file: 'package-file',
   workspace_existence_result: 'workspace-existence-result',
   package_existence_result: 'package-existence-result',
+  refresh_workflow: 'refresh-workflow',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

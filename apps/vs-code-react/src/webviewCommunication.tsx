@@ -12,6 +12,7 @@ import type {
   GetConfigurationSettingMessage,
   InjectValuesMessage,
   UpdatePanelMetadataMessage,
+  RefreshWorkflowMessage,
   CompleteFileSystemConnectionMessage,
   ReceiveCallbackMessage,
   GetDataMapperVersionMessage,
@@ -79,7 +80,7 @@ import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
-import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
+import { store as DesignerStore, resetDesignerDirtyState, resetWorkflowState } from '@microsoft/logic-apps-designer';
 import {
   initializeProject,
   setProjectPath,
@@ -97,7 +98,8 @@ type DesignerMessageType =
   | ReceiveCallbackMessage
   | ResetDesignerDirtyStateMessage
   | CompleteFileSystemConnectionMessage
-  | UpdatePanelMetadataMessage;
+  | UpdatePanelMetadataMessage
+  | RefreshWorkflowMessage;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -180,6 +182,12 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             break;
           }
           case ExtensionCommand.update_panel_metadata: {
+            dispatch(updatePanelMetadata(message.data));
+            break;
+          }
+          case ExtensionCommand.refresh_workflow: {
+            // Clean refresh: reset all designer state, then re-initialize with new workflow data
+            designerDispatch(resetWorkflowState());
             dispatch(updatePanelMetadata(message.data));
             break;
           }
