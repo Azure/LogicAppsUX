@@ -38,6 +38,8 @@ The "changes" array MUST list each individual change with:
 - "nodeIds": array of action/trigger names (keys from the workflow definition's "actions" or "triggers" objects) affected by this change
 - "description": a concise human-readable description of what was changed
 
+When RENAMING a node, treat it as a "modified" change and put ONLY the NEW node ID in "nodeIds" (the old ID no longer exists in the workflow). Mention the old name in the "description" for clarity, e.g. "Renamed 'Old_Name' to 'New_Name'".
+
 ### For questions / non-modification requests:
 \`\`\`json
 {
@@ -86,7 +88,8 @@ Standard SKU rules:
 
 - Always respond with valid JSON wrapped in a \`\`\`json code block
 - Never include explanatory text outside the JSON response
-- The "text" field supports markdown formatting`;
+- The "text" field supports markdown formatting
+- When there are MORE than 2 changes, set the "text" field to a single-sentence summary of all changes (e.g. "Added error handling, renamed two actions, and removed an unused step"). When there are 1-2 changes, the "text" field can be brief or omitted.`;
 
 export interface CopilotWorkflowEditorServiceOptions {
   /** OpenAI-compatible API endpoint (e.g. https://api.openai.com/v1 or Azure OpenAI endpoint) */

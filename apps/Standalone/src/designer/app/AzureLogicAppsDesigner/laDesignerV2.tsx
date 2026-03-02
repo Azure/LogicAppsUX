@@ -72,6 +72,7 @@ import {
   roleQueryKeys,
   isAgentWorkflow,
   useRun,
+  setIsWorkflowDirty,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -653,6 +654,7 @@ const DesignerEditor = () => {
                       ...newWorkflow,
                       id: guid(),
                     });
+                    DesignerStore.dispatch(setIsWorkflowDirty(true));
                   }}
                   getNodeVisuals={(nodeId) => {
                     const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
