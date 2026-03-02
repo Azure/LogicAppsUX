@@ -40,6 +40,9 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// CopilotWorkflowEditor
+export { BaseCopilotWorkflowEditorService } from './copilotWorkflowEditor';
+export type { CopilotWorkflowEditorServiceOptions } from './copilotWorkflowEditor';
 // Clone
 export { BaseCloneService } from './clone';
 export type { BaseCloneServiceOptions } from './clone';

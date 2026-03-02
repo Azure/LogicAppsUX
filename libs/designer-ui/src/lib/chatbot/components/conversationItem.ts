@@ -82,6 +82,8 @@ export type AssistantGreetingItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Greeting;
   origin: FlowOrigin;
   reaction: ChatEntryReaction | undefined;
+  /** When true, the greeting reflects that the assistant can also modify workflows */
+  workflowEditingEnabled?: boolean;
 };
 
 export type AssistantErrorItem = BaseAssistantMessageItem & {

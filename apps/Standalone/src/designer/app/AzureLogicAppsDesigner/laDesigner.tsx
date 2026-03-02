@@ -32,6 +32,8 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
+  BaseCopilotWorkflowEditorService,
+  InitCopilotWorkflowEditorService,
   BaseExperimentationService,
   BaseUserPreferenceService,
   BaseFunctionService,
@@ -86,7 +88,6 @@ const httpClient = new HttpClient();
 
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -510,6 +511,14 @@ const DesignerEditor = () => {
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                  enableWorkflowEditing={true}
+                  autoApply={true}
+                  onWorkflowProposed={(newWorkflow) => {
+                    setWorkflow({
+                      ...newWorkflow,
+                      id: guid(),
+                    });
+                  }}
                 />
               ) : null}
               <div
@@ -909,6 +918,20 @@ const getDesignerServices = (
     location,
   });
 
+  // Initialize CopilotWorkflowEditorService if API key is configured
+  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
+  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
+  if (copilotEditorApiKey && copilotEditorEndpoint) {
+    const copilotEditorService = new BaseCopilotWorkflowEditorService({
+      endpoint: copilotEditorEndpoint,
+      apiKey: copilotEditorApiKey,
+      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
+      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
+      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
+    });
+    InitCopilotWorkflowEditorService(copilotEditorService);
+  }
+
   const customCodeService = new StandardCustomCodeService({
     apiVersion: '2018-11-01',
     baseUrl: armUrl,
@@ -1041,7 +1064,6 @@ const getConnectionsToUpdate = (
   if (hasNewServiceProviderKeys) {
     for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
       if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
         (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
           originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
       }
@@ -1051,7 +1073,6 @@ const getConnectionsToUpdate = (
   if (hasNewAgentKeys) {
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
       }
     }

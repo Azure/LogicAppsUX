@@ -1,8 +1,10 @@
 import { Confirm } from '../../dialogs/confirm';
 import { useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
+import type { ChatBubbleAction } from './chatBubble';
 import { ChatBubble } from './chatBubble';
 import { UndoStatus, type AssistantReplyWithFlowItem } from './conversationItem';
 import { FlowDiffPreview } from './flowDiffPreview';
+import { ArrowUndoRegular } from '@fluentui/react-icons';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -67,12 +69,12 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
     setIsUndoConfirmationOpen(false);
   }, []);
 
-  const additionalFooterActions = [];
+  const additionalFooterActions: ChatBubbleAction[] = [];
   if (item.undoStatus === UndoStatus.UndoAvailable) {
     additionalFooterActions.push({
       text: intlText.undo,
       onClick: () => setIsUndoConfirmationOpen(true),
-      iconProps: { iconName: 'Undo' },
+      iconElement: React.createElement(ArrowUndoRegular),
       disabled: false, // TODO
     });
   } else if (item.undoStatus === UndoStatus.Undone) {

@@ -1,7 +1,8 @@
-import { type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
+import { Panel, PanelType, useTheme } from '@fluentui/react';
 import { mergeClasses } from '@fluentui/react-components';
 import {
   ChatInput,
+  type ChatInputHandle,
   ChatSuggestion,
   ChatSuggestionGroup,
   type ConversationItem,
@@ -73,29 +74,11 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   } = props;
   const intl = useIntl();
   const { isInverted } = useTheme();
-  const textInputRef = useRef<ITextField>(null);
+  const textInputRef = useRef<ChatInputHandle>(null);
 
   // Styles
   const styles = useChatbotStyles();
   const darkStyles = useChatbotDarkStyles();
-
-  const inputIconButtonStyles = useMemo(
-    () => ({
-      enabled: {
-        root: {
-          backgroundColor: 'transparent',
-          color: isInverted ? 'rgb(200, 200, 200)' : 'rgb(51, 51, 51)',
-        },
-      },
-      disabled: {
-        root: {
-          backgroundColor: 'transparent',
-          color: isInverted ? 'rgb(79, 79, 79)' : 'rgb(200, 200, 200)',
-        },
-      },
-    }),
-    [isInverted]
-  );
 
   useEffect(() => {
     if (focus) {
@@ -174,7 +157,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
           ) : null}
           {readOnly ? null : (
             <ChatInput
-              textFieldRef={textInputRef}
+              ref={textInputRef}
               disabled={inputDisabled}
               isMultiline
               maxQueryLength={QUERY_MAX_LENGTH}
@@ -185,10 +168,6 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
               submitButtonProps={{
                 title: submitString ?? intlText.submitButton,
                 disabled: submitDisabled,
-                iconProps: {
-                  iconName: 'Send',
-                  styles: submitDisabled ? inputIconButtonStyles.disabled : inputIconButtonStyles.enabled,
-                },
                 onClick: () => onSubmit(value),
               }}
             />

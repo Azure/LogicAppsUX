@@ -1,13 +1,7 @@
-import Constants from '../constants';
-import Dislike from '../images/Dislike.svg';
-import DislikeFilled from '../images/DislikeFilled.svg';
-import DislikeDark from '../images/Dislike_Dark.svg';
-import Like from '../images/Like.svg';
-import LikeFilled from '../images/LikeFilled.svg';
-import LikeDark from '../images/Like_Dark.svg';
-import { IconButton, useTheme } from '@fluentui/react';
 import type React from 'react';
 import { useIntl } from 'react-intl';
+import { Button, Tooltip } from '@fluentui/react-components';
+import { ThumbLikeRegular, ThumbLikeFilled, ThumbDislikeRegular, ThumbDislikeFilled } from '@fluentui/react-icons';
 
 export interface IThumbsReactionButtonProps {
   isDownvote: boolean;
@@ -17,18 +11,6 @@ export interface IThumbsReactionButtonProps {
 }
 
 export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isVoted, onClick, isDownvote, disabled }) => {
-  const { isInverted } = useTheme();
-  const icon = isDownvote
-    ? isVoted
-      ? DislikeFilled
-      : isInverted
-        ? DislikeDark
-        : Dislike
-    : isVoted
-      ? LikeFilled
-      : isInverted
-        ? LikeDark
-        : Like;
   const intl = useIntl();
   const intlText = {
     upvote: intl.formatMessage({
@@ -43,29 +25,21 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
     }),
   };
 
-  return (
-    <IconButton
-      title={isDownvote ? intlText.downvote : intlText.upvote}
-      styles={getIconButtonStyles(isVoted, isInverted)}
-      onClick={onClick}
-      disabled={disabled}
-      toggle={true}
-      checked={isVoted}
-      iconProps={{
-        imageProps: {
-          src: icon,
-          styles: getIconButtonStyles(isVoted, isInverted),
-        },
-      }}
-    />
+  const icon = isDownvote ? (
+    isVoted ? (
+      <ThumbDislikeFilled />
+    ) : (
+      <ThumbDislikeRegular />
+    )
+  ) : isVoted ? (
+    <ThumbLikeFilled />
+  ) : (
+    <ThumbLikeRegular />
   );
-};
 
-const getIconButtonStyles = (isVoted?: boolean, isInverted?: boolean) => {
-  return {
-    root: { color: isInverted ? Constants.DARK_PRIMARY : Constants.NEUTRAL_PRIMARY, backgroundColor: 'transparent' },
-    rootChecked: { color: Constants.THEME_PRIMARY, backgroundColor: 'transparent' },
-    icon: { color: isInverted ? Constants.DARK_PRIMARY : isVoted ? Constants.THEME_PRIMARY : 'unset' },
-    rootDisabled: { color: Constants.NEUTRAL_LIGHTER, backgroundColor: 'transparent' },
-  };
+  return (
+    <Tooltip content={isDownvote ? intlText.downvote : intlText.upvote} relationship="label">
+      <Button onClick={onClick} appearance={'subtle'} disabled={disabled} icon={icon} />
+    </Tooltip>
+  );
 };
