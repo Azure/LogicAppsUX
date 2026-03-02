@@ -1,4 +1,5 @@
-import type { ICopilotWorkflowEditorService, WorkflowEditResponse } from '../copilotWorkflowEditor';
+import type { ICopilotWorkflowEditorService, WorkflowEditResponse, WorkflowChange } from '../copilotWorkflowEditor';
+import { WorkflowChangeType } from '../copilotWorkflowEditor';
 import type { Workflow } from '../../../utils/src';
 import { ArgumentException } from '../../../utils/src';
 
@@ -12,13 +13,30 @@ You MUST respond with a valid JSON object in one of these two formats:
 \`\`\`json
 {
   "type": "workflow",
-  "text": "Brief description of what you changed",
+  "text": "Brief summary of all changes made",
+  "changes": [
+    {
+      "changeType": "added",
+      "nodeIds": ["Action_Name"],
+      "description": "Added a new Compose action that generates a random number"
+    },
+    {
+      "changeType": "modified",
+      "nodeIds": ["Existing_Action"],
+      "description": "Updated the condition expression to check for status code 200"
+    }
+  ],
   "workflow": {
     "definition": { ... },
     "kind": "Stateful"
   }
 }
 \`\`\`
+
+The "changes" array MUST list each individual change with:
+- "changeType": one of "added", "modified", or "removed"
+- "nodeIds": array of action/trigger names (keys from the workflow definition's "actions" or "triggers" objects) affected by this change
+- "description": a concise human-readable description of what was changed
 
 ### For questions / non-modification requests:
 \`\`\`json
@@ -56,6 +74,7 @@ Standard SKU rules:
 4. Preserve all existing "runAfter" dependencies
 5. When adding a new action that should run after existing actions, set appropriate "runAfter"
 6. Return the COMPLETE modified workflow definition (not just the changed parts)
+7. Action and trigger names (the keys in the "actions" and "triggers" objects) MUST use underscores instead of spaces (e.g. "Get_current_weather", NOT "Get current weather"). This is a hard requirement — spaces in node IDs will cause runtime failures.
 
 ## WHEN ANSWERING QUESTIONS
 
@@ -193,10 +212,13 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
           kind: parsed.workflow.kind ?? currentWorkflow.kind,
         };
 
+        const changes = this._parseChanges(parsed.changes);
+
         return {
           type: 'workflow',
           text: parsed.text ?? 'Workflow updated.',
           workflow: proposedWorkflow,
+          changes,
         };
       }
 
@@ -227,5 +249,26 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       // Could not parse JSON — treat entire content as a text reply
       return { type: 'text', text: content };
     }
+  }
+
+  private _parseChanges(rawChanges: unknown): WorkflowChange[] | undefined {
+    if (!Array.isArray(rawChanges) || rawChanges.length === 0) {
+      return undefined;
+    }
+
+    const validChangeTypes = new Set<string>(Object.values(WorkflowChangeType));
+
+    return rawChanges
+      .filter((c: any): c is any => !!c && typeof c === 'object')
+      .map((c: any) => {
+        const ct = c.changeType as string | undefined;
+        const ids = c.nodeIds as unknown;
+        const desc = c.description as unknown;
+        return {
+          changeType: (ct && validChangeTypes.has(ct) ? ct : WorkflowChangeType.Modified) as WorkflowChangeType,
+          nodeIds: Array.isArray(ids) ? ids.filter((id: unknown): id is string => typeof id === 'string') : [],
+          description: typeof desc === 'string' ? desc : 'Change applied',
+        };
+      });
   }
 }

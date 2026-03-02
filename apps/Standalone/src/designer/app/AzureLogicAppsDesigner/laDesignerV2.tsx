@@ -654,6 +654,10 @@ const DesignerEditor = () => {
                       id: guid(),
                     });
                   }}
+                  getNodeVisuals={(nodeId) => {
+                    const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
+                    return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
+                  }}
                 />
               ) : null}
               <div

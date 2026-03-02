@@ -10,7 +10,10 @@ import {
   CopilotWorkflowEditorService,
   isCopilotWorkflowEditorServiceInitialized,
   guid,
+  fallbackConnectorIconUrl,
   type Workflow,
+  type WorkflowChange,
+  WorkflowChangeType,
 } from '@microsoft/logic-apps-shared';
 import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
 import { PanelLocation, ConversationItemType, FlowOrigin, UndoStatus } from '@microsoft/designer-ui';
@@ -32,6 +35,8 @@ export interface CoPilotChatbotProps {
   onWorkflowProposed?: (workflow: Workflow) => void;
   /** When true, workflow proposals are applied immediately without showing a proposal card. Defaults to true. */
   autoApply?: boolean;
+  /** Optional callback to resolve a node's icon and brand color by node ID */
+  getNodeVisuals?: (nodeId: string) => { iconUri: string; brandColor: string } | undefined;
 }
 
 export const CoPilotChatbot = ({
@@ -45,6 +50,7 @@ export const CoPilotChatbot = ({
   enableWorkflowEditing = false,
   onWorkflowProposed,
   autoApply = true,
+  getNodeVisuals,
 }: CoPilotChatbotProps) => {
   const chatSessionId = useRef(guid());
   const intl = useIntl();
@@ -226,6 +232,109 @@ export const CoPilotChatbot = ({
     }
   }, []);
 
+  const enrichChangesWithVisuals = useCallback(
+    (
+      changes: WorkflowChange[] | undefined,
+      currentWorkflow: Workflow,
+      preApplySnapshot?: Map<string, { iconUri: string; brandColor: string }>
+    ): WorkflowChange[] | undefined => {
+      if (!changes) {
+        return changes;
+      }
+      const connectionIconUrl = fallbackConnectorIconUrl();
+      const connectionRefs = currentWorkflow.connectionReferences ?? {};
+
+      // Build a normalized key → original key map for case/space-insensitive lookups
+      const normalizeKey = (key: string) => key.toLowerCase().replace(/[\s_]/g, '');
+      const snapshotByNormalized = new Map<string, { iconUri: string; brandColor: string }>();
+      if (preApplySnapshot) {
+        for (const [key, value] of preApplySnapshot) {
+          snapshotByNormalized.set(normalizeKey(key), value);
+        }
+      }
+
+      return changes.map((change) => {
+        // Skip if already enriched
+        if (change.iconUri) {
+          return change;
+        }
+
+        const primaryNodeId = change.nodeIds[0];
+        if (!primaryNodeId) {
+          return { ...change, iconUri: connectionIconUrl, brandColor: '#4E4F4F' };
+        }
+
+        // Check if this is a connection reference change
+        if (primaryNodeId in connectionRefs) {
+          return { ...change, iconUri: connectionIconUrl, brandColor: '#4E4F4F' };
+        }
+
+        // Try the live store first (works for modified nodes, and added nodes after re-render)
+        if (getNodeVisuals) {
+          const visuals = getNodeVisuals(primaryNodeId);
+          if (visuals) {
+            return { ...change, iconUri: visuals.iconUri, brandColor: visuals.brandColor };
+          }
+        }
+
+        // Fall back to pre-apply snapshot (works for deleted nodes)
+        // Try exact match first, then normalized match for LLM name mismatches
+        if (preApplySnapshot) {
+          const snapshotVisuals = preApplySnapshot.get(primaryNodeId);
+          if (snapshotVisuals) {
+            return { ...change, iconUri: snapshotVisuals.iconUri, brandColor: snapshotVisuals.brandColor };
+          }
+        }
+        const normalizedVisuals = snapshotByNormalized.get(normalizeKey(primaryNodeId));
+        if (normalizedVisuals) {
+          return { ...change, iconUri: normalizedVisuals.iconUri, brandColor: normalizedVisuals.brandColor };
+        }
+
+        // Ultimate fallback — use a generic connector icon so there's always something visible
+        return { ...change, iconUri: connectionIconUrl, brandColor: '#4E4F4F' };
+      });
+    },
+    [getNodeVisuals]
+  );
+
+  /**
+   * Schedules a delayed re-enrichment attempt for conversation items whose changes
+   * are still missing icon data (e.g. newly added nodes that the designer hasn't
+   * processed yet).
+   */
+  const scheduleIconEnrichment = useCallback(
+    (
+      responseId: string,
+      rawChanges: WorkflowChange[] | undefined,
+      currentWorkflow: Workflow,
+      preApplySnapshot?: Map<string, { iconUri: string; brandColor: string }>,
+      retriesLeft = 5
+    ) => {
+      if (!rawChanges || !getNodeVisuals) {
+        return;
+      }
+      const timer = setTimeout(() => {
+        setConversation((current) =>
+          current.map((item) => {
+            if (item.id !== responseId || item.type !== ConversationItemType.ReplyWithFlow) {
+              return item;
+            }
+            const enriched = enrichChangesWithVisuals(rawChanges, currentWorkflow, preApplySnapshot);
+            const fallbackIcon = fallbackConnectorIconUrl();
+            const stillUsingFallback =
+              enriched?.some((c) => c.changeType === WorkflowChangeType.Added && c.iconUri === fallbackIcon) ?? false;
+            if (stillUsingFallback && retriesLeft > 1) {
+              scheduleIconEnrichment(responseId, rawChanges, currentWorkflow, preApplySnapshot, retriesLeft - 1);
+            }
+            return { ...item, changes: enriched };
+          })
+        );
+      }, 1000);
+      return timer;
+    },
+    [getNodeVisuals, enrichChangesWithVisuals]
+  );
+
   const handleWorkflowEditResponse = useCallback(
     async (query: string, requestPayload: RequestData) => {
       const editorService = CopilotWorkflowEditorService();
@@ -237,6 +346,20 @@ export const CoPilotChatbot = ({
         const responseId = guid();
 
         if (autoApply) {
+          // Capture visual metadata for every referenced node BEFORE applying
+          // (deleted nodes will lose their metadata once the designer processes the new workflow)
+          const preApplySnapshot = new Map<string, { iconUri: string; brandColor: string }>();
+          if (getNodeVisuals && response.changes) {
+            for (const change of response.changes) {
+              for (const nodeId of change.nodeIds) {
+                const visuals = getNodeVisuals(nodeId);
+                if (visuals) {
+                  preApplySnapshot.set(nodeId, visuals);
+                }
+              }
+            }
+          }
+
           // Auto-apply: immediately call onWorkflowProposed and show confirmation
           pendingProposalRef.current = {
             workflow: proposedWorkflow,
@@ -244,6 +367,13 @@ export const CoPilotChatbot = ({
             conversationItemId: responseId,
           };
           onWorkflowProposed?.(proposedWorkflow);
+
+          // Enrich changes with node icons — modified/deleted nodes resolve from
+          // the pre-apply snapshot; for added nodes, schedule a delayed retry
+          const enrichedChanges = enrichChangesWithVisuals(response.changes, currentWorkflow, preApplySnapshot);
+          const fallbackIcon = fallbackConnectorIconUrl();
+          const hasAddedWithFallback =
+            enrichedChanges?.some((c) => c.changeType === WorkflowChangeType.Added && c.iconUri === fallbackIcon) ?? false;
 
           setConversation((current) => [
             {
@@ -254,6 +384,7 @@ export const CoPilotChatbot = ({
               reaction: undefined,
               undoStatus: UndoStatus.UndoAvailable,
               correlationId: chatSessionId.current,
+              changes: enrichedChanges,
               __rawRequest: requestPayload,
               __rawResponse: response,
               openFeedback: openFeedbackPanel,
@@ -280,6 +411,11 @@ export const CoPilotChatbot = ({
             },
             ...current,
           ]);
+
+          // Re-enrich icons for newly added nodes once designer processes the workflow
+          if (hasAddedWithFallback) {
+            scheduleIconEnrichment(responseId, response.changes, currentWorkflow, preApplySnapshot);
+          }
         } else {
           // Proposal mode: show the proposal for user approval
           pendingProposalRef.current = {
@@ -287,6 +423,8 @@ export const CoPilotChatbot = ({
             previousWorkflow: currentWorkflow,
             conversationItemId: responseId,
           };
+
+          const proposalEnrichedChanges = enrichChangesWithVisuals(response.changes, currentWorkflow);
 
           setConversation((current) => [
             {
@@ -297,6 +435,7 @@ export const CoPilotChatbot = ({
               reaction: undefined,
               undoStatus: UndoStatus.Unavailable,
               correlationId: chatSessionId.current,
+              changes: proposalEnrichedChanges,
               __rawRequest: requestPayload,
               __rawResponse: response,
               openFeedback: openFeedbackPanel,
@@ -333,6 +472,12 @@ export const CoPilotChatbot = ({
             },
             ...current,
           ]);
+
+          // Re-enrich icons for any changes missing visuals
+          const proposalFallbackIcon = fallbackConnectorIconUrl();
+          if (proposalEnrichedChanges?.some((c) => c.changeType === WorkflowChangeType.Added && c.iconUri === proposalFallbackIcon)) {
+            scheduleIconEnrichment(responseId, response.changes, currentWorkflow);
+          }
         }
       } else {
         // Text-only response (question answer, etc.)
@@ -359,8 +504,11 @@ export const CoPilotChatbot = ({
       signal,
       autoApply,
       onWorkflowProposed,
+      getNodeVisuals,
       openFeedbackPanel,
       logFeedbackVote,
+      enrichChangesWithVisuals,
+      scheduleIconEnrichment,
       intlText.workflowAppliedText,
       intlText.workflowProposedText,
       intlText.workflowUndoneText,

@@ -1,4 +1,5 @@
 import type { OperationInfo } from './flowDiffPreview';
+import type { WorkflowChange } from '@microsoft/logic-apps-shared';
 
 export const FlowOrigin = {
   Default: 'default',
@@ -135,6 +136,7 @@ export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
   reaction: ChatEntryReaction | undefined;
   undoStatus: UndoStatus;
   correlationId?: string;
+  changes?: WorkflowChange[];
   __rawRequest: any;
   __rawResponse: any;
 };
