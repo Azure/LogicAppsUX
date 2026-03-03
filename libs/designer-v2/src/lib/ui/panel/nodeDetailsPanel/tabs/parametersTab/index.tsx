@@ -1134,6 +1134,7 @@ export const ParameterSection = ({
           agent={selectedFoundryAgent!}
           models={foundryModelsForNode ?? []}
           modelsLoading={foundryModelsLoading}
+          selectedModel={pendingFoundryModel}
           onModelChange={handleFoundryModelChange}
           onInstructionsChange={handleFoundryInstructionsChange}
           projectResourceId={foundryProjectResourceId}

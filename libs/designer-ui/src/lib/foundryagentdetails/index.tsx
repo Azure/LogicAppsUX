@@ -10,6 +10,8 @@ export interface FoundryAgentDetailsProps {
   agent: FoundryAgent;
   models: FoundryModel[];
   modelsLoading?: boolean;
+  /** Override the displayed model (e.g. when the user picks a new one before save). */
+  selectedModel?: string;
   onModelChange: (modelId: string) => void;
   onInstructionsChange: (instructions: string) => void;
   projectResourceId?: string;
@@ -40,6 +42,7 @@ export const FoundryAgentDetails = ({
   agent,
   models,
   modelsLoading = false,
+  selectedModel,
   onModelChange,
   onInstructionsChange,
   projectResourceId,
@@ -72,10 +75,17 @@ export const FoundryAgentDetails = ({
     return agent.tools.map((t) => t.type).join(', ');
   }, [agent.tools]);
 
+  const effectiveModel = selectedModel ?? agent.model;
+
   const currentModelId = useMemo(() => {
-    const found = models.find((m) => m.id === agent.model || m.id.startsWith(agent.model));
-    return found?.id ?? agent.model;
-  }, [models, agent.model]);
+    const found = models.find((m) => m.id === effectiveModel || m.id.startsWith(effectiveModel));
+    return found?.id ?? effectiveModel;
+  }, [models, effectiveModel]);
+
+  const displayModelName = useMemo(() => {
+    const found = models.find((m) => m.id === currentModelId);
+    return found?.name ?? effectiveModel ?? '';
+  }, [models, currentModelId, effectiveModel]);
 
   return (
     <div className={styles.container}>
@@ -90,7 +100,7 @@ export const FoundryAgentDetails = ({
         <Field label="Model" size="small">
           <Dropdown
             placeholder={modelsLoading ? 'Loading models...' : 'Select a model'}
-            value={agent.model || ''}
+            value={displayModelName}
             selectedOptions={currentModelId ? [currentModelId] : []}
             onOptionSelect={handleModelSelect}
             disabled={disabled || modelsLoading}
