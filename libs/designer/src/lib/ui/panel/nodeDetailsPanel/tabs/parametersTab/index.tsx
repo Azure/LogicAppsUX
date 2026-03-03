@@ -117,7 +117,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
-import { setPendingFoundryUpdate } from '../../../../../core';
+import { setPendingFoundryUpdate, setIsWorkflowDirty } from '../../../../../core';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -436,6 +436,7 @@ export const ParameterSection = ({
   const handleFoundryModelChange = useCallback(
     (modelId: string) => {
       setPendingFoundryModel(modelId);
+      dispatch(setIsWorkflowDirty(true));
       if (foundryProjectEndpoint && selectedFoundryAgent) {
         setPendingFoundryUpdate(nodeId, {
           projectEndpoint: foundryProjectEndpoint,
@@ -467,6 +468,7 @@ export const ParameterSection = ({
   const handleFoundryInstructionsChange = useCallback(
     (instructions: string) => {
       setPendingFoundryInstructions(instructions);
+      dispatch(setIsWorkflowDirty(true));
       if (foundryProjectEndpoint && selectedFoundryAgent) {
         setPendingFoundryUpdate(nodeId, {
           projectEndpoint: foundryProjectEndpoint,
