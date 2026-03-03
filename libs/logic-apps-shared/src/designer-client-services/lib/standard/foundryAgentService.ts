@@ -259,7 +259,24 @@ export async function updateFoundryAgent(
   }
   const url = `${base}/agents/${encodeURIComponent(agentId)}?api-version=${FOUNDRY_API_VERSION}`;
 
-  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', url, updates);
+  // The Foundry v2 API expects model/instructions inside a "definition" envelope
+  const body: Record<string, unknown> = {};
+  const definition: Record<string, unknown> = { kind: 'prompt' };
+  if (updates.model !== undefined) {
+    definition.model = updates.model;
+  }
+  if (updates.instructions !== undefined) {
+    definition.instructions = updates.instructions;
+  }
+  body.definition = definition;
+  if (updates.name !== undefined) {
+    body.name = updates.name;
+  }
+  if (updates.description !== undefined) {
+    body.description = updates.description;
+  }
+
+  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', url, body);
   return normalizeAgent(raw);
 }
 
