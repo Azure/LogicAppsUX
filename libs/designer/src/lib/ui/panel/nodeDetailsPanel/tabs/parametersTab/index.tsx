@@ -117,7 +117,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
-import { setPendingFoundryUpdate, clearPendingFoundryUpdate, setIsWorkflowDirty } from '../../../../../core';
+import { setPendingFoundryUpdate, clearPendingFoundryUpdate, getPendingFoundryUpdate, setIsWorkflowDirty } from '../../../../../core';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -379,9 +379,12 @@ export const ParameterSection = ({
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
 
-  // Track the selected Foundry agent and pending edits
-  const [pendingFoundryModel, setPendingFoundryModel] = useState<string | undefined>(undefined);
-  const [pendingFoundryInstructions, setPendingFoundryInstructions] = useState<string | undefined>(undefined);
+  // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
+  const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
+  const [pendingFoundryModel, setPendingFoundryModel] = useState<string | undefined>(existingPendingUpdate?.updates?.model);
+  const [pendingFoundryInstructions, setPendingFoundryInstructions] = useState<string | undefined>(
+    existingPendingUpdate?.updates?.instructions
+  );
 
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
@@ -1127,8 +1130,12 @@ export const ParameterSection = ({
     );
 
     if (foundryAgentSettingIndex >= 0) {
-      const settingsBefore = settings.slice(0, foundryAgentSettingIndex + 1);
-      const settingsAfter = filterFoundryManagedSettings(settings.slice(foundryAgentSettingIndex + 1));
+      // Extract the agent picker setting and filter Foundry-managed fields from all other settings
+      const agentPickerSetting = settings[foundryAgentSettingIndex];
+      const remainingSettings = filterFoundryManagedSettings([
+        ...settings.slice(0, foundryAgentSettingIndex),
+        ...settings.slice(foundryAgentSettingIndex + 1),
+      ]);
 
       return (
         <>
@@ -1137,7 +1144,7 @@ export const ParameterSection = ({
             nodeId={nodeId}
             sectionName={group.description}
             title={group.description}
-            settings={settingsBefore}
+            settings={[agentPickerSetting]}
             showHeading={!!group.description}
             expanded={sectionExpanded}
             onHeaderClick={onExpandSection}
@@ -1148,15 +1155,16 @@ export const ParameterSection = ({
             models={foundryModelsForNode ?? []}
             modelsLoading={foundryModelsLoading}
             selectedModel={pendingFoundryModel}
+            selectedInstructions={pendingFoundryInstructions}
             onModelChange={handleFoundryModelChange}
             onInstructionsChange={handleFoundryInstructionsChange}
             projectResourceId={foundryProjectResourceId}
           />
-          {settingsAfter.length > 0 && (
+          {remainingSettings.length > 0 && (
             <SettingsSection
               id={`${group.id}-after-foundry`}
               nodeId={nodeId}
-              settings={settingsAfter}
+              settings={remainingSettings}
               showHeading={false}
               showSeparator={false}
             />

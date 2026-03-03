@@ -58,3 +58,8 @@ export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult
 export function hasPendingFoundryUpdates(): boolean {
   return pendingUpdates.size > 0;
 }
+
+/** Retrieve the pending update for a specific node (if any). */
+export function getPendingFoundryUpdate(nodeId: string): PendingFoundryUpdate | undefined {
+  return pendingUpdates.get(nodeId);
+}

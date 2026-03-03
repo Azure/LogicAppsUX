@@ -14,6 +14,8 @@ export interface FoundryAgentDetailsProps {
   modelsLoading?: boolean;
   /** Override the displayed model (e.g. when the user picks a new one before save). */
   selectedModel?: string;
+  /** Override the displayed instructions (e.g. restored from pending edits). */
+  selectedInstructions?: string;
   onModelChange: (modelId: string) => void;
   onInstructionsChange: (instructions: string) => void;
   projectResourceId?: string;
@@ -43,6 +45,7 @@ export function FoundryAgentDetails({
   models,
   modelsLoading = false,
   selectedModel,
+  selectedInstructions,
   onModelChange,
   onInstructionsChange,
   projectResourceId,
@@ -50,7 +53,7 @@ export function FoundryAgentDetails({
 }: FoundryAgentDetailsProps) {
   const styles = useFoundryAgentDetailsStyles();
   const intl = useIntl();
-  const [localInstructions, setLocalInstructions] = useState<string | undefined>(undefined);
+  const [localInstructions, setLocalInstructions] = useState<string | undefined>(selectedInstructions);
 
   const versionLabel = intl.formatMessage({ defaultMessage: 'Version', id: 'vnlEv2', description: 'Label for Foundry agent version' });
   const versionValue = intl.formatMessage({ defaultMessage: 'Agents (v2)', id: 'hbwavm', description: 'Foundry agents version display' });
