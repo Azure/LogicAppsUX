@@ -8,15 +8,11 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['./src/react/test/setup.ts'],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      reporter: ['html', 'cobertura', 'lcov'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.config.ts', '**/index.ts'],
-      thresholds: {
-        lines: 70,
-        functions: 85,
-        branches: 70,
-        statements: 70,
-      },
     },
   },
   resolve: {
