@@ -261,7 +261,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
       }
       case ExtensionCommand.addConnection: {
         this._pendingConnectionWrite = callWithTelemetryAndErrorHandling(
-          'AddConnectionFromDesigner',
+          'AddConnectionFromConnectionView',
           async (activateContext: IActionContext) => {
             await addConnectionData(activateContext, this.workflowFilePath, message.connectionAndSetting);
           }
@@ -450,9 +450,7 @@ function insertFunctionCallAtLocation(
         performTextReplacement(editor, connection, insertionContext, connectionKey);
         // Save the document after successful insertion
         existingEditor.document.save().then(
-          () => {
-            vscode.window.showInformationMessage('File saved successfully');
-          },
+          () => {},
           (saveError: any) => {
             const errorMessage =
               saveError instanceof Error ? saveError.message : typeof saveError === 'string' ? saveError : 'Unknown error';
