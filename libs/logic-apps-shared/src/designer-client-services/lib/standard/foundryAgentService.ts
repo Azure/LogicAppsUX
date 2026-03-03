@@ -244,18 +244,18 @@ export async function updateFoundryAgent(
 ): Promise<FoundryAgent> {
   const definition: Record<string, unknown> = { kind: 'prompt' };
   if (updates.model !== undefined) {
-    definition.model = updates.model;
+    definition['model'] = updates.model;
   }
   if (updates.instructions !== undefined) {
-    definition.instructions = updates.instructions;
+    definition['instructions'] = updates.instructions;
   }
 
   const body: Record<string, unknown> = { definition };
   if (updates.name !== undefined) {
-    body.name = updates.name;
+    body['name'] = updates.name;
   }
   if (updates.description !== undefined) {
-    body.description = updates.description;
+    body['description'] = updates.description;
   }
 
   const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', buildAgentUrl(projectEndpoint, agentId), body);
