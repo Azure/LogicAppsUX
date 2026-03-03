@@ -24,7 +24,7 @@ namespace <%= logicAppNamespace %>
 
             var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
                 location: () => $"{builder.TriggerOutput.Body}",
-                units: () => CurrentWeatherunitsInput.Imperial);
+                units: () => unitsInput.Imperial);
             builder.AddAction(getCurrentWeatherAction);
 
             var response = WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}");

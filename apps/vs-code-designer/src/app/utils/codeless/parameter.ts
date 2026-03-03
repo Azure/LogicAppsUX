@@ -17,13 +17,13 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 
 /**
- * Retrieves the parameters JSON object from a workflow file.
- * @param {string} workflowFilePath The path to the workflow file.
+ * Retrieves the parameters JSON object from a logic app project.
+ * @param {string} projectPath The path to the logic app project root.
  * @returns A promise that resolves to a Record<string, Parameter> object representing the parameters.
  * @throws An error if the parameters file cannot be parsed.
  */
-export async function getParametersJson(workflowFilePath: string): Promise<Record<string, Parameter>> {
-  const parameterFilePath: string = path.join(workflowFilePath, parametersFileName);
+export async function getParametersJson(projectPath: string): Promise<Record<string, Parameter>> {
+  const parameterFilePath: string = path.join(projectPath, parametersFileName);
   if (await fse.pathExists(parameterFilePath)) {
     const data: string = (await fse.readFile(parameterFilePath)).toString();
     if (/[^\s]/.test(data)) {

@@ -154,7 +154,7 @@ export const createCodefulWorkflowFile = async (
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
   // Create the workflow-specific .cs file
-  const capitalizedWorkflowName = workflowName.charAt(0).toUpperCase() + workflowName.slice(1);
+  const capitalizedWorkflowName = (workflowName.charAt(0).toUpperCase() + workflowName.slice(1)).replace(/-/g, '_');
   const templateCSPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', workflowTemplateFileName);
   const templateCSContent = (await fse.readFile(templateCSPath, 'utf-8'))
     .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
