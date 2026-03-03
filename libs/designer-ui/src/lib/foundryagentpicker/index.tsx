@@ -70,7 +70,7 @@ export const FoundryAgentPicker = ({
       <Field label={selectAgentLabel} required size="small" {...(error && { validationState: 'error', validationMessage: error.message })}>
         <Combobox
           placeholder={isLoading ? loadingPlaceholder : selectPlaceholder}
-          value={selectedAgent?.name ?? ''}
+          value={selectedAgent?.name ?? selectedAgent?.id ?? ''}
           selectedOptions={selectedAgentId ? [selectedAgentId] : []}
           onOptionSelect={handleOptionSelect}
           disabled={disabled || isLoading}

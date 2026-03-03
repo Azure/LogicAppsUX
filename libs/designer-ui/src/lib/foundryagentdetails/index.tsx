@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Dropdown, Field, Link, Option, Text, Textarea } from '@fluentui/react-components';
 import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
@@ -54,6 +54,11 @@ export function FoundryAgentDetails({
   const styles = useFoundryAgentDetailsStyles();
   const intl = useIntl();
   const [localInstructions, setLocalInstructions] = useState<string | undefined>(selectedInstructions);
+
+  // Reset local instructions when switching agents
+  useEffect(() => {
+    setLocalInstructions(undefined);
+  }, [agent.id]);
 
   const versionLabel = intl.formatMessage({ defaultMessage: 'Version', id: 'vnlEv2', description: 'Label for Foundry agent version' });
   const versionValue = intl.formatMessage({ defaultMessage: 'Agents (v2)', id: 'hbwavm', description: 'Foundry agents version display' });
@@ -116,7 +121,7 @@ export function FoundryAgentDetails({
   const effectiveModel = selectedModel ?? agent.model;
 
   const resolvedModel = useMemo(() => {
-    const found = models.find((m) => m.id === effectiveModel || m.id.startsWith(effectiveModel));
+    const found = effectiveModel ? models.find((m) => m.id === effectiveModel || m.id.startsWith(effectiveModel)) : undefined;
     return {
       id: found?.id ?? effectiveModel,
       displayName: found?.name ?? effectiveModel ?? '',
