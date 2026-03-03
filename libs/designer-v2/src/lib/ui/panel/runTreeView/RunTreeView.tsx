@@ -149,6 +149,12 @@ export const RunTreeView = () => {
 
     // Stateful nodes
     Object.entries(actions).forEach(([id, action]) => {
+      // Skip built-in agent tools (e.g. code_interpreter) - they're added as children
+      // of agent repetitions in the agent scopes branch below
+      if (isBuiltInAgentTool(id)) {
+        return;
+      }
+
       let parentNodeId = nodesMetadata?.[id]?.parentNodeId ?? 'root';
       if (nodesMetadata?.[parentNodeId]?.subgraphType) {
         parentNodeId = nodesMetadata?.[parentNodeId]?.parentNodeId ?? 'root';
@@ -254,6 +260,7 @@ export const RunTreeView = () => {
                       type: 'workflows/runs/actions/agentRepetitions/tools',
                     },
                     parentRepetition: agentRepetition,
+                    startTime: agentRepetition.properties?.startTime,
                   },
                 };
                 addToCountRecord(toolId);
@@ -375,6 +382,7 @@ export const RunTreeView = () => {
                 type: 'workflows/runs/actions/agentRepetitions/tools',
               },
               parentRepetition: agentRepetition,
+              startTime: agentRepetition.properties?.startTime,
             },
           };
           addToCountRecord(toolId);
@@ -522,13 +530,9 @@ export const RunTreeView = () => {
     return null;
   }
 
-  // console.log("--flatTree ", JSON.stringify(flatTree));
-  // console.log("--treeItems ", JSON.stringify(treeItems));
-
   return (
     <>
       <FlatTree {...flatTree.getTreeProps()} aria-label="Flat Tree">
-        {'----IN THE RUNTREEVIEW----'}
         {Array.from(flatTree.items(), (flatTreeItem) => {
           if (!flatTreeItem?.value) {
             return null;

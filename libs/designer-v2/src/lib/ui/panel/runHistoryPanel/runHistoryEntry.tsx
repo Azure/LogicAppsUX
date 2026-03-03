@@ -43,7 +43,6 @@ const RunHistoryEntry = (props: {
   if (size === 'small') {
     return (
       <>
-        {'----IN THE SMALL RUN HISTORY ENTRY----'}
         <div
           ref={ref}
           className={mergeClasses(styles.runEntry, styles.runEntrySmall, isSelected && styles.runEntrySelected)}
@@ -60,7 +59,6 @@ const RunHistoryEntry = (props: {
 
   return (
     <>
-      {'----IN THE REGULAR RUN HISTORY ENTRY----'}
       <div
         ref={ref}
         className={mergeClasses(styles.runEntry, isSelected && styles.runEntrySelected)}
