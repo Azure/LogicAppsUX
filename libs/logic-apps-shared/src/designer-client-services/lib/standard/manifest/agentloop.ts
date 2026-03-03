@@ -74,8 +74,8 @@ export default {
         },
         foundryAgentId: {
           type: 'string',
-          title: 'Agent ID',
-          description: 'The ID of the Foundry agent to use.',
+          title: 'Agent',
+          description: 'The Foundry agent to use.',
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
           'x-ms-input-dependencies': {

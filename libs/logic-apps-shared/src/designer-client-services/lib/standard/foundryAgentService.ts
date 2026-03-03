@@ -231,3 +231,83 @@ export async function getFoundryAgent(projectEndpoint: string, agentId: string, 
   const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'GET', url);
   return normalizeAgent(raw);
 }
+
+// =============================================================================
+// UPDATE AGENT
+// =============================================================================
+
+export interface UpdateFoundryAgentOptions {
+  model?: string;
+  instructions?: string;
+  name?: string;
+  description?: string;
+}
+
+/**
+ * Update a Foundry v2 agent's model, instructions, or other properties.
+ * Uses POST /agents/{agentId} for partial updates.
+ */
+export async function updateFoundryAgent(
+  projectEndpoint: string,
+  agentId: string,
+  accessToken: string,
+  updates: UpdateFoundryAgentOptions
+): Promise<FoundryAgent> {
+  let base = projectEndpoint.replace(/\/+$/, '');
+  if (base.includes('.cognitiveservices.azure.com')) {
+    base = base.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
+  }
+  const url = `${base}/agents/${encodeURIComponent(agentId)}?api-version=${FOUNDRY_API_VERSION}`;
+
+  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', url, updates);
+  return normalizeAgent(raw);
+}
+
+// =============================================================================
+// LIST MODELS
+// =============================================================================
+
+export interface FoundryModel {
+  id: string;
+  name: string;
+}
+
+interface FoundryModelDeployment {
+  name: string;
+  // ARM-style nested model info
+  properties?: {
+    model?: {
+      name?: string;
+      format?: string;
+      version?: string;
+    };
+  };
+  // Data-plane style flat model info
+  model_name?: string;
+  model_version?: string;
+}
+
+interface FoundryModelDeploymentListResponse {
+  value?: FoundryModelDeployment[];
+  data?: FoundryModelDeployment[];
+}
+
+/**
+ * List available model deployments for a Foundry project.
+ * Uses the data-plane deployments API on the project endpoint.
+ */
+export async function listFoundryModels(projectEndpoint: string, accessToken: string): Promise<FoundryModel[]> {
+  const url = `${projectEndpoint}/deployments?api-version=${FOUNDRY_API_VERSION}`;
+
+  const response = await foundryRequest<FoundryModelDeploymentListResponse>(accessToken, 'GET', url);
+  const deployments = response.value ?? response.data ?? [];
+  return deployments
+    .filter((d) => d.name)
+    .map((d) => {
+      const modelName = d.properties?.model?.name ?? d.model_name ?? d.name;
+      return {
+        id: d.name,
+        name: modelName,
+      };
+    });
+}

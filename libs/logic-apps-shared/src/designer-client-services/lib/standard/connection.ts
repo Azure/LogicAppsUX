@@ -305,7 +305,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const connectionCreationClientName = parametersMetadata.connectionMetadata?.connectionCreationClient;
     if (connectionCreationClientName) {
       if (connectionCreationClients?.[connectionCreationClientName]) {
-        // eslint-disable-next-line no-param-reassign
         connectionInfo = await connectionCreationClients[connectionCreationClientName].connectionCreationFunc(
           connectionInfo,
           connectionName
@@ -768,6 +767,11 @@ function convertAgentConnectionDataToConnection(connectionKey: string, connectio
             value: connectionData.resourceId,
           },
         },
+        ...(connectionData.type && {
+          agentModelType: {
+            type: connectionData.type,
+          },
+        }),
       },
       displayName: displayName as string,
       statuses: [{ status: 'Connected' }],

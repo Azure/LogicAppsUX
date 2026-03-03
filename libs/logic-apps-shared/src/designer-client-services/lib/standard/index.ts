@@ -17,10 +17,14 @@ export {
   listFoundryAgents,
   listAllFoundryAgents,
   getFoundryAgent,
+  updateFoundryAgent,
+  listFoundryModels,
   buildProjectEndpointFromResourceId,
   type FoundryAgent,
   type FoundryAgentListResponse,
   type FoundryToolDefinition,
+  type FoundryModel,
+  type UpdateFoundryAgentOptions,
   type ListAgentsOptions,
 } from './foundryAgentService';
 // Template

@@ -51,6 +51,7 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
+import { FoundryAgentDetails } from '@microsoft/designer-ui';
 import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
@@ -97,6 +98,9 @@ import {
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
   useFoundryAgentsForNode,
+  useFoundryModelsForNode,
+  useFoundryProjectEndpointForNode,
+  useFoundryProjectResourceIdForNode,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import {
   categorizeConnections,
@@ -113,6 +117,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
+import { setPendingFoundryUpdate } from '../../../../../core';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -370,6 +375,14 @@ export const ParameterSection = ({
     operationInfo?.connectorId
   );
   const { data: foundryAgentsForNode } = useFoundryAgentsForNode(nodeId);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
+  const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
+
+  // Track the selected Foundry agent and pending edits
+  const [pendingFoundryModel, setPendingFoundryModel] = useState<string | undefined>(undefined);
+  const [pendingFoundryInstructions, setPendingFoundryInstructions] = useState<string | undefined>(undefined);
+
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
       return {
@@ -404,6 +417,80 @@ export const ParameterSection = ({
   const isAgentServiceConnection = useMemo(() => {
     return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
   }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
+
+  // Derive the currently selected Foundry agent from parameter values
+  const selectedFoundryAgent = useMemo(() => {
+    if (!isAgentServiceConnection || !foundryAgentsForNode?.length) {
+      return undefined;
+    }
+    const parameterGroup = nodeInputs.parameterGroups[group.id];
+    const foundryParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentId');
+    const agentName = foundryParam?.value?.[0]?.value;
+    if (!agentName) {
+      return undefined;
+    }
+    return foundryAgentsForNode.find((a) => (a.name ?? a.id) === agentName);
+  }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
+
+  // Sync pending Foundry changes to the update store for save-time flushing
+  const handleFoundryModelChange = useCallback(
+    (modelId: string) => {
+      setPendingFoundryModel(modelId);
+      if (foundryProjectEndpoint && selectedFoundryAgent) {
+        setPendingFoundryUpdate(nodeId, {
+          projectEndpoint: foundryProjectEndpoint,
+          agentId: selectedFoundryAgent.id,
+          updates: { model: modelId, instructions: pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined },
+        });
+      }
+    },
+    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions]
+  );
+
+  const handleFoundryInstructionsChange = useCallback(
+    (instructions: string) => {
+      setPendingFoundryInstructions(instructions);
+      if (foundryProjectEndpoint && selectedFoundryAgent) {
+        setPendingFoundryUpdate(nodeId, {
+          projectEndpoint: foundryProjectEndpoint,
+          agentId: selectedFoundryAgent.id,
+          updates: { model: pendingFoundryModel ?? selectedFoundryAgent.model, instructions },
+        });
+      }
+      // Sync system instructions to the messages parameter so the workflow definition stays in sync
+      const parameterGroup = nodeInputs.parameterGroups[group.id];
+      const messagesParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.messages');
+      if (messagesParam) {
+        // Parse existing user instructions from current messages value
+        const currentValue = convertSegmentsToString(messagesParam.value ?? []);
+        let userInstructions: { role: string; content: string }[] = [];
+        try {
+          const parsed = JSON.parse(currentValue || '[]');
+          if (Array.isArray(parsed)) {
+            userInstructions = parsed.filter((m: { role: string }) => m.role === 'user');
+          }
+        } catch {
+          // If parsing fails, preserve nothing
+        }
+        const newMessages = [{ role: 'system', content: instructions }, ...userInstructions];
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                groupId: group.id,
+                parameterId: messagesParam.id,
+                propertiesToUpdate: {
+                  value: [createLiteralValueSegment(JSON.stringify(newMessages, null, 4))],
+                },
+              },
+            ],
+          })
+        );
+      }
+    },
+    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, nodeInputs.parameterGroups, group.id, dispatch]
+  );
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
@@ -968,13 +1055,86 @@ export const ParameterSection = ({
       };
     });
 
+  // Split settings to insert FoundryAgentDetails inline after the Agent picker
+  const foundryAgentSettingIndex =
+    isAgentServiceConnection && selectedFoundryAgent
+      ? settings.findIndex((s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Agent')
+      : -1;
+
+  if (foundryAgentSettingIndex >= 0) {
+    const settingsBefore = settings.slice(0, foundryAgentSettingIndex + 1);
+    // Hide system instructions from agentinstruction editor since they're shown inline in FoundryAgentDetails
+    const settingsAfter = settings.slice(foundryAgentSettingIndex + 1).map((s) => {
+      if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
+        return {
+          ...s,
+          settingProp: {
+            ...s.settingProp,
+            editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
+          },
+        };
+      }
+      return s;
+    });
+
+    return (
+      <>
+        <SettingsSection
+          id={group.id}
+          nodeId={nodeId}
+          sectionName={group.description}
+          title={group.description}
+          settings={settingsBefore}
+          showHeading={!!group.description}
+          expanded={sectionExpanded}
+          onHeaderClick={onExpandSection}
+          showSeparator={false}
+        />
+        <FoundryAgentDetails
+          agent={selectedFoundryAgent!}
+          models={foundryModelsForNode ?? []}
+          modelsLoading={foundryModelsLoading}
+          onModelChange={handleFoundryModelChange}
+          onInstructionsChange={handleFoundryInstructionsChange}
+          projectResourceId={foundryProjectResourceId}
+        />
+        {settingsAfter.length > 0 && (
+          <SettingsSection
+            id={`${group.id}-after-foundry`}
+            nodeId={nodeId}
+            settings={settingsAfter}
+            showHeading={false}
+            showSeparator={false}
+          />
+        )}
+      </>
+    );
+  }
+
+  // When Foundry connection is active but no agent selected yet, hide system instructions
+  // since they'll be managed via the FoundryAgentDetails component once an agent is picked
+  const finalSettings = isAgentServiceConnection
+    ? settings.map((s) => {
+        if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
+          return {
+            ...s,
+            settingProp: {
+              ...s.settingProp,
+              editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
+            },
+          };
+        }
+        return s;
+      })
+    : settings;
+
   return (
     <SettingsSection
       id={group.id}
       nodeId={nodeId}
       sectionName={group.description}
       title={group.description}
-      settings={settings}
+      settings={finalSettings}
       showHeading={!!group.description}
       expanded={sectionExpanded}
       onHeaderClick={onExpandSection}

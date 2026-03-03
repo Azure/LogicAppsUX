@@ -43,6 +43,12 @@ export {
   parseWorkflowParameterValue,
 } from './actions/bjsworkflow/serializer';
 export {
+  flushPendingFoundryUpdates,
+  hasPendingFoundryUpdates,
+  setPendingFoundryUpdate,
+  clearPendingFoundryUpdate,
+} from './actions/bjsworkflow/foundryUpdates';
+export {
   setSelectedNodeId,
   changePanelNode,
   clearPanel,
