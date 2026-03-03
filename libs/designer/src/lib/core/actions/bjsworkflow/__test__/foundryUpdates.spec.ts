@@ -93,7 +93,7 @@ describe('foundryUpdates', () => {
       });
     });
 
-    it('should clear all pending updates after flush', async () => {
+    it('should clear successful pending updates after flush', async () => {
       setPendingFoundryUpdate('node-1', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
@@ -102,6 +102,44 @@ describe('foundryUpdates', () => {
 
       await flushPendingFoundryUpdates();
       expect(hasPendingFoundryUpdates()).toBe(false);
+    });
+
+    it('should return empty array when token getter is unavailable', async () => {
+      const { CognitiveServiceService } = await import('@microsoft/logic-apps-shared');
+      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined } as any);
+
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+      });
+
+      const results = await flushPendingFoundryUpdates();
+      expect(results).toEqual([]);
+      // Pending update should still exist since we skipped
+      expect(hasPendingFoundryUpdates()).toBe(true);
+    });
+
+    it('should retain failed entries and throw consolidated error on partial failure', async () => {
+      const { updateFoundryAgent } = await import('@microsoft/logic-apps-shared');
+      vi.mocked(updateFoundryAgent)
+        .mockResolvedValueOnce({} as any) // node-1 succeeds
+        .mockRejectedValueOnce(new Error('API error')); // node-2 fails
+
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+      });
+      setPendingFoundryUpdate('node-2', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-2',
+        updates: { model: 'gpt-5' },
+      });
+
+      await expect(flushPendingFoundryUpdates()).rejects.toThrow('Foundry agent update failed: API error');
+      // node-2 should still be pending (failed), node-1 should be cleared (succeeded)
+      expect(hasPendingFoundryUpdates()).toBe(true);
     });
   });
 });

@@ -1,8 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { Dropdown, Field, Link, Option, Text, Textarea } from '@fluentui/react-components';
 import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
 import type { FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
 import { useFoundryAgentDetailsStyles } from './styles';
+import { useIntl } from 'react-intl';
 
 const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
 
@@ -33,7 +35,7 @@ function buildFoundryPortalUrl(projectResourceId: string | undefined, agentId: s
     return undefined;
   }
   const [, subscriptionId, resourceGroup, account, project] = match;
-  return `https://ai.azure.com/nextgen/r/${subscriptionId},${resourceGroup},,${account},${project}/build/agents/${encodeURIComponent(agentId)}/build?version=2`;
+  return `https://ai.azure.com/nextgen/r/${encodeURIComponent(subscriptionId)},${encodeURIComponent(resourceGroup)},,${encodeURIComponent(account)},${encodeURIComponent(project)}/build/agents/${encodeURIComponent(agentId)}/build?version=2`;
 }
 
 export function FoundryAgentDetails({
@@ -47,6 +49,39 @@ export function FoundryAgentDetails({
   disabled = false,
 }: FoundryAgentDetailsProps) {
   const styles = useFoundryAgentDetailsStyles();
+  const intl = useIntl();
+  const [localInstructions, setLocalInstructions] = useState<string | undefined>(undefined);
+
+  const versionLabel = intl.formatMessage({ defaultMessage: 'Version', id: 'vnlEv2', description: 'Label for Foundry agent version' });
+  const versionValue = intl.formatMessage({ defaultMessage: 'Agents (v2)', id: 'hbwavm', description: 'Foundry agents version display' });
+  const modelLabel = intl.formatMessage({ defaultMessage: 'Model', id: 'ZHM0+8', description: 'Label for AI model field' });
+  const selectModelPlaceholder = intl.formatMessage({
+    defaultMessage: 'Select a model',
+    id: 'merl0X',
+    description: 'Placeholder for model dropdown',
+  });
+  const loadingModelsPlaceholder = intl.formatMessage({
+    defaultMessage: 'Loading models...',
+    id: 'kiNXnD',
+    description: 'Placeholder while models load',
+  });
+  const instructionsLabel = intl.formatMessage({
+    defaultMessage: 'Instructions',
+    id: 'PvFzkM',
+    description: 'Label for agent instructions',
+  });
+  const definedInFoundry = intl.formatMessage({
+    defaultMessage: 'Defined in Foundry',
+    id: 'fZbvAd',
+    description: 'Badge indicating instructions are from Foundry',
+  });
+  const toolsLabel = intl.formatMessage({ defaultMessage: 'Tools', id: 'US0YlH', description: 'Label for agent tools list' });
+  const noTools = intl.formatMessage({ defaultMessage: 'None', id: 'an5t/3', description: 'Displayed when agent has no tools' });
+  const editInPortal = intl.formatMessage({
+    defaultMessage: 'Edit in Foundry Portal',
+    id: 'Cz5vTr',
+    description: 'Link to edit agent in Foundry Portal',
+  });
 
   const portalUrl = useMemo(() => buildFoundryPortalUrl(projectResourceId, agent.id), [projectResourceId, agent.id]);
 
@@ -59,19 +94,21 @@ export function FoundryAgentDetails({
     [onModelChange]
   );
 
-  const handleInstructionsBlur = useCallback(
-    (ev: React.FocusEvent<HTMLTextAreaElement>) => {
-      onInstructionsChange(ev.target.value);
+  const handleInstructionsChange = useCallback(
+    (ev: ChangeEvent<HTMLTextAreaElement>) => {
+      const value = ev.target.value;
+      setLocalInstructions(value);
+      onInstructionsChange(value);
     },
     [onInstructionsChange]
   );
 
   const toolsSummary = useMemo(() => {
     if (agent.tools.length === 0) {
-      return 'None';
+      return noTools;
     }
     return agent.tools.map((t) => t.type).join(', ');
-  }, [agent.tools]);
+  }, [agent.tools, noTools]);
 
   const effectiveModel = selectedModel ?? agent.model;
 
@@ -86,14 +123,14 @@ export function FoundryAgentDetails({
   return (
     <div className={styles.container}>
       <div className={styles.row}>
-        <Text className={styles.label}>Version</Text>
-        <Text>Agents (v2)</Text>
+        <Text className={styles.label}>{versionLabel}</Text>
+        <Text>{versionValue}</Text>
       </div>
 
       <div className={styles.row}>
-        <Field label="Model" size="small">
+        <Field label={modelLabel} size="small">
           <Dropdown
-            placeholder={modelsLoading ? 'Loading models...' : 'Select a model'}
+            placeholder={modelsLoading ? loadingModelsPlaceholder : selectModelPlaceholder}
             value={resolvedModel.displayName}
             selectedOptions={resolvedModel.id ? [resolvedModel.id] : []}
             onOptionSelect={handleModelSelect}
@@ -111,14 +148,14 @@ export function FoundryAgentDetails({
 
       <div className={styles.row}>
         <div className={styles.labelRow}>
-          <Text className={styles.label}>Instructions</Text>
-          <Text className={styles.badge}>Defined in Foundry</Text>
+          <Text className={styles.label}>{instructionsLabel}</Text>
+          <Text className={styles.badge}>{definedInFoundry}</Text>
         </div>
         <Textarea
           className={styles.instructionsTextarea}
           key={agent.id}
-          defaultValue={agent.instructions ?? ''}
-          onBlur={handleInstructionsBlur}
+          value={localInstructions ?? agent.instructions ?? ''}
+          onChange={handleInstructionsChange}
           disabled={disabled}
           resize="vertical"
           size="small"
@@ -126,14 +163,14 @@ export function FoundryAgentDetails({
       </div>
 
       <div className={styles.row}>
-        <Text className={styles.label}>Tools</Text>
+        <Text className={styles.label}>{toolsLabel}</Text>
         <Text className={styles.toolsList}>{toolsSummary}</Text>
       </div>
 
       {portalUrl && (
         <Link className={styles.portalLink} href={portalUrl} target="_blank" rel="noopener noreferrer">
           <NavigateIcon />
-          Edit in Foundry Portal
+          {editInPortal}
         </Link>
       )}
     </div>

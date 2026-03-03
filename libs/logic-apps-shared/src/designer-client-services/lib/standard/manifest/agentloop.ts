@@ -516,7 +516,7 @@ export default {
           },
         },
       },
-      required: ['agentModelType', 'messages', 'foundryAgentId'],
+      required: ['agentModelType', 'messages'],
     },
     outputs: {
       type: 'object',

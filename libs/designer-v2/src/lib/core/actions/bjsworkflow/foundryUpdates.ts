@@ -21,7 +21,8 @@ export function clearPendingFoundryUpdate(nodeId: string): void {
 
 /**
  * Flush all pending Foundry agent updates by calling the update API.
- * Call this from the host's save workflow flow, alongside serializeWorkflow().
+ * Only clears successfully flushed entries; failed entries remain for retry.
+ * Throws an aggregated error if any updates failed.
  */
 export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult<void>[]> {
   const entries = Array.from(pendingUpdates.entries());
@@ -31,17 +32,25 @@ export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult
 
   const getToken = CognitiveServiceService().getFoundryAccessToken;
   if (!getToken) {
-    throw new Error('Foundry access token getter is not available');
+    // Token getter not configured (e.g. VS Code) — skip silently
+    return [];
   }
 
   const results = await Promise.allSettled(
-    entries.map(async ([, { projectEndpoint, agentId, updates }]) => {
+    entries.map(async ([nodeId, { projectEndpoint, agentId, updates }]) => {
       const token = await getToken();
       await updateFoundryAgent(projectEndpoint, agentId, token, updates);
+      // Only clear this entry on success
+      pendingUpdates.delete(nodeId);
     })
   );
 
-  pendingUpdates.clear();
+  const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
+  if (failures.length > 0) {
+    const messages = failures.map((f) => (f.reason instanceof Error ? f.reason.message : String(f.reason)));
+    throw new Error(`Foundry agent update failed: ${messages.join('; ')}`);
+  }
+
   return results;
 }
 

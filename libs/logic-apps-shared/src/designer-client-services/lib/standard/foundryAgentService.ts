@@ -285,7 +285,7 @@ interface FoundryModelDeploymentListResponse {
 
 /** List available model deployments for a Foundry project. */
 export async function listFoundryModels(projectEndpoint: string, accessToken: string): Promise<FoundryModel[]> {
-  const url = `${projectEndpoint}/deployments?api-version=${FOUNDRY_API_VERSION}`;
+  const url = `${normalizeEndpoint(projectEndpoint)}/deployments?api-version=${FOUNDRY_API_VERSION}`;
   const response = await foundryRequest<FoundryModelDeploymentListResponse>(accessToken, 'GET', url);
   const deployments = response.value ?? response.data ?? [];
 

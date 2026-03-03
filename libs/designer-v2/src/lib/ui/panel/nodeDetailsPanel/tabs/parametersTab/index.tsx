@@ -117,7 +117,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getConnectionsForConnector } from '../../../../../core/queries/connections';
 import { updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { removeNodeConnectionData } from '../../../../../core/state/connection/connectionSlice';
-import { setPendingFoundryUpdate, setIsWorkflowDirty } from '../../../../../core';
+import { setPendingFoundryUpdate, clearPendingFoundryUpdate, setIsWorkflowDirty } from '../../../../../core';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -426,18 +426,19 @@ export const ParameterSection = ({
     }
     const parameterGroup = nodeInputs.parameterGroups[group.id];
     const foundryParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentId');
-    const agentName = foundryParam?.value?.[0]?.value;
-    if (!agentName) {
+    const agentId = foundryParam?.value?.[0]?.value;
+    if (!agentId) {
       return undefined;
     }
-    return foundryAgentsForNode.find((a) => (a.name ?? a.id) === agentName);
+    return foundryAgentsForNode.find((a) => a.id === agentId);
   }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
 
   // Reset pending overrides when the selected agent changes to avoid stale state
   useEffect(() => {
     setPendingFoundryModel(undefined);
     setPendingFoundryInstructions(undefined);
-  }, [selectedFoundryAgent?.id]);
+    clearPendingFoundryUpdate(nodeId);
+  }, [selectedFoundryAgent?.id, nodeId]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -687,7 +688,8 @@ export const ParameterSection = ({
       const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
       if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
         const selectedAgentName = value?.length ? value[0]?.value : undefined;
-        const selectedAgent = selectedAgentName ? foundryAgentsForNode.find((a: any) => (a.name ?? a.id) === selectedAgentName) : undefined;
+        const selectedAgentId = selectedAgentName ? selectedAgentName : undefined;
+        const selectedAgent = selectedAgentId ? foundryAgentsForNode.find((a: any) => a.id === selectedAgentId) : undefined;
 
         updatedDependencies.inputs ??= {};
 
@@ -982,8 +984,19 @@ export const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
-      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
-        param;
+      const {
+        id,
+        label,
+        value,
+        required,
+        showTokens,
+        placeholder,
+        editorViewModel,
+        dynamicData,
+        conditionalVisibility,
+        validationErrors,
+        parameterKey,
+      } = param;
 
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
         ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
@@ -997,6 +1010,7 @@ export const ParameterSection = ({
         placeholder,
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
+        parameterKey,
       };
 
       const { editor, editorOptions } = getEditorAndOptions(
@@ -1079,12 +1093,17 @@ export const ParameterSection = ({
       };
     });
 
+  // Stable parameter keys for Foundry-managed fields (not locale-dependent)
+  const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
+  const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
+  const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
+
   // Hide AI model & collapse system instructions when Foundry manages them
   const filterFoundryManagedSettings = (items: typeof settings) =>
     items
-      .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'AI model'))
+      .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_DEPLOYMENT_KEY))
       .map((s) => {
-        if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
+        if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_MESSAGES_KEY) {
           return {
             ...s,
             settingProp: {
@@ -1099,7 +1118,7 @@ export const ParameterSection = ({
   // Insert FoundryAgentDetails inline after the Agent picker when a Foundry agent is selected
   if (isAgentServiceConnection && selectedFoundryAgent) {
     const foundryAgentSettingIndex = settings.findIndex(
-      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Agent'
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
 
     if (foundryAgentSettingIndex >= 0) {
@@ -1254,7 +1273,7 @@ export const getEditorAndOptions = (
   const isFoundryAgent = isAgentConnectorAndFoundryAgentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isFoundryAgent) {
     const options = foundryAgents.map((agent: any) => ({
-      value: agent.name ?? agent.id,
+      value: agent.id,
       displayName: `${agent.name ?? agent.id}${agent.model ? ` (${agent.model})` : ''}`,
     }));
 

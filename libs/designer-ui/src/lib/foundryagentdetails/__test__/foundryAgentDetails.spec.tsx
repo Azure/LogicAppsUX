@@ -1,12 +1,15 @@
 import * as React from 'react';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
+import * as renderer from 'react-test-renderer';
+import { IntlProvider } from 'react-intl';
+import { describe, vi, it, expect } from 'vitest';
 import { FoundryAgentDetails } from '../index';
 import type { FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
 
-describe('FoundryAgentDetails', () => {
-  let renderer: ReactShallowRenderer.ShallowRenderer;
+function renderWithIntl(component: React.ReactElement) {
+  return renderer.create(<IntlProvider locale="en">{component}</IntlProvider>);
+}
 
+describe('FoundryAgentDetails', () => {
   const baseAgent: FoundryAgent = {
     id: 'agent-1',
     name: 'TestAgent',
@@ -24,38 +27,32 @@ describe('FoundryAgentDetails', () => {
     { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
   ];
 
-  beforeEach(() => {
-    renderer = ReactShallowRenderer.createRenderer();
-  });
-
-  afterEach(() => {
-    renderer.unmount();
-  });
-
   it('should render without crashing', () => {
-    renderer.render(<FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />);
-    const output = renderer.getRenderOutput();
-    expect(output).toBeTruthy();
-    expect(output.type).toBe('div');
+    const tree = renderWithIntl(
+      <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+    );
+    expect(tree.toJSON()).toBeTruthy();
   });
 
   it('should render version text', () => {
-    renderer.render(<FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />);
-    const output = renderer.getRenderOutput();
-    const children = React.Children.toArray(output.props.children);
-    // First child is the version row
-    expect(children.length).toBeGreaterThan(0);
+    const tree = renderWithIntl(
+      <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+    );
+    const json = tree.toJSON() as renderer.ReactTestRendererJSON;
+    expect(json.children).toBeTruthy();
+    expect(json.children!.length).toBeGreaterThan(0);
   });
 
   it('should render tools summary as "None" when no tools', () => {
-    renderer.render(<FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />);
-    const output = renderer.getRenderOutput();
-    expect(output).toBeTruthy();
+    const tree = renderWithIntl(
+      <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+    );
+    expect(tree.toJSON()).toBeTruthy();
   });
 
   it('should render portal link when projectResourceId is provided', () => {
     const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct-1/projects/proj-1';
-    renderer.render(
+    const tree = renderWithIntl(
       <FoundryAgentDetails
         agent={baseAgent}
         models={baseModels}
@@ -64,22 +61,24 @@ describe('FoundryAgentDetails', () => {
         projectResourceId={resourceId}
       />
     );
-    const output = renderer.getRenderOutput();
-    const children = React.Children.toArray(output.props.children);
-    // Last child should be the portal link
-    const lastChild = children[children.length - 1] as React.ReactElement;
-    expect(lastChild).toBeTruthy();
-    expect(lastChild.props.href).toContain('ai.azure.com');
-    expect(lastChild.props.href).toContain('agent-1');
+    const root = tree.root;
+    // Find the Link element (rendered as an anchor with href)
+    const links = root.findAll(
+      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.includes('ai.azure.com')
+    );
+    expect(links.length).toBeGreaterThan(0);
+    expect(links[0].props.href).toContain('agent-1');
   });
 
   it('should not render portal link when projectResourceId is missing', () => {
-    renderer.render(<FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />);
-    const output = renderer.getRenderOutput();
-    const children = React.Children.toArray(output.props.children);
-    // Without projectResourceId, the last child should NOT be a link
-    const lastChild = children[children.length - 1] as React.ReactElement;
-    expect(lastChild.props.href).toBeUndefined();
+    const tree = renderWithIntl(
+      <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+    );
+    const root = tree.root;
+    const links = root.findAll(
+      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.includes('ai.azure.com')
+    );
+    expect(links.length).toBe(0);
   });
 
   it('should render agent with tools summary', () => {
@@ -87,10 +86,9 @@ describe('FoundryAgentDetails', () => {
       ...baseAgent,
       tools: [{ type: 'code_interpreter' }, { type: 'file_search' }],
     };
-    renderer.render(
+    const tree = renderWithIntl(
       <FoundryAgentDetails agent={agentWithTools} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
     );
-    const output = renderer.getRenderOutput();
-    expect(output).toBeTruthy();
+    expect(tree.toJSON()).toBeTruthy();
   });
 });
