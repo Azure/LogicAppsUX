@@ -39,7 +39,9 @@ export const useFoundryAgentDetailsStyles = makeStyles({
   instructionsTextarea: {
     width: '100%',
     minHeight: '60px',
-    resize: 'vertical',
+    '& textarea': {
+      minHeight: '60px',
+    },
   },
   portalLink: {
     display: 'inline-flex',

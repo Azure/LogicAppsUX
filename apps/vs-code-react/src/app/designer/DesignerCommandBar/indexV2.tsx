@@ -17,6 +17,7 @@ import {
   type RootState,
   resetDesignerView,
   collapsePanel,
+  flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer-v2';
 import { isNullOrEmpty, type Workflow } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
@@ -145,6 +146,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
       if (!hasParametersErrors) {
+        await flushPendingFoundryUpdates().catch(console.error);
         _saveWorkflow(serializedWorkflow, customCodeData as any, () => dispatch(resetDesignerDirtyState(undefined)));
       }
     } catch (error: any) {
