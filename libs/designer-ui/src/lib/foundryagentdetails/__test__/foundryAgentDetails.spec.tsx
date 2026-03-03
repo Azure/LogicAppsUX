@@ -64,7 +64,7 @@ describe('FoundryAgentDetails', () => {
     const root = tree.root;
     // Find the Link element (rendered as an anchor with href)
     const links = root.findAll(
-      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.includes('ai.azure.com')
+      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.startsWith('https://ai.azure.com/')
     );
     expect(links.length).toBeGreaterThan(0);
     expect(links[0].props.href).toContain('agent-1');
@@ -76,7 +76,7 @@ describe('FoundryAgentDetails', () => {
     );
     const root = tree.root;
     const links = root.findAll(
-      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.includes('ai.azure.com')
+      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.startsWith('https://ai.azure.com/')
     );
     expect(links.length).toBe(0);
   });
