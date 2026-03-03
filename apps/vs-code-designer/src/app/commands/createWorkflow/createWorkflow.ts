@@ -19,7 +19,7 @@ export const createWorkflow = async (context: IActionContext) => {
   const isCodeful = await isCodefulProject(projectRoot);
   const logicAppName = path.basename(projectRoot);
 
-  const logicAppType = isCodeful ? ProjectType.codeful : '';
+  const logicAppType = isCodeful ? ProjectType.agentCodeful : '';
 
   await createWorkspaceWebviewCommandHandler({
     panelName: localize('createWorkflow', 'Create workflow'),

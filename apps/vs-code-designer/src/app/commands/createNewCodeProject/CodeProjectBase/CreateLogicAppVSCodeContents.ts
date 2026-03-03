@@ -27,22 +27,17 @@ import path from 'path';
 import * as fse from 'fs-extra';
 import type { DebugConfiguration } from 'vscode';
 import { confirmEditJsonFile } from '../../../utils/fs';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
 import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
 import { binariesExist } from '../../../utils/binaries';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import {
-  type CustomCodeFunctionsProjectMetadata,
-  getCustomCodeFunctionsProjectMetadata,
-  tryGetLogicAppCustomCodeFunctionsProjects,
-} from '../../../utils/customCodeUtils';
 
 async function writeSettingsJson(context: IWebviewProjectContext, additionalSettings: ISettingToAdd[], vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
 
   const settings: ISettingToAdd[] = additionalSettings.concat(
-    { key: projectLanguageSetting, value: logicAppType === ProjectType.codeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript },
+    { key: projectLanguageSetting, value: logicAppType === ProjectType.agentCodeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript },
     { key: funcVersionSetting, value: latestGAVersion },
     // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
     { prefix: 'debug', key: 'internalConsoleOptions', value: 'neverOpen' },
@@ -51,7 +46,7 @@ async function writeSettingsJson(context: IWebviewProjectContext, additionalSett
 
   const settingsJsonPath: string = path.join(vscodePath, settingsFileName);
 
-  if (logicAppType === ProjectType.codeful) {
+  if (logicAppType === ProjectType.agentCodeful) {
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     settings.push(
       { prefix: 'azureFunctions', key: 'deploySubpath', value: deploySubPathValue },
@@ -88,7 +83,7 @@ export async function writeExtensionsJson(webviewProjectContext: IWebviewProject
   await fse.writeJson(extensionsJsonPath, extensionsData, { spaces: 2 });
 }
 
-const getCodefulTasks = (targetFramework: string) => {
+const getAgentCodefulTasks = (targetFramework: string) => {
   const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
   const releaseArgs: string[] = ['--configuration', 'Release'];
   const funcBinariesExist = binariesExist(funcDependencyName);
@@ -161,15 +156,17 @@ async function writeTasksJson(context: IWebviewProjectContext, vscodePath: strin
   const templateContent = await fse.readFile(templatePath, 'utf8');
   const tasksData = JSON.parse(templateContent);
 
-  if (logicAppType === ProjectType.codeful && targetFramework) {
-    // Get the codeful-specific tasks
-    const codefulTasks = getCodefulTasks(targetFramework);
-    tasksData.tasks = codefulTasks;
+  if (logicAppType === ProjectType.agentCodeful && targetFramework) {
+    // Get the agent codeful-specific tasks
+    const agentCodefulTasks = getAgentCodefulTasks(targetFramework);
+
+    // Replace tasks with agent codeful tasks
+    tasksData.tasks = agentCodefulTasks;
 
     // Write the modified tasks.json file
     await fse.writeJson(tasksJsonPath, tasksData, { spaces: 2 });
   } else {
-    // For non-codeful projects, just copy the template
+    // For non-agentCodeful projects, just copy the template
     await fse.copyFile(templatePath, tasksJsonPath);
   }
 }
@@ -183,9 +180,10 @@ export async function writeDevContainerJson(devContainerPath: string): Promise<v
 export function getDebugConfiguration(
   logicAppName: string,
   customCodeTargetFramework?: TargetFramework,
-  isCodeful?: boolean
+  logicAppType?: string
 ): DebugConfiguration {
-  // NOTE(aeldridge): Only use logicapp debug configuration for custom code and codeful projects for now. Simple attach is sufficient for codeless non-custom code.
+  const isCodeful = logicAppType === ProjectType.agentCodeful;
+
   if (isCodeful) {
     return {
       name: localize('debugLogicApp', `Run/Debug logic app ${logicAppName}`),
@@ -215,13 +213,14 @@ export function getDebugConfiguration(
   };
 }
 
-export async function writeLaunchJson(context: IWebviewProjectContext, vscodePath: string, logicAppName: string): Promise<void> {
-  const customCodeTargetFramework =
-    context.logicAppType === ProjectType.customCode || context.logicAppType === ProjectType.rulesEngine
-      ? (context.targetFramework ?? (await tryGetCustomCodeTargetFramework(context)))
-      : undefined;
-  const isCodeful = context.logicAppType === ProjectType.codeful;
-  const newDebugConfig: DebugConfiguration = getDebugConfiguration(logicAppName, customCodeTargetFramework, isCodeful);
+export async function writeLaunchJson(
+  context: IActionContext,
+  vscodePath: string,
+  logicAppName: string,
+  customCodeTargetFramework?: TargetFramework,
+  logicAppType?: string
+): Promise<void> {
+  const newDebugConfig: DebugConfiguration = getDebugConfiguration(logicAppName, customCodeTargetFramework, logicAppType);
 
   // otherwise manually edit json
   const launchJsonPath: string = path.join(vscodePath, launchFileName);
@@ -230,18 +229,6 @@ export async function writeLaunchJson(context: IWebviewProjectContext, vscodePat
     data.configurations = insertLaunchConfig(data.configurations, newDebugConfig);
     return data;
   });
-}
-
-async function tryGetCustomCodeTargetFramework(context: IWebviewProjectContext): Promise<TargetFramework | undefined> {
-  const workspaceFolder = path.join(context.workspaceProjectPath.fsPath, context.workspaceName);
-  const logicAppFolderPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(logicAppFolderPath);
-  let customCodeProjectsMetadata: CustomCodeFunctionsProjectMetadata[];
-  if (customCodeProjectPaths && customCodeProjectPaths.length > 0) {
-    customCodeProjectsMetadata = await Promise.all(customCodeProjectPaths.map(getCustomCodeFunctionsProjectMetadata));
-  }
-  // Currently only support one custom code functions project per logic app
-  return customCodeProjectsMetadata ? customCodeProjectsMetadata[0].targetFramework : undefined;
 }
 
 export function insertLaunchConfig(existingConfigs: DebugConfiguration[] | undefined, newConfig: DebugConfiguration): DebugConfiguration[] {
@@ -254,7 +241,7 @@ export function insertLaunchConfig(existingConfigs: DebugConfiguration[] | undef
 }
 
 export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
-  const { logicAppType, logicAppName } = webviewProjectContext;
+  const { logicAppType, logicAppName, targetFramework } = webviewProjectContext;
   const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
   await fse.ensureDir(vscodePath);
 
@@ -267,7 +254,7 @@ export async function createLogicAppVsCodeContents(webviewProjectContext: IWebvi
   await writeSettingsJson(webviewProjectContext, additionalSettings, vscodePath);
   await writeExtensionsJson(webviewProjectContext, vscodePath);
   await writeTasksJson(webviewProjectContext, vscodePath);
-  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName);
+  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName, targetFramework as TargetFramework, logicAppType);
 }
 
 export async function createDevContainerContents(webviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {

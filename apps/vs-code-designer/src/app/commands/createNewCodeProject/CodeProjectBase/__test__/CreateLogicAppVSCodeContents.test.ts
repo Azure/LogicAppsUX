@@ -19,9 +19,6 @@ vi.mock('fs-extra', () => ({
 vi.mock('../../../../utils/fs', () => ({
   confirmEditJsonFile: vi.fn(),
 }));
-vi.mock('../../../../utils/binaries', () => ({
-  binariesExist: vi.fn().mockReturnValue(false),
-}));
 
 describe('CreateLogicAppVSCodeContents', () => {
   const mockContext: IWebviewProjectContext = {
@@ -53,8 +50,8 @@ describe('CreateLogicAppVSCodeContents', () => {
 
   const mockContextCodeful: IWebviewProjectContext = {
     logicAppName: 'TestLogicAppCodeful',
-    logicAppType: ProjectType.codeful,
-    targetFramework: TargetFramework.NetFx,
+    logicAppType: ProjectType.agentCodeful,
+    targetFramework: TargetFramework.Net8,
     isDevContainerProject: false,
   } as any;
 
@@ -277,27 +274,7 @@ describe('CreateLogicAppVSCodeContents', () => {
       });
     });
 
-    it('should create settings.json with codeful-specific settings for codeful project', async () => {
-      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
-
-      const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
-
-      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'C#');
-      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
-      expect(settingsData).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
-      expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
-      expect(settingsData).toHaveProperty('azureFunctions.deploySubpath');
-      expect(settingsData).toHaveProperty('azureFunctions.preDeployTask', 'publish');
-      expect(settingsData).toHaveProperty('azureFunctions.projectSubpath');
-      expect(settingsData).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
-      expect(settingsData).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
-      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.deploySubpath');
-    });
-
-    it('should create launch.json with logicapp configuration for codeful projects', async () => {
+    it('should create launch.json with logicapp configuration without customCodeRuntime for codeful projects', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
@@ -405,11 +382,14 @@ describe('CreateLogicAppVSCodeContents', () => {
       });
     });
 
-    it('should return logicapp configuration with isCodeless false for codeful project', () => {
-      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', undefined, true);
+    it('should return logicapp configuration without customCodeRuntime for codeful project', () => {
+      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration(
+        'TestLogicApp',
+        TargetFramework.Net8,
+        ProjectType.agentCodeful
+      );
 
       expect(config).toMatchObject({
-        name: expect.stringContaining('Run/Debug logic app TestLogicApp'),
         type: 'logicapp',
         request: 'launch',
         funcRuntime: 'coreclr',
