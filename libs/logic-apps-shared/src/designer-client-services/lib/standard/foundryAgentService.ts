@@ -10,9 +10,7 @@
 const REQUEST_TIMEOUT = 30_000;
 const FOUNDRY_API_VERSION = '2025-05-15-preview';
 
-// =============================================================================
-// TYPES
-// =============================================================================
+// --- Types ---
 
 export interface FoundryToolDefinition {
   type: 'code_interpreter' | 'file_search' | 'function';
@@ -70,13 +68,11 @@ export interface FoundryAgentListResponse {
 export interface ListAgentsOptions {
   limit?: number;
   order?: 'asc' | 'desc';
-  after?: string | undefined;
-  before?: string | undefined;
+  after?: string;
+  before?: string;
 }
 
-// =============================================================================
-// HELPERS
-// =============================================================================
+// --- Helpers ---
 
 function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
   const latest = raw.versions?.latest;
@@ -94,19 +90,31 @@ function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
   };
 }
 
+/** Normalize the project endpoint to the Foundry data-plane host. */
+function normalizeEndpoint(projectEndpoint: string): string {
+  const base = projectEndpoint.replace(/\/+$/, '');
+  return base.includes('.cognitiveservices.azure.com') ? base.replace('.cognitiveservices.azure.com', '.services.ai.azure.com') : base;
+}
+
+function buildAgentsUrl(projectEndpoint: string): string {
+  return `${normalizeEndpoint(projectEndpoint)}/agents?api-version=${FOUNDRY_API_VERSION}`;
+}
+
+function buildAgentUrl(projectEndpoint: string, agentId: string): string {
+  return `${normalizeEndpoint(projectEndpoint)}/agents/${encodeURIComponent(agentId)}?api-version=${FOUNDRY_API_VERSION}`;
+}
+
 async function foundryRequest<T>(accessToken: string, method: 'GET' | 'POST' | 'DELETE', url: string, body?: unknown): Promise<T> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
   try {
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    };
-
     const options: RequestInit = {
       method,
-      headers,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
       signal: controller.signal,
     };
 
@@ -118,7 +126,7 @@ async function foundryRequest<T>(accessToken: string, method: 'GET' | 'POST' | '
 
     if (!response.ok) {
       const errorText = await response.text();
-      let errorMessage = `${response.status}`;
+      let errorMessage: string;
       try {
         const errorJson = JSON.parse(errorText);
         errorMessage = errorJson.error?.message ?? errorJson.message ?? errorText;
@@ -139,19 +147,7 @@ async function foundryRequest<T>(accessToken: string, method: 'GET' | 'POST' | '
   }
 }
 
-function buildAgentsUrl(projectEndpoint: string): string {
-  let base = projectEndpoint.replace(/\/+$/, '');
-
-  if (base.includes('.cognitiveservices.azure.com')) {
-    base = base.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
-  }
-
-  return `${base}/agents?api-version=${FOUNDRY_API_VERSION}`;
-}
-
-// =============================================================================
-// API FUNCTIONS
-// =============================================================================
+// --- API Functions ---
 
 /**
  * Derive the Foundry project data-plane endpoint from the connection's ARM resource ID.
@@ -168,9 +164,7 @@ export function buildProjectEndpointFromResourceId(resourceId: string): string |
   return `https://${accountName}.services.ai.azure.com/api/projects/${projectName}`;
 }
 
-/**
- * List v2 agents in a Foundry project.
- */
+/** List v2 agents in a Foundry project. */
 export async function listFoundryAgents(
   projectEndpoint: string,
   accessToken: string,
@@ -194,18 +188,13 @@ export async function listFoundryAgents(
   return foundryRequest<FoundryAgentListResponse>(accessToken, 'GET', url.toString());
 }
 
-/**
- * List ALL v2 agents in a Foundry project (auto-paginate).
- */
+/** List ALL v2 agents in a Foundry project (auto-paginate). */
 export async function listAllFoundryAgents(projectEndpoint: string, accessToken: string): Promise<FoundryAgent[]> {
   const agents: FoundryAgent[] = [];
   let after: string | undefined;
 
   while (true) {
-    const page = await listFoundryAgents(projectEndpoint, accessToken, {
-      limit: 100,
-      after,
-    });
+    const page = await listFoundryAgents(projectEndpoint, accessToken, { limit: 100, after });
 
     agents.push(...page.data.map(normalizeAgent));
 
@@ -218,23 +207,13 @@ export async function listAllFoundryAgents(projectEndpoint: string, accessToken:
   return agents;
 }
 
-/**
- * Get a single Foundry v2 agent by ID.
- */
+/** Get a single Foundry v2 agent by ID. */
 export async function getFoundryAgent(projectEndpoint: string, agentId: string, accessToken: string): Promise<FoundryAgent> {
-  let base = projectEndpoint.replace(/\/+$/, '');
-  if (base.includes('.cognitiveservices.azure.com')) {
-    base = base.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
-  }
-  const url = `${base}/agents/${encodeURIComponent(agentId)}?api-version=${FOUNDRY_API_VERSION}`;
-
-  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'GET', url);
+  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'GET', buildAgentUrl(projectEndpoint, agentId));
   return normalizeAgent(raw);
 }
 
-// =============================================================================
-// UPDATE AGENT
-// =============================================================================
+// --- Update Agent ---
 
 export interface UpdateFoundryAgentOptions {
   model?: string;
@@ -253,14 +232,6 @@ export async function updateFoundryAgent(
   accessToken: string,
   updates: UpdateFoundryAgentOptions
 ): Promise<FoundryAgent> {
-  let base = projectEndpoint.replace(/\/+$/, '');
-  if (base.includes('.cognitiveservices.azure.com')) {
-    base = base.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
-  }
-  const url = `${base}/agents/${encodeURIComponent(agentId)}?api-version=${FOUNDRY_API_VERSION}`;
-
-  // The Foundry v2 API expects model/instructions inside a "definition" envelope
-  const body: Record<string, unknown> = {};
   const definition: Record<string, unknown> = { kind: 'prompt' };
   if (updates.model !== undefined) {
     definition.model = updates.model;
@@ -268,7 +239,8 @@ export async function updateFoundryAgent(
   if (updates.instructions !== undefined) {
     definition.instructions = updates.instructions;
   }
-  body.definition = definition;
+
+  const body: Record<string, unknown> = { definition };
   if (updates.name !== undefined) {
     body.name = updates.name;
   }
@@ -276,13 +248,11 @@ export async function updateFoundryAgent(
     body.description = updates.description;
   }
 
-  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', url, body);
+  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', buildAgentUrl(projectEndpoint, agentId), body);
   return normalizeAgent(raw);
 }
 
-// =============================================================================
-// LIST MODELS
-// =============================================================================
+// --- List Models ---
 
 export interface FoundryModel {
   id: string;
@@ -291,15 +261,9 @@ export interface FoundryModel {
 
 interface FoundryModelDeployment {
   name: string;
-  // ARM-style nested model info
   properties?: {
-    model?: {
-      name?: string;
-      format?: string;
-      version?: string;
-    };
+    model?: { name?: string; format?: string; version?: string };
   };
-  // Data-plane style flat model info
   model_name?: string;
   model_version?: string;
 }
@@ -309,22 +273,16 @@ interface FoundryModelDeploymentListResponse {
   data?: FoundryModelDeployment[];
 }
 
-/**
- * List available model deployments for a Foundry project.
- * Uses the data-plane deployments API on the project endpoint.
- */
+/** List available model deployments for a Foundry project. */
 export async function listFoundryModels(projectEndpoint: string, accessToken: string): Promise<FoundryModel[]> {
   const url = `${projectEndpoint}/deployments?api-version=${FOUNDRY_API_VERSION}`;
-
   const response = await foundryRequest<FoundryModelDeploymentListResponse>(accessToken, 'GET', url);
   const deployments = response.value ?? response.data ?? [];
+
   return deployments
     .filter((d) => d.name)
-    .map((d) => {
-      const modelName = d.properties?.model?.name ?? d.model_name ?? d.name;
-      return {
-        id: d.name,
-        name: modelName,
-      };
-    });
+    .map((d) => ({
+      id: d.name,
+      name: d.properties?.model?.name ?? d.model_name ?? d.name,
+    }));
 }

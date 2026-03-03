@@ -26,8 +26,6 @@ function buildFoundryPortalUrl(projectResourceId: string | undefined, agentId: s
   if (!projectResourceId) {
     return undefined;
   }
-  // Extract parts from ARM resource ID:
-  // /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.CognitiveServices/accounts/{account}/projects/{project}
   const match = projectResourceId.match(
     /\/subscriptions\/([^/]+)\/resourceGroups\/([^/]+)\/providers\/Microsoft\.CognitiveServices\/accounts\/([^/]+)\/projects\/([^/]+)/i
   );
@@ -38,7 +36,7 @@ function buildFoundryPortalUrl(projectResourceId: string | undefined, agentId: s
   return `https://ai.azure.com/nextgen/r/${subscriptionId},${resourceGroup},,${account},${project}/build/agents/${encodeURIComponent(agentId)}/build?version=2`;
 }
 
-export const FoundryAgentDetails = ({
+export function FoundryAgentDetails({
   agent,
   models,
   modelsLoading = false,
@@ -47,7 +45,7 @@ export const FoundryAgentDetails = ({
   onInstructionsChange,
   projectResourceId,
   disabled = false,
-}: FoundryAgentDetailsProps) => {
+}: FoundryAgentDetailsProps) {
   const styles = useFoundryAgentDetailsStyles();
 
   const portalUrl = useMemo(() => buildFoundryPortalUrl(projectResourceId, agent.id), [projectResourceId, agent.id]);
@@ -77,31 +75,27 @@ export const FoundryAgentDetails = ({
 
   const effectiveModel = selectedModel ?? agent.model;
 
-  const currentModelId = useMemo(() => {
+  const resolvedModel = useMemo(() => {
     const found = models.find((m) => m.id === effectiveModel || m.id.startsWith(effectiveModel));
-    return found?.id ?? effectiveModel;
+    return {
+      id: found?.id ?? effectiveModel,
+      displayName: found?.name ?? effectiveModel ?? '',
+    };
   }, [models, effectiveModel]);
-
-  const displayModelName = useMemo(() => {
-    const found = models.find((m) => m.id === currentModelId);
-    return found?.name ?? effectiveModel ?? '';
-  }, [models, currentModelId, effectiveModel]);
 
   return (
     <div className={styles.container}>
-      {/* Version */}
       <div className={styles.row}>
         <Text className={styles.label}>Version</Text>
         <Text>Agents (v2)</Text>
       </div>
 
-      {/* Model dropdown */}
       <div className={styles.row}>
         <Field label="Model" size="small">
           <Dropdown
             placeholder={modelsLoading ? 'Loading models...' : 'Select a model'}
-            value={displayModelName}
-            selectedOptions={currentModelId ? [currentModelId] : []}
+            value={resolvedModel.displayName}
+            selectedOptions={resolvedModel.id ? [resolvedModel.id] : []}
             onOptionSelect={handleModelSelect}
             disabled={disabled || modelsLoading}
             size="small"
@@ -115,7 +109,6 @@ export const FoundryAgentDetails = ({
         </Field>
       </div>
 
-      {/* Instructions */}
       <div className={styles.row}>
         <div className={styles.labelRow}>
           <Text className={styles.label}>Instructions</Text>
@@ -132,13 +125,11 @@ export const FoundryAgentDetails = ({
         />
       </div>
 
-      {/* Tools */}
       <div className={styles.row}>
         <Text className={styles.label}>Tools</Text>
         <Text className={styles.toolsList}>{toolsSummary}</Text>
       </div>
 
-      {/* Edit in Foundry Portal link */}
       {portalUrl && (
         <Link className={styles.portalLink} href={portalUrl} target="_blank" rel="noopener noreferrer">
           <NavigateIcon />
@@ -147,6 +138,4 @@ export const FoundryAgentDetails = ({
       )}
     </div>
   );
-};
-
-FoundryAgentDetails.displayName = 'FoundryAgentDetails';
+}

@@ -383,6 +383,7 @@ export const ParameterSection = ({
   // Track the selected Foundry agent and pending edits
   const [pendingFoundryModel, setPendingFoundryModel] = useState<string | undefined>(undefined);
   const [pendingFoundryInstructions, setPendingFoundryInstructions] = useState<string | undefined>(undefined);
+
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
       return {
@@ -431,6 +432,12 @@ export const ParameterSection = ({
     }
     return foundryAgentsForNode.find((a) => (a.name ?? a.id) === agentName);
   }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
+
+  // Reset pending overrides when the selected agent changes to avoid stale state
+  useEffect(() => {
+    setPendingFoundryModel(undefined);
+    setPendingFoundryInstructions(undefined);
+  }, [selectedFoundryAgent?.id]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -626,33 +633,32 @@ export const ParameterSection = ({
 
       const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
 
+      // Shared helper for building dependent parameter update entries
+      const buildDependentParam = (key: string, val?: string) => {
+        const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+        const resolvedValue = val ?? targetParam?.schema?.default;
+        if (!resolvedValue) {
+          return undefined;
+        }
+        return {
+          definition: targetParam?.schema,
+          dependencyType: 'AgentSchema' as const,
+          dependentParameters: { [id]: { isValid: true } },
+          parameter: {
+            key,
+            name: targetParam?.parameterName ?? '',
+            type: targetParam?.type ?? '',
+            value: [createLiteralValueSegment(resolvedValue)],
+          },
+        };
+      };
+
       if (isAgentDeployment) {
         const deploymentInfo = value?.length
           ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
           : undefined;
 
         updatedDependencies.inputs ??= {};
-
-        const getDependentInputParameter = (key: string, apiValue?: any) => {
-          const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
-          const resolvedValue = apiValue ?? targetParam?.schema?.default;
-
-          if (!resolvedValue) {
-            return undefined;
-          }
-
-          return {
-            definition: targetParam?.schema,
-            dependencyType: 'AgentSchema' as const,
-            dependentParameters: { [id]: { isValid: true } },
-            parameter: {
-              key,
-              name: targetParam?.parameterName ?? '',
-              type: targetParam?.type ?? '',
-              value: [createLiteralValueSegment(resolvedValue)],
-            },
-          };
-        };
 
         const agentDeploymentKeys = [
           {
@@ -670,7 +676,7 @@ export const ParameterSection = ({
         ];
 
         for (const { key, default: defaultValue } of agentDeploymentKeys) {
-          const dependency = getDependentInputParameter(key, defaultValue);
+          const dependency = buildDependentParam(key, defaultValue);
           if (dependency) {
             updatedDependencies.inputs[key] = dependency;
           }
@@ -685,32 +691,13 @@ export const ParameterSection = ({
 
         updatedDependencies.inputs ??= {};
 
-        const getFoundryDependentParam = (key: string, val?: string) => {
-          const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
-          const resolvedValue = val ?? targetParam?.schema?.default;
-          if (!resolvedValue) {
-            return undefined;
-          }
-          return {
-            definition: targetParam?.schema,
-            dependencyType: 'AgentSchema' as const,
-            dependentParameters: { [id]: { isValid: true } },
-            parameter: {
-              key,
-              name: targetParam?.parameterName ?? '',
-              type: targetParam?.type ?? '',
-              value: [createLiteralValueSegment(resolvedValue)],
-            },
-          };
-        };
-
         const foundryDependentKeys = [
           { key: 'inputs.$.foundryAgentName', default: selectedAgent?.name ?? selectedAgentName },
           { key: 'inputs.$.foundryAgentVersion', default: 'v2' },
         ];
 
         for (const { key, default: defaultValue } of foundryDependentKeys) {
-          const dependency = getFoundryDependentParam(key, defaultValue);
+          const dependency = buildDependentParam(key, defaultValue);
           if (dependency) {
             updatedDependencies.inputs[key] = dependency;
           }
@@ -1092,17 +1079,9 @@ export const ParameterSection = ({
       };
     });
 
-  // Split settings to insert FoundryAgentDetails inline after the Agent picker
-  const foundryAgentSettingIndex =
-    isAgentServiceConnection && selectedFoundryAgent
-      ? settings.findIndex((s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Agent')
-      : -1;
-
-  if (foundryAgentSettingIndex >= 0) {
-    const settingsBefore = settings.slice(0, foundryAgentSettingIndex + 1);
-    // Hide system instructions and deploymentId ("AI model") since they're shown inline in FoundryAgentDetails
-    const settingsAfter = settings
-      .slice(foundryAgentSettingIndex + 1)
+  // Hide AI model & collapse system instructions when Foundry manages them
+  const filterFoundryManagedSettings = (items: typeof settings) =>
+    items
       .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'AI model'))
       .map((s) => {
         if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
@@ -1117,59 +1096,55 @@ export const ParameterSection = ({
         return s;
       });
 
-    return (
-      <>
-        <SettingsSection
-          id={group.id}
-          nodeId={nodeId}
-          sectionName={group.description}
-          title={group.description}
-          settings={settingsBefore}
-          showHeading={!!group.description}
-          expanded={sectionExpanded}
-          onHeaderClick={onExpandSection}
-          showSeparator={false}
-        />
-        <FoundryAgentDetails
-          agent={selectedFoundryAgent!}
-          models={foundryModelsForNode ?? []}
-          modelsLoading={foundryModelsLoading}
-          selectedModel={pendingFoundryModel}
-          onModelChange={handleFoundryModelChange}
-          onInstructionsChange={handleFoundryInstructionsChange}
-          projectResourceId={foundryProjectResourceId}
-        />
-        {settingsAfter.length > 0 && (
+  // Insert FoundryAgentDetails inline after the Agent picker when a Foundry agent is selected
+  if (isAgentServiceConnection && selectedFoundryAgent) {
+    const foundryAgentSettingIndex = settings.findIndex(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Agent'
+    );
+
+    if (foundryAgentSettingIndex >= 0) {
+      const settingsBefore = settings.slice(0, foundryAgentSettingIndex + 1);
+      const settingsAfter = filterFoundryManagedSettings(settings.slice(foundryAgentSettingIndex + 1));
+
+      return (
+        <>
           <SettingsSection
-            id={`${group.id}-after-foundry`}
+            id={group.id}
             nodeId={nodeId}
-            settings={settingsAfter}
-            showHeading={false}
+            sectionName={group.description}
+            title={group.description}
+            settings={settingsBefore}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
             showSeparator={false}
           />
-        )}
-      </>
-    );
+          <FoundryAgentDetails
+            agent={selectedFoundryAgent}
+            models={foundryModelsForNode ?? []}
+            modelsLoading={foundryModelsLoading}
+            selectedModel={pendingFoundryModel}
+            onModelChange={handleFoundryModelChange}
+            onInstructionsChange={handleFoundryInstructionsChange}
+            projectResourceId={foundryProjectResourceId}
+          />
+          {settingsAfter.length > 0 && (
+            <SettingsSection
+              id={`${group.id}-after-foundry`}
+              nodeId={nodeId}
+              settings={settingsAfter}
+              showHeading={false}
+              showSeparator={false}
+            />
+          )}
+        </>
+      );
+    }
   }
 
   // When Foundry connection is active but no agent selected yet, hide system instructions
   // and deploymentId since they'll be managed via FoundryAgentDetails once an agent is picked
-  const finalSettings = isAgentServiceConnection
-    ? settings
-        .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'AI model'))
-        .map((s) => {
-          if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
-            return {
-              ...s,
-              settingProp: {
-                ...s.settingProp,
-                editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
-              },
-            };
-          }
-          return s;
-        })
-    : settings;
+  const finalSettings = isAgentServiceConnection ? filterFoundryManagedSettings(settings) : settings;
 
   return (
     <SettingsSection
