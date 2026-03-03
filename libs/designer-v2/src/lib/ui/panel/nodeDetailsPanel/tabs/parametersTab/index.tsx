@@ -443,8 +443,25 @@ export const ParameterSection = ({
           updates: { model: modelId, instructions: pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined },
         });
       }
+      // Sync deploymentId parameter so the serialized workflow includes the model
+      const parameterGroup = nodeInputs.parameterGroups[group.id];
+      const deploymentParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.deploymentId');
+      if (deploymentParam) {
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                groupId: group.id,
+                parameterId: deploymentParam.id,
+                propertiesToUpdate: { value: [createLiteralValueSegment(modelId)] },
+              },
+            ],
+          })
+        );
+      }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions]
+    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions, nodeInputs.parameterGroups, group.id, dispatch]
   );
 
   const handleFoundryInstructionsChange = useCallback(
@@ -490,6 +507,30 @@ export const ParameterSection = ({
     },
     [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, nodeInputs.parameterGroups, group.id, dispatch]
   );
+
+  // Sync deploymentId when the selected Foundry agent changes (initial selection or switching agents)
+  useEffect(() => {
+    if (!selectedFoundryAgent) {
+      return;
+    }
+    const parameterGroup = nodeInputs.parameterGroups[group.id];
+    const deploymentParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.deploymentId');
+    if (deploymentParam) {
+      const modelValue = pendingFoundryModel ?? selectedFoundryAgent.model;
+      dispatch(
+        updateNodeParameters({
+          nodeId,
+          parameters: [
+            {
+              groupId: group.id,
+              parameterId: deploymentParam.id,
+              propertiesToUpdate: { value: [createLiteralValueSegment(modelValue)] },
+            },
+          ],
+        })
+      );
+    }
+  }, [selectedFoundryAgent?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
@@ -1057,19 +1098,22 @@ export const ParameterSection = ({
 
   if (foundryAgentSettingIndex >= 0) {
     const settingsBefore = settings.slice(0, foundryAgentSettingIndex + 1);
-    // Hide system instructions from agentinstruction editor since they're shown inline in FoundryAgentDetails
-    const settingsAfter = settings.slice(foundryAgentSettingIndex + 1).map((s) => {
-      if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
-        return {
-          ...s,
-          settingProp: {
-            ...s.settingProp,
-            editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
-          },
-        };
-      }
-      return s;
-    });
+    // Hide system instructions and deploymentId ("AI model") since they're shown inline in FoundryAgentDetails
+    const settingsAfter = settings
+      .slice(foundryAgentSettingIndex + 1)
+      .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'AI model'))
+      .map((s) => {
+        if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
+          return {
+            ...s,
+            settingProp: {
+              ...s.settingProp,
+              editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
+            },
+          };
+        }
+        return s;
+      });
 
     return (
       <>
@@ -1106,20 +1150,22 @@ export const ParameterSection = ({
   }
 
   // When Foundry connection is active but no agent selected yet, hide system instructions
-  // since they'll be managed via the FoundryAgentDetails component once an agent is picked
+  // and deploymentId since they'll be managed via FoundryAgentDetails once an agent is picked
   const finalSettings = isAgentServiceConnection
-    ? settings.map((s) => {
-        if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
-          return {
-            ...s,
-            settingProp: {
-              ...s.settingProp,
-              editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
-            },
-          };
-        }
-        return s;
-      })
+    ? settings
+        .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'AI model'))
+        .map((s) => {
+          if (s.settingType === 'SettingTokenField' && (s.settingProp as any)?.label === 'Instructions for agent') {
+            return {
+              ...s,
+              settingProp: {
+                ...s.settingProp,
+                editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
+              },
+            };
+          }
+          return s;
+        })
     : settings;
 
   return (

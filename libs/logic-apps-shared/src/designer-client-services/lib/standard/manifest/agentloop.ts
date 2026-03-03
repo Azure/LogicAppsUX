@@ -135,7 +135,7 @@ export default {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'APIMGenAIGateway'],
+                values: ['AzureOpenAI', 'APIMGenAIGateway', 'FoundryAgentService'],
               },
             ],
           },
