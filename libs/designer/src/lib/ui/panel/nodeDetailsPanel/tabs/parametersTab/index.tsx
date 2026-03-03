@@ -1175,8 +1175,29 @@ export const ParameterSection = ({
   }
 
   // When Foundry connection is active but no agent selected yet, hide system instructions
-  // and deploymentId since they'll be managed via FoundryAgentDetails once an agent is picked
-  const finalSettings = isAgentServiceConnection ? filterFoundryManagedSettings(settings) : settings;
+  // and deploymentId since they'll be managed via FoundryAgentDetails once an agent is picked.
+  // Also move the Agent picker to the top for consistent ordering.
+  if (isAgentServiceConnection) {
+    const filtered = filterFoundryManagedSettings(settings);
+    const agentIdx = filtered.findIndex(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
+    );
+    const finalSettings = agentIdx > 0 ? [filtered[agentIdx], ...filtered.slice(0, agentIdx), ...filtered.slice(agentIdx + 1)] : filtered;
+
+    return (
+      <SettingsSection
+        id={group.id}
+        nodeId={nodeId}
+        sectionName={group.description}
+        title={group.description}
+        settings={finalSettings}
+        showHeading={!!group.description}
+        expanded={sectionExpanded}
+        onHeaderClick={onExpandSection}
+        showSeparator={false}
+      />
+    );
+  }
 
   return (
     <SettingsSection
@@ -1184,7 +1205,7 @@ export const ParameterSection = ({
       nodeId={nodeId}
       sectionName={group.description}
       title={group.description}
-      settings={finalSettings}
+      settings={settings}
       showHeading={!!group.description}
       expanded={sectionExpanded}
       onHeaderClick={onExpandSection}
