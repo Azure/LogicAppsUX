@@ -68,6 +68,7 @@ import {
   TriggerDescriptionDialog,
   getMissingRoleDefinitions,
   roleQueryKeys,
+  isAgentWorkflow,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
@@ -371,7 +372,7 @@ const DesignerEditor = () => {
           ...connectionsData?.serviceProviderConnections,
           ...newServiceProviderConnections,
         };
-        if (Object.keys(newAgentConnections).length > 0) {
+        if (isAgentWorkflow(workflow?.kind ?? '')) {
           (connectionsData as ConnectionsData).agentConnections = {
             ...connectionsData?.agentConnections,
             ...newAgentConnections,
