@@ -13,7 +13,6 @@ import {
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
   getCustomCodeFilesWithData,
-  flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer';
 import { type AgentURL, RUN_AFTER_COLORS, equals, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
@@ -124,7 +123,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
     if (!hasParametersErrors) {
-      await flushPendingFoundryUpdates().catch(console.error);
       vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
