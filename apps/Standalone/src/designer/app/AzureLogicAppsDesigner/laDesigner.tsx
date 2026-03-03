@@ -73,6 +73,8 @@ import {
   roleQueryKeys,
   isAgentWorkflow,
   setIsWorkflowDirty,
+  setFocusNode,
+  changePanelNode,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -131,7 +133,6 @@ const DesignerEditor = () => {
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
-  const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
     () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
@@ -505,8 +506,9 @@ const DesignerEditor = () => {
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
-              {displayCopilotChatbot ? (
+              {designerView ? (
                 <CoPilotChatbot
+                  isOpen={showChatBot}
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}
                   getUpdatedWorkflow={getUpdatedWorkflow}
@@ -525,15 +527,20 @@ const DesignerEditor = () => {
                     const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
                     return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
                   }}
+                  onNodeClick={(nodeId) => {
+                    DesignerStore.dispatch(setFocusNode(nodeId));
+                    DesignerStore.dispatch(changePanelNode(nodeId));
+                  }}
                 />
               ) : null}
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  height: 'inherit',
-                  flexGrow: 1,
-                  maxWidth: '100%',
+                  flex: '1 1 0',
+                  minHeight: 0,
+                  minWidth: 0,
+                  overflow: 'hidden',
                 }}
               >
                 <DesignerCommandBar

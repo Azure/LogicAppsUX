@@ -58,6 +58,16 @@ const useStyles = makeStyles({
     fontSize: tokens.fontSizeBase300,
     lineHeight: tokens.lineHeightBase300,
   },
+  nodeNameClickable: {
+    fontWeight: tokens.fontWeightSemibold,
+    fontSize: tokens.fontSizeBase300,
+    lineHeight: tokens.lineHeightBase300,
+    cursor: 'pointer',
+    color: tokens.colorBrandForegroundLink,
+    ':hover': {
+      textDecorationLine: 'underline',
+    },
+  },
   changeDescription: {
     fontSize: tokens.fontSizeBase200,
     lineHeight: tokens.lineHeightBase200,
@@ -166,12 +176,39 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
           <div className={styles.changeList}>
             {item.changes.map((change, index) => {
               const { icon: ChangeTypeIcon, styleKey } = changeIconMap[change.changeType] ?? changeIconMap[WorkflowChangeType.Modified];
-              const displayName = change.nodeIds.length > 0 ? change.nodeIds.map((id) => labelCase(id)).join(', ') : undefined;
+              const isClickable = change.changeType !== WorkflowChangeType.Removed && !!item.onNodeClick;
               return (
                 <div key={index} className={styles.changeItem}>
                   <div className={styles.changeFirstLine}>
                     {change.iconUri ? <img src={change.iconUri} alt="" className={styles.nodeIcon} /> : null}
-                    {displayName ? <span className={styles.nodeName}>{displayName}</span> : null}
+                    <div>
+                      {change.nodeIds.length > 0
+                        ? change.nodeIds.map((id, i) => {
+                            const label = labelCase(id) + (i < change.nodeIds.length - 1 ? ', ' : '');
+                            return isClickable ? (
+                              <span
+                                key={id}
+                                className={styles.nodeNameClickable}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => item.onNodeClick?.(id)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    item.onNodeClick?.(id);
+                                  }
+                                }}
+                              >
+                                {label}
+                              </span>
+                            ) : (
+                              <span key={id} className={styles.nodeName}>
+                                {label}
+                              </span>
+                            );
+                          })
+                        : null}
+                    </div>
                   </div>
                   <div className={styles.changeSecondLine}>
                     <ChangeTypeIcon className={`${styles.changeTypeIcon} ${styles[styleKey]}`} />

@@ -137,6 +137,7 @@ export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
   undoStatus: UndoStatus;
   correlationId?: string;
   changes?: WorkflowChange[];
+  onNodeClick?: (nodeId: string) => void;
   __rawRequest: any;
   __rawResponse: any;
 };

@@ -23,6 +23,8 @@ import { AssistantChat, defaultChatbotPanelWidth } from './ChatbotUi';
 
 export interface CoPilotChatbotProps {
   panelLocation?: PanelLocation;
+  /** Controls whether the chatbot drawer is open. The component stays mounted to preserve conversation history. */
+  isOpen?: boolean;
   getAuthToken: () => Promise<string>;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
@@ -37,10 +39,13 @@ export interface CoPilotChatbotProps {
   autoApply?: boolean;
   /** Optional callback to resolve a node's icon and brand color by node ID */
   getNodeVisuals?: (nodeId: string) => { iconUri: string; brandColor: string } | undefined;
+  /** Optional callback when a node ID in the change list is clicked — used to focus/open the node in the editor */
+  onNodeClick?: (nodeId: string) => void;
 }
 
 export const CoPilotChatbot = ({
   panelLocation = PanelLocation.Left,
+  isOpen = true,
   getAuthToken,
   getUpdatedWorkflow,
   openFeedbackPanel,
@@ -51,13 +56,13 @@ export const CoPilotChatbot = ({
   onWorkflowProposed,
   autoApply = true,
   getNodeVisuals,
+  onNodeClick,
 }: CoPilotChatbotProps) => {
   const chatSessionId = useRef(guid());
   const intl = useIntl();
   const chatbotService = ChatbotService();
   const workflowEditorEnabled = enableWorkflowEditing && isCopilotWorkflowEditorServiceInitialized();
   const [inputQuery, setInputQuery] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
   const [answerGeneration, stopAnswerGeneration] = useState(true);
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
@@ -385,6 +390,7 @@ export const CoPilotChatbot = ({
               undoStatus: UndoStatus.UndoAvailable,
               correlationId: chatSessionId.current,
               changes: enrichedChanges,
+              onNodeClick,
               __rawRequest: requestPayload,
               __rawResponse: response,
               openFeedback: openFeedbackPanel,
@@ -436,6 +442,7 @@ export const CoPilotChatbot = ({
               undoStatus: UndoStatus.Unavailable,
               correlationId: chatSessionId.current,
               changes: proposalEnrichedChanges,
+              onNodeClick,
               __rawRequest: requestPayload,
               __rawResponse: response,
               openFeedback: openFeedbackPanel,
@@ -505,6 +512,7 @@ export const CoPilotChatbot = ({
       autoApply,
       onWorkflowProposed,
       getNodeVisuals,
+      onNodeClick,
       openFeedbackPanel,
       logFeedbackVote,
       enrichChangesWithVisuals,
@@ -647,7 +655,6 @@ export const CoPilotChatbot = ({
   );
 
   const dismissCopilot = useCallback(() => {
-    setCollapsed(true);
     closeChatBot?.();
     LoggerService().log({
       level: LogEntryLevel.Warning,
@@ -669,7 +676,7 @@ export const CoPilotChatbot = ({
       panel={{
         location: panelLocation,
         width: chatbotWidth,
-        isOpen: !collapsed,
+        isOpen,
         onDismiss: dismissCopilot,
         header: <CopilotPanelHeader />,
       }}

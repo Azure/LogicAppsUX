@@ -2,94 +2,11 @@ import type { ICopilotWorkflowEditorService, WorkflowEditResponse, WorkflowChang
 import { WorkflowChangeType } from '../copilotWorkflowEditor';
 import type { Workflow } from '../../../utils/src';
 import { ArgumentException } from '../../../utils/src';
-
-const DEFAULT_SYSTEM_PROMPT = `You are a workflow assistant for Azure Logic Apps. You can answer questions about workflows AND modify workflow definitions based on user requests.
-
-## RESPONSE FORMAT
-
-You MUST respond with a valid JSON object in one of these two formats:
-
-### For workflow modifications:
-\`\`\`json
-{
-  "type": "workflow",
-  "text": "Brief summary of all changes made",
-  "changes": [
-    {
-      "changeType": "added",
-      "nodeIds": ["Action_Name"],
-      "description": "Added a new Compose action that generates a random number"
-    },
-    {
-      "changeType": "modified",
-      "nodeIds": ["Existing_Action"],
-      "description": "Updated the condition expression to check for status code 200"
-    }
-  ],
-  "workflow": {
-    "definition": { ... },
-    "kind": "Stateful"
-  }
-}
-\`\`\`
-
-The "changes" array MUST list each individual change with:
-- "changeType": one of "added", "modified", or "removed"
-- "nodeIds": array of action/trigger names (keys from the workflow definition's "actions" or "triggers" objects) affected by this change
-- "description": a concise human-readable description of what was changed
-
-When RENAMING a node, treat it as a "modified" change and put ONLY the NEW node ID in "nodeIds" (the old ID no longer exists in the workflow). Mention the old name in the "description" for clarity, e.g. "Renamed 'Old_Name' to 'New_Name'".
-
-### For questions / non-modification requests:
-\`\`\`json
-{
-  "type": "text",
-  "text": "Your answer here"
-}
-\`\`\`
-
-## WORKFLOW RULES
-
-You are generating workflows for Azure Logic Apps STANDARD SKU (not Consumption SKU).
-
-Standard SKU rules:
-- The workflow definition should contain the "definition" object with triggers and actions
-- Do NOT include "parameters" with connection references in the definition
-- Do NOT include "connections" or "$connections" in the workflow definition
-- NEVER use parameters('$connections') - this pattern does NOT exist in Standard SKU
-- For actions that need connections, use this format:
-  "inputs": {
-    "host": {
-      "connection": {
-        "referenceName": "connectionName"
-      }
-    }
-  }
-- Preserve existing connectionReferences from the current workflow when possible
-- Keep the same "kind" value unless the user explicitly asks to change it
-
-## WHEN MODIFYING A WORKFLOW
-
-1. Start from the provided current workflow definition
-2. Apply ONLY the changes the user requested
-3. Preserve all existing actions, triggers, and structure unless explicitly asked to change them
-4. Preserve all existing "runAfter" dependencies
-5. When adding a new action that should run after existing actions, set appropriate "runAfter"
-6. Return the COMPLETE modified workflow definition (not just the changed parts)
-7. Action and trigger names (the keys in the "actions" and "triggers" objects) MUST use underscores instead of spaces (e.g. "Get_current_weather", NOT "Get current weather"). This is a hard requirement — spaces in node IDs will cause runtime failures.
-
-## WHEN ANSWERING QUESTIONS
-
-- Answer clearly and concisely
-- You can answer questions about Azure Logic Apps, workflows, actions, triggers, expressions, and connectors
-- If the user asks about the current workflow, reference the workflow context provided
-
-## IMPORTANT
-
-- Always respond with valid JSON wrapped in a \`\`\`json code block
-- Never include explanatory text outside the JSON response
-- The "text" field supports markdown formatting
-- When there are MORE than 2 changes, set the "text" field to a single-sentence summary of all changes (e.g. "Added error handling, renamed two actions, and removed an unused step"). When there are 1-2 changes, the "text" field can be brief or omitted.`;
+import { COPILOT_WORKFLOW_TOOLS, executeCopilotTool } from './copilotWorkflowEditorTools';
+import type { CopilotToolDefinition } from './copilotWorkflowEditorTools';
+import { DEFAULT_SYSTEM_PROMPT } from './copilotWorkflowEditorPrompt';
+import { SearchService } from '../search';
+import { ConnectionService } from '../connection';
 
 export interface CopilotWorkflowEditorServiceOptions {
   /** OpenAI-compatible API endpoint (e.g. https://api.openai.com/v1 or Azure OpenAI endpoint) */
@@ -104,6 +21,27 @@ export interface CopilotWorkflowEditorServiceOptions {
   deploymentName?: string;
   /** API version for Azure OpenAI */
   apiVersion?: string;
+  /** Whether to enable tool calling for connector/operation lookup (defaults to true) */
+  enableTools?: boolean;
+  /** Maximum number of tool-calling rounds before forcing a final response (defaults to 5) */
+  maxToolRounds?: number;
+}
+
+/** Message types used in the OpenAI chat completion API */
+type ChatMessage =
+  | { role: 'system'; content: string }
+  | { role: 'user'; content: string }
+  | { role: 'assistant'; content: string; tool_calls?: undefined }
+  | { role: 'assistant'; content: string | null; tool_calls: ToolCall[] }
+  | { role: 'tool'; tool_call_id: string; content: string };
+
+interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
 }
 
 export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorService {
@@ -113,6 +51,8 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
   private readonly systemPrompt: string;
   private readonly deploymentName?: string;
   private readonly apiVersion?: string;
+  private readonly enableTools: boolean;
+  private readonly maxToolRounds: number;
   private conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
 
   constructor(options: CopilotWorkflowEditorServiceOptions) {
@@ -130,6 +70,8 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     this.systemPrompt = options.systemPrompt ?? DEFAULT_SYSTEM_PROMPT;
     this.deploymentName = options.deploymentName;
     this.apiVersion = options.apiVersion;
+    this.enableTools = options.enableTools ?? true;
+    this.maxToolRounds = options.maxToolRounds ?? 5;
   }
 
   async getWorkflowEdit(prompt: string, workflow: Workflow, signal?: AbortSignal): Promise<WorkflowEditResponse> {
@@ -145,7 +87,15 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
 
     const userMessage = `[CURRENT WORKFLOW]\n${workflowContext}\n\n[USER REQUEST]\n${prompt}`;
 
-    this.conversationHistory.push({ role: 'user', content: userMessage });
+    // Determine which tools are available for this request
+    const tools = this._getAvailableTools();
+
+    // Build the messages array for this request — includes persistent history + current turn
+    const messages: ChatMessage[] = [
+      { role: 'system' as const, content: this.systemPrompt },
+      ...this.conversationHistory.map((m) => ({ ...m }) as ChatMessage),
+      { role: 'user' as const, content: userMessage },
+    ];
 
     const url = this._buildUrl();
     const headers: Record<string, string> = {
@@ -153,31 +103,98 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       ...this._buildAuthHeaders(),
     };
 
-    const body = {
-      model: this.deploymentName ?? this.model,
-      messages: [{ role: 'system' as const, content: this.systemPrompt }, ...this.conversationHistory],
-      temperature: 1.0,
-      max_completion_tokens: 16384,
-    };
+    let finalContent = '';
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-      signal,
-    });
+    // Tool-calling loop: the LLM may request tool calls before producing a final response
+    for (let round = 0; round <= this.maxToolRounds; round++) {
+      const body: Record<string, unknown> = {
+        model: this.deploymentName ?? this.model,
+        messages,
+        temperature: 1.0,
+        max_completion_tokens: 16384,
+      };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`LLM API request failed (${response.status}): ${errorText}`);
+      if (tools.length > 0 && round < this.maxToolRounds) {
+        body['tools'] = tools;
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+        signal,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`LLM API request failed (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
+      const choice = data.choices?.[0];
+      const assistantMessage = choice?.message;
+
+      if (!assistantMessage) {
+        throw new Error('LLM returned no message in response');
+      }
+
+      // Check if the LLM wants to call tools
+      const toolCalls = assistantMessage.tool_calls as ToolCall[] | undefined;
+
+      if (toolCalls && toolCalls.length > 0) {
+        // Add the assistant's tool-call message to the conversation
+        messages.push({
+          role: 'assistant' as const,
+          content: assistantMessage.content ?? null,
+          tool_calls: toolCalls,
+        });
+
+        // Execute each tool call and add results
+        for (const toolCall of toolCalls) {
+          const result = await executeCopilotTool(toolCall.function.name, toolCall.function.arguments);
+          messages.push({
+            role: 'tool' as const,
+            tool_call_id: toolCall.id,
+            content: result,
+          });
+        }
+
+        // Continue to the next round for the LLM to process tool results
+        continue;
+      }
+
+      // No tool calls — this is the final response
+      finalContent = assistantMessage.content ?? '';
+      break;
     }
 
-    const data = await response.json();
-    const assistantContent = data.choices?.[0]?.message?.content ?? '';
+    // Persist user + final assistant message in conversation history (excluding tool-call internals)
+    this.conversationHistory.push({ role: 'user', content: userMessage });
+    this.conversationHistory.push({ role: 'assistant', content: finalContent });
 
-    this.conversationHistory.push({ role: 'assistant', content: assistantContent });
+    return this._parseResponse(finalContent, workflow);
+  }
 
-    return this._parseResponse(assistantContent, workflow);
+  /**
+   * Returns the tools that should be offered to the LLM.
+   * Only returns tools if enableTools is true and the required services are available.
+   */
+  private _getAvailableTools(): CopilotToolDefinition[] {
+    if (!this.enableTools) {
+      return [];
+    }
+
+    // Check if the required services are initialized by attempting to access them.
+    // If they're not available, we skip tools gracefully so the LLM still works (just without lookup).
+    try {
+      SearchService();
+      ConnectionService();
+    } catch {
+      // Services not initialized — tools won't work, so don't offer them
+      return [];
+    }
+
+    return COPILOT_WORKFLOW_TOOLS;
   }
 
   private _buildUrl(): string {

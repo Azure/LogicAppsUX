@@ -73,6 +73,8 @@ import {
   isAgentWorkflow,
   useRun,
   setIsWorkflowDirty,
+  setFocusNode,
+  changePanelNode,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -131,17 +133,40 @@ const DesignerEditor = () => {
   const [isDraftMode, setIsDraftMode] = useState(true);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
-  const originalConnectionsData = useMemo(
+  const prodConnectionsData = useMemo(
     () => artifactData?.properties.files[Artifact.ConnectionsFile] ?? {},
     [artifactData?.properties.files]
   );
+  const draftConnectionsData = useMemo(
+    () => artifactData?.properties.files[Artifact.DraftConnectionsFile],
+    [artifactData?.properties.files]
+  );
+  const originalConnectionsData = useMemo(() => {
+    if (isDraftMode && draftConnectionsData && Object.keys(draftConnectionsData).length > 0) {
+      return draftConnectionsData;
+    }
+    return prodConnectionsData;
+  }, [isDraftMode, draftConnectionsData, prodConnectionsData]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const prodWorkflow = useMemo(() => artifactData?.properties.files[Artifact.WorkflowFile], [artifactData?.properties.files]);
   const draftWorkflow = useMemo(() => customCodeData?.[Artifact.DraftFile], [customCodeData]);
-  const parameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
-  const notes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
+  const prodParameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
+  const draftParameters = useMemo(() => artifactData?.properties.files[Artifact.DraftParametersFile], [artifactData?.properties.files]);
+  const parameters = useMemo(() => {
+    if (isDraftMode && draftParameters && Object.keys(draftParameters).length > 0) {
+      return draftParameters;
+    }
+    return prodParameters;
+  }, [isDraftMode, draftParameters, prodParameters]);
+  const prodNotes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
+  const draftNotes = useMemo(() => customCodeData?.[VfsArtifact.DraftNotesFile], [customCodeData]);
+  const notes = useMemo(() => {
+    if (isDraftMode && draftNotes && Object.keys(draftNotes).length > 0) {
+      return draftNotes;
+    }
+    return prodNotes;
+  }, [isDraftMode, draftNotes, prodNotes]);
   const queryClient = getReactQueryClient();
-  const displayCopilotChatbot = showChatBot && isDesignerView;
   const connectionsData = useMemo(
     () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
     [originalConnectionsData, parameters, settingsData?.properties]
@@ -431,6 +456,10 @@ const DesignerEditor = () => {
         isDraftSave
       );
 
+      // Invalidate cached workflow artifacts so the next load fetches fresh data
+      // (including any new connection references added during this session)
+      getReactQueryClient().invalidateQueries(['workflowArtifactsStandard', workflowId]);
+
       return workflowToSave;
     },
     [
@@ -444,6 +473,7 @@ const DesignerEditor = () => {
       settingsData?.properties,
       siteResourceId,
       workflow,
+      workflowId,
       workflowName,
     ]
   );
@@ -585,6 +615,37 @@ const DesignerEditor = () => {
     }
   }, [artifactsLoading, customCodeLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
 
+  const Copilot = useCallback(
+    () => (
+      <CoPilotChatbot
+        isOpen={showChatBot}
+        openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+        getAuthToken={getAuthToken}
+        getUpdatedWorkflow={getUpdatedWorkflow}
+        openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+        closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+        enableWorkflowEditing={true}
+        autoApply={true}
+        onWorkflowProposed={(newWorkflow) => {
+          setWorkflow({
+            ...newWorkflow,
+            id: guid(),
+          });
+          DesignerStore.dispatch(setIsWorkflowDirty(true));
+        }}
+        getNodeVisuals={(nodeId) => {
+          const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
+          return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
+        }}
+        onNodeClick={(nodeId) => {
+          DesignerStore.dispatch(setFocusNode(nodeId));
+          DesignerStore.dispatch(changePanelNode(nodeId));
+        }}
+      />
+    ),
+    [showChatBot, dispatch]
+  );
+
   const derivedIsReadOnly = useMemo(() => {
     return isReadOnly || isMonitoringView || !isDraftMode;
   }, [isReadOnly, isMonitoringView, isDraftMode]);
@@ -633,82 +694,57 @@ const DesignerEditor = () => {
             appSettings={settingsData?.properties}
             isMultiVariableEnabled={hostOptions.enableMultiVariable && !isMonitoringView}
           >
+            <DesignerCommandBar
+              id={workflowId}
+              saveWorkflow={saveWorkflowFromDesigner}
+              discard={discardAllChanges}
+              location={canonicalLocation}
+              isReadOnly={derivedIsReadOnly}
+              isUnitTest={isUnitTest}
+              isDarkMode={isDarkMode}
+              isMonitoringView={isMonitoringView}
+              isDesignerView={isDesignerView}
+              isCodeView={isCodeView}
+              enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
+              saveWorkflowFromCode={saveWorkflowFromCode}
+              showMonitoringView={showMonitoringView}
+              showDesignerView={showDesignerView}
+              showCodeView={showCodeView}
+              switchWorkflowMode={switchWorkflowMode}
+              isDraftMode={isDraftMode}
+              prodWorkflow={artifactData?.properties.files[Artifact.WorkflowFile]}
+            />
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'row',
-                height: 'inherit',
+                flex: '1 1 0',
+                minHeight: 0,
+                minWidth: 0,
+                overflow: 'hidden',
+                position: 'relative',
               }}
             >
-              {displayCopilotChatbot ? (
-                <CoPilotChatbot
-                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-                  getAuthToken={getAuthToken}
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                  enableWorkflowEditing={true}
-                  autoApply={true}
-                  onWorkflowProposed={(newWorkflow) => {
-                    setWorkflow({
-                      ...newWorkflow,
-                      id: guid(),
-                    });
-                    DesignerStore.dispatch(setIsWorkflowDirty(true));
-                  }}
-                  getNodeVisuals={(nodeId) => {
-                    const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
-                    return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
-                  }}
-                />
-              ) : null}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 'inherit',
-                  flexGrow: 1,
-                  maxWidth: '100%',
-                }}
-              >
-                <DesignerCommandBar
-                  id={workflowId}
-                  saveWorkflow={saveWorkflowFromDesigner}
-                  discard={discardAllChanges}
-                  location={canonicalLocation}
-                  isReadOnly={derivedIsReadOnly}
-                  isUnitTest={isUnitTest}
-                  isDarkMode={isDarkMode}
-                  isMonitoringView={isMonitoringView}
-                  isDesignerView={isDesignerView}
-                  isCodeView={isCodeView}
-                  enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
-                  saveWorkflowFromCode={saveWorkflowFromCode}
-                  showMonitoringView={showMonitoringView}
-                  showDesignerView={showDesignerView}
-                  showCodeView={showCodeView}
-                  switchWorkflowMode={switchWorkflowMode}
-                  isDraftMode={isDraftMode}
-                  prodWorkflow={artifactData?.properties.files[Artifact.WorkflowFile]}
-                />
-                {!isCodeView && (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
-                    <Designer />
-                    <FloatingRunButton
-                      siteResourceId={siteResourceId}
-                      workflowName={workflowName}
-                      saveDraftWorkflow={saveWorkflowFromDesigner}
-                      onRun={onRun}
-                      isDarkMode={isDarkMode}
-                      isDraftMode={isDraftMode}
-                      workflowReadOnly={derivedIsReadOnly}
-                    />
-                  </div>
-                )}
-                {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
-                <CombineInitializeVariableDialog />
-                <TriggerDescriptionDialog workflowId={workflowId} />
+              <div>
+                <Copilot />
               </div>
+              {!isCodeView && (
+                <>
+                  <Designer />
+                  <FloatingRunButton
+                    siteResourceId={siteResourceId}
+                    workflowName={workflowName}
+                    saveDraftWorkflow={saveWorkflowFromDesigner}
+                    onRun={onRun}
+                    isDarkMode={isDarkMode}
+                    isDraftMode={isDraftMode}
+                    workflowReadOnly={derivedIsReadOnly}
+                  />
+                </>
+              )}
+              {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+              <CombineInitializeVariableDialog />
+              <TriggerDescriptionDialog workflowId={workflowId} />
             </div>
           </BJSWorkflowProvider>
         ) : null}

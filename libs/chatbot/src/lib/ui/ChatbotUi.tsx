@@ -1,4 +1,4 @@
-import { Button, Drawer, DrawerBody, DrawerHeader, DrawerHeaderTitle } from '@fluentui/react-components';
+import { Button, InlineDrawer, DrawerBody, DrawerHeader, DrawerHeaderTitle } from '@fluentui/react-components';
 import { DismissRegular, ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
@@ -21,8 +21,6 @@ interface ChatbotUIProps {
     width?: string;
     location?: PanelLocation;
     isOpen?: boolean;
-    hasCloseButton?: boolean;
-    isBlocking?: boolean;
     onDismiss?: () => void;
     header?: React.ReactNode;
   };
@@ -176,7 +174,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
 
 export const AssistantChat = (props: ChatbotUIProps) => {
   const {
-    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, isBlocking, onDismiss, header },
+    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, onDismiss, header },
   } = props;
 
   const intl = useIntl();
@@ -187,17 +185,7 @@ export const AssistantChat = (props: ChatbotUIProps) => {
   });
 
   return (
-    <Drawer
-      modalType={isBlocking ? 'modal' : 'non-modal'}
-      open={isOpen}
-      onOpenChange={(_, { open }) => {
-        if (!open) {
-          onDismiss?.();
-        }
-      }}
-      position={location === PanelLocation.Right ? 'end' : 'start'}
-      style={{ width, zIndex: 0 }}
-    >
+    <InlineDrawer open={isOpen} position={location === PanelLocation.Right ? 'end' : 'start'} style={{ width, height: '100%' }} separator>
       <DrawerHeader>
         <DrawerHeaderTitle
           action={<Button appearance="subtle" aria-label={closeButtonLabel} icon={<DismissRegular />} onClick={onDismiss} />}
@@ -208,6 +196,6 @@ export const AssistantChat = (props: ChatbotUIProps) => {
       <DrawerBody style={{ padding: 0 }}>
         <ChatbotUI {...props} />
       </DrawerBody>
-    </Drawer>
+    </InlineDrawer>
   );
 };

@@ -74,8 +74,8 @@ import {
   DocumentOnePageColumnsRegular,
   ArrowSyncFilled,
   CheckmarkCircleRegular,
-  ChatFilled,
-  ChatRegular,
+  ChatSparkleFilled,
+  ChatSparkleRegular,
 } from '@fluentui/react-icons';
 
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
@@ -86,7 +86,7 @@ const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
 const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
-const ChatIcon = bundleIcon(ChatFilled, ChatRegular);
+const ChatIcon = bundleIcon(ChatSparkleFilled, ChatSparkleRegular);
 
 const useStyles = makeStyles({
   viewModeContainer: {
@@ -200,7 +200,10 @@ export const DesignerCommandBar = ({
 
       if (!hasParametersErrors || autoSave) {
         await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
-        if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
+        // Only refresh callback URL on explicit saves, not auto-saves.
+        // The callback URL doesn't change on draft saves, so calling it on every
+        // auto-save cycle just generates unnecessary network requests.
+        if (!autoSave && Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
           updateCallbackUrl(designerState, dispatch);
         }
         if (autoSave) {
