@@ -92,8 +92,17 @@ function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
 
 /** Normalize the project endpoint to the Foundry data-plane host. */
 function normalizeEndpoint(projectEndpoint: string): string {
-  const base = projectEndpoint.replace(/\/+$/, '');
-  return base.includes('.cognitiveservices.azure.com') ? base.replace('.cognitiveservices.azure.com', '.services.ai.azure.com') : base;
+  const base = projectEndpoint.endsWith('/') ? projectEndpoint.replace(/\/+$/, '') : projectEndpoint;
+  try {
+    const url = new URL(base);
+    if (url.hostname.endsWith('.cognitiveservices.azure.com')) {
+      url.hostname = url.hostname.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
+      return url.toString().replace(/\/+$/, '');
+    }
+  } catch {
+    // Not a valid URL — fall through and return as-is
+  }
+  return base;
 }
 
 function buildAgentsUrl(projectEndpoint: string): string {
@@ -156,7 +165,8 @@ async function foundryRequest<T>(accessToken: string, method: 'GET' | 'POST' | '
  * Output: https://{account}.services.ai.azure.com/api/projects/{project}
  */
 export function buildProjectEndpointFromResourceId(resourceId: string): string | undefined {
-  const match = resourceId.match(/\/Microsoft\.CognitiveServices\/accounts\/([^/]+)\/projects\/([^/]+)/i);
+  // Use non-greedy match to avoid polynomial backtracking
+  const match = resourceId.match(/\/Microsoft\.CognitiveServices\/accounts\/([^/]+?)\/projects\/([^/]+?)(?:\/|$)/i);
   if (!match) {
     return undefined;
   }
