@@ -89,7 +89,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
@@ -522,10 +522,14 @@ export const ParameterSection = ({
   );
 
   // Sync deploymentId when the selected Foundry agent changes (initial selection or switching agents)
+  const prevFoundryAgentIdRef = useRef<string | undefined>(selectedFoundryAgent?.id);
   useEffect(() => {
-    if (!selectedFoundryAgent) {
+    if (!selectedFoundryAgent || selectedFoundryAgent.id === prevFoundryAgentIdRef.current) {
+      prevFoundryAgentIdRef.current = selectedFoundryAgent?.id;
       return;
     }
+    prevFoundryAgentIdRef.current = selectedFoundryAgent.id;
+
     const parameterGroup = nodeInputs.parameterGroups[group.id];
     const deploymentParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.deploymentId');
     if (deploymentParam) {
@@ -543,7 +547,7 @@ export const ParameterSection = ({
         })
       );
     }
-  }, [selectedFoundryAgent?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedFoundryAgent, pendingFoundryModel, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
