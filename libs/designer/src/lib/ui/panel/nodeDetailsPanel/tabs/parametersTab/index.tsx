@@ -463,12 +463,73 @@ export const ParameterSection = ({
     return undefined;
   }, [selectedFoundryVersion, foundryVersions, nodeInputs.parameterGroups, group.id]);
 
-  // Persist the derived version into state so it survives across re-renders
+  // Persist the derived version into state AND sync to workflow parameters on initial load
   useEffect(() => {
-    if (effectiveFoundryVersion && !selectedFoundryVersion) {
-      setSelectedFoundryVersion(effectiveFoundryVersion);
+    if (!effectiveFoundryVersion || selectedFoundryVersion) {
+      return;
     }
-  }, [effectiveFoundryVersion, selectedFoundryVersion]);
+    setSelectedFoundryVersion(effectiveFoundryVersion);
+
+    const parameterGroup = nodeInputs.parameterGroups[group.id];
+
+    // Write version number to workflow parameter
+    const versionParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentVersionNumber');
+    if (versionParam) {
+      dispatch(
+        updateNodeParameters({
+          nodeId,
+          parameters: [
+            {
+              groupId: group.id,
+              parameterId: versionParam.id,
+              propertiesToUpdate: { value: [createLiteralValueSegment(effectiveFoundryVersion)] },
+            },
+          ],
+        })
+      );
+    }
+
+    // Sync system instructions from the selected version/agent into messages parameter
+    const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
+    const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
+    if (instructions) {
+      const messagesParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.messages');
+      if (messagesParam) {
+        const currentValue = convertSegmentsToString(messagesParam.value ?? []);
+        let userInstructions: { role: string; content: string }[] = [];
+        try {
+          const parsed = JSON.parse(currentValue || '[]');
+          if (Array.isArray(parsed)) {
+            userInstructions = parsed.filter((m: { role: string }) => m.role === 'user');
+          }
+        } catch {
+          // preserve nothing on parse failure
+        }
+        const newMessages = [{ role: 'system', content: instructions }, ...userInstructions];
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                groupId: group.id,
+                parameterId: messagesParam.id,
+                propertiesToUpdate: { value: [createLiteralValueSegment(JSON.stringify(newMessages, null, 4))] },
+              },
+            ],
+          })
+        );
+      }
+    }
+  }, [
+    effectiveFoundryVersion,
+    selectedFoundryVersion,
+    foundryVersions,
+    selectedFoundryAgent,
+    nodeInputs.parameterGroups,
+    group.id,
+    nodeId,
+    dispatch,
+  ]);
 
   // After a save, Foundry creates a new version — auto-select it
   useEffect(() => {
