@@ -30,16 +30,18 @@ export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult
     return [];
   }
 
-  const getToken = CognitiveServiceService().getFoundryAccessToken;
-  if (!getToken) {
-    // Token getter not configured (e.g. VS Code) — skip silently
+  const service = CognitiveServiceService();
+  const getToken = service.getFoundryAccessToken;
+  const httpClient = service.getHttpClient?.();
+  if (!getToken || !httpClient) {
+    // Token getter or httpClient not configured (e.g. VS Code) — skip silently
     return [];
   }
 
   const results = await Promise.allSettled(
     entries.map(async ([nodeId, { projectEndpoint, agentId, updates }]) => {
       const token = await getToken();
-      await updateFoundryAgent(projectEndpoint, agentId, token, updates);
+      await updateFoundryAgent(httpClient, projectEndpoint, agentId, token, updates);
       // Only clear this entry on success
       pendingUpdates.delete(nodeId);
     })

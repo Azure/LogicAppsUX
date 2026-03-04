@@ -3,11 +3,14 @@
  *
  * API client for listing and retrieving Azure AI Foundry v2 agents.
  * Uses the agent REST API exposed by Foundry projects.
+ * Delegates HTTP calls to the shared IHttpClient for consistent retry,
+ * error handling, and request patterns across the codebase.
  *
  * Endpoint pattern: https://{accountName}.services.ai.azure.com/api/projects/{projectName}
  */
 
-const REQUEST_TIMEOUT = 30_000;
+import type { IHttpClient, QueryParameters } from '../httpClient';
+
 const FOUNDRY_API_VERSION = '2025-05-15-preview';
 
 // --- Types ---
@@ -105,55 +108,19 @@ function normalizeEndpoint(projectEndpoint: string): string {
   return base;
 }
 
-function buildAgentsUrl(projectEndpoint: string): string {
-  return `${normalizeEndpoint(projectEndpoint)}/agents?api-version=${FOUNDRY_API_VERSION}`;
+function buildAgentsUri(projectEndpoint: string): string {
+  return `${normalizeEndpoint(projectEndpoint)}/agents`;
 }
 
-function buildAgentUrl(projectEndpoint: string, agentId: string): string {
-  return `${normalizeEndpoint(projectEndpoint)}/agents/${encodeURIComponent(agentId)}?api-version=${FOUNDRY_API_VERSION}`;
+function buildAgentUri(projectEndpoint: string, agentId: string): string {
+  return `${normalizeEndpoint(projectEndpoint)}/agents/${encodeURIComponent(agentId)}`;
 }
 
-async function foundryRequest<T>(accessToken: string, method: 'GET' | 'POST' | 'DELETE', url: string, body?: unknown): Promise<T> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
-
-  try {
-    const options: RequestInit = {
-      method,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal,
-    };
-
-    if (body !== undefined) {
-      options.body = JSON.stringify(body);
-    }
-
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage: string;
-      try {
-        const errorJson = JSON.parse(errorText);
-        errorMessage = errorJson.error?.message ?? errorJson.message ?? errorText;
-      } catch {
-        errorMessage = errorText || response.statusText;
-      }
-      throw new Error(`Foundry API error: ${errorMessage}`);
-    }
-
-    return response.json();
-  } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Foundry API request timed out. Please try again.');
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeoutId);
-  }
+function foundryHeaders(accessToken: string): Record<string, string> {
+  return {
+    Authorization: `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+  };
 }
 
 // --- API Functions ---
@@ -176,35 +143,41 @@ export function buildProjectEndpointFromResourceId(resourceId: string): string |
 
 /** List v2 agents in a Foundry project. */
 export async function listFoundryAgents(
+  httpClient: IHttpClient,
   projectEndpoint: string,
   accessToken: string,
   options?: ListAgentsOptions
 ): Promise<FoundryAgentListResponse> {
-  const url = new URL(buildAgentsUrl(projectEndpoint));
+  const queryParameters: QueryParameters = { 'api-version': FOUNDRY_API_VERSION };
 
   if (options?.limit) {
-    url.searchParams.set('limit', String(options.limit));
+    queryParameters['limit'] = options.limit;
   }
   if (options?.order) {
-    url.searchParams.set('order', options.order);
+    queryParameters['order'] = options.order;
   }
   if (options?.after) {
-    url.searchParams.set('after', options.after);
+    queryParameters['after'] = options.after;
   }
   if (options?.before) {
-    url.searchParams.set('before', options.before);
+    queryParameters['before'] = options.before;
   }
 
-  return foundryRequest<FoundryAgentListResponse>(accessToken, 'GET', url.toString());
+  return httpClient.get<FoundryAgentListResponse>({
+    uri: buildAgentsUri(projectEndpoint),
+    headers: foundryHeaders(accessToken),
+    queryParameters,
+    noAuth: true,
+  });
 }
 
 /** List ALL v2 agents in a Foundry project (auto-paginate). */
-export async function listAllFoundryAgents(projectEndpoint: string, accessToken: string): Promise<FoundryAgent[]> {
+export async function listAllFoundryAgents(httpClient: IHttpClient, projectEndpoint: string, accessToken: string): Promise<FoundryAgent[]> {
   const agents: FoundryAgent[] = [];
   let after: string | undefined;
 
   while (true) {
-    const page = await listFoundryAgents(projectEndpoint, accessToken, { limit: 100, after });
+    const page = await listFoundryAgents(httpClient, projectEndpoint, accessToken, { limit: 100, after });
 
     agents.push(...page.data.map(normalizeAgent));
 
@@ -218,8 +191,18 @@ export async function listAllFoundryAgents(projectEndpoint: string, accessToken:
 }
 
 /** Get a single Foundry v2 agent by ID. */
-export async function getFoundryAgent(projectEndpoint: string, agentId: string, accessToken: string): Promise<FoundryAgent> {
-  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'GET', buildAgentUrl(projectEndpoint, agentId));
+export async function getFoundryAgent(
+  httpClient: IHttpClient,
+  projectEndpoint: string,
+  agentId: string,
+  accessToken: string
+): Promise<FoundryAgent> {
+  const raw = await httpClient.get<FoundryAgentRaw>({
+    uri: buildAgentUri(projectEndpoint, agentId),
+    headers: foundryHeaders(accessToken),
+    queryParameters: { 'api-version': FOUNDRY_API_VERSION },
+    noAuth: true,
+  });
   return normalizeAgent(raw);
 }
 
@@ -237,6 +220,7 @@ export interface UpdateFoundryAgentOptions {
  * Uses POST /agents/{agentId} for partial updates.
  */
 export async function updateFoundryAgent(
+  httpClient: IHttpClient,
   projectEndpoint: string,
   agentId: string,
   accessToken: string,
@@ -258,7 +242,13 @@ export async function updateFoundryAgent(
     body['description'] = updates.description;
   }
 
-  const raw = await foundryRequest<FoundryAgentRaw>(accessToken, 'POST', buildAgentUrl(projectEndpoint, agentId), body);
+  const raw = await httpClient.post<FoundryAgentRaw, Record<string, unknown>>({
+    uri: buildAgentUri(projectEndpoint, agentId),
+    headers: foundryHeaders(accessToken),
+    queryParameters: { 'api-version': FOUNDRY_API_VERSION },
+    content: body,
+    noAuth: true,
+  });
   return normalizeAgent(raw);
 }
 
@@ -284,9 +274,13 @@ interface FoundryModelDeploymentListResponse {
 }
 
 /** List available model deployments for a Foundry project. */
-export async function listFoundryModels(projectEndpoint: string, accessToken: string): Promise<FoundryModel[]> {
-  const url = `${normalizeEndpoint(projectEndpoint)}/deployments?api-version=${FOUNDRY_API_VERSION}`;
-  const response = await foundryRequest<FoundryModelDeploymentListResponse>(accessToken, 'GET', url);
+export async function listFoundryModels(httpClient: IHttpClient, projectEndpoint: string, accessToken: string): Promise<FoundryModel[]> {
+  const response = await httpClient.get<FoundryModelDeploymentListResponse>({
+    uri: `${normalizeEndpoint(projectEndpoint)}/deployments`,
+    headers: foundryHeaders(accessToken),
+    queryParameters: { 'api-version': FOUNDRY_API_VERSION },
+    noAuth: true,
+  });
   const deployments = response.value ?? response.data ?? [];
 
   return deployments

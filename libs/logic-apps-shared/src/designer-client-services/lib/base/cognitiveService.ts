@@ -25,6 +25,10 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     }
   }
 
+  getHttpClient(): IHttpClient {
+    return this.options.httpClient;
+  }
+
   async fetchCognitiveServiceAccountById(accountId: string): Promise<any> {
     const { httpClient, baseUrl, apiVersion } = this.options;
     const uri = `${baseUrl}${accountId}`;

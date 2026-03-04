@@ -213,12 +213,14 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
       if (!projectEndpoint) {
         return [];
       }
-      const getToken = CognitiveServiceService().getFoundryAccessToken;
-      if (!getToken) {
+      const service = CognitiveServiceService();
+      const getToken = service.getFoundryAccessToken;
+      const httpClient = service.getHttpClient?.();
+      if (!getToken || !httpClient) {
         return [];
       }
       const token = await getToken();
-      return listAllFoundryAgents(projectEndpoint, token);
+      return listAllFoundryAgents(httpClient, projectEndpoint, token);
     },
     {
       ...queryOpts,
@@ -255,12 +257,14 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       if (!projectEndpoint) {
         return [];
       }
-      const getToken = CognitiveServiceService().getFoundryAccessToken;
-      if (!getToken) {
+      const service = CognitiveServiceService();
+      const getToken = service.getFoundryAccessToken;
+      const httpClient = service.getHttpClient?.();
+      if (!getToken || !httpClient) {
         return [];
       }
       const token = await getToken();
-      return listFoundryModels(projectEndpoint, token);
+      return listFoundryModels(httpClient, projectEndpoint, token);
     },
     {
       ...queryOpts,

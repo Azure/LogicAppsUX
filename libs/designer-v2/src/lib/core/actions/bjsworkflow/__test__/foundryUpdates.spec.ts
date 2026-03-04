@@ -7,10 +7,20 @@ import {
   getPendingFoundryUpdate,
 } from '../foundryUpdates';
 
+const mockHttpClient = {
+  dispose: vi.fn(),
+  get: vi.fn().mockResolvedValue({}),
+  post: vi.fn().mockResolvedValue({}),
+  put: vi.fn().mockResolvedValue({}),
+  patch: vi.fn().mockResolvedValue({}),
+  delete: vi.fn().mockResolvedValue({}),
+};
+
 vi.mock('@microsoft/logic-apps-shared', () => ({
   updateFoundryAgent: vi.fn().mockResolvedValue({}),
   CognitiveServiceService: vi.fn(() => ({
     getFoundryAccessToken: vi.fn().mockResolvedValue('mock-token'),
+    getHttpClient: vi.fn(() => mockHttpClient),
   })),
 }));
 
@@ -107,7 +117,7 @@ describe('foundryUpdates', () => {
       const results = await flushPendingFoundryUpdates();
       expect(results).toHaveLength(1);
       expect(results[0].status).toBe('fulfilled');
-      expect(updateFoundryAgent).toHaveBeenCalledWith(endpoint, 'agent-1', 'mock-token', {
+      expect(updateFoundryAgent).toHaveBeenCalledWith(mockHttpClient, endpoint, 'agent-1', 'mock-token', {
         model: 'gpt-4',
         instructions: 'Be helpful',
       });
@@ -135,7 +145,7 @@ describe('foundryUpdates', () => {
 
     it('should return empty array when token getter is unavailable', async () => {
       const { CognitiveServiceService } = await import('@microsoft/logic-apps-shared');
-      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined } as any);
+      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined, getHttpClient: undefined } as any);
 
       setPendingFoundryUpdate('node-1', makeUpdate());
 
