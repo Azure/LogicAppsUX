@@ -1,31 +1,39 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../state/mcp/store';
-import { setDarkMode } from '../state/mcp/mcpOptions/mcpOptionsSlice';
-import { type KnowledgeServiceOptions, initializeServices } from '../actions/bjsworkflow/knowledge';
+import type { AppDispatch, RootState } from '../state/knowledge/store';
+import { setDarkMode } from '../state/knowledge/optionsSlice';
+import { type KnowledgeServiceOptions, initializeData } from '../actions/bjsworkflow/knowledge';
+import { type ResourceState, setInitialData } from '../state/mcp/resourceSlice';
 
 export interface KnowledgeDataProviderProps {
-  appId: string;
+  resourceDetails: ResourceState;
   services: KnowledgeServiceOptions;
   children?: React.ReactNode;
   isDarkMode?: boolean;
 }
 
-export const KnowledgeDataProvider = ({
-  services,
-  children,
-  isDarkMode,
-}: KnowledgeDataProviderProps) => {
+export const KnowledgeDataProvider = ({ services, children, isDarkMode, resourceDetails }: KnowledgeDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { servicesInitialized } = useSelector((state: RootState) => ({
-    servicesInitialized: state.mcpOptions.servicesInitialized,
+    servicesInitialized: state.options.servicesInitialized,
   }));
 
   useEffect(() => {
     if (!servicesInitialized && services) {
-      initializeServices(services);
+      dispatch(initializeData(services));
     }
-  }, [servicesInitialized, services]);
+  }, [servicesInitialized, services, dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      setInitialData({
+        subscriptionId: resourceDetails.subscriptionId,
+        resourceGroup: resourceDetails.resourceGroup,
+        location: resourceDetails.location,
+        logicAppName: resourceDetails.logicAppName,
+      })
+    );
+  }, [dispatch, resourceDetails]);
 
   useEffect(() => {
     if (isDarkMode !== undefined) {

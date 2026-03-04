@@ -2,7 +2,7 @@ import type { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { mcpStore } from '../state/mcp/store';
+import { knowledgeStore } from '../state/knowledge/store';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { KnowledgeWrappedContext } from './KnowledgeWizardContext';
 
@@ -40,5 +40,5 @@ export const KnowledgeWizardProvider = ({ locale = 'en', useExternalRedux = fals
     </KnowledgeWrappedContext.Provider>
   );
 
-  return useExternalRedux ? content : <ReduxProvider store={mcpStore}>{content}</ReduxProvider>;
+  return useExternalRedux ? content : <ReduxProvider store={knowledgeStore}>{content}</ReduxProvider>;
 };
