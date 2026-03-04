@@ -1,0 +1,62 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/builtintools > should render with basic props 1`] = `
+<div
+  className="___pt95jf0_0000000 f22iagw f1vx9l62 ft85np5 fm9niy fggle4k f1yhwmi5"
+>
+  <div
+    className="___1hlb6fg_0000000 fl43uef fkhj508 f19n0e5"
+  >
+    Built-in Tools
+  </div>
+  <div
+    className="___kzuet60_0000000 f22iagw f122n59 f1869bpl fu9asb0"
+  >
+    <div
+      className="___1hxfasu_0000000 f22iagw f1vx9l62 fz7g6wx fe7p41z"
+    >
+      <span
+        className="___bbz8wo0_0000000 fl43uef fy9rknc f19n0e5"
+      >
+        Code Interpreter
+      </span>
+      <span
+        className="___l0twgo0_0000000 fy9rknc fkfq4zb"
+      >
+        Enable the agent to write and execute JavaScript code for calculations, data analysis, and file processing.
+      </span>
+    </div>
+    <div
+      className="fui-Switch r2i81i2"
+    >
+      <input
+        checked={false}
+        className="fui-Switch__input rsji9ng"
+        id="switch-r0"
+        onChange={[Function]}
+        role="switch"
+        type="checkbox"
+      />
+      <div
+        aria-hidden={true}
+        className="fui-Switch__indicator r1c3hft5"
+      >
+        <svg
+          aria-hidden={true}
+          className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
