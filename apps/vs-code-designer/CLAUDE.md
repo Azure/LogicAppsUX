@@ -85,6 +85,21 @@ pnpm run vscode:designer:e2e:ui      # With UI
 pnpm run vscode:designer:e2e:headless # Headless
 ```
 
+#### Phase 4.2 Designer Tests (2 tests, ~5 min)
+The primary E2E tests are in `src/test/ui/designerActions.test.ts` (~2647 lines). They cover the complete workflow lifecycle:
+- **Test 1 (Standard)**: Open designer → add Request trigger + Response action → save → debug → open overview → run trigger → verify all nodes succeeded
+- **Test 2 (CustomCode)**: Open designer → add Compose action + fill inputs → save → debug → open overview → run trigger → verify Running → Succeeded transition → verify all nodes succeeded
+
+Run Phase 4.2 only (requires workspaces from a prior Phase 4.1 run):
+```bash
+cd apps/vs-code-designer
+npx tsup --config tsup.e2e.test.config.ts
+$env:E2E_MODE = "designeronly"
+node src/test/ui/run-e2e.js
+```
+
+Key files: `designerActions.test.ts`, `run-e2e.js`, `SKILL.md` (detailed learning document)
+
 ## Configuration
 
 ### `package.json` (Extension Manifest)

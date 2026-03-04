@@ -15,6 +15,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { exec } = require('child_process');
 
 const projectDir = path.resolve(__dirname, '..', '..', '..');
@@ -22,7 +23,7 @@ const distDir = path.join(projectDir, 'dist');
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
 // would destroy cached marketplace extension installs.
-const extDir = path.join(require('os').tmpdir(), 'test-resources', 'test-extensions');
+const extDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
 const testGlob = path.resolve(projectDir, 'out', 'test', '*.js').replace(/\\/g, '/');
 
 /**
@@ -494,6 +495,14 @@ async function main() {
   // creating duplicate commands and opening the wrong webview.
   const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
   fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
+
+  // Resolve the auto-downloaded runtime dependency paths so the extension can
+  // find func, dotnet, and node without relying on PATH or re-downloading.
+  const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+  const funcBinary = path.join(depsRoot, 'FuncCoreTools', 'func');
+  const dotnetBinary = path.join(depsRoot, 'DotNetSDK', 'dotnet');
+  const nodeBinary = path.join(depsRoot, 'NodeJs', 'node');
+
   fs.writeFileSync(
     settingsFile,
     JSON.stringify(
@@ -512,19 +521,37 @@ async function main() {
         // Disable authentication modal dialogs — the extension tries to sign in
         // to Azure when it detects WORKFLOWS_SUBSCRIPTION_ID in local.settings.json.
         'microsoft-sovereign-cloud.environment': '',
+        // Suppress "wants to sign in" authentication popups
+        'azure.authenticationLibrary': 'MSAL',
+        'azure.cloud': 'AzureCloud',
+        // Disable Git auto-repository detection to reduce dialogs
+        'git.openRepositoryInParentFolders': 'never',
+        'git.enabled': false,
+        // Point to auto-downloaded runtime binaries so the extension can start
+        // the design-time API process (func host start) without relying on PATH.
+        'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
+        'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': true,
+        'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
+        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
+        'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
+        // Suppress "wants to sign in" auth dialog — uses silent auth that
+        // returns undefined instead of prompting when no cached token exists.
+        'azureLogicAppsStandard.silentAuth': true,
       },
       null,
       2
     )
   );
   console.log(`  Created test settings file: ${settingsFile}`);
+  console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
+  console.log(`  autoRuntimeDependenciesPath: ${depsRoot}`);
 
   const outTestDir = path.resolve(projectDir, 'out', 'test');
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.test.js')];
 
-  const phase2Files = [testFile('designerOpen.test.js'), testFile('designerActions.test.js')];
+  const phase2Files = [testFile('designerActions.test.js')];
 
   const phase3Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js')];
 

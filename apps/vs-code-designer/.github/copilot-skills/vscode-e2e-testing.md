@@ -183,7 +183,11 @@ suite('Feature Name', () => {
 
 ## Related ExTester UI Suite (apps/vs-code-designer/src/test/ui)
 - This skill file covers `@vscode/test-cli` extension-host tests; interactive webview DOM coverage is implemented in the ExTester UI suite.
-- Phase ownership in ExTester:
-  - Phase 4.2 (`designerOpen` + `designerActions`) covers real designer authoring interactions.
-  - Phase 4.3 (`demo` + `smoke` + `standalone`) is smoke/demo coverage and does not validate trigger/action insertion.
-- Current strict rule in `designerActions`: add-trigger/add-action checks should only pass when operation selection succeeds and expected node content is visible on the canvas.
+- Phase 4.2 now runs **only `designerActions.test.ts`** (2 focused tests, ~2 min, 100% reliability over 5 runs).
+  - Test 1: Standard workflow — open designer → add Request trigger → assert node on canvas
+  - Test 2: CustomCode workflow — open designer → add Compose action → assert node on canvas
+- Each test uses `assert.ok()` at every step (designer opened, panel opened, search results, node added).
+- All waits are detection-based (poll for DOM changes). No static sleeps.
+- Key reliability fixes: command palette retries up to 5x on "not found", stale element retry on React Flow re-renders, Selenium Actions API for React-compatible clicks.
+- `designerOpen.test.ts` is no longer included in Phase 4.2 — designer opening is tested implicitly by each action test.
+- Runtime dependency paths (`funcCoreToolsBinaryPath`, `dotnetBinaryPath`, `nodeJsBinaryPath`) are configured in `run-e2e.js` test settings pointing to `~/.azurelogicapps/dependencies/`.

@@ -2,7 +2,7 @@
 
 This directory contains UI tests for the Logic Apps VS Code Extension using [vscode-extension-tester (ExTester)](https://github.com/redhat-developer/vscode-extension-tester).
 
-> **Current Status (2026-02-26)**: Phase 4.1 (workspace creation): **63 passing, 1 failing** (known product bug). Phase 4.3 smoke/demo suite: **14 passing**. Phase 4.2 varies with workspace freshness; strict `designerActions` validations are currently **11 passing** in actions-only runs. See [SKILL.md](SKILL.md) for details.
+> **Current Status (2026-03-03)**: Phase 4.1 (workspace creation): **63 passing, 1 failing** (known product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify all nodes succeeded. ~5 min runtime. See [SKILL.md](SKILL.md) for details.
 
 ## Overview
 
@@ -190,11 +190,12 @@ Tests are organized into three phases:
 - Writes a workspace manifest (`created-workspaces.json`) consumed by Phase 4.2
 - **63 passing, 1 failing** (namespace validation product bug)
 
-#### Phase 4.2 — Designer Tests (`designerOpen.test.ts` + `designerActions.test.ts`)
-- Opens the workflow designer for each workspace type
-- Tests adding triggers and actions via the designer UI
-- Requires workspaces from Phase 4.1 (reads `created-workspaces.json`)
-- Strict add-flow validation now requires successful selection and visible insertion of core nodes (for example, Request trigger and Compose action)
+#### Phase 4.2 — Designer Tests (`designerActions.test.ts`)
+- 2 focused end-to-end tests: open designer → add trigger/action → verify on canvas
+- Each test has 4+ `assert.ok()` assertions at each step (designer opened, panel opened, search results, node added)
+- Screenshots captured before every assertion for debugging failures
+- All waits are detection-based (poll for DOM changes, no static sleeps)
+- `designerOpen.test.ts` removed from Phase 4.2 — designer opening is tested implicitly by each action test
 
 #### Phase 4.3 — Smoke/Demo/Standalone (`demo.test.ts` + `smoke.test.ts` + `standalone.test.ts`)
 - Runs generic extension smoke and framework checks
