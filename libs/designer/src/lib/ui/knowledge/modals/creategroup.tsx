@@ -17,7 +17,11 @@ import { Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useState } from 'react';
 import { createKnowledgeHub } from '../../../core/knowledge/utils/helper';
 
-export const CreateGroup = ({ onDismiss, onCreate }: { onDismiss: () => void; onCreate?: (groupName: string) => void }) => {
+export const CreateGroup = ({
+  resourceId,
+  onDismiss,
+  onCreate,
+}: { resourceId: string; onDismiss: () => void; onCreate?: (groupName: string) => void }) => {
   const intl = useIntl();
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -66,11 +70,11 @@ export const CreateGroup = ({ onDismiss, onCreate }: { onDismiss: () => void; on
   const [description, setDescription] = useState('');
 
   const handleCreate = useCallback(async () => {
-    await createKnowledgeHub('', name, description);
+    await createKnowledgeHub(resourceId, name, description);
 
     onCreate?.(name);
     onDismiss();
-  }, [description, name, onCreate, onDismiss]);
+  }, [description, name, onCreate, onDismiss, resourceId]);
 
   const handleCancel = useCallback(() => {
     onDismiss();

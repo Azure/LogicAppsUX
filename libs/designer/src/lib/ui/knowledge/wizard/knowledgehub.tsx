@@ -179,7 +179,7 @@ export const KnowledgeHubWizard = () => {
         </Button>
       </div>
       {hubs.length === 0 ? connection ? <EmptyKnowledgeBaseView /> : <NoConnectionsView /> : <div>{'Open the list view here'}</div>}
-      {showAddGroup ? <CreateGroup onDismiss={handleCloseAddGroup} /> : null}
+      {showAddGroup ? <CreateGroup resourceId={logicAppId} onDismiss={handleCloseAddGroup} /> : null}
       <div
         id={'msla-layer-host'}
         style={{

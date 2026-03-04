@@ -234,7 +234,10 @@ export class StandardConnectionService extends BaseConnectionService implements 
       return this.getConnectionsForConnector(connectorId, queryClient);
     }
 
-    const [localConnections, apiHubConnections] = await Promise.all([this._options.readConnections(), fetchOnlyLocal ? [] : this.getConnectionsInApiHub()]);
+    const [localConnections, apiHubConnections] = await Promise.all([
+      this._options.readConnections(),
+      fetchOnlyLocal ? [] : this.getConnectionsInApiHub(),
+    ]);
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
@@ -334,7 +337,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const connectionCreationClientName = parametersMetadata.connectionMetadata?.connectionCreationClient;
     if (connectionCreationClientName) {
       if (connectionCreationClients?.[connectionCreationClientName]) {
-        // eslint-disable-next-line no-param-reassign
         connectionInfo = await connectionCreationClients[connectionCreationClientName].connectionCreationFunc(
           connectionInfo,
           connectionName
@@ -660,12 +662,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
         break;
       }
       case ConnectionType.KnowledgeHub: {
-        const { connectionAndSettings, rawConnection } = convertToKnowledgeHubConnectionsData(connectionName, connectionInfo, parametersMetadata);
-        connectionsData = connectionAndSettings;
-        connection = convertKnowledgeHubConnectionDataToConnection(
-          connectionsData.connectionKey,
-          rawConnection
+        const { connectionAndSettings, rawConnection } = convertToKnowledgeHubConnectionsData(
+          connectionName,
+          connectionInfo,
+          parametersMetadata
         );
+        connectionsData = connectionAndSettings;
+        connection = convertKnowledgeHubConnectionDataToConnection(connectionsData.connectionKey, rawConnection);
         break;
       }
       default: {
@@ -839,6 +842,11 @@ function convertAgentConnectionDataToConnection(connectionKey: string, connectio
             value: connectionData.resourceId,
           },
         },
+        ...(connectionData.type && {
+          agentModelType: {
+            type: connectionData.type,
+          },
+        }),
       },
       displayName: displayName as string,
       statuses: [{ status: 'Connected' }],

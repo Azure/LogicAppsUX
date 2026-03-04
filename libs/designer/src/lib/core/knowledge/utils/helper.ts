@@ -15,7 +15,7 @@ export const createKnowledgeHub = async (siteResourceId: string, groupName: stri
 
     const queryClient = getReactQueryClient();
     queryClient.setQueryData(['knowledgehubs', siteResourceId.toLowerCase()], (oldData: any) => {
-      return [...oldData, { name: groupName, description, artifacts: [] }];
+      return [...(oldData ?? []), { name: groupName, description, artifacts: [] }];
     });
 
     return response;

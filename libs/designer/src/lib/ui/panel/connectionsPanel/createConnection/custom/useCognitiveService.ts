@@ -1,5 +1,13 @@
-import type { Connection } from '@microsoft/logic-apps-shared';
-import { ApiManagementService, CognitiveServiceService, ResourceService, foundryServiceConnectionRegex } from '@microsoft/logic-apps-shared';
+import type { Connection, FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
+import {
+  ApiManagementService,
+  CognitiveServiceService,
+  ResourceService,
+  foundryServiceConnectionRegex,
+  buildProjectEndpointFromResourceId,
+  listAllFoundryAgents,
+  listFoundryModels,
+} from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
@@ -18,6 +26,7 @@ export const queryKeys = {
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
   allAPIMServiceAccounts: 'allAPIMServiceAccounts',
   allAPIMServiceAccountApis: 'allAPIMServiceAccountApis',
+  allFoundryAgents: 'allFoundryAgents',
 };
 
 export const useAllAPIMServiceAccounts = (subscriptionId: string, enabled = true) => {
@@ -169,13 +178,116 @@ export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = 
   return useQuery(
     ['allCosmosDbServiceAccounts', { subscriptionId }],
     async () => {
-      const allCosmosDbServiceAccounts = await ResourceService().listResources(subscriptionId, `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | extend capabilities = todynamic(properties.capabilities) | mv-apply capabilities on ( mv-expand capabilities | extend capabilityName = tostring(capabilities.name) | where capabilityName =~ 'EnableNoSQLVectorSearch')`);
+      const allCosmosDbServiceAccounts = await ResourceService().listResources(
+        subscriptionId,
+        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | extend capabilities = todynamic(properties.capabilities) | mv-apply capabilities on ( mv-expand capabilities | extend capabilityName = tostring(capabilities.name) | where capabilityName =~ 'EnableNoSQLVectorSearch')`
+      );
       return allCosmosDbServiceAccounts ?? [];
     },
     {
       ...queryOpts,
       retryOnMount: true,
       enabled: !!subscriptionId && enabled,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+    }
+  );
+};
+/**
+ * Returns the Foundry project endpoint for a node's selected connection, or undefined
+ * if the connection is not a Foundry connection.
+ */
+export const useFoundryProjectEndpointForNode = (nodeId: string): string | undefined => {
+  const selectedConnection = useSelectedConnection(nodeId);
+  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
+  if (!isFoundry || !resourceId) {
+    return undefined;
+  }
+  return buildProjectEndpointFromResourceId(resourceId);
+};
+
+/**
+ * Returns the full ARM resource ID for the Foundry project connection, used for portal URLs.
+ */
+export const useFoundryProjectResourceIdForNode = (nodeId: string): string | undefined => {
+  const selectedConnection = useSelectedConnection(nodeId);
+  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
+  if (!isFoundry || !resourceId) {
+    return undefined;
+  }
+  return resourceId;
+};
+
+/**
+ * Fetches all v2 Foundry agents for the node's selected connection.
+ * Only runs when the connection is a Foundry connection and a token getter is available.
+ */
+export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+
+  return useQuery(
+    [queryKeys.allFoundryAgents, { projectEndpoint }],
+    async () => {
+      if (!projectEndpoint) {
+        return [];
+      }
+      const getToken = CognitiveServiceService().getFoundryAccessToken;
+      if (!getToken) {
+        return [];
+      }
+      const token = await getToken();
+      return listAllFoundryAgents(projectEndpoint, token);
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      enabled: !!projectEndpoint,
+    }
+  );
+};
+
+/**
+ * Returns the ARM resource ID of the Foundry account (without /projects/{project}) for a node's connection.
+ */
+export const useFoundryAccountResourceIdForNode = (nodeId: string): string | undefined => {
+  const selectedConnection = useSelectedConnection(nodeId);
+  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
+  if (!isFoundry || !resourceId) {
+    return undefined;
+  }
+  return getServiceAccountId(resourceId, true);
+};
+
+/**
+ * Fetches available model deployments for the Foundry project connected to the node.
+ */
+export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+
+  return useQuery(
+    ['allFoundryModels', { projectEndpoint }],
+    async () => {
+      if (!projectEndpoint) {
+        return [];
+      }
+      const getToken = CognitiveServiceService().getFoundryAccessToken;
+      if (!getToken) {
+        return [];
+      }
+      const token = await getToken();
+      return listFoundryModels(projectEndpoint, token);
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      enabled: !!projectEndpoint,
     }
   );
 };

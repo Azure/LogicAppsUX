@@ -2,13 +2,14 @@ import type { AppDispatch } from '../../../../../core/state/knowledge/store';
 import type { McpCreateAppTabProps, McpPanelTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
 import { closePanel } from '../../../../../core/state/knowledge/panelSlice';
+import Constants from '../../../../../common/constants';
 
 export const modelTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   { isTabDisabled, isPrimaryButtonDisabled, tabStatusIcon, onPrimaryButtonClick }: McpCreateAppTabProps
 ): McpPanelTabProps => ({
-  id: 'model',
+  id: Constants.KNOWLEDGE_PANEL_TAB_NAMES.MODEL,
   title: intl.formatMessage({
     defaultMessage: 'Model',
     id: 'qlFQqe',

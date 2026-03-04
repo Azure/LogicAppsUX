@@ -103,6 +103,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const [openPopover, setOpenPopover] = useState(false);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
+    (props.editorOptions?.hideLabel === true && equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.AGENT_INSTRUCTION)) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.BUILTIN_TOOLS);
   const [showSubComponent, setShowSubComponent] = useState(false);
@@ -220,6 +221,7 @@ export const TokenField = ({
           agentParameterButtonProps={agentParameterButtonProps}
           tokenMapping={tokenMapping}
           hideUserInstructions={editorOptions?.hideUserInstructions}
+          hideSystemInstructions={editorOptions?.hideSystemInstructions}
           loadParameterValueFromString={loadParameterValueFromString}
           serializeValue={onValueChange}
           getTokenPicker={getTokenPicker}

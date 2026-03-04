@@ -195,6 +195,7 @@ export const AddFilePanel = ({ resourceId }: { resourceId: string }) => {
     <>
       {showCreateModal && (
         <CreateGroup
+          resourceId={resourceId}
           onDismiss={() => setShowCreateModal(false)}
           onCreate={(name) => {
             setGroupName(name);
