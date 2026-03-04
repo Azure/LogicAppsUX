@@ -51,8 +51,8 @@ import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { FoundryAgentDetails } from '@microsoft/designer-ui';
-import { Divider, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
+import { FoundryAgentDetails, buildFoundryPortalUrl, NavigateIcon, useFoundryAgentDetailsStyles } from '@microsoft/designer-ui';
+import { Divider, Link, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -1154,6 +1154,7 @@ export const ParameterSection = ({
             onHeaderClick={onExpandSection}
             showSeparator={false}
           />
+          <FoundryPortalLink projectResourceId={foundryProjectResourceId} agentId={selectedFoundryAgent.id} />
           <FoundryAgentDetails
             agent={selectedFoundryAgent}
             models={foundryModelsForNode ?? []}
@@ -1162,7 +1163,6 @@ export const ParameterSection = ({
             selectedInstructions={pendingFoundryInstructions}
             onModelChange={handleFoundryModelChange}
             onInstructionsChange={handleFoundryInstructionsChange}
-            projectResourceId={foundryProjectResourceId}
           />
           {remainingSettings.length > 0 && (
             <SettingsSection
@@ -1353,6 +1353,28 @@ export const getEditorAndOptions = (
 const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
+
+function FoundryPortalLink({ projectResourceId, agentId }: { projectResourceId?: string; agentId: string }) {
+  const styles = useFoundryAgentDetailsStyles();
+  const intl = useIntl();
+  const portalUrl = useMemo(() => buildFoundryPortalUrl(projectResourceId, agentId), [projectResourceId, agentId]);
+  const editInPortal = intl.formatMessage({
+    defaultMessage: 'Edit in foundry portal',
+    id: '1r967W',
+    description: 'Link to edit agent in Foundry Portal',
+  });
+
+  if (!portalUrl) {
+    return null;
+  }
+
+  return (
+    <Link className={styles.portalLink} href={portalUrl} target="_blank" rel="noopener noreferrer">
+      <NavigateIcon />
+      {editInPortal}
+    </Link>
+  );
+}
 
 export const parametersTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,

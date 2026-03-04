@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { Dropdown, Field, Link, Option, Text, Textarea } from '@fluentui/react-components';
-import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
+import { Dropdown, Field, Option, Text, Textarea } from '@fluentui/react-components';
 import type { FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
 import { useFoundryAgentDetailsStyles } from './styles';
 import { useIntl } from 'react-intl';
 
-const NavigateIcon = bundleIcon(Open12Regular, Open12Filled);
+export { useFoundryAgentDetailsStyles } from './styles';
 
 export interface FoundryAgentDetailsProps {
   agent: FoundryAgent;
@@ -18,7 +17,6 @@ export interface FoundryAgentDetailsProps {
   selectedInstructions?: string;
   onModelChange: (modelId: string) => void;
   onInstructionsChange: (instructions: string) => void;
-  projectResourceId?: string;
   disabled?: boolean;
 }
 
@@ -26,7 +24,7 @@ export interface FoundryAgentDetailsProps {
  * Builds the Foundry Portal URL for editing an agent.
  * Pattern: https://ai.azure.com/nextgen/r/{subscriptionId},{resourceGroup},,{account},{project}/build/agents/{agentId}/build?version=2
  */
-function buildFoundryPortalUrl(projectResourceId: string | undefined, agentId: string): string | undefined {
+export function buildFoundryPortalUrl(projectResourceId: string | undefined, agentId: string): string | undefined {
   if (!projectResourceId) {
     return undefined;
   }
@@ -48,7 +46,6 @@ export function FoundryAgentDetails({
   selectedInstructions,
   onModelChange,
   onInstructionsChange,
-  projectResourceId,
   disabled = false,
 }: FoundryAgentDetailsProps) {
   const styles = useFoundryAgentDetailsStyles();
@@ -83,13 +80,6 @@ export function FoundryAgentDetails({
     id: 'fZbvAd',
     description: 'Badge indicating instructions are from Foundry',
   });
-  const editInPortal = intl.formatMessage({
-    defaultMessage: 'Edit in Foundry Portal',
-    id: 'Cz5vTr',
-    description: 'Link to edit agent in Foundry Portal',
-  });
-
-  const portalUrl = useMemo(() => buildFoundryPortalUrl(projectResourceId, agent.id), [projectResourceId, agent.id]);
 
   const handleModelSelect = useCallback(
     (_: unknown, data: { optionValue?: string }) => {
@@ -160,13 +150,6 @@ export function FoundryAgentDetails({
           size="small"
         />
       </div>
-
-      {portalUrl && (
-        <Link className={styles.portalLink} href={portalUrl} target="_blank" rel="noopener noreferrer">
-          <NavigateIcon />
-          {editInPortal}
-        </Link>
-      )}
     </div>
   );
 }

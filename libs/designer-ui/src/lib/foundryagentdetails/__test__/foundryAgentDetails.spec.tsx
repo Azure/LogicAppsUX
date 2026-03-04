@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';
 import { describe, vi, it, expect } from 'vitest';
-import { FoundryAgentDetails } from '../index';
+import { FoundryAgentDetails, buildFoundryPortalUrl } from '../index';
 import type { FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
 
 function renderWithIntl(component: React.ReactElement) {
@@ -42,35 +42,21 @@ describe('FoundryAgentDetails', () => {
     expect(json.children).toBeTruthy();
     expect(json.children!.length).toBeGreaterThan(0);
   });
+});
 
-  it('should render portal link when projectResourceId is provided', () => {
+describe('buildFoundryPortalUrl', () => {
+  it('should return a portal URL when given a valid project resource ID', () => {
     const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct-1/projects/proj-1';
-    const tree = renderWithIntl(
-      <FoundryAgentDetails
-        agent={baseAgent}
-        models={baseModels}
-        onModelChange={vi.fn()}
-        onInstructionsChange={vi.fn()}
-        projectResourceId={resourceId}
-      />
-    );
-    const root = tree.root;
-    // Find the Link element (rendered as an anchor with href)
-    const links = root.findAll(
-      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.startsWith('https://ai.azure.com/')
-    );
-    expect(links.length).toBeGreaterThan(0);
-    expect(links[0].props.href).toContain('agent-1');
+    const url = buildFoundryPortalUrl(resourceId, 'agent-1');
+    expect(url).toContain('https://ai.azure.com/');
+    expect(url).toContain('agent-1');
   });
 
-  it('should not render portal link when projectResourceId is missing', () => {
-    const tree = renderWithIntl(
-      <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
-    );
-    const root = tree.root;
-    const links = root.findAll(
-      (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.startsWith('https://ai.azure.com/')
-    );
-    expect(links.length).toBe(0);
+  it('should return undefined when projectResourceId is missing', () => {
+    expect(buildFoundryPortalUrl(undefined, 'agent-1')).toBeUndefined();
+  });
+
+  it('should return undefined for an invalid resource ID', () => {
+    expect(buildFoundryPortalUrl('/subscriptions/sub-1/resourceGroups/rg-1', 'agent-1')).toBeUndefined();
   });
 });
