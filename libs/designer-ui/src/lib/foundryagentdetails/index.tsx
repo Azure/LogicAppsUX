@@ -83,8 +83,6 @@ export function FoundryAgentDetails({
     id: 'fZbvAd',
     description: 'Badge indicating instructions are from Foundry',
   });
-  const toolsLabel = intl.formatMessage({ defaultMessage: 'Tools', id: 'US0YlH', description: 'Label for agent tools list' });
-  const noTools = intl.formatMessage({ defaultMessage: 'None', id: 'an5t/3', description: 'Displayed when agent has no tools' });
   const editInPortal = intl.formatMessage({
     defaultMessage: 'Edit in Foundry Portal',
     id: 'Cz5vTr',
@@ -110,13 +108,6 @@ export function FoundryAgentDetails({
     },
     [onInstructionsChange]
   );
-
-  const toolsSummary = useMemo(() => {
-    if (agent.tools.length === 0) {
-      return noTools;
-    }
-    return agent.tools.map((t) => t.type).join(', ');
-  }, [agent.tools, noTools]);
 
   const effectiveModel = selectedModel ?? agent.model;
 
@@ -168,11 +159,6 @@ export function FoundryAgentDetails({
           resize="vertical"
           size="small"
         />
-      </div>
-
-      <div className={styles.row}>
-        <Text className={styles.label}>{toolsLabel}</Text>
-        <Text className={styles.toolsList}>{toolsSummary}</Text>
       </div>
 
       {portalUrl && (

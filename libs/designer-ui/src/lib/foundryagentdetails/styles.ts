@@ -57,8 +57,4 @@ export const useFoundryAgentDetailsStyles = makeStyles({
       textDecorationLine: 'underline',
     },
   },
-  toolsList: {
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-  },
 });

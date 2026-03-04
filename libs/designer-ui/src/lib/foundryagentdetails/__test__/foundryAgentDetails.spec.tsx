@@ -43,13 +43,6 @@ describe('FoundryAgentDetails', () => {
     expect(json.children!.length).toBeGreaterThan(0);
   });
 
-  it('should render tools summary as "None" when no tools', () => {
-    const tree = renderWithIntl(
-      <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
-    );
-    expect(tree.toJSON()).toBeTruthy();
-  });
-
   it('should render portal link when projectResourceId is provided', () => {
     const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct-1/projects/proj-1';
     const tree = renderWithIntl(
@@ -79,16 +72,5 @@ describe('FoundryAgentDetails', () => {
       (node) => node.props.href && typeof node.props.href === 'string' && node.props.href.startsWith('https://ai.azure.com/')
     );
     expect(links.length).toBe(0);
-  });
-
-  it('should render agent with tools summary', () => {
-    const agentWithTools: FoundryAgent = {
-      ...baseAgent,
-      tools: [{ type: 'code_interpreter' }, { type: 'file_search' }],
-    };
-    const tree = renderWithIntl(
-      <FoundryAgentDetails agent={agentWithTools} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
-    );
-    expect(tree.toJSON()).toBeTruthy();
   });
 });
