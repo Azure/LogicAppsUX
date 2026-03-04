@@ -12,6 +12,7 @@
 import type { IHttpClient, QueryParameters } from '../httpClient';
 
 const FOUNDRY_API_VERSION = '2025-05-15-preview';
+const FOUNDRY_PORTAL_VERSIONS_URI = 'https://ai.azure.com/nextgen/api/query?getAgentVersionsResolver';
 
 // --- Types ---
 
@@ -63,6 +64,25 @@ export interface FoundryAgent {
 export interface FoundryAgentListResponse {
   object: 'list';
   data: FoundryAgentRaw[];
+  first_id: string | null;
+  last_id: string | null;
+  has_more: boolean;
+}
+
+export interface FoundryAgentVersion {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  created_at: number;
+  metadata: Record<string, string>;
+  object: 'agent.version';
+  definition: FoundryAgentVersionDefinition;
+}
+
+export interface FoundryAgentVersionListResponse {
+  object: 'list';
+  data: FoundryAgentVersion[];
   first_id: string | null;
   last_id: string | null;
   has_more: boolean;
@@ -204,6 +224,85 @@ export async function getFoundryAgent(
     noAuth: true,
   });
   return normalizeAgent(raw);
+}
+
+// --- Agent Versions ---
+
+/**
+ * List all versions of a Foundry agent.
+ * Tries the data-plane endpoint first (`GET /agents/{id}/versions`).
+ * Falls back to the Foundry Portal BFF if the data-plane returns 404.
+ */
+export async function listFoundryAgentVersions(
+  httpClient: IHttpClient,
+  projectEndpoint: string,
+  agentId: string,
+  accessToken: string,
+  projectResourceId?: string
+): Promise<FoundryAgentVersion[]> {
+  // Try data-plane endpoint first
+  try {
+    const response = await httpClient.get<FoundryAgentVersionListResponse>({
+      uri: `${buildAgentUri(projectEndpoint, agentId)}/versions`,
+      headers: foundryHeaders(accessToken),
+      queryParameters: { 'api-version': FOUNDRY_API_VERSION },
+      noAuth: true,
+    });
+    const versions = extractVersionsData(response);
+    if (versions.length) {
+      return versions;
+    }
+    // Data-plane returned empty — fall through to portal BFF
+  } catch {
+    // Data-plane endpoint may not exist — fall through to portal API
+  }
+
+  // Fallback: Foundry Portal BFF
+  if (!projectResourceId) {
+    return [];
+  }
+
+  try {
+    const response = await httpClient.post<FoundryAgentVersionListResponse, Record<string, unknown>>({
+      uri: FOUNDRY_PORTAL_VERSIONS_URI,
+      headers: foundryHeaders(accessToken),
+      content: {
+        query: 'getAgentVersionsResolver',
+        params: {
+          resourceId: projectResourceId,
+          agentName: agentId,
+          useFoundryV2: false,
+        },
+      },
+      noAuth: true,
+    });
+    return extractVersionsData(response);
+  } catch (error) {
+    console.warn('[FoundryAgentService] Portal BFF versions call failed:', error);
+    return [];
+  }
+}
+
+/** Safely extract the versions array from an API response, handling nested or flat shapes. */
+function extractVersionsData(response: unknown): FoundryAgentVersion[] {
+  if (!response || typeof response !== 'object') {
+    return [];
+  }
+  const resp = response as Record<string, unknown>;
+  // Standard shape: { data: [...] }
+  if (Array.isArray(resp['data'])) {
+    return resp['data'] as FoundryAgentVersion[];
+  }
+  // Wrapped shape: { result: { data: [...] } }
+  const result = resp['result'];
+  if (result && typeof result === 'object' && Array.isArray((result as Record<string, unknown>)['data'])) {
+    return (result as Record<string, unknown>)['data'] as FoundryAgentVersion[];
+  }
+  // Direct array response
+  if (Array.isArray(response)) {
+    return response as FoundryAgentVersion[];
+  }
+  return [];
 }
 
 // --- Update Agent ---

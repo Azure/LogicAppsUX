@@ -1,10 +1,11 @@
-import type { Connection, FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
+import type { Connection, FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
 import {
   ApiManagementService,
   CognitiveServiceService,
   foundryServiceConnectionRegex,
   buildProjectEndpointFromResourceId,
   listAllFoundryAgents,
+  listFoundryAgentVersions,
   listFoundryModels,
 } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
@@ -207,7 +208,7 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
       }
       const service = CognitiveServiceService();
       const getToken = service.getFoundryAccessToken;
-      const httpClient = service.getHttpClient?.();
+      const httpClient = service.httpClient;
       if (!getToken || !httpClient) {
         return [];
       }
@@ -251,7 +252,7 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       }
       const service = CognitiveServiceService();
       const getToken = service.getFoundryAccessToken;
-      const httpClient = service.getHttpClient?.();
+      const httpClient = service.httpClient;
       if (!getToken || !httpClient) {
         return [];
       }
@@ -264,6 +265,42 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       refetchOnMount: true,
       refetchOnReconnect: true,
       enabled: !!projectEndpoint,
+    }
+  );
+};
+
+/**
+ * Fetches all versions of a specific Foundry agent.
+ * Only runs when an agent is selected and connection info is available.
+ */
+export const useFoundryAgentVersions = (
+  nodeId: string,
+  agentId: string | undefined
+): { data: FoundryAgentVersion[] | undefined; isLoading: boolean; error: unknown } => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const projectResourceId = useFoundryProjectResourceIdForNode(nodeId);
+
+  return useQuery(
+    ['foundryAgentVersions', { projectEndpoint, agentId }],
+    async () => {
+      if (!projectEndpoint || !agentId) {
+        return [];
+      }
+      const service = CognitiveServiceService();
+      const getToken = service.getFoundryAccessToken;
+      const httpClient = service.httpClient;
+      if (!getToken || !httpClient) {
+        return [];
+      }
+      const token = await getToken();
+      return listFoundryAgentVersions(httpClient, projectEndpoint, agentId, token, projectResourceId);
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      enabled: !!projectEndpoint && !!agentId,
     }
   );
 };

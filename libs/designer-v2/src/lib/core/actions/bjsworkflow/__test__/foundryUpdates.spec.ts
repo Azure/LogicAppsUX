@@ -5,6 +5,7 @@ import {
   hasPendingFoundryUpdates,
   flushPendingFoundryUpdates,
   getPendingFoundryUpdate,
+  consumeVersionRefresh,
 } from '../foundryUpdates';
 
 const mockHttpClient = {
@@ -20,7 +21,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   updateFoundryAgent: vi.fn().mockResolvedValue({}),
   CognitiveServiceService: vi.fn(() => ({
     getFoundryAccessToken: vi.fn().mockResolvedValue('mock-token'),
-    getHttpClient: vi.fn(() => mockHttpClient),
+    httpClient: mockHttpClient,
   })),
 }));
 
@@ -145,7 +146,7 @@ describe('foundryUpdates', () => {
 
     it('should return empty array when token getter is unavailable', async () => {
       const { CognitiveServiceService } = await import('@microsoft/logic-apps-shared');
-      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined, getHttpClient: undefined } as any);
+      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined, httpClient: undefined } as any);
 
       setPendingFoundryUpdate('node-1', makeUpdate());
 
@@ -188,6 +189,34 @@ describe('foundryUpdates', () => {
       setPendingFoundryUpdate('node-1', makeUpdate());
 
       await expect(flushPendingFoundryUpdates()).rejects.toThrow('Foundry agent update failed: string error');
+    });
+
+    it('should mark flushed nodes for version refresh', async () => {
+      setPendingFoundryUpdate('node-1', makeUpdate());
+      await flushPendingFoundryUpdates();
+
+      // consumeVersionRefresh returns true the first time (and clears the flag)
+      expect(consumeVersionRefresh('node-1')).toBe(true);
+      // Second call returns false — flag was already consumed
+      expect(consumeVersionRefresh('node-1')).toBe(false);
+    });
+
+    it('should call onFlushed callback with successfully flushed node IDs', async () => {
+      const onFlushed = vi.fn();
+
+      setPendingFoundryUpdate('node-1', makeUpdate('agent-1'));
+      setPendingFoundryUpdate('node-3', makeUpdate('agent-3', { instructions: 'Be brief' }));
+
+      await flushPendingFoundryUpdates(onFlushed);
+
+      expect(onFlushed).toHaveBeenCalledOnce();
+      expect(onFlushed).toHaveBeenCalledWith(expect.arrayContaining(['node-1', 'node-3']));
+    });
+
+    it('should not call onFlushed when no entries are flushed', async () => {
+      const onFlushed = vi.fn();
+      await flushPendingFoundryUpdates(onFlushed);
+      expect(onFlushed).not.toHaveBeenCalled();
     });
   });
 });

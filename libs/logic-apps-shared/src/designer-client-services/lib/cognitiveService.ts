@@ -13,7 +13,7 @@ export interface ICognitiveServiceService {
   hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean>;
   createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any>;
   getFoundryAccessToken?(): Promise<string>;
-  getHttpClient?(): IHttpClient;
+  readonly httpClient: IHttpClient;
 }
 
 let service: ICognitiveServiceService;

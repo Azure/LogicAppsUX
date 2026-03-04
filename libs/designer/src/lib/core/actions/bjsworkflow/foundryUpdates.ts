@@ -9,6 +9,12 @@ interface PendingFoundryUpdate {
 
 const pendingUpdates = new Map<string, PendingFoundryUpdate>();
 
+/**
+ * Tracks nodes whose Foundry agent was just updated (new version created).
+ * Consumed by the parametersTab auto-select effect to bump the version number.
+ */
+const recentlyFlushedNodes = new Set<string>();
+
 /** Register a pending Foundry agent update (model and/or instructions change). */
 export function setPendingFoundryUpdate(nodeId: string, update: PendingFoundryUpdate): void {
   pendingUpdates.set(nodeId, update);
@@ -20,11 +26,20 @@ export function clearPendingFoundryUpdate(nodeId: string): void {
 }
 
 /**
+ * Check and consume the "recently flushed" flag for a node.
+ * Returns true (and clears the flag) if the node's Foundry agent was recently updated.
+ */
+export function consumeVersionRefresh(nodeId: string): boolean {
+  return recentlyFlushedNodes.delete(nodeId);
+}
+
+/**
  * Flush all pending Foundry agent updates by calling the update API.
  * Only clears successfully flushed entries; failed entries remain for retry.
  * Throws an aggregated error if any updates failed.
+ * @param onFlushed Optional callback invoked with the node IDs that were successfully flushed.
  */
-export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult<void>[]> {
+export async function flushPendingFoundryUpdates(onFlushed?: (flushedNodeIds: string[]) => void): Promise<PromiseSettledResult<void>[]> {
   const entries = Array.from(pendingUpdates.entries());
   if (entries.length === 0) {
     return [];
@@ -32,11 +47,13 @@ export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult
 
   const service = CognitiveServiceService();
   const getToken = service.getFoundryAccessToken;
-  const httpClient = service.getHttpClient?.();
+  const httpClient = service.httpClient;
   if (!getToken || !httpClient) {
     // Token getter or httpClient not configured (e.g. VS Code) — skip silently
     return [];
   }
+
+  const flushedNodeIds: string[] = [];
 
   const results = await Promise.allSettled(
     entries.map(async ([nodeId, { projectEndpoint, agentId, updates }]) => {
@@ -44,8 +61,14 @@ export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult
       await updateFoundryAgent(httpClient, projectEndpoint, agentId, token, updates);
       // Only clear this entry on success
       pendingUpdates.delete(nodeId);
+      recentlyFlushedNodes.add(nodeId);
+      flushedNodeIds.push(nodeId);
     })
   );
+
+  if (flushedNodeIds.length > 0) {
+    onFlushed?.(flushedNodeIds);
+  }
 
   const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
   if (failures.length > 0) {

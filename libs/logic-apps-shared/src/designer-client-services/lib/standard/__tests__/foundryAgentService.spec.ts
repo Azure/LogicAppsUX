@@ -6,6 +6,7 @@ import {
   listFoundryAgents,
   listAllFoundryAgents,
   getFoundryAgent,
+  listFoundryAgentVersions,
 } from '../foundryAgentService';
 import type { IHttpClient } from '../../httpClient';
 
@@ -416,6 +417,169 @@ describe('foundryAgentService', () => {
       const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
       expect(callArgs.uri).toContain('/deployments');
       expect(callArgs.queryParameters).toHaveProperty('api-version');
+    });
+  });
+
+  // --- listFoundryAgentVersions ---
+
+  describe('listFoundryAgentVersions', () => {
+    const versionsResponse = {
+      object: 'list',
+      data: [
+        {
+          metadata: {},
+          object: 'agent.version',
+          id: 'TESTONE:3',
+          name: 'TESTONE',
+          version: '3',
+          description: '',
+          created_at: 1772564608,
+          definition: { kind: 'prompt', model: 'gpt-4', instructions: 'v3 instructions' },
+        },
+        {
+          metadata: {},
+          object: 'agent.version',
+          id: 'TESTONE:2',
+          name: 'TESTONE',
+          version: '2',
+          description: '',
+          created_at: 1770322055,
+          definition: { kind: 'prompt', model: 'gpt-4', instructions: 'v2 instructions' },
+        },
+      ],
+      first_id: 'TESTONE:3',
+      last_id: 'TESTONE:2',
+      has_more: false,
+    };
+
+    it('should return versions from data-plane endpoint when available', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue(versionsResponse);
+
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token'
+      );
+
+      expect(versions).toHaveLength(2);
+      expect(versions[0].version).toBe('3');
+      expect(versions[1].version).toBe('2');
+
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/agents/TESTONE/versions');
+      expect(callArgs.queryParameters).toHaveProperty('api-version');
+    });
+
+    it('should fall back to portal API when data-plane returns 404', async () => {
+      vi.mocked(httpClient.get).mockRejectedValue(new Error('Not Found'));
+      vi.mocked(httpClient.post).mockResolvedValue(versionsResponse);
+
+      const resourceId = '/subscriptions/sub-1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/acct/projects/proj';
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token',
+        resourceId
+      );
+
+      expect(versions).toHaveLength(2);
+      expect(httpClient.post).toHaveBeenCalledOnce();
+
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.uri).toContain('ai.azure.com/nextgen/api/query');
+      expect(callArgs.content).toMatchObject({
+        query: 'getAgentVersionsResolver',
+        params: { resourceId, agentName: 'TESTONE', useFoundryV2: false },
+      });
+    });
+
+    it('should return empty array when data-plane fails and no resourceId provided', async () => {
+      vi.mocked(httpClient.get).mockRejectedValue(new Error('Not Found'));
+
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token'
+      );
+
+      expect(versions).toEqual([]);
+      expect(httpClient.post).not.toHaveBeenCalled();
+    });
+
+    it('should fall through to portal BFF when data-plane returns empty data', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue({
+        object: 'list',
+        data: [],
+        first_id: null,
+        last_id: null,
+        has_more: false,
+      });
+      vi.mocked(httpClient.post).mockResolvedValue(versionsResponse);
+
+      const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct/projects/proj';
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token',
+        resourceId
+      );
+
+      // Should have fallen through to portal BFF and returned versions
+      expect(versions).toHaveLength(2);
+      expect(httpClient.post).toHaveBeenCalledOnce();
+    });
+
+    it('should return empty array when both data-plane and portal return no data', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue({ data: [] });
+      vi.mocked(httpClient.post).mockResolvedValue({ data: [] });
+
+      const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct/projects/proj';
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token',
+        resourceId
+      );
+
+      expect(versions).toEqual([]);
+    });
+
+    it('should return empty array when portal BFF throws (e.g. CORS)', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue({ data: [] });
+      vi.mocked(httpClient.post).mockRejectedValue(new Error('Network Error'));
+
+      const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct/projects/proj';
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token',
+        resourceId
+      );
+
+      expect(versions).toEqual([]);
+    });
+
+    it('should handle wrapped response shape from portal BFF', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue({ data: [] });
+      vi.mocked(httpClient.post).mockResolvedValue({ result: versionsResponse });
+
+      const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct/projects/proj';
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token',
+        resourceId
+      );
+
+      expect(versions).toHaveLength(2);
+      expect(versions[0].version).toBe('3');
     });
   });
 });
