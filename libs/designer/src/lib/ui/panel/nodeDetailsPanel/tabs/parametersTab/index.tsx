@@ -123,6 +123,7 @@ import {
   clearPendingFoundryUpdate,
   getPendingFoundryUpdate,
   consumeVersionRefresh,
+  needsVersionRefresh,
   setIsWorkflowDirty,
 } from '../../../../../core';
 
@@ -433,9 +434,7 @@ export const ParameterSection = ({
     if (!isAgentServiceConnection || !foundryAgentsForNode?.length) {
       return undefined;
     }
-    const parameterGroup = nodeInputs.parameterGroups[group.id];
-    const foundryParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentId');
-    const agentId = foundryParam?.value?.[0]?.value;
+    const agentId = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
     if (!agentId) {
       return undefined;
     }
@@ -452,9 +451,7 @@ export const ParameterSection = ({
       return selectedFoundryVersion;
     }
     if (foundryVersions?.length) {
-      const parameterGroup = nodeInputs.parameterGroups[group.id];
-      const versionParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentVersionNumber');
-      const storedVersion = versionParam?.value?.[0]?.value;
+      const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber')?.value?.[0]?.value;
       if (storedVersion && foundryVersions.some((v) => String(v.version) === String(storedVersion))) {
         return storedVersion;
       }
@@ -472,81 +469,37 @@ export const ParameterSection = ({
     hasInitializedVersion.current = true;
     setSelectedFoundryVersion(effectiveFoundryVersion);
 
-    const parameterGroup = nodeInputs.parameterGroups[group.id];
-
     // Write version number to workflow parameter
-    const versionParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentVersionNumber');
+    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
     if (versionParam) {
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              groupId: group.id,
-              parameterId: versionParam.id,
-              propertiesToUpdate: { value: [createLiteralValueSegment(effectiveFoundryVersion)] },
-            },
-          ],
-        })
-      );
+      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, effectiveFoundryVersion);
     }
 
     // Sync system instructions from the selected version/agent into messages parameter
     const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
     const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
     if (instructions) {
-      const messagesParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.messages');
+      const messagesParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.messages');
       if (messagesParam) {
         const currentValue = convertSegmentsToString(messagesParam.value ?? []);
-        let userInstructions: { role: string; content: string }[] = [];
-        try {
-          const parsed = JSON.parse(currentValue || '[]');
-          if (Array.isArray(parsed)) {
-            userInstructions = parsed.filter((m: { role: string }) => m.role === 'user');
-          }
-        } catch {
-          // preserve nothing on parse failure
-        }
-        const newMessages = [{ role: 'system', content: instructions }, ...userInstructions];
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                groupId: group.id,
-                parameterId: messagesParam.id,
-                propertiesToUpdate: { value: [createLiteralValueSegment(JSON.stringify(newMessages, null, 4))] },
-              },
-            ],
-          })
-        );
+        const newMessagesJson = buildMessagesWithSystemInstructions(currentValue, instructions);
+        dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
       }
     }
   }, [effectiveFoundryVersion, foundryVersions, selectedFoundryAgent, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
   // After a save, Foundry creates a new version — auto-select it
   useEffect(() => {
-    if (foundryVersions?.length && consumeVersionRefresh(nodeId)) {
+    if (foundryVersions?.length && needsVersionRefresh(nodeId)) {
       const latestVersion = String(foundryVersions[0].version);
-      const parameterGroup = nodeInputs.parameterGroups[group.id];
-      const versionParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentVersionNumber');
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
       const storedVersion = versionParam?.value?.[0]?.value;
 
       if (latestVersion !== storedVersion) {
+        consumeVersionRefresh(nodeId);
         setSelectedFoundryVersion(latestVersion);
         if (versionParam) {
-          dispatch(
-            updateNodeParameters({
-              nodeId,
-              parameters: [
-                {
-                  groupId: group.id,
-                  parameterId: versionParam.id,
-                  propertiesToUpdate: { value: [createLiteralValueSegment(latestVersion)] },
-                },
-              ],
-            })
-          );
+          dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, latestVersion);
         }
       }
     }
@@ -572,21 +525,9 @@ export const ParameterSection = ({
         });
       }
       // Sync deploymentId parameter so the serialized workflow includes the model
-      const parameterGroup = nodeInputs.parameterGroups[group.id];
-      const deploymentParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.deploymentId');
+      const deploymentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.deploymentId');
       if (deploymentParam) {
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                groupId: group.id,
-                parameterId: deploymentParam.id,
-                propertiesToUpdate: { value: [createLiteralValueSegment(modelId)] },
-              },
-            ],
-          })
-        );
+        dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelId);
       }
     },
     [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions, nodeInputs.parameterGroups, group.id, dispatch]
@@ -604,35 +545,11 @@ export const ParameterSection = ({
         });
       }
       // Sync system instructions to the messages parameter so the workflow definition stays in sync
-      const parameterGroup = nodeInputs.parameterGroups[group.id];
-      const messagesParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.messages');
+      const messagesParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.messages');
       if (messagesParam) {
-        // Parse existing user instructions from current messages value
         const currentValue = convertSegmentsToString(messagesParam.value ?? []);
-        let userInstructions: { role: string; content: string }[] = [];
-        try {
-          const parsed = JSON.parse(currentValue || '[]');
-          if (Array.isArray(parsed)) {
-            userInstructions = parsed.filter((m: { role: string }) => m.role === 'user');
-          }
-        } catch {
-          // If parsing fails, preserve nothing
-        }
-        const newMessages = [{ role: 'system', content: instructions }, ...userInstructions];
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                groupId: group.id,
-                parameterId: messagesParam.id,
-                propertiesToUpdate: {
-                  value: [createLiteralValueSegment(JSON.stringify(newMessages, null, 4))],
-                },
-              },
-            ],
-          })
-        );
+        const newMessagesJson = buildMessagesWithSystemInstructions(currentValue, instructions);
+        dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
       }
     },
     [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, nodeInputs.parameterGroups, group.id, dispatch]
@@ -647,22 +564,10 @@ export const ParameterSection = ({
     }
     prevFoundryAgentIdRef.current = selectedFoundryAgent.id;
 
-    const parameterGroup = nodeInputs.parameterGroups[group.id];
-    const deploymentParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.deploymentId');
+    const deploymentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.deploymentId');
     if (deploymentParam) {
       const modelValue = pendingFoundryModel ?? selectedFoundryAgent.model;
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              groupId: group.id,
-              parameterId: deploymentParam.id,
-              propertiesToUpdate: { value: [createLiteralValueSegment(modelValue)] },
-            },
-          ],
-        })
-      );
+      dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelValue);
     }
   }, [selectedFoundryAgent, pendingFoundryModel, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
@@ -684,39 +589,16 @@ export const ParameterSection = ({
       }
 
       // Sync version number to workflow parameter
-      const parameterGroup = nodeInputs.parameterGroups[group.id];
-      const versionParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.foundryAgentVersionNumber');
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
       if (versionParam) {
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                groupId: group.id,
-                parameterId: versionParam.id,
-                propertiesToUpdate: { value: [createLiteralValueSegment(version.version)] },
-              },
-            ],
-          })
-        );
+        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, version.version);
       }
 
       // Sync deploymentId to the version's model
       if (model) {
-        const deploymentParam = parameterGroup?.parameters?.find((p: ParameterInfo) => p.parameterKey === 'inputs.$.deploymentId');
+        const deploymentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.deploymentId');
         if (deploymentParam) {
-          dispatch(
-            updateNodeParameters({
-              nodeId,
-              parameters: [
-                {
-                  groupId: group.id,
-                  parameterId: deploymentParam.id,
-                  propertiesToUpdate: { value: [createLiteralValueSegment(model)] },
-                },
-              ],
-            })
-          );
+          dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, model);
         }
       }
 
@@ -1548,6 +1430,46 @@ export const getEditorAndOptions = (
 const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
+
+// --- Foundry parameter helpers ---
+
+/** Find a parameter in a group by its parameterKey. */
+function findFoundryParam(parameterGroups: Record<string, ParameterGroup>, groupId: string, key: string): ParameterInfo | undefined {
+  return parameterGroups[groupId]?.parameters?.find((p: ParameterInfo) => p.parameterKey === key);
+}
+
+/** Dispatch a single parameter value update to the Redux store. */
+function dispatchParamUpdate(dispatch: AppDispatch, nodeId: string, groupId: string, param: ParameterInfo, value: string): void {
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [
+        {
+          groupId,
+          parameterId: param.id,
+          propertiesToUpdate: { value: [createLiteralValueSegment(value)] },
+        },
+      ],
+    })
+  );
+}
+
+/**
+ * Build a messages JSON array with updated system instructions, preserving user messages.
+ * Returns the stringified JSON, or undefined if no messages parameter exists.
+ */
+function buildMessagesWithSystemInstructions(currentMessagesValue: string, systemInstructions: string): string {
+  let userMessages: { role: string; content: string }[] = [];
+  try {
+    const parsed = JSON.parse(currentMessagesValue || '[]');
+    if (Array.isArray(parsed)) {
+      userMessages = parsed.filter((m: { role: string }) => m.role === 'user');
+    }
+  } catch {
+    // preserve nothing on parse failure
+  }
+  return JSON.stringify([{ role: 'system', content: systemInstructions }, ...userMessages], null, 4);
+}
 
 function FoundryPortalLink({
   projectResourceId,

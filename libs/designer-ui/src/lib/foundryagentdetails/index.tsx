@@ -152,12 +152,7 @@ export function FoundryAgentDetails({
     };
   }, [models, effectiveModel]);
 
-  const versionDisplayValue = useMemo(() => {
-    if (!selectedVersion) {
-      return '';
-    }
-    return `Version ${selectedVersion}`;
-  }, [selectedVersion]);
+  const versionDisplayValue = selectedVersion ? `Version ${selectedVersion}` : '';
 
   return (
     <div className={styles.container}>

@@ -115,7 +115,7 @@ function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
 
 /** Normalize the project endpoint to the Foundry data-plane host. */
 function normalizeEndpoint(projectEndpoint: string): string {
-  const base = projectEndpoint.endsWith('/') ? projectEndpoint.replace(/\/+$/, '') : projectEndpoint;
+  const base = projectEndpoint.replace(/\/+$/, '');
   try {
     const url = new URL(base);
     if (url.hostname.endsWith('.cognitiveservices.azure.com')) {
@@ -168,20 +168,13 @@ export async function listFoundryAgents(
   accessToken: string,
   options?: ListAgentsOptions
 ): Promise<FoundryAgentListResponse> {
-  const queryParameters: QueryParameters = { 'api-version': FOUNDRY_API_VERSION };
-
-  if (options?.limit) {
-    queryParameters['limit'] = options.limit;
-  }
-  if (options?.order) {
-    queryParameters['order'] = options.order;
-  }
-  if (options?.after) {
-    queryParameters['after'] = options.after;
-  }
-  if (options?.before) {
-    queryParameters['before'] = options.before;
-  }
+  const queryParameters: QueryParameters = {
+    'api-version': FOUNDRY_API_VERSION,
+    ...(options?.limit && { limit: options.limit }),
+    ...(options?.order && { order: options.order }),
+    ...(options?.after && { after: options.after }),
+    ...(options?.before && { before: options.before }),
+  };
 
   return httpClient.get<FoundryAgentListResponse>({
     uri: buildAgentsUri(projectEndpoint),
@@ -285,23 +278,27 @@ export async function listFoundryAgentVersions(
 
 /** Safely extract the versions array from an API response, handling nested or flat shapes. */
 function extractVersionsData(response: unknown): FoundryAgentVersion[] {
-  if (!response || typeof response !== 'object') {
-    return [];
-  }
-  const resp = response as Record<string, unknown>;
-  // Standard shape: { data: [...] }
-  if (Array.isArray(resp['data'])) {
-    return resp['data'] as FoundryAgentVersion[];
-  }
-  // Wrapped shape: { result: { data: [...] } }
-  const result = resp['result'];
-  if (result && typeof result === 'object' && Array.isArray((result as Record<string, unknown>)['data'])) {
-    return (result as Record<string, unknown>)['data'] as FoundryAgentVersion[];
-  }
   // Direct array response
   if (Array.isArray(response)) {
     return response as FoundryAgentVersion[];
   }
+  if (!response || typeof response !== 'object') {
+    return [];
+  }
+
+  const resp = response as Record<string, unknown>;
+
+  // Standard shape: { data: [...] }
+  if (Array.isArray(resp['data'])) {
+    return resp['data'] as FoundryAgentVersion[];
+  }
+
+  // Wrapped shape: { result: { data: [...] } }
+  const result = resp['result'] as Record<string, unknown> | undefined;
+  if (Array.isArray(result?.['data'])) {
+    return result['data'] as FoundryAgentVersion[];
+  }
+
   return [];
 }
 

@@ -49,6 +49,7 @@ export {
   clearPendingFoundryUpdate,
   getPendingFoundryUpdate,
   consumeVersionRefresh,
+  needsVersionRefresh,
 } from './actions/bjsworkflow/foundryUpdates';
 export {
   setSelectedNodeId,

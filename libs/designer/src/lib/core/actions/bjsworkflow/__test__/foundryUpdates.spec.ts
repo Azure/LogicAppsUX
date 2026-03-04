@@ -6,6 +6,7 @@ import {
   flushPendingFoundryUpdates,
   getPendingFoundryUpdate,
   consumeVersionRefresh,
+  needsVersionRefresh,
 } from '../foundryUpdates';
 
 const mockHttpClient = {
@@ -169,10 +170,19 @@ describe('foundryUpdates', () => {
 
       await flushPendingFoundryUpdates();
 
+      // needsVersionRefresh checks without consuming
+      expect(needsVersionRefresh('node-1')).toBe(true);
+      expect(needsVersionRefresh('node-1')).toBe(true); // still true — not consumed
       // consumeVersionRefresh returns true the first time (and clears the flag)
       expect(consumeVersionRefresh('node-1')).toBe(true);
-      // Second call returns false — flag was already consumed
+      // Now both should return false
+      expect(needsVersionRefresh('node-1')).toBe(false);
       expect(consumeVersionRefresh('node-1')).toBe(false);
+    });
+
+    it('should not consume flag for nodes that were never flushed', () => {
+      expect(needsVersionRefresh('never-flushed')).toBe(false);
+      expect(consumeVersionRefresh('never-flushed')).toBe(false);
     });
 
     it('should call onFlushed callback with successfully flushed node IDs', async () => {

@@ -25,9 +25,15 @@ export function clearPendingFoundryUpdate(nodeId: string): void {
   pendingUpdates.delete(nodeId);
 }
 
+/** Check whether a node needs a version refresh (without consuming the flag). */
+export function needsVersionRefresh(nodeId: string): boolean {
+  return recentlyFlushedNodes.has(nodeId);
+}
+
 /**
- * Check and consume the "recently flushed" flag for a node.
+ * Consume the "recently flushed" flag for a node.
  * Returns true (and clears the flag) if the node's Foundry agent was recently updated.
+ * Call only after confirming the new version is available to avoid losing the flag.
  */
 export function consumeVersionRefresh(nodeId: string): boolean {
   return recentlyFlushedNodes.delete(nodeId);
