@@ -1,5 +1,5 @@
 import type { ICopilotWorkflowEditorService, WorkflowEditResponse, WorkflowChange } from '../copilotWorkflowEditor';
-import { WorkflowChangeType } from '../copilotWorkflowEditor';
+import { WorkflowChangeType, WorkflowChangeTargetType } from '../copilotWorkflowEditor';
 import type { Workflow } from '../../../utils/src';
 import { ArgumentException } from '../../../utils/src';
 import { COPILOT_WORKFLOW_TOOLS, executeCopilotTool } from './copilotWorkflowEditorTools';
@@ -80,6 +80,8 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
         definition: workflow.definition,
         kind: workflow.kind,
         connectionReferences: workflow.connectionReferences,
+        ...(workflow.parameters && Object.keys(workflow.parameters).length > 0 ? { parameters: workflow.parameters } : {}),
+        ...(workflow.notes && Object.keys(workflow.notes).length > 0 ? { notes: workflow.notes } : {}),
       },
       null,
       2
@@ -229,6 +231,7 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
           definition: parsed.workflow.definition ?? parsed.workflow,
           connectionReferences: parsed.workflow.connectionReferences ?? currentWorkflow.connectionReferences ?? {},
           parameters: parsed.workflow.parameters ?? currentWorkflow.parameters,
+          notes: parsed.workflow.notes ?? currentWorkflow.notes,
           kind: parsed.workflow.kind ?? currentWorkflow.kind,
         };
 
@@ -258,6 +261,7 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
             definition: parsed.definition,
             connectionReferences: parsed.connectionReferences ?? currentWorkflow.connectionReferences ?? {},
             parameters: parsed.parameters ?? currentWorkflow.parameters,
+            notes: parsed.notes ?? currentWorkflow.notes,
             kind: parsed.kind ?? currentWorkflow.kind,
           },
         };
@@ -277,15 +281,18 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     }
 
     const validChangeTypes = new Set<string>(Object.values(WorkflowChangeType));
+    const validTargetTypes = new Set<string>(Object.values(WorkflowChangeTargetType));
 
     return rawChanges
       .filter((c: any): c is any => !!c && typeof c === 'object')
       .map((c: any) => {
         const ct = c.changeType as string | undefined;
+        const tt = c.targetType as string | undefined;
         const ids = c.nodeIds as unknown;
         const desc = c.description as unknown;
         return {
           changeType: (ct && validChangeTypes.has(ct) ? ct : WorkflowChangeType.Modified) as WorkflowChangeType,
+          targetType: (tt && validTargetTypes.has(tt) ? tt : WorkflowChangeTargetType.Action) as WorkflowChangeTargetType,
           nodeIds: Array.isArray(ids) ? ids.filter((id: unknown): id is string => typeof id === 'string') : [],
           description: typeof desc === 'string' ? desc : 'Change applied',
         };

@@ -160,16 +160,26 @@ const DesignerEditor = () => {
   }, [isDraftMode, draftParameters, prodParameters]);
   const prodNotes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
   const draftNotes = useMemo(() => customCodeData?.[VfsArtifact.DraftNotesFile], [customCodeData]);
-  const notes = useMemo(() => {
+  const initialNotes = useMemo(() => {
     if (isDraftMode && draftNotes && Object.keys(draftNotes).length > 0) {
       return draftNotes;
     }
     return prodNotes;
   }, [isDraftMode, draftNotes, prodNotes]);
+  const [currentNotes, setCurrentNotes] = useState<NotesData>(initialNotes);
+  const [currentParameters, setCurrentParameters] = useState<ParametersData>(parameters ?? {});
+
+  useEffect(() => {
+    setCurrentNotes(initialNotes);
+  }, [initialNotes]);
+  useEffect(() => {
+    setCurrentParameters(parameters ?? {});
+  }, [parameters]);
   const queryClient = getReactQueryClient();
   const connectionsData = useMemo(
-    () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
-    [originalConnectionsData, parameters, settingsData?.properties]
+    () =>
+      resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {}),
+    [originalConnectionsData, currentParameters, settingsData?.properties]
   );
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const { data: runInstanceData } = useRun(runId);
@@ -328,8 +338,8 @@ const DesignerEditor = () => {
     return { ...(settingsData?.properties ?? {}) };
   }, [settingsData?.properties]);
 
-  const originalParametersData: ParametersData = clone(parameters ?? {});
-  const originalNotesData: NotesData = clone(notes ?? {});
+  const originalParametersData: ParametersData = clone(currentParameters ?? {});
+  const originalNotesData: NotesData = clone(currentNotes ?? {});
 
   const saveWorkflowFromDesigner = useCallback(
     async (
@@ -346,6 +356,7 @@ const DesignerEditor = () => {
       };
 
       delete workflowToSave.id;
+      delete workflowToSave.notes;
 
       const newManagedApiConnections = {
         ...(connectionsData?.managedApiConnections ?? {}),
@@ -615,37 +626,6 @@ const DesignerEditor = () => {
     }
   }, [artifactsLoading, customCodeLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
 
-  const Copilot = useCallback(
-    () => (
-      <CoPilotChatbot
-        isOpen={showChatBot}
-        openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-        getAuthToken={getAuthToken}
-        getUpdatedWorkflow={getUpdatedWorkflow}
-        openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-        closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-        enableWorkflowEditing={true}
-        autoApply={true}
-        onWorkflowProposed={(newWorkflow) => {
-          setWorkflow({
-            ...newWorkflow,
-            id: guid(),
-          });
-          DesignerStore.dispatch(setIsWorkflowDirty(true));
-        }}
-        getNodeVisuals={(nodeId) => {
-          const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
-          return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
-        }}
-        onNodeClick={(nodeId) => {
-          DesignerStore.dispatch(setFocusNode(nodeId));
-          DesignerStore.dispatch(changePanelNode(nodeId));
-        }}
-      />
-    ),
-    [showChatBot, dispatch]
-  );
-
   const derivedIsReadOnly = useMemo(() => {
     return isReadOnly || isMonitoringView || !isDraftMode;
   }, [isReadOnly, isMonitoringView, isDraftMode]);
@@ -684,8 +664,8 @@ const DesignerEditor = () => {
             workflow={{
               definition: workflow?.definition,
               connectionReferences,
-              parameters,
-              notes,
+              parameters: currentParameters,
+              notes: currentNotes,
               kind: workflow?.kind,
             }}
             workflowId={workflow?.id}
@@ -726,7 +706,35 @@ const DesignerEditor = () => {
               }}
             >
               <div>
-                <Copilot />
+                <CoPilotChatbot
+                  isOpen={showChatBot}
+                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                  getAuthToken={getAuthToken}
+                  getUpdatedWorkflow={getUpdatedWorkflow}
+                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                  enableWorkflowEditing={true}
+                  autoApply={true}
+                  onWorkflowProposed={(newWorkflow) => {
+                    setCurrentNotes(newWorkflow.notes ?? {});
+                    if (newWorkflow.parameters) {
+                      setCurrentParameters(newWorkflow.parameters as unknown as ParametersData);
+                    }
+                    setWorkflow({
+                      ...newWorkflow,
+                      id: guid(),
+                    });
+                    DesignerStore.dispatch(setIsWorkflowDirty(true));
+                  }}
+                  getNodeVisuals={(nodeId) => {
+                    const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
+                    return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
+                  }}
+                  onNodeClick={(nodeId) => {
+                    DesignerStore.dispatch(setFocusNode(nodeId));
+                    DesignerStore.dispatch(changePanelNode(nodeId));
+                  }}
+                />
               </div>
               {!isCodeView && (
                 <>

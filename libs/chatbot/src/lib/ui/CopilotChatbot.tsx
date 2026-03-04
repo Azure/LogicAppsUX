@@ -14,6 +14,7 @@ import {
   type Workflow,
   type WorkflowChange,
   WorkflowChangeType,
+  WorkflowChangeTargetType,
 } from '@microsoft/logic-apps-shared';
 import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
 import { PanelLocation, ConversationItemType, FlowOrigin, UndoStatus } from '@microsoft/designer-ui';
@@ -261,6 +262,11 @@ export const CoPilotChatbot = ({
       return changes.map((change) => {
         // Skip if already enriched
         if (change.iconUri) {
+          return change;
+        }
+
+        // Non-action target types (notes, connections, parameters) don't need connector icon enrichment
+        if (change.targetType && change.targetType !== WorkflowChangeTargetType.Action) {
           return change;
         }
 

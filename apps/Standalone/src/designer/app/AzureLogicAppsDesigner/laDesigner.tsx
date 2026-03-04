@@ -132,11 +132,17 @@ const DesignerEditor = () => {
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
+  const [currentParameters, setCurrentParameters] = useState<ParametersData>(parameters);
   const queryClient = getReactQueryClient();
 
+  useEffect(() => {
+    setCurrentParameters(parameters);
+  }, [parameters]);
+
   const connectionsData = useMemo(
-    () => resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters, settingsData?.properties ?? {}),
-    [originalConnectionsData, parameters, settingsData?.properties]
+    () =>
+      resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {}),
+    [originalConnectionsData, currentParameters, settingsData?.properties]
   );
 
   const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
@@ -485,7 +491,7 @@ const DesignerEditor = () => {
             workflow={{
               definition: workflow?.definition,
               connectionReferences,
-              parameters,
+              parameters: currentParameters,
               kind: workflow?.kind,
             }}
             workflowId={workflow?.id}
@@ -517,6 +523,9 @@ const DesignerEditor = () => {
                   enableWorkflowEditing={true}
                   autoApply={true}
                   onWorkflowProposed={(newWorkflow) => {
+                    if (newWorkflow.parameters) {
+                      setCurrentParameters(newWorkflow.parameters as unknown as ParametersData);
+                    }
                     setWorkflow({
                       ...newWorkflow,
                       id: guid(),

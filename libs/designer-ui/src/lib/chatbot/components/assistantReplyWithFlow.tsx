@@ -3,9 +3,17 @@ import { useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
 import type { ChatBubbleAction } from './chatBubble';
 import { ChatBubble } from './chatBubble';
 import { UndoStatus, type AssistantReplyWithFlowItem } from './conversationItem';
-import { ArrowUndoRegular, AddCircleRegular, EditRegular, DeleteRegular } from '@fluentui/react-icons';
+import {
+  ArrowUndoRegular,
+  AddCircleRegular,
+  EditRegular,
+  DeleteRegular,
+  NoteFilled,
+  LinkFilled,
+  MentionBracketsFilled,
+} from '@fluentui/react-icons';
 import { makeStyles, tokens } from '@fluentui/react-components';
-import { WorkflowChangeType, labelCase } from '@microsoft/logic-apps-shared';
+import { WorkflowChangeType, WorkflowChangeTargetType, labelCase } from '@microsoft/logic-apps-shared';
 import React from 'react';
 import Markdown from 'react-markdown';
 import { useIntl } from 'react-intl';
@@ -53,6 +61,16 @@ const useStyles = makeStyles({
     flexShrink: 0,
     objectFit: 'contain',
   },
+  targetTypeIcon: {
+    width: '24px',
+    height: '24px',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px',
+    color: tokens.colorNeutralForeground2,
+  },
   nodeName: {
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase300,
@@ -79,6 +97,18 @@ const changeIconMap = {
   [WorkflowChangeType.Added]: { icon: AddCircleRegular, styleKey: 'addedIcon' as const },
   [WorkflowChangeType.Modified]: { icon: EditRegular, styleKey: 'modifiedIcon' as const },
   [WorkflowChangeType.Removed]: { icon: DeleteRegular, styleKey: 'removedIcon' as const },
+};
+
+const targetTypeIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  [WorkflowChangeTargetType.Note]: NoteFilled,
+  [WorkflowChangeTargetType.Connection]: LinkFilled,
+  [WorkflowChangeTargetType.Parameter]: MentionBracketsFilled,
+};
+
+const targetTypeDisplayNameMap: Record<string, string> = {
+  [WorkflowChangeTargetType.Note]: 'Note',
+  [WorkflowChangeTargetType.Connection]: 'Connection',
+  [WorkflowChangeTargetType.Parameter]: 'Parameter',
 };
 
 type AssistantReplyWithFlowProps = {
@@ -176,38 +206,48 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
           <div className={styles.changeList}>
             {item.changes.map((change, index) => {
               const { icon: ChangeTypeIcon, styleKey } = changeIconMap[change.changeType] ?? changeIconMap[WorkflowChangeType.Modified];
-              const isClickable = change.changeType !== WorkflowChangeType.Removed && !!item.onNodeClick;
+              const isNonActionTarget = change.targetType && change.targetType !== WorkflowChangeTargetType.Action;
+              const isClickable = !isNonActionTarget && change.changeType !== WorkflowChangeType.Removed && !!item.onNodeClick;
+              const TargetTypeIcon = isNonActionTarget ? targetTypeIconMap[change.targetType] : undefined;
               return (
                 <div key={index} className={styles.changeItem}>
                   <div className={styles.changeFirstLine}>
-                    {change.iconUri ? <img src={change.iconUri} alt="" className={styles.nodeIcon} /> : null}
+                    {TargetTypeIcon ? (
+                      <span className={styles.targetTypeIcon}>
+                        <TargetTypeIcon />
+                      </span>
+                    ) : change.iconUri ? (
+                      <img src={change.iconUri} alt="" className={styles.nodeIcon} />
+                    ) : null}
                     <div>
-                      {change.nodeIds.length > 0
-                        ? change.nodeIds.map((id, i) => {
-                            const label = labelCase(id) + (i < change.nodeIds.length - 1 ? ', ' : '');
-                            return isClickable ? (
-                              <span
-                                key={id}
-                                className={styles.nodeNameClickable}
-                                role="button"
-                                tabIndex={0}
-                                onClick={() => item.onNodeClick?.(id)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    item.onNodeClick?.(id);
-                                  }
-                                }}
-                              >
-                                {label}
-                              </span>
-                            ) : (
-                              <span key={id} className={styles.nodeName}>
-                                {label}
-                              </span>
-                            );
-                          })
-                        : null}
+                      {isNonActionTarget ? (
+                        <span className={styles.nodeName}>{targetTypeDisplayNameMap[change.targetType] ?? 'Item'}</span>
+                      ) : change.nodeIds.length > 0 ? (
+                        change.nodeIds.map((id, i) => {
+                          const label = labelCase(id) + (i < change.nodeIds.length - 1 ? ', ' : '');
+                          return isClickable ? (
+                            <span
+                              key={id}
+                              className={styles.nodeNameClickable}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => item.onNodeClick?.(id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  item.onNodeClick?.(id);
+                                }
+                              }}
+                            >
+                              {label}
+                            </span>
+                          ) : (
+                            <span key={id} className={styles.nodeName}>
+                              {label}
+                            </span>
+                          );
+                        })
+                      ) : null}
                     </div>
                   </div>
                   <div className={styles.changeSecondLine}>

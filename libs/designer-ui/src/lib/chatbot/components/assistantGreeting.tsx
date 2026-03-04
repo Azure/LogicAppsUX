@@ -100,7 +100,6 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
         date={item.date}
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
-        // TODO: add disabled={isBlockingOperationInProgress}
         isEmphasized={true}
         hideFooter={true}
       >

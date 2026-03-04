@@ -8,9 +8,19 @@ export const WorkflowChangeType = {
 } as const;
 export type WorkflowChangeType = (typeof WorkflowChangeType)[keyof typeof WorkflowChangeType];
 
+export const WorkflowChangeTargetType = {
+  Action: 'action',
+  Note: 'note',
+  Connection: 'connection',
+  Parameter: 'parameter',
+} as const;
+export type WorkflowChangeTargetType = (typeof WorkflowChangeTargetType)[keyof typeof WorkflowChangeTargetType];
+
 export interface WorkflowChange {
   /** The type of change (added, modified, removed) */
   changeType: WorkflowChangeType;
+  /** The kind of entity this change targets (action, note, connection, parameter) */
+  targetType: WorkflowChangeTargetType;
   /** The node/action IDs affected by this change */
   nodeIds: string[];
   /** Human-readable description of what changed */
