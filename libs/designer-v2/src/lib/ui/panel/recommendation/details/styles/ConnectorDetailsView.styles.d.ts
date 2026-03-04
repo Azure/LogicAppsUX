@@ -1,1 +1,0 @@
-export declare const useConnectorDetailsViewStyles: () => Record<"header" | "connectorName" | "container" | "loadingContainer" | "connectorIcon" | "headerContent" | "connectorNameContainer" | "connectorDescription", string>;

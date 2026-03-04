@@ -1,1 +1,0 @@
-export declare const useTemplateSearchFiltersStyles: () => Record<"root" | "searchBoxContainer" | "searchBox" | "filtersDropdowns" | "filtersTabs" | "tabListWrapper" | "tabList" | "sortContainer" | "sortField" | "sortDropdown", string>;

@@ -1,2 +1,0 @@
-export declare const useMcpWizardStyles: () => Record<"footer" | "header" | "section" | "content" | "scrollableContent" | "wizardContainer" | "mainSection" | "sectionHeader" | "sectionDescription", string>;
-export declare const useConnectorSectionStyles: () => Record<"icon" | "emptyState" | "emptyStateIcon" | "tableStyle" | "connectorIcon" | "descriptionSection" | "iconText" | "iconTextCell" | "iconsCell", string>;

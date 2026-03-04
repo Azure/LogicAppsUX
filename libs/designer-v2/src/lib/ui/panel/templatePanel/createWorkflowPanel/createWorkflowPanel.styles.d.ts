@@ -1,1 +1,0 @@
-export declare const useStyles: () => Record<"body" | "footer" | "header" | "closeButton" | "descriptionText" | "drawer" | "templateDetailsToggle" | "templateDetailsToggleText" | "descriptionWrapper" | "descriptionRow" | "descriptionTitle", string>;

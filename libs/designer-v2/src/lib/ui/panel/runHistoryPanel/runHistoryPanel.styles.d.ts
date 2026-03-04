@@ -1,1 +1,0 @@
-export declare const useRunHistoryPanelStyles: () => Record<"resizer" | "resizerActive" | "noRunsText" | "flexbox" | "filterToggleRow" | "filterContainer" | "compatComponent" | "smallInput" | "runProperty" | "runEntry" | "runEntrySmall" | "runEntryContent" | "runEntrySubtext" | "runEntryContentSmall" | "runEntrySelectedIndicator" | "runEntrySelected", string>;

@@ -1,1 +1,0 @@
-export declare const useStyles: () => Record<"body" | "footer" | "header" | "closeButton" | "drawer" | "tagsContainer" | "lastTag" | "sourceCodeLink" | "sourceCodeIcon" | "featuresSection" | "markdownContent" | "quickviewTabs", string>;
