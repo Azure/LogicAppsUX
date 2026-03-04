@@ -17,6 +17,7 @@ interface AgentInstructionEditorProps extends BaseEditorProps {
   serializeValue?: ChangeHandler;
   onCastParameter: CastHandler;
   hideUserInstructions?: boolean;
+  hideSystemInstructions?: boolean;
 }
 
 export const AgentInstructionEditor = ({
@@ -25,6 +26,7 @@ export const AgentInstructionEditor = ({
   onCastParameter,
   serializeValue,
   hideUserInstructions = false,
+  hideSystemInstructions = false,
   ...props
 }: AgentInstructionEditorProps): JSX.Element => {
   const intl = useIntl();
@@ -70,15 +72,17 @@ export const AgentInstructionEditor = ({
   return (
     <div className="msla-agent-instruction-editor-container">
       <div className={mergeClasses(styles.editors)}>
-        <StringEditor
-          {...props}
-          className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
-          placeholder={systemPlaceholder}
-          initialValue={systemMessage}
-          editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
-          valueType={constants.SWAGGER.TYPE.STRING}
-          spellCheck={true}
-        />
+        {!hideSystemInstructions && (
+          <StringEditor
+            {...props}
+            className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
+            placeholder={systemPlaceholder}
+            initialValue={systemMessage}
+            editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
+            valueType={constants.SWAGGER.TYPE.STRING}
+            spellCheck={true}
+          />
+        )}
         {!hideUserInstructions && (
           <>
             <Label text={userItemLabel} />

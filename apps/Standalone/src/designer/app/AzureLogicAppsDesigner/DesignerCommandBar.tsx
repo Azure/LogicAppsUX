@@ -40,6 +40,7 @@ import {
   useNodesAndDynamicDataInitialized,
   getRun,
   downloadDocumentAsFile,
+  flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -134,6 +135,7 @@ export const DesignerCommandBar = ({
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
     if (!hasParametersErrors) {
+      await flushPendingFoundryUpdates().catch(console.error);
       await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
       if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
         updateCallbackUrl(designerState, dispatch);
