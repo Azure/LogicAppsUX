@@ -3,6 +3,7 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
+import { runsQueriesKeys } from '@microsoft/logic-apps-designer';
 import type { CustomCodeFileNameMapping, ServerNotificationData, AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
