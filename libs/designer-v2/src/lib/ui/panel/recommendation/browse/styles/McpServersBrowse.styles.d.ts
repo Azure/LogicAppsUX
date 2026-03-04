@@ -1,0 +1,1 @@
+export declare const useMcpServersBrowseStyles: () => Record<"description" | "container" | "itemCount" | "loadingContainer" | "searchBox" | "sortField" | "sortDropdown" | "emptyStateContainer" | "headerSection" | "filterRow" | "itemCountRow" | "serverList", string>;

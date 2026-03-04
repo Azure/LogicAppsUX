@@ -1,0 +1,1 @@
+export declare const useRunTreeViewStyles: () => Record<"treeViewContainer" | "runningSpinner" | "treeItem" | "treeItemSelected" | "treeItemContent" | "treeItemIcon" | "treeItemToolIcon" | "userChatIcon" | "selectionIndicator", string>;

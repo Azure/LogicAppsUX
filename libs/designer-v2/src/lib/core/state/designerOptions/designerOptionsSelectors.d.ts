@@ -1,0 +1,28 @@
+export declare const useReadOnly: () => boolean | undefined;
+export declare const useMonitoringView: () => boolean | undefined;
+export declare const useIsDraft: () => boolean | undefined;
+export declare const useUnitTest: () => boolean | undefined;
+export declare const useLegacyWorkflowParameters: () => boolean | undefined;
+export declare const useHostOptions: () => {
+    displayRuntimeInfo: boolean;
+    suppressCastingForSerialize?: boolean | undefined;
+    recurrenceInterval?: import("@microsoft/logic-apps-shared/src/utils/src/lib/models/logicApps").Recurrence | undefined;
+    maxWaitingRuns?: import("../../../ui/settings").MaximumWaitingRunsMetadata | undefined;
+    stringOverrides?: Record<string, string> | undefined;
+    maxStateHistorySize?: number | undefined;
+    hideContentTransferSettings?: boolean | undefined;
+    collapseGraphsByDefault?: boolean | undefined;
+    enableMultiVariable?: boolean | undefined;
+    enableNestedAgentLoops?: boolean | undefined;
+};
+export declare const useIsXrmConnectionReferenceMode: () => boolean | undefined;
+export declare const useIsDarkMode: () => boolean | undefined;
+export declare const useIsVSCode: () => boolean | undefined;
+export declare const useSuppressDefaultNodeSelectFunctionality: () => boolean | undefined;
+export declare const useNodeSelectAdditionalCallback: () => ((nodeId: string) => any) | undefined;
+export declare const usePanelTabHideKeys: () => ("HANDOFF" | "PARAMETERS" | "FUNCTION_CREATE" | "STATIC_RESULT" | "SETTINGS" | "ABOUT" | "CODE_VIEW" | "MONITORING" | "OPERATION_SELECTOR" | "CHANNELS" | "REQUEST_HISTORY" | "RETRY_HISTORY" | "RUN_AFTER" | "SCRATCH" | "SWAGGER_ENDPOINT" | "TESTING" | "MOCK_RESULTS")[];
+export declare const useShowPerformanceDebug: () => boolean;
+export declare const useEnableNestedAgentLoops: () => boolean;
+export declare const useAreDesignerOptionsInitialized: () => boolean;
+export declare const useAreServicesInitialized: () => boolean;
+export declare const useSupportedChannels: (nodeId: string) => any[];

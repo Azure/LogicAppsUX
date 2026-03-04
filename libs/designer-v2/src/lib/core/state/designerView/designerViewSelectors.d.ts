@@ -1,0 +1,9 @@
+export declare const useShowMinimap: () => boolean | undefined;
+export declare const useClampPan: () => boolean | undefined;
+export declare const useShowDeleteModalNodeId: () => string | undefined;
+export declare const useNodeContextMenuData: () => import("./designerViewInterfaces").NodeContextMenuObject | undefined;
+export declare const useEdgeContextMenuData: () => import("./designerViewInterfaces").EdgeContextMenuObject | undefined;
+export declare const useIsAgenticWorkflow: () => boolean;
+export declare const useIsAgenticWorkflowOnly: () => boolean;
+export declare const useIsA2AWorkflow: () => boolean;
+export declare const useWorkflowHasAgentLoop: () => boolean;

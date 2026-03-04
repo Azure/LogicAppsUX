@@ -1,0 +1,24 @@
+import type { ArmResource, LogicAppResource, WorkflowResource, Template } from '@microsoft/logic-apps-shared';
+import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
+export declare const workflowAppConnectionsKey = "connectionsdata";
+export declare const getTemplateManifest: (templateId: string) => Promise<Template.TemplateManifest>;
+export declare const getWorkflowsInTemplate: (templateId: string) => Promise<Record<string, Template.WorkflowManifest>>;
+export declare const getWorkflowResourcesInTemplate: (templateId: string) => Promise<ArmResource<any>[]>;
+export declare const useTemplate: (templateId: string, enabled?: boolean) => UseQueryResult<ArmResource<any>, unknown>;
+export declare const useTemplateWorkflowResources: (templateId: string, enabled?: boolean) => UseQueryResult<ArmResource<any>[], unknown>;
+export declare const getTemplate: (templateId: string) => Promise<ArmResource<any>>;
+export declare const useAllConnectors: (operationInfos: Record<string, NodeOperation>, workflows: Record<string, Partial<WorkflowTemplateData>>) => UseQueryResult<{
+    id: string;
+    displayName: string;
+}[], unknown>;
+export declare const useAllLogicApps: (subscriptionId: string, resourceGroup: string, enabled: boolean) => UseQueryResult<LogicAppResource[], unknown>;
+export declare const useWorkflowsInApp: (subscriptionId: string, resourceGroup: string, logicAppName: string, isConsumption: boolean, filter?: ((workflow: ArmResource<any>) => boolean) | undefined) => UseQueryResult<WorkflowResource[], unknown>;
+export declare const getConsumptionWorkflow: (subscriptionId: string, resourceGroup: string, logicAppName: string, queryClient: QueryClient) => Promise<ArmResource<any>>;
+export declare const getStandardWorkflow: (workflowId: string, queryClient: QueryClient) => Promise<ArmResource<any>>;
+export declare const getConnectionsInWorkflowApp: (subscriptionId: string, resourceGroup: string, logicAppName: string, queryClient: QueryClient) => Promise<Record<string, any>>;
+export declare const getParametersInWorkflowApp: (subscriptionId: string, resourceGroup: string, logicAppName: string, queryClient: QueryClient) => Promise<Record<string, any>>;
+export declare const resetTemplateWorkflowsQuery: (templateId: string, clearRawData?: boolean) => void;
+export declare const resetAllTemplatesQuery: (templateId: string, clearRawData?: boolean) => void;
+export declare const resetTemplateQuery: (templateId: string) => void;

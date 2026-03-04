@@ -1,0 +1,1 @@
+export declare const useNoteNodeStyles: () => Record<"dragHandle" | "noteCard" | "draggingNote" | "noteTextarea" | "reactMarkdown" | "markdownContainer" | "markdownImage" | "markdownHeading" | "markdownParagraph" | "markdownList" | "markdownEmbed" | "noteToolbar", string>;
