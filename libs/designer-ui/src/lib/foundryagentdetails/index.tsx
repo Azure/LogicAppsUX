@@ -179,7 +179,13 @@ export function FoundryAgentDetails({
               ))}
             </Dropdown>
           ) : (
-            <Dropdown placeholder={versionsLoading ? loadingVersionsPlaceholder : selectVersionPlaceholder} disabled size="small" />
+            <Dropdown
+              placeholder={versionsLoading ? loadingVersionsPlaceholder : selectVersionPlaceholder}
+              value=""
+              selectedOptions={[]}
+              disabled
+              size="small"
+            />
           )}
         </Field>
       </div>

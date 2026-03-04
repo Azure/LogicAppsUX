@@ -465,10 +465,12 @@ export const ParameterSection = ({
   }, [selectedFoundryVersion, foundryVersions, nodeInputs.parameterGroups, group.id]);
 
   // Persist the derived version into state AND sync to workflow parameters on initial load
+  const hasInitializedVersion = useRef(false);
   useEffect(() => {
-    if (!effectiveFoundryVersion || selectedFoundryVersion) {
+    if (!effectiveFoundryVersion || hasInitializedVersion.current) {
       return;
     }
+    hasInitializedVersion.current = true;
     setSelectedFoundryVersion(effectiveFoundryVersion);
 
     const parameterGroup = nodeInputs.parameterGroups[group.id];
@@ -521,16 +523,7 @@ export const ParameterSection = ({
         );
       }
     }
-  }, [
-    effectiveFoundryVersion,
-    selectedFoundryVersion,
-    foundryVersions,
-    selectedFoundryAgent,
-    nodeInputs.parameterGroups,
-    group.id,
-    nodeId,
-    dispatch,
-  ]);
+  }, [effectiveFoundryVersion, foundryVersions, selectedFoundryAgent, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
   // After a save, Foundry creates a new version — auto-select it
   useEffect(() => {
