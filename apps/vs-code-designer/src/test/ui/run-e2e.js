@@ -659,6 +659,14 @@ async function main() {
       process.exit(phase2Exit);
     }
 
+    if (e2eMode === 'createonly') {
+      await extest.downloadCode('max');
+      await extest.downloadChromeDriver('max');
+      await prepareFreshSession('phase1-only');
+      const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
+      process.exit(phase1Exit);
+    }
+
     await prepareFreshSession('phase1');
     const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
     if (phase1Exit !== 0) {

@@ -65,10 +65,10 @@ const ELEMENT_TIMEOUT = 15_000;
 const POLL_INTERVAL = 500;
 
 /** Debounce time for path validation + buffer */
-const PATH_VALIDATION_WAIT = 3_000;
+const PATH_VALIDATION_WAIT = 1_500;
 
 /** Time to wait after typing in a field */
-const TYPE_SETTLE = 1_000;
+const TYPE_SETTLE = 300;
 
 /** Path to the manifest file that records all created workspaces for downstream tests */
 const WORKSPACE_MANIFEST_PATH = path.join(os.tmpdir(), 'la-e2e-test', 'created-workspaces.json');
@@ -171,6 +171,42 @@ function uniqueName(prefix: string): string {
 /** Sleep for ms milliseconds */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Directory for explicit screenshots */
+const EXPLICIT_SCREENSHOT_DIR = path.join(
+  process.env.TEMP || process.cwd(),
+  'test-resources',
+  'screenshots',
+  'createWorkspace-explicit',
+  new Date().toISOString().replace(/[:.]/g, '-')
+);
+
+function sanitizeFileSegment(value: string): string {
+  return value
+    .split('')
+    .map((char) => {
+      const code = char.charCodeAt(0);
+      if (code < 32 || /[<>:"/\\|?*]/.test(char) || /\s/.test(char)) {
+        return '_';
+      }
+      return char;
+    })
+    .join('');
+}
+
+async function captureScreenshot(driver: WebDriver, fileName: string): Promise<string | undefined> {
+  try {
+    fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
+    const screenshotPath = path.join(EXPLICIT_SCREENSHOT_DIR, `${sanitizeFileSegment(fileName)}.png`);
+    const base64 = await driver.takeScreenshot();
+    fs.writeFileSync(screenshotPath, base64, 'base64');
+    console.log(`[screenshot] Saved: ${screenshotPath}`);
+    return screenshotPath;
+  } catch (e: any) {
+    console.log(`[screenshot] Failed to capture "${fileName}": ${e.message}`);
+    return undefined;
+  }
 }
 
 /**
@@ -395,8 +431,18 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
   // Dismiss any notification toasts that might be blocking the webview
   await dismissNotifications(driver);
 
+  // Aggressively remove notification toasts via JS — they can intercept webview iframe clicks
+  try {
+    await driver.switchTo().defaultContent();
+    await driver.executeScript(`
+      document.querySelectorAll('.notification-toast-container, .notifications-toasts').forEach(el => el.remove());
+    `);
+  } catch {
+    /* ignore */
+  }
+
   let lastError: Error | null = null;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const webview = new WebView();
       await webview.switchToFrame();
@@ -418,17 +464,28 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
       if (e.message?.includes('Package')) {
         throw e; // Don't retry wrong webview
       }
-      console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/5 failed: ${e.message}`);
       try {
         await driver.switchTo().defaultContent();
       } catch {
         // Ignore
       }
-      await sleep(3000);
+
+      // Re-dismiss notifications before retry — new toasts may have appeared
+      await dismissNotifications(driver);
+      try {
+        await driver.executeScript(`
+          document.querySelectorAll('.notification-toast-container, .notifications-toasts').forEach(el => el.remove());
+        `);
+      } catch {
+        /* ignore */
+      }
+
+      await sleep(2000);
     }
   }
 
-  throw lastError || new Error('Could not switch to webview frame after 3 attempts');
+  throw lastError || new Error('Could not switch to webview frame after 5 attempts');
 }
 
 /**
@@ -747,10 +804,8 @@ async function selectRadioOption(driver: WebDriver, optionLabel: string): Promis
  */
 async function clearAndType(element: WebElement, text: string): Promise<void> {
   await element.click();
-  await sleep(200);
-  await element.sendKeys(Key.chord(Key.CONTROL, 'a'));
   await sleep(100);
-  await element.sendKeys(Key.BACK_SPACE);
+  await element.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE);
   await sleep(100);
   await element.sendKeys(text);
   await sleep(TYPE_SETTLE);
@@ -762,23 +817,41 @@ async function clearAndType(element: WebElement, text: string): Promise<void> {
  * validatePath postMessage. We wait for the validation indicators.
  */
 async function waitForPathValidation(driver: WebDriver, timeoutMs = PATH_VALIDATION_WAIT): Promise<boolean> {
-  // The validation is async, just wait for the debounce + validation round-trip
-  console.log('[waitForPathValidation] Waiting for path validation...');
-  await sleep(timeoutMs);
+  // Poll for validation to complete instead of a static sleep.
+  // The webview sends a validatePath postMessage; we watch for the result indicators.
+  console.log('[waitForPathValidation] Polling for path validation...');
+  const deadline = Date.now() + timeoutMs;
+  const pollMs = 300;
 
-  // Check for error messages
-  const errors = await driver.findElements(By.xpath("//*[contains(@class, 'error') or contains(@class, 'Error')]"));
-  if (errors.length > 0) {
+  // Give the debounce at least one tick to fire
+  await sleep(pollMs);
+
+  while (Date.now() < deadline) {
+    // Check for visible error messages
+    const errors = await driver.findElements(By.xpath("//*[contains(@class, 'error') or contains(@class, 'Error')]"));
     for (const err of errors) {
-      const text = await err.getText();
-      if (text.trim()) {
-        console.log(`[waitForPathValidation] Error found: "${text}"`);
-        return false;
+      try {
+        const text = await err.getText();
+        if (text.trim()) {
+          console.log(`[waitForPathValidation] Error found: "${text}"`);
+          return false;
+        }
+      } catch {
+        /* stale element */
       }
     }
+
+    // Check if the path input has been validated (no pending state)
+    // If no errors are visible and we've waited at least one poll, assume valid
+    if (Date.now() - (deadline - timeoutMs) > pollMs * 2) {
+      console.log('[waitForPathValidation] No errors found, assuming valid');
+      return true;
+    }
+
+    await sleep(pollMs);
   }
 
-  console.log('[waitForPathValidation] No errors found, assuming valid');
+  console.log('[waitForPathValidation] Timed out, assuming valid');
   return true;
 }
 
@@ -1423,11 +1496,11 @@ describe('Create Workspace Tests', function () {
   });
 
   // =========================================================================
-  // READ-ONLY WEBVIEW TESTS — Share a single webview instance.
-  // The webview is opened once before these tests and closed once after.
-  // This avoids redundant open/close cycles for simple read-only checks.
+  // PRE-CREATION WEBVIEW TESTS — Single shared webview instance.
+  // Opens the webview once, runs all read-only checks, validation tests,
+  // and interaction tests, then closes. Avoids redundant webview open/close.
   // =========================================================================
-  describe('Webview read-only checks (shared webview)', function () {
+  describe('Pre-creation webview tests (single shared webview)', function () {
     this.timeout(TEST_TIMEOUT);
 
     let webview: WebView;
@@ -1476,268 +1549,115 @@ describe('Create Workspace Tests', function () {
     });
 
     // -----------------------------------------------------------------------
-    // Test: Verify correct command was selected (not "from package")
+    // Test: Verify all form elements on initial render (consolidated)
+    // Combines: correct command, dropdown options, step indicator, buttons,
+    // radio options, descriptions, browse button, sections, required, nav
     // -----------------------------------------------------------------------
-    it('should select the correct Create Workspace command (not from package)', async () => {
-      // Look for "Project setup" section header which is unique to Create Workspace
-      const projectSetupHeaders = await driver.findElements(
-        By.xpath("//*[contains(text(), 'Project setup') or contains(text(), 'project setup')]")
-      );
-      console.log(`[test1] Found ${projectSetupHeaders.length} "Project setup" elements`);
+    it('should verify all form elements on initial render', async () => {
+      await waitForCreateWorkspaceFormReady(driver);
+      const pageText = await driver.findElement(By.css('body')).getText();
+      const lowerPageText = pageText.toLowerCase();
 
-      // Should NOT find "Package path" (only in "from package" flow)
+      // 1. Correct command selected (not "from package")
       const packagePathLabels = await driver.findElements(By.xpath("//*[contains(text(), 'Package path')]"));
-      console.log(`[test1] Found ${packagePathLabels.length} "Package path" elements`);
-
-      // Assert: Project setup should exist, Package path should not
       if (packagePathLabels.length > 0) {
         throw new Error('Wrong webview: found "Package path" label - this is the "from package" flow');
       }
+      console.log('[formElements] Correct command opened (no "Package path") ✓');
 
-      if (projectSetupHeaders.length === 0) {
-        console.log('[test1] Warning: "Project setup" not found, but "Package path" is also absent - likely correct');
-      }
-
-      console.log('[test1] PASSED: Correct webview opened');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Workflow type dropdown has expected options
-    // -----------------------------------------------------------------------
-    it('should display all workflow type options in dropdown', async () => {
-      console.log('[test5] Looking for Workflow type dropdown...');
-      await waitForCreateWorkspaceFormReady(driver);
-      const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await wfTypeDropdown.click();
-      await sleep(500);
-
-      // Get all options
-      const options = await driver.findElements(By.css('[role="option"]'));
-      const optionTexts: string[] = [];
-      for (const opt of options) {
-        const text = await opt.getText();
-        optionTexts.push(text.trim());
-      }
-      console.log(`[test5] Dropdown options: ${JSON.stringify(optionTexts)}`);
-
-      // Close dropdown by pressing Escape
-      await driver.actions().sendKeys(Key.ESCAPE).perform();
-      await sleep(300);
-
-      // Expected options — all 4 workflow types
-      const expectedOptions = ['Stateful', 'Stateless', 'Autonomous Agents', 'Conversational Agents'];
-      for (const expected of expectedOptions) {
-        if (!optionTexts.some((opt) => opt.includes(expected))) {
-          throw new Error(`Expected dropdown option "${expected}" not found. Available: ${JSON.stringify(optionTexts)}`);
-        }
-      }
-
-      // Verify we have exactly 4 options
-      if (optionTexts.length !== 4) {
-        console.log(`[test5] Warning: Expected 4 workflow type options, found ${optionTexts.length}`);
-      }
-
-      console.log('[test5] PASSED: All expected workflow type options present');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Step indicator shows correct step
-    // -----------------------------------------------------------------------
-    it('should show correct step indicator text', async () => {
-      await waitForCreateWorkspaceFormReady(driver);
-      const pageText = await driver.findElement(By.css('body')).getText();
+      // 2. Step indicator
       const hasStep1 = pageText.includes('Step 1 of 2') || pageText.includes('step 1 of 2');
-      console.log(`[test6] Page text includes "Step 1 of 2": ${hasStep1}`);
-
-      const hasProjectSetup = pageText.includes('Project setup') || pageText.includes('project setup');
-      console.log(`[test6] Has "Project setup": ${hasProjectSetup}`);
-
-      const hasWorkspaceParentFolder = pageText.includes('Workspace parent folder path');
-      console.log(`[test6] Has "Workspace parent folder path": ${hasWorkspaceParentFolder}`);
-
-      if (!hasStep1 && !hasProjectSetup && !hasWorkspaceParentFolder) {
-        throw new Error('Could not verify step indicator or section headers on step 0');
+      const hasProjectSetup = lowerPageText.includes('project setup');
+      if (!hasStep1 && !hasProjectSetup) {
+        throw new Error('Neither step indicator nor "Project setup" header found');
       }
+      console.log('[formElements] Step indicator found ✓');
 
-      console.log('[test6] PASSED: Step indicator or section headers found');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Next button is disabled when form is incomplete
-    // -----------------------------------------------------------------------
-    it('should disable Next button when required fields are empty', async () => {
-      await sleep(1000); // Wait for form to fully render
-
+      // 3. Next button disabled when empty
       const nextButtons = await driver.findElements(By.xpath("//button[contains(text(), 'Next')]"));
-
       if (nextButtons.length === 0) {
         throw new Error('Next button not found on the form');
       }
-
-      const disabled = await nextButtons[0].getAttribute('disabled');
-      const ariaDisabled = await nextButtons[0].getAttribute('aria-disabled');
-      const isDisabled = disabled === 'true' || disabled === '' || ariaDisabled === 'true';
-
-      console.log(`[test7] Next button disabled attr: "${disabled}", aria-disabled: "${ariaDisabled}"`);
-      console.log(`[test7] Is disabled: ${isDisabled}`);
-
-      if (!isDisabled) {
+      const nextDisabled = await nextButtons[0].getAttribute('disabled');
+      const nextAriaDisabled = await nextButtons[0].getAttribute('aria-disabled');
+      const isNextDisabled = nextDisabled === 'true' || nextDisabled === '' || nextAriaDisabled === 'true';
+      if (!isNextDisabled) {
         throw new Error('Next button should be disabled when required fields are empty');
       }
+      console.log('[formElements] Next button disabled ✓');
 
-      console.log('[test7] PASSED: Next button is correctly disabled');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Back button is disabled on first step
-    // -----------------------------------------------------------------------
-    it('should disable Back button on the first step', async () => {
+      // 4. Back button disabled or absent on step 0
       const backButtons = await driver.findElements(By.xpath("//button[contains(text(), 'Back')]"));
-
-      if (backButtons.length === 0) {
-        // Back button might not be rendered at all on step 0, which is also valid
-        console.log('[test8] Back button not found on step 0 - this is acceptable');
-        return;
+      if (backButtons.length > 0) {
+        const backDisabled = await backButtons[0].getAttribute('disabled');
+        const backAriaDisabled = await backButtons[0].getAttribute('aria-disabled');
+        const isBackDisabled = backDisabled === 'true' || backDisabled === '' || backAriaDisabled === 'true';
+        if (!isBackDisabled) {
+          throw new Error('Back button should be disabled on the first step');
+        }
       }
+      console.log('[formElements] Back button disabled/absent ✓');
 
-      const disabled = await backButtons[0].getAttribute('disabled');
-      const ariaDisabled = await backButtons[0].getAttribute('aria-disabled');
-      const isDisabled = disabled === 'true' || disabled === '' || ariaDisabled === 'true';
-
-      console.log(`[test8] Back button disabled attr: "${disabled}", aria-disabled: "${ariaDisabled}"`);
-
-      if (!isDisabled) {
-        throw new Error('Back button should be disabled on the first step');
-      }
-
-      console.log('[test8] PASSED: Back button is correctly disabled on step 0');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: All 3 logic app type radio buttons are present
-    // -----------------------------------------------------------------------
-    it('should display all three logic app type radio options', async () => {
-      const pageText = await driver.findElement(By.css('body')).getText();
-
+      // 5. All 3 radio options present
       const expectedRadioLabels = ['Logic app (Standard)', 'Logic app with custom code', 'Logic app with rules engine'];
-
       const missingLabels: string[] = [];
       for (const label of expectedRadioLabels) {
         if (!pageText.includes(label)) {
           missingLabels.push(label);
         }
       }
-
       if (missingLabels.length > 0) {
-        throw new Error(
-          `Missing logic app type radio labels: ${JSON.stringify(missingLabels)}\n` +
-            `Page text (first 800 chars): ${pageText.substring(0, 800)}`
-        );
+        throw new Error(`Missing radio labels: ${JSON.stringify(missingLabels)}`);
       }
-
-      // Also verify the radio inputs exist
       const radios = await driver.findElements(By.css('input[type="radio"]'));
-      console.log(`[testRadioOptions] Found ${radios.length} radio inputs`);
       if (radios.length < 3) {
-        throw new Error(`Expected at least 3 radio inputs for logic app types, found ${radios.length}`);
+        throw new Error(`Expected at least 3 radio inputs, found ${radios.length}`);
       }
+      console.log('[formElements] 3 radio options present ✓');
 
-      console.log('[testRadioOptions] PASSED: All 3 logic app type radio options present');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Logic app type radio descriptions are present
-    // -----------------------------------------------------------------------
-    it('should display descriptions for each logic app type', async () => {
-      const pageText = await driver.findElement(By.css('body')).getText();
-
-      // Each radio option should have a description beneath it.
-      // The exact text comes from intl messages, but we can check for keywords.
-      const descriptionKeywords = [
-        // Standard description should mention standard/workflows
+      // 6. Radio description keywords
+      const descKeywords = [
         { label: 'Standard', keywords: ['workflow'] },
-        // Custom code description should mention custom code/functions
         { label: 'Custom code', keywords: ['custom', 'code'] },
-        // Rules engine description should mention rules
         { label: 'Rules engine', keywords: ['rule'] },
       ];
-
-      const lowerPageText = pageText.toLowerCase();
-      for (const desc of descriptionKeywords) {
+      for (const desc of descKeywords) {
         const allFound = desc.keywords.every((kw) => lowerPageText.includes(kw));
         if (allFound) {
-          console.log(`[testRadioDesc] "${desc.label}" description keywords found`);
+          console.log(`[formElements] "${desc.label}" description keywords found ✓`);
         } else {
-          console.log(`[testRadioDesc] Warning: Description keywords for "${desc.label}" not all found: ${JSON.stringify(desc.keywords)}`);
+          console.log(`[formElements] Warning: "${desc.label}" description keywords not all found`);
         }
       }
 
-      console.log('[testRadioDesc] PASSED: Logic app type descriptions verified');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Browse button exists for workspace parent folder path
-    // -----------------------------------------------------------------------
-    it('should display a Browse button for workspace parent folder path', async () => {
+      // 7. Browse button present
       const browseButtons = await driver.findElements(By.xpath("//button[contains(text(), 'Browse')]"));
-
       if (browseButtons.length === 0) {
-        throw new Error('Browse button not found for workspace parent folder path');
+        throw new Error('Browse button not found');
       }
-
-      console.log(`[testBrowse] Found ${browseButtons.length} Browse button(s)`);
-
-      // Verify the button is displayed
-      const isDisplayed = await browseButtons[0].isDisplayed();
-      if (!isDisplayed) {
+      if (!(await browseButtons[0].isDisplayed())) {
         throw new Error('Browse button is not visible');
       }
+      console.log('[formElements] Browse button visible ✓');
 
-      console.log('[testBrowse] PASSED: Browse button is visible');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Section headers are present on step 0
-    // -----------------------------------------------------------------------
-    it('should display all section headers on project setup step', async () => {
-      const pageText = await driver.findElement(By.css('body')).getText();
-      const lowerPageText = pageText.toLowerCase();
-
-      // Expected section-related text (actual headers may vary slightly)
+      // 8. Section headers
       const expectedSections = [
         { name: 'Workspace/Project setup', patterns: ['workspace parent folder path', 'workspace name'] },
         { name: 'Logic App Details', patterns: ['logic app name'] },
         { name: 'Workflow Configuration', patterns: ['workflow name', 'workflow type'] },
       ];
-
       for (const section of expectedSections) {
         const found = section.patterns.some((p) => lowerPageText.includes(p));
         if (!found) {
-          throw new Error(
-            `Section "${section.name}" not found. Expected patterns: ${JSON.stringify(section.patterns)}\n` +
-              `Page text (first 500 chars): ${pageText.substring(0, 500)}`
-          );
+          throw new Error(`Section "${section.name}" not found. Patterns: ${JSON.stringify(section.patterns)}`);
         }
-        console.log(`[testSections] Section "${section.name}" found`);
       }
+      console.log('[formElements] Section headers present ✓');
 
-      console.log('[testSections] PASSED: All section headers present');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Required field asterisks/indicators are present
-    // -----------------------------------------------------------------------
-    it('should mark required fields with required indicator', async () => {
-      // Fluent UI required fields have aria-required="true" or a "*" indicator
+      // 9. Required field indicators
       const requiredInputs = await driver.findElements(By.css('input[required], input[aria-required="true"]'));
       const requiredLabels = await driver.findElements(By.css('label[class*="required"], span[class*="required"]'));
-
-      console.log(`[testRequired] Found ${requiredInputs.length} required inputs, ${requiredLabels.length} required labels`);
-
-      // We expect at minimum: path, workspace name, logic app name, workflow name = 4 required inputs
-      // The exact count depends on whether Fluent UI uses required attr or aria-required
       if (requiredInputs.length === 0 && requiredLabels.length === 0) {
-        // Check for asterisks in label text
         const labels = await driver.findElements(By.css('label'));
         let asteriskCount = 0;
         for (const label of labels) {
@@ -1746,61 +1666,49 @@ describe('Create Workspace Tests', function () {
             asteriskCount++;
           }
         }
-        console.log(`[testRequired] Found ${asteriskCount} labels with asterisks`);
         if (asteriskCount === 0) {
-          console.log('[testRequired] Warning: No required indicators found — this may be a Fluent UI rendering difference');
+          console.log('[formElements] Warning: No required indicators found — may be a Fluent UI rendering difference');
         }
       }
+      console.log('[formElements] Required indicators checked ✓');
 
-      console.log('[testRequired] PASSED: Required field indicators checked');
-    });
-
-    // -----------------------------------------------------------------------
-    // Test: Step navigation indicators are present (Step 1 / Step 2 labels)
-    // -----------------------------------------------------------------------
-    it('should display step navigation with correct labels', async () => {
-      const pageText = await driver.findElement(By.css('body')).getText();
-      const lowerPageText = pageText.toLowerCase();
-
-      // Should have "Project setup" and "Review + Create" step labels
-      const hasProjectSetup = lowerPageText.includes('project setup');
+      // 10. Step navigation labels
       const hasReviewCreate = lowerPageText.includes('review') && (lowerPageText.includes('create') || lowerPageText.includes('+'));
-
-      console.log(`[testStepNav] Has "Project setup": ${hasProjectSetup}`);
-      console.log(`[testStepNav] Has "Review + Create": ${hasReviewCreate}`);
-
-      if (!hasProjectSetup) {
-        console.log(`[testStepNav] Warning: "Project setup" step label not found`);
+      if (!hasProjectSetup && !hasReviewCreate) {
+        console.log('[formElements] Warning: step navigation labels not found');
       }
-      if (!hasReviewCreate) {
-        console.log(`[testStepNav] Warning: "Review + Create" step label not found`);
-      }
+      console.log('[formElements] Step navigation checked ✓');
 
-      // At minimum the step indicator text should exist
-      const hasStepIndicator = pageText.includes('Step 1 of 2') || pageText.includes('step 1 of 2');
-      if (!hasProjectSetup && !hasStepIndicator) {
-        throw new Error('Neither step navigation labels nor step indicator found on the page');
+      // 11. Workflow type dropdown options
+      const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
+      await wfTypeDropdown.click();
+      await sleep(500);
+      const options = await driver.findElements(By.css('[role="option"]'));
+      const optionTexts: string[] = [];
+      for (const opt of options) {
+        optionTexts.push((await opt.getText()).trim());
       }
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+      await sleep(300);
+      const expectedOptions = ['Stateful', 'Stateless', 'Autonomous Agents', 'Conversational Agents'];
+      for (const expected of expectedOptions) {
+        if (!optionTexts.some((opt) => opt.includes(expected))) {
+          throw new Error(`Expected dropdown option "${expected}" not found. Available: ${JSON.stringify(optionTexts)}`);
+        }
+      }
+      console.log(`[formElements] Workflow type dropdown options: ${JSON.stringify(optionTexts)} ✓`);
 
-      console.log('[testStepNav] PASSED: Step navigation labels verified');
+      await captureScreenshot(driver, 'formElements-passed');
+      console.log('[formElements] PASSED: All form elements verified');
     });
-  }); // end read-only describe
 
-  // =========================================================================
-  // FORM VALIDATION TESTS — Share a single webview instance.
-  // Validation can be tested by typing invalid values and checking error
-  // messages without needing to close/reopen the webview between tests.
-  // =========================================================================
-  describe('Form validation tests (shared webview)', function () {
-    this.timeout(TEST_TIMEOUT);
+    // =========================================================================
+    // FORM VALIDATION TESTS — Reuses the same shared webview. No
+    // close/reopen cycles needed. Helper functions scoped within this block.
+    // =========================================================================
 
-    let webview: WebView;
+    // --- Validation helper functions ---
 
-    /**
-     * Helper: find a Fluent UI validation message on the page.
-     * Fluent UI v9 Field renders validation messages in a span/div near the input.
-     * We search for any element whose text content contains the expected message.
-     */
     async function findValidationMessage(drv: WebDriver, expectedText: string, timeout = ELEMENT_TIMEOUT): Promise<WebElement> {
       const deadline = Date.now() + timeout;
       while (Date.now() < deadline) {
@@ -1822,9 +1730,6 @@ describe('Create Workspace Tests', function () {
       throw new Error(`Validation message not found: "${expectedText}" (waited ${timeout}ms)`);
     }
 
-    /**
-     * Helper: assert that the Next button is currently disabled.
-     */
     async function assertNextButtonDisabled(drv: WebDriver): Promise<void> {
       const timeout = 8_000;
       const deadline = Date.now() + timeout;
@@ -2030,44 +1935,6 @@ describe('Create Workspace Tests', function () {
       await sleep(TYPE_SETTLE);
     }
 
-    before(async function () {
-      this.timeout(120_000);
-      console.log('[validation] Opening shared webview...');
-      await selectCreateWorkspaceCommand(workbench);
-      webview = await switchToWebviewFrame(driver);
-      console.log('[validation] Shared webview ready');
-      await webview.switchBack();
-    });
-
-    beforeEach(async () => {
-      await webview.switchToFrame();
-      await sleep(500);
-    });
-
-    afterEach(async () => {
-      try {
-        await webview.switchBack();
-      } catch {
-        try {
-          await driver.switchTo().defaultContent();
-        } catch {
-          console.log('[validation:afterEach] Could not switch to defaultContent');
-        }
-      }
-    });
-
-    after(async () => {
-      try {
-        await driver.switchTo().defaultContent();
-        await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 10_000);
-        const editorView = new EditorView();
-        await editorView.closeAllEditors();
-      } catch {
-        console.log('[validation:after] Warning: could not close editors');
-      }
-      await sleep(1000);
-    });
-
     // -----------------------------------------------------------------------
     // Path validation
     // -----------------------------------------------------------------------
@@ -2093,6 +1960,7 @@ describe('Create Workspace Tests', function () {
       await assertNoValidationMessage(driver, 'not exist');
       console.log('[validPath] Validation error cleared for valid path');
 
+      await captureScreenshot(driver, 'validPath-passed');
       console.log('[validPath] PASSED');
     });
 
@@ -2115,6 +1983,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(pathInput, tempDir);
       await waitForPathValidation(driver);
 
+      await captureScreenshot(driver, 'validPathEmpty-passed');
       console.log('[validPathEmpty] PASSED');
     });
 
@@ -2138,6 +2007,7 @@ describe('Create Workspace Tests', function () {
       // Fix it
       await clearAndType(wsNameInput, uniqueName('validws'));
       await assertNoValidationMessage(driver, 'must start with a letter');
+      await captureScreenshot(driver, 'validWsNum-passed');
       console.log('[validWsNum] PASSED');
     });
 
@@ -2159,6 +2029,7 @@ describe('Create Workspace Tests', function () {
       // Restore valid value
       await clearAndType(wsNameInput, uniqueName('validws'));
 
+      await captureScreenshot(driver, 'validWsSpecial-passed');
       console.log('[validWsSpecial] PASSED');
     });
 
@@ -2182,6 +2053,7 @@ describe('Create Workspace Tests', function () {
       // Restore
       await clearAndType(wsNameInput, uniqueName('validws'));
 
+      await captureScreenshot(driver, 'validLeading-passed');
       console.log('[validLeading] PASSED');
     });
 
@@ -2200,6 +2072,7 @@ describe('Create Workspace Tests', function () {
       // Restore
       await clearAndType(wsNameInput, uniqueName('validws'));
 
+      await captureScreenshot(driver, 'validWsEmpty-passed');
       console.log('[validWsEmpty] PASSED');
     });
 
@@ -2218,6 +2091,7 @@ describe('Create Workspace Tests', function () {
       // Fix it
       await clearAndType(appNameInput, uniqueName('validapp'));
       await assertNoValidationMessage(driver, 'Logic app name must start');
+      await captureScreenshot(driver, 'validAppName-passed');
       console.log('[validAppName] PASSED');
     });
 
@@ -2236,6 +2110,7 @@ describe('Create Workspace Tests', function () {
       // Restore
       await clearAndType(appNameInput, uniqueName('validapp'));
 
+      await captureScreenshot(driver, 'validAppEmpty-passed');
       console.log('[validAppEmpty] PASSED');
     });
 
@@ -2254,6 +2129,7 @@ describe('Create Workspace Tests', function () {
       // Fix it
       await clearAndType(wfNameInput, uniqueName('validwf'));
       await assertNoValidationMessage(driver, 'Workflow name must start');
+      await captureScreenshot(driver, 'validWfName-passed');
       console.log('[validWfName] PASSED');
     });
 
@@ -2322,6 +2198,7 @@ describe('Create Workspace Tests', function () {
         throw new Error('Next button should be enabled when all fields are valid');
       }
       console.log('[validNext] Next enabled when all fields valid');
+      await captureScreenshot(driver, 'validNext-passed');
       console.log('[validNext] PASSED');
     });
 
@@ -2344,6 +2221,7 @@ describe('Create Workspace Tests', function () {
       if (!hasCustomCode) {
         throw new Error('Custom code configuration fields did not appear after selecting custom code type');
       }
+      await captureScreenshot(driver, 'ccSwitch-passed');
       console.log('[ccSwitch] PASSED: Custom code fields visible');
     });
 
@@ -2370,6 +2248,7 @@ describe('Create Workspace Tests', function () {
 
       // Fix it
       await clearAndType(folderInput, uniqueName('validfolder'));
+      await captureScreenshot(driver, 'validCcFolder-passed');
       console.log('[validCcFolder] PASSED');
     });
 
@@ -2399,6 +2278,7 @@ describe('Create Workspace Tests', function () {
 
       // Fix it
       await clearAndType(folderInput, uniqueName('validfolder'));
+      await captureScreenshot(driver, 'validCcFolderSame-passed');
       console.log('[validCcFolderSame] PASSED');
     });
 
@@ -2428,6 +2308,7 @@ describe('Create Workspace Tests', function () {
 
       // Restore
       await clearAndType(folderInput, uniqueName('validfolder'));
+      await captureScreenshot(driver, 'validCcFolderEmpty-passed');
       console.log('[validCcFolderEmpty] PASSED');
     });
 
@@ -2464,6 +2345,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validCcNs] Next button disabled for invalid namespace "Invalid-Namespace"');
 
       await clearAndType(nsInput, 'Valid.Namespace');
+      await captureScreenshot(driver, 'validCcNs-passed');
       console.log('[validCcNs] PASSED');
     });
 
@@ -2490,6 +2372,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validCcNsEmpty] Next button disabled for empty namespace');
 
       await clearAndType(nsInput, 'ValidNamespace');
+      await captureScreenshot(driver, 'validCcNsEmpty-passed');
       console.log('[validCcNsEmpty] PASSED');
     });
 
@@ -2526,6 +2409,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validCcFnName] Next button disabled for invalid function name "999func"');
 
       await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validCcFnName-passed');
       console.log('[validCcFnName] PASSED');
     });
 
@@ -2563,6 +2447,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validCcFnEmpty] Next button disabled for empty function name');
 
       await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validCcFnEmpty-passed');
       console.log('[validCcFnEmpty] PASSED');
     });
 
@@ -2583,6 +2468,7 @@ describe('Create Workspace Tests', function () {
       if (!hasRulesEngine) {
         throw new Error('Rules engine configuration fields did not appear after selecting rules engine type');
       }
+      await captureScreenshot(driver, 'reSwitch-passed');
       console.log('[reSwitch] PASSED: Rules engine fields visible');
     });
 
@@ -2609,6 +2495,7 @@ describe('Create Workspace Tests', function () {
 
       // Fix it
       await clearAndType(folderInput, uniqueName('validrefolder'));
+      await captureScreenshot(driver, 'validReFolder-passed');
       console.log('[validReFolder] PASSED');
     });
 
@@ -2637,6 +2524,7 @@ describe('Create Workspace Tests', function () {
       await assertNextButtonDisabled(driver);
 
       await clearAndType(folderInput, uniqueName('validrefolder'));
+      await captureScreenshot(driver, 'validReFolderSame-passed');
       console.log('[validReFolderSame] PASSED');
     });
 
@@ -2665,6 +2553,7 @@ describe('Create Workspace Tests', function () {
       await assertNextButtonDisabled(driver);
 
       await clearAndType(folderInput, uniqueName('validrefolder'));
+      await captureScreenshot(driver, 'validReFolderEmpty-passed');
       console.log('[validReFolderEmpty] PASSED');
     });
 
@@ -2686,6 +2575,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validReNs] Next button disabled for invalid namespace with hyphen');
 
       await clearAndType(nsInput, 'Valid.Namespace');
+      await captureScreenshot(driver, 'validReNs-passed');
       console.log('[validReNs] PASSED');
     });
 
@@ -2705,6 +2595,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validReNsEmpty] Next button disabled for empty namespace');
 
       await clearAndType(nsInput, 'ValidNamespace');
+      await captureScreenshot(driver, 'validReNsEmpty-passed');
       console.log('[validReNsEmpty] PASSED');
     });
 
@@ -2722,6 +2613,7 @@ describe('Create Workspace Tests', function () {
       console.log('[validReFnName] Next button disabled for invalid function name');
 
       await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validReFnName-passed');
       console.log('[validReFnName] PASSED');
     });
 
@@ -2741,76 +2633,43 @@ describe('Create Workspace Tests', function () {
       console.log('[validReFnEmpty] Next button disabled for empty function name');
 
       await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validReFnEmpty-passed');
       console.log('[validReFnEmpty] PASSED');
     });
-  }); // end form validation (shared webview) describe
 
-  // =========================================================================
-  // FORM INTERACTION TESTS — Share a single webview instance.
-  // Uses Back button to return from Review step instead of closing the
-  // webview. Only creation tests (below) are destructive.
-  //
-  // The webview is opened once in before() and closed once in after().
-  // Each test builds on the shared form state, navigating to Review to
-  // verify entered data, then pressing Back to continue testing.
-  // =========================================================================
-  describe('Form interaction tests (shared webview)', function () {
-    this.timeout(TEST_TIMEOUT);
+    // =========================================================================
+    // FORM INTERACTION TESTS — Reuses the same shared webview.
+    // Each test builds on the shared form state, navigating to Review to
+    // verify entered data, then pressing Back to continue testing.
+    // =========================================================================
 
-    let webview: WebView;
+    // --- Interaction helper functions ---
+    // (findValidationMessage and assertNextButtonDisabled already defined above)
 
-    /**
-     * Helper: find a Fluent UI validation message on the page.
-     */
-    async function findValidationMsg(drv: WebDriver, expectedText: string, timeout = ELEMENT_TIMEOUT): Promise<WebElement> {
-      const deadline = Date.now() + timeout;
-      while (Date.now() < deadline) {
-        const candidates = await drv.findElements(By.xpath(`//*[contains(text(), '${expectedText.replace(/'/g, "\\'")}')]`));
-        for (const el of candidates) {
-          try {
-            if (await el.isDisplayed()) {
-              const text = await el.getText();
-              if (text.includes(expectedText)) {
-                return el;
-              }
-            }
-          } catch {
-            /* stale element */
-          }
-        }
-        await sleep(POLL_INTERVAL);
-      }
-      throw new Error(`Validation message not found: "${expectedText}" (waited ${timeout}ms)`);
+    function assertNextDisabled(drv: WebDriver): Promise<void> {
+      // Thin wrapper — reuses assertNextButtonDisabled with same behavior
+      return assertNextButtonDisabled(drv);
     }
 
-    /**
-     * Helper: assert that the Next button is currently disabled.
-     */
-    async function assertNextDisabled(drv: WebDriver): Promise<void> {
-      const nextButtons = await drv.findElements(By.xpath("//button[contains(text(), 'Next')]"));
-      if (nextButtons.length === 0) {
-        throw new Error('Next button not found');
-      }
-      const disabled = await nextButtons[0].getAttribute('disabled');
-      const ariaDisabled = await nextButtons[0].getAttribute('aria-disabled');
-      const isDisabled = disabled === 'true' || disabled === '' || ariaDisabled === 'true';
-      if (!isDisabled) {
-        throw new Error('Expected Next button to be disabled, but it is enabled');
-      }
-    }
-
-    /**
-     * Helper: navigate to review and verify values, then come back.
-     * Returns the full review page text for additional assertions.
-     */
     async function goToReviewAndBack(drv: WebDriver, expectedValues: { label: string; value: string }[]): Promise<string> {
       // Click Next to go to review
       const nextBtn = await waitForNextButton(drv);
       await nextBtn.click();
-      await sleep(2000);
 
-      // Get review text
-      const reviewText = await drv.findElement(By.css('body')).getText();
+      // Poll for review step content instead of static sleep
+      const reviewDeadline = Date.now() + 5000;
+      let reviewText = '';
+      while (Date.now() < reviewDeadline) {
+        reviewText = await drv.findElement(By.css('body')).getText();
+        const lower = reviewText.toLowerCase();
+        if (lower.includes('create workspace') && (lower.includes('review') || lower.includes('step 2'))) {
+          break;
+        }
+        await sleep(300);
+      }
+      if (!reviewText) {
+        reviewText = await drv.findElement(By.css('body')).getText();
+      }
       console.log(`[review] Review text (first 1500 chars): ${reviewText.substring(0, 1500)}`);
 
       // Verify all expected values are present
@@ -2830,23 +2689,26 @@ describe('Create Workspace Tests', function () {
       // Click Back to return to the form
       const backBtn = await findButtonByText(drv, 'Back');
       await backBtn.click();
-      await sleep(2000);
+
+      // Poll for form step content instead of static sleep
+      const formDeadline = Date.now() + 5000;
+      while (Date.now() < formDeadline) {
+        const formText = (await drv.findElement(By.css('body')).getText()).toLowerCase();
+        if (formText.includes('workspace parent folder path') || formText.includes('project setup')) {
+          break;
+        }
+        await sleep(300);
+      }
 
       return reviewText;
     }
 
-    /**
-     * Helper: clear a field by selecting all text and deleting it.
-     */
     async function clearFormField(element: WebElement): Promise<void> {
       await element.sendKeys(Key.chord(Key.CONTROL, 'a'));
       await element.sendKeys(Key.BACK_SPACE);
       await sleep(TYPE_SETTLE);
     }
 
-    /**
-     * Helper: find function name input (not namespace).
-     */
     async function findFunctionNameInput(drv: WebDriver): Promise<WebElement> {
       const fnLabels = await drv.findElements(
         By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
@@ -2868,9 +2730,6 @@ describe('Create Workspace Tests', function () {
       return findInputByLabel(drv, 'Function name');
     }
 
-    /**
-     * Helper: find folder name input (custom code or rules engine).
-     */
     async function findFolderNameInput(drv: WebDriver, type: 'customCode' | 'rulesEngine'): Promise<WebElement> {
       const labels =
         type === 'customCode'
@@ -2886,9 +2745,6 @@ describe('Create Workspace Tests', function () {
       throw new Error(`Could not find ${type} folder name input`);
     }
 
-    /**
-     * Helper: find function namespace input.
-     */
     async function findNamespaceInput(drv: WebDriver): Promise<WebElement> {
       for (const label of ['Function namespace', 'Namespace', 'namespace']) {
         try {
@@ -2899,44 +2755,6 @@ describe('Create Workspace Tests', function () {
       }
       throw new Error('Could not find function namespace input');
     }
-
-    before(async function () {
-      this.timeout(120_000);
-      console.log('[formInteraction] Opening shared webview...');
-      await selectCreateWorkspaceCommand(workbench);
-      webview = await switchToWebviewFrame(driver);
-      console.log('[formInteraction] Shared webview ready');
-      await webview.switchBack();
-    });
-
-    beforeEach(async () => {
-      await webview.switchToFrame();
-      await sleep(500);
-    });
-
-    afterEach(async () => {
-      try {
-        await webview.switchBack();
-      } catch {
-        try {
-          await driver.switchTo().defaultContent();
-        } catch {
-          console.log('[formInteraction:afterEach] Could not switch to defaultContent');
-        }
-      }
-    });
-
-    after(async () => {
-      try {
-        await driver.switchTo().defaultContent();
-        await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 10_000);
-        const editorView = new EditorView();
-        await editorView.closeAllEditors();
-      } catch {
-        console.log('[formInteraction:after] Warning: could not close editors');
-      }
-      await sleep(1000);
-    });
 
     // -----------------------------------------------------------------------
     // Test: Fill standard fields as Stateful, verify review, then Back
@@ -2983,6 +2801,7 @@ describe('Create Workspace Tests', function () {
         throw new Error(`Workflow name not preserved: expected "${wfName}", got "${wfValue}"`);
       }
 
+      await captureScreenshot(driver, 'stfulReview-passed');
       console.log('[stfulReview] PASSED: Stateful review verified, values preserved after Back');
     });
 
@@ -3016,6 +2835,7 @@ describe('Create Workspace Tests', function () {
       // Navigate to review and verify Stateless appears
       await goToReviewAndBack(driver, [{ label: 'Workflow type', value: 'Stateless' }]);
 
+      await captureScreenshot(driver, 'slReview-passed');
       console.log('[slReview] PASSED: Stateless workflow type verified in description and review');
     });
 
@@ -3048,6 +2868,7 @@ describe('Create Workspace Tests', function () {
         console.log('[aaReview] Autonomous agent type confirmed in review');
       }
 
+      await captureScreenshot(driver, 'aaReview-passed');
       console.log('[aaReview] PASSED: Autonomous Agents verified in description and review');
     });
 
@@ -3084,6 +2905,7 @@ describe('Create Workspace Tests', function () {
       await selectDropdownOption(driver, wfTypeDropdown2, 'Stateful');
       await sleep(500);
 
+      await captureScreenshot(driver, 'caReview-passed');
       console.log('[caReview] PASSED: Conversational Agents verified in description and review');
     });
 
@@ -3091,7 +2913,7 @@ describe('Create Workspace Tests', function () {
     // Test: Switch to Custom Code type, verify fields appear, test each
     // field's validation errors, fill valid values, verify review, Back
     // -----------------------------------------------------------------------
-    it('should switch to custom code, validate each field with errors, verify review, and navigate back', async function () {
+    it('should switch to custom code, fill valid values, verify review, and navigate back', async function () {
       this.timeout(180_000);
 
       console.log('[ccFields] Selecting "Logic app with custom code"...');
@@ -3108,7 +2930,7 @@ describe('Create Workspace Tests', function () {
       }
       console.log('[ccFields] Custom code configuration fields visible');
 
-      // --- .NET Version dropdown: verify options ---
+      // --- .NET Version dropdown: verify options and select .NET 8 ---
       let dotNetDropdown: WebElement | null = null;
       try {
         dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
@@ -3146,77 +2968,23 @@ describe('Create Workspace Tests', function () {
       if (!optionTexts.some((o) => o.includes('.NET 8'))) {
         throw new Error(`.NET 8 not found in dropdown. Available: ${JSON.stringify(optionTexts)}`);
       }
-      if (process.platform === 'win32' && !optionTexts.some((o) => o.includes('.NET Framework'))) {
-        console.log('[ccFields] Warning: .NET Framework not found on Windows');
-      }
 
-      // Select .NET 8
       await selectDropdownOption(driver, dotNetDropdown, '.NET 8');
       await sleep(500);
       console.log('[ccFields] Selected .NET 8');
 
-      // --- Folder name: test validation errors ---
+      // --- Fill valid custom code field values (validation already tested above) ---
       const folderInput = await findFolderNameInput(driver, 'customCode');
-
-      // Invalid: starts with number
-      await clearAndType(folderInput, '123folder');
-      await findValidationMsg(driver, 'must start with a letter and can only contain letters, digits');
-      console.log('[ccFields] Folder name error for "123folder" ✓');
-
-      // Invalid: same as logic app name
-      const appNameInput = await findInputByLabel(driver, 'Logic app name');
-      const currentAppName = await appNameInput.getAttribute('value');
-      await clearAndType(folderInput, currentAppName);
-      await findValidationMsg(driver, 'cannot be the same as the logic app name');
-      console.log(`[ccFields] Folder name error for matching app name "${currentAppName}" ✓`);
-
-      // Invalid: empty
-      await clearAndType(folderInput, 'temp');
-      await clearFormField(folderInput);
-      await findValidationMsg(driver, 'cannot be empty');
-      console.log('[ccFields] Folder name error for empty ✓');
-
-      // Fix with valid folder name
       const ccFolderName = uniqueName('ccfolder');
       await clearAndType(folderInput, ccFolderName);
       console.log(`[ccFields] Folder name set to "${ccFolderName}"`);
 
-      // --- Function namespace: test validation errors ---
       const nsInput = await findNamespaceInput(driver);
-
-      // Invalid: starts with number
-      await clearAndType(nsInput, '123BadNs');
-      await sleep(TYPE_SETTLE);
-      await assertNextDisabled(driver);
-      console.log('[ccFields] Namespace error for "123BadNs" (Next disabled) ✓');
-
-      // Invalid: empty
-      await clearAndType(nsInput, 'Temp');
-      await clearFormField(nsInput);
-      await assertNextDisabled(driver);
-      console.log('[ccFields] Namespace error for empty (Next disabled) ✓');
-
-      // Fix with valid namespace
       const ccNamespace = 'ValidCcNamespace';
       await clearAndType(nsInput, ccNamespace);
       console.log(`[ccFields] Namespace set to "${ccNamespace}"`);
 
-      // --- Function name: test validation errors ---
       const fnInput = await findFunctionNameInput(driver);
-
-      // Invalid: starts with number
-      await clearAndType(fnInput, '999func');
-      await sleep(TYPE_SETTLE);
-      await assertNextDisabled(driver);
-      console.log('[ccFields] Function name error for "999func" (Next disabled) ✓');
-
-      // Invalid: empty
-      await clearAndType(fnInput, 'temp');
-      await clearFormField(fnInput);
-      await assertNextDisabled(driver);
-      console.log('[ccFields] Function name error for empty (Next disabled) ✓');
-
-      // Fix with valid function name
       const ccFnName = uniqueName('ccfunc');
       await clearAndType(fnInput, ccFnName);
       console.log(`[ccFields] Function name set to "${ccFnName}"`);
@@ -3228,24 +2996,22 @@ describe('Create Workspace Tests', function () {
         { label: 'Function name', value: ccFnName },
       ]);
 
-      // Verify the "Custom Code Configuration" section header in review
       if (reviewText.toLowerCase().includes('custom code')) {
         console.log('[ccFields] "Custom Code Configuration" section found in review ✓');
       }
-      // Verify .NET 8 is shown in review
       if (reviewText.toLowerCase().includes('.net 8') || reviewText.toLowerCase().includes('net8')) {
         console.log('[ccFields] .NET 8 framework shown in review ✓');
       }
 
-      console.log('[ccFields] PASSED: Custom code fields validated, review verified, Back navigation works');
+      await captureScreenshot(driver, 'ccFields-passed');
+      console.log('[ccFields] PASSED: Custom code fields filled, review verified');
     });
 
     // -----------------------------------------------------------------------
-    // Test: Switch to Rules Engine type, verify correct fields appear
-    // (no .NET dropdown), test each field's validation errors, fill
-    // valid values, verify review, Back
+    // Test: Switch to Rules Engine type, verify fields, fill valid values,
+    // verify review, Back (validation already tested in validation section)
     // -----------------------------------------------------------------------
-    it('should switch to rules engine, validate each field with errors, verify review, and navigate back', async function () {
+    it('should switch to rules engine, fill valid values, verify review, and navigate back', async function () {
       this.timeout(180_000);
 
       console.log('[reFields] Selecting "Logic app with rules engine"...');
@@ -3260,9 +3026,7 @@ describe('Create Workspace Tests', function () {
       }
       console.log('[reFields] Rules engine configuration fields visible');
 
-      // --- Verify NO .NET Version dropdown (rules engine uses net472 always) ---
-      const comboboxes = await driver.findElements(By.css('button[role="combobox"]'));
-      // The only combobox should be the workflow type dropdown, NOT a .NET version dropdown
+      // --- Verify NO .NET Version dropdown ---
       const dotNetLabels = await driver.findElements(By.xpath("//label[contains(text(), '.NET Version')]"));
       if (dotNetLabels.length > 0) {
         console.log('[reFields] Warning: .NET Version label still visible in rules engine mode');
@@ -3270,68 +3034,18 @@ describe('Create Workspace Tests', function () {
         console.log('[reFields] Confirmed: No .NET Version dropdown in rules engine mode ✓');
       }
 
-      // --- Folder name: test validation errors ---
+      // --- Fill valid rules engine field values (validation already tested above) ---
       const folderInput = await findFolderNameInput(driver, 'rulesEngine');
-
-      // Invalid: starts with number
-      await clearAndType(folderInput, '123refolder');
-      await findValidationMsg(driver, 'must start with a letter and can only contain letters, digits');
-      console.log('[reFields] Folder name error for "123refolder" ✓');
-
-      // Invalid: same as logic app name
-      const appNameInput = await findInputByLabel(driver, 'Logic app name');
-      const currentAppName = await appNameInput.getAttribute('value');
-      await clearAndType(folderInput, currentAppName);
-      await findValidationMsg(driver, 'cannot be the same as the logic app name');
-      console.log(`[reFields] Folder name error for matching app name "${currentAppName}" ✓`);
-
-      // Invalid: empty
-      await clearAndType(folderInput, 'temp');
-      await clearFormField(folderInput);
-      await findValidationMsg(driver, 'cannot be empty');
-      console.log('[reFields] Folder name error for empty ✓');
-
-      // Fix with valid folder name
       const reFolderName = uniqueName('refolder');
       await clearAndType(folderInput, reFolderName);
       console.log(`[reFields] Folder name set to "${reFolderName}"`);
 
-      // --- Function namespace: test validation errors ---
       const nsInput = await findNamespaceInput(driver);
-
-      // Invalid: starts with number
-      await clearAndType(nsInput, '123BadNs');
-      await sleep(TYPE_SETTLE);
-      await assertNextDisabled(driver);
-      console.log('[reFields] Namespace error for "123BadNs" (Next disabled) ✓');
-
-      // Invalid: empty
-      await clearAndType(nsInput, 'Temp');
-      await clearFormField(nsInput);
-      await assertNextDisabled(driver);
-      console.log('[reFields] Namespace error for empty (Next disabled) ✓');
-
-      // Fix with valid namespace
       const reNamespace = 'RulesEngineNs';
       await clearAndType(nsInput, reNamespace);
       console.log(`[reFields] Namespace set to "${reNamespace}"`);
 
-      // --- Function name: test validation errors ---
       const fnInput = await findFunctionNameInput(driver);
-
-      // Invalid: starts with number
-      await clearAndType(fnInput, '999rulesfn');
-      await sleep(TYPE_SETTLE);
-      await assertNextDisabled(driver);
-      console.log('[reFields] Function name error for "999rulesfn" (Next disabled) ✓');
-
-      // Invalid: empty
-      await clearAndType(fnInput, 'temp');
-      await clearFormField(fnInput);
-      await assertNextDisabled(driver);
-      console.log('[reFields] Function name error for empty (Next disabled) ✓');
-
-      // Fix with valid function name
       const reFnName = uniqueName('rulesfunc');
       await clearAndType(fnInput, reFnName);
       console.log(`[reFields] Function name set to "${reFnName}"`);
@@ -3343,12 +3057,12 @@ describe('Create Workspace Tests', function () {
         { label: 'Function name', value: reFnName },
       ]);
 
-      // Verify the "Function Configuration" section header in review
       if (reviewText.toLowerCase().includes('function configuration') || reviewText.toLowerCase().includes('rules engine')) {
         console.log('[reFields] "Function Configuration" / "Rules Engine" section found in review ✓');
       }
 
-      console.log('[reFields] PASSED: Rules engine fields validated, review verified, Back navigation works');
+      await captureScreenshot(driver, 'reFields-passed');
+      console.log('[reFields] PASSED: Rules engine fields filled, review verified');
     });
 
     // -----------------------------------------------------------------------
@@ -3437,9 +3151,10 @@ describe('Create Workspace Tests', function () {
         console.log('[stdComprehensive] No custom code / rules engine sections in Standard review ✓');
       }
 
+      await captureScreenshot(driver, 'stdComprehensive-passed');
       console.log('[stdComprehensive] PASSED: Standard comprehensive review verified');
     });
-  }); // end form interaction describe
+  }); // end pre-creation webview tests (single shared webview)
 
   // =========================================================================
   // CREATION TESTS - These run last because vscode.openFolder may disrupt
@@ -3465,6 +3180,15 @@ describe('Create Workspace Tests', function () {
         await driver.switchTo().defaultContent();
       } catch {
         console.log('[creation:afterEach] Could not switch to defaultContent');
+      }
+      // Aggressively dismiss all notifications that accumulated during workspace creation
+      try {
+        await dismissNotifications(driver);
+        await driver.executeScript(`
+          document.querySelectorAll('.notification-toast-container, .notifications-toasts').forEach(el => el.remove());
+        `);
+      } catch {
+        /* ignore */
       }
       try {
         await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 10_000);
@@ -3561,6 +3285,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createStandard-passed');
       console.log('[createStandard] PASSED: Workspace created and verified on disk');
     });
 
@@ -3705,6 +3430,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createCustomCode-passed');
       console.log('[createCustomCode] PASSED: Custom code workspace created and verified on disk');
     });
 
@@ -3774,6 +3500,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createStateless-passed');
       console.log('[createStateless] PASSED: Stateless workspace created and verified on disk');
     });
 
@@ -3845,6 +3572,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createAutonomousAgent-passed');
       console.log('[createAutonomousAgent] PASSED: Autonomous Agents workspace created and verified');
     });
 
@@ -3916,6 +3644,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createConversationalAgent-passed');
       console.log('[createConversationalAgent] PASSED: Conversational Agents workspace created and verified');
     });
 
@@ -4101,6 +3830,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createRulesEngine-passed');
       console.log('[createRulesEngine] PASSED: Rules engine workspace created and verified on disk');
     });
 
@@ -4182,6 +3912,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createCcStateless-passed');
       console.log('[createCcStateless] PASSED');
     });
 
@@ -4256,6 +3987,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createCcAgentic-passed');
       console.log('[createCcAgentic] PASSED');
     });
 
@@ -4330,6 +4062,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createCcConvAgent-passed');
       console.log('[createCcConvAgent] PASSED');
     });
 
@@ -4452,6 +4185,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createReStateless-passed');
       console.log('[createReStateless] PASSED');
     });
 
@@ -4573,6 +4307,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createReAgentic-passed');
       console.log('[createReAgentic] PASSED');
     });
 
@@ -4694,6 +4429,7 @@ describe('Create Workspace Tests', function () {
         })
       );
 
+      await captureScreenshot(driver, 'createReConvAgent-passed');
       console.log('[createReConvAgent] PASSED');
     });
   }); // end creation describe
