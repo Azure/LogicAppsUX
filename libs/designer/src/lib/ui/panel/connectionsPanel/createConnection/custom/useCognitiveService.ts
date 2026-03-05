@@ -2,6 +2,7 @@ import type { Connection, FoundryAgent, FoundryModel } from '@microsoft/logic-ap
 import {
   ApiManagementService,
   CognitiveServiceService,
+  ResourceService,
   foundryServiceConnectionRegex,
   buildProjectEndpointFromResourceId,
   listAllFoundryAgents,
@@ -173,6 +174,25 @@ export const useAllBuiltInRoleDefinitions = () => {
   );
 };
 
+export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = true) => {
+  return useQuery(
+    ['allCosmosDbServiceAccounts', { subscriptionId }],
+    async () => {
+      const allCosmosDbServiceAccounts = await ResourceService().listResources(
+        subscriptionId,
+        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | extend capabilities = todynamic(properties.capabilities) | mv-apply capabilities on ( mv-expand capabilities | extend capabilityName = tostring(capabilities.name) | where capabilityName =~ 'EnableNoSQLVectorSearch')`
+      );
+      return allCosmosDbServiceAccounts ?? [];
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId && enabled,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+    }
+  );
+};
 /**
  * Returns the Foundry project endpoint for a node's selected connection, or undefined
  * if the connection is not a Foundry connection.

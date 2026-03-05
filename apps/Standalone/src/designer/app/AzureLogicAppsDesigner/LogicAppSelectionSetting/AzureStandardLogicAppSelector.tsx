@@ -6,7 +6,7 @@ import type { WorkflowList, RunList } from '../Models/WorkflowListTypes';
 import { useFetchStandardApps } from '../Queries/FetchStandardApps';
 import { useFetchHybridApps } from '../Queries/FetchHybridApps';
 import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } from '@fluentui/react';
-import { ComboBox, Dropdown, Spinner, Stack } from '@fluentui/react';
+import { ComboBox, Dropdown, Spinner, Stack, SpinnerSize } from '@fluentui/react';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -147,8 +147,9 @@ export const AzureStandardLogicAppSelector = ({
         />
         {isAppsLoading ? (
           <Spinner
-            style={{ position: 'absolute', bottom: '6px', left: '8px' }}
+            style={{ position: 'absolute', bottom: '2px', left: '8px' }}
             labelPosition="right"
+            size={SpinnerSize.small}
             label="Loading Standard Logic Apps..."
           />
         ) : null}
