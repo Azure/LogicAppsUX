@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "test:e2e-cli:compile",
+      "group": "build",
+      "label": "npm: test:e2e-cli:compile",
+      "detail": "Compile e2e tests"
+    },
+    {
+      "type": "npm",
+      "script": "watch",
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "label": "npm: watch"
+    }
+  ]
+}

@@ -71,6 +71,18 @@ export const DotNetFrameworkStep: React.FC = () => {
     }
   }, [functionFolderName, validateFunctionFolderName]);
 
+  useEffect(() => {
+    if (functionNamespace) {
+      setFunctionNamespaceError(validateFunctionNamespace(functionNamespace, intlText));
+    }
+  }, [functionNamespace, intlText]);
+
+  useEffect(() => {
+    if (functionName) {
+      setFunctionNameError(validateFunctionName(functionName, intlText));
+    }
+  }, [functionName, intlText]);
+
   const handleFunctionNamespaceChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setFunctionNamespace(data.value));
     setFunctionNamespaceError(validateFunctionNamespace(data.value, intlText));
