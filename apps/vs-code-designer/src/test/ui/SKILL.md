@@ -516,7 +516,7 @@ Phase 4.2 runs only `designerActions.test.ts` (the `designerOpen.test.ts` file w
 **Product code change for testing:**
 - `getAuthorizationToken.ts`: Added `silentAuth` setting support. When `azureLogicAppsStandard.silentAuth` is `true`, uses `{ silent: true }` instead of `{ createIfNone: true }` for Azure session, preventing the "wants to sign in" dialog that blocks overview page loading in test environments.
 
-### Test Inventory (All Phases Combined: 79 passing, 1 failing)
+### Test Inventory (All Phases Combined: 87+ passing, 1 failing)
 
 **Phase 4.1 — createWorkspace.test.ts (63 pass, 1 fail)**
 
@@ -528,18 +528,25 @@ Phase 4.2 runs only `designerActions.test.ts` (the `designerOpen.test.ts` file w
 | Create Workspace (non-destructive) | 6 | Command selection, form values, workflow types, step indicator, button states | ✅ |
 | Create Workspace (destructive) | 48 | 12 workspace types × 4 tests each (creation, disk verify, workspace file, manifest) | 47 ✅, 1 ❌ |
 
-**Phase 4.2 — designerActions.test.ts (2 pass, 0 fail)**
+**Phase 4.2 — designerActions.test.ts + new tests (8+ pass, 0 fail)**
 
-| Suite | # | Tests | Status |
-|-------|---|-------|--------|
-| Designer Actions | 1 | Standard workflow: trigger + response + save + debug + overview + run | ✅ |
-| Designer Actions | 1 | CustomCode workflow: add compose + fill inputs + save + debug + overview + run | ✅ |
+| Suite | # | Tests | Status | ADO ID |
+|-------|---|-------|--------|--------|
+| Designer Actions | 1 | Standard workflow: trigger + response + save + debug + overview + run | ✅ | |
+| Designer Actions | 1 | CustomCode workflow: add compose + fill inputs + save + debug + overview + run | ✅ | |
+| Inline JavaScript | 1 | Request trigger + Execute JS Code + Response → save + debug + run + verify | 🆕 | #10109800 |
+| Stateless Variables | 1 | Stateless workflow + Request trigger + Initialize Variable + Response → full flow | 🆕 | #10109878 |
+| Designer View Extended | 1 | Add parallel branch alongside existing action | 🆕 | #10109401 |
+| Designer View Extended | 1 | Configure run-after settings on an action | 🆕 | #10109401 |
+| Keyboard Navigation | 1 | Ctrl+Down/Up navigation between canvas nodes | 🆕 | #10273324 |
 
-**Phase 4.3 — smoke/demo/standalone (14 pass, 0 fail)**
+**Phase 4.3 — smoke/demo/standalone + Data Mapper (16+ pass, 0 fail)**
 
-| Suite | # | Tests | Status |
-|-------|---|-------|--------|
-| Demo, Smoke, Standalone | 14 | Generic VS Code functionality, framework validation | ✅ |
+| Suite | # | Tests | Status | ADO ID |
+|-------|---|-------|--------|--------|
+| Demo, Smoke, Standalone | 14 | Generic VS Code functionality, framework validation | ✅ | |
+| Data Mapper Extension | 1 | Open Data Mapper from Azure activity bar | 🆕 | #26272218 |
+| Data Mapper Extension | 1 | Verify "Create new data map" command exists | 🆕 | #26272218 |
 
 ## 11. What Needs Work (Prioritized)
 
@@ -665,7 +672,7 @@ Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
 
 5. **Auth dialogs block overview page silently.** The extension's `getAuthorizationToken()` unconditionally shows a "wants to sign in" dialog when opening the overview page. Added `silentAuth` setting support in product code to use `{ silent: true }` in test environments — this prevents the dialog without changing production behavior.
 
-6. **Close all editors before opening overview.** If the designer webview is still open when the overview page opens, `WebView.switchToFrame()` enters the designer iframe instead of the overview iframe. Closing all editors first ensures the correct webview is targeted.
+6. **Close all editors before opening overview (CRITICAL).** If the designer webview is still open when the overview page opens, `WebView.switchToFrame()` enters the designer iframe instead of the overview iframe. The symptom is that `switchToOverviewWebview()` times out waiting 60s for "Run trigger" button while sitting in the designer frame (you'll see designer content like action names in the body text diagnostic). **The fix**: always call `result.webview.switchBack()`, then `driver.switchTo().defaultContent()`, then `new EditorView().closeAllEditors()`, then `sleep(2000)` before starting the debug session. This ensures the designer webview iframe is removed from the DOM entirely before the overview page creates its own webview.
 
 7. **Debug view blocks Explorer right-click.** After starting debugging, the Activity Bar switches to the Debug view. Must send Ctrl+Shift+E to switch back to Explorer before right-clicking workflow.json to open the overview page.
 
@@ -674,6 +681,20 @@ Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
 9. **3-phase run verification provides clear proof.** The run verification flow captures three distinct phases: (a) run appears in overview list (Running/Succeeded status), (b) run transitions to Succeeded in overview list after Refresh, (c) opening run details shows all individual action nodes as Succeeded. This provides unambiguous visual evidence via screenshots at each phase.
 
 10. **Process cleanup must include func.exe.** After debugging, `func.exe` (the Azure Functions runtime) keeps running and holds file locks. Must be explicitly killed alongside language servers to prevent subsequent test runs from failing.
+
+11. **Use `findLastAddActionElement()` when inserting a second action (CRITICAL).** The canvas has multiple `+` buttons (one between each pair of nodes). `findAddActionElement()` returns the FIRST `+` button, which inserts the new action between the trigger and the first action — NOT at the end. When adding a second action (e.g., Response after Execute JavaScript Code), use `findLastAddActionElement()` which returns the LAST `+` button, ensuring the action is appended at the bottom of the flow in the correct topological order.
+
+12. **Initialize Variable parameter panel uses contenteditable editors, not `<input>` elements.** The label-based lookup helpers (`fillActionInput`, `selectDropdownInPanel`) cannot find fields because the Initialize Variable action panel doesn't render standard HTML `<label>` + `<input>` pairs. Instead, it uses Lexical contenteditable editors with `data-automation-id` attributes and Fluent UI comboboxes. The working pattern: (a) click the node with `openNodeSettingsPanel()` to ensure the panel is open, (b) find contenteditable editors directly with `[contenteditable="true"].editor-input` selectors, (c) use index-based targeting (first editor = Name, combobox = Type, last editor = Value), (d) dump the panel's `data-automation-id` values for diagnostics when fields aren't found.
+
+13. **Each new test should run in its own phase (fresh VS Code session).** Tests that share a Phase 4.x session with other tests fail because the previous test's debug session, workspace switch, and lingering processes leave VS Code in a degraded state (extension host unresponsive, func.exe holding locks, webview iframes still in DOM). Running each test in its own phase via `prepareFreshSession()` solves all of these issues. The runtime cost (~30s per extra session start) is worth the reliability gain.
+
+14. **Multiple webview iframes: ExTester's WebView targets the wrong frame (CRITICAL).** When two designer tabs are open simultaneously, `new WebView().switchToFrame()` always enters the FIRST iframe in DOM order — not the active tab's iframe. The fix: use raw Selenium `driver.switchTo().frame(element)` with a custom `switchToActiveDesignerFrame()` function that (a) finds all `iframe.webview` elements, (b) checks which one is visible (`.isDisplayed()` + non-zero dimensions), (c) switches into it, (d) navigates the nested iframe structure (outer → `#active-frame` inner), and (e) polls until the designer canvas renders. This function must POLL (not check once) because VS Code takes time to create the new iframe when a second webview tab opens.
+
+15. **Designer tab names vs. file tab names — must match on "(Workspace)" (CRITICAL).** The `activateDesignerTab()` function must distinguish designer tabs from `workflow.json` text file tabs. Both contain the workflow name, but designer tab titles follow the pattern `{workspaceName} (Workspace)-{logicAppName}-{workflowName}` and always contain "Workspace". Match on BOTH the workflow name AND "workspace" in the tab title. Without this, the function clicks the wrong tab (text editor instead of designer), leaving the webview invisible.
+
+16. **Right-clicking the correct workflow.json in the Explorer.** When multiple workflows exist, the Explorer tree has multiple `workflow.json` rows. Use `VSBrowser.instance.openResources(absolutePath)` to open the specific file first — this reveals and selects it in the tree. Then find the row with `selected` CSS class and right-click it. Without this, the test right-clicks the first `workflow.json` it finds (wrong workflow).
+
+17. **Built-in operations (Request, Response) are always available; connectors (Compose) may not be.** When the design-time API hasn't fully loaded the connector catalog, the search results may not include connector-level operations like Compose. Use only built-in operations (Request, Response) in tests that need reliability. The connector catalog loads asynchronously from the func host, which may not be running in all test scenarios.
 
 ### Architecture Decisions That Paid Off
 

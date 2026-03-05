@@ -553,7 +553,24 @@ async function main() {
 
   const phase2Files = [testFile('designerActions.test.js')];
 
-  const phase3Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js')];
+  // Each new test gets its own phase (fresh VS Code session) to avoid
+  // workspace-switch contention with the previous test's debug processes.
+  const phase3Files = [testFile('inlineJavascript.test.js')];
+  const phase4Files = [testFile('statelessVariables.test.js')];
+  const phase5Files = [testFile('designerViewExtended.test.js')];
+  const phase6Files = [testFile('keyboardNavigation.test.js')];
+
+  const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
+
+  // Conversion tests (ADO #31054994, Steps 5-15)
+  // Each gets its own session because they need different startup folders.
+  const phase8aFiles = [testFile('workspaceConversionNo.test.js')];
+  const phase8bFiles = [testFile('workspaceConversionCreate.test.js')];
+  // Phase 4.8c combines: add workflow via right-click + open multiple designers
+  const phase8cFiles = [testFile('multipleDesigners.test.js')];
+  // Wave 2: Tests that involve window reload or different folder open scenarios
+  const phase8dFiles = [testFile('workspaceConversionYes.test.js')];
+  const phase8eFiles = [testFile('workspaceConversionSubfolder.test.js')];
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
   console.log(`\nE2E mode: ${e2eMode}`);
@@ -645,18 +662,161 @@ async function main() {
       await extest.downloadCode('max');
       await extest.downloadChromeDriver('max');
 
-      // Steps 2-3 are handled by the main() setup above (extension deps
-      // install + copy our extension). Since test-extensions lives in
-      // test-resources/ now and persists across builds, deps should already
-      // be cached. Just ensure our extension copy is up-to-date.
-      // The mtime-based check in Step 3 handles this automatically.
-
       await prepareFreshSession('phase2-only');
       const phase2Resources = getPhase2Resources();
-      const phase2Exit = await runPhase('Phase 4.2: designerOpen fresh session', phase2Files, {
+      const phase2Exit = await runPhase('Phase 4.2: designerActions', phase2Files, {
         resources: phase2Resources,
       });
       process.exit(phase2Exit);
+    }
+
+    if (e2eMode === 'newtestsonly') {
+      // Run only the new tests (phases 4.3–4.6) each in their own session
+      await extest.downloadCode('max');
+      await extest.downloadChromeDriver('max');
+      const wsResources = getPhase2Resources();
+      const exits = [];
+
+      await prepareFreshSession('phase3-only');
+      exits.push(await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase4-only');
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase5-only');
+      exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase6-only');
+      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
+
+      const finalExit = Math.max(...exits);
+      console.log(`\n=== New tests results: ${exits.map((c, i) => `4.${i + 3}=${c}`).join(', ')} → exit ${finalExit} ===`);
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'conversiononly') {
+      // Run only the workspace conversion tests (phases 4.8a–4.8d)
+      await extest.downloadCode('max');
+      await extest.downloadChromeDriver('max');
+      const wsResources = getPhase2Resources();
+      const exits = [];
+
+      // Phase 4.8a: Open workspace DIR (not .code-workspace), click No
+      // Startup resource = workspace directory (the folder containing .code-workspace)
+      const wsDir = (() => {
+        const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+        if (fs.existsSync(manifestPath)) {
+          try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+            if (preferred?.wsDir && fs.existsSync(preferred.wsDir)) return [preferred.wsDir];
+          } catch {
+            /* ignore */
+          }
+        }
+        return [];
+      })();
+      if (wsDir.length > 0) {
+        await prepareFreshSession('phase8a-only');
+        exits.push(await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir }));
+        await new Promise((r) => setTimeout(r, 3000));
+      } else {
+        console.warn('  No workspace directory found for phase 4.8a — skipping');
+        exits.push(0);
+      }
+
+      // Phase 4.8b: Open legacy project folder (no .code-workspace), click Yes
+      const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
+      // Create the legacy project for this test
+      const legacyWfDir = path.join(legacyDir, 'testworkflow');
+      if (!fs.existsSync(legacyWfDir)) {
+        fs.mkdirSync(legacyWfDir, { recursive: true });
+        fs.writeFileSync(
+          path.join(legacyDir, 'host.json'),
+          JSON.stringify(
+            { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
+            null,
+            2
+          )
+        );
+        fs.writeFileSync(
+          path.join(legacyDir, 'local.settings.json'),
+          JSON.stringify(
+            {
+              IsEncrypted: false,
+              Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
+            },
+            null,
+            2
+          )
+        );
+        fs.writeFileSync(
+          path.join(legacyWfDir, 'workflow.json'),
+          JSON.stringify(
+            {
+              definition: {
+                $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+                contentVersion: '1.0.0.0',
+                actions: {},
+                triggers: {},
+                outputs: {},
+              },
+              kind: 'Stateful',
+            },
+            null,
+            2
+          )
+        );
+        console.log(`  Created legacy project at: ${legacyDir}`);
+      }
+      await prepareFreshSession('phase8b-only');
+      exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
+      await new Promise((r) => setTimeout(r, 3000));
+
+      // Phase 4.8c: Multiple designers + add workflow
+      await prepareFreshSession('phase8c-only');
+      exits.push(await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: wsResources }));
+      await new Promise((r) => setTimeout(r, 3000));
+
+      // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+      if (wsDir.length > 0) {
+        await prepareFreshSession('phase8d-only');
+        exits.push(await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir }));
+        await new Promise((r) => setTimeout(r, 3000));
+      } else {
+        exits.push(0);
+      }
+
+      // Phase 4.8e: Open logic app subfolder, click No
+      const appDir = (() => {
+        const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+        if (fs.existsSync(manifestPath)) {
+          try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+            if (preferred?.appDir && fs.existsSync(preferred.appDir)) return [preferred.appDir];
+          } catch {
+            /* ignore */
+          }
+        }
+        return [];
+      })();
+      if (appDir.length > 0) {
+        await prepareFreshSession('phase8e-only');
+        exits.push(await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir }));
+      } else {
+        console.warn('  No app directory found for phase 4.8e — skipping');
+        exits.push(0);
+      }
+
+      const finalExit = Math.max(...exits);
+      console.log(
+        `\n=== Conversion tests results: 4.8a=${exits[0]}, 4.8b=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${exits[3]}, 4.8e=${exits[4]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
     }
 
     if (e2eMode === 'createonly') {
@@ -678,20 +838,170 @@ async function main() {
     await prepareFreshSession('phase2');
     const phase2Resources = getPhase2Resources();
 
-    const phase2Exit = await runPhase('Phase 4.2: designerOpen fresh session', phase2Files, {
+    const phase2Exit = await runPhase('Phase 4.2: designerActions', phase2Files, {
       resources: phase2Resources,
     });
     if (phase2Exit !== 0) {
       console.log(`\n⚠ Phase 4.2 exited with code ${phase2Exit} — continuing to Phase 4.3`);
     }
 
+    // Phases 4.3–4.6: Each new test in its own fresh VS Code session
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase3');
-    const phase3Exit = await runPhase('Phase 4.3: remaining suites', phase3Files);
+    const phase3Exit = await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: phase2Resources });
+    if (phase3Exit !== 0) {
+      console.log(`\n⚠ Phase 4.3 exited with code ${phase3Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase4');
+    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: phase2Resources });
+    if (phase4Exit !== 0) {
+      console.log(`\n⚠ Phase 4.4 exited with code ${phase4Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase5');
+    const phase5Exit = await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: phase2Resources });
+    if (phase5Exit !== 0) {
+      console.log(`\n⚠ Phase 4.5 exited with code ${phase5Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase6');
+    const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
+    if (phase6Exit !== 0) {
+      console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase7');
+    const phase7Exit = await runPhase('Phase 4.7: remaining suites', phase7Files);
+
+    // Phases 4.8a–4.8d: Workspace conversion tests (ADO #31054994, Steps 5-15)
+    // Phase 4.8a: Open workspace dir, click No on conversion dialog
+    let phase8aExit = 0;
+    const wsDir = (() => {
+      const preferred = (() => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8')).find(
+            (e) => e.appType === 'standard' && e.wfType === 'Stateful'
+          );
+        } catch {
+          return null;
+        }
+      })();
+      return preferred?.wsDir && fs.existsSync(preferred.wsDir) ? [preferred.wsDir] : [];
+    })();
+    if (wsDir.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase8a');
+      phase8aExit = await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir });
+      if (phase8aExit !== 0) console.log(`\n⚠ Phase 4.8a exited with code ${phase8aExit} — continuing`);
+    }
+
+    // Phase 4.8b: Open legacy project, create workspace dialog
+    let phase8bExit = 0;
+    const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
+    const legacyWfDir = path.join(legacyDir, 'testworkflow');
+    if (!fs.existsSync(legacyWfDir)) {
+      fs.mkdirSync(legacyWfDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(legacyDir, 'host.json'),
+        JSON.stringify(
+          { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
+          null,
+          2
+        )
+      );
+      fs.writeFileSync(
+        path.join(legacyDir, 'local.settings.json'),
+        JSON.stringify(
+          {
+            IsEncrypted: false,
+            Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
+          },
+          null,
+          2
+        )
+      );
+      fs.writeFileSync(
+        path.join(legacyWfDir, 'workflow.json'),
+        JSON.stringify(
+          {
+            definition: {
+              $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+              contentVersion: '1.0.0.0',
+              actions: {},
+              triggers: {},
+              outputs: {},
+            },
+            kind: 'Stateful',
+          },
+          null,
+          2
+        )
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase8b');
+    phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
+    if (phase8bExit !== 0) console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
+
+    // Phase 4.8c: Multiple designers + add workflow
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase8c');
+    const phase8cExit = await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: phase2Resources });
+    if (phase8cExit !== 0) console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
+
+    // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+    let phase8dExit = 0;
+    if (wsDir.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase8d');
+      phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
+      if (phase8dExit !== 0) console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
+    }
+
+    // Phase 4.8e: Open logic app subfolder, click No
+    let phase8eExit = 0;
+    const appDir = (() => {
+      const preferred = (() => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8')).find(
+            (e) => e.appType === 'standard' && e.wfType === 'Stateful'
+          );
+        } catch {
+          return null;
+        }
+      })();
+      return preferred?.appDir && fs.existsSync(preferred.appDir) ? [preferred.appDir] : [];
+    })();
+    if (appDir.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase8e');
+      phase8eExit = await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir });
+      if (phase8eExit !== 0) console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
+    }
 
     // Exit with worst exit code from all phases
-    const finalExit = Math.max(phase1Exit, phase2Exit, phase3Exit);
-    console.log(`\n=== Final results: Phase 4.1=${phase1Exit}, Phase 4.2=${phase2Exit}, Phase 4.3=${phase3Exit} → exit ${finalExit} ===`);
+    const finalExit = Math.max(
+      phase1Exit,
+      phase2Exit,
+      phase3Exit,
+      phase4Exit,
+      phase5Exit,
+      phase6Exit,
+      phase7Exit,
+      phase8aExit,
+      phase8bExit,
+      phase8cExit,
+      phase8dExit,
+      phase8eExit
+    );
+    console.log(
+      `\n=== Final results: 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit} → exit ${finalExit} ===`
+    );
     process.exit(finalExit);
   } catch (err) {
     console.error(`\n✗ ExTester error: ${err.message || err}`);

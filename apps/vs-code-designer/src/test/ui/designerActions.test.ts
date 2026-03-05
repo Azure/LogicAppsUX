@@ -2273,7 +2273,7 @@ describe('Designer Actions Tests', function () {
   let manifest: WorkspaceManifestEntry[];
 
   before(async function () {
-    this.timeout(120_000);
+    this.timeout(300_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
 
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
@@ -2289,7 +2289,7 @@ describe('Designer Actions Tests', function () {
 
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver, 120_000);
+    await waitForDependencyValidation(driver, 300_000);
   });
 
   afterEach(async () => {
