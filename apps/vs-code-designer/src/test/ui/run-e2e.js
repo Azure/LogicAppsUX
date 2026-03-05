@@ -20,6 +20,15 @@ const { exec } = require('child_process');
 
 const projectDir = path.resolve(__dirname, '..', '..', '..');
 const distDir = path.join(projectDir, 'dist');
+
+/**
+ * Pinned VS Code version for test stability.
+ * ExTester's page-objects use CSS selectors (e.g., '.editor-instance') that
+ * change between VS Code versions. Pinning ensures the same version is used
+ * locally and in CI. Update this when ExTester releases support for newer versions.
+ */
+const VSCODE_VERSION = '1.108.0';
+
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
 // would destroy cached marketplace extension installs.
@@ -127,8 +136,8 @@ async function main() {
 
   // Step 1: Download VS Code + ChromeDriver (skips if already cached)
   console.log('\n=== Step 1: Download VS Code + ChromeDriver ===');
-  await extest.downloadCode('max');
-  await extest.downloadChromeDriver('max');
+  await extest.downloadCode(VSCODE_VERSION);
+  await extest.downloadChromeDriver(VSCODE_VERSION);
 
   // Step 2: Install extension dependencies from the marketplace (PARALLEL)
   // Skip deps already present in test-extensions/. For uncached deps,
@@ -576,7 +585,7 @@ async function main() {
   console.log(`\nE2E mode: ${e2eMode}`);
 
   const runOptions = {
-    vscodeVersion: 'max',
+    vscodeVersion: VSCODE_VERSION,
     settings: settingsFile,
     cleanup: false,
     offline: false,
@@ -659,8 +668,8 @@ async function main() {
 
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
-      await extest.downloadCode('max');
-      await extest.downloadChromeDriver('max');
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
 
       await prepareFreshSession('phase2-only');
       const phase2Resources = getPhase2Resources();
@@ -672,8 +681,8 @@ async function main() {
 
     if (e2eMode === 'newtestsonly') {
       // Run only the new tests (phases 4.3–4.6) each in their own session
-      await extest.downloadCode('max');
-      await extest.downloadChromeDriver('max');
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
       const wsResources = getPhase2Resources();
       const exits = [];
 
@@ -699,8 +708,8 @@ async function main() {
 
     if (e2eMode === 'conversiononly') {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
-      await extest.downloadCode('max');
-      await extest.downloadChromeDriver('max');
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
       const wsResources = getPhase2Resources();
       const exits = [];
 
@@ -820,8 +829,8 @@ async function main() {
     }
 
     if (e2eMode === 'createonly') {
-      await extest.downloadCode('max');
-      await extest.downloadChromeDriver('max');
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
       await prepareFreshSession('phase1-only');
       const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
       process.exit(phase1Exit);
@@ -1013,3 +1022,4 @@ main().catch((err) => {
   console.error('Fatal error in E2E launcher:', err);
   process.exit(1);
 });
+
