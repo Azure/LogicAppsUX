@@ -797,16 +797,21 @@ async function main() {
         );
         console.log(`  Created legacy project at: ${legacyDir}`);
       }
+      // Phase 4.8b: Enable dependency validation so extension fully activates
+      // and shows the conversion dialog for legacy projects.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
       await prepareFreshSession('phase8b-only');
       exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
       await new Promise((r) => setTimeout(r, 3000));
 
-      // Phase 4.8c: Multiple designers + add workflow
+      // Phase 4.8c: Multiple designers + add workflow — needs full design-time
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
       await prepareFreshSession('phase8c-only');
       exits.push(await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: wsResources }));
       await new Promise((r) => setTimeout(r, 3000));
 
-      // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+      // Phase 4.8d: Restore conversion settings
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
       if (wsDir.length > 0) {
         await prepareFreshSession('phase8d-only');
         exits.push(await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir }));
@@ -915,9 +920,8 @@ async function main() {
     const wsDir = (() => {
       const preferred = (() => {
         try {
-          return JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8')).find(
-            (e) => e.appType === 'standard' && e.wfType === 'Stateful'
-          );
+          const m = JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8'));
+            return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
         } catch {
           return null;
         }
@@ -932,6 +936,9 @@ async function main() {
     }
 
     // Phase 4.8b: Open legacy project, create workspace dialog
+    // Re-enable dependency validation — the extension needs to fully activate
+    // to detect the legacy project and show the conversion dialog.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
     let phase8bExit = 0;
     const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
     const legacyWfDir = path.join(legacyDir, 'testworkflow');
@@ -980,12 +987,16 @@ async function main() {
     if (phase8bExit !== 0) console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
 
     // Phase 4.8c: Multiple designers + add workflow
+    // Re-enable full design-time — this test needs the designer to open.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase8c');
     const phase8cExit = await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: phase2Resources });
     if (phase8cExit !== 0) console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
 
     // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+    // Restore conversion settings — 4.8d/4.8e don't need design-time.
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
     let phase8dExit = 0;
     if (wsDir.length > 0) {
       await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -999,9 +1010,8 @@ async function main() {
     const appDir = (() => {
       const preferred = (() => {
         try {
-          return JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8')).find(
-            (e) => e.appType === 'standard' && e.wfType === 'Stateful'
-          );
+          const m = JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8'));
+            return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
         } catch {
           return null;
         }

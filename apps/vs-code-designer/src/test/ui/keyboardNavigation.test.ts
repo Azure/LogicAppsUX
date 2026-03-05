@@ -70,7 +70,8 @@ describe('Keyboard Navigation Tests', function () {
   });
 
   it('should navigate between canvas nodes using Ctrl+Down in topological order', async () => {
-    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');
       return;

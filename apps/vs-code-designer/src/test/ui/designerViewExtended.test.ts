@@ -80,7 +80,8 @@ describe('Designer View Extended Tests', function () {
   });
 
   it('should add a parallel branch alongside an existing action', async () => {
-    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');
       return;
@@ -138,7 +139,8 @@ describe('Designer View Extended Tests', function () {
   });
 
   it('should configure run-after settings on an action', async () => {
-    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');
       return;

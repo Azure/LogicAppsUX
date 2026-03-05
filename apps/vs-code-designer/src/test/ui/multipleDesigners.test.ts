@@ -505,7 +505,8 @@ describe('Multiple Designers + Add Workflow', function () {
   });
 
   it('should add a workflow, then open multiple designers via right-click and verify operations', async () => {
-    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');
       return;

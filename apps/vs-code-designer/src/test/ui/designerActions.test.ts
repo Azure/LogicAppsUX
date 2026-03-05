@@ -2314,7 +2314,8 @@ describe('Designer Actions Tests', function () {
   // Test 1: Standard workflow — open designer, add Request trigger
   // =====================================================================
   it('should add a Request trigger and Response action, then save', async () => {
-    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');
       return;

@@ -803,7 +803,13 @@ async function selectRadioOption(driver: WebDriver, optionLabel: string): Promis
  * Uses select-all + backspace to clear, then types.
  */
 async function clearAndType(element: WebElement, text: string): Promise<void> {
-  await element.click();
+  // Use scrollIntoView + JS click as fallback for cases where another
+  // iframe or overlay intercepts the native click (CI headless issue).
+  try {
+    await element.click();
+  } catch {
+    await driver.executeScript('arguments[0].scrollIntoView({block:"center"}); arguments[0].click();', element);
+  }
   await sleep(100);
   await element.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE);
   await sleep(100);

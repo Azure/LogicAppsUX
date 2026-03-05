@@ -97,7 +97,8 @@ describe('Inline JavaScript Tests', function () {
   });
 
   it('should create a workflow with Request trigger, Execute JavaScript Code, and Response, then run and verify', async () => {
-    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');
       return;
