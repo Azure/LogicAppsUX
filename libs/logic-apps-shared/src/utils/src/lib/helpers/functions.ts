@@ -1,6 +1,5 @@
 import { ArgumentException } from '../exception';
 
-/* eslint-disable no-param-reassign */
 type Primitive = number | boolean | string;
 type NonPrimitive = Record<string, unknown>;
 
@@ -1164,3 +1163,14 @@ export const validateRequiredServiceArguments = (requiredFields: Record<string, 
 export async function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve: () => void) => setTimeout(resolve, ms));
 }
+
+const BUILT_IN_AGENT_TOOLS = new Set(['code_interpreter']);
+
+/**
+ * Returns true if the tool name corresponds to a built-in agent tool.
+ * Built-in tools (e.g. code_interpreter) don't have action-level content links
+ * and require fetching data from the parent agent repetition.
+ * @arg {string} toolName - The tool name to check.
+ * @return {boolean} - True if the tool is a built-in agent tool.
+ */
+export const isBuiltInAgentTool = (toolName: string): boolean => BUILT_IN_AGENT_TOOLS.has(toolName);
