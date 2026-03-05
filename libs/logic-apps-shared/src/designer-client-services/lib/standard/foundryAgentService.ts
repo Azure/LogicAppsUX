@@ -153,7 +153,7 @@ function foundryHeaders(accessToken: string): Record<string, string> {
  */
 export function buildProjectEndpointFromResourceId(resourceId: string): string | undefined {
   // Use non-greedy match to avoid polynomial backtracking
-  const match = resourceId.match(/\/Microsoft\.CognitiveServices\/accounts\/([^/]+?)\/projects\/([^/]+?)(?:\/|$)/i);
+  const match = resourceId.match(/\/Microsoft\.CognitiveServices\/accounts\/([^/]+)\/projects\/([^/]+)(?:\/|$)/i);
   if (!match) {
     return undefined;
   }

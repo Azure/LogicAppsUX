@@ -601,18 +601,6 @@ export const ParameterSection = ({
           dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, model);
         }
       }
-
-      // Queue Foundry API update if endpoint is available
-      if (foundryProjectEndpoint && selectedFoundryAgent) {
-        setPendingFoundryUpdate(nodeId, {
-          projectEndpoint: foundryProjectEndpoint,
-          agentId: selectedFoundryAgent.id,
-          updates: {
-            model: model ?? selectedFoundryAgent.model,
-            instructions: instructions ?? selectedFoundryAgent.instructions ?? undefined,
-          },
-        });
-      }
     },
     [nodeInputs.parameterGroups, group.id, dispatch, nodeId, foundryProjectEndpoint, selectedFoundryAgent]
   );

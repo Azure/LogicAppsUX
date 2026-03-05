@@ -118,9 +118,10 @@ describe('buildFoundryPortalUrl', () => {
     expect(url).not.toContain('version=2');
   });
 
-  it('should default version to 2 when versionNumber is omitted', () => {
+  it('should omit version query param when versionNumber is not provided', () => {
     const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct-1/projects/proj-1';
     const url = buildFoundryPortalUrl(resourceId, 'agent-1');
-    expect(url).toContain('?version=2');
+    expect(url).not.toContain('?version=');
+    expect(url).toContain('/build/agents/agent-1/build');
   });
 });

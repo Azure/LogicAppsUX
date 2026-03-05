@@ -30,7 +30,7 @@ export interface FoundryAgentDetailsProps {
 
 /**
  * Builds the Foundry Portal URL for editing an agent.
- * Pattern: https://ai.azure.com/nextgen/r/{subscriptionId},{resourceGroup},,{account},{project}/build/agents/{agentId}/build?version=2
+ * When versionNumber is provided, appends ?version={N}. Otherwise opens the latest.
  */
 export function buildFoundryPortalUrl(projectResourceId: string | undefined, agentId: string, versionNumber?: string): string | undefined {
   if (!projectResourceId) {
@@ -43,8 +43,8 @@ export function buildFoundryPortalUrl(projectResourceId: string | undefined, age
     return undefined;
   }
   const [, subscriptionId, resourceGroup, account, project] = match;
-  const version = versionNumber ?? '2';
-  return `https://ai.azure.com/nextgen/r/${encodeURIComponent(subscriptionId)},${encodeURIComponent(resourceGroup)},,${encodeURIComponent(account)},${encodeURIComponent(project)}/build/agents/${encodeURIComponent(agentId)}/build?version=${encodeURIComponent(version)}`;
+  const baseUrl = `https://ai.azure.com/nextgen/r/${encodeURIComponent(subscriptionId)},${encodeURIComponent(resourceGroup)},,${encodeURIComponent(account)},${encodeURIComponent(project)}/build/agents/${encodeURIComponent(agentId)}/build`;
+  return versionNumber ? `${baseUrl}?version=${encodeURIComponent(versionNumber)}` : baseUrl;
 }
 
 export function FoundryAgentDetails({
