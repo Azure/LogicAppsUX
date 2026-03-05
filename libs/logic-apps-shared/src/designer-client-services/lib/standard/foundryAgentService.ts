@@ -115,12 +115,19 @@ function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
 
 /** Normalize the project endpoint to the Foundry data-plane host. */
 function normalizeEndpoint(projectEndpoint: string): string {
-  const base = projectEndpoint.replace(/\/+$/, '');
+  let base = projectEndpoint;
+  while (base.endsWith('/')) {
+    base = base.slice(0, -1);
+  }
   try {
     const url = new URL(base);
     if (url.hostname.endsWith('.cognitiveservices.azure.com')) {
       url.hostname = url.hostname.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
-      return url.toString().replace(/\/+$/, '');
+      let result = url.toString();
+      while (result.endsWith('/')) {
+        result = result.slice(0, -1);
+      }
+      return result;
     }
   } catch {
     // Not a valid URL — fall through and return as-is
