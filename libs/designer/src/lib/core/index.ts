@@ -76,6 +76,8 @@ export { McpWizardProvider } from './mcp/McpWizardProvider';
 export { resetMcpStateOnResourceChange } from './actions/bjsworkflow/mcp';
 export { McpServerDataProvider } from './mcp/McpServerDataProvider';
 export type { McpServerCreateData } from './mcp/utils/serializer';
+export { KnowledgeDataProvider } from './knowledge/KnowledgeDataProvider';
+export { KnowledgeWizardProvider } from './knowledge/KnowledgeWizardProvider';
 export {
   validateParameter,
   parameterValueToString,

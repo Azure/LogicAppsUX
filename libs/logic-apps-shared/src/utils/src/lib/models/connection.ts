@@ -54,11 +54,18 @@ export interface ConnectionAuthenticatedUser {
   tenantId?: string;
 }
 
+interface ConnectionParameterValue {
+  type: string;
+  metadata: {
+    value: any;
+  };
+}
+
 export type ConnectionFeatureType = 'DynamicUserInvoked'; // Currently only this value is supported but this can be extended in the future
 
 export interface ConnectionProperties {
   authenticatedUser?: ConnectionAuthenticatedUser;
-  connectionParameters?: Record<string, ConnectionParameter>;
+  connectionParameters?: Record<string, ConnectionParameter | ConnectionParameterValue>;
   connectionParametersSet?: ConnectionParameterSet;
   createdBy?: Principal;
   createdTime: string;
