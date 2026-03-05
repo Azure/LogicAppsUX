@@ -14,6 +14,7 @@ import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
 import { useEdges } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
+import { getOperationsState } from '../selectors/actionMetadataSelector';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -326,7 +327,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       let caseId = baseId;
       let caseCount = 1;
       const idList = Object.keys(state.nodesMetadata);
-      // eslint-disable-next-line no-loop-func
+
       while (idList.some((id) => id === caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;
@@ -754,41 +755,45 @@ export const useHandoffEdges = (): WorkflowEdge[] => {
 
 export const useHandoffActionsForAgent = (agentId: string): any[] => {
   return useSelector(
-    createSelector(getWorkflowAndOperationState, (state: { workflow: WorkflowState; operations: OperationMetadataState }) => {
-      // Check the action is an agent action
-      if (!equals(state.workflow.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
-        return [];
-      }
-      const toolNodeIds = Object.keys(state.workflow.nodesMetadata[agentId]?.handoffs ?? {});
-      const output: any[] = [];
-      for (const toolId of toolNodeIds) {
-        // If the tool contains a handoff action, add it to the output
-        const toolActionIds = getNodesWithGraphId(toolId, state.workflow.nodesMetadata);
-        const isSingleAction = Object.keys(toolActionIds).length === 1;
-        for (const actionId of Object.keys(toolActionIds)) {
-          const action = state.workflow.operations[actionId];
-          if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
-            const toolDescription =
-              state.operations?.inputParameters?.[toolId]?.parameterGroups?.default?.parameters?.find((param) =>
-                equals(param.parameterName, 'description')
-              )?.value?.[0]?.value ?? '';
-            const targetId =
-              state.operations?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters?.find((param) =>
-                equals(param.parameterName, 'name')
-              )?.value?.[0]?.value ?? '';
-
-            const actionData = {
-              id: actionId,
-              toolId,
-              toolDescription,
-              targetId,
-              isSingleAction,
-            };
-            output.push(actionData);
+    useMemo(
+      () =>
+        createSelector([getWorkflowState, getOperationsState], (workflowState: WorkflowState, operationsState: OperationMetadataState) => {
+          // Check the action is an agent action
+          if (!equals(workflowState.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
+            return [];
           }
-        }
-      }
-      return output;
-    })
+          const toolNodeIds = Object.keys(workflowState.nodesMetadata[agentId]?.handoffs ?? {});
+          const output: any[] = [];
+          for (const toolId of toolNodeIds) {
+            // If the tool contains a handoff action, add it to the output
+            const toolActionIds = getNodesWithGraphId(toolId, workflowState.nodesMetadata);
+            const isSingleAction = Object.keys(toolActionIds).length === 1;
+            for (const actionId of Object.keys(toolActionIds)) {
+              const action = workflowState.operations[actionId];
+              if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
+                const toolDescription =
+                  operationsState?.inputParameters?.[toolId]?.parameterGroups?.default?.parameters?.find((param) =>
+                    equals(param.parameterName, 'description')
+                  )?.value?.[0]?.value ?? '';
+                const targetId =
+                  operationsState?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters?.find((param) =>
+                    equals(param.parameterName, 'name')
+                  )?.value?.[0]?.value ?? '';
+
+                const actionData = {
+                  id: actionId,
+                  toolId,
+                  toolDescription,
+                  targetId,
+                  isSingleAction,
+                };
+                output.push(actionData);
+              }
+            }
+          }
+          return output;
+        }),
+      [agentId]
+    )
   );
 };

@@ -262,8 +262,8 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesInitialized = true;
     },
     initializeOperationInfo: (state, action: PayloadAction<AddNodeOperationPayload>) => {
-      const { id, connectorId, operationId, type, kind } = action.payload;
-      state.operationInfo[id] = { connectorId, operationId, type, kind };
+      const { id, connectorId, operationId, type, kind, operationPath } = action.payload;
+      state.operationInfo[id] = { connectorId, operationId, type, kind, operationPath };
     },
     initializeNodes: (state, action: PayloadAction<InitializeNodesPayload>) => {
       const { nodes, clearExisting = false } = action.payload;

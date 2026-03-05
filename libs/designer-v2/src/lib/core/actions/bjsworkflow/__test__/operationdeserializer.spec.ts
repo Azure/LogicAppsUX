@@ -249,6 +249,7 @@ describe('operationdeserializer', () => {
             operationId: 'test-operation',
             type: 'McpClientTool',
             kind: 'Managed',
+            operationPath: '/servers/filesystem',
           }),
         })
       );

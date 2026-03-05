@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { getAgentBaseUrl, parseIframeConfig } from '../config-parser';
+import { parseIframeConfig, parseIdentityProviders } from '../config-parser';
 
 describe('parseIframeConfig', () => {
   let originalLocation: Location;
@@ -220,26 +220,18 @@ describe('parseIframeConfig', () => {
       expect(config.contextId).toBe('ctx-123');
     });
 
-    it('includes default identity providers when window.IDENTITY_PROVIDERS is not set', () => {
+    it('returns undefined for identity providers when window.IDENTITY_PROVIDERS is not set', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
 
       const config = parseIframeConfig();
 
-      expect(config.props.identityProviders).toBeDefined();
-      expect(config.props.identityProviders?.microsoft).toEqual({
-        signInEndpoint: '/.auth/login/aad',
-        name: 'Microsoft',
-      });
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
     });
 
     it('uses window.IDENTITY_PROVIDERS when set', () => {
       document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
-      (window as any).IDENTITY_PROVIDERS = {
-        custom: {
-          signInEndpoint: '/.auth/login/custom',
-          name: 'Custom Provider',
-        },
-      };
+      (window as any).IDENTITY_PROVIDERS = '{"custom":{"signInEndpoint":"/.auth/login/custom","name":"Custom Provider"}}';
 
       const config = parseIframeConfig();
 
@@ -248,6 +240,89 @@ describe('parseIframeConfig', () => {
           signInEndpoint: '/.auth/login/custom',
           name: 'Custom Provider',
         },
+      });
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS is invalid JSON', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = 'not valid json';
+
+      const config = parseIframeConfig();
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse IDENTITY_PROVIDERS:', expect.any(Error));
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS is empty string', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '';
+
+      const config = parseIframeConfig();
+
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to null', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = 'null';
+
+      const config = parseIframeConfig();
+
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to array', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
+
+      const config = parseIframeConfig();
+
+      // Arrays are objects but not the expected Record<string, IdentityProvider> format
+      expect(config.props.identityProviders).toBeUndefined();
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to primitive', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS = '"just a string"';
+
+      const config = parseIframeConfig();
+
+      // No fallback to default providers - undefined means no sign-in required
+      expect(config.props.identityProviders).toBeUndefined();
+
+      // Clean up
+      delete (window as any).IDENTITY_PROVIDERS;
+    });
+
+    it('handles multiple identity providers', () => {
+      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      (window as any).IDENTITY_PROVIDERS =
+        '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"},"github":{"signInEndpoint":"/.auth/login/github","name":"GitHub"}}';
+
+      const config = parseIframeConfig();
+
+      expect(config.props.identityProviders).toEqual({
+        microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+        google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+        github: { signInEndpoint: '/.auth/login/github', name: 'GitHub' },
       });
 
       // Clean up
@@ -295,107 +370,121 @@ describe('parseIframeConfig', () => {
   });
 });
 
-describe('getAgentBaseUrl', () => {
-  it('removes agent card suffix from URL', () => {
-    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+describe('parseIdentityProviders', () => {
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
-    expect(result).toBe('https://example.com/api/agents/TestAgent');
+  beforeEach(() => {
+    // Clean up IDENTITY_PROVIDERS before each test
+    delete (window as any).IDENTITY_PROVIDERS;
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  it('returns URL unchanged if no agent card suffix', () => {
-    const url = 'https://example.com/api/agents/TestAgent';
-    const result = getAgentBaseUrl(url);
-
-    expect(result).toBe('https://example.com/api/agents/TestAgent');
+  afterEach(() => {
+    delete (window as any).IDENTITY_PROVIDERS;
+    consoleErrorSpy?.mockRestore();
   });
 
-  it('returns empty string for undefined URL', () => {
-    const result = getAgentBaseUrl(undefined);
+  it('returns undefined when IDENTITY_PROVIDERS is not set', () => {
+    const result = parseIdentityProviders();
 
-    expect(result).toBe('');
+    expect(result).toBeUndefined();
   });
 
-  it('handles URLs with query parameters after agent card suffix', () => {
-    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json?param=value';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined when IDENTITY_PROVIDERS is empty string', () => {
+    (window as any).IDENTITY_PROVIDERS = '';
 
-    expect(result).toBe('https://example.com/api/agents/TestAgent?param=value');
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
   });
 
-  it('handles URLs with hash fragments', () => {
-    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json#section';
-    const result = getAgentBaseUrl(url);
+  it('parses valid JSON identity providers', () => {
+    (window as any).IDENTITY_PROVIDERS = '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"}}';
 
-    expect(result).toBe('https://example.com/api/agents/TestAgent#section');
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({
+      microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+    });
   });
 
-  it('handles URLs with both query parameters and hash fragments', () => {
-    const url = 'https://example.com/api/agents/TestAgent/.well-known/agent-card.json?param=value#section';
-    const result = getAgentBaseUrl(url);
+  it('parses multiple identity providers', () => {
+    (window as any).IDENTITY_PROVIDERS =
+      '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"}}';
 
-    expect(result).toBe('https://example.com/api/agents/TestAgent?param=value#section');
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({
+      microsoft: { signInEndpoint: '/.auth/login/aad', name: 'Microsoft' },
+      google: { signInEndpoint: '/.auth/login/google', name: 'Google' },
+    });
   });
 
-  it('handles URLs with port numbers', () => {
-    const url = 'https://example.com:8080/api/agents/TestAgent/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined and logs error for invalid JSON', () => {
+    (window as any).IDENTITY_PROVIDERS = 'not valid json';
 
-    expect(result).toBe('https://example.com:8080/api/agents/TestAgent');
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse IDENTITY_PROVIDERS:', expect.any(Error));
   });
 
-  it('handles URLs with special characters in agent name', () => {
-    const url = 'https://example.com/api/agents/Test-Agent_v2.0/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined when JSON parses to null', () => {
+    (window as any).IDENTITY_PROVIDERS = 'null';
 
-    expect(result).toBe('https://example.com/api/agents/Test-Agent_v2.0');
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
   });
 
-  it('handles URLs with encoded characters', () => {
-    const url = 'https://example.com/api/agents/Test%20Agent/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined when JSON parses to a string', () => {
+    (window as any).IDENTITY_PROVIDERS = '"just a string"';
 
-    expect(result).toBe('https://example.com/api/agents/Test%20Agent');
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
   });
 
-  it('handles URLs with multiple path segments after agent', () => {
-    const url = 'https://example.com/api/v2/agents/TestAgent/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined when JSON parses to a number', () => {
+    (window as any).IDENTITY_PROVIDERS = '123';
 
-    expect(result).toBe('https://example.com/api/v2/agents/TestAgent');
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
   });
 
-  it('handles protocol-relative URLs', () => {
-    const url = '//example.com/api/agents/TestAgent/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined when JSON parses to a boolean', () => {
+    (window as any).IDENTITY_PROVIDERS = 'true';
 
-    expect(result).toBe('//example.com/api/agents/TestAgent');
+    const result = parseIdentityProviders();
+
+    expect(result).toBeUndefined();
   });
 
-  it('handles relative URLs', () => {
-    const url = '/api/agents/TestAgent/.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
+  it('returns undefined when JSON parses to array (arrays are not valid Record format)', () => {
+    (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
 
-    expect(result).toBe('/api/agents/TestAgent');
+    const result = parseIdentityProviders();
+
+    // Arrays are objects but not valid Record<string, IdentityProvider> format
+    expect(result).toBeUndefined();
   });
 
-  it('only removes the exact suffix pattern', () => {
-    const url = 'https://example.com/api/agents/TestAgent/.well-known/other-file.json';
-    const result = getAgentBaseUrl(url);
+  it('returns empty object for empty JSON object', () => {
+    (window as any).IDENTITY_PROVIDERS = '{}';
 
-    expect(result).toBe('https://example.com/api/agents/TestAgent/.well-known/other-file.json');
+    const result = parseIdentityProviders();
+
+    expect(result).toEqual({});
   });
 
-  it('handles empty string', () => {
-    const result = getAgentBaseUrl('');
+  it('handles identity providers with additional properties', () => {
+    (window as any).IDENTITY_PROVIDERS = '{"custom":{"signInEndpoint":"/.auth/login/custom","name":"Custom SSO","icon":"custom-icon.png"}}';
 
-    expect(result).toBe('');
-  });
+    const result = parseIdentityProviders();
 
-  it('handles URLs with trailing slashes before suffix', () => {
-    const url = 'https://example.com/api/agents/TestAgent//.well-known/agent-card.json';
-    const result = getAgentBaseUrl(url);
-
-    expect(result).toBe('https://example.com/api/agents/TestAgent/');
+    expect(result).toEqual({
+      custom: { signInEndpoint: '/.auth/login/custom', name: 'Custom SSO', icon: 'custom-icon.png' },
+    });
   });
 });

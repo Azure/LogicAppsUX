@@ -56,7 +56,7 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
                 <div
                   data-color-scheme={themeName}
                   className={`msla-theme-${themeName}`}
-                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'hidden' }}
+                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'clip' }}
                 >
                   <IntlProvider
                     locale={locale}
@@ -69,6 +69,7 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
                   </IntlProvider>
                 </div>
               </LayoutProvider>
+              <div id="fluent-compat-component-mount" />
             </FluentProvider>
           </ThemeProvider>
         </ProviderWrappedContext.Provider>

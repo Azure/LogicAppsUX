@@ -143,7 +143,11 @@ export const Designer = (props: DesignerProps) => {
             isResizeable={true}
           />
           {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
-          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
+          <div
+            className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}
+            role="toolbar"
+            aria-label="Designer controls"
+          >
             <Controls />
             <Minimap />
           </div>

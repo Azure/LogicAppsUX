@@ -9,7 +9,7 @@ export const useTemplatesGalleryStyles = makeStyles({
 
   galleryList: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, 343px)',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(min(343px, 100%), 1fr))',
     gap: '24px',
     justifyContent: 'start',
     marginBottom: '40px',

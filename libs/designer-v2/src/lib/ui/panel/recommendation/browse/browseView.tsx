@@ -5,10 +5,12 @@ import {
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelSelectedBrowseCategory,
+  useIsAddingAgentTool,
 } from '../../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectBrowseCategory } from '../../../../core/state/panel/panelSlice';
 import { CategoryCard } from './categoryCard';
 import { ConnectorBrowse } from './connectorBrowse';
+import { McpServersBrowse } from './mcpServersBrowse';
 import { useBrowseViewStyles } from './styles/BrowseView.styles';
 import { Favorites } from '../categories/Favorites';
 import type { AppDispatch } from '../../../../core';
@@ -30,8 +32,9 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
 
   const allowAgents = equals(relationshipIds.graphId, 'root');
+  const isAddingAgentTool = useIsAddingAgentTool();
 
-  const categories = isTrigger ? getTriggerCategories() : getActionCategories(allowAgents);
+  const categories = isTrigger ? getTriggerCategories() : getActionCategories(allowAgents, isAddingAgentTool);
 
   const addTriggerOperation = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
@@ -82,9 +85,12 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
     const category = categories.find((cat) => cat.key === selectedBrowseCategory.key);
 
     if (category?.type === BrowseCategoryType.BROWSE) {
-      // Special case for favorites category
+      // Special case for favorites category and MCP servers category
       if (selectedBrowseCategory.key === 'favorites') {
         return <Favorites onConnectorSelected={onConnectorSelected} onOperationSelected={onOperationSelected} />;
+      }
+      if (selectedBrowseCategory.key === 'mcpServers') {
+        return <McpServersBrowse onOperationClick={onOperationClick} />;
       }
 
       return (

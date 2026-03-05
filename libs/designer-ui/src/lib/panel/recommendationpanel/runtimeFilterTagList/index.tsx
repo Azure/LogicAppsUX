@@ -95,6 +95,7 @@ export const RuntimeFilterTagList = ({
           items={runtimeFilters}
           initialSelectedItem={getRecordEntry(filters, 'runtime')}
           onTagSelect={(value) => onTabSelect(value, 'runtime')}
+          ariaLabel={ByConnectorLabel}
         />
         {isSearchResult ? (
           <div className="msla-runtime-filter-tag-list-buttons-container">

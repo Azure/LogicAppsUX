@@ -20,7 +20,7 @@ vi.mock('../MultiSessionChat/MultiSessionChat', () => ({
 vi.mock('../../lib/authHandler', () => ({
   createUnauthorizedHandler: vi.fn(() => vi.fn()),
   getBaseUrl: vi.fn((agentCard) => `https://base.url.from/${agentCard}`),
-  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, error: null })),
+  checkAuthStatus: vi.fn(() => Promise.resolve({ isAuthenticated: true, isEasyAuthConfigured: true, error: null })),
   openLoginPopup: vi.fn(),
 }));
 
@@ -35,6 +35,14 @@ vi.mock('../../lib/hooks/useParentCommunication', () => ({
   useParentCommunication: vi.fn(() => ({
     isWaitingForAgentCard: false,
     sendMessageToParent: vi.fn(),
+  })),
+}));
+
+vi.mock('../../hooks/useAgentCard', () => ({
+  useAgentCard: vi.fn(() => ({
+    data: undefined,
+    isLoading: false,
+    error: null,
   })),
 }));
 
@@ -59,7 +67,7 @@ describe('IframeWrapper - contextId support', () => {
     vi.clearAllMocks();
 
     // Reset checkAuthStatus to return authenticated
-    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, error: null });
+    vi.mocked(authHandler.checkAuthStatus).mockResolvedValue({ isAuthenticated: true, isEasyAuthConfigured: true, error: null });
   });
 
   afterEach(() => {

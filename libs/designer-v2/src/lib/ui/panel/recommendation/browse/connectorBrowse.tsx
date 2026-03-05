@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useAllConnectors } from '../../../../core/queries/browse';
@@ -12,8 +12,7 @@ import { ConnectorCard } from './connectorCard';
 import { selectOperationGroupId } from '../../../../core/state/panel/panelSlice';
 import type { AppDispatch } from '../../../../core';
 import { useConnectorBrowseStyles } from './styles/ConnectorBrowse.styles';
-import type { ListChildComponentProps } from 'react-window';
-import { FixedSizeList } from 'react-window';
+import { List, type RowComponentProps } from 'react-window';
 import type { ConnectorFilterTypes } from './helper';
 
 export interface ConnectorBrowseProps {
@@ -89,19 +88,6 @@ export const ConnectorBrowse = ({
   const dispatch = useDispatch<AppDispatch>();
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAddingToGraph = useDiscoveryPanelRelationshipIds().graphId === 'root';
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerHeight, setContainerHeight] = useState(0);
-
-  useEffect(() => {
-    if (!containerRef.current) {
-      return;
-    }
-    const updateHeight = () => setContainerHeight(containerRef.current!.clientHeight);
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
-  }, []);
 
   const { data: allConnectors, isLoading } = useAllConnectors();
 
@@ -234,27 +220,18 @@ export const ConnectorBrowse = ({
   }
 
   // --- Row Renderer ---
-  const Row = ({ index, style }: ListChildComponentProps) => {
-    const connector = sortedConnectors[index];
-    return (
-      <div style={style}>
-        <ConnectorCard connector={connector} onClick={handleConnectorSelected} displayRuntimeInfo={displayRuntimeInfo} />
-      </div>
-    );
-  };
+  const Row = ({ index, style }: RowComponentProps) => (
+    <div style={style}>
+      <ConnectorCard connector={sortedConnectors[index]} onClick={handleConnectorSelected} displayRuntimeInfo={displayRuntimeInfo} />
+    </div>
+  );
 
   return (
-    <div ref={containerRef} className={classes.connectorGrid}>
-      {containerHeight > 0 && (
-        <FixedSizeList
-          height={containerHeight}
-          itemCount={sortedConnectors.length}
-          itemSize={70} // ConnectorCard height
-          width="100%"
-        >
-          {Row}
-        </FixedSizeList>
-      )}
-    </div>
+    <List
+      rowCount={sortedConnectors.length}
+      rowHeight={70} // ConnectorCard height
+      rowComponent={Row}
+      rowProps={{}}
+    />
   );
 };

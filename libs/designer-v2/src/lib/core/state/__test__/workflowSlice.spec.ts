@@ -5,7 +5,15 @@ import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { setStateAfterUndoRedo } from '../global';
 import { WorkflowState, NodeMetadata } from '../workflow/workflowInterfaces';
-import reducer, { addNode, addMcpServer, deleteMcpServer, setToolRunIndex, updateAgenticMetadata } from '../workflow/workflowSlice';
+import reducer, {
+  addNode,
+  addMcpServer,
+  deleteMcpServer,
+  setToolRunIndex,
+  updateAgenticMetadata,
+  initialWorkflowState,
+} from '../workflow/workflowSlice';
+import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../actions/bjsworkflow/monitoring';
 import { OperationDefinition } from '../../../../../../logic-apps-shared/src/utils/src/lib/models/logicApps';
 import type { UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
@@ -336,5 +344,245 @@ describe('workflow slice reducers', () => {
       repetitionCount: 3,
     });
     expect(mcpToolMetadata.toolRunIndex).toBe(0);
+  });
+
+  describe('built-in agent tool support', () => {
+    it('should set inputsLink and outputsLink for built-in tools in updateAgenticMetadata', () => {
+      const mockAgentId = 'agent-123';
+      const state = { ...initialState };
+      state.nodesMetadata = {
+        code_interpreter: {
+          graphId: mockAgentId,
+          isRoot: false,
+          isTrigger: false,
+        } as NodeMetadata,
+      };
+
+      const mockPayload: UpdateAgenticGraphPayload = {
+        nodeId: mockAgentId,
+        scopeRepetitionRunData: {
+          inputsLink: { uri: 'https://example.com/inputs' },
+          outputsLink: { uri: 'https://example.com/outputs' },
+          tools: {
+            code_interpreter: {
+              status: 'Succeeded',
+              iterations: 1,
+            },
+          },
+        },
+      };
+
+      const newState = reducer(state, updateAgenticMetadata(mockPayload));
+
+      const toolMetadata = newState.nodesMetadata.code_interpreter;
+      expect(toolMetadata.runData).toBeDefined();
+      expect(toolMetadata.runData?.status).toBe('Succeeded');
+      expect((toolMetadata.runData as any)?.inputsLink).toEqual({ uri: 'https://example.com/inputs' });
+      expect((toolMetadata.runData as any)?.outputsLink).toEqual({ uri: 'https://example.com/outputs' });
+      expect(toolMetadata.runIndex).toBe(0);
+    });
+
+    it('should NOT set inputsLink and outputsLink for regular (non-built-in) tools in updateAgenticMetadata', () => {
+      const mockAgentId = 'agent-123';
+      const state = { ...initialState };
+      state.nodesMetadata = {
+        my_custom_tool: {
+          graphId: mockAgentId,
+          isRoot: false,
+          isTrigger: false,
+        } as NodeMetadata,
+      };
+
+      const mockPayload: UpdateAgenticGraphPayload = {
+        nodeId: mockAgentId,
+        scopeRepetitionRunData: {
+          inputsLink: { uri: 'https://example.com/inputs' },
+          outputsLink: { uri: 'https://example.com/outputs' },
+          tools: {
+            my_custom_tool: {
+              status: 'Succeeded',
+              iterations: 2,
+            },
+          },
+        },
+      };
+
+      const newState = reducer(state, updateAgenticMetadata(mockPayload));
+
+      const toolMetadata = newState.nodesMetadata.my_custom_tool;
+      expect(toolMetadata.runData).toBeDefined();
+      expect(toolMetadata.runData?.status).toBe('Succeeded');
+      // Regular tools should NOT have inputsLink/outputsLink
+      expect((toolMetadata.runData as any)?.inputsLink).toBeUndefined();
+      expect((toolMetadata.runData as any)?.outputsLink).toBeUndefined();
+    });
+
+    it('should handle fetchBuiltInToolRunData.fulfilled by setting run data on nodesMetadata', () => {
+      const state = { ...initialState };
+      state.nodesMetadata = {};
+
+      const mockPayload = {
+        toolNodeId: 'code_interpreter',
+        inputsLink: { uri: 'https://example.com/inputs' },
+        outputsLink: { uri: 'https://example.com/outputs' },
+        inputs: { message: { displayName: 'Message', value: 'hello' } },
+        outputs: { result: { displayName: 'Result', value: 'world' } },
+        startTime: '2024-01-01T00:00:00Z',
+        endTime: '2024-01-01T00:01:00Z',
+        status: 'Succeeded',
+        correlation: { actionTrackingId: 'test-id' },
+      };
+
+      const action = {
+        type: fetchBuiltInToolRunData.fulfilled.type,
+        payload: mockPayload,
+      };
+
+      const newState = reducer(state, action);
+
+      expect(newState.nodesMetadata.code_interpreter).toBeDefined();
+      const runData = newState.nodesMetadata.code_interpreter.runData;
+      expect(runData).toBeDefined();
+      expect(runData?.status).toBe('Succeeded');
+      expect(runData?.startTime).toBe('2024-01-01T00:00:00Z');
+      expect(runData?.endTime).toBe('2024-01-01T00:01:00Z');
+      expect((runData as any)?.inputs).toEqual({ message: { displayName: 'Message', value: 'hello' } });
+      expect((runData as any)?.outputs).toEqual({ result: { displayName: 'Result', value: 'world' } });
+    });
+
+    it('should create nodesMetadata entry if it does not exist for fetchBuiltInToolRunData.fulfilled', () => {
+      const state = { ...initialState };
+      state.nodesMetadata = {}; // Empty - no entry for code_interpreter
+
+      const action = {
+        type: fetchBuiltInToolRunData.fulfilled.type,
+        payload: {
+          toolNodeId: 'code_interpreter',
+          inputsLink: null,
+          outputsLink: null,
+          inputs: {},
+          outputs: {},
+          startTime: '2024-01-01T00:00:00Z',
+          endTime: '2024-01-01T00:01:00Z',
+          status: 'Failed',
+          correlation: null,
+        },
+      };
+
+      const newState = reducer(state, action);
+
+      // Should have created the nodesMetadata entry
+      expect(newState.nodesMetadata.code_interpreter).toBeDefined();
+      expect(newState.nodesMetadata.code_interpreter.runData?.status).toBe('Failed');
+    });
+
+    it('should preserve existing nodesMetadata when fetchBuiltInToolRunData.fulfilled updates', () => {
+      const state = { ...initialState };
+      state.nodesMetadata = {
+        code_interpreter: {
+          graphId: 'agent-1',
+          isRoot: false,
+          isTrigger: false,
+          runData: {
+            status: 'Running',
+            repetitionCount: 1,
+          },
+        } as NodeMetadata,
+      };
+
+      const action = {
+        type: fetchBuiltInToolRunData.fulfilled.type,
+        payload: {
+          toolNodeId: 'code_interpreter',
+          inputsLink: { uri: 'https://example.com/inputs' },
+          outputsLink: { uri: 'https://example.com/outputs' },
+          inputs: { code: { displayName: 'Code', value: 'print("hi")' } },
+          outputs: { result: { displayName: 'Result', value: 'hi' } },
+          startTime: '2024-01-01T00:00:00Z',
+          endTime: '2024-01-01T00:01:00Z',
+          status: 'Succeeded',
+          correlation: null,
+        },
+      };
+
+      const newState = reducer(state, action);
+
+      // Should preserve graphId and other existing metadata
+      expect(newState.nodesMetadata.code_interpreter.graphId).toBe('agent-1');
+      // But update runData
+      expect(newState.nodesMetadata.code_interpreter.runData?.status).toBe('Succeeded');
+      expect((newState.nodesMetadata.code_interpreter.runData as any)?.inputs).toEqual({
+        code: { displayName: 'Code', value: 'print("hi")' },
+      });
+    });
+
+    it('should preserve existing inputs/outputs in initializeInputsOutputsBinding.fulfilled when new values are empty', () => {
+      const state = { ...initialState };
+      const existingInputs = { code: { displayName: 'Code', value: 'print("hi")' } };
+      const existingOutputs = { result: { displayName: 'Result', value: 'hi' } };
+
+      state.nodesMetadata = {
+        code_interpreter: {
+          graphId: 'agent-1',
+          isRoot: false,
+          isTrigger: false,
+          runData: {
+            status: 'Succeeded',
+            inputs: existingInputs,
+            outputs: existingOutputs,
+          },
+        } as NodeMetadata,
+      };
+
+      const action = {
+        type: initializeInputsOutputsBinding.fulfilled.type,
+        payload: {
+          nodeId: 'code_interpreter',
+          inputs: {}, // Empty - should not overwrite existing
+          outputs: {}, // Empty - should not overwrite existing
+        },
+      };
+
+      const newState = reducer(state, action);
+
+      // Existing inputs/outputs should be preserved
+      expect((newState.nodesMetadata.code_interpreter.runData as any)?.inputs).toEqual(existingInputs);
+      expect((newState.nodesMetadata.code_interpreter.runData as any)?.outputs).toEqual(existingOutputs);
+    });
+
+    it('should overwrite existing inputs/outputs in initializeInputsOutputsBinding.fulfilled when new values are non-empty', () => {
+      const state = { ...initialState };
+
+      state.nodesMetadata = {
+        test_node: {
+          graphId: 'root',
+          isRoot: false,
+          isTrigger: false,
+          runData: {
+            status: 'Succeeded',
+            inputs: { old: { displayName: 'Old', value: 'old-value' } },
+            outputs: { old: { displayName: 'Old', value: 'old-value' } },
+          },
+        } as NodeMetadata,
+      };
+
+      const newInputs = { new_input: { displayName: 'New Input', value: 'new-value' } };
+      const newOutputs = { new_output: { displayName: 'New Output', value: 'new-value' } };
+
+      const action = {
+        type: initializeInputsOutputsBinding.fulfilled.type,
+        payload: {
+          nodeId: 'test_node',
+          inputs: newInputs,
+          outputs: newOutputs,
+        },
+      };
+
+      const newState = reducer(state, action);
+
+      // New non-empty inputs/outputs should overwrite existing
+      expect((newState.nodesMetadata.test_node.runData as any)?.inputs).toEqual(newInputs);
+      expect((newState.nodesMetadata.test_node.runData as any)?.outputs).toEqual(newOutputs);
+    });
   });
 });

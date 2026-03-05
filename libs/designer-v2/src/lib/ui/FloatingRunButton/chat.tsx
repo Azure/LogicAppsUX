@@ -649,7 +649,7 @@ export const ChatButton = (props: ChatButtonProps) => {
                 </DialogTrigger>
               }
             />
-            <DialogContent style={{ height: '70vh', padding: 0 }}>{chatContent}</DialogContent>
+            <DialogContent style={{ height: '70vh', padding: 0, margin: '0 -24px -32px' }}>{chatContent}</DialogContent>
           </DialogBody>
         </DialogSurface>
       </Dialog>

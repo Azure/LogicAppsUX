@@ -16,6 +16,7 @@ export interface DownloadChunkMetadata {
 export interface OperationInfo {
   connectorId: string;
   operationId: string;
+  operationPath?: string;
 }
 
 export interface SecureDataOptions {
@@ -75,6 +76,7 @@ export const ConnectionType = {
   ApiConnection: 'apiconnection',
   Agent: 'agent',
   Mcp: 'mcp',
+  KnowledgeHub: 'knowledgehub',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 

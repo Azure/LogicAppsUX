@@ -56,6 +56,7 @@ interface DropdownItem extends BaseTextInputFieldItem {
   onOptionSelect: (selectedOptions: string[]) => void;
   selectedOptions: string[];
   multiselect?: boolean;
+  controlled?: boolean;
 }
 
 interface RadioGroupItem extends BaseFieldItem {
@@ -93,6 +94,7 @@ interface BaseTemplatesSectionProps {
     href: string;
   };
   cssOverrides?: Record<string, string>;
+  onRenderInfoBar?: () => React.ReactNode;
 }
 
 interface ContentBasedProps extends BaseTemplatesSectionProps {

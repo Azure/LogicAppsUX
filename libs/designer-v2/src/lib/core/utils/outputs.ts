@@ -43,6 +43,7 @@ import {
   LoggerService,
   LogEntryLevel,
   TryGetOperationManifestService,
+  dereferenceJsonSchema,
 } from '@microsoft/logic-apps-shared';
 import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
 import type {
@@ -318,7 +319,8 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
         case 'Value': {
           if (segment.type === ValueSegmentType.LITERAL) {
             try {
-              schemaToReplace = JSON.parse(segment.value);
+              const parsedSchema = JSON.parse(segment.value);
+              schemaToReplace = dereferenceJsonSchema(parsedSchema) ?? undefined;
             } catch {} // eslint-disable-line no-empty
           }
           break;
@@ -515,7 +517,8 @@ export const loadDynamicOutputsInNode = async (
                 operationInfo.type,
                 dynamicOutputs,
                 { iconUri, brandColor },
-                settings
+                settings,
+                nodeInputs
               ),
             })
           );

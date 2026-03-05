@@ -49,14 +49,16 @@ import type {
   SearchableDropdownOption,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
-import { type AppDispatch, storeStateToUndoRedoHistory } from '../../core';
+import { type AppDispatch, type RootState, storeStateToUndoRedoHistory, useOperationInfo } from '../../core';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
 import constants from '../../common/constants';
 import { AdvancedSettingsMessage } from './advancedSettingsMessage';
+import { updateParameterConditionalVisibilityAndRefreshOutputs } from '../../core/actions/bjsworkflow/initialize';
+import { isTriggerNode } from '../../core/utils/graph';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -235,6 +237,9 @@ const Setting = ({
   const normalizedType = node?.type.toLowerCase();
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
 
+  const operationInfo = useOperationInfo(nodeId);
+  const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
+
   const updateHideErrorMessage = (index: number, b: boolean) => {
     setHideErrorMessage([...hideErrorMessage.slice(0, index), b, ...hideErrorMessage.slice(index + 1)]);
   };
@@ -340,7 +345,16 @@ const Setting = ({
 
     const removeParamCallback = () => {
       dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
-      dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
+      dispatch(
+        updateParameterConditionalVisibilityAndRefreshOutputs({
+          nodeId,
+          groupId: id ?? '',
+          parameterId,
+          value: false,
+          operationInfo,
+          isTrigger,
+        })
+      );
     };
 
     const removeParamTooltip = intl.formatMessage(

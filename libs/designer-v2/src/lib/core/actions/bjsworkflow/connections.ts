@@ -47,6 +47,7 @@ import {
   UserPreferenceService,
   LoggerService,
   LogEntryLevel,
+  foundryServiceConnectionRegex,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -121,9 +122,24 @@ const updateAgentParametersForConnection = (
   // Extract modelType from connection
   const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
 
-  // Map display name back to manifest value
-  const ModelTypeReverseMap = Object.fromEntries(Object.entries(AgentUtils.ModelType).map(([key, val]) => [val.trim(), key]));
-  const agentModelTypeValue = ModelTypeReverseMap[rawModelType] ?? 'AzureOpenAI';
+  // Map display name to manifest parameter value
+  const displayNameToManifestValue: Record<string, string> = {
+    [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
+    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
+    [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
+    [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',
+  };
+  let agentModelTypeValue = displayNameToManifestValue[rawModelType] ?? '';
+
+  // Fallback: detect Foundry connections by cognitiveServiceAccountId resource pattern
+  if (!agentModelTypeValue) {
+    const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
+    if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
+      agentModelTypeValue = 'FoundryAgentService';
+    } else {
+      agentModelTypeValue = 'AzureOpenAI';
+    }
+  }
 
   // Get current parameter groups
   const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;

@@ -6880,7 +6880,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copilot chat canceled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot 채팅을 취소함]]></Val>
+            <Val><![CDATA[Copilot Chat 취소됨]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

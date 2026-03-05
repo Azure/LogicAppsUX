@@ -1,6 +1,7 @@
 name: '✨ Feature Request'
 description: Suggest an idea or enhancement for Logic Apps
 labels: ['enhancement', 'triage']
+type: 'Feature'
 body:
   - type: markdown
     attributes:

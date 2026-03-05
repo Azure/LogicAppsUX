@@ -3,7 +3,7 @@ import { TemplateCard } from '../cards/templateCard';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageNum, templatesCountPerPage } from '../../../core/state/templates/manifestSlice';
-import { Text, mergeClasses } from '@fluentui/react-components';
+import { Text, mergeClasses, useArrowNavigationGroup } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useTemplatesGalleryStyles } from './templatesgallery.styles';
 import { useFilteredTemplateNames } from '../../../core/state/templates/templateselectors';
@@ -30,6 +30,7 @@ export const TemplatesGallery = ({
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useTemplatesGalleryStyles();
+  const arrowNavigationAttributes = useArrowNavigationGroup({ axis: 'both', circular: true });
   const intlText = {
     NO_RESULTS: intl.formatMessage({
       defaultMessage: "Can't find any search results",
@@ -50,7 +51,7 @@ export const TemplatesGallery = ({
   return (
     <div className={styles.galleryWrapper}>
       <div>
-        <div className={mergeClasses(styles.galleryList, cssOverrides?.['list'])}>
+        <div className={mergeClasses(styles.galleryList, cssOverrides?.['list'])} {...arrowNavigationAttributes}>
           {blankTemplateCard ? blankTemplateCard : null}
           {filteredTemplateNames === undefined
             ? [1, 2, 3, 4].map((i) => <TemplateCard key={i} cssOverrides={cssOverrides} templateName={''} />)

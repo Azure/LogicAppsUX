@@ -9,6 +9,8 @@ import type {
   ConnectionPanelContentState,
   DiscoveryPanelContentState,
   ErrorPanelContentState,
+  McpToolWizardState,
+  McpWizardStep,
   NodeSearchPanelContentState,
   OperationPanelContentState,
   PanelMode,
@@ -209,7 +211,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.isParallelBranch = isParallelBranch ?? false;
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
-      state.discoveryContent.isAddingAgentTool = isAgentTool;
+      state.discoveryContent.isAddingAgentTool = isAgentTool ?? false;
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
       state.discoveryContent.selectedOperationId = '';
@@ -349,6 +351,53 @@ export const panelSlice = createSlice({
     setRunHistoryCollapsed: (state, action: PayloadAction<boolean>) => {
       state.runHistoryCollapsed = action.payload;
     },
+    openMcpToolWizard: (
+      state,
+      action: PayloadAction<{
+        operation: McpToolWizardState['operation'];
+        connectionId?: string;
+        forceCreateConnection?: boolean;
+      }>
+    ) => {
+      const { operation, connectionId, forceCreateConnection } = action.payload;
+      state.discoveryContent.mcpToolWizard = {
+        operation,
+        currentStep: forceCreateConnection ? 'CREATE_CONNECTION' : connectionId ? 'PARAMETERS' : 'CONNECTION',
+        connectionId,
+        allowedTools: undefined,
+        isConnectionLocked: !!connectionId,
+      };
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area,
+        message: action.type,
+        args: [operation.name],
+      });
+    },
+    setMcpWizardStep: (state, action: PayloadAction<McpWizardStep>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.currentStep = action.payload;
+      }
+    },
+    setMcpWizardConnection: (state, action: PayloadAction<string>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.connectionId = action.payload;
+      }
+    },
+    setMcpWizardTools: (state, action: PayloadAction<string[]>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.allowedTools = action.payload;
+      }
+    },
+    setMcpWizardHeaders: (state, action: PayloadAction<Record<string, string>>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.headers = action.payload;
+      }
+    },
+    closeMcpToolWizard: (state) => {
+      state.discoveryContent.mcpToolWizard = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -380,6 +429,12 @@ export const {
   initRunInPanel,
   addAgentToolMetadata,
   setRunHistoryCollapsed,
+  openMcpToolWizard,
+  setMcpWizardStep,
+  setMcpWizardConnection,
+  setMcpWizardTools,
+  setMcpWizardHeaders,
+  closeMcpToolWizard,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

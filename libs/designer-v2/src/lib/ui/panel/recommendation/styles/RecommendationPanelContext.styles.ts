@@ -26,4 +26,11 @@ export const useRecommendationPanelContextStyles = makeStyles({
     fontWeight: '400',
     padding: '8px 2px 0px',
   },
+  wizardWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    // Use calc to fill remaining viewport height, accounting for header
+    height: 'calc(100vh - 180px)',
+    overflow: 'hidden',
+  },
 });

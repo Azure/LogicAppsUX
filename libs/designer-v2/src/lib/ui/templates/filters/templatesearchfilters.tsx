@@ -72,8 +72,8 @@ const SortDropdown = () => {
 
   const intlText = {
     SORT_BY: intl.formatMessage({
-      defaultMessage: 'Sort By',
-      id: 'ZOIvqN',
+      defaultMessage: 'Sort by',
+      id: 'zLrEAG',
       description: 'Label text for sort by filter',
     }),
   };
@@ -130,8 +130,8 @@ export const TemplateSearchAndFilters = ({
       description: 'Label text for type filter',
     }),
     SORT_BY: intl.formatMessage({
-      defaultMessage: 'Sort By',
-      id: 'ZOIvqN',
+      defaultMessage: 'Sort by',
+      id: 'zLrEAG',
       description: 'Label text for sort by filter',
     }),
     MY_TEMPLATES: intl.formatMessage({
@@ -217,13 +217,15 @@ export const TemplateSearchAndFilters = ({
       {showFilters && <Filters tabFilterKey={tabFilterKey} detailFilters={detailFilters} />}
 
       <div className={mergeClasses(styles.filtersTabs, cssOverrides?.tabs)}>
-        <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>
-          {templateTabs.map((tab) => (
-            <Tab key={tab.name} id={tab.name} value={tab.name}>
-              {tab.displayName}
-            </Tab>
-          ))}
-        </TabList>
+        <div className={styles.tabListWrapper}>
+          <TabList className={styles.tabList} selectedValue={selectedTabId} onTabSelect={onTabSelected}>
+            {templateTabs.map((tab) => (
+              <Tab key={tab.name} id={tab.name} value={tab.name}>
+                {tab.displayName}
+              </Tab>
+            ))}
+          </TabList>
+        </div>
         <SortDropdown />
       </div>
     </div>

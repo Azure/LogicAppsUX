@@ -3,7 +3,7 @@ import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { DocumentCard } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
+import { Text, useRestoreFocusTarget } from '@fluentui/react-components';
 import { Add16Regular } from '@fluentui/react-icons';
 import { templateCardStyles } from './templateCard';
 
@@ -40,12 +40,22 @@ export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty
     await TemplateService()?.onAddBlankWorkflow?.();
   };
 
+  const restoreFocusTargetAttribute = useRestoreFocusTarget();
+
   return (
     <DocumentCard
+      {...restoreFocusTargetAttribute}
       className="msla-template-card-wrapper"
       styles={templateCardStyles}
       onClick={onBlankWorkflowClick}
       aria-label={intlText.BLANK_WORKFLOW}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          onBlankWorkflowClick();
+        }
+      }}
     >
       <div className="msla-blank-template-card">
         <Add16Regular className="msla-blank-template-card-add-icon" />

@@ -17,6 +17,7 @@ export interface InteractionTagListProps {
   items: InteractionTagItem[];
   initialSelectedItem?: string;
   onTagSelect: (value: string) => void;
+  ariaLabel?: string;
 }
 
 const useInteractionTagListStyles = makeStyles({
@@ -31,6 +32,7 @@ export const InteractionTagList = ({
   items,
   onTagSelect,
   initialSelectedItem,
+  ariaLabel,
   ...interactionTagProps
 }: InteractionTagListProps & Partial<InteractionTagProps>) => {
   const [selectedItem, setSelectedItem] = React.useState<string | undefined>(initialSelectedItem ?? items[0]?.value);
@@ -42,7 +44,7 @@ export const InteractionTagList = ({
   };
 
   return (
-    <TagGroup>
+    <TagGroup role="radiogroup" aria-label={ariaLabel}>
       {items.map(({ key, text, value }) => (
         <InteractionTag
           key={key}

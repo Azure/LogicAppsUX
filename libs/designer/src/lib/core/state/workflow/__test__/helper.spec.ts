@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { collapseFlowTree } from '../helper'; // Adjust the import path as needed
+import { collapseFlowTree, isA2AWorkflow } from '../helper'; // Adjust the import path as needed
 import { WorkflowNode } from '../../../parsers/models/workflowNode';
+import type { WorkflowState } from '../workflowInterfaces';
 
 describe('collapseFlowTree', () => {
   test('should return the original tree when no collapsed nodes are provided', () => {
@@ -122,5 +123,310 @@ describe('collapseFlowTree', () => {
     const nodeA = (graph?.children ?? []).find((child) => child.id === 'A');
     expect(nodeA).toBeDefined();
     expect(nodeA?.edges).toBeUndefined();
+  });
+});
+
+describe('isA2AWorkflow', () => {
+  // Helper to create minimal workflow state
+  const createWorkflowState = (overrides: Partial<WorkflowState> = {}): WorkflowState => ({
+    graph: {
+      id: 'root',
+      type: 'GRAPH_NODE',
+      children: [],
+      edges: [],
+    },
+    operations: {},
+    nodesMetadata: {},
+    collapsedGraphIds: {},
+    edgeIdsBySource: {},
+    idReplacements: {},
+    newlyAddedOperations: {},
+    isDirty: false,
+    focusedTab: undefined,
+    ...overrides,
+  });
+
+  describe('Standard SKU detection', () => {
+    test('should return true for Standard SKU with workflowKind="agent"', () => {
+      const state = createWorkflowState({
+        workflowKind: 'agent',
+      });
+
+      expect(isA2AWorkflow(state)).toBe(true);
+    });
+
+    test('should return false for Standard SKU with workflowKind="stateful"', () => {
+      const state = createWorkflowState({
+        workflowKind: 'stateful',
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should return false for Standard SKU with workflowKind="stateless"', () => {
+      const state = createWorkflowState({
+        workflowKind: 'stateless',
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+  });
+
+  describe('Consumption SKU - metadata detection', () => {
+    test('should return true for Consumption SKU with agentType="conversational"', () => {
+      const state = createWorkflowState({
+        originalDefinition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          metadata: {
+            agentType: 'conversational',
+          },
+          triggers: {},
+          actions: {},
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(true);
+    });
+
+    test('should return false for Consumption SKU with agentType="Conversational" (case sensitive)', () => {
+      // The equals() function is case-sensitive for metadata check
+      const state = createWorkflowState({
+        originalDefinition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          metadata: {
+            agentType: 'Conversational',
+          },
+          triggers: {},
+          actions: {},
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should return false for Consumption SKU with different agentType', () => {
+      const state = createWorkflowState({
+        originalDefinition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          metadata: {
+            agentType: 'autonomous',
+          },
+          triggers: {},
+          actions: {},
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+  });
+
+  describe('Consumption SKU - trigger pattern detection', () => {
+    test('should return true for Consumption SKU with Request trigger and Agent kind', () => {
+      const state = createWorkflowState({
+        nodesMetadata: {
+          trigger1: {
+            graphId: 'root',
+            isRoot: true,
+            isTrigger: true,
+          },
+        },
+        operations: {
+          trigger1: {
+            type: 'Request',
+            kind: 'Agent',
+            inputs: {},
+          },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(true);
+    });
+
+    test('should return true for trigger pattern with case-insensitive matching', () => {
+      const state = createWorkflowState({
+        nodesMetadata: {
+          trigger1: {
+            graphId: 'root',
+            isRoot: true,
+            isTrigger: true,
+          },
+        },
+        operations: {
+          trigger1: {
+            type: 'request',
+            kind: 'agent',
+            inputs: {},
+          },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(true);
+    });
+
+    test('should return false for Request trigger without Agent kind', () => {
+      const state = createWorkflowState({
+        nodesMetadata: {
+          trigger1: {
+            graphId: 'root',
+            isRoot: true,
+            isTrigger: true,
+          },
+        },
+        operations: {
+          trigger1: {
+            type: 'Request',
+            kind: 'Http',
+            inputs: {},
+          },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should return false for Agent kind without Request trigger', () => {
+      const state = createWorkflowState({
+        nodesMetadata: {
+          trigger1: {
+            graphId: 'root',
+            isRoot: true,
+            isTrigger: true,
+          },
+        },
+        operations: {
+          trigger1: {
+            type: 'Recurrence',
+            kind: 'Agent',
+            inputs: {},
+          },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+  });
+
+  describe('Edge cases and fallback behavior', () => {
+    test('should return false for regular workflow with no A2A indicators', () => {
+      const state = createWorkflowState({
+        operations: {
+          trigger1: {
+            type: 'Recurrence',
+            kind: 'Http',
+            inputs: {},
+          },
+        },
+        nodesMetadata: {
+          trigger1: {
+            graphId: 'root',
+            isRoot: true,
+            isTrigger: true,
+          },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should return false for empty workflow state', () => {
+      const state = createWorkflowState();
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should return false when no trigger exists', () => {
+      const state = createWorkflowState({
+        operations: {
+          action1: {
+            type: 'Http',
+            inputs: {},
+          },
+        },
+        nodesMetadata: {
+          action1: {
+            graphId: 'root',
+            isRoot: false,
+            isTrigger: false,
+          },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should handle workflow with multiple non-trigger nodes', () => {
+      const state = createWorkflowState({
+        operations: {
+          action1: { type: 'Http', inputs: {} },
+          action2: { type: 'Response', inputs: {} },
+          action3: { type: 'Compose', inputs: {} },
+        },
+        nodesMetadata: {
+          action1: { graphId: 'root', isRoot: false, isTrigger: false },
+          action2: { graphId: 'root', isRoot: false, isTrigger: false },
+          action3: { graphId: 'root', isRoot: false, isTrigger: false },
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+  });
+
+  describe('Priority and short-circuit behavior', () => {
+    test('should prioritize workflowKind="agent" over other checks', () => {
+      // Even with conflicting metadata, workflowKind should win
+      const state = createWorkflowState({
+        workflowKind: 'agent',
+        originalDefinition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          metadata: {
+            agentType: 'someOtherType',
+          },
+          triggers: {},
+          actions: {},
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(true);
+    });
+
+    test('should short-circuit on explicit non-agent workflowKind', () => {
+      // Should return false without checking other properties
+      const state = createWorkflowState({
+        workflowKind: 'stateful',
+        originalDefinition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          metadata: {
+            agentType: 'conversational',
+          },
+          triggers: {},
+          actions: {},
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(false);
+    });
+
+    test('should fall through to metadata check when workflowKind is undefined', () => {
+      const state = createWorkflowState({
+        workflowKind: undefined,
+        originalDefinition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          metadata: {
+            agentType: 'conversational',
+          },
+          triggers: {},
+          actions: {},
+        },
+      });
+
+      expect(isA2AWorkflow(state)).toBe(true);
+    });
   });
 });

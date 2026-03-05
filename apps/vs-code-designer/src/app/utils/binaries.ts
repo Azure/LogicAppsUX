@@ -24,6 +24,7 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
+import { isDevContainerWorkspace } from './devContainerUtils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -82,7 +83,7 @@ export async function downloadAndExtractDependency(
 
       // Extract to targetFolder
       if (dependencyName === dotnetDependencyName) {
-        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
+        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
         if (process.platform === Platform.windows) {
           await executeCommand(
             ext.outputChannel,
@@ -216,12 +217,12 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
       .catch((error) => {
         context.telemetry.properties.latestVersionSource = 'fallback';
         context.telemetry.properties.errorNewestDotNetVersion = `Error getting latest .NET SDK version: ${error}`;
-        return DependencyVersion.dotnet6;
+        return DependencyVersion.dotnet8;
       });
   }
 
   context.telemetry.properties.latestVersionSource = 'fallback';
-  return DependencyVersion.dotnet6;
+  return DependencyVersion.dotnet8;
 }
 
 export async function getLatestNodeJsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
@@ -238,6 +239,9 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
             return releaseVersion;
           }
         }
+        context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
+        context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
+        return DependencyVersion.nodeJs;
       })
       .catch((error) => {
         context.telemetry.properties.latestNodeJSVersion = 'fallback';
@@ -282,8 +286,8 @@ export function getCpuArchitecture() {
  * @param dependencyName The name of the dependency.
  * @returns true if expected binaries folder directory path exists
  */
-export function binariesExist(dependencyName: string): boolean {
-  if (!useBinariesDependencies()) {
+export async function binariesExist(dependencyName: string): Promise<boolean> {
+  if (!(await useBinariesDependencies())) {
     return false;
   }
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
@@ -419,7 +423,7 @@ export function getDependencyTimeout(): number {
  * @param {IActionContext} context - Activation context.
  */
 export async function installBinaries(context: IActionContext) {
-  const useBinaries = useBinariesDependencies();
+  const useBinaries = await useBinariesDependencies();
 
   if (useBinaries) {
     await onboardBinaries(context);
@@ -434,8 +438,15 @@ export async function installBinaries(context: IActionContext) {
 
 /**
  * Returns boolean to determine if workspace uses binaries dependencies.
+ * Returns false for devContainer workspaces as they have pre-configured environments.
  */
-export const useBinariesDependencies = (): boolean => {
+export const useBinariesDependencies = async (): Promise<boolean> => {
+  // Always return false for devContainer workspaces
+  const isDevContainer = await isDevContainerWorkspace();
+  if (isDevContainer) {
+    return false;
+  }
+
   const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
   return !!binariesInstallation;
 };

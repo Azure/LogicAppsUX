@@ -30,7 +30,7 @@ export const isDynamicConnection = (feature?: string): boolean => {
 export class AgentUtils {
   public static ModelType = {
     AzureOpenAI: 'Azure OpenAI',
-    FoundryService: 'Foundry Agent Service',
+    FoundryService: 'Foundry project',
     APIM: 'APIM Gen AI Gateway',
     V1ChatCompletionsService: 'V1 Chat Completions Service',
   };
@@ -44,6 +44,10 @@ export class AgentUtils {
 
   public static isAgentModelTypeParameter = (parameterName?: string): boolean => {
     return equals(parameterName ?? '', 'agentModelType', true);
+  };
+
+  public static isFoundryAgentIdParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'foundryAgentId', true);
   };
 
   public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {

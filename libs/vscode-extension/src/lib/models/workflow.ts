@@ -53,6 +53,7 @@ export interface AzureConnectorDetails {
   tenantId?: string;
   clientId?: string;
   workflowManagementBaseUrl?: string;
+  defaultHostName?: string;
 }
 
 export interface WorkflowParameter {

@@ -1,18 +1,59 @@
-import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
-import { isArmResourceId, UnsupportedException } from '../../../utils/src';
+import type { Connector, OpenAPIV2, OperationManifest } from '../../../utils/src';
+import {
+  isArmResourceId,
+  UnsupportedException,
+  ResourceIdentityType,
+  equals,
+  optional,
+  getConnectionParametersWithType,
+  ConnectionParameterTypes,
+} from '../../../utils/src';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
+import { ConnectionService } from '../connection';
+import { WorkflowService } from '../workflow';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
-type GetConfigurationFunction = (connectionId: string, manifest?: OperationManifest) => Promise<Record<string, any>>;
+const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
+  let audience: string | undefined;
+  let additionalAudiences: string[] | undefined;
+  if (WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()) {
+    const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
+    const parameterType = isMultiAuth ? ConnectionParameterTypes.managedIdentity : ConnectionParameterTypes.oauthSetting;
+    const parameters = getConnectionParametersWithType(connector, parameterType);
+
+    if (isMultiAuth) {
+      audience = parameters?.[0]?.managedIdentitySettings?.resourceUri;
+      additionalAudiences = parameters?.[0]?.managedIdentitySettings?.additionalResourceUris;
+    } else {
+      audience = parameters?.[0]?.oAuthSettings?.properties?.AzureActiveDirectoryResourceId;
+    }
+  }
+
+  return {
+    authentication: {
+      type: 'ManagedServiceIdentity',
+      ...optional('identity', userAssignedIdentity),
+      ...optional('audience', audience),
+      ...optional('additionalAudiences', additionalAudiences),
+    },
+  };
+};
+
+type GetConfigurationFunction = (
+  connectionId: string,
+  manifest?: OperationManifest,
+  useManagedConnections?: boolean
+) => Promise<Record<string, any>>;
 
 export interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
   getConfiguration: GetConfigurationFunction;
+  workflowName?: string;
 }
 
 export class StandardConnectorService extends BaseConnectorService {
@@ -60,11 +101,13 @@ export class StandardConnectorService extends BaseConnectorService {
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any,
-    configuration: Record<string, any>
+    connectionId: string | undefined,
+    operationPath?: string
   ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    const { baseUrl, apiVersion, httpClient, getConfiguration } = this.options;
+    const { operationId: dynamicOperation, apiType } = dynamicState;
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const isMcpConnection = apiType === 'mcp' && dynamicOperation === 'listMcpTools';
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       if (!this.options.valuesClient?.[dynamicOperation]) {
@@ -73,8 +116,85 @@ export class StandardConnectorService extends BaseConnectorService {
       return this.options.valuesClient?.[dynamicOperation]({
         operationId,
         parameters: invokeParameters,
-        configuration,
+        configuration: await getConfiguration(connectionId ?? ''),
       });
+    }
+
+    const configuration: any = await getConfiguration(connectionId ?? '', /* manifest */ undefined, !!isMcpConnection);
+    if (isMcpConnection) {
+      if (!this.options.workflowName) {
+        throw new Error('workflowName is required for MCP connections.');
+      }
+
+      const uri = `${baseUrl}/workflows/${this.options.workflowName}/listMcpTools`;
+      let content: any;
+
+      const builtinConnectionData = configuration?.isAgentMcpConnection ? configuration.connection : undefined;
+      if (builtinConnectionData) {
+        content = { connection: builtinConnectionData };
+      } else {
+        let connection: any;
+        if (configuration) {
+          // Workaround: Remove connectionRuntimeUrl from connectionProperties if it exists
+          // connectionRuntimeUrl should be at the root level, not inside connectionProperties
+          connection = { ...configuration.connection };
+          if (connection?.connectionProperties?.connectionRuntimeUrl) {
+            delete connection.connectionProperties.connectionRuntimeUrl;
+          }
+        } else if (connectionId && isArmResourceId(connectionId)) {
+          // Generate connection reference for managed connections when it's not found.
+          const connectionFromService = await ConnectionService().getConnection(connectionId);
+          if (connectionFromService) {
+            const identity = WorkflowService().getAppIdentity?.();
+            const userIdentity =
+              equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
+                ? Object.keys(identity.userAssignedIdentities)[0]
+                : undefined;
+            const properties = connectionFromService.properties as any;
+
+            let connectionProperties: any;
+            try {
+              const connector = await ConnectionService().getConnector(properties.api.id);
+              connectionProperties = getConnectionProperties(connector, userIdentity);
+            } catch {
+              connectionProperties = {
+                authentication: {
+                  type: 'ManagedServiceIdentity',
+                  ...optional('identity', userIdentity),
+                },
+              };
+            }
+            connection = {
+              api: { id: connectorId },
+              connection: { id: connectionId },
+              authentication: {
+                type: 'ManagedServiceIdentity',
+                ...optional('identity', userIdentity),
+              },
+              connectionRuntimeUrl: properties.connectionRuntimeUrl ?? '',
+              connectionProperties,
+            };
+          }
+        }
+
+        content = {
+          managedConnection: connection,
+          mcpServerPath: operationPath,
+        };
+      }
+
+      const mcpToolsResponse = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content,
+      });
+      const tools = this._getResponseFromDynamicApi(mcpToolsResponse, uri);
+
+      return (tools ?? []).map((tool: any) => ({
+        value: tool.name,
+        displayName: tool.name,
+        description: tool.description,
+      }));
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
@@ -106,11 +226,11 @@ export class StandardConnectorService extends BaseConnectorService {
     connectorId: string,
     operationId: string,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    _isManagedIdentityConnection?: boolean,
+    operationPath?: string
   ): Promise<ListDynamicValue[]> {
-    const { getConfiguration } = this.options;
-    const configuration = await getConfiguration(connectionId ?? '');
-    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, configuration);
+    return this._listDynamicValues(connectorId, operationId, parameters, dynamicState, connectionId, operationPath);
   }
 
   protected async _getDynamicSchema(

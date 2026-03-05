@@ -87,9 +87,9 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre ref={elementRef} className={className} style={style}>
             {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line, key: i })}>
+              <div key={i} {...getLineProps({ line })}>
                 {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token, key })} />
+                  <span key={key} {...getTokenProps({ token })} />
                 ))}
               </div>
             ))}

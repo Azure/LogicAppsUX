@@ -9,4 +9,9 @@ export const useBrowseViewStyles = makeStyles({
     alignSelf: 'flex-start',
     marginBottom: tokens.spacingVerticalL,
   },
+  wizardWrapper: {
+    height: 'calc(100vh - 120px)',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 });

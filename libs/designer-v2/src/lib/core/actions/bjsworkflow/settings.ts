@@ -848,12 +848,18 @@ const getTrackedProperties = (isTrigger: boolean, manifest?: OperationManifest, 
 };
 
 const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {
+  // Tracked properties are never supported for triggers (backend limitation),
+  // regardless of what the manifest declares. See Azure/logicapps#798.
+  if (isTrigger) {
+    return false;
+  }
+
   if (manifest) {
     const setting = getOperationSettingFromManifest(manifest, 'trackedProperties') as OperationManifestSetting<void> | undefined;
     return isSettingSupportedFromOperationManifest(setting, isTrigger);
   }
 
-  return !isTrigger;
+  return true;
 };
 
 const getSecureInputsSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {

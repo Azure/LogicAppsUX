@@ -514,6 +514,10 @@ export default {
     QUICK_BASICS: 'QUICK_BASICS',
     QUICK_REVIEW: 'QUICK_REVIEW',
   },
+  KNOWLEDGE_PANEL_TAB_NAMES: {
+    BASICS: 'BASICS',
+    MODEL: 'MODEL',
+  },
   CLONE_TO_STANDARD_TAB_NAMES: {
     CONFIGURE: 'CONFIGURE',
     REVIEW: 'REVIEW',
@@ -984,6 +988,7 @@ export default {
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+    SELECT_NESTED_AGENT_WORKFLOW_ACTION: 'invokenestedagent',
   },
   CHANNELS: {
     INPUT: '-inputchannel-',

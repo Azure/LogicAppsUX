@@ -148,8 +148,9 @@ export class MapDefinitionDeserializer {
       srcNode = this.getSourceNodeWithBackout(key);
     } else {
       const lastLoop = this.getLowestLoop().key;
-      // danielle handle namespace here
-      srcNode = findNodeForKey(`${lastLoop}/${key}`, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+      // Handle relative attribute paths like './@AttributeName' by stripping the './' prefix
+      const normalizedKey = key.startsWith('./@') ? key.substring(2) : key;
+      srcNode = findNodeForKey(`${lastLoop}/${normalizedKey}`, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
     }
     return srcNode;
   };
