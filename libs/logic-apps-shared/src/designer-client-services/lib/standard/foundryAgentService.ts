@@ -170,10 +170,10 @@ export async function listFoundryAgents(
 ): Promise<FoundryAgentListResponse> {
   const queryParameters: QueryParameters = {
     'api-version': FOUNDRY_API_VERSION,
-    ...(options?.limit && { limit: options.limit }),
-    ...(options?.order && { order: options.order }),
-    ...(options?.after && { after: options.after }),
-    ...(options?.before && { before: options.before }),
+    ...(options?.limit != null && { limit: options.limit }),
+    ...(options?.order != null && { order: options.order }),
+    ...(options?.after != null && { after: options.after }),
+    ...(options?.before != null && { before: options.before }),
   };
 
   return httpClient.get<FoundryAgentListResponse>({
@@ -278,7 +278,6 @@ export async function listFoundryAgentVersions(
 
 /** Safely extract the versions array from an API response, handling nested or flat shapes. */
 function extractVersionsData(response: unknown): FoundryAgentVersion[] {
-  // Direct array response
   if (Array.isArray(response)) {
     return response as FoundryAgentVersion[];
   }
@@ -322,21 +321,17 @@ export async function updateFoundryAgent(
   accessToken: string,
   updates: UpdateFoundryAgentOptions
 ): Promise<FoundryAgent> {
-  const definition: Record<string, unknown> = { kind: 'prompt' };
-  if (updates.model !== undefined) {
-    definition['model'] = updates.model;
-  }
-  if (updates.instructions !== undefined) {
-    definition['instructions'] = updates.instructions;
-  }
+  const definition: Record<string, unknown> = {
+    kind: 'prompt',
+    ...(updates.model !== undefined && { model: updates.model }),
+    ...(updates.instructions !== undefined && { instructions: updates.instructions }),
+  };
 
-  const body: Record<string, unknown> = { definition };
-  if (updates.name !== undefined) {
-    body['name'] = updates.name;
-  }
-  if (updates.description !== undefined) {
-    body['description'] = updates.description;
-  }
+  const body: Record<string, unknown> = {
+    definition,
+    ...(updates.name !== undefined && { name: updates.name }),
+    ...(updates.description !== undefined && { description: updates.description }),
+  };
 
   const raw = await httpClient.post<FoundryAgentRaw, Record<string, unknown>>({
     uri: buildAgentUri(projectEndpoint, agentId),

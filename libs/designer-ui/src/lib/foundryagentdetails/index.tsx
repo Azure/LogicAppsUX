@@ -153,6 +153,7 @@ export function FoundryAgentDetails({
   }, [models, effectiveModel]);
 
   const versionDisplayValue = selectedVersion ? `Version ${selectedVersion}` : '';
+  const versionPlaceholder = versionsLoading ? loadingVersionsPlaceholder : selectVersionPlaceholder;
 
   return (
     <div className={styles.container}>
@@ -160,7 +161,7 @@ export function FoundryAgentDetails({
         <Field label={versionLabel} size="small">
           {hasVersions ? (
             <Dropdown
-              placeholder={versionsLoading ? loadingVersionsPlaceholder : selectVersionPlaceholder}
+              placeholder={versionPlaceholder}
               value={versionDisplayValue}
               selectedOptions={selectedVersion ? [selectedVersion] : []}
               onOptionSelect={handleVersionSelect}
@@ -174,13 +175,7 @@ export function FoundryAgentDetails({
               ))}
             </Dropdown>
           ) : (
-            <Dropdown
-              placeholder={versionsLoading ? loadingVersionsPlaceholder : selectVersionPlaceholder}
-              value=""
-              selectedOptions={[]}
-              disabled
-              size="small"
-            />
+            <Dropdown placeholder={versionPlaceholder} value="" selectedOptions={[]} disabled size="small" />
           )}
         </Field>
       </div>

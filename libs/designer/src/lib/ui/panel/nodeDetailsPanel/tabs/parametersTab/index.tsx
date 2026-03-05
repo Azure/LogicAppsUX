@@ -442,8 +442,7 @@ export const ParameterSection = ({
     if (agentModelType) {
       return false;
     }
-    const hasFoundryAgentId = !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
-    return hasFoundryAgentId;
+    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
   }, [isAgentServiceConnection, nodeInputs.parameterGroups, group.id]);
 
   // Derive the currently selected Foundry agent from parameter values
@@ -464,12 +463,12 @@ export const ParameterSection = ({
 
   // Derive the effective version: explicit selection > stored param > latest available
   const effectiveFoundryVersion = useMemo(() => {
-    if (selectedFoundryVersion && foundryVersions?.some((v) => String(v.version) === String(selectedFoundryVersion))) {
+    if (selectedFoundryVersion && foundryVersions?.some((v) => String(v.version) === selectedFoundryVersion)) {
       return selectedFoundryVersion;
     }
     if (foundryVersions?.length) {
       const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber')?.value?.[0]?.value;
-      if (storedVersion && foundryVersions.some((v) => String(v.version) === String(storedVersion))) {
+      if (storedVersion && foundryVersions.some((v) => String(v.version) === storedVersion)) {
         return storedVersion;
       }
       return String(foundryVersions[0].version);
@@ -508,12 +507,14 @@ export const ParameterSection = ({
   // After a save, Foundry creates a new version — auto-select it
   useEffect(() => {
     if (foundryVersions?.length && needsVersionRefresh(nodeId)) {
+      // Always consume the flag to prevent leaks (even if version didn't change)
+      consumeVersionRefresh(nodeId);
+
       const latestVersion = String(foundryVersions[0].version);
       const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
       const storedVersion = versionParam?.value?.[0]?.value;
 
       if (latestVersion !== storedVersion) {
-        consumeVersionRefresh(nodeId);
         setSelectedFoundryVersion(latestVersion);
         if (versionParam) {
           dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, latestVersion);
@@ -619,7 +620,7 @@ export const ParameterSection = ({
         }
       }
     },
-    [nodeInputs.parameterGroups, group.id, dispatch, nodeId, foundryProjectEndpoint, selectedFoundryAgent]
+    [nodeInputs.parameterGroups, group.id, dispatch, nodeId]
   );
 
   const onValueChange = useCallback(
@@ -1463,7 +1464,6 @@ function dispatchParamUpdate(dispatch: AppDispatch, nodeId: string, groupId: str
 
 /**
  * Build a messages JSON array with updated system instructions, preserving user messages.
- * Returns the stringified JSON, or undefined if no messages parameter exists.
  */
 function buildMessagesWithSystemInstructions(currentMessagesValue: string, systemInstructions: string): string {
   let userMessages: { role: string; content: string }[] = [];
@@ -1478,11 +1478,13 @@ function buildMessagesWithSystemInstructions(currentMessagesValue: string, syste
   return JSON.stringify([{ role: 'system', content: systemInstructions }, ...userMessages], null, 4);
 }
 
-function FoundryPortalLink({
-  projectResourceId,
-  agentId,
-  versionNumber,
-}: { projectResourceId?: string; agentId: string; versionNumber?: string }) {
+interface FoundryPortalLinkProps {
+  projectResourceId?: string;
+  agentId: string;
+  versionNumber?: string;
+}
+
+function FoundryPortalLink({ projectResourceId, agentId, versionNumber }: FoundryPortalLinkProps) {
   const styles = useFoundryAgentDetailsStyles();
   const intl = useIntl();
   const portalUrl = useMemo(
