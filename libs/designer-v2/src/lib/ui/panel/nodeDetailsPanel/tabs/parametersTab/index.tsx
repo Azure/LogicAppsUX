@@ -1416,7 +1416,7 @@ function dispatchParamUpdate(dispatch: AppDispatch, nodeId: string, groupId: str
         {
           groupId,
           parameterId: param.id,
-          propertiesToUpdate: { value: [createLiteralValueSegment(value)] },
+          propertiesToUpdate: { value: [createLiteralValueSegment(String(value))], preservedValue: undefined },
         },
       ],
     })

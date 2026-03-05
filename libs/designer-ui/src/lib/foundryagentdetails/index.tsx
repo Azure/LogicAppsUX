@@ -115,7 +115,7 @@ export function FoundryAgentDetails({
   const handleVersionSelect = useCallback(
     (_: unknown, data: { optionValue?: string }) => {
       if (data.optionValue && onVersionChange && versions) {
-        const version = versions.find((v) => v.version === data.optionValue);
+        const version = versions.find((v) => String(v.version) === data.optionValue);
         if (version) {
           onVersionChange(version);
         }
@@ -168,7 +168,7 @@ export function FoundryAgentDetails({
               size="small"
             >
               {versions.map((v) => (
-                <Option key={v.version} value={v.version} text={`Version ${v.version}`}>
+                <Option key={String(v.version)} value={String(v.version)} text={`Version ${v.version}`}>
                   {`Version ${v.version}`}
                 </Option>
               ))}

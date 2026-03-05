@@ -74,6 +74,26 @@ describe('FoundryAgentDetails', () => {
     expect(json.children!.length).toBeGreaterThan(0);
   });
 
+  it('should render with numeric version values from the API (runtime type mismatch)', () => {
+    // The Foundry API may return version as a number despite the TypeScript interface declaring string.
+    // The component must handle this gracefully via String() coercion.
+    const numericVersions = baseVersions.map((v) => ({ ...v, version: Number(v.version) as unknown as string }));
+    const tree = renderWithIntl(
+      <FoundryAgentDetails
+        agent={baseAgent}
+        models={baseModels}
+        onModelChange={vi.fn()}
+        onInstructionsChange={vi.fn()}
+        versions={numericVersions}
+        selectedVersion="3"
+        onVersionChange={vi.fn()}
+      />
+    );
+    const json = tree.toJSON() as renderer.ReactTestRendererJSON;
+    expect(json.children).toBeTruthy();
+    expect(json.children!.length).toBeGreaterThan(0);
+  });
+
   it('should render disabled version dropdown when no versions available', () => {
     const tree = renderWithIntl(
       <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} versions={[]} />
