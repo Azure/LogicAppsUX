@@ -36,7 +36,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@xyflow/react": "^12.3.5",
-    "dompurify": "3.3.1",
+    "dompurify": "3.3.2",
     "fuse.js": "6.6.2",
     "lexical": "0.33.1",
     "prism-react-renderer": "2.3.1",
