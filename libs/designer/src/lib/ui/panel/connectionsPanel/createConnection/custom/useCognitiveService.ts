@@ -296,7 +296,6 @@ export const useFoundryAgentVersions = (
   agentId: string | undefined
 ): { data: FoundryAgentVersion[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
-  const projectResourceId = useFoundryProjectResourceIdForNode(nodeId);
 
   return useQuery(
     ['foundryAgentVersions', { projectEndpoint, agentId }],
@@ -309,7 +308,7 @@ export const useFoundryAgentVersions = (
         return [];
       }
       const token = await ctx.getToken();
-      return listFoundryAgentVersions(ctx.httpClient, projectEndpoint, agentId, token, projectResourceId);
+      return listFoundryAgentVersions(ctx.httpClient, projectEndpoint, agentId, token);
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );

@@ -12,7 +12,6 @@
 import type { IHttpClient, QueryParameters } from '../httpClient';
 
 const FOUNDRY_API_VERSION = '2025-05-15-preview';
-const FOUNDRY_PORTAL_VERSIONS_URI = 'https://ai.azure.com/nextgen/api/query?getAgentVersionsResolver';
 
 // --- Types ---
 
@@ -237,50 +236,15 @@ export async function listFoundryAgentVersions(
   httpClient: IHttpClient,
   projectEndpoint: string,
   agentId: string,
-  accessToken: string,
-  projectResourceId?: string
+  accessToken: string
 ): Promise<FoundryAgentVersion[]> {
-  // Try data-plane endpoint first
-  try {
-    const response = await httpClient.get<FoundryAgentVersionListResponse>({
-      uri: `${buildAgentUri(projectEndpoint, agentId)}/versions`,
-      headers: foundryHeaders(accessToken),
-      queryParameters: { 'api-version': FOUNDRY_API_VERSION },
-      noAuth: true,
-    });
-    const versions = extractVersionsData(response);
-    if (versions.length) {
-      return versions;
-    }
-    // Data-plane returned empty — fall through to portal BFF
-  } catch {
-    // Data-plane endpoint may not exist — fall through to portal API
-  }
-
-  // Fallback: Foundry Portal BFF
-  if (!projectResourceId) {
-    return [];
-  }
-
-  try {
-    const response = await httpClient.post<FoundryAgentVersionListResponse, Record<string, unknown>>({
-      uri: FOUNDRY_PORTAL_VERSIONS_URI,
-      headers: foundryHeaders(accessToken),
-      content: {
-        query: 'getAgentVersionsResolver',
-        params: {
-          resourceId: projectResourceId,
-          agentName: agentId,
-          useFoundryV2: false,
-        },
-      },
-      noAuth: true,
-    });
-    return extractVersionsData(response);
-  } catch (error) {
-    console.warn('[FoundryAgentService] Portal BFF versions call failed:', error);
-    return [];
-  }
+  const response = await httpClient.get<FoundryAgentVersionListResponse>({
+    uri: `${buildAgentUri(projectEndpoint, agentId)}/versions`,
+    headers: foundryHeaders(accessToken),
+    queryParameters: { 'api-version': FOUNDRY_API_VERSION },
+    noAuth: true,
+  });
+  return extractVersionsData(response);
 }
 
 /** Safely extract the versions array from an API response, handling nested or flat shapes. */
