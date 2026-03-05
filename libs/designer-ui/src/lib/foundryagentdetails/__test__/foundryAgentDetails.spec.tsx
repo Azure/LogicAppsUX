@@ -115,6 +115,58 @@ describe('FoundryAgentDetails', () => {
   });
 });
 
+describe('handleVersionSelect logic (String coercion)', () => {
+  // Extracted logic from handleVersionSelect to verify the String() coercion fix
+  // works for both string and numeric version values from the API.
+  function findVersion(versions: FoundryAgentVersion[], optionValue: string): FoundryAgentVersion | undefined {
+    return versions.find((v) => String(v.version) === optionValue);
+  }
+
+  const versions: FoundryAgentVersion[] = [
+    {
+      id: 'a:8',
+      name: 'a',
+      version: '8',
+      description: '',
+      created_at: 0,
+      metadata: {},
+      object: 'agent.version',
+      definition: { kind: 'prompt', model: 'gpt-4', instructions: '' },
+    },
+    {
+      id: 'a:7',
+      name: 'a',
+      version: '7',
+      description: '',
+      created_at: 0,
+      metadata: {},
+      object: 'agent.version',
+      definition: { kind: 'prompt', model: 'gpt-4', instructions: '' },
+    },
+  ];
+
+  it('should find version when version field is a string', () => {
+    const result = findVersion(versions, '8');
+    expect(result).toBeDefined();
+    expect(result!.id).toBe('a:8');
+  });
+
+  it('should find version when API returns version as a number (runtime type mismatch)', () => {
+    const numericVersions = versions.map((v) => ({ ...v, version: Number(v.version) as unknown as string }));
+    const result = findVersion(numericVersions, '8');
+    expect(result).toBeDefined();
+    expect(result!.id).toBe('a:8');
+  });
+
+  it('should return undefined for non-existent version', () => {
+    expect(findVersion(versions, '99')).toBeUndefined();
+  });
+
+  it('should return undefined for empty optionValue', () => {
+    expect(findVersion(versions, '')).toBeUndefined();
+  });
+});
+
 describe('buildFoundryPortalUrl', () => {
   it('should return a portal URL when given a valid project resource ID', () => {
     const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct-1/projects/proj-1';
