@@ -429,6 +429,16 @@ export const ParameterSection = ({
     return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
   }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
 
+  // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
+  // This avoids flashing the generic agent UI while the connection type is still resolving.
+  const isFoundryAgentPending = useMemo(() => {
+    if (isAgentServiceConnection) {
+      return false;
+    }
+    const hasFoundryAgentId = !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
+    return hasFoundryAgentId;
+  }, [isAgentServiceConnection, nodeInputs.parameterGroups, group.id]);
+
   // Derive the currently selected Foundry agent from parameter values
   const selectedFoundryAgent = useMemo(() => {
     if (!isAgentServiceConnection || !foundryAgentsForNode?.length) {
@@ -1246,7 +1256,9 @@ export const ParameterSection = ({
   // When Foundry connection is active but no agent selected yet, hide system instructions
   // and deploymentId since they'll be managed via FoundryAgentDetails once an agent is picked.
   // Also move the Agent picker to the top for consistent ordering.
-  if (isAgentServiceConnection) {
+  // Also applies when the connection type is still resolving (isFoundryAgentPending) to prevent
+  // the generic agent UI from flashing before the Foundry-specific UI loads.
+  if (isAgentServiceConnection || isFoundryAgentPending) {
     const filtered = filterFoundryManagedSettings(settings);
     const agentIdx = filtered.findIndex(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
