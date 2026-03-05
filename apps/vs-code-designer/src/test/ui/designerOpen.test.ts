@@ -3,6 +3,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as assert from 'assert';
 import {
   Workbench,
   WebView,
@@ -1067,7 +1068,7 @@ describe('Designer Open Tests', function () {
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
       console.log('[designerOpen:before] Manifest file not found — skipping all designer open tests.');
       console.log('[designerOpen:before] The createWorkspace.test.ts suite must run first to create the manifest.');
-      this.skip();
+      assert.fail('Test precondition not met - required setup failed');
       return;
     }
 
@@ -1076,7 +1077,7 @@ describe('Designer Open Tests', function () {
 
     if (manifest.length === 0) {
       console.log('[designerOpen:before] Manifest is empty — skipping all designer open tests.');
-      this.skip();
+      assert.fail('Test precondition not met - required setup failed');
       return;
     }
 
@@ -1101,9 +1102,9 @@ describe('Designer Open Tests', function () {
   // Manifest verification tests
   // =========================================================================
   describe('Manifest verification', () => {
-    it('should have a valid manifest with workspace entries', function () {
+    it('should have a valid manifest with workspace entries', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1125,9 +1126,9 @@ describe('Designer Open Tests', function () {
       console.log('[manifestCheck] All manifest entries are valid');
     });
 
-    it('should have all workspace directories on disk', function () {
+    it('should have all workspace directories on disk', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1145,9 +1146,9 @@ describe('Designer Open Tests', function () {
       console.log(`[diskCheck] All ${manifest.length} workspace directories exist on disk`);
     });
 
-    it('should have workflow.json in each workspace', function () {
+    it('should have workflow.json in each workspace', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1166,9 +1167,9 @@ describe('Designer Open Tests', function () {
       console.log(`[workflowJsonCheck] All ${manifest.length} workspaces have workflow.json`);
     });
 
-    it('should have correct workflow.json content for each workspace type', function () {
+    it('should have correct workflow.json content for each workspace type', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1239,16 +1240,16 @@ describe('Designer Open Tests', function () {
       await sleep(2000);
     });
 
-    it('should open designer for a Standard workspace', async function () {
+    it('should open designer for a Standard workspace', async () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
       const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
       if (!entry) {
         console.log('[designerStandard] No Standard + Stateful workspace in manifest, skipping');
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1262,16 +1263,16 @@ describe('Designer Open Tests', function () {
       console.log(`[designerStandard] PASSED: ${result.details}`);
     });
 
-    it('should open designer for a Custom Code workspace', async function () {
+    it('should open designer for a Custom Code workspace', async () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
       const entry = manifest.find((e) => e.appType === 'customCode' && e.wfType === 'Stateful');
       if (!entry) {
         console.log('[designerCustomCode] No CustomCode + Stateful workspace in manifest, skipping');
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1285,16 +1286,16 @@ describe('Designer Open Tests', function () {
       console.log(`[designerCustomCode] PASSED: ${result.details}`);
     });
 
-    it('should open designer for a Rules Engine workspace', async function () {
+    it('should open designer for a Rules Engine workspace', async () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
       const entry = manifest.find((e) => e.appType === 'rulesEngine' && e.wfType === 'Stateful');
       if (!entry) {
         console.log('[designerRulesEngine] No RulesEngine + Stateful workspace in manifest, skipping');
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1315,9 +1316,9 @@ describe('Designer Open Tests', function () {
   describe('Designer command availability', function () {
     this.timeout(60_000);
 
-    it('should find the openDesigner command in the palette', async function () {
+    it('should find the openDesigner command in the palette', async () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1394,9 +1395,9 @@ describe('Designer Open Tests', function () {
       }
     });
 
-    it('should find the openOverview command in the palette', async function () {
+    it('should find the openOverview command in the palette', async () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1439,9 +1440,9 @@ describe('Designer Open Tests', function () {
   // Workspace structure verification (per manifest entry)
   // =========================================================================
   describe('Workspace structure verification', () => {
-    it('should have host.json in each workspace', function () {
+    it('should have host.json in each workspace', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1460,9 +1461,9 @@ describe('Designer Open Tests', function () {
       console.log(`[hostJsonCheck] All ${manifest.length} workspaces have host.json`);
     });
 
-    it('should have local.settings.json in each workspace', function () {
+    it('should have local.settings.json in each workspace', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1481,9 +1482,9 @@ describe('Designer Open Tests', function () {
       console.log(`[localSettingsCheck] All ${manifest.length} workspaces have local.settings.json`);
     });
 
-    it('should have .code-workspace file for each workspace', function () {
+    it('should have .code-workspace file for each workspace', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1501,15 +1502,15 @@ describe('Designer Open Tests', function () {
       console.log(`[codeWorkspaceCheck] All ${manifest.length} workspaces have .code-workspace file`);
     });
 
-    it('should have custom code files for customCode workspaces', function () {
+    it('should have custom code files for customCode workspaces', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
       const ccEntries = manifest.filter((e) => e.appType === 'customCode');
       if (ccEntries.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
@@ -1532,15 +1533,15 @@ describe('Designer Open Tests', function () {
       console.log(`[customCodeCheck] All ${ccEntries.length} custom code workspaces verified`);
     });
 
-    it('should have rules engine files for rulesEngine workspaces', function () {
+    it('should have rules engine files for rulesEngine workspaces', () => {
       if (!manifest || manifest.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 
       const reEntries = manifest.filter((e) => e.appType === 'rulesEngine');
       if (reEntries.length === 0) {
-        this.skip();
+        assert.fail('Test precondition not met - required setup failed');
         return;
       }
 

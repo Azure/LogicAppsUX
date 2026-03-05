@@ -10,6 +10,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as assert from 'assert';
 import { Workbench, By, type WebDriver, VSBrowser } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
@@ -35,12 +36,12 @@ describe('Data Mapper Extension Tests', function () {
     this.timeout(60_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
@@ -56,10 +57,10 @@ describe('Data Mapper Extension Tests', function () {
     await sleep(1000);
   });
 
-  it('should open the Data Mapper section from the Azure activity bar', async function () {
+  it('should open the Data Mapper section from the Azure activity bar', async () => {
     const entry = manifest.find((e) => e.appType === 'standard') || manifest[0];
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 
@@ -69,7 +70,7 @@ describe('Data Mapper Extension Tests', function () {
       await clearBlockingUI(driver);
     } catch (e: any) {
       console.log(`[dataMapper] Could not open workspace: ${e.message}`);
-      this.skip();
+      assert.fail('Test precondition not met - required setup failed');
       return;
     }
 

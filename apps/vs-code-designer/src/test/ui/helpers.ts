@@ -264,6 +264,8 @@ export async function clearBlockingUI(driver: WebDriver): Promise<void> {
     await sleep(500);
   }
   await dismissNotifications(driver);
+  // Dismiss any QuickPick widget (e.g. "Use connectors from Azure" / "Skip for now")
+  await dismissQuickPickIfVisible(driver);
   try {
     const body = await driver.findElement(By.css('body'));
     for (let i = 0; i < 3; i++) {
@@ -272,6 +274,51 @@ export async function clearBlockingUI(driver: WebDriver): Promise<void> {
     }
   } catch {
     /* ignore */
+  }
+}
+
+/**
+ * Dismiss any visible QuickPick widget by selecting "Skip for now" or
+ * "Connection Keys" if available, otherwise pressing Escape.
+ * Uses JS-based textContent extraction for reliable label matching.
+ */
+export async function dismissQuickPickIfVisible(driver: WebDriver): Promise<boolean> {
+  try {
+    const result = await driver.executeScript<string | null>(`
+      const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+      if (!widget) return null;
+      // Skip the command palette (input starts with ">")
+      const inputEl = widget.querySelector('.quick-input-box input');
+      if (inputEl && (inputEl.value || '').startsWith('>')) return null;
+      const rows = widget.querySelectorAll('.quick-input-list .monaco-list-row');
+      if (rows.length === 0) return null;
+      for (const row of rows) {
+        const labelSpan = row.querySelector('.label-name');
+        const text = (labelSpan ? labelSpan.textContent : row.textContent || '').toLowerCase();
+        if (text.includes('skip')) { row.click(); return 'skip'; }
+        if (text.includes('connection key') || text.includes('access key')) { row.click(); return 'connkey'; }
+      }
+      return 'unknown';
+    `);
+
+    if (!result) {
+      return false;
+    }
+
+    if (result === 'skip' || result === 'connkey') {
+      console.log(`[dismissQuickPick] Clicked ${result} option`);
+      await sleep(1000);
+      return true;
+    }
+
+    // Unknown QuickPick — press Escape
+    console.log('[dismissQuickPick] No skip/connkey option, pressing Escape');
+    const body = await driver.findElement(By.css('body'));
+    await body.sendKeys(Key.ESCAPE);
+    await sleep(500);
+    return true;
+  } catch {
+    return false;
   }
 }
 

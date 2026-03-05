@@ -719,10 +719,11 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
     throw new Error(`"${VALIDATION_TEXT}" still visible after ${timeoutMs}ms`);
   }
 
-  // Not visible yet — wait up to 60s for either the notification to appear
+  // Not visible yet — wait up to timeoutMs for either the notification to appear
   // OR the extension to finish activating (commands become available).
-  // Extension host may restart during activation, so this can take a while.
-  const activationDeadline = Date.now() + 60_000;
+  // When dependency validation is disabled via settings, the notification never
+  // appears so we rely entirely on the command registration check.
+  const activationDeadline = Date.now() + timeoutMs;
   while (Date.now() < activationDeadline) {
     if (await isValidationVisible()) {
       console.log(`[depValidation] "${VALIDATION_TEXT}" appeared (${Date.now() - t0}ms) — waiting for it to finish`);
@@ -765,7 +766,9 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
     await sleep(2000);
   }
 
-  throw new Error(`Extension not properly activated after 60s: "${VALIDATION_TEXT}" never appeared and "Open Designer" command not found`);
+  throw new Error(
+    `Extension not properly activated after ${Math.round(timeoutMs / 1000)}s: "${VALIDATION_TEXT}" never appeared and "Open Designer" command not found`
+  );
 }
 
 /**
@@ -2277,13 +2280,13 @@ describe('Designer Actions Tests', function () {
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
 
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
 
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
 
@@ -2310,10 +2313,10 @@ describe('Designer Actions Tests', function () {
   // =====================================================================
   // Test 1: Standard workflow — open designer, add Request trigger
   // =====================================================================
-  it('should add a Request trigger and Response action, then save', async function () {
+  it('should add a Request trigger and Response action, then save', async () => {
     const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 
@@ -2572,10 +2575,10 @@ describe('Designer Actions Tests', function () {
   // =====================================================================
   // Test 2: CustomCode workflow — open designer, add Compose action
   // =====================================================================
-  it('should add a Compose action to a CustomCode workflow', async function () {
+  it('should add a Compose action to a CustomCode workflow', async () => {
     const entry = manifest.find((e) => e.appType === 'customCode') || manifest.find((e) => e.appType === 'rulesEngine') || manifest[0];
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 

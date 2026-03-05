@@ -499,12 +499,6 @@ async function main() {
     }
   }
 
-  // Create a VS Code settings file that disables extension auto-update.
-  // Without this, VS Code downloads a newer version from the marketplace,
-  // creating duplicate commands and opening the wrong webview.
-  const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
-  fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
-
   // Resolve the auto-downloaded runtime dependency paths so the extension can
   // find func, dotnet, and node without relying on PATH or re-downloading.
   const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
@@ -512,45 +506,61 @@ async function main() {
   const dotnetBinary = path.join(depsRoot, 'DotNetSDK', 'dotnet');
   const nodeBinary = path.join(depsRoot, 'NodeJs', 'node');
 
-  fs.writeFileSync(
-    settingsFile,
-    JSON.stringify(
-      {
-        'extensions.autoUpdate': false,
-        'extensions.autoCheckUpdates': false,
-        'update.mode': 'none',
-        'update.showReleaseNotes': false,
-        'telemetry.telemetryLevel': 'off',
-        // Disable workspace trust to prevent the modal trust dialog from blocking
-        // keyboard shortcuts (F1 / Ctrl+Shift+P) when opening new workspace folders.
-        'security.workspace.trust.enabled': false,
-        // Disable the startup editor (Welcome tab / Getting Started) to avoid
-        // an extra tab that may steal focus from our workflow.json file.
-        'workbench.startupEditor': 'none',
-        // Disable authentication modal dialogs — the extension tries to sign in
-        // to Azure when it detects WORKFLOWS_SUBSCRIPTION_ID in local.settings.json.
-        'microsoft-sovereign-cloud.environment': '',
-        // Suppress "wants to sign in" authentication popups
-        'azure.authenticationLibrary': 'MSAL',
-        'azure.cloud': 'AzureCloud',
-        // Disable Git auto-repository detection to reduce dialogs
-        'git.openRepositoryInParentFolders': 'never',
-        'git.enabled': false,
-        // Point to auto-downloaded runtime binaries so the extension can start
-        // the design-time API process (func host start) without relying on PATH.
-        'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
-        'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': true,
-        'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
-        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
-        'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
-        // Suppress "wants to sign in" auth dialog — uses silent auth that
-        // returns undefined instead of prompting when no cached token exists.
-        'azureLogicAppsStandard.silentAuth': true,
-      },
-      null,
-      2
-    )
-  );
+  // Create a VS Code settings file. Called before each phase group so we can
+  // enable dependency validation for Phase 4.1 (first run) and disable it
+  // for all subsequent phases (saves 30-60s per session startup).
+  const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
+  fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
+
+  const writeTestSettings = ({ validateDependencies = false, autoStartDesignTime = true } = {}) => {
+    const settings = {
+      'extensions.autoUpdate': false,
+      'extensions.autoCheckUpdates': false,
+      'update.mode': 'none',
+      'update.showReleaseNotes': false,
+      'telemetry.telemetryLevel': 'off',
+      // Disable workspace trust to prevent the modal trust dialog from blocking
+      // keyboard shortcuts (F1 / Ctrl+Shift+P) when opening new workspace folders.
+      'security.workspace.trust.enabled': false,
+      // Disable the startup editor (Welcome tab / Getting Started) to avoid
+      // an extra tab that may steal focus from our workflow.json file.
+      'workbench.startupEditor': 'none',
+      // Disable authentication modal dialogs — the extension tries to sign in
+      // to Azure when it detects WORKFLOWS_SUBSCRIPTION_ID in local.settings.json.
+      'microsoft-sovereign-cloud.environment': '',
+      // Suppress "wants to sign in" authentication popups
+      'azure.authenticationLibrary': 'MSAL',
+      'azure.cloud': 'AzureCloud',
+      // Disable Git auto-repository detection to reduce dialogs
+      'git.openRepositoryInParentFolders': 'never',
+      'git.enabled': false,
+      // Point to auto-downloaded runtime binaries so the extension can start
+      // the design-time API process (func host start) without relying on PATH.
+      'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
+      // Dependency validation: Phase 4.1 needs this ON (first run downloads/validates
+      // binaries). All subsequent phases set it OFF since paths are already resolved.
+      'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': validateDependencies,
+      'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
+      'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
+      'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
+      // Design-time auto-start: ON for tests that need the runtime (designer, run),
+      // OFF for tests that only check UI/conversion to save startup time.
+      'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,
+      // Suppress the "Start design time?" prompt dialog on project load.
+      'azureLogicAppsStandard.showStartDesignTimeMessage': false,
+      // Suppress "wants to sign in" auth dialog — uses silent auth that
+      // returns undefined instead of prompting when no cached token exists.
+      'azureLogicAppsStandard.silentAuth': true,
+    };
+    fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2));
+    console.log(`  Settings: validateDependencies=${validateDependencies}, autoStartDesignTime=${autoStartDesignTime}`);
+  };
+
+  // Write initial settings — keep dependency validation ON for all phases.
+  // It adds ~30-60s per session but prevents the Azure connector wizard
+  // from blocking designer operations (the validation flow handles the
+  // timing so the wizard completes before the user opens the designer).
+  writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
   console.log(`  Created test settings file: ${settingsFile}`);
   console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
   console.log(`  autoRuntimeDependenciesPath: ${depsRoot}`);
@@ -670,6 +680,8 @@ async function main() {
       // Ensure VS Code and ChromeDriver are downloaded
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
+      // Keep dependency validation on to ensure extension activates properly
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
       const phase2Resources = getPhase2Resources();
@@ -683,6 +695,8 @@ async function main() {
       // Run only the new tests (phases 4.3–4.6) each in their own session
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
+      // Keep dependency validation on to ensure extension activates properly
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits = [];
 
@@ -710,6 +724,8 @@ async function main() {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
+      // Conversion tests don't need design-time runtime or dependency validation
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
       const wsResources = getPhase2Resources();
       const exits = [];
 
@@ -842,6 +858,9 @@ async function main() {
       console.log(`\n⚠ Phase 4.1 exited with code ${phase1Exit} — continuing to Phase 4.2 anyway (workspaces may still have been created)`);
     }
 
+    // After Phase 4.1, keep dependency validation ON but the conversion phases
+    // don't need design-time. That change happens before phase 4.8.
+
     console.log('\n=== Session boundary: closing createWorkspace session completely ===');
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await prepareFreshSession('phase2');
@@ -887,7 +906,10 @@ async function main() {
     await prepareFreshSession('phase7');
     const phase7Exit = await runPhase('Phase 4.7: remaining suites', phase7Files);
 
-    // Phases 4.8a–4.8d: Workspace conversion tests (ADO #31054994, Steps 5-15)
+    // Phases 4.8a–4.8e: Workspace conversion tests (ADO #31054994, Steps 5-15)
+    // Conversion tests don't need design-time runtime — disable it for faster startup.
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+
     // Phase 4.8a: Open workspace dir, click No on conversion dialog
     let phase8aExit = 0;
     const wsDir = (() => {

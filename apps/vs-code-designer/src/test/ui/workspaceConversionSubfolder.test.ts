@@ -78,12 +78,12 @@ describe('Workspace Conversion — Open Subfolder', function () {
     this.timeout(30_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
@@ -99,7 +99,7 @@ describe('Workspace Conversion — Open Subfolder', function () {
     await sleep(1000);
   });
 
-  it('should show workspace prompt when opening a logic app subfolder and dismiss on No', async function () {
+  it('should show workspace prompt when opening a logic app subfolder and dismiss on No', async () => {
     // The run-e2e.js phase for this test opens the logic app SUBFOLDER
     // (e.g., testws_xxx/testapp_xxx/) as the startup folder.
     // The extension detects a Logic App project in root and finds the
@@ -114,7 +114,7 @@ describe('Workspace Conversion — Open Subfolder', function () {
       console.log('[subfolder] No workspace prompt appeared — the extension may not have detected the project or the .code-workspace');
       // Log what folder we opened
       console.log('[subfolder] This test requires the startup folder to be a logic app subfolder within a workspace directory');
-      this.skip();
+      assert.fail('Test precondition not met - required setup failed');
       return;
     }
 

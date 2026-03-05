@@ -53,12 +53,12 @@ describe('Designer View Extended Tests', function () {
     this.timeout(120_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
@@ -79,10 +79,10 @@ describe('Designer View Extended Tests', function () {
     await sleep(1000);
   });
 
-  it('should add a parallel branch alongside an existing action', async function () {
+  it('should add a parallel branch alongside an existing action', async () => {
     const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 
@@ -137,10 +137,10 @@ describe('Designer View Extended Tests', function () {
     }
   });
 
-  it('should configure run-after settings on an action', async function () {
+  it('should configure run-after settings on an action', async () => {
     const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 

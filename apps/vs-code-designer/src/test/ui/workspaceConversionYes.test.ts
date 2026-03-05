@@ -84,18 +84,18 @@ describe('Workspace Conversion — Click Yes', function () {
     this.timeout(30_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
   });
 
-  it('should show workspace prompt and successfully click Yes', async function () {
+  it('should show workspace prompt and successfully click Yes', async () => {
     await captureScreenshot(driver, 'conversion-yes-start', EXPLICIT_SCREENSHOT_DIR);
 
     // Wait for the prompt
@@ -104,7 +104,7 @@ describe('Workspace Conversion — Click Yes', function () {
 
     if (!promptMessage) {
       console.log('[conversionYes] No workspace prompt appeared — skipping');
-      this.skip();
+      assert.fail('Test precondition not met - required setup failed');
       return;
     }
 

@@ -121,6 +121,11 @@ export const DEPENDENCY_VALIDATION_TIMEOUT = 300_000;
  *
  * Setting WORKFLOWS_SUBSCRIPTION_ID to "" (empty string) prevents the wizard
  * from launching because the code checks `subscriptionId === undefined`.
+ *
+ * NOTE: This causes the else branch in getAzureConnectorDetailsForLocalProject
+ * to call getAuthData(). With silentAuth: true in VS Code settings, getAuthData
+ * returns undefined which may crash. The test's `waitForDesignerWebviewTab`
+ * handles this by dismissing any resulting error dialogs.
  */
 export function ensureLocalSettingsForDesigner(appDir: string): void {
   const localSettingsPath = path.join(appDir, 'local.settings.json');
@@ -452,21 +457,65 @@ export async function waitForDesignerWebviewTab(driver: WebDriver): Promise<bool
     }
 
     // Check for QuickPick prompts from the Azure connector wizard
+    // Prompt 1: "Use connectors from Azure" / "Skip for now" → click "Skip"
+    // Prompt 2: "Managed Service Identity" / "Connection Keys" → click "Connection Keys"
+    // IMPORTANT: Skip the command palette (input starts with ">") — only target wizard QuickPicks.
     try {
-      const quickPicks = await driver.findElements(By.css('.quick-input-widget:not(.hidden) .quick-input-list .monaco-list-row'));
-      if (quickPicks.length > 0) {
-        for (const pick of quickPicks) {
-          try {
-            const text = (await pick.getText()).toLowerCase();
-            if (text.includes('skip')) {
-              console.log('[waitForDesignerTab] Selecting "Skip for now"');
-              await pick.click();
-              await sleep(500);
-              break;
-            }
-          } catch {
-            /* stale element */
+      const quickPickAction = await driver.executeScript<string | null>(`
+        const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+        if (!widget) return null;
+
+        // Skip the command palette — its input starts with ">"
+        const inputEl = widget.querySelector('.quick-input-box input');
+        const inputVal = inputEl ? inputEl.value || '' : '';
+        if (inputVal.startsWith('>')) return null;
+
+        const rows = widget.querySelectorAll('.quick-input-list .monaco-list-row');
+        if (rows.length === 0) return null;
+
+        // Collect row labels — use the .label-name span for precise text
+        const labels = [];
+        for (const row of rows) {
+          const labelSpan = row.querySelector('.label-name');
+          labels.push(labelSpan ? (labelSpan.textContent || '').trim() : (row.textContent || '').trim());
+        }
+
+        // Prompt 1: "Use connectors from Azure" / "Skip for now"
+        for (let i = 0; i < labels.length; i++) {
+          if (labels[i].toLowerCase().includes('skip')) {
+            rows[i].click();
+            return 'clicked:skip:' + labels[i].substring(0, 80);
           }
+        }
+
+        // Prompt 2: "Connection Keys" / "Managed Service Identity"
+        for (let i = 0; i < labels.length; i++) {
+          const lower = labels[i].toLowerCase();
+          if (lower.includes('connection key') || lower.includes('access key')) {
+            rows[i].click();
+            return 'clicked:connkey:' + labels[i].substring(0, 80);
+          }
+        }
+
+        // If we have real labels but no match, return them for debugging
+        const nonEmpty = labels.filter(l => l.length > 0);
+        if (nonEmpty.length > 0) {
+          return 'unknown:' + JSON.stringify(nonEmpty.map(l => l.substring(0, 80)));
+        }
+
+        return null; // Empty labels — ignore
+      `);
+
+      if (quickPickAction) {
+        if (quickPickAction.startsWith('clicked:')) {
+          console.log(`[waitForDesignerTab] ${quickPickAction}`);
+          await sleep(1000);
+        } else if (quickPickAction.startsWith('unknown:')) {
+          console.log(`[waitForDesignerTab] Unknown QuickPick: ${quickPickAction}`);
+          // Press Escape to dismiss unknown QuickPick
+          const body = await driver.findElement(By.css('body'));
+          await body.sendKeys(Key.ESCAPE);
+          await sleep(500);
         }
       }
     } catch {

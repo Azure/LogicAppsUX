@@ -477,12 +477,12 @@ describe('Multiple Designers + Add Workflow', function () {
     this.timeout(DEPENDENCY_VALIDATION_TIMEOUT + 30_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
@@ -504,10 +504,10 @@ describe('Multiple Designers + Add Workflow', function () {
     await sleep(1000);
   });
 
-  it('should add a workflow, then open multiple designers via right-click and verify operations', async function () {
+  it('should add a workflow, then open multiple designers via right-click and verify operations', async () => {
     const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 

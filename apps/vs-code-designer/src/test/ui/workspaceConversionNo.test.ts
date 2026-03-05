@@ -85,12 +85,12 @@ describe('Workspace Conversion — Click No', function () {
     this.timeout(60_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
@@ -106,7 +106,7 @@ describe('Workspace Conversion — Click No', function () {
     await sleep(1000);
   });
 
-  it('should show conversion dialog when opening workspace folder and dismiss on No', async function () {
+  it('should show conversion dialog when opening workspace folder and dismiss on No', async () => {
     // The run-e2e.js phase for this test opens the workspace DIRECTORY
     // (not the .code-workspace file), which triggers convertToWorkspace().
     // We wait for the dialog to appear and click "No".
@@ -122,7 +122,7 @@ describe('Workspace Conversion — Click No', function () {
       // or if the folder was opened as a workspace (not plain folder).
       console.log('[conversionNo] No conversion dialog appeared — the workspace directory may have been opened correctly');
       // This is not necessarily a failure — skip gracefully
-      this.skip();
+      assert.fail('Test precondition not met - required setup failed');
       return;
     }
 

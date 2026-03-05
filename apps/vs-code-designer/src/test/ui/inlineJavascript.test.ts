@@ -70,12 +70,12 @@ describe('Inline JavaScript Tests', function () {
     this.timeout(120_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
-      this.skip();
+      assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
       return;
     }
     manifest = loadWorkspaceManifest();
     if (manifest.length === 0) {
-      this.skip();
+      assert.fail('Workspace manifest is empty - Phase 4.1 must create workspaces first');
       return;
     }
     driver = VSBrowser.instance.driver;
@@ -96,10 +96,10 @@ describe('Inline JavaScript Tests', function () {
     await sleep(1000);
   });
 
-  it('should create a workflow with Request trigger, Execute JavaScript Code, and Response, then run and verify', async function () {
+  it('should create a workflow with Request trigger, Execute JavaScript Code, and Response, then run and verify', async () => {
     const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
-      this.skip();
+      assert.fail('No matching workspace entry found in manifest');
       return;
     }
 
