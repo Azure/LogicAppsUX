@@ -110,6 +110,7 @@ import {
   getFirstDeploymentModelName,
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
+  agentModelTypeParameterKey,
   isAgentConnectorAndDeploymentId,
   isAgentConnectorAndFoundryAgentId,
 } from './helpers';
@@ -431,8 +432,14 @@ export const ParameterSection = ({
 
   // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
+  // Only applies when agentModelType is truly empty (not yet loaded); if it's set to a
+  // non-Foundry value (e.g. after switching connections) this must return false.
   const isFoundryAgentPending = useMemo(() => {
     if (isAgentServiceConnection) {
+      return false;
+    }
+    const agentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value;
+    if (agentModelType) {
       return false;
     }
     const hasFoundryAgentId = !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
