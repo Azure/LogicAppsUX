@@ -689,6 +689,22 @@ async function main() {
     console.log(`  Files: ${files.join(', ')}`);
     if (phaseRunOptions.resources?.length) {
       console.log(`  Startup resources: ${phaseRunOptions.resources.join(', ')}`);
+      // Diagnostic: verify startup resource files exist
+      for (const r of phaseRunOptions.resources) {
+        const exists = fs.existsSync(r);
+        const isDir = exists && fs.statSync(r).isDirectory();
+        console.log(`  Resource "${path.basename(r)}": exists=${exists}, isDir=${isDir}`);
+      }
+    }
+    // Diagnostic: list files in settings dir to check for IPC sockets
+    try {
+      const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+      if (fs.existsSync(settingsDir)) {
+        const contents = fs.readdirSync(settingsDir);
+        console.log(`  Settings dir (${contents.length} items): ${contents.slice(0, 15).join(', ')}`);
+      }
+    } catch {
+      /* ignore */
     }
     const phaseTester = new ExTester(undefined, undefined, extDir);
     const code = await phaseTester.runTests(files, phaseRunOptions);

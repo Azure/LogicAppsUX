@@ -267,33 +267,83 @@ export async function handleDesignerPrompts(workbench: Workbench, driver: WebDri
  * After opening, clears any blocking UI (auth dialogs, workspace trust prompts, etc.)
  */
 export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: string): Promise<void> {
-  console.log(`[openWorkspaceFileInSession] Opening workspace file: ${wsFilePath}`);
+  console.log(`[openWorkspaceFileInSession] Opening: ${wsFilePath}`);
 
   if (!fs.existsSync(wsFilePath)) {
-    throw new Error(`Workspace file not found: ${wsFilePath}`);
+    throw new Error(`Path not found: ${wsFilePath}`);
   }
 
   const driver = VSBrowser.instance.driver;
 
-  await VSBrowser.instance.openResources(wsFilePath);
+  // Diagnostic: capture VS Code title before opening
+  try {
+    const titleBefore = await driver.getTitle();
+    console.log(`[openWorkspaceFileInSession] VS Code title BEFORE: "${titleBefore}"`);
+  } catch {
+    /* ignore */
+  }
+
+  // Call openResources (uses `code -r` via ExTester)
+  // Also call it directly with error capture to diagnose Linux CI failures
+  try {
+    const { execSync } = require('child_process');
+    const storagePath = path.join(require('os').tmpdir(), 'test-resources');
+    const settingsDir = path.join(storagePath, 'settings');
+
+    // List socket-related files in settings dir for diagnostics
+    try {
+      const settingsContents = fs.readdirSync(settingsDir);
+      const socketFiles = settingsContents.filter((f: string) => f.endsWith('.sock') || f.includes('socket') || f.includes('ipc'));
+      console.log(
+        `[openWorkspaceFileInSession] Settings dir files: ${settingsContents.length} total, sockets: ${JSON.stringify(socketFiles)}`
+      );
+    } catch {
+      console.log('[openWorkspaceFileInSession] Could not read settings dir');
+    }
+
+    // Try openResources (ExTester's mechanism)
+    await VSBrowser.instance.openResources(wsFilePath);
+  } catch (e: any) {
+    console.log(`[openWorkspaceFileInSession] openResources error: ${e.message}`);
+  }
+
   await sleep(5000);
+
+  // Diagnostic: capture VS Code title after opening
+  try {
+    const titleAfter = await driver.getTitle();
+    console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
+  } catch {
+    /* ignore */
+  }
+
+  // Diagnostic: check if Explorer sidebar shows any folders
+  try {
+    const explorerState = await driver.executeScript<string>(`
+      const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
+      if (rows.length === 0) return 'EMPTY - no rows in explorer';
+      const items = [];
+      for (let i = 0; i < Math.min(rows.length, 5); i++) {
+        items.push(rows[i].textContent?.substring(0, 50) || '');
+      }
+      return 'ROWS=' + rows.length + ': ' + items.join(' | ');
+    `);
+    console.log(`[openWorkspaceFileInSession] Explorer state: ${explorerState}`);
+  } catch {
+    console.log('[openWorkspaceFileInSession] Could not check explorer state');
+  }
 
   // Dismiss any dialogs that appeared during workspace open
   await clearBlockingUI(driver);
 
   await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
 
-  // Wait a reasonable time for VS Code to settle after workspace switch.
-  // DO NOT call waitForDependencyValidation here — it blocks for 300s and
-  // the dangling Promise outlives the Mocha test timeout, causing async
-  // interleaving across phases. The extension activation wait happens
-  // later in executeOpenDesignerCommand which polls the command palette.
   await sleep(5000);
 
   // Final clear of any dialogs that appeared during re-activation
   await clearBlockingUI(driver);
 
-  console.log('[openWorkspaceFileInSession] Workspace file opened and workbench is ready');
+  console.log('[openWorkspaceFileInSession] Done');
 }
 
 /**
@@ -360,6 +410,14 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
 export async function waitForDependencyValidation(driver: WebDriver, timeoutMs = DEPENDENCY_VALIDATION_TIMEOUT): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
+
+  // Diagnostic: log VS Code title to see if a workspace is loaded
+  try {
+    const title = await driver.getTitle();
+    console.log(`[depValidation] VS Code title at start: "${title}"`);
+  } catch {
+    /* ignore */
+  }
 
   const isValidationVisible = async (): Promise<boolean> => {
     try {
