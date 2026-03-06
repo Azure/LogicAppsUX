@@ -606,16 +606,41 @@ async function main() {
     const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
     const userDir = path.join(settingsDir, 'User');
 
-    // Kill any lingering test VS Code processes that lock the settings dir
+    // Kill any lingering VS Code processes from previous phases.
+    // Without this, the old VS Code window stays open and `code -r` from
+    // ExTester's openResources sends the workspace-open command to the OLD
+    // window instead of the new one. The new window stays bare (no folder),
+    // which is why screenshots show empty VS Code on CI.
     try {
       const { execSync } = require('child_process');
-      execSync(
-        `powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like '*test-resources*' } | Stop-Process -Force -ErrorAction SilentlyContinue"`,
-        { stdio: 'ignore', timeout: 10000 }
-      );
-      await new Promise((r) => setTimeout(r, 2000));
+      const isLinux = process.platform === 'linux';
+      const isMac = process.platform === 'darwin';
+
+      if (isLinux || isMac) {
+        // Kill all VS Code processes from test-resources directory
+        // Use pkill with full process matching, or fall back to killall
+        try {
+          execSync('pkill -f "test-resources.*[Cc]ode"', { stdio: 'ignore', timeout: 10000 });
+        } catch {
+          // pkill returns exit code 1 if no processes matched — that's OK
+        }
+        // Also kill any chromedriver processes from previous sessions
+        try {
+          execSync('pkill -f chromedriver', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* no chromedriver running — fine */
+        }
+      } else {
+        // Windows: use PowerShell
+        execSync(
+          'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
+          { stdio: 'ignore', timeout: 10000 }
+        );
+      }
+      console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver processes`);
+      await new Promise((r) => setTimeout(r, 3000));
     } catch {
-      /* ignore */
+      console.log(`  [${label}] No lingering processes to kill (or kill failed — continuing)`);
     }
 
     // Only delete settings/User/ — NOT the entire settings/ dir.

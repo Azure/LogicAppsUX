@@ -573,9 +573,7 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
   await focusEditor(driver);
 
   let input: InputBox | undefined;
-  // On CI after a workspace switch, the extension host restarts and may take
-  // 60-120s to re-register commands. Use 20 attempts × 10s = 200s max wait.
-  for (let attempt = 0; attempt < 20; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     // Clear blocking UI before each attempt
     await clearBlockingUI(driver);
     await jsDismissDialogs(driver);
@@ -602,7 +600,7 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
           if (tabFound) {
             return true;
           }
-          console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/20: command selected but webview tab not found, retrying...`);
+          console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/5: command selected but webview tab not found, retrying...`);
           break;
         }
       }
@@ -615,17 +613,17 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
           /* stale */
         }
       }
-      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/20: "Open Designer" not found. Available: ${JSON.stringify(available)}`);
+      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/5: "Open Designer" not found. Available: ${JSON.stringify(available)}`);
       await input.cancel();
-      await sleep(10000);
+      await sleep(3000);
     } catch (e: any) {
-      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/20 failed: ${e.message}`);
+      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/5 failed: ${e.message}`);
       try {
         await input?.cancel();
       } catch {
         /* ignore */
       }
-      await sleep(10000);
+      await sleep(3000);
     }
   }
   return false;

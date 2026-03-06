@@ -3182,7 +3182,16 @@ describe('Create Workspace Tests', function () {
       }
     });
 
-    afterEach(async () => {
+    afterEach(async function () {
+      // Capture screenshot on failure for CI debugging
+      if (this.currentTest?.state === 'failed') {
+        try {
+          const failName = (this.currentTest.title || 'unknown').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 80);
+          await captureScreenshot(driver, `FAIL-${failName}`);
+        } catch {
+          /* screenshot failed — don't mask the real error */
+        }
+      }
       try {
         await driver.switchTo().defaultContent();
       } catch {
@@ -3219,22 +3228,28 @@ describe('Create Workspace Tests', function () {
 
       // Step 1: Open the Create Workspace command
       console.log('[createStandard] Opening Create Workspace command...');
+      await captureScreenshot(driver, 'createStandard-step1-before-command');
       await selectCreateWorkspaceCommand(workbench);
+      await captureScreenshot(driver, 'createStandard-step1-after-command');
 
       // Step 2: Switch to webview
       console.log('[createStandard] Switching to webview...');
       const webview = await switchToWebviewFrame(driver);
+      await captureScreenshot(driver, 'createStandard-step2-webview-loaded');
 
       // Step 3: Fill all standard form fields
       console.log('[createStandard] Filling all form fields...');
       await fillStandardFormFields(driver, tempDir, { wsName, appName, wfName });
+      await captureScreenshot(driver, 'createStandard-step3-fields-filled');
 
       // Step 4: Wait for Next button to be enabled and click it
       console.log('[createStandard] Waiting for Next button...');
       const nextButton = await waitForNextButton(driver);
+      await captureScreenshot(driver, 'createStandard-step4-before-next');
       console.log('[createStandard] Clicking Next...');
       await nextButton.click();
       await sleep(2000);
+      await captureScreenshot(driver, 'createStandard-step5-review-page');
 
       // Step 5: Verify we're on the Review step
       console.log('[createStandard] Verifying Review step...');
@@ -3270,7 +3285,9 @@ describe('Create Workspace Tests', function () {
       }
 
       // Step 7: Click "Create workspace" to actually create the workspace
+      await captureScreenshot(driver, 'createStandard-step6-before-create');
       await clickCreateWorkspaceButton(driver, webview);
+      await captureScreenshot(driver, 'createStandard-step7-after-create');
 
       // Step 8: Deep-verify workspace on disk
       console.log('[createStandard] Verifying workspace on disk...');
