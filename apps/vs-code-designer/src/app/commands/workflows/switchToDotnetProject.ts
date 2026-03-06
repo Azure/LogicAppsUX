@@ -158,8 +158,16 @@ export async function switchToDotnetProject(
 
   await copyBundleProjectFiles(target);
   await updateBuildFile(context, target, dotnetVersion, isCodeful);
-  if (useBinaries) {
+  if (useBinaries && dotnetLocalVersion) {
     await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
+  } else if (useBinaries) {
+    ext.outputChannel.appendLog(
+      localize(
+        'dotnetVersionNotFound',
+        'Could not determine local .NET SDK version for major version {0}. Skipping global.json creation.',
+        localDotNetMajorVersion
+      )
+    );
   }
 
   const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);

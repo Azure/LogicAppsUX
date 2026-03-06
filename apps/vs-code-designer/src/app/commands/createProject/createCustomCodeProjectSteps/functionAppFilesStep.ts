@@ -21,7 +21,7 @@ import * as path from 'path';
 import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { tryGetLocalFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
-import { getCustomCodeRuntime, getDebugConfiguration } from '../../../utils/debug';
+import { getCustomCodeRuntime, getDebugConfiguration, usesPublishFolderProperty } from '../../../utils/debug';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -47,10 +47,6 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     [ProjectType.customCode]: 'FunctionProjectTemplate',
     [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
   };
-
-  private usesPublishFolderProperty(projectType: ProjectType, targetFramework: TargetFramework): boolean {
-    return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;
-  }
 
   /**
    * Determines whether the prompt should be displayed.
@@ -154,7 +150,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     let csprojFileContent: string;
-    if (this.usesPublishFolderProperty(projectType, targetFramework)) {
+    if (usesPublishFolderProperty(projectType, targetFramework)) {
       csprojFileContent = templateContent.replace(
         /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
         `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`

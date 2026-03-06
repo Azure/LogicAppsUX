@@ -21,7 +21,7 @@ import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { localize } from '../../../../localize';
 import * as vscode from 'vscode';
-import { getCustomCodeRuntime } from '../../../utils/debug';
+import { getCustomCodeRuntime, usesPublishFolderProperty } from '../../../utils/debug';
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
  */
@@ -47,10 +47,6 @@ export class CreateFunctionAppFiles {
     [ProjectType.customCode]: 'FunctionProjectTemplate',
     [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
   };
-
-  private usesPublishFolderProperty(projectType: ProjectType, targetFramework: TargetFramework): boolean {
-    return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;
-  }
 
   /**
    * Prompts the user to set up an Azure Function project.
@@ -145,7 +141,7 @@ export class CreateFunctionAppFiles {
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     let csprojFileContent: string;
-    if (this.usesPublishFolderProperty(projectType, targetFramework)) {
+    if (usesPublishFolderProperty(projectType, targetFramework)) {
       csprojFileContent = templateContent.replace(
         /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
         `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`

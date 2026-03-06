@@ -1,7 +1,7 @@
-import { getCustomCodeRuntime, getDebugConfiguration } from '../debug';
+import { getCustomCodeRuntime, getDebugConfiguration, usesPublishFolderProperty } from '../debug';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { extensionCommand } from '../../../constants';
-import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 describe('debug', () => {
   describe('getCustomCodeRuntime', () => {
@@ -15,6 +15,28 @@ describe('debug', () => {
 
     it('should return clr for .NET Framework', () => {
       expect(getCustomCodeRuntime(TargetFramework.NetFx)).toBe('clr');
+    });
+  });
+
+  describe('usesPublishFolderProperty', () => {
+    it('should return true for custom code with .NET 8', () => {
+      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.Net8)).toBe(true);
+    });
+
+    it('should return true for custom code with .NET 10', () => {
+      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.Net10)).toBe(true);
+    });
+
+    it('should return false for custom code with .NET Framework', () => {
+      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.NetFx)).toBe(false);
+    });
+
+    it('should return false for rules engine projects', () => {
+      expect(usesPublishFolderProperty(ProjectType.rulesEngine, TargetFramework.Net8)).toBe(false);
+    });
+
+    it('should return false for standard logic app projects', () => {
+      expect(usesPublishFolderProperty(ProjectType.logicApp, TargetFramework.Net8)).toBe(false);
     });
   });
 
