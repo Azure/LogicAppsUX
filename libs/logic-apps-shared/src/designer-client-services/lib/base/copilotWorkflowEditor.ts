@@ -19,8 +19,6 @@ export interface CopilotWorkflowEditorServiceOptions {
   systemPrompt?: string;
   /** Deployment name for Azure OpenAI (if using Azure OpenAI) */
   deploymentName?: string;
-  /** API version for Azure OpenAI */
-  apiVersion?: string;
   /** Whether to enable tool calling for connector/operation lookup (defaults to true) */
   enableTools?: boolean;
   /** Maximum number of tool-calling rounds before forcing a final response (defaults to 5) */
@@ -62,7 +60,6 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
   private readonly model: string;
   private readonly systemPrompt: string;
   private readonly deploymentName?: string;
-  private readonly apiVersion?: string;
   private readonly enableTools: boolean;
   private readonly maxToolRounds: number;
   private conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
@@ -81,7 +78,6 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     this.model = options.model ?? 'gpt-4o';
     this.systemPrompt = options.systemPrompt ?? DEFAULT_SYSTEM_PROMPT;
     this.deploymentName = options.deploymentName;
-    this.apiVersion = options.apiVersion;
     this.enableTools = options.enableTools ?? true;
     this.maxToolRounds = options.maxToolRounds ?? 5;
   }

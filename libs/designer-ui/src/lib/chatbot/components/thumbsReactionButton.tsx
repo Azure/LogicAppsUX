@@ -39,7 +39,7 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
 
   return (
     <Tooltip content={isDownvote ? intlText.downvote : intlText.upvote} relationship="label">
-      <Button onClick={onClick} appearance={'subtle'} disabled={disabled} icon={icon} />
+      <Button onClick={onClick} appearance={'subtle'} disabled={disabled} icon={icon} aria-pressed={isVoted} />
     </Tooltip>
   );
 };

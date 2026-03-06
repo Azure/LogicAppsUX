@@ -47,6 +47,7 @@ export const CopilotPanelHeader = (): JSX.Element => {
           className={styles.protectedBadgeLink}
           href="https://aka.ms/azurecopilot/privacystatement"
           target="_blank"
+          rel="noopener noreferrer"
           onClick={() => {
             LoggerService().log({
               level: LogEntryLevel.Warning,

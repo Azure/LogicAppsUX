@@ -437,7 +437,6 @@ describe('BaseCopilotWorkflowEditorService', () => {
       const svc = new BaseCopilotWorkflowEditorService({
         ...defaultOptions,
         deploymentName: 'my-deployment',
-        apiVersion: '2024-06-01',
       });
       await svc.getWorkflowEdit('test', simpleWorkflow);
 
