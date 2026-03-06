@@ -69,6 +69,7 @@ function createActionContext(): IActionContext {
 // Static import - uses the mocked modules defined above
 import {
   getFramework,
+  getJsonCliFramework,
   getDotnetTemplateDir,
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
@@ -259,6 +260,36 @@ describe('executeDotnetTemplateCommand', () => {
       // Second call without isCodeful - should use cache
       const result2 = await getFramework(ctx, '/workspace');
       expect(result2).toBe('net8.0');
+    });
+  });
+
+  describe('getJsonCliFramework', () => {
+    it('should return net8.0 as-is', () => {
+      expect(getJsonCliFramework('net8.0')).toBe('net8.0');
+    });
+
+    it('should return net6.0 as-is', () => {
+      expect(getJsonCliFramework('net6.0')).toBe('net6.0');
+    });
+
+    it('should return netcoreapp3.0 as-is', () => {
+      expect(getJsonCliFramework('netcoreapp3.0')).toBe('netcoreapp3.0');
+    });
+
+    it('should return netcoreapp2.0 as-is', () => {
+      expect(getJsonCliFramework('netcoreapp2.0')).toBe('netcoreapp2.0');
+    });
+
+    it('should fall back to net8.0 for net10.0', () => {
+      expect(getJsonCliFramework('net10.0')).toBe('net8.0');
+    });
+
+    it('should fall back to net8.0 for net9.0', () => {
+      expect(getJsonCliFramework('net9.0')).toBe('net8.0');
+    });
+
+    it('should fall back to net8.0 for unknown frameworks', () => {
+      expect(getJsonCliFramework('net99.0')).toBe('net8.0');
     });
   });
 

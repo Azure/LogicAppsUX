@@ -58,7 +58,7 @@ export async function executeDotnetTemplateCommand(
  * The JsonCli DLLs are framework-agnostic and forward-compatible, so newer frameworks
  * (e.g. net10.0) can reuse the net8.0 binaries.
  */
-function getJsonCliFramework(framework: string): string {
+export function getJsonCliFramework(framework: string): string {
   const supportedJsonCliFrameworks = ['net8.0', 'net6.0', 'netcoreapp3.0', 'netcoreapp2.0'];
   if (supportedJsonCliFrameworks.includes(framework)) {
     return framework;

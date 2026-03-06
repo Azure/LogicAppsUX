@@ -1,9 +1,23 @@
-import { getDebugConfiguration } from '../debug';
+import { getCustomCodeRuntime, getDebugConfiguration } from '../debug';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { extensionCommand } from '../../../constants';
 import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 describe('debug', () => {
+  describe('getCustomCodeRuntime', () => {
+    it('should return coreclr for .NET 8', () => {
+      expect(getCustomCodeRuntime(TargetFramework.Net8)).toBe('coreclr');
+    });
+
+    it('should return coreclr for .NET 10', () => {
+      expect(getCustomCodeRuntime(TargetFramework.Net10)).toBe('coreclr');
+    });
+
+    it('should return clr for .NET Framework', () => {
+      expect(getCustomCodeRuntime(TargetFramework.NetFx)).toBe('clr');
+    });
+  });
+
   describe('getDebugConfiguration', () => {
     beforeEach(() => {
       vi.clearAllMocks();
