@@ -99,6 +99,9 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       2
     );
 
+    // Build the full message for the current turn (workflow context + user prompt).
+    // Only the user prompt (without the workflow context) is stored in conversation
+    // history so that old serialized workflows don't accumulate and bloat the context.
     const userMessage = `[CURRENT WORKFLOW]\n${workflowContext}\n\n[USER REQUEST]\n${prompt}`;
     const tools = this._getAvailableTools();
     const url = this._buildUrl();
@@ -114,8 +117,9 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       finalContent = await this._executeCompletionsApi(userMessage, tools, url, headers, signal);
     }
 
-    // Persist user + final assistant message in conversation history
-    this.conversationHistory.push({ role: 'user', content: userMessage });
+    // Store only the user prompt (not the workflow context) in history to avoid
+    // accumulating large serialized workflows across turns.
+    this.conversationHistory.push({ role: 'user', content: prompt });
     this.conversationHistory.push({ role: 'assistant', content: finalContent });
 
     return this._parseResponse(finalContent, workflow);
