@@ -206,3 +206,16 @@ Common Biome rules to follow when writing code:
 - Avoid unnecessary `catch` bindings — use `catch {` not `catch (e) {` when `e` is unused
 - Keep imports organized and remove unused imports
 - Always use block statements with braces — `if (x) { break; }` not `if (x) break;`
+
+## CI Iteration Workflow
+
+After pushing E2E test changes, **automatically monitor the GitHub Actions CI run and iterate on failures without waiting for the user to ask**:
+
+1. Push the commit
+2. Wait ~20-25 minutes for the VS Code E2E test job to complete
+3. Use the GitHub MCP tools (`fetch_webpage` on the Actions run URL, or `mcp_io_github_git_pull_request_read` with `get_status`) to check the result
+4. If the CI fails, analyze the failure logs (user will paste them if needed, or download screenshots)
+5. Fix the issues, build, commit, and push
+6. Go back to step 2
+
+Do NOT stop after pushing and tell the user "I'll wait" — proactively check and iterate.

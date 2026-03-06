@@ -1312,14 +1312,32 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file
+  // 3. Open the workspace file — but SKIP if VS Code was already launched
+  //    with this workspace as a startup resource (avoids a costly extension
+  //    host restart + dependency re-validation cycle on CI).
+  const wsBaseName = path.basename(entry.wsFilePath);
+  let skipWorkspaceSwitch = false;
   try {
-    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-    driver = VSBrowser.instance.driver;
-    workbench = new Workbench();
-    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-  } catch (e: any) {
-    return { success: false, error: `Failed to open workspace: ${e.message}` };
+    const title = await driver.getTitle();
+    // VS Code title format: "workspaceName (Workspace) — Visual Studio Code"
+    const wsNameFromFile = path.basename(entry.wsFilePath, '.code-workspace');
+    if (title.includes(wsNameFromFile) || title.includes('(Workspace)')) {
+      console.log(`${tag} VS Code already has workspace open (title: "${title}") — skipping workspace switch`);
+      skipWorkspaceSwitch = true;
+    }
+  } catch {
+    /* title check failed — proceed with workspace switch */
+  }
+
+  if (!skipWorkspaceSwitch) {
+    try {
+      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+      driver = VSBrowser.instance.driver;
+      workbench = new Workbench();
+      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+    } catch (e: any) {
+      return { success: false, error: `Failed to open workspace: ${e.message}` };
+    }
   }
 
   // 4. Open workflow.json in the editor
