@@ -106,6 +106,17 @@ describe('executeDotnetTemplateCommand', () => {
       expect(result).toBe('net10.0');
     });
 
+    it('should pick .NET 8 when .NET 10 is not available', async () => {
+      const ctx = createActionContext();
+
+      mockExecuteCommand
+        .mockResolvedValueOnce('8.0.100\n') // --version
+        .mockResolvedValueOnce('8.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net8.0');
+    });
+
     it('should pick .NET 6 when 8 not available', async () => {
       const ctx = createActionContext();
 
@@ -186,6 +197,20 @@ describe('executeDotnetTemplateCommand', () => {
       const ctx = createActionContext();
 
       mockUseBinariesDependencies.mockResolvedValue(true);
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('8.0.100\n');
+      mockExecuteCommand
+        .mockResolvedValueOnce('') // --version
+        .mockResolvedValueOnce(''); // --list-sdks
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(mockGetLocalDotNetVersionFromBinaries).toHaveBeenCalled();
+      expect(result).toBe('net8.0');
+    });
+
+    it('should use binaries with .NET 10 when useBinariesDependencies returns true', async () => {
+      const ctx = createActionContext();
+
+      mockUseBinariesDependencies.mockResolvedValue(true);
       mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('10.0.100\n');
       mockExecuteCommand
         .mockResolvedValueOnce('') // --version
@@ -201,39 +226,39 @@ describe('executeDotnetTemplateCommand', () => {
 
       mockUseBinariesDependencies.mockResolvedValue(false);
       mockExecuteCommand
-        .mockResolvedValueOnce('10.0.100\n') // --version
+        .mockResolvedValueOnce('8.0.100\n') // --version
         .mockResolvedValueOnce(''); // --list-sdks
 
       const result = await getFramework(ctx, '/workspace', true);
       expect(mockGetLocalDotNetVersionFromBinaries).not.toHaveBeenCalled();
-      expect(result).toBe('net10.0');
+      expect(result).toBe('net8.0');
     });
 
     it('should handle executeCommand failures gracefully', async () => {
       const ctx = createActionContext();
 
       mockUseBinariesDependencies.mockResolvedValue(true);
-      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('10.0.100\n');
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('8.0.100\n');
       mockExecuteCommand.mockRejectedValue(new Error('command not found'));
 
       const result = await getFramework(ctx, '/workspace', true);
-      expect(result).toBe('net10.0');
+      expect(result).toBe('net8.0');
     });
 
     it('should cache result for subsequent calls', async () => {
       const ctx = createActionContext();
 
       mockExecuteCommand
-        .mockResolvedValueOnce('10.0.100\n') // --version (first call)
-        .mockResolvedValueOnce('10.0.100 [/sdk]\n'); // --list-sdks (first call)
+        .mockResolvedValueOnce('8.0.100\n') // --version (first call)
+        .mockResolvedValueOnce('8.0.100 [/sdk]\n'); // --list-sdks (first call)
 
       // First call with isCodeful to set cache
       const result1 = await getFramework(ctx, '/workspace', true);
-      expect(result1).toBe('net10.0');
+      expect(result1).toBe('net8.0');
 
       // Second call without isCodeful - should use cache
       const result2 = await getFramework(ctx, '/workspace');
-      expect(result2).toBe('net10.0');
+      expect(result2).toBe('net8.0');
     });
   });
 
