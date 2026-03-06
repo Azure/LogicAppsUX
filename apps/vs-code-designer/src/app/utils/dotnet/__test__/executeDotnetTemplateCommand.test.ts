@@ -95,15 +95,15 @@ describe('executeDotnetTemplateCommand', () => {
   // allowing each test to independently verify version detection logic.
 
   describe('getFramework', () => {
-    it('should pick .NET 8 when available (highest priority)', async () => {
+    it('should pick .NET 10 when available (highest priority)', async () => {
       const ctx = createActionContext();
 
       mockExecuteCommand
-        .mockResolvedValueOnce('8.0.100\n') // --version
-        .mockResolvedValueOnce('8.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
+        .mockResolvedValueOnce('10.0.100\n') // --version
+        .mockResolvedValueOnce('10.0.100 [/usr/share/dotnet/sdk]\n8.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
 
       const result = await getFramework(ctx, '/workspace', true);
-      expect(result).toBe('net8.0');
+      expect(result).toBe('net10.0');
     });
 
     it('should pick .NET 6 when 8 not available', async () => {
@@ -139,15 +139,15 @@ describe('executeDotnetTemplateCommand', () => {
       expect(result).toBe('netcoreapp2.0');
     });
 
-    it('should pick .NET 9 as lower priority than 8', async () => {
+    it('should pick .NET 8 ahead of .NET 9 when .NET 10 is unavailable', async () => {
       const ctx = createActionContext();
 
       mockExecuteCommand
-        .mockResolvedValueOnce('9.0.100\n') // --version
-        .mockResolvedValueOnce('9.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
+        .mockResolvedValueOnce('8.0.100\n') // --version
+        .mockResolvedValueOnce('9.0.100 [/usr/share/dotnet/sdk]\n8.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
 
       const result = await getFramework(ctx, '/workspace', true);
-      expect(result).toBe('net9.0');
+      expect(result).toBe('net8.0');
     });
 
     it('should prefer GA over preview versions', async () => {
@@ -186,14 +186,14 @@ describe('executeDotnetTemplateCommand', () => {
       const ctx = createActionContext();
 
       mockUseBinariesDependencies.mockResolvedValue(true);
-      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('8.0.100\n');
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('10.0.100\n');
       mockExecuteCommand
         .mockResolvedValueOnce('') // --version
         .mockResolvedValueOnce(''); // --list-sdks
 
       const result = await getFramework(ctx, '/workspace', true);
       expect(mockGetLocalDotNetVersionFromBinaries).toHaveBeenCalled();
-      expect(result).toBe('net8.0');
+      expect(result).toBe('net10.0');
     });
 
     it('should not use binaries when useBinariesDependencies returns false', async () => {
@@ -201,39 +201,39 @@ describe('executeDotnetTemplateCommand', () => {
 
       mockUseBinariesDependencies.mockResolvedValue(false);
       mockExecuteCommand
-        .mockResolvedValueOnce('8.0.100\n') // --version
+        .mockResolvedValueOnce('10.0.100\n') // --version
         .mockResolvedValueOnce(''); // --list-sdks
 
       const result = await getFramework(ctx, '/workspace', true);
       expect(mockGetLocalDotNetVersionFromBinaries).not.toHaveBeenCalled();
-      expect(result).toBe('net8.0');
+      expect(result).toBe('net10.0');
     });
 
     it('should handle executeCommand failures gracefully', async () => {
       const ctx = createActionContext();
 
       mockUseBinariesDependencies.mockResolvedValue(true);
-      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('8.0.100\n');
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('10.0.100\n');
       mockExecuteCommand.mockRejectedValue(new Error('command not found'));
 
       const result = await getFramework(ctx, '/workspace', true);
-      expect(result).toBe('net8.0');
+      expect(result).toBe('net10.0');
     });
 
     it('should cache result for subsequent calls', async () => {
       const ctx = createActionContext();
 
       mockExecuteCommand
-        .mockResolvedValueOnce('8.0.100\n') // --version (first call)
-        .mockResolvedValueOnce('8.0.100 [/sdk]\n'); // --list-sdks (first call)
+        .mockResolvedValueOnce('10.0.100\n') // --version (first call)
+        .mockResolvedValueOnce('10.0.100 [/sdk]\n'); // --list-sdks (first call)
 
       // First call with isCodeful to set cache
       const result1 = await getFramework(ctx, '/workspace', true);
-      expect(result1).toBe('net8.0');
+      expect(result1).toBe('net10.0');
 
       // Second call without isCodeful - should use cache
       const result2 = await getFramework(ctx, '/workspace');
-      expect(result2).toBe('net8.0');
+      expect(result2).toBe('net10.0');
     });
   });
 

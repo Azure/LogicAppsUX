@@ -21,6 +21,7 @@ import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { localize } from '../../../../localize';
 import * as vscode from 'vscode';
+import { getCustomCodeRuntime } from '../../../utils/debug';
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
  */
@@ -28,22 +29,28 @@ export class CreateFunctionAppFiles {
   // Hide the step count in the wizard UI
   public hideStepCount = true;
 
-  private csTemplateFileName = {
+  private readonly csTemplateFileName = {
     [TargetFramework.NetFx]: 'FunctionsFileNetFx',
     [TargetFramework.Net8]: 'FunctionsFileNet8',
+    [TargetFramework.Net10]: 'FunctionsFileNet10',
     [ProjectType.rulesEngine]: 'RulesFunctionsFile',
   };
 
-  private csprojTemplateFileName = {
+  private readonly csprojTemplateFileName = {
     [TargetFramework.NetFx]: 'FunctionsProjNetFx',
     [TargetFramework.Net8]: 'FunctionsProjNet8New',
+    [TargetFramework.Net10]: 'FunctionsProjNet10New',
     [ProjectType.rulesEngine]: 'RulesFunctionsProj',
   };
 
-  private templateFolderName = {
+  private readonly templateFolderName = {
     [ProjectType.customCode]: 'FunctionProjectTemplate',
     [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
   };
+
+  private usesPublishFolderProperty(projectType: ProjectType, targetFramework: TargetFramework): boolean {
+    return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;
+  }
 
   /**
    * Prompts the user to set up an Azure Function project.
@@ -138,7 +145,7 @@ export class CreateFunctionAppFiles {
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     let csprojFileContent: string;
-    if (targetFramework === TargetFramework.Net8 && projectType === ProjectType.customCode) {
+    if (this.usesPublishFolderProperty(projectType, targetFramework)) {
       csprojFileContent = templateContent.replace(
         /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
         `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
@@ -232,7 +239,7 @@ export class CreateFunctionAppFiles {
           if (debugConfig.type === 'logicapp') {
             return {
               ...debugConfig,
-              customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+              customCodeRuntime: getCustomCodeRuntime(targetFramework),
               isCodeless: true,
             };
           }
@@ -244,7 +251,7 @@ export class CreateFunctionAppFiles {
             type: 'logicapp',
             request: 'launch',
             funcRuntime: funcVersion === FuncVersion.v1 ? 'clr' : 'coreclr',
-            customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+            customCodeRuntime: getCustomCodeRuntime(targetFramework),
             isCodeless: true,
           },
           ...debugConfigs.filter(

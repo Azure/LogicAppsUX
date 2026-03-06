@@ -21,7 +21,7 @@ import * as path from 'path';
 import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { tryGetLocalFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
-import { getDebugConfiguration } from '../../../utils/debug';
+import { getCustomCodeRuntime, getDebugConfiguration } from '../../../utils/debug';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -29,22 +29,28 @@ import { getDebugConfiguration } from '../../../utils/debug';
 export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
-  private csTemplateFileName = {
+  private readonly csTemplateFileName = {
     [TargetFramework.NetFx]: 'FunctionsFileNetFx',
     [TargetFramework.Net8]: 'FunctionsFileNet8',
+    [TargetFramework.Net10]: 'FunctionsFileNet10',
     [ProjectType.rulesEngine]: 'RulesFunctionsFile',
   };
 
-  private csprojTemplateFileName = {
+  private readonly csprojTemplateFileName = {
     [TargetFramework.NetFx]: 'FunctionsProjNetFx',
     [TargetFramework.Net8]: 'FunctionsProjNet8New',
+    [TargetFramework.Net10]: 'FunctionsProjNet10New',
     [ProjectType.rulesEngine]: 'RulesFunctionsProj',
   };
 
-  private templateFolderName = {
+  private readonly templateFolderName = {
     [ProjectType.customCode]: 'FunctionProjectTemplate',
     [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
   };
+
+  private usesPublishFolderProperty(projectType: ProjectType, targetFramework: TargetFramework): boolean {
+    return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;
+  }
 
   /**
    * Determines whether the prompt should be displayed.
@@ -148,7 +154,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     let csprojFileContent: string;
-    if (targetFramework === TargetFramework.Net8 && projectType === ProjectType.customCode) {
+    if (this.usesPublishFolderProperty(projectType, targetFramework)) {
       csprojFileContent = templateContent.replace(
         /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
         `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
@@ -227,7 +233,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
           if (debugConfig.type === 'logicapp') {
             return {
               ...debugConfig,
-              customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+              customCodeRuntime: getCustomCodeRuntime(targetFramework),
               isCodeless: true,
             };
           }

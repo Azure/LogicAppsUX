@@ -725,6 +725,7 @@ describe('createLogicAppProject - Integration Tests', () => {
 
         // Create .cs file from template using correct path
         const csTemplateMap: Record<string, string> = {
+          net10: 'FunctionsFileNet10',
           net8: 'FunctionsFileNet8',
           net472: 'FunctionsFileNetFx',
           rulesEngine: 'RulesFunctionsFile',
@@ -749,6 +750,7 @@ describe('createLogicAppProject - Integration Tests', () => {
 
         // Create .csproj file from template using correct path
         const csprojTemplateMap: Record<string, string> = {
+          net10: 'FunctionsProjNet10New',
           net8: 'FunctionsProjNet8New',
           net472: 'FunctionsProjNetFx',
           rulesEngine: 'RulesFunctionsProj',
@@ -761,7 +763,7 @@ describe('createLogicAppProject - Integration Tests', () => {
         let csprojContent = await fse.readFile(csprojTemplatePath, 'utf-8');
 
         // Replace LogicApp folder references
-        if (targetFramework === 'net8' && projectType === ProjectType.customCode) {
+        if ((targetFramework === 'net8' || targetFramework === 'net10') && projectType === ProjectType.customCode) {
           csprojContent = csprojContent.replace(
             /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
             `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`

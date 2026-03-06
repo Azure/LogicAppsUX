@@ -41,15 +41,18 @@ vi.mock('../../../extensionVariables', () => ({
 
 describe('customCodeUtils', () => {
   let validNet8CsprojContent: string;
+  let validNet10CsprojContent: string;
   let validNetFxCsprojContent: string;
   let invalidCsprojContent: string;
 
   beforeAll(async () => {
     const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
     const assetsFolderPath = path.join(__dirname, '..', '..', '..', assetsFolderName);
+    const net10CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet10New');
     const net8CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet8New');
     const netFxCsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNetFx');
 
+    validNet10CsprojContent = await realFs.readFile(net10CsprojTemplatePath, 'utf8');
     validNet8CsprojContent = await realFs.readFile(net8CsprojTemplatePath, 'utf8');
     validNetFxCsprojContent = await realFs.readFile(netFxCsprojTemplatePath, 'utf8');
     invalidCsprojContent = `
@@ -156,6 +159,14 @@ describe('customCodeUtils', () => {
       expect(result).toBe(true);
     });
 
+    it('should return true for a valid net10 csproj file', async () => {
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsprojFile]);
+      vi.spyOn(fse, 'readFile').mockResolvedValue(validNet10CsprojContent);
+      const result = await isCustomCodeFunctionsProject(testFolderPath);
+      expect(result).toBe(true);
+    });
+
     it('should return true for a valid netfx csproj file', async () => {
       vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
       vi.spyOn(fse, 'readdir').mockResolvedValue([testCsprojFile]);
@@ -247,6 +258,25 @@ describe('customCodeUtils', () => {
         functionAppName: testFunctionName,
         logicAppName: 'LogicApp',
         targetFramework: TargetFramework.Net8,
+        namespace: testNamespace,
+      } as CustomCodeFunctionsProjectMetadata);
+    });
+
+    it('should return metadata for a valid net10 csproj file', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile, testCsprojFile]);
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('.csproj')) {
+          return validNet10CsprojContent;
+        }
+        return `namespace ${testNamespace} {}`;
+      });
+
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toEqual({
+        projectPath: testFolderPath,
+        functionAppName: testFunctionName,
+        logicAppName: 'LogicApp',
+        targetFramework: TargetFramework.Net10,
         namespace: testNamespace,
       } as CustomCodeFunctionsProjectMetadata);
     });

@@ -39,7 +39,7 @@ export async function executeDotnetTemplateCommand(
     path.join(assetsFolderName, 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
   );
 
-  return await executeCommand(
+  return executeCommand(
     undefined,
     workingDirectory,
     getDotNetCommand(),
@@ -87,25 +87,20 @@ export async function validateDotnetInstalled(context: IActionContext): Promise<
  */
 export async function getFramework(context: IActionContext, workingDirectory: string | undefined, isCodeful = false): Promise<string> {
   if (!cachedFramework || isCodeful) {
-    let versions = '';
     const dotnetBinariesLocation = getDotNetCommand();
+    const versionSources: string[] = [];
 
-    versions = (await useBinariesDependencies()) ? await getLocalDotNetVersionFromBinaries() : versions;
-
-    try {
-      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');
-    } catch {
-      // ignore
+    if (await useBinariesDependencies()) {
+      versionSources.push((await getLocalDotNetVersionFromBinaries()) ?? '');
     }
 
-    try {
-      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--list-sdks');
-    } catch {
-      // ignore
-    }
+    versionSources.push(await tryGetDotnetVersionOutput(dotnetBinariesLocation, workingDirectory, '--version'));
+    versionSources.push(await tryGetDotnetVersionOutput(dotnetBinariesLocation, workingDirectory, '--list-sdks'));
+
+    const versions = versionSources.join('');
 
     // Prioritize "LTS", then "Current", then "Preview"
-    const netVersions: string[] = ['8', '6', '3', '2', '9', '10'];
+    const netVersions: string[] = ['10', '8', '6', '3', '2', '9'];
 
     const semVersions: SemVer[] = netVersions.map((v) => semVerCoerce(v) as SemVer);
 
@@ -144,4 +139,16 @@ export async function getFramework(context: IActionContext, workingDirectory: st
   }
 
   return cachedFramework;
+}
+
+async function tryGetDotnetVersionOutput(
+  dotnetCommand: string,
+  workingDirectory: string | undefined,
+  commandArgument: '--version' | '--list-sdks'
+): Promise<string> {
+  try {
+    return await executeCommand(undefined, workingDirectory, dotnetCommand, commandArgument);
+  } catch {
+    return '';
+  }
 }

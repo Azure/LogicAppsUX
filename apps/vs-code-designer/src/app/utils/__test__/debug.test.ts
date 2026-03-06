@@ -22,6 +22,19 @@ describe('debug', () => {
         });
       });
 
+      it('should return launch configuration for .NET 10 custom code with v4 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net10);
+
+        expect(result).toEqual({
+          name: 'Run/Debug logic app with local function TestLogicApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'coreclr',
+          isCodeless: true,
+        });
+      });
+
       it('should return launch configuration for .NET Framework custom code with v1 function runtime', () => {
         const result = getDebugConfiguration(FuncVersion.v1, 'TestLogicApp', TargetFramework.NetFx);
 

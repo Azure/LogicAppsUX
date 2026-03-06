@@ -17,6 +17,10 @@ export async function getDebugSymbolDll(): Promise<string> {
   return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
 }
 
+export function getCustomCodeRuntime(targetFramework: TargetFramework): 'coreclr' | 'clr' {
+  return targetFramework === TargetFramework.NetFx ? 'clr' : 'coreclr';
+}
+
 /**
  * Generates a debug configuration for a Logic App based on the function version and optional custom code framework.
  * @param version - The Azure Functions runtime version (v1, v2, v3, or v4)
@@ -38,7 +42,7 @@ export const getDebugConfiguration = (
       type: 'logicapp',
       request: 'launch',
       funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+      customCodeRuntime: getCustomCodeRuntime(customCodeTargetFramework),
       isCodeless: true,
     };
   }
