@@ -22,9 +22,10 @@ vi.mock('../tabs/model', () => ({
 }));
 
 // Mock selectPanelTab action
-const mockSelectPanelTab = vi.fn((tab: string) => ({ type: 'mcpPanel/selectPanelTab', payload: tab }));
-vi.mock('../../../../../core/state/mcp/panel/mcpPanelSlice', () => ({
+const mockSelectPanelTab = vi.fn((tab: string) => ({ type: 'knowledgeHubPanel/selectPanelTab', payload: tab }));
+vi.mock('../../../../../core/state/knowledge/panelSlice', () => ({
   selectPanelTab: (tab: string) => mockSelectPanelTab(tab),
+  closePanel: vi.fn(() => ({ type: 'knowledgeHubPanel/closePanel' })),
 }));
 
 describe('useCreateConnectionPanelTabs Hook', () => {
@@ -72,6 +73,8 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     expect(mockBasicsTab).toHaveBeenCalledWith(
       expect.any(Object), // intl
       expect.any(Function), // dispatch
+      expect.any(Object), // connectionParameters
+      expect.any(Function), // setConnectionParameterValues
       expect.objectContaining({
         isTabDisabled: false,
         isPrimaryButtonDisabled: false,
@@ -113,8 +116,9 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
 
     // Get the onPrimaryButtonClick from basicsTab call
+    // basicsTab(intl, dispatch, connectionParameters, setConnectionParameterValues, tabProps)
     const basicsTabCall = mockBasicsTab.mock.calls[0];
-    const basicsTabProps = basicsTabCall[2];
+    const basicsTabProps = basicsTabCall[4]; // Tab props are now at index 4
 
     // Call the onPrimaryButtonClick (handleMoveToModel)
     basicsTabProps.onPrimaryButtonClick();

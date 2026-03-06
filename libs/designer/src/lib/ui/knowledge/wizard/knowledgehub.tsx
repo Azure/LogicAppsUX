@@ -146,7 +146,7 @@ export const KnowledgeHubWizard = () => {
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <KnowledgeHubPanel resourceId={logicAppId} />
       <DescriptionWithLink text={INTL_TEXT.description} linkText={INTL_TEXT.learnMore} linkUrl="" />
       <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>

@@ -7,7 +7,8 @@ import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text, Option, F
 import { usePanelStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, AddRegular } from '@fluentui/react-icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { setLayerHostSelector } from '@fluentui/react';
 import { useAllKnowledgeHubs } from '../../../core/knowledge/utils/queries';
 import { CreateGroup } from '../modals/creategroup';
 
@@ -19,6 +20,15 @@ export const AddFilePanel = ({ resourceId }: { resourceId: string }) => {
   const styles = usePanelStyles();
 
   const { isOpen, currentPanelView } = useSelector((state: RootState) => state.knowledgeHubPanel);
+  const isAddFilesPanel = currentPanelView === KnowledgePanelView.AddFiles;
+
+  // Set layer host for Fluent UI v8 components (dropdowns, callouts) inside the drawer
+  useEffect(() => {
+    if (isOpen && isAddFilesPanel) {
+      setLayerHostSelector('#msla-layer-host-add-files');
+    }
+  }, [isOpen, isAddFilesPanel]);
+
   const { data: hubs, isLoading } = useAllKnowledgeHubs(resourceId);
 
   const INTL_TEXT = {
@@ -239,6 +249,15 @@ export const AddFilePanel = ({ resourceId }: { resourceId: string }) => {
         <DrawerFooter className={styles.footer}>
           <TemplatesPanelFooter {...footerContent} />
         </DrawerFooter>
+        <div
+          id="msla-layer-host-add-files"
+          style={{
+            position: 'absolute',
+            inset: '0px',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+          }}
+        />
       </Drawer>
     </>
   );

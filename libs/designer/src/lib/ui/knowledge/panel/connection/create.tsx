@@ -1,5 +1,6 @@
+import type { KnowledgeTabProps } from '@microsoft/designer-ui';
 import { TemplateContent, TemplatesPanelFooter } from '@microsoft/designer-ui';
-import { useCreateConnectionPanelTabs, type TabProps } from './usepaneltabs';
+import { useCreateConnectionPanelTabs } from './usepaneltabs';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/knowledge/store';
 import { closePanel, KnowledgePanelView, selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
@@ -7,14 +8,15 @@ import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@f
 import { usePanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { setLayerHostSelector } from '@fluentui/react';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const CreateOrUpdateConnectionPanel = ({ isCreate }: { isCreate: boolean }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const panelTabs: TabProps[] = useCreateConnectionPanelTabs();
+  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs();
   const { selectedTabId, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedTabId: state.knowledgeHubPanel.selectedTabId,
     isOpen: state.knowledgeHubPanel?.isOpen ?? false,
@@ -24,6 +26,13 @@ export const CreateOrUpdateConnectionPanel = ({ isCreate }: { isCreate: boolean 
     () => panelMode === KnowledgePanelView.CreateConnection || panelMode === KnowledgePanelView.EditConnection,
     [panelMode]
   );
+
+  // Set layer host for Fluent UI v8 components (dropdowns, callouts) inside the drawer
+  useEffect(() => {
+    if (isOpen && isConnectionsPanel) {
+      setLayerHostSelector('#msla-layer-host-knowledge-connection');
+    }
+  }, [isOpen, isConnectionsPanel]);
 
   const onTabSelected = useCallback(
     (tabId: string): void => {

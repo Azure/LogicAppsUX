@@ -4,6 +4,7 @@ import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../core/
 import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { ChevronDown16Regular, ChevronUp16Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { Text, Button, Label, Drawer, DrawerBody, DrawerHeader, DrawerFooter } from '@fluentui/react-components';
 import Markdown from 'react-markdown';
@@ -78,6 +79,13 @@ export const CreateWorkflowPanel = ({
       refetchWorkflowNames();
     }
   }, [isOpen, refetchWorkflowNames]);
+
+  // Set layer host for Fluent UI v8 components (dropdowns, callouts) inside the drawer
+  useEffect(() => {
+    if (isOpen && currentPanelView === TemplatePanelView.CreateWorkflow) {
+      setLayerHostSelector('#msla-layer-host-create-workflow');
+    }
+  }, [isOpen, currentPanelView]);
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));

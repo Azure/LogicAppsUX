@@ -2,7 +2,8 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Text, Button, Drawer, DrawerBody, DrawerHeader, DrawerFooter } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { setLayerHostSelector } from '@fluentui/react';
 import { TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
@@ -60,6 +61,13 @@ export const QuickViewPanel = ({
     onClose
   );
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
+
+  // Set layer host for Fluent UI v8 components (dropdowns, callouts) inside the drawer
+  useEffect(() => {
+    if (isOpen && currentPanelView === TemplatePanelView.QuickView) {
+      setLayerHostSelector('#msla-layer-host-quickview');
+    }
+  }, [isOpen, currentPanelView]);
 
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());

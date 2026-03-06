@@ -8,23 +8,16 @@ import {
 import type { IntlShape } from 'react-intl';
 import { closePanel } from '../../../../../core/state/knowledge/panelSlice';
 import Constants from '../../../../../common/constants';
-import { useState, useCallback, useMemo, type FormEvent } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   getPropertyValue,
-  isEmptyString,
   ConnectionParameterTypes,
   type ConnectionParameterSetParameter,
   filterRecord,
-  ConnectionParameterEditorService,
   type ConnectionParameterSets,
 } from '@microsoft/logic-apps-shared';
 import { useCreatePanelStyles } from '../../styles';
-import { Label, Text } from '@fluentui/react-components';
-import ConnectionMultiAuthInput from '../../../../panel/connectionsPanel/createConnection/formInputs/connectionMultiAuth';
-import {
-  type ConnectionParameterProps,
-  UniversalConnectionParameter,
-} from '../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter';
+import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 
 export const basicsTab = (
   intl: IntlShape,
@@ -120,18 +113,41 @@ const Basics = ({
       id: '9o9MIz',
       description: 'Description for the database section in basics tab for quick app create panel',
     }),
+    authTypeLabel: intl.formatMessage({
+      defaultMessage: 'Authentication type',
+      id: 'cUwOWl',
+      description: 'Label for authentication type dropdown',
+    }),
+    subscriptionLabel: intl.formatMessage({
+      defaultMessage: 'Subscription',
+      id: 'cAPPxZ',
+      description: 'Label for subscription dropdown',
+    }),
+    subscriptionPlaceholder: intl.formatMessage({
+      defaultMessage: 'Select subscription',
+      id: '3VZYMO',
+      description: 'Placeholder for subscription dropdown',
+    }),
+    loadingSubscriptions: intl.formatMessage({
+      defaultMessage: 'Loading subscriptions...',
+      id: 'qmJ4fl',
+      description: 'Loading subscriptions message',
+    }),
   };
 
   const [name, setName] = useState<string | undefined>(undefined);
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>('');
+  const { isFetching: isFetchingSubscriptions, data: subscriptions } = useSubscriptions();
 
-  const handleParametersChange = useCallback(
-    (values: Record<string, any>) => {
-      setParameterValues(values);
-      setConnectionParameterValues(values);
+  const handleParameterChange = useCallback(
+    (key: string, value: any) => {
+      const newValues = { ...parameterValues, [key]: value };
+      setParameterValues(newValues);
+      setConnectionParameterValues(newValues);
     },
-    [setConnectionParameterValues]
+    [parameterValues, setConnectionParameterValues]
   );
 
   const allParameters = useMemo(
@@ -160,81 +176,171 @@ const Basics = ({
     [parameterValues]
   );
 
-  const parameters: Record<string, ConnectionParameterSetParameter> = useMemo(
+  const visibleParameters: Record<string, ConnectionParameterSetParameter> = useMemo(
     () => filterRecord<any>(allParameters, (_, value) => isParamVisible(value)),
     [allParameters, isParamVisible]
   );
 
   const onAuthDropdownChange = useCallback(
-    (_event: FormEvent<HTMLDivElement>, item: any): void => {
-      if (item.key !== selectedParamSetIndex) {
-        setSelectedParamSetIndex(item.key as number);
-        handleParametersChange({}); // Clear out the config params from previous set
+    (selectedOptions: string[]) => {
+      const newIndex = Number.parseInt(selectedOptions[0] ?? '0', 10);
+      if (newIndex !== selectedParamSetIndex) {
+        setSelectedParamSetIndex(newIndex);
+        setParameterValues({});
+        setConnectionParameterValues({});
       }
     },
-    [handleParametersChange, selectedParamSetIndex]
+    [selectedParamSetIndex, setConnectionParameterValues]
   );
 
-  const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter) => {
-    const connectionParameterProps: ConnectionParameterProps = {
-      parameterKey: key,
-      parameter,
-      value: parameterValues[key],
-      setValue: (val: any) => handleParametersChange((values: Record<string, any>) => ({ ...values, [key]: val })),
-      parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
-      setKeyValue: (customKey: string, val: any) =>
-        handleParametersChange((values: Record<string, any>) => ({ ...values, [customKey]: val })),
-      parameterValues: parameterValues,
-    };
+  // Build auth type dropdown options
+  const authTypeOptions = useMemo(
+    () =>
+      connectionParameterSets?.values.map((paramSet, index) => ({
+        id: String(index),
+        value: String(index),
+        label: paramSet?.uiDefinition?.displayName ?? paramSet?.name,
+      })) ?? [],
+    [connectionParameterSets]
+  );
 
-    const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
-      connectorId: '/placeholder/knowledgehub',
-      parameterKey: key,
+  // Build subscription dropdown options
+  const subscriptionOptions = useMemo(
+    () =>
+      (subscriptions ?? [])
+        .sort((a, b) => a.displayName.localeCompare(b.displayName))
+        .map((subscription) => {
+          const id = subscription.id.split('/subscriptions/')[1];
+          return {
+            id,
+            value: id,
+            label: `${subscription.displayName} (${id})`,
+          };
+        }),
+    [subscriptions]
+  );
+
+  const onSubscriptionChange = useCallback((selectedOptions: string[]) => {
+    setSelectedSubscriptionId(selectedOptions[0] ?? '');
+  }, []);
+
+  // Build parameter items for TemplatesSection
+  const parameterItems: TemplatesSectionItem[] = useMemo(() => {
+    return Object.entries(visibleParameters).map(([key, parameter]) => {
+      const uiDef = parameter?.uiDefinition;
+      const displayName = uiDef?.displayName ?? key;
+      const description = uiDef?.description ?? uiDef?.schema?.description;
+      const isRequired = uiDef?.constraints?.required === 'true';
+      const isSecure = parameter.type === 'securestring' && !uiDef?.constraints?.clearText;
+
+      // Check if parameter has allowed values (dropdown)
+      const allowedValues = uiDef?.constraints?.allowedValues;
+      if (allowedValues && allowedValues.length > 0) {
+        const options = allowedValues.map((av, idx) => ({
+          id: String(idx),
+          value: av.value,
+          label: av.text ?? av.value,
+        }));
+        return {
+          label: displayName,
+          type: 'dropdown' as const,
+          placeholder: description,
+          required: isRequired,
+          options,
+          selectedOptions: parameterValues[key] ? [parameterValues[key]] : [],
+          value: parameterValues[key] ?? '',
+          controlled: true,
+          onOptionSelect: (selected: string[]) => handleParameterChange(key, selected[0]),
+        };
+      }
+
+      // Text input (regular or password)
+      return {
+        id: key,
+        label: displayName,
+        type: isSecure ? ('textfield' as const) : ('textfield' as const),
+        placeholder: description,
+        required: isRequired,
+        value: parameterValues[key] ?? '',
+        onChange: (value: string) => handleParameterChange(key, value),
+      };
     });
-    if (customParameterOptions) {
-      const CustomConnectionParameter = customParameterOptions.EditorComponent;
-      return <CustomConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
-    }
+  }, [visibleParameters, parameterValues, handleParameterChange]);
 
-    return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
-  };
+  const detailsItems: TemplatesSectionItem[] = useMemo(
+    () => [
+      {
+        label: INTL_TEXT.nameLabel,
+        value: name ?? '',
+        type: 'textfield',
+        placeholder: INTL_TEXT.namePlaceholder,
+        required: true,
+        onChange: setName,
+        errorMessage: name !== undefined && name.trim() === '' ? INTL_TEXT.nameError : undefined,
+      },
+    ],
+    [INTL_TEXT.nameLabel, INTL_TEXT.namePlaceholder, INTL_TEXT.nameError, name]
+  );
 
-  const items: TemplatesSectionItem[] = [
-    {
-      label: INTL_TEXT.nameLabel,
-      value: name,
-      type: 'textfield',
-      placeholder: INTL_TEXT.namePlaceholder,
-      required: true,
-      onChange: setName,
-      errorMessage: name !== undefined && isEmptyString(name) ? INTL_TEXT.nameError : undefined,
-    },
-  ];
+  const databaseItems: TemplatesSectionItem[] = useMemo(
+    () => [
+      {
+        label: INTL_TEXT.subscriptionLabel,
+        type: 'dropdown' as const,
+        placeholder: isFetchingSubscriptions ? INTL_TEXT.loadingSubscriptions : INTL_TEXT.subscriptionPlaceholder,
+        required: true,
+        options: subscriptionOptions,
+        selectedOptions: selectedSubscriptionId ? [selectedSubscriptionId] : [],
+        value: subscriptionOptions.find((opt) => opt.id === selectedSubscriptionId)?.label ?? '',
+        controlled: true,
+        onOptionSelect: onSubscriptionChange,
+        disabled: isFetchingSubscriptions,
+      },
+      {
+        label: connectionParameterSets?.uiDefinition?.displayName ?? INTL_TEXT.authTypeLabel,
+        type: 'dropdown' as const,
+        placeholder: connectionParameterSets?.uiDefinition?.description,
+        required: true,
+        options: authTypeOptions,
+        selectedOptions: [String(selectedParamSetIndex)],
+        value: authTypeOptions[selectedParamSetIndex]?.label ?? '',
+        controlled: true,
+        onOptionSelect: onAuthDropdownChange,
+      },
+      ...parameterItems,
+    ],
+    [
+      INTL_TEXT.subscriptionLabel,
+      INTL_TEXT.subscriptionPlaceholder,
+      INTL_TEXT.loadingSubscriptions,
+      isFetchingSubscriptions,
+      subscriptionOptions,
+      selectedSubscriptionId,
+      onSubscriptionChange,
+      connectionParameterSets?.uiDefinition?.displayName,
+      connectionParameterSets?.uiDefinition?.description,
+      INTL_TEXT.authTypeLabel,
+      authTypeOptions,
+      selectedParamSetIndex,
+      onAuthDropdownChange,
+      parameterItems,
+    ]
+  );
 
   return (
     <div className={styles.container}>
       <TemplatesSection
         title={INTL_TEXT.detailsTitle}
         description={INTL_TEXT.detailsDescription}
-        items={items}
+        items={detailsItems}
         cssOverrides={{ sectionItem: styles.sectionItem }}
       />
-
-      <div className="msla-templates-section">
-        <Label className="msla-templates-section-title">{INTL_TEXT.databaseTitle}</Label>
-        <Text className="msla-templates-section-description">{INTL_TEXT.databaseDescription}</Text>
-      </div>
-
-      <ConnectionMultiAuthInput
-        data-testId={'connection-multi-auth-input'}
-        isLoading={false}
-        value={selectedParamSetIndex}
-        onChange={onAuthDropdownChange}
-        connectionParameterSets={connectionParameterSets}
+      <TemplatesSection
+        title={INTL_TEXT.databaseTitle}
+        description={INTL_TEXT.databaseDescription}
+        items={databaseItems}
+        cssOverrides={{ sectionItem: styles.sectionItem }}
       />
-      {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter]) => {
-        return renderConnectionParameter(key, parameter);
-      })}
     </div>
   );
 };

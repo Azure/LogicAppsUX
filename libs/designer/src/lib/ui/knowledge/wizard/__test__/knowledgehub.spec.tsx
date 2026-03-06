@@ -12,11 +12,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { KnowledgeHubWizard } from '../knowledgehub';
 import { KnowledgePanelView } from '../../../../core/state/knowledge/panelSlice';
 
-// Mock setLayerHostSelector
-vi.mock('@fluentui/react', () => ({
-  setLayerHostSelector: vi.fn(),
-}));
-
 // Mock styles
 vi.mock('../styles', () => ({
   useWizardStyles: () => ({
