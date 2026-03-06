@@ -35,8 +35,9 @@ export async function executeDotnetTemplateCommand(
   ...args: string[]
 ): Promise<string> {
   const framework: string = await getFramework(context, workingDirectory);
+  const jsonCliFramework = getJsonCliFramework(framework);
   const jsonDllPath: string = ext.context.asAbsolutePath(
-    path.join(assetsFolderName, 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
+    path.join(assetsFolderName, 'dotnetJsonCli', jsonCliFramework, 'Microsoft.TemplateEngine.JsonCli.dll')
   );
 
   return executeCommand(
@@ -50,6 +51,20 @@ export async function executeDotnetTemplateCommand(
     operation,
     ...args
   );
+}
+
+/**
+ * Maps a detected .NET framework version to the corresponding dotnetJsonCli asset folder.
+ * The JsonCli DLLs are framework-agnostic and forward-compatible, so newer frameworks
+ * (e.g. net10.0) can reuse the net8.0 binaries.
+ */
+function getJsonCliFramework(framework: string): string {
+  const supportedJsonCliFrameworks = ['net8.0', 'net6.0', 'netcoreapp3.0', 'netcoreapp2.0'];
+  if (supportedJsonCliFrameworks.includes(framework)) {
+    return framework;
+  }
+  // Fall back to net8.0 for newer frameworks (e.g. net10.0)
+  return 'net8.0';
 }
 
 export function getDotnetItemTemplatePath(version: FuncVersion, projTemplateKey: string): string {
