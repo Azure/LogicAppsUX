@@ -10,7 +10,7 @@ import {
   PanelLocation,
   ProgressCardWithStopButton,
 } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useChatbotStyles } from './styles';
 
@@ -26,9 +26,7 @@ interface ChatbotUIProps {
   };
   inputBox: {
     disabled?: boolean;
-    value?: string;
     placeholder?: string;
-    onChange?: (value: string) => void;
     onSubmit: (value: string) => void;
     readOnly?: boolean;
   };
@@ -65,12 +63,18 @@ const QUERY_MAX_LENGTH = 2000;
 export const ChatbotUI = (props: ChatbotUIProps) => {
   const {
     body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
-    inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly },
+    inputBox: { disabled, placeholder, onSubmit, readOnly },
     data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
   const intl = useIntl();
   const textInputRef = useRef<ChatInputHandle>(null);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSubmit = useCallback(() => {
+    onSubmit(inputValue);
+    setInputValue('');
+  }, [onSubmit, inputValue]);
 
   // Styles
   const styles = useChatbotStyles();
@@ -119,7 +123,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   }, [intl]);
 
   const inputDisabled = !!(answerGenerationInProgress || disabled);
-  const trimmedLength = value.trim().length;
+  const trimmedLength = inputValue.trim().length;
   const submitDisabled = answerGenerationInProgress || trimmedLength < QUERY_MIN_LENGTH;
   const resolvedPlaceholder = placeholder ?? intlText.inputPlaceHolder;
 
@@ -155,14 +159,14 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
               disabled={inputDisabled}
               isMultiline
               maxQueryLength={QUERY_MAX_LENGTH}
-              onQueryChange={(_ev, newValue) => onChange?.(newValue ?? '')}
+              onQueryChange={(_ev, newValue) => setInputValue(newValue ?? '')}
               placeholder={resolvedPlaceholder}
-              query={value}
+              query={inputValue}
               showCharCount
               submitButtonProps={{
                 title: submitString ?? intlText.submitButton,
                 disabled: submitDisabled,
-                onClick: () => onSubmit(value),
+                onClick: handleSubmit,
               }}
             />
           )}

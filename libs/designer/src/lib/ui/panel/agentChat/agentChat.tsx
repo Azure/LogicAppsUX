@@ -53,7 +53,7 @@ export const AgentChat = ({
   // State section
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [textInput, setTextInput] = useState<string>('');
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -146,32 +146,34 @@ export const AgentChat = ({
     [dispatch]
   );
 
-  const onChatSubmit = useCallback(async () => {
-    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
-      return;
-    }
+  const onChatSubmit = useCallback(
+    async (value: string) => {
+      if (!value || isNullOrUndefined(chatInvokeUri)) {
+        return;
+      }
 
-    setIsWaitingForResponse(true);
+      setIsWaitingForResponse(true);
 
-    try {
-      await RunService().invokeAgentChat({
-        id: chatInvokeUri,
-        data: { role: 'User', content: textInput },
-      });
+      try {
+        await RunService().invokeAgentChat({
+          id: chatInvokeUri,
+          data: { role: 'User', content: value },
+        });
 
-      refetchChatHistory();
-    } catch (e: any) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'agentchat',
-        message: 'Agent chat invocation failed',
-        error: e,
-      });
-    }
+        refetchChatHistory();
+      } catch (e: any) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'agentchat',
+          message: 'Agent chat invocation failed',
+          error: e,
+        });
+      }
 
-    setIsWaitingForResponse(false);
-    setTextInput('');
-  }, [textInput, chatInvokeUri, refetchChatHistory]);
+      setIsWaitingForResponse(false);
+    },
+    [chatInvokeUri, refetchChatHistory]
+  );
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
@@ -299,11 +301,7 @@ export const AgentChat = ({
               ),
             }}
             inputBox={{
-              onSubmit: () => {
-                onChatSubmit();
-              },
-              onChange: setTextInput,
-              value: textInput,
+              onSubmit: onChatSubmit,
               readOnly: !chatInvokeUri,
             }}
             string={{

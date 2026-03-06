@@ -1,6 +1,6 @@
 import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
-import { Button, Link, mergeClasses, Tooltip } from '@fluentui/react-components';
+import { Button, Link, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, CopyFilled, CopyRegular } from '@fluentui/react-icons';
 import type React from 'react';
 import { useMemo } from 'react';
@@ -91,17 +91,19 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
   return (
     <div
-      className={mergeClasses(
+      className={[
         'msla-bubble-container',
-        isUserMessage && USER_MESSAGE_CLASS,
+        isUserMessage ? USER_MESSAGE_CLASS : undefined,
         isUserMessage ? animations.userMessageEnter : animations.assistantMessageEnter,
-        isEmphasized && animations.messageBorderGlint,
-        className
-      )}
+        isEmphasized ? animations.messageBorderGlint : undefined,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
-      <div className={mergeClasses('msla-bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
-      {additionalLinksSection && additionalLinksSection}
-      {(additionalFooterActions && additionalFooterActions.length > 0) || (isAIGenerated && !hideFooter) ? (
+      <div className={['msla-bubble', isUserMessage ? USER_MESSAGE_CLASS : undefined].filter(Boolean).join(' ')}>{children}</div>
+      {additionalLinksSection ?? null}
+      {(additionalFooterActions?.length ?? 0) > 0 || (isAIGenerated && !hideFooter) ? (
         <div className={'msla-bubble-footer'}>
           {additionalFooterActions && (
             <div className={'msla-bubble-footer-actions'}>

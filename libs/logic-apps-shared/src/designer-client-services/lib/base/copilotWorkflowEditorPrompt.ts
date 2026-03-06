@@ -256,7 +256,7 @@ The "notes" object is a record of GUID keys (e.g. "a1b2c3d4-e5f6-7890-abcd-ef123
       "content": "Markdown content for the note",
       "color": "#FFFBCC",
       "metadata": {
-        "position": { "x": 100, "y": 200 },
+        "position": { "x": 250, "y": 0 },
         "width": 200,
         "height": 100
       }
@@ -275,9 +275,9 @@ The "notes" object is a record of GUID keys (e.g. "a1b2c3d4-e5f6-7890-abcd-ef123
   - "#E0CCFF" (purple) — use for technical/complex notes
   - "#FFFFFF" (white) — use for neutral notes
   Do NOT use any other color values.
-- "metadata.position": The { x, y } position on the canvas. Place notes near relevant actions but offset so they don't overlap. Space notes vertically by at least 150 pixels
+- "metadata.position": The { x, y } position on the canvas. The workflow is laid out top-to-bottom with nodes centered around x=0. Each node is approximately 200px wide and 40px tall, spaced about 80px apart vertically. To avoid overlapping with nodes, place notes to the RIGHT of the workflow — use an x value of at least 250 (to clear the node width + some padding). Estimate y based on the action's position in the sequence: the trigger is near y=0, the first action near y=120, the second near y=240, and so on (~120px per step). Space multiple notes vertically by at least 180 pixels from each other
 - "metadata.width": Width in pixels (default: 200)
-- "metadata.height": Height in pixels (default: 100)
+- "metadata.height": Height in pixels (default: 100). For notes with more content (bullet lists, multiple paragraphs), use a larger height (150-200) to avoid content being cut off
 
 ### When to create/modify notes
 - When the user explicitly asks to add a note, comment, or documentation to the workflow
@@ -299,7 +299,7 @@ Include the "notes" object at the same level as "definition" in the workflow res
       "abc-123": {
         "content": "## Error Handling\\nThis section catches and logs failures from the API call.",
         "color": "#FFFBCC",
-        "metadata": { "position": { "x": 600, "y": 300 }, "width": 250, "height": 120 }
+        "metadata": { "position": { "x": 250, "y": 120 }, "width": 250, "height": 120 }
       }
     }
   }

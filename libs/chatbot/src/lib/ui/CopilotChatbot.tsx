@@ -18,7 +18,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
 import { PanelLocation, ConversationItemType, FlowOrigin, UndoStatus } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { AssistantChat, defaultChatbotPanelWidth } from './ChatbotUi';
 
@@ -63,7 +63,6 @@ export const CoPilotChatbot = ({
   const intl = useIntl();
   const chatbotService = ChatbotService();
   const workflowEditorEnabled = enableWorkflowEditing && isCopilotWorkflowEditorServiceInitialized();
-  const [inputQuery, setInputQuery] = useState('');
   const [answerGeneration, stopAnswerGeneration] = useState(true);
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
@@ -673,10 +672,6 @@ export const CoPilotChatbot = ({
     controller.abort();
   }, [controller]);
 
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
-
   return (
     <AssistantChat
       panel={{
@@ -687,8 +682,6 @@ export const CoPilotChatbot = ({
         header: <CopilotPanelHeader />,
       }}
       inputBox={{
-        value: inputQuery,
-        onChange: setInputQuery,
         placeholder: intlText.chatInputPlaceholder,
         onSubmit: onSubmitInputQuery,
       }}
