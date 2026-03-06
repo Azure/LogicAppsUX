@@ -569,7 +569,7 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
   await focusEditor(driver);
 
   let input: InputBox | undefined;
-  for (let attempt = 0; attempt < 5; attempt++) {
+  for (let attempt = 0; attempt < 10; attempt++) {
     // Clear blocking UI before each attempt
     await clearBlockingUI(driver);
     await jsDismissDialogs(driver);
@@ -598,7 +598,7 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
           }
           // Webview tab didn't appear — the command may have silently failed.
           // Continue to next retry attempt.
-          console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/5: command selected but webview tab not found, retrying...`);
+          console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/10: command selected but webview tab not found, retrying...`);
           break; // break inner picks loop, continue outer retry loop
         }
       }
@@ -613,17 +613,17 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
           /* stale */
         }
       }
-      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/5: "Open Designer" not found. Available: ${JSON.stringify(available)}`);
+      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/10: "Open Designer" not found. Available: ${JSON.stringify(available)}`);
       await input.cancel();
-      await sleep(3000);
+      await sleep(5000);
     } catch (e: any) {
-      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/10 failed: ${e.message}`);
       try {
         await input?.cancel();
       } catch {
         /* ignore */
       }
-      await sleep(3000);
+      await sleep(5000);
     }
   }
   return false;

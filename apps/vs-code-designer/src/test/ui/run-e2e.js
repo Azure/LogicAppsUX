@@ -724,8 +724,9 @@ async function main() {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
-      // Conversion tests don't need design-time runtime or dependency validation
-      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+      // ALL conversion tests need validateDependencies ON so the extension
+      // fully activates and detects legacy projects / shows conversion dialog.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
       const wsResources = getPhase2Resources();
       const exits = [];
 
@@ -810,8 +811,8 @@ async function main() {
       exits.push(await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: wsResources }));
       await new Promise((r) => setTimeout(r, 3000));
 
-      // Phase 4.8d: Restore conversion settings
-      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+      // Phase 4.8d: Keep validateDependencies ON for conversion dialog
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
       if (wsDir.length > 0) {
         await prepareFreshSession('phase8d-only');
         exits.push(await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir }));
@@ -912,8 +913,10 @@ async function main() {
     const phase7Exit = await runPhase('Phase 4.7: remaining suites', phase7Files);
 
     // Phases 4.8a–4.8e: Workspace conversion tests (ADO #31054994, Steps 5-15)
-    // Conversion tests don't need design-time runtime — disable it for faster startup.
-    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+    // ALL conversion tests need validateDependencies ON so the extension fully
+    // activates and can detect legacy projects / show the conversion dialog.
+    // Design-time is not needed (no designer opens in conversion tests).
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
 
     // Phase 4.8a: Open workspace dir, click No on conversion dialog
     let phase8aExit = 0;
@@ -995,8 +998,8 @@ async function main() {
     if (phase8cExit !== 0) console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
 
     // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
-    // Restore conversion settings — 4.8d/4.8e don't need design-time.
-    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+    // Restore conversion settings — design-time not needed, but validation must stay ON.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
     let phase8dExit = 0;
     if (wsDir.length > 0) {
       await new Promise((resolve) => setTimeout(resolve, 3000));

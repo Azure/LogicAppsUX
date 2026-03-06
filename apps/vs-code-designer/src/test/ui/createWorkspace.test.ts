@@ -808,7 +808,8 @@ async function clearAndType(element: WebElement, text: string): Promise<void> {
   try {
     await element.click();
   } catch {
-    await driver.executeScript('arguments[0].scrollIntoView({block:"center"}); arguments[0].click();', element);
+    const d = VSBrowser.instance.driver;
+    await d.executeScript('arguments[0].scrollIntoView({block:"center"}); arguments[0].click();', element);
   }
   await sleep(100);
   await element.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE);
