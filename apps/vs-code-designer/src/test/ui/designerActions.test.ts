@@ -15,7 +15,7 @@ import {
   type WebElement,
   Key,
   ModalDialog,
-  type InputBox,
+  InputBox,
 } from 'vscode-extension-tester';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
@@ -599,31 +599,89 @@ async function handleDesignerPrompts(workbench: Workbench, driver: WebDriver): P
  * After opening, clears any blocking UI (auth dialogs, workspace trust prompts, etc.)
  */
 async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: string): Promise<void> {
-  console.log(`[openWorkspaceFileInSession] Opening workspace file: ${wsFilePath}`);
+  console.log(`[openWorkspaceFileInSession] Opening: ${wsFilePath}`);
 
   if (!fs.existsSync(wsFilePath)) {
-    throw new Error(`Workspace file not found: ${wsFilePath}`);
+    throw new Error(`Path not found: ${wsFilePath}`);
   }
 
   const driver = VSBrowser.instance.driver;
+  const isWorkspaceFile = wsFilePath.endsWith('.code-workspace');
 
-  await VSBrowser.instance.openResources(wsFilePath);
-  await sleep(5000);
+  // Open via command palette — code -r doesn't work on Linux CI
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await clearBlockingUI(driver);
+      const input = await workbench.openCommandPrompt();
+      await sleep(500);
 
-  // Dismiss any dialogs that appeared during workspace open
+      if (isWorkspaceFile) {
+        await input.setText('> File: Open Workspace from File...');
+      } else {
+        await input.setText('> File: Open Folder...');
+      }
+      await sleep(1000);
+
+      const picks = await input.getQuickPicks();
+      let commandFound = false;
+      for (const pick of picks) {
+        const label = await pick.getLabel();
+        if ((isWorkspaceFile && label.includes('Open Workspace from File')) || (!isWorkspaceFile && label.includes('Open Folder'))) {
+          console.log(`[openWorkspaceFileInSession] Selecting: "${label}"`);
+          await pick.select();
+          commandFound = true;
+          break;
+        }
+      }
+
+      if (!commandFound) {
+        await input.cancel();
+        await sleep(2000);
+        continue;
+      }
+
+      await sleep(2000);
+
+      // Type path in simple dialog
+      try {
+        const dialogInput = new InputBox();
+        await dialogInput.setText(wsFilePath);
+        await sleep(500);
+        await dialogInput.confirm();
+      } catch {
+        const body = await driver.findElement(By.css('body'));
+        await body.sendKeys(wsFilePath, Key.ENTER);
+      }
+
+      await sleep(5000);
+
+      try {
+        await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
+      } catch {
+        /* reload timeout OK */
+      }
+
+      const titleAfter = await driver.getTitle().catch(() => '');
+      console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
+      if (titleAfter !== 'Visual Studio Code') {
+        break;
+      }
+    } catch (e: any) {
+      console.log(`[openWorkspaceFileInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      try {
+        const body = await driver.findElement(By.css('body'));
+        await body.sendKeys(Key.ESCAPE);
+      } catch {
+        /* ignore */
+      }
+      await sleep(2000);
+    }
+  }
+
   await clearBlockingUI(driver);
-
-  await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
-
-  // Wait a reasonable time for VS Code to settle after workspace switch.
-  // DO NOT call waitForDependencyValidation here — the 300s blocking Promise
-  // outlives Mocha test timeouts and causes async interleaving across phases.
-  await sleep(5000);
-
-  // Final clear of any dialogs that appeared during re-activation
+  await sleep(3000);
   await clearBlockingUI(driver);
-
-  console.log('[openWorkspaceFileInSession] Workspace file opened and workbench is ready');
+  console.log('[openWorkspaceFileInSession] Done');
 }
 
 /**

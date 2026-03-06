@@ -54,7 +54,7 @@ import {
   VSBrowser,
   type WebElement,
   Key,
-  type InputBox,
+  InputBox,
 } from 'vscode-extension-tester';
 import {
   sleep,
@@ -275,7 +275,7 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
 
   const driver = VSBrowser.instance.driver;
 
-  // Diagnostic: capture VS Code title before opening
+  // Log VS Code title before opening
   try {
     const titleBefore = await driver.getTitle();
     console.log(`[openWorkspaceFileInSession] VS Code title BEFORE: "${titleBefore}"`);
@@ -283,64 +283,124 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
     /* ignore */
   }
 
-  // Call openResources (uses `code -r` via ExTester)
-  // Also call it directly with error capture to diagnose Linux CI failures
-  try {
-    const { execSync } = require('child_process');
-    const storagePath = path.join(require('os').tmpdir(), 'test-resources');
-    const settingsDir = path.join(storagePath, 'settings');
+  // Open the workspace/folder via the command palette.
+  // ExTester's openResources uses `code -r` (CLI IPC) which silently fails on
+  // Linux CI because the VS Code IPC socket isn't set up when launched via
+  // ChromeDriver. Instead, use VS Code's built-in "Open Folder" command which
+  // shows a simple text input (files.simpleDialog.enable=true is set by ExTester).
+  const isWorkspaceFile = wsFilePath.endsWith('.code-workspace');
+  const openPath = isWorkspaceFile ? wsFilePath : wsFilePath;
 
-    // List socket-related files in settings dir for diagnostics
+  for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const settingsContents = fs.readdirSync(settingsDir);
-      const socketFiles = settingsContents.filter((f: string) => f.endsWith('.sock') || f.includes('socket') || f.includes('ipc'));
-      console.log(
-        `[openWorkspaceFileInSession] Settings dir files: ${settingsContents.length} total, sockets: ${JSON.stringify(socketFiles)}`
-      );
-    } catch {
-      console.log('[openWorkspaceFileInSession] Could not read settings dir');
-    }
+      await clearBlockingUI(driver);
 
-    // Try openResources (ExTester's mechanism)
-    await VSBrowser.instance.openResources(wsFilePath);
-  } catch (e: any) {
-    console.log(`[openWorkspaceFileInSession] openResources error: ${e.message}`);
-  }
+      // Use Quick Open (Ctrl+O on Linux) which opens the file/folder dialog
+      // Or use the command palette to run "File: Open Folder..."
+      const input = await workbench.openCommandPrompt();
+      await sleep(500);
 
-  await sleep(5000);
-
-  // Diagnostic: capture VS Code title after opening
-  try {
-    const titleAfter = await driver.getTitle();
-    console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
-  } catch {
-    /* ignore */
-  }
-
-  // Diagnostic: check if Explorer sidebar shows any folders
-  try {
-    const explorerState = await driver.executeScript<string>(`
-      const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
-      if (rows.length === 0) return 'EMPTY - no rows in explorer';
-      const items = [];
-      for (let i = 0; i < Math.min(rows.length, 5); i++) {
-        items.push(rows[i].textContent?.substring(0, 50) || '');
+      if (isWorkspaceFile) {
+        await input.setText('> File: Open Workspace from File...');
+      } else {
+        await input.setText('> File: Open Folder...');
       }
-      return 'ROWS=' + rows.length + ': ' + items.join(' | ');
-    `);
-    console.log(`[openWorkspaceFileInSession] Explorer state: ${explorerState}`);
-  } catch {
-    console.log('[openWorkspaceFileInSession] Could not check explorer state');
+      await sleep(1000);
+
+      const picks = await input.getQuickPicks();
+      let commandFound = false;
+      for (const pick of picks) {
+        const label = await pick.getLabel();
+        if ((isWorkspaceFile && label.includes('Open Workspace from File')) || (!isWorkspaceFile && label.includes('Open Folder'))) {
+          console.log(`[openWorkspaceFileInSession] Selecting command: "${label}"`);
+          await pick.select();
+          commandFound = true;
+          break;
+        }
+      }
+
+      if (!commandFound) {
+        const available = [];
+        for (const p of picks) {
+          try {
+            available.push(await p.getLabel());
+          } catch {
+            /* stale */
+          }
+        }
+        console.log(`[openWorkspaceFileInSession] Command not found. Available: ${JSON.stringify(available)}`);
+        await input.cancel();
+        await sleep(2000);
+        continue;
+      }
+
+      // Wait for the simple dialog input box to appear
+      await sleep(2000);
+
+      // The simple dialog shows an input box. Type the full path.
+      // ExTester sets files.simpleDialog.enable=true so this should be a text input.
+      try {
+        const dialogInput = new InputBox();
+        await dialogInput.setText(openPath);
+        await sleep(500);
+        await dialogInput.confirm();
+      } catch (inputErr: any) {
+        console.log(`[openWorkspaceFileInSession] InputBox approach failed: ${inputErr.message}, trying sendKeys`);
+        // Fallback: type directly and press Enter
+        const body = await driver.findElement(By.css('body'));
+        await body.sendKeys(openPath, Key.ENTER);
+      }
+
+      await sleep(5000);
+
+      // Wait for the workbench to be ready after potential reload
+      try {
+        await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
+      } catch {
+        /* timeout is OK — VS Code may have reloaded */
+      }
+
+      // Check if the workspace actually opened
+      const titleAfter = await driver.getTitle().catch(() => '');
+      console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
+
+      if (titleAfter !== 'Visual Studio Code') {
+        console.log('[openWorkspaceFileInSession] Workspace opened successfully (title changed)');
+        break;
+      }
+
+      // Check explorer
+      const explorerState = await driver
+        .executeScript<string>(
+          `
+        const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
+        if (rows.length === 0) return 'EMPTY';
+        return 'ROWS=' + rows.length;
+      `
+        )
+        .catch(() => 'ERROR');
+      console.log(`[openWorkspaceFileInSession] Explorer: ${explorerState}`);
+
+      if (explorerState !== 'EMPTY') {
+        console.log('[openWorkspaceFileInSession] Folder opened (explorer has rows)');
+        break;
+      }
+
+      console.log(`[openWorkspaceFileInSession] Workspace not opened on attempt ${attempt + 1}/3`);
+    } catch (e: any) {
+      console.log(`[openWorkspaceFileInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      try {
+        const body = await driver.findElement(By.css('body'));
+        await body.sendKeys(Key.ESCAPE);
+      } catch {
+        /* ignore */
+      }
+      await sleep(2000);
+    }
   }
 
-  // Dismiss any dialogs that appeared during workspace open
   await clearBlockingUI(driver);
-
-  await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
-
-  await sleep(5000);
-
-  // Final clear of any dialogs that appeared during re-activation
+  await sleep(3000);
   await clearBlockingUI(driver);
 
   console.log('[openWorkspaceFileInSession] Done');
