@@ -30,3 +30,14 @@ export const usePanelStyles = makeStyles({
     borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
   },
 });
+
+export const useCreatePanelStyles = makeStyles({
+  container: {
+    padding: '10px',
+  },
+
+  sectionItem: {
+    flexDirection: 'column',
+    gap: '8px',
+  },
+});

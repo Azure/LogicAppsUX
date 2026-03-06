@@ -193,6 +193,16 @@ export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = 
     }
   );
 };
+
+export const getCosmosDbEndpoint = (accountId: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['cosmosDbEndpoint', accountId.toLowerCase()], async () => {
+    return ResourceService()
+      .executeResourceAction(accountId, 'GET', { 'api-version': '2025-11-01' })
+      .then((response) => response?.properties?.documentEndpoint ?? '');
+  });
+};
+
 /**
  * Returns the Foundry project endpoint for a node's selected connection, or undefined
  * if the connection is not a Foundry connection.

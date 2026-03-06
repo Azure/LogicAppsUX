@@ -1,42 +1,39 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import type { AppDispatch } from '../../../../core/state/knowledge/store';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
-import type { TemplatePanelFooterProps } from '@microsoft/designer-ui';
+import type { KnowledgeTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../common/constants';
 import { basicsTab } from './tabs/basics';
 import { modelTab } from './tabs/model';
-import { selectPanelTab } from '../../../../core/state/mcp/panel/mcpPanelSlice';
+import { selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
+import { getCosmosDbConnectionParameters } from '../../../../core/knowledge/utils/connection';
 
-export interface TabProps {
-  id: string;
-  title: string;
-  onTabClick?: () => void;
-  disabled?: boolean;
-  tabStatusIcon?: 'error';
-  content: React.ReactElement;
-  footerContent: TemplatePanelFooterProps;
-}
-
-export const useCreateConnectionPanelTabs = (): TabProps[] => {
+export const useCreateConnectionPanelTabs = (): KnowledgeTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-
+  const cosmosDbConnectionParameters = getCosmosDbConnectionParameters(intl);
+  const [cosmosDbConnectionParametersValues, setCosmosDbConnectionParametersValues] = useState<Record<string, any>>({});
+  const [basicsError, setBasicsError] = useState<'error' | undefined>(undefined);
   const handleMoveToModel = useCallback(() => {
     dispatch(selectPanelTab(constants.KNOWLEDGE_PANEL_TAB_NAMES.MODEL));
-  }, [dispatch]);
+    setBasicsError(
+      Object.values(cosmosDbConnectionParametersValues).some((value) => value === undefined || value === '') ? 'error' : undefined
+    );
+  }, [dispatch, cosmosDbConnectionParametersValues]);
 
   const handleCreate = useCallback(async () => {
     // Handle create action here, e.g. call an API or update state
   }, []);
   const basicsTabItem = useMemo(
     () =>
-      basicsTab(intl, dispatch, {
+      basicsTab(intl, dispatch, cosmosDbConnectionParameters, setCosmosDbConnectionParametersValues, {
         isTabDisabled: false,
         isPrimaryButtonDisabled: false,
         onPrimaryButtonClick: handleMoveToModel,
+        tabStatusIcon: basicsError,
       }),
-    [intl, dispatch, handleMoveToModel]
+    [intl, dispatch, cosmosDbConnectionParameters, handleMoveToModel, basicsError]
   );
 
   const modelTabItem = useMemo(
