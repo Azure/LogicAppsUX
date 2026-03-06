@@ -1,3 +1,4 @@
+import { latestGAVersion, ProjectLanguage, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import {
   assetsFolderName,
