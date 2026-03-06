@@ -343,7 +343,7 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (isAgentWorkflow(workflow?.kind ?? '')) {
+      if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
         (connectionsData as ConnectionsData).agentConnections = {
           ...connectionsData?.agentConnections,
           ...newAgentConnections,
@@ -970,6 +970,7 @@ const getDesignerServices = (
     httpClient,
     identity: workflowApp?.identity,
   });
+  cognitiveServiceService.getFoundryAccessToken = async () => environment.foundryToken ?? environment.armToken ?? '';
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);

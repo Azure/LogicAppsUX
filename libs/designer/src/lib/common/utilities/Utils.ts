@@ -46,6 +46,10 @@ export class AgentUtils {
     return equals(parameterName ?? '', 'agentModelType', true);
   };
 
+  public static isFoundryAgentIdParameter = (parameterName?: string): boolean => {
+    return equals(parameterName ?? '', 'foundryAgentId', true);
+  };
+
   public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {
     const isAgentSubgraph = isAgentSubgraphFromMetadata(nodeId, state?.workflow?.nodesMetadata);
     return isAgentSubgraph || !isDynamicConnection(connections.properties?.features);

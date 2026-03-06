@@ -528,22 +528,23 @@ describe('CreateServer', () => {
     });
 
     it('closes panel after successful submission', async () => {
-      const user = userEvent.setup();
-
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
       const nameInput = screen.getByTestId('textfield-name');
       const descriptionInput = screen.getByTestId('textarea-description');
       const workflow1Option = screen.getByTestId('option-workflow1');
-      const submitButton = screen.getByTestId('footer-button-0');
 
-      await user.clear(nameInput);
-      await user.type(nameInput, 'TestServer');
-      await user.clear(descriptionInput);
-      await user.type(descriptionInput, 'Test Description');
+      // Use fireEvent.change for direct, synchronous control to avoid keyboard event
+      // interference from Fluent UI's tabster focus-trapping (consistent with the
+      // "calls onUpdate with correct data" test above)
+      fireEvent.change(nameInput, { target: { value: 'TestServer' } });
+      fireEvent.change(descriptionInput, { target: { value: 'Test Description' } });
       fireEvent.click(workflow1Option);
 
-      fireEvent.click(submitButton);
+      // Wait for state updates to settle so the submit button is enabled
+      await waitFor(() => expect(screen.getByTestId('footer-button-0')).toBeEnabled());
+
+      fireEvent.click(screen.getByTestId('footer-button-0'));
 
       await waitFor(() => {
         expect(mockClosePanel).toHaveBeenCalled();

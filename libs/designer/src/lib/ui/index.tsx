@@ -5,6 +5,7 @@ export * from './menuItems';
 export * from './templates';
 export * from './mcp/wizard/McpWizard';
 export * from './mcp/wizard/mcpservers';
+export * from './knowledge/wizard/knowledgehub';
 export * from './clonetostandard/wizard/clonewizard';
 export * from './dialog/combineVariableDialog';
 export * from './dialog/triggerDescriptionDialog';
