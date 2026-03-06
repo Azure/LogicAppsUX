@@ -17,6 +17,7 @@ import { useStyles } from './quickViewPanel.styles';
 export interface QuickViewPanelProps {
   showCreate: boolean;
   workflowId: string;
+  mountNode: HTMLElement | null;
   clearDetailsOnClose?: boolean;
   panelWidth?: string;
   showCloseButton?: boolean;
@@ -27,6 +28,7 @@ export const QuickViewPanel = ({
   onClose,
   showCreate,
   workflowId,
+  mountNode,
   panelWidth = '50%',
   showCloseButton = true,
   clearDetailsOnClose = true,
@@ -102,7 +104,11 @@ export const QuickViewPanel = ({
       open={isOpen && currentPanelView === TemplatePanelView.QuickView}
       onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
       position="end"
-      style={{ width: panelWidth }}
+      style={{ width: panelWidth, height: '100%', maxWidth: '100%' }}
+      mountNode={{
+        className: 'msla-panel-host-container',
+        element: mountNode,
+      }}
     >
       <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
       <DrawerBody className={styles.body}>

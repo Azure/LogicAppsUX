@@ -1,5 +1,5 @@
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { DetailsList, type IColumn, SelectionMode, setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -81,8 +81,9 @@ export const TemplateOverview = ({
     onClose
   ).footerContent;
 
+  const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
       <QuickViewPanelHeader
         title={title}
         summary={summary}
@@ -125,6 +126,7 @@ export const TemplateOverview = ({
 
       {selectedWorkflow ? (
         <QuickViewPanel
+          mountNode={containerRef?.current}
           showCreate={false}
           workflowId={selectedWorkflow}
           clearDetailsOnClose={false}
@@ -134,6 +136,7 @@ export const TemplateOverview = ({
 
       {showCreatePanel ? (
         <CreateWorkflowPanel
+          mountNode={containerRef?.current}
           createWorkflow={createWorkflow}
           showCloseButton={showCloseButton}
           panelWidth={panelWidth}
@@ -149,7 +152,7 @@ export const TemplateOverview = ({
           visibility: 'hidden',
         }}
       />
-    </>
+    </div>
   );
 };
 
