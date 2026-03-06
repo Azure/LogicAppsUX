@@ -283,19 +283,12 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
 
   await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
 
-  // Wait for the extension to FULLY re-activate after the workspace switch.
-  // Opening a .code-workspace file triggers an extension host restart. On CI
-  // (Linux, cold caches), the extension downloads and validates runtime
-  // dependencies (NodeJs, FuncCoreTools, DotNetSDK) which takes 30-120s.
-  // Without this wait, "Open Designer" is never found in the command palette
-  // because the extension hasn't finished registering its commands yet.
-  console.log('[openWorkspaceFileInSession] Waiting for extension to re-activate after workspace switch...');
-  try {
-    await waitForDependencyValidation(driver, DEPENDENCY_VALIDATION_TIMEOUT);
-  } catch (e: any) {
-    console.log(`[openWorkspaceFileInSession] Warning: extension activation wait failed: ${e.message}`);
-    // Don't throw — the extension may still work, just slower than expected
-  }
+  // Wait a reasonable time for VS Code to settle after workspace switch.
+  // DO NOT call waitForDependencyValidation here — it blocks for 300s and
+  // the dangling Promise outlives the Mocha test timeout, causing async
+  // interleaving across phases. The extension activation wait happens
+  // later in executeOpenDesignerCommand which polls the command palette.
+  await sleep(5000);
 
   // Final clear of any dialogs that appeared during re-activation
   await clearBlockingUI(driver);
@@ -580,7 +573,9 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
   await focusEditor(driver);
 
   let input: InputBox | undefined;
-  for (let attempt = 0; attempt < 10; attempt++) {
+  // On CI after a workspace switch, the extension host restarts and may take
+  // 60-120s to re-register commands. Use 20 attempts × 10s = 200s max wait.
+  for (let attempt = 0; attempt < 20; attempt++) {
     // Clear blocking UI before each attempt
     await clearBlockingUI(driver);
     await jsDismissDialogs(driver);
@@ -607,15 +602,11 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
           if (tabFound) {
             return true;
           }
-          // Webview tab didn't appear — the command may have silently failed.
-          // Continue to next retry attempt.
-          console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/10: command selected but webview tab not found, retrying...`);
-          break; // break inner picks loop, continue outer retry loop
+          console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/20: command selected but webview tab not found, retrying...`);
+          break;
         }
       }
 
-      // Command not found in picks — log what was available, cancel, and retry.
-      // The extension may still be registering commands after a workspace switch.
       const available: string[] = [];
       for (const pick of picks) {
         try {
@@ -624,17 +615,17 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
           /* stale */
         }
       }
-      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/10: "Open Designer" not found. Available: ${JSON.stringify(available)}`);
+      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/20: "Open Designer" not found. Available: ${JSON.stringify(available)}`);
       await input.cancel();
-      await sleep(5000);
+      await sleep(10000);
     } catch (e: any) {
-      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/10 failed: ${e.message}`);
+      console.log(`[executeOpenDesigner] Attempt ${attempt + 1}/20 failed: ${e.message}`);
       try {
         await input?.cancel();
       } catch {
         /* ignore */
       }
-      await sleep(5000);
+      await sleep(10000);
     }
   }
   return false;
@@ -1312,32 +1303,15 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file — but SKIP if VS Code was already launched
-  //    with this workspace as a startup resource (avoids a costly extension
-  //    host restart + dependency re-validation cycle on CI).
-  const wsBaseName = path.basename(entry.wsFilePath);
-  let skipWorkspaceSwitch = false;
+  // 3. Open the workspace file. This triggers an extension host restart.
+  //    The activation wait happens later in executeOpenDesignerCommand.
   try {
-    const title = await driver.getTitle();
-    // VS Code title format: "workspaceName (Workspace) — Visual Studio Code"
-    const wsNameFromFile = path.basename(entry.wsFilePath, '.code-workspace');
-    if (title.includes(wsNameFromFile) || title.includes('(Workspace)')) {
-      console.log(`${tag} VS Code already has workspace open (title: "${title}") — skipping workspace switch`);
-      skipWorkspaceSwitch = true;
-    }
-  } catch {
-    /* title check failed — proceed with workspace switch */
-  }
-
-  if (!skipWorkspaceSwitch) {
-    try {
-      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-      driver = VSBrowser.instance.driver;
-      workbench = new Workbench();
-      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-    } catch (e: any) {
-      return { success: false, error: `Failed to open workspace: ${e.message}` };
-    }
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+    driver = VSBrowser.instance.driver;
+    workbench = new Workbench();
+    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+  } catch (e: any) {
+    return { success: false, error: `Failed to open workspace: ${e.message}` };
   }
 
   // 4. Open workflow.json in the editor

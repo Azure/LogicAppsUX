@@ -615,15 +615,10 @@ async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: stri
 
   await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
 
-  // Wait for the extension to FULLY re-activate after the workspace switch.
-  // Opening a .code-workspace file triggers an extension host restart. On CI
-  // the extension re-downloads/validates dependencies which takes 30-120s.
-  console.log('[openWorkspaceFileInSession] Waiting for extension to re-activate after workspace switch...');
-  try {
-    await waitForDependencyValidation(driver, 300_000);
-  } catch (e: any) {
-    console.log(`[openWorkspaceFileInSession] Warning: extension activation wait failed: ${e.message}`);
-  }
+  // Wait a reasonable time for VS Code to settle after workspace switch.
+  // DO NOT call waitForDependencyValidation here — the 300s blocking Promise
+  // outlives Mocha test timeouts and causes async interleaving across phases.
+  await sleep(5000);
 
   // Final clear of any dialogs that appeared during re-activation
   await clearBlockingUI(driver);
@@ -1567,28 +1562,15 @@ async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file — skip if already open to avoid extension restart
-  let skipWorkspaceSwitch = false;
+  // 3. Open the workspace file. This triggers an extension host restart.
+  //    The activation wait happens later in executeOpenDesignerCommand.
   try {
-    const title = await driver.getTitle();
-    const wsNameFromFile = path.basename(entry.wsFilePath, '.code-workspace');
-    if (title.includes(wsNameFromFile) || title.includes('(Workspace)')) {
-      console.log(`${tag} VS Code already has workspace open (title: "${title}") — skipping switch`);
-      skipWorkspaceSwitch = true;
-    }
-  } catch {
-    /* proceed with switch */
-  }
-
-  if (!skipWorkspaceSwitch) {
-    try {
-      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-      driver = VSBrowser.instance.driver;
-      workbench = new Workbench();
-      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-    } catch (e: any) {
-      return { success: false, error: `Failed to open workspace: ${e.message}` };
-    }
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+    driver = VSBrowser.instance.driver;
+    workbench = new Workbench();
+    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+  } catch (e: any) {
+    return { success: false, error: `Failed to open workspace: ${e.message}` };
   }
 
   // 4. Open workflow.json in the editor
