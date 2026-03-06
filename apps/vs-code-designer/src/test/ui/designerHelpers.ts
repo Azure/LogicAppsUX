@@ -1449,7 +1449,7 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file. This triggers an extension host restart.
+  // 3. Open the workspace file via `code -r`.
   try {
     await openWorkspaceFileInSession(workbench, entry.wsFilePath);
     driver = VSBrowser.instance.driver;

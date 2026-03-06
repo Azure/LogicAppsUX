@@ -638,7 +638,25 @@ async function main() {
         );
       }
       console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver processes`);
-      await new Promise((r) => setTimeout(r, 3000));
+      // Wait for processes to fully exit and release IPC sockets.
+      // On Linux, VS Code writes an IPC socket to the user-data-dir for
+      // the CLI `code -r` command to connect. If the old socket persists,
+      // the new VS Code can't bind, and `code -r` either connects to a
+      // dead socket (silent failure) or opens in the wrong window.
+      await new Promise((r) => setTimeout(r, 5000));
+
+      // Clean up stale IPC socket files so new VS Code gets a fresh socket
+      if (isLinux || isMac) {
+        try {
+          const sockFiles = fs.readdirSync(settingsDir).filter((f) => f.endsWith('.sock'));
+          for (const sock of sockFiles) {
+            fs.unlinkSync(path.join(settingsDir, sock));
+            console.log(`  [${label}] ✓ Removed stale socket: ${sock}`);
+          }
+        } catch {
+          /* settingsDir may not exist yet */
+        }
+      }
     } catch {
       console.log(`  [${label}] No lingering processes to kill (or kill failed — continuing)`);
     }
@@ -687,12 +705,15 @@ async function main() {
           const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
           // Use the same fallback order as the test files:
           // prefer standard+Stateful, then any standard, then first entry
-          const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard') || manifest[0];
+          const preferred =
+            manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+            manifest.find((e) => e.appType === 'standard') ||
+            manifest[0];
           if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
             phase2Resources = [preferred.wsFilePath];
-            console.log(`  Using startup workspace for designerOpen: ${preferred.wsFilePath}`);
+            console.log(`  Using startup workspace: ${preferred.wsFilePath}`);
           } else {
-            console.warn('  Could not find a valid wsFilePath in manifest for phase 2 startup resource');
+            console.warn('  Could not find a valid directory in manifest for phase 2 startup resource');
           }
         } catch (e) {
           console.warn(`  Failed to parse manifest for phase 2 startup resource: ${e.message}`);
@@ -951,7 +972,7 @@ async function main() {
       const preferred = (() => {
         try {
           const m = JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8'));
-            return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
+          return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
         } catch {
           return null;
         }
@@ -1041,7 +1062,7 @@ async function main() {
       const preferred = (() => {
         try {
           const m = JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8'));
-            return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
+          return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
         } catch {
           return null;
         }
@@ -1084,4 +1105,3 @@ main().catch((err) => {
   console.error('Fatal error in E2E launcher:', err);
   process.exit(1);
 });
-
