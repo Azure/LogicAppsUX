@@ -61,7 +61,6 @@ export const SubscriptionDropdown = ({
         data-automation-id="subscription-combobox"
         autoFocus={false}
         componentRef={comboRef}
-        allowFreeform
         autoComplete="on"
         required={true}
         disabled={isFetchingSubscriptions}

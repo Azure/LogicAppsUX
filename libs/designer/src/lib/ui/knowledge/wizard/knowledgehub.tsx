@@ -186,6 +186,7 @@ export const KnowledgeHubWizard = () => {
           position: 'absolute',
           inset: '0px',
           visibility: 'hidden',
+          zIndex: 10001,
         }}
       />
     </div>
