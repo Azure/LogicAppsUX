@@ -133,6 +133,7 @@ export const CreateWorkflowPanel = ({
       mountNode={{
         element: mountNode,
       }}
+      type={'overlay'}
     >
       <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
       <DrawerBody className={styles.body}>
