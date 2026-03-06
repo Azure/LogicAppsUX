@@ -615,8 +615,15 @@ async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: stri
 
   await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
 
-  // Extra wait for extension re-activation after workspace switch
-  await sleep(3000);
+  // Wait for the extension to FULLY re-activate after the workspace switch.
+  // Opening a .code-workspace file triggers an extension host restart. On CI
+  // the extension re-downloads/validates dependencies which takes 30-120s.
+  console.log('[openWorkspaceFileInSession] Waiting for extension to re-activate after workspace switch...');
+  try {
+    await waitForDependencyValidation(driver, 300_000);
+  } catch (e: any) {
+    console.log(`[openWorkspaceFileInSession] Warning: extension activation wait failed: ${e.message}`);
+  }
 
   // Final clear of any dialogs that appeared during re-activation
   await clearBlockingUI(driver);
