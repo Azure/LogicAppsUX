@@ -13,5 +13,22 @@ export { StandardSearchService } from './search';
 export { StandardRunService } from './run';
 export { StandardArtifactService } from './artifact';
 export { StandardCustomCodeService } from './customcode';
+export {
+  listFoundryAgents,
+  listAllFoundryAgents,
+  getFoundryAgent,
+  updateFoundryAgent,
+  listFoundryModels,
+  listFoundryAgentVersions,
+  buildProjectEndpointFromResourceId,
+  type FoundryAgent,
+  type FoundryAgentListResponse,
+  type FoundryAgentVersion,
+  type FoundryAgentVersionListResponse,
+  type FoundryToolDefinition,
+  type FoundryModel,
+  type UpdateFoundryAgentOptions,
+  type ListAgentsOptions,
+} from './foundryAgentService';
 // Template
 export { StandardTemplateService } from './template';

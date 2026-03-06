@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, describe, expect, it, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 import { CodeBlockHeader } from '../CodeBlockHeader';
 

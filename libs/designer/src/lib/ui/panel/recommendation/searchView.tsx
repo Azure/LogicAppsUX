@@ -125,7 +125,10 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      if (equals(type, constants.NODE.TYPE.NESTED_AGENT) && id === 'invokeNestedAgent') {
+      if (equals(type, constants.NODE.TYPE.NESTED_AGENT) && equals(id, 'invokenestedagent')) {
+        if (!isA2AWorkflow) {
+          return false;
+        }
         if (!(isWithinAgenticLoop || isAgentTool)) {
           return false;
         }

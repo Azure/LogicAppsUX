@@ -16,6 +16,7 @@ export const gitignoreFileName = '.gitignore';
 export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
+export const devContainerFileName = 'devcontainer.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
 export const codefulWorkflowFileName = 'workflow.cs';
@@ -40,9 +41,11 @@ export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
+export const devContainerFolderName = '.devcontainer';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
 export const workspaceTemplatesFolderName = 'WorkspaceTemplates';
+export const containerTemplatesFolderName = 'ContainerTemplates';
 export const unitTestTemplatesFolderName = 'UnitTestTemplates';
 
 // Unit test template names
@@ -220,6 +223,7 @@ export const extensionCommand = {
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
+  enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 

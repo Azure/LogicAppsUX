@@ -5,6 +5,7 @@ import { history, defaultKeymap } from '@codemirror/commands';
 import { bracketMatching, foldGutter, indentOnInput, StreamLanguage } from '@codemirror/language';
 import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { linter } from '@codemirror/lint';
+import { search, searchKeymap } from '@codemirror/search';
 import { json, jsonParseLinter } from '@codemirror/lang-json';
 import { python } from '@codemirror/lang-python';
 import { javascript } from '@codemirror/lang-javascript';
@@ -208,7 +209,8 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         indentOnInput(),
         highlightActiveLine(),
         highlightActiveLineGutter(),
-        keymap.of([...closeBracketsKeymap, ...completionKeymap, ...defaultKeymap]),
+        keymap.of([...closeBracketsKeymap, ...completionKeymap, ...searchKeymap, ...defaultKeymap]),
+        search(),
         themeCompartment.of(createFluentTheme(isInverted)),
         languageCompartment.of(getLanguageExtension(language)),
         readOnlyCompartment.of(EditorState.readOnly.of(readOnly)),

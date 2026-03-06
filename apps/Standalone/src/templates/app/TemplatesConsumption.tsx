@@ -366,6 +366,7 @@ const getResourceBasedServices = (
     ...defaultServiceParams,
     clientSupportedOperations: [
       ['/connectionProviders/workflow', 'invokeWorkflow'],
+      ['/connectionProviders/workflow', 'invokenestedagent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],

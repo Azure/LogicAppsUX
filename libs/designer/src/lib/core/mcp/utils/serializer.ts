@@ -9,6 +9,10 @@ import {
   ExtensionProperties,
   deleteObjectProperties,
   clone,
+  ResourceService,
+  LoggerService,
+  LogEntryLevel,
+  getUniqueName,
 } from '@microsoft/logic-apps-shared';
 import {
   parameterHasValue,
@@ -65,13 +69,17 @@ export const serializeMcpWorkflows = async (
   });
 
   const allOperations = await Promise.all(promises);
+  const existingWorkflowNames = await getExistingWorkflowNames(subscriptionId, resourceGroup, logicAppName);
 
   for (const operationData of allOperations) {
     const { operationId, definition: operationDefinition, triggerInputs } = operationData;
     const definition = JSON.parse(
       JSON.stringify(generateDefinition(operationId, operationDefinition, triggerInputs, operationMetadata[operationId]?.description))
     );
-    workflows[getWorkflowNameFromOperation(operationMetadata[operationId]?.summary, operationId)] = { definition, kind: 'Stateful' };
+    workflows[getWorkflowNameFromOperation(operationMetadata[operationId]?.summary, operationId, existingWorkflowNames)] = {
+      definition,
+      kind: 'Stateful',
+    };
   }
 
   const { connectionsData } = await getConnectionsDataToSerialize(connectionState, subscriptionId, resourceGroup, logicAppName);
@@ -218,11 +226,18 @@ const transformSwaggerSchema = (schema: any): any => {
   return updatedSchema;
 };
 
-export const getWorkflowNameFromOperation = (operationSummary: string | undefined, operationId: string): string => {
-  return (operationSummary ?? operationId)
+export const getWorkflowNameFromOperation = (
+  operationSummary: string | undefined,
+  operationId: string,
+  existingNames: string[]
+): string => {
+  const workflowName = (operationSummary ?? operationId)
     .replace(/[^\w-]+/g, '_') // Replace invalid characters with underscores
     .replace(/__+/g, '_') // Replace multiple underscores with a single underscore
     .replace(/^_+|_+$/g, ''); // Trim leading and trailing underscores
+
+  const { name: uniqueWorkflowName } = getUniqueName(existingNames, workflowName, '_');
+  return uniqueWorkflowName;
 };
 
 const getConnectionsDataToSerialize = async (
@@ -258,4 +273,19 @@ const getConnectionsDataToSerialize = async (
     connectionsData: getConnectionsToUpdate(originalConnectionsData, updatedConnectionsData),
     references: referencesToSerialize,
   };
+};
+
+const getExistingWorkflowNames = async (subscriptionId: string, resourceGroup: string, logicAppName: string): Promise<string[]> => {
+  try {
+    const workflows = await ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName);
+    return workflows?.map((workflow) => workflow.name) ?? [];
+  } catch (error: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'McpServer.getExistingWorkflowNames',
+      error,
+      message: `Error while fetching existing workflow names for the logicApp: ${logicAppName}`,
+    });
+    return [];
+  }
 };

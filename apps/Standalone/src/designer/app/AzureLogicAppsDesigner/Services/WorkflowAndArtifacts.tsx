@@ -3,7 +3,8 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { getHostConfig, getReactQueryClient, runsQueriesKeys, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { runsQueriesKeys } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, ServerNotificationData, AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -11,7 +12,6 @@ import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
-import type { CustomCodeFileNameMapping, ServerNotificationData } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
@@ -45,6 +45,31 @@ export const getConnectionsData = async (appId: string): Promise<ConnectionsData
     }
     const { error } = health;
     throw new Error(error.message);
+  } catch {
+    return {};
+  }
+};
+
+export const useParametersData = (appId?: string, enabled = true) => {
+  return useQuery(['getParametersData', appId], async () => getParametersData(appId as string), {
+    enabled: !!appId && enabled,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const getParametersData = async (appId: string): Promise<ParametersData> => {
+  const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/parameters.json?api-version=2018-11-01&relativepath=1`;
+  try {
+    const response = await axios.get(uri, {
+      headers: {
+        'If-Match': '*',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+    return response.data;
   } catch {
     return {};
   }
@@ -790,6 +815,31 @@ export const saveNotesStandard = async (notesData?: Record<string, Note>): Promi
       error: error instanceof Error ? error : undefined,
     });
     return;
+  }
+};
+
+export const createOrUpdateConnection = async (
+  siteResourceId: string,
+  connectionsData: ConnectionsData,
+  settings: Record<string, string> | undefined
+): Promise<any> => {
+  try {
+    await saveWorkflowStandard(
+      siteResourceId,
+      /* workflows */ [],
+      connectionsData,
+      /* parametersData */ undefined,
+      settings,
+      /* hostConfig */ undefined,
+      /* customCodeData */ undefined,
+      /* notes */ undefined,
+      /* mcpServers */ undefined,
+      /* clearDirtyState */ () => {},
+      { skipValidation: true, throwError: true }
+    );
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 };
 

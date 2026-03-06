@@ -1,5 +1,6 @@
 import type { Connector, OperationInfo, OperationManifest } from '../../../utils/src';
 import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
+import { enableCodeInterpreterConsumption } from '../experimentationFlags';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
@@ -22,11 +23,19 @@ import { selectFunctionManifest } from './manifests/functions';
 import { inlineCodeManifest } from './manifests/inlinecode';
 import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
 import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
+import { invokeNestedAgentManifest } from './manifests/invokeNestedAgent';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
 import { rosettaNetEncodeManifest, rosettaNetDecodeManifest, rosettaNetWaitForResponseManifest } from './manifests/rosettanet';
 import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
-import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
+import {
+  functionGroup,
+  functionOperation,
+  invokeWorkflowGroup,
+  invokeWorkflowOperation,
+  invokeNestedAgentOperation,
+  swaggerFunctionOperation,
+} from './operations';
 import { getBuiltInConnectorsInConsumption } from './search';
 import agentloop from './manifests/agentloop';
 import a2arequestManifest from './manifests/a2arequest';
@@ -66,6 +75,12 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
             operationId: invokeWorkflowOperation.id,
           };
 
+        case 'nestedagent':
+          return {
+            connectorId: invokeWorkflowGroup.id,
+            operationId: invokeNestedAgentOperation.id,
+          };
+
         case 'function':
           return {
             connectorId: functionGroup.id,
@@ -99,6 +114,15 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
 
     if (supportedManifest) {
+      if (operationId === agentType) {
+        const isCodeInterpreterEnabled = await enableCodeInterpreterConsumption();
+        if (!isCodeInterpreterEnabled) {
+          const manifest: OperationManifest = JSON.parse(JSON.stringify(supportedManifest));
+          delete (manifest.properties?.inputs?.properties as any)?.agentModelSettings?.properties?.agentChatCompletionSettings?.properties
+            ?.builtinTools;
+          return manifest;
+        }
+      }
       return supportedManifest;
     }
 
@@ -188,6 +212,7 @@ const apimanagementtrigger = 'apimanagementtrigger';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
+const invokenestedagent = 'invokenestedagent';
 const sendtobatch = 'sendtobatch';
 const batch = 'batch';
 
@@ -219,6 +244,7 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ['azurefunction', selectFunctionManifest],
   ['azureswaggerfunction', selectSwaggerFunctionManifest],
   [invokeworkflow, invokeWorkflowManifest],
+  [invokenestedagent, invokeNestedAgentManifest],
   [sendtobatch, sendToBatchManifest],
   [batch, batchTriggerManifest],
   [as2encode, as2EncodeManifest],

@@ -93,6 +93,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.appServiceTriggerOperation,
       OperationsData.functionOperation,
       OperationsData.invokeWorkflowOperation,
+      OperationsData.invokeNestedAgentOperation,
       OperationsData.sendToBatchOperation,
       OperationsData.batchTriggerOperation,
       OperationsData.as2EncodeOperation,

@@ -58,26 +58,24 @@ export const GenerateKeys = () => {
       description: 'Aria label for closing the MCP generate keys panel',
     }),
     detailsTitle: intl.formatMessage({
-      defaultMessage: 'Key access duration',
-      id: 'AfJvdR',
+      defaultMessage: 'API key access duration',
+      id: 'd3gbyY',
       description: 'Title for the MCP generate keys details section',
     }),
     detailsDescription: intl.formatMessage({
-      defaultMessage:
-        'Set how long this key should be valid. This key will be shown only once and cannot be retrieved later. The key is not stored on Azure, save it securely. You will need to regenerate the key if lost.',
-      id: 'Vfa/1M',
+      defaultMessage: `Set the valid duration for this API key. Securely save the key after generation. This key appears only once and isn't stored in Azure, so you can't view the key later. Lost API keys require regenerating new ones.`,
+      id: 'VtRDnx',
       description: 'Description for the MCP generate keys section',
     }),
     resultTitle: intl.formatMessage({
       defaultMessage: 'MCP API key',
-      id: 'Jx88eq',
-      description: 'Title for the MCP Server workflows section',
+      id: 'avaDe+',
+      description: 'Title for the MCP server workflows section',
     }),
     resultDescription: intl.formatMessage({
-      defaultMessage:
-        'Save MCP API key information in a secure location, it will not be available later. The old API keys will still work based on their expiration date. If access keys are regenerated that would invalidate all access keys.',
-      id: 'XOMMsL',
-      description: 'Description for the MCP Server workflows section',
+      defaultMessage: `Save this API key in a secure place. You can't view the key later. Previous API keys still work based on their expiration date. However, regenerating access tokens invalidates all previous API keys.`,
+      id: 'ZzQUve',
+      description: 'Description for the MCP server workflows section',
     }),
     learnMoreLinkText: intl.formatMessage({
       defaultMessage: 'Learn more',
@@ -105,8 +103,8 @@ export const GenerateKeys = () => {
       description: 'Label for the access key',
     }),
     accessKeyInfoText: intl.formatMessage({
-      defaultMessage: 'Select the access key you want to generate your keys from',
-      id: 'dxNeLe',
+      defaultMessage: 'Select the access token from where to generate your API keys.',
+      id: '+kRsu+',
       description: 'Info text for access key selection',
     }),
     hoursText: intl.formatMessage({
@@ -156,13 +154,13 @@ export const GenerateKeys = () => {
     }),
     generateButtonText: intl.formatMessage({
       defaultMessage: 'Generate',
-      id: 'EOx5fA',
-      description: 'Button text for creating the MCP Server',
+      id: 'Q5uGjc',
+      description: 'Button text for creating the MCP server',
     }),
     closeButtonText: intl.formatMessage({
       defaultMessage: 'Close',
-      id: '8cgUrz',
-      description: 'Button text for closing MCP Server creation',
+      id: 'gxqCx0',
+      description: 'Button text for closing creation for MCP server',
     }),
   };
   const durationOptions = useMemo(() => {

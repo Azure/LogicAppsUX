@@ -1,4 +1,5 @@
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
+import type { IHttpClient } from './httpClient';
 
 export interface ICognitiveServiceService {
   fetchAllCognitiveServiceAccounts(subscriptionId: string): Promise<any>;
@@ -11,6 +12,8 @@ export interface ICognitiveServiceService {
   fetchBuiltInRoleDefinitions(): Promise<any>;
   hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean>;
   createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any>;
+  getFoundryAccessToken?(): Promise<string>;
+  readonly httpClient: IHttpClient;
 }
 
 let service: ICognitiveServiceService;

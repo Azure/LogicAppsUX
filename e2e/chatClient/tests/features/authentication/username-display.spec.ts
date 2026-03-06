@@ -205,7 +205,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Message should still appear and chat should function normally
-    await expect(page.getByText('Test message without username')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Test message without username').first()).toBeVisible({ timeout: 5000 });
     // Chat should remain functional
     await expect(messageInput).toBeEnabled({ timeout: 10000 });
   });
@@ -233,7 +234,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Chat should still work despite malformed JWT
-    await expect(page.getByText('Test with malformed token')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Test with malformed token').first()).toBeVisible({ timeout: 5000 });
     await expect(messageInput).toBeEnabled({ timeout: 10000 });
   });
 
@@ -260,7 +262,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Chat should still function without username
-    await expect(page.getByText('Test without access token')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Test without access token').first()).toBeVisible({ timeout: 5000 });
     await expect(messageInput).toBeEnabled({ timeout: 10000 });
   });
 });

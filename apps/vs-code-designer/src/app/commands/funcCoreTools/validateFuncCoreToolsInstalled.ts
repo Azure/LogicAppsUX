@@ -35,7 +35,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
       installed = true;
     } else if (await isFuncToolsInstalled()) {
       installed = true;
-    } else if (useBinariesDependencies()) {
+    } else if (await useBinariesDependencies()) {
       installed = await validateFuncCoreToolsInstalledBinaries(innerContext, message, install, input, installed);
     } else {
       installed = await validateFuncCoreToolsInstalledSystem(innerContext, message, install, input, installed, fsPath);

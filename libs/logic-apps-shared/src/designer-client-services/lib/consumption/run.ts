@@ -66,7 +66,8 @@ export class ConsumptionRunService implements IRunService {
         noAuth: true,
         headers: { 'Access-Control-Allow-Origin': '*' },
       });
-      return response;
+      // API may return 204 No Content (empty response) — normalize to empty object
+      return response || {};
     } catch (e: any) {
       throw new Error(e.message);
     }

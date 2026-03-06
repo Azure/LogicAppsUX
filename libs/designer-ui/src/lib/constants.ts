@@ -463,6 +463,7 @@ export default {
       CONDITION: 'condition',
       DICTIONARY: 'dictionary',
       DROPDOWN: 'dropdown',
+      BUILTIN_TOOLS: 'builtintools',
       FLOATINGACTIONMENU: 'floatingactionmenu',
       FILEPICKER: 'filepicker',
       HTML: 'html',
