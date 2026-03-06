@@ -307,7 +307,6 @@ export const AgentChat = ({
               location: panelLocation,
               width: chatbotWidth,
               isOpen: true,
-              isBlocking: false,
               onDismiss: () => {},
               header: (
                 <AgentChatHeader
