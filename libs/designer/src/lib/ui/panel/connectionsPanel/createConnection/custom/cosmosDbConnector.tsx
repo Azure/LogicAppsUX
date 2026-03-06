@@ -1,16 +1,14 @@
-import { ResourceService, isUndefinedOrEmptyString, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { ResourceService, LogEntryLevel, LoggerService, equals } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import type { IComboBox, IComboBoxOption } from '@fluentui/react';
-import { ComboBox, Spinner } from '@fluentui/react';
+import { useCallback, useMemo, useState } from 'react';
 import { useStyles } from './styles';
-import { Link, tokens } from '@fluentui/react-components';
+import { Link, tokens, Combobox, Option, Field } from '@fluentui/react-components';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
-import { useAllCosmosDbServiceAccounts, getCosmosDbEndpoint } from './useCognitiveService';
+import { useAllCosmosDbServiceAccounts, type CosmosDbAccount } from './useCognitiveService';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
@@ -28,7 +26,6 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
   } = useAllCosmosDbServiceAccounts(selectedSubscriptionId);
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
-  const comboRef = useRef<IComboBox>(null);
   const [selectedAccountText, setSelectedAccountText] = useState<string>('');
 
   const stringResources = useMemo(
@@ -63,24 +60,25 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
         id: 'EXxdfo',
         description: 'Message displayed while fetching resource details',
       }),
+      NO_RESOURCES: intl.formatMessage({
+        defaultMessage: 'No Cosmos DB resources found',
+        id: 'UdYwGT',
+        description: 'Message displayed when no Cosmos DB resources are found',
+      }),
+      NO_RESULTS: intl.formatMessage({
+        defaultMessage: 'No results found',
+        id: 'nEWQ/Q',
+        description: 'Message displayed when search returns no results',
+      }),
     }),
     [intl]
   );
 
   const setEndpoint = useCallback(
-    async (accountId: string) => {
-      try {
-        const accountResponse = await getCosmosDbEndpoint(accountId);
-        setKeyValue?.('cosmosDbEndpoint', accountResponse);
+    (endpoint: string) => {
+      if (endpoint) {
+        setKeyValue?.('cosmosDBEndpoint', endpoint);
         setErrorMessage('');
-      } catch (e: any) {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for cognitive service',
-          error: e,
-        });
-        setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
       }
     },
     [setKeyValue]
@@ -92,13 +90,13 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
         const accountResponse = await ResourceService().executeResourceAction(`${accountId}/listKeys`, 'POST', {
           'api-version': '2025-11-01',
         });
-        setKeyValue?.('openAIKey', accountResponse?.key1 ?? '');
+        setKeyValue?.('cosmosDBAuthenticationKey', accountResponse?.key1 ?? '');
         setErrorMessage('');
       } catch (e: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
           area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for cognitive service',
+          message: 'Failed to fetch account key for Cosmos DB',
           error: e,
         });
         setErrorMessage(e.message ?? 'Failed to fetch account key');
@@ -108,12 +106,13 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
   );
 
   const setAccountValues = useCallback(
-    async (accountId: string) => {
+    async (account: CosmosDbAccount) => {
       setLoadingAccountDetails(true);
-      await Promise.all([setEndpoint(accountId), setKey(accountId)]);
+      setEndpoint(account.endpoint);
+      await setKey(account.id);
       setLoadingAccountDetails(false);
 
-      setValue(accountId);
+      setValue(account.id);
     },
     [setEndpoint, setKey, setValue]
   );
@@ -135,12 +134,15 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
     }
   }, [accountComboboxDisabled, refetch]);
 
-  const accountOptions: IComboBoxOption[] = useMemo(() => {
-    return (allCosmosDbServiceAccounts ?? []).map((account: any) => ({
+  const accountOptions = useMemo(() => {
+    return (allCosmosDbServiceAccounts ?? []).map((account: CosmosDbAccount) => ({
       key: account.id,
       text: `${account.name} (/${account.resourceGroup})`,
+      data: account,
     }));
   }, [allCosmosDbServiceAccounts]);
+
+  const [accountSearchTerm, setSearchTerm] = useState<string | undefined>('');
 
   if (parameterKey === 'cosmosDbServiceAccountId') {
     return (
@@ -163,43 +165,39 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
           }
         >
           <div className={styles.openAIContainer}>
-            <div className={styles.comboxbox}>
-              <ComboBox
-                autoFocus={false}
-                componentRef={comboRef}
-                allowFreeform
-                autoComplete="on"
-                required={true}
+            <Field validationState={errorMessage ? 'error' : 'none'} validationMessage={errorMessage}>
+              <Combobox
+                className={styles.comboxbox}
                 disabled={isFetchingAccount}
+                value={accountSearchTerm !== undefined ? accountSearchTerm : selectedAccountText}
+                selectedOptions={value ? [value] : []}
                 placeholder={isFetchingAccount ? stringResources.LOADING_DATABASES : stringResources.SELECT_COSMOS_DB_RESOURCE}
-                selectedKey={isUndefinedOrEmptyString(value) ? null : value}
-                className={styles.openAICombobox}
-                options={accountOptions}
-                text={selectedAccountText}
-                errorMessage={errorMessage}
-                onClick={() => {
-                  if (!isFetchingAccount) {
-                    comboRef.current?.focus(true);
+                onOptionSelect={async (_, data) => {
+                  if (data.optionValue && data.optionValue !== 'no-items' && !equals(data.optionValue, value)) {
+                    const resource = accountOptions.find((r) => equals(r.data.id, data.optionValue))?.data ?? undefined;
+                    if (resource) {
+                      await setAccountValues(resource);
+                      setSearchTerm(undefined);
+                    }
                   }
                 }}
-                onChange={async (_e, option?: IComboBoxOption) => {
-                  if (option?.key) {
-                    const selectedId = option.key as string;
-                    await setAccountValues(selectedId);
-                    setSelectedAccountText(option.text);
-                  }
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
                 }}
-                onPendingValueChanged={(_option, _index, text) => setSelectedAccountText(text ?? '')}
               >
-                {isFetchingAccount ? (
-                  <Spinner
-                    style={{ position: 'absolute', bottom: '6px', left: '8px' }}
-                    labelPosition="right"
-                    label={stringResources.LOADING_DATABASES}
-                  />
-                ) : null}
-              </ComboBox>
-            </div>
+                {!isFetchingAccount && !accountOptions.length ? (
+                  <Option key={'no-items'} value={'no-items'} disabled>
+                    {accountSearchTerm?.trim() ? `${stringResources.NO_RESULTS} "${accountSearchTerm}"` : stringResources.NO_RESOURCES}
+                  </Option>
+                ) : (
+                  accountOptions.map((resource) => (
+                    <Option key={resource.data.id} value={resource.data.id}>
+                      {resource.data.name}
+                    </Option>
+                  ))
+                )}
+              </Combobox>
+            </Field>
             <RefreshIcon
               style={{
                 marginTop: '4px',
