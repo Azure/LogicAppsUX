@@ -104,7 +104,7 @@ export const QuickViewPanel = ({
       open={isOpen && currentPanelView === TemplatePanelView.QuickView}
       onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
       position="end"
-      style={{ width: panelWidth, height: '100%', maxWidth: '100%' }}
+      style={{ width: panelWidth }}
       mountNode={{
         className: 'msla-panel-host-container',
         element: mountNode,

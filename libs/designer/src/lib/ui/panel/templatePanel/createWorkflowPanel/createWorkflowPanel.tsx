@@ -131,7 +131,6 @@ export const CreateWorkflowPanel = ({
         width: panelWidth,
       }}
       mountNode={{
-        className: 'msla-panel-host-container',
         element: mountNode,
       }}
     >

@@ -27,18 +27,16 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
     }
   };
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div>
       <TemplatesGalleryWithSearch
         searchAndFilterProps={{ detailFilters, tabFilterKey }}
         blankTemplateCard={blankTemplateCard}
         onTemplateSelect={onTemplateSelect}
       />
-      <WorkflowView createWorkflowCall={createWorkflowCall} panelRef={containerRef} />
+      <WorkflowView createWorkflowCall={createWorkflowCall} />
       <div
         id={'msla-layer-host'}
         style={{
@@ -53,14 +51,13 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
 
 const WorkflowView = ({
   createWorkflowCall,
-  panelRef,
-}: { createWorkflowCall: CreateWorkflowHandler; panelRef: React.RefObject<HTMLDivElement> }) => {
+}: { createWorkflowCall: CreateWorkflowHandler; panelRef?: React.RefObject<HTMLDivElement> }) => {
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
-
+  const containerRef = useRef<HTMLDivElement>(null);
   return templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
-    <>
-      <QuickViewPanel mountNode={panelRef?.current} showCreate={true} workflowId={Object.keys(workflows)[0]} />
-      <CreateWorkflowPanel mountNode={panelRef?.current} createWorkflow={createWorkflowCall} />
-    </>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <QuickViewPanel mountNode={containerRef.current} showCreate={true} workflowId={Object.keys(workflows)[0]} />
+      <CreateWorkflowPanel mountNode={containerRef.current} createWorkflow={createWorkflowCall} />
+    </div>
   );
 };
