@@ -23,6 +23,8 @@ import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { sleep, captureScreenshot } from './helpers';
 import {
   TEST_TIMEOUT,
+  DEPENDENCY_VALIDATION_TIMEOUT,
+  waitForDependencyValidation,
   openDesignerForEntry,
   findAddTriggerCard,
   findAddActionElement,
@@ -67,7 +69,7 @@ describe('Inline JavaScript Tests', function () {
   let manifest: WorkspaceManifestEntry[];
 
   before(async function () {
-    this.timeout(120_000);
+    this.timeout(DEPENDENCY_VALIDATION_TIMEOUT + 30_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
       assert.fail(`Workspace manifest not found at ${WORKSPACE_MANIFEST_PATH} - Phase 4.1 must run first`);
@@ -80,6 +82,7 @@ describe('Inline JavaScript Tests', function () {
     }
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
+    await waitForDependencyValidation(driver);
   });
 
   afterEach(async () => {

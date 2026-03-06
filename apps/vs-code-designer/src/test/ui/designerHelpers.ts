@@ -1277,6 +1277,154 @@ export async function canvasHasNode(driver: WebDriver, nodeText: string): Promis
 }
 
 /**
+ * Open the designer for a workflow.json via right-click in the Explorer tree.
+ *
+ * This is more reliable than the command palette approach because:
+ *   - It doesn't require workflow.json to be the active focused editor tab
+ *   - Context menu items are available as soon as the extension loads
+ *   - It mirrors how real users actually open the designer
+ *
+ * Strategy: use openResources() to reveal + select the workflow.json in the
+ * Explorer tree, then right-click the selected row and click "Open Designer".
+ */
+export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: string, label: string): Promise<boolean> {
+  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"...`);
+
+  // Switch to Explorer view
+  try {
+    await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+    await sleep(1500);
+  } catch {
+    /* ignore */
+  }
+
+  // Open the specific file to reveal + select it in the tree
+  await VSBrowser.instance.openResources(workflowJsonPath);
+  await sleep(2000);
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      // Scroll the selected workflow.json into view
+      await driver.executeScript(`
+        var items = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
+        for (var i = 0; i < items.length; i++) {
+          if ((items[i].textContent || '').includes('workflow.json') &&
+              items[i].classList.contains('selected')) {
+            items[i].scrollIntoView({block: 'center'});
+            break;
+          }
+        }
+      `);
+
+      // Find the selected/focused workflow.json row
+      const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+
+      let targetRow = null;
+      // Strategy 1: Find the row that's selected
+      for (const row of rows) {
+        const text = await row.getText().catch(() => '');
+        const classes = await row.getAttribute('class').catch(() => '');
+        if (text.includes('workflow.json') && (classes.includes('selected') || classes.includes('focused'))) {
+          targetRow = row;
+          break;
+        }
+      }
+
+      // Strategy 2: Find near the workflow folder name
+      if (!targetRow) {
+        let foundParentFolder = false;
+        for (const row of rows) {
+          const text = await row.getText().catch(() => '');
+          if (text.includes(label)) {
+            foundParentFolder = true;
+            continue;
+          }
+          if (foundParentFolder && text.includes('workflow.json')) {
+            targetRow = row;
+            break;
+          }
+          if (foundParentFolder && !text.includes('workflow.json') && !text.includes('.')) {
+            break;
+          }
+        }
+      }
+
+      // Strategy 3: Any workflow.json
+      if (!targetRow) {
+        for (const row of rows) {
+          const text = await row.getText().catch(() => '');
+          if (text.includes('workflow.json')) {
+            targetRow = row;
+            break;
+          }
+        }
+      }
+
+      if (!targetRow) {
+        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/5)`);
+        await sleep(3000);
+        continue;
+      }
+
+      // Right-click and find "Open Designer"
+      await driver.actions().contextClick(targetRow).perform();
+      await sleep(1500);
+
+      const menuItems = await driver.findElements(
+        By.css('.context-view .action-item a, .monaco-menu .action-item a, .context-view .action-label')
+      );
+      for (const menuItem of menuItems) {
+        try {
+          const menuLabel = await menuItem.getText();
+          if (menuLabel.toLowerCase().includes('open designer') && !menuLabel.toLowerCase().includes('data map')) {
+            console.log(`[openDesignerViaExplorer] Clicking: "${menuLabel}"`);
+            await menuItem.click();
+            await sleep(3000);
+
+            // Wait for webview iframe to appear
+            const deadline = Date.now() + 30_000;
+            while (Date.now() < deadline) {
+              try {
+                await dismissAllDialogs(driver);
+              } catch {
+                /* ignore */
+              }
+              const found = await driver
+                .executeScript<boolean>(
+                  'return !!(document.querySelector("iframe.webview") || document.querySelector("iframe[id*=\\"webview\\"]") || document.querySelector(\'*[id="active-frame"]\'))'
+                )
+                .catch(() => false);
+              if (found) {
+                console.log(`[openDesignerViaExplorer] Designer webview detected for "${label}"`);
+                return true;
+              }
+              await sleep(500);
+            }
+            console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" within 30s`);
+            return false;
+          }
+        } catch {
+          /* stale menu item */
+        }
+      }
+
+      // Dismiss context menu if "Open Designer" not found
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+      console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/5)`);
+    } catch (e: any) {
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(3000);
+    }
+  }
+  return false;
+}
+
+/**
  * Full E2E flow: open a workspace's designer and verify the webview renders.
  * Returns the webview and driver for further interaction.
  */
@@ -1302,7 +1450,6 @@ export async function openDesignerForEntry(
   ensureLocalSettingsForDesigner(entry.appDir);
 
   // 3. Open the workspace file. This triggers an extension host restart.
-  //    The activation wait happens later in executeOpenDesignerCommand.
   try {
     await openWorkspaceFileInSession(workbench, entry.wsFilePath);
     driver = VSBrowser.instance.driver;
@@ -1312,33 +1459,29 @@ export async function openDesignerForEntry(
     return { success: false, error: `Failed to open workspace: ${e.message}` };
   }
 
-  // 4. Open workflow.json in the editor
-  try {
-    await openFileInEditor(workbench, driver, workflowJsonPath);
-    console.log(`${tag} Opened workflow.json`);
-  } catch (e: any) {
-    return { success: false, error: `Failed to open workflow.json: ${e.message}` };
-  }
-
-  // 5. Wait for extension recognition, dismissing any blocking UI
+  // 4. Wait for extension to settle, dismiss blocking UI
   await sleep(PROJECT_RECOGNITION_WAIT);
   await clearBlockingUI(driver);
 
-  // 6. Execute Open Designer command
+  // 5. Open designer via right-click on workflow.json in the Explorer tree.
+  //    This is more reliable than the command palette because:
+  //    - It doesn't require workflow.json to be the active editor tab
+  //    - Context menu items appear as soon as the extension loads
+  //    - It mirrors how real users actually open the designer
   try {
     await driver.switchTo().defaultContent();
   } catch {
     /* ignore */
   }
 
-  const commandFound = await executeOpenDesignerCommand(workbench, driver);
-  if (!commandFound) {
-    await captureScreenshot(driver, `${entry.label}-command-not-found`);
-    return { success: false, error: 'Open Designer command not found in palette' };
+  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow');
+  if (!designerOpened) {
+    await captureScreenshot(driver, `${entry.label}-designer-not-opened`);
+    return { success: false, error: 'Could not open designer via Explorer right-click' };
   }
-  console.log(`${tag} Open Designer command executed`);
+  console.log(`${tag} Designer opened via Explorer right-click`);
 
-  // 7. Switch into the webview
+  // 6. Switch into the webview
   // Note: prompt handling is now integrated into waitForDesignerWebviewTab()
   try {
     await driver.switchTo().defaultContent();

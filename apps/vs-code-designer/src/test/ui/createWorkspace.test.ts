@@ -13,6 +13,7 @@ import {
   until,
   EditorView,
   type WebDriver,
+  VSBrowser,
   type WebElement,
   Key,
 } from 'vscode-extension-tester';
@@ -442,7 +443,9 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
   }
 
   let lastError: Error | null = null;
-  for (let attempt = 0; attempt < 5; attempt++) {
+  // On CI the first cold webview render takes longer (~15s).
+  // Use 10 retries x 3s = 30s total to accommodate.
+  for (let attempt = 0; attempt < 10; attempt++) {
     try {
       const webview = new WebView();
       await webview.switchToFrame();
@@ -464,7 +467,7 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
       if (e.message?.includes('Package')) {
         throw e; // Don't retry wrong webview
       }
-      console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/10 failed: ${e.message}`);
       try {
         await driver.switchTo().defaultContent();
       } catch {
@@ -481,7 +484,7 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
         /* ignore */
       }
 
-      await sleep(2000);
+      await sleep(3000);
     }
   }
 

@@ -685,7 +685,9 @@ async function main() {
       if (fs.existsSync(manifestPath)) {
         try {
           const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-          const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+          // Use the same fallback order as the test files:
+          // prefer standard+Stateful, then any standard, then first entry
+          const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard') || manifest[0];
           if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
             phase2Resources = [preferred.wsFilePath];
             console.log(`  Using startup workspace for designerOpen: ${preferred.wsFilePath}`);
