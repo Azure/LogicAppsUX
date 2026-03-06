@@ -27,7 +27,7 @@ export interface CopilotWorkflowEditorServiceOptions {
   maxToolRounds?: number;
 }
 
-/** Message types used in the OpenAI chat completion API */
+/** Message types used in the OpenAI Chat Completions API */
 type ChatMessage =
   | { role: 'system'; content: string }
   | { role: 'user'; content: string }
@@ -42,6 +42,18 @@ interface ToolCall {
     name: string;
     arguments: string;
   };
+}
+
+/** Output item shapes returned by the Responses API */
+interface ResponsesApiOutputItem {
+  type: 'message' | 'function_call';
+  // message fields
+  role?: string;
+  content?: Array<{ type: string; text?: string }>;
+  // function_call fields
+  call_id?: string;
+  name?: string;
+  arguments?: string;
 }
 
 export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorService {
@@ -88,26 +100,46 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     );
 
     const userMessage = `[CURRENT WORKFLOW]\n${workflowContext}\n\n[USER REQUEST]\n${prompt}`;
-
-    // Determine which tools are available for this request
     const tools = this._getAvailableTools();
-
-    // Build the messages array for this request — includes persistent history + current turn
-    const messages: ChatMessage[] = [
-      { role: 'system' as const, content: this.systemPrompt },
-      ...this.conversationHistory.map((m) => ({ ...m }) as ChatMessage),
-      { role: 'user' as const, content: userMessage },
-    ];
-
     const url = this._buildUrl();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...this._buildAuthHeaders(),
     };
 
+    let finalContent: string;
+    if (this._isResponsesApi()) {
+      finalContent = await this._executeResponsesApi(userMessage, tools, url, headers, signal);
+    } else {
+      finalContent = await this._executeCompletionsApi(userMessage, tools, url, headers, signal);
+    }
+
+    // Persist user + final assistant message in conversation history
+    this.conversationHistory.push({ role: 'user', content: userMessage });
+    this.conversationHistory.push({ role: 'assistant', content: finalContent });
+
+    return this._parseResponse(finalContent, workflow);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Chat Completions API (/chat/completions)
+  // ---------------------------------------------------------------------------
+
+  private async _executeCompletionsApi(
+    userMessage: string,
+    tools: CopilotToolDefinition[],
+    url: string,
+    headers: Record<string, string>,
+    signal?: AbortSignal
+  ): Promise<string> {
+    const messages: ChatMessage[] = [
+      { role: 'system' as const, content: this.systemPrompt },
+      ...this.conversationHistory.map((m) => ({ ...m }) as ChatMessage),
+      { role: 'user' as const, content: userMessage },
+    ];
+
     let finalContent = '';
 
-    // Tool-calling loop: the LLM may request tool calls before producing a final response
     for (let round = 0; round <= this.maxToolRounds; round++) {
       const body: Record<string, unknown> = {
         model: this.deploymentName ?? this.model,
@@ -140,18 +172,15 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
         throw new Error('LLM returned no message in response');
       }
 
-      // Check if the LLM wants to call tools
       const toolCalls = assistantMessage.tool_calls as ToolCall[] | undefined;
 
       if (toolCalls && toolCalls.length > 0) {
-        // Add the assistant's tool-call message to the conversation
         messages.push({
           role: 'assistant' as const,
           content: assistantMessage.content ?? null,
           tool_calls: toolCalls,
         });
 
-        // Execute each tool call and add results
         for (const toolCall of toolCalls) {
           const result = await executeCopilotTool(toolCall.function.name, toolCall.function.arguments);
           messages.push({
@@ -160,21 +189,111 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
             content: result,
           });
         }
-
-        // Continue to the next round for the LLM to process tool results
         continue;
       }
 
-      // No tool calls — this is the final response
       finalContent = assistantMessage.content ?? '';
       break;
     }
 
-    // Persist user + final assistant message in conversation history (excluding tool-call internals)
-    this.conversationHistory.push({ role: 'user', content: userMessage });
-    this.conversationHistory.push({ role: 'assistant', content: finalContent });
+    return finalContent;
+  }
 
-    return this._parseResponse(finalContent, workflow);
+  // ---------------------------------------------------------------------------
+  // Responses API (/responses)
+  // ---------------------------------------------------------------------------
+
+  private async _executeResponsesApi(
+    userMessage: string,
+    tools: CopilotToolDefinition[],
+    url: string,
+    headers: Record<string, string>,
+    signal?: AbortSignal
+  ): Promise<string> {
+    // Build initial input from conversation history + current user message
+    const input: Record<string, unknown>[] = [
+      ...this.conversationHistory.map((m) => ({ role: m.role, content: m.content })),
+      { role: 'user', content: userMessage },
+    ];
+
+    // Transform tools from Chat Completions format → Responses API format (flat)
+    const responsesTools = tools.map((t) => ({
+      type: 'function' as const,
+      name: t.function.name,
+      description: t.function.description,
+      parameters: t.function.parameters,
+    }));
+
+    let previousResponseId: string | undefined;
+    let pendingToolOutputs: Record<string, unknown>[] | undefined;
+    let finalContent = '';
+
+    for (let round = 0; round <= this.maxToolRounds; round++) {
+      const body: Record<string, unknown> = {
+        model: this.deploymentName ?? this.model,
+        instructions: this.systemPrompt,
+        temperature: 1.0,
+        max_output_tokens: 16384,
+      };
+
+      if (previousResponseId && pendingToolOutputs) {
+        // Subsequent round: reference previous response + send tool outputs
+        body['previous_response_id'] = previousResponseId;
+        body['input'] = pendingToolOutputs;
+      } else {
+        // First round: send full input
+        body['input'] = input;
+      }
+
+      if (responsesTools.length > 0 && round < this.maxToolRounds) {
+        body['tools'] = responsesTools;
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+        signal,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`LLM API request failed (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
+      previousResponseId = data.id;
+      const outputItems: ResponsesApiOutputItem[] = data.output ?? [];
+      const functionCalls = outputItems.filter((item) => item.type === 'function_call');
+
+      if (functionCalls.length > 0 && round < this.maxToolRounds) {
+        // Execute each tool call and prepare results for the next round
+        pendingToolOutputs = [];
+        for (const fc of functionCalls) {
+          const result = await executeCopilotTool(fc.name!, fc.arguments!);
+          pendingToolOutputs.push({
+            type: 'function_call_output',
+            call_id: fc.call_id,
+            output: result,
+          });
+        }
+        continue;
+      }
+
+      // Extract text content from message output items
+      for (const item of outputItems) {
+        if (item.type === 'message' && item.content) {
+          for (const block of item.content) {
+            if (block.type === 'output_text' && block.text) {
+              finalContent += block.text;
+            }
+          }
+        }
+      }
+      break;
+    }
+
+    return finalContent;
   }
 
   /**
@@ -200,13 +319,12 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
   }
 
   private _buildUrl(): string {
-    // Azure OpenAI format
-    if (this.deploymentName) {
-      const apiVersion = this.apiVersion ?? '2024-08-01-preview';
-      return `${this.endpoint}/openai/deployments/${this.deploymentName}/chat/completions?api-version=${apiVersion}`;
-    }
-    // Standard OpenAI format
-    return `${this.endpoint}/chat/completions`;
+    return this.endpoint;
+  }
+
+  /** Detect whether the configured endpoint uses the Responses API (`/responses`) */
+  private _isResponsesApi(): boolean {
+    return this.endpoint.includes('/responses');
   }
 
   private _buildAuthHeaders(): Record<string, string> {
@@ -218,13 +336,62 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     return { Authorization: `Bearer ${this.apiKey}` };
   }
 
+  /**
+   * Strip JavaScript-style comments from a string so that JSON.parse can succeed
+   * even when the LLM injects comments into its JSON output.
+   */
+  private _stripJsonComments(str: string): string {
+    // Remove single-line comments (// …) that are NOT inside strings.
+    // We walk through the string tracking whether we're inside a JSON string value.
+    let result = '';
+    let inString = false;
+    let i = 0;
+    while (i < str.length) {
+      const ch = str[i];
+      if (inString) {
+        result += ch;
+        // Skip escaped characters inside strings
+        if (ch === '\\' && i + 1 < str.length) {
+          i++;
+          result += str[i];
+        } else if (ch === '"') {
+          inString = false;
+        }
+      } else if (ch === '"') {
+        inString = true;
+        result += ch;
+      } else if (ch === '/' && i + 1 < str.length && str[i + 1] === '/') {
+        // Single-line comment — skip until end of line
+        i += 2;
+        while (i < str.length && str[i] !== '\n') {
+          i++;
+        }
+        continue; // don't increment i again at the bottom
+      } else if (ch === '/' && i + 1 < str.length && str[i + 1] === '*') {
+        // Block comment — skip until */
+        i += 2;
+        while (i < str.length && !(str[i] === '*' && i + 1 < str.length && str[i + 1] === '/')) {
+          i++;
+        }
+        i += 2; // skip the closing */
+        continue;
+      } else {
+        result += ch;
+      }
+      i++;
+    }
+    return result;
+  }
+
   private _parseResponse(content: string, currentWorkflow: Workflow): WorkflowEditResponse {
     // Try to extract JSON from a ```json code block
     const jsonBlockMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
     const jsonStr = jsonBlockMatch ? jsonBlockMatch[1] : content;
 
     try {
-      const parsed = JSON.parse(jsonStr.trim());
+      // Strip JS-style comments that LLMs sometimes inject (// … and /* … */)
+      const cleanedJson = this._stripJsonComments(jsonStr.trim());
+      const parsed = JSON.parse(cleanedJson);
 
       if (parsed.type === 'workflow' && parsed.workflow) {
         const proposedWorkflow: Workflow = {

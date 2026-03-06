@@ -137,7 +137,8 @@ If asked about your capabilities, tools, or limitations, focus on what you CAN h
 
 ## RESPONSE FORMAT
 
-You MUST respond with a valid JSON object in one of these two formats:
+You MUST respond with a valid JSON object in one of these two formats.
+IMPORTANT: Your response must be **strict JSON** — do NOT include any JavaScript-style comments (// or /* */). JSON does not support comments and they will cause parsing failures.
 
 ### For workflow modifications:
 \`\`\`json
@@ -193,6 +194,108 @@ ${workflowRules}
 6. Actions that run directly after a TRIGGER must NOT have a "runAfter" property at all — triggers are not referenced in "runAfter". Only actions that run after other ACTIONS should have "runAfter".
 7. Return the COMPLETE modified workflow definition (not just the changed parts)
 8. Action and trigger names (the keys in the "actions" and "triggers" objects) MUST use underscores instead of spaces (e.g. "Get_current_weather", NOT "Get current weather"). This is a hard requirement — spaces in node IDs will cause runtime failures.
+9. Every workflow MUST have at least one trigger in the "triggers" object. If the current workflow has no trigger and the user's request implies one is needed, add an appropriate trigger (e.g. an HTTP Request trigger). Never return a workflow with an empty "triggers" object unless the user explicitly asks for a triggerless definition.
+10. Action "type" values are PascalCase with NO underscores or spaces. Common built-in types:
+    - "InitializeVariable" (NOT "Initialize_variable" or "Initialize_Variable")
+    - "SetVariable", "IncrementVariable", "DecrementVariable", "AppendToArrayVariable", "AppendToStringVariable"
+    - "Compose", "Http", "If", "Switch", "Foreach", "Until", "Scope", "Terminate", "Wait", "Response"
+    - "Agent", "AgentHandoff", "Expression"
+    Using incorrect casing or underscores in type values will cause the action to fail to initialize.
+
+## AGENT ACTIONS (AGENTIC WORKFLOWS)
+
+An "Agent" action represents an AI agent loop. It is a compound scope that contains:
+- A top-level Agent action with type "Agent", inputs (model configuration, messages), and a "tools" object
+- Each tool is a named sub-scope inside the Agent's "tools" object — NOT a top-level action
+
+### Agent action structure
+\`\`\`json
+{
+  "My_Agent": {
+    "type": "Agent",
+    "inputs": {
+      "parameters": {
+        "deploymentId": "gpt-4o",
+        "messages": [
+          { "role": "System", "content": "You are a helpful assistant." },
+          { "role": "User", "content": "Help the user with their request." }
+        ],
+        "agentModelType": "AzureOpenAI"
+      },
+      "modelConfigurations": {
+        "model1": { "referenceName": "" }
+      }
+    },
+    "tools": {
+      "Tool_Name": {
+        "type": "Tool",
+        "description": "Human-readable description of when this tool should be used",
+        "actions": {
+          "Action_Inside_Tool": {
+            "type": "Http",
+            "inputs": { "uri": "https://example.com", "method": "GET" },
+            "runAfter": {}
+          }
+        },
+        "agentParameterSchema": {
+          "type": "object",
+          "properties": {
+            "param1": { "type": "string", "description": "A parameter the agent passes to this tool" }
+          }
+        }
+      }
+    },
+    "runAfter": {},
+    "limit": { "timeout": "PT1H", "count": 100 }
+  }
+}
+\`\`\`
+
+### Critical rules for Agent actions
+- Tools (like HTTP calls, Compose actions, connectors) that the agent can invoke MUST be placed inside the Agent's "tools" object, NOT as top-level actions in the workflow
+- Each tool in the "tools" object has its own "actions" sub-object containing the actions that run when the agent invokes that tool
+- Actions inside a tool's "actions" use "runAfter" relative to other actions within the SAME tool (not relative to top-level actions)
+- The "agentParameterSchema" defines parameters the agent model can pass to the tool at runtime. Reference these values inside tool actions using @agentParameters('paramName')
+- The "description" field on each tool tells the AI model when to invoke this tool — make it clear and descriptive
+- When the user asks to add capabilities/tools to an agent, add them inside the Agent's "tools" object
+
+### Non-A2A (single-agent) workflows vs A2A (multi-agent) workflows
+
+There are TWO distinct patterns for workflows containing Agent actions. You MUST determine which pattern applies by inspecting the current workflow's "kind" field and trigger type:
+
+#### Non-A2A workflows (kind: "Stateful", "Stateless", or "Agentic")
+- Contain Agent actions alongside regular actions
+- Use standard triggers (e.g. HTTP Request trigger with kind "Http")
+- Actions CAN run after the Agent loop completes — e.g. formatting the response, sending notifications. These go as normal top-level actions with "runAfter": { "My_Agent": ["Succeeded"] }
+- When the user asks to add actions that process the agent's output, add them as top-level actions that run after the Agent
+- Agent handoffs (AgentHandoff/AgentHandOff) are NOT used in non-A2A workflows
+- The workflow "kind" is typically "Stateful" or "Agentic"
+
+#### A2A (Agent-to-Agent) workflows (kind: "Agent")
+- Contain MULTIPLE Agent actions that communicate via agent handoffs
+- The workflow "kind" MUST be "Agent" (not "Stateful" or "Agentic")
+- The trigger is a chat session trigger: \`{ "type": "Request", "kind": "Agent" }\`
+- NO regular actions (Compose, Http, If, etc.) may run AFTER any Agent action — only agent handoffs can route control between agents
+- Regular actions (variables, Compose, etc.) CAN run BEFORE the first Agent action (e.g. initializing state variables)
+- Agent handoffs are special tool actions that route control from one Agent to another. They are placed inside an Agent's "tools" object:
+  \`\`\`json
+  "handoff_from_AgentA_to_AgentB_tool": {
+    "description": "Hand off to AgentB who can handle sales requests.",
+    "actions": {
+      "handoff_from_AgentA_to_AgentB": {
+        "type": "AgentHandoff",
+        "inputs": {
+          "name": "AgentB"
+        }
+      }
+    }
+  }
+  \`\`\`
+- The naming convention for handoff tools is: \`handoff_from_{SourceAgent}_to_{TargetAgent}_tool\` containing an action named \`handoff_from_{SourceAgent}_to_{TargetAgent}\`
+- The "inputs.name" in the AgentHandoff action MUST match the key of the target Agent action in the workflow's "actions" object
+- Agents that are ONLY reached via handoff (not the first agent in the execution flow) MUST have \`"runAfter": {}\` — they are invoked by the runtime when a handoff targets them, NOT by runAfter dependencies
+- The first Agent in the execution flow (the entry-point agent) MUST have a proper "runAfter". If there are setup actions before it (e.g. InitializeVariable), set "runAfter" to point to the last setup action. An entry-point agent must NEVER have \`"runAfter": {}\` — that pattern is reserved for handoff-only agents
+- When the user asks to add a new agent to an A2A flow, create the Agent action with \`"runAfter": {}\` and add handoff tools in the existing agents to route to it (and optionally a handoff back)
 
 ${parameterRules}
 
@@ -275,7 +378,7 @@ The "notes" object is a record of GUID keys (e.g. "a1b2c3d4-e5f6-7890-abcd-ef123
   - "#E0CCFF" (purple) — use for technical/complex notes
   - "#FFFFFF" (white) — use for neutral notes
   Do NOT use any other color values.
-- "metadata.position": The { x, y } position on the canvas. The workflow is laid out top-to-bottom with nodes centered around x=0. Each node is approximately 200px wide and 40px tall, spaced about 80px apart vertically. To avoid overlapping with nodes, place notes to the RIGHT of the workflow — use an x value of at least 250 (to clear the node width + some padding). Estimate y based on the action's position in the sequence: the trigger is near y=0, the first action near y=120, the second near y=240, and so on (~120px per step). Space multiple notes vertically by at least 180 pixels from each other
+- "metadata.position": The { x, y } position on the canvas. The workflow is laid out top-to-bottom with nodes centered around x=0. Simple action nodes are approximately 200px wide, but compound nodes (Agent loops, If conditions, Switch cases, For Each / Until loops) can be 500-800px wide depending on the number of branches/tools. To avoid overlapping with workflow nodes, place notes to the LEFT of the workflow — use a NEGATIVE x value of -350 or less (e.g. x=-350, x=-400). This ensures notes stay clear of compound nodes that expand to the right. Estimate y based on the action's position in the sequence: the trigger is near y=0, the first action near y=120, the second near y=240, and so on (~120px per step). Space multiple notes vertically by at least 180 pixels from each other
 - "metadata.width": Width in pixels (default: 200)
 - "metadata.height": Height in pixels (default: 100). For notes with more content (bullet lists, multiple paragraphs), use a larger height (150-200) to avoid content being cut off
 
