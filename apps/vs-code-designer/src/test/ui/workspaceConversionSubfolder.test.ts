@@ -22,7 +22,7 @@ import * as assert from 'assert';
 import { Workbench, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { sleep, captureScreenshot } from './helpers';
+import { sleep, captureScreenshot, openFolderInSession } from './helpers';
 
 const TEST_TIMEOUT = 60_000;
 
@@ -100,10 +100,12 @@ describe('Workspace Conversion — Open Subfolder', function () {
   });
 
   it('should show workspace prompt when opening a logic app subfolder and dismiss on No', async () => {
-    // The run-e2e.js phase for this test opens the logic app SUBFOLDER
-    // (e.g., testws_xxx/testapp_xxx/) as the startup folder.
-    // The extension detects a Logic App project in root and finds the
-    // .code-workspace in the parent directory.
+    // Open the logic app SUBFOLDER via command palette to trigger conversion.
+    // ExTester's startup resources use code -r which doesn't work on Linux CI.
+    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+    assert.ok(entry, 'No workspace entry found in manifest');
+    await openFolderInSession(driver, entry.appDir);
+
     await captureScreenshot(driver, 'subfolder-start', EXPLICIT_SCREENSHOT_DIR);
 
     // Wait for the workspace prompt

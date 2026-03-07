@@ -167,9 +167,28 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     /* ignore */
   }
 
-  // Open the specific file to reveal + select it in the tree
-  await VSBrowser.instance.openResources(workflowJsonPath);
-  await sleep(2000);
+  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
+  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails on Linux CI.
+  try {
+    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+    await sleep(1000);
+    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
+    await quickInput.sendKeys(label + '/workflow.json');
+    await sleep(1500);
+    await quickInput.sendKeys(Key.ENTER);
+    await sleep(2000);
+    console.log(`[multiDesigner] Opened ${label}/workflow.json via Quick Open`);
+  } catch (qoErr: any) {
+    console.log(`[multiDesigner] Quick Open failed: ${qoErr.message}`);
+  }
+
+  // Re-focus Explorer so the opened file is selected/revealed in the tree
+  try {
+    await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+    await sleep(1500);
+  } catch {
+    /* ignore */
+  }
 
   // Now right-click on the active/focused workflow.json in the Explorer
   for (let attempt = 0; attempt < 3; attempt++) {

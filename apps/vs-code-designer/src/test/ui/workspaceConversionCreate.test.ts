@@ -22,7 +22,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as assert from 'assert';
 import { Workbench, WebView, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
-import { sleep, captureScreenshot } from './helpers';
+import { sleep, captureScreenshot, openFolderInSession } from './helpers';
 
 const TEST_TIMEOUT = 180_000;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -209,6 +209,10 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
   });
 
   it('should complete the workspace creation wizard and verify results', async () => {
+    // Open the legacy project folder via command palette.
+    // ExTester's startup resources use code -r which doesn't work on Linux CI.
+    await openFolderInSession(driver, LEGACY_PROJECT_DIR);
+
     await captureScreenshot(driver, 'create-ws-start', EXPLICIT_SCREENSHOT_DIR);
 
     // ── Step 1: Wait for the conversion dialog ──

@@ -428,11 +428,18 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      await VSBrowser.instance.openResources(filePath);
-      await sleep(2000);
-
-      // Verify the file is now the active editor tab
+      // Use Quick Open (Ctrl+P) to open the file instead of openResources
+      // which uses code -r IPC that doesn't work on Linux CI.
       const expectedName = path.basename(filePath);
+      const parentDir = path.basename(path.dirname(filePath));
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      const qInput = await driver.findElement(By.css('.quick-input-box input'));
+      // Type parent/filename for uniqueness
+      await qInput.sendKeys(parentDir + '/' + expectedName);
+      await sleep(1500);
+      await qInput.sendKeys(Key.ENTER);
+      await sleep(2000);
       const editorView = new EditorView();
       const activeTab = await editorView.getActiveTab();
       if (activeTab) {
@@ -1416,9 +1423,30 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
     /* ignore */
   }
 
-  // Open the specific file to reveal + select it in the tree
-  await VSBrowser.instance.openResources(workflowJsonPath);
-  await sleep(2000);
+  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
+  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails
+  // on Linux CI (same root cause as openWorkspaceFileInSession).
+  try {
+    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+    await sleep(1000);
+    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
+    // Type workflow folder + filename for uniqueness in multi-workflow workspaces
+    await quickInput.sendKeys(label + '/workflow.json');
+    await sleep(1500);
+    await quickInput.sendKeys(Key.ENTER);
+    await sleep(2000);
+    console.log('[openDesignerViaExplorer] Opened workflow.json via Quick Open');
+  } catch (qoErr: any) {
+    console.log(`[openDesignerViaExplorer] Quick Open failed: ${qoErr.message}`);
+  }
+
+  // Re-focus Explorer so the opened file is selected/revealed in the tree
+  try {
+    await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+    await sleep(1500);
+  } catch {
+    /* ignore */
+  }
 
   for (let attempt = 0; attempt < 5; attempt++) {
     try {

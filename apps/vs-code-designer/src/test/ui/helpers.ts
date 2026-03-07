@@ -519,3 +519,87 @@ export async function clickTreeViewAction(driver: WebDriver, itemLabel: string, 
   }
   throw new Error(`Tree item "${itemLabel}" not found`);
 }
+
+// ===========================================================================
+// Folder / workspace opening (for tests that can't use code -r)
+// ===========================================================================
+
+/**
+ * Open a folder in VS Code via the command palette.
+ *
+ * ExTester's openResources / startup resources use `code -r` CLI IPC which
+ * silently fails on Linux CI. This function uses the command palette
+ * "File: Open Folder..." command with the simple dialog (text input).
+ *
+ * IMPORTANT: Does NOT dismiss dialogs after opening — conversion tests need
+ * the workspace prompt dialog to remain visible.
+ */
+export async function openFolderInSession(driver: WebDriver, folderPath: string): Promise<void> {
+  console.log(`[openFolderInSession] Opening folder: ${folderPath}`);
+
+  // Dismiss any existing overlays before opening command palette
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+    await sleep(500);
+  } catch {
+    /* ignore */
+  }
+
+  // Open command palette and run "File: Open Folder..."
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      // Press F1 to open command palette
+      await driver.actions().sendKeys(Key.F1).perform();
+      await sleep(800);
+
+      const cmdInput = await driver.findElement(By.css('.quick-input-box input'));
+      await cmdInput.sendKeys(Key.chord(Key.CONTROL, 'a'));
+      await cmdInput.sendKeys('File: Open Folder...');
+      await sleep(1000);
+
+      // Press Enter to execute the command
+      await cmdInput.sendKeys(Key.ENTER);
+      await sleep(2000);
+
+      // The simple dialog input should appear. Type the path.
+      // ExTester sets files.simpleDialog.enable=true.
+      const dialogInput = await driver.findElement(By.css('.quick-input-box input'));
+      await dialogInput.sendKeys(Key.chord(Key.CONTROL, 'a'));
+      await dialogInput.sendKeys(folderPath);
+      await sleep(500);
+      await dialogInput.sendKeys(Key.ENTER);
+      await sleep(5000);
+
+      // Check if folder opened by looking at the title
+      const title = await driver.getTitle().catch(() => '');
+      console.log(`[openFolderInSession] VS Code title: "${title}"`);
+
+      if (title !== 'Visual Studio Code') {
+        console.log('[openFolderInSession] Folder opened successfully');
+        return;
+      }
+
+      // Also check Explorer rows
+      const rows = await driver
+        .executeScript<number>(
+          'return document.querySelectorAll(".explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row").length'
+        )
+        .catch(() => 0);
+      if (rows > 0) {
+        console.log(`[openFolderInSession] Folder opened (${rows} Explorer rows)`);
+        return;
+      }
+
+      console.log(`[openFolderInSession] Attempt ${attempt + 1}/3: folder not opened`);
+    } catch (e: any) {
+      console.log(`[openFolderInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(2000);
+    }
+  }
+  console.log('[openFolderInSession] All attempts exhausted');
+}

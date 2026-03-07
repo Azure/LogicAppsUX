@@ -21,7 +21,7 @@ import * as assert from 'assert';
 import { Workbench, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { sleep, captureScreenshot } from './helpers';
+import { sleep, captureScreenshot, openFolderInSession } from './helpers';
 
 const TEST_TIMEOUT = 120_000;
 
@@ -107,9 +107,11 @@ describe('Workspace Conversion — Click No', function () {
   });
 
   it('should show conversion dialog when opening workspace folder and dismiss on No', async () => {
-    // The run-e2e.js phase for this test opens the workspace DIRECTORY
-    // (not the .code-workspace file), which triggers convertToWorkspace().
-    // We wait for the dialog to appear and click "No".
+    // Open the workspace DIRECTORY (not the .code-workspace file) via command palette.
+    // ExTester's startup resources use code -r which doesn't work on Linux CI.
+    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+    assert.ok(entry, 'No workspace entry found in manifest');
+    await openFolderInSession(driver, entry.wsDir);
 
     await captureScreenshot(driver, 'conversion-no-start', EXPLICIT_SCREENSHOT_DIR);
 

@@ -706,11 +706,17 @@ async function openFileInEditor(workbench: Workbench, driver: WebDriver, filePat
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      await VSBrowser.instance.openResources(filePath);
-      await sleep(2000);
-
-      // Verify the file is now the active editor tab
+      // Use Quick Open (Ctrl+P) to open the file instead of openResources
+      // which uses code -r IPC that doesn't work on Linux CI.
       const expectedName = path.basename(filePath);
+      const parentDir = path.basename(path.dirname(filePath));
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      const qInput = await driver.findElement(By.css('.quick-input-box input'));
+      await qInput.sendKeys(parentDir + '/' + expectedName);
+      await sleep(1500);
+      await qInput.sendKeys(Key.ENTER);
+      await sleep(2000);
       const editorView = new EditorView();
       const activeTab = await editorView.getActiveTab();
       if (activeTab) {
@@ -1607,20 +1613,31 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
     /* ignore */
   }
 
-  await VSBrowser.instance.openResources(workflowJsonPath);
-  await sleep(2000);
+  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
+  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails on Linux CI.
+  try {
+    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+    await sleep(1000);
+    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
+    await quickInput.sendKeys(label + '/workflow.json');
+    await sleep(1500);
+    await quickInput.sendKeys(Key.ENTER);
+    await sleep(2000);
+    console.log('[openDesignerViaExplorer] Opened workflow.json via Quick Open');
+  } catch (qoErr: any) {
+    console.log(`[openDesignerViaExplorer] Quick Open failed: ${qoErr.message}`);
+  }
+
+  // Re-focus Explorer so the opened file is selected/revealed in the tree
+  try {
+    await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+    await sleep(1500);
+  } catch {
+    /* ignore */
+  }
 
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
-      await driver.executeScript(`
-        var items = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
-        for (var i = 0; i < items.length; i++) {
-          if ((items[i].textContent || '').includes('workflow.json') && items[i].classList.contains('selected')) {
-            items[i].scrollIntoView({block: 'center'}); break;
-          }
-        }
-      `);
-
       const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
       let targetRow = null;
       for (const row of rows) {
@@ -2008,9 +2025,27 @@ async function openOverviewPage(workbench: Workbench, driver: WebDriver, workflo
     console.log(`[overview] Could not switch to Explorer: ${e.message}`);
   }
 
-  // Open workflow.json so the Explorer shows its location
-  await VSBrowser.instance.openResources(workflowJsonPath);
-  await sleep(2000);
+  // Open workflow.json via Quick Open so the Explorer shows its location
+  // (VSBrowser.instance.openResources uses code -r which fails on Linux CI)
+  try {
+    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+    await sleep(1000);
+    const qi = await driver.findElement(By.css('.quick-input-box input'));
+    await qi.sendKeys('workflow.json');
+    await sleep(1500);
+    await qi.sendKeys(Key.ENTER);
+    await sleep(2000);
+  } catch {
+    console.log('[overview] Quick Open for workflow.json failed');
+  }
+
+  // Re-focus Explorer
+  try {
+    await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+    await sleep(1500);
+  } catch {
+    /* ignore */
+  }
 
   // Try to find and right-click on workflow.json in the explorer tree
   for (let attempt = 0; attempt < 3; attempt++) {
