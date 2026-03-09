@@ -770,29 +770,107 @@ export async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DES
   const webview = new WebView();
   const t0 = Date.now();
 
-  // Phase 1: switch into the iframe
-  // ExTester's switchToFrame() has a short default timeout (~5s) that is
-  // insufficient on CI where the webview iframe's internal `active-frame`
-  // element takes longer to appear while the designer is loading.
-  // Retry up to 6 times (30s total) to give the webview time to initialize.
+  // Phase 1: Switch into the webview iframe manually.
+  //
+  // ExTester's WebView.switchToFrame() searches for *[id="active-frame"]
+  // inside the webview iframe, but VS Code 1.108.0 on Linux CI does not
+  // render that element — the inner content is loaded differently.
+  //
+  // Instead, we manually:
+  //   1. Find the outer webview iframe (.webview.ready or iframe.webview)
+  //   2. Switch into it with raw Selenium driver.switchTo().frame()
+  //   3. Look for #active-frame inside (optional — may not exist in 1.108)
+  //   4. If #active-frame exists, switch into it too
+  //   5. Otherwise try to find the content directly
   let switched = false;
-  for (let frameAttempt = 0; frameAttempt < 6; frameAttempt++) {
+  const frameDeadline = Date.now() + 60_000; // 60s total for frame switching
+
+  while (Date.now() < frameDeadline && !switched) {
     try {
       await driver.switchTo().defaultContent();
-      const wv = new WebView();
-      await wv.switchToFrame();
-      switched = true;
-      console.log(`[designerReady] Phase 1: switched into webview frame (${Date.now() - t0}ms, attempt ${frameAttempt + 1})`);
-      break;
-    } catch (frameErr: any) {
-      console.log(`[designerReady] Phase 1: switchToFrame attempt ${frameAttempt + 1}/6 failed: ${frameErr.message.substring(0, 120)}`);
-      if (frameAttempt < 5) {
-        await sleep(5000);
+
+      // Find the outer webview iframe
+      const iframes = await driver.findElements(By.css('iframe.webview.ready, iframe.webview, iframe[id*="webview"]'));
+
+      if (iframes.length === 0) {
+        console.log(`[designerReady] Phase 1: no webview iframes found yet (${Date.now() - t0}ms)`);
+        await sleep(2000);
+        continue;
       }
+
+      // Switch into the first visible webview iframe
+      let outerFrame: any = null;
+      for (const iframe of iframes) {
+        try {
+          const displayed = await iframe.isDisplayed();
+          if (displayed) {
+            outerFrame = iframe;
+            break;
+          }
+        } catch {
+          /* stale element */
+        }
+      }
+
+      if (!outerFrame) {
+        console.log(`[designerReady] Phase 1: found ${iframes.length} iframe(s) but none visible (${Date.now() - t0}ms)`);
+        await sleep(2000);
+        continue;
+      }
+
+      // Switch into the outer webview iframe
+      await driver.switchTo().frame(outerFrame);
+
+      // Now look for #active-frame inside (VS Code's inner frame)
+      try {
+        const activeFrame = await driver.findElement(By.id('active-frame'));
+        await driver.switchTo().frame(activeFrame);
+        console.log(`[designerReady] Phase 1: switched via active-frame (${Date.now() - t0}ms)`);
+        switched = true;
+      } catch {
+        // #active-frame doesn't exist — check if there's a nested iframe
+        try {
+          const innerIframes = await driver.findElements(By.css('iframe'));
+          if (innerIframes.length > 0) {
+            await driver.switchTo().frame(innerIframes[0]);
+            console.log(`[designerReady] Phase 1: switched via inner iframe (${Date.now() - t0}ms)`);
+          } else {
+            console.log(`[designerReady] Phase 1: no inner frames, using outer frame directly (${Date.now() - t0}ms)`);
+          }
+        } catch {
+          /* use outer frame as-is */
+        }
+
+        // Verify we can see webview content (#root or any content)
+        try {
+          const roots = await driver.findElements(By.css('#root, body'));
+          if (roots.length > 0) {
+            switched = true;
+            console.log(`[designerReady] Phase 1: webview content accessible (${Date.now() - t0}ms)`);
+          }
+        } catch {
+          /* not ready yet */
+        }
+      }
+
+      if (!switched) {
+        await driver.switchTo().defaultContent();
+        console.log(`[designerReady] Phase 1: frame switch incomplete (${Date.now() - t0}ms), retrying...`);
+        await sleep(3000);
+      }
+    } catch (frameErr: any) {
+      console.log(`[designerReady] Phase 1: attempt failed (${Date.now() - t0}ms): ${frameErr.message.substring(0, 120)}`);
+      try {
+        await driver.switchTo().defaultContent();
+      } catch {
+        /* ignore */
+      }
+      await sleep(3000);
     }
   }
+
   if (!switched) {
-    throw new Error('switchToDesignerWebview: could not switch into webview frame after 6 attempts');
+    throw new Error('switchToDesignerWebview: could not switch into webview frame within 60s');
   }
 
   const deadline = Date.now() + timeoutMs;
