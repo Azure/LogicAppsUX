@@ -678,6 +678,34 @@ async function main() {
     } else {
       console.log(`  [${label}] settings/User does not exist, nothing to clean`);
     }
+
+    // Fix execute permissions on downloaded runtime binaries.
+    // The extension's download/extract process doesn't set chmod +x on Linux,
+    // causing "/bin/sh: 1: .../func: Permission denied" when the extension
+    // tries to run `func host start` to start the design-time API.
+    if (process.platform === 'linux' || process.platform === 'darwin') {
+      const { execSync } = require('child_process');
+      for (const bin of [funcBinary, dotnetBinary, nodeBinary]) {
+        if (fs.existsSync(bin)) {
+          try {
+            execSync(`chmod +x "${bin}"`, { stdio: 'ignore' });
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+      // Also chmod the entire FuncCoreTools directory — it contains sub-binaries
+      // (e.g., gozip, func) that all need execute permission.
+      const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
+      if (fs.existsSync(funcToolsDir)) {
+        try {
+          execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
+          console.log(`  [${label}] ✓ Fixed execute permissions on runtime binaries`);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
   };
 
   const runPhase = async (phaseName, files, optionsOverride = {}) => {

@@ -487,6 +487,25 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
   const funcBinaryPath = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', 'func');
 
+  // Fix execute permissions on downloaded runtime binaries.
+  // The extension's download/extract doesn't set chmod +x on Linux, causing
+  // "/bin/sh: 1: .../func: Permission denied" when running `func host start`.
+  if (process.platform === 'linux' || process.platform === 'darwin') {
+    const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+    for (const subDir of ['FuncCoreTools', 'NodeJs', 'DotNetSDK']) {
+      const binDir = path.join(depsRoot, subDir);
+      if (fs.existsSync(binDir)) {
+        try {
+          const { execSync } = require('child_process');
+          execSync(`chmod -R +x "${binDir}"`, { stdio: 'ignore' });
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    console.log('[depValidation] Fixed execute permissions on runtime binaries');
+  }
+
   // Diagnostic: log VS Code title to see if a workspace is loaded
   try {
     const title = await driver.getTitle();
