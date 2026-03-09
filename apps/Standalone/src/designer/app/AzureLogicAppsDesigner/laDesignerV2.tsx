@@ -737,7 +737,7 @@ const DesignerEditor = () => {
                 />
               </div>
               {!isCodeView && (
-                <>
+                <div style={{ flexGrow: 1, display: 'inherit' }}>
                   <Designer />
                   <FloatingRunButton
                     siteResourceId={siteResourceId}
@@ -748,7 +748,7 @@ const DesignerEditor = () => {
                     isDraftMode={isDraftMode}
                     workflowReadOnly={derivedIsReadOnly}
                   />
-                </>
+                </div>
               )}
               {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
               <CombineInitializeVariableDialog />

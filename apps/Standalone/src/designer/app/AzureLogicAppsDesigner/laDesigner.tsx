@@ -573,7 +573,9 @@ const DesignerEditor = () => {
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />
-                {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+                <div style={{ flexGrow: 1, display: 'inherit' }}>
+                  {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+                </div>
                 <CombineInitializeVariableDialog />
                 <TriggerDescriptionDialog workflowId={workflowId} />
               </div>

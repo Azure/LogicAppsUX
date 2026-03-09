@@ -403,7 +403,7 @@ const DesignerEditorConsumption = () => {
       return;
     }
 
-    if (isDraftMode && draftWorkflow) {
+    if (isDraftMode && draftWorkflow?.definition) {
       setConnectionReferences(draftConnectionReferences);
       setParameters(draftParameters);
       setNotes(draftNotes);
@@ -528,7 +528,7 @@ const DesignerEditorConsumption = () => {
                 {isCodeView ? (
                   <CodeViewEditor ref={codeEditorRef} isConsumption />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'row', flex: '1 1 0', minHeight: 0, position: 'relative' }}>
+                  <>
                     <Designer />
                     <FloatingRunButton
                       siteResourceId={workflowId}
@@ -540,7 +540,7 @@ const DesignerEditorConsumption = () => {
                       isConsumption={true}
                       workflowReadOnly={derivedIsReadOnly}
                     />
-                  </div>
+                  </>
                 )}
                 <CombineInitializeVariableDialog />
                 <TriggerDescriptionDialog workflowId={workflowId} />
