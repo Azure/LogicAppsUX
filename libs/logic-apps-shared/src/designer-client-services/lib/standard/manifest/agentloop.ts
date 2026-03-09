@@ -119,6 +119,21 @@ export default {
             ],
           },
         },
+        foundryAgentVersionNumber: {
+          type: 'string',
+          title: 'Agent version number',
+          description: 'The selected Foundry agent version number.',
+          'x-ms-visibility': 'internal',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['FoundryAgentService'],
+              },
+            ],
+          },
+        },
         deploymentId: {
           type: 'string',
           title: 'AI model',

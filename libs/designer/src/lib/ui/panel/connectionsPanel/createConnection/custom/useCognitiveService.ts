@@ -1,4 +1,4 @@
-import type { Connection, FoundryAgent, FoundryModel } from '@microsoft/logic-apps-shared';
+import type { Connection, FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
 import {
   ApiManagementService,
   CognitiveServiceService,
@@ -6,6 +6,7 @@ import {
   foundryServiceConnectionRegex,
   buildProjectEndpointFromResourceId,
   listAllFoundryAgents,
+  listFoundryAgentVersions,
   listFoundryModels,
 } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
@@ -208,36 +209,54 @@ export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = 
 };
 
 /**
- * Returns the Foundry project endpoint for a node's selected connection, or undefined
- * if the connection is not a Foundry connection.
+ * Extracts the Foundry project resource ID from a node's selected connection.
+ * Returns undefined if the connection is not a Foundry connection.
  */
+const useFoundryConnectionResourceId = (nodeId: string): string | undefined => {
+  const selectedConnection = useSelectedConnection(nodeId);
+  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
+  return isFoundry ? resourceId : undefined;
+};
+
+/**
+ * Returns the httpClient and a getToken function from the CognitiveServiceService,
+ * or undefined if either is unavailable (e.g. VS Code environment).
+ */
+function getFoundryServiceContext():
+  | {
+      httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>;
+      getToken: NonNullable<ReturnType<typeof CognitiveServiceService>['getFoundryAccessToken']>;
+    }
+  | undefined {
+  const service = CognitiveServiceService();
+  const getToken = service.getFoundryAccessToken;
+  const httpClient = service.httpClient;
+  if (!getToken || !httpClient) {
+    return undefined;
+  }
+  return { httpClient, getToken };
+}
+
+const foundryQueryOpts = {
+  ...queryOpts,
+  retryOnMount: true,
+  refetchOnMount: true,
+  refetchOnReconnect: true,
+};
+
+/** Returns the Foundry project endpoint for a node's selected connection. */
 export const useFoundryProjectEndpointForNode = (nodeId: string): string | undefined => {
-  const selectedConnection = useSelectedConnection(nodeId);
-  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
-  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
-  if (!isFoundry || !resourceId) {
-    return undefined;
-  }
-  return buildProjectEndpointFromResourceId(resourceId);
+  const resourceId = useFoundryConnectionResourceId(nodeId);
+  return resourceId ? buildProjectEndpointFromResourceId(resourceId) : undefined;
 };
 
-/**
- * Returns the full ARM resource ID for the Foundry project connection, used for portal URLs.
- */
+/** Returns the full ARM resource ID for the Foundry project connection, used for portal URLs. */
 export const useFoundryProjectResourceIdForNode = (nodeId: string): string | undefined => {
-  const selectedConnection = useSelectedConnection(nodeId);
-  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
-  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
-  if (!isFoundry || !resourceId) {
-    return undefined;
-  }
-  return resourceId;
+  return useFoundryConnectionResourceId(nodeId);
 };
 
-/**
- * Fetches all v2 Foundry agents for the node's selected connection.
- * Only runs when the connection is a Foundry connection and a token getter is available.
- */
+/** Fetches all v2 Foundry agents for the node's selected connection. */
 export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
@@ -247,39 +266,24 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
       if (!projectEndpoint) {
         return [];
       }
-      const getToken = CognitiveServiceService().getFoundryAccessToken;
-      if (!getToken) {
+      const ctx = getFoundryServiceContext();
+      if (!ctx) {
         return [];
       }
-      const token = await getToken();
-      return listAllFoundryAgents(projectEndpoint, token);
+      const token = await ctx.getToken();
+      return listAllFoundryAgents(ctx.httpClient, projectEndpoint, token);
     },
-    {
-      ...queryOpts,
-      retryOnMount: true,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-      enabled: !!projectEndpoint,
-    }
+    { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
 };
 
-/**
- * Returns the ARM resource ID of the Foundry account (without /projects/{project}) for a node's connection.
- */
+/** Returns the ARM resource ID of the Foundry account (without /projects/{project}) for a node's connection. */
 export const useFoundryAccountResourceIdForNode = (nodeId: string): string | undefined => {
-  const selectedConnection = useSelectedConnection(nodeId);
-  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
-  const isFoundry = foundryServiceConnectionRegex.test(resourceId ?? '');
-  if (!isFoundry || !resourceId) {
-    return undefined;
-  }
-  return getServiceAccountId(resourceId, true);
+  const resourceId = useFoundryConnectionResourceId(nodeId);
+  return resourceId ? getServiceAccountId(resourceId, true) : undefined;
 };
 
-/**
- * Fetches available model deployments for the Foundry project connected to the node.
- */
+/** Fetches available model deployments for the Foundry project connected to the node. */
 export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
@@ -289,19 +293,37 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       if (!projectEndpoint) {
         return [];
       }
-      const getToken = CognitiveServiceService().getFoundryAccessToken;
-      if (!getToken) {
+      const ctx = getFoundryServiceContext();
+      if (!ctx) {
         return [];
       }
-      const token = await getToken();
-      return listFoundryModels(projectEndpoint, token);
+      const token = await ctx.getToken();
+      return listFoundryModels(ctx.httpClient, projectEndpoint, token);
     },
-    {
-      ...queryOpts,
-      retryOnMount: true,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-      enabled: !!projectEndpoint,
-    }
+    { ...foundryQueryOpts, enabled: !!projectEndpoint }
+  );
+};
+
+/** Fetches all versions of a specific Foundry agent. */
+export const useFoundryAgentVersions = (
+  nodeId: string,
+  agentId: string | undefined
+): { data: FoundryAgentVersion[] | undefined; isLoading: boolean; error: unknown } => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+
+  return useQuery(
+    ['foundryAgentVersions', { projectEndpoint, agentId }],
+    async () => {
+      if (!projectEndpoint || !agentId) {
+        return [];
+      }
+      const ctx = getFoundryServiceContext();
+      if (!ctx) {
+        return [];
+      }
+      const token = await ctx.getToken();
+      return listFoundryAgentVersions(ctx.httpClient, projectEndpoint, agentId, token);
+    },
+    { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );
 };

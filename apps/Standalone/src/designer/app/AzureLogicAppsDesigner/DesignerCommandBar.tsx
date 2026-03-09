@@ -43,7 +43,7 @@ import {
   flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
 import { environment } from '../../../environments/environment';
@@ -100,6 +100,7 @@ export const DesignerCommandBar = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
+  const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
@@ -135,7 +136,9 @@ export const DesignerCommandBar = ({
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
     if (!hasParametersErrors) {
-      await flushPendingFoundryUpdates().catch(console.error);
+      await flushPendingFoundryUpdates(() => {
+        queryClient.invalidateQueries({ queryKey: ['foundryAgentVersions'] });
+      }).catch(console.error);
       await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
       if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
         updateCallbackUrl(designerState, dispatch);

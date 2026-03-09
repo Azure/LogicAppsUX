@@ -1,5 +1,6 @@
 import type { Connector, OperationInfo, OperationManifest } from '../../../utils/src';
 import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
+import { enableCodeInterpreterConsumption } from '../experimentationFlags';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
@@ -113,6 +114,15 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
 
     if (supportedManifest) {
+      if (operationId === agentType) {
+        const isCodeInterpreterEnabled = await enableCodeInterpreterConsumption();
+        if (!isCodeInterpreterEnabled) {
+          const manifest: OperationManifest = JSON.parse(JSON.stringify(supportedManifest));
+          delete (manifest.properties?.inputs?.properties as any)?.agentModelSettings?.properties?.agentChatCompletionSettings?.properties
+            ?.builtinTools;
+          return manifest;
+        }
+      }
       return supportedManifest;
     }
 
