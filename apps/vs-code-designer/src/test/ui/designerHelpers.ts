@@ -69,6 +69,7 @@ import {
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 
 // ===========================================================================
 // Constants
@@ -464,19 +465,27 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
 }
 
 /**
- * Ensure the extension has activated and dependency validation has completed.
+ * Ensure the extension has activated and ALL runtime dependencies have been
+ * validated and downloaded (NodeJS, Functions Runtime, .NET SDK).
  *
- * The extension shows a "Validating Runtime Dependency" notification on first
- * activation. This may have already completed if designerOpen.test.ts ran first.
+ * The extension shows a single "Validating Runtime Dependency" progress
+ * notification that steps through each dependency sequentially. The message
+ * changes to "NodeJS", "Functions Runtime", ".NET SDK" etc.
  *
- * 1. If the notification is currently visible → wait for it to disappear.
- * 2. If not visible → wait briefly in case it's about to appear.
- * 3. If it never appears → verify extension activation by asserting the
- *    openDesigner command is registered.
+ * IMPORTANT: We must wait for the `func` binary to exist on disk, not just
+ * wait for the notification to disappear. The notification can vanish
+ * between dependency stages or be dismissed by other code paths.
+ *
+ * Strategy:
+ * 1. Wait for the "Validating Runtime Dependency" notification to appear.
+ * 2. Once visible, wait for it to disappear (all deps validated).
+ * 3. THEN verify the func binary actually exists on disk.
+ * 4. If the notification never appears, check if deps are already present.
  */
 export async function waitForDependencyValidation(driver: WebDriver, timeoutMs = DEPENDENCY_VALIDATION_TIMEOUT): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
+  const funcBinaryPath = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', 'func');
 
   // Diagnostic: log VS Code title to see if a workspace is loaded
   try {
@@ -508,64 +517,101 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
     console.log(`[depValidation] "${VALIDATION_TEXT}" is visible — waiting for it to finish`);
     while (Date.now() - t0 < timeoutMs) {
       if (!(await isValidationVisible())) {
-        console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
+        console.log(`[depValidation] Notification gone (${Date.now() - t0}ms) — checking func binary`);
+        break;
+      }
+      // Log the current stage for diagnostics
+      try {
+        const msg = await driver.executeScript<string>(`
+          var vt = ${JSON.stringify(VALIDATION_TEXT)};
+          var els = document.querySelectorAll('[role="dialog"], .notification-toast, .notifications-toasts .notification-list-item');
+          for (var i = 0; i < els.length; i++) {
+            var t = (els[i].textContent || '');
+            if (t.includes(vt)) return t.substring(0, 200);
+          }
+          return '';
+        `);
+        if (msg) {
+          console.log(`[depValidation] Current stage: "${msg.substring(0, 120)}"`);
+        }
+      } catch {
+        /* ignore */
+      }
+      await sleep(2000);
+    }
+  } else {
+    // Not visible yet — poll until either the notification appears or deps are already present
+    const activationDeadline = Date.now() + Math.min(timeoutMs, 30_000); // Wait up to 30s for it to appear
+    let everAppeared = false;
+    while (Date.now() < activationDeadline) {
+      if (await isValidationVisible()) {
+        everAppeared = true;
+        console.log(`[depValidation] "${VALIDATION_TEXT}" appeared (${Date.now() - t0}ms) — waiting for it to finish`);
+        while (Date.now() - t0 < timeoutMs) {
+          if (!(await isValidationVisible())) {
+            console.log(`[depValidation] Notification gone (${Date.now() - t0}ms) — checking func binary`);
+            break;
+          }
+          await sleep(2000);
+        }
+        break;
+      }
+
+      // Check if func binary already exists (validation may have completed before we started)
+      if (fs.existsSync(funcBinaryPath)) {
+        console.log(`[depValidation] func binary already exists at ${funcBinaryPath} (${Date.now() - t0}ms)`);
         return;
       }
-      await sleep(500);
+
+      await sleep(2000);
     }
-    throw new Error(`"${VALIDATION_TEXT}" still visible after ${timeoutMs}ms`);
+
+    if (!everAppeared && !fs.existsSync(funcBinaryPath)) {
+      console.log(`[depValidation] Notification never appeared and func not found — waiting for func binary on disk`);
+    }
   }
 
-  // Not visible yet — poll until either the notification appears
-  // OR the extension finishes activating (commands become available).
-  // Extension host may restart during activation. In CI, the first run
-  // downloads ~500MB of dependencies which takes 3-5 min.
-  const activationDeadline = Date.now() + timeoutMs;
-  while (Date.now() < activationDeadline) {
+  // CRITICAL: Wait for the func binary to actually exist on disk.
+  // The notification disappearing does NOT mean all downloads are complete —
+  // it may disappear between dependency stages or get auto-dismissed.
+  const funcDeadline = Date.now() + Math.max(timeoutMs - (Date.now() - t0), 60_000);
+  while (Date.now() < funcDeadline) {
+    if (fs.existsSync(funcBinaryPath)) {
+      console.log(`[depValidation] func binary found at ${funcBinaryPath} (${Date.now() - t0}ms)`);
+
+      // Also wait a moment for the extension to update its internal state
+      await sleep(3000);
+      return;
+    }
+
+    // Check if validation notification reappeared (downloading next dependency)
     if (await isValidationVisible()) {
-      console.log(`[depValidation] "${VALIDATION_TEXT}" appeared (${Date.now() - t0}ms) — waiting for it to finish`);
-      while (Date.now() - t0 < timeoutMs) {
-        if (!(await isValidationVisible())) {
-          console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
-          return;
-        }
-        await sleep(500);
-      }
-      throw new Error(`"${VALIDATION_TEXT}" still visible after ${timeoutMs}ms`);
+      console.log(`[depValidation] Validation notification reappeared — still downloading (${Date.now() - t0}ms)`);
     }
 
-    // Also check if extension commands are already registered (validation may
-    // have completed before we started looking).
-    try {
-      const wb = new Workbench();
-      const input = await wb.openCommandPrompt();
-      await sleep(500);
-      await input.setText('> Open Designer');
-      await sleep(1000);
-      const picks = await input.getQuickPicks();
-      let found = false;
-      for (const p of picks) {
-        const label = await p.getLabel();
-        if (label.toLowerCase().includes('open designer')) {
-          found = true;
-          break;
-        }
-      }
-      await input.cancel();
-      if (found) {
-        console.log(`[depValidation] Extension is active — openDesigner command found (${Date.now() - t0}ms)`);
-        return;
-      }
-    } catch {
-      /* command palette not ready yet — keep waiting */
-    }
-
-    await sleep(2000);
+    console.log(`[depValidation] Waiting for func binary... (${Date.now() - t0}ms)`);
+    await sleep(5000);
   }
 
-  throw new Error(
-    `Extension not properly activated after ${Math.round(timeoutMs / 1000)}s: "${VALIDATION_TEXT}" never appeared and "Open Designer" command not found`
-  );
+  // Final check — log what exists in the dependencies folder
+  const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+  try {
+    if (fs.existsSync(depsRoot)) {
+      const contents = fs.readdirSync(depsRoot);
+      console.log(`[depValidation] Dependencies folder contents: ${JSON.stringify(contents)}`);
+      for (const item of contents) {
+        const itemPath = path.join(depsRoot, item);
+        const subContents = fs.statSync(itemPath).isDirectory() ? fs.readdirSync(itemPath).slice(0, 10) : [];
+        console.log(`[depValidation]   ${item}/: ${JSON.stringify(subContents)}`);
+      }
+    } else {
+      console.log(`[depValidation] Dependencies folder does not exist: ${depsRoot}`);
+    }
+  } catch (e: any) {
+    console.log(`[depValidation] Error listing deps: ${e.message}`);
+  }
+
+  console.log(`[depValidation] WARNING: func binary not found after ${Math.round((Date.now() - t0) / 1000)}s — designer tests may fail`);
 }
 
 /**

@@ -109,6 +109,15 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
     const message = await dialog.getMessage();
     console.log(`[dismissAllDialogs] ModalDialog found: "${message.substring(0, 150)}"`);
 
+    // CRITICAL: Do NOT dismiss the dependency validation notification.
+    // The extension downloads runtime dependencies (func, dotnet, node)
+    // sequentially within this single notification. Dismissing it kills
+    // the in-progress download and leaves the func binary missing.
+    if (message.includes('Validating Runtime Dependency') || message.includes('Successfully installed')) {
+      console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
+      return false;
+    }
+
     if (
       message.includes('sign in') ||
       message.includes('Sign in') ||
@@ -166,6 +175,12 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
         /* ignore */
       }
       console.log(`[dismissAllDialogs] Found ${containerSel}: "${messageText}"`);
+
+      // CRITICAL: Do NOT dismiss the dependency validation notification
+      if (messageText.includes('Validating Runtime Dependency') || messageText.includes('Successfully installed')) {
+        console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
+        continue;
+      }
 
       if (messageText.includes('sign in') || messageText.includes('Sign in') || messageText.includes('wants to sign in')) {
         try {

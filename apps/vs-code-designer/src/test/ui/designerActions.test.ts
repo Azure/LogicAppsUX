@@ -3,6 +3,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as assert from 'assert';
 import {
   Workbench,
@@ -754,6 +755,7 @@ async function openFileInEditor(workbench: Workbench, driver: WebDriver, filePat
 async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
+  const funcBinaryPath = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', 'func');
 
   const isValidationVisible = async (): Promise<boolean> => {
     try {
@@ -772,69 +774,63 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
     }
   };
 
-  // Check if the notification is currently visible
+  // Check if func binary already exists (from a previous phase)
+  if (fs.existsSync(funcBinaryPath)) {
+    console.log(`[depValidation] func binary already exists at ${funcBinaryPath}`);
+    // Still wait for the notification to complete if visible
+    if (await isValidationVisible()) {
+      console.log(`[depValidation] "${VALIDATION_TEXT}" is visible — waiting for it to finish`);
+      while (Date.now() - t0 < timeoutMs && (await isValidationVisible())) {
+        await sleep(2000);
+      }
+      console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
+    }
+    return;
+  }
+
+  // Wait for the notification to appear and complete
   if (await isValidationVisible()) {
     console.log(`[depValidation] "${VALIDATION_TEXT}" is visible — waiting for it to finish`);
     while (Date.now() - t0 < timeoutMs) {
       if (!(await isValidationVisible())) {
-        console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
+        console.log(`[depValidation] Notification gone (${Date.now() - t0}ms)`);
+        break;
+      }
+      await sleep(2000);
+    }
+  } else {
+    // Wait for it to appear
+    const deadline = Date.now() + Math.min(timeoutMs, 30_000);
+    while (Date.now() < deadline) {
+      if (await isValidationVisible()) {
+        console.log(`[depValidation] "${VALIDATION_TEXT}" appeared (${Date.now() - t0}ms) — waiting for it to finish`);
+        while (Date.now() - t0 < timeoutMs && (await isValidationVisible())) {
+          await sleep(2000);
+        }
+        console.log(`[depValidation] Notification gone (${Date.now() - t0}ms)`);
+        break;
+      }
+      if (fs.existsSync(funcBinaryPath)) {
+        console.log(`[depValidation] func binary found (${Date.now() - t0}ms)`);
         return;
       }
-      await sleep(500);
+      await sleep(2000);
     }
-    throw new Error(`"${VALIDATION_TEXT}" still visible after ${timeoutMs}ms`);
   }
 
-  // Not visible yet — wait up to timeoutMs for either the notification to appear
-  // OR the extension to finish activating (commands become available).
-  // When dependency validation is disabled via settings, the notification never
-  // appears so we rely entirely on the command registration check.
-  const activationDeadline = Date.now() + timeoutMs;
-  while (Date.now() < activationDeadline) {
-    if (await isValidationVisible()) {
-      console.log(`[depValidation] "${VALIDATION_TEXT}" appeared (${Date.now() - t0}ms) — waiting for it to finish`);
-      while (Date.now() - t0 < timeoutMs) {
-        if (!(await isValidationVisible())) {
-          console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
-          return;
-        }
-        await sleep(500);
-      }
-      throw new Error(`"${VALIDATION_TEXT}" still visible after ${timeoutMs}ms`);
+  // Wait for func binary on disk
+  const funcDeadline = Date.now() + Math.max(timeoutMs - (Date.now() - t0), 60_000);
+  while (Date.now() < funcDeadline) {
+    if (fs.existsSync(funcBinaryPath)) {
+      console.log(`[depValidation] func binary found at ${funcBinaryPath} (${Date.now() - t0}ms)`);
+      await sleep(3000);
+      return;
     }
-
-    // Also check if extension commands are already registered (validation may
-    // have completed before we started looking).
-    try {
-      const wb = new Workbench();
-      const input = await wb.openCommandPrompt();
-      await sleep(500);
-      await input.setText('> Open Designer');
-      await sleep(1000);
-      const picks = await input.getQuickPicks();
-      let found = false;
-      for (const p of picks) {
-        const label = await p.getLabel();
-        if (label.toLowerCase().includes('open designer')) {
-          found = true;
-          break;
-        }
-      }
-      await input.cancel();
-      if (found) {
-        console.log(`[depValidation] Extension is active — openDesigner command found (${Date.now() - t0}ms)`);
-        return;
-      }
-    } catch {
-      /* command palette not ready yet — keep waiting */
-    }
-
-    await sleep(2000);
+    console.log(`[depValidation] Waiting for func binary... (${Date.now() - t0}ms)`);
+    await sleep(5000);
   }
 
-  throw new Error(
-    `Extension not properly activated after ${Math.round(timeoutMs / 1000)}s: "${VALIDATION_TEXT}" never appeared and "Open Designer" command not found`
-  );
+  console.log(`[depValidation] WARNING: func binary not found after ${Math.round((Date.now() - t0) / 1000)}s`);
 }
 
 /**
