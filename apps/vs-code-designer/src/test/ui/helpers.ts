@@ -537,24 +537,45 @@ export async function clickTreeViewAction(driver: WebDriver, itemLabel: string, 
 export async function openFolderInSession(driver: WebDriver, folderPath: string): Promise<void> {
   console.log(`[openFolderInSession] Opening folder: ${folderPath}`);
 
-  // Dismiss any existing overlays before opening command palette
-  try {
-    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  // Aggressively dismiss ALL blocking UI before opening command palette.
+  // On CI, dialogs like "C# Dev Kit Sign In" appear and block keyboard input.
+  for (let d = 0; d < 3; d++) {
+    try {
+      await dismissAllDialogs(driver);
+    } catch {
+      /* ignore */
+    }
+    try {
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+    } catch {
+      /* ignore */
+    }
     await sleep(500);
-  } catch {
-    /* ignore */
   }
 
   // Open command palette and run "File: Open Folder..."
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      // Press F1 to open command palette
-      await driver.actions().sendKeys(Key.F1).perform();
-      await sleep(800);
+      // Dismiss dialogs before each attempt
+      try {
+        await dismissAllDialogs(driver);
+      } catch {
+        /* ignore */
+      }
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(500);
+
+      // Use Ctrl+Shift+P (more reliable than F1 when dialogs are present)
+      await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('p').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+      await sleep(1000);
 
       const cmdInput = await driver.findElement(By.css('.quick-input-box input'));
       await cmdInput.sendKeys(Key.chord(Key.CONTROL, 'a'));
-      await cmdInput.sendKeys('File: Open Folder...');
+      await cmdInput.sendKeys('> File: Open Folder...');
       await sleep(1000);
 
       // Press Enter to execute the command

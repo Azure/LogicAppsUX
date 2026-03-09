@@ -999,9 +999,27 @@ async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DESIGNER_R
   const webview = new WebView();
   const t0 = Date.now();
 
-  // Phase 1: switch into the iframe
-  await webview.switchToFrame();
-  console.log(`[designerReady] Phase 1: switched into webview frame (${Date.now() - t0}ms)`);
+  // Phase 1: switch into the iframe with retry
+  // ExTester's switchToFrame() has a ~5s timeout that's too short on CI.
+  let switched = false;
+  for (let frameAttempt = 0; frameAttempt < 6; frameAttempt++) {
+    try {
+      await driver.switchTo().defaultContent();
+      const wv = new WebView();
+      await wv.switchToFrame();
+      switched = true;
+      console.log(`[designerReady] Phase 1: switched into webview frame (${Date.now() - t0}ms, attempt ${frameAttempt + 1})`);
+      break;
+    } catch (frameErr: any) {
+      console.log(`[designerReady] Phase 1: switchToFrame attempt ${frameAttempt + 1}/6 failed: ${frameErr.message.substring(0, 120)}`);
+      if (frameAttempt < 5) {
+        await sleep(5000);
+      }
+    }
+  }
+  if (!switched) {
+    throw new Error('switchToDesignerWebview: could not switch into webview frame after 6 attempts');
+  }
 
   const deadline = Date.now() + timeoutMs;
 
