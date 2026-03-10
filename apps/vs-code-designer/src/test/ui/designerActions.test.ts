@@ -1128,23 +1128,20 @@ async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DESIGNER_R
           const innerIframes = await driver.findElements(By.css('iframe'));
           if (innerIframes.length > 0) {
             await driver.switchTo().frame(innerIframes[0]);
-            try {
-              const roots = await driver.findElements(By.id('root'));
-              if (roots.length > 0) {
-                switched = true;
-                console.log(`[designerReady] Phase 1: #root found in inner iframe (${Date.now() - t0}ms)`);
-              }
-            } catch {
-              /* not ready */
-            }
           } else {
-            const elapsed = Math.round((Date.now() - t0) / 1000);
-            if (elapsed % 10 < 4) {
-              console.log(`[designerReady] Phase 1: waiting for #active-frame to appear (${elapsed}s)`);
-            }
+            console.log(`[designerReady] Phase 1: no inner frames, using outer frame (${Date.now() - t0}ms)`);
           }
         } catch {
-          /* use outer — will retry */
+          /* use outer */
+        }
+        try {
+          const roots = await driver.findElements(By.css('#root, body'));
+          if (roots.length > 0) {
+            switched = true;
+            console.log(`[designerReady] Phase 1: webview content accessible (${Date.now() - t0}ms)`);
+          }
+        } catch {
+          /* not ready */
         }
       }
 
