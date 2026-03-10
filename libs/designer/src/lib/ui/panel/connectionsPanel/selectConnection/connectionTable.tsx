@@ -23,6 +23,7 @@ import {
   getLabelForConnection,
   getSubLabelForConnection,
 } from './selectConnection.helpers';
+import { useConnectionRefs } from '../../../../core/state/connection/connectionSelector';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -55,6 +56,18 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   const intl = useIntl();
   const initiallySelectedConnectionId = useRef(currentConnectionId);
+  const connectionReferences = useConnectionRefs();
+
+  // Check if the currentConnectionId is actually configured in connectionReferences
+  const isCurrentConnectionConfigured = useMemo(() => {
+    if (!currentConnectionId) {
+      return false;
+    }
+    return Object.values(connectionReferences).some((ref: any) => {
+      const refConnectionId = ref?.connection?.id;
+      return refConnectionId && getIdLeaf(refConnectionId) === currentConnectionId;
+    });
+  }, [currentConnectionId, connectionReferences]);
 
   const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
     return cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
@@ -86,10 +99,10 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         message: 'Connection was selected.',
       });
 
-      if (areIdLeavesEqual(connection.id, currentConnectionId)) {
-        cancelSelectionCallback?.(); // User clicked the existing connection, keep selection the same and return
+      if (areIdLeavesEqual(connection.id, currentConnectionId) && isCurrentConnectionConfigured) {
+        cancelSelectionCallback?.(); // User clicked the existing connection that is already configured
       } else {
-        saveSelectionCallback(connection); // User clicked a different connection, save selection and return
+        saveSelectionCallback(connection); // User clicked a different connection or unconfigured connection
       }
     },
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]

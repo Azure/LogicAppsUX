@@ -11,7 +11,6 @@ import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-exte
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import {
-  addConnectionData,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
@@ -49,10 +48,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private readonly range: Range;
   private readonly connectorType: string;
   private readonly currentConnectionId: string;
-  // Tracks in-flight addConnection writes so insert_connection can wait for
-  // them to complete before reading connections.json, avoiding a race where a
-  // stale read overwrites the newly-added connection data.
-  private _pendingConnectionWrite: Promise<void> | undefined;
 
   constructor(
     context: IActionContext,
@@ -128,18 +123,13 @@ export default class OpenConnectionView extends OpenDesignerBase {
     this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.oauthRedirectUrl = callbackUri.toString(true);
 
-    this.panel.webview.html = await this.getWebviewContent({
-      connectionsData: this.panelMetadata.connectionsData,
-      parametersData: this.panelMetadata.parametersData || {},
-      localSettings: this.panelMetadata.localSettings,
-      artifacts: this.panelMetadata.artifacts,
-      azureDetails: this.panelMetadata.azureDetails,
-      workflowDetails: this.panelMetadata.workflowDetails,
-    });
-
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
 
+    // Register message handler BEFORE setting the React webview content.
+    // The React app sends "initialize" immediately on boot — if the handler
+    // isn't registered yet, the message is silently dropped and the UI stays
+    // stuck on "Loading connection data..." forever.
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
 
     this.panel.onDidDispose(
@@ -152,6 +142,16 @@ export default class OpenConnectionView extends OpenDesignerBase {
 
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
+
+    // Set the React content LAST — handler is ready to receive "initialize"
+    this.panel.webview.html = await this.getWebviewContent({
+      connectionsData: this.panelMetadata.connectionsData,
+      parametersData: this.panelMetadata.parametersData || {},
+      localSettings: this.panelMetadata.localSettings,
+      artifacts: this.panelMetadata.artifacts,
+      azureDetails: this.panelMetadata.azureDetails,
+      workflowDetails: this.panelMetadata.workflowDetails,
+    });
   }
 
   private getLoadingHtml(): string {
@@ -226,13 +226,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
       }
       case ExtensionCommand.insert_connection: {
         await callWithTelemetryAndErrorHandling('InsertConnectionView', async () => {
-          // Wait for any pending addConnection write to finish so that the
-          // subsequent file read in saveConnection sees the latest data.
-          if (this._pendingConnectionWrite) {
-            await this._pendingConnectionWrite;
-            this._pendingConnectionWrite = undefined;
-          }
-
           const { connection, connectionReferences } = message;
 
           await this.saveConnection(
@@ -260,12 +253,10 @@ export default class OpenConnectionView extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.addConnection: {
-        this._pendingConnectionWrite = callWithTelemetryAndErrorHandling(
-          'AddConnectionFromConnectionView',
-          async (activateContext: IActionContext) => {
-            await addConnectionData(activateContext, this.workflowFilePath, message.connectionAndSetting);
-          }
-        ).then(() => undefined);
+        // No-op: saveConnectionReferences in saveConnection handles managed API
+        // connection writes. addConnectionData uses a React-generated key from
+        // API Hub uniqueness checks that doesn't match the key saveConnectionReferences
+        // generates, causing duplicate entries.
         break;
       }
       default:
@@ -283,17 +274,10 @@ export default class OpenConnectionView extends OpenDesignerBase {
   ) {
     const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
-    // Get the connection key from connections.json immediately for faster insertion
-    const connectionKey = await this.getConnectionKeyFromConnectionsJson(projectPath, connection.name);
-
-    // Insert the connection into the code FIRST for immediate user feedback
-    insertFunctionCallAtLocation(functionName, connection, insertionContext, connectionKey);
-
-    // Process connection references asynchronously (don't block the UI)
+    // Process connection references FIRST so connections.json is written
     const parametersFromDefinition = {} as any;
 
     if (connectionReferences) {
-      // Process connection references in the background
       const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
         this.context,
         projectPath,
@@ -305,6 +289,13 @@ export default class OpenConnectionView extends OpenDesignerBase {
 
       await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
     }
+
+    // NOW get the connection key from the just-written connections.json
+    // This ensures the .cs file uses the same key that saveConnectionReferences generated
+    const connectionKey = await this.getConnectionKeyFromConnectionsJson(projectPath, connection.name);
+
+    // Insert the connection key into the .cs file
+    insertFunctionCallAtLocation(functionName, connection, insertionContext, connectionKey);
 
     if (parametersFromDefinition) {
       delete parametersFromDefinition.$connections;
@@ -320,10 +311,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
 
   /**
    * Merges parameters from JSON.
-   * @param filePath The file path of the parameters JSON file.
-   * @param definitionParameters The parameters from the designer.
-   * @param panelParameterRecord The parameters from the panel
-   * @returns parameters from JSON file and designer.
    */
   private async mergeJsonParameters(filePath: string, definitionParameters: any): Promise<void> {
     const jsonParameters = await getParametersFromFile(this.context, filePath);
@@ -383,9 +370,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
 
   /**
    * Finds the key in connections.json that references the given connection name.
-   * @param projectPath The project path
-   * @param connectionName The connection name to find
-   * @returns The key from connections.json that references this connection, or the connection name if not found
    */
   private async getConnectionKeyFromConnectionsJson(projectPath: string | undefined, connectionName: string): Promise<string> {
     if (!projectPath) {
@@ -401,10 +385,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
       const connectionsJson = JSON.parse(connectionsJsonString);
       const managedApiConnections = connectionsJson?.managedApiConnections || {};
 
-      // Find the key where the connection.name matches the provided connectionName
       for (const [key, connectionData] of Object.entries(managedApiConnections)) {
         const connection = connectionData as any;
-        // Check if connection.connection.id ends with the connectionName after the last '/'
         if (connection?.connection?.id) {
           const idParts = connection.connection.id.split('/');
           const lastPart = idParts[idParts.length - 1];
@@ -414,10 +396,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
         }
       }
 
-      // If not found, return the connection name as fallback
       return connectionName;
     } catch {
-      // If parsing fails, return the connection name as fallback
       return connectionName;
     }
   }
