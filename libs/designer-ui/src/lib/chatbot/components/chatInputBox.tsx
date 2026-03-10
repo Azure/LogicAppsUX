@@ -1,8 +1,18 @@
-import constants from '../constants';
-import { FontSizes, IconButton, mergeStyles, mergeStyleSets, TextField, useTheme } from '@fluentui/react';
-import type { IButtonProps, IStyle, ITextField, ITextFieldStyles } from '@fluentui/react';
-import type { FC, FormEvent, FocusEvent, KeyboardEventHandler, RefObject } from 'react';
-import { useCallback } from 'react';
+import { Button, Textarea, Text, makeStyles, mergeClasses, tokens, Tooltip } from '@fluentui/react-components';
+import { bundleIcon, SendFilled, SendRegular } from '@fluentui/react-icons';
+import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import type { FocusEvent, KeyboardEventHandler } from 'react';
+
+export interface ChatInputSubmitButtonProps {
+  title?: string;
+  disabled?: boolean;
+  onClick: () => void;
+}
+
+export interface ChatInputHandle {
+  focus: () => void;
+  blur: () => void;
+}
 
 export interface IChatInputProps {
   query: string;
@@ -11,132 +21,131 @@ export interface IChatInputProps {
   disabled?: boolean;
   isMultiline?: boolean;
   maxQueryLength?: number;
-  submitButtonProps: IButtonProps & { onClick: () => void };
+  submitButtonProps: ChatInputSubmitButtonProps;
   showCharCount?: boolean;
-  onQueryChange: (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
-  onBlur?: (ev: FocusEvent<HTMLInputElement>) => void;
-  onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-  onRenderPrefix?: () => JSX.Element;
-  textFieldRef?: RefObject<ITextField>;
+  onQueryChange: (event: { target: { value: string } }, newValue?: string) => void;
+  onBlur?: (ev: FocusEvent<HTMLTextAreaElement>) => void;
+  onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement>;
   role?: string;
-  styles?: Partial<IChatInputStyles>;
+  className?: string;
 }
 
-export const ChatInput: FC<IChatInputProps> = ({
-  query,
-  placeholder,
-  showCharCount,
-  disabled,
-  autoFocus,
-  maxQueryLength,
-  isMultiline,
-  submitButtonProps,
-  onQueryChange,
-  onBlur,
-  onKeyDown,
-  onRenderPrefix,
-  textFieldRef,
-  role,
-  styles,
-}) => {
-  const { isInverted } = useTheme();
-  const chatInputStyles = getChatInputStyles(isInverted);
+const SendIcon = bundleIcon(SendFilled, SendRegular);
 
-  const rootClassName = mergeStyles(chatInputStyles.root, styles?.root);
-  const charCounterClassName = mergeStyles(chatInputStyles.charCounter, styles?.charCounter);
-  const footerClassName = mergeStyles(chatInputStyles.footer, styles?.footer);
-
-  const textFieldStyles = mergeStyleSets(chatInputStyles.textField, styles?.textField);
-
-  const { onClick } = submitButtonProps;
-  const submitOnEnter: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
-    (event) => {
-      // ENTER+SHIFT is ignored to allow adding new lines
-      if (!disabled && event.key === 'Enter' && !event.shiftKey) {
-        onClick();
-        event.preventDefault();
-        event.stopPropagation();
-      }
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    border: `1px solid ${tokens.colorNeutralStroke1}`,
+    borderRadius: '8px',
+    padding: '5px',
+    backgroundColor: tokens.colorNeutralBackground1,
+  },
+  textarea: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    border: 'none !important',
+    outline: 'none !important',
+    '& textarea': {
+      paddingBottom: '16px',
     },
-    [onClick, disabled]
-  );
+    '::after': {
+      display: 'none',
+    },
+  },
+  charCounter: {
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground3,
+    textAlign: 'left',
+    paddingLeft: '8px',
+    width: 'fit-content',
+  },
+  footer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  submitButton: {
+    minWidth: 'auto',
+  },
+});
 
-  return (
-    <div className={rootClassName}>
-      <TextField
-        componentRef={textFieldRef}
-        placeholder={placeholder}
-        multiline={isMultiline}
-        autoAdjustHeight={true}
-        borderless={true}
-        resizable={false}
-        type="text"
-        role={role}
-        autoFocus={autoFocus}
-        autoComplete="off"
-        styles={textFieldStyles}
-        maxLength={maxQueryLength}
-        disabled={disabled}
-        value={query}
-        onChange={onQueryChange}
-        onBlur={onBlur}
-        onRenderPrefix={onRenderPrefix}
-        onKeyDown={onKeyDown ?? submitOnEnter}
-      />
-      <div className={footerClassName}>
-        {showCharCount && <div className={charCounterClassName}>{`${query.length}/${maxQueryLength}`}</div>}
-        <IconButton {...submitButtonProps} disabled={disabled || submitButtonProps.disabled} />
+export const ChatInput = forwardRef<ChatInputHandle, IChatInputProps>(
+  (
+    {
+      query,
+      placeholder,
+      showCharCount,
+      disabled,
+      autoFocus,
+      maxQueryLength,
+      isMultiline,
+      submitButtonProps,
+      onQueryChange,
+      onBlur,
+      onKeyDown,
+      role,
+      className,
+    },
+    ref
+  ) => {
+    const styles = useStyles();
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useImperativeHandle(ref, () => ({
+      focus: () => textareaRef.current?.focus(),
+      blur: () => textareaRef.current?.blur(),
+    }));
+
+    const { onClick } = submitButtonProps;
+    const submitOnEnter: KeyboardEventHandler<HTMLTextAreaElement> = useCallback(
+      (event) => {
+        if (!disabled && event.key === 'Enter' && !event.shiftKey) {
+          onClick();
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      },
+      [onClick, disabled]
+    );
+
+    return (
+      <div className={mergeClasses(styles.root, className)}>
+        <Textarea
+          ref={textareaRef}
+          placeholder={placeholder}
+          resize="none"
+          appearance="outline"
+          role={role}
+          autoFocus={autoFocus}
+          autoComplete="off"
+          className={styles.textarea}
+          maxLength={maxQueryLength}
+          disabled={disabled}
+          value={query}
+          onChange={(_ev, data) => {
+            onQueryChange({ target: { value: data.value } }, data.value);
+          }}
+          onBlur={onBlur}
+          onKeyDown={onKeyDown ?? submitOnEnter}
+          rows={isMultiline ? 3 : 1}
+        />
+        <div className={styles.footer}>
+          {showCharCount && <Text className={styles.charCounter}>{`${query.length}/${maxQueryLength}`}</Text>}
+          <Tooltip content={submitButtonProps.title ?? ''} relationship="label">
+            <Button
+              appearance="transparent"
+              size="small"
+              className={styles.submitButton}
+              icon={<SendIcon />}
+              disabled={disabled || submitButtonProps.disabled}
+              onClick={submitButtonProps.onClick}
+            />
+          </Tooltip>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
-export interface IChatInputStyles {
-  root: IStyle;
-  textField: Partial<ITextFieldStyles>;
-  charCounter: IStyle;
-  footer: IStyle;
-}
-
-const getChatInputStyles = (isInverted?: boolean): IChatInputStyles => {
-  return {
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: constants.NEUTRAL_TERTIARY,
-      borderRadius: 8,
-      padding: 5,
-      backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
-    },
-    textField: {
-      fieldGroup: {
-        backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
-      },
-      field: {
-        paddingBottom: 16,
-        backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
-        ':disabled': {
-          backgroundColor: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
-        },
-        '::placeholder, :-ms-input-placeholder, ::-ms-input-placeholder': {
-          color: isInverted ? constants.GRAY : constants.NEUTRAL_SECONDARY_ALT,
-          opacity: 1, // Firefox adds a lower opacity to the placeholder, so we use opacity: 1 to fix this.,
-        },
-      },
-    },
-    charCounter: {
-      fontSize: FontSizes.small,
-      color: isInverted ? constants.GRAY : constants.NEUTRAL_SECONDARY_ALT,
-      textAlign: 'left',
-      paddingLeft: 8,
-      width: 'fit-content',
-    },
-    footer: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      width: 'fit-contet',
-    },
-  };
-};
+ChatInput.displayName = 'ChatInput';
