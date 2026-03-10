@@ -36,6 +36,7 @@ import {
   ensureLocalSettingsForDesigner,
   openWorkspaceFileInSession,
   waitForDependencyValidation,
+  waitForExtensionValidationComplete,
   DEPENDENCY_VALIDATION_TIMEOUT,
   findAddTriggerCard,
   waitForDiscoveryPanel,
@@ -559,6 +560,14 @@ describe('Multiple Designers + Add Workflow', function () {
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
     await captureScreenshot(driver, 'multi-workspace-opened', EXPLICIT_SCREENSHOT_DIR);
+
+    // Wait for extension dependency validation to complete before opening designer
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+    await waitForExtensionValidationComplete(driver);
 
     // ── Step 2: Add a new workflow via right-click on the logic app folder ──
     const newWfName = 'e2enewwf';

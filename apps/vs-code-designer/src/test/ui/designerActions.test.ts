@@ -853,6 +853,76 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
 }
 
 /**
+ * Wait for the extension's dependency validation to fully complete.
+ * The design-time API (func host start) won't start until validation is done.
+ */
+async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs = 120_000): Promise<void> {
+  const t0 = Date.now();
+
+  const hasValidationNotification = async (): Promise<string | null> => {
+    try {
+      return await driver.executeScript<string | null>(`
+        var els = document.querySelectorAll(
+          '.notifications-toasts .notification-list-item, ' +
+          '[role="dialog"], ' +
+          '.notification-toast, ' +
+          '.monaco-notification-list-item'
+        );
+        for (var i = 0; i < els.length; i++) {
+          var text = els[i].textContent || '';
+          if (text.includes('Validating Runtime Dependency') || text.includes('Successfully installed')) {
+            return text.substring(0, 150);
+          }
+        }
+        return null;
+      `);
+    } catch {
+      return null;
+    }
+  };
+
+  console.log('[waitForValidation] Waiting for extension dependency validation to complete...');
+
+  let firstSeen = false;
+  const phase1Deadline = Date.now() + 15_000;
+  while (Date.now() < phase1Deadline) {
+    const msg = await hasValidationNotification();
+    if (msg) {
+      console.log(`[waitForValidation] Validation active: "${msg}"`);
+      firstSeen = true;
+      break;
+    }
+    await sleep(1000);
+  }
+
+  if (!firstSeen) {
+    console.log(`[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s`);
+    return;
+  }
+
+  let lastSeenAt = Date.now();
+  const QUIET_PERIOD = 10_000;
+
+  while (Date.now() - t0 < timeoutMs) {
+    const msg = await hasValidationNotification();
+    if (msg) {
+      lastSeenAt = Date.now();
+      const elapsed = Math.round((Date.now() - t0) / 1000);
+      if (elapsed % 15 < 2) {
+        console.log(`[waitForValidation] Still active (${elapsed}s): "${msg}"`);
+      }
+    } else if (Date.now() - lastSeenAt >= QUIET_PERIOD) {
+      console.log(`[waitForValidation] Complete (total: ${Math.round((Date.now() - t0) / 1000)}s)`);
+      await sleep(3000);
+      return;
+    }
+    await sleep(2000);
+  }
+
+  console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
+}
+
+/**
  * Poll until a webview tab (iframe) appears in the VS Code DOM, indicating
  * the designer panel has opened. Also dismisses any blocking prompts that
  * appear during this wait (Azure connector wizard, auth dialogs).
@@ -1119,6 +1189,20 @@ async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DESIGNER_R
     console.log(`[designerReady] Phase 2: spinner gone, React app rendered (${Date.now() - t0}ms)`);
   } else {
     console.log(`[designerReady] Phase 2: spinner still present or #root not found after ${Date.now() - t0}ms`);
+    try {
+      const diagInfo = await driver.executeScript<string>(`
+        var info = 'URL: ' + window.location.href + '\\n';
+        info += 'Title: ' + document.title + '\\n';
+        info += 'Body children: ' + document.body.children.length + '\\n';
+        var html = document.documentElement.outerHTML || '';
+        info += 'HTML length: ' + html.length + '\\n';
+        info += 'HTML preview: ' + html.substring(0, 1500);
+        return info;
+      `);
+      console.log(`[designerReady] Webview diagnostics:\n${diagInfo}`);
+    } catch (diagErr: any) {
+      console.log(`[designerReady] Could not dump webview diagnostics: ${diagErr.message?.substring(0, 100)}`);
+    }
   }
 
   // Phase 3: wait for the actual designer canvas + nodes/placeholder to render.
@@ -1841,6 +1925,14 @@ async function openDesignerForEntry(
   // 4. Wait for extension to settle, dismiss blocking UI
   await sleep(PROJECT_RECOGNITION_WAIT);
   await clearBlockingUI(driver);
+
+  // 4.5. Wait for dependency validation to fully complete before opening designer
+  try {
+    await driver.switchTo().defaultContent();
+  } catch {
+    /* ignore */
+  }
+  await waitForExtensionValidationComplete(driver);
 
   // 5. Open designer via right-click on workflow.json in the Explorer tree.
   try {
