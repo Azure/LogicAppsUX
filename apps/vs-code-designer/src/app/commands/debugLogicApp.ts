@@ -62,7 +62,7 @@ export async function debugLogicApp(
       context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
       throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
     }
-  } else if (!debugConfig.isCodeless) {
+  } else if (debugConfig.isCodeless === false) {
     const codefulNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
       context,
       workspaceFolder,
