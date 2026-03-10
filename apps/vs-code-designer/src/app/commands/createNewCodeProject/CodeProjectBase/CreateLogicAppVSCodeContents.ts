@@ -89,8 +89,8 @@ export async function writeExtensionsJson(webviewProjectContext: IWebviewProject
 }
 
 const getCodefulTasks = (targetFramework: string) => {
-  const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
-  const releaseArgs: string[] = ['--configuration', 'Release'];
+  const commonDotnetArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
+  const releaseDotnetArgs: string[] = ['--configuration', 'Release'];
   const funcBinariesExist = binariesExist(funcDependencyName);
   const debugSubpath = path.posix.join('bin', 'Debug', targetFramework);
   const binariesOptions = funcBinariesExist
@@ -107,14 +107,14 @@ const getCodefulTasks = (targetFramework: string) => {
     {
       label: 'clean',
       command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['clean', ...commonArgs],
+      args: ['clean', ...commonDotnetArgs],
       type: 'process',
       problemMatcher: '$msCompile',
     },
     {
       label: 'build',
       command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['build', ...commonArgs],
+      args: ['build', ...commonDotnetArgs],
       type: 'process',
       dependsOn: 'clean',
       group: {
@@ -126,14 +126,14 @@ const getCodefulTasks = (targetFramework: string) => {
     {
       label: 'clean release',
       command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['clean', ...releaseArgs, ...commonArgs],
+      args: ['clean', ...releaseDotnetArgs, ...commonDotnetArgs],
       type: 'process',
       problemMatcher: '$msCompile',
     },
     {
       label: dotnetPublishTaskLabel,
       command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['publish', ...releaseArgs, ...commonArgs],
+      args: ['publish', ...releaseDotnetArgs, ...commonDotnetArgs],
       type: 'process',
       dependsOn: 'clean release',
       problemMatcher: '$msCompile',
