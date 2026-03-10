@@ -966,35 +966,64 @@ export async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DES
       // Switch into the outer webview iframe
       await driver.switchTo().frame(outerFrame);
 
-      // Now look for #active-frame inside (VS Code's inner frame)
+      // Now look for #active-frame inside (VS Code's inner frame).
+      // The outer webview iframe contains a bootstrap script that creates
+      // the #active-frame dynamically. The React app lives INSIDE that
+      // inner frame. We must wait for it to appear — checking `body` would
+      // falsely match the outer frame and trap us in the wrong context.
       try {
         const activeFrame = await driver.findElement(By.id('active-frame'));
         await driver.switchTo().frame(activeFrame);
         console.log(`[designerReady] Phase 1: switched via active-frame (${Date.now() - t0}ms)`);
         switched = true;
       } catch {
-        // #active-frame doesn't exist — check if there's a nested iframe
+        // #active-frame doesn't exist yet — check for any nested iframe
         try {
           const innerIframes = await driver.findElements(By.css('iframe'));
           if (innerIframes.length > 0) {
             await driver.switchTo().frame(innerIframes[0]);
             console.log(`[designerReady] Phase 1: switched via inner iframe (${Date.now() - t0}ms)`);
+            // Verify we can see #root (React app mount point)
+            try {
+              const roots = await driver.findElements(By.id('root'));
+              if (roots.length > 0) {
+                switched = true;
+                console.log(`[designerReady] Phase 1: #root found in inner iframe (${Date.now() - t0}ms)`);
+              }
+            } catch {
+              /* not ready yet */
+            }
           } else {
-            console.log(`[designerReady] Phase 1: no inner frames, using outer frame directly (${Date.now() - t0}ms)`);
+            // No inner frames yet — the bootstrap script hasn't loaded them.
+            // Do NOT set switched=true here — we'd be stuck in the outer frame.
+            const elapsed = Math.round((Date.now() - t0) / 1000);
+            if (elapsed % 10 < 4) {
+              console.log(`[designerReady] Phase 1: waiting for #active-frame to appear (${elapsed}s)`);
+            }
+            // Dump DOM diagnostics every 15s to understand what's in the outer frame
+            if (elapsed > 0 && elapsed % 15 < 4) {
+              try {
+                const domInfo = await driver.executeScript<string>(`
+                  var info = 'childNodes: ' + document.body.childNodes.length + '\\n';
+                  for (var i = 0; i < document.body.childNodes.length; i++) {
+                    var n = document.body.childNodes[i];
+                    info += '  [' + i + '] ' + n.nodeName + ' id=' + (n.id || '') + ' class=' + (n.className || '') + '\\n';
+                  }
+                  var allIframes = document.querySelectorAll('iframe');
+                  info += 'iframes: ' + allIframes.length + '\\n';
+                  for (var j = 0; j < allIframes.length; j++) {
+                    info += '  iframe[' + j + '] id=' + (allIframes[j].id || '') + ' name=' + (allIframes[j].name || '') + ' src=' + (allIframes[j].src || '').substring(0, 100) + '\\n';
+                  }
+                  return info;
+                `);
+                console.log(`[designerReady] Outer frame DOM:\\n${domInfo}`);
+              } catch {
+                /* ignore */
+              }
+            }
           }
         } catch {
-          /* use outer frame as-is */
-        }
-
-        // Verify we can see webview content (#root or any content)
-        try {
-          const roots = await driver.findElements(By.css('#root, body'));
-          if (roots.length > 0) {
-            switched = true;
-            console.log(`[designerReady] Phase 1: webview content accessible (${Date.now() - t0}ms)`);
-          }
-        } catch {
-          /* not ready yet */
+          /* use outer frame as-is — will retry */
         }
       }
 
