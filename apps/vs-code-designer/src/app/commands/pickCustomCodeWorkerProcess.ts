@@ -186,6 +186,12 @@ export async function pickCustomCodeWorkerChildProcess(
         break;
       }
     }
+  } else if (!isCodeless) {
+    // NOTE(aeldridge): Codeful .NET host is a child of the child func process, so need to look one level deeper
+    const childrenOfChild =
+      process.platform === Platform.windows ? await getWindowsChildren(Number(child.pid)) : await getUnixChildren(Number(child.pid));
+
+    child = childrenOfChild.reverse().find((c) => childRegex.test(c.command || ''));
   }
   return child ? child.pid.toString() : undefined;
 }

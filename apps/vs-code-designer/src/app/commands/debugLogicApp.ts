@@ -33,8 +33,8 @@ export async function debugLogicApp(
   };
   await vscode.debug.startDebugging(workspaceFolder, logicAppLaunchConfig);
 
+  let functionLaunchConfig: vscode.DebugConfiguration;
   if (debugConfig.customCodeRuntime) {
-    let functionLaunchConfig: vscode.DebugConfiguration;
     if (debugConfig.customCodeRuntime === 'coreclr') {
       const customCodeNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
         context,
@@ -62,10 +62,23 @@ export async function debugLogicApp(
       context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
       throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
     }
-
-    if (functionLaunchConfig?.processId) {
-      await vscode.debug.startDebugging(workspaceFolder, functionLaunchConfig);
-    }
-    context.telemetry.properties.result = 'Succeeded';
+  } else if (!debugConfig.isCodeless) {
+    const codefulNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
+      context,
+      workspaceFolder,
+      projectPath,
+      false /* isCodeless */
+    );
+    functionLaunchConfig = {
+      name: localize('attachToCustomCodeFunc', 'Debug local function'),
+      type: debugConfig.funcRuntime,
+      request: 'attach',
+      processId: codefulNetHostProcessId,
+    };
   }
+
+  if (functionLaunchConfig?.processId) {
+    await vscode.debug.startDebugging(workspaceFolder, functionLaunchConfig);
+  }
+  context.telemetry.properties.result = 'Succeeded';
 }
