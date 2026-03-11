@@ -192,6 +192,14 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
 const azureDetailsCache = new Map<string, { timestamp: number; details: AzureConnectorDetails }>();
 const AZURE_DETAILS_CACHE_TTL = 300000; // 5 minutes
 
+/**
+ * Invalidates the cached Azure connector details for a project.
+ * Call after Azure settings change (e.g., enabling Azure connectors).
+ */
+export function invalidateAzureDetailsCache(projectPath: string): void {
+  azureDetailsCache.delete(projectPath);
+}
+
 export async function getAzureConnectorDetailsForLocalProject(
   context: IActionContext,
   projectPath: string
@@ -225,7 +233,10 @@ export async function getAzureConnectorDetailsForLocalProject(
     resourceGroupName = connectorsContext.resourceGroup?.name || '';
     location = connectorsContext.resourceGroup?.location || '';
     workflowManagementBaseUrl = connectorsContext.environment?.resourceManagerEndpointUrl;
-  } else if (subscriptionId) {
+  }
+
+  // Get auth token if we have a valid subscription (whether from wizard or local.settings.json)
+  if (subscriptionId) {
     const authData = await getAuthData(tenantId);
     accessToken = `Bearer ${authData?.accessToken}`;
     const [parsedClientId, parsedTenantId] = authData.account.id.split('.');

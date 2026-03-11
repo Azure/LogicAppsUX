@@ -453,51 +453,143 @@ const performTextReplacement = (
   insertionContext: { documentUri: string; range: Range },
   connectionKey?: string
 ) => {
-  if (insertionContext.range) {
-    // Normalize the range format - handle both Start/Line and start/line formats
-    const range = insertionContext.range;
-    let startLine: number;
-    let startChar: number;
-    let endLine: number;
-    let endChar: number;
+  if (!insertionContext.range) {
+    vscode.window.showErrorMessage('No range provided for connection ID insertion');
+    return;
+  }
 
-    if (range.Start && range.End) {
-      // Handle { Start: { Line: 55, Character: 85 }, End: { Line: 55, Character: 99 } } format
-      startLine = range.Start.Line;
-      startChar = range.Start.Character;
-      endLine = range.End.Line;
-      endChar = range.End.Character;
+  const range = insertionContext.range;
+  if (!range.Start || !range.End) {
+    vscode.window.showErrorMessage('Invalid range format provided');
+    return;
+  }
+
+  const connectionIdToInsert = connectionKey || connection.name;
+  const startLine = range.Start.Line;
+  const startChar = range.Start.Character;
+  const endLine = range.End.Line;
+  const endChar = range.End.Character;
+
+  const startPos = new vscode.Position(startLine, startChar);
+  const endPos = new vscode.Position(endLine, endChar);
+  const rangeToReplace = new vscode.Range(startPos, endPos);
+
+  // Read the CURRENT text at the range to handle all cases correctly
+  const existingText = editor.document.getText(rangeToReplace);
+
+  let editRange: vscode.Range;
+  let editText: string;
+
+  if (existingText.startsWith('"') && existingText.endsWith('"')) {
+    // Case 1: Range covers just the string parameter (e.g., "azureblob")
+    editRange = rangeToReplace;
+    editText = `"${connectionIdToInsert}"`;
+  } else {
+    // Range covers a wider method call — find the string param within it
+    const stringMatch = existingText.match(/"([^"]*)"/);
+
+    if (stringMatch && stringMatch.index !== undefined) {
+      // Case 2 & 4: Method call with existing string param — replace just the string
+      // This also handles stale ranges (user edited file) as long as the string is findable
+      const matchStart = stringMatch.index;
+      const matchEnd = matchStart + stringMatch[0].length;
+      editRange = new vscode.Range(
+        new vscode.Position(startLine, startChar + matchStart),
+        new vscode.Position(startLine, startChar + matchEnd)
+      );
+      editText = `"${connectionIdToInsert}"`;
     } else {
-      vscode.window.showErrorMessage('Invalid range format provided');
-      return;
+      // Case 3: No string parameter — find empty parens and insert connection name
+      // Look for the first "(" in the text and insert after it
+      const parenIndex = existingText.indexOf('(');
+      if (parenIndex !== -1) {
+        const insertPos = new vscode.Position(startLine, startChar + parenIndex + 1);
+        editRange = new vscode.Range(insertPos, insertPos);
+        editText = `"${connectionIdToInsert}"`;
+      } else {
+        // Fallback: search the full line near the range for the connector call
+        const fullLine = editor.document.lineAt(startLine).text;
+        const lineStringMatch = fullLine.match(/"([^"]*)"/);
+        if (lineStringMatch && lineStringMatch.index !== undefined) {
+          editRange = new vscode.Range(
+            new vscode.Position(startLine, lineStringMatch.index),
+            new vscode.Position(startLine, lineStringMatch.index + lineStringMatch[0].length)
+          );
+          editText = `"${connectionIdToInsert}"`;
+        } else {
+          // Case 5: User emptied the string and quotes — find empty parens on the line
+          const emptyParenMatch = fullLine.match(/\(\)/);
+          if (emptyParenMatch && emptyParenMatch.index !== undefined) {
+            const insertPos = new vscode.Position(startLine, emptyParenMatch.index + 1);
+            editRange = new vscode.Range(insertPos, insertPos);
+            editText = `"${connectionIdToInsert}"`;
+          } else {
+            vscode.window.showErrorMessage('Could not find connection parameter to replace in the source file');
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  editor
+    .edit((editBuilder) => {
+      editBuilder.replace(editRange, editText);
+    })
+    .then((success) => {
+      if (success) {
+        const newCursorPos = new vscode.Position(editRange.start.line, editRange.start.character + editText.length);
+        editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
+      } else {
+        vscode.window.showErrorMessage('Failed to insert connection ID');
+      }
+    });
+};
+
+/**
+ * Determines what text edit to perform for a connection name replacement.
+ * Exported for testing.
+ * @returns { offset, length, text } relative to the range start, or null if no edit possible.
+ */
+export function resolveConnectionEdit(
+  existingText: string,
+  connectionId: string,
+  fullLineText?: string
+): { offset: number; length: number; text: string } | null {
+  if (existingText.startsWith('"') && existingText.endsWith('"')) {
+    // Case 1: Range covers just the string parameter
+    return { offset: 0, length: existingText.length, text: `"${connectionId}"` };
+  }
+
+  // Range covers wider text — find string param within
+  const stringMatch = existingText.match(/"([^"]*)"/);
+  if (stringMatch && stringMatch.index !== undefined) {
+    // Case 2 & 4: Replace existing string param
+    return { offset: stringMatch.index, length: stringMatch[0].length, text: `"${connectionId}"` };
+  }
+
+  // Case 3: No string param — insert into empty parens
+  const parenIndex = existingText.indexOf('(');
+  if (parenIndex !== -1) {
+    return { offset: parenIndex + 1, length: 0, text: `"${connectionId}"` };
+  }
+
+  // Fallback: search the full line for a string param or empty parens
+  if (fullLineText) {
+    const lineMatch = fullLineText.match(/"([^"]*)"/);
+    if (lineMatch && lineMatch.index !== undefined) {
+      return { offset: -1, lineOffset: lineMatch.index, length: lineMatch[0].length, text: `"${connectionId}"` } as any;
     }
 
-    // Use the connection key from connections.json if available, otherwise fall back to connection.name
-    const connectionIdToInsert = connectionKey || connection.name;
-
-    // Use the normalized range to replace the text with the connection key
-    const startPos = new vscode.Position(startLine, startChar);
-    const endPos = new vscode.Position(endLine, endChar);
-    const rangeToReplace = new vscode.Range(startPos, endPos);
-
-    editor
-      .edit((editBuilder) => {
-        editBuilder.replace(rangeToReplace, `"${connectionIdToInsert}"`);
-      })
-      .then((success) => {
-        if (success) {
-          // Position cursor after the inserted connection ID
-          const newCursorPos = new vscode.Position(startLine, startChar + connectionIdToInsert.length);
-          // const newCursorPos = new vscode.Position(startLine, startChar + connection.name.length);
-          editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
-        } else {
-          vscode.window.showErrorMessage('Failed to insert connection ID');
-        }
-      });
-  } else {
-    vscode.window.showErrorMessage('No range provided for connection ID insertion');
+    // Case 5: User emptied the string and quotes — find empty parens on the line
+    const emptyParenMatch = fullLineText.match(/\(\)/);
+    if (emptyParenMatch && emptyParenMatch.index !== undefined) {
+      return { offset: -1, lineOffset: emptyParenMatch.index + 1, length: 0, text: `"${connectionId}"` } as any;
+    }
   }
-};
+
+  return null;
+}
 
 export async function openLanguageServerConnectionView(
   context: IActionContext,
