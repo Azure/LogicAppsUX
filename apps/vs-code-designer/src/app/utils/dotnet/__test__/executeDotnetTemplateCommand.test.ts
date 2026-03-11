@@ -235,6 +235,47 @@ describe('executeDotnetTemplateCommand', () => {
       expect(result).toBe('net8.0');
     });
 
+    it('should detect .NET 10 when version sources lack trailing newlines', async () => {
+      const ctx = createActionContext();
+
+      // Simulate outputs without trailing newlines — prior to the delimiter fix,
+      // these would concatenate into "2.0.10010.0.100 [path]" hiding .NET 10
+      mockUseBinariesDependencies.mockResolvedValue(true);
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('2.0.100');
+      mockExecuteCommand
+        .mockResolvedValueOnce('') // --version
+        .mockResolvedValueOnce('10.0.100 [/usr/share/dotnet/sdk]'); // --list-sdks (no trailing newline)
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net10.0');
+    });
+
+    it('should detect correct version when all sources lack trailing newlines', async () => {
+      const ctx = createActionContext();
+
+      mockUseBinariesDependencies.mockResolvedValue(true);
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('6.0.400');
+      mockExecuteCommand
+        .mockResolvedValueOnce('8.0.100') // --version (no newline)
+        .mockResolvedValueOnce('8.0.100 [/sdk]'); // --list-sdks (no newline)
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net8.0');
+    });
+
+    it('should not create false match from concatenated version strings', async () => {
+      const ctx = createActionContext();
+
+      // "8.0.100" + "6.0.400" without delimiter could form "8.0.1006.0.400"
+      // which should NOT accidentally match .NET 10
+      mockExecuteCommand
+        .mockResolvedValueOnce('8.0.100') // --version (no newline)
+        .mockResolvedValueOnce('6.0.400 [/sdk]'); // --list-sdks
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net8.0');
+    });
+
     it('should handle executeCommand failures gracefully', async () => {
       const ctx = createActionContext();
 

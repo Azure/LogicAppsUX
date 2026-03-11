@@ -112,7 +112,7 @@ export async function getFramework(context: IActionContext, workingDirectory: st
     versionSources.push(await tryGetDotnetVersionOutput(dotnetBinariesLocation, workingDirectory, '--version'));
     versionSources.push(await tryGetDotnetVersionOutput(dotnetBinariesLocation, workingDirectory, '--list-sdks'));
 
-    const versions = versionSources.join('');
+    const versions = versionSources.join('\n');
 
     // Prioritize "LTS", then "Current", then "Preview"
     const netVersions: string[] = ['10', '8', '6', '3', '2', '9'];
