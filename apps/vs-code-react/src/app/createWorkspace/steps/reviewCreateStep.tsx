@@ -58,7 +58,7 @@ export const ReviewCreateStep: React.FC = () => {
     const frameworkDisplayMap: Record<string, string> = {
       net472: intlText.DOTNET_FRAMEWORK_OPTION,
       net8: intlText.DOTNET_8,
-      net10: intlText.DOTNET_10,
+      'net10.0': intlText.DOTNET_10,
     };
 
     return frameworkDisplayMap[framework] ?? framework;

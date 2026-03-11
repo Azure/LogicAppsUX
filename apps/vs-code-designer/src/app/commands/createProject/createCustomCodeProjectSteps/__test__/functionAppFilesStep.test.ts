@@ -64,16 +64,16 @@ describe('FunctionAppFilesStep', () => {
       expect(mapping[ProjectType.rulesEngine]).toBe('RulesFunctionsFile');
     });
 
-    it('should map Net10 to FunctionsProjNet10New in csprojTemplateFileName', () => {
+    it('should map Net10 to FunctionsProjNet10 in csprojTemplateFileName', () => {
       const step = new FunctionAppFilesStep();
       const mapping = (step as any).csprojTemplateFileName;
-      expect(mapping[TargetFramework.Net10]).toBe('FunctionsProjNet10New');
+      expect(mapping[TargetFramework.Net10]).toBe('FunctionsProjNet10');
     });
 
     it('should preserve Net8 mapping in csprojTemplateFileName', () => {
       const step = new FunctionAppFilesStep();
       const mapping = (step as any).csprojTemplateFileName;
-      expect(mapping[TargetFramework.Net8]).toBe('FunctionsProjNet8New');
+      expect(mapping[TargetFramework.Net8]).toBe('FunctionsProjNet8');
     });
 
     it('should preserve NetFx mapping in csprojTemplateFileName', () => {

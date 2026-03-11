@@ -53,7 +53,7 @@ export const DotNetFrameworkStep: React.FC = () => {
       description: intlText.DOTNET_8_DESCRIPTION,
     },
     {
-      value: 'net10',
+      value: 'net10.0',
       label: intlText.DOTNET_10,
       description: intlText.DOTNET_10_DESCRIPTION,
     },

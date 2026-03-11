@@ -109,10 +109,10 @@ describe('DotNetFrameworkStep', () => {
   });
 
   describe('selected framework display', () => {
-    it('should show .NET 10 label when net10 is selected', () => {
+    it('should show .NET 10 label when net10.0 is selected', () => {
       renderWithStore({
         logicAppType: ProjectType.customCode,
-        targetFramework: 'net10',
+        targetFramework: 'net10.0',
       });
       const combobox = screen.getByRole('combobox');
       expect(combobox).toHaveTextContent('.NET 10');
@@ -130,7 +130,7 @@ describe('DotNetFrameworkStep', () => {
     it('should show description text when a framework is selected', () => {
       renderWithStore({
         logicAppType: ProjectType.customCode,
-        targetFramework: 'net10',
+        targetFramework: 'net10.0',
       });
       // Description text should appear below the dropdown
       expect(screen.getByText(/modern development and performance/)).toBeInTheDocument();
@@ -172,7 +172,7 @@ describe('DotNetFrameworkStep', () => {
       fireEvent.click(net10Option);
 
       const state = store.getState().createWorkspace;
-      expect(state.targetFramework).toBe('net10');
+      expect(state.targetFramework).toBe('net10.0');
     });
   });
 });

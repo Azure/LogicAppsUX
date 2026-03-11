@@ -38,8 +38,8 @@ export class CreateFunctionAppFiles {
 
   private readonly csprojTemplateFileName = {
     [TargetFramework.NetFx]: 'FunctionsProjNetFx',
-    [TargetFramework.Net8]: 'FunctionsProjNet8New',
-    [TargetFramework.Net10]: 'FunctionsProjNet10New',
+    [TargetFramework.Net8]: 'FunctionsProjNet8',
+    [TargetFramework.Net10]: 'FunctionsProjNet10',
     [ProjectType.rulesEngine]: 'RulesFunctionsProj',
   };
 
