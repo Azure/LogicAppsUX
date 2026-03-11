@@ -40,7 +40,19 @@ export class ConsumptionConnectionService extends BaseConnectionService {
 
     if (connectionParametersSet?.values) {
       const values = connectionParametersSet.values;
-      const authKeys = ['username', 'password', 'key', 'keyHeaderName', 'clientId', 'secret', 'tenant', 'authority', 'audience', 'pfx'];
+      const authKeys = [
+        'username',
+        'password',
+        'key',
+        'keyHeaderName',
+        'value',
+        'clientId',
+        'secret',
+        'tenant',
+        'authority',
+        'audience',
+        'pfx',
+      ];
       for (const key of authKeys) {
         if (values[key] !== undefined) {
           authParams[key] = this.extractParameterValue(values[key]);
@@ -158,7 +170,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       const { authenticationType, authParams } = this.extractAuthParameters(connectionInfo.connectionParametersSet);
 
       const connection = {
-        id: `connectionProviders/mcpclient/connections/${connectionName}`,
+        id: `/connectionProviders/mcpclient/connections/${connectionName}`,
         name: connectionName,
         type: 'connections',
         location: '',
