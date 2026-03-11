@@ -11,6 +11,7 @@ import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-exte
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import {
+  addConnectionData,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
@@ -225,8 +226,13 @@ export default class OpenConnectionView extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.insert_connection: {
-        await callWithTelemetryAndErrorHandling('InsertConnectionView', async () => {
-          const { connection, connectionReferences } = message;
+        await callWithTelemetryAndErrorHandling('InsertConnectionView', async (activateContext: IActionContext) => {
+          const { connection, connectionReferences, connectionAndSetting } = message;
+
+          // For local connections, the React side captures the connection data from the writeConnection callback and includes it here.
+          if (connectionAndSetting) {
+            await addConnectionData(activateContext, this.workflowFilePath, connectionAndSetting);
+          }
 
           await this.saveConnection(
             this.methodName,
@@ -250,13 +256,6 @@ export default class OpenConnectionView extends OpenDesignerBase {
       case ExtensionCommand.logTelemetry: {
         const eventName = message.data.name ?? message.data.area;
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
-        break;
-      }
-      case ExtensionCommand.addConnection: {
-        // No-op: saveConnectionReferences in saveConnection handles managed API
-        // connection writes. addConnectionData uses a React-generated key from
-        // API Hub uniqueness checks that doesn't match the key saveConnectionReferences
-        // generates, causing duplicate entries.
         break;
       }
       default:
