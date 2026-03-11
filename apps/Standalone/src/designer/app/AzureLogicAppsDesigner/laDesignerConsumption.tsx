@@ -329,17 +329,25 @@ const DesignerEditorConsumption = () => {
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
-              {showChatBot ? (
-                <CoPilotChatbot
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={openFeedBackPanel}
-                  closeChatBot={() => {
-                    dispatch(setIsChatBotEnabled(false));
-                  }}
-                  getAuthToken={getAuthToken}
-                />
-              ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <CoPilotChatbot
+                isOpen={showChatBot}
+                getUpdatedWorkflow={getUpdatedWorkflow}
+                openFeedbackPanel={openFeedBackPanel}
+                closeChatBot={() => {
+                  dispatch(setIsChatBotEnabled(false));
+                }}
+                getAuthToken={getAuthToken}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: '1 1 0',
+                  minHeight: 0,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                }}
+              >
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}

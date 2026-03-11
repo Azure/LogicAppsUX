@@ -981,7 +981,16 @@ export const saveWorkflowStandard = async (
 
   if (isDraftSave) {
     if (workflows.length > 0) {
-      return deployArtifacts(siteResourceId, workflows[0].name, workflows[0].workflow, connectionsData, parametersData, settings, true);
+      return deployArtifacts(
+        siteResourceId,
+        workflows[0].name,
+        workflows[0].workflow,
+        connectionsData,
+        parametersData,
+        settings,
+        true,
+        notesData
+      );
     }
     return;
   }
@@ -1074,11 +1083,6 @@ export const saveWorkflowConsumption = async (
   },
   isDraftSave?: boolean
 ): Promise<any> => {
-  // Implement draft save logic for consumption if needed
-  if (isDraftSave) {
-    return;
-  }
-
   const shouldConvertToConsumption = options?.shouldConvertToConsumption ?? true;
 
   const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
@@ -1091,6 +1095,10 @@ export const saveWorkflowConsumption = async (
     },
   };
 
+  if (isDraftSave) {
+    return putConsumptionDraftWorkflow(outdatedWorkflow.id, outputWorkflow, { throwError: options?.throwError });
+  }
+
   try {
     await axios.put(`${baseUrl}${validateResourceId(outdatedWorkflow.id)}?api-version=2016-10-01`, JSON.stringify(outputWorkflow), {
       headers: {
@@ -1100,6 +1108,28 @@ export const saveWorkflowConsumption = async (
       },
     });
     clearDirtyState?.();
+  } catch (error) {
+    console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
+  }
+};
+
+const putConsumptionDraftWorkflow = async (workflowId: string, workflow: any, options?: { throwError?: boolean }): Promise<any> => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}${validateResourceId(workflowId)}/drafts/default?api-version=${consumptionApiVersion}`,
+      JSON.stringify(workflow),
+      {
+        headers: {
+          'If-Match': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+    return response;
   } catch (error) {
     console.log(error);
     if (options?.throwError) {
@@ -1279,7 +1309,8 @@ export const deployArtifacts = async (
   connectionsData?: ConnectionsData,
   parametersData?: ParametersData,
   settings?: Record<string, string>,
-  isDraft?: boolean
+  isDraft?: boolean,
+  notesData?: Record<string, Note>
 ) => {
   const data: any = {
     files: {},
@@ -1293,6 +1324,14 @@ export const deployArtifacts = async (
 
   if (parametersData) {
     data.files[isDraft ? Artifact.DraftParametersFile : Artifact.ParametersFile] = parametersData;
+  }
+
+  if (notesData) {
+    // Always write to draft notes file; additionally write to prod notes file on publish
+    data.files[`${workflowName}/${Artifact.DraftNotesFile}`] = notesData;
+    if (!isDraft) {
+      data.files[`${workflowName}/${Artifact.NotesFile}`] = notesData;
+    }
   }
 
   if (settings) {
