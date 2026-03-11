@@ -1,7 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
-vi.mock('fs-extra');
+vi.mock('fs-extra', () => ({
+  writeFile: vi.fn(() => Promise.resolve()),
+  ensureDir: vi.fn(() => Promise.resolve()),
+  readFile: vi.fn(() => Promise.resolve('')),
+  pathExists: vi.fn(() => Promise.resolve(false)),
+  existsSync: vi.fn(() => false),
+  readdir: vi.fn(),
+  stat: vi.fn(),
+  writeJson: vi.fn(() => Promise.resolve()),
+  copyFile: vi.fn(() => Promise.resolve()),
+  readJson: vi.fn(() => Promise.resolve({})),
+}));
 vi.mock('vscode');
 vi.mock('../../../../../constants', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
@@ -33,6 +44,8 @@ vi.mock('../../../../utils/debug', () => ({
 }));
 
 import { FunctionAppFilesStep } from '../functionAppFilesStep';
+import * as fs from 'fs-extra';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 describe('FunctionAppFilesStep', () => {
   beforeEach(() => {
@@ -93,6 +106,106 @@ describe('FunctionAppFilesStep', () => {
     it('should always return true', () => {
       const step = new FunctionAppFilesStep();
       expect(step.shouldPrompt()).toBe(true);
+    });
+  });
+
+  describe('Program.cs generation via prompt', () => {
+    function createMockContext(overrides: Partial<IProjectWizardContext> = {}): IProjectWizardContext {
+      return {
+        functionAppName: 'TestFunction',
+        functionAppNamespace: 'TestNamespace',
+        targetFramework: TargetFramework.Net10,
+        logicAppName: 'TestLogicApp',
+        version: '~4',
+        workspacePath: '/mock/workspace',
+        projectType: ProjectType.customCode,
+        shouldCreateLogicAppProject: true,
+        ...overrides,
+      } as IProjectWizardContext;
+    }
+
+    beforeEach(() => {
+      vi.mocked(fs.ensureDir).mockResolvedValue(undefined);
+      vi.mocked(fs.readFile).mockResolvedValue('template with <%= namespace %> placeholder');
+      vi.mocked(fs.writeFile).mockResolvedValue(undefined);
+      vi.mocked(fs.writeJson).mockResolvedValue(undefined);
+      vi.mocked(fs.copyFile).mockResolvedValue(undefined);
+      vi.mocked(fs.pathExists).mockResolvedValue(false);
+    });
+
+    it('should create Program.cs for Net10 custom code project', async () => {
+      const step = new FunctionAppFilesStep();
+      const context = createMockContext({
+        targetFramework: TargetFramework.Net10,
+        projectType: ProjectType.customCode,
+      });
+
+      await step.prompt(context);
+
+      const writeFileCalls = vi.mocked(fs.writeFile).mock.calls;
+      const programCsCall = writeFileCalls.find((call) => String(call[0]).endsWith('Program.cs'));
+      expect(programCsCall).toBeDefined();
+      expect(String(programCsCall![1])).not.toContain('<%= namespace %>');
+    });
+
+    it('should replace namespace placeholder in Program.cs', async () => {
+      vi.mocked(fs.readFile).mockResolvedValue('namespace <%= namespace %>\n{\n    class Program {}\n}');
+      const step = new FunctionAppFilesStep();
+      const context = createMockContext({
+        targetFramework: TargetFramework.Net10,
+        projectType: ProjectType.customCode,
+        functionAppNamespace: 'MyCompany.Functions',
+      });
+
+      await step.prompt(context);
+
+      const writeFileCalls = vi.mocked(fs.writeFile).mock.calls;
+      const programCsCall = writeFileCalls.find((call) => String(call[0]).endsWith('Program.cs'));
+      expect(programCsCall).toBeDefined();
+      expect(String(programCsCall![1])).toContain('namespace MyCompany.Functions');
+      expect(String(programCsCall![1])).not.toContain('<%= namespace %>');
+    });
+
+    it('should not create Program.cs for Net8 custom code project', async () => {
+      const step = new FunctionAppFilesStep();
+      const context = createMockContext({
+        targetFramework: TargetFramework.Net8,
+        projectType: ProjectType.customCode,
+      });
+
+      await step.prompt(context);
+
+      const writeFileCalls = vi.mocked(fs.writeFile).mock.calls;
+      const programCsCall = writeFileCalls.find((call) => String(call[0]).endsWith('Program.cs'));
+      expect(programCsCall).toBeUndefined();
+    });
+
+    it('should not create Program.cs for NetFx custom code project', async () => {
+      const step = new FunctionAppFilesStep();
+      const context = createMockContext({
+        targetFramework: TargetFramework.NetFx,
+        projectType: ProjectType.customCode,
+      });
+
+      await step.prompt(context);
+
+      const writeFileCalls = vi.mocked(fs.writeFile).mock.calls;
+      const programCsCall = writeFileCalls.find((call) => String(call[0]).endsWith('Program.cs'));
+      expect(programCsCall).toBeUndefined();
+    });
+
+    it('should not create Program.cs for rulesEngine project even with Net10', async () => {
+      const step = new FunctionAppFilesStep();
+      const context = createMockContext({
+        targetFramework: TargetFramework.Net10,
+        projectType: ProjectType.rulesEngine,
+      });
+
+      await step.prompt(context);
+
+      const writeFileCalls = vi.mocked(fs.writeFile).mock.calls;
+      const programCsCall = writeFileCalls.find((call) => String(call[0]).endsWith('Program.cs'));
+      expect(programCsCall).toBeUndefined();
     });
   });
 });

@@ -70,6 +70,9 @@ export class CreateFunctionAppFiles {
     // Create the .cs file inside the functions folder
     await this.createCsFile(functionFolderPath, functionAppName, namespace, projectType, targetFramework);
 
+    // Create the Program.cs file for .NET 10 isolated worker model
+    await this.createProgramFile(functionFolderPath, namespace, projectType, targetFramework);
+
     // Create the .cs files inside the functions folders for rule code projects
     if (projectType === ProjectType.rulesEngine) {
       await this.createRulesFiles(functionFolderPath);
@@ -105,6 +108,27 @@ export class CreateFunctionAppFiles {
     const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
     const csFileContent = templateContent.replace(/<%= methodName %>/g, methodName).replace(/<%= namespace %>/g, namespace);
     await fs.writeFile(csFilePath, csFileContent);
+  }
+
+  /**
+   * Creates the Program.cs file for .NET 10 isolated worker model.
+   * @param functionFolderPath - The path to the functions folder.
+   * @param namespace - The name of the namespace.
+   * @param projectType - The workspace project type.
+   * @param targetFramework - The target framework.
+   */
+  private async createProgramFile(
+    functionFolderPath: string,
+    namespace: string,
+    projectType: ProjectType,
+    targetFramework: TargetFramework
+  ): Promise<void> {
+    if (targetFramework === TargetFramework.Net10 && projectType !== ProjectType.rulesEngine) {
+      const templatePath = path.join(__dirname, assetsFolderName, 'FunctionProjectTemplate', 'ProgramFileNet10');
+      const templateContent = await fs.readFile(templatePath, 'utf-8');
+      const content = templateContent.replace(/<%= namespace %>/g, namespace);
+      await fs.writeFile(path.join(functionFolderPath, 'Program.cs'), content);
+    }
   }
 
   /**
