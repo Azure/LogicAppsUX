@@ -21,7 +21,7 @@ import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/commo
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 
-export default class LogicAppsSeverLanguage {
+export default class LogicAppsLanguageServer {
   protected lspServerPath: string;
   protected sdkNupkgPath: string;
   protected apiVersion = workflowAppApiVersion;
@@ -242,7 +242,7 @@ export default class LogicAppsSeverLanguage {
 
 export const startLanguageServerProtocol = async () => {
   await callWithTelemetryAndErrorHandling(onStartLanguageServerProtocol, async (context: IActionContext) => {
-    const languageServer = new LogicAppsSeverLanguage(context);
+    const languageServer = new LogicAppsLanguageServer(context);
     languageServer.start();
   });
 };

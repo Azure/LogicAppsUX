@@ -110,11 +110,7 @@ export async function activate(context: vscode.ExtensionContext) {
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
 
-    // Initialize Language Server Protocol
     startLanguageServerProtocol();
-
-    // Removed for unit test codefull experience standby
-    //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider

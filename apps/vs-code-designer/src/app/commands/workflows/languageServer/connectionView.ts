@@ -11,6 +11,7 @@ import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-exte
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import {
+  addConnectionData,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
@@ -227,11 +228,15 @@ export default class OpenConnectionView extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.insert_connection: {
-        await callWithTelemetryAndErrorHandling('InsertConnectionView', async () => {
-          const { connection, connectionReferences } = message;
+        await callWithTelemetryAndErrorHandling('InsertConnectionView', async (activateContext: IActionContext) => {
+          const { connection, connectionReferences, connectionAndSetting } = message;
+
+          // For local connections, the React side captures the connection data from the writeConnection callback and includes it here.
+          if (connectionAndSetting) {
+            await addConnectionData(activateContext, this.workflowFilePath, connectionAndSetting);
+          }
 
           await this.saveConnection(
-            this.methodName,
             connection,
             {
               documentUri: this.workflowFilePath,
@@ -254,20 +259,12 @@ export default class OpenConnectionView extends OpenDesignerBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
         break;
       }
-      case ExtensionCommand.addConnection: {
-        // No-op: saveConnectionReferences in saveConnection handles managed API
-        // connection writes. addConnectionData uses a React-generated key from
-        // API Hub uniqueness checks that doesn't match the key saveConnectionReferences
-        // generates, causing duplicate entries.
-        break;
-      }
       default:
         break;
     }
   }
 
   private async saveConnection(
-    functionName: string,
     connection: Connection,
     insertionContext: { documentUri: string; range: Range },
     connectionReferences: any,
@@ -296,8 +293,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
     // This ensures the .cs file uses the same key that saveConnectionReferences generated
     const connectionKey = await this.getConnectionKeyFromConnectionsJson(projectPath, connection.name);
 
-    // Insert the connection key into the .cs file
-    insertFunctionCallAtLocation(functionName, connection, insertionContext, connectionKey);
+    const connectionId = connectionKey || connection.name;
+    updateConnectionIdInSource(connectionId, insertionContext);
 
     if (parametersFromDefinition) {
       delete parametersFromDefinition.$connections;
@@ -405,33 +402,28 @@ export default class OpenConnectionView extends OpenDesignerBase {
   }
 }
 
-// Helper function to update function parameters at specific location
-function insertFunctionCallAtLocation(
-  _functionName: string,
-  connection: Connection,
-  insertionContext: { documentUri: string; range: Range },
-  connectionKey?: string
-) {
-  // Find the document by URI
+/**
+ * Updates the connection ID in the source file at the specified range with the new connection ID.
+ * @param {string} connectionId - The new connection ID to insert into the source file.
+ * @param {{ documentUri: string; range: Range }} insertionContext - The context containing the document URI and the range where the connection ID should be inserted.
+ */
+function updateConnectionIdInSource(connectionId: string, insertionContext: { documentUri: string; range: Range }) {
   const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.fsPath.toString() === insertionContext.documentUri);
 
   if (!targetDocument) {
     vscode.window.showErrorMessage('Target document not found. Please ensure the file is still open.');
     return;
   }
-  // Check if the document is already visible in an active editor
+
   const visibleEditors = vscode.window.visibleTextEditors;
+  const targetEditor = visibleEditors.find((editor) => editor.document.uri.fsPath === targetDocument.uri.fsPath);
 
-  // Check if the target document is already open in any visible editor
-  const existingEditor = visibleEditors.find((editor) => editor.document.uri.fsPath === targetDocument.uri.fsPath);
-
-  if (existingEditor) {
-    // Document is already open, just focus on it
-    vscode.window.showTextDocument(existingEditor.document, existingEditor.viewColumn, false).then(
+  if (targetEditor) {
+    vscode.window.showTextDocument(targetEditor.document, targetEditor.viewColumn, false).then(
       (editor) => {
-        performTextReplacement(editor, connection, insertionContext, connectionKey);
-        // Save the document after successful insertion
-        existingEditor.document.save().then(
+        performTextReplacement(editor, connectionId, insertionContext);
+
+        targetEditor.document.save().then(
           () => {},
           (saveError: any) => {
             const errorMessage =
@@ -445,15 +437,13 @@ function insertFunctionCallAtLocation(
         vscode.window.showErrorMessage(`Failed to open target document: ${errorMessage}`);
       }
     );
-    return;
   }
 }
 
 const performTextReplacement = (
   editor: vscode.TextEditor,
-  connection: Connection,
-  insertionContext: { documentUri: string; range: Range },
-  connectionKey?: string
+  connectionId: string,
+  insertionContext: { documentUri: string; range: Range }
 ) => {
   if (!insertionContext.range) {
     vscode.window.showErrorMessage('No range provided for connection ID insertion');
@@ -466,7 +456,6 @@ const performTextReplacement = (
     return;
   }
 
-  const connectionIdToInsert = connectionKey || connection.name;
   const startLine = range.Start.Line;
   const startChar = range.Start.Character;
   const endLine = range.End.Line;
@@ -485,7 +474,7 @@ const performTextReplacement = (
   if (existingText.startsWith('"') && existingText.endsWith('"')) {
     // Case 1: Range covers just the string parameter (e.g., "azureblob")
     editRange = rangeToReplace;
-    editText = `"${connectionIdToInsert}"`;
+    editText = `"${connectionId}"`;
   } else {
     // Range covers a wider method call — find the string param within it
     const stringMatch = existingText.match(/"([^"]*)"/);
@@ -499,7 +488,7 @@ const performTextReplacement = (
         new vscode.Position(startLine, startChar + matchStart),
         new vscode.Position(startLine, startChar + matchEnd)
       );
-      editText = `"${connectionIdToInsert}"`;
+      editText = `"${connectionId}"`;
     } else {
       // Case 3: No string parameter — find empty parens and insert connection name
       // Look for the first "(" in the text and insert after it
@@ -507,7 +496,7 @@ const performTextReplacement = (
       if (parenIndex !== -1) {
         const insertPos = new vscode.Position(startLine, startChar + parenIndex + 1);
         editRange = new vscode.Range(insertPos, insertPos);
-        editText = `"${connectionIdToInsert}"`;
+        editText = `"${connectionId}"`;
       } else {
         // Fallback: search the full line near the range for the connector call
         const fullLine = editor.document.lineAt(startLine).text;
@@ -517,14 +506,14 @@ const performTextReplacement = (
             new vscode.Position(startLine, lineStringMatch.index),
             new vscode.Position(startLine, lineStringMatch.index + lineStringMatch[0].length)
           );
-          editText = `"${connectionIdToInsert}"`;
+          editText = `"${connectionId}"`;
         } else {
           // Case 5: User emptied the string and quotes — find empty parens on the line
           const emptyParenMatch = fullLine.match(/\(\)/);
           if (emptyParenMatch && emptyParenMatch.index !== undefined) {
             const insertPos = new vscode.Position(startLine, emptyParenMatch.index + 1);
             editRange = new vscode.Range(insertPos, insertPos);
-            editText = `"${connectionIdToInsert}"`;
+            editText = `"${connectionId}"`;
           } else {
             vscode.window.showErrorMessage('Could not find connection parameter to replace in the source file');
             return;

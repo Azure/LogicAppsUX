@@ -53,7 +53,7 @@ namespace <%= logicAppNamespace %>
                             Content = "You are an agent to get the weather. Greet the user warmly and provide the current weather conditions for their location, including temperature, weather type (e.g., sunny, cloudy, rainy), humidity, and wind speed. If a forecast is available, summarize the expected weather for the next 24 hours. Make the response clear and conversational, and suggest whether it’s a good day for outdoor activities based on the weather.\r\n\r\n"
                         }
                     },
-                ConnectionName = "agent-2",
+                ConnectionName = "agent",
             };
             #endregion
 
