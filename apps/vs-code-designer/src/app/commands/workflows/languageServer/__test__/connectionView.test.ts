@@ -327,3 +327,33 @@ describe('resolveConnectionEdit', () => {
     });
   });
 });
+
+describe('resolveCurrentConnectionId', () => {
+  const resolveCurrentConnectionId = (mockModule as any).resolveCurrentConnectionId;
+
+  it('returns mapped connection id leaf when current id is a connections.json key', () => {
+    const connectionsData = JSON.stringify({
+      managedApiConnections: {
+        'msnweather-1': {
+          connection: {
+            id: '/subscriptions/sub-123/resourceGroups/rg/providers/Microsoft.Web/connections/msnweather-10',
+          },
+        },
+      },
+    });
+
+    const result = resolveCurrentConnectionId(connectionsData, 'msnweather-1');
+    expect(result).toBe('msnweather-10');
+  });
+
+  it('returns original id when key is not found', () => {
+    const connectionsData = JSON.stringify({ managedApiConnections: {} });
+    const result = resolveCurrentConnectionId(connectionsData, 'msnweather-1');
+    expect(result).toBe('msnweather-1');
+  });
+
+  it('returns original id when json is invalid', () => {
+    const result = resolveCurrentConnectionId('not-json', 'msnweather-1');
+    expect(result).toBe('msnweather-1');
+  });
+});

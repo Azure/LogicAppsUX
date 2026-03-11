@@ -198,6 +198,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
   private async _handleWebviewMsg(message: any) {
     switch (message.command) {
       case ExtensionCommand.initialize: {
+        const resolvedCurrentConnectionId = resolveCurrentConnectionId(this.panelMetadata?.connectionsData, this.currentConnectionId);
+
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
@@ -214,7 +216,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
             connector: {
               name: this.connectorName,
               type: this.connectorType,
-              currentConnectionId: this.currentConnectionId,
+              currentConnectionId: resolvedCurrentConnectionId,
             },
           },
         });
@@ -589,6 +591,33 @@ export function resolveConnectionEdit(
   }
 
   return null;
+}
+
+/**
+ * Resolves a connection reference key (for example "msnweather-1")
+ * to the actual connection id leaf (for example "msnweather-10")
+ * by looking up managedApiConnections in connections.json.
+ */
+export function resolveCurrentConnectionId(connectionsData: string | undefined, currentConnectionId: string): string {
+  if (!connectionsData || !currentConnectionId) {
+    return currentConnectionId;
+  }
+
+  try {
+    const parsedConnections = JSON.parse(connectionsData);
+    const managedApiConnection = parsedConnections?.managedApiConnections?.[currentConnectionId];
+    const connectionId = managedApiConnection?.connection?.id;
+
+    if (typeof connectionId === 'string' && connectionId.length > 0) {
+      const idParts = connectionId.split('/');
+      const idLeaf = idParts[idParts.length - 1];
+      return idLeaf || currentConnectionId;
+    }
+  } catch {
+    // Fall back to original value when connections data isn't valid JSON.
+  }
+
+  return currentConnectionId;
 }
 
 export async function openLanguageServerConnectionView(
