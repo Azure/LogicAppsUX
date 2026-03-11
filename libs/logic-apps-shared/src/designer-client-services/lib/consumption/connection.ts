@@ -186,7 +186,9 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       };
 
       LoggerService().endTrace(logId, { status: Status.Success });
-      return connection as unknown as Connection;
+      const result = connection as unknown as Connection;
+      this._connections[result.id] = result;
+      return result;
     } catch (error) {
       const errorMessage = `Failed to create built-in MCP connection: ${this.tryParseErrorMessage(error)}`;
       LoggerService().log({

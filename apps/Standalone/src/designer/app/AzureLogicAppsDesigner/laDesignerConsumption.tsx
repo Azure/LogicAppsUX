@@ -63,7 +63,6 @@ const httpClient = new HttpClient();
 const DesignerEditorConsumption = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -310,6 +309,7 @@ const DesignerEditorConsumption = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
           },
           showPerformanceDebug,
+          mcpClientToolEnabled: true,
         }}
       >
         {definition ? (

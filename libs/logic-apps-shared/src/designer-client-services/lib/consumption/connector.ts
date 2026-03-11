@@ -2,6 +2,7 @@ import type { OpenAPIV2 } from '../../../utils/src';
 import { ArgumentException, UnsupportedException, optional, equals, getResourceName } from '../../../utils/src';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
+import { ConnectionService } from '../connection';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
@@ -52,10 +53,12 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any,
-    isManagedIdentityConnection?: boolean
+    isManagedIdentityConnection?: boolean,
+    operationPath?: string
   ): Promise<ListDynamicValue[]> {
-    const { apiVersion, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    const { apiVersion, httpClient, baseUrl } = this.options;
+    const { operationId: dynamicOperation, apiType } = dynamicState;
+    const isMcpConnection = apiType === 'mcp' && dynamicOperation === 'listMcpTools';
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
 
@@ -67,6 +70,55 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         operationId,
         parameters: invokeParameters,
       });
+    }
+
+    if (isMcpConnection) {
+      const { workflowReferenceId } = this.options;
+      const uri = `${baseUrl}${workflowReferenceId}/listMcpTools`;
+
+      let content: any;
+      if (connectionId) {
+        const connection = await ConnectionService().getConnection(connectionId);
+        const connectionProperties = (connection?.properties as any)?.parameterValues ?? {};
+        const isBuiltInConnection = connectionId?.includes('connectionProviders/mcpclient');
+
+        if (isBuiltInConnection) {
+          // Native/built-in MCP connection — backend expects AgentMcpConnection shape
+          const mcpServerUrl = connectionProperties['mcpServerUrl'] ?? connectionProperties['serverUrl'];
+          const authentication = this._buildMcpAuthentication(connectionProperties);
+          content = {
+            connection: {
+              displayName: (connection?.properties as any)?.displayName ?? '',
+              mcpServerUrl,
+              ...(authentication ? { authentication } : {}),
+            },
+            mcpServerPath: operationPath,
+          };
+        } else {
+          // Managed API connection — backend expects ConnectionReference shape
+          content = {
+            managedConnection: {
+              connection: { id: connectionId },
+            },
+            mcpServerPath: operationPath,
+          };
+        }
+      } else {
+        content = { mcpServerPath: operationPath };
+      }
+
+      const mcpToolsResponse = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content,
+      });
+      const tools = this._getResponseFromDynamicApi(mcpToolsResponse, uri);
+
+      return (tools ?? []).map((tool: any) => ({
+        value: tool.name,
+        displayName: tool.name,
+        description: tool.description,
+      }));
     }
 
     const uri = `${connectionId}/dynamicList`;
@@ -173,5 +225,33 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     }
 
     return undefined;
+  }
+
+  private _buildMcpAuthentication(connectionProperties: Record<string, any>): Record<string, any> | undefined {
+    const authType = connectionProperties['authenticationType'];
+    if (!authType || authType === 'None') {
+      return undefined;
+    }
+
+    const authentication: Record<string, any> = { type: authType };
+    if (authType === 'ApiKey') {
+      authentication['value'] = connectionProperties['key'];
+      authentication['name'] = connectionProperties['keyHeaderName'];
+      authentication['in'] = 'header';
+    } else if (authType === 'Basic') {
+      authentication['username'] = connectionProperties['username'];
+      authentication['password'] = connectionProperties['password'];
+    } else if (authType === 'ActiveDirectoryOAuth') {
+      authentication['tenant'] = connectionProperties['tenant'];
+      authentication['clientId'] = connectionProperties['clientId'];
+      authentication['secret'] = connectionProperties['secret'];
+      authentication['authority'] = connectionProperties['authority'];
+      authentication['audience'] = connectionProperties['audience'];
+    } else if (authType === 'ClientCertificate') {
+      authentication['pfx'] = connectionProperties['pfx'];
+      authentication['password'] = connectionProperties['password'];
+    }
+
+    return authentication;
   }
 }
