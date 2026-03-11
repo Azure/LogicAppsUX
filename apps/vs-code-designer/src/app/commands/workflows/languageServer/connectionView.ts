@@ -294,8 +294,8 @@ export default class OpenConnectionView extends OpenDesignerBase {
     // This ensures the .cs file uses the same key that saveConnectionReferences generated
     const connectionKey = await this.getConnectionKeyFromConnectionsJson(projectPath, connection.name);
 
-    // Insert the connection key into the .cs file
-    insertFunctionCallAtLocation(functionName, connection, insertionContext, connectionKey);
+    const connectionId = connectionKey || connection.name;
+    updateConnectionIdInSource(connectionId, insertionContext);
 
     if (parametersFromDefinition) {
       delete parametersFromDefinition.$connections;
@@ -403,33 +403,29 @@ export default class OpenConnectionView extends OpenDesignerBase {
   }
 }
 
-// Helper function to update function parameters at specific location
-function insertFunctionCallAtLocation(
-  _functionName: string,
-  connection: Connection,
-  insertionContext: { documentUri: string; range: Range },
-  connectionKey?: string
-) {
-  // Find the document by URI
+/**
+ * Updates the connection ID in the source file at the specified range with the new connection ID.
+ * @param {string} connectionId - The new connection ID to insert into the source file.
+ * @param {{ documentUri: string; range: Range }} insertionContext - The context containing the document URI and the range where the connection ID should be inserted.
+ */
+function updateConnectionIdInSource(connectionId: string, insertionContext: { documentUri: string; range: Range }) {
   const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.fsPath.toString() === insertionContext.documentUri);
 
   if (!targetDocument) {
     vscode.window.showErrorMessage('Target document not found. Please ensure the file is still open.');
     return;
   }
-  // Check if the document is already visible in an active editor
+
   const visibleEditors = vscode.window.visibleTextEditors;
+  const targetEditor = visibleEditors.find((editor) => editor.document.uri.fsPath === targetDocument.uri.fsPath);
 
-  // Check if the target document is already open in any visible editor
-  const existingEditor = visibleEditors.find((editor) => editor.document.uri.fsPath === targetDocument.uri.fsPath);
-
-  if (existingEditor) {
-    // Document is already open, just focus on it
-    vscode.window.showTextDocument(existingEditor.document, existingEditor.viewColumn, false).then(
+  if (targetEditor) {
+    vscode.window.showTextDocument(targetEditor.document, targetEditor.viewColumn, false).then(
       (editor) => {
-        performTextReplacement(editor, connection, insertionContext, connectionKey);
-        // Save the document after successful insertion
-        existingEditor.document.save().then(
+        const newText = `"${connectionId}"`;
+        replaceText(editor, newText, insertionContext);
+
+        targetEditor.document.save().then(
           () => {},
           (saveError: any) => {
             const errorMessage =
@@ -443,61 +439,44 @@ function insertFunctionCallAtLocation(
         vscode.window.showErrorMessage(`Failed to open target document: ${errorMessage}`);
       }
     );
-    return;
   }
 }
 
-const performTextReplacement = (
-  editor: vscode.TextEditor,
-  connection: Connection,
-  insertionContext: { documentUri: string; range: Range },
-  connectionKey?: string
-) => {
-  if (insertionContext.range) {
-    // Normalize the range format - handle both Start/Line and start/line formats
-    const range = insertionContext.range;
-    let startLine: number;
-    let startChar: number;
-    let endLine: number;
-    let endChar: number;
-
-    if (range.Start && range.End) {
-      // Handle { Start: { Line: 55, Character: 85 }, End: { Line: 55, Character: 99 } } format
-      startLine = range.Start.Line;
-      startChar = range.Start.Character;
-      endLine = range.End.Line;
-      endChar = range.End.Character;
-    } else {
-      vscode.window.showErrorMessage('Invalid range format provided');
-      return;
-    }
-
-    // Use the connection key from connections.json if available, otherwise fall back to connection.name
-    const connectionIdToInsert = connectionKey || connection.name;
-
-    // Use the normalized range to replace the text with the connection key
-    const startPos = new vscode.Position(startLine, startChar);
-    const endPos = new vscode.Position(endLine, endChar);
-    const rangeToReplace = new vscode.Range(startPos, endPos);
-
-    editor
-      .edit((editBuilder) => {
-        editBuilder.replace(rangeToReplace, `"${connectionIdToInsert}"`);
-      })
-      .then((success) => {
-        if (success) {
-          // Position cursor after the inserted connection ID
-          const newCursorPos = new vscode.Position(startLine, startChar + connectionIdToInsert.length);
-          // const newCursorPos = new vscode.Position(startLine, startChar + connection.name.length);
-          editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
-        } else {
-          vscode.window.showErrorMessage('Failed to insert connection ID');
-        }
-      });
-  } else {
-    vscode.window.showErrorMessage('No range provided for connection ID insertion');
+/**
+ * Replaces text in the editor at the specified range with the new text string.
+ * @param {vscode.TextEditor} editor - The text editor instance where the replacement should occur.
+ * @param {string} newText - The new text to insert at the specified range.
+ * @param {{ documentUri: string; range: Range }} insertionContext - The context containing the document URI and the range where the text should be replaced.
+ */
+function replaceText(editor: vscode.TextEditor, newText: string, insertionContext: { documentUri: string; range: Range }) {
+  const range = insertionContext.range;
+  if (!range || !range.Start || !range.End) {
+    vscode.window.showErrorMessage('Invalid range provided for connection ID insertion.');
+    return;
   }
-};
+
+  const startLine = range.Start.Line;
+  const startChar = range.Start.Character;
+  const endLine = range.End.Line;
+  const endChar = range.End.Character;
+
+  const startPos = new vscode.Position(startLine, startChar);
+  const endPos = new vscode.Position(endLine, endChar);
+  const rangeToReplace = new vscode.Range(startPos, endPos);
+
+  editor
+    .edit((editBuilder) => {
+      editBuilder.replace(rangeToReplace, newText);
+    })
+    .then((success) => {
+      if (success) {
+        const newCursorPos = new vscode.Position(startLine, startChar + newText.length);
+        editor.selection = new vscode.Selection(newCursorPos, newCursorPos);
+      } else {
+        vscode.window.showErrorMessage('Failed to insert connection ID');
+      }
+    });
+}
 
 export async function openLanguageServerConnectionView(
   context: IActionContext,
