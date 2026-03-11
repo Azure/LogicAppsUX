@@ -8,7 +8,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 export const ReviewCreateStep: React.FC = () => {
   const intlText = useIntlMessages(workspaceMessages);
@@ -56,9 +56,9 @@ export const ReviewCreateStep: React.FC = () => {
 
   const getDotNetFrameworkDisplay = (framework: string) => {
     const frameworkDisplayMap: Record<string, string> = {
-      net472: intlText.DOTNET_FRAMEWORK_OPTION,
-      net8: intlText.DOTNET_8,
-      'net10.0': intlText.DOTNET_10,
+      [TargetFramework.NetFx]: intlText.DOTNET_FRAMEWORK_OPTION,
+      [TargetFramework.Net8]: intlText.DOTNET_8,
+      [TargetFramework.Net10]: intlText.DOTNET_10,
     };
 
     return frameworkDisplayMap[framework] ?? framework;

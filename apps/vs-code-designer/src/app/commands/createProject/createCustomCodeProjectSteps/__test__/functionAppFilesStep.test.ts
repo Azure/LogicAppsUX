@@ -44,6 +44,7 @@ vi.mock('../../../../utils/debug', () => ({
 }));
 
 import { FunctionAppFilesStep } from '../functionAppFilesStep';
+import { csTemplateFileNames, csprojTemplateFileNames } from '../../../../utils/functionProjectFiles';
 import * as fs from 'fs-extra';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
@@ -53,52 +54,36 @@ describe('FunctionAppFilesStep', () => {
   });
 
   describe('template name mappings', () => {
-    it('should map Net10 to FunctionsFileNet10 in csTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csTemplateFileName;
-      expect(mapping[TargetFramework.Net10]).toBe('FunctionsFileNet10');
+    it('should map Net10 to FunctionsFileNet10 in csTemplateFileNames', () => {
+      expect(csTemplateFileNames[TargetFramework.Net10]).toBe('FunctionsFileNet10');
     });
 
-    it('should preserve Net8 mapping in csTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csTemplateFileName;
-      expect(mapping[TargetFramework.Net8]).toBe('FunctionsFileNet8');
+    it('should preserve Net8 mapping in csTemplateFileNames', () => {
+      expect(csTemplateFileNames[TargetFramework.Net8]).toBe('FunctionsFileNet8');
     });
 
-    it('should preserve NetFx mapping in csTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csTemplateFileName;
-      expect(mapping[TargetFramework.NetFx]).toBe('FunctionsFileNetFx');
+    it('should preserve NetFx mapping in csTemplateFileNames', () => {
+      expect(csTemplateFileNames[TargetFramework.NetFx]).toBe('FunctionsFileNetFx');
     });
 
-    it('should preserve rulesEngine mapping in csTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csTemplateFileName;
-      expect(mapping[ProjectType.rulesEngine]).toBe('RulesFunctionsFile');
+    it('should preserve rulesEngine mapping in csTemplateFileNames', () => {
+      expect(csTemplateFileNames[ProjectType.rulesEngine]).toBe('RulesFunctionsFile');
     });
 
-    it('should map Net10 to FunctionsProjNet10 in csprojTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csprojTemplateFileName;
-      expect(mapping[TargetFramework.Net10]).toBe('FunctionsProjNet10');
+    it('should map Net10 to FunctionsProjNet10 in csprojTemplateFileNames', () => {
+      expect(csprojTemplateFileNames[TargetFramework.Net10]).toBe('FunctionsProjNet10');
     });
 
-    it('should preserve Net8 mapping in csprojTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csprojTemplateFileName;
-      expect(mapping[TargetFramework.Net8]).toBe('FunctionsProjNet8');
+    it('should preserve Net8 mapping in csprojTemplateFileNames', () => {
+      expect(csprojTemplateFileNames[TargetFramework.Net8]).toBe('FunctionsProjNet8');
     });
 
-    it('should preserve NetFx mapping in csprojTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csprojTemplateFileName;
-      expect(mapping[TargetFramework.NetFx]).toBe('FunctionsProjNetFx');
+    it('should preserve NetFx mapping in csprojTemplateFileNames', () => {
+      expect(csprojTemplateFileNames[TargetFramework.NetFx]).toBe('FunctionsProjNetFx');
     });
 
-    it('should preserve rulesEngine mapping in csprojTemplateFileName', () => {
-      const step = new FunctionAppFilesStep();
-      const mapping = (step as any).csprojTemplateFileName;
-      expect(mapping[ProjectType.rulesEngine]).toBe('RulesFunctionsProj');
+    it('should preserve rulesEngine mapping in csprojTemplateFileNames', () => {
+      expect(csprojTemplateFileNames[ProjectType.rulesEngine]).toBe('RulesFunctionsProj');
     });
   });
 

@@ -21,7 +21,9 @@ import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { localize } from '../../../../localize';
 import * as vscode from 'vscode';
-import { getCustomCodeRuntime, usesPublishFolderProperty } from '../../../utils/debug';
+import { getCustomCodeRuntime } from '../../../utils/debug';
+import { createCsFile, createProgramFile, createRulesFiles, createCsprojFile } from '../../../utils/functionProjectFiles';
+
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
  */
@@ -29,154 +31,26 @@ export class CreateFunctionAppFiles {
   // Hide the step count in the wizard UI
   public hideStepCount = true;
 
-  private readonly csTemplateFileName = {
-    [TargetFramework.NetFx]: 'FunctionsFileNetFx',
-    [TargetFramework.Net8]: 'FunctionsFileNet8',
-    [TargetFramework.Net10]: 'FunctionsFileNet10',
-    [ProjectType.rulesEngine]: 'RulesFunctionsFile',
-  };
-
-  private readonly csprojTemplateFileName = {
-    [TargetFramework.NetFx]: 'FunctionsProjNetFx',
-    [TargetFramework.Net8]: 'FunctionsProjNet8',
-    [TargetFramework.Net10]: 'FunctionsProjNet10',
-    [ProjectType.rulesEngine]: 'RulesFunctionsProj',
-  };
-
-  private readonly templateFolderName = {
-    [ProjectType.customCode]: 'FunctionProjectTemplate',
-    [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
-  };
-
   /**
-   * Prompts the user to set up an Azure Function project.
+   * Sets up an Azure Function project by creating all necessary files.
    * @param context The project wizard context.
    */
   public async setup(context: IProjectWizardContext): Promise<void> {
-    // Set the functionAppName and namespaceName properties from the context wizard
-    const functionAppName = context.functionAppName;
-    const namespace = context.functionAppNamespace;
-    const targetFramework = context.targetFramework;
+    const { functionAppName, functionAppNamespace: namespace, targetFramework, projectType } = context;
     const logicAppName = context.logicAppName || 'LogicApp';
-    // const funcVersion = context.version ?? (await tryGetLocalFuncVersion());
-
-    // Define the functions folder path using the context property of the wizard
     const functionFolderPath = path.join(context.workspacePath, context.functionFolderName);
+    const assetsPath = path.join(__dirname, assetsFolderName);
+
     await fs.ensureDir(functionFolderPath);
+    await createCsFile(assetsPath, functionFolderPath, functionAppName, namespace, projectType, targetFramework);
+    await createProgramFile(assetsPath, functionFolderPath, namespace, projectType, targetFramework);
 
-    // Define the type of project in the workspace
-    const projectType = context.projectType;
-
-    // Create the .cs file inside the functions folder
-    await this.createCsFile(functionFolderPath, functionAppName, namespace, projectType, targetFramework);
-
-    // Create the Program.cs file for .NET 10 isolated worker model
-    await this.createProgramFile(functionFolderPath, namespace, projectType, targetFramework);
-
-    // Create the .cs files inside the functions folders for rule code projects
     if (projectType === ProjectType.rulesEngine) {
-      await this.createRulesFiles(functionFolderPath);
+      await createRulesFiles(assetsPath, functionFolderPath);
     }
 
-    // Create the .csproj file inside the functions folder
-    await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
-
-    // Generate the Visual Studio Code configuration files in the specified folder.
+    await createCsprojFile(assetsPath, functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
     await this.createVscodeConfigFiles(functionFolderPath, targetFramework);
-  }
-
-  /**
-   * Creates the .cs file inside the functions folder.
-   * @param functionFolderPath - The path to the functions folder.
-   * @param methodName - The name of the method.
-   * @param namespace - The name of the namespace.
-   * @param projectType - The workspace projet type.
-   * @param targetFramework - The target framework.
-   */
-  private async createCsFile(
-    functionFolderPath: string,
-    methodName: string,
-    namespace: string,
-    projectType: ProjectType,
-    targetFramework: TargetFramework
-  ): Promise<void> {
-    const templateFile =
-      projectType === ProjectType.rulesEngine ? this.csTemplateFileName[ProjectType.rulesEngine] : this.csTemplateFileName[targetFramework];
-    const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
-    const templateContent = await fs.readFile(templatePath, 'utf-8');
-
-    const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
-    const csFileContent = templateContent.replace(/<%= methodName %>/g, methodName).replace(/<%= namespace %>/g, namespace);
-    await fs.writeFile(csFilePath, csFileContent);
-  }
-
-  /**
-   * Creates the Program.cs file for .NET 10 isolated worker model.
-   * @param functionFolderPath - The path to the functions folder.
-   * @param namespace - The name of the namespace.
-   * @param projectType - The workspace project type.
-   * @param targetFramework - The target framework.
-   */
-  private async createProgramFile(
-    functionFolderPath: string,
-    namespace: string,
-    projectType: ProjectType,
-    targetFramework: TargetFramework
-  ): Promise<void> {
-    if (targetFramework === TargetFramework.Net10 && projectType !== ProjectType.rulesEngine) {
-      const templatePath = path.join(__dirname, assetsFolderName, 'FunctionProjectTemplate', 'ProgramFileNet10');
-      const templateContent = await fs.readFile(templatePath, 'utf-8');
-      const content = templateContent.replace(/<%= namespace %>/g, namespace);
-      await fs.writeFile(path.join(functionFolderPath, 'Program.cs'), content);
-    }
-  }
-
-  /**
-   * Creates the rules files for the project.
-   * @param {string} functionFolderPath - The path of the function folder.
-   * @returns A promise that resolves when the rules files are created.
-   */
-  private async createRulesFiles(functionFolderPath: string): Promise<void> {
-    const csTemplatePath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'ContosoPurchase');
-    const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
-    await fs.copyFile(csTemplatePath, csRuleSetPath);
-  }
-
-  /**
-   * Creates a .csproj file for a specific Azure Function.
-   * @param functionFolderPath - The path to the folder where the .csproj file will be created.
-   * @param methodName - The name of the Azure Function.
-   * @param projectType - The workspace projet type.
-   * @param targetFramework - The target framework.
-   */
-  private async createCsprojFile(
-    functionFolderPath: string,
-    methodName: string,
-    logicAppName: string,
-    projectType: ProjectType,
-    targetFramework: TargetFramework
-  ): Promise<void> {
-    const templateFile =
-      projectType === ProjectType.rulesEngine
-        ? this.csprojTemplateFileName[ProjectType.rulesEngine]
-        : this.csprojTemplateFileName[targetFramework];
-    const templatePath = path.join(__dirname, assetsFolderName, this.templateFolderName[projectType], templateFile);
-    const templateContent = await fs.readFile(templatePath, 'utf-8');
-
-    const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
-    let csprojFileContent: string;
-    if (usesPublishFolderProperty(projectType, targetFramework)) {
-      csprojFileContent = templateContent.replace(
-        /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
-        `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
-      );
-    } else {
-      csprojFileContent = templateContent.replace(
-        /<LogicAppFolder>LogicApp<\/LogicAppFolder>/g,
-        `<LogicAppFolder>${logicAppName}</LogicAppFolder>`
-      );
-    }
-    await fs.writeFile(csprojFilePath, csprojFileContent);
   }
 
   /**

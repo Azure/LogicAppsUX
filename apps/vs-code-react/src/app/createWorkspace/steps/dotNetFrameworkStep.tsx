@@ -12,7 +12,7 @@ import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionF
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
-import { Platform, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 type TargetFrameworkOption = {
   value: string;
@@ -41,19 +41,19 @@ export const DotNetFrameworkStep: React.FC = () => {
     ...(platform === Platform.windows
       ? [
           {
-            value: 'net472',
+            value: TargetFramework.NetFx,
             label: intlText.DOTNET_FRAMEWORK_OPTION,
             description: intlText.DOTNET_FRAMEWORK_DESCRIPTION,
           },
         ]
       : []),
     {
-      value: 'net8',
+      value: TargetFramework.Net8,
       label: intlText.DOTNET_8,
       description: intlText.DOTNET_8_DESCRIPTION,
     },
     {
-      value: 'net10.0',
+      value: TargetFramework.Net10,
       label: intlText.DOTNET_10,
       description: intlText.DOTNET_10_DESCRIPTION,
     },
