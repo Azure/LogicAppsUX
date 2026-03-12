@@ -8,7 +8,7 @@ import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 export const ReviewCreateStep: React.FC = () => {
   const intlText = useIntlMessages(workspaceMessages);
@@ -48,44 +48,20 @@ export const ReviewCreateStep: React.FC = () => {
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
-
-  const getWorkspaceFilePath = () => {
-    if (!workspaceProjectPath.fsPath || !workspaceName) {
-      return '';
-    }
-    return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${workspaceName}.code-workspace`;
-  };
-
-  const getWorkspaceFolderPath = () => {
-    if (!workspaceProjectPath.fsPath || !workspaceName) {
-      return '';
-    }
-    return `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-  };
-
-  const getLogicAppLocationPath = () => {
-    if (!workspaceProjectPath.fsPath || !workspaceName || !logicAppName) {
-      return '';
-    }
-    return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${logicAppName}`;
-  };
-
-  const getFunctionLocationPath = () => {
-    if (!workspaceProjectPath.fsPath || !workspaceName || !functionFolderName) {
-      return '';
-    }
-    return `${workspaceProjectPath.fsPath}${separator}${workspaceName}${separator}${functionFolderName}`;
-  };
+  const workspaceBasePath =
+    workspaceProjectPath.fsPath && workspaceName ? `${workspaceProjectPath.fsPath}${separator}${workspaceName}` : '';
+  const workspaceFilePath = workspaceBasePath ? `${workspaceBasePath}${separator}${workspaceName}.code-workspace` : '';
+  const logicAppLocationPath = workspaceBasePath && logicAppName ? `${workspaceBasePath}${separator}${logicAppName}` : '';
+  const functionLocationPath = workspaceBasePath && functionFolderName ? `${workspaceBasePath}${separator}${functionFolderName}` : '';
 
   const getDotNetFrameworkDisplay = (framework: string) => {
-    switch (framework) {
-      case 'net472':
-        return '.NET Framework';
-      case 'net8':
-        return '.NET 8';
-      default:
-        return framework;
-    }
+    const frameworkDisplayMap: Record<string, string> = {
+      [TargetFramework.NetFx]: intlText.DOTNET_FRAMEWORK_OPTION,
+      [TargetFramework.Net8]: intlText.DOTNET_8,
+      [TargetFramework.Net10]: intlText.DOTNET_10,
+    };
+
+    return frameworkDisplayMap[framework] ?? framework;
   };
 
   const getLogicAppTypeDisplay = (type: string) => {
@@ -145,8 +121,8 @@ export const ReviewCreateStep: React.FC = () => {
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>{intlText.PROJECT_SETUP}</div>
             {renderSettingRow(intlText.WORKSPACE_NAME_REVIEW, workspaceName)}
-            {renderSettingRow(intlText.WORKSPACE_FOLDER, getWorkspaceFolderPath())}
-            {renderSettingRow(intlText.WORKSPACE_FILE, getWorkspaceFilePath())}
+            {renderSettingRow(intlText.WORKSPACE_FOLDER, workspaceBasePath)}
+            {renderSettingRow(intlText.WORKSPACE_FILE, workspaceFilePath)}
             {renderSettingRow(intlText.USE_DEV_CONTAINER_LABEL, isDevContainerProject ? 'Yes' : 'No')}
           </div>
         )}
@@ -155,7 +131,7 @@ export const ReviewCreateStep: React.FC = () => {
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Logic App Details</div>
             {renderSettingRow(intlText.LOGIC_APP_NAME_REVIEW, logicAppName)}
-            {flowType !== 'createLogicApp' && renderSettingRow(intlText.LOGIC_APP_LOCATION, getLogicAppLocationPath())}
+            {flowType !== 'createLogicApp' && renderSettingRow(intlText.LOGIC_APP_LOCATION, logicAppLocationPath)}
             {renderSettingRow(intlText.LOGIC_APP_TYPE_REVIEW, getLogicAppTypeDisplay(logicAppType))}
           </div>
         )}
@@ -165,7 +141,7 @@ export const ReviewCreateStep: React.FC = () => {
             <div className={styles.reviewSectionTitle}>Custom Code Configuration</div>
             {renderSettingRow(intlText.DOTNET_FRAMEWORK_REVIEW, getDotNetFrameworkDisplay(targetFramework))}
             {renderSettingRow(intlText.CUSTOM_CODE_FOLDER, functionFolderName)}
-            {renderSettingRow(intlText.CUSTOM_CODE_LOCATION, getFunctionLocationPath())}
+            {renderSettingRow(intlText.CUSTOM_CODE_LOCATION, functionLocationPath)}
             {renderSettingRow(intlText.FUNCTION_WORKSPACE, functionNamespace)}
             {renderSettingRow(intlText.FUNCTION_NAME_REVIEW, functionName)}
           </div>
@@ -175,7 +151,7 @@ export const ReviewCreateStep: React.FC = () => {
           <div className={styles.reviewSection}>
             <div className={styles.reviewSectionTitle}>Function Configuration</div>
             {renderSettingRow(intlText.RULES_ENGINE_FOLDER, functionFolderName)}
-            {renderSettingRow(intlText.RULES_ENGINE_LOCATION, getFunctionLocationPath())}
+            {renderSettingRow(intlText.RULES_ENGINE_LOCATION, functionLocationPath)}
             {renderSettingRow(intlText.FUNCTION_WORKSPACE, functionNamespace)}
             {renderSettingRow(intlText.FUNCTION_NAME_REVIEW, functionName)}
           </div>

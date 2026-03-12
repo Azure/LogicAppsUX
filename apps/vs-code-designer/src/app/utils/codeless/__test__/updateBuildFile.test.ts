@@ -121,6 +121,54 @@ describe('utils/codeless/updateBuildFile', () => {
         Version: '3.0.13',
       });
     });
+
+    it('Should update the package version to 4.5.0 for .NET 8', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Microsoft.NET.Sdk.Functions',
+                  Version: '3.0.13',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net8);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
+        Include: 'Microsoft.NET.Sdk.Functions',
+        Version: '4.5.0',
+      });
+    });
+
+    it('Should update the package version to 4.5.0 for .NET 10', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Microsoft.NET.Sdk.Functions',
+                  Version: '3.0.13',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net10);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
+        Include: 'Microsoft.NET.Sdk.Functions',
+        Version: '4.5.0',
+      });
+    });
   });
 
   describe('addFolderToBuildPath', () => {

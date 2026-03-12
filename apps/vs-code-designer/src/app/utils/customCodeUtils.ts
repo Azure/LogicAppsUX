@@ -85,7 +85,7 @@ export async function isCustomCodeFunctionsProject(folderPath: string): Promise<
   }
 
   const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  return isCustomCodeNet8Csproj(csprojContent) || isCustomCodeNetFxCsproj(csprojContent);
+  return !isNullOrUndefined(getCustomCodeTargetFramework(csprojContent));
 }
 
 /**
@@ -119,47 +119,80 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
   }
 
   const csprojContentStr = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  return new Promise((resolve, _) => {
+  return new Promise((resolve) => {
     parseString(csprojContentStr, (err, result) => {
       if (err) {
         ext.outputChannel.appendLog(`Error parsing csproj file: ${err}`);
         resolve(undefined);
+        return;
       }
 
-      if (isCustomCodeNet8Csproj(csprojContentStr)) {
+      const targetFramework = getCustomCodeTargetFramework(csprojContentStr);
+      const functionAppName = path.basename(path.normalize(folderPath));
+      if (targetFramework && usesLogicAppFolderToPublish(targetFramework)) {
         resolve({
           projectPath: folderPath,
-          functionAppName: path.basename(path.normalize(folderPath)),
+          functionAppName,
           logicAppName: path.win32.basename(path.win32.normalize(result.Project.PropertyGroup[0].LogicAppFolderToPublish[0])),
-          targetFramework: TargetFramework.Net8,
-          namespace: namespace,
+          targetFramework,
+          namespace,
         });
+        return;
       }
 
-      if (isCustomCodeNetFxCsproj(csprojContentStr)) {
+      if (targetFramework === TargetFramework.NetFx) {
         resolve({
           projectPath: folderPath,
-          functionAppName: path.basename(path.normalize(folderPath)),
+          functionAppName,
           logicAppName: path.win32.basename(path.win32.normalize(result.Project.PropertyGroup[0].LogicAppFolder[0])),
-          targetFramework: TargetFramework.NetFx,
-          namespace: namespace,
+          targetFramework,
+          namespace,
         });
+        return;
       }
 
       ext.outputChannel.appendLog(
-        `The csproj file in ${folderPath} does not match the expected format for a .Net 8 or .Net Framework custom code functions project.`
+        `The csproj file in ${folderPath} does not match the expected format for a .NET 8, .NET 10, or .NET Framework custom code functions project.`
       );
       resolve(undefined);
     });
   });
 }
 
-function isCustomCodeNet8Csproj(csprojContent: string): boolean {
+function getCustomCodeTargetFramework(csprojContent: string): TargetFramework | undefined {
+  if (isCustomCodeNet10Csproj(csprojContent)) {
+    return TargetFramework.Net10;
+  }
+
+  if (isCustomCodeNet8Csproj(csprojContent)) {
+    return TargetFramework.Net8;
+  }
+
+  if (isCustomCodeNetFxCsproj(csprojContent)) {
+    return TargetFramework.NetFx;
+  }
+
+  return undefined;
+}
+
+function usesLogicAppFolderToPublish(targetFramework: TargetFramework): boolean {
+  return targetFramework !== TargetFramework.NetFx;
+}
+
+function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework.Net8 | TargetFramework.Net10): boolean {
   return (
-    csprojContent.includes('<TargetFramework>net8</TargetFramework>') &&
+    csprojContent.includes(`<TargetFramework>${targetFramework}</TargetFramework>`) &&
     csprojContent.includes('Microsoft.Azure.Workflows.Webjobs.Sdk') &&
     csprojContent.includes('<LogicAppFolderToPublish>')
   );
+}
+
+function isCustomCodeNet10Csproj(csprojContent: string): boolean {
+  return isCustomCodeNetCoreCsproj(csprojContent, TargetFramework.Net10);
+}
+
+function isCustomCodeNet8Csproj(csprojContent: string): boolean {
+  return isCustomCodeNetCoreCsproj(csprojContent, TargetFramework.Net8);
 }
 
 function isCustomCodeNetFxCsproj(csprojContent: string): boolean {
@@ -272,10 +305,11 @@ async function isCustomCodeFunctionsProjectForLogicApp(folderPath: string, logic
 
   const csprojFile = (await fse.readdir(folderPath)).find((file) => file.endsWith('.csproj'));
   const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  if (isCustomCodeNet8Csproj(csprojContent)) {
+  const targetFramework = getCustomCodeTargetFramework(csprojContent);
+  if (targetFramework && usesLogicAppFolderToPublish(targetFramework)) {
     return csprojContent.includes(`<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`);
   }
-  if (isCustomCodeNetFxCsproj(csprojContent)) {
+  if (targetFramework === TargetFramework.NetFx) {
     return csprojContent.includes(`<LogicAppFolder>${logicAppName}</LogicAppFolder>`);
   }
 

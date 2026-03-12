@@ -69,6 +69,7 @@ function createActionContext(): IActionContext {
 // Static import - uses the mocked modules defined above
 import {
   getFramework,
+  getJsonCliFramework,
   getDotnetTemplateDir,
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
@@ -95,7 +96,18 @@ describe('executeDotnetTemplateCommand', () => {
   // allowing each test to independently verify version detection logic.
 
   describe('getFramework', () => {
-    it('should pick .NET 8 when available (highest priority)', async () => {
+    it('should pick .NET 10 when available (highest priority)', async () => {
+      const ctx = createActionContext();
+
+      mockExecuteCommand
+        .mockResolvedValueOnce('10.0.100\n') // --version
+        .mockResolvedValueOnce('10.0.100 [/usr/share/dotnet/sdk]\n8.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net10.0');
+    });
+
+    it('should pick .NET 8 when .NET 10 is not available', async () => {
       const ctx = createActionContext();
 
       mockExecuteCommand
@@ -139,15 +151,15 @@ describe('executeDotnetTemplateCommand', () => {
       expect(result).toBe('netcoreapp2.0');
     });
 
-    it('should pick .NET 9 as lower priority than 8', async () => {
+    it('should pick .NET 8 ahead of .NET 9 when .NET 10 is unavailable', async () => {
       const ctx = createActionContext();
 
       mockExecuteCommand
-        .mockResolvedValueOnce('9.0.100\n') // --version
-        .mockResolvedValueOnce('9.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
+        .mockResolvedValueOnce('8.0.100\n') // --version
+        .mockResolvedValueOnce('9.0.100 [/usr/share/dotnet/sdk]\n8.0.100 [/usr/share/dotnet/sdk]\n'); // --list-sdks
 
       const result = await getFramework(ctx, '/workspace', true);
-      expect(result).toBe('net9.0');
+      expect(result).toBe('net8.0');
     });
 
     it('should prefer GA over preview versions', async () => {
@@ -196,6 +208,20 @@ describe('executeDotnetTemplateCommand', () => {
       expect(result).toBe('net8.0');
     });
 
+    it('should use binaries with .NET 10 when useBinariesDependencies returns true', async () => {
+      const ctx = createActionContext();
+
+      mockUseBinariesDependencies.mockResolvedValue(true);
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('10.0.100\n');
+      mockExecuteCommand
+        .mockResolvedValueOnce('') // --version
+        .mockResolvedValueOnce(''); // --list-sdks
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(mockGetLocalDotNetVersionFromBinaries).toHaveBeenCalled();
+      expect(result).toBe('net10.0');
+    });
+
     it('should not use binaries when useBinariesDependencies returns false', async () => {
       const ctx = createActionContext();
 
@@ -206,6 +232,47 @@ describe('executeDotnetTemplateCommand', () => {
 
       const result = await getFramework(ctx, '/workspace', true);
       expect(mockGetLocalDotNetVersionFromBinaries).not.toHaveBeenCalled();
+      expect(result).toBe('net8.0');
+    });
+
+    it('should detect .NET 10 when version sources lack trailing newlines', async () => {
+      const ctx = createActionContext();
+
+      // Simulate outputs without trailing newlines — prior to the delimiter fix,
+      // these would concatenate into "2.0.10010.0.100 [path]" hiding .NET 10
+      mockUseBinariesDependencies.mockResolvedValue(true);
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('2.0.100');
+      mockExecuteCommand
+        .mockResolvedValueOnce('') // --version
+        .mockResolvedValueOnce('10.0.100 [/usr/share/dotnet/sdk]'); // --list-sdks (no trailing newline)
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net10.0');
+    });
+
+    it('should detect correct version when all sources lack trailing newlines', async () => {
+      const ctx = createActionContext();
+
+      mockUseBinariesDependencies.mockResolvedValue(true);
+      mockGetLocalDotNetVersionFromBinaries.mockResolvedValue('6.0.400');
+      mockExecuteCommand
+        .mockResolvedValueOnce('8.0.100') // --version (no newline)
+        .mockResolvedValueOnce('8.0.100 [/sdk]'); // --list-sdks (no newline)
+
+      const result = await getFramework(ctx, '/workspace', true);
+      expect(result).toBe('net8.0');
+    });
+
+    it('should not create false match from concatenated version strings', async () => {
+      const ctx = createActionContext();
+
+      // "8.0.100" + "6.0.400" without delimiter could form "8.0.1006.0.400"
+      // which should NOT accidentally match .NET 10
+      mockExecuteCommand
+        .mockResolvedValueOnce('8.0.100') // --version (no newline)
+        .mockResolvedValueOnce('6.0.400 [/sdk]'); // --list-sdks
+
+      const result = await getFramework(ctx, '/workspace', true);
       expect(result).toBe('net8.0');
     });
 
@@ -234,6 +301,36 @@ describe('executeDotnetTemplateCommand', () => {
       // Second call without isCodeful - should use cache
       const result2 = await getFramework(ctx, '/workspace');
       expect(result2).toBe('net8.0');
+    });
+  });
+
+  describe('getJsonCliFramework', () => {
+    it('should return net8.0 as-is', () => {
+      expect(getJsonCliFramework('net8.0')).toBe('net8.0');
+    });
+
+    it('should return net6.0 as-is', () => {
+      expect(getJsonCliFramework('net6.0')).toBe('net6.0');
+    });
+
+    it('should return netcoreapp3.0 as-is', () => {
+      expect(getJsonCliFramework('netcoreapp3.0')).toBe('netcoreapp3.0');
+    });
+
+    it('should return netcoreapp2.0 as-is', () => {
+      expect(getJsonCliFramework('netcoreapp2.0')).toBe('netcoreapp2.0');
+    });
+
+    it('should fall back to net8.0 for net10.0', () => {
+      expect(getJsonCliFramework('net10.0')).toBe('net8.0');
+    });
+
+    it('should fall back to net8.0 for net9.0', () => {
+      expect(getJsonCliFramework('net9.0')).toBe('net8.0');
+    });
+
+    it('should fall back to net8.0 for unknown frameworks', () => {
+      expect(getJsonCliFramework('net99.0')).toBe('net8.0');
     });
   });
 
