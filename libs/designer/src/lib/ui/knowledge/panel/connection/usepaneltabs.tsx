@@ -6,7 +6,7 @@ import type { KnowledgeTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../common/constants';
 import { basicsTab } from './tabs/basics';
 import { modelTab } from './tabs/model';
-import { selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
+import { closePanel, selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
 import {
   createOrUpdateConnection,
   getCosmosDbConnectionParameters,
@@ -36,12 +36,14 @@ export const useCreateConnectionPanelTabs = (): KnowledgeTabProps[] => {
     try {
       setIsCreating(true);
       await createOrUpdateConnection({ ...cosmosDbConnectionParametersValues, ...openAIConnectionParametersValues });
+      // TODO: Setup toast notification for success and failure cases
+      dispatch(closePanel());
     } catch (error) {
       console.error('Error creating connection:', error);
     } finally {
       setIsCreating(false);
     }
-  }, [cosmosDbConnectionParametersValues, openAIConnectionParametersValues]);
+  }, [cosmosDbConnectionParametersValues, dispatch, openAIConnectionParametersValues]);
   const basicsTabItem = useMemo(
     () =>
       basicsTab(

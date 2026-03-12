@@ -169,12 +169,14 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
     setIsSaving(true);
     try {
       await createOrUpdateConnection(connectionParameterValues);
+      // TODO: Setup toast notification for success and failure cases
+      handleDismiss();
     } catch (error) {
       console.error('Error updating connection:', error);
     } finally {
       setIsSaving(false);
     }
-  }, [connectionParameterValues]);
+  }, [connectionParameterValues, handleDismiss]);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {

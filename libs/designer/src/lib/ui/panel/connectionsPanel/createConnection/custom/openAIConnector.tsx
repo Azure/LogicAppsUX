@@ -28,7 +28,7 @@ import { useSubscriptions } from '../../../../../core/state/connection/connectio
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
 import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQuery } from '../../../../../core/queries/role';
 import constants from '../../../../../common/constants';
-import { getSubscriptionFromResource } from './cosmosDBConnector';
+import { getSubscriptionFromResource } from './cosmosConnector';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 

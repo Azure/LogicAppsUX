@@ -100,7 +100,7 @@ export const QuickViewPanel = ({
   return (
     <Drawer
       className={styles.drawer}
-      modalType={'non-modal'}
+      modalType={shouldCloseByDefault ? 'modal' : 'non-modal'}
       open={isOpen && currentPanelView === TemplatePanelView.QuickView}
       onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
       position="end"
