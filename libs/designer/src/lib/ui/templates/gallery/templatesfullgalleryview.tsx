@@ -49,9 +49,7 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
   );
 };
 
-const WorkflowView = ({
-  createWorkflowCall,
-}: { createWorkflowCall: CreateWorkflowHandler; panelRef?: React.RefObject<HTMLDivElement> }) => {
+const WorkflowView = ({ createWorkflowCall }: { createWorkflowCall: CreateWorkflowHandler }) => {
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const containerRef = useRef<HTMLDivElement>(null);
   return templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
