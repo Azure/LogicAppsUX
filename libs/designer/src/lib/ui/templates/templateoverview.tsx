@@ -83,7 +83,7 @@ export const TemplateOverview = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div>
       <QuickViewPanelHeader
         title={title}
         summary={summary}
@@ -124,26 +124,28 @@ export const TemplateOverview = ({
         <TemplatesPanelFooter {...footerContentProps} />
       </div>
 
-      {selectedWorkflow ? (
-        <QuickViewPanel
-          mountNode={containerRef?.current}
-          showCreate={false}
-          workflowId={selectedWorkflow}
-          clearDetailsOnClose={false}
-          onClose={() => setSelectedWorkflow(undefined)}
-        />
-      ) : null}
+      <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {selectedWorkflow ? (
+          <QuickViewPanel
+            mountNode={containerRef?.current}
+            showCreate={false}
+            workflowId={selectedWorkflow}
+            clearDetailsOnClose={false}
+            onClose={() => setSelectedWorkflow(undefined)}
+          />
+        ) : null}
 
-      {showCreatePanel ? (
-        <CreateWorkflowPanel
-          mountNode={containerRef?.current}
-          createWorkflow={createWorkflow}
-          showCloseButton={showCloseButton}
-          panelWidth={panelWidth}
-          onClose={() => setShowCreatePanel(false)}
-          clearDetailsOnClose={false}
-        />
-      ) : null}
+        {showCreatePanel ? (
+          <CreateWorkflowPanel
+            mountNode={containerRef?.current}
+            createWorkflow={createWorkflow}
+            showCloseButton={showCloseButton}
+            panelWidth={panelWidth}
+            onClose={() => setShowCreatePanel(false)}
+            clearDetailsOnClose={false}
+          />
+        ) : null}
+      </div>
       <div
         id={'msla-layer-host'}
         style={{

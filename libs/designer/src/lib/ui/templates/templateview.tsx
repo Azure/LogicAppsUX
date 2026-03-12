@@ -77,22 +77,24 @@ const SingleTemplateView = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <QuickViewPanel
-        mountNode={containerRef?.current}
-        showCreate={true}
-        showCloseButton={showCloseButton}
-        onClose={onClose}
-        workflowId={Object.keys(workflows)[0]}
-        panelWidth={panelWidth}
-      />
-      <CreateWorkflowPanel
-        mountNode={containerRef?.current}
-        showCloseButton={showCloseButton}
-        createWorkflow={createWorkflow}
-        panelWidth={panelWidth}
-        onClose={onClose}
-      />
+    <div>
+      <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <QuickViewPanel
+          mountNode={containerRef?.current}
+          showCreate={true}
+          showCloseButton={showCloseButton}
+          onClose={onClose}
+          workflowId={Object.keys(workflows)[0]}
+          panelWidth={panelWidth}
+        />
+        <CreateWorkflowPanel
+          mountNode={containerRef?.current}
+          showCloseButton={showCloseButton}
+          createWorkflow={createWorkflow}
+          panelWidth={panelWidth}
+          onClose={onClose}
+        />
+      </div>
       <div
         id={'msla-layer-host'}
         style={{

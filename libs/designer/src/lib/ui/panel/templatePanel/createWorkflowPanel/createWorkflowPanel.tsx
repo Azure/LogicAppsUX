@@ -131,9 +131,9 @@ export const CreateWorkflowPanel = ({
         width: panelWidth,
       }}
       mountNode={{
-        className: 'msla-panel-host-container',
         element: mountNode,
       }}
+      type={'overlay'}
     >
       <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
       <DrawerBody className={styles.body}>
