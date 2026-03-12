@@ -304,7 +304,7 @@ describe('EditConnectionPanel Component', () => {
 
     it('renders the Open AI Model section', () => {
       renderComponent();
-      expect(screen.getByTestId('section-openai-model')).toBeInTheDocument();
+      expect(screen.getByTestId('section-azure-openai-model')).toBeInTheDocument();
       expect(screen.getByText('Azure OpenAI model')).toBeInTheDocument();
     });
 

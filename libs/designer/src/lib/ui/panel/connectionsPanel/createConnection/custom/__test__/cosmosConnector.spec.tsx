@@ -547,7 +547,7 @@ describe('CosmosDbConnector', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByTestId('field')).toHaveAttribute('data-validation-message', 'Failed to fetch account key');
+        expect(screen.getByTestId('field')).toHaveAttribute('data-validation-message', "Can't find account key");
       });
     });
   });
