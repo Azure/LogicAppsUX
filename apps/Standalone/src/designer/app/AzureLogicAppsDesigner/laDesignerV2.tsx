@@ -46,6 +46,7 @@ import {
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
+  StandardEvaluationService,
   clone,
   equals,
   guid,
@@ -1131,6 +1132,10 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const evaluationService = new StandardEvaluationService({
+    ...defaultServiceParams,
+  });
+
   const roleService = new BaseRoleService({
     baseUrl: armUrl,
     httpClient,
@@ -1204,6 +1209,7 @@ const getDesignerServices = (
     cognitiveServiceService,
     connectionParameterEditorService,
     editorService,
+    evaluationService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

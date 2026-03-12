@@ -30,5 +30,6 @@ export {
   type UpdateFoundryAgentOptions,
   type ListAgentsOptions,
 } from './foundryAgentService';
+export { StandardEvaluationService, type EvaluationServiceOptions } from './evaluation';
 // Template
 export { StandardTemplateService } from './template';
