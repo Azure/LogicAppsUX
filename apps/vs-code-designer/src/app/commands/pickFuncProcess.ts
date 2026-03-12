@@ -34,6 +34,7 @@ import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
+import { getChildProcessesWithScript } from '../utils/findChildProcess/findChildProcess';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -297,10 +298,15 @@ async function startFuncTask(
 }
 
 export async function findChildProcess(processId: number): Promise<string | undefined> {
-  const children: OSAgnosticProcess[] =
-    process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);
+  if (process.platform === Platform.windows) {
+    const children = await getChildProcessesWithScript(processId);
+    const child = [...children].reverse().find((c) => /func(\.exe|)$/i.test(c.name || ''));
+    return child ? child.processId.toString() : undefined;
+  }
+
+  const children: OSAgnosticProcess[] = await getUnixChildren(processId);
   const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
-  return child ? child.pid.toString() : String(processId);
+  return child ? child.pid.toString() : undefined;
 }
 
 /**

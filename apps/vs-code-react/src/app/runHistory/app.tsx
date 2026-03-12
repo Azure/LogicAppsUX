@@ -78,6 +78,8 @@ export const RunHistoryApp = () => {
     });
   };
 
+  const runHistoryPanelKey = selectedWorkflow || 'run-history';
+
   return (
     <div className={styles.runHistoryContainer}>
       <Title1 className={styles.runHistoryTitle}>{intlText.RUN_HISTORY_TITLE}</Title1>
@@ -89,7 +91,7 @@ export const RunHistoryApp = () => {
           ))}
         </Dropdown>
       </div>
-      <RunHistoryPanelInstance onRunSelected={handleRunSelected} />
+      <RunHistoryPanelInstance key={runHistoryPanelKey} onRunSelected={handleRunSelected} />
     </div>
   );
 };

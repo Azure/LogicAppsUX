@@ -70,7 +70,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   }, [currentConnectionId, connectionReferences]);
 
   const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
-    return cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
+    return isCurrentConnectionConfigured && cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
   };
 
   // We need to flatten the connection to allow the detail list access to nested props

@@ -221,14 +221,27 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     retries++;
   }
   if (!childFuncPid) {
-    return false;
+    ext.outputChannel.appendLog('Design-time child func PID not set yet. Attempting live resolution from current child processes.');
   }
 
   if (os.platform() === Platform.windows) {
     const children = await getChildProcessesWithScript(process.pid);
+    const resolvedChildFuncPid =
+      childFuncPid ??
+      [...children]
+        .reverse()
+        .find((p) => /func(\.exe|)$/i.test(p.name || ''))
+        ?.processId?.toString();
+
+    if (resolvedChildFuncPid && resolvedChildFuncPid !== childFuncPid) {
+      designTimeInst.childFuncPid = resolvedChildFuncPid;
+      childFuncPid = resolvedChildFuncPid;
+      ext.outputChannel.appendLog(`Design-time child func PID updated during validation to ${resolvedChildFuncPid}`);
+    }
+
     ext.outputChannel.appendLog(`Checking for func.exe child process. Looking for PID: ${childFuncPid}, Found ${children.length} children`);
     correctId = children.some((p) => {
-      const matches = p.processId.toString() === childFuncPid && p.name === 'func.exe';
+      const matches = p.processId.toString() === childFuncPid && /func(\.exe|)$/i.test(p.name || '');
       ext.outputChannel.appendLog(`  Child: PID=${p.processId}, Name=${p.name}, Matches=${matches}`);
       return matches;
     });
@@ -243,6 +256,21 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     });
   }
   return correctId;
+}
+
+async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500): Promise<string | undefined> {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const childFuncPid = await findChildProcess(processId);
+    if (childFuncPid) {
+      return childFuncPid;
+    }
+
+    if (attempt < retries - 1) {
+      await delay(delayMs);
+    }
+  }
+
+  return undefined;
 }
 
 export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
@@ -279,7 +307,10 @@ export async function waitForDesignTimeStartUp(
     }
     if (setDesignTimeInst) {
       const designTimeInst = ext.designTimeInstances.get(projectPath);
-      designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
+      designTimeInst.childFuncPid = await resolveChildFuncPid(designTimeInst.process.pid);
+      ext.outputChannel.appendLog(
+        `Design-time child func PID ${designTimeInst.childFuncPid ? `resolved to ${designTimeInst.childFuncPid}` : 'was not resolved during startup'}`
+      );
       designTimeInst.isStarting = false;
     }
     context.telemetry.measurements.waitForDesignTimeStartupDuration = (Date.now() - initialTime) / 1000;
@@ -372,7 +403,9 @@ export function stopDesignTimeApi(projectPath: string): void {
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+    if (childFuncPid) {
+      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+    }
     cp.exec(`taskkill /pid ${process.pid} /t /f`);
   } else {
     cp.spawn('kill', ['-9'].concat(`${process.pid}`));

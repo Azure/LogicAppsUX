@@ -32,7 +32,7 @@ interface RunHistoryPanelProps {
 export const RunHistoryPanelInstance = (props: RunHistoryPanelProps) => {
   const intl = useIntl();
   const styles = useRunHistoryPanelStyles();
-  const runsQuery = useRunsInfiniteQuery();
+  const runsQuery = useRunsInfiniteQuery(true);
   const runs = useAllRuns();
 
   useEffect(() => {

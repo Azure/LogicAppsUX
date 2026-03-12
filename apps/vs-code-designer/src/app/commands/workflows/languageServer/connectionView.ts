@@ -18,6 +18,7 @@ import {
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../utils/codeless/connection';
+import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import path from 'path';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import type { WebviewPanel } from 'vscode';
@@ -117,6 +118,13 @@ export default class OpenConnectionView extends OpenDesignerBase {
     this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panelMetadata = panelMetadata;
+
+    // Pre-warm the auth token while the webview loads so that
+    // saveConnection → getConnectionsAndSettingsToUpdate → getAuthorizationToken
+    // returns instantly from cache when the user clicks a connection
+    if (this.panelMetadata.azureDetails?.tenantId) {
+      getAuthorizationToken(this.panelMetadata.azureDetails.tenantId).catch(() => {});
+    }
 
     const callbackUri: Uri = await (env as any).asExternalUri(
       Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
