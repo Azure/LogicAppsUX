@@ -75,6 +75,7 @@ import {
   setIsWorkflowDirty,
   setFocusNode,
   changePanelNode,
+  EvaluateView,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -130,6 +131,7 @@ const DesignerEditor = () => {
   const [workflow, setWorkflow] = useState<Workflow>(); // Current workflow on the designer
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
+  const [isEvaluateView, setIsEvaluateView] = useState(false);
   const [isDraftMode, setIsDraftMode] = useState(true);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
@@ -535,6 +537,12 @@ const DesignerEditor = () => {
       return;
     }
 
+    if (isEvaluateView) {
+      setIsEvaluateView(false);
+      setIsCodeView(true);
+      return;
+    }
+
     if (isMonitoringView) {
       hideMonitoringView();
       setIsCodeView(true);
@@ -548,6 +556,12 @@ const DesignerEditor = () => {
 
   const showDesignerView = async () => {
     if (isDesignerView) {
+      return;
+    }
+
+    if (isEvaluateView) {
+      setIsEvaluateView(false);
+      setIsDesignerView(true);
       return;
     }
 
@@ -578,6 +592,18 @@ const DesignerEditor = () => {
       }
     }
   };
+
+  const showEvaluateView = useCallback(() => {
+    if (isEvaluateView) {
+      return;
+    }
+    if (isMonitoringView) {
+      hideMonitoringView();
+    }
+    setIsDesignerView(false);
+    setIsCodeView(false);
+    setIsEvaluateView(true);
+  }, [isEvaluateView, isMonitoringView, hideMonitoringView]);
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
   useEffect(() => {
@@ -685,11 +711,13 @@ const DesignerEditor = () => {
               isMonitoringView={isMonitoringView}
               isDesignerView={isDesignerView}
               isCodeView={isCodeView}
+              isEvaluateView={isEvaluateView}
               enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
               saveWorkflowFromCode={saveWorkflowFromCode}
               showMonitoringView={showMonitoringView}
               showDesignerView={showDesignerView}
               showCodeView={showCodeView}
+              showEvaluateView={showEvaluateView}
               switchWorkflowMode={switchWorkflowMode}
               isDraftMode={isDraftMode}
               prodWorkflow={artifactData?.properties.files[Artifact.WorkflowFile]}
@@ -736,7 +764,7 @@ const DesignerEditor = () => {
                   }}
                 />
               </div>
-              {!isCodeView && (
+              {!isCodeView && !isEvaluateView && (
                 <div style={{ flexGrow: 1, display: 'inherit' }}>
                   <Designer />
                   <FloatingRunButton
@@ -751,6 +779,7 @@ const DesignerEditor = () => {
                 </div>
               )}
               {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+              {isEvaluateView && <EvaluateView workflowName={workflowName} />}
               <CombineInitializeVariableDialog />
               <TriggerDescriptionDialog workflowId={workflowId} />
             </div>

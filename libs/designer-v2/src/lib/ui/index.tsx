@@ -11,3 +11,4 @@ export * from './FloatingRunButton';
 export * from './FloatingRunButton/chat';
 export { getLogicAppsCategories } from './configuretemplate/resources';
 export { TemplateInfoToast, type TemplateInfoToasterProps } from './configuretemplate/toasters';
+export { EvaluateView } from './evaluation/EvaluateView';

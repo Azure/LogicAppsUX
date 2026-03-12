@@ -28,6 +28,7 @@ import * as OpenAPIV2 from './openApiV2';
 import * as Swagger from './swagger';
 import * as Template from './template';
 export * from './agent';
+export * from './evaluation';
 export * from './mcp';
 export * from './knowledge';
 

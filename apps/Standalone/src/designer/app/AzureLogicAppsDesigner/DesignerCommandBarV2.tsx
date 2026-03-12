@@ -120,6 +120,7 @@ export const DesignerCommandBar = ({
   isDesignerView,
   isMonitoringView,
   isCodeView,
+  isEvaluateView,
   isDarkMode,
   isUnitTest,
   isDraftMode,
@@ -127,6 +128,7 @@ export const DesignerCommandBar = ({
   showMonitoringView,
   showDesignerView,
   showCodeView,
+  showEvaluateView,
   switchWorkflowMode,
 }: {
   id: string;
@@ -143,6 +145,7 @@ export const DesignerCommandBar = ({
   isDesignerView?: boolean;
   isMonitoringView?: boolean;
   isCodeView?: boolean;
+  isEvaluateView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
   isDraftMode?: boolean;
@@ -151,6 +154,7 @@ export const DesignerCommandBar = ({
   showMonitoringView: () => void;
   showDesignerView: () => void;
   showCodeView: () => void;
+  showEvaluateView: () => void;
   switchWorkflowMode: (draftMode: boolean) => void;
 }) => {
   const styles = useStyles();
@@ -347,6 +351,18 @@ export const DesignerCommandBar = ({
         }}
       >
         Run history
+      </Button>
+      <Button
+        appearance={isEvaluateView ? 'primary' : 'subtle'}
+        className={mergeClasses(styles.viewButton, isEvaluateView ? styles.selectedButton : '')}
+        size="small"
+        onClick={() => {
+          showEvaluateView();
+          dispatch(collapsePanel());
+          dispatch(resetDesignerView());
+        }}
+      >
+        Evaluate
       </Button>
     </Card>
   );

@@ -38,4 +38,5 @@ export * from './lib/uiInteractionsService';
 export * from './lib/userpreference';
 export * from './lib/resource';
 export * from './lib/role';
+export * from './lib/evaluation';
 export * from './lib/providers/FavoriteContextProvider';

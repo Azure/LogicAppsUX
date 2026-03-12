@@ -129,3 +129,10 @@ export { setLocation, setSubscription, setResourceGroup } from './state/template
 export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';
 export * from './state/modal/modalSelectors';
 export * from './state/modal/modalSlice';
+export * from './queries/evaluations';
+export {
+  setSelectedRun as setEvaluationSelectedRun,
+  setSelectedAction as setEvaluationSelectedAction,
+  resetEvaluationState,
+} from './state/evaluation/evaluationSlice';
+export type { AgentAction, WorkflowRunEntry } from './state/evaluation/evaluationInterfaces';
