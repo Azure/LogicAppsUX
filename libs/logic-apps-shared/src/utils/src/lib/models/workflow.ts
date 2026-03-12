@@ -1,9 +1,20 @@
 import type { WorkflowDefinition } from './logicAppsV2';
 
+export type Note = {
+  content: string;
+  color: string;
+  metadata: {
+    position: { x: number; y: number };
+    width: number;
+    height: number;
+  };
+};
+
 export interface Workflow {
   definition: WorkflowDefinition;
   connectionReferences: ConnectionReferences;
   parameters?: Record<string, WorkflowParameter>;
+  notes?: Record<string, Note>;
   kind?: string;
   id?: string;
 }

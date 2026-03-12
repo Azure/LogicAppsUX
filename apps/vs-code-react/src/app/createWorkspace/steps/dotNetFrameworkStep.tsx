@@ -12,7 +12,13 @@ import { setTargetFramework, setFunctionNamespace, setFunctionName, setFunctionF
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
 import { nameValidation, validateFunctionName, validateFunctionNamespace } from '../validation/helper';
-import { Platform, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+
+type TargetFrameworkOption = {
+  value: string;
+  label: string;
+  description: string;
+};
 
 export const DotNetFrameworkStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -30,6 +36,30 @@ export const DotNetFrameworkStep: React.FC = () => {
   const [functionNamespaceError, setFunctionNamespaceError] = useState<string | undefined>(undefined);
   const [functionNameError, setFunctionNameError] = useState<string | undefined>(undefined);
   const [functionFolderNameError, setFunctionFolderNameError] = useState<string | undefined>(undefined);
+
+  const targetFrameworkOptions: TargetFrameworkOption[] = [
+    ...(platform === Platform.windows
+      ? [
+          {
+            value: TargetFramework.NetFx,
+            label: intlText.DOTNET_FRAMEWORK_OPTION,
+            description: intlText.DOTNET_FRAMEWORK_DESCRIPTION,
+          },
+        ]
+      : []),
+    {
+      value: TargetFramework.Net8,
+      label: intlText.DOTNET_8,
+      description: intlText.DOTNET_8_DESCRIPTION,
+    },
+    {
+      value: TargetFramework.Net10,
+      label: intlText.DOTNET_10,
+      description: intlText.DOTNET_10_DESCRIPTION,
+    },
+  ];
+
+  const selectedTargetFramework = targetFrameworkOptions.find((option) => option.value === targetFramework);
 
   const handleDotNetFrameworkChange: DropdownProps['onOptionSelect'] = (event, data) => {
     if (data.optionValue) {
@@ -95,22 +125,19 @@ export const DotNetFrameworkStep: React.FC = () => {
           <Field required>
             <Label required>{intlText.DOTNET_VERSION}</Label>
             <Dropdown
-              value={targetFramework === 'net472' ? '.NET Framework' : targetFramework === 'net8' ? '.NET 8' : ''}
+              value={selectedTargetFramework?.label ?? ''}
               selectedOptions={targetFramework ? [targetFramework] : []}
               onOptionSelect={handleDotNetFrameworkChange}
               placeholder={intlText.SELECT_DOTNET_VERSION}
               className={styles.inputControl}
             >
-              {platform === Platform.windows ? (
-                <Option value="net472" text=".NET Framework">
-                  .NET Framework
+              {targetFrameworkOptions.map((option) => (
+                <Option key={option.value} value={option.value} text={option.label}>
+                  {option.label}
                 </Option>
-              ) : null}
-              <Option value="net8" text=".NET 8">
-                .NET 8
-              </Option>
+              ))}
             </Dropdown>
-            {targetFramework && (
+            {selectedTargetFramework && (
               <Text
                 size={200}
                 style={{
@@ -119,8 +146,7 @@ export const DotNetFrameworkStep: React.FC = () => {
                   display: 'block',
                 }}
               >
-                {targetFramework === 'net472' && intlText.DOTNET_FRAMEWORK_DESCRIPTION}
-                {targetFramework === 'net8' && intlText.DOTNET_8_DESCRIPTION}
+                {selectedTargetFramework.description}
               </Text>
             )}
           </Field>
