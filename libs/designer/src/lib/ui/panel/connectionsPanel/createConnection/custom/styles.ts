@@ -51,4 +51,7 @@ export const useStyles = makeStyles({
     gap: '4px',
     width: '100%',
   },
+  refreshButton: {
+    marginTop: '-6px',
+  },
 });

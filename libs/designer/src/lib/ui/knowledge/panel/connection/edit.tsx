@@ -60,8 +60,8 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
       description: 'Aria label for close button',
     }),
     buttonText: intl.formatMessage({
-      id: 'SOv8Gj',
-      defaultMessage: 'Save changes',
+      id: 'luCPhK',
+      defaultMessage: 'Save',
       description: 'Button text for update connection',
     }),
     savingText: intl.formatMessage({
@@ -75,8 +75,8 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
       description: 'Button text for cancelling updating the connection',
     }),
     errorText: intl.formatMessage({
-      id: 'jfTYa7',
-      defaultMessage: 'Parameter value is required.',
+      id: '2XMSCZ',
+      defaultMessage: 'Requires a parameter value.',
       description: 'Error message when a required parameter value is missing',
     }),
     detailsTitle: intl.formatMessage({
@@ -90,9 +90,9 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
       description: 'Azure Cosmos DB details label',
     }),
     openAITitle: intl.formatMessage({
-      id: 'nH0BXX',
-      defaultMessage: 'OpenAI model',
-      description: 'OpenAI model label',
+      id: 'FeqzjX',
+      defaultMessage: 'Azure OpenAI model',
+      description: 'Azure OpenAI model label',
     }),
     displayNameFieldLabel: intl.formatMessage({
       id: '3cdEwu',
@@ -106,12 +106,13 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
   }, [dispatch]);
 
   const getParameterItem = useCallback(
-    (key: string, parameter: ConnectionParameterSetParameter, disabled = true) => {
+    (key: string, parameter: ConnectionParameterSetParameter, disabled = true, isSecretField = false) => {
       const parameterValue = connectionParameterValues[key] ?? undefined;
       return {
+        type: 'textfield',
         label: parameter.uiDefinition.displayName,
         value: parameterValue ?? '',
-        type: 'textfield',
+        isSecret: isSecretField,
         required: true,
         disabled,
         onChange: (value: string) => setConnectionParameterValues((prev) => ({ ...prev, [key]: value })),
@@ -148,7 +149,7 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
     ];
 
     if (equals(connectionParameterValues['cosmosDBAuthenticationType'], 'key')) {
-      items.push(getParameterItem('cosmosDBKey', connectionParameters.cosmosDBKey));
+      items.push(getParameterItem('cosmosDBKey', connectionParameters.cosmosDBKey, /* disabled */ true, /* isSecretField */ true));
     }
     return items;
   }, [getParameterItem, connectionParameters, connectionParameterValues]);
@@ -160,7 +161,7 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
       getParameterItem('openAIEmbeddingsModel', connectionParameters.openAIEmbeddingsModel, /* disabled */ false),
     ];
     if (equals(connectionParameterValues['openAIAuthenticationType'], 'key')) {
-      items.splice(2, 0, getParameterItem('openAIKey', connectionParameters.openAIKey));
+      items.splice(2, 0, getParameterItem('openAIKey', connectionParameters.openAIKey, /* disabled */ true, /* isSecretField */ true));
     }
     return items;
   }, [getParameterItem, connectionParameters, connectionParameterValues]);

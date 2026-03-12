@@ -16,7 +16,7 @@ export interface KnowledgeWizardProviderProps {
 }
 
 export const KnowledgeWizardProvider = ({ locale = 'en', useExternalRedux = false, children, theme }: KnowledgeWizardProviderProps) => {
-  const webTheme = theme === 'light' ? webLightTheme : webDarkTheme;
+  const webTheme = theme === ThemeType.Light ? webLightTheme : webDarkTheme;
   const content = (
     <KnowledgeWrappedContext.Provider value={{ readOnly: false }}>
       <ThemeProvider theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark} style={{ height: 'inherit' }}>

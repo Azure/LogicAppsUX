@@ -4,7 +4,7 @@ import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStyles } from './styles';
-import { Link, tokens, Combobox, Option, Field } from '@fluentui/react-components';
+import { Link, Combobox, Option, Field, Button } from '@fluentui/react-components';
 import { ArrowClockwise20Filled, ArrowClockwise20Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
@@ -36,9 +36,9 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
         description: 'Azure Cosmos DB resource label',
       }),
       SELECT_COSMOS_DB_RESOURCE: intl.formatMessage({
-        defaultMessage: 'Select a Azure Cosmos DB resource',
-        id: 'uhtJkb',
-        description: 'Select the Azure Cosmos DB resource to use for this connection',
+        defaultMessage: 'Select a Cosmos DB resource.',
+        id: '3CYbZj',
+        description: 'Select the Azure Cosmos DB resource to use for this connection.',
       }),
       LOADING_DATABASES: intl.formatMessage({
         defaultMessage: 'Loading databases...',
@@ -46,13 +46,13 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
         description: 'Loading databases text',
       }),
       FETCHING: intl.formatMessage({
-        defaultMessage: 'Fetching...',
-        id: 'WBDuOo',
+        defaultMessage: 'Fetching data...',
+        id: 'hQNVhi',
         description: 'Fetching data text',
       }),
       SELECT_SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Select the subscription for your Cosmos DB resource',
-        id: 'ySi0Rt',
+        defaultMessage: 'Select the subscription for your Cosmos DB resource.',
+        id: 'Cg2gLt',
         description: 'Message for selecting subscription',
       }),
       FETCHING_RESOURCE_DETAILS: intl.formatMessage({
@@ -61,14 +61,19 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
         description: 'Message displayed while fetching resource details',
       }),
       NO_RESOURCES: intl.formatMessage({
-        defaultMessage: 'No Cosmos DB resources found',
-        id: 'UdYwGT',
+        defaultMessage: `Can't find any Cosmos DB resources.`,
+        id: '2wT48Z',
         description: 'Message displayed when no Cosmos DB resources are found',
       }),
       NO_RESULTS: intl.formatMessage({
-        defaultMessage: 'No results found',
-        id: 'nEWQ/Q',
+        defaultMessage: `Search can't find any results.`,
+        id: 'd0BKdI',
         description: 'Message displayed when search returns no results',
+      }),
+      LEARN_MORE: intl.formatMessage({
+        defaultMessage: 'Learn more',
+        id: 'YJZGKU',
+        description: 'Text for link to learn more about Cosmos DB resource',
       }),
     }),
     [intl]
@@ -88,18 +93,18 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
     async (accountId: string) => {
       try {
         const accountResponse = await ResourceService().executeResourceAction(`${accountId}/listKeys`, 'POST', {
-          'api-version': '2025-11-01',
+          'api-version': '2025-11-01-preview',
         });
-        setKeyValue?.('cosmosDBAuthenticationKey', accountResponse?.key1 ?? '');
+        setKeyValue?.('cosmosDBKey', accountResponse?.primaryReadonlyMasterKey ?? accountResponse?.primaryMasterKey ?? '');
         setErrorMessage('');
       } catch (e: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
           area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for Cosmos DB',
+          message: `Can't get the account key for Cosmos DB.`,
           error: e,
         });
-        setErrorMessage(e.message ?? 'Failed to fetch account key');
+        setErrorMessage(e.message ?? `Can't find account key`);
       }
     },
     [setKeyValue]
@@ -172,8 +177,8 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
           displayName={stringResources.RESOURCE}
           required={true}
           tooltip={
-            <Link href="https://learn.microsoft.com/azure/cosmos-db/introduction" target="_blank">
-              {'Learn More'}
+            <Link href="https://go.microsoft.com/fwlink/?linkid=2356278" target="_blank">
+              {stringResources.LEARN_MORE}
             </Link>
           }
           cssOverrides={cssOverrides}
@@ -212,12 +217,13 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
                 )}
               </Combobox>
             </Field>
-            <RefreshIcon
-              style={{
-                margin: '6px 0 0 6px',
-                color: accountComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
-              }}
+            <Button
+              appearance="subtle"
+              className={styles.refreshButton}
+              icon={<RefreshIcon />}
               onClick={onRefreshClick}
+              disabled={accountComboboxDisabled}
+              aria-label={stringResources.FETCHING_RESOURCE_DETAILS}
             />
           </div>
         </ConnectionParameterRow>

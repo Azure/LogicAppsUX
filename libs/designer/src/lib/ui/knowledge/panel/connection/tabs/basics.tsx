@@ -146,23 +146,23 @@ const Basics = ({
       description: 'Title for the connection details section in basics tab for quick app create panel',
     }),
     detailsDescription: intl.formatMessage({
-      defaultMessage: 'Provide a display name for your connection. You can edit this later.',
-      id: 'RYovpU',
+      defaultMessage: 'Enter a display name for your connection. You can edit this name later.',
+      id: 'dpHuNn',
       description: 'Description for the connection details section in basics tab for quick app create panel',
     }),
     nameLabel: intl.formatMessage({
-      defaultMessage: 'Display Name',
-      id: 'UeILhA',
+      defaultMessage: 'Display name',
+      id: '+NW+ab',
       description: 'Label for the name field in basics tab for quick app create panel',
     }),
     namePlaceholder: intl.formatMessage({
-      defaultMessage: 'Enter a display name for your connection',
-      id: 'LoLMyj',
+      defaultMessage: 'Enter a display name for your connection.',
+      id: 'ibx+yu',
       description: 'Placeholder for the name field in basics tab for quick app create panel',
     }),
     nameError: intl.formatMessage({
-      defaultMessage: 'Name is required',
-      id: 'wCEMpJ',
+      defaultMessage: 'Requires a name.',
+      id: '1YRXiO',
       description: 'Error message when name field is left empty in basics tab for quick app create panel',
     }),
     databaseTitle: intl.formatMessage({

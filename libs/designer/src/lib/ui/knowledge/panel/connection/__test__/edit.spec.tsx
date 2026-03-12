@@ -299,19 +299,19 @@ describe('EditConnectionPanel Component', () => {
     it('renders the Cosmos Database section', () => {
       renderComponent();
       expect(screen.getByTestId('section-cosmos-database')).toBeInTheDocument();
-      expect(screen.getByText('Cosmos Database')).toBeInTheDocument();
+      expect(screen.getByText('Cosmos database')).toBeInTheDocument();
     });
 
     it('renders the Open AI Model section', () => {
       renderComponent();
-      expect(screen.getByTestId('section-open-ai-model')).toBeInTheDocument();
-      expect(screen.getByText('Open AI Model')).toBeInTheDocument();
+      expect(screen.getByTestId('section-openai-model')).toBeInTheDocument();
+      expect(screen.getByText('Azure OpenAI model')).toBeInTheDocument();
     });
 
     it('renders the footer with Save and Cancel buttons', () => {
       renderComponent();
       expect(screen.getByTestId('panel-footer')).toBeInTheDocument();
-      expect(screen.getByText('Save changes')).toBeInTheDocument();
+      expect(screen.getByText('Save')).toBeInTheDocument();
       expect(screen.getByText('Cancel')).toBeInTheDocument();
     });
   });
@@ -338,7 +338,7 @@ describe('EditConnectionPanel Component', () => {
 
       expect(screen.queryByTestId('section-details')).not.toBeInTheDocument();
       expect(screen.queryByTestId('section-cosmos-database')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('section-open-ai-model')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('section-openai-model')).not.toBeInTheDocument();
     });
   });
 
@@ -429,7 +429,7 @@ describe('EditConnectionPanel Component', () => {
       fireEvent.change(displayNameInput, { target: { value: '' } });
 
       await waitFor(() => {
-        expect(screen.getByText('Parameter value is required.')).toBeInTheDocument();
+        expect(screen.getByText('Requires a parameter value.')).toBeInTheDocument();
       });
     });
   });

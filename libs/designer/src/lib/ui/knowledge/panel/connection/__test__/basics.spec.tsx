@@ -447,7 +447,7 @@ describe('basicsTab', () => {
       renderBasicsTab();
 
       const nameInput = screen.getByTestId('input-display-name');
-      expect(nameInput).toHaveAttribute('placeholder', 'Enter a display name for your connection');
+      expect(nameInput).toHaveAttribute('placeholder', 'Enter a display name for your connection.');
     });
 
     it('updates name when input changes', () => {
