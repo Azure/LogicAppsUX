@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { TemplateCard } from '../cards/templateCard';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { CreateWorkflowHandler, TemplatesDesignerProps } from '../TemplatesDesigner';
 import { QuickViewPanel } from '../../panel/templatePanel/quickViewPanel/quickViewPanel';
@@ -12,7 +12,6 @@ import { TemplatesGalleryWithSearch } from './templatesgallerywithsearch';
 const tabFilterKey = 'publishedBy';
 
 export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
-  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
 
   const {
@@ -28,8 +27,10 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
     }
   };
 
+  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
+
   return (
-    <>
+    <div>
       <TemplatesGalleryWithSearch
         searchAndFilterProps={{ detailFilters, tabFilterKey }}
         blankTemplateCard={blankTemplateCard}
@@ -44,17 +45,19 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
           visibility: 'hidden',
         }}
       />
-    </>
+    </div>
   );
 };
 
-const WorkflowView = ({ createWorkflowCall }: { createWorkflowCall: CreateWorkflowHandler }) => {
+const WorkflowView = ({
+  createWorkflowCall,
+}: { createWorkflowCall: CreateWorkflowHandler; panelRef?: React.RefObject<HTMLDivElement> }) => {
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
-
+  const containerRef = useRef<HTMLDivElement>(null);
   return templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
-    <>
-      <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
-      <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
-    </>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <QuickViewPanel mountNode={containerRef.current} showCreate={true} workflowId={Object.keys(workflows)[0]} />
+      <CreateWorkflowPanel mountNode={containerRef.current} createWorkflow={createWorkflowCall} />
+    </div>
   );
 };
