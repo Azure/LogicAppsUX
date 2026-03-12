@@ -24,7 +24,7 @@ import {
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { Spinner } from '@fluentui/react-components';
-import { CustomConnectionParameterEditorService } from '../../designer/app/AzureLogicAppsDesigner/Services/customConnectionParameterEditorService';
+import { CustomConnectionParameterEditorService } from '../Services/connectionParameterEditor';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -76,12 +76,7 @@ export const KnowledgeHub = () => {
   );
 
   if (isSettingsLoading || isParametersLoading || isConnectionsLoading) {
-    return (
-      <>
-        <div id="knowledge-layer-host" className={styles.layerHost} />
-        <Spinner style={{ margin: '0 auto', paddingTop: '100px' }} size="large" />
-      </>
-    );
+    return <Spinner style={{ margin: '0 auto', paddingTop: '100px' }} size="large" />;
   }
 
   return (
@@ -92,7 +87,6 @@ export const KnowledgeHub = () => {
             <div className={styles.wizardWrapper}>
               <KnowledgeDataProvider resourceDetails={resourceDetails} services={services} isDarkMode={theme === 'dark'}>
                 <KnowledgeHubWizard />
-                <div id="knowledge-layer-host" className={styles.layerHost} />
               </KnowledgeDataProvider>
             </div>
           </div>
@@ -140,7 +134,7 @@ const getServices = (
     },
   });
 
-  const cognitiveServiceService = new BaseCognitiveServiceService({
+  const cognitiveService = new BaseCognitiveServiceService({
     apiVersion: '2023-10-01-preview',
     baseUrl: armUrl,
     httpClient,
@@ -153,7 +147,7 @@ const getServices = (
     connectionService,
     resourceService,
     gatewayService,
-    cognitiveServiceService,
+    cognitiveService,
     connectionParameterEditorService,
     hostService: {} as any, // Placeholder for IHostService, not used in this context
   };

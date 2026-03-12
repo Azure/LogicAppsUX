@@ -29,6 +29,18 @@ export const usePanelStyles = makeStyles({
     padding: `${tokens.spacingVerticalM} 20px`,
     borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
   },
+  loadingContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: '10%',
+  },
+
+  loadingText: {
+    paddingTop: '10px',
+  },
 });
 
 export const useCreatePanelStyles = makeStyles({
@@ -39,5 +51,49 @@ export const useCreatePanelStyles = makeStyles({
   sectionItem: {
     flexDirection: 'column',
     gap: '8px',
+  },
+
+  paramField: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    paddingBottom: '8px',
+  },
+
+  paramLabel: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightRegular,
+    lineHeight: tokens.lineHeightBase300,
+  },
+
+  secretField: {
+    height: 'inherit',
+  },
+
+  dropdown: {
+    border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+    borderBottomColor: tokens.colorNeutralStrokeAccessible,
+    borderRadius: tokens.borderRadiusMedium,
+    height: '32px',
+  },
+
+  combobox: {
+    width: '100%',
+  },
+
+  disabledField: {
+    marginLeft: tokens.spacingHorizontalXXL,
+  },
+});
+
+export const useEditPanelStyles = makeStyles({
+  infoBar: {
+    margin: '20px 0',
+  },
+
+  sectionItem: {
+    flexDirection: 'column',
+    gap: '8px',
+    paddingBottom: '16px',
   },
 });

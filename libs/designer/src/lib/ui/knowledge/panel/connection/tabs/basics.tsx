@@ -8,7 +8,7 @@ import {
 import type { IntlShape } from 'react-intl';
 import { closePanel } from '../../../../../core/state/knowledge/panelSlice';
 import Constants from '../../../../../common/constants';
-import { useState, useCallback, useMemo, type FormEvent } from 'react';
+import { useState, useCallback, useMemo, type FormEvent, useEffect } from 'react';
 import {
   getPropertyValue,
   isEmptyString,
@@ -19,19 +19,22 @@ import {
   type ConnectionParameterSets,
 } from '@microsoft/logic-apps-shared';
 import { useCreatePanelStyles } from '../../styles';
-import { Label, Text } from '@fluentui/react-components';
+import { Label, Text, tokens } from '@fluentui/react-components';
 import ConnectionMultiAuthInput from '../../../../panel/connectionsPanel/createConnection/formInputs/connectionMultiAuth';
 import {
   type ConnectionParameterProps,
   UniversalConnectionParameter,
 } from '../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter';
+import type { IComboBoxStyles, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 
 export const basicsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   connectionParameters: ConnectionParameterSets,
+  connectionParameterValues: Record<string, any>,
   setConnectionParameterValues: (values: Record<string, any>) => void,
-  { isTabDisabled, isPrimaryButtonDisabled, tabStatusIcon, onPrimaryButtonClick }: KnowledgeConnectionTabProps
+  isCreating: boolean,
+  { isPrimaryButtonDisabled, tabStatusIcon, onPrimaryButtonClick }: KnowledgeConnectionTabProps
 ): KnowledgeTabProps => ({
   id: Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS,
   title: intl.formatMessage({
@@ -41,9 +44,14 @@ export const basicsTab = (
   }),
   tabStatusIcon,
   content: (
-    <Basics intl={intl} setConnectionParameterValues={setConnectionParameterValues} connectionParameterSets={connectionParameters} />
+    <Basics
+      intl={intl}
+      connectionParameterValues={connectionParameterValues}
+      setConnectionParameterValues={setConnectionParameterValues}
+      connectionParameterSets={connectionParameters}
+    />
   ),
-  disabled: isTabDisabled,
+  disabled: isCreating,
   footerContent: {
     buttonContents: [
       {
@@ -56,6 +64,7 @@ export const basicsTab = (
         onClick: () => {
           dispatch(closePanel());
         },
+        disabled: isCreating,
       },
       {
         type: 'navigation',
@@ -68,19 +77,65 @@ export const basicsTab = (
           onPrimaryButtonClick?.();
         },
         appearance: 'primary',
-        disabled: isPrimaryButtonDisabled,
+        disabled: isPrimaryButtonDisabled || isCreating,
       },
     ],
   },
 });
 
+export const comboboxStyles: IComboBoxStyles = {
+  root: {
+    borderRadius: tokens.borderRadiusMedium,
+    height: tokens.spacingVerticalXXXL,
+    lineHeight: tokens.spacingVerticalXXXL,
+    fontSize: tokens.fontSizeBase300,
+
+    selectors: {
+      ':active': {
+        border: '1px solid green',
+        borderBottomColor: 'green',
+        borderRadius: tokens.borderRadiusMedium,
+      },
+    },
+  },
+} as unknown as IComboBoxStyles;
+export const dropdownStyles = {
+  dropdown: {
+    height: `${tokens.spacingVerticalXXXL} !important`,
+  },
+  caretDown: {
+    lineHeight: tokens.lineHeightBase600,
+  },
+  dropdownOptionText: {
+    fontSize: tokens.fontSizeBase300,
+  },
+  title: {
+    border: 'none',
+    fontSize: tokens.fontSizeBase300,
+    lineHeight: tokens.lineHeightBase600,
+  },
+  root: {
+    border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+    borderBottomColor: tokens.colorNeutralStrokeAccessible,
+    borderRadius: tokens.borderRadiusMedium,
+  },
+} as IDropdownStyles;
+export const secretFieldStyles = {
+  fieldGroup: {
+    minHeight: '24px',
+    height: 'inherit',
+  },
+} as ITextFieldStyles;
+
 const Basics = ({
   intl,
   connectionParameterSets,
+  connectionParameterValues,
   setConnectionParameterValues,
 }: {
   intl: IntlShape;
   connectionParameterSets: ConnectionParameterSets;
+  connectionParameterValues: Record<string, any>;
   setConnectionParameterValues: (values: Record<string, any>) => void;
 }) => {
   const styles = useCreatePanelStyles();
@@ -122,9 +177,23 @@ const Basics = ({
     }),
   };
 
-  const [name, setName] = useState<string | undefined>(undefined);
-  const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
-  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
+  const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
+  const [name, setName] = useState<string | undefined>(connectionParameterValues.displayName);
+  const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(
+    getSelectedAuthIndex(connectionParameterSets, connectionParameterValues.cosmosDBAuthenticationType)
+  );
+  const [parameterValues, setParameterValues] = useState<Record<string, any>>(connectionParameterValues);
+  const authType = useMemo(
+    () => connectionParameterSets?.values[selectedParamSetIndex]?.name,
+    [connectionParameterSets, selectedParamSetIndex]
+  );
+
+  useEffect(() => {
+    if (authType) {
+      setOperationParameterValues({ authType });
+      setConnectionParameterValues((values: Record<string, any>) => ({ ...values, cosmosDBAuthenticationType: authType })); // Set authType in connection parameter values as well so that it can be used for showing/hiding parameters based on auth type
+    }
+  }, [authType, setConnectionParameterValues]);
 
   const handleParametersChange = useCallback(
     (values: Record<string, any>) => {
@@ -169,47 +238,81 @@ const Basics = ({
     (_event: FormEvent<HTMLDivElement>, item: any): void => {
       if (item.key !== selectedParamSetIndex) {
         setSelectedParamSetIndex(item.key as number);
-        handleParametersChange({}); // Clear out the config params from previous set
+        handleParametersChange(name !== undefined ? { displayName: name } : {}); // Clear out the config params from previous set
       }
     },
-    [handleParametersChange, selectedParamSetIndex]
+    [handleParametersChange, name, selectedParamSetIndex]
   );
 
-  const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter) => {
-    const connectionParameterProps: ConnectionParameterProps = {
-      parameterKey: key,
-      parameter,
-      value: parameterValues[key],
-      setValue: (val: any) => handleParametersChange((values: Record<string, any>) => ({ ...values, [key]: val })),
-      parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
-      setKeyValue: (customKey: string, val: any) =>
-        handleParametersChange((values: Record<string, any>) => ({ ...values, [customKey]: val })),
-      parameterValues: parameterValues,
-    };
+  const styleOverrides = useMemo(
+    () => ({
+      combobox: comboboxStyles,
+      dropdown: dropdownStyles,
+      secretField: secretFieldStyles,
+    }),
+    []
+  );
+  const renderConnectionParameter = useCallback(
+    (key: string, parameter: ConnectionParameterSetParameter) => {
+      const connectionParameterProps: ConnectionParameterProps = {
+        parameterKey: key,
+        parameter,
+        value: parameterValues[key],
+        setValue: (val: any) => handleParametersChange((values: Record<string, any>) => ({ ...values, [key]: val })),
+        parameterSet: connectionParameterSets?.values[selectedParamSetIndex],
+        setKeyValue: (customKey: string, val: any) =>
+          handleParametersChange((values: Record<string, any>) => ({ ...values, [customKey]: val })),
+        parameterValues: parameterValues,
+        operationParameterValues,
+        cssOverrides: { field: styles.paramField, label: styles.paramLabel },
+        styleOverrides,
+      };
 
-    const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
-      connectorId: '/placeholder/knowledgehub',
-      parameterKey: key,
-    });
-    if (customParameterOptions) {
-      const CustomConnectionParameter = customParameterOptions.EditorComponent;
-      return <CustomConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
-    }
+      const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
+        connectorId: '/placeholder/knowledgehub',
+        parameterKey: key,
+      });
+      if (customParameterOptions) {
+        const CustomConnectionParameter = customParameterOptions.EditorComponent;
+        return <CustomConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
+      }
 
-    return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
-  };
-
-  const items: TemplatesSectionItem[] = [
-    {
-      label: INTL_TEXT.nameLabel,
-      value: name,
-      type: 'textfield',
-      placeholder: INTL_TEXT.namePlaceholder,
-      required: true,
-      onChange: setName,
-      errorMessage: name !== undefined && isEmptyString(name) ? INTL_TEXT.nameError : undefined,
+      return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
     },
-  ];
+    [
+      parameterValues,
+      connectionParameterSets?.values,
+      selectedParamSetIndex,
+      operationParameterValues,
+      styles.paramField,
+      styles.paramLabel,
+      styleOverrides,
+      handleParametersChange,
+    ]
+  );
+
+  const handleNameChange = useCallback(
+    (name: string) => {
+      setName(name);
+      setConnectionParameterValues((values: Record<string, any>) => ({ ...values, displayName: name }));
+    },
+    [setConnectionParameterValues]
+  );
+
+  const items: TemplatesSectionItem[] = useMemo(
+    () => [
+      {
+        label: INTL_TEXT.nameLabel,
+        value: name,
+        type: 'textfield',
+        placeholder: INTL_TEXT.namePlaceholder,
+        required: true,
+        onChange: handleNameChange,
+        errorMessage: name !== undefined && isEmptyString(name) ? INTL_TEXT.nameError : undefined,
+      },
+    ],
+    [name, handleNameChange, INTL_TEXT.nameLabel, INTL_TEXT.namePlaceholder, INTL_TEXT.nameError]
+  );
 
   return (
     <div className={styles.container}>
@@ -223,18 +326,30 @@ const Basics = ({
       <div className="msla-templates-section">
         <Label className="msla-templates-section-title">{INTL_TEXT.databaseTitle}</Label>
         <Text className="msla-templates-section-description">{INTL_TEXT.databaseDescription}</Text>
-      </div>
 
-      <ConnectionMultiAuthInput
-        data-testId={'connection-multi-auth-input'}
-        isLoading={false}
-        value={selectedParamSetIndex}
-        onChange={onAuthDropdownChange}
-        connectionParameterSets={connectionParameterSets}
-      />
-      {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter]) => {
-        return renderConnectionParameter(key, parameter);
-      })}
+        <div className="msla-templates-section-items">
+          <ConnectionMultiAuthInput
+            data-testId={'connection-multi-auth-input'}
+            isLoading={false}
+            value={selectedParamSetIndex}
+            onChange={onAuthDropdownChange}
+            connectionParameterSets={connectionParameterSets}
+            cssOverrides={{ field: styles.paramField, label: styles.paramLabel, dropdown: styles.dropdown }}
+            styleOverrides={styleOverrides}
+          />
+          {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter]) => {
+            return renderConnectionParameter(key, parameter);
+          })}
+        </div>
+      </div>
     </div>
   );
+};
+
+export const getSelectedAuthIndex = (connectionParameterSets: ConnectionParameterSets, authType?: string): number => {
+  if (!authType) {
+    return 0;
+  }
+  const index = connectionParameterSets?.values.findIndex((paramSet) => paramSet.name === authType);
+  return index !== undefined && index >= 0 ? index : 0;
 };

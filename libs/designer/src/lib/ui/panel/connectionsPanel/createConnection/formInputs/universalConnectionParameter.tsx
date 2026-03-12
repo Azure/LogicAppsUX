@@ -1,7 +1,7 @@
 import { ConnectionParameterRow } from '../connectionParameterRow';
 // eslint-disable-next-line import/no-named-as-default
 import GatewayPicker from './gatewayPicker';
-import type { IDropdownOption } from '@fluentui/react';
+import type { IComboBoxStyles, IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
 import type {
   ConnectionParameter,
@@ -31,6 +31,8 @@ export interface ConnectionParameterProps {
   parameterSet?: ConnectionParameterSet;
   operationParameterValues?: Record<string, any>;
   parameterValues?: Record<string, any>;
+  cssOverrides?: Record<string, string>;
+  styleOverrides?: Record<string, IDropdownStyles | IComboBoxStyles | ITextFieldStyles>;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {
@@ -46,6 +48,8 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     availableGateways,
     availableSubscriptions,
     identity,
+    cssOverrides,
+    styleOverrides,
   } = props;
 
   const data = parameter?.uiDefinition;
@@ -109,6 +113,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
       <Dropdown
         id={`connection-param-${parameterKey}`}
         className="connection-parameter-input"
+        styles={styleOverrides?.dropdown}
         selectedKey={selectedKey}
         onChange={(e: any, newVal?: IDropdownOption) => setValue(newVal?.data ?? newVal?.text)}
         disabled={isLoading}
@@ -135,7 +140,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
     inputComponent = (
       <TextField
-        styles={{ fieldGroup: { minHeight: '24px' } }}
+        styles={{ fieldGroup: { minHeight: '24px' }, ...(styleOverrides?.secretField ?? {}) }}
         id={parameterKey}
         className="connection-parameter-input"
         disabled={isLoading}
@@ -161,6 +166,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
       tooltip={data?.tooltip}
       required={constraints?.required === 'true'}
       disabled={isLoading}
+      cssOverrides={cssOverrides}
     >
       {inputComponent}
     </ConnectionParameterRow>

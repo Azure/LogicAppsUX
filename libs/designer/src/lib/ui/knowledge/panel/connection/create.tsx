@@ -1,5 +1,5 @@
-import { TemplateContent, TemplatesPanelFooter } from '@microsoft/designer-ui';
-import { useCreateConnectionPanelTabs, type TabProps } from './usepaneltabs';
+import { TemplateContent, TemplatesPanelFooter, type KnowledgeTabProps } from '@microsoft/designer-ui';
+import { useCreateConnectionPanelTabs } from './usepaneltabs';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/knowledge/store';
 import { closePanel, KnowledgePanelView, selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
@@ -11,10 +11,10 @@ import { useCallback, useMemo } from 'react';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const CreateOrUpdateConnectionPanel = ({ isCreate }: { isCreate: boolean }) => {
+export const CreateConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement | null }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const panelTabs: TabProps[] = useCreateConnectionPanelTabs();
+  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs();
   const { selectedTabId, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedTabId: state.knowledgeHubPanel.selectedTabId,
     isOpen: state.knowledgeHubPanel?.isOpen ?? false,
@@ -43,11 +43,6 @@ export const CreateOrUpdateConnectionPanel = ({ isCreate }: { isCreate: boolean 
       id: 'PAnD/E',
       description: 'Header for the panel to create a knowledge hub connection',
     }),
-    updateTitle: intl.formatMessage({
-      defaultMessage: 'Update connection',
-      id: 'CwKE/Q',
-      description: 'Header for the panel to update a knowledge hub connection',
-    }),
     closeAriaLabel: intl.formatMessage({
       id: 'kdCuJZ',
       defaultMessage: 'Close panel',
@@ -66,11 +61,12 @@ export const CreateOrUpdateConnectionPanel = ({ isCreate }: { isCreate: boolean 
       onOpenChange={(_, { open }) => !open && handleDismiss()}
       position="end"
       size="large"
+      mountNode={{ element: mountNode }}
     >
       <DrawerHeader className={styles.header}>
         <div className={styles.headerContent}>
           <Text size={600} weight="semibold" style={{ flex: 1 }}>
-            {isCreate ? INTL_TEXT.createTitle : INTL_TEXT.updateTitle}
+            {INTL_TEXT.createTitle}
           </Text>
           <Button appearance="subtle" icon={<CloseIcon />} onClick={handleDismiss} aria-label={INTL_TEXT.closeAriaLabel} />
         </div>

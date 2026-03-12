@@ -42,4 +42,13 @@ export const useStyles = makeStyles({
     overflowWrap: 'anywhere',
     lineHeight: '1.5',
   },
+  cosmosCombobox: {
+    width: '100%',
+  },
+  cosmosField: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    width: '100%',
+  },
 });

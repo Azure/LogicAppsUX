@@ -1,24 +1,24 @@
-import { ResourceService, LogEntryLevel, LoggerService, equals } from '@microsoft/logic-apps-shared';
+import { ResourceService, LogEntryLevel, LoggerService, equals, isArmResourceId } from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStyles } from './styles';
 import { Link, tokens, Combobox, Option, Field } from '@fluentui/react-components';
-import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
+import { ArrowClockwise20Filled, ArrowClockwise20Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
 import { useAllCosmosDbServiceAccounts, type CosmosDbAccount } from './useCognitiveService';
 
-const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
+const RefreshIcon = bundleIcon(ArrowClockwise20Regular, ArrowClockwise20Filled);
 
 export const CosmosDbConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, value, setValue, parameter, setKeyValue } = props;
+  const { parameterKey, value, setValue, parameter, setKeyValue, cssOverrides, styleOverrides, operationParameterValues } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loadingAccountDetails, setLoadingAccountDetails] = useState<boolean>(false);
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState(getSubscriptionFromResource(value));
   const {
     isFetching: isFetchingAccount,
     data: allCosmosDbServiceAccounts,
@@ -27,7 +27,7 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
   const [selectedAccountText, setSelectedAccountText] = useState<string>('');
-
+  const isKeyAuth = useMemo(() => equals(operationParameterValues?.['authType'], 'key'), [operationParameterValues]);
   const stringResources = useMemo(
     () => ({
       RESOURCE: intl.formatMessage({
@@ -109,12 +109,14 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
     async (account: CosmosDbAccount) => {
       setLoadingAccountDetails(true);
       setEndpoint(account.endpoint);
-      await setKey(account.id);
+      if (isKeyAuth) {
+        await setKey(account.id);
+      }
       setLoadingAccountDetails(false);
 
       setValue(account.id);
     },
-    [setEndpoint, setKey, setValue]
+    [setEndpoint, setKey, setValue, isKeyAuth]
   );
 
   const setSubscriptionValue = useCallback(
@@ -125,6 +127,15 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
     },
     [setValue]
   );
+
+  useEffect(() => {
+    if (value && allCosmosDbServiceAccounts && !isFetchingAccount) {
+      const selectedAccount = allCosmosDbServiceAccounts.find((account) => equals(account.id, value));
+      if (selectedAccount) {
+        setSelectedAccountText(`${selectedAccount.name} (/${selectedAccount.resourceGroup})`);
+      }
+    }
+  }, [value, allCosmosDbServiceAccounts, isFetchingAccount]);
 
   const accountComboboxDisabled = useMemo(() => isFetchingAccount || isFetchingSubscription, [isFetchingAccount, isFetchingSubscription]);
 
@@ -142,7 +153,7 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
     }));
   }, [allCosmosDbServiceAccounts]);
 
-  const [accountSearchTerm, setSearchTerm] = useState<string | undefined>('');
+  const [accountSearchTerm, setSearchTerm] = useState<string | undefined>();
 
   if (parameterKey === 'cosmosDbServiceAccountId') {
     return (
@@ -153,6 +164,8 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
           setSelectedSubscriptionId={setSubscriptionValue}
           selectedSubscriptionId={selectedSubscriptionId}
           title={stringResources.SELECT_SUBSCRIPTION}
+          cssOverrides={cssOverrides}
+          styleOverrides={styleOverrides}
         />
         <ConnectionParameterRow
           parameterKey={'cosmos-db-resource-id'}
@@ -163,11 +176,12 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
               {'Learn More'}
             </Link>
           }
+          cssOverrides={cssOverrides}
         >
           <div className={styles.openAIContainer}>
-            <Field validationState={errorMessage ? 'error' : 'none'} validationMessage={errorMessage}>
+            <Field className={styles.cosmosField} validationState={errorMessage ? 'error' : 'none'} validationMessage={errorMessage}>
               <Combobox
-                className={styles.comboxbox}
+                className={styles.cosmosCombobox}
                 disabled={isFetchingAccount}
                 value={accountSearchTerm !== undefined ? accountSearchTerm : selectedAccountText}
                 selectedOptions={value ? [value] : []}
@@ -200,8 +214,7 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
             </Field>
             <RefreshIcon
               style={{
-                marginTop: '4px',
-                marginLeft: '4px',
+                margin: '6px 0 0 6px',
                 color: accountComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
               }}
               onClick={onRefreshClick}
@@ -225,4 +238,12 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
       }}
     />
   );
+};
+
+export const getSubscriptionFromResource = (resourceId: string): string => {
+  if (!resourceId || !isArmResourceId(resourceId)) {
+    return '';
+  }
+
+  return resourceId.split('/subscriptions/')[1].split('/')[0];
 };

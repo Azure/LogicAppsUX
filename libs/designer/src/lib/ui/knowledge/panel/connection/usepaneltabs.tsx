@@ -7,7 +7,11 @@ import constants from '../../../../common/constants';
 import { basicsTab } from './tabs/basics';
 import { modelTab } from './tabs/model';
 import { selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
-import { getCosmosDbConnectionParameters } from '../../../../core/knowledge/utils/connection';
+import {
+  createOrUpdateConnection,
+  getCosmosDbConnectionParameters,
+  getOpenAIConnectionParameters,
+} from '../../../../core/knowledge/utils/connection';
 
 export const useCreateConnectionPanelTabs = (): KnowledgeTabProps[] => {
   const intl = useIntl();
@@ -15,6 +19,12 @@ export const useCreateConnectionPanelTabs = (): KnowledgeTabProps[] => {
   const cosmosDbConnectionParameters = getCosmosDbConnectionParameters(intl);
   const [cosmosDbConnectionParametersValues, setCosmosDbConnectionParametersValues] = useState<Record<string, any>>({});
   const [basicsError, setBasicsError] = useState<'error' | undefined>(undefined);
+
+  const openAIConnectionParameters = getOpenAIConnectionParameters(intl);
+  const [openAIConnectionParametersValues, setOpenAIConnectionParametersValues] = useState<Record<string, any>>({});
+
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+
   const handleMoveToModel = useCallback(() => {
     dispatch(selectPanelTab(constants.KNOWLEDGE_PANEL_TAB_NAMES.MODEL));
     setBasicsError(
@@ -23,27 +33,50 @@ export const useCreateConnectionPanelTabs = (): KnowledgeTabProps[] => {
   }, [dispatch, cosmosDbConnectionParametersValues]);
 
   const handleCreate = useCallback(async () => {
-    // Handle create action here, e.g. call an API or update state
-  }, []);
+    try {
+      setIsCreating(true);
+      await createOrUpdateConnection({ ...cosmosDbConnectionParametersValues, ...openAIConnectionParametersValues });
+    } catch (error) {
+      console.error('Error creating connection:', error);
+    } finally {
+      setIsCreating(false);
+    }
+  }, [cosmosDbConnectionParametersValues, openAIConnectionParametersValues]);
   const basicsTabItem = useMemo(
     () =>
-      basicsTab(intl, dispatch, cosmosDbConnectionParameters, setCosmosDbConnectionParametersValues, {
-        isTabDisabled: false,
-        isPrimaryButtonDisabled: false,
-        onPrimaryButtonClick: handleMoveToModel,
-        tabStatusIcon: basicsError,
-      }),
-    [intl, dispatch, cosmosDbConnectionParameters, handleMoveToModel, basicsError]
+      basicsTab(
+        intl,
+        dispatch,
+        cosmosDbConnectionParameters,
+        cosmosDbConnectionParametersValues,
+        setCosmosDbConnectionParametersValues,
+        isCreating,
+        {
+          isTabDisabled: isCreating,
+          isPrimaryButtonDisabled: isCreating,
+          onPrimaryButtonClick: handleMoveToModel,
+          tabStatusIcon: basicsError,
+        }
+      ),
+    [intl, dispatch, cosmosDbConnectionParameters, cosmosDbConnectionParametersValues, isCreating, handleMoveToModel, basicsError]
   );
 
   const modelTabItem = useMemo(
     () =>
-      modelTab(intl, dispatch, {
-        isTabDisabled: false,
-        isPrimaryButtonDisabled: false,
-        onPrimaryButtonClick: handleCreate,
-      }),
-    [intl, dispatch, handleCreate]
+      modelTab(
+        intl,
+        dispatch,
+        openAIConnectionParameters,
+        openAIConnectionParametersValues,
+        setOpenAIConnectionParametersValues,
+        isCreating,
+        {
+          isTabDisabled: isCreating,
+          isPrimaryButtonDisabled: isCreating,
+          onPrimaryButtonClick: handleCreate,
+        }
+      ),
+    [intl, dispatch, openAIConnectionParameters, openAIConnectionParametersValues, isCreating, handleCreate]
   );
 
   return useMemo(() => [basicsTabItem, modelTabItem], [basicsTabItem, modelTabItem]);
