@@ -1386,8 +1386,40 @@ export const ParameterSection = ({
     const agentIdx = filtered.findIndex(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
-    const finalSettings = agentIdx > 0 ? [filtered[agentIdx], ...filtered.slice(0, agentIdx), ...filtered.slice(agentIdx + 1)] : filtered;
 
+    // Split: agent picker goes first, then create button, then remaining settings
+    if (agentIdx >= 0) {
+      const agentPickerSetting = filtered[agentIdx];
+      const otherSettings = [...filtered.slice(0, agentIdx), ...filtered.slice(agentIdx + 1)];
+
+      return (
+        <>
+          <SettingsSection
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
+          {createAgentInline}
+          {otherSettings.length > 0 && (
+            <SettingsSection
+              id={`${group.id}-after-foundry`}
+              nodeId={nodeId}
+              settings={otherSettings}
+              showHeading={false}
+              showSeparator={false}
+            />
+          )}
+        </>
+      );
+    }
+
+    // Fallback: no agent picker found, render all with create at end
     return (
       <>
         <SettingsSection
@@ -1395,7 +1427,7 @@ export const ParameterSection = ({
           nodeId={nodeId}
           sectionName={group.description}
           title={group.description}
-          settings={finalSettings}
+          settings={filtered}
           showHeading={!!group.description}
           expanded={sectionExpanded}
           onHeaderClick={onExpandSection}
