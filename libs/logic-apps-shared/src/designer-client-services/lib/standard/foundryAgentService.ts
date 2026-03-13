@@ -377,6 +377,12 @@ function proxyHeaders(connectionName: string, path: string, method: string, apiV
   };
 }
 
+/** Build the proxy URI with the ARM api-version query parameter. */
+function buildProxyUri(proxyBaseUrl: string): string {
+  const separator = proxyBaseUrl.includes('?') ? '&' : '?';
+  return `${proxyBaseUrl}${separator}api-version=2018-11-01`;
+}
+
 /** List all Foundry agents via the backend proxy. */
 export async function listAllFoundryAgentsViaProxy(ctx: FoundryProxyContext): Promise<FoundryAgent[]> {
   console.log(`[FoundryProxy] POST ${ctx.proxyBaseUrl} → GET /agents (connection: ${ctx.connectionName})`);
@@ -386,7 +392,7 @@ export async function listAllFoundryAgentsViaProxy(ctx: FoundryProxyContext): Pr
   while (true) {
     const afterParam = after ? `&after=${encodeURIComponent(after)}` : '';
     const page = await ctx.httpClient.post<FoundryAgentListResponse, Record<string, never>>({
-      uri: ctx.proxyBaseUrl,
+      uri: buildProxyUri(ctx.proxyBaseUrl),
       headers: proxyHeaders(ctx.connectionName, `/agents?limit=100${afterParam}`, 'GET'),
       content: {},
       noAuth: true,
@@ -406,7 +412,7 @@ export async function listAllFoundryAgentsViaProxy(ctx: FoundryProxyContext): Pr
 /** Get a single Foundry agent via the backend proxy. */
 export async function getFoundryAgentViaProxy(ctx: FoundryProxyContext, agentId: string): Promise<FoundryAgent> {
   const raw = await ctx.httpClient.post<FoundryAgentRaw, Record<string, never>>({
-    uri: ctx.proxyBaseUrl,
+    uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx.connectionName, `/agents/${encodeURIComponent(agentId)}`, 'GET'),
     content: {},
     noAuth: true,
@@ -433,7 +439,7 @@ export async function updateFoundryAgentViaProxy(
   };
 
   const raw = await ctx.httpClient.post<FoundryAgentRaw, Record<string, unknown>>({
-    uri: ctx.proxyBaseUrl,
+    uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx.connectionName, `/agents/${encodeURIComponent(agentId)}`, 'POST'),
     content: body,
     noAuth: true,
@@ -444,7 +450,7 @@ export async function updateFoundryAgentViaProxy(
 /** List Foundry agent versions via the backend proxy. */
 export async function listFoundryAgentVersionsViaProxy(ctx: FoundryProxyContext, agentId: string): Promise<FoundryAgentVersion[]> {
   const response = await ctx.httpClient.post<FoundryAgentVersionListResponse, Record<string, never>>({
-    uri: ctx.proxyBaseUrl,
+    uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx.connectionName, `/agents/${encodeURIComponent(agentId)}/versions`, 'GET'),
     content: {},
     noAuth: true,
@@ -455,7 +461,7 @@ export async function listFoundryAgentVersionsViaProxy(ctx: FoundryProxyContext,
 /** List Foundry model deployments via the backend proxy. */
 export async function listFoundryModelsViaProxy(ctx: FoundryProxyContext): Promise<FoundryModel[]> {
   const response = await ctx.httpClient.post<FoundryModelDeploymentListResponse, Record<string, never>>({
-    uri: ctx.proxyBaseUrl,
+    uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx.connectionName, '/deployments', 'GET'),
     content: {},
     noAuth: true,
