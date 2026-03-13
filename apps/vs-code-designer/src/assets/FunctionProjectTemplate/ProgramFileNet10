@@ -1,0 +1,25 @@
+// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace <%= namespace %>
+{
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+
+    internal static class Program
+    {
+        private static void Main(string[] args)
+        {
+            var host = new HostBuilder()
+                .ConfigureFunctionsWebApplication()
+                .ConfigureServices(services =>
+                {
+                    services.AddApplicationInsightsTelemetryWorkerService();
+                })
+                .Build();
+
+            host.Run();
+        }
+    }
+}

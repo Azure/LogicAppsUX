@@ -2,7 +2,8 @@ import { useFeedbackMessage } from '../feedbackHelper';
 import { ChatBubble } from './chatBubble';
 import { ConnectionsLoading, ConnectionStatusList } from './connectionStatus';
 import type { ConnectionsSetupItem } from './conversationItem';
-import { css } from '@fluentui/react';
+import { mergeClasses } from '@fluentui/react-components';
+import { ArrowForwardRegular } from '@fluentui/react-icons';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -74,12 +75,12 @@ const ConnectionsSetup: React.FC<ConnectionsSetupProps> = ({ item }) => {
           {
             text: intlText.skipText,
             //TODO: onClick
-            iconProps: { iconName: 'Forward' },
+            iconElement: React.createElement(ArrowForwardRegular),
           },
         ]}
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
-        className={css('msla-connections-bubble', isHidden && HIDDEN_CLASS)}
+        className={mergeClasses('msla-connections-bubble', isHidden && HIDDEN_CLASS)}
         disabled={false} //TODO
       >
         <div className={'msla-connections-message'}>{intlText.connectionsSetupCardDescription}</div>

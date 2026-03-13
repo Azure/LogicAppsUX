@@ -321,7 +321,7 @@ describe('CreateServer', () => {
     });
 
     it('displays validation errors for name field', async () => {
-      mockValidateMcpServerName.mockReturnValue('Name is required');
+      mockValidateMcpServerName.mockReturnValue('Requires a name.');
       const user = userEvent.setup();
 
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
@@ -330,7 +330,7 @@ describe('CreateServer', () => {
       await user.type(nameInput, 'invalid');
 
       await waitFor(() => {
-        expect(screen.getByText('Name is required')).toBeInTheDocument();
+        expect(screen.getByText('Requires a name.')).toBeInTheDocument();
       });
     });
 

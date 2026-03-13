@@ -62,7 +62,7 @@ export const DevToolbox = () => {
             <AccordionItem value="1">
               <AccordionHeader className={styles.accordionHeader}>
                 <div className={styles.headerContent}>
-                  <Text size={500} weight="semibold">
+                  <Text size={400} weight="semibold">
                     🛠️ Developer Toolbox
                   </Text>
                   <Badge appearance="tint" color={armToken ? 'success' : 'danger'} size="small">
@@ -74,7 +74,7 @@ export const DevToolbox = () => {
               <AccordionPanel className={styles.accordionPanel}>
                 <div className={styles.mainContainer}>
                   <div className={styles.themeToggleContainer}>
-                    <Text size={400} weight="semibold">
+                    <Text size={300} weight="semibold">
                       🎨 Dark Mode
                     </Text>
                     <Switch checked={!isLightMode} onChange={handleThemeToggle} label={isLightMode ? 'Light' : 'Dark'} />

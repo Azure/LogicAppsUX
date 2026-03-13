@@ -16,13 +16,16 @@ export const Artifact = {
   ParametersFile: 'parameters.json',
   WorkflowFile: 'workflow.json',
   HostFile: 'host.json',
+  NotesFile: 'notes.json',
   DraftFile: 'workflow-draft.json',
   DraftConnectionsFile: 'connections-draft.json',
   DraftParametersFile: 'parameters-draft.json',
+  DraftNotesFile: 'notes-draft.json',
 } as const;
 
 export const VfsArtifact = {
   NotesFile: 'notes.json',
+  DraftNotesFile: 'notes-draft.json',
 } as const;
 
 export interface ArtifactProperties {
@@ -30,6 +33,8 @@ export interface ArtifactProperties {
     [Artifact.WorkflowFile]: WorkflowJson;
     [Artifact.ParametersFile]: ParametersData;
     [Artifact.ConnectionsFile]: ConnectionsData;
+    [Artifact.DraftConnectionsFile]?: ConnectionsData;
+    [Artifact.DraftParametersFile]?: ParametersData;
   };
   health: {
     state: string;
@@ -128,7 +133,6 @@ export interface ConnectionsData {
   agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export type ParametersData = Record<string, Parameter>;
 
 export interface Parameter {
