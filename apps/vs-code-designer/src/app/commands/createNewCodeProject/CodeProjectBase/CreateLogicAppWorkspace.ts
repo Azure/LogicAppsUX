@@ -229,8 +229,8 @@ export async function createLocalConfigurationFiles(
   if (logicAppType === ProjectType.codeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
     localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
-    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.160.0.18]';
-    localSettingsJson.Values['FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI'] = 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test';
+    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__version'] = '[1.160.24]';
+    localSettingsJson.Values['FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI'] = 'https://cdnforlogicappsv2.blob.core.windows.net/la-sdk-private';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
