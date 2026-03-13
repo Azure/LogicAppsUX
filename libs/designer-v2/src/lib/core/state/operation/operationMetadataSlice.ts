@@ -343,9 +343,16 @@ export const operationMetadataSlice = createSlice({
         parameterGroup.rawInputs = rawInputs;
       }
 
-      // Clear the stash — dynamic loading succeeded, so stashed values are no longer needed
-      if (inputParameters) {
-        delete inputParameters.stashedDynamicParameterValues;
+      // Remove stash entries that are now satisfied by the newly loaded inputs,
+      // but keep entries for other dynamic refs that haven't loaded yet.
+      if (inputParameters?.stashedDynamicParameterValues?.length) {
+        const loadedKeys = new Set(inputs.map((p) => p.parameterKey));
+        const remaining = inputParameters.stashedDynamicParameterValues.filter((p) => !loadedKeys.has(p.parameterKey));
+        if (remaining.length > 0) {
+          inputParameters.stashedDynamicParameterValues = remaining;
+        } else {
+          delete inputParameters.stashedDynamicParameterValues;
+        }
       }
 
       if (dependencies) {

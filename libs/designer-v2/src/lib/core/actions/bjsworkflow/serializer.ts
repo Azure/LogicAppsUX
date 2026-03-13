@@ -997,15 +997,11 @@ const serializeHost = (
 };
 
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
+  const result = { ...inputs };
   for (const [key, value] of Object.entries(hostInfo)) {
-    if (inputs[key]) {
-      inputs[key] = { ...inputs[key], ...value };
-    } else {
-      inputs[key] = value;
-    }
+    result[key] = result[key] ? { ...result[key], ...value } : value;
   }
-
-  return inputs;
+  return result;
 };
 
 //#endregion

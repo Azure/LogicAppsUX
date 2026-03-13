@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { operationMetadataSlice, initialState, DynamicLoadStatus, ErrorLevel } from '../operationMetadataSlice';
+import { operationMetadataSlice, initialState, DynamicLoadStatus } from '../operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 
 const { clearDynamicIO, addDynamicInputs } = operationMetadataSlice.actions;
@@ -7,7 +7,7 @@ const { clearDynamicIO, addDynamicInputs } = operationMetadataSlice.actions;
 const createMockParameter = (overrides: Partial<ParameterInfo> & { parameterKey: string }): ParameterInfo =>
   ({
     id: overrides.parameterKey,
-    parameterKey: overrides.parameterKey,
+    // parameterKey: overrides.parameterKey, // Present in overrides spread
     parameterName: overrides.parameterKey,
     label: overrides.parameterKey,
     required: false,
@@ -128,37 +128,39 @@ describe('clearDynamicIO - dynamic parameter stashing', () => {
 describe('addDynamicInputs - stash clearing', () => {
   const nodeId = 'testNode';
 
+  const makeStateWithStash = (stashedParams: ParameterInfo[], groupParams: ParameterInfo[] = []) => ({
+    ...initialState,
+    inputParameters: {
+      [nodeId]: {
+        dynamicLoadStatus: DynamicLoadStatus.NOTSTARTED,
+        parameterGroups: {
+          default: {
+            id: 'default',
+            description: '',
+            parameters: groupParams,
+            rawInputs: [],
+          },
+        },
+        stashedDynamicParameterValues: stashedParams,
+      },
+    },
+    dependencies: {
+      [nodeId]: { inputs: {}, outputs: {} },
+    },
+  });
+
   it('should clear the stash when dynamic inputs are successfully loaded', () => {
     const newDynamicParam = createMockParameter({
       parameterKey: 'newDynamic',
       info: { isDynamic: true, dynamicParameterReference: 'depKey' },
     });
 
-    const state = {
-      ...initialState,
-      inputParameters: {
-        [nodeId]: {
-          dynamicLoadStatus: DynamicLoadStatus.NOTSTARTED,
-          parameterGroups: {
-            default: {
-              id: 'default',
-              description: '',
-              parameters: [],
-              rawInputs: [],
-            },
-          },
-          stashedDynamicParameterValues: [
-            createMockParameter({
-              parameterKey: 'oldDynamic',
-              info: { isDynamic: true, dynamicParameterReference: 'depKey' },
-            }),
-          ],
-        },
-      },
-      dependencies: {
-        [nodeId]: { inputs: {}, outputs: {} },
-      },
-    };
+    const state = makeStateWithStash([
+      createMockParameter({
+        parameterKey: 'newDynamic',
+        info: { isDynamic: true, dynamicParameterReference: 'depKey' },
+      }),
+    ]);
 
     const result = operationMetadataSlice.reducer(
       state as any,
@@ -170,10 +172,47 @@ describe('addDynamicInputs - stash clearing', () => {
       })
     );
 
-    // Stash should be cleared
+    // Stash should be cleared because the loaded input satisfies the stashed entry
     expect(result.inputParameters[nodeId].stashedDynamicParameterValues).toBeUndefined();
     // New params should be in the group
     expect(result.inputParameters[nodeId].parameterGroups.default.parameters).toHaveLength(1);
     expect(result.inputParameters[nodeId].parameterGroups.default.parameters[0].parameterKey).toBe('newDynamic');
+  });
+
+  it('should only remove stash entries whose parameterKeys are now present in the loaded inputs', () => {
+    const stashedA = createMockParameter({
+      parameterKey: 'dynamicA',
+      info: { isDynamic: true, dynamicParameterReference: 'depA' },
+    });
+    const stashedB = createMockParameter({
+      parameterKey: 'dynamicB',
+      info: { isDynamic: true, dynamicParameterReference: 'depB' },
+    });
+
+    const loadedA = createMockParameter({
+      parameterKey: 'dynamicA',
+      info: { isDynamic: true, dynamicParameterReference: 'depA' },
+      value: [{ id: '1', type: 'literal', value: 'freshly-loaded' }],
+    });
+
+    const state = makeStateWithStash([stashedA, stashedB]);
+
+    const result = operationMetadataSlice.reducer(
+      state as any,
+      addDynamicInputs({
+        nodeId,
+        groupId: 'default',
+        inputs: [loadedA],
+        rawInputs: [],
+      })
+    );
+
+    // depB should remain in the stash since it was not part of the loaded inputs
+    expect(result.inputParameters[nodeId].stashedDynamicParameterValues).toHaveLength(1);
+    expect(result.inputParameters[nodeId].stashedDynamicParameterValues![0].parameterKey).toBe('dynamicB');
+
+    // depA should be in the group now
+    expect(result.inputParameters[nodeId].parameterGroups.default.parameters).toHaveLength(1);
+    expect(result.inputParameters[nodeId].parameterGroups.default.parameters[0].parameterKey).toBe('dynamicA');
   });
 });
