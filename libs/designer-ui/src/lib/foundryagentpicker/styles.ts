@@ -60,6 +60,8 @@ export const useFoundryAgentPickerStyles = makeStyles({
     cursor: 'pointer',
     fontSize: tokens.fontSizeBase200,
     color: tokens.colorBrandForeground1,
+    backgroundColor: 'transparent',
+    ...shorthands.border('0'),
     '&:hover': {
       color: tokens.colorBrandForeground2Hover,
     },

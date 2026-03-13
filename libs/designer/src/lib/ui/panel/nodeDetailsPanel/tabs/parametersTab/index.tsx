@@ -1703,7 +1703,7 @@ function CreateFoundryAgentInline({
       await onCreateAgent({
         name: trimmedName,
         model,
-        ...(trimmedInstructions ? { instructions: trimmedInstructions } : {}),
+        ...(trimmedInstructions && { instructions: trimmedInstructions }),
       });
       resetForm();
     } catch (err: unknown) {

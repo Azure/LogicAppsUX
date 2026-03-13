@@ -1,4 +1,11 @@
-import type { Connection, CreateFoundryAgentOptions, FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
+import type {
+  Connection,
+  CreateFoundryAgentOptions,
+  FoundryAgent,
+  FoundryAgentVersion,
+  FoundryModel,
+  IHttpClient,
+} from '@microsoft/logic-apps-shared';
 import {
   ApiManagementService,
   CognitiveServiceService,
@@ -224,9 +231,7 @@ const useFoundryConnectionResourceId = (nodeId: string): string | undefined => {
  * Returns the proxy context (httpClient + proxyBaseUrl) from the CognitiveServiceService.
  * All Foundry calls go through the backend proxy which handles auth via MSI.
  */
-function getFoundryProxyContext():
-  | { httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>; proxyBaseUrl: string }
-  | undefined {
+function getFoundryProxyContext(): { httpClient: IHttpClient; proxyBaseUrl: string } | undefined {
   const service = CognitiveServiceService();
   if (!service.foundryProxyBaseUrl || !service.httpClient) {
     return undefined;
@@ -267,19 +272,15 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
   const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
-    [queryKeys.allFoundryAgents, { projectEndpoint }],
+    [queryKeys.allFoundryAgents, { projectEndpoint, connectionName }],
     async () => {
       if (!projectEndpoint) {
         return [];
       }
       const proxy = getFoundryProxyContext();
       if (!proxy) {
-        console.warn('[FoundryProxy] No proxy configured — cannot list agents');
         return [];
       }
-      console.log(
-        `[FoundryProxy] listAgents via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint}, connection: ${connectionName ?? 'none'})`
-      );
       return listAllFoundryAgentsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
@@ -298,17 +299,15 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
   const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
-    ['allFoundryModels', { projectEndpoint }],
+    ['allFoundryModels', { projectEndpoint, connectionName }],
     async () => {
       if (!projectEndpoint) {
         return [];
       }
       const proxy = getFoundryProxyContext();
       if (!proxy) {
-        console.warn('[FoundryProxy] No proxy configured — cannot list models');
         return [];
       }
-      console.log(`[FoundryProxy] listModels via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint})`);
       return listFoundryModelsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
@@ -324,17 +323,15 @@ export const useFoundryAgentVersions = (
   const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
-    ['foundryAgentVersions', { projectEndpoint, agentId }],
+    ['foundryAgentVersions', { projectEndpoint, connectionName, agentId }],
     async () => {
       if (!projectEndpoint || !agentId) {
         return [];
       }
       const proxy = getFoundryProxyContext();
       if (!proxy) {
-        console.warn('[FoundryProxy] No proxy configured — cannot list agent versions');
         return [];
       }
-      console.log(`[FoundryProxy] listAgentVersions via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint}, agent: ${agentId})`);
       return listFoundryAgentVersionsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName }, agentId);
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }

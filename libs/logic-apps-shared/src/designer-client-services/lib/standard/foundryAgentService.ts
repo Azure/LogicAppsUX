@@ -395,7 +395,6 @@ function buildProxyUri(proxyBaseUrl: string): string {
 
 /** List all Foundry agents via the backend proxy. */
 export async function listAllFoundryAgentsViaProxy(ctx: FoundryProxyContext): Promise<FoundryAgent[]> {
-  console.log(`[FoundryProxy] POST ${ctx.proxyBaseUrl} → GET /agents (endpoint: ${ctx.foundryEndpoint})`);
   const agents: FoundryAgent[] = [];
   let after: string | undefined;
 

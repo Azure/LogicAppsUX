@@ -7,10 +7,10 @@ import { useFoundryAgentPickerStyles } from './styles';
 export interface FoundryAgentPickerProps {
   agents: FoundryAgent[];
   isLoading: boolean;
-  error?: Error | null | undefined;
-  selectedAgentId?: string | undefined;
+  error?: Error | null;
+  selectedAgentId?: string;
   onAgentSelect: (agent: FoundryAgent) => void;
-  disabled?: boolean | undefined;
+  disabled?: boolean;
   /** Available models for the create form dropdown */
   models?: Array<{ id: string; name: string }>;
   /** Whether models are loading */
