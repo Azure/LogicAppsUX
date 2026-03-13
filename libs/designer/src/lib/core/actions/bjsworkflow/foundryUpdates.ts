@@ -62,9 +62,9 @@ export async function flushPendingFoundryUpdates(onFlushed?: (flushedNodeIds: st
   const flushedNodeIds: string[] = [];
 
   const results = await Promise.allSettled(
-    entries.map(async ([nodeId, { agentId, updates, connectionName }]) => {
-      console.log(`[FoundryProxy] updateAgent via proxy: ${proxyBaseUrl} (connection: ${connectionName}, agent: ${agentId})`);
-      await updateFoundryAgentViaProxy({ httpClient, proxyBaseUrl, connectionName }, agentId, updates);
+    entries.map(async ([nodeId, { projectEndpoint, agentId, updates, connectionName }]) => {
+      console.log(`[FoundryProxy] updateAgent via proxy: ${proxyBaseUrl} (endpoint: ${projectEndpoint}, agent: ${agentId})`);
+      await updateFoundryAgentViaProxy({ httpClient, proxyBaseUrl, foundryEndpoint: projectEndpoint, connectionName }, agentId, updates);
       // Only clear this entry on success
       pendingUpdates.delete(nodeId);
       recentlyFlushedNodes.add(nodeId);

@@ -271,12 +271,12 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
         return [];
       }
       const proxy = getFoundryProxyContext();
-      if (!proxy || !connectionName) {
-        console.warn('[FoundryProxy] No proxy configured or connection name missing — cannot list agents');
+      if (!proxy) {
+        console.warn('[FoundryProxy] No proxy configured — cannot list agents');
         return [];
       }
-      console.log(`[FoundryProxy] listAgents via proxy: ${proxy.proxyBaseUrl} (connection: ${connectionName})`);
-      return listAllFoundryAgentsViaProxy({ ...proxy, connectionName });
+      console.log(`[FoundryProxy] listAgents via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint}, connection: ${connectionName ?? 'none'})`);
+      return listAllFoundryAgentsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -300,12 +300,12 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
         return [];
       }
       const proxy = getFoundryProxyContext();
-      if (!proxy || !connectionName) {
-        console.warn('[FoundryProxy] No proxy configured or connection name missing — cannot list models');
+      if (!proxy) {
+        console.warn('[FoundryProxy] No proxy configured — cannot list models');
         return [];
       }
-      console.log(`[FoundryProxy] listModels via proxy: ${proxy.proxyBaseUrl} (connection: ${connectionName})`);
-      return listFoundryModelsViaProxy({ ...proxy, connectionName });
+      console.log(`[FoundryProxy] listModels via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint})`);
+      return listFoundryModelsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -326,12 +326,12 @@ export const useFoundryAgentVersions = (
         return [];
       }
       const proxy = getFoundryProxyContext();
-      if (!proxy || !connectionName) {
-        console.warn('[FoundryProxy] No proxy configured or connection name missing — cannot list agent versions');
+      if (!proxy) {
+        console.warn('[FoundryProxy] No proxy configured — cannot list agent versions');
         return [];
       }
-      console.log(`[FoundryProxy] listAgentVersions via proxy: ${proxy.proxyBaseUrl} (connection: ${connectionName}, agent: ${agentId})`);
-      return listFoundryAgentVersionsViaProxy({ ...proxy, connectionName }, agentId);
+      console.log(`[FoundryProxy] listAgentVersions via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint}, agent: ${agentId})`);
+      return listFoundryAgentVersionsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName }, agentId);
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );
