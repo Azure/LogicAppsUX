@@ -99,6 +99,7 @@ import {
   useCognitiveServiceAccountId,
   useFoundryAgentsForNode,
   useFoundryAgentVersions,
+  useFoundryConnectionName,
   useFoundryModelsForNode,
   useFoundryProjectEndpointForNode,
   useFoundryProjectResourceIdForNode,
@@ -387,6 +388,7 @@ export const ParameterSection = ({
   const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
+  const foundryConnectionName = useFoundryConnectionName(nodeId);
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
@@ -540,6 +542,7 @@ export const ParameterSection = ({
           projectEndpoint: foundryProjectEndpoint,
           agentId: selectedFoundryAgent.id,
           updates: { model: modelId, instructions: pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined },
+          connectionName: foundryConnectionName ?? '',
         });
       }
       // Sync deploymentId parameter so the serialized workflow includes the model
@@ -548,7 +551,7 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelId);
       }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions, nodeInputs.parameterGroups, group.id, dispatch]
+    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions, foundryConnectionName, nodeInputs.parameterGroups, group.id, dispatch]
   );
 
   const handleFoundryInstructionsChange = useCallback(
@@ -560,6 +563,7 @@ export const ParameterSection = ({
           projectEndpoint: foundryProjectEndpoint,
           agentId: selectedFoundryAgent.id,
           updates: { model: pendingFoundryModel ?? selectedFoundryAgent.model, instructions },
+          connectionName: foundryConnectionName ?? '',
         });
       }
       // Sync system instructions to the messages parameter so the workflow definition stays in sync
@@ -570,7 +574,7 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
       }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, nodeInputs.parameterGroups, group.id, dispatch]
+    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, foundryConnectionName, nodeInputs.parameterGroups, group.id, dispatch]
   );
 
   // Sync deploymentId when the selected Foundry agent changes (initial selection or switching agents)

@@ -5,12 +5,13 @@ import {
   ResourceService,
   foundryServiceConnectionRegex,
   buildProjectEndpointFromResourceId,
-  listAllFoundryAgents,
-  listFoundryAgentVersions,
-  listFoundryModels,
+  listAllFoundryAgentsViaProxy,
+  listFoundryAgentVersionsViaProxy,
+  listFoundryModelsViaProxy,
 } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
+import { useConnectionMapping } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
 
 const queryOpts = {
@@ -220,23 +221,25 @@ const useFoundryConnectionResourceId = (nodeId: string): string | undefined => {
 };
 
 /**
- * Returns the httpClient and a getToken function from the CognitiveServiceService,
- * or undefined if either is unavailable (e.g. VS Code environment).
+ * Returns the proxy context (httpClient + proxyBaseUrl) from the CognitiveServiceService.
+ * All Foundry calls go through the backend proxy which handles auth via MSI.
  */
-function getFoundryServiceContext():
-  | {
-      httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>;
-      getToken: NonNullable<ReturnType<typeof CognitiveServiceService>['getFoundryAccessToken']>;
-    }
-  | undefined {
+function getFoundryProxyContext(): { httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>; proxyBaseUrl: string } | undefined {
   const service = CognitiveServiceService();
-  const getToken = service.getFoundryAccessToken;
-  const httpClient = service.httpClient;
-  if (!getToken || !httpClient) {
+  if (!service.foundryProxyBaseUrl || !service.httpClient) {
     return undefined;
   }
-  return { httpClient, getToken };
+  return { httpClient: service.httpClient, proxyBaseUrl: service.foundryProxyBaseUrl };
 }
+
+/**
+ * Returns the connection reference name (key in connectionsMapping) for a node.
+ * This is the name used in connections.json as the agent connection key.
+ */
+export const useFoundryConnectionName = (nodeId: string): string | undefined => {
+  const connectionsMapping = useConnectionMapping();
+  return connectionsMapping[nodeId] ?? undefined;
+};
 
 const foundryQueryOpts = {
   ...queryOpts,
@@ -256,9 +259,10 @@ export const useFoundryProjectResourceIdForNode = (nodeId: string): string | und
   return useFoundryConnectionResourceId(nodeId);
 };
 
-/** Fetches all v2 Foundry agents for the node's selected connection. */
+/** Fetches all v2 Foundry agents for the node's selected connection via the backend proxy. */
 export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
     [queryKeys.allFoundryAgents, { projectEndpoint }],
@@ -266,12 +270,13 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
       if (!projectEndpoint) {
         return [];
       }
-      const ctx = getFoundryServiceContext();
-      if (!ctx) {
+      const proxy = getFoundryProxyContext();
+      if (!proxy || !connectionName) {
+        console.warn('[FoundryProxy] No proxy configured or connection name missing — cannot list agents');
         return [];
       }
-      const token = await ctx.getToken();
-      return listAllFoundryAgents(ctx.httpClient, projectEndpoint, token);
+      console.log(`[FoundryProxy] listAgents via proxy: ${proxy.proxyBaseUrl} (connection: ${connectionName})`);
+      return listAllFoundryAgentsViaProxy({ ...proxy, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -283,9 +288,10 @@ export const useFoundryAccountResourceIdForNode = (nodeId: string): string | und
   return resourceId ? getServiceAccountId(resourceId, true) : undefined;
 };
 
-/** Fetches available model deployments for the Foundry project connected to the node. */
+/** Fetches available model deployments for the Foundry project connected to the node via the backend proxy. */
 export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
     ['allFoundryModels', { projectEndpoint }],
@@ -293,23 +299,25 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       if (!projectEndpoint) {
         return [];
       }
-      const ctx = getFoundryServiceContext();
-      if (!ctx) {
+      const proxy = getFoundryProxyContext();
+      if (!proxy || !connectionName) {
+        console.warn('[FoundryProxy] No proxy configured or connection name missing — cannot list models');
         return [];
       }
-      const token = await ctx.getToken();
-      return listFoundryModels(ctx.httpClient, projectEndpoint, token);
+      console.log(`[FoundryProxy] listModels via proxy: ${proxy.proxyBaseUrl} (connection: ${connectionName})`);
+      return listFoundryModelsViaProxy({ ...proxy, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
 };
 
-/** Fetches all versions of a specific Foundry agent. */
+/** Fetches all versions of a specific Foundry agent via the backend proxy. */
 export const useFoundryAgentVersions = (
   nodeId: string,
   agentId: string | undefined
 ): { data: FoundryAgentVersion[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
     ['foundryAgentVersions', { projectEndpoint, agentId }],
@@ -317,12 +325,13 @@ export const useFoundryAgentVersions = (
       if (!projectEndpoint || !agentId) {
         return [];
       }
-      const ctx = getFoundryServiceContext();
-      if (!ctx) {
+      const proxy = getFoundryProxyContext();
+      if (!proxy || !connectionName) {
+        console.warn('[FoundryProxy] No proxy configured or connection name missing — cannot list agent versions');
         return [];
       }
-      const token = await ctx.getToken();
-      return listFoundryAgentVersions(ctx.httpClient, projectEndpoint, agentId, token);
+      console.log(`[FoundryProxy] listAgentVersions via proxy: ${proxy.proxyBaseUrl} (connection: ${connectionName}, agent: ${agentId})`);
+      return listFoundryAgentVersionsViaProxy({ ...proxy, connectionName }, agentId);
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );

@@ -352,3 +352,120 @@ export async function listFoundryModels(httpClient: IHttpClient, projectEndpoint
       name: d.properties?.model?.name ?? d.model_name ?? d.name,
     }));
 }
+
+// ============================================================================
+// Proxy Functions — route Foundry calls through the backend proxy
+// ============================================================================
+
+/**
+ * Context for proxy-based Foundry calls.
+ * The proxy handles authentication (MSI/Key) server-side.
+ */
+export interface FoundryProxyContext {
+  httpClient: IHttpClient;
+  proxyBaseUrl: string;
+  connectionName: string;
+}
+
+function proxyHeaders(connectionName: string, path: string, method: string, apiVersion?: string): Record<string, string> {
+  return {
+    'x-ms-foundry-connection': connectionName,
+    'x-ms-foundry-path': path,
+    'x-ms-foundry-method': method,
+    ...(apiVersion && { 'x-ms-foundry-api-version': apiVersion }),
+    'Content-Type': 'application/json',
+  };
+}
+
+/** List all Foundry agents via the backend proxy. */
+export async function listAllFoundryAgentsViaProxy(ctx: FoundryProxyContext): Promise<FoundryAgent[]> {
+  console.log(`[FoundryProxy] POST ${ctx.proxyBaseUrl} → GET /agents (connection: ${ctx.connectionName})`);
+  const agents: FoundryAgent[] = [];
+  let after: string | undefined;
+
+  while (true) {
+    const afterParam = after ? `&after=${encodeURIComponent(after)}` : '';
+    const page = await ctx.httpClient.post<FoundryAgentListResponse, Record<string, never>>({
+      uri: ctx.proxyBaseUrl,
+      headers: proxyHeaders(ctx.connectionName, `/agents?limit=100${afterParam}`, 'GET'),
+      content: {},
+      noAuth: true,
+    });
+
+    agents.push(...(page.data ?? []).map(normalizeAgent));
+
+    if (!page.has_more || !page.last_id) {
+      break;
+    }
+    after = page.last_id;
+  }
+
+  return agents;
+}
+
+/** Get a single Foundry agent via the backend proxy. */
+export async function getFoundryAgentViaProxy(ctx: FoundryProxyContext, agentId: string): Promise<FoundryAgent> {
+  const raw = await ctx.httpClient.post<FoundryAgentRaw, Record<string, never>>({
+    uri: ctx.proxyBaseUrl,
+    headers: proxyHeaders(ctx.connectionName, `/agents/${encodeURIComponent(agentId)}`, 'GET'),
+    content: {},
+    noAuth: true,
+  });
+  return normalizeAgent(raw);
+}
+
+/** Update a Foundry agent via the backend proxy. */
+export async function updateFoundryAgentViaProxy(
+  ctx: FoundryProxyContext,
+  agentId: string,
+  updates: UpdateFoundryAgentOptions
+): Promise<FoundryAgent> {
+  const definition: Record<string, unknown> = {
+    kind: 'prompt',
+    ...(updates.model !== undefined && { model: updates.model }),
+    ...(updates.instructions !== undefined && { instructions: updates.instructions }),
+  };
+
+  const body: Record<string, unknown> = {
+    definition,
+    ...(updates.name !== undefined && { name: updates.name }),
+    ...(updates.description !== undefined && { description: updates.description }),
+  };
+
+  const raw = await ctx.httpClient.post<FoundryAgentRaw, Record<string, unknown>>({
+    uri: ctx.proxyBaseUrl,
+    headers: proxyHeaders(ctx.connectionName, `/agents/${encodeURIComponent(agentId)}`, 'POST'),
+    content: body,
+    noAuth: true,
+  });
+  return normalizeAgent(raw);
+}
+
+/** List Foundry agent versions via the backend proxy. */
+export async function listFoundryAgentVersionsViaProxy(ctx: FoundryProxyContext, agentId: string): Promise<FoundryAgentVersion[]> {
+  const response = await ctx.httpClient.post<FoundryAgentVersionListResponse, Record<string, never>>({
+    uri: ctx.proxyBaseUrl,
+    headers: proxyHeaders(ctx.connectionName, `/agents/${encodeURIComponent(agentId)}/versions`, 'GET'),
+    content: {},
+    noAuth: true,
+  });
+  return extractVersionsData(response);
+}
+
+/** List Foundry model deployments via the backend proxy. */
+export async function listFoundryModelsViaProxy(ctx: FoundryProxyContext): Promise<FoundryModel[]> {
+  const response = await ctx.httpClient.post<FoundryModelDeploymentListResponse, Record<string, never>>({
+    uri: ctx.proxyBaseUrl,
+    headers: proxyHeaders(ctx.connectionName, '/deployments', 'GET'),
+    content: {},
+    noAuth: true,
+  });
+  const deployments = response.value ?? response.data ?? [];
+
+  return deployments
+    .filter((d) => d.name)
+    .map((d) => ({
+      id: d.name,
+      name: d.properties?.model?.name ?? d.model_name ?? d.name,
+    }));
+}

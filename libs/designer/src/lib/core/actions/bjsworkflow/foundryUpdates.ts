@@ -1,10 +1,11 @@
-import { updateFoundryAgent, CognitiveServiceService } from '@microsoft/logic-apps-shared';
+import { updateFoundryAgentViaProxy, CognitiveServiceService } from '@microsoft/logic-apps-shared';
 import type { UpdateFoundryAgentOptions } from '@microsoft/logic-apps-shared';
 
 interface PendingFoundryUpdate {
   projectEndpoint: string;
   agentId: string;
   updates: UpdateFoundryAgentOptions;
+  connectionName: string;
 }
 
 const pendingUpdates = new Map<string, PendingFoundryUpdate>();
@@ -52,19 +53,18 @@ export async function flushPendingFoundryUpdates(onFlushed?: (flushedNodeIds: st
   }
 
   const service = CognitiveServiceService();
-  const getToken = service.getFoundryAccessToken;
   const httpClient = service.httpClient;
-  if (!getToken || !httpClient) {
-    // Token getter or httpClient not configured (e.g. VS Code) — skip silently
+  const proxyBaseUrl = service.foundryProxyBaseUrl;
+  if (!httpClient || !proxyBaseUrl) {
     return [];
   }
 
   const flushedNodeIds: string[] = [];
 
   const results = await Promise.allSettled(
-    entries.map(async ([nodeId, { projectEndpoint, agentId, updates }]) => {
-      const token = await getToken();
-      await updateFoundryAgent(httpClient, projectEndpoint, agentId, token, updates);
+    entries.map(async ([nodeId, { agentId, updates, connectionName }]) => {
+      console.log(`[FoundryProxy] updateAgent via proxy: ${proxyBaseUrl} (connection: ${connectionName}, agent: ${agentId})`);
+      await updateFoundryAgentViaProxy({ httpClient, proxyBaseUrl, connectionName }, agentId, updates);
       // Only clear this entry on success
       pendingUpdates.delete(nodeId);
       recentlyFlushedNodes.add(nodeId);
