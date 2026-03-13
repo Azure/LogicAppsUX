@@ -1322,17 +1322,19 @@ export const ParameterSection = ({
 
       return (
         <>
-          <SettingsSection
-            id={group.id}
-            nodeId={nodeId}
-            sectionName={group.description}
-            title={group.description}
-            settings={[agentPickerSetting]}
-            showHeading={!!group.description}
-            expanded={sectionExpanded}
-            onHeaderClick={onExpandSection}
-            showSeparator={false}
-          />
+          <div style={isCreatingNewAgent ? { opacity: 0.5, pointerEvents: 'none' } : undefined}>
+            <SettingsSection
+              id={group.id}
+              nodeId={nodeId}
+              sectionName={group.description}
+              title={group.description}
+              settings={[agentPickerSetting]}
+              showHeading={!!group.description}
+              expanded={sectionExpanded}
+              onHeaderClick={onExpandSection}
+              showSeparator={false}
+            />
+          </div>
           {isCreatingNewAgent ? (
             createAgentInline
           ) : (
@@ -1782,7 +1784,7 @@ function CreateFoundryAgentInline({
           {isCreating ? creatingLabel : createLabel}
         </Button>
         {isCreating ? <Spinner size="tiny" /> : null}
-        <Button appearance="subtle" size="small" onClick={resetForm} disabled={isCreating}>
+        <Button appearance="outline" size="small" onClick={resetForm} disabled={isCreating}>
           {cancelLabel}
         </Button>
       </div>
