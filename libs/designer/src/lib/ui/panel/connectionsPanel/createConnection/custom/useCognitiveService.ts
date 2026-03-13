@@ -1,17 +1,17 @@
-import type { Connection, FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
+import type { Connection, CreateFoundryAgentOptions, FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
 import {
   ApiManagementService,
   CognitiveServiceService,
   ResourceService,
-  foundryServiceConnectionRegex,
   buildProjectEndpointFromResourceId,
+  createFoundryAgentViaProxy,
+  foundryServiceConnectionRegex,
   listAllFoundryAgentsViaProxy,
   listFoundryAgentVersionsViaProxy,
   listFoundryModelsViaProxy,
 } from '@microsoft/logic-apps-shared';
-import { useQuery } from '@tanstack/react-query';
-import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
-import { useConnectionMapping } from '../../../../../core/state/connection/connectionSelector';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useConnectionMapping, useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
 
 const queryOpts = {
@@ -224,7 +224,9 @@ const useFoundryConnectionResourceId = (nodeId: string): string | undefined => {
  * Returns the proxy context (httpClient + proxyBaseUrl) from the CognitiveServiceService.
  * All Foundry calls go through the backend proxy which handles auth via MSI.
  */
-function getFoundryProxyContext(): { httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>; proxyBaseUrl: string } | undefined {
+function getFoundryProxyContext():
+  | { httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>; proxyBaseUrl: string }
+  | undefined {
   const service = CognitiveServiceService();
   if (!service.foundryProxyBaseUrl || !service.httpClient) {
     return undefined;
@@ -275,7 +277,9 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
         console.warn('[FoundryProxy] No proxy configured — cannot list agents');
         return [];
       }
-      console.log(`[FoundryProxy] listAgents via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint}, connection: ${connectionName ?? 'none'})`);
+      console.log(
+        `[FoundryProxy] listAgents via proxy: ${proxy.proxyBaseUrl} (endpoint: ${projectEndpoint}, connection: ${connectionName ?? 'none'})`
+      );
       return listAllFoundryAgentsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
@@ -335,4 +339,24 @@ export const useFoundryAgentVersions = (
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );
+};
+
+/** Creates a new Foundry agent via the backend proxy and refreshes the agents list. */
+export const useCreateFoundryAgent = (nodeId: string) => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const connectionName = useFoundryConnectionName(nodeId);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (options: CreateFoundryAgentOptions) => {
+      const proxy = getFoundryProxyContext();
+      if (!proxy || !projectEndpoint) {
+        throw new Error('Foundry proxy not configured');
+      }
+      return createFoundryAgentViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName }, options);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [queryKeys.allFoundryAgents] });
+    },
+  });
 };

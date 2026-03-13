@@ -94,6 +94,12 @@ export interface ListAgentsOptions {
   before?: string;
 }
 
+export interface CreateFoundryAgentOptions {
+  name: string;
+  model: string;
+  instructions?: string;
+}
+
 // --- Helpers ---
 
 function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
@@ -399,7 +405,6 @@ export async function listAllFoundryAgentsViaProxy(ctx: FoundryProxyContext): Pr
       uri: buildProxyUri(ctx.proxyBaseUrl),
       headers: proxyHeaders(ctx, `/agents?limit=100${afterParam}`, 'GET'),
       content: {},
-      
     });
 
     agents.push(...(page.data ?? []).map(normalizeAgent));
@@ -419,7 +424,25 @@ export async function getFoundryAgentViaProxy(ctx: FoundryProxyContext, agentId:
     uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx, `/agents/${encodeURIComponent(agentId)}`, 'GET'),
     content: {},
-    
+  });
+  return normalizeAgent(raw);
+}
+
+/** Create a Foundry agent via the backend proxy. */
+export async function createFoundryAgentViaProxy(ctx: FoundryProxyContext, options: CreateFoundryAgentOptions): Promise<FoundryAgent> {
+  const body = {
+    name: options.name,
+    definition: {
+      kind: 'prompt',
+      model: options.model,
+      ...(options.instructions !== undefined && { instructions: options.instructions }),
+    },
+  };
+
+  const raw = await ctx.httpClient.post<FoundryAgentRaw, typeof body>({
+    uri: buildProxyUri(ctx.proxyBaseUrl),
+    headers: proxyHeaders(ctx, '/agents', 'POST'),
+    content: body,
   });
   return normalizeAgent(raw);
 }
@@ -446,7 +469,6 @@ export async function updateFoundryAgentViaProxy(
     uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx, `/agents/${encodeURIComponent(agentId)}`, 'POST'),
     content: body,
-    
   });
   return normalizeAgent(raw);
 }
@@ -457,7 +479,6 @@ export async function listFoundryAgentVersionsViaProxy(ctx: FoundryProxyContext,
     uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx, `/agents/${encodeURIComponent(agentId)}/versions`, 'GET'),
     content: {},
-    
   });
   return extractVersionsData(response);
 }
@@ -468,7 +489,6 @@ export async function listFoundryModelsViaProxy(ctx: FoundryProxyContext): Promi
     uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx, '/deployments', 'GET'),
     content: {},
-    
   });
   const deployments = response.value ?? response.data ?? [];
 

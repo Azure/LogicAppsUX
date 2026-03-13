@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   buildProjectEndpointFromResourceId,
+  createFoundryAgentViaProxy,
   updateFoundryAgent,
   listFoundryModels,
   listFoundryAgents,
@@ -8,6 +9,7 @@ import {
   getFoundryAgent,
   listFoundryAgentVersions,
 } from '../foundryAgentService';
+import type { FoundryProxyContext } from '../foundryAgentService';
 import type { IHttpClient } from '../../httpClient';
 
 function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
@@ -51,8 +53,6 @@ describe('foundryAgentService', () => {
     httpClient = createMockHttpClient();
   });
 
-  // --- buildProjectEndpointFromResourceId ---
-
   describe('buildProjectEndpointFromResourceId', () => {
     it('should extract account and project from a valid ARM resource ID', () => {
       const resourceId =
@@ -88,8 +88,6 @@ describe('foundryAgentService', () => {
       expect(result).toBe('https://acct.services.ai.azure.com/api/projects/proj');
     });
   });
-
-  // --- listFoundryAgents ---
 
   describe('listFoundryAgents', () => {
     it('should call the agents endpoint and return the raw list response', async () => {
@@ -146,8 +144,6 @@ describe('foundryAgentService', () => {
       expect(callArgs.noAuth).toBe(true);
     });
   });
-
-  // --- listAllFoundryAgents ---
 
   describe('listAllFoundryAgents', () => {
     it('should return normalized agents from a single page', async () => {
@@ -269,8 +265,6 @@ describe('foundryAgentService', () => {
     });
   });
 
-  // --- getFoundryAgent ---
-
   describe('getFoundryAgent', () => {
     it('should fetch a single agent by ID and return normalized result', async () => {
       vi.mocked(httpClient.get).mockResolvedValue(rawAgent({ id: 'agent-42', name: 'SpecificAgent', model: 'gpt-4o-mini' }));
@@ -294,8 +288,6 @@ describe('foundryAgentService', () => {
       expect(callArgs.uri).toContain('/agents/agent%2Fwith%20spaces');
     });
   });
-
-  // --- updateFoundryAgent ---
 
   describe('updateFoundryAgent', () => {
     it('should send model and instructions inside a definition envelope with kind "prompt"', async () => {
@@ -360,7 +352,123 @@ describe('foundryAgentService', () => {
     });
   });
 
-  // --- listFoundryModels ---
+  describe('createFoundryAgentViaProxy', () => {
+    let proxyContext: FoundryProxyContext;
+
+    beforeEach(() => {
+      proxyContext = {
+        httpClient,
+        proxyBaseUrl: 'https://test.azure.com/foundryProxy',
+        foundryEndpoint: 'https://my-project.services.ai.azure.com/api/projects/my-project',
+        connectionName: 'myConnection',
+      };
+    });
+
+    it('should POST to /agents with correct body structure', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(
+        rawAgent({ id: 'test-agent', name: 'Test Agent', model: 'gpt-4.1', instructions: 'Be helpful' })
+      );
+
+      await createFoundryAgentViaProxy(proxyContext, {
+        name: 'Test Agent',
+        model: 'gpt-4.1',
+        instructions: 'Be helpful',
+      });
+
+      expect(httpClient.post).toHaveBeenCalledOnce();
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.uri).toBe('https://test.azure.com/foundryProxy?api-version=2018-11-01');
+      expect(callArgs.headers).toMatchObject({
+        'x-ms-foundry-endpoint': proxyContext.foundryEndpoint,
+        'x-ms-foundry-connection': 'myConnection',
+        'x-ms-foundry-path': '/agents',
+        'x-ms-foundry-method': 'POST',
+        'Content-Type': 'application/json',
+      });
+      expect(callArgs.content).toEqual({
+        name: 'Test Agent',
+        definition: {
+          kind: 'prompt',
+          model: 'gpt-4.1',
+          instructions: 'Be helpful',
+        },
+      });
+    });
+
+    it('should omit instructions when not provided', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(
+        rawAgent({ id: 'test-agent', name: 'Test Agent', model: 'gpt-4.1', instructions: undefined })
+      );
+
+      await createFoundryAgentViaProxy(proxyContext, {
+        name: 'Test Agent',
+        model: 'gpt-4.1',
+      });
+
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.content).toEqual({
+        name: 'Test Agent',
+        definition: {
+          kind: 'prompt',
+          model: 'gpt-4.1',
+        },
+      });
+      expect(callArgs.content.definition).not.toHaveProperty('instructions');
+    });
+
+    it('should append api-version to proxy URIs that already include query params', async () => {
+      proxyContext = {
+        ...proxyContext,
+        proxyBaseUrl: 'https://test.azure.com/foundryProxy?foo=bar',
+      };
+      vi.mocked(httpClient.post).mockResolvedValue(rawAgent({ id: 'test-agent', name: 'Test Agent', model: 'gpt-4.1' }));
+
+      await createFoundryAgentViaProxy(proxyContext, {
+        name: 'Test Agent',
+        model: 'gpt-4.1',
+      });
+
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.uri).toBe('https://test.azure.com/foundryProxy?foo=bar&api-version=2018-11-01');
+      expect(callArgs.headers).toMatchObject({
+        'x-ms-foundry-path': '/agents',
+        'x-ms-foundry-method': 'POST',
+      });
+    });
+
+    it('should return a normalized FoundryAgent', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(
+        rawAgent({
+          id: 'new-agent',
+          name: 'New Agent',
+          model: 'gpt-4.1',
+          instructions: 'Help users',
+          tools: [{ type: 'code_interpreter' }],
+          metadata: { source: 'proxy' },
+          created_at: 1712345678,
+          description: 'Created from picker',
+        })
+      );
+
+      const result = await createFoundryAgentViaProxy(proxyContext, {
+        name: 'New Agent',
+        model: 'gpt-4.1',
+        instructions: 'Help users',
+      });
+
+      expect(result).toEqual({
+        id: 'new-agent',
+        name: 'New Agent',
+        model: 'gpt-4.1',
+        instructions: 'Help users',
+        tools: [{ type: 'code_interpreter' }],
+        metadata: { source: 'proxy' },
+        created_at: 1712345678,
+        object: 'agent',
+        description: 'Created from picker',
+      });
+    });
+  });
 
   describe('listFoundryModels', () => {
     it('should parse deployments with data-plane format', async () => {
@@ -419,8 +527,6 @@ describe('foundryAgentService', () => {
       expect(callArgs.queryParameters).toHaveProperty('api-version');
     });
   });
-
-  // --- listFoundryAgentVersions ---
 
   describe('listFoundryAgentVersions', () => {
     const versionsResponse = {
