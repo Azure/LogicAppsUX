@@ -360,7 +360,6 @@ describe('foundryAgentService', () => {
         httpClient,
         proxyBaseUrl: 'https://test.azure.com/foundryProxy',
         foundryEndpoint: 'https://my-project.services.ai.azure.com/api/projects/my-project',
-        connectionName: 'myConnection',
       };
     });
 
@@ -380,7 +379,6 @@ describe('foundryAgentService', () => {
       expect(callArgs.uri).toBe('https://test.azure.com/foundryProxy?api-version=2018-11-01');
       expect(callArgs.headers).toMatchObject({
         'x-ms-foundry-endpoint': proxyContext.foundryEndpoint,
-        'x-ms-foundry-connection': 'myConnection',
         'x-ms-foundry-path': '/agents',
         'x-ms-foundry-method': 'POST',
         'Content-Type': 'application/json',

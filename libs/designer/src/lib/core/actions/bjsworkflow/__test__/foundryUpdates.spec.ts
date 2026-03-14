@@ -95,7 +95,6 @@ describe('foundryUpdates', () => {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
         updates: { model: 'gpt-4', instructions: 'Be helpful' },
-        connectionName: 'myConnection',
       });
 
       const results = await flushPendingFoundryUpdates();
@@ -106,7 +105,6 @@ describe('foundryUpdates', () => {
           httpClient: mockHttpClient,
           proxyBaseUrl: 'https://management.azure.com/test/foundryProxy',
           foundryEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
-          connectionName: 'myConnection',
         },
         'agent-1',
         {
@@ -121,7 +119,6 @@ describe('foundryUpdates', () => {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
         updates: { model: 'gpt-4' },
-        connectionName: 'myConnection',
       });
 
       await flushPendingFoundryUpdates();
@@ -136,7 +133,6 @@ describe('foundryUpdates', () => {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
         updates: { model: 'gpt-4' },
-        connectionName: 'myConnection',
       });
 
       const results = await flushPendingFoundryUpdates();
@@ -155,13 +151,11 @@ describe('foundryUpdates', () => {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
         updates: { model: 'gpt-4' },
-        connectionName: 'myConnection',
       });
       setPendingFoundryUpdate('node-2', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-2',
         updates: { model: 'gpt-5' },
-        connectionName: 'myConnection',
       });
 
       await expect(flushPendingFoundryUpdates()).rejects.toThrow('Foundry agent update failed: API error');
@@ -174,7 +168,6 @@ describe('foundryUpdates', () => {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
         updates: { model: 'gpt-4' },
-        connectionName: 'myConnection',
       });
 
       await flushPendingFoundryUpdates();
@@ -201,13 +194,11 @@ describe('foundryUpdates', () => {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-1',
         updates: { model: 'gpt-4' },
-        connectionName: 'myConnection',
       });
       setPendingFoundryUpdate('node-3', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
         agentId: 'agent-3',
         updates: { instructions: 'Be brief' },
-        connectionName: 'myConnection',
       });
 
       await flushPendingFoundryUpdates(onFlushed);

@@ -18,7 +18,7 @@ import {
   listFoundryModelsViaProxy,
 } from '@microsoft/logic-apps-shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useConnectionMapping, useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
+import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
 
 const queryOpts = {
@@ -239,15 +239,6 @@ function getFoundryProxyContext(): { httpClient: IHttpClient; proxyBaseUrl: stri
   return { httpClient: service.httpClient, proxyBaseUrl: service.foundryProxyBaseUrl };
 }
 
-/**
- * Returns the connection reference name (key in connectionsMapping) for a node.
- * This is the name used in connections.json as the agent connection key.
- */
-export const useFoundryConnectionName = (nodeId: string): string | undefined => {
-  const connectionsMapping = useConnectionMapping();
-  return connectionsMapping[nodeId] ?? undefined;
-};
-
 const foundryQueryOpts = {
   ...queryOpts,
   retryOnMount: true,
@@ -269,10 +260,9 @@ export const useFoundryProjectResourceIdForNode = (nodeId: string): string | und
 /** Fetches all v2 Foundry agents for the node's selected connection via the backend proxy. */
 export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
-  const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
-    [queryKeys.allFoundryAgents, { projectEndpoint, connectionName }],
+    [queryKeys.allFoundryAgents, { projectEndpoint }],
     async () => {
       if (!projectEndpoint) {
         return [];
@@ -281,7 +271,7 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
       if (!proxy) {
         return [];
       }
-      return listAllFoundryAgentsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
+      return listAllFoundryAgentsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -296,10 +286,9 @@ export const useFoundryAccountResourceIdForNode = (nodeId: string): string | und
 /** Fetches available model deployments for the Foundry project connected to the node via the backend proxy. */
 export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
-  const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
-    ['allFoundryModels', { projectEndpoint, connectionName }],
+    ['allFoundryModels', { projectEndpoint }],
     async () => {
       if (!projectEndpoint) {
         return [];
@@ -308,7 +297,7 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       if (!proxy) {
         return [];
       }
-      return listFoundryModelsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName });
+      return listFoundryModelsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint });
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -320,10 +309,9 @@ export const useFoundryAgentVersions = (
   agentId: string | undefined
 ): { data: FoundryAgentVersion[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
-  const connectionName = useFoundryConnectionName(nodeId);
 
   return useQuery(
-    ['foundryAgentVersions', { projectEndpoint, connectionName, agentId }],
+    ['foundryAgentVersions', { projectEndpoint, agentId }],
     async () => {
       if (!projectEndpoint || !agentId) {
         return [];
@@ -332,7 +320,7 @@ export const useFoundryAgentVersions = (
       if (!proxy) {
         return [];
       }
-      return listFoundryAgentVersionsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName }, agentId);
+      return listFoundryAgentVersionsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint }, agentId);
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );
@@ -341,7 +329,6 @@ export const useFoundryAgentVersions = (
 /** Creates a new Foundry agent via the backend proxy and refreshes the agents list. */
 export const useCreateFoundryAgent = (nodeId: string) => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
-  const connectionName = useFoundryConnectionName(nodeId);
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -350,7 +337,7 @@ export const useCreateFoundryAgent = (nodeId: string) => {
       if (!proxy || !projectEndpoint) {
         throw new Error('Foundry proxy not configured');
       }
-      return createFoundryAgentViaProxy({ ...proxy, foundryEndpoint: projectEndpoint, connectionName }, options);
+      return createFoundryAgentViaProxy({ ...proxy, foundryEndpoint: projectEndpoint }, options);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [queryKeys.allFoundryAgents] });

@@ -5,7 +5,6 @@ interface PendingFoundryUpdate {
   projectEndpoint: string;
   agentId: string;
   updates: UpdateFoundryAgentOptions;
-  connectionName: string;
 }
 
 const pendingUpdates = new Map<string, PendingFoundryUpdate>();
@@ -62,8 +61,8 @@ export async function flushPendingFoundryUpdates(onFlushed?: (flushedNodeIds: st
   const flushedNodeIds: string[] = [];
 
   const results = await Promise.allSettled(
-    entries.map(async ([nodeId, { projectEndpoint, agentId, updates, connectionName }]) => {
-      await updateFoundryAgentViaProxy({ httpClient, proxyBaseUrl, foundryEndpoint: projectEndpoint, connectionName }, agentId, updates);
+    entries.map(async ([nodeId, { projectEndpoint, agentId, updates }]) => {
+      await updateFoundryAgentViaProxy({ httpClient, proxyBaseUrl, foundryEndpoint: projectEndpoint }, agentId, updates);
       // Only clear this entry on success
       pendingUpdates.delete(nodeId);
       recentlyFlushedNodes.add(nodeId);

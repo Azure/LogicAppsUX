@@ -372,14 +372,12 @@ export interface FoundryProxyContext {
   proxyBaseUrl: string;
   /** The Foundry project endpoint (e.g., https://{account}.services.ai.azure.com/api/projects/{project}). */
   foundryEndpoint: string;
-  /** Optional connection name — used when the connection already exists on the server. */
-  connectionName?: string;
 }
 
+/** Always uses endpoint-based mode — the backend authenticates via the Logic App's system-assigned MSI. */
 function proxyHeaders(ctx: FoundryProxyContext, path: string, method: string, apiVersion?: string): Record<string, string> {
   return {
     'x-ms-foundry-endpoint': ctx.foundryEndpoint,
-    ...(ctx.connectionName && { 'x-ms-foundry-connection': ctx.connectionName }),
     'x-ms-foundry-path': path,
     'x-ms-foundry-method': method,
     ...(apiVersion && { 'x-ms-foundry-api-version': apiVersion }),
