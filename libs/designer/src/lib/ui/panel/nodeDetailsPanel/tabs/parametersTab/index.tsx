@@ -98,9 +98,11 @@ import {
   getRecordEntry,
   isNullOrUndefined,
   isRecordNotEmpty,
+  RoleService,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
+import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -445,6 +447,31 @@ export const ParameterSection = ({
   const isAgentServiceConnection = useMemo(() => {
     return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
   }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
+
+  // When a Foundry connection becomes active, eagerly assign RBAC roles so the proxy can
+  // authenticate via MSI before the workflow is saved.
+  const rbacAssignedRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!isAgentServiceConnection || !foundryProjectResourceId || rbacAssignedRef.current === foundryProjectResourceId) {
+      return;
+    }
+    rbacAssignedRef.current = foundryProjectResourceId;
+    // Strip /projects/{project} to get the account-level resource ID for RBAC
+    const parts = foundryProjectResourceId.split('/');
+    const accountResourceId = parts.length >= 2 ? parts.slice(0, -2).join('/') : foundryProjectResourceId;
+    getMissingRoleDefinitions(accountResourceId, [
+      'Azure AI User',
+      'Azure AI Administrator',
+      'Azure AI Developer',
+      'Cognitive Services Contributor',
+    ])
+      .then((missingRoles) =>
+        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(accountResourceId, role.id)))
+      )
+      .catch(() => {
+        // Best-effort — the save handler will retry
+      });
+  }, [isAgentServiceConnection, foundryProjectResourceId]);
 
   // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
