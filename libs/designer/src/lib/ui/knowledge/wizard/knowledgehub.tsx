@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../../core/state/knowledge/store
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import type { KnowledgeHub } from '@microsoft/logic-apps-shared';
+import type { KnowledgeHubExtended as KnowledgeHub } from '@microsoft/logic-apps-shared';
 import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
 import { KnowledgePanelView, openPanelView } from '../../../core/state/knowledge/panelSlice';
 import {
@@ -36,6 +36,8 @@ import {
   LinkMultipleRegular,
 } from '@fluentui/react-icons';
 import { CreateGroup } from '../modals/creategroup';
+import { type KnowledgeHubItem, KnowledgeList } from './knowledgelist';
+import { DeleteModal } from '../modals/delete';
 
 export const KnowledgeHubWizard = () => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -99,6 +101,8 @@ export const KnowledgeHubWizard = () => {
 
   const [hubs, setHubs] = useState<KnowledgeHub[] | undefined>(undefined);
   const [showAddGroup, setShowAddGroup] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedArtifacts, setSelectedArtifacts] = useState<KnowledgeHubItem[]>([]);
 
   useEffect(() => {
     if (allHubs && !isLoading) {
@@ -106,24 +110,18 @@ export const KnowledgeHubWizard = () => {
     }
   }, [allHubs, isLoading]);
 
-  const handleDelete = useCallback(() => {
-    // Implement delete functionality here
-  }, []);
-
   const handleAddFiles = useCallback(() => {
     // Implement add files functionality here
   }, []);
 
-  const handleAddGroup = useCallback(() => {
-    setShowAddGroup(true);
-  }, []);
-  const handleCloseAddGroup = useCallback(() => {
-    setShowAddGroup(false);
-  }, []);
+  const handleDeleteClick = useCallback(() => setShowDeleteModal(true), []);
+  const handleCloseDeleteModal = useCallback(() => setShowDeleteModal(false), []);
+  const handleOnDeleteComplete = useCallback(() => refetch(), [refetch]);
 
-  const handleRefreshHubs = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
+  const handleAddGroup = useCallback(() => setShowAddGroup(true), []);
+  const handleCloseAddGroup = useCallback(() => setShowAddGroup(false), []);
+
+  const handleRefreshHubs = useCallback(async () => refetch(), [refetch]);
 
   const handleConnectionClick = useCallback(() => {
     dispatch(openPanelView({ panelView: connection ? KnowledgePanelView.EditConnection : KnowledgePanelView.CreateConnection }));
@@ -174,12 +172,38 @@ export const KnowledgeHubWizard = () => {
           <Button appearance="subtle" icon={<LinkMultipleRegular />} onClick={handleConnectionClick} disabled={!connection}>
             {INTL_TEXT.connectionButton}
           </Button>
-          <Button appearance="subtle" icon={<DeleteRegular />} onClick={handleDelete} disabled={!connection}>
+          <Button
+            appearance="subtle"
+            icon={<DeleteRegular />}
+            onClick={handleDeleteClick}
+            disabled={!connection || selectedArtifacts.length === 0}
+          >
             {INTL_TEXT.deleteButton}
           </Button>
         </div>
-        {hubs.length === 0 ? connection ? <EmptyKnowledgeBaseView /> : <NoConnectionsView /> : <div>{'Open the list view here'}</div>}
+        {hubs.length === 0 ? (
+          connection ? (
+            <EmptyKnowledgeBaseView />
+          ) : (
+            <NoConnectionsView />
+          )
+        ) : (
+          <KnowledgeList
+            resourceId={logicAppId}
+            hubs={hubs}
+            onUploadArtifacts={handleAddFiles}
+            setSelectedArtifacts={setSelectedArtifacts}
+          />
+        )}
         {showAddGroup ? <CreateGroup resourceId={logicAppId} onDismiss={handleCloseAddGroup} /> : null}
+        {showDeleteModal ? (
+          <DeleteModal
+            selectedArtifacts={selectedArtifacts}
+            resourceId={logicAppId}
+            onDelete={handleOnDeleteComplete}
+            onDismiss={handleCloseDeleteModal}
+          />
+        ) : null}
         <KnowledgeHubPanel resourceId={logicAppId} mountNode={containerRef.current} />
       </div>
       <div
