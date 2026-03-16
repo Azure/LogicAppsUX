@@ -18,12 +18,12 @@ const mockHttpClient = {
   delete: vi.fn().mockResolvedValue({}),
 };
 
-// Mock the external dependencies
+// Mock the external dependencies — now uses proxy-based API
 vi.mock('@microsoft/logic-apps-shared', () => ({
-  updateFoundryAgent: vi.fn().mockResolvedValue({}),
+  updateFoundryAgentViaProxy: vi.fn().mockResolvedValue({}),
   CognitiveServiceService: vi.fn(() => ({
-    getFoundryAccessToken: vi.fn().mockResolvedValue('mock-token'),
     httpClient: mockHttpClient,
+    foundryProxyBaseUrl: 'https://management.azure.com/test/foundryProxy',
   })),
 }));
 
@@ -88,8 +88,8 @@ describe('foundryUpdates', () => {
       expect(results).toEqual([]);
     });
 
-    it('should call updateFoundryAgent for each pending update', async () => {
-      const { updateFoundryAgent } = await import('@microsoft/logic-apps-shared');
+    it('should call updateFoundryAgentViaProxy for each pending update', async () => {
+      const { updateFoundryAgentViaProxy } = await import('@microsoft/logic-apps-shared');
 
       setPendingFoundryUpdate('node-1', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
@@ -100,11 +100,13 @@ describe('foundryUpdates', () => {
       const results = await flushPendingFoundryUpdates();
       expect(results).toHaveLength(1);
       expect(results[0].status).toBe('fulfilled');
-      expect(updateFoundryAgent).toHaveBeenCalledWith(
-        mockHttpClient,
-        'https://acct.services.ai.azure.com/api/projects/proj',
+      expect(updateFoundryAgentViaProxy).toHaveBeenCalledWith(
+        {
+          httpClient: mockHttpClient,
+          proxyBaseUrl: 'https://management.azure.com/test/foundryProxy',
+          foundryEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        },
         'agent-1',
-        'mock-token',
         {
           model: 'gpt-4',
           instructions: 'Be helpful',
@@ -125,7 +127,7 @@ describe('foundryUpdates', () => {
 
     it('should return empty array when token getter is unavailable', async () => {
       const { CognitiveServiceService } = await import('@microsoft/logic-apps-shared');
-      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined, httpClient: undefined } as any);
+      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ httpClient: undefined, foundryProxyBaseUrl: undefined } as any);
 
       setPendingFoundryUpdate('node-1', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
@@ -140,8 +142,8 @@ describe('foundryUpdates', () => {
     });
 
     it('should retain failed entries and throw consolidated error on partial failure', async () => {
-      const { updateFoundryAgent } = await import('@microsoft/logic-apps-shared');
-      vi.mocked(updateFoundryAgent)
+      const { updateFoundryAgentViaProxy } = await import('@microsoft/logic-apps-shared');
+      vi.mocked(updateFoundryAgentViaProxy)
         .mockResolvedValueOnce({} as any) // node-1 succeeds
         .mockRejectedValueOnce(new Error('API error')); // node-2 fails
 
