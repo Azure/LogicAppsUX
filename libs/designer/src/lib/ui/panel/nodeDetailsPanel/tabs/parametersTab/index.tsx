@@ -501,10 +501,21 @@ export const ParameterSection = ({
 
   // Fetch versions for the selected Foundry agent
   const { data: foundryVersions, isLoading: foundryVersionsLoading } = useFoundryAgentVersions(nodeId, selectedFoundryAgent?.id);
-  const [selectedFoundryVersion, setSelectedFoundryVersion] = useState<string | undefined>(undefined);
+  const [selectedFoundryVersion, setSelectedFoundryVersion] = useState<string | undefined>(existingPendingUpdate?.selectedVersion);
+
+  // Flag set by the agent-switch reset effect to force effectiveFoundryVersion to
+  // ignore stale selectedFoundryVersion/storedVersion during the transition render.
+  const agentSwitchPendingRef = useRef(false);
 
   // Derive the effective version: explicit selection > stored param > latest available
   const effectiveFoundryVersion = useMemo(() => {
+    if (agentSwitchPendingRef.current) {
+      // Agent just switched — ignore stale selections, wait for new versions to load
+      if (foundryVersions?.length) {
+        return String(foundryVersions[0].version);
+      }
+      return undefined;
+    }
     if (selectedFoundryVersion && foundryVersions?.some((v) => String(v.version) === selectedFoundryVersion)) {
       return selectedFoundryVersion;
     }
@@ -519,13 +530,21 @@ export const ParameterSection = ({
   }, [selectedFoundryVersion, foundryVersions, nodeInputs.parameterGroups, group.id]);
 
   // Persist the derived version into state AND sync to workflow parameters on initial load
+  // or after an agent switch (hasInitializedVersion is reset when the agent changes).
+  // Skip instructions sync when pending edits exist (restored from module store after panel reopen).
   const hasInitializedVersion = useRef(false);
   useEffect(() => {
     if (!effectiveFoundryVersion || hasInitializedVersion.current) {
       return;
     }
     hasInitializedVersion.current = true;
-    setSelectedFoundryVersion(effectiveFoundryVersion);
+    // Clear the agent-switch flag now that we've initialized with the correct version
+    agentSwitchPendingRef.current = false;
+
+    // Only overwrite selectedFoundryVersion if we don't already have a restored pending version
+    if (!existingPendingUpdate?.selectedVersion) {
+      setSelectedFoundryVersion(effectiveFoundryVersion);
+    }
 
     // Write version number to workflow parameter
     const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
@@ -533,18 +552,42 @@ export const ParameterSection = ({
       dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, effectiveFoundryVersion);
     }
 
-    // Sync system instructions from the selected version/agent into messages parameter
-    const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
-    const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
-    if (instructions) {
-      const messagesParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.messages');
-      if (messagesParam) {
-        const currentValue = convertSegmentsToString(messagesParam.value ?? []);
-        const newMessagesJson = buildMessagesWithSystemInstructions(currentValue, instructions);
-        dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
+    // Sync model and instructions from the selected version to local state.
+    // Skip only when the user has pending edits from a prior session (panel reopen).
+    const hasPendingEdits = existingPendingUpdate?.updates?.model || existingPendingUpdate?.updates?.instructions;
+    if (!hasPendingEdits) {
+      const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
+      const model = selectedVersionData?.definition?.model;
+      const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
+
+      if (model) {
+        setPendingFoundryModel(model);
+        const deploymentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.deploymentId');
+        if (deploymentParam) {
+          dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, model);
+        }
+      }
+
+      if (instructions) {
+        setPendingFoundryInstructions(instructions);
+        const messagesParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.messages');
+        if (messagesParam) {
+          const currentValue = convertSegmentsToString(messagesParam.value ?? []);
+          const newMessagesJson = buildMessagesWithSystemInstructions(currentValue, instructions);
+          dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
+        }
       }
     }
-  }, [effectiveFoundryVersion, foundryVersions, selectedFoundryAgent, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
+  }, [
+    effectiveFoundryVersion,
+    foundryVersions,
+    selectedFoundryAgent,
+    nodeInputs.parameterGroups,
+    group.id,
+    nodeId,
+    dispatch,
+    existingPendingUpdate,
+  ]);
 
   // After a save, Foundry creates a new version — auto-select it
   useEffect(() => {
@@ -565,12 +608,42 @@ export const ParameterSection = ({
     }
   }, [foundryVersions, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
-  // Reset pending overrides when the selected agent changes to avoid stale state
+  // Reset pending overrides when the user switches to a different agent (not on initial load).
+  // On remount, selectedFoundryAgent?.id goes undefined → actual ID as React Query resolves;
+  // that transition must NOT clear the pending edits we just restored from the module store.
+  // Track the raw foundryAgentId parameter value to reliably detect agent switches,
+  // since selectedFoundryAgent depends on the React Query agents list loading.
+  const rawFoundryAgentId = useMemo(
+    () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value as string | undefined,
+    [nodeInputs.parameterGroups, group.id]
+  );
+  const prevRawAgentIdRef = useRef<string | undefined>(rawFoundryAgentId);
   useEffect(() => {
-    setPendingFoundryModel(undefined);
-    setPendingFoundryInstructions(undefined);
-    clearPendingFoundryUpdate(nodeId);
-  }, [selectedFoundryAgent?.id, nodeId]);
+    if (!isAgentServiceConnection) {
+      return;
+    }
+    const prevId = prevRawAgentIdRef.current;
+    prevRawAgentIdRef.current = rawFoundryAgentId;
+
+    // Only clear when the agent param truly changes from one ID to another
+    if (prevId && rawFoundryAgentId && prevId !== rawFoundryAgentId) {
+      setPendingFoundryModel(undefined);
+      setPendingFoundryInstructions(undefined);
+      setSelectedFoundryVersion(undefined);
+      clearPendingFoundryUpdate(nodeId);
+      // Allow the version-init effect to run again for the new agent's versions
+      hasInitializedVersion.current = false;
+      // Signal effectiveFoundryVersion to ignore stale state during the transition
+      agentSwitchPendingRef.current = true;
+
+      // Clear the stored version parameter in Redux so effectiveFoundryVersion
+      // falls through to the latest version for the new agent.
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      if (versionParam) {
+        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, '');
+      }
+    }
+  }, [isAgentServiceConnection, rawFoundryAgentId, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -582,6 +655,7 @@ export const ParameterSection = ({
           projectEndpoint: foundryProjectEndpoint,
           agentId: selectedFoundryAgent.id,
           updates: { model: modelId, instructions: pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined },
+          selectedVersion: selectedFoundryVersion,
         });
       }
       // Sync deploymentId parameter so the serialized workflow includes the model
@@ -590,7 +664,16 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelId);
       }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions, nodeInputs.parameterGroups, group.id, dispatch]
+    [
+      foundryProjectEndpoint,
+      selectedFoundryAgent,
+      nodeId,
+      pendingFoundryInstructions,
+      selectedFoundryVersion,
+      nodeInputs.parameterGroups,
+      group.id,
+      dispatch,
+    ]
   );
 
   const handleFoundryInstructionsChange = useCallback(
@@ -602,6 +685,7 @@ export const ParameterSection = ({
           projectEndpoint: foundryProjectEndpoint,
           agentId: selectedFoundryAgent.id,
           updates: { model: pendingFoundryModel ?? selectedFoundryAgent.model, instructions },
+          selectedVersion: selectedFoundryVersion,
         });
       }
       // Sync system instructions to the messages parameter so the workflow definition stays in sync
@@ -612,7 +696,16 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
       }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, nodeInputs.parameterGroups, group.id, dispatch]
+    [
+      foundryProjectEndpoint,
+      selectedFoundryAgent,
+      nodeId,
+      pendingFoundryModel,
+      selectedFoundryVersion,
+      nodeInputs.parameterGroups,
+      group.id,
+      dispatch,
+    ]
   );
 
   // Sync deploymentId when the selected Foundry agent changes (initial selection or switching agents)
@@ -648,6 +741,19 @@ export const ParameterSection = ({
         setPendingFoundryInstructions(instructions);
       }
 
+      // Persist version + model/instructions to the module-level store so edits survive panel close/reopen
+      if (foundryProjectEndpoint && selectedFoundryAgent) {
+        setPendingFoundryUpdate(nodeId, {
+          projectEndpoint: foundryProjectEndpoint,
+          agentId: selectedFoundryAgent.id,
+          updates: {
+            model: model ?? pendingFoundryModel ?? selectedFoundryAgent.model,
+            instructions: instructions ?? pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined,
+          },
+          selectedVersion: version.version,
+        });
+      }
+
       // Sync version number to workflow parameter
       const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
       if (versionParam) {
@@ -662,7 +768,16 @@ export const ParameterSection = ({
         }
       }
     },
-    [nodeInputs.parameterGroups, group.id, dispatch, nodeId]
+    [
+      nodeInputs.parameterGroups,
+      group.id,
+      dispatch,
+      nodeId,
+      foundryProjectEndpoint,
+      selectedFoundryAgent,
+      pendingFoundryModel,
+      pendingFoundryInstructions,
+    ]
   );
 
   const buildDependentParam = useCallback(

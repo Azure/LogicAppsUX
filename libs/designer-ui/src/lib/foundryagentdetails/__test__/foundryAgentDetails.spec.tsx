@@ -1,7 +1,12 @@
+/**
+ * @vitest-environment jsdom
+ */
+import '@testing-library/jest-dom/vitest';
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
+import { cleanup, render, screen } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
-import { describe, vi, it, expect } from 'vitest';
+import { describe, vi, it, expect, afterEach } from 'vitest';
 import { FoundryAgentDetails, buildFoundryPortalUrl } from '../index';
 import type { FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
 
@@ -112,6 +117,118 @@ describe('FoundryAgentDetails', () => {
       />
     );
     expect(tree.toJSON()).toBeTruthy();
+  });
+});
+
+describe('FoundryAgentDetails — pending edits persistence', () => {
+  afterEach(cleanup);
+
+  const baseAgent: FoundryAgent = {
+    id: 'agent-1',
+    name: 'TestAgent',
+    model: 'gpt-4',
+    instructions: 'Original instructions from Foundry.',
+    tools: [],
+    metadata: {},
+    created_at: 1700000000,
+    object: 'agent',
+    description: 'Test agent',
+  };
+
+  const baseModels: FoundryModel[] = [
+    { id: 'gpt-4', name: 'GPT-4' },
+    { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
+  ];
+
+  it('should display selectedInstructions (pending edits) instead of agent.instructions on initial render', () => {
+    const pendingText = 'User-edited instructions that should persist';
+    render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails
+          agent={baseAgent}
+          models={baseModels}
+          onModelChange={vi.fn()}
+          onInstructionsChange={vi.fn()}
+          selectedInstructions={pendingText}
+        />
+      </IntlProvider>
+    );
+
+    const textarea = screen.getByRole('textbox');
+    expect(textarea).toHaveValue(pendingText);
+  });
+
+  it('should fall back to agent.instructions when selectedInstructions is undefined', () => {
+    render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+      </IntlProvider>
+    );
+
+    const textarea = screen.getByRole('textbox');
+    expect(textarea).toHaveValue(baseAgent.instructions);
+  });
+
+  it('should not reset selectedInstructions when agent.id stays the same (panel reopen)', () => {
+    const pendingText = 'Edits from before panel close';
+    const { rerender } = render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails
+          agent={baseAgent}
+          models={baseModels}
+          onModelChange={vi.fn()}
+          onInstructionsChange={vi.fn()}
+          selectedInstructions={pendingText}
+        />
+      </IntlProvider>
+    );
+
+    // Re-render with the same agent (simulates panel reopen)
+    rerender(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails
+          agent={baseAgent}
+          models={baseModels}
+          onModelChange={vi.fn()}
+          onInstructionsChange={vi.fn()}
+          selectedInstructions={pendingText}
+        />
+      </IntlProvider>
+    );
+
+    const textarea = screen.getByRole('textbox');
+    expect(textarea).toHaveValue(pendingText);
+  });
+
+  it('should reset instructions when switching to a different agent', () => {
+    const pendingText = 'Edits for agent-1';
+    const { rerender } = render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails
+          agent={baseAgent}
+          models={baseModels}
+          onModelChange={vi.fn()}
+          onInstructionsChange={vi.fn()}
+          selectedInstructions={pendingText}
+        />
+      </IntlProvider>
+    );
+
+    const newAgent: FoundryAgent = {
+      ...baseAgent,
+      id: 'agent-2',
+      name: 'OtherAgent',
+      instructions: 'Different agent instructions.',
+    };
+
+    rerender(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails agent={newAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+      </IntlProvider>
+    );
+
+    const textarea = screen.getByRole('textbox');
+    expect(textarea).toHaveValue(newAgent.instructions);
   });
 });
 

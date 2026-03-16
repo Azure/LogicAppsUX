@@ -82,6 +82,60 @@ describe('foundryUpdates', () => {
     });
   });
 
+  describe('getPendingFoundryUpdate', () => {
+    it('should return undefined for nodes with no pending update', () => {
+      expect(getPendingFoundryUpdate('nonexistent')).toBeUndefined();
+    });
+
+    it('should round-trip selectedVersion through set/get', () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4', instructions: 'Be helpful' },
+        selectedVersion: '5',
+      });
+
+      const pending = getPendingFoundryUpdate('node-1');
+      expect(pending).toBeDefined();
+      expect(pending!.selectedVersion).toBe('5');
+      expect(pending!.updates.model).toBe('gpt-4');
+      expect(pending!.updates.instructions).toBe('Be helpful');
+    });
+
+    it('should preserve selectedVersion when only version changes', () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+        selectedVersion: '3',
+      });
+
+      // Simulate a second edit that overwrites with a new version
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-5' },
+        selectedVersion: '7',
+      });
+
+      const pending = getPendingFoundryUpdate('node-1');
+      expect(pending!.selectedVersion).toBe('7');
+      expect(pending!.updates.model).toBe('gpt-5');
+    });
+
+    it('should allow selectedVersion to be undefined', () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+      });
+
+      const pending = getPendingFoundryUpdate('node-1');
+      expect(pending).toBeDefined();
+      expect(pending!.selectedVersion).toBeUndefined();
+    });
+  });
+
   describe('flushPendingFoundryUpdates', () => {
     it('should return empty array when no pending updates', async () => {
       const results = await flushPendingFoundryUpdates();
