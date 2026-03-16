@@ -200,6 +200,28 @@ describe('FoundryAgentDetails — pending edits persistence', () => {
     expect(textarea).toHaveValue(pendingText);
   });
 
+  it('should display selectedModel in the model dropdown instead of agent.model', () => {
+    render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails
+          agent={baseAgent}
+          models={baseModels}
+          onModelChange={vi.fn()}
+          onInstructionsChange={vi.fn()}
+          selectedModel="gpt-35-turbo"
+        />
+      </IntlProvider>
+    );
+
+    // The model dropdown should show the overridden model name, not the agent's default
+    const modelDropdown = screen.getAllByRole('combobox').find((el) => el.textContent?.includes('GPT-3.5 Turbo'));
+    expect(modelDropdown).toBeDefined();
+    // Verify it does NOT show the agent's default model (GPT-4)
+    const allComboboxes = screen.getAllByRole('combobox');
+    const modelCombobox = allComboboxes.find((el) => el.textContent?.includes('GPT-4') && !el.textContent?.includes('GPT-3.5'));
+    expect(modelCombobox).toBeUndefined();
+  });
+
   it('should reset instructions when switching to a different agent', () => {
     const pendingText = 'Edits for agent-1';
     const { rerender } = render(

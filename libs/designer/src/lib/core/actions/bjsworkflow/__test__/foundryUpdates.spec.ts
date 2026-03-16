@@ -266,5 +266,43 @@ describe('foundryUpdates', () => {
       await flushPendingFoundryUpdates(onFlushed);
       expect(onFlushed).not.toHaveBeenCalled();
     });
+
+    it('should NOT send selectedVersion to the API (it is UI-only state)', async () => {
+      const { updateFoundryAgentViaProxy } = await import('@microsoft/logic-apps-shared');
+      vi.mocked(updateFoundryAgentViaProxy).mockResolvedValueOnce({} as any);
+
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4', instructions: 'Be helpful' },
+        selectedVersion: '5',
+      });
+
+      await flushPendingFoundryUpdates();
+
+      // The third argument to updateFoundryAgentViaProxy should be the `updates` object only,
+      // with no selectedVersion property leaking through.
+      const callArgs = vi.mocked(updateFoundryAgentViaProxy).mock.calls.at(-1);
+      expect(callArgs).toBeDefined();
+      const updatesArg = callArgs![2];
+      expect(updatesArg).toEqual({ model: 'gpt-4', instructions: 'Be helpful' });
+      expect(updatesArg).not.toHaveProperty('selectedVersion');
+    });
+
+    it('should clear selectedVersion along with the entry after successful flush', async () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+        selectedVersion: '5',
+      });
+
+      expect(getPendingFoundryUpdate('node-1')?.selectedVersion).toBe('5');
+
+      await flushPendingFoundryUpdates();
+
+      // The entire entry (including selectedVersion) should be gone
+      expect(getPendingFoundryUpdate('node-1')).toBeUndefined();
+    });
   });
 });

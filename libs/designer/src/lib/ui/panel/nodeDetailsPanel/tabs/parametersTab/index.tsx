@@ -375,6 +375,11 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
   }
 );
 
+// Stable parameter keys for Foundry-managed fields (not locale-dependent)
+const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
+const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
+const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
+
 export const ParameterSection = ({
   nodeId,
   group,
@@ -410,6 +415,8 @@ export const ParameterSection = ({
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
+  // Capture in a ref so the version-init effect can read it without re-triggering on every render.
+  const existingPendingUpdateRef = useRef(existingPendingUpdate);
   const [pendingFoundryModel, setPendingFoundryModel] = useState<string | undefined>(existingPendingUpdate?.updates?.model);
   const [pendingFoundryInstructions, setPendingFoundryInstructions] = useState<string | undefined>(
     existingPendingUpdate?.updates?.instructions
@@ -542,7 +549,7 @@ export const ParameterSection = ({
     agentSwitchPendingRef.current = false;
 
     // Only overwrite selectedFoundryVersion if we don't already have a restored pending version
-    if (!existingPendingUpdate?.selectedVersion) {
+    if (!existingPendingUpdateRef.current?.selectedVersion) {
       setSelectedFoundryVersion(effectiveFoundryVersion);
     }
 
@@ -554,7 +561,7 @@ export const ParameterSection = ({
 
     // Sync model and instructions from the selected version to local state.
     // Skip only when the user has pending edits from a prior session (panel reopen).
-    const hasPendingEdits = existingPendingUpdate?.updates?.model || existingPendingUpdate?.updates?.instructions;
+    const hasPendingEdits = existingPendingUpdateRef.current?.updates?.model || existingPendingUpdateRef.current?.updates?.instructions;
     if (!hasPendingEdits) {
       const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
       const model = selectedVersionData?.definition?.model;
@@ -578,16 +585,7 @@ export const ParameterSection = ({
         }
       }
     }
-  }, [
-    effectiveFoundryVersion,
-    foundryVersions,
-    selectedFoundryAgent,
-    nodeInputs.parameterGroups,
-    group.id,
-    nodeId,
-    dispatch,
-    existingPendingUpdate,
-  ]);
+  }, [effectiveFoundryVersion, foundryVersions, selectedFoundryAgent, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
   // After a save, Foundry creates a new version — auto-select it
   useEffect(() => {
@@ -1390,11 +1388,6 @@ export const ParameterSection = ({
         },
       };
     });
-
-  // Stable parameter keys for Foundry-managed fields (not locale-dependent)
-  const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
-  const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
-  const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
 
   // Hide AI model & collapse system instructions when Foundry manages them
   const filterFoundryManagedSettings = (items: typeof settings) =>
