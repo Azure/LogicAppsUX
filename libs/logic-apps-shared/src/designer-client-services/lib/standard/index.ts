@@ -21,14 +21,22 @@ export {
   listFoundryModels,
   listFoundryAgentVersions,
   buildProjectEndpointFromResourceId,
+  listAllFoundryAgentsViaProxy,
+  getFoundryAgentViaProxy,
+  createFoundryAgentViaProxy,
+  updateFoundryAgentViaProxy,
+  listFoundryAgentVersionsViaProxy,
+  listFoundryModelsViaProxy,
   type FoundryAgent,
   type FoundryAgentListResponse,
   type FoundryAgentVersion,
   type FoundryAgentVersionListResponse,
   type FoundryToolDefinition,
   type FoundryModel,
+  type CreateFoundryAgentOptions,
   type UpdateFoundryAgentOptions,
   type ListAgentsOptions,
+  type FoundryProxyContext,
 } from './foundryAgentService';
 // Template
 export { StandardTemplateService } from './template';

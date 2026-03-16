@@ -40,6 +40,13 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// CopilotWorkflowEditor
+export { BaseCopilotWorkflowEditorService } from './copilotWorkflowEditor';
+export type { CopilotWorkflowEditorServiceOptions } from './copilotWorkflowEditor';
+export { COPILOT_WORKFLOW_TOOLS, executeCopilotTool } from './copilotWorkflowEditorTools';
+export type { CopilotToolDefinition } from './copilotWorkflowEditorTools';
+export { DEFAULT_SYSTEM_PROMPT, STANDARD_SYSTEM_PROMPT, CONSUMPTION_SYSTEM_PROMPT } from './copilotWorkflowEditorPrompt';
+export type { LogicAppsSku } from './copilotWorkflowEditorPrompt';
 // Clone
 export { BaseCloneService } from './clone';
 export type { BaseCloneServiceOptions } from './clone';
