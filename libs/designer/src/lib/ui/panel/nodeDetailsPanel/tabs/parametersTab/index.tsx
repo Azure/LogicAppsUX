@@ -464,18 +464,23 @@ export const ParameterSection = ({
     if (!isAgentServiceConnection || !foundryAccountResourceId || rbacAssignedRef.current === foundryAccountResourceId) {
       return;
     }
-    rbacAssignedRef.current = foundryAccountResourceId;
-    getMissingRoleDefinitions(foundryAccountResourceId, [
+    // Mark as in-progress to prevent concurrent attempts
+    const targetResourceId = foundryAccountResourceId;
+    rbacAssignedRef.current = targetResourceId;
+    getMissingRoleDefinitions(targetResourceId, [
       'Azure AI User',
       'Azure AI Administrator',
       'Azure AI Developer',
       'Cognitive Services Contributor',
     ])
       .then((missingRoles) =>
-        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(foundryAccountResourceId, role.id)))
+        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id)))
       )
       .catch(() => {
-        // Best-effort — the save handler will retry
+        // Clear the ref on failure so subsequent renders can retry
+        if (rbacAssignedRef.current === targetResourceId) {
+          rbacAssignedRef.current = undefined;
+        }
       });
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
@@ -561,7 +566,9 @@ export const ParameterSection = ({
 
     // Sync model and instructions from the selected version to local state.
     // Skip only when the user has pending edits from a prior session (panel reopen).
-    const hasPendingEdits = existingPendingUpdateRef.current?.updates?.model || existingPendingUpdateRef.current?.updates?.instructions;
+    const hasPendingEdits =
+      existingPendingUpdateRef.current?.updates?.model !== undefined ||
+      existingPendingUpdateRef.current?.updates?.instructions !== undefined;
     if (!hasPendingEdits) {
       const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
       const model = selectedVersionData?.definition?.model;
@@ -783,7 +790,7 @@ export const ParameterSection = ({
       const parameterGroup = nodeInputs.parameterGroups[group.id];
       const targetParam = parameterGroup?.parameters.find((param) => equals(key, param.parameterKey, true));
       const resolvedValue = value ?? targetParam?.schema?.default;
-      if (!resolvedValue) {
+      if (resolvedValue === undefined || resolvedValue === null) {
         return undefined;
       }
 
@@ -1420,8 +1427,7 @@ export const ParameterSection = ({
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
-  const hasFoundryAgentId = !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
-  if (isAgentServiceConnection && hasFoundryAgentId && !selectedFoundryAgent && foundryAgentsLoading) {
+  if (isAgentServiceConnection && rawFoundryAgentId && !selectedFoundryAgent && foundryAgentsLoading) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
@@ -1464,7 +1470,7 @@ export const ParameterSection = ({
 
       return (
         <>
-          <div style={isCreatingNewAgent ? { opacity: 0.5, pointerEvents: 'none' } : undefined}>
+          <div style={isCreatingNewAgent ? { opacity: 0.5 } : undefined} {...(isCreatingNewAgent ? { inert: '' } : {})}>
             <SettingsSection
               id={group.id}
               nodeId={nodeId}
