@@ -87,18 +87,11 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       let content: any = {};
       if (connection?.properties?.parameterValues) {
         // Built-in MCP connection — send connection info in the expected format
-        const { mcpServerUrl, authenticationType, ...authParams } = connection.properties.parameterValues;
+        const { mcpServerUrl, authenticationType } = connection.properties.parameterValues;
         content = {
           connection: {
-            inputs: {
-              Connection: {
-                McpServerUrl: mcpServerUrl,
-                Authentication: authenticationType || 'None',
-                ...authParams,
-              },
-            },
-            type: 'McpClientTool',
-            kind: 'BuiltIn',
+            McpServerUrl: mcpServerUrl,
+            Authentication: authenticationType || 'None',
           },
         };
       }
