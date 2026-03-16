@@ -2,6 +2,7 @@ import type { OpenAPIV2 } from '../../../utils/src';
 import { ArgumentException, UnsupportedException, optional, equals, getResourceName } from '../../../utils/src';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
+import { ConnectionService } from '../connection';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
@@ -55,7 +56,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     isManagedIdentityConnection?: boolean
   ): Promise<ListDynamicValue[]> {
     const { apiVersion, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    const { operationId: dynamicOperation, apiType } = dynamicState;
+    const isMcpConnection = apiType === 'mcp' && dynamicOperation === 'listMcpTools';
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
 
@@ -69,7 +71,55 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       });
     }
 
-    const uri = `${connectionId}/dynamicList`;
+    // MCP-specific: use listMcpTools endpoint instead of dynamicList
+    if (isMcpConnection) {
+      const { workflowReferenceId } = this.options;
+      const uri = `${workflowReferenceId}/listMcpTools`;
+
+      // Get the connection data from ConnectionService
+      let connection: any;
+      try {
+        connection = connectionId ? await ConnectionService().getConnection(connectionId) : undefined;
+      } catch {
+        // Connection may not be in cache/API Hub for built-in MCP
+      }
+
+      let content: any = {};
+      if (connection?.properties?.parameterValues) {
+        // Built-in MCP connection — send connection info in the expected format
+        const { mcpServerUrl, authenticationType, ...authParams } = connection.properties.parameterValues;
+        content = {
+          connection: {
+            inputs: {
+              Connection: {
+                McpServerUrl: mcpServerUrl,
+                Authentication: authenticationType || 'None',
+                ...authParams,
+              },
+            },
+            type: 'McpClientTool',
+            kind: 'BuiltIn',
+          },
+        };
+      }
+
+      const mcpToolsResponse = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': '2018-07-01-preview' },
+        content,
+      });
+      const tools = this._getResponseFromDynamicApi(mcpToolsResponse, uri);
+
+      return (tools ?? []).map((tool: any) => ({
+        value: tool.name,
+        displayName: tool.name,
+        description: tool.description,
+      }));
+    }
+
+    // Regular dynamic list for non-MCP connections
+    const resolvedConnectionId = this._resolveConnectionId(connectionId);
+    const uri = `${resolvedConnectionId}/dynamicList`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },
@@ -110,7 +160,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       });
     }
 
-    const uri = `${connectionId}/dynamicProperties`;
+    const resolvedConnectionId = this._resolveConnectionId(connectionId);
+    const uri = `${resolvedConnectionId}/dynamicProperties`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },
@@ -136,7 +187,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     const { apiVersion, httpClient } = this.options;
     const { dynamicState, selectionState } = dynamicExtension;
 
-    const uri = `${connectionId}/dynamicTree`;
+    const resolvedConnectionId = this._resolveConnectionId(connectionId);
+    const uri = `${resolvedConnectionId}/dynamicTree`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },
@@ -154,6 +206,13 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       id: item.Id,
       isParent: item.isParent ?? equals(item.nodeType, 'parent'),
     }));
+  }
+
+  private _resolveConnectionId(connectionId: string | undefined): string | undefined {
+    if (connectionId && !connectionId.startsWith('/subscriptions/')) {
+      return `${this.options.workflowReferenceId}/${connectionId}`;
+    }
+    return connectionId;
   }
 
   private _getPropertiesIfNeeded(isManagedIdentityConnection?: boolean):
