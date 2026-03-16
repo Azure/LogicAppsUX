@@ -361,7 +361,7 @@ const DesignerEditor = () => {
          */
         for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
           if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'];
+            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
             const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
             const assignmentPromises = [];
             for (const roleDefinition of missingRoleAssignments) {
@@ -972,7 +972,9 @@ const getDesignerServices = (
     httpClient,
     identity: workflowApp?.identity,
   });
-  cognitiveServiceService.getFoundryAccessToken = async () => environment.foundryToken ?? environment.armToken ?? '';
+  // All Foundry calls go through the backend proxy — no direct Foundry token needed.
+  // The proxy handles auth server-side via MSI (production) or Bearer token (local POC).
+  cognitiveServiceService.foundryProxyBaseUrl = `${baseUrl}/foundryProxy`;
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
