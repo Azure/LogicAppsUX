@@ -1477,7 +1477,7 @@ export const ParameterSection = ({
           />
         )}
         <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
-          <Spinner size="small" label="Loading agent details..." />
+          <Spinner size="tiny" label="Loading agent details..." />
         </div>
       </>
     );
