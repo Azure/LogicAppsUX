@@ -3,16 +3,15 @@ import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
 import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
-import { screen } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
-// biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
-import { CreateWorkflowPanel } from '../createWorkflowPanel/createWorkflowPanel';
+import { CreateWorkflowPanel, CreateWorkflowPanelHeader } from '../createWorkflowPanel/createWorkflowPanel';
 
 describe('panel/templatePanel/createWorkflowPanel', () => {
   let store: AppStore;
@@ -158,7 +157,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
           errors: {
             workflow: undefined,
             kind: undefined,
-          },
+          } as any,
           connectionKeys: [],
         },
       },
@@ -177,7 +176,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         workflows: {},
         parameters: {},
         connections: undefined,
-      },
+      } as any,
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -192,10 +191,12 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
   beforeEach(() => {
     const queryClient = getReactQueryClient();
-
+    const ref = React.createRef<HTMLDivElement>();
     renderWithProviders(
       <QueryClientProvider client={queryClient}>
-        <CreateWorkflowPanel createWorkflow={vi.fn()} />
+        <div ref={ref}>
+          <CreateWorkflowPanel createWorkflow={vi.fn()} mountNode={ref.current} />
+        </div>
       </QueryClientProvider>,
       { store }
     );
@@ -274,5 +275,75 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeNull();
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
+  });
+});
+
+describe('panel/templatePanel/CreateWorkflowPanelHeader', () => {
+  it('Renders header with default title when headerTitle is not provided', () => {
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" />, { store: setupStore({}) });
+    expect(screen.getByText('Create a new workflow from template')).toBeDefined();
+  });
+
+  it('Renders header with custom headerTitle when provided', () => {
+    renderWithProviders(<CreateWorkflowPanelHeader headerTitle="Custom Header" title="Test Template" summary="Test Summary" />, {
+      store: setupStore({}),
+    });
+    expect(screen.getByText('Custom Header')).toBeDefined();
+  });
+
+  it('Shows close button when onClose is provided', () => {
+    const onCloseMock = vi.fn();
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" onClose={onCloseMock} />, {
+      store: setupStore({}),
+    });
+    expect(screen.getByText('Close Panel')).toBeDefined();
+  });
+
+  it('Does not show close button when onClose is not provided', () => {
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" />, { store: setupStore({}) });
+    expect(screen.queryByText('Close Panel')).toBeNull();
+  });
+
+  it('Calls onClose when close button is clicked', () => {
+    const onCloseMock = vi.fn();
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" onClose={onCloseMock} />, {
+      store: setupStore({}),
+    });
+    const closeButton = screen.getByText('Close Panel');
+    fireEvent.click(closeButton);
+    expect(onCloseMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('Template details section is collapsed by default', () => {
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" />, { store: setupStore({}) });
+    expect(screen.getByText('Template details')).toBeDefined();
+    expect(screen.queryByText('Name')).toBeNull();
+    expect(screen.queryByText('Description')).toBeNull();
+  });
+
+  it('Expands template details when toggle is clicked', async () => {
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" />, { store: setupStore({}) });
+    const toggle = screen.getByText('Template details');
+    fireEvent.click(toggle);
+    await waitFor(() => {
+      expect(screen.getByText('Name')).toBeDefined();
+      expect(screen.getByText('Description')).toBeDefined();
+      expect(screen.getByText('Test Template')).toBeDefined();
+      expect(screen.getByText('Test Summary')).toBeDefined();
+    });
+  });
+
+  it('Collapses template details when toggle is clicked twice', async () => {
+    renderWithProviders(<CreateWorkflowPanelHeader title="Test Template" summary="Test Summary" />, { store: setupStore({}) });
+    const toggle = screen.getByText('Template details');
+    fireEvent.click(toggle);
+    await waitFor(() => {
+      expect(screen.getByText('Name')).toBeDefined();
+    });
+    fireEvent.click(toggle);
+    await waitFor(() => {
+      expect(screen.queryByText('Name')).toBeNull();
+      expect(screen.queryByText('Description')).toBeNull();
+    });
   });
 });

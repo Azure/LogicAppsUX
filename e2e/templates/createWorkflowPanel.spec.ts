@@ -21,7 +21,7 @@ test.describe(
       await page.locator('[data-testid="msla-templates-workflowName"]').fill(workflowName);
       await page.getByText('Stateless', { exact: true }).click();
 
-      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByTestId('template-footer-button-0').click();
 
       await expect(page.getByText('BasicWorkflowOnly', { exact: true })).not.toBeVisible();
       await expect(page.getByText('Stateful', { exact: true })).not.toBeVisible();
@@ -58,7 +58,7 @@ test.describe(
 
       await page.getByRole('tab', { name: 'Parameters' }).click();
       await page.locator('[data-testid="msla-templates-parameter-value-LogicMessage_#workflowname#"]').fill(parameterValue);
-      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByTestId('template-footer-button-0').click();
 
       await expect(page.getByText('----', { exact: true })).not.toBeVisible();
       await expect(page.getByText(parameterValue, { exact: true })).toBeVisible();

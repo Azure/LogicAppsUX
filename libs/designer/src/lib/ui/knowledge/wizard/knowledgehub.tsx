@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/knowledge/store';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import type { KnowledgeHub } from '@microsoft/logic-apps-shared';
@@ -94,7 +94,6 @@ export const KnowledgeHubWizard = () => {
       description: 'Button text for deleting a knowledge hub',
     }),
   };
-
   const { data: allHubs, isLoading, refetch } = useAllKnowledgeHubs(logicAppId);
   const { data: connection, isLoading: isConnectionLoading } = useConnection();
 
@@ -130,6 +129,7 @@ export const KnowledgeHubWizard = () => {
     dispatch(openPanelView({ panelView: connection ? KnowledgePanelView.EditConnection : KnowledgePanelView.CreateConnection }));
   }, [dispatch, connection]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   if (hubs === undefined || isLoading || isConnectionLoading) {
     return (
       <div className={styles.loadingContainer}>
@@ -146,46 +146,49 @@ export const KnowledgeHubWizard = () => {
   }
 
   return (
-    <div>
-      <KnowledgeHubPanel resourceId={logicAppId} />
-      <DescriptionWithLink text={INTL_TEXT.description} linkText={INTL_TEXT.learnMore} linkUrl="" />
-      <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
-        <Menu>
-          <MenuTrigger disableButtonEnhancement>
-            <MenuButton icon={<AddRegular />} appearance="subtle">
-              {INTL_TEXT.newButton}
-            </MenuButton>
-          </MenuTrigger>
-          <MenuPopover>
-            <MenuList>
-              <MenuItem icon={<DocumentRegular />} onClick={handleAddFiles} disabled={!connection}>
-                {INTL_TEXT.addFilesItem}
-              </MenuItem>
-              <MenuItem icon={<FolderRegular />} onClick={handleAddGroup} disabled={!connection}>
-                {INTL_TEXT.addGroupItem}
-              </MenuItem>
-            </MenuList>
-          </MenuPopover>
-        </Menu>
-        <Button appearance="subtle" icon={<ArrowClockwiseRegular />} onClick={handleRefreshHubs}>
-          {INTL_TEXT.refreshButton}
-        </Button>
-        <Divider vertical={true} style={{ maxWidth: '2px' }} />
-        <Button appearance="subtle" icon={<LinkMultipleRegular />} onClick={handleConnectionClick} disabled={!connection}>
-          {INTL_TEXT.connectionButton}
-        </Button>
-        <Button appearance="subtle" icon={<DeleteRegular />} onClick={handleDelete} disabled={!connection}>
-          {INTL_TEXT.deleteButton}
-        </Button>
+    <div style={{ height: '93vh' }}>
+      <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <DescriptionWithLink text={INTL_TEXT.description} linkText={INTL_TEXT.learnMore} linkUrl="" />
+        <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
+          <Menu>
+            <MenuTrigger disableButtonEnhancement>
+              <MenuButton icon={<AddRegular />} appearance="subtle">
+                {INTL_TEXT.newButton}
+              </MenuButton>
+            </MenuTrigger>
+            <MenuPopover>
+              <MenuList>
+                <MenuItem icon={<DocumentRegular />} onClick={handleAddFiles} disabled={!connection}>
+                  {INTL_TEXT.addFilesItem}
+                </MenuItem>
+                <MenuItem icon={<FolderRegular />} onClick={handleAddGroup} disabled={!connection}>
+                  {INTL_TEXT.addGroupItem}
+                </MenuItem>
+              </MenuList>
+            </MenuPopover>
+          </Menu>
+          <Button appearance="subtle" icon={<ArrowClockwiseRegular />} onClick={handleRefreshHubs}>
+            {INTL_TEXT.refreshButton}
+          </Button>
+          <Divider vertical={true} style={{ maxWidth: '2px' }} />
+          <Button appearance="subtle" icon={<LinkMultipleRegular />} onClick={handleConnectionClick} disabled={!connection}>
+            {INTL_TEXT.connectionButton}
+          </Button>
+          <Button appearance="subtle" icon={<DeleteRegular />} onClick={handleDelete} disabled={!connection}>
+            {INTL_TEXT.deleteButton}
+          </Button>
+        </div>
+        {hubs.length === 0 ? connection ? <EmptyKnowledgeBaseView /> : <NoConnectionsView /> : <div>{'Open the list view here'}</div>}
+        {showAddGroup ? <CreateGroup resourceId={logicAppId} onDismiss={handleCloseAddGroup} /> : null}
+        <KnowledgeHubPanel resourceId={logicAppId} mountNode={containerRef.current} />
       </div>
-      {hubs.length === 0 ? connection ? <EmptyKnowledgeBaseView /> : <NoConnectionsView /> : <div>{'Open the list view here'}</div>}
-      {showAddGroup ? <CreateGroup resourceId={logicAppId} onDismiss={handleCloseAddGroup} /> : null}
       <div
         id={'msla-layer-host'}
         style={{
           position: 'absolute',
           inset: '0px',
           visibility: 'hidden',
+          zIndex: 10001,
         }}
       />
     </div>

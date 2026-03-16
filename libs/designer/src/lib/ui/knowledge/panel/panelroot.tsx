@@ -1,10 +1,11 @@
 import { KnowledgePanelView } from '../../../core/state/knowledge/panelSlice';
 import type { RootState } from '../../../core/state/knowledge/store';
-import { CreateOrUpdateConnectionPanel } from './connection/create';
+import { CreateConnectionPanel } from './connection/create';
 import { AddFilePanel } from './addfile';
 import { useSelector } from 'react-redux';
+import { EditConnectionPanel } from './connection/edit';
 
-export const KnowledgeHubPanel = ({ resourceId }: { resourceId: string }) => {
+export const KnowledgeHubPanel = ({ resourceId, mountNode }: { resourceId: string; mountNode: HTMLDivElement | null }) => {
   const { isOpen, panelView } = useSelector((state: RootState) => ({
     isOpen: state.knowledgeHubPanel?.isOpen ?? false,
     panelView: state.knowledgeHubPanel?.currentPanelView,
@@ -20,8 +21,10 @@ export const KnowledgeHubPanel = ({ resourceId }: { resourceId: string }) => {
   }
 
   return panelView === KnowledgePanelView.AddFiles ? (
-    <AddFilePanel resourceId={resourceId} />
+    <AddFilePanel resourceId={resourceId} mountNode={mountNode} />
+  ) : panelView === KnowledgePanelView.CreateConnection ? (
+    <CreateConnectionPanel mountNode={mountNode} />
   ) : (
-    <CreateOrUpdateConnectionPanel isCreate={panelView === KnowledgePanelView.CreateConnection} />
+    <EditConnectionPanel mountNode={mountNode} />
   );
 };

@@ -1,15 +1,23 @@
-import type { Connection, FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
+import type {
+  Connection,
+  CreateFoundryAgentOptions,
+  FoundryAgent,
+  FoundryAgentVersion,
+  FoundryModel,
+  IHttpClient,
+} from '@microsoft/logic-apps-shared';
 import {
   ApiManagementService,
   CognitiveServiceService,
   ResourceService,
-  foundryServiceConnectionRegex,
   buildProjectEndpointFromResourceId,
-  listAllFoundryAgents,
-  listFoundryAgentVersions,
-  listFoundryModels,
+  createFoundryAgentViaProxy,
+  foundryServiceConnectionRegex,
+  listAllFoundryAgentsViaProxy,
+  listFoundryAgentVersionsViaProxy,
+  listFoundryModelsViaProxy,
 } from '@microsoft/logic-apps-shared';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
 import { getReactQueryClient } from '../../../../../core';
 
@@ -175,15 +183,28 @@ export const useAllBuiltInRoleDefinitions = () => {
   );
 };
 
+export interface CosmosDbAccount {
+  id: string;
+  name: string;
+  resourceGroup: string;
+  subscriptionId: string;
+  endpoint: string;
+}
 export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = true) => {
   return useQuery(
     ['allCosmosDbServiceAccounts', { subscriptionId }],
-    async () => {
+    async (): Promise<CosmosDbAccount[]> => {
       const allCosmosDbServiceAccounts = await ResourceService().listResources(
         subscriptionId,
-        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | extend capabilities = todynamic(properties.capabilities) | mv-apply capabilities on ( mv-expand capabilities | extend capabilityName = tostring(capabilities.name) | where capabilityName =~ 'EnableNoSQLVectorSearch')`
+        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | where array_length(todynamic(properties.capabilities)) > 0 | extend capabilities = tostring(properties.capabilities) | where capabilities contains 'EnableNoSQLVectorSearch'`
       );
-      return allCosmosDbServiceAccounts ?? [];
+      return (allCosmosDbServiceAccounts ?? []).map((account: any) => ({
+        id: account.id,
+        name: account.name,
+        resourceGroup: account.resourceGroup,
+        subscriptionId,
+        endpoint: account.properties.documentEndpoint,
+      }));
     },
     {
       ...queryOpts,
@@ -194,6 +215,7 @@ export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = 
     }
   );
 };
+
 /**
  * Extracts the Foundry project resource ID from a node's selected connection.
  * Returns undefined if the connection is not a Foundry connection.
@@ -206,22 +228,29 @@ const useFoundryConnectionResourceId = (nodeId: string): string | undefined => {
 };
 
 /**
- * Returns the httpClient and a getToken function from the CognitiveServiceService,
- * or undefined if either is unavailable (e.g. VS Code environment).
+ * Returns the proxy context (httpClient + proxyBaseUrl) from the CognitiveServiceService.
+ * All Foundry calls go through the backend proxy which handles auth via MSI.
  */
-function getFoundryServiceContext():
-  | {
-      httpClient: NonNullable<ReturnType<typeof CognitiveServiceService>['httpClient']>;
-      getToken: NonNullable<ReturnType<typeof CognitiveServiceService>['getFoundryAccessToken']>;
-    }
-  | undefined {
-  const service = CognitiveServiceService();
-  const getToken = service.getFoundryAccessToken;
-  const httpClient = service.httpClient;
-  if (!getToken || !httpClient) {
+function getFoundryProxyContext(): { httpClient: IHttpClient; proxyBaseUrl: string } | undefined {
+  const { foundryProxyBaseUrl, httpClient } = CognitiveServiceService();
+  if (!foundryProxyBaseUrl || !httpClient) {
     return undefined;
   }
-  return { httpClient, getToken };
+  return { httpClient, proxyBaseUrl: foundryProxyBaseUrl };
+}
+
+/** Build a FoundryProxyContext for a given project endpoint, or return undefined if not configured. */
+function buildProxyContext(
+  projectEndpoint: string | undefined
+): { httpClient: IHttpClient; proxyBaseUrl: string; foundryEndpoint: string } | undefined {
+  if (!projectEndpoint) {
+    return undefined;
+  }
+  const proxy = getFoundryProxyContext();
+  if (!proxy) {
+    return undefined;
+  }
+  return { ...proxy, foundryEndpoint: projectEndpoint };
 }
 
 const foundryQueryOpts = {
@@ -242,22 +271,15 @@ export const useFoundryProjectResourceIdForNode = (nodeId: string): string | und
   return useFoundryConnectionResourceId(nodeId);
 };
 
-/** Fetches all v2 Foundry agents for the node's selected connection. */
+/** Fetches all v2 Foundry agents for the node's selected connection via the backend proxy. */
 export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
   return useQuery(
     [queryKeys.allFoundryAgents, { projectEndpoint }],
     async () => {
-      if (!projectEndpoint) {
-        return [];
-      }
-      const ctx = getFoundryServiceContext();
-      if (!ctx) {
-        return [];
-      }
-      const token = await ctx.getToken();
-      return listAllFoundryAgents(ctx.httpClient, projectEndpoint, token);
+      const ctx = buildProxyContext(projectEndpoint);
+      return ctx ? listAllFoundryAgentsViaProxy(ctx) : [];
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -269,28 +291,21 @@ export const useFoundryAccountResourceIdForNode = (nodeId: string): string | und
   return resourceId ? getServiceAccountId(resourceId, true) : undefined;
 };
 
-/** Fetches available model deployments for the Foundry project connected to the node. */
+/** Fetches available model deployments for the Foundry project connected to the node via the backend proxy. */
 export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
   return useQuery(
     ['allFoundryModels', { projectEndpoint }],
     async () => {
-      if (!projectEndpoint) {
-        return [];
-      }
-      const ctx = getFoundryServiceContext();
-      if (!ctx) {
-        return [];
-      }
-      const token = await ctx.getToken();
-      return listFoundryModels(ctx.httpClient, projectEndpoint, token);
+      const ctx = buildProxyContext(projectEndpoint);
+      return ctx ? listFoundryModelsViaProxy(ctx) : [];
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
 };
 
-/** Fetches all versions of a specific Foundry agent. */
+/** Fetches all versions of a specific Foundry agent via the backend proxy. */
 export const useFoundryAgentVersions = (
   nodeId: string,
   agentId: string | undefined
@@ -300,16 +315,31 @@ export const useFoundryAgentVersions = (
   return useQuery(
     ['foundryAgentVersions', { projectEndpoint, agentId }],
     async () => {
-      if (!projectEndpoint || !agentId) {
+      if (!agentId) {
         return [];
       }
-      const ctx = getFoundryServiceContext();
-      if (!ctx) {
-        return [];
-      }
-      const token = await ctx.getToken();
-      return listFoundryAgentVersions(ctx.httpClient, projectEndpoint, agentId, token);
+      const ctx = buildProxyContext(projectEndpoint);
+      return ctx ? listFoundryAgentVersionsViaProxy(ctx, agentId) : [];
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );
+};
+
+/** Creates a new Foundry agent via the backend proxy and refreshes the agents list. */
+export const useCreateFoundryAgent = (nodeId: string) => {
+  const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (options: CreateFoundryAgentOptions) => {
+      const ctx = buildProxyContext(projectEndpoint);
+      if (!ctx) {
+        throw new Error('Foundry proxy not configured');
+      }
+      return createFoundryAgentViaProxy(ctx, options);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [queryKeys.allFoundryAgents] });
+    },
+  });
 };

@@ -13,7 +13,7 @@ import { CreateGroup } from '../modals/creategroup';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const AddFilePanel = ({ resourceId }: { resourceId: string }) => {
+export const AddFilePanel = ({ resourceId, mountNode }: { resourceId: string; mountNode: HTMLDivElement | null }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const styles = usePanelStyles();
@@ -209,6 +209,7 @@ export const AddFilePanel = ({ resourceId }: { resourceId: string }) => {
         onOpenChange={(_, { open }) => !open && handleClose()}
         position="end"
         size="large"
+        mountNode={{ element: mountNode }}
       >
         <DrawerHeader className={styles.header}>
           <div className={styles.headerContent}>
