@@ -464,7 +464,10 @@ const DesignerEditor = () => {
   };
 
   return (
-    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
+    <div
+      key={designerID}
+      style={{ height: 'inherit', width: 'inherit', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}
+    >
       <DesignerProvider
         id={designerID}
         key={designerID}
@@ -573,7 +576,7 @@ const DesignerEditor = () => {
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />
-                <div style={{ flexGrow: 1, display: 'inherit' }}>
+                <div style={{ flexGrow: 1, display: 'inherit', minHeight: 0, minWidth: 0, overflow: 'hidden' }}>
                   {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
                 </div>
                 <CombineInitializeVariableDialog />

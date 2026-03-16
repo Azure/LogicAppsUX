@@ -441,7 +441,10 @@ const DesignerEditorConsumption = () => {
   }
 
   return (
-    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
+    <div
+      key={designerID}
+      style={{ height: 'inherit', width: 'inherit', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}
+    >
       <DesignerProvider
         id={workflow?.id}
         key={designerID}
@@ -473,7 +476,7 @@ const DesignerEditorConsumption = () => {
             runInstance={runInstanceData as any}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
-            <div style={{ display: 'flex', height: 'inherit' }}>
+            <div style={{ display: 'flex', height: 'inherit', minHeight: 0, overflow: 'hidden' }}>
               <CoPilotChatbot
                 isOpen={showChatBot}
                 getUpdatedWorkflow={getUpdatedWorkflow}

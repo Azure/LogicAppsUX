@@ -639,7 +639,10 @@ const DesignerEditor = () => {
   }
 
   return (
-    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
+    <div
+      key={designerID}
+      style={{ height: 'inherit', width: 'inherit', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}
+    >
       <DesignerProvider
         id={workflow?.id}
         key={designerID}
@@ -737,7 +740,7 @@ const DesignerEditor = () => {
                 />
               </div>
               {!isCodeView && (
-                <div style={{ flexGrow: 1, display: 'inherit' }}>
+                <div style={{ flexGrow: 1, display: 'inherit', minHeight: 0, minWidth: 0, overflow: 'hidden' }}>
                   <Designer />
                   <FloatingRunButton
                     siteResourceId={siteResourceId}

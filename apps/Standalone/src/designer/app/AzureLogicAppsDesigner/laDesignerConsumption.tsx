@@ -291,7 +291,10 @@ const DesignerEditorConsumption = () => {
   };
 
   return (
-    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
+    <div
+      key={designerID}
+      style={{ height: 'inherit', width: 'inherit', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}
+    >
       <DesignerProvider
         key={designerID}
         locale={language}
@@ -322,7 +325,7 @@ const DesignerEditorConsumption = () => {
             runInstance={runInstanceData}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
-            <div style={{ display: 'flex', height: 'inherit' }}>
+            <div style={{ display: 'flex', height: 'inherit', minHeight: 0, overflow: 'hidden' }}>
               <RunHistoryPanel
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
