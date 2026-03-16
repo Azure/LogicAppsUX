@@ -63,6 +63,8 @@ jobs:
           key: la-runtime-deps-${{ runner.os }}-v1
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
+          # Save even when tests fail so deps are available on next run
+          save-always: true
 
       - name: Run VS Code Extension E2E tests
         run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js

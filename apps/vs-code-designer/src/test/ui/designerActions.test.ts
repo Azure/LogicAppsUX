@@ -883,9 +883,31 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
 
   console.log('[waitForValidation] Waiting for extension dependency validation to complete...');
 
+  const dismissGitHubErrors = async (): Promise<void> => {
+    try {
+      await driver.executeScript(`
+        var els = document.querySelectorAll(
+          '.notifications-toasts .notification-list-item, ' +
+          '[role="dialog"], ' +
+          '.notification-toast'
+        );
+        for (var i = 0; i < els.length; i++) {
+          var text = els[i].textContent || '';
+          if (text.includes('Error reading JSON from URL') || text.includes('status code 403')) {
+            var closeBtn = els[i].querySelector('.codicon-close, [aria-label="Close"], .action-label.codicon');
+            if (closeBtn) { closeBtn.click(); }
+          }
+        }
+      `);
+    } catch {
+      /* ignore */
+    }
+  };
+
   let firstSeen = false;
   const phase1Deadline = Date.now() + 15_000;
   while (Date.now() < phase1Deadline) {
+    await dismissGitHubErrors();
     const msg = await hasValidationNotification();
     if (msg) {
       console.log(`[waitForValidation] Validation active: "${msg}"`);
@@ -904,6 +926,7 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
   const QUIET_PERIOD = 10_000;
 
   while (Date.now() - t0 < timeoutMs) {
+    await dismissGitHubErrors();
     const msg = await hasValidationNotification();
     if (msg) {
       lastSeenAt = Date.now();
@@ -913,13 +936,46 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
       }
     } else if (Date.now() - lastSeenAt >= QUIET_PERIOD) {
       console.log(`[waitForValidation] Complete (total: ${Math.round((Date.now() - t0) / 1000)}s)`);
-      await sleep(3000);
-      return;
+      break;
     }
     await sleep(2000);
   }
 
-  console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
+  if (Date.now() - t0 >= timeoutMs) {
+    console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
+  }
+
+  // Wait for design-time API (func host start) to start
+  console.log('[waitForValidation] Waiting for design-time API to start...');
+  const apiDeadline = Date.now() + 60_000;
+  while (Date.now() < apiDeadline) {
+    try {
+      const apiReady = await driver.executeScript<boolean>(`
+        var els = document.querySelectorAll(
+          '.notifications-toasts .notification-list-item, ' +
+          '[role="dialog"]'
+        );
+        for (var i = 0; i < els.length; i++) {
+          var text = els[i].textContent || '';
+          if (text.includes('design time') || text.includes('Design time') ||
+              text.includes('already running') || text.includes('func host')) {
+            return true;
+          }
+        }
+        if (document.querySelector('iframe.webview')) return true;
+        return false;
+      `);
+      if (apiReady) {
+        console.log(`[waitForValidation] Design-time API indicators found (${Math.round((Date.now() - t0) / 1000)}s)`);
+        await sleep(3000);
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    await sleep(2000);
+  }
+  console.log(`[waitForValidation] Design-time API wait timed out (${Math.round((Date.now() - t0) / 1000)}s)`);
 }
 
 /**

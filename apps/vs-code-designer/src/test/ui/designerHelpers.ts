@@ -666,12 +666,37 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
     }
   };
 
+  // Dismiss GitHub API rate-limit errors that block validation.
+  // The extension checks github.com for latest versions but gets 403 on CI.
+  // These errors are non-fatal when cached binaries exist.
+  const dismissGitHubErrors = async (): Promise<void> => {
+    try {
+      await driver.executeScript(`
+        var els = document.querySelectorAll(
+          '.notifications-toasts .notification-list-item, ' +
+          '[role="dialog"], ' +
+          '.notification-toast'
+        );
+        for (var i = 0; i < els.length; i++) {
+          var text = els[i].textContent || '';
+          if (text.includes('Error reading JSON from URL') || text.includes('status code 403')) {
+            var closeBtn = els[i].querySelector('.codicon-close, [aria-label="Close"], .action-label.codicon');
+            if (closeBtn) { closeBtn.click(); }
+          }
+        }
+      `);
+    } catch {
+      /* ignore */
+    }
+  };
+
   console.log('[waitForValidation] Waiting for extension dependency validation to complete...');
 
   // Phase 1: Wait up to 15s for the first validation notification to appear.
   let firstSeen = false;
   const phase1Deadline = Date.now() + 15_000;
   while (Date.now() < phase1Deadline) {
+    await dismissGitHubErrors();
     const msg = await hasValidationNotification();
     if (msg) {
       console.log(`[waitForValidation] Validation active: "${msg}"`);
@@ -693,6 +718,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
   const QUIET_PERIOD = 10_000;
 
   while (Date.now() - t0 < timeoutMs) {
+    await dismissGitHubErrors();
     const msg = await hasValidationNotification();
     if (msg) {
       lastSeenAt = Date.now();
@@ -703,14 +729,51 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
       }
     } else if (Date.now() - lastSeenAt >= QUIET_PERIOD) {
       console.log(`[waitForValidation] Complete — quiet for ${QUIET_PERIOD / 1000}s (total: ${Math.round((Date.now() - t0) / 1000)}s)`);
-      // Give the extension a moment to start the design-time API
-      await sleep(3000);
-      return;
+      break;
     }
     await sleep(2000);
   }
 
-  console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s — proceeding anyway`);
+  if (Date.now() - t0 >= timeoutMs) {
+    console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s — proceeding anyway`);
+  }
+
+  // Phase 3: Wait for design-time API (func host start) to be ready.
+  // After validation completes, the extension starts func which takes time.
+  // Poll for evidence that the API is responding by checking the Output panel.
+  console.log('[waitForValidation] Waiting for design-time API to start...');
+  const apiDeadline = Date.now() + 60_000;
+  while (Date.now() < apiDeadline) {
+    try {
+      const apiReady = await driver.executeScript<boolean>(`
+        // Check notifications for design-time errors (means func tried to start)
+        var els = document.querySelectorAll(
+          '.notifications-toasts .notification-list-item, ' +
+          '[role="dialog"]'
+        );
+        for (var i = 0; i < els.length; i++) {
+          var text = els[i].textContent || '';
+          // If we see design-time-related messages, func has started
+          if (text.includes('design time') || text.includes('Design time') ||
+              text.includes('already running') || text.includes('func host')) {
+            return true;
+          }
+        }
+        // Check if any webview iframes exist (designer tab opened)
+        if (document.querySelector('iframe.webview')) return true;
+        return false;
+      `);
+      if (apiReady) {
+        console.log(`[waitForValidation] Design-time API indicators found (${Math.round((Date.now() - t0) / 1000)}s)`);
+        await sleep(3000);
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    await sleep(2000);
+  }
+  console.log(`[waitForValidation] Design-time API wait timed out — proceeding (${Math.round((Date.now() - t0) / 1000)}s)`);
 }
 
 /**

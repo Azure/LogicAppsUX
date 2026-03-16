@@ -118,6 +118,26 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       return false;
     }
 
+    // Dismiss GitHub API rate-limit errors (403) that block the UI.
+    // These occur when the extension checks for latest versions in CI.
+    if (message.includes('Error reading JSON from URL') || message.includes('status code 403')) {
+      try {
+        await dialog.pushButton('Close');
+        console.log('[dismissAllDialogs] Dismissed GitHub API error (403)');
+        await sleep(500);
+        return true;
+      } catch {
+        try {
+          await dialog.close();
+          console.log('[dismissAllDialogs] Closed GitHub API error dialog');
+          await sleep(500);
+          return true;
+        } catch {
+          /* fall through */
+        }
+      }
+    }
+
     if (
       message.includes('sign in') ||
       message.includes('Sign in') ||
@@ -180,6 +200,19 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       if (messageText.includes('Validating Runtime Dependency') || messageText.includes('Successfully installed')) {
         console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
         continue;
+      }
+
+      // Dismiss GitHub API rate-limit errors (403) via raw selector
+      if (messageText.includes('Error reading JSON from URL') || messageText.includes('status code 403')) {
+        try {
+          const closeBtn = await dialogs[0].findElement(By.css('.codicon-close, [aria-label="Close"]'));
+          await closeBtn.click();
+          console.log('[dismissAllDialogs] Dismissed GitHub API error via raw selector');
+          await sleep(500);
+          return true;
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
       }
 
       if (messageText.includes('sign in') || messageText.includes('Sign in') || messageText.includes('wants to sign in')) {

@@ -60,7 +60,7 @@ import {
 const TEST_TIMEOUT = 120_000;
 
 /** Timeout for waiting for elements */
-const ELEMENT_TIMEOUT = 15_000;
+const ELEMENT_TIMEOUT = 20_000;
 
 /** Poll interval for waiting loops */
 const POLL_INTERVAL = 500;
