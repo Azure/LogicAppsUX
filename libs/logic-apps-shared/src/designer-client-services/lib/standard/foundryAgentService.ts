@@ -120,7 +120,11 @@ function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
 
 /** Strip trailing slashes from a string. */
 function stripTrailingSlashes(value: string): string {
-  return value.replace(/\/+$/, '');
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') {
+    end--;
+  }
+  return value.slice(0, end);
 }
 
 /** Normalize the project endpoint to the Foundry data-plane host. */
