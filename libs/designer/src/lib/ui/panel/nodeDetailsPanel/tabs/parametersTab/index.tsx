@@ -713,7 +713,7 @@ export const ParameterSection = ({
     ]
   );
 
-  // Sync deploymentId when the selected Foundry agent changes (initial selection or switching agents)
+  // Sync deploymentId and foundryAgentName when the selected Foundry agent changes
   const prevFoundryAgentIdRef = useRef<string | undefined>(selectedFoundryAgent?.id);
   useEffect(() => {
     if (!selectedFoundryAgent || selectedFoundryAgent.id === prevFoundryAgentIdRef.current) {
@@ -726,6 +726,12 @@ export const ParameterSection = ({
     if (deploymentParam) {
       const modelValue = pendingFoundryModel ?? selectedFoundryAgent.model;
       dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelValue);
+    }
+
+    // Sync foundryAgentName so the serialized workflow always has the correct agent name
+    const nameParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName');
+    if (nameParam) {
+      dispatchParamUpdate(dispatch, nodeId, group.id, nameParam, selectedFoundryAgent.name ?? selectedFoundryAgent.id);
     }
   }, [selectedFoundryAgent, pendingFoundryModel, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
