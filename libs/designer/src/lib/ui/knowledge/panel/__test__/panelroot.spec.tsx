@@ -17,9 +17,11 @@ vi.mock('../addfile', () => ({
 }));
 
 vi.mock('../connection/create', () => ({
-  CreateOrUpdateConnectionPanel: ({ isCreate }: { isCreate: boolean }) => (
-    <div data-testid="connection-panel">ConnectionPanel: {isCreate ? 'create' : 'edit'}</div>
-  ),
+  CreateConnectionPanel: () => <div data-testid="connection-panel">ConnectionPanel: create</div>,
+}));
+
+vi.mock('../connection/edit', () => ({
+  EditConnectionPanel: () => <div data-testid="connection-panel">ConnectionPanel: edit</div>,
 }));
 
 describe('KnowledgeHubPanel Component', () => {
@@ -34,9 +36,12 @@ describe('KnowledgeHubPanel Component', () => {
   };
 
   const renderComponent = (store = createMockStore()) => {
+    const ref = React.createRef<HTMLDivElement>();
     return render(
       <Provider store={store}>
-        <KnowledgeHubPanel resourceId={resourceId} />
+        <div ref={ref}>
+          <KnowledgeHubPanel resourceId={resourceId} mountNode={ref.current} />
+        </div>
       </Provider>
     );
   };
@@ -53,14 +58,14 @@ describe('KnowledgeHubPanel Component', () => {
     const store = createMockStore({ isOpen: false, currentPanelView: undefined });
     const { container } = renderComponent(store);
 
-    expect(container.firstChild).toBeNull();
+    expect(container.firstChild).toBeEmptyDOMElement();
   });
 
   it('renders nothing when panel is open but no valid view', () => {
     const store = createMockStore({ isOpen: true, currentPanelView: undefined });
     const { container } = renderComponent(store);
 
-    expect(container.firstChild).toBeNull();
+    expect(container.firstChild).toBeEmptyDOMElement();
   });
 
   it('renders AddFilePanel when view is AddFiles', () => {
@@ -71,7 +76,7 @@ describe('KnowledgeHubPanel Component', () => {
     expect(screen.getByText(`AddFilePanel: ${resourceId}`)).toBeInTheDocument();
   });
 
-  it('renders CreateOrUpdateConnectionPanel in create mode when view is CreateConnection', () => {
+  it('renders CreateConnectionPanel in create mode when view is CreateConnection', () => {
     const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.CreateConnection });
     renderComponent(store);
 
@@ -79,7 +84,7 @@ describe('KnowledgeHubPanel Component', () => {
     expect(screen.getByText('ConnectionPanel: create')).toBeInTheDocument();
   });
 
-  it('renders CreateOrUpdateConnectionPanel in edit mode when view is EditConnection', () => {
+  it('renders EditConnectionPanel in edit mode when view is EditConnection', () => {
     const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.EditConnection });
     renderComponent(store);
 
@@ -109,6 +114,6 @@ describe('KnowledgeHubPanel Component', () => {
     });
     const { container } = renderComponent(store);
 
-    expect(container.firstChild).toBeNull();
+    expect(container.firstChild).toBeEmptyDOMElement();
   });
 });

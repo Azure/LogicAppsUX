@@ -175,15 +175,28 @@ export const useAllBuiltInRoleDefinitions = () => {
   );
 };
 
+export interface CosmosDbAccount {
+  id: string;
+  name: string;
+  resourceGroup: string;
+  subscriptionId: string;
+  endpoint: string;
+}
 export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = true) => {
   return useQuery(
     ['allCosmosDbServiceAccounts', { subscriptionId }],
-    async () => {
+    async (): Promise<CosmosDbAccount[]> => {
       const allCosmosDbServiceAccounts = await ResourceService().listResources(
         subscriptionId,
-        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | extend capabilities = todynamic(properties.capabilities) | mv-apply capabilities on ( mv-expand capabilities | extend capabilityName = tostring(capabilities.name) | where capabilityName =~ 'EnableNoSQLVectorSearch')`
+        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | where array_length(todynamic(properties.capabilities)) > 0 | extend capabilities = tostring(properties.capabilities) | where capabilities contains 'EnableNoSQLVectorSearch'`
       );
-      return allCosmosDbServiceAccounts ?? [];
+      return (allCosmosDbServiceAccounts ?? []).map((account: any) => ({
+        id: account.id,
+        name: account.name,
+        resourceGroup: account.resourceGroup,
+        subscriptionId,
+        endpoint: account.properties.documentEndpoint,
+      }));
     },
     {
       ...queryOpts,
@@ -194,6 +207,7 @@ export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = 
     }
   );
 };
+
 /**
  * Extracts the Foundry project resource ID from a node's selected connection.
  * Returns undefined if the connection is not a Foundry connection.

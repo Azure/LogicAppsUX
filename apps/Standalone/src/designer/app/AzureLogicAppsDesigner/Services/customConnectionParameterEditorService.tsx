@@ -3,7 +3,7 @@ import type {
   IConnectionParameterEditorService,
   IConnectionParameterInfo,
 } from '@microsoft/logic-apps-shared';
-import { ACASessionConnector, CustomOpenAIConnector } from '@microsoft/logic-apps-designer';
+import { ACASessionConnector, CustomOpenAIConnector, CosmosDbConnector } from '@microsoft/logic-apps-designer';
 
 export class CustomConnectionParameterEditorService implements IConnectionParameterEditorService {
   public getConnectionParameterEditor({ connectorId }: IConnectionParameterInfo): IConnectionParameterEditorOptions | undefined {
@@ -16,6 +16,12 @@ export class CustomConnectionParameterEditorService implements IConnectionParame
     if (connectorId === '/serviceProviders/acasession') {
       return {
         EditorComponent: ACASessionConnector,
+      };
+    }
+
+    if (connectorId === '/placeholder/knowledgehub') {
+      return {
+        EditorComponent: CosmosDbConnector,
       };
     }
 
