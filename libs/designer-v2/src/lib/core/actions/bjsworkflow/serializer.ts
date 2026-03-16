@@ -26,6 +26,7 @@ import {
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
+  ConnectionService,
   WorkflowService,
   getIntl,
   create,
@@ -75,7 +76,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
-import { isA2AWorkflow } from '../../../core/state/workflow/helper';
+import { isA2AWorkflow, isBuiltInMcpOperation } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -288,9 +289,12 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = operation.type?.toLowerCase() === 'mcpclienttool' && operation.kind?.toLowerCase() === 'managed';
+  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
+  } else if (isBuiltInMcpClient) {
+    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -332,22 +336,6 @@ export const serializeOperation = async (
     const replacedTriggerId = getRecordEntry(rootState.workflow.idReplacements, triggerId) ?? triggerId;
     // Remove any runAfter properties pointing to the trigger, EXCEPT for agent actions
     removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
-  }
-
-  // If dynamic inputs failed to load and no stashed parameters exist (initial load failure),
-  // preserve the original definition's inputs so dynamic parameter values are not lost on save.
-  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
-  const hasDynamicInputsError = !!errors?.[ErrorLevel.DynamicInputs];
-  const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
-  const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
-  if (hasDynamicInputsError && !hasStash && !hasDynamicParamsInGroups) {
-    const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
-    if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
-      serializedOperation = {
-        ...serializedOperation,
-        inputs: merge({}, originalDef.inputs, serializedOperation.inputs),
-      };
-    }
   }
 
   return serializedOperation;
@@ -521,6 +509,60 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
+const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
+  if (!operationInfo) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
+  }
+  const { type, kind } = operationInfo;
+
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, nodeId);
+
+  const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
+  const manifest = await getOperationManifest(nativeMcpOperationInfo);
+  const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
+
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
+
+  // Look up the connection to get MCP server URL and authentication type
+  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
+  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
+  const connectionId = connectionReference?.connection?.id;
+
+  let mcpServerUrl = '';
+  let authenticationType = 'None';
+
+  if (connectionId) {
+    try {
+      const connection = await ConnectionService().getConnection(connectionId);
+      const parameterValues = (connection?.properties as any)?.parameterValues;
+      if (parameterValues) {
+        mcpServerUrl = parameterValues.mcpServerUrl ?? '';
+        authenticationType = parameterValues.authenticationType ?? 'None';
+      }
+    } catch {
+      // Fall back to empty values if connection lookup fails
+    }
+  }
+
+  const inputs = {
+    Connection: {
+      McpServerUrl: mcpServerUrl,
+      Authentication: authenticationType,
+    },
+    parameters: {
+      ...inputParameters.parameters,
+    },
+  };
+
+  return {
+    type: type,
+    kind: kind,
+    ...optional('description', operationFromWorkflow.description),
+    ...optional('inputs', inputs),
+  };
+};
+
 const serializeSwaggerBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const idReplacements = rootState.workflow.idReplacements;
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, operationId) as NodeOperation;
@@ -606,29 +648,15 @@ export interface SerializedParameter extends ParameterInfo {
 export const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId) as NodeInputs;
-  const shouldEncode = shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {});
-
-  const currentParams = getOperationInputParameters(nodeInputs);
-  const serialized = currentParams.map((input) => ({
+  return getOperationInputParameters(nodeInputs).map((input) => ({
     ...input,
-    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements, shouldEncode),
+    value: parameterValueToString(
+      input,
+      true /* isDefinitionValue */,
+      idReplacements,
+      shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {})
+    ),
   }));
-
-  // If dynamic parameters were stashed (cleared during loading or after failure),
-  // include them as fallback so their values are not lost on save.
-  const stashed = nodeInputs?.stashedDynamicParameterValues;
-  if (stashed?.length) {
-    const currentKeys = new Set(currentParams.map((p) => p.parameterKey));
-    const missingStashed = stashed.filter((p) => !currentKeys.has(p.parameterKey));
-    for (const param of missingStashed) {
-      serialized.push({
-        ...param,
-        value: parameterValueToString(param, true /* isDefinitionValue */, idReplacements, shouldEncode),
-      });
-    }
-  }
-
-  return serialized;
 };
 
 const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
@@ -997,11 +1025,15 @@ const serializeHost = (
 };
 
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
-  const result = { ...inputs };
   for (const [key, value] of Object.entries(hostInfo)) {
-    result[key] = result[key] ? { ...result[key], ...value } : value;
+    if (inputs[key]) {
+      inputs[key] = { ...inputs[key], ...value };
+    } else {
+      inputs[key] = value;
+    }
   }
-  return result;
+
+  return inputs;
 };
 
 //#endregion
