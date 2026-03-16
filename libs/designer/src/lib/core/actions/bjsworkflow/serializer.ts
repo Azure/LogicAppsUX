@@ -161,6 +161,11 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       return references;
     }
 
+    const operation = getRecordEntry(rootState.operations.operationInfo, nodeId);
+    if (operation && isBuiltInMcpOperation(operation)) {
+      return references;
+    }
+
     references[referenceKey] = referencesObject[referenceKey];
     return references;
   }, {});
