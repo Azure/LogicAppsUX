@@ -400,7 +400,7 @@ export const ParameterSection = ({
     nodeId,
     operationInfo?.connectorId
   );
-  const { data: foundryAgentsForNode } = useFoundryAgentsForNode(nodeId);
+  const { data: foundryAgentsForNode, isLoading: foundryAgentsLoading } = useFoundryAgentsForNode(nodeId);
   const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
@@ -1424,6 +1424,36 @@ export const ParameterSection = ({
       onShowFormChange={setIsCreatingNewAgent}
     />
   );
+
+  // Show a loading indicator while Foundry agent data is resolving.
+  // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
+  const hasFoundryAgentId = !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
+  if (isAgentServiceConnection && hasFoundryAgentId && !selectedFoundryAgent && foundryAgentsLoading) {
+    const agentPickerSetting = settings.find(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
+    );
+
+    return (
+      <>
+        {agentPickerSetting && (
+          <SettingsSection
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
+        )}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+          <Spinner size="small" label="Loading agent details..." />
+        </div>
+      </>
+    );
+  }
 
   // Insert FoundryAgentDetails inline after the Agent picker when a Foundry agent is selected
   if (isAgentServiceConnection && selectedFoundryAgent) {
