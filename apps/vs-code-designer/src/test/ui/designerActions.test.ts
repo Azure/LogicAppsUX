@@ -474,16 +474,25 @@ function ensureLocalSettingsForDesigner(appDir: string): void {
         settings.Values = {};
       }
     } catch {
-      // Corrupted file — use defaults
       settings = { IsEncrypted: false, Values: {} };
     }
   }
 
-  if (settings.Values.WORKFLOWS_SUBSCRIPTION_ID === undefined) {
-    settings.Values.WORKFLOWS_SUBSCRIPTION_ID = '';
+  // Remove Azure subscription keys so the extension skips the auth path.
+  // When subscriptionId is undefined, the code path that calls getAuthData()
+  // is skipped entirely, avoiding the 'Cannot read properties of undefined
+  // (reading account)' crash when no Azure account is signed in.
+  let changed = false;
+  for (const key of ['WORKFLOWS_SUBSCRIPTION_ID', 'WORKFLOWS_TENANT_ID', 'WORKFLOWS_RESOURCE_GROUP_NAME', 'WORKFLOWS_LOCATION_NAME']) {
+    if (settings.Values[key] !== undefined) {
+      delete settings.Values[key];
+      changed = true;
+    }
+  }
+  if (changed) {
     fs.mkdirSync(appDir, { recursive: true });
     fs.writeFileSync(localSettingsPath, JSON.stringify(settings, null, 2));
-    console.log(`[ensureLocalSettings] Set WORKFLOWS_SUBSCRIPTION_ID="" in ${localSettingsPath}`);
+    console.log(`[ensureLocalSettings] Removed Azure subscription keys from ${localSettingsPath}`);
   }
 }
 
