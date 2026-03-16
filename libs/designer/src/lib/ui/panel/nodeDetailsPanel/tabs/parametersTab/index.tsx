@@ -112,6 +112,7 @@ import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
+  useFoundryAccountResourceIdForNode,
   useFoundryAgentsForNode,
   useFoundryAgentVersions,
   useFoundryModelsForNode,
@@ -403,6 +404,7 @@ export const ParameterSection = ({
   const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
+  const foundryAccountResourceId = useFoundryAccountResourceIdForNode(nodeId);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
 
@@ -452,26 +454,23 @@ export const ParameterSection = ({
   // authenticate via MSI before the workflow is saved.
   const rbacAssignedRef = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (!isAgentServiceConnection || !foundryProjectResourceId || rbacAssignedRef.current === foundryProjectResourceId) {
+    if (!isAgentServiceConnection || !foundryAccountResourceId || rbacAssignedRef.current === foundryAccountResourceId) {
       return;
     }
-    rbacAssignedRef.current = foundryProjectResourceId;
-    // Strip /projects/{project} to get the account-level resource ID for RBAC
-    const parts = foundryProjectResourceId.split('/');
-    const accountResourceId = parts.length >= 2 ? parts.slice(0, -2).join('/') : foundryProjectResourceId;
-    getMissingRoleDefinitions(accountResourceId, [
+    rbacAssignedRef.current = foundryAccountResourceId;
+    getMissingRoleDefinitions(foundryAccountResourceId, [
       'Azure AI User',
       'Azure AI Administrator',
       'Azure AI Developer',
       'Cognitive Services Contributor',
     ])
       .then((missingRoles) =>
-        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(accountResourceId, role.id)))
+        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(foundryAccountResourceId, role.id)))
       )
       .catch(() => {
         // Best-effort — the save handler will retry
       });
-  }, [isAgentServiceConnection, foundryProjectResourceId]);
+  }, [isAgentServiceConnection, foundryAccountResourceId]);
 
   // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.

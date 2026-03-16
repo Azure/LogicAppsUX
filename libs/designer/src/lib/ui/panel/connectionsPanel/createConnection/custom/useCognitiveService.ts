@@ -232,11 +232,25 @@ const useFoundryConnectionResourceId = (nodeId: string): string | undefined => {
  * All Foundry calls go through the backend proxy which handles auth via MSI.
  */
 function getFoundryProxyContext(): { httpClient: IHttpClient; proxyBaseUrl: string } | undefined {
-  const service = CognitiveServiceService();
-  if (!service.foundryProxyBaseUrl || !service.httpClient) {
+  const { foundryProxyBaseUrl, httpClient } = CognitiveServiceService();
+  if (!foundryProxyBaseUrl || !httpClient) {
     return undefined;
   }
-  return { httpClient: service.httpClient, proxyBaseUrl: service.foundryProxyBaseUrl };
+  return { httpClient, proxyBaseUrl: foundryProxyBaseUrl };
+}
+
+/** Build a FoundryProxyContext for a given project endpoint, or return undefined if not configured. */
+function buildProxyContext(
+  projectEndpoint: string | undefined
+): { httpClient: IHttpClient; proxyBaseUrl: string; foundryEndpoint: string } | undefined {
+  if (!projectEndpoint) {
+    return undefined;
+  }
+  const proxy = getFoundryProxyContext();
+  if (!proxy) {
+    return undefined;
+  }
+  return { ...proxy, foundryEndpoint: projectEndpoint };
 }
 
 const foundryQueryOpts = {
@@ -264,14 +278,8 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
   return useQuery(
     [queryKeys.allFoundryAgents, { projectEndpoint }],
     async () => {
-      if (!projectEndpoint) {
-        return [];
-      }
-      const proxy = getFoundryProxyContext();
-      if (!proxy) {
-        return [];
-      }
-      return listAllFoundryAgentsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint });
+      const ctx = buildProxyContext(projectEndpoint);
+      return ctx ? listAllFoundryAgentsViaProxy(ctx) : [];
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -290,14 +298,8 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
   return useQuery(
     ['allFoundryModels', { projectEndpoint }],
     async () => {
-      if (!projectEndpoint) {
-        return [];
-      }
-      const proxy = getFoundryProxyContext();
-      if (!proxy) {
-        return [];
-      }
-      return listFoundryModelsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint });
+      const ctx = buildProxyContext(projectEndpoint);
+      return ctx ? listFoundryModelsViaProxy(ctx) : [];
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint }
   );
@@ -313,14 +315,11 @@ export const useFoundryAgentVersions = (
   return useQuery(
     ['foundryAgentVersions', { projectEndpoint, agentId }],
     async () => {
-      if (!projectEndpoint || !agentId) {
+      if (!agentId) {
         return [];
       }
-      const proxy = getFoundryProxyContext();
-      if (!proxy) {
-        return [];
-      }
-      return listFoundryAgentVersionsViaProxy({ ...proxy, foundryEndpoint: projectEndpoint }, agentId);
+      const ctx = buildProxyContext(projectEndpoint);
+      return ctx ? listFoundryAgentVersionsViaProxy(ctx, agentId) : [];
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && !!agentId }
   );
@@ -333,11 +332,11 @@ export const useCreateFoundryAgent = (nodeId: string) => {
 
   return useMutation({
     mutationFn: async (options: CreateFoundryAgentOptions) => {
-      const proxy = getFoundryProxyContext();
-      if (!proxy || !projectEndpoint) {
+      const ctx = buildProxyContext(projectEndpoint);
+      if (!ctx) {
         throw new Error('Foundry proxy not configured');
       }
-      return createFoundryAgentViaProxy({ ...proxy, foundryEndpoint: projectEndpoint }, options);
+      return createFoundryAgentViaProxy(ctx, options);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [queryKeys.allFoundryAgents] });

@@ -975,7 +975,6 @@ const getDesignerServices = (
   // All Foundry calls go through the backend proxy — no direct Foundry token needed.
   // The proxy handles auth server-side via MSI (production) or Bearer token (local POC).
   cognitiveServiceService.foundryProxyBaseUrl = `${baseUrl}/foundryProxy`;
-  console.log(`[FoundryProxy] Configured proxy URL: ${baseUrl}/foundryProxy`);
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);

@@ -118,21 +118,19 @@ function normalizeAgent(raw: FoundryAgentRaw): FoundryAgent {
   };
 }
 
+/** Strip trailing slashes from a string. */
+function stripTrailingSlashes(value: string): string {
+  return value.replace(/\/+$/, '');
+}
+
 /** Normalize the project endpoint to the Foundry data-plane host. */
 function normalizeEndpoint(projectEndpoint: string): string {
-  let base = projectEndpoint;
-  while (base.endsWith('/')) {
-    base = base.slice(0, -1);
-  }
+  const base = stripTrailingSlashes(projectEndpoint);
   try {
     const url = new URL(base);
     if (url.hostname.endsWith('.cognitiveservices.azure.com')) {
       url.hostname = url.hostname.replace('.cognitiveservices.azure.com', '.services.ai.azure.com');
-      let result = url.toString();
-      while (result.endsWith('/')) {
-        result = result.slice(0, -1);
-      }
-      return result;
+      return stripTrailingSlashes(url.toString());
     }
   } catch {
     // Not a valid URL — fall through and return as-is
@@ -287,6 +285,21 @@ export interface UpdateFoundryAgentOptions {
   description?: string;
 }
 
+/** Build the request body for an agent update or create-with-updates call. */
+function buildUpdateBody(updates: UpdateFoundryAgentOptions): Record<string, unknown> {
+  const definition: Record<string, unknown> = {
+    kind: 'prompt',
+    ...(updates.model !== undefined && { model: updates.model }),
+    ...(updates.instructions !== undefined && { instructions: updates.instructions }),
+  };
+
+  return {
+    definition,
+    ...(updates.name !== undefined && { name: updates.name }),
+    ...(updates.description !== undefined && { description: updates.description }),
+  };
+}
+
 /**
  * Update a Foundry v2 agent's model, instructions, or other properties.
  * Uses POST /agents/{agentId} for partial updates.
@@ -298,23 +311,11 @@ export async function updateFoundryAgent(
   accessToken: string,
   updates: UpdateFoundryAgentOptions
 ): Promise<FoundryAgent> {
-  const definition: Record<string, unknown> = {
-    kind: 'prompt',
-    ...(updates.model !== undefined && { model: updates.model }),
-    ...(updates.instructions !== undefined && { instructions: updates.instructions }),
-  };
-
-  const body: Record<string, unknown> = {
-    definition,
-    ...(updates.name !== undefined && { name: updates.name }),
-    ...(updates.description !== undefined && { description: updates.description }),
-  };
-
   const raw = await httpClient.post<FoundryAgentRaw, Record<string, unknown>>({
     uri: buildAgentUri(projectEndpoint, agentId),
     headers: foundryHeaders(accessToken),
     queryParameters: { 'api-version': FOUNDRY_API_VERSION },
-    content: body,
+    content: buildUpdateBody(updates),
     noAuth: true,
   });
   return normalizeAgent(raw);
@@ -341,6 +342,17 @@ interface FoundryModelDeploymentListResponse {
   data?: FoundryModelDeployment[];
 }
 
+/** Normalize a deployment list response into FoundryModel[]. */
+function normalizeDeployments(response: FoundryModelDeploymentListResponse): FoundryModel[] {
+  const deployments = response.value ?? response.data ?? [];
+  return deployments
+    .filter((d) => d.name)
+    .map((d) => ({
+      id: d.name,
+      name: d.properties?.model?.name ?? d.model_name ?? d.name,
+    }));
+}
+
 /** List available model deployments for a Foundry project. */
 export async function listFoundryModels(httpClient: IHttpClient, projectEndpoint: string, accessToken: string): Promise<FoundryModel[]> {
   const response = await httpClient.get<FoundryModelDeploymentListResponse>({
@@ -349,14 +361,7 @@ export async function listFoundryModels(httpClient: IHttpClient, projectEndpoint
     queryParameters: { 'api-version': FOUNDRY_API_VERSION },
     noAuth: true,
   });
-  const deployments = response.value ?? response.data ?? [];
-
-  return deployments
-    .filter((d) => d.name)
-    .map((d) => ({
-      id: d.name,
-      name: d.properties?.model?.name ?? d.model_name ?? d.name,
-    }));
+  return normalizeDeployments(response);
 }
 
 // ============================================================================
@@ -450,22 +455,10 @@ export async function updateFoundryAgentViaProxy(
   agentId: string,
   updates: UpdateFoundryAgentOptions
 ): Promise<FoundryAgent> {
-  const definition: Record<string, unknown> = {
-    kind: 'prompt',
-    ...(updates.model !== undefined && { model: updates.model }),
-    ...(updates.instructions !== undefined && { instructions: updates.instructions }),
-  };
-
-  const body: Record<string, unknown> = {
-    definition,
-    ...(updates.name !== undefined && { name: updates.name }),
-    ...(updates.description !== undefined && { description: updates.description }),
-  };
-
   const raw = await ctx.httpClient.post<FoundryAgentRaw, Record<string, unknown>>({
     uri: buildProxyUri(ctx.proxyBaseUrl),
     headers: proxyHeaders(ctx, `/agents/${encodeURIComponent(agentId)}`, 'POST'),
-    content: body,
+    content: buildUpdateBody(updates),
   });
   return normalizeAgent(raw);
 }
@@ -487,12 +480,5 @@ export async function listFoundryModelsViaProxy(ctx: FoundryProxyContext): Promi
     headers: proxyHeaders(ctx, '/deployments', 'GET'),
     content: {},
   });
-  const deployments = response.value ?? response.data ?? [];
-
-  return deployments
-    .filter((d) => d.name)
-    .map((d) => ({
-      id: d.name,
-      name: d.properties?.model?.name ?? d.model_name ?? d.name,
-    }));
+  return normalizeDeployments(response);
 }
