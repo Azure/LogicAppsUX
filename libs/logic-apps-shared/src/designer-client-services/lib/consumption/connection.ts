@@ -40,7 +40,19 @@ export class ConsumptionConnectionService extends BaseConnectionService {
 
     if (connectionParametersSet?.values) {
       const values = connectionParametersSet.values;
-      const authKeys = ['username', 'password', 'key', 'keyHeaderName', 'clientId', 'secret', 'tenant', 'authority', 'audience', 'pfx'];
+      const authKeys = [
+        'username',
+        'password',
+        'key',
+        'keyHeaderName',
+        'value',
+        'clientId',
+        'secret',
+        'tenant',
+        'authority',
+        'audience',
+        'pfx',
+      ];
       for (const key of authKeys) {
         if (values[key] !== undefined) {
           authParams[key] = this.extractParameterValue(values[key]);
@@ -158,7 +170,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       const { authenticationType, authParams } = this.extractAuthParameters(connectionInfo.connectionParametersSet);
 
       const connection = {
-        id: `connectionProviders/mcpclient/connections/${connectionName}`,
+        id: `/connectionProviders/mcpclient/connections/${connectionName}`,
         name: connectionName,
         type: 'connections',
         location: '',
@@ -186,7 +198,9 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       };
 
       LoggerService().endTrace(logId, { status: Status.Success });
-      return connection as unknown as Connection;
+      const result = connection as unknown as Connection;
+      this._connections[result.id] = result;
+      return result;
     } catch (error) {
       const errorMessage = `Failed to create built-in MCP connection: ${this.tryParseErrorMessage(error)}`;
       LoggerService().log({

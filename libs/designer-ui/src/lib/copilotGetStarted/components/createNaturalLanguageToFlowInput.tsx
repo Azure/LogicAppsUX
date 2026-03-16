@@ -1,10 +1,8 @@
-import { ChatInput } from '../../chatbot/components/chatInputBox';
+import { ChatInput, type ChatInputHandle } from '../../chatbot/components/chatInputBox';
 import { useBoolean, useId } from '@fluentui/react-hooks';
 import { DirectionalHint } from '@fluentui/react/lib/Callout';
 import type { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { ContextualMenu, ContextualMenuItemType } from '@fluentui/react/lib/ContextualMenu';
-import { FontSizes } from '@fluentui/react/lib/Styling';
-import type { ITextField } from '@fluentui/react/lib/TextField';
 import { KeyCodes } from '@fluentui/react/lib/Utilities';
 import React from 'react';
 
@@ -46,22 +44,8 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
   const [shouldMenuFocusOnMount, { setTrue: focusMenuOnMount, setFalse: doNotFocusMenuOnMount }] = useBoolean(false);
   const [isMenuOpen, { setTrue: openMenu, setFalse: closeMenu }] = useBoolean(false);
 
-  const textFieldRef = React.useRef<ITextField>(null);
+  const textFieldRef = React.useRef<ChatInputHandle>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
-
-  const iconButtonStyles = {
-    root: { color: 'rgb(50, 49, 48)', backgroundColor: 'transparent' },
-    rootDisabled: { backgroundColor: 'transparent' },
-  };
-
-  const chatInputStyles = {
-    root: { width: '100%', borderWidth: 0, boxShadow: 'rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px' },
-    textField: {
-      root: { paddingTop: 8, marginBottom: '8px' },
-      field: { fontSize: FontSizes.medium, padding: '0 12px' },
-    },
-    footer: { margin: '0 6px 4px 6px' },
-  };
 
   const contextualMenuStyles = {
     root: { borderRadius: '0px 0px 8px 8px' },
@@ -174,14 +158,14 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
     return items;
   }, [getHistoryEntries, onHistoryEntryClick, onHistorySearch, onSuggestionSearch, searchString, suggestions, suggestionsHeaderLabel]);
 
-  const onInputBlur = (ev: React.FocusEvent<HTMLInputElement>): void => {
+  const onInputBlur = (ev: React.FocusEvent<HTMLTextAreaElement>): void => {
     if (menuRef.current?.contains(ev.relatedTarget as Node) && !shouldMenuFocusOnMount) {
       // If user hovers on options we don't want the input to lose focus
       textFieldRef.current?.focus();
     }
   };
 
-  const onInputChange = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+  const onInputChange = (ev: { target: { value: string } }, newValue?: string) => {
     const value = newValue ?? '';
     value ? tryOpenMenu() : onMenuDismissed();
     setSearchString(value);
@@ -191,7 +175,7 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
     }
   };
 
-  const onInputKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+  const onInputKeyDown = (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (ev.which) {
       case KeyCodes.down: {
         if (isMenuOpen) {
@@ -240,7 +224,7 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
   return (
     <div id={nL2FlowInputId} className={'msla-naturallanguagetoflowinput-root'} data-automation-id={dataAutomationId}>
       <ChatInput
-        textFieldRef={textFieldRef}
+        ref={textFieldRef}
         query={searchString}
         placeholder={placeholder}
         autoFocus={autoFocus}
@@ -248,17 +232,13 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
         submitButtonProps={{
           title: 'Submit', // TODO : move to resources
           disabled: isDisabled || !canSearch(searchString),
-          iconProps: {
-            iconName: 'Send',
-            styles: iconButtonStyles,
-          },
           onClick: onIconButtonClick,
         }}
         showCharCount={false}
         onQueryChange={onInputChange}
         onBlur={onInputBlur}
         onKeyDown={onInputKeyDown}
-        styles={chatInputStyles}
+        className={'msla-naturallanguagetoflowinput-chatinput'}
         role="searchbox"
       />
       <ContextualMenu

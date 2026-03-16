@@ -402,7 +402,7 @@ export const McpToolWizard = () => {
       }),
       connectionLockedInfo: intl.formatMessage({
         defaultMessage: 'The connection for this MCP server is locked and cannot be changed.',
-        id: 'dK7mXq',
+        id: 'lmqT4k',
         description: 'Info message shown on parameters step when the connection is locked',
       }),
       toolsManagementDescription: intl.formatMessage({
@@ -507,7 +507,7 @@ export const McpToolWizard = () => {
       }),
       addConnectionLink: intl.formatMessage({
         defaultMessage: 'Create a new connection',
-        id: 'YW1rx0',
+        id: '5R1r3q',
         description: 'Button text to create a new connection',
       }),
     }),

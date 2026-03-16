@@ -233,4 +233,32 @@ export class ConsumptionConnectorService extends BaseConnectorService {
 
     return undefined;
   }
+
+  private _buildMcpAuthentication(connectionProperties: Record<string, any>): Record<string, any> | undefined {
+    const authType = connectionProperties['authenticationType'];
+    if (!authType || authType === 'None') {
+      return undefined;
+    }
+
+    const authentication: Record<string, any> = { type: authType };
+    if (authType === 'ApiKey') {
+      authentication['value'] = connectionProperties['key'];
+      authentication['name'] = connectionProperties['keyHeaderName'];
+      authentication['in'] = 'header';
+    } else if (authType === 'Basic') {
+      authentication['username'] = connectionProperties['username'];
+      authentication['password'] = connectionProperties['password'];
+    } else if (authType === 'ActiveDirectoryOAuth') {
+      authentication['tenant'] = connectionProperties['tenant'];
+      authentication['clientId'] = connectionProperties['clientId'];
+      authentication['secret'] = connectionProperties['secret'];
+      authentication['authority'] = connectionProperties['authority'];
+      authentication['audience'] = connectionProperties['audience'];
+    } else if (authType === 'ClientCertificate') {
+      authentication['pfx'] = connectionProperties['pfx'];
+      authentication['password'] = connectionProperties['password'];
+    }
+
+    return authentication;
+  }
 }

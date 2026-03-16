@@ -1,23 +1,15 @@
 import Workflow from '../images/Workflow.svg';
-import { FontSizes, Link, useTheme } from '@fluentui/react';
-import { Tooltip, mergeClasses, Subtitle2 } from '@fluentui/react-components';
+import { Badge, Link, Tooltip, Subtitle2 } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { IconButton } from '@fluentui/react/lib/Button';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
-import { useChatbotStyles, useChatbotDarkStyles } from './styles';
+import { useChatbotStyles } from './styles';
 
-interface CopilotPanelHeaderProps {
-  closeCopilot: () => void;
-}
-
-export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): JSX.Element => {
+export const CopilotPanelHeader = (): JSX.Element => {
   const intl = useIntl();
-  const { isInverted } = useTheme();
 
   // Styles
   const styles = useChatbotStyles();
-  const darkStyles = useChatbotDarkStyles();
 
   const headerTitle = intl.formatMessage({
     defaultMessage: 'Workflow assistant',
@@ -39,11 +31,6 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
     id: 'Yrw/Qt',
     description: 'Letting user know that their data is protected in the chatbot',
   });
-  const closeButtonTitle = intl.formatMessage({
-    defaultMessage: 'Close',
-    id: 'ZihyUf',
-    description: 'Label for the close button in the chatbot header',
-  });
 
   return (
     <div className={styles.header}>
@@ -52,38 +39,28 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
       </div>
       <div>
         <h2 className={styles.headerTitle}>{headerTitle}</h2>
-        <Subtitle2 className={mergeClasses(styles.headerSubtitle, isInverted && darkStyles.headerSubtitle)}>{subtitleText}</Subtitle2>
+        <Subtitle2 className={styles.headerSubtitle}>{subtitleText}</Subtitle2>
       </div>
-      <div>
-        <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>
-          <div className={styles.headerModeProtectedPill}>
-            <ShieldCheckmarkRegular className={styles.shieldCheckmarkRegular} />
-            <Link
-              className={styles.protectedMessageLink}
-              onClick={() => {
-                window.open('https://aka.ms/azurecopilot/privacystatement', '_blank');
-                LoggerService().log({
-                  level: LogEntryLevel.Warning,
-                  area: 'chatbot',
-                  message: 'protection link opened',
-                });
-              }}
-              underline={true}
-            >
-              {protectedPillText}
-            </Link>
-          </div>
-        </Tooltip>
-      </div>
-      <IconButton
-        className={styles.collapseButton}
-        title={closeButtonTitle}
-        styles={{ icon: { fontSize: FontSizes.small } }}
-        iconProps={{ iconName: 'Clear' }}
-        onClick={() => {
-          closeCopilot();
-        }}
-      />
+      <div style={{ flexGrow: 1 }} />
+      <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>
+        <Link
+          className={styles.protectedBadgeLink}
+          href="https://aka.ms/azurecopilot/privacystatement"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            LoggerService().log({
+              level: LogEntryLevel.Warning,
+              area: 'chatbot',
+              message: 'protection link opened',
+            });
+          }}
+        >
+          <Badge size="small" color="success" appearance="filled" icon={<ShieldCheckmarkRegular />}>
+            {protectedPillText}
+          </Badge>
+        </Link>
+      </Tooltip>
     </div>
   );
 };

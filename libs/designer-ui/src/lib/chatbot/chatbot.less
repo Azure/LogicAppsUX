@@ -35,6 +35,9 @@
   width: 100%;
   border-radius: 10px;
   text-align: start;
+	display: flex;
+	gap: 6px;
+	flex-direction: column;
   @-moz-document url-prefix() {
     li {
       margin-left: 12px;
@@ -47,6 +50,7 @@
 }
 
 .msla-bubble-footer {
+	margin-top: 8px;
   gap: 4px;
   flex-direction: column;
 }
@@ -108,24 +112,9 @@
   }
 }
 
-.msla-bubble-actions-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-}
-
 .msla-bubble-reactions {
   flex-grow: 2;
   text-align: right;
-}
-
-.msla-copy-button {
-  color: #323130;
-}
-
-.msla-copy-button:hover {
-  color: #323130;
 }
 
 .msla-assistant-error-container {
@@ -450,9 +439,5 @@
 
   .msla-bubble-footer-role {
     color: #a9a9a9;
-  }
-
-  .msla-copy-button {
-    color: #f3f2f1;
   }
 }

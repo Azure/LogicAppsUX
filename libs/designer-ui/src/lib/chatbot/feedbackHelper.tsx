@@ -1,11 +1,12 @@
+import type { ChatBubbleAction } from './components/chatBubble';
 import type { ChatEntryReaction, ReactionItem } from './components/conversationItem';
 import { FeedbackMessage } from './components/feedbackMessage';
-import Constants from './constants';
-import { Link, type IButtonProps } from '@fluentui/react';
-import { useMemo, useState } from 'react';
+import { Link } from '@fluentui/react-components';
+import { BugRegular } from '@fluentui/react-icons';
+import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export function useReportBugButton(disabled: boolean): IButtonProps {
+export function useReportBugButton(disabled: boolean): ChatBubbleAction {
   const intl = useIntl();
   const intlText = {
     reportBugButtonText: intl.formatMessage({
@@ -18,15 +19,7 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
     text: intlText.reportBugButtonText,
     onClick: () => onReportBugClick(),
     disabled,
-    iconProps: {
-      iconName: 'Bug',
-      styles: {
-        root: {
-          color: Constants.NEUTRAL_PRIMARY,
-          backgroundColor: 'transparent',
-        },
-      },
-    },
+    iconElement: React.createElement(BugRegular),
   };
 }
 
@@ -53,7 +46,7 @@ export function useExternalLink(additionalDocURL?: string) {
   );
 }
 
-export function useAzureCopilotButton(azureButtonCallback?: () => void): IButtonProps {
+export function useAzureCopilotButton(azureButtonCallback?: () => void): ChatBubbleAction {
   const intl = useIntl();
   const intlText = {
     azureCopilotButtonText: intl.formatMessage({
@@ -65,15 +58,6 @@ export function useAzureCopilotButton(azureButtonCallback?: () => void): IButton
   return {
     text: intlText.azureCopilotButtonText,
     onClick: azureButtonCallback,
-    iconProps: {
-      iconName: 'AzureLogo',
-      styles: {
-        root: {
-          color: Constants.NEUTRAL_PRIMARY,
-          backgroundColor: 'transparent',
-        },
-      },
-    },
   };
 }
 

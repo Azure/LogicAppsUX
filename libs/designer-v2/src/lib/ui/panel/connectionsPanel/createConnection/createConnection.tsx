@@ -21,6 +21,7 @@ import {
 import {
   ConnectionParameterEditorService,
   ConnectionService,
+  ConsumptionConnectionService,
   Capabilities,
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
@@ -410,7 +411,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
     if (isMcpClientConnection) {
       const connectionService = ConnectionService();
-      const isConsumptionSku = connectionService.constructor.name === 'ConsumptionConnectionService';
+      const isConsumptionSku = connectionService instanceof ConsumptionConnectionService;
 
       if (isConsumptionSku) {
         return false;
