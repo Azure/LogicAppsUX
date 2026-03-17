@@ -33,6 +33,10 @@ export default class LogicAppsLanguageServer {
   }
 
   public async start(): Promise<void> {
+    if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
+      return;
+    }
+
     const workspaceFolder = await getWorkspaceFolderPath(this.context);
     this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
     const { lspServerPath, sdkNupkgPath } = await this.getSDKPaths();
