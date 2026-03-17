@@ -2944,6 +2944,19 @@ describe('Designer Actions Tests', function () {
   // Test 2: CustomCode workflow — open designer, add Compose action
   // =====================================================================
   it('should add a Compose action to a CustomCode workflow', async () => {
+    // Close all editor tabs from test 1 (run details webview, designer, workflow.json).
+    // Without this, the run details webview from test 1 stays focused and blocks
+    // the command palette interaction needed to open the CustomCode workspace.
+    try {
+      await driver.switchTo().defaultContent();
+      const editorView = new EditorView();
+      await editorView.closeAllEditors();
+      await sleep(2000);
+      console.log('[test2] Closed all editors from test 1');
+    } catch {
+      console.log('[test2] Could not close editors (may already be closed)');
+    }
+
     const entry = manifest.find((e) => e.appType === 'customCode') || manifest.find((e) => e.appType === 'rulesEngine') || manifest[0];
     if (!entry) {
       assert.fail('No matching workspace entry found in manifest');

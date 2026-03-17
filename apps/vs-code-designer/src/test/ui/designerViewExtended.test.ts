@@ -124,9 +124,21 @@ describe('Designer View Extended Tests', function () {
         await searchInDiscoveryPanel(driver, 'Compose');
         await waitForSearchResults(driver);
         await selectOperation(driver, 'Compose');
-        const newCount = await waitForNodeCountIncrease(driver, initialCount, 10_000);
+        const newCount = await waitForNodeCountIncrease(driver, initialCount, 15_000);
         assert.ok(newCount > initialCount, `Node count should increase (${initialCount} → ${newCount})`);
-        assert.ok(await canvasHasNode(driver, 'Compose'), 'Compose node should be on canvas');
+        // Wait for the Compose node text to appear on the canvas.
+        // After selectOperation, React Flow re-layouts asynchronously —
+        // the node may take a few seconds to render with its label.
+        let composeFound = false;
+        const composeDeadline = Date.now() + 10_000;
+        while (Date.now() < composeDeadline) {
+          if (await canvasHasNode(driver, 'Compose')) {
+            composeFound = true;
+            break;
+          }
+          await sleep(500);
+        }
+        assert.ok(composeFound, 'Compose node should be on canvas');
       }
 
       await clickSaveButton(driver);
