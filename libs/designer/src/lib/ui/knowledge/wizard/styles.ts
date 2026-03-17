@@ -44,8 +44,17 @@ export const useWizardStyles = makeStyles({
 
 export const useListStyles = makeStyles({
   tableStyle: {
-    width: '100%',
-    margin: '0 auto',
+    width: '95%',
+  },
+
+  tableCell: {
+    border: 'none',
+    paddingBottom: '8px',
+  },
+
+  rowCell: {
+    paddingTop: '6px',
+    alignItems: 'center',
   },
 
   icon: {
@@ -54,6 +63,9 @@ export const useListStyles = makeStyles({
 
   iconsCell: {
     textAlign: 'right',
+    border: 'none',
+    paddingBottom: '8px',
+    width: '8%',
   },
 
   nameCell: {
@@ -70,6 +82,11 @@ export const useListStyles = makeStyles({
 
   artifactNameCell: {
     marginLeft: '32px',
+  },
+
+  statusCell: {
+    display: 'flex',
+    gap: '4px',
   },
 
   table: {

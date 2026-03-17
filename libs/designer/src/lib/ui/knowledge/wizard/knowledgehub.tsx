@@ -116,7 +116,10 @@ export const KnowledgeHubWizard = () => {
 
   const handleDeleteClick = useCallback(() => setShowDeleteModal(true), []);
   const handleCloseDeleteModal = useCallback(() => setShowDeleteModal(false), []);
-  const handleOnDeleteComplete = useCallback(() => refetch(), [refetch]);
+  const handleOnDeleteComplete = useCallback(async () => {
+    await refetch();
+    setSelectedArtifacts([]);
+  }, [refetch]);
 
   const handleAddGroup = useCallback(() => setShowAddGroup(true), []);
   const handleCloseAddGroup = useCallback(() => setShowAddGroup(false), []);

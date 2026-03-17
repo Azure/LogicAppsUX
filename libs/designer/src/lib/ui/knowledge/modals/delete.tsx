@@ -15,7 +15,7 @@ import { useIntl } from 'react-intl';
 import type { KnowledgeHubItem } from '../wizard/knowledgelist';
 import type { ServerNotificationData as NotificationData } from '../../mcp/servers/servers';
 import { useModalStyles } from './styles';
-import { deleteKnowledgeHubArtifacts } from 'lib/core/knowledge/utils/helper';
+import { deleteKnowledgeHubArtifacts } from '../../../core/knowledge/utils/helper';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export const DeleteModal = ({
@@ -30,7 +30,7 @@ export const DeleteModal = ({
     .filter((item) => item.parentId !== null)
     .reduce(
       (acc, item) => {
-        if (hubsToDelete.includes((item.parentId as string).toLowerCase())) {
+        if (!hubsToDelete.includes((item.parentId as string).toLowerCase())) {
           acc[item.name.toLowerCase()] = item.parentId as string;
         }
         return acc;
@@ -77,8 +77,8 @@ export const DeleteModal = ({
     ),
     artifactName: intl.formatMessage(
       {
-        defaultMessage: 'Artifact(s) name: {artifactNames}',
-        id: 'X2TtEI',
+        defaultMessage: 'Artifact(s): {artifactNames}',
+        id: 'eW6zWL',
         description: 'The name of the artifact to be deleted, shown in the delete confirmation modal',
       },
       { artifactNames }
@@ -112,6 +112,7 @@ export const DeleteModal = ({
         title: INTL_TEXT.successNotificationTitle,
         content: `${INTL_TEXT.successNotificationContent}\n${hubNames}${artifactNames ? `\n${artifactNames}` : ''}`,
       });
+      onDismiss();
     } catch (errorResponse: any) {
       const error = errorResponse?.error || {};
       // For now log the error
@@ -130,6 +131,7 @@ export const DeleteModal = ({
     hubNames,
     hubsToDelete,
     onDelete,
+    onDismiss,
     resourceId,
   ]);
 
@@ -144,9 +146,13 @@ export const DeleteModal = ({
               <div className={styles.content}>
                 <Text>{INTL_TEXT.multiArtifactsContent}</Text>
                 <br />
-                <Text>{INTL_TEXT.hubName}</Text>
-                <br />
-                <Text>{INTL_TEXT.artifactName}</Text>
+                {hubsToDelete.length > 0 && (
+                  <>
+                    <Text>{INTL_TEXT.hubName}</Text>
+                    <br />
+                  </>
+                )}
+                {Object.keys(artifactsToDelete).length > 0 && <Text>{INTL_TEXT.artifactName}</Text>}
               </div>
             ) : selectedArtifacts[0].parentId === null ? (
               INTL_TEXT.hubContent
