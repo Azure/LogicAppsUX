@@ -565,6 +565,25 @@ async function main() {
   console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
   console.log(`  autoRuntimeDependenciesPath: ${depsRoot}`);
 
+  // Ensure DOTNET_ROOT and PATH include the extension's downloaded DotNetSDK
+  // and NodeJs directories. Without this, `func host start` (both the debug
+  // task and the design-time API process) cannot find dotnet on CI runners
+  // where only the extension-managed copy exists.
+  // Also include the system dotnet if actions/setup-dotnet installed one.
+  const dotnetSdkDir = path.join(depsRoot, 'DotNetSDK');
+  const nodeJsDir = path.join(depsRoot, 'NodeJs');
+  const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
+  const pathSep = process.platform === 'win32' ? ';' : ':';
+  const extraPaths = [funcToolsDir, dotnetSdkDir, nodeJsDir].filter(d => fs.existsSync(d));
+  if (extraPaths.length > 0) {
+    process.env.PATH = extraPaths.join(pathSep) + pathSep + (process.env.PATH || '');
+    console.log(`  Prepended to PATH: ${extraPaths.join(', ')}`);
+  }
+  if (fs.existsSync(dotnetSdkDir)) {
+    process.env.DOTNET_ROOT = dotnetSdkDir;
+    console.log(`  DOTNET_ROOT: ${dotnetSdkDir}`);
+  }
+
   const outTestDir = path.resolve(projectDir, 'out', 'test');
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
 
