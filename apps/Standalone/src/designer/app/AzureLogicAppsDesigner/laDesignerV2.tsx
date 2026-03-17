@@ -1149,7 +1149,9 @@ const getDesignerServices = (
     httpClient,
     identity: workflowApp?.identity,
   });
-  cognitiveServiceService.getFoundryAccessToken = async () => environment.foundryToken ?? environment.armToken ?? '';
+  // All Foundry calls go through the backend proxy — no direct Foundry token needed.
+  // The proxy handles auth server-side via MSI (production) or Bearer token (local POC).
+  cognitiveServiceService.foundryProxyBaseUrl = `${baseUrl}/foundryProxy`;
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
