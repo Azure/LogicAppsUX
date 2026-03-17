@@ -26,6 +26,7 @@ import {
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
+  ConnectionService,
   WorkflowService,
   getIntl,
   create,
@@ -536,15 +537,37 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
   const manifest = await getOperationManifest(nativeMcpOperationInfo);
-  const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
+  serializeParametersFromManifest(inputsToSerialize, manifest);
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
-  // Built-in MCP operations: MCP server URL and authentication are passed as parameters.
-  // No pseudo-connection is needed; backend handles implicit MCP connection.
+  // Built-in MCP operations should serialize Connection settings in code preview,
+  // while still avoiding any connectionReference payload.
+  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection ?? {};
+  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
+  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
+  const connectionId = connectionReference?.connection?.id;
+
+  let mcpServerUrl = existingConnectionInput.McpServerUrl ?? '';
+  let authenticationType = existingConnectionInput.Authentication ?? 'None';
+
+  if (connectionId) {
+    try {
+      const connection = await ConnectionService().getConnection(connectionId);
+      const parameterValues = (connection?.properties as any)?.parameterValues;
+      if (parameterValues) {
+        mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
+        authenticationType = parameterValues.authenticationType ?? authenticationType;
+      }
+    } catch {
+      // Keep existing values when connection lookup fails.
+    }
+  }
+
   const inputs = {
-    parameters: {
-      ...inputParameters.parameters,
+    Connection: {
+      Authentication: authenticationType,
+      McpServerUrl: mcpServerUrl,
     },
   };
 
