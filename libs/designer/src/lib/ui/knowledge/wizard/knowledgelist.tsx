@@ -30,7 +30,6 @@ import {
   ChevronRightRegular,
   Delete24Regular,
   DocumentText20Regular,
-  Edit24Regular,
   FolderOpen20Regular,
   MoreHorizontal20Regular,
   SubtractCircle20Regular,
@@ -103,11 +102,6 @@ export const KnowledgeList = ({
       id: 'xfUoo5',
       description: 'Label for the status column',
     }),
-    renameLabel: intl.formatMessage({
-      defaultMessage: 'Rename',
-      id: '1Jch8f',
-      description: 'Label for the rename action',
-    }),
     uploadLabel: intl.formatMessage({
       defaultMessage: 'Upload artifacts',
       id: 'mfpHrs',
@@ -145,13 +139,13 @@ export const KnowledgeList = ({
     }),
   };
 
-  const [allItems, setAllItems] = useState<Record<string, KnowledgeHubItem>>(createAllItems(hubs));
+  const [allItems, setAllItems] = useState<Record<string, KnowledgeHubItem>>(createAllItems(hubs, /* existingItems: */ {}));
 
   useEffect(() => {
     if (hubs) {
-      setAllItems(createAllItems(hubs));
+      setAllItems(createAllItems(hubs, allItems));
     }
-  }, [hubs]);
+  }, [allItems, hubs]);
 
   const columns = [
     createTableColumn<KnowledgeHubItem>({
@@ -311,17 +305,6 @@ export const KnowledgeList = ({
     event.stopPropagation();
     event.preventDefault();
   }, []);
-
-  const handleRename = useCallback(
-    (item: KnowledgeHubItem, event: React.MouseEvent) => {
-      event.stopPropagation();
-      event.preventDefault();
-      // For now just log the action, need to implement rename logic
-      // Implement rename logic here, possibly opening a dialog to enter new name
-      console.log('Rename item', item, selectedItems);
-    },
-    [selectedItems]
-  );
 
   const handleDelete = useCallback(async (item: KnowledgeHubItem, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -484,6 +467,17 @@ export const KnowledgeList = ({
     [allItems, isRowSelected]
   );
 
+  useEffect(() => {
+    // Check if any item has been deleted to update the selected list
+    if (allItems && selectedItems) {
+      const deletedItems = selectedItems.filter((id) => !getPropertyValue(allItems, id));
+      if (deletedItems.length) {
+        const newSelectedItems = selectedItems.filter((id) => !deletedItems.includes(id));
+        setSelectedArtifactItems(newSelectedItems);
+      }
+    }
+  }, [allItems, selectedItems, setSelectedArtifactItems]);
+
   if (!items.length) {
     return null;
   }
@@ -537,15 +531,14 @@ export const KnowledgeList = ({
                   </MenuTrigger>
                   <MenuPopover>
                     <MenuList>
-                      <MenuItem icon={<Edit24Regular />} onClick={(event) => handleRename(item, event)}>
-                        {INTL_TEXT.renameLabel}
-                      </MenuItem>
                       {item.parentId === null ? (
-                        <MenuItem icon={<ArrowUpload24Regular />} onClick={(event) => handleUploadArtifacts(item, event)}>
-                          {INTL_TEXT.uploadLabel}
-                        </MenuItem>
+                        <>
+                          <MenuItem icon={<ArrowUpload24Regular />} onClick={(event) => handleUploadArtifacts(item, event)}>
+                            {INTL_TEXT.uploadLabel}
+                          </MenuItem>
+                          <Divider />
+                        </>
                       ) : null}
-                      <Divider />
                       <MenuItem icon={<Delete24Regular />} onClick={(event) => handleDelete(item, event)}>
                         {INTL_TEXT.deleteLabel}
                       </MenuItem>
@@ -569,7 +562,7 @@ export const KnowledgeList = ({
   );
 };
 
-const createAllItems = (hubs: KnowledgeHub[]): Record<string, KnowledgeHubItem> =>
+const createAllItems = (hubs: KnowledgeHub[], existingItems: Record<string, KnowledgeHubItem>): Record<string, KnowledgeHubItem> =>
   hubs.reduce(
     (result: Record<string, KnowledgeHubItem>, hub: KnowledgeHub) => {
       const id = hub.name.toLowerCase();
@@ -581,15 +574,15 @@ const createAllItems = (hubs: KnowledgeHub[]): Record<string, KnowledgeHubItem> 
         createdDate: hub.createdAt ? new Date(hub.createdAt).toLocaleString() : '--',
         status: '--', // Need to determine how to get upload status
         parentId: null,
-        isExpanded: false,
+        isExpanded: existingItems[id]?.isExpanded ?? false, // Preserve the expanded state if the item already exists
       };
       // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
-      return { ...result, ...createArtifactItems(hub) };
+      return { ...result, ...createArtifactItems(hub, existingItems) };
     },
     {} as Record<string, KnowledgeHubItem>
   );
 
-const createArtifactItems = (hub: KnowledgeHub): Record<string, KnowledgeHubItem> =>
+const createArtifactItems = (hub: KnowledgeHub, existingItems: Record<string, KnowledgeHubItem>): Record<string, KnowledgeHubItem> =>
   hub.artifacts.reduce(
     (result: Record<string, KnowledgeHubItem>, artifact) => {
       const id = `${hub.name.toLowerCase()}-${artifact.name.toLowerCase()}`;
@@ -601,7 +594,7 @@ const createArtifactItems = (hub: KnowledgeHub): Record<string, KnowledgeHubItem
         createdDate: artifact.createdAt ? new Date(artifact.createdAt).toLocaleString() : '--',
         status: artifact.uploadStatus, // Need to determine how to get upload status
         parentId: hub.name,
-        isExpanded: false,
+        isExpanded: existingItems[id]?.isExpanded ?? false, // Preserve the expanded state if the item already exists
       };
       return result;
     },

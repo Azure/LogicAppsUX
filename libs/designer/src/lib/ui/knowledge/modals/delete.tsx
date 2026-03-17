@@ -10,7 +10,7 @@ import {
   tokens,
   Text,
 } from '@fluentui/react-components';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { KnowledgeHubItem } from '../wizard/knowledgelist';
 import type { ServerNotificationData as NotificationData } from '../../mcp/servers/servers';
@@ -83,6 +83,11 @@ export const DeleteModal = ({
       },
       { artifactNames }
     ),
+    deletingButtonText: intl.formatMessage({
+      defaultMessage: 'Deleting...',
+      id: 'HTwVAR',
+      description: 'Button text for when the hub artifacts are being deleted',
+    }),
     deleteButtonText: intl.formatMessage({
       defaultMessage: 'Delete',
       id: 'w1QL1r',
@@ -105,8 +110,11 @@ export const DeleteModal = ({
     }),
   };
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDelete = useCallback(async () => {
     try {
+      setIsDeleting(true);
       await deleteKnowledgeHubArtifacts(resourceId, hubsToDelete, artifactsToDelete);
       onDelete({
         title: INTL_TEXT.successNotificationTitle,
@@ -122,6 +130,8 @@ export const DeleteModal = ({
         error,
         message: `Error while deleting knowledge hub artifact for the app: ${resourceId}`,
       });
+    } finally {
+      setIsDeleting(false);
     }
   }, [
     INTL_TEXT.successNotificationContent,
@@ -167,11 +177,12 @@ export const DeleteModal = ({
                 background: tokens.colorStatusDangerForeground1,
               }}
               onClick={handleDelete}
+              disabled={isDeleting}
             >
-              {INTL_TEXT.deleteButtonText}
+              {isDeleting ? INTL_TEXT.deletingButtonText : INTL_TEXT.deleteButtonText}
             </Button>
             <DialogTrigger disableButtonEnhancement>
-              <Button appearance="secondary" onClick={onDismiss}>
+              <Button appearance="secondary" onClick={onDismiss} disabled={isDeleting}>
                 {INTL_TEXT.closeButtonText}
               </Button>
             </DialogTrigger>

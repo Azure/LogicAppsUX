@@ -53,7 +53,6 @@ export const useListStyles = makeStyles({
   },
 
   rowCell: {
-    paddingTop: '6px',
     alignItems: 'center',
   },
 
@@ -87,37 +86,5 @@ export const useListStyles = makeStyles({
   statusCell: {
     display: 'flex',
     gap: '4px',
-  },
-
-  table: {
-    width: '100%',
-    borderCollapse: 'separate',
-    borderSpacing: '0 8px',
-  },
-
-  tableHeader: {
-    borderBottom: '1px solid #E1DFDD',
-  },
-
-  tableHeaderCell: {
-    fontWeight: '600',
-    color: '#605E5C',
-    paddingBottom: '8px',
-  },
-
-  tableRow: {
-    backgroundColor: '#FFFFFF',
-    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
-    borderRadius: '4px',
-  },
-
-  toolNameCell: {
-    paddingTop: '6px',
-    alignItems: 'center',
-    display: 'flex',
-  },
-
-  lastCell: {
-    width: '8%',
   },
 });
