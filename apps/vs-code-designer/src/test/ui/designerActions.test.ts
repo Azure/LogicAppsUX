@@ -453,12 +453,16 @@ async function focusEditor(driver: WebDriver): Promise<void> {
  * Ensure the local.settings.json for a workspace has WORKFLOWS_SUBSCRIPTION_ID
  * set to "" so that the Azure connector wizard is skipped when opening the designer.
  *
- * Without this, the extension shows two blocking QuickPick prompts:
- *   1. "Use connectors from Azure" / "Skip for now"
- *   2. "Managed Service Identity" / "Connection Keys"
+ * Without this (if the key is absent/undefined), the extension shows a blocking
+ * QuickPick wizard ("Enable connectors in Azure") via wizard.prompt() that hangs
+ * forever in headless CI.
  *
  * Setting WORKFLOWS_SUBSCRIPTION_ID to "" (empty string) prevents the wizard
  * from launching because the code checks `subscriptionId === undefined`.
+ * With empty string, `enabled = !!'' = false`, so the else branch runs:
+ *   - getAuthData() returns undefined (no Azure session in CI)
+ *   - authData?.account?.id (optional chaining in common.ts) safely handles null
+ *   - Returns { enabled: false, ... } → designer loads without Azure connectors
  */
 function ensureLocalSettingsForDesigner(appDir: string): void {
   const localSettingsPath = path.join(appDir, 'local.settings.json');
@@ -478,21 +482,21 @@ function ensureLocalSettingsForDesigner(appDir: string): void {
     }
   }
 
-  // Remove Azure subscription keys so the extension skips the auth path.
-  // When subscriptionId is undefined, the code path that calls getAuthData()
-  // is skipped entirely, avoiding the 'Cannot read properties of undefined
-  // (reading account)' crash when no Azure account is signed in.
+  // Set Azure subscription keys to empty string (not delete!).
+  // Empty string → subscriptionId !== undefined → skips blocking wizard.prompt()
+  // Empty string → enabled = !!'' = false → Azure connectors disabled
+  const keysToSet = ['WORKFLOWS_SUBSCRIPTION_ID', 'WORKFLOWS_TENANT_ID', 'WORKFLOWS_RESOURCE_GROUP_NAME', 'WORKFLOWS_LOCATION_NAME'];
   let changed = false;
-  for (const key of ['WORKFLOWS_SUBSCRIPTION_ID', 'WORKFLOWS_TENANT_ID', 'WORKFLOWS_RESOURCE_GROUP_NAME', 'WORKFLOWS_LOCATION_NAME']) {
-    if (settings.Values[key] !== undefined) {
-      delete settings.Values[key];
+  for (const key of keysToSet) {
+    if (settings.Values[key] !== '') {
+      settings.Values[key] = '';
       changed = true;
     }
   }
   if (changed) {
     fs.mkdirSync(appDir, { recursive: true });
     fs.writeFileSync(localSettingsPath, JSON.stringify(settings, null, 2));
-    console.log(`[ensureLocalSettings] Removed Azure subscription keys from ${localSettingsPath}`);
+    console.log(`[ensureLocalSettings] Set Azure keys to empty string in ${localSettingsPath}`);
   }
 }
 

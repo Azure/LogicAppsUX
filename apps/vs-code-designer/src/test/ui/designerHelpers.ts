@@ -116,17 +116,17 @@ export const DEPENDENCY_VALIDATION_TIMEOUT = 300_000;
  * Ensure the local.settings.json for a workspace has WORKFLOWS_SUBSCRIPTION_ID
  * set to "" so that the Azure connector wizard is skipped when opening the designer.
  *
- * Without this, the extension shows two blocking QuickPick prompts:
- *   1. "Use connectors from Azure" / "Skip for now"
- *   2. "Managed Service Identity" / "Connection Keys"
+ * Without this (if the key is absent/undefined), the extension shows a blocking
+ * QuickPick wizard ("Enable connectors in Azure" → "Use connectors from Azure" /
+ * "Skip for now") via wizard.prompt() in getAzureConnectorDetailsForLocalProject.
+ * This hangs forever in headless CI because no user can interact with it.
  *
  * Setting WORKFLOWS_SUBSCRIPTION_ID to "" (empty string) prevents the wizard
  * from launching because the code checks `subscriptionId === undefined`.
- *
- * NOTE: This causes the else branch in getAzureConnectorDetailsForLocalProject
- * to call getAuthData(). With silentAuth: true in VS Code settings, getAuthData
- * returns undefined which may crash. The test's `waitForDesignerWebviewTab`
- * handles this by dismissing any resulting error dialogs.
+ * With empty string, `enabled = !!'' = false`, so the else branch runs:
+ *   - getAuthData() returns undefined (no Azure session in CI)
+ *   - authData?.account?.id (optional chaining in common.ts) safely handles null
+ *   - Returns { enabled: false, ... } → designer loads without Azure connectors
  */
 export function ensureLocalSettingsForDesigner(appDir: string): void {
   const localSettingsPath = path.join(appDir, 'local.settings.json');
@@ -147,32 +147,23 @@ export function ensureLocalSettingsForDesigner(appDir: string): void {
     }
   }
 
-  // Remove WORKFLOWS_SUBSCRIPTION_ID entirely so the extension sees
-  // `subscriptionId === undefined` and skips the Azure auth path.
-  // Previously we set it to "" which caused the else branch to execute
-  // and crash with "Cannot read properties of undefined (reading 'account')"
-  // because getAuthData() returns undefined when no Azure account is signed in.
+  // Set Azure subscription keys to empty string (not delete!).
+  // Empty string → subscriptionId !== undefined → skips blocking wizard.prompt()
+  // Empty string → enabled = !!'' = false → Azure connectors disabled
+  // The else branch calls getAuthData() which returns undefined in CI,
+  // but common.ts uses optional chaining (authData?.account?.id) to handle this.
+  const keysToSet = ['WORKFLOWS_SUBSCRIPTION_ID', 'WORKFLOWS_TENANT_ID', 'WORKFLOWS_RESOURCE_GROUP_NAME', 'WORKFLOWS_LOCATION_NAME'];
   let changed = false;
-  if (settings.Values.WORKFLOWS_SUBSCRIPTION_ID !== undefined) {
-    delete settings.Values.WORKFLOWS_SUBSCRIPTION_ID;
-    changed = true;
-  }
-  if (settings.Values.WORKFLOWS_TENANT_ID !== undefined) {
-    delete settings.Values.WORKFLOWS_TENANT_ID;
-    changed = true;
-  }
-  if (settings.Values.WORKFLOWS_RESOURCE_GROUP_NAME !== undefined) {
-    delete settings.Values.WORKFLOWS_RESOURCE_GROUP_NAME;
-    changed = true;
-  }
-  if (settings.Values.WORKFLOWS_LOCATION_NAME !== undefined) {
-    delete settings.Values.WORKFLOWS_LOCATION_NAME;
-    changed = true;
+  for (const key of keysToSet) {
+    if (settings.Values[key] !== '') {
+      settings.Values[key] = '';
+      changed = true;
+    }
   }
   if (changed) {
     fs.mkdirSync(appDir, { recursive: true });
     fs.writeFileSync(localSettingsPath, JSON.stringify(settings, null, 2));
-    console.log(`[ensureLocalSettings] Removed Azure subscription keys from ${localSettingsPath}`);
+    console.log(`[ensureLocalSettings] Set Azure keys to empty string in ${localSettingsPath}`);
   }
 }
 
