@@ -976,207 +976,145 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
 
 /**
  * Switch into the designer webview iframe and wait for the designer to
- * actually finish loading — not just exist. We detect three phases:
+ * actually finish loading — not just exist.
  *
- *   Phase 1: Webview iframe is switchable (ExTester's switchToFrame)
- *   Phase 2: Spinner disappears (React data fetch complete)
- *   Phase 3: Canvas and nodes render (React Flow + workflow graph ready)
+ * Uses a unified polling loop that re-discovers the webview iframe structure
+ * each iteration. This is critical because:
+ *   - The outer webview iframe exists immediately after "Open designer"
+ *   - But the INNER iframe (containing the React app) is created LATER by
+ *     the VS Code webview bootstrap, once startDesignTimeApi() completes
+ *   - Previous code would "succeed" Phase 1 by finding `body` in the outer
+ *     bootstrap frame, then get stuck polling for `#root` / `.msla-designer-canvas`
+ *     in the wrong frame forever
  *
- * If Phase 3 doesn't complete we still return success as long as the canvas
- * div is mounted (Phase 2). Some tests only need the discovery panel which
- * opens even before nodes fully render.
+ * This matches the proven pattern from switchToActiveDesignerFrame() in
+ * multipleDesigners.test.ts which successfully loads the designer.
  */
 export async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DESIGNER_READY_TIMEOUT): Promise<WebView> {
   const webview = new WebView();
   const t0 = Date.now();
+  const deadline = Date.now() + timeoutMs;
+  let readyLevel = 0; // 0=nothing, 1=canvas div, 2=react-flow, 3=nodes/trigger card
 
-  // Phase 1: Switch into the webview iframe manually.
-  //
-  // ExTester's WebView.switchToFrame() searches for *[id="active-frame"]
-  // inside the webview iframe, but VS Code 1.108.0 on Linux CI does not
-  // render that element — the inner content is loaded differently.
-  //
-  // Instead, we manually:
-  //   1. Find the outer webview iframe (.webview.ready or iframe.webview)
-  //   2. Switch into it with raw Selenium driver.switchTo().frame()
-  //   3. Look for #active-frame inside (optional — may not exist in 1.108)
-  //   4. If #active-frame exists, switch into it too
-  //   5. Otherwise try to find the content directly
-  let switched = false;
-  const frameDeadline = Date.now() + 60_000; // 60s total for frame switching
-
-  while (Date.now() < frameDeadline && !switched) {
+  while (Date.now() < deadline) {
+    // Always start from top-level to re-discover the iframe structure.
+    // The inner iframe may not exist yet on early iterations.
     try {
       await driver.switchTo().defaultContent();
-
-      // Find the outer webview iframe
-      const iframes = await driver.findElements(By.css('iframe.webview.ready, iframe.webview, iframe[id*="webview"]'));
-
-      if (iframes.length === 0) {
-        console.log(`[designerReady] Phase 1: no webview iframes found yet (${Date.now() - t0}ms)`);
-        await sleep(2000);
-        continue;
-      }
-
-      // Switch into the first visible webview iframe
-      let outerFrame: any = null;
-      for (const iframe of iframes) {
-        try {
-          const displayed = await iframe.isDisplayed();
-          if (displayed) {
-            outerFrame = iframe;
-            break;
-          }
-        } catch {
-          /* stale element */
-        }
-      }
-
-      if (!outerFrame) {
-        console.log(`[designerReady] Phase 1: found ${iframes.length} iframe(s) but none visible (${Date.now() - t0}ms)`);
-        await sleep(2000);
-        continue;
-      }
-
-      // Switch into the outer webview iframe
-      await driver.switchTo().frame(outerFrame);
-
-      // Now look for #active-frame inside (VS Code's inner frame).
-      // On VS Code 1.108.0 Linux CI, #active-frame does NOT exist —
-      // the webview bootstrap loads extension content directly in the
-      // outer frame. We try #active-frame first, fall back to inner
-      // iframes, and finally accept the outer frame itself.
-      try {
-        const activeFrame = await driver.findElement(By.id('active-frame'));
-        await driver.switchTo().frame(activeFrame);
-        console.log(`[designerReady] Phase 1: switched via active-frame (${Date.now() - t0}ms)`);
-        switched = true;
-      } catch {
-        // #active-frame doesn't exist — try nested iframes, then accept outer frame
-        try {
-          const innerIframes = await driver.findElements(By.css('iframe'));
-          if (innerIframes.length > 0) {
-            await driver.switchTo().frame(innerIframes[0]);
-            console.log(`[designerReady] Phase 1: switched via inner iframe (${Date.now() - t0}ms)`);
-          } else {
-            console.log(`[designerReady] Phase 1: no inner frames, using outer frame directly (${Date.now() - t0}ms)`);
-          }
-        } catch {
-          /* use outer frame as-is */
-        }
-
-        // Accept the current frame context (outer or inner) if body is accessible.
-        // On VS Code 1.108.0 Linux, the extension content loads in the outer frame
-        // and #root appears later once the design-time API responds.
-        try {
-          const roots = await driver.findElements(By.css('#root, body'));
-          if (roots.length > 0) {
-            switched = true;
-            console.log(`[designerReady] Phase 1: webview content accessible (${Date.now() - t0}ms)`);
-          }
-        } catch {
-          /* not ready yet */
-        }
-      }
-
-      if (!switched) {
-        await driver.switchTo().defaultContent();
-        console.log(`[designerReady] Phase 1: frame switch incomplete (${Date.now() - t0}ms), retrying...`);
-        await sleep(3000);
-      }
-    } catch (frameErr: any) {
-      console.log(`[designerReady] Phase 1: attempt failed (${Date.now() - t0}ms): ${frameErr.message.substring(0, 120)}`);
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      await sleep(3000);
+    } catch {
+      /* ignore */
     }
-  }
+    await sleep(500);
 
-  if (!switched) {
-    throw new Error('switchToDesignerWebview: could not switch into webview frame within 60s');
-  }
-
-  const deadline = Date.now() + timeoutMs;
-
-  // Phase 2: wait for the loading spinner to disappear.
-  // The VS Code designer renders <Spinner className="designerLoading" size="large">
-  // while data is being fetched. Once that disappears, the Designer component
-  // has mounted.
-  let spinnerGone = false;
-  while (Date.now() < deadline) {
     try {
-      const spinners = await driver.findElements(By.css('.fui-Spinner, [role="progressbar"]'));
-      if (spinners.length === 0) {
-        // Also verify #root exists so we know we're in the right frame
-        const roots = await driver.findElements(By.id('root'));
-        if (roots.length > 0) {
-          spinnerGone = true;
-          break;
+      // Find all webview iframes
+      const iframes = await driver.findElements(By.css('iframe.webview.ready, iframe.webview'));
+      if (iframes.length === 0) {
+        if ((Date.now() - t0) % 10000 < 600) {
+          console.log(`[designerReady] No webview iframes yet (${Date.now() - t0}ms)`);
+        }
+        await sleep(1000);
+        continue;
+      }
+
+      // Try each visible iframe (last first = most likely active tab)
+      for (let i = iframes.length - 1; i >= 0; i--) {
+        try {
+          const displayed = await iframes[i].isDisplayed();
+          const rect = await iframes[i].getRect();
+          if (!displayed || rect.width < 100 || rect.height < 100) {
+            continue;
+          }
+
+          // Switch into the outer webview iframe
+          await driver.switchTo().frame(iframes[i]);
+          await sleep(300);
+
+          // Try to navigate into the inner iframe (VS Code nests webview content)
+          // The inner iframe is created by the webview bootstrap AFTER the extension
+          // sends the HTML content via panel.webview.html. On first iterations this
+          // inner iframe doesn't exist yet — that's OK, we'll retry next loop.
+          try {
+            const innerFrames = await driver.findElements(By.css('#active-frame, iframe'));
+            if (innerFrames.length > 0) {
+              await driver.switchTo().frame(innerFrames[0]);
+              await sleep(300);
+            }
+          } catch {
+            /* may already be in the right frame */
+          }
+
+          // Check designer readiness in the current frame context
+          try {
+            const result = await driver.executeScript<number>(`
+              if (!document.querySelector('.msla-designer-canvas')) return 0;
+              if (!document.querySelector('.react-flow__viewport')) return 1;
+              if (document.querySelector('[data-testid="card-Add a trigger"]') || document.querySelectorAll('.react-flow__node').length > 0 || document.querySelector('[role="toolbar"]')) return 3;
+              return 2;
+            `);
+            readyLevel = Math.max(readyLevel, result ?? 0);
+            if (readyLevel >= 2) {
+              const labels = ['nothing', 'canvas div', 'react-flow viewport', 'nodes/trigger/toolbar'];
+              console.log(`[designerReady] Designer ready (level ${readyLevel}: ${labels[readyLevel]}) in ${Date.now() - t0}ms`);
+              return webview;
+            }
+          } catch {
+            /* script may fail during frame transitions — will retry */
+          }
+
+          // Not ready yet — switch back to default and retry
+          try {
+            await driver.switchTo().defaultContent();
+          } catch {
+            /* ignore */
+          }
+        } catch {
+          try {
+            await driver.switchTo().defaultContent();
+          } catch {
+            /* ignore */
+          }
         }
       }
     } catch {
-      /* elements may not exist yet */
+      /* iframe discovery failed — will retry */
     }
-    await sleep(500);
+
+    // Log progress periodically
+    if ((Date.now() - t0) % 15000 < 600) {
+      console.log(`[designerReady] Waiting... readyLevel=${readyLevel} (${Date.now() - t0}ms)`);
+    }
+    await sleep(1500);
   }
 
-  if (spinnerGone) {
-    console.log(`[designerReady] Phase 2: spinner gone, React app rendered (${Date.now() - t0}ms)`);
-  } else {
-    console.log(`[designerReady] Phase 2: spinner still present or #root not found after ${Date.now() - t0}ms`);
-    // Dump diagnostic info about what's in the webview frame
+  // Timed out — dump diagnostics
+  console.log(`[designerReady] readyLevel=${readyLevel} after ${Date.now() - t0}ms`);
+  if (readyLevel === 0) {
+    console.log('[designerReady] Warning: designer content not found within timeout');
+    // Try to dump diagnostics from whatever frame we're in
     try {
+      await driver.switchTo().defaultContent();
+      const iframes = await driver.findElements(By.css('iframe.webview.ready, iframe.webview'));
+      if (iframes.length > 0) {
+        await driver.switchTo().frame(iframes[iframes.length - 1]);
+        const innerFrames = await driver.findElements(By.css('#active-frame, iframe'));
+        if (innerFrames.length > 0) {
+          await driver.switchTo().frame(innerFrames[0]);
+        }
+      }
       const diagInfo = await driver.executeScript<string>(`
-        var info = 'URL: ' + window.location.href + '\n';
-        info += 'Title: ' + document.title + '\n';
-        info += 'Body children: ' + document.body.children.length + '\n';
+        var info = 'URL: ' + window.location.href + '\\n';
+        info += 'Title: ' + document.title + '\\n';
+        info += 'Body children: ' + document.body.children.length + '\\n';
         var html = document.documentElement.outerHTML || '';
-        info += 'HTML length: ' + html.length + '\n';
+        info += 'HTML length: ' + html.length + '\\n';
         info += 'HTML preview: ' + html.substring(0, 1500);
         return info;
       `);
       console.log(`[designerReady] Webview diagnostics:\n${diagInfo}`);
     } catch (diagErr: any) {
-      console.log(`[designerReady] Could not dump webview diagnostics: ${diagErr.message?.substring(0, 100)}`);
+      console.log(`[designerReady] Could not dump diagnostics: ${diagErr.message?.substring(0, 100)}`);
     }
-  }
-
-  // Phase 3: wait for the actual designer canvas + nodes/placeholder to render.
-  // The designer mounts .msla-designer-canvas → ReactFlow → .react-flow__viewport.
-  // For empty workflows a [data-testid="card-Add a trigger"] card appears.
-  // For non-empty workflows .react-flow__node elements appear.
-  let readyLevel = 0; // 0=nothing, 1=canvas div, 2=react-flow, 3=nodes/trigger card
-  while (Date.now() < deadline) {
-    try {
-      const result = await driver.executeScript<number>(`
-        var canvas = document.querySelector('.msla-designer-canvas');
-        if (!canvas) return 0;
-        var rf = document.querySelector('.react-flow__viewport');
-        if (!rf) return 1;
-        var trigger = document.querySelector('[data-testid="card-Add a trigger"]');
-        var nodes = document.querySelectorAll('.react-flow__node');
-        var toolbar = document.querySelector('[role="toolbar"]');
-        if (trigger || nodes.length > 0 || toolbar) return 3;
-        return 2;
-      `);
-      readyLevel = Math.max(readyLevel, result ?? 0);
-      if (readyLevel >= 3) {
-        break;
-      }
-    } catch {
-      /* script may fail during frame transitions */
-    }
-    await sleep(500);
-  }
-
-  const labels = ['nothing', 'canvas div', 'react-flow viewport', 'nodes/trigger/toolbar'];
-  console.log(`[designerReady] Phase 3: readyLevel=${readyLevel} (${labels[readyLevel]}) in ${Date.now() - t0}ms`);
-
-  if (readyLevel === 0) {
-    console.log('[designerReady] Warning: designer content not found within timeout');
   }
 
   return webview;
