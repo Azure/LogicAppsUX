@@ -85,10 +85,11 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform, logicAppType } = action.payload;
+      const { separator, platform, logicAppType, logicAppName } = action.payload;
       state.separator = separator;
       state.platform = platform;
       state.logicAppType = logicAppType || '';
+      state.logicAppName = logicAppName || '';
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -191,7 +192,22 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
     setComplete: (state, action: PayloadAction<boolean>) => {
       state.isComplete = action.payload;
     },
-    resetState: () => initialState,
+    resetState: (state, action: PayloadAction<{ preserveLogicAppData?: boolean } | undefined>) => {
+      const preserveLogicAppData = action.payload?.preserveLogicAppData;
+      const preservedLogicAppType = preserveLogicAppData ? state.logicAppType : '';
+      const preservedLogicAppName = preserveLogicAppData ? state.logicAppName : '';
+      const preservedSeparator = preserveLogicAppData ? state.separator : '/';
+      const preservedPlatform = preserveLogicAppData ? state.platform : null;
+
+      Object.assign(state, initialState);
+
+      if (preserveLogicAppData) {
+        state.logicAppType = preservedLogicAppType;
+        state.logicAppName = preservedLogicAppName;
+        state.separator = preservedSeparator;
+        state.platform = preservedPlatform;
+      }
+    },
     nextStep: (state) => {
       if (state.currentStep < 7) {
         // Maximum of 8 steps (0-7) for custom code, 7 steps (0-6) for others

@@ -12,6 +12,7 @@ import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps'
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../../utils/codeless/common';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { isString } from '@microsoft/logic-apps-shared';
 
@@ -36,6 +37,10 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
     await wizard.prompt();
     await wizard.execute();
     if (connectorsContext.enabled) {
+      // Invalidate stale cache and refetch Azure details with fresh auth token
+      invalidateAzureDetailsCache(projectPath);
+      getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
+
       vscode.window.showInformationMessage(
         localize(
           'logicapp.azureConnectorsEnabledForProject',

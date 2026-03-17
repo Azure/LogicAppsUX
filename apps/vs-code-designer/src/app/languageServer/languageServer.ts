@@ -19,8 +19,9 @@ import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
 import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
 import * as vscode from 'vscode';
+import { filterCompletionResult } from './completionFilter';
 
-export default class LogicAppsSeverLanguage {
+export default class LogicAppsLanguageServer {
   protected lspServerPath: string;
   protected sdkNupkgPath: string;
   protected apiVersion = workflowAppApiVersion;
@@ -32,6 +33,10 @@ export default class LogicAppsSeverLanguage {
   }
 
   public async start(): Promise<void> {
+    if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
+      return;
+    }
+
     const workspaceFolder = await getWorkspaceFolderPath(this.context);
     this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
     const { lspServerPath, sdkNupkgPath } = await this.getSDKPaths();
@@ -143,6 +148,10 @@ export default class LogicAppsSeverLanguage {
       },
       middleware: {
         provideHover: hoverMiddleware.provideHover,
+        provideCompletionItem: async (document, position, context, token, next) => {
+          const result = await next(document, position, context, token);
+          return filterCompletionResult(result);
+        },
         sendRequest: generalMiddleware.sendRequest,
         sendNotification: generalMiddleware.sendNotification,
       },
@@ -174,7 +183,7 @@ export default class LogicAppsSeverLanguage {
     const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
     const files = await fse.readdir(sdkFolderPath);
     const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Sdk.Agents.') && file.endsWith('.nupkg');
+      return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
     });
 
     const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
@@ -237,7 +246,40 @@ export default class LogicAppsSeverLanguage {
 
 export const startLanguageServerProtocol = async () => {
   await callWithTelemetryAndErrorHandling(onStartLanguageServerProtocol, async (context: IActionContext) => {
-    const languageServer = new LogicAppsSeverLanguage(context);
+    const languageServer = new LogicAppsLanguageServer(context);
     languageServer.start();
   });
 };
+
+/**
+ * Gets workflow metadata from the LSP server including trigger names.
+ * Uses a custom LSP request to query the workflow structure.
+ * @param workflowFilePath - The absolute path to the codeful workflow .cs file
+ * @returns Workflow metadata including workflow name and trigger name, or undefined if not available
+ */
+export async function getCodefulWorkflowMetadata(
+  workflowFilePath: string
+): Promise<{ workflowName: string; triggerName: string } | undefined> {
+  if (!ext.languageClient) {
+    console.warn('[LSP] Language client not initialized');
+    return undefined;
+  }
+
+  try {
+    // Use the custom LSP request to get workflow metadata
+    const response = await ext.languageClient.sendRequest<{ workflowName: string; triggerName: string } | null>(
+      'custom/getWorkflowMetadata',
+      { uri: workflowFilePath }
+    );
+
+    if (!response) {
+      console.warn('[LSP] No workflow metadata returned from server');
+      return undefined;
+    }
+
+    return response;
+  } catch (error) {
+    console.error('[LSP] Failed to get workflow metadata:', error);
+    return undefined;
+  }
+}

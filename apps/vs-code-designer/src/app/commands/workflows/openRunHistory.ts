@@ -11,6 +11,7 @@ import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
+import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
@@ -65,6 +66,10 @@ export async function openRunHistory(context: IAzureConnectorsContext, workflowN
   let interval: NodeJS.Timeout;
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
+      case ExtensionCommand.loadRun: {
+        openMonitoringView(context, workflowNode, message.item.id, programFilePath);
+        break;
+      }
       case ExtensionCommand.initialize: {
         panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,

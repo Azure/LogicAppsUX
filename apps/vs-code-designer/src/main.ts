@@ -7,7 +7,12 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
-import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
+import {
+  getExtensionVersion,
+  initializeCustomExtensionContext,
+  registerCodefulWorkflowContextListener,
+  updateLogicAppsContext,
+} from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
@@ -105,11 +110,7 @@ export async function activate(context: vscode.ExtensionContext) {
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
 
-    // Initialize Language Server Protocol
     startLanguageServerProtocol();
-
-    // Removed for unit test codefull experience standby
-    //await prepareTestExplorer(context, activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
@@ -136,6 +137,9 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
+
+    // Register codeful workflow context listener
+    registerCodefulWorkflowContextListener(context);
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
     const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
