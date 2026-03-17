@@ -415,10 +415,10 @@ export const useRunChatHistory = (runId: string | undefined, isEnabled: boolean)
   );
 };
 
-export const useChatHistory = (isMonitoringView: boolean, runId: string | undefined, nodeIds: string[] = [], isA2AWorkflow: boolean) => {
-  const actionHistoryQuery = useActionsChatHistory(nodeIds, runId, isMonitoringView && !isA2AWorkflow);
+export const useChatHistory = (isEnabled: boolean, runId: string | undefined, nodeIds: string[] = [], isA2AWorkflow: boolean) => {
+  const actionHistoryQuery = useActionsChatHistory(nodeIds, runId, isEnabled && !isA2AWorkflow);
 
-  const runHistoryQuery = useRunChatHistory(runId, isMonitoringView && isA2AWorkflow);
+  const runHistoryQuery = useRunChatHistory(runId, isEnabled && isA2AWorkflow);
 
   return isA2AWorkflow ? runHistoryQuery : actionHistoryQuery;
 };

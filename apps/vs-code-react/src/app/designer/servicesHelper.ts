@@ -6,6 +6,7 @@ import {
   StandardSearchService,
   BaseGatewayService,
   StandardRunService,
+  StandardEvaluationService,
   StandardArtifactService,
   BaseApiManagementService,
   BaseFunctionService,
@@ -60,6 +61,7 @@ export interface IDesignerServices {
   loggerService: ILoggerService;
   connectionParameterEditorService: CustomConnectionParameterEditorService;
   cognitiveServiceService: BaseCognitiveServiceService;
+  evaluationService: StandardEvaluationService;
 }
 
 export const getDesignerServices = (
@@ -378,6 +380,12 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  const evaluationService = new StandardEvaluationService({
+    apiVersion,
+    baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
+    httpClient,
+  });
+
   // MSI is not supported in VS Code
   const roleService = new BaseRoleService({
     baseUrl: armUrl,
@@ -428,6 +436,7 @@ export const getDesignerServices = (
     loggerService,
     connectionParameterEditorService,
     cognitiveServiceService,
+    evaluationService,
     functionService,
   };
 };

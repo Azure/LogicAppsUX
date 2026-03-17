@@ -15,6 +15,7 @@ import {
   useThemeObserver,
   FloatingRunButton,
   useRun,
+  EvaluateView,
 } from '@microsoft/logic-apps-designer-v2';
 import { BundleVersionRequirements, guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
@@ -54,6 +55,7 @@ export const DesignerApp = () => {
   const isDesignerView = useMemo(() => currentView === DesignerViewType.Workflow, [currentView]);
   const isCodeView = useMemo(() => currentView === DesignerViewType.Code, [currentView]);
   const isMonitoringView = useMemo(() => currentView === DesignerViewType.Monitoring, [currentView]);
+  const isEvaluateView = useMemo(() => currentView === DesignerViewType.Evaluate, [currentView]);
 
   const [runId, setRunId] = useState(_runId);
 
@@ -267,35 +269,48 @@ export const DesignerApp = () => {
       hideMonitoringView();
       setCurrentView(DesignerViewType.Workflow);
     }
-  }, [isDesignerView, isCodeView, isMonitoringView, validateAndSaveCodeView, hideMonitoringView]);
+    if (isEvaluateView) {
+      setCurrentView(DesignerViewType.Workflow);
+    }
+  }, [isDesignerView, isCodeView, isMonitoringView, isEvaluateView, validateAndSaveCodeView, hideMonitoringView]);
 
   const switchToCodeView = useCallback(async () => {
     if (isCodeView) {
       return;
     }
 
-    if (isDesignerView) {
+    if (isDesignerView || isEvaluateView) {
       setCurrentView(DesignerViewType.Code);
     }
     if (isMonitoringView) {
       hideMonitoringView();
       setCurrentView(DesignerViewType.Code);
     }
-  }, [hideMonitoringView, isCodeView, isDesignerView, isMonitoringView]);
+  }, [hideMonitoringView, isCodeView, isDesignerView, isMonitoringView, isEvaluateView]);
 
   const switchToMonitoringView = useCallback(async () => {
     if (isMonitoringView) {
       return;
     }
 
-    if (isDesignerView) {
+    if (isDesignerView || isEvaluateView) {
       setCurrentView(DesignerViewType.Monitoring);
     }
 
     if (isCodeView) {
       validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Monitoring));
     }
-  }, [isMonitoringView, isDesignerView, isCodeView, validateAndSaveCodeView]);
+  }, [isMonitoringView, isDesignerView, isCodeView, isEvaluateView, validateAndSaveCodeView]);
+
+  const switchToEvaluateView = useCallback(async () => {
+    if (isEvaluateView) {
+      return;
+    }
+    if (isMonitoringView) {
+      hideMonitoringView();
+    }
+    setCurrentView(DesignerViewType.Evaluate);
+  }, [isEvaluateView, isMonitoringView, hideMonitoringView]);
 
   /////////////////////////////////////////////////////////////////////////////
   // Rendering
@@ -352,12 +367,14 @@ export const DesignerApp = () => {
               isDesignerView={isDesignerView}
               isCodeView={isCodeView}
               isMonitoringView={isMonitoringView}
+              isEvaluateView={isEvaluateView}
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
+              switchToEvaluateView={switchToEvaluateView}
             />
 
-            {!isCodeView && (
+            {!isCodeView && !isEvaluateView && (
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                 <Designer />
                 <FloatingRunButton
@@ -372,6 +389,7 @@ export const DesignerApp = () => {
               </div>
             )}
             {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} workflowFile={initialWorkflow} />}
+            {isEvaluateView && <EvaluateView workflowName={panelMetaData?.workflowName ?? ''} />}
           </BJSWorkflowProvider>
         ) : null}
       </DesignerProvider>

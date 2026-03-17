@@ -1,6 +1,7 @@
 import type { RootState } from '../../store';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useIsAgenticWorkflow } from '../designerView/designerViewSelectors';
 
 export const useEvaluators = () => useSelector((state: RootState) => state.evaluation.evaluators);
 export const useEvaluatorsLoading = () => useSelector((state: RootState) => state.evaluation.evaluatorsLoading);
@@ -32,14 +33,15 @@ export const useFilteredEvaluators = () => {
 export const useCanRunEvaluation = () => {
   const selectedRun = useSelectedRun();
   const selectedAction = useSelectedAction();
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+
   return useMemo(() => {
     if (!selectedRun) {
       return false;
     }
-    if (workflowKind === 'stateful') {
+    if (isAgenticWorkflow) {
       return !!selectedAction;
     }
     return true;
-  }, [selectedRun, selectedAction, workflowKind]);
+  }, [selectedRun, selectedAction, isAgenticWorkflow]);
 };

@@ -3,7 +3,7 @@ import { Button, Dropdown, Input, Label, Option, Radio, RadioGroup, Checkbox, Te
 import { DeleteRegular, AddRegular, SaveRegular } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { finishFormAction, cancelFormAction } from '../../core/state/evaluation/evaluationSlice';
-import { useEditingEvaluator, useRightPanelView } from '../../core/state/evaluation/evaluationSelectors';
+import { useEditingEvaluator, useRightPanelView, useSelectedAction } from '../../core/state/evaluation/evaluationSelectors';
 import { useCreateOrUpdateEvaluator } from '../../core/queries/evaluations';
 import type { EvaluatorTemplate, ComparisonMethod } from '@microsoft/logic-apps-shared';
 import type { EvaluatorFormData } from './evaluatorFormHelpers';
@@ -25,7 +25,11 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   const rightPanelView = useRightPanelView();
   const editingEvaluator = useEditingEvaluator();
   const mode = rightPanelView === 'edit' ? 'edit' : 'create';
-  const createOrUpdate = useCreateOrUpdateEvaluator(workflowName);
+  const selectedAction = useSelectedAction();
+  const { mutateAsync: createOrUpdateEvaluator, isLoading: isModifyingEvaluator } = useCreateOrUpdateEvaluator(
+    workflowName,
+    selectedAction?.name ?? ''
+  );
 
   const [formData, setFormData] = useState<EvaluatorFormData>(createDefaultEvaluatorFormData());
   const [error, setError] = useState<string | null>(null);
@@ -51,12 +55,12 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
     setError(null);
     try {
       const evalData = formDataToEvaluator(formData);
-      await createOrUpdate.mutateAsync({ evaluatorName: formData.name, evaluator: evalData });
+      await createOrUpdateEvaluator({ evaluatorName: formData.name, evaluator: evalData });
       dispatch(finishFormAction());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save evaluator');
     }
-  }, [formData, createOrUpdate, dispatch]);
+  }, [formData, createOrUpdateEvaluator, dispatch]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -95,6 +99,13 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
           <Label htmlFor="evaluator-template">Template</Label>
           <Dropdown
             id="evaluator-template"
+            value={
+              formData.template === 'CustomPrompt'
+                ? 'Custom Prompt'
+                : formData.template === 'ToolCallTrajectory'
+                  ? 'Tool Call Trajectory'
+                  : 'Semantic Similarity'
+            }
             selectedOptions={[formData.template]}
             onOptionSelect={(_e, data) => updateFormField('template', data.optionValue as EvaluatorTemplate)}
             style={{ width: '100%' }}
@@ -333,9 +344,9 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         </Button>
         <Button
           appearance="primary"
-          icon={createOrUpdate.isLoading ? <Spinner size="extra-tiny" /> : <SaveRegular />}
+          icon={isModifyingEvaluator ? <Spinner size="extra-tiny" /> : <SaveRegular />}
           onClick={handleSubmit}
-          disabled={createOrUpdate.isLoading}
+          disabled={isModifyingEvaluator}
         >
           Save
         </Button>

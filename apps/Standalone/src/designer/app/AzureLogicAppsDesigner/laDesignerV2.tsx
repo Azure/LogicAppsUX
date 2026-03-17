@@ -287,6 +287,7 @@ const DesignerEditor = () => {
     if (!isMonitoringView) {
       setIsDesignerView(false);
       setIsCodeView(false);
+      setIsEvaluateView(false);
       toggleMonitoringView();
     }
   }, [isMonitoringView, toggleMonitoringView]);

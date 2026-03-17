@@ -129,7 +129,7 @@ export const evaluatorToFormData = (evaluator: Evaluator): EvaluatorFormData => 
         arguments: JSON.stringify(tc.arguments, null, 2),
       })) ?? [],
     threshold: evaluator.parameters.threshold?.toString() ?? '',
-    comparisonMethod: evaluator.parameters.comparisonMethod ?? 'Exact',
+    comparisonMethod: evaluator.parameters.comparisonMethod ?? 'exact',
     shouldCompareArgs: evaluator.parameters.shouldCompareArgs ?? false,
     expectedChatResponse: evaluator.parameters.expectedChatResponse ?? '',
     useGroundTruthRun,

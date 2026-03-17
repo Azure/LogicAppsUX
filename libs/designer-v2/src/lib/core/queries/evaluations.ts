@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { EvaluationService } from '@microsoft/logic-apps-shared';
 import type { Evaluator } from '@microsoft/logic-apps-shared';
+import { useIsAgenticWorkflow } from '../state/designerView/designerViewSelectors';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 5,
@@ -12,140 +13,252 @@ const queryOpts = {
 export const evaluationQueryKeys = {
   evaluators: 'evaluators',
   evaluator: 'evaluator',
-  evaluationsForRun: 'evaluationsForRun',
+  evaluations: 'evaluations',
   evaluation: 'evaluation',
-  evaluationsForAction: 'evaluationsForAction',
-  evaluationForAction: 'evaluationForAction',
 };
 
-export const useEvaluatorsQuery = (workflowName: string, enabled = true) => {
+export const useEvaluators = (workflowName: string, agentActionName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const globalAgentEvaluators = useGlobalAgentEvaluators(workflowName, !isAgenticWorkflow);
+  const agentEvaluators = useAgentEvaluators(workflowName, agentActionName, isAgenticWorkflow);
+  return isAgenticWorkflow ? agentEvaluators : globalAgentEvaluators;
+};
+
+const useGlobalAgentEvaluators = (workflowName: string, isEnabled: boolean) => {
   return useQuery(
     [evaluationQueryKeys.evaluators, workflowName],
     async () => {
-      return EvaluationService().getEvaluators(workflowName);
+      return EvaluationService().getGlobalAgentEvaluators(workflowName);
     },
     {
       ...queryOpts,
-      enabled: enabled && !!workflowName.trim(),
+      enabled: isEnabled && !!workflowName.trim(),
     }
   );
 };
 
-export const useEvaluatorQuery = (workflowName: string, evaluatorName: string, enabled = true) => {
+const useAgentEvaluators = (workflowName: string, agentActionName: string, isEnabled: boolean) => {
+  return useQuery(
+    [evaluationQueryKeys.evaluators, workflowName, agentActionName],
+    async () => {
+      return EvaluationService().getAgentEvaluators(workflowName, agentActionName);
+    },
+    {
+      ...queryOpts,
+      enabled: isEnabled && !!workflowName.trim() && !!agentActionName.trim(),
+    }
+  );
+};
+
+export const useEvaluator = (workflowName: string, agentActionName: string, evaluatorName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const globalAgentEvaluator = useGlobalAgentEvaluator(workflowName, evaluatorName, !isAgenticWorkflow);
+  const agentEvaluator = useAgentEvaluator(workflowName, agentActionName, evaluatorName, isAgenticWorkflow);
+  return isAgenticWorkflow ? agentEvaluator : globalAgentEvaluator;
+};
+
+const useGlobalAgentEvaluator = (workflowName: string, evaluatorName: string, isEnabled: boolean) => {
   return useQuery(
     [evaluationQueryKeys.evaluator, workflowName, evaluatorName],
     async () => {
-      return EvaluationService().getEvaluator(workflowName, evaluatorName);
+      return EvaluationService().getGlobalAgentEvaluator(workflowName, evaluatorName);
     },
     {
       ...queryOpts,
-      enabled: enabled && !!workflowName.trim() && !!evaluatorName.trim(),
+      enabled: isEnabled && !!workflowName.trim() && !!evaluatorName.trim(),
     }
   );
 };
 
-export const useCreateOrUpdateEvaluator = (workflowName: string) => {
+const useAgentEvaluator = (workflowName: string, agentActionName: string, evaluatorName: string, isEnabled: boolean) => {
+  return useQuery(
+    [evaluationQueryKeys.evaluator, workflowName, agentActionName, evaluatorName],
+    async () => {
+      return EvaluationService().getAgentEvaluator(workflowName, agentActionName, evaluatorName);
+    },
+    {
+      ...queryOpts,
+      enabled: isEnabled && !!workflowName.trim() && !!agentActionName.trim() && !!evaluatorName.trim(),
+    }
+  );
+};
+
+export const useCreateOrUpdateEvaluator = (workflowName: string, agentActionName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const createOrUpdateGlobalAgentEvaluator = useCreateOrUpdateGlobalAgentEvaluator(workflowName);
+  const createOrUpdateAgentEvaluator = useCreateOrUpdateAgentEvaluator(workflowName, agentActionName);
+  return isAgenticWorkflow ? createOrUpdateAgentEvaluator : createOrUpdateGlobalAgentEvaluator;
+};
+
+const useCreateOrUpdateGlobalAgentEvaluator = (workflowName: string) => {
   const queryClient = useQueryClient();
   return useMutation(
     async ({ evaluatorName, evaluator }: { evaluatorName: string; evaluator: Evaluator }) => {
-      return EvaluationService().createOrUpdateEvaluator(workflowName, evaluatorName, evaluator);
+      return EvaluationService().createOrUpdateGlobalAgentEvaluator(workflowName, evaluatorName, evaluator);
     },
     {
-      onSuccess: () => {
+      onSuccess: (data, variables) => {
         queryClient.invalidateQueries([evaluationQueryKeys.evaluators, workflowName]);
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluator, workflowName, variables.evaluatorName]);
       },
     }
   );
 };
 
-export const useDeleteEvaluator = (workflowName: string) => {
+const useCreateOrUpdateAgentEvaluator = (workflowName: string, agentActionName: string) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ evaluatorName, evaluator }: { evaluatorName: string; evaluator: Evaluator }) => {
+      return EvaluationService().createOrUpdateAgentEvaluator(workflowName, agentActionName, evaluatorName, evaluator);
+    },
+    {
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluators, workflowName, agentActionName]);
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluator, workflowName, agentActionName, variables.evaluatorName]);
+      },
+    }
+  );
+};
+
+export const useDeleteEvaluator = (workflowName: string, agentActionName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const deleteGlobalAgentEvaluator = useDeleteGlobalAgentEvaluator(workflowName);
+  const deleteAgentEvaluator = useDeleteAgentEvaluator(workflowName, agentActionName);
+  return isAgenticWorkflow ? deleteAgentEvaluator : deleteGlobalAgentEvaluator;
+};
+
+const useDeleteGlobalAgentEvaluator = (workflowName: string) => {
   const queryClient = useQueryClient();
   return useMutation(
     async (evaluatorName: string) => {
-      return EvaluationService().deleteEvaluator(workflowName, evaluatorName);
+      return EvaluationService().deleteGlobalAgentEvaluator(workflowName, evaluatorName);
     },
     {
-      onSuccess: () => {
+      onSuccess: (data, evaluatorName) => {
         queryClient.invalidateQueries([evaluationQueryKeys.evaluators, workflowName]);
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluator, workflowName, evaluatorName]);
       },
     }
   );
 };
 
-export const useEvaluationsForRun = (workflowName: string, runId: string, enabled = true) => {
-  return useQuery(
-    [evaluationQueryKeys.evaluationsForRun, workflowName, runId],
-    async () => {
-      return EvaluationService().getEvaluationsForRun(workflowName, runId);
+const useDeleteAgentEvaluator = (workflowName: string, agentActionName: string) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (evaluatorName: string) => {
+      return EvaluationService().deleteAgentEvaluator(workflowName, agentActionName, evaluatorName);
     },
     {
-      ...queryOpts,
-      enabled: enabled && !!workflowName.trim() && !!runId.trim(),
+      onSuccess: (data, evaluatorName) => {
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluators, workflowName, agentActionName]);
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluator, workflowName, agentActionName, evaluatorName]);
+      },
     }
   );
 };
 
-export const useEvaluationQuery = (workflowName: string, runId: string, evaluatorName: string, enabled = true) => {
+export const useEvaluations = (workflowName: string, runId: string, agentActionName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const globalAgentEvaluations = useGlobalAgentEvaluations(workflowName, runId, !isAgenticWorkflow);
+  const agentEvaluations = useAgentEvaluations(workflowName, runId, agentActionName, isAgenticWorkflow);
+  return isAgenticWorkflow ? agentEvaluations : globalAgentEvaluations;
+};
+
+const useGlobalAgentEvaluations = (workflowName: string, runId: string, isEnabled: boolean) => {
+  return useQuery(
+    [evaluationQueryKeys.evaluations, workflowName, runId],
+    async () => {
+      return EvaluationService().getGlobalAgentEvaluations(workflowName, runId);
+    },
+    {
+      ...queryOpts,
+      enabled: isEnabled && !!workflowName.trim() && !!runId.trim(),
+    }
+  );
+};
+
+const useAgentEvaluations = (workflowName: string, runId: string, agentActionName: string, isEnabled: boolean) => {
+  return useQuery(
+    [evaluationQueryKeys.evaluations, workflowName, runId, agentActionName],
+    async () => {
+      return EvaluationService().getAgentEvaluations(workflowName, runId, agentActionName);
+    },
+    {
+      ...queryOpts,
+      enabled: isEnabled && !!workflowName.trim() && !!runId.trim() && !!agentActionName.trim(),
+    }
+  );
+};
+
+export const useEvaluation = (workflowName: string, runId: string, agentActionName: string, evaluatorName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const globalAgentEvaluation = useGlobalAgentEvaluation(workflowName, runId, evaluatorName, !isAgenticWorkflow);
+  const agentEvaluation = useAgentEvaluation(workflowName, runId, agentActionName, evaluatorName, isAgenticWorkflow);
+  return isAgenticWorkflow ? agentEvaluation : globalAgentEvaluation;
+};
+
+const useGlobalAgentEvaluation = (workflowName: string, runId: string, evaluatorName: string, isEnabled: boolean) => {
   return useQuery(
     [evaluationQueryKeys.evaluation, workflowName, runId, evaluatorName],
     async () => {
-      return EvaluationService().getEvaluation(workflowName, runId, evaluatorName);
+      return EvaluationService().getGlobalAgentEvaluation(workflowName, runId, evaluatorName);
     },
     {
       ...queryOpts,
-      enabled: enabled && !!workflowName.trim() && !!runId.trim() && !!evaluatorName.trim(),
+      enabled: isEnabled && !!workflowName.trim() && !!runId.trim() && !!evaluatorName.trim(),
     }
   );
 };
 
-export const useEvaluationForActionQuery = (
-  workflowName: string,
-  runId: string,
-  agentActionName: string,
-  evaluatorName: string,
-  enabled = true
-) => {
+const useAgentEvaluation = (workflowName: string, runId: string, agentActionName: string, evaluatorName: string, isEnabled: boolean) => {
   return useQuery(
-    [evaluationQueryKeys.evaluationForAction, workflowName, runId, agentActionName, evaluatorName],
+    [evaluationQueryKeys.evaluation, workflowName, runId, agentActionName, evaluatorName],
     async () => {
-      return EvaluationService().getEvaluationForAction(workflowName, runId, agentActionName, evaluatorName);
+      return EvaluationService().getAgentEvaluation(workflowName, runId, agentActionName, evaluatorName);
     },
     {
       ...queryOpts,
-      enabled: enabled && !!workflowName.trim() && !!runId.trim() && !!agentActionName.trim() && !!evaluatorName.trim(),
+      enabled: isEnabled && !!workflowName.trim() && !!runId.trim() && !!agentActionName.trim() && !!evaluatorName.trim(),
     }
   );
 };
 
-export const useRunEvaluation = (workflowName: string) => {
+export const useRunEvaluation = (workflowName: string, agentActionName: string) => {
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const runGlobalAgentEvaluation = useRunGlobalAgentEvaluation(workflowName);
+  const runAgentEvaluation = useRunAgentEvaluation(workflowName, agentActionName);
+  return isAgenticWorkflow ? runAgentEvaluation : runGlobalAgentEvaluation;
+};
+
+const useRunGlobalAgentEvaluation = (workflowName: string) => {
   const queryClient = useQueryClient();
   return useMutation(
     async ({ runId, evaluatorName }: { runId: string; evaluatorName: string }) => {
-      return EvaluationService().runEvaluation(workflowName, runId, evaluatorName);
+      return EvaluationService().runGlobalAgentEvaluation(workflowName, runId, evaluatorName);
     },
     {
-      onSuccess: (_data, variables) => {
-        queryClient.invalidateQueries([evaluationQueryKeys.evaluationsForRun, workflowName, variables.runId]);
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluations, workflowName, variables.runId]);
         queryClient.invalidateQueries([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName]);
       },
     }
   );
 };
 
-export const useRunEvaluationForAction = (workflowName: string) => {
+const useRunAgentEvaluation = (workflowName: string, agentActionName: string) => {
   const queryClient = useQueryClient();
   return useMutation(
-    async ({ runId, agentActionName, evaluatorName }: { runId: string; agentActionName: string; evaluatorName: string }) => {
-      return EvaluationService().runEvaluationForAction(workflowName, runId, agentActionName, evaluatorName);
+    async ({ runId, evaluatorName }: { runId: string; evaluatorName: string }) => {
+      return EvaluationService().runAgentEvaluation(workflowName, runId, agentActionName, evaluatorName);
     },
     {
-      onSuccess: (_data, variables) => {
-        queryClient.invalidateQueries([evaluationQueryKeys.evaluationsForAction, workflowName, variables.runId, variables.agentActionName]);
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries([evaluationQueryKeys.evaluations, workflowName, variables.runId, agentActionName]);
         queryClient.invalidateQueries([
-          evaluationQueryKeys.evaluationForAction,
+          evaluationQueryKeys.evaluation,
           workflowName,
           variables.runId,
-          variables.agentActionName,
+          agentActionName,
           variables.evaluatorName,
         ]);
       },

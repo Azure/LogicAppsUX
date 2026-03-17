@@ -67,4 +67,5 @@ export const DesignerViewType = {
   Workflow: 'workflow',
   Code: 'code',
   Monitoring: 'monitoring',
+  Evaluate: 'evaluate',
 };

@@ -140,6 +140,12 @@ export const useEvaluateViewStyles = makeStyles({
     gap: '4px',
     flexShrink: 0,
   },
+  colResult: {
+    width: '70px',
+    flexShrink: 0,
+    fontSize: tokens.fontSizeBase200,
+    fontWeight: tokens.fontWeightSemibold,
+  },
   // Agent actions list
   actionItem: {
     display: 'flex',
@@ -347,5 +353,20 @@ export const useEvaluateViewStyles = makeStyles({
   detailValue: {
     fontSize: tokens.fontSizeBase300,
     fontWeight: tokens.fontWeightSemibold,
+  },
+  panelChat: {
+    width: '380px',
+    minWidth: '280px',
+    borderLeft: `1px solid ${tokens.colorNeutralStroke1}`,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+  },
+  chatPanelContainer: {
+    flex: '1',
+    overflow: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
   },
 });

@@ -1,13 +1,11 @@
 import { Button, mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
 import { EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
-import { useSelector } from 'react-redux';
 import type { Evaluator } from '@microsoft/logic-apps-shared';
 import { useSelectedRun, useSelectedAction, useCanRunEvaluation } from '../../core/state/evaluation/evaluationSelectors';
-import { useEvaluationQuery, useEvaluationForActionQuery } from '../../core/queries/evaluations';
-import type { RootState } from '../../core/store';
+import { useEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 
-interface EvaluatorViewPanelProps {
+interface EvaluatorDetailsPanelProps {
   workflowName: string;
   evaluator: Evaluator;
   onEdit: () => void;
@@ -15,39 +13,25 @@ interface EvaluatorViewPanelProps {
   onDelete: () => void;
 }
 
-export const EvaluatorViewPanel = ({ workflowName, evaluator, onEdit, onRun, onDelete }: EvaluatorViewPanelProps) => {
+export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onRun, onDelete }: EvaluatorDetailsPanelProps) => {
   const styles = useEvaluateViewStyles();
   const selectedRun = useSelectedRun();
   const selectedAction = useSelectedAction();
   const canRun = useCanRunEvaluation();
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
 
-  const isStateful = workflowKind === 'stateful' || workflowKind === 'agentic';
-
-  const { data: evaluationData, isLoading: evaluationLoading } = useEvaluationQuery(
+  const { data: evaluation, isLoading: isEvaluationLoading } = useEvaluation(
     workflowName,
-    selectedRun?.id ?? '',
-    evaluator.name,
-    !!selectedRun && !isStateful
-  );
-
-  const { data: evaluationForActionData, isLoading: evaluationForActionLoading } = useEvaluationForActionQuery(
-    workflowName,
-    selectedRun?.id ?? '',
+    selectedRun?.name ?? '',
     selectedAction?.name ?? '',
-    evaluator.name,
-    !!selectedRun && isStateful && !!selectedAction
+    evaluator.name
   );
-
-  const lastEvaluation = isStateful ? evaluationForActionData : evaluationData;
-  const loadingEvaluation = isStateful ? evaluationForActionLoading : evaluationLoading;
-  const isPassed = lastEvaluation?.result?.toLowerCase() === 'passed';
+  const isEvalPassed = evaluation?.result?.toLowerCase() === 'passed';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className={styles.panelHeader}>
         <div>
-          <h2 className={styles.panelTitle}>View Evaluator</h2>
+          <h2 className={styles.panelTitle}>Evaluator Details</h2>
           <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--colorNeutralForeground2)' }}>{evaluator.name}</p>
         </div>
       </div>
@@ -189,57 +173,57 @@ export const EvaluatorViewPanel = ({ workflowName, evaluator, onEdit, onRun, onD
         {/* Last Evaluation Result */}
         {selectedRun && (
           <div className={styles.card}>
-            {loadingEvaluation ? (
+            {isEvaluationLoading ? (
               <div className={styles.loadingContainer}>
                 <Spinner size="small" label="Loading evaluation..." />
               </div>
-            ) : lastEvaluation ? (
+            ) : evaluation ? (
               <>
                 <div className={styles.evaluationHeader}>
                   <span className={styles.panelTitle}>Last Evaluation</span>
-                  <span className={mergeClasses(styles.resultBadge, isPassed ? styles.resultPassed : styles.resultFailed)}>
-                    {lastEvaluation.result}
+                  <span className={mergeClasses(styles.resultBadge, isEvalPassed ? styles.resultPassed : styles.resultFailed)}>
+                    {evaluation.result}
                   </span>
                 </div>
 
                 <div className={styles.resultSection}>
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Status</span>
-                    <span className={mergeClasses(styles.detailValue, isPassed ? styles.statusSucceeded : styles.statusFailed)}>
-                      {lastEvaluation.result}
+                    <span className={mergeClasses(styles.detailValue, isEvalPassed ? styles.statusSucceeded : styles.statusFailed)}>
+                      {evaluation.result}
                     </span>
                   </div>
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Value</span>
-                    <span className={styles.detailValue}>{lastEvaluation.value}</span>
+                    <span className={styles.detailValue}>{evaluation.value}</span>
                   </div>
-                  {lastEvaluation.agentActionName && (
+                  {evaluation.agentActionName && (
                     <div className={styles.detailRow}>
                       <span className={styles.detailLabel}>Agent Action</span>
-                      <span className={styles.detailValue}>{lastEvaluation.agentActionName}</span>
+                      <span className={styles.detailValue}>{evaluation.agentActionName}</span>
                     </div>
                   )}
                 </div>
 
-                {lastEvaluation.reason && (
+                {evaluation.reason && (
                   <div style={{ marginTop: '8px' }}>
                     <span className={styles.fieldLabel}>Reason</span>
-                    <div className={styles.resultReason}>{lastEvaluation.reason}</div>
+                    <div className={styles.resultReason}>{evaluation.reason}</div>
                   </div>
                 )}
 
                 <div className={styles.tokenStats}>
                   <div className={styles.tokenStat}>
                     <span className={styles.statLabel}>Total Tokens</span>
-                    <span className={styles.statValue}>{lastEvaluation.totalTokens}</span>
+                    <span className={styles.statValue}>{evaluation.totalTokens}</span>
                   </div>
                   <div className={styles.tokenStat}>
                     <span className={styles.statLabel}>Input Tokens</span>
-                    <span className={styles.statValue}>{lastEvaluation.inputTokens}</span>
+                    <span className={styles.statValue}>{evaluation.inputTokens}</span>
                   </div>
                   <div className={styles.tokenStat}>
                     <span className={styles.statLabel}>Output Tokens</span>
-                    <span className={styles.statValue}>{lastEvaluation.outputTokens}</span>
+                    <span className={styles.statValue}>{evaluation.outputTokens}</span>
                   </div>
                 </div>
               </>

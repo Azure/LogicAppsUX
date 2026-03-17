@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Button, Input, mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
 import { AddRegular, EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   setEvaluators,
   setEvaluatorsLoading,
@@ -24,16 +24,15 @@ import {
   useSelectedRun,
   useSelectedAction,
 } from '../../core/state/evaluation/evaluationSelectors';
-import { useEvaluatorsQuery, useRunEvaluation, useRunEvaluationForAction, useDeleteEvaluator } from '../../core/queries/evaluations';
-import type { Evaluator } from '@microsoft/logic-apps-shared';
+import { useEvaluators, useRunEvaluation, useDeleteEvaluator, useEvaluations } from '../../core/queries/evaluations';
+import type { Evaluator, EvaluationResult } from '@microsoft/logic-apps-shared';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
-import type { RootState } from '../../core/store';
 
-interface EvaluatorsPanelProps {
+interface EvaluatorManagementPanelProps {
   workflowName: string;
 }
 
-export const EvaluatorsPanel = ({ workflowName }: EvaluatorsPanelProps) => {
+export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPanelProps) => {
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
   const filteredEvaluators = useFilteredEvaluators();
@@ -43,19 +42,30 @@ export const EvaluatorsPanel = ({ workflowName }: EvaluatorsPanelProps) => {
   const canRun = useCanRunEvaluation();
   const selectedRun = useSelectedRun();
   const selectedAction = useSelectedAction();
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
 
-  const { data, isLoading } = useEvaluatorsQuery(workflowName);
-  const runEvaluation = useRunEvaluation(workflowName);
-  const runEvaluationForAction = useRunEvaluationForAction(workflowName);
-  const deleteEvaluator = useDeleteEvaluator(workflowName);
+  const { data: evaluators, isLoading: isEvaluatorsLoading } = useEvaluators(workflowName, selectedAction?.name ?? '');
+  const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAction?.name ?? '');
+  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
+  const { data: evaluations } = useEvaluations(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '');
+
+  const evaluationsByName = useMemo(() => {
+    const map = new Map<string, EvaluationResult>();
+    if (evaluations) {
+      for (const result of evaluations) {
+        if (result.evaluatorName) {
+          map.set(result.evaluatorName, result);
+        }
+      }
+    }
+    return map;
+  }, [evaluations]);
 
   useEffect(() => {
-    dispatch(setEvaluatorsLoading(isLoading));
-    if (data) {
-      dispatch(setEvaluators(Array.isArray(data) ? data : []));
+    dispatch(setEvaluatorsLoading(isEvaluatorsLoading));
+    if (evaluators) {
+      dispatch(setEvaluators(Array.isArray(evaluators) ? evaluators : []));
     }
-  }, [data, isLoading, dispatch]);
+  }, [evaluators, isEvaluatorsLoading, dispatch]);
 
   const handleSelectEvaluator = useCallback(
     (evaluator: Evaluator) => {
@@ -76,34 +86,24 @@ export const EvaluatorsPanel = ({ workflowName }: EvaluatorsPanelProps) => {
       dispatch(setRunningEvaluatorName(evaluator.name));
 
       try {
-        const isStateful = workflowKind === 'stateful' || workflowKind === 'agentic';
-        if (isStateful && selectedAction) {
-          const result = await runEvaluationForAction.mutateAsync({
-            runId: selectedRun.id,
-            agentActionName: selectedAction.name,
-            evaluatorName: evaluator.name,
-          });
-          dispatch(setEvaluationResult(result));
-        } else {
-          const result = await runEvaluation.mutateAsync({
-            runId: selectedRun.id,
-            evaluatorName: evaluator.name,
-          });
-          dispatch(setEvaluationResult(result));
-        }
+        const result = await runEvaluation({
+          runId: selectedRun.name,
+          evaluatorName: evaluator.name,
+        });
+        dispatch(setEvaluationResult(result));
       } catch (err) {
         dispatch(setEvaluationError(err instanceof Error ? err.message : 'Failed to run evaluation'));
       } finally {
         dispatch(setEvaluationLoading(false));
       }
     },
-    [dispatch, selectedRun, selectedAction, workflowKind, runEvaluation, runEvaluationForAction]
+    [dispatch, selectedRun, runEvaluation]
   );
 
   const handleDeleteClick = useCallback(
     async (evaluator: Evaluator) => {
       try {
-        await deleteEvaluator.mutateAsync(evaluator.name);
+        await deleteEvaluator(evaluator.name);
         if (selectedEvaluator?.name === evaluator.name) {
           dispatch(setSelectedEvaluator(null));
         }
@@ -142,10 +142,11 @@ export const EvaluatorsPanel = ({ workflowName }: EvaluatorsPanelProps) => {
       <div className={styles.tableHeader}>
         <div className={styles.colType}>Type</div>
         <div className={styles.colName}>Name</div>
+        <div className={styles.colResult}>Result</div>
         <div className={styles.colActions} />
       </div>
 
-      {evaluatorsLoading || isLoading ? (
+      {evaluatorsLoading || isEvaluatorsLoading ? (
         <div className={styles.loadingContainer}>
           <Spinner size="small" label="Loading..." />
         </div>
@@ -168,6 +169,16 @@ export const EvaluatorsPanel = ({ workflowName }: EvaluatorsPanelProps) => {
               >
                 <div className={styles.colType}>{evaluator.template}</div>
                 <div className={styles.colName}>{evaluator.name}</div>
+                <div className={styles.colResult}>
+                  {(() => {
+                    const result = evaluationsByName.get(evaluator.name);
+                    if (!result) {
+                      return <span style={{ color: 'var(--colorNeutralForeground3)' }}>—</span>;
+                    }
+                    const passed = result.result?.toLowerCase() === 'passed';
+                    return <span className={passed ? styles.statusSucceeded : styles.statusFailed}>{passed ? 'Passed' : 'Failed'}</span>;
+                  })()}
+                </div>
                 <div className={styles.colActions}>
                   <Tooltip content="Edit" relationship="label">
                     <Button

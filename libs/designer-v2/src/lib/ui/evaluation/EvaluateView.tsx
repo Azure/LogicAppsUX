@@ -1,5 +1,5 @@
 import { mergeClasses } from '@fluentui/react-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   useSelectedEvaluator,
   useRightPanelView,
@@ -15,13 +15,13 @@ import {
   setEvaluationResult,
   setRunningEvaluatorName,
 } from '../../core/state/evaluation/evaluationSlice';
-import { useRunEvaluation, useRunEvaluationForAction, useDeleteEvaluator } from '../../core/queries/evaluations';
-import type { RootState } from '../../core/store';
+import { useRunEvaluation, useDeleteEvaluator } from '../../core/queries/evaluations';
 import { RunDatasetPanel } from './RunDatasetPanel';
-import { EvaluatorsPanel } from './EvaluatorsPanel';
+import { EvaluatorManagementPanel } from './EvaluatorManagementPanel';
 import { EvaluatorFormPanel } from './EvaluatorFormPanel';
-import { EvaluatorViewPanel } from './EvaluatorViewPanel';
+import { EvaluatorDetailsPanel } from './EvaluatorDetailsPanel';
 import { EvaluationResultPanel } from './EvaluationResultPanel';
+import { AgentChatPanel } from './AgentChatPanel';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
 
@@ -36,11 +36,9 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
   const rightPanelView = useRightPanelView();
   const selectedRun = useSelectedRun();
   const selectedAction = useSelectedAction();
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
 
-  const runEvaluation = useRunEvaluation(workflowName);
-  const runEvaluationForAction = useRunEvaluationForAction(workflowName);
-  const deleteEvaluator = useDeleteEvaluator(workflowName);
+  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
+  const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAction?.name ?? '');
 
   const handleRunClick = useCallback(async () => {
     if (!selectedRun || !selectedEvaluator) {
@@ -54,34 +52,24 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
     dispatch(setRunningEvaluatorName(selectedEvaluator.name));
 
     try {
-      const isStateful = workflowKind === 'stateful' || workflowKind === 'agentic';
-      if (isStateful && selectedAction) {
-        const result = await runEvaluationForAction.mutateAsync({
-          runId: selectedRun.id,
-          agentActionName: selectedAction.name,
-          evaluatorName: selectedEvaluator.name,
-        });
-        dispatch(setEvaluationResult(result));
-      } else {
-        const result = await runEvaluation.mutateAsync({
-          runId: selectedRun.id,
-          evaluatorName: selectedEvaluator.name,
-        });
-        dispatch(setEvaluationResult(result));
-      }
+      const result = await runEvaluation({
+        runId: selectedRun.name,
+        evaluatorName: selectedEvaluator.name,
+      });
+      dispatch(setEvaluationResult(result));
     } catch (err) {
       dispatch(setEvaluationError(err instanceof Error ? err.message : 'Failed to run evaluation'));
     } finally {
       dispatch(setEvaluationLoading(false));
     }
-  }, [dispatch, selectedRun, selectedAction, selectedEvaluator, workflowKind, runEvaluation, runEvaluationForAction]);
+  }, [dispatch, selectedRun, selectedEvaluator, runEvaluation]);
 
   const handleDeleteClick = useCallback(async () => {
     if (!selectedEvaluator) {
       return;
     }
     try {
-      await deleteEvaluator.mutateAsync(selectedEvaluator.name);
+      await deleteEvaluator(selectedEvaluator.name);
       dispatch(setSelectedEvaluator(null));
     } catch (err) {
       console.error('Failed to delete evaluator:', err);
@@ -95,7 +83,7 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
         return <EvaluatorFormPanel workflowName={workflowName} />;
       case 'view':
         return selectedEvaluator ? (
-          <EvaluatorViewPanel
+          <EvaluatorDetailsPanel
             workflowName={workflowName}
             evaluator={selectedEvaluator}
             onEdit={() => dispatch(startEditEvaluator(selectedEvaluator))}
@@ -119,8 +107,16 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
     <div className={styles.root}>
       <div className={styles.main}>
         <RunDatasetPanel />
-        <EvaluatorsPanel workflowName={workflowName} />
+        <EvaluatorManagementPanel workflowName={workflowName} />
         <div className={mergeClasses(styles.panel, styles.panelDetail)}>{renderRightPanel()}</div>
+        {selectedRun && (
+          <div className={styles.panelChat}>
+            <div className={styles.panelHeader}>
+              <h2 className={styles.panelTitle}>Chat History</h2>
+            </div>
+            <AgentChatPanel />
+          </div>
+        )}
       </div>
     </div>
   );

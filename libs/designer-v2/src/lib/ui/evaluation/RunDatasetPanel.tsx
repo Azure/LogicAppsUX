@@ -1,19 +1,20 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Button, mergeClasses, Spinner } from '@fluentui/react-components';
 import { ArrowLeftRegular } from '@fluentui/react-icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedRun, setSelectedAction } from '../../core/state/evaluation/evaluationSlice';
+import { useDispatch } from 'react-redux';
+import { setSelectedRun, setSelectedAction, setAgentActions, setAgentActionsLoading } from '../../core/state/evaluation/evaluationSlice';
 import {
   useSelectedRun,
   useSelectedAction,
   useAgentActions,
   useAgentActionsLoading,
 } from '../../core/state/evaluation/evaluationSelectors';
-import { useRunsInfiniteQuery, useAllRuns } from '../../core/queries/runs';
-import type { RootState } from '../../core/store';
+import { useRunsInfiniteQuery, useAllRuns, useRun } from '../../core/queries/runs';
 import type { WorkflowRunEntry, AgentAction } from '../../core/state/evaluation/evaluationInterfaces';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import type { Run } from '@microsoft/logic-apps-shared';
+import { useIsAgenticWorkflow } from '../../core/state/designerView/designerViewSelectors';
+import { useAgentOperations } from '../../core/state/workflow/workflowSelectors';
 
 const formatTimestamp = (isoString: string | undefined): string => {
   if (!isoString) {
@@ -55,7 +56,7 @@ const formatTime = (isoString: string | undefined): string => {
 };
 
 const runToEntry = (run: Run): WorkflowRunEntry => ({
-  id: run.id ?? run.name,
+  id: run.id,
   name: run.name,
   startTime: typeof run.properties.startTime === 'string' ? run.properties.startTime : new Date(run.properties.startTime).toISOString(),
   endTime: run.properties.endTime
@@ -73,17 +74,46 @@ export const RunDatasetPanel = () => {
   const selectedAction = useSelectedAction();
   const agentActions = useAgentActions();
   const agentActionsLoading = useAgentActionsLoading();
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  const isAgenticWorkflow = useIsAgenticWorkflow();
+  const agentOperations = useAgentOperations();
 
   const { isLoading: runsLoading, fetchNextPage, hasNextPage } = useRunsInfiniteQuery(true);
   const allRuns = useAllRuns();
 
-  const isStateful = workflowKind === 'stateful' || workflowKind === 'agentic';
+  const { data: runData } = useRun(selectedRun?.id, !!selectedRun && isAgenticWorkflow);
+
+  useEffect(() => {
+    if (!selectedRun || !isAgenticWorkflow || agentOperations.length === 0) {
+      dispatch(setAgentActions([]));
+      return;
+    }
+
+    if (!runData) {
+      dispatch(setAgentActionsLoading(true));
+      return;
+    }
+
+    const actions = (runData.properties.actions ?? {}) as Record<string, { status?: string; startTime?: string; endTime?: string }>;
+    dispatch(
+      setAgentActions(
+        agentOperations.map((nodeId) => {
+          const actionData = actions[nodeId];
+          return {
+            name: nodeId,
+            status: actionData?.status ?? '',
+            startTime: actionData?.startTime ?? '',
+            endTime: actionData?.endTime ?? '',
+          };
+        })
+      )
+    );
+    dispatch(setAgentActionsLoading(false));
+  }, [selectedRun, isAgenticWorkflow, agentOperations, runData, dispatch]);
 
   const handleRunClick = useCallback(
     (run: Run) => {
       const entry = runToEntry(run);
-      if (selectedRun?.id === entry.id) {
+      if (selectedRun?.name === entry.name) {
         return;
       }
       dispatch(setSelectedRun(entry));
@@ -103,7 +133,7 @@ export const RunDatasetPanel = () => {
   }, [dispatch]);
 
   // Agent actions sub-view for stateful/agentic workflows
-  if (selectedRun && isStateful && agentActions.length > 0) {
+  if (selectedRun && isAgenticWorkflow && agentActions.length > 0) {
     return (
       <div className={mergeClasses(styles.panel, styles.panelRuns)}>
         <div className={mergeClasses(styles.panelHeader, styles.panelHeaderWithBack)}>
@@ -160,11 +190,11 @@ export const RunDatasetPanel = () => {
       ) : (
         <div className={styles.listContainer}>
           {allRuns.map((run) => {
-            const id = run.id ?? run.name;
+            const id = run.name;
             return (
               <div
                 key={id}
-                className={mergeClasses(styles.listItem, selectedRun?.id === id && styles.listItemSelected)}
+                className={mergeClasses(styles.listItem, selectedRun?.name === id && styles.listItemSelected)}
                 onClick={() => handleRunClick(run)}
                 role="button"
                 tabIndex={0}

@@ -88,9 +88,11 @@ export interface DesignerCommandBarProps {
   isDesignerView: boolean;
   isCodeView: boolean;
   isMonitoringView: boolean;
+  isEvaluateView: boolean;
   switchToDesignerView: () => void;
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
+  switchToEvaluateView: () => void;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -104,9 +106,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isDesignerView,
   isCodeView,
   isMonitoringView,
+  isEvaluateView,
   switchToDesignerView,
   switchToCodeView,
   switchToMonitoringView,
+  switchToEvaluateView,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -274,6 +278,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         }}
       >
         Run history
+      </Button>
+      <Button
+        appearance={isEvaluateView ? 'primary' : 'subtle'}
+        className={mergeClasses(styles.viewButton, isEvaluateView ? styles.selectedButton : '')}
+        size="small"
+        onClick={() => {
+          dispatch(collapsePanel());
+          dispatch(resetDesignerView());
+          switchToEvaluateView();
+        }}
+      >
+        Evaluate
       </Button>
     </Card>
   );
