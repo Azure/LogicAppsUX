@@ -26,7 +26,6 @@ import {
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
-  ConnectionService,
   WorkflowService,
   getIntl,
   create,
@@ -167,15 +166,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     }
 
     const operation = getRecordEntry(rootState.operations.operationInfo, nodeId);
-    // DEBUG: Log MCP connection filtering
-    if (referenceKey === 'mcpclient' || referenceKey?.includes('mcp')) {
-      console.log(
-        `[MCP Debug] nodeId=${nodeId}, referenceKey=${referenceKey}, operation.type=${operation?.type}, operation.kind=${operation?.kind}, isBuiltIn=${operation ? isBuiltInMcpOperation(operation) : 'no-op'}`
-      );
-    }
-
+    // Built-in MCP operations don't use connection references; exclude them
     if (operation && isBuiltInMcpOperation(operation)) {
-      console.log(`[MCP Filter] Skipping MCP connection: ${referenceKey}`);
       return references;
     }
 
@@ -548,32 +540,9 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
-  // Look up the connection to get MCP server URL and authentication type
-  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
-  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
-  const connectionId = connectionReference?.connection?.id;
-
-  let mcpServerUrl = '';
-  let authenticationType = 'None';
-
-  if (connectionId) {
-    try {
-      const connection = await ConnectionService().getConnection(connectionId);
-      const parameterValues = (connection?.properties as any)?.parameterValues;
-      if (parameterValues) {
-        mcpServerUrl = parameterValues.mcpServerUrl ?? '';
-        authenticationType = parameterValues.authenticationType ?? 'None';
-      }
-    } catch {
-      // Fall back to empty values if connection lookup fails
-    }
-  }
-
+  // Built-in MCP operations: MCP server URL and authentication are passed as parameters.
+  // No pseudo-connection is needed; backend handles implicit MCP connection.
   const inputs = {
-    Connection: {
-      McpServerUrl: mcpServerUrl,
-      Authentication: authenticationType,
-    },
     parameters: {
       ...inputParameters.parameters,
     },
