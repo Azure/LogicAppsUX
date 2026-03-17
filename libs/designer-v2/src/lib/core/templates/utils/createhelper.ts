@@ -11,6 +11,12 @@ interface WorkflowPayload {
   connectionReferences?: ConnectionReferences;
 }
 
+const isBuiltInMcpConnectionReference = (connection: any): boolean => {
+  const apiId = connection?.api?.id?.toLowerCase?.() ?? '';
+  const connectionId = connection?.connection?.id?.toLowerCase?.() ?? '';
+  return apiId.includes('connectionproviders/mcpclient') || connectionId.includes('/connectionproviders/mcpclient/');
+};
+
 export const getConsumptionWorkflowPayloadForCreate = (
   definition: LogicAppsV2.WorkflowDefinition,
   parameterDefinitions: Record<string, Template.ParameterDefinition>,
@@ -149,11 +155,14 @@ const convertDesignerWorkflowToConsumptionWorkflow = (
   } else {
     // Move connection data to parameters
     if (workflow?.connections) {
+      const filteredConnections = Object.fromEntries(
+        Object.entries(workflow.connections).filter(([, connection]) => !isBuiltInMcpConnectionReference(connection))
+      );
       workflow.parameters = {
         ...workflow.parameters,
         $connections: {
           value: {
-            ...workflow.connections,
+            ...filteredConnections,
           },
         } as WorkflowParameter,
       };
@@ -179,6 +188,9 @@ const convertDesignerWorkflowToConsumptionWorkflow = (
         workflow.parameters.$connections = { type: 'Object', value: {} };
       }
       Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
+        if (isBuiltInMcpConnectionReference(connection)) {
+          return;
+        }
         workflow.parameters.$connections.value[key] = {
           id: connection.api.id,
           connectionId: connection.connection.id,

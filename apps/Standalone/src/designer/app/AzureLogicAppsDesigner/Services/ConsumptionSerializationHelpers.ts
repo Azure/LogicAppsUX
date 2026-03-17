@@ -102,6 +102,19 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   // Remove connections from workflow root
   delete workflow?.connections;
 
+  // Defensive guard: built-in MCP pseudo IDs are not valid ARM connection resources.
+  // If any legacy/stale path adds one, strip it before save.
+  const connectionValues = workflow?.parameters?.$connections?.value;
+  if (connectionValues && typeof connectionValues === 'object') {
+    Object.keys(connectionValues).forEach((key) => {
+      const candidate = connectionValues[key];
+      const connectionId = candidate?.connectionId;
+      if (typeof connectionId === 'string' && connectionId.toLowerCase().startsWith('/connectionproviders/mcpclient/connections/')) {
+        delete connectionValues[key];
+      }
+    });
+  }
+
   return workflow;
 };
 
