@@ -162,7 +162,15 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     }
 
     const operation = getRecordEntry(rootState.operations.operationInfo, nodeId);
+    // DEBUG: Log MCP connection filtering
+    if (referenceKey === 'mcpclient' || referenceKey?.includes('mcp')) {
+      console.log(
+        `[MCP Debug] nodeId=${nodeId}, referenceKey=${referenceKey}, operation.type=${operation?.type}, operation.kind=${operation?.kind}, isBuiltIn=${operation ? isBuiltInMcpOperation(operation) : 'no-op'}`
+      );
+    }
+
     if (operation && isBuiltInMcpOperation(operation)) {
+      console.log(`[MCP Filter] Skipping MCP connection: ${referenceKey}`);
       return references;
     }
 

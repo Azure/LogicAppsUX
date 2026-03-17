@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isOpenApiSchemaVersion } from '@microsoft/logic-apps-designer';
 import { clone } from '@microsoft/logic-apps-shared';
 
@@ -47,6 +46,7 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   } else {
     // Move connection data to parameters
     if (workflow?.connections) {
+      console.log('[MCP $connections Debug] workflow.connections keys:', Object.keys(workflow.connections));
       workflow.parameters = {
         ...workflow.parameters,
         $connections: {
@@ -73,6 +73,7 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
 
     // Move connection references to root parameters
     if (workflow?.connectionReferences) {
+      console.log('[MCP $connections Debug] workflow.connectionReferences keys:', Object.keys(workflow.connectionReferences));
       if (!workflow.parameters?.$connections) {
         workflow.parameters.$connections = { value: {} };
       }
