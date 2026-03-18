@@ -35,7 +35,7 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
   const selectedRun = useSelectedRun();
   const selectedAction = useSelectedAction();
 
-  const { data: evaluators, isLoading: isEvaluatorsLoading } = useEvaluators(workflowName, selectedAction?.name ?? '');
+  const { data: evaluators, isFetching: isEvaluatorsFetching } = useEvaluators(workflowName, selectedAction?.name ?? '');
   const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAction?.name ?? '');
   const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
   const { data: evaluations } = useEvaluations(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '');
@@ -123,7 +123,7 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
         <div className={styles.colActions} />
       </div>
 
-      {isEvaluatorsLoading ? (
+      {isEvaluatorsFetching ? (
         <div className={styles.loadingContainer}>
           <Spinner size="small" label="Loading..." />
         </div>

@@ -130,6 +130,7 @@ export const RunDatasetPanel = () => {
 
   const handleBackClick = useCallback(() => {
     dispatch(setSelectedAction(null));
+    dispatch(setSelectedRun(null));
   }, [dispatch]);
 
   // Agent actions sub-view for stateful/agentic workflows

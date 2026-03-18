@@ -36,7 +36,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
     });
   }, [dispatch, selectedRun, evaluator.name, runEvaluation]);
 
-  const { data: evaluation, isLoading: isEvaluationLoading } = useEvaluation(
+  const { data: evaluation, isFetching: isEvaluationFetching } = useEvaluation(
     workflowName,
     selectedRun?.name ?? '',
     selectedAction?.name ?? '',
@@ -190,7 +190,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
         {/* Last Evaluation Result */}
         {selectedRun && (
           <div className={styles.card}>
-            {isEvaluationLoading ? (
+            {isEvaluationFetching ? (
               <div className={styles.loadingContainer}>
                 <Spinner size="small" label="Loading evaluation..." />
               </div>

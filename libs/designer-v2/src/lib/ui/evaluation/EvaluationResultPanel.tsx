@@ -15,11 +15,11 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
 
   const {
     data: result,
-    isLoading,
+    isFetching,
     error,
   } = useEvaluation(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '', evaluatorName);
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className={styles.loadingContainer} style={{ flex: 1, alignItems: 'center' }}>
