@@ -1662,19 +1662,57 @@ export async function countCanvasNodes(driver: WebDriver): Promise<number> {
  * Check if the designer canvas has a specific node by partial text match.
  */
 export async function canvasHasNode(driver: WebDriver, nodeText: string): Promise<boolean> {
+  const lowerText = nodeText.toLowerCase();
+
+  // Strategy 1: Check .react-flow__node getText()
   try {
     const nodes = await driver.findElements(By.css('.react-flow__node'));
+    const nodeTexts: string[] = [];
     for (const node of nodes) {
       try {
         const text = await node.getText();
-        if (text.toLowerCase().includes(nodeText.toLowerCase())) {
+        nodeTexts.push(text.substring(0, 60));
+        if (text.toLowerCase().includes(lowerText)) {
           return true;
         }
       } catch {}
     }
+    console.log(`[canvasHasNode] Searching for "${nodeText}" — node texts: ${JSON.stringify(nodeTexts)}`);
   } catch {
     // No nodes found
   }
+
+  // Strategy 2: Check data-testid="card-<name>" (case-insensitive via JS)
+  try {
+    const found = await driver.executeScript<boolean>(
+      `var cards = document.querySelectorAll('[data-testid]');
+      for (var i = 0; i < cards.length; i++) {
+        var tid = cards[i].getAttribute('data-testid').toLowerCase();
+        if (tid.includes('card-') && tid.includes(arguments[0])) return true;
+      }
+      return false;`,
+      lowerText
+    );
+    if (found) {
+      return true;
+    }
+  } catch {}
+
+  // Strategy 3: Check data-automation-id containing the node name
+  try {
+    const found = await driver.executeScript<boolean>(
+      `var els = document.querySelectorAll('[data-automation-id]');
+      for (var i = 0; i < els.length; i++) {
+        var aid = els[i].getAttribute('data-automation-id').toLowerCase();
+        if (aid.includes('card-') && aid.includes(arguments[0])) return true;
+      }
+      return false;`,
+      lowerText
+    );
+    if (found) {
+      return true;
+    }
+  } catch {}
 
   return false;
 }
