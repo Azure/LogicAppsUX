@@ -1,4 +1,4 @@
-import { ResourceService, LoggerService, LogEntryLevel } from '@microsoft/logic-apps-shared';
+import { ResourceService, LoggerService, LogEntryLevel, type UploadFile } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 
 export const createKnowledgeHub = async (siteResourceId: string, groupName: string, description: string) => {
@@ -29,4 +29,17 @@ export const createKnowledgeHub = async (siteResourceId: string, groupName: stri
       message: `Error while creating knowledge hub for the app: ${siteResourceId}`,
     });
   }
+};
+
+export const uploadFileToKnowledgeHub = async (
+  siteResourceId: string,
+  groupName: string,
+  content: { file: UploadFile; description?: string }
+) => {
+  console.log('Uploading file to knowledge hub', {
+    siteResourceId,
+    groupName,
+    fileName: content.file.file.name,
+    description: content.description,
+  });
 };

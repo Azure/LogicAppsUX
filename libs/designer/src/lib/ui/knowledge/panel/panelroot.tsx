@@ -4,8 +4,13 @@ import { CreateConnectionPanel } from './connection/create';
 import { AddFilePanel } from './addfile';
 import { useSelector } from 'react-redux';
 import { EditConnectionPanel } from './connection/edit';
+import type { RenderFileUploadProps } from '@microsoft/logic-apps-shared';
 
-export const KnowledgeHubPanel = ({ resourceId, mountNode }: { resourceId: string; mountNode: HTMLDivElement | null }) => {
+export const KnowledgeHubPanel = ({
+  resourceId,
+  mountNode,
+  renderFileUpload,
+}: { resourceId: string; mountNode: HTMLDivElement | null; renderFileUpload: (props: RenderFileUploadProps) => JSX.Element }) => {
   const { isOpen, panelView } = useSelector((state: RootState) => ({
     isOpen: state.knowledgeHubPanel?.isOpen ?? false,
     panelView: state.knowledgeHubPanel?.currentPanelView,
@@ -21,7 +26,7 @@ export const KnowledgeHubPanel = ({ resourceId, mountNode }: { resourceId: strin
   }
 
   return panelView === KnowledgePanelView.AddFiles ? (
-    <AddFilePanel resourceId={resourceId} mountNode={mountNode} />
+    <AddFilePanel resourceId={resourceId} mountNode={mountNode} renderFileUpload={renderFileUpload} />
   ) : panelView === KnowledgePanelView.CreateConnection ? (
     <CreateConnectionPanel mountNode={mountNode} />
   ) : (

@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../../core/state/knowledge/store
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import type { KnowledgeHub } from '@microsoft/logic-apps-shared';
+import type { KnowledgeHub, RenderFileUploadProps } from '@microsoft/logic-apps-shared';
 import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
 import { KnowledgePanelView, openPanelView } from '../../../core/state/knowledge/panelSlice';
 import {
@@ -37,7 +37,7 @@ import {
 } from '@fluentui/react-icons';
 import { CreateGroup } from '../modals/creategroup';
 
-export const KnowledgeHubWizard = () => {
+export const KnowledgeHubWizard = ({ renderFileUpload }: { renderFileUpload: (props: RenderFileUploadProps) => JSX.Element }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const styles = useWizardStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -180,7 +180,7 @@ export const KnowledgeHubWizard = () => {
         </div>
         {hubs.length === 0 ? connection ? <EmptyKnowledgeBaseView /> : <NoConnectionsView /> : <div>{'Open the list view here'}</div>}
         {showAddGroup ? <CreateGroup resourceId={logicAppId} onDismiss={handleCloseAddGroup} /> : null}
-        <KnowledgeHubPanel resourceId={logicAppId} mountNode={containerRef.current} />
+        <KnowledgeHubPanel resourceId={logicAppId} mountNode={containerRef.current} renderFileUpload={renderFileUpload} />
       </div>
       <div
         id={'msla-layer-host'}
