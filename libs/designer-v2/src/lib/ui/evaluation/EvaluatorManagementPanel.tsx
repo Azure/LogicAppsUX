@@ -1,23 +1,17 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Button, Input, mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
 import { AddRegular, EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import {
-  setEvaluators,
-  setEvaluatorsLoading,
   setSelectedEvaluator,
   startCreateEvaluator,
   startEditEvaluator,
   setSearchQuery,
   setRightPanelView,
-  setEvaluationLoading,
-  setEvaluationError,
-  setEvaluationResult,
   setRunningEvaluatorName,
 } from '../../core/state/evaluation/evaluationSlice';
 import {
   useFilteredEvaluators,
-  useEvaluatorsLoading,
   useSelectedEvaluator,
   useSearchQuery,
   useCanRunEvaluation,
@@ -35,8 +29,6 @@ interface EvaluatorManagementPanelProps {
 export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPanelProps) => {
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
-  const filteredEvaluators = useFilteredEvaluators();
-  const evaluatorsLoading = useEvaluatorsLoading();
   const selectedEvaluator = useSelectedEvaluator();
   const searchQuery = useSearchQuery();
   const canRun = useCanRunEvaluation();
@@ -47,6 +39,9 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
   const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAction?.name ?? '');
   const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
   const { data: evaluations } = useEvaluations(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '');
+
+  const evaluatorsList = useMemo(() => (Array.isArray(evaluators) ? evaluators : []), [evaluators]);
+  const filteredEvaluators = useFilteredEvaluators(evaluatorsList);
 
   const evaluationsByName = useMemo(() => {
     const map = new Map<string, EvaluationResult>();
@@ -59,13 +54,6 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
     }
     return map;
   }, [evaluations]);
-
-  useEffect(() => {
-    dispatch(setEvaluatorsLoading(isEvaluatorsLoading));
-    if (evaluators) {
-      dispatch(setEvaluators(Array.isArray(evaluators) ? evaluators : []));
-    }
-  }, [evaluators, isEvaluatorsLoading, dispatch]);
 
   const handleSelectEvaluator = useCallback(
     (evaluator: Evaluator) => {
@@ -80,22 +68,11 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
         return;
       }
       dispatch(setRightPanelView('result'));
-      dispatch(setEvaluationLoading(true));
-      dispatch(setEvaluationError(null));
-      dispatch(setEvaluationResult(null));
       dispatch(setRunningEvaluatorName(evaluator.name));
-
-      try {
-        const result = await runEvaluation({
-          runId: selectedRun.name,
-          evaluatorName: evaluator.name,
-        });
-        dispatch(setEvaluationResult(result));
-      } catch (err) {
-        dispatch(setEvaluationError(err instanceof Error ? err.message : 'Failed to run evaluation'));
-      } finally {
-        dispatch(setEvaluationLoading(false));
-      }
+      await runEvaluation({
+        runId: selectedRun.name,
+        evaluatorName: evaluator.name,
+      });
     },
     [dispatch, selectedRun, runEvaluation]
   );
@@ -146,7 +123,7 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
         <div className={styles.colActions} />
       </div>
 
-      {evaluatorsLoading || isEvaluatorsLoading ? (
+      {isEvaluatorsLoading ? (
         <div className={styles.loadingContainer}>
           <Spinner size="small" label="Loading..." />
         </div>

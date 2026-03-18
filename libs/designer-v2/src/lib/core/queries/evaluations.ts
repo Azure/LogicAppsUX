@@ -238,8 +238,10 @@ const useRunGlobalAgentEvaluation = (workflowName: string) => {
     },
     {
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([evaluationQueryKeys.evaluations, workflowName, variables.runId]);
-        queryClient.invalidateQueries([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName]);
+        queryClient.setQueryData([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName], data);
+        queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId], (oldData: any) => {
+          return [...(oldData ?? []), data];
+        });
       },
     }
   );
@@ -253,14 +255,13 @@ const useRunAgentEvaluation = (workflowName: string, agentActionName: string) =>
     },
     {
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([evaluationQueryKeys.evaluations, workflowName, variables.runId, agentActionName]);
-        queryClient.invalidateQueries([
-          evaluationQueryKeys.evaluation,
-          workflowName,
-          variables.runId,
-          agentActionName,
-          variables.evaluatorName,
-        ]);
+        queryClient.setQueryData(
+          [evaluationQueryKeys.evaluation, workflowName, variables.runId, agentActionName, variables.evaluatorName],
+          data
+        );
+        queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId, agentActionName], (oldData: any) => {
+          return [...(oldData ?? []), data];
+        });
       },
     }
   );

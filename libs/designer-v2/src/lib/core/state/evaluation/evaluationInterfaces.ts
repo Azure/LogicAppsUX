@@ -1,4 +1,4 @@
-import type { Evaluator, EvaluationResult } from '@microsoft/logic-apps-shared';
+import type { Evaluator } from '@microsoft/logic-apps-shared';
 
 export type RightPanelView = 'empty' | 'create' | 'edit' | 'view' | 'result';
 
@@ -18,18 +18,12 @@ export interface WorkflowRunEntry {
 }
 
 export interface EvaluationState {
-  evaluators: Evaluator[];
-  evaluatorsLoading: boolean;
   selectedEvaluator: Evaluator | null;
   selectedRun: WorkflowRunEntry | null;
   selectedAction: AgentAction | null;
   agentActions: AgentAction[];
   agentActionsLoading: boolean;
   rightPanelView: RightPanelView;
-  editingEvaluator: Evaluator | null;
-  evaluationResult: EvaluationResult | null;
-  evaluationLoading: boolean;
-  evaluationError: string | null;
   runningEvaluatorName: string;
   searchQuery: string;
 }

@@ -1,20 +1,25 @@
 import { mergeClasses, Spinner } from '@fluentui/react-components';
-import {
-  useEvaluationResult,
-  useEvaluationLoading,
-  useEvaluationError,
-  useRunningEvaluatorName,
-} from '../../core/state/evaluation/evaluationSelectors';
+import { useRunningEvaluatorName, useSelectedRun, useSelectedAction } from '../../core/state/evaluation/evaluationSelectors';
+import { useEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 
-export const EvaluationResultPanel = () => {
-  const styles = useEvaluateViewStyles();
-  const result = useEvaluationResult();
-  const loading = useEvaluationLoading();
-  const error = useEvaluationError();
-  const evaluatorName = useRunningEvaluatorName();
+interface EvaluationResultPanelProps {
+  workflowName: string;
+}
 
-  if (loading) {
+export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelProps) => {
+  const styles = useEvaluateViewStyles();
+  const evaluatorName = useRunningEvaluatorName();
+  const selectedRun = useSelectedRun();
+  const selectedAction = useSelectedAction();
+
+  const {
+    data: result,
+    isLoading,
+    error,
+  } = useEvaluation(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '', evaluatorName);
+
+  if (isLoading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className={styles.loadingContainer} style={{ flex: 1, alignItems: 'center' }}>
@@ -35,7 +40,7 @@ export const EvaluationResultPanel = () => {
         </div>
         <div className={styles.formContent}>
           <div className={styles.formError}>
-            <span>{error}</span>
+            <span>{error instanceof Error ? error.message : String(error)}</span>
           </div>
         </div>
       </div>

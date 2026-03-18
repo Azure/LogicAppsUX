@@ -2,22 +2,39 @@ import { Button, mergeClasses, Spinner, Tooltip } from '@fluentui/react-componen
 import { EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
 import type { Evaluator } from '@microsoft/logic-apps-shared';
 import { useSelectedRun, useSelectedAction, useCanRunEvaluation } from '../../core/state/evaluation/evaluationSelectors';
-import { useEvaluation } from '../../core/queries/evaluations';
+import { setRightPanelView, setRunningEvaluatorName } from '../../core/state/evaluation/evaluationSlice';
+import { useEvaluation, useRunEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 interface EvaluatorDetailsPanelProps {
   workflowName: string;
   evaluator: Evaluator;
   onEdit: () => void;
-  onRun: () => void;
   onDelete: () => void;
 }
 
-export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onRun, onDelete }: EvaluatorDetailsPanelProps) => {
+export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelete }: EvaluatorDetailsPanelProps) => {
   const styles = useEvaluateViewStyles();
+  const dispatch = useDispatch();
   const selectedRun = useSelectedRun();
   const selectedAction = useSelectedAction();
   const canRun = useCanRunEvaluation();
+
+  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
+
+  const handleRunEvaluation = useCallback(async () => {
+    if (!selectedRun) {
+      return;
+    }
+    dispatch(setRightPanelView('result'));
+    dispatch(setRunningEvaluatorName(evaluator.name));
+    await runEvaluation({
+      runId: selectedRun.name,
+      evaluatorName: evaluator.name,
+    });
+  }, [dispatch, selectedRun, evaluator.name, runEvaluation]);
 
   const { data: evaluation, isLoading: isEvaluationLoading } = useEvaluation(
     workflowName,
@@ -158,7 +175,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onRun, 
               </Button>
             </Tooltip>
             <Tooltip content={canRun ? 'Run evaluation' : 'Select a run first'} relationship="label">
-              <Button appearance="primary" icon={<PlayRegular />} onClick={onRun} disabled={!canRun}>
+              <Button appearance="primary" icon={<PlayRegular />} onClick={handleRunEvaluation} disabled={!canRun}>
                 Run
               </Button>
             </Tooltip>

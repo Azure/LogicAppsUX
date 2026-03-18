@@ -3,7 +3,7 @@ import { Button, Dropdown, Input, Label, Option, Radio, RadioGroup, Checkbox, Te
 import { DeleteRegular, AddRegular, SaveRegular } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { finishFormAction, cancelFormAction } from '../../core/state/evaluation/evaluationSlice';
-import { useEditingEvaluator, useRightPanelView, useSelectedAction } from '../../core/state/evaluation/evaluationSelectors';
+import { useSelectedEvaluator, useRightPanelView, useSelectedAction } from '../../core/state/evaluation/evaluationSelectors';
 import { useCreateOrUpdateEvaluator } from '../../core/queries/evaluations';
 import type { EvaluatorTemplate, ComparisonMethod } from '@microsoft/logic-apps-shared';
 import type { EvaluatorFormData } from './evaluatorFormHelpers';
@@ -23,7 +23,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
   const rightPanelView = useRightPanelView();
-  const editingEvaluator = useEditingEvaluator();
+  const selectedEvaluator = useSelectedEvaluator();
   const mode = rightPanelView === 'edit' ? 'edit' : 'create';
   const selectedAction = useSelectedAction();
   const { mutateAsync: createOrUpdateEvaluator, isLoading: isModifyingEvaluator } = useCreateOrUpdateEvaluator(
@@ -35,12 +35,12 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (mode === 'edit' && editingEvaluator) {
-      setFormData(evaluatorToFormData(editingEvaluator));
+    if (mode === 'edit' && selectedEvaluator) {
+      setFormData(evaluatorToFormData(selectedEvaluator));
     } else {
       setFormData(createDefaultEvaluatorFormData());
     }
-  }, [mode, editingEvaluator]);
+  }, [mode, selectedEvaluator]);
 
   const updateFormField = useCallback(<K extends keyof EvaluatorFormData>(field: K, value: EvaluatorFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
