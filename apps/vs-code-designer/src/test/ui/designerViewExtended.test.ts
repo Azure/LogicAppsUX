@@ -116,46 +116,52 @@ describe('Designer View Extended Tests', function () {
     assert.ok(result.success, `Designer should open — ${result.error}`);
 
     try {
-      const initialCount = await countCanvasNodes(driver);
       await captureScreenshot(driver, 'parallel-initial', EXPLICIT_SCREENSHOT_DIR);
 
       const added = await addParallelBranch(driver, 'Response');
       await captureScreenshot(driver, 'parallel-after-branch', EXPLICIT_SCREENSHOT_DIR);
       console.log(`[parallel] addParallelBranch returned: ${added}`);
-      if (added && (await waitForDiscoveryPanel(driver, 5000))) {
-        await captureScreenshot(driver, 'parallel-discovery-panel', EXPLICIT_SCREENSHOT_DIR);
-        await searchInDiscoveryPanel(driver, 'Compose');
-        await waitForSearchResults(driver);
-        await captureScreenshot(driver, 'parallel-search-results', EXPLICIT_SCREENSHOT_DIR);
-        await selectOperation(driver, 'Compose');
-        await captureScreenshot(driver, 'parallel-after-select-compose', EXPLICIT_SCREENSHOT_DIR);
-        const newCount = await waitForNodeCountIncrease(driver, initialCount, 15_000);
-        console.log(`[parallel] Node count: ${initialCount} → ${newCount}`);
-        assert.ok(newCount > initialCount, `Node count should increase (${initialCount} → ${newCount})`);
-        // Wait for the Compose node text/card to appear on the canvas.
-        // After selectOperation, React Flow re-layouts asynchronously —
-        // the node may take a few seconds to render with its label.
-        let composeFound = false;
-        const composeDeadline = Date.now() + 10_000;
-        while (Date.now() < composeDeadline) {
-          if (await canvasHasNode(driver, 'Compose')) {
-            composeFound = true;
-            break;
-          }
-          await sleep(500);
-        }
-        await captureScreenshot(driver, 'parallel-compose-wait-result', EXPLICIT_SCREENSHOT_DIR);
-        // If text/testid match fails but node count increased, accept it.
-        // The node may render with a different label in parallel branch layout.
-        if (!composeFound && newCount > initialCount) {
-          console.log('[parallel] Compose text not found but node count increased — accepting');
-          composeFound = true;
-        }
-        assert.ok(composeFound, 'Compose node should be on canvas');
-      } else {
-        console.log(`[parallel] Discovery panel did not open (added=${added})`);
+      assert.ok(added, 'Parallel branch should be added');
+
+      // Capture node count AFTER addParallelBranch — the branch itself adds a
+      // placeholder node, so we need this as the baseline for detecting Compose.
+      const countAfterBranch = await countCanvasNodes(driver);
+      console.log(`[parallel] Node count after branch: ${countAfterBranch}`);
+
+      const panelOpen = await waitForDiscoveryPanel(driver, 5000);
+      if (!panelOpen) {
         await captureScreenshot(driver, 'parallel-no-discovery-panel', EXPLICIT_SCREENSHOT_DIR);
+        assert.fail('Discovery panel should open after adding parallel branch');
       }
+
+      await captureScreenshot(driver, 'parallel-discovery-panel', EXPLICIT_SCREENSHOT_DIR);
+      await searchInDiscoveryPanel(driver, 'Compose');
+      await waitForSearchResults(driver);
+      await captureScreenshot(driver, 'parallel-search-results', EXPLICIT_SCREENSHOT_DIR);
+      const selected = await selectOperation(driver, 'Compose');
+      console.log(`[parallel] selectOperation returned: ${selected}`);
+      await captureScreenshot(driver, 'parallel-after-select-compose', EXPLICIT_SCREENSHOT_DIR);
+
+      // Wait for the Compose node to actually appear on the canvas.
+      // Use countAfterBranch as baseline so we detect the real addition.
+      const newCount = await waitForNodeCountIncrease(driver, countAfterBranch, 15_000);
+      console.log(`[parallel] Node count: ${countAfterBranch} → ${newCount}`);
+
+      // Also poll for the Compose node by text/testid
+      let composeFound = false;
+      const composeDeadline = Date.now() + 10_000;
+      while (Date.now() < composeDeadline) {
+        if (await canvasHasNode(driver, 'Compose')) {
+          composeFound = true;
+          break;
+        }
+        await sleep(500);
+      }
+      await captureScreenshot(driver, 'parallel-compose-wait-result', EXPLICIT_SCREENSHOT_DIR);
+      assert.ok(
+        composeFound || newCount > countAfterBranch,
+        `Compose node should be on canvas (found=${composeFound}, count ${countAfterBranch}→${newCount})`
+      );
 
       await clickSaveButton(driver);
       await captureScreenshot(driver, 'parallel-after-save', EXPLICIT_SCREENSHOT_DIR);
