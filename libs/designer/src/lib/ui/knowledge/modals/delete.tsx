@@ -53,8 +53,8 @@ export const DeleteModal = ({
       description: 'Title for the delete hub artifacts modal',
     }),
     multiArtifactsContent: intl.formatMessage({
-      defaultMessage: `Confirm that you want to delete these hub artifacts? You can't undo this action. Deleting the hub will delete all artifacts under it.`,
-      id: '/8PUD5',
+      defaultMessage: `Confirm that you want to delete these hub artifacts? Deleting a hub deletes all its artifacts. You can't undo this action.`,
+      id: 'uYxnwQ',
       description: 'Content for the delete hub artifacts modal',
     }),
     hubContent: intl.formatMessage({

@@ -115,7 +115,7 @@ describe('DeleteModal Component', () => {
       const dialog = getDialog();
       expect(
         within(dialog).getByText(
-          "Confirm that you want to delete these hub artifacts? You can't undo this action. Deleting the hub will delete all artifacts under it."
+          "Confirm that you want to delete these hub artifacts? Deleting a hub deletes all its artifacts. You can't undo this action."
         )
       ).toBeInTheDocument();
     });
