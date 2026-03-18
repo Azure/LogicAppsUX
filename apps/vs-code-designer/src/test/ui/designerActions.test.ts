@@ -2947,14 +2947,21 @@ describe('Designer Actions Tests', function () {
     // Close all editor tabs from test 1 (run details webview, designer, workflow.json).
     // Without this, the run details webview from test 1 stays focused and blocks
     // the command palette interaction needed to open the CustomCode workspace.
+    // Use keyboard shortcut Ctrl+K Ctrl+W instead of EditorView API because
+    // the API fails when we're still inside the webview frame context.
     try {
       await driver.switchTo().defaultContent();
-      const editorView = new EditorView();
-      await editorView.closeAllEditors();
-      await sleep(2000);
-      console.log('[test2] Closed all editors from test 1');
     } catch {
-      console.log('[test2] Could not close editors (may already be closed)');
+      /* ignore */
+    }
+    try {
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('k').keyUp(Key.CONTROL).perform();
+      await sleep(300);
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('w').keyUp(Key.CONTROL).perform();
+      await sleep(2000);
+      console.log('[test2] Closed all editors via Ctrl+K Ctrl+W');
+    } catch {
+      console.log('[test2] Could not close editors via keyboard shortcut');
     }
 
     const entry = manifest.find((e) => e.appType === 'customCode') || manifest.find((e) => e.appType === 'rulesEngine') || manifest[0];

@@ -120,11 +120,17 @@ describe('Designer View Extended Tests', function () {
       await captureScreenshot(driver, 'parallel-initial', EXPLICIT_SCREENSHOT_DIR);
 
       const added = await addParallelBranch(driver, 'Response');
+      await captureScreenshot(driver, 'parallel-after-branch', EXPLICIT_SCREENSHOT_DIR);
+      console.log(`[parallel] addParallelBranch returned: ${added}`);
       if (added && (await waitForDiscoveryPanel(driver, 5000))) {
+        await captureScreenshot(driver, 'parallel-discovery-panel', EXPLICIT_SCREENSHOT_DIR);
         await searchInDiscoveryPanel(driver, 'Compose');
         await waitForSearchResults(driver);
+        await captureScreenshot(driver, 'parallel-search-results', EXPLICIT_SCREENSHOT_DIR);
         await selectOperation(driver, 'Compose');
+        await captureScreenshot(driver, 'parallel-after-select-compose', EXPLICIT_SCREENSHOT_DIR);
         const newCount = await waitForNodeCountIncrease(driver, initialCount, 15_000);
+        console.log(`[parallel] Node count: ${initialCount} → ${newCount}`);
         assert.ok(newCount > initialCount, `Node count should increase (${initialCount} → ${newCount})`);
         // Wait for the Compose node text to appear on the canvas.
         // After selectOperation, React Flow re-layouts asynchronously —
@@ -138,7 +144,11 @@ describe('Designer View Extended Tests', function () {
           }
           await sleep(500);
         }
+        await captureScreenshot(driver, 'parallel-compose-wait-result', EXPLICIT_SCREENSHOT_DIR);
         assert.ok(composeFound, 'Compose node should be on canvas');
+      } else {
+        console.log(`[parallel] Discovery panel did not open (added=${added})`);
+        await captureScreenshot(driver, 'parallel-no-discovery-panel', EXPLICIT_SCREENSHOT_DIR);
       }
 
       await clickSaveButton(driver);
