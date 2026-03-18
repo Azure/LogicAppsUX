@@ -48,8 +48,8 @@ export const DeleteModal = ({
   );
   const INTL_TEXT = {
     title: intl.formatMessage({
-      defaultMessage: 'Delete hub artifacts.',
-      id: 'uc2g6Y',
+      defaultMessage: 'Delete hub artifacts',
+      id: 'HMyJSH',
       description: 'Title for the delete hub artifacts modal',
     }),
     multiArtifactsContent: intl.formatMessage({
@@ -58,8 +58,8 @@ export const DeleteModal = ({
       description: 'Content for the delete hub artifacts modal',
     }),
     hubContent: intl.formatMessage({
-      defaultMessage: `Confirm that you want to delete this hub? You can't undo this action. Deleting the hub will delete all artifacts under it.`,
-      id: 'zxFbNI',
+      defaultMessage: `Confirm that you want to delete this hub? This action also deletes all the hub's artifacts. You can't undo this action.`,
+      id: 'Xjhrkz',
       description: 'Content for the delete hub',
     }),
     artifactContent: intl.formatMessage({
@@ -69,16 +69,16 @@ export const DeleteModal = ({
     }),
     hubName: intl.formatMessage(
       {
-        defaultMessage: 'Hub(s): {hubNames}',
-        id: 'KfHL/5',
+        defaultMessage: 'Hubs: {hubNames}',
+        id: 'DAqQK1',
         description: 'The name of the hub to be deleted, shown in the delete confirmation modal',
       },
       { hubNames }
     ),
     artifactName: intl.formatMessage(
       {
-        defaultMessage: 'Artifact(s): {artifactNames}',
-        id: 'eW6zWL',
+        defaultMessage: 'Artifacts: {artifactNames}',
+        id: 'fm59Od',
         description: 'The name of the artifact to be deleted, shown in the delete confirmation modal',
       },
       { artifactNames }
@@ -99,13 +99,13 @@ export const DeleteModal = ({
       description: 'Button text for closing the delete hub artifacts modal',
     }),
     successNotificationTitle: intl.formatMessage({
-      defaultMessage: 'Successfully deleted the hub artifact(s).',
-      id: 'iTtjSl',
+      defaultMessage: 'Successfully deleted the hub artifacts.',
+      id: '8iLlRQ',
       description: 'Title for the toaster after successfully deleting hub artifacts',
     }),
     successNotificationContent: intl.formatMessage({
-      defaultMessage: 'The following hub artifacts were deleted.',
-      id: '6/oxZR',
+      defaultMessage: 'Deleted the following hub artifacts:',
+      id: 'H9pzpO',
       description: 'Content for the toaster after successfully deleting hub artifacts, with the names of the deleted artifacts',
     }),
   };
@@ -128,7 +128,7 @@ export const DeleteModal = ({
         level: LogEntryLevel.Error,
         area: 'KnowledgeHub.deleteKnowledgeHubArtifact',
         error,
-        message: `Error while deleting knowledge hub artifact for the app: ${resourceId}`,
+        message: `The following error happened when deleting the knowledge hub artifact for the app: ${resourceId}`,
       });
     } finally {
       setIsDeleting(false);

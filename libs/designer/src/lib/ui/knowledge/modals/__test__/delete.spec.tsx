@@ -88,7 +88,7 @@ describe('DeleteModal Component', () => {
     it('renders with correct title', () => {
       renderComponent([createHubItem('TestHub')]);
 
-      expect(screen.getByText('Delete hub artifacts.')).toBeInTheDocument();
+      expect(screen.getByText('Delete hub artifacts')).toBeInTheDocument();
     });
 
     it('renders hub content when deleting a single hub', () => {
@@ -97,7 +97,7 @@ describe('DeleteModal Component', () => {
       const dialog = getDialog();
       expect(
         within(dialog).getByText(
-          "Confirm that you want to delete this hub? You can't undo this action. Deleting the hub will delete all artifacts under it."
+          `Confirm that you want to delete this hub? This action also deletes all the hub's artifacts. You can't undo this action.`
         )
       ).toBeInTheDocument();
     });
@@ -124,14 +124,14 @@ describe('DeleteModal Component', () => {
       renderComponent([createHubItem('Hub1'), createHubItem('Hub2')]);
 
       const dialog = getDialog();
-      expect(within(dialog).getByText('Hub(s): hub1, hub2')).toBeInTheDocument();
+      expect(within(dialog).getByText('Hubs: hub1, hub2')).toBeInTheDocument();
     });
 
     it('displays artifact names with parent hub when deleting artifacts', () => {
       renderComponent([createArtifactItem('Artifact1', 'ParentHub1'), createArtifactItem('Artifact2', 'ParentHub2')]);
 
       const dialog = getDialog();
-      expect(within(dialog).getByText('Artifact(s): artifact1 (hub: ParentHub1), artifact2 (hub: ParentHub2)')).toBeInTheDocument();
+      expect(within(dialog).getByText('Artifacts: artifact1 (hub: ParentHub1), artifact2 (hub: ParentHub2)')).toBeInTheDocument();
     });
 
     it('does not display artifacts that belong to hubs being deleted', () => {
@@ -139,7 +139,7 @@ describe('DeleteModal Component', () => {
       renderComponent([createHubItem('ParentHub'), createArtifactItem('ChildArtifact', 'ParentHub')]);
 
       const dialog = getDialog();
-      expect(within(dialog).getByText('Hub(s): parenthub')).toBeInTheDocument();
+      expect(within(dialog).getByText('Hubs: parenthub')).toBeInTheDocument();
       expect(within(dialog).queryByText(/Artifact\(s\):/)).not.toBeInTheDocument();
     });
 
@@ -198,8 +198,8 @@ describe('DeleteModal Component', () => {
 
       await waitFor(() => {
         expect(mockOnDelete).toHaveBeenCalledWith({
-          title: 'Successfully deleted the hub artifact(s).',
-          content: 'The following hub artifacts were deleted.\ntesthub',
+          title: 'Successfully deleted the hub artifacts.',
+          content: 'Deleted the following hub artifacts:\ntesthub',
         });
       });
     });
@@ -213,8 +213,8 @@ describe('DeleteModal Component', () => {
 
       await waitFor(() => {
         expect(mockOnDelete).toHaveBeenCalledWith({
-          title: 'Successfully deleted the hub artifact(s).',
-          content: 'The following hub artifacts were deleted.\n\ntestartifact (hub: ParentHub)',
+          title: 'Successfully deleted the hub artifacts.',
+          content: 'Deleted the following hub artifacts:\n\ntestartifact (hub: ParentHub)',
         });
       });
     });

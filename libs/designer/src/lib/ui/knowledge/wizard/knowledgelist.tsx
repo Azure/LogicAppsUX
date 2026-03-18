@@ -123,8 +123,8 @@ export const KnowledgeList = ({
       description: 'Label for select row checkbox',
     }),
     inProgressStatus: intl.formatMessage({
-      defaultMessage: 'In-progress',
-      id: 'oBWuQA',
+      defaultMessage: 'In progress',
+      id: 'gyfZhJ',
       description: 'Text to indicate that the artifact upload is in progress',
     }),
     completedStatus: intl.formatMessage({
@@ -137,15 +137,25 @@ export const KnowledgeList = ({
       id: 'fs92Nu',
       description: 'Text to indicate that the artifact upload has failed',
     }),
+    collapseHub: intl.formatMessage({
+      defaultMessage: 'Collapse hub',
+      id: 'UXbZTn',
+      description: 'Aria label for collapse hub button',
+    }),
+    expandHub: intl.formatMessage({
+      defaultMessage: 'Expand hub',
+      id: 'hfz4Il',
+      description: 'Aria label for expand hub button',
+    }),
   };
 
   const [allItems, setAllItems] = useState<Record<string, KnowledgeHubItem>>(createAllItems(hubs, /* existingItems: */ {}));
 
   useEffect(() => {
     if (hubs) {
-      setAllItems(createAllItems(hubs, allItems));
+      setAllItems((prev) => createAllItems(hubs, prev));
     }
-  }, [allItems, hubs]);
+  }, [hubs]);
 
   const columns = [
     createTableColumn<KnowledgeHubItem>({
@@ -321,11 +331,11 @@ export const KnowledgeList = ({
       return;
     }
 
-    if (selectedItems.includes(itemDeleted.name)) {
-      setSelectedArtifactItems(selectedItems.filter((name) => name !== itemDeleted.name));
+    if (selectedItems.includes(itemDeleted.id)) {
+      setSelectedArtifactItems(selectedItems.filter((id) => !equals(id, itemDeleted.id)));
     }
     setArtifactToDelete(null);
-    queryClient.setQueryData(['knowledgehubs', resourceId], (oldData: KnowledgeHub[] | undefined) => {
+    queryClient.setQueryData(['knowledgehubs', resourceId.toLowerCase()], (oldData: KnowledgeHub[] | undefined) => {
       if (oldData) {
         if (itemDeleted.parentId === null) {
           // Hub group deleted, remove the whole hub
@@ -369,6 +379,8 @@ export const KnowledgeList = ({
                 appearance="subtle"
                 icon={item.isExpanded ? <ChevronDownRegular /> : <ChevronRightRegular />}
                 onClick={(event) => handleExpandCollapse(item, event)}
+                aria-label={item.isExpanded ? INTL_TEXT.collapseHub : INTL_TEXT.expandHub}
+                aria-expanded={item.isExpanded}
               />
             ) : null}
             <div className={mergeClasses(styles.nameText, className)}>

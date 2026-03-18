@@ -10,7 +10,6 @@ import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { KnowledgeHubWizard } from '../knowledgehub';
-import { KnowledgePanelView } from '../../../../core/state/knowledge/panelSlice';
 import type { KnowledgeHubItem } from '../knowledgelist';
 
 // Mock setLayerHostSelector
