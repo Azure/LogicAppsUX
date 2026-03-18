@@ -397,7 +397,15 @@ export const KnowledgeList = ({
         </TableCell>
       );
     },
-    [handleExpandCollapse, styles.artifactNameCell, styles.nameCell, styles.nameText, styles.rowCell]
+    [
+      INTL_TEXT.collapseHub,
+      INTL_TEXT.expandHub,
+      handleExpandCollapse,
+      styles.artifactNameCell,
+      styles.nameCell,
+      styles.nameText,
+      styles.rowCell,
+    ]
   );
 
   const renderTextCell = useCallback(

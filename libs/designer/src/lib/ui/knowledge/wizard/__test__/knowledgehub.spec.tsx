@@ -96,7 +96,20 @@ vi.mock('../knowledgelist', () => ({
         <span data-testid="knowledge-list-count">{hubs.length} hubs</span>
         <button
           data-testid="knowledge-list-select-item"
-          onClick={() => setSelectedArtifacts([{ id: 'artifact1', name: 'Test Artifact', type: 'file', hubId: 'hub1' }])}
+          onClick={() =>
+            setSelectedArtifacts([
+              {
+                id: 'artifact1',
+                name: 'Test Artifact',
+                type: 'file',
+                description: 'A test artifact',
+                createdDate: '--',
+                parentId: null,
+                status: '--',
+                isExpanded: false,
+              },
+            ])
+          }
         >
           Select Item
         </button>
