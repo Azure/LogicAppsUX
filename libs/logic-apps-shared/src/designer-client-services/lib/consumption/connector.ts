@@ -53,7 +53,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any,
-    isManagedIdentityConnection?: boolean
+    isManagedIdentityConnection?: boolean,
+    operationPath?: string
   ): Promise<ListDynamicValue[]> {
     const { apiVersion, httpClient } = this.options;
     const { operationId: dynamicOperation, apiType } = dynamicState;
@@ -73,8 +74,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
 
     // MCP-specific: use listMcpTools endpoint instead of dynamicList
     if (isMcpConnection) {
-      const { workflowReferenceId } = this.options;
-      const uri = `${workflowReferenceId}/listMcpTools`;
+      const { baseUrl, workflowReferenceId } = this.options;
+      const uri = `${baseUrl}${workflowReferenceId}/listMcpTools`;
 
       // Get the connection data from ConnectionService
       let connection: any;
@@ -84,15 +85,34 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         // Connection may not be in cache/API Hub for built-in MCP
       }
 
-      let content: any = {};
-      if (connection?.properties?.parameterValues) {
-        // Built-in MCP connection — send connection info in the expected format
-        const { mcpServerUrl, authenticationType } = connection.properties.parameterValues;
+      let content: any;
+      const parameterValues = connection?.properties?.parameterValues;
+      if (parameterValues?.mcpServerUrl) {
+        // Built-in MCP connection — has mcpServerUrl in parameterValues
+        const connectionData: any = {
+          mcpServerUrl: parameterValues.mcpServerUrl,
+          displayName: connection.properties.displayName,
+        };
+        const authentication = this._buildMcpAuthentication(parameterValues);
+        if (authentication) {
+          connectionData.authentication = authentication;
+        }
         content = {
-          connection: {
-            McpServerUrl: mcpServerUrl,
-            Authentication: authenticationType || 'None',
+          connection: connectionData,
+          mcpServerPath: operationPath,
+        };
+      } else if (connectionId) {
+        // Managed MCP connection — send managed connection reference
+        content = {
+          managedConnection: {
+            connection: { id: connectionId },
           },
+          mcpServerPath: operationPath,
+        };
+      } else {
+        // No connection — just send mcpServerPath
+        content = {
+          mcpServerPath: operationPath,
         };
       }
 
@@ -111,8 +131,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     }
 
     // Regular dynamic list for non-MCP connections
-    const resolvedConnectionId = this._resolveConnectionId(connectionId);
-    const uri = `${resolvedConnectionId}/dynamicList`;
+    const uri = `${connectionId}/dynamicList`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },
@@ -153,8 +172,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       });
     }
 
-    const resolvedConnectionId = this._resolveConnectionId(connectionId);
-    const uri = `${resolvedConnectionId}/dynamicProperties`;
+    const uri = `${connectionId}/dynamicProperties`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },
@@ -180,8 +198,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     const { apiVersion, httpClient } = this.options;
     const { dynamicState, selectionState } = dynamicExtension;
 
-    const resolvedConnectionId = this._resolveConnectionId(connectionId);
-    const uri = `${resolvedConnectionId}/dynamicTree`;
+    const uri = `${connectionId}/dynamicTree`;
     const response = await httpClient.post({
       uri,
       queryParameters: { 'api-version': apiVersion },

@@ -277,9 +277,6 @@ const DesignerEditorConsumption = () => {
       }
       workflowToSave.connections = newConnectionsObj;
 
-      console.log('[MCP Save Debug] workflowToSave.connections keys:', Object.keys(workflowToSave.connections ?? {}));
-      console.log('[MCP Save Debug] workflowToSave.connectionReferences keys:', Object.keys(workflowToSave.connectionReferences ?? {}));
-
       await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState, undefined, isDraftSave);
 
       return workflowToSave;

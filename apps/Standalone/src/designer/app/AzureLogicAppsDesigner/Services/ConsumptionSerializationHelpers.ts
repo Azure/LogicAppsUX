@@ -46,7 +46,6 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   } else {
     // Move connection data to parameters
     if (workflow?.connections) {
-      console.log('[MCP $connections Debug] workflow.connections keys:', Object.keys(workflow.connections));
       workflow.parameters = {
         ...workflow.parameters,
         $connections: {
@@ -73,7 +72,6 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
 
     // Move connection references to root parameters
     if (workflow?.connectionReferences) {
-      console.log('[MCP $connections Debug] workflow.connectionReferences keys:', Object.keys(workflow.connectionReferences));
       if (!workflow.parameters?.$connections) {
         workflow.parameters.$connections = { value: {} };
       }
@@ -101,19 +99,6 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
 
   // Remove connections from workflow root
   delete workflow?.connections;
-
-  // Defensive guard: built-in MCP pseudo IDs are not valid ARM connection resources.
-  // If any legacy/stale path adds one, strip it before save.
-  const connectionValues = workflow?.parameters?.$connections?.value;
-  if (connectionValues && typeof connectionValues === 'object') {
-    Object.keys(connectionValues).forEach((key) => {
-      const candidate = connectionValues[key];
-      const connectionId = candidate?.connectionId;
-      if (typeof connectionId === 'string' && connectionId.toLowerCase().startsWith('/connectionproviders/mcpclient/connections/')) {
-        delete connectionValues[key];
-      }
-    });
-  }
 
   return workflow;
 };
