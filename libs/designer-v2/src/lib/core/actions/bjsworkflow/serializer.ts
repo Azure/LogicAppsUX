@@ -541,19 +541,21 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
   const manifest = await getOperationManifest(nativeMcpOperationInfo);
-  serializeParametersFromManifest(inputsToSerialize, manifest);
+  const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
-  // Built-in MCP operations should serialize Connection settings in code preview,
-  // while still avoiding any connectionReference payload.
-  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection ?? {};
+  // Built-in MCP operations should serialize Connection settings when available.
+  // If we can resolve the connection URL, emit the Connection block.
+  // Otherwise fall back to the parameter-based format to avoid sending an
+  // incomplete Connection object that the backend would reject.
+  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
   const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
   const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
   const connectionId = connectionReference?.connection?.id;
 
-  let mcpServerUrl = existingConnectionInput.McpServerUrl ?? '';
-  let authenticationType = existingConnectionInput.Authentication ?? 'None';
+  let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
+  let authenticationType = existingConnectionInput?.Authentication ?? 'None';
 
   if (connectionId) {
     try {
@@ -568,12 +570,20 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
     }
   }
 
-  const inputs = {
-    Connection: {
-      Authentication: authenticationType,
-      McpServerUrl: mcpServerUrl,
-    },
-  };
+  // Only emit Connection block when we have a non-empty mcpServerUrl.
+  // The backend rejects Connection objects with empty mcpServerUrl.
+  const inputs = mcpServerUrl
+    ? {
+        Connection: {
+          Authentication: authenticationType,
+          McpServerUrl: mcpServerUrl,
+        },
+      }
+    : {
+        parameters: {
+          ...inputParameters.parameters,
+        },
+      };
 
   return {
     type: type,
