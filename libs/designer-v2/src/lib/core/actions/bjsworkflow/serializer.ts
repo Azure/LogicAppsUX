@@ -295,17 +295,15 @@ export const serializeOperation = async (
   operationId: string,
   _options?: SerializeOptions
 ): Promise<LogicAppsV2.OperationDefinition | null> => {
+  const errors = getRecordEntry(rootState.operations.errors, operationId);
+
+  if (errors?.[ErrorLevel.Critical]) {
+    return getRecordEntry(rootState.workflow.operations, operationId) ?? null;
+  }
+
   const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
   if (!operation) {
     return null;
-  }
-
-  const errors = getRecordEntry(rootState.operations.errors, operationId);
-
-  // Keep serializing built-in MCP operations even with critical errors so we don't fall back
-  // to stale workflow JSON that can still contain old connectionReference shapes.
-  if (errors?.[ErrorLevel.Critical] && !isBuiltInMcpOperation(operation)) {
-    return getRecordEntry(rootState.workflow.operations, operationId) ?? null;
   }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
@@ -357,6 +355,22 @@ export const serializeOperation = async (
     const replacedTriggerId = getRecordEntry(rootState.workflow.idReplacements, triggerId) ?? triggerId;
     // Remove any runAfter properties pointing to the trigger, EXCEPT for agent actions
     removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
+  }
+
+  // If dynamic inputs failed to load and no stashed parameters exist (initial load failure),
+  // preserve the original definition's inputs so dynamic parameter values are not lost on save.
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
+  const hasDynamicInputsError = !!errors?.[ErrorLevel.DynamicInputs];
+  const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
+  const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
+  if (hasDynamicInputsError && !hasStash && !hasDynamicParamsInGroups) {
+    const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
+    if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
+      serializedOperation = {
+        ...serializedOperation,
+        inputs: merge({}, originalDef.inputs, serializedOperation.inputs),
+      };
+    }
   }
 
   return serializedOperation;
@@ -678,15 +692,29 @@ export interface SerializedParameter extends ParameterInfo {
 export const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId) as NodeInputs;
-  return getOperationInputParameters(nodeInputs).map((input) => ({
+  const shouldEncode = shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {});
+
+  const currentParams = getOperationInputParameters(nodeInputs);
+  const serialized = currentParams.map((input) => ({
     ...input,
-    value: parameterValueToString(
-      input,
-      true /* isDefinitionValue */,
-      idReplacements,
-      shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {})
-    ),
+    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements, shouldEncode),
   }));
+
+  // If dynamic parameters were stashed (cleared during loading or after failure),
+  // include them as fallback so their values are not lost on save.
+  const stashed = nodeInputs?.stashedDynamicParameterValues;
+  if (stashed?.length) {
+    const currentKeys = new Set(currentParams.map((p) => p.parameterKey));
+    const missingStashed = stashed.filter((p) => !currentKeys.has(p.parameterKey));
+    for (const param of missingStashed) {
+      serialized.push({
+        ...param,
+        value: parameterValueToString(param, true /* isDefinitionValue */, idReplacements, shouldEncode),
+      });
+    }
+  }
+
+  return serialized;
 };
 
 const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
@@ -1055,15 +1083,11 @@ const serializeHost = (
 };
 
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
+  const result = { ...inputs };
   for (const [key, value] of Object.entries(hostInfo)) {
-    if (inputs[key]) {
-      inputs[key] = { ...inputs[key], ...value };
-    } else {
-      inputs[key] = value;
-    }
+    result[key] = result[key] ? { ...result[key], ...value } : value;
   }
-
-  return inputs;
+  return result;
 };
 
 //#endregion

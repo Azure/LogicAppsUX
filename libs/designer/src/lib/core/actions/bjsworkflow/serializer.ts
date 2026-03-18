@@ -291,17 +291,15 @@ export const serializeOperation = async (
   operationId: string,
   _options?: SerializeOptions
 ): Promise<LogicAppsV2.OperationDefinition | null> => {
+  const errors = getRecordEntry(rootState.operations.errors, operationId);
+
+  if (errors?.[ErrorLevel.Critical]) {
+    return getRecordEntry(rootState.workflow.operations, operationId) ?? null;
+  }
+
   const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
   if (!operation) {
     return null;
-  }
-
-  const errors = getRecordEntry(rootState.operations.errors, operationId);
-
-  // Keep serializing built-in MCP operations even with critical errors so we don't fall back
-  // to stale workflow JSON that can still contain old connectionReference shapes.
-  if (errors?.[ErrorLevel.Critical] && !isBuiltInMcpOperation(operation)) {
-    return getRecordEntry(rootState.workflow.operations, operationId) ?? null;
   }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
