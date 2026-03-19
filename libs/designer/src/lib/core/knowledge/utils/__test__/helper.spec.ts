@@ -1,9 +1,8 @@
-import { createKnowledgeHub, deleteKnowledgeHubArtifacts } from '../helper';
+import { createKnowledgeHub, deleteKnowledgeHubArtifacts, validateHubNameAvailability, validateArtifactNameAvailability } from '../helper';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockExecuteResourceAction = vi.fn();
 const mockLog = vi.fn();
-const mockSetQueryData = vi.fn();
 
 vi.mock('@microsoft/logic-apps-shared', () => ({
   ResourceService: vi.fn(() => ({
@@ -15,12 +14,11 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   LogEntryLevel: {
     Error: 'Error',
   },
-}));
-
-vi.mock('../../../ReactQueryProvider', () => ({
-  getReactQueryClient: vi.fn(() => ({
-    setQueryData: mockSetQueryData,
-  })),
+  getIntl: () => ({
+    formatMessage: ({ defaultMessage }: { defaultMessage: string }) => defaultMessage,
+  }),
+  isNullOrEmpty: (value: string | undefined | null) => value === undefined || value === null || value === '',
+  equals: (a: string, b: string) => a?.toLowerCase() === b?.toLowerCase(),
 }));
 
 describe('knowledge helper utils', () => {
@@ -50,31 +48,6 @@ describe('knowledge helper utils', () => {
       );
     });
 
-    it('should update query cache with new hub on success', async () => {
-      const response = { name: groupName, id: 'hub-id' };
-      mockExecuteResourceAction.mockResolvedValue(response);
-
-      await createKnowledgeHub(siteResourceId, groupName, description);
-
-      expect(mockSetQueryData).toHaveBeenCalledTimes(1);
-      expect(mockSetQueryData).toHaveBeenCalledWith(['knowledgehubs', siteResourceId.toLowerCase()], expect.any(Function));
-
-      // Verify the updater function works correctly
-      const updater = mockSetQueryData.mock.calls[0][1];
-
-      // When oldData is undefined
-      const resultWithUndefined = updater(undefined);
-      expect(resultWithUndefined).toEqual([{ name: groupName, description, artifacts: [] }]);
-
-      // When oldData has existing hubs
-      const existingHubs = [{ name: 'existing-hub', description: 'existing', artifacts: [] }];
-      const resultWithExisting = updater(existingHubs);
-      expect(resultWithExisting).toEqual([
-        { name: 'existing-hub', description: 'existing', artifacts: [] },
-        { name: groupName, description, artifacts: [] },
-      ]);
-    });
-
     it('should return response on success', async () => {
       const response = { name: groupName, id: 'hub-id' };
       mockExecuteResourceAction.mockResolvedValue(response);
@@ -97,14 +70,6 @@ describe('knowledge helper utils', () => {
         error: errorResponse.error,
         message: `Error while creating knowledge hub for the app: ${siteResourceId}`,
       });
-    });
-
-    it('should not update cache when API call fails', async () => {
-      mockExecuteResourceAction.mockRejectedValue({ error: { message: 'Failed' } });
-
-      await createKnowledgeHub(siteResourceId, groupName, description);
-
-      expect(mockSetQueryData).not.toHaveBeenCalled();
     });
 
     it('should return undefined when API call fails', async () => {
@@ -217,6 +182,128 @@ describe('knowledge helper utils', () => {
       const hubs = ['hub1', 'hub2'];
 
       await expect(deleteKnowledgeHubArtifacts(siteResourceId, hubs, {})).rejects.toThrow('Delete failed');
+    });
+  });
+
+  describe('validateHubNameAvailability', () => {
+    it('should return error when hub name is empty', () => {
+      const result = validateHubNameAvailability('', []);
+      expect(result).toBe('Hub name is required.');
+    });
+
+    it('should return error when hub name already exists (case-insensitive)', () => {
+      const existingNames = ['MyHub', 'AnotherHub'];
+      const result = validateHubNameAvailability('myhub', existingNames);
+      expect(result).toBe('A hub with this name already exists.');
+    });
+
+    it('should return error when hub name is too long', () => {
+      const longName = 'a'.repeat(81);
+      const result = validateHubNameAvailability(longName, []);
+      expect(result).toBe('Hub name must be less than 80 characters.');
+    });
+
+    it('should return error when hub name contains special characters', () => {
+      const result = validateHubNameAvailability('my-hub', []);
+      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+    });
+
+    it('should return error when hub name contains spaces', () => {
+      const result = validateHubNameAvailability('my hub', []);
+      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+    });
+
+    it('should return error when hub name contains underscores', () => {
+      const result = validateHubNameAvailability('my_hub', []);
+      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+    });
+
+    it('should return undefined for valid hub name', () => {
+      const result = validateHubNameAvailability('MyValidHub123', []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for valid hub name with max length', () => {
+      const validName = 'a'.repeat(80);
+      const result = validateHubNameAvailability(validName, []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for single character hub name', () => {
+      const result = validateHubNameAvailability('H', []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for numeric hub name', () => {
+      const result = validateHubNameAvailability('123456', []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should allow hub name not in existing list', () => {
+      const existingNames = ['Hub1', 'Hub2'];
+      const result = validateHubNameAvailability('Hub3', existingNames);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('validateArtifactNameAvailability', () => {
+    it('should return error when artifact name is empty', () => {
+      const result = validateArtifactNameAvailability('', []);
+      expect(result).toBe('File artifact name is required.');
+    });
+
+    it('should return error when artifact name already exists (case-insensitive)', () => {
+      const existingNames = ['MyArtifact', 'AnotherArtifact'];
+      const result = validateArtifactNameAvailability('myartifact', existingNames);
+      expect(result).toBe('An artifact with this name already exists in the hub.');
+    });
+
+    it('should return error when artifact name is too long', () => {
+      const longName = 'a'.repeat(81);
+      const result = validateArtifactNameAvailability(longName, []);
+      expect(result).toBe('File artifact name must be less than 80 characters.');
+    });
+
+    it('should return error when artifact name contains special characters', () => {
+      const result = validateArtifactNameAvailability('my-artifact', []);
+      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+    });
+
+    it('should return error when artifact name contains periods', () => {
+      const result = validateArtifactNameAvailability('my.artifact', []);
+      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+    });
+
+    it('should return error when artifact name contains spaces', () => {
+      const result = validateArtifactNameAvailability('my artifact', []);
+      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+    });
+
+    it('should return undefined for valid artifact name', () => {
+      const result = validateArtifactNameAvailability('MyValidArtifact123', []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for valid artifact name with max length', () => {
+      const validName = 'b'.repeat(80);
+      const result = validateArtifactNameAvailability(validName, []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for single character artifact name', () => {
+      const result = validateArtifactNameAvailability('A', []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined for numeric artifact name', () => {
+      const result = validateArtifactNameAvailability('789012', []);
+      expect(result).toBeUndefined();
+    });
+
+    it('should allow artifact name not in existing list', () => {
+      const existingNames = ['Artifact1', 'Artifact2'];
+      const result = validateArtifactNameAvailability('Artifact3', existingNames);
+      expect(result).toBeUndefined();
     });
   });
 });
