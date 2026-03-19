@@ -334,13 +334,15 @@ export const serializeOperation = async (
     removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
   }
 
-  // If dynamic inputs failed to load and no stashed parameters exist (initial load failure),
-  // preserve the original definition's inputs so dynamic parameter values are not lost on save.
+  // If dynamic inputs are not yet available (still loading, failed, or never started) and
+  // no stashed parameters exist, preserve the original definition's inputs so dynamic
+  // parameter values are not lost on save.
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
   const hasDynamicInputsError = !!errors?.[ErrorLevel.DynamicInputs];
+  const nodeExpectsDynamicInputs = !!nodeInputs?.dynamicLoadStatus;
   const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
   const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
-  if (hasDynamicInputsError && !hasStash && !hasDynamicParamsInGroups) {
+  if ((hasDynamicInputsError || nodeExpectsDynamicInputs) && !hasStash && !hasDynamicParamsInGroups) {
     const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
     if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
       serializedOperation = {
