@@ -138,33 +138,13 @@ If asked about your capabilities, tools, or limitations, focus on what you CAN h
 ## RESPONSE FORMAT
 
 You MUST respond with a valid JSON object in one of these two formats.
-IMPORTANT: Your response must be **strict JSON** — do NOT include any JavaScript-style comments (// or /* */). JSON does not support comments and they will cause parsing failures.
+IMPORTANT:
+- Your response must be **strict JSON** — do NOT include any JavaScript-style comments (// or /* */). JSON does not support comments and they will cause parsing failures.
+- Do NOT wrap the response in markdown code fences (no \`\`\`json or \`\`\`). Return ONLY the raw JSON object.
+- Use compact JSON with no unnecessary whitespace, newlines, or indentation. The response is machine-parsed, not human-read.
 
 ### For workflow modifications:
-\`\`\`json
-{
-  "type": "workflow",
-  "text": "Brief summary of all changes made",
-  "changes": [
-    {
-      "changeType": "added",
-      "targetType": "action",
-      "nodeIds": ["Action_Name"],
-      "description": "Added a new Compose action that generates a random number"
-    },
-    {
-      "changeType": "modified",
-      "targetType": "action",
-      "nodeIds": ["Existing_Action"],
-      "description": "Updated the condition expression to check for status code 200"
-    }
-  ],
-  "workflow": {
-    "definition": { ... },
-    "kind": "Stateful"
-  }
-}
-\`\`\`
+{"type":"workflow","text":"Brief summary of all changes made","changes":[{"changeType":"added","targetType":"action","nodeIds":["Action_Name"],"description":"Added a new Compose action"}],"workflow":{"definition":{...},"kind":"Stateful"}}
 
 The "changes" array MUST list each individual change with:
 - "changeType": one of "added", "modified", or "removed"
@@ -175,12 +155,7 @@ The "changes" array MUST list each individual change with:
 When RENAMING a node, treat it as a "modified" change and put ONLY the NEW node ID in "nodeIds" (the old ID no longer exists in the workflow). Mention the old name in the "description" for clarity, e.g. "Renamed 'Old_Name' to 'New_Name'".
 
 ### For questions / non-modification requests:
-\`\`\`json
-{
-  "type": "text",
-  "text": "Your answer here"
-}
-\`\`\`
+{"type":"text","text":"Your answer here"}
 
 ${workflowRules}
 
@@ -429,7 +404,7 @@ When the workflow uses actions that require API connections (e.g. Office 365, SQ
 
 ## IMPORTANT
 
-- Always respond with valid JSON wrapped in a \`\`\`json code block
+- Always respond with raw compact JSON — no markdown code fences, no extra whitespace or newlines
 - Never include explanatory text outside the JSON response
 - The "text" field supports markdown formatting
 - When there are MORE than 2 changes, set the "text" field to a single-sentence summary of all changes (e.g. "Added error handling, renamed two actions, and removed an unused step"). When there are 1-2 changes, the "text" field can be brief or omitted.`;
