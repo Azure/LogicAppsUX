@@ -1,4 +1,4 @@
-import { createKnowledgeHub } from '../helper';
+import { createKnowledgeHub, deleteKnowledgeHubArtifacts } from '../helper';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockExecuteResourceAction = vi.fn();
@@ -40,10 +40,10 @@ describe('knowledge helper utils', () => {
 
       expect(mockExecuteResourceAction).toHaveBeenCalledTimes(1);
       expect(mockExecuteResourceAction).toHaveBeenCalledWith(
-        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHub/${groupName}`,
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/${groupName}`,
         'PUT',
         {
-          'api-version': '2025-11-01',
+          'api-version': '2018-11-01',
           'Content-Type': 'application/json',
         },
         JSON.stringify({ description })
@@ -126,6 +126,97 @@ describe('knowledge helper utils', () => {
         error: {},
         message: `Error while creating knowledge hub for the app: ${siteResourceId}`,
       });
+    });
+  });
+
+  describe('deleteKnowledgeHubArtifacts', () => {
+    it('should call ResourceService to delete each hub', async () => {
+      mockExecuteResourceAction.mockResolvedValue({});
+      const hubs = ['hub1', 'hub2'];
+      const artifacts = {};
+
+      await deleteKnowledgeHubArtifacts(siteResourceId, hubs, artifacts);
+
+      expect(mockExecuteResourceAction).toHaveBeenCalledTimes(2);
+      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/hub1`,
+        'DELETE',
+        { 'api-version': '2018-11-01' }
+      );
+      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/hub2`,
+        'DELETE',
+        { 'api-version': '2018-11-01' }
+      );
+    });
+
+    it('should call ResourceService to delete each artifact', async () => {
+      mockExecuteResourceAction.mockResolvedValue({});
+      const hubs: string[] = [];
+      const artifacts = { artifact1: 'hubA', artifact2: 'hubB' };
+
+      await deleteKnowledgeHubArtifacts(siteResourceId, hubs, artifacts);
+
+      expect(mockExecuteResourceAction).toHaveBeenCalledTimes(2);
+      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/hubA/artifacts/artifact1`,
+        'DELETE',
+        { 'api-version': '2018-11-01' }
+      );
+      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/hubB/artifacts/artifact2`,
+        'DELETE',
+        { 'api-version': '2018-11-01' }
+      );
+    });
+
+    it('should delete both hubs and artifacts when both are provided', async () => {
+      mockExecuteResourceAction.mockResolvedValue({});
+      const hubs = ['hubToDelete'];
+      const artifacts = { 'my-artifact': 'hubWithArtifact' };
+
+      await deleteKnowledgeHubArtifacts(siteResourceId, hubs, artifacts);
+
+      expect(mockExecuteResourceAction).toHaveBeenCalledTimes(2);
+      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/hubToDelete`,
+        'DELETE',
+        { 'api-version': '2018-11-01' }
+      );
+      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
+        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHubs/hubWithArtifact/artifacts/my-artifact`,
+        'DELETE',
+        { 'api-version': '2018-11-01' }
+      );
+    });
+
+    it('should return empty array when no hubs or artifacts are provided', async () => {
+      const result = await deleteKnowledgeHubArtifacts(siteResourceId, [], {});
+
+      expect(mockExecuteResourceAction).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+
+    it('should return all resolved promises', async () => {
+      const response1 = { deleted: 'hub1' };
+      const response2 = { deleted: 'artifact1' };
+      mockExecuteResourceAction.mockResolvedValueOnce(response1).mockResolvedValueOnce(response2);
+
+      const hubs = ['hub1'];
+      const artifacts = { artifact1: 'hubA' };
+
+      const result = await deleteKnowledgeHubArtifacts(siteResourceId, hubs, artifacts);
+
+      expect(result).toEqual([response1, response2]);
+    });
+
+    it('should reject when any delete operation fails', async () => {
+      const error = new Error('Delete failed');
+      mockExecuteResourceAction.mockResolvedValueOnce({}).mockRejectedValueOnce(error);
+
+      const hubs = ['hub1', 'hub2'];
+
+      await expect(deleteKnowledgeHubArtifacts(siteResourceId, hubs, {})).rejects.toThrow('Delete failed');
     });
   });
 });

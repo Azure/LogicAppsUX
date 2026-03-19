@@ -1,20 +1,25 @@
 export interface KnowledgeHub {
+  id: string;
   name: string;
   description: string;
+  partitionKey: string;
+  createdAt: string;
 }
 
 export interface KnowledgeHubArtifact {
+  id: string;
   name: string;
   description: string;
-  type?: ArtifactType;
-  contentKind?: ContentKind;
-  contentStream?: any;
-  creationStatus?: ArtifactCreationStatus;
+  knowledgeHubId: string;
+  artifactSource: ArtifactType;
+  uploadStatus: ArtifactCreationStatus;
+  partitionKey: string;
+  createdAt: string;
 }
 
 export const ArtifactCreationStatus = {
   Initialized: 'Initialized',
-  Processing: 'Processing',
+  InProgress: 'InProgress',
   Completed: 'Completed',
   Failed: 'Failed',
 };
@@ -58,11 +63,9 @@ export interface UploadFile {
   readonly setProgress?: (progress: ProgressStatus) => void;
 }
 
-type FileHandler = (file: UploadFile) => void;
-export interface RenderFileUploadProps {
-  accept: string;
-  disabled?: boolean;
-  isMultiUpload: boolean;
-  onAdd: FileHandler;
-  onRemove: FileHandler;
-}
+export type UploadFileHandler = (
+  siteResourceId: string,
+  hubName: string,
+  content: { file: UploadFile; name: string; description?: string },
+  setIsLoading: (isLoading: boolean) => void
+) => Promise<void>;

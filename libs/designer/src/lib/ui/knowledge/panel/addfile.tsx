@@ -1,5 +1,5 @@
 import type { TemplatePanelFooterProps, TemplatesSectionItem } from '@microsoft/designer-ui';
-import { TemplatesPanelFooter, TemplatesSection } from '@microsoft/designer-ui';
+import { FileDropZone, TemplatesPanelFooter, TemplatesSection } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/knowledge/store';
 import { closePanel, KnowledgePanelView } from '../../../core/state/knowledge/panelSlice';
@@ -23,29 +23,31 @@ import {
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
+  tokens,
 } from '@fluentui/react-components';
-import { usePanelStyles } from './styles';
+import { useAddFilePanelStyles, usePanelStyles } from './styles';
 import { useIntl } from 'react-intl';
-import { bundleIcon, Delete24Regular, Dismiss24Filled, Dismiss24Regular, DocumentText20Regular, AddRegular } from '@fluentui/react-icons';
-import { useCallback, useMemo, useState } from 'react';
+import { bundleIcon, Delete20Regular, Dismiss24Filled, Dismiss24Regular, DocumentText20Regular, AddRegular } from '@fluentui/react-icons';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAllKnowledgeHubs } from '../../../core/knowledge/utils/queries';
-import { uploadFileToKnowledgeHub } from '../../../core/knowledge/utils/helper';
+import { validateArtifactNameAvailability } from '../../../core/knowledge/utils/helper';
 import { CreateGroup } from '../modals/creategroup';
-import { LoggerService, LogEntryLevel, type RenderFileUploadProps, type UploadFile } from '@microsoft/logic-apps-shared';
+import { LoggerService, LogEntryLevel, type UploadFile, equals, type UploadFileHandler } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 const UploadSizeLimit = 16 * 1024 * 1024; // 16MB
 export const AddFilePanel = ({
   resourceId,
   mountNode,
-  renderFileUpload,
-}: { resourceId: string; mountNode: HTMLDivElement | null; renderFileUpload: (props: RenderFileUploadProps) => JSX.Element }) => {
+  selectedHub,
+  onUploadArtifact,
+}: { resourceId: string; mountNode: HTMLDivElement | null; selectedHub?: string; onUploadArtifact: UploadFileHandler }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const styles = usePanelStyles();
+  const styles = { ...usePanelStyles(), ...useAddFilePanelStyles() };
 
   const { isOpen, currentPanelView } = useSelector((state: RootState) => state.knowledgeHubPanel);
-  const { data: hubs, isLoading } = useAllKnowledgeHubs(resourceId);
+  const { data: hubs, isLoading, refetch } = useAllKnowledgeHubs(resourceId);
 
   const INTL_TEXT = {
     title: intl.formatMessage({
@@ -87,6 +89,11 @@ export const AddFilePanel = ({
       id: 'ddpKN/',
       defaultMessage: 'Create a new group',
       description: 'Label for the create new group option in add files panel',
+    }),
+    groupDescriptionLabel: intl.formatMessage({
+      id: 'J+HlnI',
+      defaultMessage: 'Description',
+      description: 'Label for the group description input field in add files panel',
     }),
     addFilesSectionDescription: intl.formatMessage({
       id: '2tsZvo',
@@ -141,13 +148,33 @@ export const AddFilePanel = ({
   );
 
   const createNewKey = 'CREATE_NEW';
-  const [groupName, setGroupName] = useState<string>('');
+  const [groupName, setGroupName] = useState<string>(selectedHub ?? '');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
+  const [groupDescription, setGroupDescription] = useState<string>('');
+  const [existingArtifactNames, setExistingArtifactNames] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (hubs && groupName) {
+      setGroupDescription(hubs.find((hub) => equals(hub.name, groupName))?.description ?? '');
+      setExistingArtifactNames(hubs.find((hub) => equals(hub.name, groupName))?.artifacts.map((artifact) => artifact.name) ?? []);
+    }
+  }, [hubs, groupName]);
+
+  const handleCreateGroup = useCallback(
+    async (groupName: string, groupDescription: string) => {
+      setGroupName(groupName);
+      setGroupDescription(groupDescription);
+      setSearchTerm(undefined);
+      setShowCreateModal(false);
+      await refetch();
+    },
+    [refetch]
+  );
   const groupSectionItems = useMemo(() => {
     return [
       {
+        label: INTL_TEXT.nameLabel,
         value: groupName,
         type: 'custom',
         required: true,
@@ -155,8 +182,9 @@ export const AddFilePanel = ({
           <Field required={true}>
             <div>
               <Combobox
+                style={{ width: '100%' }}
                 disabled={isLoading}
-                value={searchTerm}
+                value={searchTerm !== undefined ? searchTerm : groupName}
                 selectedOptions={groupName ? [groupName] : []}
                 placeholder={isLoading ? INTL_TEXT.loading : INTL_TEXT.namePlaceholder}
                 onOptionSelect={(_, data) => {
@@ -164,8 +192,8 @@ export const AddFilePanel = ({
                     setShowCreateModal(true);
                   } else if (data.optionValue) {
                     setGroupName(data.optionValue);
-                    setSearchTerm(data.optionValue);
                   }
+                  setSearchTerm(undefined);
                 }}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -187,8 +215,25 @@ export const AddFilePanel = ({
           </Field>
         ),
       },
+      {
+        label: INTL_TEXT.groupDescriptionLabel,
+        value: groupDescription,
+        type: 'textarea',
+        disabled: true,
+      },
     ] as TemplatesSectionItem[];
-  }, [INTL_TEXT.createGroupLabel, INTL_TEXT.loading, INTL_TEXT.namePlaceholder, groupName, isLoading, options, searchTerm]);
+  }, [
+    INTL_TEXT.createGroupLabel,
+    INTL_TEXT.groupDescriptionLabel,
+    INTL_TEXT.loading,
+    INTL_TEXT.nameLabel,
+    INTL_TEXT.namePlaceholder,
+    groupDescription,
+    groupName,
+    isLoading,
+    options,
+    searchTerm,
+  ]);
 
   const [selectedFiles, setSelectedFiles] = useState<UploadFile[]>([]);
   const sizeTooLargeError = useMemo(
@@ -201,29 +246,44 @@ export const AddFilePanel = ({
         value: groupName,
         type: 'custom',
         required: true,
-        onRenderItem: () =>
-          renderFileUpload({
-            accept: '.pdf,.docx,.xlsx',
-            disabled: selectedFiles.length > 0,
-            isMultiUpload: false,
-            onAdd: (file) => setSelectedFiles((prev) => [...prev, file]),
-            onRemove: (file) => setSelectedFiles((prev) => prev.filter((f) => f.uuid !== file.uuid)),
-          }),
+        onRenderItem: () => (
+          <FileDropZone
+            accept={'.pdf,.doc,.docx,.ppt,..pptx,.xls,.xlsx,.txt,.md,.html'}
+            disabled={selectedFiles.length > 0}
+            isMultiUpload={false}
+            onAdd={(file) => setSelectedFiles((prev) => [...prev, file])}
+          />
+        ),
         errorMessage: sizeTooLargeError,
       },
     ] as TemplatesSectionItem[];
-  }, [groupName, renderFileUpload, selectedFiles.length, sizeTooLargeError]);
+  }, [groupName, selectedFiles.length, sizeTooLargeError]);
 
+  const [fileNames, setFileNames] = useState<Record<string, string>>({});
   const [fileDescriptions, setFileDescriptions] = useState<Record<string, string>>({});
+  const hasNonEmptyFileNames = useMemo(
+    () => Object.keys(fileNames).filter((key) => fileNames[key]).length === selectedFiles.length,
+    [fileNames, selectedFiles.length]
+  );
+
   const handleDeleteFile = useCallback((file: UploadFile) => {
     setSelectedFiles((prev) => prev.filter((f) => f.uuid !== file.uuid));
   }, []);
 
-  const handleUpdateFile = useCallback((file: UploadFile, properties: { description?: string }) => {
-    setFileDescriptions((prev) => ({
-      ...prev,
-      [file.uuid]: properties.description ?? '',
-    }));
+  const handleUpdateFile = useCallback((file: UploadFile, { name, description }: { name?: string; description?: string }) => {
+    if (name !== undefined) {
+      setFileNames((prev) => ({
+        ...prev,
+        [file.uuid]: name,
+      }));
+    }
+
+    if (description !== undefined) {
+      setFileDescriptions((prev) => ({
+        ...prev,
+        [file.uuid]: description,
+      }));
+    }
   }, []);
 
   const fileSectionItems = useMemo(() => {
@@ -232,10 +292,12 @@ export const AddFilePanel = ({
         value: '',
         type: 'custom',
         required: true,
-        onRenderItem: () => <FileList files={selectedFiles} onDelete={handleDeleteFile} onUpdate={handleUpdateFile} />,
+        onRenderItem: () => (
+          <FileList files={selectedFiles} onDelete={handleDeleteFile} onUpdate={handleUpdateFile} existingNames={existingArtifactNames} />
+        ),
       },
     ] as TemplatesSectionItem[];
-  }, [handleDeleteFile, handleUpdateFile, selectedFiles]);
+  }, [existingArtifactNames, handleDeleteFile, handleUpdateFile, selectedFiles]);
 
   const handleCancel = useCallback(() => {
     dispatch(closePanel());
@@ -245,14 +307,15 @@ export const AddFilePanel = ({
   const [uploadError, setUploadError] = useState<string | undefined>(undefined);
 
   const handleAdd = useCallback(async () => {
-    setIsUploading(true);
     setUploadError(undefined);
 
     try {
-      await uploadFileToKnowledgeHub(resourceId, groupName, {
-        file: selectedFiles[0],
-        description: fileDescriptions[selectedFiles[0].uuid],
-      });
+      await onUploadArtifact(
+        resourceId,
+        groupName,
+        { file: selectedFiles[0], name: fileNames[selectedFiles[0].uuid], description: fileDescriptions[selectedFiles[0].uuid] },
+        setIsUploading
+      );
       // For now we will just close the panel after upload. We can add a success message and keep the panel open in future if needed.
       dispatch(closePanel());
     } catch (error: any) {
@@ -274,10 +337,9 @@ export const AddFilePanel = ({
           { errorMessage }
         )
       );
-    } finally {
       setIsUploading(false);
     }
-  }, [dispatch, fileDescriptions, groupName, intl, resourceId, selectedFiles]);
+  }, [dispatch, fileDescriptions, fileNames, groupName, intl, onUploadArtifact, resourceId, selectedFiles]);
 
   const handleClose = useCallback(() => {
     handleCancel();
@@ -290,7 +352,7 @@ export const AddFilePanel = ({
           type: 'action',
           text: isUploading ? INTL_TEXT.addingButton : INTL_TEXT.addButton,
           appearance: 'primary',
-          disabled: !groupName || selectedFiles.length === 0 || sizeTooLargeError !== undefined || isUploading,
+          disabled: !groupName || selectedFiles.length === 0 || sizeTooLargeError !== undefined || isUploading || !hasNonEmptyFileNames,
           onClick: handleAdd,
         },
         {
@@ -307,6 +369,7 @@ export const AddFilePanel = ({
     groupName,
     handleAdd,
     handleCancel,
+    hasNonEmptyFileNames,
     isUploading,
     selectedFiles.length,
     sizeTooLargeError,
@@ -314,16 +377,7 @@ export const AddFilePanel = ({
 
   return (
     <>
-      {showCreateModal && (
-        <CreateGroup
-          resourceId={resourceId}
-          onDismiss={() => setShowCreateModal(false)}
-          onCreate={(name) => {
-            setGroupName(name);
-            setSearchTerm(name);
-          }}
-        />
-      )}
+      {showCreateModal && <CreateGroup resourceId={resourceId} onDismiss={() => setShowCreateModal(false)} onCreate={handleCreateGroup} />}
       <Drawer
         className={styles.drawer}
         open={isOpen && currentPanelView === KnowledgePanelView.AddFiles}
@@ -360,6 +414,7 @@ export const AddFilePanel = ({
             description={INTL_TEXT.groupSectionDescription}
             descriptionLink={{ text: INTL_TEXT.learnMore, href: 'https://www.microsoft.com' }}
             items={groupSectionItems}
+            cssOverrides={{ sectionItem: styles.sectionItem }}
           />
           <TemplatesSection
             title={INTL_TEXT.title}
@@ -393,10 +448,12 @@ const FileList = ({
   files,
   onDelete,
   onUpdate,
+  existingNames,
 }: {
   files: UploadFile[];
   onDelete: (file: UploadFile) => void;
-  onUpdate: (file: UploadFile, properties: { description?: string }) => void;
+  onUpdate: (file: UploadFile, properties: { name?: string; description?: string }) => void;
+  existingNames: string[];
 }) => {
   const intl = useIntl();
   const INTL_TEXT = {
@@ -406,8 +463,8 @@ const FileList = ({
       description: 'Aria label for file list table in add files panel',
     }),
     fileNameLabel: intl.formatMessage({
-      id: 'Dm/N8T',
-      defaultMessage: 'File Name',
+      id: 'HtP0n9',
+      defaultMessage: 'File',
       description: 'Label for file name column in file list',
     }),
     fileTypeLabel: intl.formatMessage({
@@ -419,6 +476,16 @@ const FileList = ({
       id: 'gTZBAj',
       defaultMessage: 'Size',
       description: 'Label for file size column in file list',
+    }),
+    nameLabel: intl.formatMessage({
+      id: 'L8q0Xw',
+      defaultMessage: 'Name',
+      description: 'Label for the artifact name input field in add files panel',
+    }),
+    namePlaceholder: intl.formatMessage({
+      id: 'PjxVSX',
+      defaultMessage: 'Name for the artifact',
+      description: 'Placeholder for the artifact name field in add files panel',
     }),
     descriptionLabel: intl.formatMessage({
       id: 'wb/39q',
@@ -437,48 +504,96 @@ const FileList = ({
     }),
   };
 
+  const styles = useAddFilePanelStyles();
+
   const columns = [
-    { columnKey: 'name', label: INTL_TEXT.fileNameLabel },
-    { columnKey: 'type', label: INTL_TEXT.fileTypeLabel },
+    { columnKey: 'fileName', label: INTL_TEXT.fileNameLabel },
     { columnKey: 'size', label: INTL_TEXT.fileSizeLabel },
+    { columnKey: 'name', label: INTL_TEXT.nameLabel },
     { columnKey: 'description', label: INTL_TEXT.descriptionLabel },
     { columnKey: 'actions', label: '' }, // Empty label for actions column
   ];
+
+  const renderHeaderCell = useCallback(
+    (column: { columnKey: string; label: string }, style?: React.CSSProperties) => (
+      <TableHeaderCell key={column.columnKey} style={style}>
+        <Text weight="semibold">{column.label}</Text>
+      </TableHeaderCell>
+    ),
+    []
+  );
+
+  const [fileNames, setFileNames] = useState<Record<string, { name: string; error: string | undefined }>>({});
+  const handleNameChange = useCallback(
+    (file: UploadFile, name: string) => {
+      const errorMessage = validateArtifactNameAvailability(name, [
+        ...existingNames,
+        ...Object.keys(fileNames)
+          .filter((key) => key !== file.uuid.toString())
+          .map((key) => fileNames[key].name),
+      ]);
+      setFileNames((prevFileNames) => ({ ...prevFileNames, [file.uuid.toString()]: { name, error: errorMessage } }));
+
+      if (!errorMessage) {
+        onUpdate(file, { name });
+      }
+    },
+    [existingNames, fileNames, onUpdate]
+  );
 
   return (
     <Table size="small" aria-label={INTL_TEXT.tableAriaLabel}>
       <TableHeader>
         <TableRow>
-          {columns.map((column, i) => (
-            <TableHeaderCell key={column.columnKey} style={i === columns.length - 1 ? { width: '5%' } : {}}>
-              <Text weight="semibold">{column.label}</Text>
-            </TableHeaderCell>
-          ))}
+          {renderHeaderCell(columns[0], { width: '15%' })}
+          {renderHeaderCell(columns[1], { width: '10%' })}
+          {renderHeaderCell(columns[2], { width: '25%' })}
+          {renderHeaderCell(columns[3], { width: '40%' })}
+          {renderHeaderCell(columns[4], { width: '5%' })}
         </TableRow>
       </TableHeader>
       <TableBody>
         {files.map((item) => (
           <TableRow key={item.uuid}>
-            <TableCell>
-              <DocumentText20Regular />
-              <Text size={300} title={item.file.name}>
-                {item.file.name}
-              </Text>
-            </TableCell>
-            <TableCell>
-              <Text size={300}>{item.file.type?.toUpperCase()}</Text>
+            <TableCell style={{ maxWidth: 0 }}>
+              <div className={styles.fileNameCell}>
+                <DocumentText20Regular style={{ flexShrink: 0 }} />
+                <Text size={300} title={item.file.name} className={styles.fileNameText}>
+                  {item.file.name}
+                </Text>
+              </div>
             </TableCell>
             <TableCell>
               <Text size={300}>{getFileSizeInKB(item.file)} KB</Text>
             </TableCell>
-            <TableCell style={{ alignContent: 'center' }}>
-              <Input placeholder={INTL_TEXT.descriptionPlaceholder} onChange={(e) => onUpdate(item, { description: e.target.value })} />
+            <TableCell className={styles.inputCell}>
+              <div className={fileNames[item.uuid.toString()]?.error ? styles.errorInput : undefined}>
+                <Input
+                  className={styles.inputText}
+                  value={fileNames[item.uuid.toString()]?.name}
+                  placeholder={INTL_TEXT.namePlaceholder}
+                  onChange={(e) => handleNameChange(item, e.target.value)}
+                />
+                {fileNames[item.uuid.toString()]?.error && (
+                  <Text size={200} style={{ color: tokens.colorStatusDangerForeground3 }}>
+                    {fileNames[item.uuid.toString()]?.error}
+                  </Text>
+                )}
+              </div>
+            </TableCell>
+            <TableCell className={styles.inputCell}>
+              <Input
+                className={styles.inputText}
+                placeholder={INTL_TEXT.descriptionPlaceholder}
+                onChange={(e) => onUpdate(item, { description: e.target.value })}
+              />
             </TableCell>
             <TableCell>
               <Button
+                className={styles.actionButton}
                 appearance="subtle"
                 size="small"
-                icon={<Delete24Regular />}
+                icon={<Delete20Regular />}
                 onClick={() => onDelete(item)}
                 aria-label={INTL_TEXT.deleteButtonAriaLabel}
               />
