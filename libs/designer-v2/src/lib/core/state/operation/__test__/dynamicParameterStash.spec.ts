@@ -62,6 +62,9 @@ describe('clearDynamicIO - dynamic parameter stashing', () => {
     expect(result.inputParameters[nodeId].stashedDynamicParameterValues).toHaveLength(1);
     expect(result.inputParameters[nodeId].stashedDynamicParameterValues![0].parameterKey).toBe('dynamicParam');
     expect(result.inputParameters[nodeId].stashedDynamicParameterValues![0].value[0].value).toBe('dynamicParam-value');
+
+    // dynamicLoadStatus should be reset to NOTSTARTED
+    expect(result.inputParameters[nodeId].dynamicLoadStatus).toBe(DynamicLoadStatus.NOTSTARTED);
   });
 
   it('should not create stash when no dynamic parameters exist', () => {
@@ -123,6 +126,68 @@ describe('clearDynamicIO - dynamic parameter stashing', () => {
     expect(keys).toContain('dynamicA');
     expect(keys).toContain('dynamicB');
   });
+
+  it('should transition dynamicLoadStatus from SUCCEEDED back to NOTSTARTED on clearDynamicIO', () => {
+    const dynamicParam = createMockParameter({
+      parameterKey: 'dynamicParam',
+      info: { isDynamic: true, dynamicParameterReference: 'depKey' },
+    });
+
+    const state = {
+      ...initialState,
+      inputParameters: {
+        [nodeId]: {
+          dynamicLoadStatus: DynamicLoadStatus.SUCCEEDED,
+          parameterGroups: {
+            default: {
+              id: 'default',
+              description: '',
+              parameters: [dynamicParam],
+              rawInputs: [],
+            },
+          },
+        },
+      },
+      dependencies: {
+        [nodeId]: { inputs: {}, outputs: {} },
+      },
+      errors: {} as any,
+    };
+
+    const result = operationMetadataSlice.reducer(state as any, clearDynamicIO({ nodeId, inputs: true, outputs: false }));
+
+    expect(result.inputParameters[nodeId].dynamicLoadStatus).toBe(DynamicLoadStatus.NOTSTARTED);
+    expect(result.inputParameters[nodeId].stashedDynamicParameterValues).toHaveLength(1);
+  });
+
+  it('should not set dynamicLoadStatus when it was originally undefined', () => {
+    const staticParam = createMockParameter({ parameterKey: 'staticParam' });
+
+    const state = {
+      ...initialState,
+      inputParameters: {
+        [nodeId]: {
+          parameterGroups: {
+            default: {
+              id: 'default',
+              description: '',
+              parameters: [staticParam],
+              rawInputs: [],
+            },
+          },
+        },
+      },
+      dependencies: {
+        [nodeId]: { inputs: {}, outputs: {} },
+      },
+      errors: {} as any,
+    };
+
+    const result = operationMetadataSlice.reducer(state as any, clearDynamicIO({ nodeId, inputs: true, outputs: false }));
+
+    // dynamicLoadStatus should remain undefined for nodes that don't have dynamic inputs
+    expect(result.inputParameters[nodeId].dynamicLoadStatus).toBeUndefined();
+  });
 });
 
 describe('addDynamicInputs - stash clearing', () => {
@@ -177,6 +242,9 @@ describe('addDynamicInputs - stash clearing', () => {
     // New params should be in the group
     expect(result.inputParameters[nodeId].parameterGroups.default.parameters).toHaveLength(1);
     expect(result.inputParameters[nodeId].parameterGroups.default.parameters[0].parameterKey).toBe('newDynamic');
+
+    // dynamicLoadStatus should transition to SUCCEEDED
+    expect(result.inputParameters[nodeId].dynamicLoadStatus).toBe(DynamicLoadStatus.SUCCEEDED);
   });
 
   it('should only remove stash entries whose parameterKeys are now present in the loaded inputs', () => {
