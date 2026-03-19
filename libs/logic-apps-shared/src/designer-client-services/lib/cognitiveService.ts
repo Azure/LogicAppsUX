@@ -13,6 +13,8 @@ export interface ICognitiveServiceService {
   hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean>;
   createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any>;
   getFoundryAccessToken?(): Promise<string>;
+  /** Base URL for the Foundry proxy endpoint on the Logic Apps management API. */
+  foundryProxyBaseUrl?: string;
   readonly httpClient: IHttpClient;
 }
 

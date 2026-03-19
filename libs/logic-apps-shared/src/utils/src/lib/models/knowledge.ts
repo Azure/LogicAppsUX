@@ -1,20 +1,25 @@
 export interface KnowledgeHub {
+  id: string;
   name: string;
   description: string;
+  partitionKey: string;
+  createdAt: string;
 }
 
 export interface KnowledgeHubArtifact {
+  id: string;
   name: string;
   description: string;
-  type?: ArtifactType;
-  contentKind?: ContentKind;
-  contentStream?: any;
-  creationStatus?: ArtifactCreationStatus;
+  knowledgeHubId: string;
+  artifactSource: ArtifactType;
+  uploadStatus: ArtifactCreationStatus;
+  partitionKey: string;
+  createdAt: string;
 }
 
 export const ArtifactCreationStatus = {
   Initialized: 'Initialized',
-  Processing: 'Processing',
+  InProgress: 'InProgress',
   Completed: 'Completed',
   Failed: 'Failed',
 };
