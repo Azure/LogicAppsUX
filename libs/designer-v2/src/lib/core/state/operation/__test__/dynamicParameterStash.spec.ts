@@ -160,6 +160,38 @@ describe('clearDynamicIO - dynamic parameter stashing', () => {
     expect(result.inputParameters[nodeId].stashedDynamicParameterValues).toHaveLength(1);
   });
 
+  it('should preserve LOADING dynamicLoadStatus on clearDynamicIO', () => {
+    const dynamicParam = createMockParameter({
+      parameterKey: 'dynamicParam',
+      info: { isDynamic: true, dynamicParameterReference: 'depKey' },
+    });
+
+    const state = {
+      ...initialState,
+      inputParameters: {
+        [nodeId]: {
+          dynamicLoadStatus: DynamicLoadStatus.LOADING,
+          parameterGroups: {
+            default: {
+              id: 'default',
+              description: '',
+              parameters: [dynamicParam],
+              rawInputs: [],
+            },
+          },
+        },
+      },
+      dependencies: {
+        [nodeId]: { inputs: {}, outputs: {} },
+      },
+      errors: {} as any,
+    };
+
+    const result = operationMetadataSlice.reducer(state as any, clearDynamicIO({ nodeId, inputs: true, outputs: false }));
+
+    expect(result.inputParameters[nodeId].dynamicLoadStatus).toBe(DynamicLoadStatus.LOADING);
+  });
+
   it('should not set dynamicLoadStatus when it was originally undefined', () => {
     const staticParam = createMockParameter({ parameterKey: 'staticParam' });
 

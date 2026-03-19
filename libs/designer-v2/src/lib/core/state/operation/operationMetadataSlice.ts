@@ -385,7 +385,7 @@ export const operationMetadataSlice = createSlice({
           delete nodeErrors?.[ErrorLevel.DynamicInputs];
 
           const inputParameters = getRecordEntry(state.inputParameters, nodeId);
-          if (inputParameters?.dynamicLoadStatus !== undefined) {
+          if (inputParameters?.dynamicLoadStatus !== undefined && inputParameters.dynamicLoadStatus !== DynamicLoadStatus.LOADING) {
             inputParameters.dynamicLoadStatus = DynamicLoadStatus.NOTSTARTED;
           }
 
