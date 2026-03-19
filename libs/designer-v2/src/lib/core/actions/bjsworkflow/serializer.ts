@@ -4,7 +4,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
-import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
@@ -339,7 +339,8 @@ export const serializeOperation = async (
   // parameter values are not lost on save.
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
   const hasDynamicInputsError = !!errors?.[ErrorLevel.DynamicInputs];
-  const nodeExpectsDynamicInputs = !!nodeInputs?.dynamicLoadStatus;
+  const nodeExpectsDynamicInputs =
+    nodeInputs?.dynamicLoadStatus !== undefined && nodeInputs.dynamicLoadStatus !== DynamicLoadStatus.SUCCEEDED;
   const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
   const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
   if ((hasDynamicInputsError || nodeExpectsDynamicInputs) && !hasStash && !hasDynamicParamsInGroups) {
