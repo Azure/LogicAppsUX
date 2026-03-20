@@ -36,6 +36,7 @@ export default {
           required: ['description'],
         },
         inputsLocation: [],
+        allowOperations: true,
       },
     },
     inputs: {
