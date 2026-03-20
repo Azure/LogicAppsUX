@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../../core/state/knowledge/store
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import type { KnowledgeHub } from '@microsoft/logic-apps-shared';
+import type { KnowledgeHubExtended as KnowledgeHub, UploadFileHandler, UploadFile } from '@microsoft/logic-apps-shared';
 import { getStandardLogicAppId } from '../../../core/configuretemplate/utils/helper';
 import { KnowledgePanelView, openPanelView } from '../../../core/state/knowledge/panelSlice';
 import {
@@ -36,8 +36,10 @@ import {
   LinkMultipleRegular,
 } from '@fluentui/react-icons';
 import { CreateGroup } from '../modals/creategroup';
+import { type KnowledgeHubItem, KnowledgeList } from './knowledgelist';
+import { DeleteModal } from '../modals/delete';
 
-export const KnowledgeHubWizard = () => {
+export const KnowledgeHubWizard = ({ onUploadArtifact }: { onUploadArtifact: UploadFileHandler }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const styles = useWizardStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -83,6 +85,11 @@ export const KnowledgeHubWizard = () => {
       id: 'YMwLWl',
       description: 'Button text for refreshing the knowledge hubs list',
     }),
+    refreshingButton: intl.formatMessage({
+      defaultMessage: 'Refreshing...',
+      id: '7fI0ys',
+      description: 'Button text for refreshing the knowledge hubs list when refresh is in progress',
+    }),
     connectionButton: intl.formatMessage({
       defaultMessage: 'Connection',
       id: 'q80Qpn',
@@ -94,11 +101,14 @@ export const KnowledgeHubWizard = () => {
       description: 'Button text for deleting a knowledge hub',
     }),
   };
-  const { data: allHubs, isLoading, refetch } = useAllKnowledgeHubs(logicAppId);
+  const { data: allHubs, isLoading, refetch, isRefetching } = useAllKnowledgeHubs(logicAppId);
   const { data: connection, isLoading: isConnectionLoading } = useConnection();
 
   const [hubs, setHubs] = useState<KnowledgeHub[] | undefined>(undefined);
   const [showAddGroup, setShowAddGroup] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedArtifacts, setSelectedArtifacts] = useState<KnowledgeHubItem[]>([]);
+  const [selectedHub, setSelectedHub] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (allHubs && !isLoading) {
@@ -106,28 +116,46 @@ export const KnowledgeHubWizard = () => {
     }
   }, [allHubs, isLoading]);
 
-  const handleDelete = useCallback(() => {
-    // Implement delete functionality here
-  }, []);
+  const handleAddFiles = useCallback(
+    (hub?: KnowledgeHub) => {
+      setSelectedHub(hub?.id);
+      dispatch(openPanelView({ panelView: KnowledgePanelView.AddFiles }));
+    },
+    [dispatch]
+  );
 
-  const handleAddFiles = useCallback(() => {
-    // Implement add files functionality here
-  }, []);
-
-  const handleAddGroup = useCallback(() => {
-    setShowAddGroup(true);
-  }, []);
-  const handleCloseAddGroup = useCallback(() => {
-    setShowAddGroup(false);
-  }, []);
-
-  const handleRefreshHubs = useCallback(async () => {
+  const handleDeleteClick = useCallback(() => setShowDeleteModal(true), []);
+  const handleCloseDeleteModal = useCallback(() => setShowDeleteModal(false), []);
+  const handleOnDeleteComplete = useCallback(async () => {
     await refetch();
+    setSelectedArtifacts([]);
   }, [refetch]);
+
+  const handleAddGroup = useCallback(() => setShowAddGroup(true), []);
+  const handleCloseAddGroup = useCallback(() => setShowAddGroup(false), []);
+
+  const handleRefreshHubs = useCallback(async () => refetch(), [refetch]);
+  const handleOnCreateGroup = useCallback(() => {
+    handleRefreshHubs();
+    setShowAddGroup(false);
+  }, [handleRefreshHubs]);
 
   const handleConnectionClick = useCallback(() => {
     dispatch(openPanelView({ panelView: connection ? KnowledgePanelView.EditConnection : KnowledgePanelView.CreateConnection }));
   }, [dispatch, connection]);
+
+  const handleUploadArtifact = useCallback(
+    async (
+      resourceId: string,
+      hubName: string,
+      content: { file: UploadFile; name: string; description?: string },
+      setIsLoading: (isLoading: boolean) => void
+    ) => {
+      await onUploadArtifact(resourceId, hubName, content, setIsLoading);
+      await refetch();
+    },
+    [onUploadArtifact, refetch]
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   if (hubs === undefined || isLoading || isConnectionLoading) {
@@ -158,7 +186,7 @@ export const KnowledgeHubWizard = () => {
             </MenuTrigger>
             <MenuPopover>
               <MenuList>
-                <MenuItem icon={<DocumentRegular />} onClick={handleAddFiles} disabled={!connection}>
+                <MenuItem icon={<DocumentRegular />} onClick={() => handleAddFiles()} disabled={!connection}>
                   {INTL_TEXT.addFilesItem}
                 </MenuItem>
                 <MenuItem icon={<FolderRegular />} onClick={handleAddGroup} disabled={!connection}>
@@ -167,20 +195,51 @@ export const KnowledgeHubWizard = () => {
               </MenuList>
             </MenuPopover>
           </Menu>
-          <Button appearance="subtle" icon={<ArrowClockwiseRegular />} onClick={handleRefreshHubs}>
-            {INTL_TEXT.refreshButton}
+          <Button appearance="subtle" icon={<ArrowClockwiseRegular />} onClick={handleRefreshHubs} disabled={isRefetching}>
+            {isRefetching ? INTL_TEXT.refreshingButton : INTL_TEXT.refreshButton}
           </Button>
           <Divider vertical={true} style={{ maxWidth: '2px' }} />
           <Button appearance="subtle" icon={<LinkMultipleRegular />} onClick={handleConnectionClick} disabled={!connection}>
             {INTL_TEXT.connectionButton}
           </Button>
-          <Button appearance="subtle" icon={<DeleteRegular />} onClick={handleDelete} disabled={!connection}>
+          <Button
+            appearance="subtle"
+            icon={<DeleteRegular />}
+            onClick={handleDeleteClick}
+            disabled={!connection || selectedArtifacts.length === 0}
+          >
             {INTL_TEXT.deleteButton}
           </Button>
         </div>
-        {hubs.length === 0 ? connection ? <EmptyKnowledgeBaseView /> : <NoConnectionsView /> : <div>{'Open the list view here'}</div>}
-        {showAddGroup ? <CreateGroup resourceId={logicAppId} onDismiss={handleCloseAddGroup} /> : null}
-        <KnowledgeHubPanel resourceId={logicAppId} mountNode={containerRef.current} />
+        {hubs.length === 0 ? (
+          connection ? (
+            <EmptyKnowledgeBaseView />
+          ) : (
+            <NoConnectionsView />
+          )
+        ) : (
+          <KnowledgeList
+            resourceId={logicAppId}
+            hubs={hubs}
+            onUploadArtifacts={handleAddFiles}
+            setSelectedArtifacts={setSelectedArtifacts}
+          />
+        )}
+        {showAddGroup ? <CreateGroup resourceId={logicAppId} onCreate={handleOnCreateGroup} onDismiss={handleCloseAddGroup} /> : null}
+        {showDeleteModal ? (
+          <DeleteModal
+            selectedArtifacts={selectedArtifacts}
+            resourceId={logicAppId}
+            onDelete={handleOnDeleteComplete}
+            onDismiss={handleCloseDeleteModal}
+          />
+        ) : null}
+        <KnowledgeHubPanel
+          resourceId={logicAppId}
+          mountNode={containerRef.current}
+          selectedHub={selectedHub}
+          onUploadArtifact={handleUploadArtifact}
+        />
       </div>
       <div
         id={'msla-layer-host'}

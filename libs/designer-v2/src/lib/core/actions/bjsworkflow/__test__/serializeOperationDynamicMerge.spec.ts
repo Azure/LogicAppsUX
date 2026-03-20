@@ -32,7 +32,7 @@ vi.mock('../../../state/workflow/helper', () => ({
 
 import { serializeOperation } from '../serializer';
 import { getOperationManifest } from '../../../queries/operation';
-import { ErrorLevel } from '../../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 
@@ -162,6 +162,71 @@ describe('serializeOperation – DynamicInputs error merge with original definit
     expect(result!.inputs.method).toBe('POST');
 
     // Original dynamic values are preserved through the merge
+    expect(result!.inputs.body).toEqual({
+      tableName: 'original-table',
+      column1: 'original-value',
+    });
+  });
+
+  it('should merge originalDef.inputs when dynamic loading is in progress (no error yet), preserving dynamic values', async () => {
+    (getOperationManifest as Mock).mockResolvedValue(minimalManifest);
+
+    const staticParam = createMockParameter({
+      parameterKey: 'inputs.$.method',
+      value: [{ id: '1', type: 'literal', value: 'POST' }],
+    });
+
+    const rootState = createMockRootState({
+      workflow: {
+        operations: {
+          [operationId]: {
+            type: 'Http',
+            inputs: {
+              method: 'GET',
+              body: {
+                tableName: 'original-table',
+                column1: 'original-value',
+              },
+            },
+          },
+        },
+        nodesMetadata: {
+          [operationId]: { graphId: 'root', isRoot: true },
+        },
+      },
+      operations: {
+        operationInfo: {
+          [operationId]: { type: 'Http', connectorId: 'http', operationId: 'httpaction' },
+        },
+        inputParameters: {
+          [operationId]: {
+            dynamicLoadStatus: DynamicLoadStatus.NOTSTARTED,
+            parameterGroups: {
+              default: {
+                id: 'default',
+                description: '',
+                parameters: [staticParam],
+                rawInputs: [],
+              },
+            },
+            // No stash — dynamic params were never in state (initial load, schema not fetched yet)
+          },
+        },
+        // No DynamicInputs error — loading is still in progress
+        errors: {},
+        settings: { [operationId]: {} },
+        staticResults: {},
+        actionMetadata: {},
+      },
+    });
+
+    const result = await serializeOperation(rootState, operationId);
+
+    expect(result).not.toBeNull();
+    // User-edited static value is preserved
+    expect(result!.inputs.method).toBe('POST');
+
+    // Original dynamic values are preserved through the merge even without an error
     expect(result!.inputs.body).toEqual({
       tableName: 'original-table',
       column1: 'original-value',
