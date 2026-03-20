@@ -465,14 +465,19 @@ export const ParameterSection = ({
   const {
     data: foundryAgentsForNode,
     isLoading: foundryAgentsLoading,
+    isFetching: foundryAgentsFetching,
     error: foundryAgentsError,
+    refetch: refetchFoundryAgents,
   } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
   const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
 
-  // True when RBAC roles were just assigned and proxy calls are still failing due to Azure propagation delay.
-  const isRbacPropagating = foundryRbacStatus === 'assigned' && (foundryAgentsLoading || isFoundryAuthError(foundryAgentsError));
+  // True when RBAC roles were just assigned and proxy calls are actively retrying due to Azure propagation delay.
+  const isRbacPropagating = foundryRbacStatus === 'assigned' && foundryAgentsFetching && isFoundryAuthError(foundryAgentsError);
+  // True when RBAC propagation retries have been exhausted — query gave up.
+  const isRbacRetriesExhausted =
+    foundryRbacStatus === 'assigned' && !foundryAgentsFetching && !foundryAgentsLoading && isFoundryAuthError(foundryAgentsError);
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
@@ -1463,7 +1468,7 @@ export const ParameterSection = ({
 
   // Show a purposeful loading state while RBAC roles are propagating on Azure.
   // This is expected to take 30s–2min for new Foundry connections; retries happen automatically in the background.
-  if (isAgentServiceConnection && (foundryRbacStatus === 'assigning' || isRbacPropagating)) {
+  if (isAgentServiceConnection && (foundryRbacStatus === 'assigning' || isRbacPropagating || isRbacRetriesExhausted)) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
@@ -1486,16 +1491,31 @@ export const ParameterSection = ({
             />
           </div>
         )}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '24px 0' }}>
-          <Spinner
-            size="tiny"
-            label={
-              foundryRbacStatus === 'assigning'
-                ? 'Assigning permissions for Foundry access...'
-                : 'Setting up permissions for Foundry access. This may take up to a minute...'
-            }
-          />
-        </div>
+        {isRbacRetriesExhausted ? (
+          <div
+            role="alert"
+            aria-live="polite"
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 0' }}
+          >
+            <Text size={200} style={{ textAlign: 'center', color: 'var(--colorNeutralForeground2)' }}>
+              Permissions are still propagating. This can take a few minutes on Azure.
+            </Text>
+            <Button appearance="primary" size="small" onClick={() => refetchFoundryAgents()} aria-label="Retry loading Foundry agents">
+              Retry now
+            </Button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '24px 0' }}>
+            <Spinner
+              size="tiny"
+              label={
+                foundryRbacStatus === 'assigning'
+                  ? 'Assigning permissions for Foundry access...'
+                  : 'Setting up permissions for Foundry access. This may take up to a minute...'
+              }
+            />
+          </div>
+        )}
         {filtered.length > 0 && (
           <SettingsSection id={`${group.id}-after-foundry`} nodeId={nodeId} settings={filtered} showHeading={false} showSeparator={false} />
         )}
