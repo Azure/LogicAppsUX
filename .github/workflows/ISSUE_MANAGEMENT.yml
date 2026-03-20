@@ -21,3 +21,12 @@ jobs:
           close-issue-message: "This issue has been closed because the information requested wasn't provided within 7 days."
           operations-per-run: 200
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/stale@v4
+        with:
+          only-labels: 'daily-status'
+          days-before-issue-stale: 0
+          days-before-issue-close: 1
+          stale-issue-label: 'stale'
+          close-issue-message: "Auto-closing daily status report after 1 day."
+          operations-per-run: 100
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
