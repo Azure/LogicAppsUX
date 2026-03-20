@@ -24,9 +24,9 @@ jobs:
       - uses: actions/stale@v4
         with:
           only-labels: 'daily-status'
-          days-before-issue-stale: 0
-          days-before-issue-close: 1
-          stale-issue-label: 'stale'
+          days-before-issue-stale: 1
+          days-before-issue-close: 0
+          stale-issue-label: 'stale-status'
           close-issue-message: "Auto-closing daily status report after 1 day."
           operations-per-run: 100
           repo-token: ${{ secrets.GITHUB_TOKEN }}
