@@ -12,8 +12,8 @@ import { useOperationQuery } from '../../../core/state/selectors/actionMetadataS
 import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from './usePanelTabs';
 import type { PanelNodeData } from '@microsoft/designer-ui';
-import { isBuiltInAgentTool } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
+import { isBuiltInAgentTool } from '@microsoft/logic-apps-shared';
 
 // SVG icon for built-in agent tools (code brackets icon: </>)
 const BUILT_IN_TOOL_ICON_URI =
