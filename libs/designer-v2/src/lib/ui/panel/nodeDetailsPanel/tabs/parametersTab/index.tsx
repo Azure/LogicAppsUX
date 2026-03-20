@@ -396,6 +396,7 @@ export const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
@@ -441,13 +442,18 @@ export const ParameterSection = ({
       'Cognitive Services Contributor',
     ])
       .then((missingRoles) => {
+        if (rbacAssignedResourceRef.current !== targetResourceId) {
+          return;
+        }
         if (missingRoles.length === 0) {
           setFoundryRbacStatus('not-needed');
           return Promise.resolve();
         }
         return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
           () => {
-            setFoundryRbacStatus('assigned');
+            if (rbacAssignedResourceRef.current === targetResourceId) {
+              setFoundryRbacStatus('assigned');
+            }
           }
         );
       })
@@ -1526,10 +1532,27 @@ export const ParameterSection = ({
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 0' }}
           >
             <Text size={200} style={{ textAlign: 'center', color: 'var(--colorNeutralForeground2)' }}>
-              Permissions are still propagating. This can take a few minutes on Azure.
+              {intl.formatMessage({
+                defaultMessage: 'Permissions are still propagating. This can take a few minutes on Azure.',
+                id: 'rAiPQC',
+                description: 'Message shown when RBAC propagation retries have been exhausted for Foundry agent access.',
+              })}
             </Text>
-            <Button appearance="primary" size="small" onClick={() => refetchFoundryAgents()} aria-label="Retry loading Foundry agents">
-              Retry now
+            <Button
+              appearance="primary"
+              size="small"
+              onClick={() => refetchFoundryAgents()}
+              aria-label={intl.formatMessage({
+                defaultMessage: 'Retry loading Foundry agents',
+                id: '5svGXJ',
+                description: 'Accessible label for the button that retries loading Foundry agents after RBAC propagation.',
+              })}
+            >
+              {intl.formatMessage({
+                defaultMessage: 'Retry now',
+                id: 'wU5max',
+                description: 'Button label to manually retry loading Foundry agents after RBAC propagation retries exhausted.',
+              })}
             </Button>
           </div>
         ) : (
@@ -1538,8 +1561,16 @@ export const ParameterSection = ({
               size="tiny"
               label={
                 foundryRbacStatus === 'assigning'
-                  ? 'Assigning permissions for Foundry access...'
-                  : 'Setting up permissions for Foundry access. This may take up to a minute...'
+                  ? intl.formatMessage({
+                      defaultMessage: 'Assigning permissions for Foundry access...',
+                      id: '5knK0r',
+                      description: 'Spinner label shown while RBAC role assignments are being created for Foundry.',
+                    })
+                  : intl.formatMessage({
+                      defaultMessage: 'Setting up permissions for Foundry access. This may take up to a minute...',
+                      id: 'LBPdGc',
+                      description: 'Spinner label shown while waiting for Azure RBAC roles to propagate for Foundry.',
+                    })
               }
             />
           </div>
