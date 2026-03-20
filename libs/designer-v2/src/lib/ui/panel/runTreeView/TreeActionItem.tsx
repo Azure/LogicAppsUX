@@ -11,14 +11,13 @@ import {
 } from '@fluentui/react-components';
 import { getDurationString } from '@microsoft/designer-ui';
 import { type LogicAppsV2, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
-import { changePanelNode, setFocusNode, useOperationPanelSelectedNodeId, type AppDispatch } from '../../../core';
+import { changePanelNode, setFocusNode, useOperationPanelSelectedNodeId } from '../../../core';
 import {
   useRunData,
   useParentRunIndex,
   useRunIndex,
   useNodeMetadata,
   useParentRunIndexes,
-  useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
 import {
   collapseGraphsToShowNode,
@@ -27,13 +26,12 @@ import {
   setRunIndex,
   updateAgenticGraph,
 } from '../../../core/state/workflow/workflowSlice';
-import { fetchBuiltInToolRunData } from '../../../core/actions/bjsworkflow/monitoring';
 import { useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useRunTreeViewStyles } from './RunTreeView.styles';
 import StatusIndicator from './StatusIndicator';
-import { ChatFilled, WrenchFilled, CodeFilled } from '@fluentui/react-icons';
+import { ChatFilled, WrenchFilled } from '@fluentui/react-icons';
 import HandoffIcon from '../../../common/images/handoff_icon.svg';
 import Markdown from 'react-markdown';
 
@@ -49,11 +47,10 @@ export interface TreeActionItemProps {
 }
 
 export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProps, data }: TreeActionItemProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const styles = useRunTreeViewStyles();
   const intl = useIntl();
 
-  const selectedRun = useRunInstance() as LogicAppsV2.RunInstanceDefinition | undefined;
   const rawRunData = useRunData(id);
 
   const ref = useRef(null);
@@ -190,22 +187,6 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
               })
             );
           }
-
-          // Fetch iteration-level content links for built-in tools
-          if (data?.isBuiltInTool) {
-            const agentNodeId = data?.repetition?.properties?.repetitionIndexes?.[0]?.scopeName;
-            const parentRepetitionName = data?.parentRepetition?.name;
-            if (agentNodeId && selectedRun?.id && parentRepetitionName) {
-              dispatch(
-                fetchBuiltInToolRunData({
-                  toolNodeId: id,
-                  agentNodeId,
-                  runId: selectedRun.id,
-                  repetitionName: parentRepetitionName,
-                })
-              );
-            }
-          }
         }
       }
 
@@ -215,7 +196,7 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
         dispatch(setRunIndex({ nodeId: element.scopeName, page: element.itemIndex }));
       });
     },
-    [itemRunIndex, parentRunIndex, selected, dispatch, data, selectedRunIndexForItem, isAgentRepetition, selectedRun]
+    [itemRunIndex, parentRunIndex, selected, dispatch, data, selectedRunIndexForItem, isAgentRepetition]
   );
 
   const shortTime = useMemo(() => {
@@ -255,8 +236,6 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
       <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
     ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
       <WrenchFilled className={styles.treeItemToolIcon} />
-    ) : data?.isBuiltInTool ? (
-      <CodeFilled className={styles.treeItemToolIcon} />
     ) : (hasRepetitionData && !data) || !icon ? (
       <div className={styles.treeItemIcon} />
     ) : (

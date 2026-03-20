@@ -35,7 +35,6 @@ import {
   LoggerService,
   equals,
   getRecordEntry,
-  isBuiltInAgentTool,
   RUN_AFTER_STATUS,
   WORKFLOW_NODE_TYPES,
   containsIdTag,
@@ -49,7 +48,7 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
-import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../actions/bjsworkflow/monitoring';
+import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
 
@@ -124,6 +123,7 @@ export const workflowSlice = createSlice({
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
+              // eslint-disable-next-line no-param-reassign
               edge.id = `${action.payload.nodeId}-${edge.target}`;
               edge.source = action.payload.nodeId;
             }
@@ -313,12 +313,6 @@ export const workflowSlice = createSlice({
             runData: {
               status: tools[toolId].status,
               repetitionCount: tools[toolId].iterations,
-              ...(isBuiltInAgentTool(toolId)
-                ? {
-                    inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
-                    outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
-                  }
-                : {}),
             },
             runIndex: 0,
           };
@@ -839,40 +833,12 @@ export const workflowSlice = createSlice({
       if (!nodeMetadata) {
         return;
       }
-      const existingInputs = nodeMetadata.runData?.inputs;
-      const existingOutputs = nodeMetadata.runData?.outputs;
-
-      // Don't overwrite existing inputs/outputs with empty values
-      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData)
-      const hasNewInputs = inputs && Object.keys(inputs).length > 0;
-      const hasNewOutputs = outputs && Object.keys(outputs).length > 0;
-
       const nodeRunData = {
         ...nodeMetadata.runData,
-        inputs: hasNewInputs ? inputs : existingInputs,
-        outputs: hasNewOutputs ? outputs : existingOutputs,
+        inputs: inputs,
+        outputs: outputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
-    });
-    builder.addCase(fetchBuiltInToolRunData.fulfilled, (state, action) => {
-      const { toolNodeId, inputsLink, outputsLink, inputs, outputs, startTime, endTime, status, correlation } = action.payload;
-
-      // Create nodesMetadata entry if it doesn't exist (for built-in tools like code_interpreter)
-      if (!state.nodesMetadata[toolNodeId]) {
-        state.nodesMetadata[toolNodeId] = {} as NodeMetadata;
-      }
-
-      state.nodesMetadata[toolNodeId].runData = {
-        ...state.nodesMetadata[toolNodeId].runData,
-        inputsLink,
-        outputsLink,
-        inputs,
-        outputs,
-        startTime,
-        endTime,
-        status,
-        correlation,
-      } as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addCase(updateNodeSettings, (state, action: PayloadAction<AddSettingsPayload>) => {

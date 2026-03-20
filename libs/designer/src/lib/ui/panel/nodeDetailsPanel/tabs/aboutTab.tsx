@@ -9,35 +9,18 @@ import {
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
-import { About, getConnectorCategoryString, getConnectorAllCategories } from '@microsoft/designer-ui';
-import { isBuiltInAgentTool } from '@microsoft/logic-apps-shared';
-
-const BUILT_IN_TOOL_DESCRIPTIONS: Record<string, { connectorName: string; descriptionKey: string }> = {
-  code_interpreter: {
-    connectorName: 'Code Interpreter',
-    descriptionKey: 'Code Interpreter is a built-in tool that allows agents to write and execute code to solve problems.',
-  },
-};
+import { About, getConnectorCategoryString } from '@microsoft/designer-ui';
 
 export const AboutTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId } = props;
   const operationInfo = useOperationInfo(nodeId);
   const { displayRuntimeInfo } = useHostOptions();
-  const isBuiltInTool = isBuiltInAgentTool(nodeId);
-
   const displayNameResult = useConnectorName(operationInfo);
   const { result: description } = useOperationDescription(operationInfo);
   const { result: documentation } = useOperationDocumentation(operationInfo);
   const { result: environmentBadge } = useConnectorEnvironmentBadge(operationInfo);
   const { result: statusBadge } = useConnectorStatusBadge(operationInfo);
-
-  const builtInToolInfo = isBuiltInTool ? BUILT_IN_TOOL_DESCRIPTIONS[nodeId] : undefined;
-  const connectorType = operationInfo?.connectorId
-    ? getConnectorCategoryString(operationInfo.connectorId)
-    : isBuiltInTool
-      ? getConnectorAllCategories()['inapp']
-      : '';
-
+  const connectorType = getConnectorCategoryString(operationInfo.connectorId);
   const headerIcons = [
     ...(environmentBadge ? [{ badgeText: environmentBadge.name, title: environmentBadge.description }] : []),
     ...(statusBadge ? [{ badgeText: statusBadge.name, title: statusBadge.description }] : []),
@@ -45,11 +28,11 @@ export const AboutTab: React.FC<PanelTabProps> = (props) => {
 
   return (
     <About
-      connectorDisplayName={builtInToolInfo?.connectorName ?? displayNameResult.result}
-      description={builtInToolInfo?.descriptionKey ?? description}
+      connectorDisplayName={displayNameResult.result}
+      description={description}
       descriptionDocumentation={documentation}
       headerIcons={headerIcons}
-      isLoading={isBuiltInTool ? false : displayNameResult.isLoading}
+      isLoading={displayNameResult.isLoading}
       connectorType={connectorType}
       displayRuntimeInfo={displayRuntimeInfo}
     />

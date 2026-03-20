@@ -6,7 +6,7 @@ import type { HeadlessFlatTreeItemProps, TreeItemValue, TreeOpenChangeData, Tree
 import { FlatTree, Spinner, useHeadlessFlatTree_unstable, useRestoreFocusTarget } from '@fluentui/react-components';
 import { useAllIcons } from '../../../core/state/operation/operationSelector';
 import { getAgentActionsRepetition, getAgentRepetitions, getNodeRepetitions, useChatHistory } from '../../../core';
-import { equals, idDisplayCase, isBuiltInAgentTool, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { equals, idDisplayCase, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useTimelineRepetitions } from '../../MonitoringTimeline/hooks';
 import { TreeActionItem } from './TreeActionItem';
@@ -149,12 +149,6 @@ export const RunTreeView = () => {
 
     // Stateful nodes
     Object.entries(actions).forEach(([id, action]) => {
-      // Skip built-in agent tools (e.g. code_interpreter) - they're added as children
-      // of agent repetitions in the agent scopes branch below
-      if (isBuiltInAgentTool(id)) {
-        return;
-      }
-
       let parentNodeId = nodesMetadata?.[id]?.parentNodeId ?? 'root';
       if (nodesMetadata?.[parentNodeId]?.subgraphType) {
         parentNodeId = nodesMetadata?.[parentNodeId]?.parentNodeId ?? 'root';
@@ -245,7 +239,6 @@ export const RunTreeView = () => {
                   parentValue: newAgentId,
                   data: {
                     repIndex: i,
-                    isBuiltInTool: isBuiltInAgentTool(toolId),
                     repetition: {
                       id: toolRepetitionId,
                       name: toolId,
@@ -260,7 +253,6 @@ export const RunTreeView = () => {
                       type: 'workflows/runs/actions/agentRepetitions/tools',
                     },
                     parentRepetition: agentRepetition,
-                    startTime: agentRepetition.properties?.startTime,
                   },
                 };
                 addToCountRecord(toolId);
@@ -367,7 +359,6 @@ export const RunTreeView = () => {
             parentValue: newAgentId,
             data: {
               repIndex: i,
-              isBuiltInTool: isBuiltInAgentTool(toolId),
               repetition: {
                 id: toolRepetitionId,
                 name: toolId,
@@ -382,7 +373,6 @@ export const RunTreeView = () => {
                 type: 'workflows/runs/actions/agentRepetitions/tools',
               },
               parentRepetition: agentRepetition,
-              startTime: agentRepetition.properties?.startTime,
             },
           };
           addToCountRecord(toolId);
