@@ -42,3 +42,30 @@ export type ContentKind = (typeof ContentKind)[keyof typeof ContentKind];
 export interface KnowledgeHubExtended extends KnowledgeHub {
   artifacts: KnowledgeHubArtifact[];
 }
+
+type ProgressStatus = number | 'Indeterminate';
+export interface UploadFile {
+  /**
+   * Unique identifier of each file
+   */
+  readonly uuid: number;
+  /**
+   * File object to be uploaded
+   */
+  readonly file: File;
+  /**
+   * Upload progress of the file
+   */
+  readonly progress?: ProgressStatus;
+  /**
+   * Callback to set upload progress of the file
+   */
+  readonly setProgress?: (progress: ProgressStatus) => void;
+}
+
+export type UploadFileHandler = (
+  siteResourceId: string,
+  hubName: string,
+  content: { file: UploadFile; name: string; description?: string },
+  setIsLoading: (isLoading: boolean) => void
+) => Promise<void>;
