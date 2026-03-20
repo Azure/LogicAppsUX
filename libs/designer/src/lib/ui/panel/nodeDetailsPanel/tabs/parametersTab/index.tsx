@@ -65,6 +65,7 @@ import {
   Spinner,
   Text,
   Textarea,
+  tokens,
 } from '@fluentui/react-components';
 import {
   PanelLocation,
@@ -381,6 +382,9 @@ const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
 const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
 const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
 
+const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
+type FoundryRbacStatus = 'idle' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+
 export const ParameterSection = ({
   nodeId,
   group,
@@ -413,14 +417,13 @@ export const ParameterSection = ({
 
   // Compute isAgentServiceConnection early so we can gate proxy queries behind RBAC completion.
   const earlyParamGroups = useSelector(
-    (state: RootState) => state.operations.inputParameters[nodeId]?.parameterGroups ?? ({} as Record<string, ParameterGroup>)
+    (state: RootState) => state.operations.inputParameters[nodeId]?.parameterGroups ?? EMPTY_PARAM_GROUPS
   );
   const isAgentServiceConnection = useMemo(() => {
     return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, earlyParamGroups);
   }, [group.id, earlyParamGroups, operationInfo.connectorId]);
 
   // Track RBAC assignment status so proxy queries don't fire before roles are assigned.
-  type FoundryRbacStatus = 'idle' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
   const [foundryRbacStatus, setFoundryRbacStatus] = useState<FoundryRbacStatus>('idle');
   const rbacAssignedResourceRef = useRef<string | undefined>(undefined);
 
@@ -431,6 +434,7 @@ export const ParameterSection = ({
     if (rbacAssignedResourceRef.current === foundryAccountResourceId) {
       return;
     }
+    let cancelled = false;
     const targetResourceId = foundryAccountResourceId;
     rbacAssignedResourceRef.current = targetResourceId;
     setFoundryRbacStatus('assigning');
@@ -441,7 +445,7 @@ export const ParameterSection = ({
       'Cognitive Services Contributor',
     ])
       .then((missingRoles) => {
-        if (rbacAssignedResourceRef.current !== targetResourceId) {
+        if (cancelled || rbacAssignedResourceRef.current !== targetResourceId) {
           return;
         }
         if (missingRoles.length === 0) {
@@ -450,18 +454,22 @@ export const ParameterSection = ({
         }
         return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
           () => {
-            if (rbacAssignedResourceRef.current === targetResourceId) {
+            if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
               setFoundryRbacStatus('assigned');
             }
           }
         );
       })
-      .catch(() => {
-        if (rbacAssignedResourceRef.current === targetResourceId) {
+      .catch((err) => {
+        console.error('Foundry RBAC assignment failed:', err);
+        if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
           rbacAssignedResourceRef.current = undefined;
           setFoundryRbacStatus('failed');
         }
       });
+    return () => {
+      cancelled = true;
+    };
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
   // Gate Foundry proxy queries: don't fire until RBAC assignment has completed (or is unnecessary).
@@ -484,6 +492,12 @@ export const ParameterSection = ({
   // True when RBAC propagation retries have been exhausted — query gave up.
   const isRbacRetriesExhausted =
     foundryRbacStatus === 'assigned' && !foundryAgentsFetching && !foundryAgentsLoading && isFoundryAuthError(foundryAgentsError);
+  const retryButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (isRbacRetriesExhausted) {
+      retryButtonRef.current?.focus();
+    }
+  }, [isRbacRetriesExhausted]);
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
@@ -1498,12 +1512,8 @@ export const ParameterSection = ({
           </div>
         )}
         {isRbacRetriesExhausted ? (
-          <div
-            role="alert"
-            aria-live="polite"
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 0' }}
-          >
-            <Text size={200} style={{ textAlign: 'center', color: 'var(--colorNeutralForeground2)' }}>
+          <div role="status" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 0' }}>
+            <Text size={200} style={{ textAlign: 'center', color: tokens.colorNeutralForeground2 }}>
               {intl.formatMessage({
                 defaultMessage: 'Permissions are still propagating. This can take a few minutes on Azure.',
                 id: 'rAiPQC',
@@ -1511,6 +1521,7 @@ export const ParameterSection = ({
               })}
             </Text>
             <Button
+              ref={retryButtonRef}
               appearance="primary"
               size="small"
               onClick={() => refetchFoundryAgents()}
