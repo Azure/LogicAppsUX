@@ -119,6 +119,7 @@ import {
   useFoundryProjectEndpointForNode,
   useFoundryProjectResourceIdForNode,
   useCreateFoundryAgent,
+  isFoundryAuthError,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import {
   categorizeConnections,
@@ -406,13 +407,73 @@ export const ParameterSection = ({
     nodeId,
     operationInfo?.connectorId
   );
-  const { data: foundryAgentsForNode, isLoading: foundryAgentsLoading } = useFoundryAgentsForNode(nodeId);
-  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
   const foundryAccountResourceId = useFoundryAccountResourceIdForNode(nodeId);
+
+  // Compute isAgentServiceConnection early so we can gate proxy queries behind RBAC completion.
+  const earlyParamGroups = useSelector(
+    (state: RootState) => state.operations.inputParameters[nodeId]?.parameterGroups ?? ({} as Record<string, ParameterGroup>)
+  );
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, earlyParamGroups);
+  }, [group.id, earlyParamGroups, operationInfo.connectorId]);
+
+  // Track RBAC assignment status so proxy queries don't fire before roles are assigned.
+  type FoundryRbacStatus = 'idle' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+  const [foundryRbacStatus, setFoundryRbacStatus] = useState<FoundryRbacStatus>('idle');
+  const rbacAssignedResourceRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isAgentServiceConnection || !foundryAccountResourceId) {
+      return;
+    }
+    if (rbacAssignedResourceRef.current === foundryAccountResourceId) {
+      return;
+    }
+    const targetResourceId = foundryAccountResourceId;
+    rbacAssignedResourceRef.current = targetResourceId;
+    setFoundryRbacStatus('assigning');
+    getMissingRoleDefinitions(targetResourceId, [
+      'Azure AI User',
+      'Azure AI Administrator',
+      'Azure AI Developer',
+      'Cognitive Services Contributor',
+    ])
+      .then((missingRoles) => {
+        if (missingRoles.length === 0) {
+          setFoundryRbacStatus('not-needed');
+          return Promise.resolve();
+        }
+        return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
+          () => {
+            setFoundryRbacStatus('assigned');
+          }
+        );
+      })
+      .catch(() => {
+        if (rbacAssignedResourceRef.current === targetResourceId) {
+          rbacAssignedResourceRef.current = undefined;
+          setFoundryRbacStatus('failed');
+        }
+      });
+  }, [isAgentServiceConnection, foundryAccountResourceId]);
+
+  // Gate Foundry proxy queries: don't fire until RBAC assignment has completed (or is unnecessary).
+  const foundryRbacReady =
+    !isAgentServiceConnection || foundryRbacStatus === 'assigned' || foundryRbacStatus === 'not-needed' || foundryRbacStatus === 'failed';
+
+  const {
+    data: foundryAgentsForNode,
+    isLoading: foundryAgentsLoading,
+    error: foundryAgentsError,
+  } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
+
+  // True when RBAC roles were just assigned and proxy calls are still failing due to Azure propagation delay.
+  const isRbacPropagating = foundryRbacStatus === 'assigned' && (foundryAgentsLoading || isFoundryAuthError(foundryAgentsError));
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
@@ -454,10 +515,6 @@ export const ParameterSection = ({
     [nodeId, rootState.operations.inputParameters]
   );
 
-  const isAgentServiceConnection = useMemo(() => {
-    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
-  }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
-
   // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
   // Only applies when agentModelType is truly empty (not yet loaded); if it's set to a
@@ -472,33 +529,6 @@ export const ParameterSection = ({
     }
     return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
   }, [isAgentServiceConnection, nodeInputs.parameterGroups, group.id]);
-
-  // When a Foundry connection becomes active, eagerly assign RBAC roles so the proxy can
-  // authenticate via MSI before the workflow is saved.
-  const rbacAssignedRef = useRef<string | undefined>(undefined);
-  useEffect(() => {
-    if (!isAgentServiceConnection || !foundryAccountResourceId || rbacAssignedRef.current === foundryAccountResourceId) {
-      return;
-    }
-    // Mark as in-progress to prevent concurrent attempts
-    const targetResourceId = foundryAccountResourceId;
-    rbacAssignedRef.current = targetResourceId;
-    getMissingRoleDefinitions(targetResourceId, [
-      'Azure AI User',
-      'Azure AI Administrator',
-      'Azure AI Developer',
-      'Cognitive Services Contributor',
-    ])
-      .then((missingRoles) =>
-        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id)))
-      )
-      .catch(() => {
-        // Clear the ref on failure so subsequent renders can retry
-        if (rbacAssignedRef.current === targetResourceId) {
-          rbacAssignedRef.current = undefined;
-        }
-      });
-  }, [isAgentServiceConnection, foundryAccountResourceId]);
 
   // Derive the currently selected Foundry agent from parameter values
   const selectedFoundryAgent = useMemo(() => {
@@ -1458,6 +1488,48 @@ export const ParameterSection = ({
       onShowFormChange={setIsCreatingNewAgent}
     />
   );
+
+  // Show a purposeful loading state while RBAC roles are propagating on Azure.
+  // This is expected to take 30s–2min for new Foundry connections; retries happen automatically in the background.
+  if (isAgentServiceConnection && (foundryRbacStatus === 'assigning' || isRbacPropagating)) {
+    const agentPickerSetting = settings.find(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
+    );
+    const filtered = filterFoundryManagedSettings(settings.filter((s) => s !== agentPickerSetting));
+
+    return (
+      <>
+        {agentPickerSetting && (
+          <div style={{ opacity: 0.5 }} {...{ inert: '' }}>
+            <SettingsSection
+              id={group.id}
+              nodeId={nodeId}
+              sectionName={group.description}
+              title={group.description}
+              settings={[agentPickerSetting]}
+              showHeading={!!group.description}
+              expanded={sectionExpanded}
+              onHeaderClick={onExpandSection}
+              showSeparator={false}
+            />
+          </div>
+        )}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '24px 0' }}>
+          <Spinner
+            size="tiny"
+            label={
+              foundryRbacStatus === 'assigning'
+                ? 'Assigning permissions for Foundry access...'
+                : 'Setting up permissions for Foundry access. This may take up to a minute...'
+            }
+          />
+        </div>
+        {filtered.length > 0 && (
+          <SettingsSection id={`${group.id}-after-foundry`} nodeId={nodeId} settings={filtered} showHeading={false} showSeparator={false} />
+        )}
+      </>
+    );
+  }
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.

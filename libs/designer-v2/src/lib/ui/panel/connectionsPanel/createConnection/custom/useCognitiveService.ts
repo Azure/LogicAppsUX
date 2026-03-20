@@ -218,11 +218,43 @@ function buildProxyContext(
   return { ...proxy, foundryEndpoint: projectEndpoint };
 }
 
+/**
+ * Detects whether an error from a Foundry proxy call is an auth/permission error (401/403).
+ * These are expected during RBAC propagation and should trigger extended retries.
+ */
+export function isFoundryAuthError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+  const e = error as Record<string, unknown>;
+  const status = e.httpStatusCode ?? e.status ?? e.statusCode;
+  if (status === 401 || status === 403) {
+    return true;
+  }
+  const code = String(e.code ?? e.Code ?? '');
+  const message = String(e.message ?? e.Message ?? '');
+  return /unauthorized|permissiondenied|forbidden/i.test(code) || /unauthorized|permissiondenied|forbidden/i.test(message);
+}
+
 const foundryQueryOpts = {
   ...queryOpts,
   retryOnMount: true,
   refetchOnMount: true,
   refetchOnReconnect: true,
+  retry: (failureCount: number, error: unknown) => {
+    // Extended retries for auth errors — RBAC propagation can take 30s–2min
+    if (isFoundryAuthError(error)) {
+      return failureCount < 12;
+    }
+    return failureCount < 3;
+  },
+  retryDelay: (attempt: number, error: unknown) => {
+    if (isFoundryAuthError(error)) {
+      // Exponential backoff: 3s, 6s, 12s, 24s, 30s, 30s... (cap at 30s, ~3min total window)
+      return Math.min(3000 * 2 ** attempt, 30_000);
+    }
+    return Math.min(1000 * 2 ** attempt, 10_000);
+  },
 };
 
 /** Returns the Foundry project endpoint for a node's selected connection. */
@@ -237,7 +269,10 @@ export const useFoundryProjectResourceIdForNode = (nodeId: string): string | und
 };
 
 /** Fetches all v2 Foundry agents for the node's selected connection via the backend proxy. */
-export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
+export const useFoundryAgentsForNode = (
+  nodeId: string,
+  rbacReady = true
+): { data: FoundryAgent[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
   return useQuery(
@@ -246,7 +281,7 @@ export const useFoundryAgentsForNode = (nodeId: string): { data: FoundryAgent[] 
       const ctx = buildProxyContext(projectEndpoint);
       return ctx ? listAllFoundryAgentsViaProxy(ctx) : [];
     },
-    { ...foundryQueryOpts, enabled: !!projectEndpoint }
+    { ...foundryQueryOpts, enabled: !!projectEndpoint && rbacReady }
   );
 };
 
@@ -257,7 +292,10 @@ export const useFoundryAccountResourceIdForNode = (nodeId: string): string | und
 };
 
 /** Fetches available model deployments for the Foundry project connected to the node via the backend proxy. */
-export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
+export const useFoundryModelsForNode = (
+  nodeId: string,
+  rbacReady = true
+): { data: FoundryModel[] | undefined; isLoading: boolean; error: unknown } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
   return useQuery(
@@ -266,7 +304,7 @@ export const useFoundryModelsForNode = (nodeId: string): { data: FoundryModel[] 
       const ctx = buildProxyContext(projectEndpoint);
       return ctx ? listFoundryModelsViaProxy(ctx) : [];
     },
-    { ...foundryQueryOpts, enabled: !!projectEndpoint }
+    { ...foundryQueryOpts, enabled: !!projectEndpoint && rbacReady }
   );
 };
 
