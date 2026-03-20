@@ -192,7 +192,7 @@ describe('AddFilePanel Component', () => {
       renderComponent();
 
       expect(
-        screen.getByText('Files will be added to the group name above. Each file can be up to 16MB, with a maximum or 100MB per upload.')
+        screen.getByText("Files are added to the specified group. Each file can't exceed 16 MB. Total upload can't exceed 100 MB.")
       ).toBeInTheDocument();
     });
 
@@ -344,7 +344,7 @@ describe('AddFilePanel Component', () => {
       fireEvent.click(addLargeFileButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('error-message')).toHaveTextContent('File must be less than 16MB.');
+        expect(screen.getByTestId('error-message')).toHaveTextContent('File size must be less than 16 MB.');
       });
     });
   });
@@ -415,7 +415,7 @@ describe('AddFilePanel Component', () => {
       });
 
       // Find and fill the name input (in FileList)
-      const nameInputs = screen.getAllByPlaceholderText('Name for the artifact');
+      const nameInputs = screen.getAllByPlaceholderText('Artifact name');
       if (nameInputs.length > 0) {
         fireEvent.change(nameInputs[0], { target: { value: 'TestArtifact' } });
       }

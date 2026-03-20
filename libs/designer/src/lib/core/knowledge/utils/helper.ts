@@ -57,8 +57,8 @@ export const validateHubNameAvailability = (hubName: string, existingNames: stri
 
   if (isNullOrEmpty(hubName)) {
     return intl.formatMessage({
-      defaultMessage: 'Hub name is required.',
-      id: 'cE+Bse',
+      defaultMessage: 'Requires a unique hub name under 244 characters with only letters and numbers.',
+      id: '1KFRSn',
       description: 'Error message when the hub name is empty.',
     });
   }
@@ -71,19 +71,19 @@ export const validateHubNameAvailability = (hubName: string, existingNames: stri
     });
   }
 
-  const regex = /^[a-zA-Z0-9]{1,80}$/;
+  const regex = /^[a-zA-Z0-9]{1,244}$/;
   if (!regex.test(hubName)) {
-    if (hubName.length > 80) {
+    if (hubName.length > 244) {
       return intl.formatMessage({
-        defaultMessage: 'Hub name must be less than 80 characters.',
-        id: '7HO6IB',
+        defaultMessage: `Hub name can't exceed 244 characters.`,
+        id: 'EHLy1u',
         description: 'Error message when the hub name exceeds maximum length.',
       });
     }
 
     return intl.formatMessage({
-      defaultMessage: 'Enter a unique name under 80 characters with only letters and numbers.',
-      id: 'QtEOi0',
+      defaultMessage: 'Enter a unique name under 244 characters with only letters and numbers.',
+      id: 'huLRj0',
       description: 'Error message when the hub name is invalid regex.',
     });
   }
@@ -96,8 +96,8 @@ export const validateArtifactNameAvailability = (fileName: string, existingNames
 
   if (isNullOrEmpty(fileName)) {
     return intl.formatMessage({
-      defaultMessage: 'File artifact name is required.',
-      id: 'mJz0NV',
+      defaultMessage: 'Requires a unique file artifact name under 80 characters with only letters and numbers.',
+      id: 'trESjR',
       description: 'Error message when the file artifact name is empty.',
     });
   }
@@ -114,8 +114,8 @@ export const validateArtifactNameAvailability = (fileName: string, existingNames
   if (!regex.test(fileName)) {
     if (fileName.length > 80) {
       return intl.formatMessage({
-        defaultMessage: 'File artifact name must be less than 80 characters.',
-        id: 'yHvXTq',
+        defaultMessage: `File artifact name can't exceed 80 characters.`,
+        id: '7Djtki',
         description: 'Error message when the file artifact name exceeds maximum length.',
       });
     }

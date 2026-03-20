@@ -145,25 +145,32 @@ describe('KnowledgeHubPanel Component', () => {
   });
 
   describe('AddFilePanel Rendering', () => {
-    it('renders AddFilePanel when view is AddFiles', () => {
+    it('renders AddFilePanel when view is AddFiles and onUploadArtifact is provided', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({}, store);
+      renderComponent({ onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(screen.getByTestId('add-file-panel')).toBeInTheDocument();
       expect(screen.getByText(`AddFilePanel: ${resourceId}`)).toBeInTheDocument();
     });
 
+    it('renders nothing when view is AddFiles but onUploadArtifact is not provided', () => {
+      const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
+      const { container } = renderComponent({}, store);
+
+      expect(container.firstChild).toBeNull();
+    });
+
     it('passes resourceId to AddFilePanel', () => {
       const customResourceId = '/subscriptions/custom-sub/resourceGroups/custom-rg/providers/Microsoft.Web/sites/customApp';
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({ resourceId: customResourceId }, store);
+      renderComponent({ resourceId: customResourceId, onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(mockAddFilePanel).toHaveBeenCalledWith(expect.objectContaining({ resourceId: customResourceId }));
     });
 
     it('passes selectedHub to AddFilePanel when provided', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({ selectedHub: 'myKnowledgeHub' }, store);
+      renderComponent({ selectedHub: 'myKnowledgeHub', onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(screen.getByTestId('selected-hub')).toHaveTextContent('myKnowledgeHub');
       expect(mockAddFilePanel).toHaveBeenCalledWith(expect.objectContaining({ selectedHub: 'myKnowledgeHub' }));
@@ -180,14 +187,14 @@ describe('KnowledgeHubPanel Component', () => {
     it('passes mountNode to AddFilePanel', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
       const customMountNode = document.createElement('div');
-      renderComponent({ mountNode: customMountNode }, store);
+      renderComponent({ mountNode: customMountNode, onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(mockAddFilePanel).toHaveBeenCalledWith(expect.objectContaining({ mountNode: customMountNode }));
     });
 
     it('handles null mountNode for AddFilePanel', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({ mountNode: null }, store);
+      renderComponent({ mountNode: null, onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(screen.getByTestId('add-file-panel')).toBeInTheDocument();
       expect(mockAddFilePanel).toHaveBeenCalledWith(expect.objectContaining({ mountNode: null }));
@@ -195,14 +202,14 @@ describe('KnowledgeHubPanel Component', () => {
 
     it('does not render CreateConnectionPanel when view is AddFiles', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({}, store);
+      renderComponent({ onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(screen.queryByTestId('create-connection-panel')).not.toBeInTheDocument();
     });
 
     it('does not render EditConnectionPanel when view is AddFiles', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({}, store);
+      renderComponent({ onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(screen.queryByTestId('edit-connection-panel')).not.toBeInTheDocument();
     });
@@ -333,18 +340,16 @@ describe('KnowledgeHubPanel Component', () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it('renders with all optional props undefined', () => {
+    it('renders nothing when AddFiles view and onUploadArtifact is undefined', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({ selectedHub: undefined, onUploadArtifact: undefined }, store);
+      const { container } = renderComponent({ selectedHub: undefined, onUploadArtifact: undefined }, store);
 
-      expect(screen.getByTestId('add-file-panel')).toBeInTheDocument();
-      expect(screen.queryByTestId('selected-hub')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('has-upload-handler')).not.toBeInTheDocument();
+      expect(container.firstChild).toBeNull();
     });
 
     it('renders with empty string resourceId', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({ resourceId: '' }, store);
+      renderComponent({ resourceId: '', onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(screen.getByTestId('add-file-panel')).toBeInTheDocument();
       expect(mockAddFilePanel).toHaveBeenCalledWith(expect.objectContaining({ resourceId: '' }));
@@ -352,13 +357,20 @@ describe('KnowledgeHubPanel Component', () => {
   });
 
   describe('Component Mock Calls', () => {
-    it('calls AddFilePanel mock exactly once for AddFiles view', () => {
+    it('calls AddFilePanel mock exactly once for AddFiles view with onUploadArtifact', () => {
       const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
-      renderComponent({}, store);
+      renderComponent({ onUploadArtifact: mockOnUploadArtifact }, store);
 
       expect(mockAddFilePanel).toHaveBeenCalledTimes(1);
       expect(mockCreateConnectionPanel).not.toHaveBeenCalled();
       expect(mockEditConnectionPanel).not.toHaveBeenCalled();
+    });
+
+    it('does not call AddFilePanel mock when onUploadArtifact is not provided', () => {
+      const store = createMockStore({ isOpen: true, currentPanelView: KnowledgePanelView.AddFiles });
+      renderComponent({}, store);
+
+      expect(mockAddFilePanel).not.toHaveBeenCalled();
     });
 
     it('calls CreateConnectionPanel mock exactly once for CreateConnection view', () => {

@@ -188,7 +188,7 @@ describe('knowledge helper utils', () => {
   describe('validateHubNameAvailability', () => {
     it('should return error when hub name is empty', () => {
       const result = validateHubNameAvailability('', []);
-      expect(result).toBe('Hub name is required.');
+      expect(result).toBe('Requires a unique hub name under 244 characters with only letters and numbers.');
     });
 
     it('should return error when hub name already exists (case-insensitive)', () => {
@@ -198,24 +198,24 @@ describe('knowledge helper utils', () => {
     });
 
     it('should return error when hub name is too long', () => {
-      const longName = 'a'.repeat(81);
+      const longName = 'a'.repeat(245);
       const result = validateHubNameAvailability(longName, []);
-      expect(result).toBe('Hub name must be less than 80 characters.');
+      expect(result).toBe(`Hub name can't exceed 244 characters.`);
     });
 
     it('should return error when hub name contains special characters', () => {
       const result = validateHubNameAvailability('my-hub', []);
-      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+      expect(result).toBe('Enter a unique name under 244 characters with only letters and numbers.');
     });
 
     it('should return error when hub name contains spaces', () => {
       const result = validateHubNameAvailability('my hub', []);
-      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+      expect(result).toBe('Enter a unique name under 244 characters with only letters and numbers.');
     });
 
     it('should return error when hub name contains underscores', () => {
       const result = validateHubNameAvailability('my_hub', []);
-      expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
+      expect(result).toBe('Enter a unique name under 244 characters with only letters and numbers.');
     });
 
     it('should return undefined for valid hub name', () => {
@@ -224,7 +224,7 @@ describe('knowledge helper utils', () => {
     });
 
     it('should return undefined for valid hub name with max length', () => {
-      const validName = 'a'.repeat(80);
+      const validName = 'a'.repeat(244);
       const result = validateHubNameAvailability(validName, []);
       expect(result).toBeUndefined();
     });
@@ -249,7 +249,7 @@ describe('knowledge helper utils', () => {
   describe('validateArtifactNameAvailability', () => {
     it('should return error when artifact name is empty', () => {
       const result = validateArtifactNameAvailability('', []);
-      expect(result).toBe('File artifact name is required.');
+      expect(result).toBe('Requires a unique file artifact name under 80 characters with only letters and numbers.');
     });
 
     it('should return error when artifact name already exists (case-insensitive)', () => {
@@ -261,7 +261,7 @@ describe('knowledge helper utils', () => {
     it('should return error when artifact name is too long', () => {
       const longName = 'a'.repeat(81);
       const result = validateArtifactNameAvailability(longName, []);
-      expect(result).toBe('File artifact name must be less than 80 characters.');
+      expect(result).toBe(`File artifact name can't exceed 80 characters.`);
     });
 
     it('should return error when artifact name contains special characters', () => {

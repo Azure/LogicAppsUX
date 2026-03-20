@@ -23,13 +23,13 @@ export const FileDropZone = ({ accept, disabled, onAdd }: FileDropZoneProps) => 
 
   const INTL_TEXT = {
     ariaLabel: intl.formatMessage({
-      defaultMessage: 'Drop files here or click to browse',
-      id: 'MrEY02',
+      defaultMessage: 'Drop files here or select to browse.',
+      id: '6Y7uWR',
       description: 'The aria label for the file drop zone component',
     }),
     mainText: intl.formatMessage({
-      defaultMessage: 'Drag and drop files here',
-      id: 'bSB/Ca',
+      defaultMessage: 'Drag and drop files here.',
+      id: 'nZF+C5',
       description: 'The main instruction text for the file drop zone component',
     }),
     subText: intl.formatMessage({
@@ -38,13 +38,13 @@ export const FileDropZone = ({ accept, disabled, onAdd }: FileDropZoneProps) => 
       description: 'The sub instruction text for the file drop zone component',
     }),
     draggingText: intl.formatMessage({
-      defaultMessage: 'Drop files here',
-      id: 'HphrP8',
+      defaultMessage: 'Drop files here.',
+      id: 'Mb950s',
       description: 'The instruction text when dragging files over the drop zone',
     }),
     browseLinkText: intl.formatMessage({
-      defaultMessage: 'browse to upload',
-      id: 'e6DIdK',
+      defaultMessage: 'browse to upload.',
+      id: 'AwnX1W',
       description: 'The text for the link that opens the file browser in the file drop zone component',
     }),
     acceptText: intl.formatMessage(

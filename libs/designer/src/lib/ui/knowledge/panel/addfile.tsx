@@ -96,13 +96,13 @@ export const AddFilePanel = ({
       description: 'Label for the group description input field in add files panel',
     }),
     addFilesSectionDescription: intl.formatMessage({
-      id: '2tsZvo',
-      defaultMessage: 'Files will be added to the group name above. Each file can be up to 16MB, with a maximum or 100MB per upload.',
+      id: 'ifDZq4',
+      defaultMessage: `Files are added to the specified group. Each file can't exceed 16 MB. Total upload can't exceed 100 MB.`,
       description: 'Section description for file details in add files panel',
     }),
     largeFileError: intl.formatMessage({
-      id: 't0GT/E',
-      defaultMessage: 'File must be less than 16MB.',
+      id: 'zuszqq',
+      defaultMessage: 'File size must be less than 16 MB.',
       description: 'Error message when uploaded file exceeds size limit in add files panel',
     }),
     addButton: intl.formatMessage({
@@ -248,7 +248,7 @@ export const AddFilePanel = ({
         required: true,
         onRenderItem: () => (
           <FileDropZone
-            accept={'.pdf,.doc,.docx,.ppt,..pptx,.xls,.xlsx,.txt,.md,.html'}
+            accept={'.pdf, .doc, .docx, .ppt, .pptx, .xls, .xlsx, .txt, .md, .html'}
             disabled={selectedFiles.length > 0}
             isMultiUpload={false}
             onAdd={(file) => setSelectedFiles((prev) => [...prev, file])}
@@ -262,13 +262,28 @@ export const AddFilePanel = ({
   const [fileNames, setFileNames] = useState<Record<string, string>>({});
   const [fileDescriptions, setFileDescriptions] = useState<Record<string, string>>({});
   const hasNonEmptyFileNames = useMemo(
-    () => Object.keys(fileNames).filter((key) => fileNames[key]).length === selectedFiles.length,
-    [fileNames, selectedFiles.length]
+    () =>
+      selectedFiles.length > 0 &&
+      selectedFiles.every((file) => {
+        const name = fileNames[file.uuid];
+        return name !== undefined && name.trim() !== '';
+      }),
+    [fileNames, selectedFiles]
   );
 
-  const handleDeleteFile = useCallback((file: UploadFile) => {
-    setSelectedFiles((prev) => prev.filter((f) => f.uuid !== file.uuid));
-  }, []);
+  const handleDeleteFile = useCallback(
+    (file: UploadFile) => {
+      setSelectedFiles((prev) => prev.filter((f) => f.uuid !== file.uuid));
+      const newFileNames = { ...fileNames };
+      delete newFileNames[file.uuid.toString()];
+      setFileNames(newFileNames);
+
+      const newFileDescriptions = { ...fileDescriptions };
+      delete newFileDescriptions[file.uuid.toString()];
+      setFileDescriptions(newFileDescriptions);
+    },
+    [fileDescriptions, fileNames]
+  );
 
   const handleUpdateFile = useCallback((file: UploadFile, { name, description }: { name?: string; description?: string }) => {
     if (name !== undefined) {
@@ -324,14 +339,14 @@ export const AddFilePanel = ({
         level: LogEntryLevel.Error,
         area: 'KnowledgeHub.uploadFileToKnowledgeHub',
         error,
-        message: `Error while uploading file to knowledge hub for the app: ${resourceId}`,
+        message: `Error occurred during file upload to the knowledge hub: ${resourceId}`,
       });
 
       setUploadError(
         intl.formatMessage(
           {
-            id: 'mlqmGy',
-            defaultMessage: 'File upload failed. Please try again. Error: {errorMessage}',
+            id: '+nKZHB',
+            defaultMessage: `Can't upload file. Please try again. Error: {errorMessage}`,
             description: 'Error message when file upload fails in add files panel',
           },
           { errorMessage }
@@ -458,8 +473,8 @@ const FileList = ({
   const intl = useIntl();
   const INTL_TEXT = {
     tableAriaLabel: intl.formatMessage({
-      id: 'ZmBMSx',
-      defaultMessage: 'File to be added to knowledge hub',
+      id: 'jS5fEs',
+      defaultMessage: 'File to add to the knowledge hub',
       description: 'Aria label for file list table in add files panel',
     }),
     fileNameLabel: intl.formatMessage({
@@ -483,8 +498,8 @@ const FileList = ({
       description: 'Label for the artifact name input field in add files panel',
     }),
     namePlaceholder: intl.formatMessage({
-      id: 'PjxVSX',
-      defaultMessage: 'Name for the artifact',
+      id: 'kqqMwh',
+      defaultMessage: 'Artifact name',
       description: 'Placeholder for the artifact name field in add files panel',
     }),
     descriptionLabel: intl.formatMessage({
@@ -493,8 +508,8 @@ const FileList = ({
       description: 'Label for file description column in file list',
     }),
     descriptionPlaceholder: intl.formatMessage({
-      id: 'rZdUTh',
-      defaultMessage: 'Optional description for the file',
+      id: '2t7Wx0',
+      defaultMessage: 'Optional file description',
       description: 'Placeholder for file description input in file list',
     }),
     deleteButtonAriaLabel: intl.formatMessage({

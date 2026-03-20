@@ -18,7 +18,7 @@ describe('FileDropZone', () => {
   beforeEach(() => {
     mockOnAdd = vi.fn();
     defaultProps = {
-      accept: '.pdf,.doc,.docx',
+      accept: '.pdf, .doc, .docx',
       disabled: false,
       isMultiUpload: false,
       onAdd: mockOnAdd,
@@ -34,8 +34,8 @@ describe('FileDropZone', () => {
     it('should render the drop zone with default text', () => {
       renderWithIntl(<FileDropZone {...defaultProps} />);
 
-      expect(screen.getByText('Drag and drop files here')).toBeInTheDocument();
-      expect(screen.getByText('browse to upload')).toBeInTheDocument();
+      expect(screen.getByText('Drag and drop files here.')).toBeInTheDocument();
+      expect(screen.getByText('browse to upload.')).toBeInTheDocument();
     });
 
     it('should render with role="button"', () => {
@@ -48,13 +48,13 @@ describe('FileDropZone', () => {
       renderWithIntl(<FileDropZone {...defaultProps} />);
 
       const dropZone = screen.getByRole('button');
-      expect(dropZone).toHaveAttribute('aria-label', 'Drop files here or click to browse');
+      expect(dropZone).toHaveAttribute('aria-label', 'Drop files here or select to browse.');
     });
 
     it('should display accepted formats', () => {
       renderWithIntl(<FileDropZone {...defaultProps} />);
 
-      expect(screen.getByText('Accepted formats: .pdf,.doc,.docx')).toBeInTheDocument();
+      expect(screen.getByText('Accepted formats: .pdf, .doc, .docx')).toBeInTheDocument();
     });
 
     it('should be focusable when not disabled', () => {
@@ -194,7 +194,7 @@ describe('FileDropZone', () => {
 
       fireEvent.dragEnter(dropZone);
 
-      expect(screen.getByText('Drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drop files here.')).toBeInTheDocument();
     });
 
     it('should revert to default text on drag leave', () => {
@@ -203,10 +203,10 @@ describe('FileDropZone', () => {
       const dropZone = screen.getByRole('button');
 
       fireEvent.dragEnter(dropZone);
-      expect(screen.getByText('Drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drop files here.')).toBeInTheDocument();
 
       fireEvent.dragLeave(dropZone);
-      expect(screen.getByText('Drag and drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drag and drop files here.')).toBeInTheDocument();
     });
 
     it('should call onAdd when a valid file is dropped', () => {
@@ -286,7 +286,7 @@ describe('FileDropZone', () => {
       fireEvent.dragEnter(dropZone);
 
       // Should still show default text when disabled
-      expect(screen.getByText('Drag and drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drag and drop files here.')).toBeInTheDocument();
     });
 
     it('should handle multiple drag enter/leave events correctly', () => {
@@ -299,18 +299,18 @@ describe('FileDropZone', () => {
       // Simulate entering a child element (counter should be 2)
       fireEvent.dragEnter(dropZone);
 
-      expect(screen.getByText('Drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drop files here.')).toBeInTheDocument();
 
       // Simulate leaving a child element (counter should be 1)
       fireEvent.dragLeave(dropZone);
 
       // Should still show dragging state
-      expect(screen.getByText('Drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drop files here.')).toBeInTheDocument();
 
       // Simulate leaving the container (counter should be 0)
       fireEvent.dragLeave(dropZone);
 
-      expect(screen.getByText('Drag and drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drag and drop files here.')).toBeInTheDocument();
     });
 
     it('should reset drag state after drop', () => {
@@ -320,7 +320,7 @@ describe('FileDropZone', () => {
       const testFile = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
 
       fireEvent.dragEnter(dropZone);
-      expect(screen.getByText('Drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drop files here.')).toBeInTheDocument();
 
       fireEvent.drop(dropZone, {
         dataTransfer: {
@@ -328,7 +328,7 @@ describe('FileDropZone', () => {
         },
       });
 
-      expect(screen.getByText('Drag and drop files here')).toBeInTheDocument();
+      expect(screen.getByText('Drag and drop files here.')).toBeInTheDocument();
     });
   });
 

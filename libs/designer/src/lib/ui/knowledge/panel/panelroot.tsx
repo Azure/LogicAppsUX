@@ -26,6 +26,10 @@ export const KnowledgeHubPanel = ({
     return null;
   }
 
+  if (panelView === KnowledgePanelView.AddFiles && !onUploadArtifact) {
+    return null;
+  }
+
   return panelView === KnowledgePanelView.AddFiles ? (
     <AddFilePanel
       resourceId={resourceId}
