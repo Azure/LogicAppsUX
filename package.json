@@ -2,7 +2,9 @@
   "name": "@microsoft/logicappsux",
   "version": "5.110.0",
   "devDependencies": {
+    "@a11y-insights/playwright-checker": "^1.7.0",
     "@biomejs/biome": "1.9.4",
+    "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
     "@faker-js/faker": "^8.4.1",
@@ -60,8 +62,7 @@
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.8",
     "vite-plugin-node-polyfills": "^0.23.0",
-    "vitest": "^3.2.4",
-    "@eslint/compat": "^2.0.0"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18",
