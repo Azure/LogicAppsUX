@@ -1,6 +1,6 @@
 import { mergeClasses, Text } from '@fluentui/react-components';
 import { useDispatch } from 'react-redux';
-import { useSelectedEvaluator, useRightPanelView } from '../../core/state/evaluation/evaluationSelectors';
+import { useSelectedEvaluator, useEvaluationViewMode } from '../../core/state/evaluation/evaluationSelectors';
 import { startEditEvaluator, setSelectedEvaluator } from '../../core/state/evaluation/evaluationSlice';
 import { useDeleteEvaluator } from '../../core/queries/evaluations';
 import { EvaluatorManagementPanel } from './EvaluatorManagementPanel';
@@ -10,6 +10,7 @@ import { EvaluationResultPanel } from './EvaluationResultPanel';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
 import { RunHistoryPanel } from '../panel';
+import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
 
 interface EvaluateViewProps {
   workflowName: string;
@@ -19,7 +20,7 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
   const selectedEvaluator = useSelectedEvaluator();
-  const rightPanelView = useRightPanelView();
+  const viewMode = useEvaluationViewMode();
 
   const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, '');
 
@@ -36,11 +37,11 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
   }, [deleteEvaluator, dispatch, selectedEvaluator]);
 
   const renderRightPanel = () => {
-    switch (rightPanelView) {
-      case 'create':
-      case 'edit':
+    switch (viewMode) {
+      case EvaluationViewMode.CreateEvaluator:
+      case EvaluationViewMode.EditEvaluator:
         return <EvaluatorFormPanel workflowName={workflowName} />;
-      case 'view':
+      case EvaluationViewMode.ViewEvaluator:
         return selectedEvaluator ? (
           <EvaluatorDetailsPanel
             workflowName={workflowName}
@@ -49,7 +50,7 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
             onDelete={handleDeleteClick}
           />
         ) : null;
-      case 'result':
+      case EvaluationViewMode.EvaluationResult:
         return <EvaluationResultPanel workflowName={workflowName} />;
       default:
         return (

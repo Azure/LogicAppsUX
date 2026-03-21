@@ -2,12 +2,12 @@ import type { Evaluator } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetWorkflowState } from '../global';
-import type { EvaluationState, RightPanelView } from './evaluationInterfaces';
+import { EvaluationViewMode, type EvaluationState } from './evaluationInterfaces';
 
 export const initialEvaluationState: EvaluationState = {
   selectedEvaluator: null,
   selectedAgentName: null,
-  rightPanelView: 'empty',
+  viewMode: EvaluationViewMode.None,
   runningEvaluatorName: '',
   evaluatorSearchQuery: '',
 };
@@ -19,16 +19,16 @@ export const evaluationSlice = createSlice({
     setSelectedEvaluator: (state, action: PayloadAction<Evaluator | null>) => {
       state.selectedEvaluator = action.payload;
       if (action.payload) {
-        state.rightPanelView = 'view';
+        state.viewMode = EvaluationViewMode.ViewEvaluator;
       } else {
-        state.rightPanelView = 'empty';
+        state.viewMode = EvaluationViewMode.None;
       }
     },
     setSelectedAgentName: (state, action: PayloadAction<string | null>) => {
       state.selectedAgentName = action.payload;
     },
-    setRightPanelView: (state, action: PayloadAction<RightPanelView>) => {
-      state.rightPanelView = action.payload;
+    setEvaluationViewMode: (state, action: PayloadAction<EvaluationViewMode>) => {
+      state.viewMode = action.payload;
     },
     setRunningEvaluatorName: (state, action: PayloadAction<string>) => {
       state.runningEvaluatorName = action.payload;
@@ -38,21 +38,21 @@ export const evaluationSlice = createSlice({
     },
     startCreateEvaluator: (state) => {
       state.selectedEvaluator = null;
-      state.rightPanelView = 'create';
+      state.viewMode = EvaluationViewMode.CreateEvaluator;
     },
     startEditEvaluator: (state, action: PayloadAction<Evaluator>) => {
       state.selectedEvaluator = action.payload;
-      state.rightPanelView = 'edit';
+      state.viewMode = EvaluationViewMode.EditEvaluator;
     },
     finishFormAction: (state) => {
-      state.rightPanelView = 'empty';
+      state.viewMode = EvaluationViewMode.None;
       state.selectedEvaluator = null;
     },
     cancelFormAction: (state) => {
-      if (state.selectedEvaluator && state.rightPanelView === 'edit') {
-        state.rightPanelView = 'view';
+      if (state.selectedEvaluator && state.viewMode === EvaluationViewMode.EditEvaluator) {
+        state.viewMode = EvaluationViewMode.ViewEvaluator;
       } else {
-        state.rightPanelView = 'empty';
+        state.viewMode = EvaluationViewMode.None;
         state.selectedEvaluator = null;
       }
     },
@@ -66,7 +66,7 @@ export const evaluationSlice = createSlice({
 export const {
   setSelectedEvaluator,
   setSelectedAgentName,
-  setRightPanelView,
+  setEvaluationViewMode,
   setRunningEvaluatorName,
   setEvaluatorSearchQuery,
   startCreateEvaluator,

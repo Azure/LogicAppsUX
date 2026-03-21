@@ -2,12 +2,13 @@ import { Badge, Button, Card, Caption1, Caption1Strong, Spinner, Text, Tooltip }
 import { EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
 import type { Evaluator } from '@microsoft/logic-apps-shared';
 import { useSelectedEvaluationAgentName, useEvaluationDataSelected } from '../../core/state/evaluation/evaluationSelectors';
-import { setRightPanelView, setRunningEvaluatorName } from '../../core/state/evaluation/evaluationSlice';
+import { setEvaluationViewMode, setRunningEvaluatorName } from '../../core/state/evaluation/evaluationSlice';
 import { useEvaluation, useRunEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
+import { EvaluationViewMode } from 'lib/core/state/evaluation/evaluationInterfaces';
 
 interface EvaluatorDetailsPanelProps {
   workflowName: string;
@@ -29,7 +30,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
     if (!selectedRun) {
       return;
     }
-    dispatch(setRightPanelView('result'));
+    dispatch(setEvaluationViewMode(EvaluationViewMode.EvaluationResult));
     dispatch(setRunningEvaluatorName(evaluator.name));
     await runEvaluation({
       runId: selectedRun.name,

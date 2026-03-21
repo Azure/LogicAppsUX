@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 import { finishFormAction, cancelFormAction } from '../../core/state/evaluation/evaluationSlice';
 import {
   useSelectedEvaluator,
-  useRightPanelView,
+  useEvaluationViewMode,
   useSelectedEvaluationAgentName,
   useEvaluationDataSelected,
 } from '../../core/state/evaluation/evaluationSelectors';
@@ -32,6 +32,7 @@ import {
   createDefaultToolCallFormItem,
 } from './evaluatorFormHelpers';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
+import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
 
 interface EvaluatorFormPanelProps {
   workflowName: string;
@@ -40,9 +41,8 @@ interface EvaluatorFormPanelProps {
 export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) => {
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
-  const rightPanelView = useRightPanelView();
+  const viewMode = useEvaluationViewMode();
   const selectedEvaluator = useSelectedEvaluator();
-  const mode = rightPanelView === 'edit' ? 'edit' : 'create';
   const selectedAgentName = useSelectedEvaluationAgentName();
   const isEvaluationDataSelected = useEvaluationDataSelected();
   const { mutateAsync: createOrUpdateEvaluator, isLoading: isModifyingEvaluator } = useCreateOrUpdateEvaluator(
@@ -56,12 +56,12 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (mode === 'edit' && selectedEvaluator) {
+    if (viewMode === EvaluationViewMode.EditEvaluator && selectedEvaluator) {
       setFormData(evaluatorToFormData(selectedEvaluator));
     } else {
       setFormData(createDefaultEvaluatorFormData());
     }
-  }, [mode, selectedEvaluator]);
+  }, [viewMode, selectedEvaluator]);
 
   const updateFormField = useCallback(<K extends keyof EvaluatorFormData>(field: K, value: EvaluatorFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -73,7 +73,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
       return;
     }
 
-    if (mode === 'create' && existingEvaluatorNames.has(formData.name.trim().toLowerCase())) {
+    if (viewMode === EvaluationViewMode.CreateEvaluator && existingEvaluatorNames.has(formData.name.trim().toLowerCase())) {
       setError('An evaluator with this name already exists');
       return;
     }
@@ -86,17 +86,19 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save evaluator');
     }
-  }, [formData, createOrUpdateEvaluator, dispatch, mode, existingEvaluatorNames]);
+  }, [formData, createOrUpdateEvaluator, dispatch, viewMode, existingEvaluatorNames]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className={styles.panelHeader}>
         <div>
           <Text size={400} weight="semibold" as="h2">
-            {mode === 'create' ? 'Create Evaluator' : 'Edit Evaluator'}
+            {viewMode === EvaluationViewMode.CreateEvaluator ? 'Create Evaluator' : 'Edit Evaluator'}
           </Text>
           <Caption1 block style={{ marginTop: '4px' }}>
-            {mode === 'create' ? 'Configure a new evaluator for your agent' : 'Update evaluator configuration'}
+            {viewMode === EvaluationViewMode.CreateEvaluator
+              ? 'Configure a new evaluator for your agent'
+              : 'Update evaluator configuration'}
           </Caption1>
         </div>
       </div>
@@ -117,7 +119,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
             value={formData.name}
             onChange={(_e, data) => updateFormField('name', data.value)}
             placeholder="Enter evaluator name"
-            disabled={mode === 'edit'}
+            disabled={viewMode === EvaluationViewMode.EditEvaluator}
           />
         </Field>
 

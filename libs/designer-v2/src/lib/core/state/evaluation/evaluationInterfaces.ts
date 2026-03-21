@@ -1,11 +1,18 @@
 import type { Evaluator } from '@microsoft/logic-apps-shared';
 
-export type RightPanelView = 'empty' | 'create' | 'edit' | 'view' | 'result';
+export const EvaluationViewMode = {
+  None: 'none',
+  CreateEvaluator: 'create',
+  EditEvaluator: 'edit',
+  ViewEvaluator: 'view',
+  EvaluationResult: 'result',
+} as const;
+export type EvaluationViewMode = (typeof EvaluationViewMode)[keyof typeof EvaluationViewMode];
 
 export interface EvaluationState {
   selectedEvaluator: Evaluator | null;
   selectedAgentName: string | null;
-  rightPanelView: RightPanelView;
+  viewMode: EvaluationViewMode;
   runningEvaluatorName: string;
   evaluatorSearchQuery: string;
 }

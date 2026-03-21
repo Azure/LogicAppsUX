@@ -21,7 +21,7 @@ import {
   startCreateEvaluator,
   startEditEvaluator,
   setEvaluatorSearchQuery,
-  setRightPanelView,
+  setEvaluationViewMode,
   setRunningEvaluatorName,
 } from '../../core/state/evaluation/evaluationSlice';
 import {
@@ -35,6 +35,7 @@ import { useEvaluators, useRunEvaluation, useDeleteEvaluator, useEvaluations } f
 import type { Evaluator, EvaluationResult } from '@microsoft/logic-apps-shared';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
+import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
 
 interface EvaluatorManagementPanelProps {
   workflowName: string;
@@ -81,7 +82,7 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
       if (!selectedRun) {
         return;
       }
-      dispatch(setRightPanelView('result'));
+      dispatch(setEvaluationViewMode(EvaluationViewMode.EvaluationResult));
       dispatch(setRunningEvaluatorName(evaluator.name));
       await runEvaluation({
         runId: selectedRun.name,

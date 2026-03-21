@@ -7,7 +7,7 @@ import { useRunInstance } from '../workflow/workflowSelectors';
 
 export const useSelectedEvaluationAgentName = () => useSelector((state: RootState) => state.evaluation.selectedAgentName);
 export const useSelectedEvaluator = () => useSelector((state: RootState) => state.evaluation.selectedEvaluator);
-export const useRightPanelView = () => useSelector((state: RootState) => state.evaluation.rightPanelView);
+export const useEvaluationViewMode = () => useSelector((state: RootState) => state.evaluation.viewMode);
 export const useRunningEvaluatorName = () => useSelector((state: RootState) => state.evaluation.runningEvaluatorName);
 export const useEvaluatorSearchQuery = () => useSelector((state: RootState) => state.evaluation.evaluatorSearchQuery);
 
