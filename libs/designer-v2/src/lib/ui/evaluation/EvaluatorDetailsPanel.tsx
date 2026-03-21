@@ -1,12 +1,13 @@
-import { Button, mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
+import { Badge, Button, Card, Caption1, Caption1Strong, Spinner, Text, Tooltip } from '@fluentui/react-components';
 import { EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
 import type { Evaluator } from '@microsoft/logic-apps-shared';
-import { useSelectedRun, useSelectedAction, useCanRunEvaluation } from '../../core/state/evaluation/evaluationSelectors';
+import { useSelectedEvaluationAgentName, useEvaluationDataSelected } from '../../core/state/evaluation/evaluationSelectors';
 import { setRightPanelView, setRunningEvaluatorName } from '../../core/state/evaluation/evaluationSlice';
 import { useEvaluation, useRunEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 
 interface EvaluatorDetailsPanelProps {
   workflowName: string;
@@ -18,11 +19,11 @@ interface EvaluatorDetailsPanelProps {
 export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelete }: EvaluatorDetailsPanelProps) => {
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
-  const selectedRun = useSelectedRun();
-  const selectedAction = useSelectedAction();
-  const canRun = useCanRunEvaluation();
+  const selectedRun = useRunInstance();
+  const selectedAgentName = useSelectedEvaluationAgentName();
+  const isEvaluationDataSelected = useEvaluationDataSelected();
 
-  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
+  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAgentName ?? '');
 
   const handleRunEvaluation = useCallback(async () => {
     if (!selectedRun) {
@@ -39,7 +40,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
   const { data: evaluation, isFetching: isEvaluationFetching } = useEvaluation(
     workflowName,
     selectedRun?.name ?? '',
-    selectedAction?.name ?? '',
+    selectedAgentName ?? '',
     evaluator.name
   );
   const isEvalPassed = evaluation?.result?.toLowerCase() === 'passed';
@@ -48,51 +49,55 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className={styles.panelHeader}>
         <div>
-          <h2 className={styles.panelTitle}>Evaluator Details</h2>
-          <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--colorNeutralForeground2)' }}>{evaluator.name}</p>
+          <Text size={400} weight="semibold" as="h2">
+            Evaluator Details
+          </Text>
+          <Caption1 block style={{ marginTop: '4px' }}>
+            {evaluator.name}
+          </Caption1>
         </div>
       </div>
 
       <div className={styles.formContent}>
         {/* Evaluator Definition */}
-        <div className={styles.card}>
+        <Card>
           <div className={styles.fieldRow}>
-            <span className={styles.fieldLabel}>Evaluator name</span>
-            <span className={styles.fieldValue}>{evaluator.name}</span>
+            <Caption1Strong>Evaluator name</Caption1Strong>
+            <Text size={300}>{evaluator.name}</Text>
           </div>
 
           <div className={styles.fieldRow}>
-            <span className={styles.fieldLabel}>Template</span>
-            <span className={styles.fieldValue}>{evaluator.template === 'CustomPrompt' ? 'Custom Prompt' : evaluator.template}</span>
+            <Caption1Strong>Template</Caption1Strong>
+            <Text size={300}>{evaluator.template === 'CustomPrompt' ? 'Custom Prompt' : evaluator.template}</Text>
           </div>
 
           {evaluator.template !== 'ToolCallTrajectory' && (
             <>
               {evaluator.deploymentId && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Deployment ID</span>
-                  <span className={styles.fieldValue}>{evaluator.deploymentId}</span>
+                  <Caption1Strong>Deployment ID</Caption1Strong>
+                  <Text size={300}>{evaluator.deploymentId}</Text>
                 </div>
               )}
 
               {evaluator.agentModelType && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Agent model type</span>
-                  <span className={styles.fieldValue}>{evaluator.agentModelType}</span>
+                  <Caption1Strong>Agent model type</Caption1Strong>
+                  <Text size={300}>{evaluator.agentModelType}</Text>
                 </div>
               )}
 
               {evaluator.modelConfiguration?.referenceName && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Model connection reference</span>
-                  <span className={styles.fieldValue}>{evaluator.modelConfiguration.referenceName}</span>
+                  <Caption1Strong>Model connection reference</Caption1Strong>
+                  <Text size={300}>{evaluator.modelConfiguration.referenceName}</Text>
                 </div>
               )}
 
               {evaluator.agentModelSettings?.deploymentModelProperties?.name && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Deployment model name</span>
-                  <span className={styles.fieldValue}>{evaluator.agentModelSettings.deploymentModelProperties.name}</span>
+                  <Caption1Strong>Deployment model name</Caption1Strong>
+                  <Text size={300}>{evaluator.agentModelSettings.deploymentModelProperties.name}</Text>
                 </div>
               )}
             </>
@@ -100,22 +105,22 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
 
           {evaluator.groundTruthRunId && (
             <div className={styles.fieldRow}>
-              <span className={styles.fieldLabel}>Ground truth run ID</span>
-              <span className={styles.fieldValue}>{evaluator.groundTruthRunId}</span>
+              <Caption1Strong>Ground truth run ID</Caption1Strong>
+              <Text size={300}>{evaluator.groundTruthRunId}</Text>
             </div>
           )}
 
           {evaluator.groundTruthAgentActionName && (
             <div className={styles.fieldRow}>
-              <span className={styles.fieldLabel}>Ground truth agent action</span>
-              <span className={styles.fieldValue}>{evaluator.groundTruthAgentActionName}</span>
+              <Caption1Strong>Ground truth agent action</Caption1Strong>
+              <Text size={300}>{evaluator.groundTruthAgentActionName}</Text>
             </div>
           )}
 
           {/* Template-specific parameters */}
           {evaluator.template === 'CustomPrompt' && evaluator.parameters.prompt && (
             <div className={styles.fieldRow}>
-              <span className={styles.fieldLabel}>Instructions</span>
+              <Caption1Strong>Instructions</Caption1Strong>
               <div className={styles.promptValue}>{evaluator.parameters.prompt}</div>
             </div>
           )}
@@ -124,12 +129,14 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
             <>
               {evaluator.parameters.expectedToolCalls && evaluator.parameters.expectedToolCalls.length > 0 && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Expected Tool Calls</span>
+                  <Caption1Strong>Expected Tool Calls</Caption1Strong>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
                     {evaluator.parameters.expectedToolCalls.map((tc, idx) => (
                       <div key={idx} className={styles.toolCallItem}>
                         <div className={styles.toolCallHeader}>
-                          <span>{tc.name}</span>
+                          <Text size={200} weight="semibold">
+                            {tc.name}
+                          </Text>
                         </div>
                         {tc.arguments && Object.keys(tc.arguments).length > 0 && (
                           <pre style={{ margin: 0, fontSize: '12px', whiteSpace: 'pre-wrap' }}>{JSON.stringify(tc.arguments, null, 2)}</pre>
@@ -142,28 +149,28 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
 
               {evaluator.parameters.comparisonMethod && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Comparison method</span>
-                  <span className={styles.fieldValue}>{evaluator.parameters.comparisonMethod}</span>
+                  <Caption1Strong>Comparison method</Caption1Strong>
+                  <Text size={300}>{evaluator.parameters.comparisonMethod}</Text>
                 </div>
               )}
 
               {evaluator.parameters.threshold !== undefined && (
                 <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>Threshold</span>
-                  <span className={styles.fieldValue}>{evaluator.parameters.threshold}</span>
+                  <Caption1Strong>Threshold</Caption1Strong>
+                  <Text size={300}>{evaluator.parameters.threshold}</Text>
                 </div>
               )}
 
               <div className={styles.fieldRow}>
-                <span className={styles.fieldLabel}>Compare arguments</span>
-                <span className={styles.fieldValue}>{evaluator.parameters.shouldCompareArgs ? 'Yes' : 'No'}</span>
+                <Caption1Strong>Compare arguments</Caption1Strong>
+                <Text size={300}>{evaluator.parameters.shouldCompareArgs ? 'Yes' : 'No'}</Text>
               </div>
             </>
           )}
 
           {evaluator.template === 'SemanticSimilarity' && evaluator.parameters.expectedChatResponse && (
             <div className={styles.fieldRow}>
-              <span className={styles.fieldLabel}>Expected Chat Response</span>
+              <Caption1Strong>Expected Chat Response</Caption1Strong>
               <div className={styles.promptValue}>{evaluator.parameters.expectedChatResponse}</div>
             </div>
           )}
@@ -174,8 +181,8 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
                 Edit
               </Button>
             </Tooltip>
-            <Tooltip content={canRun ? 'Run evaluation' : 'Select a run first'} relationship="label">
-              <Button appearance="primary" icon={<PlayRegular />} onClick={handleRunEvaluation} disabled={!canRun}>
+            <Tooltip content={isEvaluationDataSelected ? 'Run evaluation' : 'Select a run first'} relationship="label">
+              <Button appearance="primary" icon={<PlayRegular />} onClick={handleRunEvaluation} disabled={!isEvaluationDataSelected}>
                 Run
               </Button>
             </Tooltip>
@@ -185,11 +192,11 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
               </Button>
             </Tooltip>
           </div>
-        </div>
+        </Card>
 
         {/* Last Evaluation Result */}
         {selectedRun && (
-          <div className={styles.card}>
+          <Card>
             {isEvaluationFetching ? (
               <div className={styles.loadingContainer}>
                 <Spinner size="small" label="Loading evaluation..." />
@@ -197,65 +204,81 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
             ) : evaluation ? (
               <>
                 <div className={styles.evaluationHeader}>
-                  <span className={styles.panelTitle}>Last Evaluation</span>
-                  <span className={mergeClasses(styles.resultBadge, isEvalPassed ? styles.resultPassed : styles.resultFailed)}>
+                  <Text size={400} weight="semibold">
+                    Last Evaluation
+                  </Text>
+                  <Badge appearance="tint" color={isEvalPassed ? 'success' : 'danger'} shape="rounded" size="medium">
                     {evaluation.result}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div className={styles.resultSection}>
                   <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Status</span>
-                    <span className={mergeClasses(styles.detailValue, isEvalPassed ? styles.statusSucceeded : styles.statusFailed)}>
+                    <Caption1>Status</Caption1>
+                    <Text size={300} weight="semibold" className={isEvalPassed ? styles.statusSucceeded : styles.statusFailed}>
                       {evaluation.result}
-                    </span>
+                    </Text>
                   </div>
                   <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Value</span>
-                    <span className={styles.detailValue}>{evaluation.value}</span>
+                    <Caption1>Value</Caption1>
+                    <Text size={300} weight="semibold">
+                      {evaluation.value}
+                    </Text>
                   </div>
                   {evaluation.agentActionName && (
                     <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Agent Action</span>
-                      <span className={styles.detailValue}>{evaluation.agentActionName}</span>
+                      <Caption1>Agent Action</Caption1>
+                      <Text size={300} weight="semibold">
+                        {evaluation.agentActionName}
+                      </Text>
                     </div>
                   )}
                 </div>
 
                 {evaluation.reason && (
                   <div style={{ marginTop: '8px' }}>
-                    <span className={styles.fieldLabel}>Reason</span>
+                    <Caption1Strong>Reason</Caption1Strong>
                     <div className={styles.resultReason}>{evaluation.reason}</div>
                   </div>
                 )}
 
                 <div className={styles.tokenStats}>
                   <div className={styles.tokenStat}>
-                    <span className={styles.statLabel}>Total Tokens</span>
-                    <span className={styles.statValue}>{evaluation.totalTokens}</span>
+                    <Caption1>Total Tokens</Caption1>
+                    <Text size={400} weight="semibold">
+                      {evaluation.totalTokens}
+                    </Text>
                   </div>
                   <div className={styles.tokenStat}>
-                    <span className={styles.statLabel}>Input Tokens</span>
-                    <span className={styles.statValue}>{evaluation.inputTokens}</span>
+                    <Caption1>Input Tokens</Caption1>
+                    <Text size={400} weight="semibold">
+                      {evaluation.inputTokens}
+                    </Text>
                   </div>
                   <div className={styles.tokenStat}>
-                    <span className={styles.statLabel}>Output Tokens</span>
-                    <span className={styles.statValue}>{evaluation.outputTokens}</span>
+                    <Caption1>Output Tokens</Caption1>
+                    <Text size={400} weight="semibold">
+                      {evaluation.outputTokens}
+                    </Text>
                   </div>
                 </div>
               </>
             ) : (
               <div className={styles.emptyState}>
-                <p className={styles.emptyTitle}>No evaluation results for this run</p>
-                <p className={styles.emptySubtext}>Click Run to evaluate</p>
+                <Text size={300} weight="semibold">
+                  No evaluation results for this run
+                </Text>
+                <Text size={200}>Click Run to evaluate</Text>
               </div>
             )}
-          </div>
+          </Card>
         )}
 
         {!selectedRun && (
           <div className={styles.emptyState}>
-            <p className={styles.emptyTitle}>Select a run to view evaluation results</p>
+            <Text size={300} weight="semibold">
+              Select a run to view evaluation results
+            </Text>
           </div>
         )}
       </div>

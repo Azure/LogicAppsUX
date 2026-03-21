@@ -334,6 +334,7 @@ export const DesignerApp = () => {
           isUnitTest,
           readOnly: readOnly || isMonitoringView,
           isMonitoringView,
+          isEvaluateView,
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,

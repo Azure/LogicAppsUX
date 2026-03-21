@@ -1,26 +1,40 @@
 import { useCallback, useMemo } from 'react';
-import { Button, Input, mergeClasses, Spinner, Tooltip } from '@fluentui/react-components';
+import {
+  Badge,
+  Button,
+  mergeClasses,
+  SearchBox,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  Text,
+  Tooltip,
+} from '@fluentui/react-components';
 import { AddRegular, EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import {
   setSelectedEvaluator,
   startCreateEvaluator,
   startEditEvaluator,
-  setSearchQuery,
+  setEvaluatorSearchQuery,
   setRightPanelView,
   setRunningEvaluatorName,
 } from '../../core/state/evaluation/evaluationSlice';
 import {
   useFilteredEvaluators,
   useSelectedEvaluator,
-  useSearchQuery,
-  useCanRunEvaluation,
-  useSelectedRun,
-  useSelectedAction,
+  useEvaluatorSearchQuery,
+  useEvaluationDataSelected,
+  useSelectedEvaluationAgentName,
 } from '../../core/state/evaluation/evaluationSelectors';
 import { useEvaluators, useRunEvaluation, useDeleteEvaluator, useEvaluations } from '../../core/queries/evaluations';
 import type { Evaluator, EvaluationResult } from '@microsoft/logic-apps-shared';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
+import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 
 interface EvaluatorManagementPanelProps {
   workflowName: string;
@@ -30,15 +44,15 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
   const selectedEvaluator = useSelectedEvaluator();
-  const searchQuery = useSearchQuery();
-  const canRun = useCanRunEvaluation();
-  const selectedRun = useSelectedRun();
-  const selectedAction = useSelectedAction();
+  const evaluatorSearchQuery = useEvaluatorSearchQuery();
+  const isEvaluationDataSelected = useEvaluationDataSelected();
+  const selectedRun = useRunInstance();
+  const selectedAgentName = useSelectedEvaluationAgentName();
 
-  const { data: evaluators, isFetching: isEvaluatorsFetching } = useEvaluators(workflowName, selectedAction?.name ?? '');
-  const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAction?.name ?? '');
-  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAction?.name ?? '');
-  const { data: evaluations } = useEvaluations(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '');
+  const { data: evaluators, isFetching: isEvaluatorsFetching } = useEvaluators(workflowName, selectedAgentName ?? '');
+  const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAgentName ?? '');
+  const { mutateAsync: runEvaluation } = useRunEvaluation(workflowName, selectedAgentName ?? '');
+  const { data: evaluations } = useEvaluations(workflowName, selectedRun?.name ?? '', selectedAgentName ?? '');
 
   const evaluatorsList = useMemo(() => (Array.isArray(evaluators) ? evaluators : []), [evaluators]);
   const filteredEvaluators = useFilteredEvaluators(evaluatorsList);
@@ -94,7 +108,9 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
   return (
     <div className={mergeClasses(styles.panel, styles.panelEvaluators)}>
       <div className={styles.panelHeader}>
-        <h2 className={styles.panelTitle}>Evaluators</h2>
+        <Text size={400} weight="semibold" as="h2">
+          Evaluators
+        </Text>
         <Button
           appearance="primary"
           icon={<AddRegular />}
@@ -107,21 +123,25 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
       </div>
 
       <div className={styles.searchContainer}>
-        <Input
+        <SearchBox
           placeholder="Search or filter items by..."
-          value={searchQuery}
-          onChange={(_e, data) => dispatch(setSearchQuery(data.value))}
+          value={evaluatorSearchQuery}
+          onChange={(_e, data) => dispatch(setEvaluatorSearchQuery(data.value))}
           size="small"
           style={{ width: '100%' }}
         />
       </div>
 
-      <div className={styles.tableHeader}>
-        <div className={styles.colType}>Type</div>
-        <div className={styles.colName}>Name</div>
-        <div className={styles.colResult}>Result</div>
-        <div className={styles.colActions} />
-      </div>
+      <Table aria-label="Evaluators list" size="small">
+        <TableHeader>
+          <TableRow>
+            <TableHeaderCell style={{ width: '140px' }}>Type</TableHeaderCell>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell style={{ width: '70px' }}>Result</TableHeaderCell>
+            <TableHeaderCell style={{ width: '100px' }} />
+          </TableRow>
+        </TableHeader>
+      </Table>
 
       {isEvaluatorsFetching ? (
         <div className={styles.loadingContainer}>
@@ -130,76 +150,94 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
       ) : workflowName.trim() ? (
         filteredEvaluators.length === 0 ? (
           <div className={styles.emptyState}>
-            <p className={styles.emptyTitle}>No evaluators yet</p>
-            <p className={styles.emptySubtext}>Click Create to add your first evaluator</p>
+            <Text size={300} weight="semibold">
+              No evaluators yet
+            </Text>
+            <Text size={200}>Click Create to add your first evaluator</Text>
           </div>
         ) : (
           <div className={styles.listContainer}>
-            {filteredEvaluators.map((evaluator) => (
-              <div
-                key={evaluator.name}
-                className={mergeClasses(styles.tableRow, selectedEvaluator?.name === evaluator.name && styles.tableRowSelected)}
-                onClick={() => handleSelectEvaluator(evaluator)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && handleSelectEvaluator(evaluator)}
-              >
-                <div className={styles.colType}>{evaluator.template}</div>
-                <div className={styles.colName}>{evaluator.name}</div>
-                <div className={styles.colResult}>
-                  {(() => {
-                    const result = evaluationsByName.get(evaluator.name);
-                    if (!result) {
-                      return <span style={{ color: 'var(--colorNeutralForeground3)' }}>—</span>;
-                    }
-                    const passed = result.result?.toLowerCase() === 'passed';
-                    return <span className={passed ? styles.statusSucceeded : styles.statusFailed}>{passed ? 'Passed' : 'Failed'}</span>;
-                  })()}
-                </div>
-                <div className={styles.colActions}>
-                  <Tooltip content="Edit" relationship="label">
-                    <Button
-                      appearance="subtle"
-                      icon={<EditRegular />}
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        dispatch(startEditEvaluator(evaluator));
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip content={canRun ? 'Run evaluation' : 'Select a run first'} relationship="label">
-                    <Button
-                      appearance="subtle"
-                      icon={<PlayRegular />}
-                      size="small"
-                      disabled={!canRun}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRunClick(evaluator);
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip content="Delete evaluator" relationship="label">
-                    <Button
-                      appearance="subtle"
-                      icon={<DeleteRegular />}
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteClick(evaluator);
-                      }}
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-            ))}
+            <Table aria-label="Evaluators" size="small">
+              <TableBody>
+                {filteredEvaluators.map((evaluator) => (
+                  <TableRow
+                    key={evaluator.name}
+                    className={mergeClasses(selectedEvaluator?.name === evaluator.name && styles.tableRowSelected)}
+                    onClick={() => handleSelectEvaluator(evaluator)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <TableCell style={{ width: '140px' }}>
+                      <Text size={200}>{evaluator.template}</Text>
+                    </TableCell>
+                    <TableCell>
+                      <Text size={300} weight="semibold" truncate wrap={false}>
+                        {evaluator.name}
+                      </Text>
+                    </TableCell>
+                    <TableCell style={{ width: '70px' }}>
+                      {(() => {
+                        const result = evaluationsByName.get(evaluator.name);
+                        if (!result) {
+                          return <Text size={200}>—</Text>;
+                        }
+                        const passed = result.result?.toLowerCase() === 'passed';
+                        return (
+                          <Badge appearance="tint" color={passed ? 'success' : 'danger'} shape="rounded" size="small">
+                            {passed ? 'Passed' : 'Failed'}
+                          </Badge>
+                        );
+                      })()}
+                    </TableCell>
+                    <TableCell style={{ width: '100px' }}>
+                      <div className={styles.colActions}>
+                        <Tooltip content="Edit" relationship="label">
+                          <Button
+                            appearance="subtle"
+                            icon={<EditRegular />}
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              dispatch(startEditEvaluator(evaluator));
+                            }}
+                          />
+                        </Tooltip>
+                        <Tooltip content={isEvaluationDataSelected ? 'Run evaluation' : 'Select a run first'} relationship="label">
+                          <Button
+                            appearance="subtle"
+                            icon={<PlayRegular />}
+                            size="small"
+                            disabled={!isEvaluationDataSelected}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRunClick(evaluator);
+                            }}
+                          />
+                        </Tooltip>
+                        <Tooltip content="Delete evaluator" relationship="label">
+                          <Button
+                            appearance="subtle"
+                            icon={<DeleteRegular />}
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick(evaluator);
+                            }}
+                          />
+                        </Tooltip>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )
       ) : (
         <div className={styles.emptyState}>
-          <p className={styles.emptyTitle}>Enter a workflow name</p>
-          <p className={styles.emptySubtext}>to view evaluators</p>
+          <Text size={300} weight="semibold">
+            Enter a workflow name
+          </Text>
+          <Text size={200}>to view evaluators</Text>
         </div>
       )}
     </div>

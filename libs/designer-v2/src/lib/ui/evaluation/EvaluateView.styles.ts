@@ -39,14 +39,6 @@ export const useEvaluateViewStyles = makeStyles({
     padding: '12px 16px',
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
-  panelHeaderWithBack: {
-    padding: '8px 16px',
-  },
-  panelTitle: {
-    margin: '0',
-    fontSize: tokens.fontSizeBase400,
-    fontWeight: tokens.fontWeightSemibold,
-  },
   searchContainer: {
     padding: '8px 16px',
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
@@ -54,26 +46,6 @@ export const useEvaluateViewStyles = makeStyles({
   listContainer: {
     flex: '1',
     overflow: 'auto',
-  },
-  listItem: {
-    padding: '10px 16px',
-    cursor: 'pointer',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-    },
-  },
-  listItemSelected: {
-    backgroundColor: tokens.colorNeutralBackground1Selected,
-  },
-  runName: {
-    fontSize: tokens.fontSizeBase300,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  runTiming: {
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-    marginTop: '2px',
   },
   emptyState: {
     flex: '1',
@@ -85,108 +57,18 @@ export const useEvaluateViewStyles = makeStyles({
     padding: '32px',
     textAlign: 'center',
   },
-  emptyTitle: {
-    fontSize: tokens.fontSizeBase300,
-    fontWeight: tokens.fontWeightSemibold,
-    margin: '0 0 4px 0',
-  },
-  emptySubtext: {
-    fontSize: tokens.fontSizeBase200,
-    margin: '0',
-    opacity: 0.7,
-  },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     padding: '24px',
   },
-  // Table styles for evaluators panel
-  tableHeader: {
-    display: 'flex',
-    padding: '8px 16px',
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-    fontWeight: tokens.fontWeightSemibold,
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-  },
-  tableRow: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '8px 16px',
-    cursor: 'pointer',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-    },
-  },
   tableRowSelected: {
     backgroundColor: tokens.colorNeutralBackground1Selected,
-  },
-  colType: {
-    width: '140px',
-    flexShrink: 0,
-    fontSize: tokens.fontSizeBase200,
-  },
-  colName: {
-    flex: '1',
-    fontSize: tokens.fontSizeBase300,
-    fontWeight: tokens.fontWeightSemibold,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
   },
   colActions: {
     display: 'flex',
     gap: '4px',
     flexShrink: 0,
-  },
-  colResult: {
-    width: '70px',
-    flexShrink: 0,
-    fontSize: tokens.fontSizeBase200,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  // Agent actions list
-  actionItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    padding: '10px 16px',
-    cursor: 'pointer',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-    '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-    },
-  },
-  actionItemSelected: {
-    backgroundColor: tokens.colorNeutralBackground1Selected,
-  },
-  actionIndex: {
-    width: '24px',
-    height: '24px',
-    borderRadius: '50%',
-    backgroundColor: tokens.colorNeutralBackground3,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: tokens.fontSizeBase200,
-    fontWeight: tokens.fontWeightSemibold,
-    flexShrink: 0,
-  },
-  actionDetails: {
-    flex: '1',
-    minWidth: 0,
-  },
-  actionStatus: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontSize: tokens.fontSizeBase300,
-  },
-  actionTiming: {
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-    marginTop: '2px',
   },
   // Form styles
   formContent: {
@@ -245,14 +127,6 @@ export const useEvaluateViewStyles = makeStyles({
     gap: '4px',
     padding: '8px 0',
   },
-  fieldLabel: {
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  fieldValue: {
-    fontSize: tokens.fontSizeBase300,
-  },
   promptValue: {
     whiteSpace: 'pre-wrap',
     backgroundColor: tokens.colorNeutralBackground3,
@@ -265,22 +139,6 @@ export const useEvaluateViewStyles = makeStyles({
     gap: '8px',
     paddingTop: '12px',
   },
-  // Result panel
-  resultBadge: {
-    display: 'inline-flex',
-    padding: '4px 12px',
-    borderRadius: '12px',
-    fontWeight: tokens.fontWeightSemibold,
-    fontSize: tokens.fontSizeBase300,
-  },
-  resultPassed: {
-    backgroundColor: tokens.colorPaletteGreenBackground1,
-    color: tokens.colorPaletteGreenForeground1,
-  },
-  resultFailed: {
-    backgroundColor: tokens.colorPaletteRedBackground1,
-    color: tokens.colorPaletteRedForeground1,
-  },
   tokenStats: {
     display: 'flex',
     gap: '16px',
@@ -290,14 +148,6 @@ export const useEvaluateViewStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: '2px',
-  },
-  statLabel: {
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-  },
-  statValue: {
-    fontSize: tokens.fontSizeBase400,
-    fontWeight: tokens.fontWeightSemibold,
   },
   resultReason: {
     padding: '12px',
@@ -312,22 +162,6 @@ export const useEvaluateViewStyles = makeStyles({
   },
   statusFailed: {
     color: tokens.colorPaletteRedForeground1,
-  },
-  statusRunning: {
-    color: tokens.colorPaletteYellowForeground1,
-  },
-  // Tabs
-  tabContainer: {
-    display: 'flex',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-  },
-  // Card
-  card: {
-    padding: '16px',
-    borderRadius: '8px',
-    border: `1px solid ${tokens.colorNeutralStroke1}`,
-    backgroundColor: tokens.colorNeutralBackground1,
-    marginBottom: '16px',
   },
   evaluationHeader: {
     display: 'flex',
@@ -345,14 +179,6 @@ export const useEvaluateViewStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '4px 0',
-  },
-  detailLabel: {
-    fontSize: tokens.fontSizeBase200,
-    color: tokens.colorNeutralForeground2,
-  },
-  detailValue: {
-    fontSize: tokens.fontSizeBase300,
-    fontWeight: tokens.fontWeightSemibold,
   },
   panelChat: {
     width: '380px',

@@ -205,6 +205,7 @@ const useGlobalAgentEvaluation = (workflowName: string, runId: string, evaluator
     },
     {
       ...queryOpts,
+      retry: (_count, error: any) => error?.response?.status !== 404,
       enabled: isEnabled && !!workflowName.trim() && !!runId.trim() && !!evaluatorName.trim(),
     }
   );
@@ -218,6 +219,7 @@ const useAgentEvaluation = (workflowName: string, runId: string, agentActionName
     },
     {
       ...queryOpts,
+      retry: (_count, error: any) => error?.response?.status !== 404,
       enabled: isEnabled && !!workflowName.trim() && !!runId.trim() && !!agentActionName.trim() && !!evaluatorName.trim(),
     }
   );
@@ -237,6 +239,12 @@ const useRunGlobalAgentEvaluation = (workflowName: string) => {
       return EvaluationService().runGlobalAgentEvaluation(workflowName, runId, evaluatorName);
     },
     {
+      onMutate: (variables) => {
+        queryClient.setQueryData([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName], undefined);
+        queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId], (oldData: any) => {
+          return oldData?.filter((evaluationResult: any) => evaluationResult.evaluatorName !== variables.evaluatorName) ?? [];
+        });
+      },
       onSuccess: (data, variables) => {
         queryClient.setQueryData([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName], data);
         queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId], (oldData: any) => {
@@ -254,6 +262,15 @@ const useRunAgentEvaluation = (workflowName: string, agentActionName: string) =>
       return EvaluationService().runAgentEvaluation(workflowName, runId, agentActionName, evaluatorName);
     },
     {
+      onMutate: (variables) => {
+        queryClient.setQueryData(
+          [evaluationQueryKeys.evaluation, workflowName, variables.runId, agentActionName, variables.evaluatorName],
+          undefined
+        );
+        queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId, agentActionName], (oldData: any) => {
+          return oldData?.filter((evaluationResult: any) => evaluationResult.evaluatorName !== variables.evaluatorName) ?? [];
+        });
+      },
       onSuccess: (data, variables) => {
         queryClient.setQueryData(
           [evaluationQueryKeys.evaluation, workflowName, variables.runId, agentActionName, variables.evaluatorName],

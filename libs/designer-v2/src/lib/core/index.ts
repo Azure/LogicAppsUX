@@ -131,8 +131,6 @@ export * from './state/modal/modalSelectors';
 export * from './state/modal/modalSlice';
 export * from './queries/evaluations';
 export {
-  setSelectedRun as setEvaluationSelectedRun,
-  setSelectedAction as setEvaluationSelectedAction,
+  setSelectedAgentName as setEvaluationSelectedAgentName,
   resetEvaluationState,
 } from './state/evaluation/evaluationSlice';
-export type { AgentAction, WorkflowRunEntry } from './state/evaluation/evaluationInterfaces';

@@ -1,7 +1,8 @@
-import { mergeClasses, Spinner } from '@fluentui/react-components';
-import { useRunningEvaluatorName, useSelectedRun, useSelectedAction } from '../../core/state/evaluation/evaluationSelectors';
+import { Badge, Caption1, Caption1Strong, Card, Spinner, Text } from '@fluentui/react-components';
+import { useRunningEvaluatorName, useSelectedEvaluationAgentName } from '../../core/state/evaluation/evaluationSelectors';
 import { useEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
+import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 
 interface EvaluationResultPanelProps {
   workflowName: string;
@@ -10,14 +11,10 @@ interface EvaluationResultPanelProps {
 export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelProps) => {
   const styles = useEvaluateViewStyles();
   const evaluatorName = useRunningEvaluatorName();
-  const selectedRun = useSelectedRun();
-  const selectedAction = useSelectedAction();
+  const selectedRun = useRunInstance();
+  const selectedAgentName = useSelectedEvaluationAgentName();
 
-  const {
-    data: result,
-    isFetching,
-    error,
-  } = useEvaluation(workflowName, selectedRun?.name ?? '', selectedAction?.name ?? '', evaluatorName);
+  const { data: result, isFetching, error } = useEvaluation(workflowName, selectedRun?.name ?? '', selectedAgentName ?? '', evaluatorName);
 
   if (isFetching) {
     return (
@@ -34,8 +31,12 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className={styles.panelHeader}>
           <div>
-            <h2 className={styles.panelTitle}>Evaluation Result</h2>
-            <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--colorNeutralForeground2)' }}>Evaluator: {evaluatorName}</p>
+            <Text size={400} weight="semibold" as="h2">
+              Evaluation Result
+            </Text>
+            <Caption1 block style={{ marginTop: '4px' }}>
+              Evaluator: {evaluatorName}
+            </Caption1>
           </div>
         </div>
         <div className={styles.formContent}>
@@ -51,7 +52,9 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className={styles.emptyState}>
-          <p className={styles.emptyTitle}>No evaluation result</p>
+          <Text size={300} weight="semibold">
+            No evaluation result
+          </Text>
         </div>
       </div>
     );
@@ -63,50 +66,64 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className={styles.panelHeader}>
         <div>
-          <h2 className={styles.panelTitle}>Evaluation Result</h2>
-          <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--colorNeutralForeground2)' }}>Evaluator: {evaluatorName}</p>
+          <Text size={400} weight="semibold" as="h2">
+            Evaluation Result
+          </Text>
+          <Caption1 block style={{ marginTop: '4px' }}>
+            Evaluator: {evaluatorName}
+          </Caption1>
         </div>
       </div>
 
       <div className={styles.formContent}>
-        <div className={styles.card}>
+        <Card>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <span className={mergeClasses(styles.resultBadge, isPassed ? styles.resultPassed : styles.resultFailed)}>{result.result}</span>
+            <Badge appearance="tint" color={isPassed ? 'success' : 'danger'} shape="rounded" size="medium">
+              {result.result}
+            </Badge>
             <span>
-              <span className={styles.fieldLabel}>Value: </span>
-              <span className={styles.fieldValue}>{result.value}</span>
+              <Caption1Strong>Value: </Caption1Strong>
+              <Text size={300}>{result.value}</Text>
             </span>
           </div>
 
           {result.agentActionName && (
             <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Agent Action</span>
-              <span className={styles.detailValue}>{result.agentActionName}</span>
+              <Caption1>Agent Action</Caption1>
+              <Text size={300} weight="semibold">
+                {result.agentActionName}
+              </Text>
             </div>
           )}
 
           {result.reason && (
             <div style={{ marginTop: '8px' }}>
-              <span className={styles.fieldLabel}>Reason</span>
+              <Caption1Strong>Reason</Caption1Strong>
               <div className={styles.resultReason}>{result.reason}</div>
             </div>
           )}
 
           <div className={styles.tokenStats}>
             <div className={styles.tokenStat}>
-              <span className={styles.statLabel}>Total Tokens</span>
-              <span className={styles.statValue}>{result.totalTokens}</span>
+              <Caption1>Total Tokens</Caption1>
+              <Text size={400} weight="semibold">
+                {result.totalTokens}
+              </Text>
             </div>
             <div className={styles.tokenStat}>
-              <span className={styles.statLabel}>Input Tokens</span>
-              <span className={styles.statValue}>{result.inputTokens}</span>
+              <Caption1>Input Tokens</Caption1>
+              <Text size={400} weight="semibold">
+                {result.inputTokens}
+              </Text>
             </div>
             <div className={styles.tokenStat}>
-              <span className={styles.statLabel}>Output Tokens</span>
-              <span className={styles.statValue}>{result.outputTokens}</span>
+              <Caption1>Output Tokens</Caption1>
+              <Text size={400} weight="semibold">
+                {result.outputTokens}
+              </Text>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

@@ -2,17 +2,14 @@ import type { Evaluator } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetWorkflowState } from '../global';
-import type { EvaluationState, RightPanelView, WorkflowRunEntry, AgentAction } from './evaluationInterfaces';
+import type { EvaluationState, RightPanelView } from './evaluationInterfaces';
 
 export const initialEvaluationState: EvaluationState = {
   selectedEvaluator: null,
-  selectedRun: null,
-  selectedAction: null,
-  agentActions: [],
-  agentActionsLoading: false,
+  selectedAgentName: null,
   rightPanelView: 'empty',
   runningEvaluatorName: '',
-  searchQuery: '',
+  evaluatorSearchQuery: '',
 };
 
 export const evaluationSlice = createSlice({
@@ -27,18 +24,8 @@ export const evaluationSlice = createSlice({
         state.rightPanelView = 'empty';
       }
     },
-    setSelectedRun: (state, action: PayloadAction<WorkflowRunEntry | null>) => {
-      state.selectedRun = action.payload;
-      state.selectedAction = null;
-    },
-    setSelectedAction: (state, action: PayloadAction<AgentAction | null>) => {
-      state.selectedAction = action.payload;
-    },
-    setAgentActions: (state, action: PayloadAction<AgentAction[]>) => {
-      state.agentActions = action.payload;
-    },
-    setAgentActionsLoading: (state, action: PayloadAction<boolean>) => {
-      state.agentActionsLoading = action.payload;
+    setSelectedAgentName: (state, action: PayloadAction<string | null>) => {
+      state.selectedAgentName = action.payload;
     },
     setRightPanelView: (state, action: PayloadAction<RightPanelView>) => {
       state.rightPanelView = action.payload;
@@ -46,8 +33,8 @@ export const evaluationSlice = createSlice({
     setRunningEvaluatorName: (state, action: PayloadAction<string>) => {
       state.runningEvaluatorName = action.payload;
     },
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
+    setEvaluatorSearchQuery: (state, action: PayloadAction<string>) => {
+      state.evaluatorSearchQuery = action.payload;
     },
     startCreateEvaluator: (state) => {
       state.selectedEvaluator = null;
@@ -78,13 +65,10 @@ export const evaluationSlice = createSlice({
 
 export const {
   setSelectedEvaluator,
-  setSelectedRun,
-  setSelectedAction,
-  setAgentActions,
-  setAgentActionsLoading,
+  setSelectedAgentName,
   setRightPanelView,
   setRunningEvaluatorName,
-  setSearchQuery,
+  setEvaluatorSearchQuery,
   startCreateEvaluator,
   startEditEvaluator,
   finishFormAction,

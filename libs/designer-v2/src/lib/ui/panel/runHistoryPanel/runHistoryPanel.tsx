@@ -29,7 +29,7 @@ import { useAllRuns, useRun, useRunsInfiniteQuery } from '../../../core/queries/
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useEvaluateView, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsRunHistoryCollapsed } from '../../../core/state/panel/panelSelectors';
 import { setRunHistoryCollapsed } from '../../../core/state/panel/panelSlice';
 
@@ -52,6 +52,7 @@ import { RunMenu } from './runMenu';
 import StatusIndicator from './statusIndicator';
 import { DatePicker } from '@fluentui/react-datepicker-compat';
 import { TimePicker } from '@fluentui/react-timepicker-compat';
+import { RunDatasetActionsView } from '../runDatasetPanel/runDatasetActionsView';
 
 // MARK: End Imports
 
@@ -70,21 +71,22 @@ export const RunHistoryPanel = () => {
   const dispatch = useDispatch();
 
   const isMonitoringView = useMonitoringView();
+  const isEvaluateView = useEvaluateView();
 
   const styles = useRunHistoryPanelStyles();
 
-  const runsQuery = useRunsInfiniteQuery(isMonitoringView);
+  const runsQuery = useRunsInfiniteQuery(isMonitoringView || isEvaluateView);
   const runs = useAllRuns();
   const selectedRunInstance = useRunInstance();
   const runQuery = useRun(selectedRunInstance?.id);
 
   // Refetch the runs when the panel is expanded
   useEffect(() => {
-    if (isMonitoringView) {
+    if (isMonitoringView || isEvaluateView) {
       runsQuery.refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMonitoringView, selectedRunInstance]);
+  }, [isMonitoringView, isEvaluateView, selectedRunInstance]);
 
   // MARK: Filtering
   const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
@@ -196,7 +198,7 @@ export const RunHistoryPanel = () => {
     setFilters({});
     setCustomStart(null);
     setCustomEnd(null);
-  }, [isMonitoringView]);
+  }, [isMonitoringView, isEvaluateView]);
 
   // MARK: INTL
 
@@ -204,6 +206,12 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Run history',
     description: 'Run history panel title',
     id: 'qs+f1b',
+  });
+
+  const runDatasetTitle = intl.formatMessage({
+    defaultMessage: 'Run dataset',
+    description: 'Run dataset panel title',
+    id: 'dLxMq/',
   });
 
   const refreshAria = intl.formatMessage({
@@ -252,6 +260,12 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Return to run list',
     description: 'Return to run list button text',
     id: 'ob2fSf',
+  });
+
+  const returnDatasetText = intl.formatMessage({
+    defaultMessage: 'Return to run dataset',
+    description: 'Return to run dataset button text',
+    id: 'IBpGkP',
   });
 
   const toggleFiltersAria = intl.formatMessage({
@@ -330,6 +344,12 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Log',
     description: 'Tree view tab title',
     id: 'O0HlIg',
+  });
+
+  const agentsViewTitle = intl.formatMessage({
+    defaultMessage: 'Agents',
+    description: 'Agents tab title',
+    id: 'dUYMuK',
   });
 
   const chatViewTitle = intl.formatMessage({
@@ -467,10 +487,10 @@ export const RunHistoryPanel = () => {
   }, [chatEnabled, selectedContentTab]);
 
   useEffect(() => {
-    if (!isMonitoringView) {
+    if (!isMonitoringView && !isEvaluateView) {
       setInRunList(true);
     }
-  }, [isMonitoringView]);
+  }, [isMonitoringView, isEvaluateView]);
 
   // If a runId filter is set, prefetch that run's data
   const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
@@ -507,7 +527,7 @@ export const RunHistoryPanel = () => {
     <Drawer
       ref={sidebarRef}
       position="start"
-      open={isMonitoringView && !isRunHistoryCollapsed}
+      open={(isMonitoringView && !isRunHistoryCollapsed) || isEvaluateView}
       type="inline"
       surfaceMotion={null}
       style={{ position: 'relative', width: sidebarWidth }}
@@ -526,14 +546,14 @@ export const RunHistoryPanel = () => {
         <DrawerHeaderNavigation style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 8px' }}>
           {inRunList ? null : (
             <Button appearance="subtle" color="primary" onClick={() => setInRunList(true)} icon={<ReturnIcon />} size="small">
-              {returnText}
+              {isEvaluateView ? returnDatasetText : returnText}
             </Button>
           )}
           <div style={{ flexGrow: 1 }} />
-          <CollapseButton />
+          {!isEvaluateView && <CollapseButton />}
         </DrawerHeaderNavigation>
         {inRunList ? (
-          <DrawerHeaderTitle>{runListTitle}</DrawerHeaderTitle>
+          <DrawerHeaderTitle>{isEvaluateView ? runDatasetTitle : runListTitle}</DrawerHeaderTitle>
         ) : selectedRunInstance ? (
           <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <RunHistoryEntryInfo run={selectedRunInstance as any} />
@@ -704,7 +724,7 @@ export const RunHistoryPanel = () => {
             selectedValue={selectedContentTab}
             onTabSelect={(_: SelectTabEvent, data: SelectTabData) => setSelectedContentTab(data.value as 'tree' | 'chat')}
           >
-            <Tab value="tree">{treeViewTitle}</Tab>
+            <Tab value="tree">{isEvaluateView ? agentsViewTitle : treeViewTitle}</Tab>
             <Tab value="chat" disabled={!chatEnabled}>
               {chatViewTitle}
             </Tab>
@@ -759,7 +779,7 @@ export const RunHistoryPanel = () => {
           </MessageBar>
         ) : equals(selectedContentTab, 'tree') ? (
           <div style={{ margin: '16px -16px' }}>
-            <RunTreeView />
+            {isEvaluateView ? <RunDatasetActionsView /> : <RunTreeView />}
             {runQuery.isLoading || runQuery.isFetching ? <Spinner style={{ padding: '16px' }} /> : null}
           </div>
         ) : equals(selectedContentTab, 'chat') ? (

@@ -1,16 +1,15 @@
-import { mergeClasses } from '@fluentui/react-components';
+import { mergeClasses, Text } from '@fluentui/react-components';
 import { useDispatch } from 'react-redux';
-import { useSelectedEvaluator, useRightPanelView, useSelectedRun } from '../../core/state/evaluation/evaluationSelectors';
+import { useSelectedEvaluator, useRightPanelView } from '../../core/state/evaluation/evaluationSelectors';
 import { startEditEvaluator, setSelectedEvaluator } from '../../core/state/evaluation/evaluationSlice';
 import { useDeleteEvaluator } from '../../core/queries/evaluations';
-import { RunDatasetPanel } from './RunDatasetPanel';
 import { EvaluatorManagementPanel } from './EvaluatorManagementPanel';
 import { EvaluatorFormPanel } from './EvaluatorFormPanel';
 import { EvaluatorDetailsPanel } from './EvaluatorDetailsPanel';
 import { EvaluationResultPanel } from './EvaluationResultPanel';
-import { AgentChatPanel } from './AgentChatPanel';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
+import { RunHistoryPanel } from '../panel';
 
 interface EvaluateViewProps {
   workflowName: string;
@@ -21,7 +20,6 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
   const dispatch = useDispatch();
   const selectedEvaluator = useSelectedEvaluator();
   const rightPanelView = useRightPanelView();
-  const selectedRun = useSelectedRun();
 
   const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, '');
 
@@ -56,8 +54,10 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
       default:
         return (
           <div className={styles.emptyState}>
-            <p className={styles.emptyTitle}>Select an action to get started</p>
-            <p className={styles.emptySubtext}>Create a new evaluator or select one to view</p>
+            <Text size={300} weight="semibold">
+              Select an action to get started
+            </Text>
+            <Text size={200}>Create a new evaluator or select one to view</Text>
           </div>
         );
     }
@@ -66,17 +66,9 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
   return (
     <div className={styles.root}>
       <div className={styles.main}>
-        <RunDatasetPanel />
+        <RunHistoryPanel />
         <EvaluatorManagementPanel workflowName={workflowName} />
         <div className={mergeClasses(styles.panel, styles.panelDetail)}>{renderRightPanel()}</div>
-        {selectedRun && (
-          <div className={styles.panelChat}>
-            <div className={styles.panelHeader}>
-              <h2 className={styles.panelTitle}>Chat History</h2>
-            </div>
-            <AgentChatPanel />
-          </div>
-        )}
       </div>
     </div>
   );

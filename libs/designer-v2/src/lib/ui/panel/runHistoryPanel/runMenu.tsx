@@ -16,6 +16,7 @@ import {
 import { useCallback, useMemo } from 'react';
 import type { FilterTypes } from './runHistoryPanel';
 import { useCancelRun, useResubmitRun, useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useEvaluateView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 const ResubmitIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
@@ -31,6 +32,7 @@ export const RunMenu = (props: {
   const intl = useIntl();
 
   const runId = useMemo(() => run.id.split('/').at(-1) ?? '', [run.id]);
+  const isEvaluateView = useEvaluateView();
 
   const copyText = intl.formatMessage({
     defaultMessage: 'Copy run ID',
@@ -106,12 +108,12 @@ export const RunMenu = (props: {
           <MenuItem icon={<CopyIcon />} onClick={onCopy}>
             {copyText}
           </MenuItem>
-          {!isDraftRun && (
+          {!isDraftRun && !isEvaluateView && (
             <MenuItem icon={<ResubmitIcon />} onClick={onResubmit}>
               {resubmitText}
             </MenuItem>
           )}
-          {run.properties.status === 'Running' ? (
+          {run.properties.status === 'Running' && !isEvaluateView ? (
             <MenuItem icon={<CancelIcon />} onClick={onCancel}>
               {cancelText}
             </MenuItem>

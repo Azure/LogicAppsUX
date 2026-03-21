@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { ChatbotUI } from '@microsoft/logic-apps-chatbot';
 import { useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useEvaluateView, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
   useAgentOperations,
@@ -37,6 +37,7 @@ export const AgentChatContent = () => {
 
   // Custom hooks section
   const isMonitoringView = useMonitoringView();
+  const isEvaluateView = useEvaluateView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
@@ -50,7 +51,7 @@ export const AgentChatContent = () => {
     refetch: refetchChatHistory,
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
-  } = useChatHistory(!!isMonitoringView, runInstance?.id, agentOperations, isA2AWorkflow);
+  } = useChatHistory(!!isMonitoringView || !!isEvaluateView, runInstance?.id, agentOperations, isA2AWorkflow);
   const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
 
   // Miscellaneous section

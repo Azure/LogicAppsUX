@@ -1,10 +1,28 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Button, Dropdown, Input, Label, Option, Radio, RadioGroup, Checkbox, Textarea, Spinner } from '@fluentui/react-components';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Button,
+  Caption1,
+  Dropdown,
+  Field,
+  Input,
+  Option,
+  Radio,
+  RadioGroup,
+  Checkbox,
+  Textarea,
+  Spinner,
+  Text,
+} from '@fluentui/react-components';
 import { DeleteRegular, AddRegular, SaveRegular } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { finishFormAction, cancelFormAction } from '../../core/state/evaluation/evaluationSlice';
-import { useSelectedEvaluator, useRightPanelView, useSelectedAction } from '../../core/state/evaluation/evaluationSelectors';
-import { useCreateOrUpdateEvaluator } from '../../core/queries/evaluations';
+import {
+  useSelectedEvaluator,
+  useRightPanelView,
+  useSelectedEvaluationAgentName,
+  useEvaluationDataSelected,
+} from '../../core/state/evaluation/evaluationSelectors';
+import { useCreateOrUpdateEvaluator, useEvaluators } from '../../core/queries/evaluations';
 import type { EvaluatorTemplate, ComparisonMethod } from '@microsoft/logic-apps-shared';
 import type { EvaluatorFormData } from './evaluatorFormHelpers';
 import {
@@ -25,11 +43,14 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   const rightPanelView = useRightPanelView();
   const selectedEvaluator = useSelectedEvaluator();
   const mode = rightPanelView === 'edit' ? 'edit' : 'create';
-  const selectedAction = useSelectedAction();
+  const selectedAgentName = useSelectedEvaluationAgentName();
+  const isEvaluationDataSelected = useEvaluationDataSelected();
   const { mutateAsync: createOrUpdateEvaluator, isLoading: isModifyingEvaluator } = useCreateOrUpdateEvaluator(
     workflowName,
-    selectedAction?.name ?? ''
+    selectedAgentName ?? ''
   );
+  const { data: evaluators } = useEvaluators(workflowName, selectedAgentName ?? '');
+  const existingEvaluatorNames = useMemo(() => new Set((evaluators ?? []).map((e) => e.name.toLowerCase())), [evaluators]);
 
   const [formData, setFormData] = useState<EvaluatorFormData>(createDefaultEvaluatorFormData());
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +73,11 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
       return;
     }
 
+    if (mode === 'create' && existingEvaluatorNames.has(formData.name.trim().toLowerCase())) {
+      setError('An evaluator with this name already exists');
+      return;
+    }
+
     setError(null);
     try {
       const evalData = formDataToEvaluator(formData);
@@ -60,16 +86,18 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save evaluator');
     }
-  }, [formData, createOrUpdateEvaluator, dispatch]);
+  }, [formData, createOrUpdateEvaluator, dispatch, mode, existingEvaluatorNames]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className={styles.panelHeader}>
         <div>
-          <h2 className={styles.panelTitle}>{mode === 'create' ? 'Create Evaluator' : 'Edit Evaluator'}</h2>
-          <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--colorNeutralForeground2)' }}>
+          <Text size={400} weight="semibold" as="h2">
+            {mode === 'create' ? 'Create Evaluator' : 'Edit Evaluator'}
+          </Text>
+          <Caption1 block style={{ marginTop: '4px' }}>
             {mode === 'create' ? 'Configure a new evaluator for your agent' : 'Update evaluator configuration'}
-          </p>
+          </Caption1>
         </div>
       </div>
 
@@ -83,20 +111,17 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
       )}
 
       <div className={styles.formContent}>
-        <div>
-          <Label htmlFor="evaluator-name">Name</Label>
+        <Field label="Name" required>
           <Input
             id="evaluator-name"
             value={formData.name}
             onChange={(_e, data) => updateFormField('name', data.value)}
             placeholder="Enter evaluator name"
             disabled={mode === 'edit'}
-            style={{ width: '100%' }}
           />
-        </div>
+        </Field>
 
-        <div>
-          <Label htmlFor="evaluator-template">Template</Label>
+        <Field label="Template">
           <Dropdown
             id="evaluator-template"
             value={
@@ -108,63 +133,54 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
             }
             selectedOptions={[formData.template]}
             onOptionSelect={(_e, data) => updateFormField('template', data.optionValue as EvaluatorTemplate)}
-            style={{ width: '100%' }}
           >
             <Option value="CustomPrompt">Custom Prompt</Option>
             <Option value="ToolCallTrajectory">Tool Call Trajectory</Option>
             <Option value="SemanticSimilarity">Semantic Similarity</Option>
           </Dropdown>
-        </div>
+        </Field>
 
         {/* Model configuration - not needed for ToolCallTrajectory */}
         {formData.template !== 'ToolCallTrajectory' && (
           <>
-            <div>
-              <Label htmlFor="agent-model-type">Agent model type</Label>
+            <Field label="Agent model type">
               <Dropdown
                 id="agent-model-type"
                 value={formData.agentModelType}
                 selectedOptions={[formData.agentModelType]}
                 onOptionSelect={(_e, data) => updateFormField('agentModelType', data.optionValue as string)}
-                style={{ width: '100%' }}
               >
                 <Option value="AzureOpenAI">AzureOpenAI</Option>
                 <Option value="FoundryAgentService">FoundryAgentService</Option>
               </Dropdown>
-            </div>
+            </Field>
 
-            <div>
-              <Label htmlFor="deployment-id">Deployment ID (optional)</Label>
+            <Field label="Deployment ID (optional)">
               <Input
                 id="deployment-id"
                 value={formData.deploymentId}
                 onChange={(_e, data) => updateFormField('deploymentId', data.value)}
                 placeholder="Enter deployment identifier"
-                style={{ width: '100%' }}
               />
-            </div>
+            </Field>
 
-            <div>
-              <Label htmlFor="model-ref">Model connection reference (optional)</Label>
+            <Field label="Model connection reference (optional)">
               <Input
                 id="model-ref"
                 value={formData.modelReferenceName}
                 onChange={(_e, data) => updateFormField('modelReferenceName', data.value)}
                 placeholder="Enter model connection reference name"
-                style={{ width: '100%' }}
               />
-            </div>
+            </Field>
 
-            <div>
-              <Label htmlFor="model-name">Deployment model name (optional)</Label>
+            <Field label="Deployment model name (optional)">
               <Input
                 id="model-name"
                 value={formData.modelName}
                 onChange={(_e, data) => updateFormField('modelName', data.value)}
                 placeholder="Enter deployment model name"
-                style={{ width: '100%' }}
               />
-            </div>
+            </Field>
           </>
         )}
 
@@ -184,26 +200,22 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
 
             {formData.useGroundTruthRun && (
               <>
-                <div>
-                  <Label htmlFor="ground-truth-run">Ground truth run ID</Label>
+                <Field label="Ground truth run ID">
                   <Input
                     id="ground-truth-run"
                     value={formData.groundTruthRunId}
                     onChange={(_e, data) => updateFormField('groundTruthRunId', data.value)}
                     placeholder="Enter ground truth run identifier"
-                    style={{ width: '100%' }}
                   />
-                </div>
-                <div>
-                  <Label htmlFor="ground-truth-action">Ground truth agent action (optional)</Label>
+                </Field>
+                <Field label="Ground truth agent action (optional)">
                   <Input
                     id="ground-truth-action"
                     value={formData.groundTruthAgentActionName}
                     onChange={(_e, data) => updateFormField('groundTruthAgentActionName', data.value)}
                     placeholder="Enter ground truth agent action name"
-                    style={{ width: '100%' }}
                   />
-                </div>
+                </Field>
               </>
             )}
           </>
@@ -211,28 +223,27 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
 
         {/* CustomPrompt: Instructions */}
         {formData.template === 'CustomPrompt' && (
-          <div>
-            <Label htmlFor="prompt">Instructions</Label>
+          <Field label="Instructions">
             <Textarea
               id="prompt"
               value={formData.prompt}
               onChange={(_e, data) => updateFormField('prompt', data.value)}
               placeholder="Enter evaluation instructions"
               rows={4}
-              style={{ width: '100%' }}
             />
-          </div>
+          </Field>
         )}
 
         {/* ToolCallTrajectory: Expected Tool Calls */}
         {formData.template === 'ToolCallTrajectory' && !formData.useGroundTruthRun && (
-          <div>
-            <Label>Expected Tool Calls</Label>
+          <Field label="Expected Tool Calls">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
               {formData.expectedToolCalls.map((toolCall, index) => (
                 <div key={index} className={styles.toolCallItem}>
                   <div className={styles.toolCallHeader}>
-                    <span>Tool Call #{index + 1}</span>
+                    <Text size={200} weight="semibold">
+                      Tool Call #{index + 1}
+                    </Text>
                     <Button
                       appearance="subtle"
                       icon={<DeleteRegular />}
@@ -279,7 +290,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
                 Add Tool Call
               </Button>
             </div>
-          </div>
+          </Field>
         )}
 
         {/* ToolCallTrajectory: Optional settings */}
@@ -287,31 +298,31 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
           <>
             <div className={styles.formRow}>
               <div className={styles.formFieldHalf}>
-                <Label htmlFor="threshold">Threshold (optional)</Label>
-                <Input
-                  id="threshold"
-                  type="number"
-                  value={formData.threshold}
-                  onChange={(_e, data) => updateFormField('threshold', data.value)}
-                  placeholder="e.g., 0.8"
-                  style={{ width: '100%' }}
-                />
+                <Field label="Threshold (optional)">
+                  <Input
+                    id="threshold"
+                    type="number"
+                    value={formData.threshold}
+                    onChange={(_e, data) => updateFormField('threshold', data.value)}
+                    placeholder="e.g., 0.8"
+                  />
+                </Field>
               </div>
               <div className={styles.formFieldHalf}>
-                <Label htmlFor="comparison">Comparison Method</Label>
-                <Dropdown
-                  id="comparison"
-                  value={formData.comparisonMethod}
-                  selectedOptions={[formData.comparisonMethod]}
-                  onOptionSelect={(_e, data) => updateFormField('comparisonMethod', data.optionValue as ComparisonMethod)}
-                  style={{ width: '100%' }}
-                >
-                  <Option value="exact">Exact</Option>
-                  <Option value="in-order">In-order</Option>
-                  <Option value="any-order">Any-order</Option>
-                  <Option value="precision">Precision</Option>
-                  <Option value="recall">Recall</Option>
-                </Dropdown>
+                <Field label="Comparison Method">
+                  <Dropdown
+                    id="comparison"
+                    value={formData.comparisonMethod}
+                    selectedOptions={[formData.comparisonMethod]}
+                    onOptionSelect={(_e, data) => updateFormField('comparisonMethod', data.optionValue as ComparisonMethod)}
+                  >
+                    <Option value="exact">Exact</Option>
+                    <Option value="in-order">In-order</Option>
+                    <Option value="any-order">Any-order</Option>
+                    <Option value="precision">Precision</Option>
+                    <Option value="recall">Recall</Option>
+                  </Dropdown>
+                </Field>
               </div>
             </div>
             <Checkbox
@@ -324,17 +335,15 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
 
         {/* SemanticSimilarity: Expected response */}
         {formData.template === 'SemanticSimilarity' && !formData.useGroundTruthRun && (
-          <div>
-            <Label htmlFor="expected-response">Expected Chat Response</Label>
+          <Field label="Expected Chat Response">
             <Textarea
               id="expected-response"
               value={formData.expectedChatResponse}
               onChange={(_e, data) => updateFormField('expectedChatResponse', data.value)}
               placeholder="Enter the expected chat response"
               rows={4}
-              style={{ width: '100%' }}
             />
-          </div>
+          </Field>
         )}
       </div>
 
@@ -346,7 +355,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
           appearance="primary"
           icon={isModifyingEvaluator ? <Spinner size="extra-tiny" /> : <SaveRegular />}
           onClick={handleSubmit}
-          disabled={isModifyingEvaluator}
+          disabled={isModifyingEvaluator || !isEvaluationDataSelected}
         >
           Save
         </Button>
