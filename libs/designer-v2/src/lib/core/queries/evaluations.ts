@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useIsMutating } from '@tanstack/react-query';
 import { EvaluationService } from '@microsoft/logic-apps-shared';
 import type { Evaluator } from '@microsoft/logic-apps-shared';
 import { useIsAgenticWorkflow } from '../state/designerView/designerViewSelectors';
@@ -16,6 +16,10 @@ export const evaluationQueryKeys = {
   evaluations: 'evaluations',
   evaluation: 'evaluation',
 };
+
+const runEvaluationMutationKey = ['runEvaluation'];
+
+export const useIsRunningEvaluation = () => useIsMutating({ mutationKey: runEvaluationMutationKey }) > 0;
 
 export const useEvaluators = (workflowName: string, agentActionName: string) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
@@ -239,8 +243,10 @@ const useRunGlobalAgentEvaluation = (workflowName: string) => {
       return EvaluationService().runGlobalAgentEvaluation(workflowName, runId, evaluatorName);
     },
     {
-      onMutate: (variables) => {
-        queryClient.setQueryData([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName], undefined);
+      mutationKey: runEvaluationMutationKey,
+      onMutate: async (variables) => {
+        await queryClient.cancelQueries([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName]);
+        queryClient.removeQueries([evaluationQueryKeys.evaluation, workflowName, variables.runId, variables.evaluatorName]);
         queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId], (oldData: any) => {
           return oldData?.filter((evaluationResult: any) => evaluationResult.evaluatorName !== variables.evaluatorName) ?? [];
         });
@@ -262,11 +268,22 @@ const useRunAgentEvaluation = (workflowName: string, agentActionName: string) =>
       return EvaluationService().runAgentEvaluation(workflowName, runId, agentActionName, evaluatorName);
     },
     {
-      onMutate: (variables) => {
-        queryClient.setQueryData(
-          [evaluationQueryKeys.evaluation, workflowName, variables.runId, agentActionName, variables.evaluatorName],
-          undefined
-        );
+      mutationKey: runEvaluationMutationKey,
+      onMutate: async (variables) => {
+        await queryClient.cancelQueries([
+          evaluationQueryKeys.evaluation,
+          workflowName,
+          variables.runId,
+          agentActionName,
+          variables.evaluatorName,
+        ]);
+        queryClient.removeQueries([
+          evaluationQueryKeys.evaluation,
+          workflowName,
+          variables.runId,
+          agentActionName,
+          variables.evaluatorName,
+        ]);
         queryClient.setQueryData([evaluationQueryKeys.evaluations, workflowName, variables.runId, agentActionName], (oldData: any) => {
           return oldData?.filter((evaluationResult: any) => evaluationResult.evaluatorName !== variables.evaluatorName) ?? [];
         });

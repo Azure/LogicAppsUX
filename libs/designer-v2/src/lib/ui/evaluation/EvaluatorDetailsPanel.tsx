@@ -8,7 +8,7 @@ import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
-import { EvaluationViewMode } from 'lib/core/state/evaluation/evaluationInterfaces';
+import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
 
 interface EvaluatorDetailsPanelProps {
   workflowName: string;
