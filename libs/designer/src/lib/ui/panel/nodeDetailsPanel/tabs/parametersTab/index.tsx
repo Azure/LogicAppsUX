@@ -481,6 +481,7 @@ export const ParameterSection = ({
     isLoading: foundryAgentsLoading,
     isFetching: foundryAgentsFetching,
     error: foundryAgentsError,
+    failureCount: foundryAgentsFailureCount,
     refetch: refetchFoundryAgents,
   } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
   const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
@@ -492,6 +493,8 @@ export const ParameterSection = ({
   // True when RBAC propagation retries have been exhausted — query gave up.
   const isRbacRetriesExhausted =
     foundryRbacStatus === 'assigned' && !foundryAgentsFetching && !foundryAgentsLoading && isFoundryAuthError(foundryAgentsError);
+  // Show retry button early (after 3rd failure) so impatient users don't have to wait ~5min.
+  const showEarlyRetryButton = isRbacPropagating && foundryAgentsFailureCount >= 3;
   const retryButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (isRbacRetriesExhausted) {
@@ -1556,6 +1559,24 @@ export const ParameterSection = ({
                     })
               }
             />
+            {showEarlyRetryButton && (
+              <Button
+                appearance="subtle"
+                size="small"
+                onClick={() => refetchFoundryAgents()}
+                aria-label={intl.formatMessage({
+                  defaultMessage: 'Retry loading Foundry agents',
+                  id: '5svGXJ',
+                  description: 'Accessible label for the button that retries loading Foundry agents after RBAC propagation.',
+                })}
+              >
+                {intl.formatMessage({
+                  defaultMessage: 'Retry now',
+                  id: 'wU5max',
+                  description: 'Button label to manually retry loading Foundry agents after RBAC propagation retries exhausted.',
+                })}
+              </Button>
+            )}
           </div>
         )}
         {filtered.length > 0 && (

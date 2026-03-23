@@ -307,7 +307,14 @@ export const useFoundryProjectResourceIdForNode = (nodeId: string): string | und
 export const useFoundryAgentsForNode = (
   nodeId: string,
   rbacReady = true
-): { data: FoundryAgent[] | undefined; isLoading: boolean; isFetching: boolean; error: unknown; refetch: () => void } => {
+): {
+  data: FoundryAgent[] | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  error: unknown;
+  failureCount: number;
+  refetch: () => void;
+} => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
   const result = useQuery(
@@ -318,7 +325,14 @@ export const useFoundryAgentsForNode = (
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && rbacReady }
   );
-  return { data: result.data, isLoading: result.isLoading, isFetching: result.isFetching, error: result.error, refetch: result.refetch };
+  return {
+    data: result.data,
+    isLoading: result.isLoading,
+    isFetching: result.isFetching,
+    error: result.error,
+    failureCount: result.failureCount,
+    refetch: result.refetch,
+  };
 };
 
 /** Returns the ARM resource ID of the Foundry account (without /projects/{project}) for a node's connection. */
