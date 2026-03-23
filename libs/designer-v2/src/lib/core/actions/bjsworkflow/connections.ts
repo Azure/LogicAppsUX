@@ -3,7 +3,7 @@ import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
-import { isManagedMcpOperation } from '../../state/workflow/helper';
+import { isBuiltInMcpOperation, isManagedMcpOperation } from '../../state/workflow/helper';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import {
   changeConnectionMapping,
@@ -508,7 +508,58 @@ export const isOpenApiConnectionType = (type: string): boolean => {
 export async function getConnectionsApiAndMapping(deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch) {
   const connectionsMappings = await getConnectionsMappingForNodes(deserializedWorkflow);
   dispatch(initializeConnectionsMappings(connectionsMappings));
-  return;
+
+  // Reconstruct built-in MCP connections from inline Connection data in the workflow definition.
+  // Built-in MCP connections are serialized inline (inputs.Connection.McpServerUrl) rather than
+  // in $connections/connectionReferences, so we need to recreate them during deserialization.
+  const { actionData } = deserializedWorkflow;
+  for (const [nodeId, operation] of Object.entries(actionData)) {
+    if (!isBuiltInMcpOperation(operation) || connectionsMappings[nodeId]) {
+      continue;
+    }
+    const connectionInput = (operation as any)?.inputs?.Connection;
+    const mcpServerUrl = connectionInput?.McpServerUrl;
+    if (!mcpServerUrl) {
+      continue;
+    }
+    try {
+      const connectionName = `mcp-${nodeId}-${Date.now()}`;
+      const connectorId = 'connectionProviders/mcpclient';
+      const connection = {
+        id: `/connectionProviders/mcpclient/connections/${connectionName}`,
+        name: connectionName,
+        type: 'connections',
+        location: '',
+        properties: {
+          displayName: connectionName,
+          overallStatus: 'Connected',
+          statuses: [{ status: 'Connected' }],
+          api: {
+            id: connectorId,
+            name: 'mcpclient',
+            displayName: 'MCP Client',
+            iconUri: '',
+            brandColor: '#000000',
+            description: '',
+            category: 'MCP',
+            type: 'mcpclient',
+          },
+          createdTime: new Date().toISOString(),
+          parameterValues: {
+            mcpServerUrl,
+            authenticationType: connectionInput?.Authentication ?? 'None',
+          },
+        },
+      } as any;
+      // Store in ConnectionService so getConnection() can find it later
+      const connectionService = ConnectionService();
+      (connectionService as any)._connections[connection.id] = connection;
+      // Create the connection mapping and reference in Redux
+      dispatch(changeConnectionMapping({ nodeId, connectorId, connectionId: connection.id }));
+    } catch {
+      // If reconstruction fails, the node will show "Invalid connection" — user can re-configure
+    }
+  }
 }
 
 export async function getManifestBasedConnectionMapping(

@@ -85,6 +85,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         // Connection may not be in cache/API Hub for built-in MCP
       }
 
+      const isRealConnectionId = connectionId && !connectionId.includes('__MOCK');
+
       let content: any;
       const parameterValues = connection?.properties?.parameterValues;
       if (parameterValues?.mcpServerUrl) {
@@ -101,7 +103,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
           connection: connectionData,
           mcpServerPath: operationPath,
         };
-      } else if (connectionId) {
+      } else if (isRealConnectionId) {
         // Managed MCP connection — send managed connection reference
         content = {
           managedConnection: {
@@ -110,10 +112,9 @@ export class ConsumptionConnectorService extends BaseConnectorService {
           mcpServerPath: operationPath,
         };
       } else {
-        // No connection — just send mcpServerPath
-        content = {
-          mcpServerPath: operationPath,
-        };
+        // No valid connection available (e.g., mock reference during deserialization)
+        // Return empty list — tools will load when called from the wizard with a real connection
+        return [];
       }
 
       const mcpToolsResponse = await httpClient.post({

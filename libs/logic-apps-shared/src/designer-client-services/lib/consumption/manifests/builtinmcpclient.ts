@@ -60,9 +60,6 @@ export default {
       type: 'mcp',
       disableAutoSelection: true,
     },
-    connectionReference: {
-      referenceKeyFormat: 'mcpconnection',
-    },
 
     connector: mcpclientconnector,
   },
