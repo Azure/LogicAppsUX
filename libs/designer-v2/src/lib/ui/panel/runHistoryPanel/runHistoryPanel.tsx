@@ -45,7 +45,7 @@ import {
   FilterRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
-import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow, useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
 import { AgentChatContent } from './agentChatContent';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
 import { RunMenu } from './runMenu';
@@ -72,6 +72,7 @@ export const RunHistoryPanel = () => {
 
   const isMonitoringView = useMonitoringView();
   const isEvaluateView = useEvaluateView();
+  const isA2AWorkflow = useIsA2AWorkflow();
 
   const styles = useRunHistoryPanelStyles();
 
@@ -478,7 +479,7 @@ export const RunHistoryPanel = () => {
   );
 
   const chatEnabled = useWorkflowHasAgentLoop();
-  const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
+  const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>(isEvaluateView && isA2AWorkflow ? 'chat' : 'tree');
 
   useEffect(() => {
     if (!chatEnabled && selectedContentTab === 'chat') {
@@ -724,7 +725,7 @@ export const RunHistoryPanel = () => {
             selectedValue={selectedContentTab}
             onTabSelect={(_: SelectTabEvent, data: SelectTabData) => setSelectedContentTab(data.value as 'tree' | 'chat')}
           >
-            <Tab value="tree">{isEvaluateView ? agentsViewTitle : treeViewTitle}</Tab>
+            {!isEvaluateView || !isA2AWorkflow ? <Tab value="tree">{isEvaluateView ? agentsViewTitle : treeViewTitle}</Tab> : null}
             <Tab value="chat" disabled={!chatEnabled}>
               {chatViewTitle}
             </Tab>
@@ -777,7 +778,7 @@ export const RunHistoryPanel = () => {
               {parseErrorMessage(runQuery.error)}
             </MessageBarBody>
           </MessageBar>
-        ) : equals(selectedContentTab, 'tree') ? (
+        ) : equals(selectedContentTab, 'tree') && !(isEvaluateView && isA2AWorkflow) ? (
           <div style={{ margin: '16px -16px' }}>
             {isEvaluateView ? <RunDatasetActionsView /> : <RunTreeView />}
             {runQuery.isLoading || runQuery.isFetching ? <Spinner style={{ padding: '16px' }} /> : null}

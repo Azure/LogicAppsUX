@@ -133,13 +133,13 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
         />
       </div>
 
-      <Table aria-label="Evaluators list" size="small">
+      <Table aria-label="Evaluators list" size="small" style={{ tableLayout: 'fixed', width: '100%' }}>
         <TableHeader>
           <TableRow>
-            <TableHeaderCell style={{ width: '140px' }}>Type</TableHeaderCell>
+            <TableHeaderCell style={{ width: '90px' }}>Type</TableHeaderCell>
             <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell style={{ width: '70px' }}>Result</TableHeaderCell>
-            <TableHeaderCell style={{ width: '100px' }} />
+            <TableHeaderCell style={{ width: '65px' }}>Result</TableHeaderCell>
+            <TableHeaderCell style={{ width: '90px' }} />
           </TableRow>
         </TableHeader>
       </Table>
@@ -158,7 +158,7 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
           </div>
         ) : (
           <div className={styles.listContainer}>
-            <Table aria-label="Evaluators" size="small">
+            <Table aria-label="Evaluators" size="small" style={{ tableLayout: 'fixed', width: '100%' }}>
               <TableBody>
                 {filteredEvaluators.map((evaluator) => (
                   <TableRow
@@ -167,15 +167,17 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
                     onClick={() => handleSelectEvaluator(evaluator)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <TableCell style={{ width: '140px' }}>
-                      <Text size={200}>{evaluator.template}</Text>
+                    <TableCell style={{ width: '90px', overflow: 'hidden' }}>
+                      <Text size={200} truncate wrap={false}>
+                        {evaluator.template}
+                      </Text>
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{ overflow: 'hidden' }}>
                       <Text size={300} weight="semibold" truncate wrap={false}>
                         {evaluator.name}
                       </Text>
                     </TableCell>
-                    <TableCell style={{ width: '70px' }}>
+                    <TableCell style={{ width: '65px' }}>
                       {(() => {
                         const result = evaluationsByName.get(evaluator.name);
                         if (!result) {
@@ -189,7 +191,7 @@ export const EvaluatorManagementPanel = ({ workflowName }: EvaluatorManagementPa
                         );
                       })()}
                     </TableCell>
-                    <TableCell style={{ width: '100px' }}>
+                    <TableCell style={{ width: '90px' }}>
                       <div className={styles.colActions}>
                         <Tooltip content="Edit" relationship="label">
                           <Button

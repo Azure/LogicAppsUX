@@ -7,6 +7,11 @@ export const useEvaluateViewStyles = makeStyles({
     height: '100%',
     overflow: 'hidden',
   },
+  panelRoot: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+  },
   main: {
     flex: '1',
     display: 'flex',
@@ -24,11 +29,11 @@ export const useEvaluateViewStyles = makeStyles({
   },
   panelEvaluators: {
     width: '420px',
-    minWidth: '300px',
+    minWidth: '280px',
   },
   panelDetail: {
     flex: '1',
-    minWidth: '300px',
+    minWidth: '0',
     overflow: 'auto',
     borderRight: 'none',
   },
@@ -86,19 +91,10 @@ export const useEvaluateViewStyles = makeStyles({
     padding: '12px 16px',
     borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
   },
-  formError: {
-    padding: '8px 12px',
-    margin: '0 16px',
-    borderRadius: '4px',
-    backgroundColor: tokens.colorPaletteRedBackground1,
-    color: tokens.colorPaletteRedForeground1,
-    fontSize: tokens.fontSizeBase200,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+
   formRow: {
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '12px',
   },
   formFieldHalf: {
@@ -129,18 +125,22 @@ export const useEvaluateViewStyles = makeStyles({
   },
   promptValue: {
     whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
     backgroundColor: tokens.colorNeutralBackground3,
     padding: '8px 12px',
     borderRadius: '4px',
     fontSize: tokens.fontSizeBase200,
+    overflow: 'hidden',
   },
   definitionActions: {
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '8px',
     paddingTop: '12px',
   },
   tokenStats: {
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '16px',
     padding: '12px 0',
   },
@@ -155,6 +155,8 @@ export const useEvaluateViewStyles = makeStyles({
     borderRadius: '6px',
     fontSize: tokens.fontSizeBase200,
     whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    overflow: 'hidden',
   },
   // Status indicators
   statusSucceeded: {
@@ -194,5 +196,41 @@ export const useEvaluateViewStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',
+  },
+  loadingContainerFull: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: '1',
+    padding: '24px',
+  },
+  panelSubtitle: {
+    marginTop: '4px',
+  },
+  toolCallsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    marginTop: '4px',
+  },
+  toolCallsListEditable: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    marginTop: '8px',
+  },
+  resultBadgeRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '12px',
+  },
+  reasonSection: {
+    marginTop: '8px',
+  },
+  preFormattedCode: {
+    margin: '0',
+    fontSize: tokens.fontSizeBase200,
+    whiteSpace: 'pre-wrap',
   },
 });

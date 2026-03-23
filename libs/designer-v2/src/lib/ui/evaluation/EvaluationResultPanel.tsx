@@ -1,4 +1,4 @@
-import { Badge, Caption1, Caption1Strong, Card, Spinner, Text } from '@fluentui/react-components';
+import { Badge, Caption1, Caption1Strong, Card, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
 import { useRunningEvaluatorName, useSelectedEvaluationAgentName } from '../../core/state/evaluation/evaluationSelectors';
 import { useEvaluation, useIsRunningEvaluation } from '../../core/queries/evaluations';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
@@ -23,8 +23,8 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
 
   if (isFetchingEvaluationResult || isRunningEvaluation) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <div className={styles.loadingContainer} style={{ flex: 1, alignItems: 'center' }}>
+      <div className={styles.panelRoot}>
+        <div className={styles.loadingContainerFull}>
           <Spinner size="medium" label="Running evaluation..." />
         </div>
       </div>
@@ -39,15 +39,15 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
             <Text size={400} weight="semibold" as="h2">
               Evaluation Result
             </Text>
-            <Caption1 block style={{ marginTop: '4px' }}>
+            <Caption1 block className={styles.panelSubtitle}>
               Evaluator: {evaluatorName}
             </Caption1>
           </div>
         </div>
         <div className={styles.formContent}>
-          <div className={styles.formError}>
-            <span>{evaluationError instanceof Error ? evaluationError.message : String(evaluationError)}</span>
-          </div>
+          <MessageBar intent="error">
+            <MessageBarBody>{evaluationError instanceof Error ? evaluationError.message : String(evaluationError)}</MessageBarBody>
+          </MessageBar>
         </div>
       </div>
     );
@@ -55,7 +55,7 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
 
   if (!evaluationResult) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div className={styles.panelRoot}>
         <div className={styles.emptyState}>
           <Text size={300} weight="semibold">
             No evaluation result
@@ -68,13 +68,13 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
   const isPassed = evaluationResult.result?.toLowerCase() === 'passed';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className={styles.panelRoot}>
       <div className={styles.panelHeader}>
         <div>
           <Text size={400} weight="semibold" as="h2">
             Evaluation Result
           </Text>
-          <Caption1 block style={{ marginTop: '4px' }}>
+          <Caption1 block className={styles.panelSubtitle}>
             Evaluator: {evaluatorName}
           </Caption1>
         </div>
@@ -82,14 +82,14 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
 
       <div className={styles.formContent}>
         <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+          <div className={styles.resultBadgeRow}>
             <Badge appearance="tint" color={isPassed ? 'success' : 'danger'} shape="rounded" size="medium">
               {evaluationResult.result}
             </Badge>
-            <span>
+            <Text size={300}>
               <Caption1Strong>Value: </Caption1Strong>
-              <Text size={300}>{evaluationResult.value}</Text>
-            </span>
+              {evaluationResult.value}
+            </Text>
           </div>
 
           {evaluationResult.agentActionName && (
@@ -102,7 +102,7 @@ export const EvaluationResultPanel = ({ workflowName }: EvaluationResultPanelPro
           )}
 
           {evaluationResult.reason && (
-            <div style={{ marginTop: '8px' }}>
+            <div className={styles.reasonSection}>
               <Caption1Strong>Reason</Caption1Strong>
               <div className={styles.resultReason}>{evaluationResult.reason}</div>
             </div>

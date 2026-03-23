@@ -5,6 +5,9 @@ import {
   Dropdown,
   Field,
   Input,
+  MessageBar,
+  MessageBarActions,
+  MessageBarBody,
   Option,
   Radio,
   RadioGroup,
@@ -13,7 +16,7 @@ import {
   Spinner,
   Text,
 } from '@fluentui/react-components';
-import { DeleteRegular, AddRegular, SaveRegular } from '@fluentui/react-icons';
+import { DeleteRegular, AddRegular, SaveRegular, DismissRegular } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { finishFormAction, cancelFormAction } from '../../core/state/evaluation/evaluationSlice';
 import {
@@ -89,13 +92,13 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   }, [formData, createOrUpdateEvaluator, dispatch, viewMode, existingEvaluatorNames]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className={styles.panelRoot}>
       <div className={styles.panelHeader}>
         <div>
           <Text size={400} weight="semibold" as="h2">
             {viewMode === EvaluationViewMode.CreateEvaluator ? 'Create Evaluator' : 'Edit Evaluator'}
           </Text>
-          <Caption1 block style={{ marginTop: '4px' }}>
+          <Caption1 block className={styles.panelSubtitle}>
             {viewMode === EvaluationViewMode.CreateEvaluator
               ? 'Configure a new evaluator for your agent'
               : 'Update evaluator configuration'}
@@ -104,12 +107,12 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
       </div>
 
       {error && (
-        <div className={styles.formError}>
-          <span>{error}</span>
-          <Button appearance="subtle" size="small" onClick={() => setError(null)}>
-            ×
-          </Button>
-        </div>
+        <MessageBar intent="error" style={{ margin: '0 16px' }}>
+          <MessageBarBody>{error}</MessageBarBody>
+          <MessageBarActions
+            containerAction={<Button appearance="subtle" size="small" icon={<DismissRegular />} onClick={() => setError(null)} />}
+          />
+        </MessageBar>
       )}
 
       <div className={styles.formContent}>
@@ -239,7 +242,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         {/* ToolCallTrajectory: Expected Tool Calls */}
         {formData.template === 'ToolCallTrajectory' && !formData.useGroundTruthRun && (
           <Field label="Expected Tool Calls">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+            <div className={styles.toolCallsListEditable}>
               {formData.expectedToolCalls.map((toolCall, index) => (
                 <div key={index} className={styles.toolCallItem}>
                   <div className={styles.toolCallHeader}>

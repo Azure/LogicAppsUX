@@ -47,13 +47,13 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
   const isEvalPassed = evaluation?.result?.toLowerCase() === 'passed';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className={styles.panelRoot}>
       <div className={styles.panelHeader}>
         <div>
           <Text size={400} weight="semibold" as="h2">
             Evaluator Details
           </Text>
-          <Caption1 block style={{ marginTop: '4px' }}>
+          <Caption1 block className={styles.panelSubtitle}>
             {evaluator.name}
           </Caption1>
         </div>
@@ -131,7 +131,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
               {evaluator.parameters.expectedToolCalls && evaluator.parameters.expectedToolCalls.length > 0 && (
                 <div className={styles.fieldRow}>
                   <Caption1Strong>Expected Tool Calls</Caption1Strong>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                  <div className={styles.toolCallsList}>
                     {evaluator.parameters.expectedToolCalls.map((tc, idx) => (
                       <div key={idx} className={styles.toolCallItem}>
                         <div className={styles.toolCallHeader}>
@@ -140,7 +140,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
                           </Text>
                         </div>
                         {tc.arguments && Object.keys(tc.arguments).length > 0 && (
-                          <pre style={{ margin: 0, fontSize: '12px', whiteSpace: 'pre-wrap' }}>{JSON.stringify(tc.arguments, null, 2)}</pre>
+                          <pre className={styles.preFormattedCode}>{JSON.stringify(tc.arguments, null, 2)}</pre>
                         )}
                       </div>
                     ))}
@@ -237,7 +237,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
                 </div>
 
                 {evaluation.reason && (
-                  <div style={{ marginTop: '8px' }}>
+                  <div className={styles.reasonSection}>
                     <Caption1Strong>Reason</Caption1Strong>
                     <div className={styles.resultReason}>{evaluation.reason}</div>
                   </div>
