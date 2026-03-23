@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Dropdown, Field, Option, Text, Textarea } from '@fluentui/react-components';
 import type { FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
@@ -65,16 +65,21 @@ export function FoundryAgentDetails({
   const intl = useIntl();
   const [localInstructions, setLocalInstructions] = useState<string | undefined>(selectedInstructions);
 
-  // Sync local instructions when the parent overrides them (e.g. version switch)
+  // Sync local instructions when the parent overrides them (e.g. version switch or restored pending edits)
   useEffect(() => {
     if (selectedInstructions !== undefined) {
       setLocalInstructions(selectedInstructions);
     }
   }, [selectedInstructions]);
 
-  // Reset local instructions when switching agents
+  // Reset local instructions when switching agents (not on initial mount — the parent
+  // already provides the correct value via selectedInstructions on first render).
+  const prevAgentIdRef = useRef(agent.id);
   useEffect(() => {
-    setLocalInstructions(undefined);
+    if (prevAgentIdRef.current !== agent.id) {
+      prevAgentIdRef.current = agent.id;
+      setLocalInstructions(undefined);
+    }
   }, [agent.id]);
 
   const versionLabel = intl.formatMessage({ defaultMessage: 'Version', id: 'vnlEv2', description: 'Label for Foundry agent version' });

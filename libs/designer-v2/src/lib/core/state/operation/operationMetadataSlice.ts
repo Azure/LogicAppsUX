@@ -343,6 +343,10 @@ export const operationMetadataSlice = createSlice({
         parameterGroup.rawInputs = rawInputs;
       }
 
+      if (inputParameters?.dynamicLoadStatus !== undefined) {
+        inputParameters.dynamicLoadStatus = DynamicLoadStatus.SUCCEEDED;
+      }
+
       // Remove stash entries that are now satisfied by the newly loaded inputs,
       // but keep entries for other dynamic refs that haven't loaded yet.
       if (inputParameters?.stashedDynamicParameterValues?.length) {
@@ -381,6 +385,10 @@ export const operationMetadataSlice = createSlice({
           delete nodeErrors?.[ErrorLevel.DynamicInputs];
 
           const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+          if (inputParameters?.dynamicLoadStatus !== undefined && inputParameters.dynamicLoadStatus !== DynamicLoadStatus.LOADING) {
+            inputParameters.dynamicLoadStatus = DynamicLoadStatus.NOTSTARTED;
+          }
+
           const deletedDynamicParameters: string[] = [];
           if (inputParameters) {
             const stashedParams: WritableDraft<ParameterInfo>[] = [];
@@ -715,6 +723,13 @@ export const operationMetadataSlice = createSlice({
     updateDynamicDataLoadStatus: (state, action: PayloadAction<boolean>) => {
       state.loadStatus.nodesAndDynamicDataInitialized = action.payload;
     },
+    updateNodeDynamicInputLoadStatus: (state, action: PayloadAction<{ nodeId: string; status: DynamicLoadStatus }>) => {
+      const { nodeId, status } = action.payload;
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+      if (inputParameters) {
+        inputParameters.dynamicLoadStatus = status;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -870,6 +885,7 @@ export const {
   deinitializeOperationInfos,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
+  updateNodeDynamicInputLoadStatus,
   updateOperationDescription,
 } = operationMetadataSlice.actions;
 
