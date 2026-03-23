@@ -384,7 +384,7 @@ const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
 const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
 
 const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
-type FoundryRbacStatus = 'idle' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
 
 export const ParameterSection = ({
   nodeId,
@@ -438,7 +438,7 @@ export const ParameterSection = ({
     let cancelled = false;
     const targetResourceId = foundryAccountResourceId;
     rbacAssignedResourceRef.current = targetResourceId;
-    setFoundryRbacStatus('assigning');
+    setFoundryRbacStatus('checking');
     getMissingRoleDefinitions(targetResourceId, [
       'Azure AI User',
       'Azure AI Administrator',
@@ -453,6 +453,7 @@ export const ParameterSection = ({
           setFoundryRbacStatus('not-needed');
           return Promise.resolve();
         }
+        setFoundryRbacStatus('assigning');
         return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
           () => {
             if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
