@@ -2086,6 +2086,34 @@ describe('Create Workspace Tests', function () {
       console.log('[validWsEmpty] PASSED');
     });
 
+    it('should show validation error for workspace name with dots', async () => {
+      const wsNameInput = await findInputByLabel(driver, 'Workspace name');
+
+      await clearAndType(wsNameInput, 'my.workspace');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validWsDots] Error shown for "my.workspace"');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(wsNameInput, uniqueName('validws'));
+      await captureScreenshot(driver, 'validWsDots-passed');
+      console.log('[validWsDots] PASSED');
+    });
+
+    it('should show validation error for workspace name with trailing underscore', async () => {
+      const wsNameInput = await findInputByLabel(driver, 'Workspace name');
+
+      await clearAndType(wsNameInput, 'myws_');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validWsTrailUnderscore] Error shown for "myws_"');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(wsNameInput, uniqueName('validws'));
+      await captureScreenshot(driver, 'validWsTrailUnderscore-passed');
+      console.log('[validWsTrailUnderscore] PASSED');
+    });
+
     // -----------------------------------------------------------------------
     // Logic app name validation
     // -----------------------------------------------------------------------
@@ -2124,6 +2152,46 @@ describe('Create Workspace Tests', function () {
       console.log('[validAppEmpty] PASSED');
     });
 
+    it('should show validation error for logic app name with special characters', async () => {
+      const appNameInput = await findInputByLabel(driver, 'Logic app name');
+
+      await clearAndType(appNameInput, 'app@name');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validAppSpecial] Error shown for "app@name"');
+
+      await clearAndType(appNameInput, 'my app');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validAppSpecial] Error shown for "my app"');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(appNameInput, uniqueName('validapp'));
+      await captureScreenshot(driver, 'validAppSpecial-passed');
+      console.log('[validAppSpecial] PASSED');
+    });
+
+    it('should show validation error for logic app name with leading/trailing separators', async () => {
+      const appNameInput = await findInputByLabel(driver, 'Logic app name');
+
+      await clearAndType(appNameInput, '_myapp');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validAppSep] Error for leading underscore');
+
+      await clearAndType(appNameInput, '-myapp');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validAppSep] Error for leading hyphen');
+
+      await clearAndType(appNameInput, 'myapp-');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validAppSep] Error for trailing hyphen');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(appNameInput, uniqueName('validapp'));
+      await captureScreenshot(driver, 'validAppSep-passed');
+      console.log('[validAppSep] PASSED');
+    });
+
     // -----------------------------------------------------------------------
     // Workflow name validation
     // -----------------------------------------------------------------------
@@ -2141,6 +2209,65 @@ describe('Create Workspace Tests', function () {
       await assertNoValidationMessage(driver, 'Workflow name must start');
       await captureScreenshot(driver, 'validWfName-passed');
       console.log('[validWfName] PASSED');
+    });
+
+    it('should show empty error when workflow name is cleared after typing', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, uniqueName('tempwf'));
+      await sleep(TYPE_SETTLE);
+
+      await clearField(wfNameInput);
+
+      await findValidationMessage(driver, 'cannot be empty');
+      console.log('[validWfEmpty] Found "cannot be empty" error');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+
+      await captureScreenshot(driver, 'validWfEmpty-passed');
+      console.log('[validWfEmpty] PASSED');
+    });
+
+    it('should show validation error for workflow name with special characters', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      await clearAndType(wfNameInput, 'wf@name');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validWfSpecial] Error shown for "wf@name"');
+
+      await clearAndType(wfNameInput, 'my workflow');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validWfSpecial] Error shown for "my workflow"');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfSpecial-passed');
+      console.log('[validWfSpecial] PASSED');
+    });
+
+    it('should show validation error for workflow name with leading/trailing separators', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      await clearAndType(wfNameInput, '_workflow');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validWfSep] Error for leading underscore');
+
+      await clearAndType(wfNameInput, '-workflow');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validWfSep] Error for leading hyphen');
+
+      await clearAndType(wfNameInput, 'workflow-');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validWfSep] Error for trailing hyphen');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfSep-passed');
+      console.log('[validWfSep] PASSED');
     });
 
     // -----------------------------------------------------------------------
@@ -2322,6 +2449,64 @@ describe('Create Workspace Tests', function () {
       console.log('[validCcFolderEmpty] PASSED');
     });
 
+    it('should show error for custom code folder name with special characters', async () => {
+      let folderInput: WebElement | null = null;
+      for (const label of ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name']) {
+        try {
+          folderInput = await findInputByLabel(driver, label);
+          break;
+        } catch {
+          // Try next
+        }
+      }
+      if (!folderInput) {
+        throw new Error('Could not find custom code folder name input');
+      }
+
+      await clearAndType(folderInput, 'folder@name');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validCcFolderSpecial] Error shown for "folder@name"');
+
+      await clearAndType(folderInput, 'my folder');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validCcFolderSpecial] Error shown for "my folder"');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(folderInput, uniqueName('validfolder'));
+      await captureScreenshot(driver, 'validCcFolderSpecial-passed');
+      console.log('[validCcFolderSpecial] PASSED');
+    });
+
+    it('should show error for custom code folder name with leading/trailing separators', async () => {
+      let folderInput: WebElement | null = null;
+      for (const label of ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name']) {
+        try {
+          folderInput = await findInputByLabel(driver, label);
+          break;
+        } catch {
+          // Try next
+        }
+      }
+      if (!folderInput) {
+        throw new Error('Could not find custom code folder name input');
+      }
+
+      await clearAndType(folderInput, '_folder');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validCcFolderSep] Error for leading underscore');
+
+      await clearAndType(folderInput, 'folder-');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validCcFolderSep] Error for trailing hyphen');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(folderInput, uniqueName('validfolder'));
+      await captureScreenshot(driver, 'validCcFolderSep-passed');
+      console.log('[validCcFolderSep] PASSED');
+    });
+
     it('should disable Next for invalid custom code function namespace', async () => {
       let nsInput: WebElement | null = null;
       for (const label of ['Function namespace', 'Namespace', 'namespace']) {
@@ -2461,6 +2646,123 @@ describe('Create Workspace Tests', function () {
       console.log('[validCcFnEmpty] PASSED');
     });
 
+    it('should disable Next for hyphenated custom code function name', async () => {
+      let fnInput: WebElement | null = null;
+      const fnLabels = await driver.findElements(
+        By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
+      );
+      if (fnLabels.length > 0) {
+        const forAttr = await fnLabels[0].getAttribute('for');
+        if (forAttr) {
+          const inputs = await driver.findElements(By.id(forAttr));
+          if (inputs.length > 0) {
+            fnInput = inputs[0];
+          }
+        }
+        if (!fnInput) {
+          const parent = await fnLabels[0].findElement(By.xpath('..'));
+          const inputs = await parent.findElements(By.css('input'));
+          if (inputs.length > 0) {
+            fnInput = inputs[0];
+          }
+        }
+      }
+      if (!fnInput) {
+        fnInput = await findInputByLabel(driver, 'Function name');
+      }
+
+      await clearAndType(fnInput, 'my-func');
+      await sleep(TYPE_SETTLE);
+
+      await assertNextButtonDisabled(driver);
+      console.log('[validCcFnHyphen] Next button disabled for hyphenated function name "my-func"');
+
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validCcFnHyphen-passed');
+      console.log('[validCcFnHyphen] PASSED');
+    });
+
+    it('should disable Next for custom code function name with special characters', async () => {
+      let fnInput: WebElement | null = null;
+      const fnLabels = await driver.findElements(
+        By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
+      );
+      if (fnLabels.length > 0) {
+        const forAttr = await fnLabels[0].getAttribute('for');
+        if (forAttr) {
+          const inputs = await driver.findElements(By.id(forAttr));
+          if (inputs.length > 0) {
+            fnInput = inputs[0];
+          }
+        }
+        if (!fnInput) {
+          const parent = await fnLabels[0].findElement(By.xpath('..'));
+          const inputs = await parent.findElements(By.css('input'));
+          if (inputs.length > 0) {
+            fnInput = inputs[0];
+          }
+        }
+      }
+      if (!fnInput) {
+        fnInput = await findInputByLabel(driver, 'Function name');
+      }
+
+      await clearAndType(fnInput, 'func@name');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[validCcFnSpecial] Next disabled for "func@name"');
+
+      await clearAndType(fnInput, 'my func');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[validCcFnSpecial] Next disabled for "my func"');
+
+      await clearAndType(fnInput, 'my.func');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[validCcFnSpecial] Next disabled for "my.func"');
+
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validCcFnSpecial-passed');
+      console.log('[validCcFnSpecial] PASSED');
+    });
+
+    it('should disable Next for custom code function name with leading underscore', async () => {
+      let fnInput: WebElement | null = null;
+      const fnLabels = await driver.findElements(
+        By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
+      );
+      if (fnLabels.length > 0) {
+        const forAttr = await fnLabels[0].getAttribute('for');
+        if (forAttr) {
+          const inputs = await driver.findElements(By.id(forAttr));
+          if (inputs.length > 0) {
+            fnInput = inputs[0];
+          }
+        }
+        if (!fnInput) {
+          const parent = await fnLabels[0].findElement(By.xpath('..'));
+          const inputs = await parent.findElements(By.css('input'));
+          if (inputs.length > 0) {
+            fnInput = inputs[0];
+          }
+        }
+      }
+      if (!fnInput) {
+        fnInput = await findInputByLabel(driver, 'Function name');
+      }
+
+      await clearAndType(fnInput, '_func');
+      await sleep(TYPE_SETTLE);
+
+      await assertNextButtonDisabled(driver);
+      console.log('[validCcFnUnderscore] Next button disabled for leading underscore "_func"');
+
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validCcFnUnderscore-passed');
+      console.log('[validCcFnUnderscore] PASSED');
+    });
+
     // -----------------------------------------------------------------------
     // Rules engine validation — switch to "Logic app with rules engine" and
     // test folder name, namespace, and function name fields.
@@ -2567,6 +2869,72 @@ describe('Create Workspace Tests', function () {
       console.log('[validReFolderEmpty] PASSED');
     });
 
+    it('should show error for rules engine folder name with special characters', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      let folderInput: WebElement | null = null;
+      for (const label of ['Rules engine folder name', 'rules engine folder', 'Folder name']) {
+        try {
+          folderInput = await findInputByLabel(driver, label);
+          break;
+        } catch {
+          // Try next
+        }
+      }
+      if (!folderInput) {
+        throw new Error('Could not find rules engine folder name input');
+      }
+
+      await clearAndType(folderInput, 'folder@name');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validReFolderSpecial] Error shown for "folder@name"');
+
+      await clearAndType(folderInput, 'my folder');
+      await findValidationMessage(driver, 'must start with a letter and can only contain letters, digits');
+      console.log('[validReFolderSpecial] Error shown for "my folder"');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(folderInput, uniqueName('validrefolder'));
+      await captureScreenshot(driver, 'validReFolderSpecial-passed');
+      console.log('[validReFolderSpecial] PASSED');
+    });
+
+    it('should show error for rules engine folder name with leading/trailing separators', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      let folderInput: WebElement | null = null;
+      for (const label of ['Rules engine folder name', 'rules engine folder', 'Folder name']) {
+        try {
+          folderInput = await findInputByLabel(driver, label);
+          break;
+        } catch {
+          // Try next
+        }
+      }
+      if (!folderInput) {
+        throw new Error('Could not find rules engine folder name input');
+      }
+
+      await clearAndType(folderInput, '_folder');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validReFolderSep] Error for leading underscore');
+
+      await clearAndType(folderInput, 'folder-');
+      await findValidationMessage(driver, 'must start with a letter');
+      console.log('[validReFolderSep] Error for trailing hyphen');
+
+      await assertNextButtonDisabled(driver);
+
+      await clearAndType(folderInput, uniqueName('validrefolder'));
+      await captureScreenshot(driver, 'validReFolderSep-passed');
+      console.log('[validReFolderSep] PASSED');
+    });
+
     it('should disable Next for invalid rules engine function namespace', async () => {
       await ensureOnProjectSetupStep(driver);
       await selectRadioOption(driver, 'Logic app with rules engine');
@@ -2587,6 +2955,25 @@ describe('Create Workspace Tests', function () {
       await clearAndType(nsInput, 'Valid.Namespace');
       await captureScreenshot(driver, 'validReNs-passed');
       console.log('[validReNs] PASSED');
+    });
+
+    it('should disable Next for rules engine function namespace starting with digit', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      const nsInput = await findRulesEngineInputByLabel(driver, 'Function namespace');
+
+      await clearAndType(nsInput, '123.Bad.Namespace');
+      await sleep(TYPE_SETTLE);
+
+      await assertInputShowsValidationMessage(nsInput, 'namespace');
+      await assertNextButtonDisabled(driver);
+      console.log('[validReNsDigit] Next button disabled for namespace starting with digit');
+
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await captureScreenshot(driver, 'validReNsDigit-passed');
+      console.log('[validReNsDigit] PASSED');
     });
 
     it('should disable Next when rules engine function namespace is cleared', async () => {
@@ -2645,6 +3032,69 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, uniqueName('validfn'));
       await captureScreenshot(driver, 'validReFnEmpty-passed');
       console.log('[validReFnEmpty] PASSED');
+    });
+
+    it('should disable Next for hyphenated rules engine function name', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      const fnInput = await findRulesEngineInputByLabel(driver, 'Function name');
+
+      await clearAndType(fnInput, 'my-func');
+      await sleep(TYPE_SETTLE);
+
+      await assertNextButtonDisabled(driver);
+      console.log('[validReFnHyphen] Next button disabled for hyphenated function name "my-func"');
+
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validReFnHyphen-passed');
+      console.log('[validReFnHyphen] PASSED');
+    });
+
+    it('should disable Next for rules engine function name with special characters', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      const fnInput = await findRulesEngineInputByLabel(driver, 'Function name');
+
+      await clearAndType(fnInput, 'func@name');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[validReFnSpecial] Next disabled for "func@name"');
+
+      await clearAndType(fnInput, 'my func');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[validReFnSpecial] Next disabled for "my func"');
+
+      await clearAndType(fnInput, 'my.func');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[validReFnSpecial] Next disabled for "my.func"');
+
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validReFnSpecial-passed');
+      console.log('[validReFnSpecial] PASSED');
+    });
+
+    it('should disable Next for rules engine function name with leading underscore', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      const fnInput = await findRulesEngineInputByLabel(driver, 'Function name');
+
+      await clearAndType(fnInput, '_func');
+      await sleep(TYPE_SETTLE);
+
+      await assertNextButtonDisabled(driver);
+      console.log('[validReFnUnderscore] Next button disabled for leading underscore "_func"');
+
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await captureScreenshot(driver, 'validReFnUnderscore-passed');
+      console.log('[validReFnUnderscore] PASSED');
     });
 
     // =========================================================================

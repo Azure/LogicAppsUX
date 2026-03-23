@@ -73,9 +73,10 @@ pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
 
 **IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
 
-**NOTE**: When running from a background terminal, use absolute paths:
+**NOTE**: When running from a background terminal, run from `apps/vs-code-designer`:
 ```bash
-node d:\dev\LogicAppsUX\apps\vs-code-designer\src\test\ui\run-e2e.js
+cd apps/vs-code-designer
+node src/test/ui/run-e2e.js
 ```
 
 ## 4. Architecture
