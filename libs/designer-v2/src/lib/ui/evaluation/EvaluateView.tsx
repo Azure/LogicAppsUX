@@ -1,6 +1,10 @@
 import { mergeClasses, Text } from '@fluentui/react-components';
 import { useDispatch } from 'react-redux';
-import { useSelectedEvaluator, useEvaluationViewMode } from '../../core/state/evaluation/evaluationSelectors';
+import {
+  useSelectedEvaluator,
+  useEvaluationViewMode,
+  useSelectedEvaluationAgentName,
+} from '../../core/state/evaluation/evaluationSelectors';
 import { startEditEvaluator, setSelectedEvaluator } from '../../core/state/evaluation/evaluationSlice';
 import { useDeleteEvaluator } from '../../core/queries/evaluations';
 import { EvaluatorManagementPanel } from './EvaluatorManagementPanel';
@@ -19,10 +23,11 @@ interface EvaluateViewProps {
 export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
   const styles = useEvaluateViewStyles();
   const dispatch = useDispatch();
+  const selectedAgentName = useSelectedEvaluationAgentName();
   const selectedEvaluator = useSelectedEvaluator();
   const viewMode = useEvaluationViewMode();
 
-  const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, '');
+  const { mutateAsync: deleteEvaluator } = useDeleteEvaluator(workflowName, selectedAgentName ?? '');
 
   const handleDeleteClick = useCallback(async () => {
     if (!selectedEvaluator) {

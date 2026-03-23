@@ -141,6 +141,7 @@ export class HttpClient implements IHttpClient {
   async delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
     const request = {
       ...options,
+      url: this.getRequestUrl(options),
       headers: {
         ...this._extraHeaders,
         ...options.headers,
