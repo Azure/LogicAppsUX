@@ -121,7 +121,6 @@ import {
   useFoundryProjectEndpointForNode,
   useFoundryProjectResourceIdForNode,
   useCreateFoundryAgent,
-  isFoundryAuthError,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import {
   categorizeConnections,
@@ -483,27 +482,24 @@ export const ParameterSection = ({
     data: foundryAgentsForNode,
     isLoading: foundryAgentsLoading,
     isFetching: foundryAgentsFetching,
-    error: foundryAgentsError,
-    failureCount: foundryAgentsFailureCount,
     refetch: refetchFoundryAgents,
   } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
   const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
 
-  // True when RBAC roles were just assigned and proxy calls are actively retrying due to Azure propagation delay.
-  const isRbacPropagating = foundryRbacStatus === 'assigned' && foundryAgentsFetching && isFoundryAuthError(foundryAgentsError);
-  // True when RBAC propagation retries have been exhausted — query gave up.
-  const isRbacRetriesExhausted =
-    foundryRbacStatus === 'assigned' && !foundryAgentsFetching && !foundryAgentsLoading && isFoundryAuthError(foundryAgentsError);
-  // Show retry button early (after 3rd failure) so impatient users don't have to wait ~5min.
-  const showEarlyRetryButton = isRbacPropagating && foundryAgentsFailureCount >= 3;
-  const retryButtonRef = useRef<HTMLButtonElement>(null);
+  // Track whether loading has been ongoing long enough to show a hint (new connections may take a minute for RBAC propagation).
+  const [showSlowLoadingHint, setShowSlowLoadingHint] = useState(false);
+  const isFoundryLoading =
+    foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching || foundryAgentsLoading;
   useEffect(() => {
-    if (isRbacRetriesExhausted) {
-      retryButtonRef.current?.focus();
+    if (!isAgentServiceConnection || !isFoundryLoading) {
+      setShowSlowLoadingHint(false);
+      return;
     }
-  }, [isRbacRetriesExhausted]);
+    const timer = setTimeout(() => setShowSlowLoadingHint(true), 10_000);
+    return () => clearTimeout(timer);
+  }, [isAgentServiceConnection, isFoundryLoading]);
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
@@ -1503,96 +1499,48 @@ export const ParameterSection = ({
     />
   );
 
-  // Show a purposeful loading state while RBAC roles are propagating on Azure.
-  // This is expected to take 30s–2min for new Foundry connections; retries happen automatically in the background.
-  if (isAgentServiceConnection && (foundryRbacStatus === 'assigning' || isRbacPropagating || isRbacRetriesExhausted)) {
+  // Show a loading state while RBAC roles are being set up or agents are loading.
+  // Keeps messaging simple — no mention of RBAC/permissions. Retries happen silently in the background.
+  if (isAgentServiceConnection && isFoundryLoading && !foundryAgentsForNode?.length) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
     const filtered = filterFoundryManagedSettings(settings.filter((s) => s !== agentPickerSetting));
+    const loadingAgentsLabel = intl.formatMessage({
+      defaultMessage: 'Loading agents...',
+      id: '7oWsJU',
+      description: 'Spinner label shown while Foundry agents list is loading.',
+    });
+    const slowHintLabel = intl.formatMessage({
+      defaultMessage: 'This may take a moment for new connections.',
+      id: 'p+zBbS',
+      description: 'Hint shown after 10 seconds when loading Foundry agents takes longer than expected.',
+    });
 
     return (
       <>
         {agentPickerSetting && (
-          <div style={{ opacity: 0.5 }} {...{ inert: '' }}>
-            <SettingsSection
-              id={group.id}
-              nodeId={nodeId}
-              sectionName={group.description}
-              title={group.description}
-              settings={[agentPickerSetting]}
-              showHeading={!!group.description}
-              expanded={sectionExpanded}
-              onHeaderClick={onExpandSection}
-              showSeparator={false}
-            />
-          </div>
+          <SettingsSection
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
         )}
-        {isRbacRetriesExhausted ? (
-          <div role="status" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 0' }}>
-            <Text size={200} style={{ textAlign: 'center', color: tokens.colorNeutralForeground2 }}>
-              {intl.formatMessage({
-                defaultMessage: 'Permissions are still propagating. This can take a few minutes on Azure.',
-                id: 'rAiPQC',
-                description: 'Message shown when RBAC propagation retries have been exhausted for Foundry agent access.',
-              })}
+        {createAgentInline}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '16px 0' }}>
+          <Spinner size="tiny" label={loadingAgentsLabel} />
+          {showSlowLoadingHint && (
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+              {slowHintLabel}
             </Text>
-            <Button
-              ref={retryButtonRef}
-              appearance="primary"
-              size="small"
-              onClick={() => refetchFoundryAgents()}
-              aria-label={intl.formatMessage({
-                defaultMessage: 'Retry loading Foundry agents',
-                id: '5svGXJ',
-                description: 'Accessible label for the button that retries loading Foundry agents after RBAC propagation.',
-              })}
-            >
-              {intl.formatMessage({
-                defaultMessage: 'Retry now',
-                id: 'wU5max',
-                description: 'Button label to manually retry loading Foundry agents after RBAC propagation retries exhausted.',
-              })}
-            </Button>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '24px 0' }}>
-            <Spinner
-              size="tiny"
-              label={
-                foundryRbacStatus === 'assigning'
-                  ? intl.formatMessage({
-                      defaultMessage: 'Assigning permissions for Foundry access...',
-                      id: '5knK0r',
-                      description: 'Spinner label shown while RBAC role assignments are being created for Foundry.',
-                    })
-                  : intl.formatMessage({
-                      defaultMessage: 'Setting up permissions for Foundry access. This may take up to a minute...',
-                      id: 'LBPdGc',
-                      description: 'Spinner label shown while waiting for Azure RBAC roles to propagate for Foundry.',
-                    })
-              }
-            />
-            {showEarlyRetryButton && (
-              <Button
-                appearance="subtle"
-                size="small"
-                onClick={() => refetchFoundryAgents()}
-                aria-label={intl.formatMessage({
-                  defaultMessage: 'Retry loading Foundry agents',
-                  id: '5svGXJ',
-                  description: 'Accessible label for the button that retries loading Foundry agents after RBAC propagation.',
-                })}
-              >
-                {intl.formatMessage({
-                  defaultMessage: 'Retry now',
-                  id: 'wU5max',
-                  description: 'Button label to manually retry loading Foundry agents after RBAC propagation retries exhausted.',
-                })}
-              </Button>
-            )}
-          </div>
-        )}
+          )}
+        </div>
         {filtered.length > 0 && (
           <SettingsSection id={`${group.id}-after-foundry`} nodeId={nodeId} settings={filtered} showHeading={false} showSeparator={false} />
         )}

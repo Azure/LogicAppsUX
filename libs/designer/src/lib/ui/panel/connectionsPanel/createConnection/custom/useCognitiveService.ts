@@ -276,16 +276,17 @@ const foundryQueryOpts = {
   retryOnMount: true,
   refetchOnMount: true,
   refetchOnReconnect: true,
-  retry: (failureCount: number, error: unknown) => {
-    // Extended retries for auth errors — RBAC propagation can take 30s–2min
+  retry: (_failureCount: number, error: unknown) => {
+    // Retry indefinitely on auth errors — RBAC propagation can take 30s–5min.
+    // The user can manually refresh via the 🔄 button at any time.
     if (isFoundryAuthError(error)) {
-      return failureCount < 12;
+      return true;
     }
-    return failureCount < 3;
+    return _failureCount < 3;
   },
   retryDelay: (attempt: number, error: unknown) => {
     if (isFoundryAuthError(error)) {
-      // Exponential backoff: 3s, 6s, 12s, 24s, 30s, 30s... (cap at 30s, ~3min total window)
+      // Exponential backoff capped at 30s: 3s, 6s, 12s, 24s, 30s, 30s...
       return Math.min(3000 * 2 ** attempt, 30_000);
     }
     return Math.min(1000 * 2 ** attempt, 10_000);
