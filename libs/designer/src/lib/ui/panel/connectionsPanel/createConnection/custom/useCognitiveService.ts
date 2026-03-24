@@ -257,6 +257,8 @@ function buildProxyContext(
  * Detects whether an error from a Foundry proxy call is an auth/permission error (401/403).
  * These are expected during RBAC propagation and should trigger extended retries.
  */
+const AUTH_ERROR_PATTERN = /unauthorized|permissiondenied|forbidden/i;
+
 export function isFoundryAuthError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
     return false;
@@ -268,7 +270,7 @@ export function isFoundryAuthError(error: unknown): boolean {
   }
   const code = String(e.code ?? e.Code ?? '');
   const message = String(e.message ?? e.Message ?? '');
-  return /unauthorized|permissiondenied|forbidden/i.test(code) || /unauthorized|permissiondenied|forbidden/i.test(message);
+  return AUTH_ERROR_PATTERN.test(code) || AUTH_ERROR_PATTERN.test(message);
 }
 
 const foundryQueryOpts = {
@@ -276,13 +278,13 @@ const foundryQueryOpts = {
   retryOnMount: true,
   refetchOnMount: true,
   refetchOnReconnect: true,
-  retry: (_failureCount: number, error: unknown) => {
+  retry: (failureCount: number, error: unknown) => {
     // Retry indefinitely on auth errors — RBAC propagation can take 30s–5min.
     // The user can manually refresh via the 🔄 button at any time.
     if (isFoundryAuthError(error)) {
       return true;
     }
-    return _failureCount < 3;
+    return failureCount < 3;
   },
   retryDelay: (attempt: number, error: unknown) => {
     if (isFoundryAuthError(error)) {
@@ -313,12 +315,11 @@ export const useFoundryAgentsForNode = (
   isLoading: boolean;
   isFetching: boolean;
   error: unknown;
-  failureCount: number;
   refetch: () => void;
 } => {
   const projectEndpoint = useFoundryProjectEndpointForNode(nodeId);
 
-  const result = useQuery(
+  const { data, isLoading, isFetching, error, refetch } = useQuery(
     [queryKeys.allFoundryAgents, { projectEndpoint }],
     async () => {
       const ctx = buildProxyContext(projectEndpoint);
@@ -326,14 +327,7 @@ export const useFoundryAgentsForNode = (
     },
     { ...foundryQueryOpts, enabled: !!projectEndpoint && rbacReady }
   );
-  return {
-    data: result.data,
-    isLoading: result.isLoading,
-    isFetching: result.isFetching,
-    error: result.error,
-    failureCount: result.failureCount,
-    refetch: result.refetch,
-  };
+  return { data, isLoading, isFetching, error, refetch };
 };
 
 /** Returns the ARM resource ID of the Foundry account (without /projects/{project}) for a node's connection. */

@@ -384,6 +384,7 @@ const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
 
 const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
 type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+const RBAC_READY_STATUSES: ReadonlySet<FoundryRbacStatus> = new Set(['assigned', 'not-needed', 'failed']);
 const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 
 export const ParameterSection = ({
@@ -451,7 +452,7 @@ export const ParameterSection = ({
         }
         if (missingRoles.length === 0) {
           setFoundryRbacStatus('not-needed');
-          return Promise.resolve();
+          return;
         }
         setFoundryRbacStatus('assigning');
         return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
@@ -475,8 +476,7 @@ export const ParameterSection = ({
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
   // Gate Foundry proxy queries: don't fire until RBAC assignment has completed (or is unnecessary).
-  const foundryRbacReady =
-    !isAgentServiceConnection || foundryRbacStatus === 'assigned' || foundryRbacStatus === 'not-needed' || foundryRbacStatus === 'failed';
+  const foundryRbacReady = !isAgentServiceConnection || RBAC_READY_STATUSES.has(foundryRbacStatus);
 
   const {
     data: foundryAgentsForNode,
@@ -1478,7 +1478,7 @@ export const ParameterSection = ({
 
   const handleRefreshFoundryAgents = useCallback(() => {
     // Ungate the query in case RBAC is still checking/assigning, then refetch
-    if (foundryRbacStatus === 'idle' || foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning') {
+    if (!RBAC_READY_STATUSES.has(foundryRbacStatus)) {
       setFoundryRbacStatus('not-needed');
     }
     // Small delay to let React re-render with enabled: true before refetching
@@ -1532,8 +1532,7 @@ export const ParameterSection = ({
             showSeparator={false}
           />
         )}
-        {createAgentInline}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '16px 0' }}>
+        <div role="status" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '16px 0' }}>
           <Spinner size="tiny" label={loadingAgentsLabel} />
           {showSlowLoadingHint && (
             <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>

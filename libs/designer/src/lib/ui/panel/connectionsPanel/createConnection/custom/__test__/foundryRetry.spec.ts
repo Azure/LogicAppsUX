@@ -9,20 +9,13 @@ describe('isFoundryAuthError', () => {
     expect(isFoundryAuthError(42)).toBe(false);
   });
 
-  it('detects 401 status via httpStatusCode', () => {
-    expect(isFoundryAuthError({ httpStatusCode: 401 })).toBe(true);
-  });
-
-  it('detects 403 status via httpStatusCode', () => {
-    expect(isFoundryAuthError({ httpStatusCode: 403 })).toBe(true);
-  });
-
-  it('detects 401 via status property', () => {
-    expect(isFoundryAuthError({ status: 401 })).toBe(true);
-  });
-
-  it('detects 403 via statusCode property', () => {
-    expect(isFoundryAuthError({ statusCode: 403 })).toBe(true);
+  it.each([
+    { property: 'httpStatusCode', status: 401 },
+    { property: 'httpStatusCode', status: 403 },
+    { property: 'status', status: 401 },
+    { property: 'statusCode', status: 403 },
+  ])('detects $status via $property', ({ property, status }) => {
+    expect(isFoundryAuthError({ [property]: status })).toBe(true);
   });
 
   it('returns false for non-auth status codes', () => {
