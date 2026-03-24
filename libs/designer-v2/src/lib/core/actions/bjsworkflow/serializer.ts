@@ -591,7 +591,7 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
   // so user-configured inputs are preserved alongside the connection settings.
   const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
 
-  let inputs: LogicAppsV2.OperationDefinition['inputs'] | undefined;
+  let inputs: Record<string, any> | undefined;
   if (mcpServerUrl) {
     inputs = {
       Connection: {
