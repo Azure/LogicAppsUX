@@ -26,6 +26,7 @@ export interface NetworkingSectionProps extends SectionProps {
   onRetryIntervalChange: TextChangeHandler;
   onRetryMinIntervalChange: TextChangeHandler;
   onRetryMaxIntervalChange: TextChangeHandler;
+  onRetryHttpStatusCodesChange: (selectedCodes: number[]) => void;
   onUploadChunkSizeChange: TextChangeHandler;
   onDownloadChunkSizeChange: TextChangeHandler;
 }
@@ -63,6 +64,7 @@ export const Networking = ({
   onRetryIntervalChange,
   onRetryMinIntervalChange,
   onRetryMaxIntervalChange,
+  onRetryHttpStatusCodesChange,
   onHeaderClick,
 }: NetworkingSectionProps): JSX.Element => {
   const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
@@ -297,6 +299,16 @@ export const Networking = ({
       example: 'PT1H',
     }
   );
+  const retryPolicyHttpStatusCodesTitle = intl.formatMessage({
+    defaultMessage: 'HTTP status codes',
+    id: 'JKz1gC',
+    description: 'title for retry policy HTTP status codes setting',
+  });
+  const retryPolicyHttpStatusCodesTooltip = intl.formatMessage({
+    defaultMessage: 'Specify which HTTP status codes should trigger a retry. Select one or more status codes.',
+    id: 'hT9KxM',
+    description: 'tooltip for retry policy HTTP status codes setting',
+  });
 
   const getAsyncPatternSetting = (): Settings => {
     return {
@@ -560,6 +572,42 @@ export const Networking = ({
     };
   };
 
+  const getRetryHttpStatusCodesSetting = (): Settings => {
+    const httpStatusCodeOptions = [
+      { label: '408 - Request Timeout', value: '408' },
+      { label: '412 - Precondition Failed', value: '412' },
+      { label: '429 - Too Many Requests', value: '429' },
+      { label: '500 - Internal Server Error', value: '500' },
+      { label: '502 - Bad Gateway', value: '502' },
+      { label: '503 - Service Unavailable', value: '503' },
+      { label: '504 - Gateway Timeout', value: '504' },
+    ];
+
+    const currentSelections = (retryPolicy?.value?.httpStatusCodes ?? []).map((code) => {
+      const option = httpStatusCodeOptions.find((opt) => opt.value === code.toString());
+      return option ?? { label: `${code}`, value: code.toString() };
+    });
+
+    return {
+      settingType: 'MultiSelectSetting',
+      settingProp: {
+        readOnly,
+        options: httpStatusCodeOptions,
+        selections: currentSelections,
+        onSelectionChange: (selections) => {
+          const selectedCodes = selections.map((s) => Number.parseInt(s.value, 10));
+          onRetryHttpStatusCodesChange(selectedCodes);
+        },
+        customLabel: getSettingLabel(retryPolicyHttpStatusCodesTitle, retryPolicyHttpStatusCodesTooltip),
+        ariaLabel: retryPolicyHttpStatusCodesTitle,
+      },
+      visible:
+        retryPolicy?.isSupported &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.NONE &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.DEFAULT,
+    };
+  };
+
   const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
     nodeId,
@@ -582,6 +630,7 @@ export const Networking = ({
       getRetryIntervalSetting(),
       getRetryMinIntervalSetting(),
       getRetryMaxIntervalSetting(),
+      getRetryHttpStatusCodesSetting(),
     ],
     validationErrors,
   };
