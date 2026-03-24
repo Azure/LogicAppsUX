@@ -17,6 +17,14 @@ export const useEvaluateViewStyles = makeStyles({
     display: 'flex',
     overflow: 'hidden',
   },
+  evaluatorsArea: {
+    display: 'flex',
+    flex: '1',
+    flexWrap: 'wrap',
+    overflow: 'hidden',
+    alignContent: 'stretch',
+    minWidth: '0',
+  },
   panel: {
     display: 'flex',
     flexDirection: 'column',
@@ -28,14 +36,16 @@ export const useEvaluateViewStyles = makeStyles({
     minWidth: '240px',
   },
   panelEvaluators: {
-    width: '420px',
+    flex: '1 1 300px',
     minWidth: '280px',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
   panelDetail: {
-    flex: '1',
+    flex: '2 1 300px',
     minWidth: '0',
     overflow: 'auto',
     borderRight: 'none',
+    borderBottom: 'none',
   },
   panelHeader: {
     display: 'flex',

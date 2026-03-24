@@ -482,10 +482,13 @@ export const RunHistoryPanel = () => {
   const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>(isEvaluateView && isA2AWorkflow ? 'chat' : 'tree');
 
   useEffect(() => {
-    if (!chatEnabled && selectedContentTab === 'chat') {
+    if (isEvaluateView && isA2AWorkflow) {
+      // Tree tab is not relevant for A2A evaluation, so always use chat tab
+      setSelectedContentTab('chat');
+    } else if (!chatEnabled && selectedContentTab === 'chat') {
       setSelectedContentTab('tree');
     }
-  }, [chatEnabled, selectedContentTab]);
+  }, [chatEnabled, selectedContentTab, isEvaluateView, isA2AWorkflow]);
 
   useEffect(() => {
     if (!isMonitoringView && !isEvaluateView) {

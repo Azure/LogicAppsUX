@@ -73,8 +73,10 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
     <div className={styles.root}>
       <div className={styles.main}>
         <RunHistoryPanel />
-        <EvaluatorManagementPanel workflowName={workflowName} />
-        <div className={mergeClasses(styles.panel, styles.panelDetail)}>{renderRightPanel()}</div>
+        <div className={styles.evaluatorsArea}>
+          <EvaluatorManagementPanel workflowName={workflowName} />
+          <div className={mergeClasses(styles.panel, styles.panelDetail)}>{renderRightPanel()}</div>
+        </div>
       </div>
     </div>
   );
