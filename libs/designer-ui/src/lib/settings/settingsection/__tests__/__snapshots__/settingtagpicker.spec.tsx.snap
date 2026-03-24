@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/settings/settingtagpicker > should construct with basic props 1`] = `
+<div
+  className="___1ve27rm_0000000 f22iagw f1vx9l62 f1yhwmi5"
+>
+  <Combobox
+    className="___1s3ioet_0000000 fly5x3f f93ek0f"
+    freeform={true}
+    onInput={[Function]}
+    onOptionSelect={[Function]}
+    placeholder="Select options..."
+    positioning="below"
+    value=""
+  >
+    <Option
+      value="400"
+    >
+      400 - Bad Request
+    </Option>
+    <Option
+      value="401"
+    >
+      401 - Unauthorized
+    </Option>
+    <Option
+      value="403"
+    >
+      403 - Forbidden
+    </Option>
+    <Option
+      value="404"
+    >
+      404 - Not Found
+    </Option>
+    <Option
+      value="500"
+    >
+      500 - Internal Server Error
+    </Option>
+  </Combobox>
+</div>
+`;
