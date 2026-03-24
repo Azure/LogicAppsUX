@@ -29,6 +29,7 @@ vi.mock('../../../utils/graph', () => ({
 vi.mock('../../../state/workflow/helper', () => ({
   isA2AWorkflow: () => false,
   isBuiltInMcpOperation: () => false,
+  isManagedMcpOperation: () => false,
 }));
 
 import { serializeOperation } from '../serializer';
