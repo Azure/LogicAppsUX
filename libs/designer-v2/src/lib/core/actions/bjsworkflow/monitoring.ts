@@ -14,7 +14,8 @@ import {
   labelCase,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getAgentRepetition, type RootState } from '../..';
+import type { RootState } from '../..';
+import { getAgentRepetition } from '../../queries/runs';
 import { getOperationManifest } from '../../queries/operation';
 import InputsBinder from '../../utils/monitoring/binders/inputs';
 import constants from '../../../common/constants';
