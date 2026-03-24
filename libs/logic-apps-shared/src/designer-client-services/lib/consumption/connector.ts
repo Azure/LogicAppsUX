@@ -119,7 +119,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
 
       const mcpToolsResponse = await httpClient.post({
         uri,
-        queryParameters: { 'api-version': '2018-07-01-preview' },
+        queryParameters: { 'api-version': this.options.apiVersion },
         content,
       });
       const tools = this._getResponseFromDynamicApi(mcpToolsResponse, uri);
