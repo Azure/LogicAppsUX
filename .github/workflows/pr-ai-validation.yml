@@ -17,24 +17,51 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // Skip validation for workflow_dispatch since there is no PR context
+            if (!context.payload.pull_request) {
+              console.log('No pull request context (likely workflow_dispatch). Skipping validation.');
+              return;
+            }
+            
             const authorAssociation = context.payload.pull_request.author_association;
             const trustedAssociations = ['COLLABORATOR', 'MEMBER', 'OWNER', 'CONTRIBUTOR'];
             
             if (trustedAssociations.includes(authorAssociation)) {
               console.log(`Trusted contributor (${authorAssociation}), proceeding with validation...`);
-            } else {
-              console.log(`External contributor (${authorAssociation}) - validation requires manual approval`);
-              
-              // Create a comment to inform about the restriction
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body: `## 🔒 AI Validation Pending\n\nThis PR is from an external contributor. AI validation will be performed after manual review by a maintainer.\n\nMaintainers: Re-run this workflow after reviewing the changes if you want to enable AI validation.`
-              });
-              
-              core.setFailed('External contributor - requires manual approval before AI validation');
+              return;
             }
+            
+            // Check if a maintainer has approved this external PR via label
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+            if (labels.includes('external-approved')) {
+              console.log('External PR approved by maintainer via label, proceeding with validation...');
+              return;
+            }
+            
+            console.log(`External contributor (${authorAssociation}) - validation requires manual approval`);
+            
+            // Create or update a comment to inform about the restriction (avoid spam)
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = context.payload.pull_request.number;
+            const marker = '<!-- AI_VALIDATION_PENDING -->';
+            const pendingBody = `${marker}\n## 🔒 AI Validation Pending\n\nThis PR is from an external contributor. AI validation will be performed after manual review by a maintainer.\n\nMaintainers: Add the \`external-approved\` label to this PR after reviewing the changes to enable AI validation.`;
+            
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            
+            const existingComment = comments.find(c => c.body && c.body.includes(marker));
+            if (existingComment) {
+              console.log('Existing "AI Validation Pending" comment found, skipping creation.');
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body: pendingBody });
+            }
+            
+            core.setFailed('External contributor - requires manual approval before AI validation');
       - name: Validate PR with AI Agent
         uses: actions/github-script@v7
         env:
