@@ -1518,7 +1518,6 @@ export const ParameterSection = ({
       showForm={isCreatingNewAgent}
       onShowFormChange={setIsCreatingNewAgent}
       onRefresh={() => refetchFoundryAgents()}
-      isRefreshing={foundryAgentsFetching}
     />
   );
 
@@ -1966,8 +1965,6 @@ interface CreateFoundryAgentInlineProps {
   onShowFormChange: (show: boolean) => void;
   /** Callback to refresh the agents list. */
   onRefresh?: () => void;
-  /** Whether agents are currently loading/refreshing. */
-  isRefreshing?: boolean;
 }
 
 function CreateFoundryAgentInline({
@@ -1979,7 +1976,6 @@ function CreateFoundryAgentInline({
   showForm,
   onShowFormChange,
   onRefresh,
-  isRefreshing,
 }: CreateFoundryAgentInlineProps) {
   const intl = useIntl();
   const [name, setName] = useState('');
@@ -2094,7 +2090,6 @@ function CreateFoundryAgentInline({
             appearance="transparent"
             size="small"
             onClick={onRefresh}
-            disabled={isRefreshing}
             aria-label={intl.formatMessage({
               defaultMessage: 'Refresh agents list',
               id: '5Bxb+T',
