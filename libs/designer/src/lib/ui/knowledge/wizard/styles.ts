@@ -41,3 +41,50 @@ export const useWizardStyles = makeStyles({
     padding: '10px 0',
   },
 });
+
+export const useListStyles = makeStyles({
+  tableStyle: {
+    width: '95%',
+  },
+
+  tableCell: {
+    border: 'none',
+    paddingBottom: '8px',
+  },
+
+  rowCell: {
+    alignItems: 'center',
+  },
+
+  icon: {
+    marginRight: '8px',
+  },
+
+  iconsCell: {
+    textAlign: 'right',
+    border: 'none',
+    paddingBottom: '8px',
+    width: '8%',
+  },
+
+  nameCell: {
+    display: 'flex',
+  },
+
+  nameText: {
+    display: 'flex',
+    gap: '8px',
+    marginTop: '6px',
+  },
+
+  hubNameCell: {},
+
+  artifactNameCell: {
+    marginLeft: '32px',
+  },
+
+  statusCell: {
+    display: 'flex',
+    gap: '4px',
+  },
+});
