@@ -12,9 +12,16 @@ interface WorkflowPayload {
 }
 
 const isBuiltInMcpConnectionReference = (connection: any): boolean => {
-  const apiId = connection?.api?.id?.toLowerCase?.() ?? '';
   const connectionId = connection?.connection?.id?.toLowerCase?.() ?? '';
-  return apiId.includes('connectionproviders/mcpclient') || connectionId.includes('/connectionproviders/mcpclient/');
+
+  // ARM-managed connections use subscription-scoped resource IDs and should not be treated as built-in.
+  const isArmResource = connectionId.startsWith('/subscriptions/');
+  if (isArmResource) {
+    return false;
+  }
+
+  // Built-in MCP connections are under the connectionProviders path, not ARM /subscriptions paths.
+  return connectionId.includes('/connectionproviders/mcpclient/connections/');
 };
 
 export const getConsumptionWorkflowPayloadForCreate = (

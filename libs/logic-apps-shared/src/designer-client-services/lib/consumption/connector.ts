@@ -251,23 +251,30 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       return undefined;
     }
 
-    const authentication: Record<string, any> = { type: authType };
-    if (authType === 'ApiKey') {
+    // Normalize MCP connector manifest auth set names to backend-expected types.
+    const mappedAuthType = authType === 'Key' ? 'ApiKey' : authType;
+
+    const authentication: Record<string, any> = { type: mappedAuthType };
+    if (mappedAuthType === 'ApiKey') {
       authentication['value'] = connectionProperties['key'];
       authentication['name'] = connectionProperties['keyHeaderName'];
       authentication['in'] = 'header';
-    } else if (authType === 'Basic') {
+    } else if (mappedAuthType === 'Basic') {
       authentication['username'] = connectionProperties['username'];
       authentication['password'] = connectionProperties['password'];
-    } else if (authType === 'ActiveDirectoryOAuth') {
+    } else if (mappedAuthType === 'ActiveDirectoryOAuth') {
       authentication['tenant'] = connectionProperties['tenant'];
       authentication['clientId'] = connectionProperties['clientId'];
       authentication['secret'] = connectionProperties['secret'];
       authentication['authority'] = connectionProperties['authority'];
       authentication['audience'] = connectionProperties['audience'];
-    } else if (authType === 'ClientCertificate') {
+    } else if (mappedAuthType === 'ClientCertificate') {
       authentication['pfx'] = connectionProperties['pfx'];
       authentication['password'] = connectionProperties['password'];
+    } else if (mappedAuthType === 'Raw') {
+      authentication['value'] = connectionProperties['value'];
+    } else if (mappedAuthType === 'ManagedServiceIdentity') {
+      authentication['audience'] = connectionProperties['audience'];
     }
 
     return authentication;

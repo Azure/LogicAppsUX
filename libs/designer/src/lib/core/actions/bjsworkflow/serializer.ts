@@ -564,20 +564,24 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
     }
   }
 
-  // Only emit Connection block when we have a non-empty mcpServerUrl.
-  // The backend rejects Connection objects with empty mcpServerUrl.
-  const inputs = mcpServerUrl
-    ? {
-        Connection: {
-          Authentication: authenticationType,
-          McpServerUrl: mcpServerUrl,
-        },
-      }
-    : {
-        parameters: {
-          ...inputParameters.parameters,
-        },
-      };
+  // Merge the Connection block with manifest-serialized parameters (e.g., allowedTools, headers)
+  // so user-configured inputs are preserved alongside the connection settings.
+  const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
+
+  let inputs: LogicAppsV2.OperationDefinition['inputs'] | undefined;
+  if (mcpServerUrl) {
+    inputs = {
+      Connection: {
+        Authentication: authenticationType,
+        McpServerUrl: mcpServerUrl,
+      },
+      ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
+    };
+  } else if (hasParameters) {
+    inputs = {
+      parameters: { ...inputParameters.parameters },
+    };
+  }
 
   return {
     type: type,

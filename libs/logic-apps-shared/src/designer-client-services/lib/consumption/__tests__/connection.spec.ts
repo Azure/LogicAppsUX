@@ -75,7 +75,7 @@ describe('ConsumptionConnectionService', () => {
           serverUrl: { value: 'https://mcp-server.example.com' },
         },
         connectionParametersSet: {
-          name: 'ApiKey',
+          name: 'Key',
           values: {
             key: { value: 'test-api-key' },
           },
@@ -88,7 +88,7 @@ describe('ConsumptionConnectionService', () => {
       expect(result.name).toBe('test-mcp-connection');
       expect(result.id).toContain('connectionProviders/mcpclient/connections/');
       expect((result.properties as any).parameterValues.mcpServerUrl).toBe('https://mcp-server.example.com');
-      expect((result.properties as any).parameterValues.authenticationType).toBe('ApiKey');
+      expect((result.properties as any).parameterValues.authenticationType).toBe('Key');
     });
 
     it('should throw error when serverUrl is missing', async () => {

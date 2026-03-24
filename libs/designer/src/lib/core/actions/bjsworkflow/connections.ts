@@ -523,10 +523,20 @@ export async function getConnectionsApiAndMapping(deserializedWorkflow: Deserial
       continue;
     }
     try {
-      const connectionName = `mcp-${nodeId}-${Date.now()}`;
+      const connectionName = `mcp-${nodeId}`;
       const connectorId = 'connectionProviders/mcpclient';
+      const connectionId = `/connectionProviders/mcpclient/connections/${connectionName}`;
+
+      // Skip if this connection was already reconstructed (e.g., repeated deserialization)
+      const connectionService = ConnectionService();
+      const existingConnection = (connectionService as any)._connections?.[connectionId];
+      if (existingConnection) {
+        dispatch(changeConnectionMapping({ nodeId, connectorId, connectionId }));
+        continue;
+      }
+
       const connection = {
-        id: `/connectionProviders/mcpclient/connections/${connectionName}`,
+        id: connectionId,
         name: connectionName,
         type: 'connections',
         location: '',
@@ -552,7 +562,6 @@ export async function getConnectionsApiAndMapping(deserializedWorkflow: Deserial
         },
       } as any;
       // Store in ConnectionService so getConnection() can find it later
-      const connectionService = ConnectionService();
       (connectionService as any)._connections[connection.id] = connection;
       // Create the connection mapping and reference in Redux
       dispatch(changeConnectionMapping({ nodeId, connectorId, connectionId: connection.id }));

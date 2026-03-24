@@ -127,7 +127,7 @@ describe('ConsumptionConnectorService', () => {
         expect(content.connection.displayName).toBe('Test MCP Server');
       });
 
-      it('should include authentication for ApiKey auth type', async () => {
+      it('should include authentication for Key auth type', async () => {
         InitConnectionService({
           getConnection: vi.fn().mockResolvedValue({
             id: builtInConnectionId,
@@ -136,7 +136,7 @@ describe('ConsumptionConnectorService', () => {
               displayName: 'Test MCP Server',
               parameterValues: {
                 mcpServerUrl: 'https://mcp.example.com',
-                authenticationType: 'ApiKey',
+                authenticationType: 'Key',
                 key: 'test-api-key',
                 keyHeaderName: 'X-Api-Key',
               },
