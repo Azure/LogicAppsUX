@@ -24,7 +24,7 @@ import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import OutputsBinder from '../../utils/monitoring/binders/outputs';
-import { getAgentRepetition } from '../../queries/runs';
+import { getAgentActionsRepetition, getAgentRepetition } from '../../queries/runs';
 
 /**
  * Converts raw JSON data into BoundParameters format for display in ValuesPanel.
@@ -143,9 +143,8 @@ const getParametersToBind = (type: string, payloadInputs: any, isInputs: boolean
 
 /**
  * Fetches iteration-level data for built-in agent tools (e.g. code_interpreter).
- * Built-in tools don't have action-level content links, so we fetch the parent agent
- * repetition which contains the inputsLink/outputsLink needed to display run data.
- * We also fetch the actual content from those links to avoid CORS issues.
+ * Built-in tools have action-level content links available via getAgentActionsRepetition.
+ * We fetch the actual content from those links to avoid CORS issues.
  */
 export const fetchBuiltInToolRunData = createAsyncThunk(
   'fetchBuiltInToolRunData',
@@ -159,19 +158,41 @@ export const fetchBuiltInToolRunData = createAsyncThunk(
   }) => {
     const { toolNodeId, agentNodeId, runId, repetitionName } = payload;
 
-    // Use action-level links if provided, otherwise fall back to fetching the parent agent repetition
+    // Use action-level links if provided, otherwise fetch them from getAgentActionsRepetition
     let actionInputsLink = payload.inputsLink;
     let actionOutputsLink = payload.outputsLink;
     let repetitionProperties: any = {};
 
     if (actionInputsLink || actionOutputsLink) {
-      // We have action-level links — no need to fetch the parent repetition
+      // We have action-level links — no need to fetch
       repetitionProperties = {};
     } else {
-      const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
-      actionInputsLink = repetition.properties.inputsLink as ContentLink | undefined;
-      actionOutputsLink = repetition.properties.outputsLink as ContentLink | undefined;
-      repetitionProperties = repetition.properties;
+      // Fetch action results to get tool-specific links (not the parent agent's links)
+      const actionsRepetitions = await getAgentActionsRepetition(agentNodeId, runId, repetitionName, 0);
+      let foundToolAction = false;
+      for (const actionsRepetition of actionsRepetitions) {
+        const actionResults: any[] = (actionsRepetition.properties as any)?.actionResults ?? [];
+        for (const action of actionResults) {
+          if (action?.name === toolNodeId) {
+            actionInputsLink = action.inputsLink as ContentLink | undefined;
+            actionOutputsLink = action.outputsLink as ContentLink | undefined;
+            repetitionProperties = action;
+            foundToolAction = true;
+            break;
+          }
+        }
+        if (foundToolAction) {
+          break;
+        }
+      }
+
+      // Fall back to parent repetition if tool-specific action not found
+      if (!foundToolAction) {
+        const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
+        actionInputsLink = repetition.properties.inputsLink as ContentLink | undefined;
+        actionOutputsLink = repetition.properties.outputsLink as ContentLink | undefined;
+        repetitionProperties = repetition.properties;
+      }
     }
 
     // Fetch the actual content from the links
