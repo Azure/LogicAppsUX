@@ -52,6 +52,7 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { FoundryAgentDetails, buildFoundryPortalUrl, NavigateIcon, useFoundryAgentDetailsStyles } from '@microsoft/designer-ui';
+import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import {
   Button,
   Divider,
@@ -385,6 +386,7 @@ const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
 
 const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
 type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 
 export const ParameterSection = ({
   nodeId,
@@ -1515,6 +1517,8 @@ export const ParameterSection = ({
       disabled={readOnly}
       showForm={isCreatingNewAgent}
       onShowFormChange={setIsCreatingNewAgent}
+      onRefresh={() => refetchFoundryAgents()}
+      isRefreshing={foundryAgentsFetching}
     />
   );
 
@@ -1960,6 +1964,10 @@ interface CreateFoundryAgentInlineProps {
   /** Controlled form visibility — lifted to parent so it can toggle other sections. */
   showForm: boolean;
   onShowFormChange: (show: boolean) => void;
+  /** Callback to refresh the agents list. */
+  onRefresh?: () => void;
+  /** Whether agents are currently loading/refreshing. */
+  isRefreshing?: boolean;
 }
 
 function CreateFoundryAgentInline({
@@ -1970,6 +1978,8 @@ function CreateFoundryAgentInline({
   disabled,
   showForm,
   onShowFormChange,
+  onRefresh,
+  isRefreshing,
 }: CreateFoundryAgentInlineProps) {
   const intl = useIntl();
   const [name, setName] = useState('');
@@ -2068,15 +2078,32 @@ function CreateFoundryAgentInline({
 
   if (!showForm) {
     return (
-      <Button
-        appearance="transparent"
-        size="small"
-        onClick={() => onShowFormChange(true)}
-        disabled={disabled}
-        style={{ justifyContent: 'flex-start', paddingLeft: 0, color: 'var(--colorBrandForeground1)' }}
-      >
-        + {createNewLabel}
-      </Button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Button
+          appearance="transparent"
+          size="small"
+          onClick={() => onShowFormChange(true)}
+          disabled={disabled}
+          style={{ justifyContent: 'flex-start', paddingLeft: 0, color: 'var(--colorBrandForeground1)' }}
+        >
+          + {createNewLabel}
+        </Button>
+        {onRefresh && (
+          <Button
+            icon={<RefreshIcon />}
+            appearance="transparent"
+            size="small"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            aria-label={intl.formatMessage({
+              defaultMessage: 'Refresh agents list',
+              id: '5Bxb+T',
+              description: 'Accessible label for the button that refreshes the list of Foundry agents.',
+            })}
+            style={{ minWidth: 'auto' }}
+          />
+        )}
+      </div>
     );
   }
 
