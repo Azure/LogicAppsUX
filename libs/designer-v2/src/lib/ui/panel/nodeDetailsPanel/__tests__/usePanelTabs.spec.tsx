@@ -145,6 +145,15 @@ describe('usePanelTabs', () => {
     expect(result.current[0].id).toBe(constants.PANEL_TAB_NAMES.PARAMETERS);
   });
 
+  it('returns full tabs (not just parametersTab) for built-in agent tools like code_interpreter', () => {
+    mocks.useNodeMetadata.mockReturnValue({ subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION });
+    const { result } = renderTabs('code_interpreter');
+    // Built-in tools should NOT be restricted to parametersTab only
+    expect(result.current.length).toBeGreaterThan(1);
+    const tabIds = result.current.map((tab) => tab.id);
+    expect(tabIds).not.toEqual([constants.PANEL_TAB_NAMES.PARAMETERS]);
+  });
+
   it('returns specific tabs for MCP_CLIENT nodes (no settings/channels)', () => {
     mocks.useNodeMetadata.mockReturnValue({ subgraphType: SUBGRAPH_TYPES.MCP_CLIENT });
     const tabIds = getTabIds(renderTabs().result);
