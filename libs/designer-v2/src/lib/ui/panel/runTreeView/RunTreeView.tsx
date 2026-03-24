@@ -264,7 +264,6 @@ export const RunTreeView = () => {
                   data: {
                     repIndex: i,
                     isBuiltInTool: isBuiltInAgentTool(toolId),
-                    hello: 'HELLO1',
                     repetition: {
                       id: toolRepetitionId,
                       name: toolId,
@@ -299,7 +298,7 @@ export const RunTreeView = () => {
                   updateToolTimes(parentRepetitionId, action);
 
                   // Built-in tools (e.g. code_interpreter) don't have sub-actions —
-                  // the action result IS the tool itself, so skip creating a child node
+                  // the action result is the tool itself, so skip creating a child node
                   // and just update the tool tree item's links directly.
                   if (isBuiltInAgentTool(actionId)) {
                     updateToolRunLinks(parentRepetitionId, action);
@@ -319,7 +318,6 @@ export const RunTreeView = () => {
                         name: actionId,
                         properties: {
                           ...action,
-                          hello: 'HELLO3',
                           repetitionIndexes: [
                             {
                               scopeName: id,
@@ -397,7 +395,6 @@ export const RunTreeView = () => {
             data: {
               repIndex: i,
               isBuiltInTool: isBuiltInAgentTool(toolId),
-              hello: 'HELLO2',
               repetition: {
                 id: toolRepetitionId,
                 name: toolId,
@@ -469,7 +466,7 @@ export const RunTreeView = () => {
             updateToolTimes(parentRepetitionId, action);
 
             // Built-in tools (e.g. code_interpreter) don't have sub-actions —
-            // the action result IS the tool itself, so skip creating a child node
+            // the action result is the tool itself, so skip creating a child node
             // and just update the tool tree item's links directly.
             if (isBuiltInAgentTool(actionId)) {
               updateToolRunLinks(parentRepetitionId, action);
@@ -571,21 +568,12 @@ export const RunTreeView = () => {
 
   return (
     <>
-      <h3>{'---run tree view---'}</h3>
-      <div>{JSON.stringify(Object.keys(treeItemsRecord))}</div>
-      {/* <div>{JSON.stringify(treeItemsRecord, null, 2)}</div> */}
-      <h3>{'-------------------'}</h3>
       <FlatTree {...flatTree.getTreeProps()} aria-label="Flat Tree">
         {Array.from(flatTree.items(), (flatTreeItem) => {
           if (!flatTreeItem?.value) {
             return null;
           }
           const [actionId, repetitionName] = (flatTreeItem.value as string).split('-#');
-          // return (
-          //   <div
-          //     key={flatTreeItem.value}
-          //   ><h3>{actionId}:</h3> {JSON.stringify(treeItemsRecord[flatTreeItem.value]?.data)}</div>
-          // )
           return (
             <TreeActionItem
               key={flatTreeItem.value}

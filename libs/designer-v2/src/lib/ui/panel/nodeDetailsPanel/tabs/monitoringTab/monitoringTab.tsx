@@ -28,11 +28,6 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const endTime = runMetaData?.endTime;
 
   const getActionInputsOutputs = useCallback(async () => {
-    // For built-in tools that already have inputs/outputs from fetchBuiltInToolRunData,
-    // use the cached data instead of fetching via getActionLinks (which would fail)
-    // if (runMetaData?.inputs && runMetaData?.outputs) {
-    //   return Promise.resolve({ inputs: runMetaData.inputs ?? {}, outputs: runMetaData.outputs ?? {} });
-    // }
     const actionLinks = await RunService().getActionLinks(runMetaData, selectedNodeId);
     return { inputs: actionLinks.inputs ?? runMetaData?.inputs ?? {}, outputs: actionLinks.outputs ?? runMetaData?.outputs ?? {} };
   }, [selectedNodeId, runMetaData]);
