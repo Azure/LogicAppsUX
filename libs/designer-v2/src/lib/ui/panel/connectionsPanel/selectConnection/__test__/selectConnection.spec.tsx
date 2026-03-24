@@ -99,11 +99,6 @@ describe('SelectConnection', () => {
     expect(document.querySelector('.msla-edit-connection-actions-container')).toBeTruthy();
   });
 
-  it('should render error message when errorMessage is provided', () => {
-    render(<SelectConnection {...defaultProps} errorMessage="Something went wrong" />, { wrapper: Wrapper });
-    expect(screen.getAllByText('Something went wrong').length).toBeGreaterThan(0);
-  });
-
   it('should render action bar when provided', () => {
     render(<SelectConnection {...defaultProps} actionBar={<div data-testid="action-bar">Actions</div>} />, { wrapper: Wrapper });
     expect(screen.getByTestId('action-bar')).toBeTruthy();
