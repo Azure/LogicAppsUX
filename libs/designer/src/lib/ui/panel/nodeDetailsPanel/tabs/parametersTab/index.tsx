@@ -1480,6 +1480,15 @@ export const ParameterSection = ({
         return s;
       });
 
+  const handleRefreshFoundryAgents = useCallback(() => {
+    // Ungate the query in case RBAC is still checking/assigning, then refetch
+    if (foundryRbacStatus === 'idle' || foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning') {
+      setFoundryRbacStatus('not-needed');
+    }
+    // Small delay to let React re-render with enabled: true before refetching
+    setTimeout(() => refetchFoundryAgents(), 0);
+  }, [foundryRbacStatus, refetchFoundryAgents]);
+
   const createAgentInline = (
     <CreateFoundryAgentInline
       models={foundryModelsForNode ?? []}
@@ -1489,7 +1498,8 @@ export const ParameterSection = ({
       disabled={readOnly}
       showForm={isCreatingNewAgent}
       onShowFormChange={setIsCreatingNewAgent}
-      onRefresh={() => refetchFoundryAgents()}
+      onRefresh={handleRefreshFoundryAgents}
+      isRefreshing={foundryAgentsFetching}
     />
   );
 
@@ -1952,6 +1962,8 @@ interface CreateFoundryAgentInlineProps {
   onShowFormChange: (show: boolean) => void;
   /** Callback to refresh the agents list. */
   onRefresh?: () => void;
+  /** Whether agents are currently loading — shows spinner on refresh icon. */
+  isRefreshing?: boolean;
 }
 
 function CreateFoundryAgentInline({
@@ -1963,6 +1975,7 @@ function CreateFoundryAgentInline({
   showForm,
   onShowFormChange,
   onRefresh,
+  isRefreshing,
 }: CreateFoundryAgentInlineProps) {
   const intl = useIntl();
   const [name, setName] = useState('');
@@ -2073,7 +2086,7 @@ function CreateFoundryAgentInline({
         </Button>
         {onRefresh && (
           <Button
-            icon={<RefreshIcon />}
+            icon={isRefreshing ? <Spinner size="extra-tiny" /> : <RefreshIcon />}
             appearance="transparent"
             size="small"
             onClick={onRefresh}
