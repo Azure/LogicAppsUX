@@ -35,7 +35,6 @@ import {
   LoggerService,
   equals,
   getRecordEntry,
-  isBuiltInAgentTool,
   RUN_AFTER_STATUS,
   WORKFLOW_NODE_TYPES,
   containsIdTag,
@@ -313,12 +312,12 @@ export const workflowSlice = createSlice({
             runData: {
               status: tools[toolId].status,
               repetitionCount: tools[toolId].iterations,
-              ...(isBuiltInAgentTool(toolId)
-                ? {
-                    inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
-                    outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
-                  }
-                : {}),
+              // ...(isBuiltInAgentTool(toolId)
+              //   ? {
+              //       inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
+              //       outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
+              //     }
+              //   : {}),
             },
             runIndex: 0,
           };

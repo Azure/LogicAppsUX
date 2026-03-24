@@ -149,17 +149,38 @@ const getParametersToBind = (type: string, payloadInputs: any, isInputs: boolean
  */
 export const fetchBuiltInToolRunData = createAsyncThunk(
   'fetchBuiltInToolRunData',
-  async (payload: { toolNodeId: string; agentNodeId: string; runId: string; repetitionName: string }) => {
+  async (payload: {
+    toolNodeId: string;
+    agentNodeId: string;
+    runId: string;
+    repetitionName: string;
+    inputsLink?: ContentLink;
+    outputsLink?: ContentLink;
+  }) => {
     const { toolNodeId, agentNodeId, runId, repetitionName } = payload;
-    const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
+
+    // Use action-level links if provided, otherwise fall back to fetching the parent agent repetition
+    let actionInputsLink = payload.inputsLink;
+    let actionOutputsLink = payload.outputsLink;
+    let repetitionProperties: any = {};
+
+    if (actionInputsLink || actionOutputsLink) {
+      // We have action-level links — no need to fetch the parent repetition
+      repetitionProperties = {};
+    } else {
+      const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
+      actionInputsLink = repetition.properties.inputsLink as ContentLink | undefined;
+      actionOutputsLink = repetition.properties.outputsLink as ContentLink | undefined;
+      repetitionProperties = repetition.properties;
+    }
 
     // Fetch the actual content from the links
     let inputs: Record<string, any> = {};
     let outputs: Record<string, any> = {};
 
     try {
-      if (repetition.properties.inputsLink?.uri) {
-        inputs = (await RunService().getContent(repetition.properties.inputsLink as ContentLink)) ?? {};
+      if (actionInputsLink?.uri) {
+        inputs = (await RunService().getContent(actionInputsLink as ContentLink)) ?? {};
       }
     } catch (e) {
       // Content fetch failed - continue with empty inputs
@@ -167,8 +188,8 @@ export const fetchBuiltInToolRunData = createAsyncThunk(
     }
 
     try {
-      if (repetition.properties.outputsLink?.uri) {
-        outputs = (await RunService().getContent(repetition.properties.outputsLink as ContentLink)) ?? {};
+      if (actionOutputsLink?.uri) {
+        outputs = (await RunService().getContent(actionOutputsLink as ContentLink)) ?? {};
       }
     } catch (e) {
       // Content fetch failed - continue with empty outputs
@@ -181,14 +202,14 @@ export const fetchBuiltInToolRunData = createAsyncThunk(
 
     const result = {
       toolNodeId,
-      inputsLink: repetition.properties.inputsLink,
-      outputsLink: repetition.properties.outputsLink,
+      inputsLink: actionInputsLink,
+      outputsLink: actionOutputsLink,
       inputs: boundInputs,
       outputs: boundOutputs,
-      startTime: repetition.properties.startTime,
-      endTime: repetition.properties.endTime,
-      status: repetition.properties.status,
-      correlation: repetition.properties.correlation,
+      startTime: repetitionProperties.startTime,
+      endTime: repetitionProperties.endTime,
+      status: repetitionProperties.status,
+      correlation: repetitionProperties.correlation,
     };
     return result;
   }

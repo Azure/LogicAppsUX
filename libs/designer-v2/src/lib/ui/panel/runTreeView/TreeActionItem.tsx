@@ -202,6 +202,8 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
                   agentNodeId,
                   runId: selectedRun.id,
                   repetitionName: parentRepetitionName,
+                  inputsLink: data?.inputsLink,
+                  outputsLink: data?.outputsLink,
                 })
               );
             }
