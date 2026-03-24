@@ -275,10 +275,8 @@ describe('ConsumptionConnectorService', () => {
     });
 
     describe('MCP with no connectionId', () => {
-      it('should send only mcpServerPath when connectionId is undefined', async () => {
-        vi.mocked(mockHttpClient.post).mockResolvedValue(mockMcpToolsResponse);
-
-        await connectorService.getListDynamicValues(
+      it('should return empty list when connectionId is undefined', async () => {
+        const result = await connectorService.getListDynamicValues(
           undefined,
           '/connectionProviders/mcpclient',
           'nativemcpclient',
@@ -288,10 +286,8 @@ describe('ConsumptionConnectorService', () => {
           '/mcp/path'
         );
 
-        const postCallArgs = vi.mocked(mockHttpClient.post).mock.calls[0][0];
-        const content = postCallArgs.content as any;
-
-        expect(content).toEqual({ mcpServerPath: '/mcp/path' });
+        expect(result).toEqual([]);
+        expect(mockHttpClient.post).not.toHaveBeenCalled();
       });
     });
 
