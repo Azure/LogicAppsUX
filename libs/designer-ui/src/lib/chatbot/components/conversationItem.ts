@@ -1,4 +1,5 @@
 import type { OperationInfo } from './flowDiffPreview';
+import type { WorkflowChange } from '@microsoft/logic-apps-shared';
 
 export const FlowOrigin = {
   Default: 'default',
@@ -82,6 +83,8 @@ export type AssistantGreetingItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Greeting;
   origin: FlowOrigin;
   reaction: ChatEntryReaction | undefined;
+  /** When true, the greeting reflects that the assistant can also modify workflows */
+  workflowEditingEnabled?: boolean;
 };
 
 export type AssistantErrorItem = BaseAssistantMessageItem & {
@@ -133,6 +136,8 @@ export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
   reaction: ChatEntryReaction | undefined;
   undoStatus: UndoStatus;
   correlationId?: string;
+  changes?: WorkflowChange[];
+  onNodeClick?: (nodeId: string) => void;
   __rawRequest: any;
   __rawResponse: any;
 };

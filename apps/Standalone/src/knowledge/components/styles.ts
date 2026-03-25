@@ -14,7 +14,7 @@ export const useDevToolboxStyles = makeStyles({
   },
 
   accordionHeader: {
-    padding: '8px',
+    padding: '0 8px',
     background: tokens.colorNeutralBackground1,
     borderRadius: '8px 8px 0 0',
     position: 'relative',
@@ -43,7 +43,7 @@ export const useDevToolboxStyles = makeStyles({
   mainContainer: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '8px',
+    paddingBottom: '16px',
   },
 
   themeToggleContainer: {

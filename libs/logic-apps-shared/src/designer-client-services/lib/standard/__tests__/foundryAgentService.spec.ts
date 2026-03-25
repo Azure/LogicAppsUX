@@ -1,21 +1,26 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   buildProjectEndpointFromResourceId,
+  createFoundryAgentViaProxy,
   updateFoundryAgent,
   listFoundryModels,
   listFoundryAgents,
   listAllFoundryAgents,
   getFoundryAgent,
+  listFoundryAgentVersions,
 } from '../foundryAgentService';
+import type { FoundryProxyContext } from '../foundryAgentService';
+import type { IHttpClient } from '../../httpClient';
 
-// Helper to build a mock Response for fetch
-function mockFetchResponse(body: unknown, ok = true, status = 200, statusText = 'OK') {
+function createMockHttpClient(overrides: Partial<IHttpClient> = {}): IHttpClient {
   return {
-    ok,
-    status,
-    statusText,
-    json: vi.fn().mockResolvedValue(body),
-    text: vi.fn().mockResolvedValue(JSON.stringify(body)),
+    dispose: vi.fn(),
+    get: vi.fn().mockResolvedValue({}),
+    post: vi.fn().mockResolvedValue({}),
+    put: vi.fn().mockResolvedValue({}),
+    patch: vi.fn().mockResolvedValue({}),
+    delete: vi.fn().mockResolvedValue({}),
+    ...overrides,
   };
 }
 
@@ -42,17 +47,11 @@ function rawAgent(overrides: Record<string, unknown> = {}) {
 }
 
 describe('foundryAgentService', () => {
-  const originalFetch = globalThis.fetch;
+  let httpClient: IHttpClient;
 
   beforeEach(() => {
-    globalThis.fetch = vi.fn();
+    httpClient = createMockHttpClient();
   });
-
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
-  });
-
-  // --- buildProjectEndpointFromResourceId ---
 
   describe('buildProjectEndpointFromResourceId', () => {
     it('should extract account and project from a valid ARM resource ID', () => {
@@ -90,8 +89,6 @@ describe('foundryAgentService', () => {
     });
   });
 
-  // --- listFoundryAgents ---
-
   describe('listFoundryAgents', () => {
     it('should call the agents endpoint and return the raw list response', async () => {
       const listResponse = {
@@ -101,60 +98,52 @@ describe('foundryAgentService', () => {
         last_id: 'agent-1',
         has_more: false,
       };
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(listResponse));
+      vi.mocked(httpClient.get).mockResolvedValue(listResponse);
 
-      const result = await listFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const result = await listFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
       expect(result.object).toBe('list');
       expect(result.data).toHaveLength(1);
       expect(result.has_more).toBe(false);
 
-      const [url] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('/agents?api-version=');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/agents');
+      expect(callArgs.queryParameters).toHaveProperty('api-version');
     });
 
     it('should append query parameters when options are provided', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ object: 'list', data: [], first_id: null, last_id: null, has_more: false })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({ object: 'list', data: [], first_id: null, last_id: null, has_more: false });
 
-      await listFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token', {
+      await listFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token', {
         limit: 50,
         order: 'desc',
         after: 'cursor-abc',
       });
 
-      const [url] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('limit=50');
-      expect(url).toContain('order=desc');
-      expect(url).toContain('after=cursor-abc');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.queryParameters).toMatchObject({ limit: 50, order: 'desc', after: 'cursor-abc' });
     });
 
     it('should normalize cognitiveservices endpoint to services.ai.azure.com', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ object: 'list', data: [], first_id: null, last_id: null, has_more: false })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({ object: 'list', data: [], first_id: null, last_id: null, has_more: false });
 
-      await listFoundryAgents('https://acct.cognitiveservices.azure.com/api/projects/proj', 'fake-token');
+      await listFoundryAgents(httpClient, 'https://acct.cognitiveservices.azure.com/api/projects/proj', 'fake-token');
 
-      const [url] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('acct.services.ai.azure.com');
-      expect(url).not.toContain('cognitiveservices');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('acct.services.ai.azure.com');
+      expect(callArgs.uri).not.toContain('cognitiveservices');
     });
 
     it('should include Authorization header with Bearer token', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ object: 'list', data: [], first_id: null, last_id: null, has_more: false })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({ object: 'list', data: [], first_id: null, last_id: null, has_more: false });
 
-      await listFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'my-secret-token');
+      await listFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'my-secret-token');
 
-      const [, options] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(options.headers.Authorization).toBe('Bearer my-secret-token');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.headers).toMatchObject({ Authorization: 'Bearer my-secret-token' });
+      expect(callArgs.noAuth).toBe(true);
     });
   });
-
-  // --- listAllFoundryAgents ---
 
   describe('listAllFoundryAgents', () => {
     it('should return normalized agents from a single page', async () => {
@@ -165,9 +154,9 @@ describe('foundryAgentService', () => {
         last_id: 'a2',
         has_more: false,
       };
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(listResponse));
+      vi.mocked(httpClient.get).mockResolvedValue(listResponse);
 
-      const agents = await listAllFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const agents = await listAllFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
       expect(agents).toHaveLength(2);
       expect(agents[0].id).toBe('a1');
@@ -191,20 +180,18 @@ describe('foundryAgentService', () => {
         last_id: 'a2',
         has_more: false,
       };
-      (globalThis.fetch as ReturnType<typeof vi.fn>)
-        .mockResolvedValueOnce(mockFetchResponse(page1))
-        .mockResolvedValueOnce(mockFetchResponse(page2));
+      vi.mocked(httpClient.get).mockResolvedValueOnce(page1).mockResolvedValueOnce(page2);
 
-      const agents = await listAllFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const agents = await listAllFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
       expect(agents).toHaveLength(2);
       expect(agents[0].id).toBe('a1');
       expect(agents[1].id).toBe('a2');
-      expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+      expect(httpClient.get).toHaveBeenCalledTimes(2);
 
       // Second call should include after=a1 for pagination
-      const [url2] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[1];
-      expect(url2).toContain('after=a1');
+      const secondCallArgs = vi.mocked(httpClient.get).mock.calls[1][0];
+      expect(secondCallArgs.queryParameters).toMatchObject({ after: 'a1' });
     });
 
     it('should stop paginating when last_id is null even if has_more is true', async () => {
@@ -215,12 +202,12 @@ describe('foundryAgentService', () => {
         last_id: null,
         has_more: true,
       };
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(page));
+      vi.mocked(httpClient.get).mockResolvedValue(page);
 
-      const agents = await listAllFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const agents = await listAllFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
       expect(agents).toHaveLength(1);
-      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      expect(httpClient.get).toHaveBeenCalledTimes(1);
     });
 
     it('should normalize agent fields from nested versions structure', async () => {
@@ -234,11 +221,15 @@ describe('foundryAgentService', () => {
         created_at: 1700000000,
         metadata: { key: 'value' },
       });
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ object: 'list', data: [agent], first_id: 'a1', last_id: 'a1', has_more: false })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({
+        object: 'list',
+        data: [agent],
+        first_id: 'a1',
+        last_id: 'a1',
+        has_more: false,
+      });
 
-      const agents = await listAllFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const agents = await listAllFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
       expect(agents[0]).toEqual({
         id: 'a1',
@@ -255,11 +246,15 @@ describe('foundryAgentService', () => {
 
     it('should handle agents with missing versions/definition gracefully', async () => {
       const minimal = { object: 'agent', id: 'a1', name: 'Bare' };
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ object: 'list', data: [minimal], first_id: 'a1', last_id: 'a1', has_more: false })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({
+        object: 'list',
+        data: [minimal],
+        first_id: 'a1',
+        last_id: 'a1',
+        has_more: false,
+      });
 
-      const agents = await listAllFoundryAgents('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const agents = await listAllFoundryAgents(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
       expect(agents[0].id).toBe('a1');
       expect(agents[0].model).toBe('');
@@ -270,53 +265,43 @@ describe('foundryAgentService', () => {
     });
   });
 
-  // --- getFoundryAgent ---
-
   describe('getFoundryAgent', () => {
     it('should fetch a single agent by ID and return normalized result', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse(rawAgent({ id: 'agent-42', name: 'SpecificAgent', model: 'gpt-4o-mini' }))
-      );
+      vi.mocked(httpClient.get).mockResolvedValue(rawAgent({ id: 'agent-42', name: 'SpecificAgent', model: 'gpt-4o-mini' }));
 
-      const agent = await getFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-42', 'fake-token');
+      const agent = await getFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent-42', 'fake-token');
 
       expect(agent.id).toBe('agent-42');
       expect(agent.name).toBe('SpecificAgent');
       expect(agent.model).toBe('gpt-4o-mini');
 
-      const [url, options] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('/agents/agent-42?');
-      expect(options.method).toBe('GET');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/agents/agent-42');
     });
 
     it('should URL-encode the agent ID', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(rawAgent({ id: 'agent/with spaces' })));
+      vi.mocked(httpClient.get).mockResolvedValue(rawAgent({ id: 'agent/with spaces' }));
 
-      await getFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent/with spaces', 'fake-token');
+      await getFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent/with spaces', 'fake-token');
 
-      const [url] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('/agents/agent%2Fwith%20spaces?');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/agents/agent%2Fwith%20spaces');
     });
   });
 
-  // --- updateFoundryAgent ---
-
   describe('updateFoundryAgent', () => {
     it('should send model and instructions inside a definition envelope with kind "prompt"', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(rawAgent()));
+      vi.mocked(httpClient.post).mockResolvedValue(rawAgent());
 
-      await updateFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
+      await updateFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
         model: 'gpt-4',
         instructions: 'Do stuff',
       });
 
-      expect(globalThis.fetch).toHaveBeenCalledOnce();
-      const [url, options] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('/agents/agent-1');
-      expect(options.method).toBe('POST');
-
-      const body = JSON.parse(options.body);
-      expect(body).toEqual({
+      expect(httpClient.post).toHaveBeenCalledOnce();
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/agents/agent-1');
+      expect(callArgs.content).toEqual({
         definition: {
           kind: 'prompt',
           model: 'gpt-4',
@@ -326,130 +311,268 @@ describe('foundryAgentService', () => {
     });
 
     it('should include name at the top level, not inside definition', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(rawAgent({ name: 'Renamed' })));
+      vi.mocked(httpClient.post).mockResolvedValue(rawAgent({ name: 'Renamed' }));
 
-      await updateFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
+      await updateFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
         name: 'Renamed',
       });
 
-      const body = JSON.parse((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].body);
-      expect(body.name).toBe('Renamed');
-      expect(body.definition).toEqual({ kind: 'prompt' });
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.content).toMatchObject({ name: 'Renamed', definition: { kind: 'prompt' } });
     });
 
     it('should include description at the top level', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(rawAgent()));
+      vi.mocked(httpClient.post).mockResolvedValue(rawAgent());
 
-      await updateFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
+      await updateFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
         description: 'Updated description',
       });
 
-      const body = JSON.parse((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].body);
-      expect(body.description).toBe('Updated description');
-      expect(body.definition).toEqual({ kind: 'prompt' });
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.content).toMatchObject({ description: 'Updated description', definition: { kind: 'prompt' } });
     });
 
     it('should only include provided fields in the payload', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse(rawAgent()));
+      vi.mocked(httpClient.post).mockResolvedValue(rawAgent());
 
-      await updateFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
+      await updateFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', {
         model: 'gpt-4o',
       });
 
-      const body = JSON.parse((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].body);
-      expect(body).toEqual({ definition: { kind: 'prompt', model: 'gpt-4o' } });
-      expect(body.definition.instructions).toBeUndefined();
-      expect(body.name).toBeUndefined();
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.content).toEqual({ definition: { kind: 'prompt', model: 'gpt-4o' } });
     });
 
-    it('should throw on non-OK responses with parsed error message', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ error: { message: 'bad request' } }, false, 400, 'Bad Request')
-      );
+    it('should propagate errors from httpClient', async () => {
+      vi.mocked(httpClient.post).mockRejectedValue(new Error('bad request'));
 
       await expect(
-        updateFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', { model: 'gpt-4' })
-      ).rejects.toThrow('Foundry API error: bad request');
-    });
-
-    it('should throw with statusText when error body is not JSON', async () => {
-      const response = {
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-        json: vi.fn().mockRejectedValue(new Error('not json')),
-        text: vi.fn().mockResolvedValue(''),
-      };
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(response);
-
-      await expect(
-        updateFoundryAgent('https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', { model: 'gpt-4' })
-      ).rejects.toThrow('Foundry API error: Internal Server Error');
+        updateFoundryAgent(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'agent-1', 'fake-token', { model: 'gpt-4' })
+      ).rejects.toThrow('bad request');
     });
   });
 
-  // --- listFoundryModels ---
+  describe('createFoundryAgentViaProxy', () => {
+    let proxyContext: FoundryProxyContext;
 
-  describe('listFoundryModels', () => {
-    it('should parse deployments with data-plane format', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({
-          data: [
-            { name: 'gpt-4-deployment', model_name: 'gpt-4' },
-            { name: 'gpt-35-deployment', model_name: 'gpt-35-turbo' },
-          ],
+    beforeEach(() => {
+      proxyContext = {
+        httpClient,
+        proxyBaseUrl: 'https://test.azure.com/foundryProxy',
+        foundryEndpoint: 'https://my-project.services.ai.azure.com/api/projects/my-project',
+      };
+    });
+
+    it('should POST to /agents with correct body structure', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(
+        rawAgent({ id: 'test-agent', name: 'Test Agent', model: 'gpt-4.1', instructions: 'Be helpful' })
+      );
+
+      await createFoundryAgentViaProxy(proxyContext, {
+        name: 'Test Agent',
+        model: 'gpt-4.1',
+        instructions: 'Be helpful',
+      });
+
+      expect(httpClient.post).toHaveBeenCalledOnce();
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.uri).toBe('https://test.azure.com/foundryProxy?api-version=2018-11-01');
+      expect(callArgs.headers).toMatchObject({
+        'x-ms-foundry-endpoint': proxyContext.foundryEndpoint,
+        'x-ms-foundry-path': '/agents',
+        'x-ms-foundry-method': 'POST',
+        'Content-Type': 'application/json',
+      });
+      expect(callArgs.content).toEqual({
+        name: 'Test Agent',
+        definition: {
+          kind: 'prompt',
+          model: 'gpt-4.1',
+          instructions: 'Be helpful',
+        },
+      });
+    });
+
+    it('should omit instructions when not provided', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(
+        rawAgent({ id: 'test-agent', name: 'Test Agent', model: 'gpt-4.1', instructions: undefined })
+      );
+
+      await createFoundryAgentViaProxy(proxyContext, {
+        name: 'Test Agent',
+        model: 'gpt-4.1',
+      });
+
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.content).toEqual({
+        name: 'Test Agent',
+        definition: {
+          kind: 'prompt',
+          model: 'gpt-4.1',
+        },
+      });
+      expect(callArgs.content.definition).not.toHaveProperty('instructions');
+    });
+
+    it('should append api-version to proxy URIs that already include query params', async () => {
+      proxyContext = {
+        ...proxyContext,
+        proxyBaseUrl: 'https://test.azure.com/foundryProxy?foo=bar',
+      };
+      vi.mocked(httpClient.post).mockResolvedValue(rawAgent({ id: 'test-agent', name: 'Test Agent', model: 'gpt-4.1' }));
+
+      await createFoundryAgentViaProxy(proxyContext, {
+        name: 'Test Agent',
+        model: 'gpt-4.1',
+      });
+
+      const callArgs = vi.mocked(httpClient.post).mock.calls[0][0];
+      expect(callArgs.uri).toBe('https://test.azure.com/foundryProxy?foo=bar&api-version=2018-11-01');
+      expect(callArgs.headers).toMatchObject({
+        'x-ms-foundry-path': '/agents',
+        'x-ms-foundry-method': 'POST',
+      });
+    });
+
+    it('should return a normalized FoundryAgent', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(
+        rawAgent({
+          id: 'new-agent',
+          name: 'New Agent',
+          model: 'gpt-4.1',
+          instructions: 'Help users',
+          tools: [{ type: 'code_interpreter' }],
+          metadata: { source: 'proxy' },
+          created_at: 1712345678,
+          description: 'Created from picker',
         })
       );
 
-      const models = await listFoundryModels('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const result = await createFoundryAgentViaProxy(proxyContext, {
+        name: 'New Agent',
+        model: 'gpt-4.1',
+        instructions: 'Help users',
+      });
+
+      expect(result).toEqual({
+        id: 'new-agent',
+        name: 'New Agent',
+        model: 'gpt-4.1',
+        instructions: 'Help users',
+        tools: [{ type: 'code_interpreter' }],
+        metadata: { source: 'proxy' },
+        created_at: 1712345678,
+        object: 'agent',
+        description: 'Created from picker',
+      });
+    });
+  });
+
+  describe('listFoundryModels', () => {
+    it('should parse deployments with data-plane format', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue({
+        data: [
+          { name: 'gpt-4-deployment', model_name: 'gpt-4' },
+          { name: 'gpt-35-deployment', model_name: 'gpt-35-turbo' },
+        ],
+      });
+
+      const models = await listFoundryModels(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
       expect(models).toHaveLength(2);
       expect(models[0]).toEqual({ id: 'gpt-4-deployment', name: 'gpt-4' });
       expect(models[1]).toEqual({ id: 'gpt-35-deployment', name: 'gpt-35-turbo' });
     });
 
     it('should parse deployments with ARM format (value array)', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({
-          value: [{ name: 'deploy-1', properties: { model: { name: 'gpt-4', version: '0613' } } }],
-        })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({
+        value: [{ name: 'deploy-1', properties: { model: { name: 'gpt-4', version: '0613' } } }],
+      });
 
-      const models = await listFoundryModels('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const models = await listFoundryModels(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
       expect(models).toHaveLength(1);
       expect(models[0]).toEqual({ id: 'deploy-1', name: 'gpt-4' });
     });
 
     it('should return empty array when no deployments exist', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse({}));
+      vi.mocked(httpClient.get).mockResolvedValue({});
 
-      const models = await listFoundryModels('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const models = await listFoundryModels(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
       expect(models).toEqual([]);
     });
 
     it('should fall back to deployment name when model name is missing', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse({ data: [{ name: 'my-deploy' }] }));
+      vi.mocked(httpClient.get).mockResolvedValue({ data: [{ name: 'my-deploy' }] });
 
-      const models = await listFoundryModels('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const models = await listFoundryModels(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
       expect(models[0]).toEqual({ id: 'my-deploy', name: 'my-deploy' });
     });
 
     it('should filter out deployments without a name', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockFetchResponse({ data: [{ name: 'valid' }, { name: '' }, { model_name: 'orphan' }] })
-      );
+      vi.mocked(httpClient.get).mockResolvedValue({ data: [{ name: 'valid' }, { name: '' }, { model_name: 'orphan' }] });
 
-      const models = await listFoundryModels('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      const models = await listFoundryModels(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
       expect(models).toHaveLength(1);
       expect(models[0].id).toBe('valid');
     });
 
     it('should call the deployments endpoint with correct api-version', async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockFetchResponse({ data: [] }));
+      vi.mocked(httpClient.get).mockResolvedValue({ data: [] });
 
-      await listFoundryModels('https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
+      await listFoundryModels(httpClient, 'https://acct.services.ai.azure.com/api/projects/proj', 'fake-token');
 
-      const [url] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(url).toContain('/deployments?api-version=');
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/deployments');
+      expect(callArgs.queryParameters).toHaveProperty('api-version');
+    });
+  });
+
+  describe('listFoundryAgentVersions', () => {
+    const versionsResponse = {
+      object: 'list',
+      data: [
+        {
+          metadata: {},
+          object: 'agent.version',
+          id: 'TESTONE:3',
+          name: 'TESTONE',
+          version: '3',
+          description: '',
+          created_at: 1772564608,
+          definition: { kind: 'prompt', model: 'gpt-4', instructions: 'v3 instructions' },
+        },
+        {
+          metadata: {},
+          object: 'agent.version',
+          id: 'TESTONE:2',
+          name: 'TESTONE',
+          version: '2',
+          description: '',
+          created_at: 1770322055,
+          definition: { kind: 'prompt', model: 'gpt-4', instructions: 'v2 instructions' },
+        },
+      ],
+      first_id: 'TESTONE:3',
+      last_id: 'TESTONE:2',
+      has_more: false,
+    };
+
+    it('should return versions from data-plane endpoint when available', async () => {
+      vi.mocked(httpClient.get).mockResolvedValue(versionsResponse);
+
+      const versions = await listFoundryAgentVersions(
+        httpClient,
+        'https://acct.services.ai.azure.com/api/projects/proj',
+        'TESTONE',
+        'fake-token'
+      );
+
+      expect(versions).toHaveLength(2);
+      expect(versions[0].version).toBe('3');
+      expect(versions[1].version).toBe('2');
+
+      const callArgs = vi.mocked(httpClient.get).mock.calls[0][0];
+      expect(callArgs.uri).toContain('/agents/TESTONE/versions');
+      expect(callArgs.queryParameters).toHaveProperty('api-version');
     });
   });
 });

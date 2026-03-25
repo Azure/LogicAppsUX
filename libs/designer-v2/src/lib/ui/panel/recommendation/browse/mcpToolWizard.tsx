@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Text, Spinner, Button, MessageBar, MessageBarBody, Label, Radio, RadioGroup } from '@fluentui/react-components';
-import { AddRegular } from '@fluentui/react-icons';
+import { AddRegular, CheckmarkLockRegular } from '@fluentui/react-icons';
 import { TemplatesPanelFooter, type TemplatePanelFooterProps, SimpleDictionary, SearchableDropdown } from '@microsoft/designer-ui';
 import { ConnectionType, ConnectorService, removeConnectionPrefix } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../../core';
@@ -400,10 +400,10 @@ export const McpToolWizard = () => {
         id: 'Yzw97z',
         description: 'Description for connection selection step',
       }),
-      step2Description: intl.formatMessage({
-        defaultMessage: 'Configure the parameters for this MCP tool',
-        id: 'kAJqcb',
-        description: 'Description for parameters step',
+      connectionLockedInfo: intl.formatMessage({
+        defaultMessage: 'The connection for this MCP server is locked and cannot be changed.',
+        id: 'lmqT4k',
+        description: 'Info message shown on parameters step when the connection is locked',
       }),
       toolsManagementDescription: intl.formatMessage({
         defaultMessage: 'Configure how tools are managed and included for this MCP server',
@@ -507,7 +507,7 @@ export const McpToolWizard = () => {
       }),
       addConnectionLink: intl.formatMessage({
         defaultMessage: 'Create a new connection',
-        id: 'YW1rx0',
+        id: '5R1r3q',
         description: 'Button text to create a new connection',
       }),
     }),
@@ -656,7 +656,7 @@ export const McpToolWizard = () => {
     return (
       <div className={classes.toolsContainer}>
         {/* Tools management section */}
-        <div className={classes.toolsSection} style={{ paddingTop: '16px', borderTop: '1px solid #e0e0e0' }}>
+        <div className={classes.toolsSection} style={{ paddingTop: '16px' }}>
           <Text size={200} style={{ marginBottom: '12px' }}>
             {INTL_TEXT.toolsManagementDescription}
           </Text>
@@ -736,9 +736,6 @@ export const McpToolWizard = () => {
     if (isConnectionStep) {
       return INTL_TEXT.step1Description;
     }
-    if (isParametersStep) {
-      return INTL_TEXT.step2Description;
-    }
     return null;
   };
 
@@ -769,30 +766,26 @@ export const McpToolWizard = () => {
       <div className={classes.content}>
         {/* Step Indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              backgroundColor: isStep1Locked
-                ? 'var(--colorNeutralBackground5)'
-                : currentStepNumber >= 1
-                  ? 'var(--colorBrandBackground)'
-                  : 'var(--colorNeutralBackground3)',
-              color: isStep1Locked
-                ? 'var(--colorNeutralForeground3)'
-                : currentStepNumber >= 1
-                  ? 'var(--colorNeutralForegroundOnBrand)'
-                  : 'var(--colorNeutralForeground3)',
-              fontSize: '12px',
-              fontWeight: 600,
-            }}
-          >
-            {isStep1Locked ? '🔒' : isStep1Completed ? '✓' : '1'}
-          </div>
+          {isStep1Locked ? (
+            <CheckmarkLockRegular style={{ width: '24px', height: '24px', color: 'var(--colorStatusSuccessForeground1)' }} />
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                backgroundColor: currentStepNumber >= 1 ? 'var(--colorBrandBackground)' : 'var(--colorNeutralBackground3)',
+                color: currentStepNumber >= 1 ? 'var(--colorNeutralForegroundOnBrand)' : 'var(--colorNeutralForeground3)',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              {isStep1Completed ? '✓' : '1'}
+            </div>
+          )}
           <Text
             weight={currentStepNumber === 1 && !isStep1Locked ? 'semibold' : 'regular'}
             style={{
@@ -827,6 +820,11 @@ export const McpToolWizard = () => {
           <Text weight={currentStepNumber === 2 ? 'semibold' : 'regular'}>{INTL_TEXT.step2Label}</Text>
         </div>
         {stepDescription ? <Text className={classes.stepDescription}>{stepDescription}</Text> : null}
+        {isParametersStep && isStep1Locked && (
+          <MessageBar intent="info" layout="multiline">
+            <MessageBarBody>{INTL_TEXT.connectionLockedInfo}</MessageBarBody>
+          </MessageBar>
+        )}
         {isParametersStep && toolsErrorMessage && (
           <div className={classes.warningContainer}>
             <MessageBar intent="warning">

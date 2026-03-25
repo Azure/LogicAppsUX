@@ -62,7 +62,6 @@ export default {
           type: 'string',
           title: 'Model ID',
           description: 'The model ID to use.',
-          default: 'gpt-4o-mini',
           'x-ms-visibility': 'hideInUI',
         },
         deploymentId: {
@@ -202,6 +201,22 @@ export default {
             agentChatCompletionSettings: {
               type: 'object',
               properties: {
+                builtinTools: {
+                  type: 'array',
+                  title: 'Built-in Tools',
+                  'x-ms-visibility': 'important',
+                  'x-ms-editor': 'builtintools',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'code_interpreter',
+                        displayName: 'Code Interpreter',
+                        description:
+                          'Enable the agent to write and execute JavaScript code for calculations, data analysis, and file processing.',
+                      },
+                    ],
+                  },
+                },
                 temperature: {
                   title: 'Temperature',
                   description: 'Sampling temperature to use (value should be between 0 and 2)',

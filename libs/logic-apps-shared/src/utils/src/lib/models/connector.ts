@@ -88,6 +88,10 @@ export interface ConnectionParameterUIDefinitionBase {
      * Indicates that the parameter value should be serialized and stored in connection payload. Default is true
      */
     serialize?: boolean;
+    /**
+     * Indicates the full serialization path with parameter and this will be used if defined instead of propertyPath/parameterKey
+     */
+    serializationPath?: string[];
   };
   tooltip?: string;
   /**

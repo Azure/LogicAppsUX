@@ -360,6 +360,16 @@ export const workspaceMessages = defineMessages({
     id: 'q1dxkD',
     description: '.NET 8 description',
   },
+  DOTNET_10: {
+    defaultMessage: '.NET 10',
+    id: 'JsTRX9',
+    description: '.NET 10 option',
+  },
+  DOTNET_10_DESCRIPTION: {
+    defaultMessage: 'Use the latest .NET 10 for modern development and performance',
+    id: 'Q1tyGI',
+    description: '.NET 10 description',
+  },
   FUNCTION_NAMESPACE: {
     defaultMessage: 'Function namespace',
     id: 'mr/BC/',

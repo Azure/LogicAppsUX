@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <OutputType>Library</OutputType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\..\LogicApp</LogicAppFolderToPublish>
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" />
+    <PackageReference Include="Microsoft.Azure.Workflows.Webjobs.Sdk" Version="1.4.0" />
+  </ItemGroup>
+
+  <!-- Workaround: FindFunctionJsonFolders expects the output directory to exist -->
+  <Target Name="EnsureOutputDirectory" BeforeTargets="FindFunctionJsonFolders">
+    <MakeDir Directories="$(OutputPath)" Condition="!Exists('$(OutputPath)')" />
+  </Target>
+
+  <!-- Triggers Publish after Build so the SDK's CopyFilesAfterPublish target copies assemblies to lib/custom/net10.0 -->
+  <Target Name="TriggerPublishOnBuild" AfterTargets="Build">
+    <CallTarget Targets="Publish" />
+  </Target>
+
+  <!-- Workaround: Host resolves custom code from lib/custom/net472/ but build outputs to lib/custom/net10.0/.
+       Copy published output to net472 folder as well so the host can find it. -->
+  <Target Name="CopyToNet472Folder" AfterTargets="CopyFilesAfterPublish">
+    <ItemGroup>
+      <Net10Files Include="$(LogicAppFolderToPublish)\lib\custom\net10.0\**\*.*" />
+    </ItemGroup>
+  </Target>
+
+</Project>

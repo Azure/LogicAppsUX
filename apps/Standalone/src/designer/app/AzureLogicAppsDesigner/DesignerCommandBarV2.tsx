@@ -50,7 +50,7 @@ import {
   flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer-v2';
 import { useEffect, useMemo, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
@@ -75,6 +75,8 @@ import {
   DocumentOnePageColumnsRegular,
   ArrowSyncFilled,
   CheckmarkCircleRegular,
+  ChatSparkleFilled,
+  ChatSparkleRegular,
 } from '@fluentui/react-icons';
 
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
@@ -85,6 +87,7 @@ const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
 const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
+const ChatIcon = bundleIcon(ChatSparkleFilled, ChatSparkleRegular);
 
 const useStyles = makeStyles({
   viewModeContainer: {
@@ -160,6 +163,7 @@ export const DesignerCommandBar = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
+  const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
     try {
       setAutoSaving(autoSave ?? false);
@@ -197,9 +201,14 @@ export const DesignerCommandBar = ({
       const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
       if (!hasParametersErrors || autoSave) {
-        await flushPendingFoundryUpdates().catch(console.error);
+        await flushPendingFoundryUpdates(() => {
+          queryClient.invalidateQueries({ queryKey: ['foundryAgentVersions'] });
+        }).catch(console.error);
         await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
-        if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
+        // Only refresh callback URL on explicit saves, not auto-saves.
+        // The callback URL doesn't change on draft saves, so calling it on every
+        // auto-save cycle just generates unnecessary network requests.
+        if (!autoSave && Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
           updateCallbackUrl(designerState, dispatch);
         }
         if (autoSave) {
@@ -467,9 +476,6 @@ export const DesignerCommandBar = ({
             Assertions
           </MenuItem>
           <MenuDivider />
-          <MenuItem disabled={!isCopilotReady} onClick={() => enableCopilot?.()}>
-            Assistant
-          </MenuItem>
           <MenuItem
             disabled={haveErrors || isDownloadingDocument}
             onClick={() => downloadDocument()}
@@ -500,6 +506,9 @@ export const DesignerCommandBar = ({
         }}
       >
         <ViewModeSelect />
+        <ToolbarButton aria-label="Assistant" icon={<ChatIcon />} disabled={!isCopilotReady} onClick={() => enableCopilot?.()}>
+          Assistant
+        </ToolbarButton>
         <div style={{ flexGrow: 1 }} />
         <DraftSaveNotification />
         <SaveButton />

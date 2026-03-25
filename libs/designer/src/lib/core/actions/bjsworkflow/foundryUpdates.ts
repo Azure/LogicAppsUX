@@ -1,13 +1,21 @@
-import { updateFoundryAgent, CognitiveServiceService } from '@microsoft/logic-apps-shared';
+import { updateFoundryAgentViaProxy, CognitiveServiceService } from '@microsoft/logic-apps-shared';
 import type { UpdateFoundryAgentOptions } from '@microsoft/logic-apps-shared';
 
 interface PendingFoundryUpdate {
   projectEndpoint: string;
   agentId: string;
   updates: UpdateFoundryAgentOptions;
+  /** The version the user explicitly selected in the UI (survives panel close/reopen). */
+  selectedVersion?: string;
 }
 
 const pendingUpdates = new Map<string, PendingFoundryUpdate>();
+
+/**
+ * Tracks nodes whose Foundry agent was just updated (new version created).
+ * Consumed by the parametersTab auto-select effect to bump the version number.
+ */
+const recentlyFlushedNodes = new Set<string>();
 
 /** Register a pending Foundry agent update (model and/or instructions change). */
 export function setPendingFoundryUpdate(nodeId: string, update: PendingFoundryUpdate): void {
@@ -19,31 +27,54 @@ export function clearPendingFoundryUpdate(nodeId: string): void {
   pendingUpdates.delete(nodeId);
 }
 
+/** Check whether a node needs a version refresh (without consuming the flag). */
+export function needsVersionRefresh(nodeId: string): boolean {
+  return recentlyFlushedNodes.has(nodeId);
+}
+
+/**
+ * Consume the "recently flushed" flag for a node.
+ * Returns true (and clears the flag) if the node's Foundry agent was recently updated.
+ * Call only after confirming the new version is available to avoid losing the flag.
+ */
+export function consumeVersionRefresh(nodeId: string): boolean {
+  return recentlyFlushedNodes.delete(nodeId);
+}
+
 /**
  * Flush all pending Foundry agent updates by calling the update API.
  * Only clears successfully flushed entries; failed entries remain for retry.
  * Throws an aggregated error if any updates failed.
+ * @param onFlushed Optional callback invoked with the node IDs that were successfully flushed.
  */
-export async function flushPendingFoundryUpdates(): Promise<PromiseSettledResult<void>[]> {
+export async function flushPendingFoundryUpdates(onFlushed?: (flushedNodeIds: string[]) => void): Promise<PromiseSettledResult<void>[]> {
   const entries = Array.from(pendingUpdates.entries());
   if (entries.length === 0) {
     return [];
   }
 
-  const getToken = CognitiveServiceService().getFoundryAccessToken;
-  if (!getToken) {
-    // Token getter not configured (e.g. VS Code) — skip silently
+  const service = CognitiveServiceService();
+  const httpClient = service.httpClient;
+  const proxyBaseUrl = service.foundryProxyBaseUrl;
+  if (!httpClient || !proxyBaseUrl) {
     return [];
   }
 
+  const flushedNodeIds: string[] = [];
+
   const results = await Promise.allSettled(
     entries.map(async ([nodeId, { projectEndpoint, agentId, updates }]) => {
-      const token = await getToken();
-      await updateFoundryAgent(projectEndpoint, agentId, token, updates);
+      await updateFoundryAgentViaProxy({ httpClient, proxyBaseUrl, foundryEndpoint: projectEndpoint }, agentId, updates);
       // Only clear this entry on success
       pendingUpdates.delete(nodeId);
+      recentlyFlushedNodes.add(nodeId);
+      flushedNodeIds.push(nodeId);
     })
   );
+
+  if (flushedNodeIds.length > 0) {
+    onFlushed?.(flushedNodeIds);
+  }
 
   const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
   if (failures.length > 0) {

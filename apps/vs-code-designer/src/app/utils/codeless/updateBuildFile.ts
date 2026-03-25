@@ -140,6 +140,7 @@ export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dot
         case DotnetVersion.net6:
           packageVersion = '4.1.3';
           break;
+        case DotnetVersion.net10:
         case DotnetVersion.net8:
           packageVersion = '4.5.0';
           break;

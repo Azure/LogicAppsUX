@@ -4,7 +4,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
-import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
@@ -334,6 +334,25 @@ export const serializeOperation = async (
     removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
   }
 
+  // If dynamic inputs are not yet available (still loading, failed, or never started) and
+  // no stashed parameters exist, preserve the original definition's inputs so dynamic
+  // parameter values are not lost on save.
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
+  const hasDynamicInputsError = !!errors?.[ErrorLevel.DynamicInputs];
+  const nodeExpectsDynamicInputs =
+    nodeInputs?.dynamicLoadStatus !== undefined && nodeInputs.dynamicLoadStatus !== DynamicLoadStatus.SUCCEEDED;
+  const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
+  const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
+  if ((hasDynamicInputsError || nodeExpectsDynamicInputs) && !hasStash && !hasDynamicParamsInGroups) {
+    const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
+    if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
+      serializedOperation = {
+        ...serializedOperation,
+        inputs: merge({}, originalDef.inputs, serializedOperation.inputs),
+      };
+    }
+  }
+
   return serializedOperation;
 };
 
@@ -590,15 +609,29 @@ export interface SerializedParameter extends ParameterInfo {
 export const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId) as NodeInputs;
-  return getOperationInputParameters(nodeInputs).map((input) => ({
+  const shouldEncode = shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {});
+
+  const currentParams = getOperationInputParameters(nodeInputs);
+  const serialized = currentParams.map((input) => ({
     ...input,
-    value: parameterValueToString(
-      input,
-      true /* isDefinitionValue */,
-      idReplacements,
-      shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {})
-    ),
+    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements, shouldEncode),
   }));
+
+  // If dynamic parameters were stashed (cleared during loading or after failure),
+  // include them as fallback so their values are not lost on save.
+  const stashed = nodeInputs?.stashedDynamicParameterValues;
+  if (stashed?.length) {
+    const currentKeys = new Set(currentParams.map((p) => p.parameterKey));
+    const missingStashed = stashed.filter((p) => !currentKeys.has(p.parameterKey));
+    for (const param of missingStashed) {
+      serialized.push({
+        ...param,
+        value: parameterValueToString(param, true /* isDefinitionValue */, idReplacements, shouldEncode),
+      });
+    }
+  }
+
+  return serialized;
 };
 
 const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
@@ -907,7 +940,6 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.OpenApiConnection: {
-      // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
         host: {
@@ -968,17 +1000,11 @@ const serializeHost = (
 };
 
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
+  const result = { ...inputs };
   for (const [key, value] of Object.entries(hostInfo)) {
-    if (inputs[key]) {
-      // eslint-disable-next-line no-param-reassign
-      inputs[key] = { ...inputs[key], ...value };
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      inputs[key] = value;
-    }
+    result[key] = result[key] ? { ...result[key], ...value } : value;
   }
-
-  return inputs;
+  return result;
 };
 
 //#endregion

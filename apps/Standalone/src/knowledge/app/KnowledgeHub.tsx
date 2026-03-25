@@ -4,11 +4,16 @@ import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import {
+  BaseCognitiveServiceService,
+  BaseGatewayService,
   BaseResourceService,
   StandardConnectionService,
   type LocalConnectionModel,
   type ConnectionAndAppSetting,
   type ConnectionsData,
+  clone,
+  resolveConnectionsReferences,
+  type UploadFile,
 } from '@microsoft/logic-apps-shared';
 import { useKnowledgeStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
@@ -18,9 +23,10 @@ import {
   useConnectionsData,
   useParametersData,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import { clone, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { Spinner } from '@fluentui/react-components';
+import { CustomConnectionParameterEditorService } from '../Services/connectionParameterEditor';
+import { environment } from '../../environments/environment';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -72,12 +78,7 @@ export const KnowledgeHub = () => {
   );
 
   if (isSettingsLoading || isParametersLoading || isConnectionsLoading) {
-    return (
-      <>
-        <div id="knowledge-layer-host" className={styles.layerHost} />
-        <Spinner style={{ margin: '0 auto', paddingTop: '100px' }} size="large" />
-      </>
-    );
+    return <Spinner style={{ margin: '0 auto', paddingTop: '100px' }} size="large" />;
   }
 
   return (
@@ -87,8 +88,7 @@ export const KnowledgeHub = () => {
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
               <KnowledgeDataProvider resourceDetails={resourceDetails} services={services} isDarkMode={theme === 'dark'}>
-                <KnowledgeHubWizard />
-                <div id="knowledge-layer-host" className={styles.layerHost} />
+                <KnowledgeHubWizard onUploadArtifact={uploadFileToKnowledgeHub} />
               </KnowledgeDataProvider>
             </div>
           </div>
@@ -127,9 +127,100 @@ const getServices = (
     writeConnection: addConnection as any,
   });
 
+  const gatewayService = new BaseGatewayService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersions: {
+      subscription: apiVersion,
+      gateway: '2016-06-01',
+    },
+  });
+
+  const cognitiveService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+    identity: {} as any, // Placeholder for IIdentity, not used in this context
+  });
+
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
   return {
     connectionService,
     resourceService,
+    gatewayService,
+    cognitiveService,
+    connectionParameterEditorService,
     hostService: {} as any, // Placeholder for IHostService, not used in this context
   };
+};
+
+const uploadFileToKnowledgeHub = async (
+  siteResourceId: string,
+  hubName: string,
+  content: { file: UploadFile; name: string; description?: string },
+  setIsLoading: (isLoading: boolean) => void
+): Promise<void> => {
+  const { file, name, description } = content;
+  const contentType = file.file.type || 'application/octet-stream';
+
+  const uri = `https://management.azure.com${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgehubs/${hubName}/knowledgeArtifacts/${name}?api-version=2018-11-01`;
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const base64Content = (reader.result as string).split(',')[1]; // Remove data URL prefix
+
+      const payload = {
+        description: description,
+        payload: {
+          '$content-type': contentType,
+          $content: base64Content,
+        },
+      };
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.onloadstart = () => {
+        setIsLoading(true);
+      };
+
+      xhr.onloadend = () => {
+        setIsLoading(false);
+        file.setProgress?.(1);
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        setIsLoading(false);
+        reject(new Error('Upload failed due to network error'));
+      };
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          file.setProgress?.(e.loaded / e.total);
+        }
+      };
+
+      xhr.open('PUT', uri, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', `Bearer ${environment.armToken}`);
+      xhr.setRequestHeader('Cache-Control', 'no-cache');
+
+      xhr.send(JSON.stringify(payload));
+    };
+
+    reader.onerror = () => {
+      setIsLoading(false);
+      reject(new Error('Failed to read file'));
+    };
+
+    reader.readAsDataURL(file.file);
+  });
 };

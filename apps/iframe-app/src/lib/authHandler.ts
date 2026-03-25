@@ -297,7 +297,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
       return;
     }
 
-    // Single path for auth checking - prevents duplicate success calls
+    // Re-check: another tick may have completed during the async block above
     if (completed) {
       return;
     }
@@ -320,12 +320,9 @@ export function openLoginPopup(options: LoginPopupOptions): void {
 
       if (authInfo.isAuthenticated) {
         handleSuccess(authInfo);
-      } else if (!authInfo.isAuthenticated) {
-        // Only fail if popup is closed AND not authenticated
-        handleFailure(authInfo.error as Error);
-      } else if (popupIsClosed && !completed) {
-        // Only fail if popup is closed AND not authenticated
-        handleFailure(new Error('Login cancelled or failed'));
+      } else if (popupIsClosed) {
+        // Only fail when popup is closed AND user is not authenticated
+        handleFailure(authInfo.error ?? new Error('Login cancelled or failed'));
       }
       // If not authenticated but popup still open, keep polling
     } catch (error) {
@@ -334,7 +331,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
         handleFailure(err);
       }
     }
-  }, 500); // Poll every 500ms
+  }, 500);
 
   // Timeout handler
   const timeoutId = setTimeout(() => {
@@ -342,7 +339,6 @@ export function openLoginPopup(options: LoginPopupOptions): void {
       return;
     }
     console.log('[Auth] Login timed out');
-    cleanup();
     if (!popup.closed) {
       popup.close();
     }
