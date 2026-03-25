@@ -522,10 +522,35 @@ async function waitForCreateWorkspaceFormReady(driver: WebDriver, timeoutMs = 12
  * Fluent UI renders labels with `for` pointing to the input's ID,
  * or labels and inputs are siblings within the same field container.
  */
+function toXPathLiteral(value: string): string {
+  if (!value.includes("'")) {
+    return `'${value}'`;
+  }
+
+  if (!value.includes('"')) {
+    return `"${value}"`;
+  }
+
+  const parts = value.split("'");
+  return `concat(${parts
+    .map((part, index) => {
+      const literals = [];
+      if (part) {
+        literals.push(`'${part}'`);
+      }
+      if (index < parts.length - 1) {
+        literals.push(`"'"`);
+      }
+      return literals.join(', ');
+    })
+    .filter(Boolean)
+    .join(', ')})`;
+}
+
 async function findInputByLabel(driver: WebDriver, labelText: string): Promise<WebElement> {
   // Strategy 1: Find label exactly matching the text (allowing for trailing required indicators)
   // Use a two-step approach: first try the label whose text starts with exactly our labelText
-  const allLabels = await driver.findElements(By.xpath(`//label[contains(text(), '${labelText}')]`));
+  const allLabels = await driver.findElements(By.xpath(`//label[contains(text(), ${toXPathLiteral(labelText)})]`));
   const visibleLabels: WebElement[] = [];
   for (const label of allLabels) {
     try {
@@ -628,7 +653,7 @@ async function findInputByLabel(driver: WebDriver, labelText: string): Promise<W
  */
 async function findDropdownByLabel(driver: WebDriver, labelText: string): Promise<WebElement> {
   // Strategy 1: label with 'for' -> button with that id
-  const labels = await driver.findElements(By.xpath(`//label[contains(text(), '${labelText}')]`));
+  const labels = await driver.findElements(By.xpath(`//label[contains(text(), ${toXPathLiteral(labelText)})]`));
   for (const label of labels) {
     const forAttr = await label.getAttribute('for');
     if (forAttr) {
@@ -778,7 +803,7 @@ async function selectDropdownOption(driver: WebDriver, dropdown: WebElement, opt
 async function selectRadioOption(driver: WebDriver, optionLabel: string): Promise<void> {
   // Fluent UI RadioGroup: <input type="radio"> with associated <label>
   // Strategy: find label text, click it or click the radio input next to it
-  const labels = await driver.findElements(By.xpath(`//label[contains(text(), '${optionLabel}')]`));
+  const labels = await driver.findElements(By.xpath(`//label[contains(text(), ${toXPathLiteral(optionLabel)})]`));
 
   if (labels.length > 0) {
     await labels[0].click();
@@ -903,7 +928,7 @@ async function waitForNextButton(driver: WebDriver, timeoutMs = 30_000): Promise
  * Find a button by its text content.
  */
 async function findButtonByText(driver: WebDriver, text: string): Promise<WebElement> {
-  const buttons = await driver.findElements(By.xpath(`//button[contains(text(), '${text}')]`));
+  const buttons = await driver.findElements(By.xpath(`//button[contains(text(), ${toXPathLiteral(text)})]`));
   if (buttons.length === 0) {
     throw new Error(`Button with text "${text}" not found`);
   }
@@ -1722,7 +1747,7 @@ describe('Create Workspace Tests', function () {
     async function findValidationMessage(drv: WebDriver, expectedText: string, timeout = ELEMENT_TIMEOUT): Promise<WebElement> {
       const deadline = Date.now() + timeout;
       while (Date.now() < deadline) {
-        const candidates = await drv.findElements(By.xpath(`//*[contains(text(), '${expectedText.replace(/'/g, "\\'")}')]`));
+        const candidates = await drv.findElements(By.xpath(`//*[contains(text(), ${toXPathLiteral(expectedText)})]`));
         for (const el of candidates) {
           try {
             if (await el.isDisplayed()) {
@@ -1845,10 +1870,9 @@ describe('Create Workspace Tests', function () {
 
         // Strategy 3: global fallback when field linkage is not exposed by accessibility attrs
         if (expectedContains) {
-          const escaped = expectedContains.replace(/'/g, "\\'");
           const candidates = await driver.findElements(
             By.xpath(
-              `//*[contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '${escaped.toLowerCase()}')]`
+              `//*[contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ${toXPathLiteral(expectedContains.toLowerCase())})]`
             )
           );
           for (const el of candidates) {
@@ -1892,7 +1916,7 @@ describe('Create Workspace Tests', function () {
       const labelXpath =
         labelText === 'Function name'
           ? "contains(text(), 'Function name') and not(contains(text(), 'namespace'))"
-          : `contains(text(), '${labelText}')`;
+          : `contains(text(), ${toXPathLiteral(labelText)})`;
 
       const scopedLabels = await drv.findElements(
         By.xpath(`//label[contains(text(), 'Rules engine folder name')]/following::label[${labelXpath}]`)
@@ -1928,7 +1952,7 @@ describe('Create Workspace Tests', function () {
      */
     async function assertNoValidationMessage(drv: WebDriver, text: string): Promise<void> {
       await sleep(TYPE_SETTLE);
-      const candidates = await drv.findElements(By.xpath(`//*[contains(text(), '${text.replace(/'/g, "\\'")}')]`));
+      const candidates = await drv.findElements(By.xpath(`//*[contains(text(), ${toXPathLiteral(text)})]`));
       for (const el of candidates) {
         try {
           if (await el.isDisplayed()) {
