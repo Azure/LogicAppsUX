@@ -1,6 +1,6 @@
 import { Badge, Button, Card, Caption1, Caption1Strong, Spinner, Text, Tooltip } from '@fluentui/react-components';
 import { EditRegular, PlayRegular, DeleteRegular } from '@fluentui/react-icons';
-import type { Evaluator } from '@microsoft/logic-apps-shared';
+import { EvaluatorTemplate, type Evaluator } from '@microsoft/logic-apps-shared';
 import { useSelectedEvaluationAgentName, useEvaluationDataSelected } from '../../core/state/evaluation/evaluationSelectors';
 import { setEvaluationViewMode, setRunningEvaluatorName } from '../../core/state/evaluation/evaluationSlice';
 import { useEvaluation, useRunEvaluation } from '../../core/queries/evaluations';
@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
 import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
+import { isModelAsJudgeEvaluator } from './evaluatorFormHelpers';
 
 interface EvaluatorDetailsPanelProps {
   workflowName: string;
@@ -69,10 +70,10 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
 
           <div className={styles.fieldRow}>
             <Caption1Strong>Template</Caption1Strong>
-            <Text size={300}>{evaluator.template === 'CustomPrompt' ? 'Custom Prompt' : evaluator.template}</Text>
+            <Text size={300}>{evaluator.template === EvaluatorTemplate.CustomPrompt ? 'Custom Prompt' : evaluator.template}</Text>
           </div>
 
-          {evaluator.template !== 'ToolCallTrajectory' && (
+          {isModelAsJudgeEvaluator(evaluator.template) && (
             <>
               {evaluator.modelConfiguration?.referenceName && (
                 <div className={styles.fieldRow}>
@@ -115,14 +116,14 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
           )}
 
           {/* Template-specific parameters */}
-          {evaluator.template === 'CustomPrompt' && evaluator.parameters.prompt && (
+          {evaluator.template === EvaluatorTemplate.CustomPrompt && evaluator.parameters.prompt && (
             <div className={styles.fieldRow}>
               <Caption1Strong>Instructions</Caption1Strong>
               <div className={styles.promptValue}>{evaluator.parameters.prompt}</div>
             </div>
           )}
 
-          {evaluator.template === 'ToolCallTrajectory' && (
+          {evaluator.template === EvaluatorTemplate.ToolCallTrajectory && (
             <>
               {evaluator.parameters.expectedToolCalls && evaluator.parameters.expectedToolCalls.length > 0 && (
                 <div className={styles.fieldRow}>
@@ -165,7 +166,7 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
             </>
           )}
 
-          {evaluator.template === 'SemanticSimilarity' && evaluator.parameters.expectedChatResponse && (
+          {evaluator.template === EvaluatorTemplate.SemanticSimilarity && evaluator.parameters.expectedChatResponse && (
             <div className={styles.fieldRow}>
               <Caption1Strong>Expected Chat Response</Caption1Strong>
               <div className={styles.promptValue}>{evaluator.parameters.expectedChatResponse}</div>

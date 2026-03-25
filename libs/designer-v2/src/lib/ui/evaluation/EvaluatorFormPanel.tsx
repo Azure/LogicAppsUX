@@ -32,13 +32,15 @@ import {
   usePendingFormData,
 } from '../../core/state/evaluation/evaluationSelectors';
 import { useCreateOrUpdateEvaluator, useEvaluators } from '../../core/queries/evaluations';
-import { equals, type EvaluatorTemplate, type ComparisonMethod } from '@microsoft/logic-apps-shared';
+import { equals, EvaluatorTemplate, evaluatorTemplateDisplayMap, ToolCallComparisonMethod } from '@microsoft/logic-apps-shared';
 import type { EvaluatorFormData } from './evaluatorFormHelpers';
 import {
   createDefaultEvaluatorFormData,
   evaluatorToFormData,
   formDataToEvaluator,
   createDefaultToolCallFormItem,
+  isModelAsJudgeEvaluator,
+  isGroundTruthEvaluator,
 } from './evaluatorFormHelpers';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
@@ -127,7 +129,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
       return;
     }
 
-    if (formData.template !== 'ToolCallTrajectory' && !formData.connectionReferenceKey) {
+    if (isModelAsJudgeEvaluator(formData.template) && !formData.connectionReferenceKey) {
       setError('An agent connection is required');
       return;
     }
@@ -180,24 +182,18 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         <Field label="Template">
           <Dropdown
             id="evaluator-template"
-            value={
-              formData.template === 'CustomPrompt'
-                ? 'Custom Prompt'
-                : formData.template === 'ToolCallTrajectory'
-                  ? 'Tool Call Trajectory'
-                  : 'Semantic Similarity'
-            }
+            value={evaluatorTemplateDisplayMap[formData.template]}
             selectedOptions={[formData.template]}
             onOptionSelect={(_e, data) => updateFormField('template', data.optionValue as EvaluatorTemplate)}
           >
-            <Option value="CustomPrompt">Custom Prompt</Option>
-            <Option value="ToolCallTrajectory">Tool Call Trajectory</Option>
-            <Option value="SemanticSimilarity">Semantic Similarity</Option>
+            <Option value={EvaluatorTemplate.CustomPrompt}>Custom Prompt</Option>
+            <Option value={EvaluatorTemplate.ToolCallTrajectory}>Tool Call Trajectory</Option>
+            <Option value={EvaluatorTemplate.SemanticSimilarity}>Semantic Similarity</Option>
           </Dropdown>
         </Field>
 
-        {/* Agent connection - not needed for ToolCallTrajectory */}
-        {formData.template !== 'ToolCallTrajectory' && (
+        {/* Agent connection */}
+        {isModelAsJudgeEvaluator(formData.template) && (
           <Field label="Agent connection" required>
             {formData.connectionReferenceKey ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -222,8 +218,8 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
           </Field>
         )}
 
-        {/* AI Model - shown when a connection is selected and not ToolCallTrajectory */}
-        {formData.template !== 'ToolCallTrajectory' && formData.connectionReferenceKey && (
+        {/* AI Model - shown when a connection is selected for LLM-as-judge eval */}
+        {isModelAsJudgeEvaluator(formData.template) && formData.connectionReferenceKey && (
           <Field label="AI Model">
             {isLoadingDeployments ? (
               <Spinner size="tiny" label="Loading deployments..." />
@@ -262,7 +258,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         )}
 
         {/* Ground truth fields */}
-        {(formData.template === 'ToolCallTrajectory' || formData.template === 'SemanticSimilarity') && (
+        {isGroundTruthEvaluator(formData.template) && (
           <>
             <RadioGroup
               value={formData.useGroundTruthRun ? 'groundTruth' : 'manual'}
@@ -270,7 +266,9 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
             >
               <Radio
                 value="manual"
-                label={formData.template === 'ToolCallTrajectory' ? 'Provide expected tool calls' : 'Provide expected response'}
+                label={
+                  formData.template === EvaluatorTemplate.ToolCallTrajectory ? 'Provide expected tool calls' : 'Provide expected response'
+                }
               />
               <Radio value="groundTruth" label="Use ground truth run" />
             </RadioGroup>
@@ -299,7 +297,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         )}
 
         {/* CustomPrompt: Instructions */}
-        {formData.template === 'CustomPrompt' && (
+        {formData.template === EvaluatorTemplate.CustomPrompt && (
           <Field label="Instructions">
             <Textarea
               id="prompt"
@@ -312,7 +310,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         )}
 
         {/* ToolCallTrajectory: Expected Tool Calls */}
-        {formData.template === 'ToolCallTrajectory' && !formData.useGroundTruthRun && (
+        {formData.template === EvaluatorTemplate.ToolCallTrajectory && !formData.useGroundTruthRun && (
           <Field label="Expected Tool Calls">
             <div className={styles.toolCallsListEditable}>
               {formData.expectedToolCalls.map((toolCall, index) => (
@@ -371,7 +369,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         )}
 
         {/* ToolCallTrajectory: Optional settings */}
-        {formData.template === 'ToolCallTrajectory' && (
+        {formData.template === EvaluatorTemplate.ToolCallTrajectory && (
           <>
             <div className={styles.formRow}>
               <div className={styles.formFieldHalf}>
@@ -391,13 +389,13 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
                     id="comparison"
                     value={formData.comparisonMethod}
                     selectedOptions={[formData.comparisonMethod]}
-                    onOptionSelect={(_e, data) => updateFormField('comparisonMethod', data.optionValue as ComparisonMethod)}
+                    onOptionSelect={(_e, data) => updateFormField('comparisonMethod', data.optionValue as ToolCallComparisonMethod)}
                   >
-                    <Option value="exact">Exact</Option>
-                    <Option value="in-order">In-order</Option>
-                    <Option value="any-order">Any-order</Option>
-                    <Option value="precision">Precision</Option>
-                    <Option value="recall">Recall</Option>
+                    <Option value={ToolCallComparisonMethod.Exact}>Exact</Option>
+                    <Option value={ToolCallComparisonMethod.InOrder}>In-order</Option>
+                    <Option value={ToolCallComparisonMethod.AnyOrder}>Any-order</Option>
+                    <Option value={ToolCallComparisonMethod.Precision}>Precision</Option>
+                    <Option value={ToolCallComparisonMethod.Recall}>Recall</Option>
                   </Dropdown>
                 </Field>
               </div>
@@ -411,7 +409,7 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
         )}
 
         {/* SemanticSimilarity: Expected response */}
-        {formData.template === 'SemanticSimilarity' && !formData.useGroundTruthRun && (
+        {formData.template === EvaluatorTemplate.SemanticSimilarity && !formData.useGroundTruthRun && (
           <Field label="Expected Chat Response">
             <Textarea
               id="expected-response"

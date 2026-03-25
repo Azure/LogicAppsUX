@@ -1,4 +1,4 @@
-import type { EvaluatorTemplate, ComparisonMethod, Evaluator, EvaluatorParameters } from '@microsoft/logic-apps-shared';
+import { EvaluatorTemplate, ToolCallComparisonMethod, type Evaluator, type EvaluatorParameters } from '@microsoft/logic-apps-shared';
 
 export interface ToolCallFormItem {
   name: string;
@@ -15,13 +15,19 @@ export interface EvaluatorFormData {
   prompt: string;
   expectedToolCalls: ToolCallFormItem[];
   threshold: string;
-  comparisonMethod: ComparisonMethod;
+  comparisonMethod: ToolCallComparisonMethod;
   shouldCompareArgs: boolean;
   expectedChatResponse: string;
   useGroundTruthRun: boolean;
   groundTruthRunId: string;
   groundTruthAgentActionName: string;
 }
+
+export const isModelAsJudgeEvaluator = (template: EvaluatorTemplate): boolean =>
+  template === EvaluatorTemplate.CustomPrompt || template === EvaluatorTemplate.SemanticSimilarity;
+
+export const isGroundTruthEvaluator = (template: EvaluatorTemplate): boolean =>
+  template === EvaluatorTemplate.ToolCallTrajectory || template === EvaluatorTemplate.SemanticSimilarity;
 
 export const createDefaultToolCallFormItem = (): ToolCallFormItem => ({
   name: '',
@@ -30,7 +36,7 @@ export const createDefaultToolCallFormItem = (): ToolCallFormItem => ({
 
 export const createDefaultEvaluatorFormData = (): EvaluatorFormData => ({
   name: '',
-  template: 'CustomPrompt',
+  template: EvaluatorTemplate.CustomPrompt,
   connectionReferenceKey: '',
   deploymentId: '',
   agentModelType: '',
@@ -38,7 +44,7 @@ export const createDefaultEvaluatorFormData = (): EvaluatorFormData => ({
   prompt: '',
   expectedToolCalls: [],
   threshold: '',
-  comparisonMethod: 'exact',
+  comparisonMethod: ToolCallComparisonMethod.Exact,
   shouldCompareArgs: false,
   expectedChatResponse: '',
   useGroundTruthRun: false,
@@ -50,17 +56,16 @@ export const formDataToEvaluator = (formData: EvaluatorFormData): Evaluator => {
   const parameters: EvaluatorParameters = {};
 
   switch (formData.template) {
-    case 'CustomPrompt':
+    case EvaluatorTemplate.CustomPrompt:
       parameters.prompt = formData.prompt;
       break;
-    case 'ToolCallTrajectory': {
+    case EvaluatorTemplate.ToolCallTrajectory: {
       if (!formData.useGroundTruthRun) {
         parameters.expectedToolCalls = formData.expectedToolCalls
           .filter((tc) => tc.name.trim().length > 0)
-          .map((tc, index) => ({
+          .map((tc) => ({
             name: tc.name.trim(),
             arguments: JSON.parse(tc.arguments || '{}'),
-            callId: String(index),
           }));
       }
       if (formData.threshold) {
@@ -72,7 +77,7 @@ export const formDataToEvaluator = (formData: EvaluatorFormData): Evaluator => {
       parameters.shouldCompareArgs = formData.shouldCompareArgs;
       break;
     }
-    case 'SemanticSimilarity': {
+    case EvaluatorTemplate.SemanticSimilarity: {
       if (!formData.useGroundTruthRun) {
         parameters.expectedChatResponse = formData.expectedChatResponse;
       }
@@ -93,7 +98,7 @@ export const formDataToEvaluator = (formData: EvaluatorFormData): Evaluator => {
     }
   }
 
-  if (formData.template === 'ToolCallTrajectory') {
+  if (formData.template === EvaluatorTemplate.ToolCallTrajectory) {
     return baseEvaluator;
   }
 
@@ -133,7 +138,7 @@ export const evaluatorToFormData = (evaluator: Evaluator): EvaluatorFormData => 
         arguments: JSON.stringify(tc.arguments, null, 2),
       })) ?? [],
     threshold: evaluator.parameters.threshold?.toString() ?? '',
-    comparisonMethod: evaluator.parameters.comparisonMethod ?? 'exact',
+    comparisonMethod: evaluator.parameters.comparisonMethod ?? ToolCallComparisonMethod.Exact,
     shouldCompareArgs: evaluator.parameters.shouldCompareArgs ?? false,
     expectedChatResponse: evaluator.parameters.expectedChatResponse ?? '',
     useGroundTruthRun,
