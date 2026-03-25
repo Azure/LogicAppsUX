@@ -42,6 +42,7 @@ import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
 import handoffManifest from './manifests/handoff';
+import invokeFunctionManifest from './manifests/invokefunction';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
@@ -825,6 +826,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [httpwebhooktrigger, httpWebhookTriggerManifest],
   [incrementvariable, incrementManifest],
   [initializevariable, initializeManifest],
+  [invokefunction, invokeFunctionManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],
