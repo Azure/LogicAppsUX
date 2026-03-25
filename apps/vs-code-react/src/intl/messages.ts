@@ -390,6 +390,11 @@ export const workspaceMessages = defineMessages({
     id: 'ZY5ygq',
     description: 'Function namespace empty text',
   },
+  FUNCTION_NAMESPACE_VALIDATION: {
+    defaultMessage: 'Function namespace must be a valid C# namespace.',
+    id: '7/FvCp',
+    description: 'Function namespace validation message text',
+  },
   FUNCTION_NAME_EMPTY: {
     defaultMessage: 'Function name cannot be empty.',
     id: 'MbFszg',

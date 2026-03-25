@@ -19,28 +19,20 @@ export const validateWorkflowName = (name: string, intlText: any) => {
 
 export const validateFunctionNamespace = (namespace: string, intlText: any) => {
   if (!namespace) {
-    return intlText.FUNCTION_NAMESPACE_EMPTY ?? 'Function namespace cannot be empty.';
+    return intlText.FUNCTION_NAMESPACE_EMPTY;
   }
   if (!namespaceValidation.test(namespace)) {
-    return (
-      intlText.FUNCTION_NAMESPACE_VALIDATION ??
-      intlText.FUNCTION_NAMESPACE_VALIDATION_MESSAGE ??
-      'Function namespace must be a valid C# namespace.'
-    );
+    return intlText.FUNCTION_NAMESPACE_VALIDATION;
   }
   return undefined;
 };
 
 export const validateFunctionName = (name: string, intlText: any) => {
   if (!name) {
-    return intlText.FUNCTION_NAME_EMPTY ?? 'Function name cannot be empty.';
+    return intlText.FUNCTION_NAME_EMPTY;
   }
   if (!functionNameValidation.test(name)) {
-    return (
-      intlText.FUNCTION_NAME_VALIDATION ??
-      intlText.FUNCTION_NAME_VALIDATION_MESSAGE ??
-      'Function name must start with a letter and can only contain letters, digits, and underscores ("_").'
-    );
+    return intlText.FUNCTION_NAME_VALIDATION;
   }
   return undefined;
 };

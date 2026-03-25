@@ -1728,6 +1728,9 @@ describe('Create Workspace Tests', function () {
             if (await el.isDisplayed()) {
               const text = await el.getText();
               if (text.includes(expectedText)) {
+                // Scroll the validation message into view so screenshots capture it
+                await drv.executeScript('arguments[0].scrollIntoView({block:"center"});', el);
+                await sleep(200);
                 return el;
               }
             }
@@ -1812,6 +1815,8 @@ describe('Create Workspace Tests', function () {
                 continue;
               }
               if (!expectedContains || text.toLowerCase().includes(expectedContains.toLowerCase())) {
+                await driver.executeScript('arguments[0].scrollIntoView({block:"center"});', el);
+                await sleep(200);
                 return;
               }
             }
@@ -1831,6 +1836,8 @@ describe('Create Workspace Tests', function () {
               continue;
             }
             if (!expectedContains || text.toLowerCase().includes(expectedContains.toLowerCase())) {
+              await driver.executeScript('arguments[0].scrollIntoView({block:"center"});', el);
+              await sleep(200);
               return;
             }
           }
@@ -1848,6 +1855,8 @@ describe('Create Workspace Tests', function () {
             if (await el.isDisplayed()) {
               const text = (await el.getText()).trim();
               if (text.toLowerCase().includes(expectedContains.toLowerCase())) {
+                await driver.executeScript('arguments[0].scrollIntoView({block:"center"});', el);
+                await sleep(200);
                 return;
               }
             }
@@ -2528,14 +2537,14 @@ describe('Create Workspace Tests', function () {
       await clearAndType(nsInput, '123.Bad.Namespace');
       await sleep(TYPE_SETTLE);
 
-      await assertInputShowsValidationMessage(nsInput, 'namespace');
+      await assertInputShowsValidationMessage(nsInput, 'valid C# namespace');
       await assertNextButtonDisabled(driver);
       console.log('[validCcNs] Next button disabled for invalid namespace "123.Bad.Namespace"');
 
       await clearAndType(nsInput, 'Invalid-Namespace');
       await sleep(TYPE_SETTLE);
 
-      await assertInputShowsValidationMessage(nsInput, 'namespace');
+      await assertInputShowsValidationMessage(nsInput, 'valid C# namespace');
       await assertNextButtonDisabled(driver);
       console.log('[validCcNs] Next button disabled for invalid namespace "Invalid-Namespace"');
 
@@ -2563,6 +2572,7 @@ describe('Create Workspace Tests', function () {
 
       await clearField(nsInput);
 
+      await assertInputShowsValidationMessage(nsInput, 'cannot be empty');
       await assertNextButtonDisabled(driver);
       console.log('[validCcNsEmpty] Next button disabled for empty namespace');
 
@@ -2600,6 +2610,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, '999func');
       await sleep(TYPE_SETTLE);
 
+      await assertInputShowsValidationMessage(fnInput, 'must start with a letter');
       await assertNextButtonDisabled(driver);
       console.log('[validCcFnName] Next button disabled for invalid function name "999func"');
 
@@ -2638,6 +2649,7 @@ describe('Create Workspace Tests', function () {
 
       await clearField(fnInput);
 
+      await assertInputShowsValidationMessage(fnInput, 'cannot be empty');
       await assertNextButtonDisabled(driver);
       console.log('[validCcFnEmpty] Next button disabled for empty function name');
 
@@ -2674,6 +2686,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, 'my-func');
       await sleep(TYPE_SETTLE);
 
+      await assertInputShowsValidationMessage(fnInput, 'must start with a letter');
       await assertNextButtonDisabled(driver);
       console.log('[validCcFnHyphen] Next button disabled for hyphenated function name "my-func"');
 
@@ -2761,6 +2774,138 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, uniqueName('validfn'));
       await captureScreenshot(driver, 'validCcFnUnderscore-passed');
       console.log('[validCcFnUnderscore] PASSED');
+    });
+
+    it('should keep Next disabled for all partial-fill combinations of custom code fields', async () => {
+      // Helper to find CC inputs
+      const findCcFolderInput = async () => {
+        for (const label of ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name']) {
+          try {
+            return await findInputByLabel(driver, label);
+          } catch {
+            // Try next
+          }
+        }
+        throw new Error('Could not find custom code folder name input');
+      };
+      const findCcNsInput = async () => {
+        for (const label of ['Function namespace', 'Namespace', 'namespace']) {
+          try {
+            return await findInputByLabel(driver, label);
+          } catch {
+            // Try next
+          }
+        }
+        throw new Error('Could not find function namespace input');
+      };
+      const findCcFnInput = async () => {
+        let fnInput: WebElement | null = null;
+        const fnLabels = await driver.findElements(
+          By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
+        );
+        if (fnLabels.length > 0) {
+          const forAttr = await fnLabels[0].getAttribute('for');
+          if (forAttr) {
+            const inputs = await driver.findElements(By.id(forAttr));
+            if (inputs.length > 0) {
+              fnInput = inputs[0];
+            }
+          }
+          if (!fnInput) {
+            const parent = await fnLabels[0].findElement(By.xpath('..'));
+            const inputs = await parent.findElements(By.css('input'));
+            if (inputs.length > 0) {
+              fnInput = inputs[0];
+            }
+          }
+        }
+        if (!fnInput) {
+          fnInput = await findInputByLabel(driver, 'Function name');
+        }
+        return fnInput;
+      };
+
+      // Ensure custom code is selected and .NET Version is set (prerequisite)
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+      const dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
+      await selectDropdownOption(driver, dotNetDropdown, '.NET 8');
+      await sleep(TYPE_SETTLE);
+
+      const folderInput = await findCcFolderInput();
+      const nsInput = await findCcNsInput();
+      const fnInput = await findCcFnInput();
+
+      // --- Combo 1: all empty ---
+      await clearField(folderInput);
+      await clearField(nsInput);
+      await clearField(fnInput);
+      await sleep(TYPE_SETTLE);
+      await findValidationMessage(driver, 'cannot be empty');
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 1 (all empty): Next disabled ✓');
+
+      // --- Combo 2: folder valid, namespace empty, fn empty ---
+      await clearAndType(folderInput, uniqueName('ccfolder'));
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 2 (folder valid, ns empty, fn empty): Next disabled ✓');
+
+      // --- Combo 3: folder empty, namespace valid, fn empty ---
+      await clearField(folderInput);
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 3 (folder empty, ns valid, fn empty): Next disabled ✓');
+
+      // --- Combo 4: folder empty, namespace empty, fn valid ---
+      await clearField(nsInput);
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 4 (folder empty, ns empty, fn valid): Next disabled ✓');
+
+      // --- Combo 5: folder valid, namespace valid, fn empty ---
+      await clearAndType(folderInput, uniqueName('ccfolder'));
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await clearField(fnInput);
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 5 (folder valid, ns valid, fn empty): Next disabled ✓');
+
+      // --- Combo 6: folder valid, namespace empty, fn valid ---
+      await clearField(nsInput);
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 6 (folder valid, ns empty, fn valid): Next disabled ✓');
+
+      // --- Combo 7: folder empty, namespace valid, fn valid ---
+      await clearField(folderInput);
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[ccPartial] Combo 7 (folder empty, ns valid, fn valid): Next disabled ✓');
+
+      // --- Combo 8: all valid → Next should be ENABLED ---
+      await clearAndType(folderInput, uniqueName('validfolder'));
+      await clearAndType(nsInput, 'ValidNamespace');
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await sleep(TYPE_SETTLE);
+
+      const nextBtn = await waitForNextButton(driver, 30_000);
+      const isEnabled =
+        (await nextBtn.getAttribute('disabled')) !== 'true' &&
+        (await nextBtn.getAttribute('disabled')) !== '' &&
+        (await nextBtn.getAttribute('aria-disabled')) !== 'true';
+      if (!isEnabled) {
+        await dumpFormState(driver);
+        throw new Error('Next button should be enabled when all custom code fields are valid');
+      }
+      console.log('[ccPartial] Combo 8 (all valid): Next enabled ✓');
+
+      await captureScreenshot(driver, 'ccPartial-passed');
+      console.log('[ccPartial] PASSED: All 8 combos verified (7 disabled + 1 enabled)');
     });
 
     // -----------------------------------------------------------------------
@@ -2948,7 +3093,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(nsInput, 'Invalid-Namespace');
       await sleep(TYPE_SETTLE);
 
-      await assertInputShowsValidationMessage(nsInput, 'namespace');
+      await assertInputShowsValidationMessage(nsInput, 'valid C# namespace');
       await assertNextButtonDisabled(driver);
       console.log('[validReNs] Next button disabled for invalid namespace with hyphen');
 
@@ -2967,7 +3112,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(nsInput, '123.Bad.Namespace');
       await sleep(TYPE_SETTLE);
 
-      await assertInputShowsValidationMessage(nsInput, 'namespace');
+      await assertInputShowsValidationMessage(nsInput, 'valid C# namespace');
       await assertNextButtonDisabled(driver);
       console.log('[validReNsDigit] Next button disabled for namespace starting with digit');
 
@@ -2988,6 +3133,7 @@ describe('Create Workspace Tests', function () {
 
       await clearField(nsInput);
 
+      await assertInputShowsValidationMessage(nsInput, 'cannot be empty');
       await assertNextButtonDisabled(driver);
       console.log('[validReNsEmpty] Next button disabled for empty namespace');
 
@@ -3006,6 +3152,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, '999func');
       await sleep(TYPE_SETTLE);
 
+      await assertInputShowsValidationMessage(fnInput, 'must start with a letter');
       await assertNextButtonDisabled(driver);
       console.log('[validReFnName] Next button disabled for invalid function name');
 
@@ -3026,6 +3173,7 @@ describe('Create Workspace Tests', function () {
 
       await clearField(fnInput);
 
+      await assertInputShowsValidationMessage(fnInput, 'cannot be empty');
       await assertNextButtonDisabled(driver);
       console.log('[validReFnEmpty] Next button disabled for empty function name');
 
@@ -3044,6 +3192,7 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, 'my-func');
       await sleep(TYPE_SETTLE);
 
+      await assertInputShowsValidationMessage(fnInput, 'must start with a letter');
       await assertNextButtonDisabled(driver);
       console.log('[validReFnHyphen] Next button disabled for hyphenated function name "my-func"');
 
@@ -3095,6 +3244,99 @@ describe('Create Workspace Tests', function () {
       await clearAndType(fnInput, uniqueName('validfn'));
       await captureScreenshot(driver, 'validReFnUnderscore-passed');
       console.log('[validReFnUnderscore] PASSED');
+    });
+
+    it('should keep Next disabled for all partial-fill combinations of rules engine fields', async () => {
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with rules engine');
+      await sleep(1000);
+
+      // Helper to find RE inputs
+      const findReFolderInput = async () => {
+        for (const label of ['Rules engine folder name', 'rules engine folder', 'Folder name']) {
+          try {
+            return await findInputByLabel(driver, label);
+          } catch {
+            // Try next
+          }
+        }
+        throw new Error('Could not find rules engine folder name input');
+      };
+
+      const folderInput = await findReFolderInput();
+      const nsInput = await findRulesEngineInputByLabel(driver, 'Function namespace');
+      const fnInput = await findRulesEngineInputByLabel(driver, 'Function name');
+
+      // --- Combo 1: all empty ---
+      await clearField(folderInput);
+      await clearField(nsInput);
+      await clearField(fnInput);
+      await sleep(TYPE_SETTLE);
+      await findValidationMessage(driver, 'cannot be empty');
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 1 (all empty): Next disabled ✓');
+
+      // --- Combo 2: folder valid, namespace empty, fn empty ---
+      await clearAndType(folderInput, uniqueName('refolder'));
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 2 (folder valid, ns empty, fn empty): Next disabled ✓');
+
+      // --- Combo 3: folder empty, namespace valid, fn empty ---
+      await clearField(folderInput);
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 3 (folder empty, ns valid, fn empty): Next disabled ✓');
+
+      // --- Combo 4: folder empty, namespace empty, fn valid ---
+      await clearField(nsInput);
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 4 (folder empty, ns empty, fn valid): Next disabled ✓');
+
+      // --- Combo 5: folder valid, namespace valid, fn empty ---
+      await clearAndType(folderInput, uniqueName('refolder'));
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await clearField(fnInput);
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 5 (folder valid, ns valid, fn empty): Next disabled ✓');
+
+      // --- Combo 6: folder valid, namespace empty, fn valid ---
+      await clearField(nsInput);
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 6 (folder valid, ns empty, fn valid): Next disabled ✓');
+
+      // --- Combo 7: folder empty, namespace valid, fn valid ---
+      await clearField(folderInput);
+      await clearAndType(nsInput, 'Valid.Namespace');
+      await sleep(TYPE_SETTLE);
+      await assertNextButtonDisabled(driver);
+      console.log('[rePartial] Combo 7 (folder empty, ns valid, fn valid): Next disabled ✓');
+
+      // --- Combo 8: all valid → Next should be ENABLED ---
+      await clearAndType(folderInput, uniqueName('validrefolder'));
+      await clearAndType(nsInput, 'ValidNamespace');
+      await clearAndType(fnInput, uniqueName('validfn'));
+      await sleep(TYPE_SETTLE);
+
+      const nextBtn = await waitForNextButton(driver, 30_000);
+      const isEnabled =
+        (await nextBtn.getAttribute('disabled')) !== 'true' &&
+        (await nextBtn.getAttribute('disabled')) !== '' &&
+        (await nextBtn.getAttribute('aria-disabled')) !== 'true';
+      if (!isEnabled) {
+        await dumpFormState(driver);
+        throw new Error('Next button should be enabled when all rules engine fields are valid');
+      }
+      console.log('[rePartial] Combo 8 (all valid): Next enabled ✓');
+
+      await captureScreenshot(driver, 'rePartial-passed');
+      console.log('[rePartial] PASSED: All 8 combos verified (7 disabled + 1 enabled)');
     });
 
     // =========================================================================

@@ -23,7 +23,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as assert from 'assert';
-import { type WebDriver, VSBrowser, ModalDialog, By } from 'vscode-extension-tester';
+import { type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { sleep, captureScreenshot, openFolderInSession } from './helpers';
