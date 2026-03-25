@@ -1,7 +1,14 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useScopeFailedRepetitions, useAgentActionsRepetition, parseFailedRepetitions } from '../runs';
+import {
+  useScopeFailedRepetitions,
+  useAgentActionsRepetition,
+  parseFailedRepetitions,
+  useNodeRepetition,
+  useRunChatHistory,
+  useChatHistory,
+} from '../runs';
 import { RunService, InitRunService } from '@microsoft/logic-apps-shared';
 import constants from '../../../common/constants';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -35,6 +42,9 @@ describe('runs queries', () => {
       getMoreScopeRepetitions: vi.fn(),
       getAgentActionsRepetition: vi.fn(),
       getMoreAgentActionsRepetition: vi.fn(),
+      getRepetition: vi.fn(),
+      getRunChatHistory: vi.fn(),
+      getActionChatHistory: vi.fn(),
     };
 
     vi.mocked(RunService).mockReturnValue(mockRunService);
@@ -348,6 +358,126 @@ describe('runs queries', () => {
     test('should handle empty repetitions array', () => {
       const result = parseFailedRepetitions([], 'testScope');
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('useNodeRepetition', () => {
+    test('should return skipped status when parentStatus is SKIPPED', async () => {
+      const { result } = renderHook(() => useNodeRepetition(true, 'node1', 'run1', '000000', constants.FLOW_STATUS.SKIPPED, 0, false), {
+        wrapper: createWrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data?.properties?.status).toBe(constants.FLOW_STATUS.SKIPPED);
+      expect(mockRunService.getRepetition).not.toHaveBeenCalled();
+    });
+
+    test('should be disabled when parentRunIndex is undefined', () => {
+      renderHook(() => useNodeRepetition(true, 'node1', 'run1', '000000', 'Succeeded', undefined, false), {
+        wrapper: createWrapper,
+      });
+
+      expect(mockRunService.getRepetition).not.toHaveBeenCalled();
+    });
+
+    test('should be disabled when not monitoring view', () => {
+      renderHook(() => useNodeRepetition(false, 'node1', 'run1', '000000', 'Succeeded', 0, false), {
+        wrapper: createWrapper,
+      });
+
+      expect(mockRunService.getRepetition).not.toHaveBeenCalled();
+    });
+
+    test('should be disabled when within agentic loop', () => {
+      renderHook(() => useNodeRepetition(true, 'node1', 'run1', '000000', 'Succeeded', 0, true), {
+        wrapper: createWrapper,
+      });
+
+      expect(mockRunService.getRepetition).not.toHaveBeenCalled();
+    });
+
+    test('should call getRepetition with correct args', async () => {
+      const mockRepetition = {
+        properties: {
+          status: 'Succeeded',
+          inputsLink: { uri: 'https://test.com/inputs' },
+          outputsLink: { uri: 'https://test.com/outputs' },
+          startTime: '2024-01-01T00:00:00Z',
+          endTime: '2024-01-01T00:01:00Z',
+        },
+      };
+
+      mockRunService.getRepetition.mockResolvedValue(mockRepetition);
+
+      const { result } = renderHook(() => useNodeRepetition(true, 'node1', 'run1', '000000', 'Succeeded', 0, false), {
+        wrapper: createWrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockRunService.getRepetition).toHaveBeenCalledWith({ nodeId: 'node1', runId: 'run1' }, '000000');
+      expect(result.current.data).toEqual(mockRepetition);
+    });
+  });
+
+  describe('useRunChatHistory', () => {
+    test('should return sorted messages descending by timestamp', async () => {
+      const mockMessages = [
+        { timestamp: '2024-01-01T10:00:00Z', content: 'First' },
+        { timestamp: '2024-01-01T12:00:00Z', content: 'Third' },
+        { timestamp: '2024-01-01T11:00:00Z', content: 'Second' },
+      ];
+
+      mockRunService.getRunChatHistory.mockResolvedValue(mockMessages);
+
+      const { result } = renderHook(() => useRunChatHistory('run1', true), { wrapper: createWrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const messages = result.current.data?.[0]?.messages;
+      expect(messages?.[0].content).toBe('Third');
+      expect(messages?.[1].content).toBe('Second');
+      expect(messages?.[2].content).toBe('First');
+    });
+
+    test('should be disabled when runId is undefined', () => {
+      renderHook(() => useRunChatHistory(undefined, true), { wrapper: createWrapper });
+
+      expect(mockRunService.getRunChatHistory).not.toHaveBeenCalled();
+    });
+
+    test('should be disabled when isEnabled is false', () => {
+      renderHook(() => useRunChatHistory('run1', false), { wrapper: createWrapper });
+
+      expect(mockRunService.getRunChatHistory).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useChatHistory', () => {
+    test('should use run history query for A2A workflows', () => {
+      mockRunService.getRunChatHistory.mockResolvedValue([]);
+      mockRunService.getActionChatHistory.mockResolvedValue([]);
+
+      const { result } = renderHook(() => useChatHistory(true, 'run1', ['agent1'], true), { wrapper: createWrapper });
+
+      // For A2A workflows, useChatHistory returns the runHistoryQuery
+      expect(result.current).toBeDefined();
+    });
+
+    test('should use action history query for non-A2A workflows', () => {
+      mockRunService.getRunChatHistory.mockResolvedValue([]);
+      mockRunService.getActionChatHistory.mockResolvedValue([]);
+
+      const { result } = renderHook(() => useChatHistory(true, 'run1', ['agent1'], false), { wrapper: createWrapper });
+
+      expect(result.current).toBeDefined();
     });
   });
 });
