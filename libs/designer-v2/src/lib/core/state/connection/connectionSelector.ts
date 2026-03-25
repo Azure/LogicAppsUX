@@ -116,9 +116,19 @@ export const useConnectionRefs = (): ConnectionReferences => {
   });
 };
 
-export const useConnectionRefsByConnectorId = (connectorId?: string) => {
+export const useConnectionRefsByConnectorId = (connectorId?: string): ConnectionReference[] => {
   const allConnectionReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
   return allConnectionReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
+};
+
+export const useConnectionRefsWithKeysByConnectorId = (connectorId?: string): ConnectionReferences => {
+  const allConnectionReferences = useSelector((state: RootState) => state.connections.connectionReferences);
+  return Object.entries(allConnectionReferences).reduce((acc: ConnectionReferences, [key, ref]) => {
+    if (ref.api.id === connectorId) {
+      acc[key] = ref;
+    }
+    return acc;
+  }, {});
 };
 
 export const useIsOperationMissingConnection = (nodeId: string) => {

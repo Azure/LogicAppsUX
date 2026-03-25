@@ -34,6 +34,16 @@ export class AgentUtils {
     APIM: 'APIM Gen AI Gateway',
     V1ChatCompletionsService: 'V1 Chat Completions Service',
   };
+
+  public static DisplayNameToManifestValue: Record<string, string> = {
+    [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
+    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
+    [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
+    [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',
+  };
+
+  public static AgentConnectorId = '/connectionProviders/agent';
+
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
   };

@@ -74,24 +74,20 @@ export const EvaluatorDetailsPanel = ({ workflowName, evaluator, onEdit, onDelet
 
           {evaluator.template !== 'ToolCallTrajectory' && (
             <>
+              {evaluator.modelConfiguration?.referenceName && (
+                <div className={styles.fieldRow}>
+                  <Caption1Strong>Connection</Caption1Strong>
+                  <Text size={300}>
+                    {evaluator.modelConfiguration.referenceName}
+                    {evaluator.agentModelType ? ` (${evaluator.agentModelType})` : ''}
+                  </Text>
+                </div>
+              )}
+
               {evaluator.deploymentId && (
                 <div className={styles.fieldRow}>
                   <Caption1Strong>Deployment ID</Caption1Strong>
                   <Text size={300}>{evaluator.deploymentId}</Text>
-                </div>
-              )}
-
-              {evaluator.agentModelType && (
-                <div className={styles.fieldRow}>
-                  <Caption1Strong>Agent model type</Caption1Strong>
-                  <Text size={300}>{evaluator.agentModelType}</Text>
-                </div>
-              )}
-
-              {evaluator.modelConfiguration?.referenceName && (
-                <div className={styles.fieldRow}>
-                  <Caption1Strong>Model connection reference</Caption1Strong>
-                  <Text size={300}>{evaluator.modelConfiguration.referenceName}</Text>
                 </div>
               )}
 

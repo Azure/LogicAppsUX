@@ -8,10 +8,10 @@ export interface ToolCallFormItem {
 export interface EvaluatorFormData {
   name: string;
   template: EvaluatorTemplate;
+  connectionReferenceKey: string;
   deploymentId: string;
   agentModelType: string;
   modelName: string;
-  modelReferenceName: string;
   prompt: string;
   expectedToolCalls: ToolCallFormItem[];
   threshold: string;
@@ -31,10 +31,10 @@ export const createDefaultToolCallFormItem = (): ToolCallFormItem => ({
 export const createDefaultEvaluatorFormData = (): EvaluatorFormData => ({
   name: '',
   template: 'CustomPrompt',
-  deploymentId: 'gpt-4.1',
-  agentModelType: 'AzureOpenAI',
-  modelName: 'gpt-4.1',
-  modelReferenceName: 'agent',
+  connectionReferenceKey: '',
+  deploymentId: '',
+  agentModelType: '',
+  modelName: '',
   prompt: '',
   expectedToolCalls: [],
   threshold: '',
@@ -99,16 +99,20 @@ export const formDataToEvaluator = (formData: EvaluatorFormData): Evaluator => {
 
   return {
     ...baseEvaluator,
-    deploymentId: formData.deploymentId,
-    agentModelType: formData.agentModelType,
-    agentModelSettings: {
-      deploymentModelProperties: {
-        name: formData.modelName,
-      },
-    },
-    modelConfiguration: {
-      referenceName: formData.modelReferenceName,
-    },
+    deploymentId: formData.deploymentId || undefined,
+    agentModelType: formData.agentModelType || undefined,
+    agentModelSettings: formData.modelName
+      ? {
+          deploymentModelProperties: {
+            name: formData.modelName,
+          },
+        }
+      : undefined,
+    modelConfiguration: formData.connectionReferenceKey
+      ? {
+          referenceName: formData.connectionReferenceKey,
+        }
+      : undefined,
   };
 };
 
@@ -118,10 +122,10 @@ export const evaluatorToFormData = (evaluator: Evaluator): EvaluatorFormData => 
   return {
     name: evaluator.name,
     template: evaluator.template,
-    deploymentId: evaluator.deploymentId ?? 'gpt-4.1',
-    agentModelType: evaluator.agentModelType ?? 'AzureOpenAI',
-    modelName: evaluator.agentModelSettings?.deploymentModelProperties.name ?? 'gpt-4.1',
-    modelReferenceName: evaluator.modelConfiguration?.referenceName ?? 'agent',
+    connectionReferenceKey: evaluator.modelConfiguration?.referenceName ?? '',
+    deploymentId: evaluator.deploymentId ?? '',
+    agentModelType: evaluator.agentModelType ?? '',
+    modelName: evaluator.agentModelSettings?.deploymentModelProperties.name ?? '',
     prompt: evaluator.parameters.prompt ?? '',
     expectedToolCalls:
       evaluator.parameters.expectedToolCalls?.map((tc) => ({

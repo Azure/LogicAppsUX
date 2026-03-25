@@ -16,17 +16,23 @@ import {
   Spinner,
   Text,
 } from '@fluentui/react-components';
-import { DeleteRegular, AddRegular, SaveRegular, DismissRegular } from '@fluentui/react-icons';
-import { useDispatch } from 'react-redux';
-import { finishFormAction, cancelFormAction } from '../../core/state/evaluation/evaluationSlice';
+import { DeleteRegular, AddRegular, SaveRegular, DismissRegular, PlugConnectedRegular } from '@fluentui/react-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  finishFormAction,
+  cancelFormAction,
+  startSelectConnection,
+  clearPendingFormData,
+} from '../../core/state/evaluation/evaluationSlice';
 import {
   useSelectedEvaluator,
   useEvaluationViewMode,
   useSelectedEvaluationAgentName,
   useEvaluationDataSelected,
+  usePendingFormData,
 } from '../../core/state/evaluation/evaluationSelectors';
 import { useCreateOrUpdateEvaluator, useEvaluators } from '../../core/queries/evaluations';
-import type { EvaluatorTemplate, ComparisonMethod } from '@microsoft/logic-apps-shared';
+import { equals, type EvaluatorTemplate, type ComparisonMethod } from '@microsoft/logic-apps-shared';
 import type { EvaluatorFormData } from './evaluatorFormHelpers';
 import {
   createDefaultEvaluatorFormData,
@@ -36,6 +42,11 @@ import {
 } from './evaluatorFormHelpers';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { EvaluationViewMode } from '../../core/state/evaluation/evaluationInterfaces';
+import type { RootState } from '../../core/store';
+import { useConnectionsForConnector } from '../../core/queries/connections';
+import { getCognitiveServiceAccountDeploymentsForConnection } from '../panel/connectionsPanel/createConnection/custom/useCognitiveService';
+import constants from '../../common/constants';
+import { useQuery } from '@tanstack/react-query';
 
 interface EvaluatorFormPanelProps {
   workflowName: string;
@@ -55,8 +66,35 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
   const { data: evaluators } = useEvaluators(workflowName, selectedAgentName ?? '');
   const existingEvaluatorNames = useMemo(() => new Set((evaluators ?? []).map((e) => e.name.toLowerCase())), [evaluators]);
 
+  const pendingFormData = usePendingFormData();
+
   const [formData, setFormData] = useState<EvaluatorFormData>(createDefaultEvaluatorFormData());
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch the selected connection to get deployments for AI Model dropdown
+  const connectionReferences = useSelector((state: RootState) => state.connections.connectionReferences);
+  const selectedConnectionRef = formData.connectionReferenceKey ? connectionReferences[formData.connectionReferenceKey] : undefined;
+  const { data: allConnections } = useConnectionsForConnector(selectedConnectionRef ? selectedConnectionRef.api.id : '');
+  const selectedConnection = useMemo(
+    () => allConnections?.find((c) => selectedConnectionRef && equals(c.id, selectedConnectionRef.connection.id, true)),
+    [allConnections, selectedConnectionRef]
+  );
+  const { data: deployments, isLoading: isLoadingDeployments } = useQuery(
+    ['evaluator-deployments', selectedConnection?.id],
+    () => (selectedConnection ? getCognitiveServiceAccountDeploymentsForConnection(selectedConnection) : Promise.resolve([])),
+    { enabled: !!selectedConnection }
+  );
+  const deploymentOptions = useMemo<Array<{ value: string; displayName: string }>>(() => {
+    if (!deployments) {
+      return [];
+    }
+    return deployments
+      .filter((d: any) => constants.SUPPORTED_AGENT_MODELS.includes((d.properties?.model?.name ?? '').toLowerCase()))
+      .map((d: any) => ({
+        value: d.name as string,
+        displayName: `${d.name}${d.properties?.model?.name ? ` (${d.properties.model.name})` : ''}`,
+      }));
+  }, [deployments]);
 
   useEffect(() => {
     if (viewMode === EvaluationViewMode.EditEvaluator && selectedEvaluator) {
@@ -65,6 +103,14 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
       setFormData(createDefaultEvaluatorFormData());
     }
   }, [viewMode, selectedEvaluator]);
+
+  // Restore form data when returning from connection selection
+  useEffect(() => {
+    if (pendingFormData) {
+      setFormData(pendingFormData as EvaluatorFormData);
+      dispatch(clearPendingFormData());
+    }
+  }, [pendingFormData, dispatch]);
 
   const updateFormField = useCallback(<K extends keyof EvaluatorFormData>(field: K, value: EvaluatorFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -78,6 +124,11 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
 
     if (viewMode === EvaluationViewMode.CreateEvaluator && existingEvaluatorNames.has(formData.name.trim().toLowerCase())) {
       setError('An evaluator with this name already exists');
+      return;
+    }
+
+    if (formData.template !== 'ToolCallTrajectory' && !formData.connectionReferenceKey) {
+      setError('An agent connection is required');
       return;
     }
 
@@ -145,48 +196,69 @@ export const EvaluatorFormPanel = ({ workflowName }: EvaluatorFormPanelProps) =>
           </Dropdown>
         </Field>
 
-        {/* Model configuration - not needed for ToolCallTrajectory */}
+        {/* Agent connection - not needed for ToolCallTrajectory */}
         {formData.template !== 'ToolCallTrajectory' && (
-          <>
-            <Field label="Agent model type">
+          <Field label="Agent connection" required>
+            {formData.connectionReferenceKey ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Text size={200}>
+                  {formData.connectionReferenceKey}
+                  {formData.agentModelType ? ` (${formData.agentModelType})` : ''}
+                </Text>
+                <Button
+                  appearance="subtle"
+                  size="small"
+                  icon={<PlugConnectedRegular />}
+                  onClick={() => dispatch(startSelectConnection(formData))}
+                >
+                  Change
+                </Button>
+              </div>
+            ) : (
+              <Button appearance="secondary" icon={<PlugConnectedRegular />} onClick={() => dispatch(startSelectConnection(formData))}>
+                Select connection
+              </Button>
+            )}
+          </Field>
+        )}
+
+        {/* AI Model - shown when a connection is selected and not ToolCallTrajectory */}
+        {formData.template !== 'ToolCallTrajectory' && formData.connectionReferenceKey && (
+          <Field label="AI Model">
+            {isLoadingDeployments ? (
+              <Spinner size="tiny" label="Loading deployments..." />
+            ) : deploymentOptions.length > 0 ? (
               <Dropdown
-                id="agent-model-type"
-                value={formData.agentModelType}
-                selectedOptions={[formData.agentModelType]}
-                onOptionSelect={(_e, data) => updateFormField('agentModelType', data.optionValue as string)}
+                id="ai-model"
+                value={
+                  formData.deploymentId
+                    ? (deploymentOptions.find((o) => o.value === formData.deploymentId)?.displayName ?? formData.deploymentId)
+                    : ''
+                }
+                selectedOptions={formData.deploymentId ? [formData.deploymentId] : []}
+                onOptionSelect={(_e, data) => {
+                  const value = data.optionValue as string;
+                  setFormData((prev) => ({ ...prev, deploymentId: value, modelName: value }));
+                }}
+                placeholder="Select a deployment"
               >
-                <Option value="AzureOpenAI">AzureOpenAI</Option>
-                <Option value="FoundryAgentService">FoundryAgentService</Option>
+                {deploymentOptions.map((opt) => (
+                  <Option key={opt.value} value={opt.value} text={opt.displayName}>
+                    {opt.displayName}
+                  </Option>
+                ))}
               </Dropdown>
-            </Field>
-
-            <Field label="Deployment ID (optional)">
+            ) : (
               <Input
-                id="deployment-id"
+                id="ai-model-manual"
                 value={formData.deploymentId}
-                onChange={(_e, data) => updateFormField('deploymentId', data.value)}
-                placeholder="Enter deployment identifier"
+                onChange={(_e, data) => {
+                  setFormData((prev) => ({ ...prev, deploymentId: data.value, modelName: data.value }));
+                }}
+                placeholder="Enter deployment name"
               />
-            </Field>
-
-            <Field label="Model connection reference (optional)">
-              <Input
-                id="model-ref"
-                value={formData.modelReferenceName}
-                onChange={(_e, data) => updateFormField('modelReferenceName', data.value)}
-                placeholder="Enter model connection reference name"
-              />
-            </Field>
-
-            <Field label="Deployment model name (optional)">
-              <Input
-                id="model-name"
-                value={formData.modelName}
-                onChange={(_e, data) => updateFormField('modelName', data.value)}
-                placeholder="Enter deployment model name"
-              />
-            </Field>
-          </>
+            )}
+          </Field>
         )}
 
         {/* Ground truth fields */}

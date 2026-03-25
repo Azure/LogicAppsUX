@@ -10,6 +10,8 @@ export const initialEvaluationState: EvaluationState = {
   viewMode: EvaluationViewMode.None,
   runningEvaluatorName: '',
   evaluatorSearchQuery: '',
+  pendingFormData: null,
+  previousFormViewMode: null,
 };
 
 export const evaluationSlice = createSlice({
@@ -56,6 +58,30 @@ export const evaluationSlice = createSlice({
         state.selectedEvaluator = null;
       }
     },
+    startSelectConnection: (state, action: PayloadAction<unknown>) => {
+      state.pendingFormData = action.payload;
+      state.previousFormViewMode = state.viewMode;
+      state.viewMode = EvaluationViewMode.SelectConnection;
+    },
+    finishSelectConnection: (state, action: PayloadAction<{ connectionReferenceKey: string; agentModelType: string }>) => {
+      const pending = state.pendingFormData as any;
+      if (pending) {
+        pending.connectionReferenceKey = action.payload.connectionReferenceKey;
+        pending.agentModelType = action.payload.agentModelType;
+        // Clear deployment selection since it depends on the specific connection
+        pending.deploymentId = '';
+        pending.modelName = '';
+      }
+      state.viewMode = state.previousFormViewMode ?? EvaluationViewMode.CreateEvaluator;
+      state.previousFormViewMode = null;
+    },
+    cancelSelectConnection: (state) => {
+      state.viewMode = state.previousFormViewMode ?? EvaluationViewMode.CreateEvaluator;
+      state.previousFormViewMode = null;
+    },
+    clearPendingFormData: (state) => {
+      state.pendingFormData = null;
+    },
     resetEvaluationState: () => initialEvaluationState,
   },
   extraReducers: (builder) => {
@@ -73,6 +99,10 @@ export const {
   startEditEvaluator,
   finishFormAction,
   cancelFormAction,
+  startSelectConnection,
+  finishSelectConnection,
+  cancelSelectConnection,
+  clearPendingFormData,
   resetEvaluationState,
 } = evaluationSlice.actions;
 

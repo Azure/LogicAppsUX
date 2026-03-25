@@ -6,6 +6,7 @@ export const EvaluationViewMode = {
   EditEvaluator: 'edit',
   ViewEvaluator: 'view',
   EvaluationResult: 'result',
+  SelectConnection: 'selectConnection',
 } as const;
 export type EvaluationViewMode = (typeof EvaluationViewMode)[keyof typeof EvaluationViewMode];
 
@@ -15,4 +16,6 @@ export interface EvaluationState {
   viewMode: EvaluationViewMode;
   runningEvaluatorName: string;
   evaluatorSearchQuery: string;
+  pendingFormData: unknown;
+  previousFormViewMode: EvaluationViewMode | null;
 }

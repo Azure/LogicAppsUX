@@ -11,6 +11,7 @@ import { EvaluatorManagementPanel } from './EvaluatorManagementPanel';
 import { EvaluatorFormPanel } from './EvaluatorFormPanel';
 import { EvaluatorDetailsPanel } from './EvaluatorDetailsPanel';
 import { EvaluationResultPanel } from './EvaluationResultPanel';
+import { EvaluatorAgentConnectionSelector } from './EvaluatorAgentConnectionSelector';
 import { useEvaluateViewStyles } from './EvaluateView.styles';
 import { useCallback } from 'react';
 import { RunHistoryPanel } from '../panel';
@@ -57,6 +58,8 @@ export const EvaluateView = ({ workflowName }: EvaluateViewProps) => {
         ) : null;
       case EvaluationViewMode.EvaluationResult:
         return <EvaluationResultPanel workflowName={workflowName} />;
+      case EvaluationViewMode.SelectConnection:
+        return <EvaluatorAgentConnectionSelector />;
       default:
         return (
           <div className={styles.emptyState}>

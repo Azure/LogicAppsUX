@@ -10,6 +10,7 @@ export const useSelectedEvaluator = () => useSelector((state: RootState) => stat
 export const useEvaluationViewMode = () => useSelector((state: RootState) => state.evaluation.viewMode);
 export const useRunningEvaluatorName = () => useSelector((state: RootState) => state.evaluation.runningEvaluatorName);
 export const useEvaluatorSearchQuery = () => useSelector((state: RootState) => state.evaluation.evaluatorSearchQuery);
+export const usePendingFormData = () => useSelector((state: RootState) => state.evaluation.pendingFormData);
 
 export const useFilteredEvaluators = (evaluators: Evaluator[]) => {
   const evaluatorSearchQuery = useEvaluatorSearchQuery();
