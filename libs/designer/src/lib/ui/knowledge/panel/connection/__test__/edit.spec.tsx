@@ -601,6 +601,11 @@ describe('EditConnectionPanel Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Saving...')).toBeInTheDocument();
       });
+
+      // Wait for save operation to complete to avoid state updates after test teardown
+      await waitFor(() => {
+        expect(screen.queryByText('Saving...')).not.toBeInTheDocument();
+      });
     });
 
     it('handles save errors gracefully', async () => {
