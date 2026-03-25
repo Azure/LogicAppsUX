@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isOpenApiSchemaVersion } from '@microsoft/logic-apps-designer';
 import { clone } from '@microsoft/logic-apps-shared';
 

@@ -26,6 +26,7 @@ import {
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
+  ConnectionService,
   WorkflowService,
   getIntl,
   create,
@@ -75,7 +76,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
-import { isA2AWorkflow, isManagedMcpOperation } from '../../../core/state/workflow/helper';
+import { isA2AWorkflow, isBuiltInMcpOperation, isManagedMcpOperation } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -156,11 +157,30 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = getRecordEntry(connectionsMapping, nodeId);
-    if (!referenceKey || !referencesObject[referenceKey]) {
+    if (!referenceKey) {
       return references;
     }
 
-    references[referenceKey] = referencesObject[referenceKey];
+    const reference = referencesObject[referenceKey];
+    if (!reference) {
+      return references;
+    }
+
+    const operation = getRecordEntry(rootState.operations.operationInfo, nodeId);
+    // Built-in MCP operations don't use connection references; exclude them
+    if (operation && isBuiltInMcpOperation(operation)) {
+      return references;
+    }
+
+    const referenceConnectionId = reference.connection?.id;
+    if (
+      referenceConnectionId?.startsWith('/connectionProviders/mcpclient/') ||
+      referenceConnectionId?.startsWith('connectionProviders/mcpclient/')
+    ) {
+      return references;
+    }
+
+    references[referenceKey] = reference;
     return references;
   }, {});
 
@@ -284,9 +304,12 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = isManagedMcpOperation(operation);
+  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
+  } else if (isBuiltInMcpClient) {
+    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -492,6 +515,73 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
       mcpServerPath: operationPath,
     },
   };
+
+  return {
+    type: type,
+    kind: kind,
+    ...optional('description', operationFromWorkflow.description),
+    ...optional('inputs', inputs),
+  };
+};
+
+const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
+  if (!operationInfo) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
+  }
+  const { type, kind } = operationInfo;
+
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, nodeId);
+
+  const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
+  const manifest = await getOperationManifest(nativeMcpOperationInfo);
+  const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
+
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
+
+  // Built-in MCP operations should serialize Connection settings when available.
+  // If we can resolve the connection URL, emit the Connection block.
+  // Otherwise fall back to the parameter-based format to avoid sending an
+  // incomplete Connection object that the backend would reject.
+  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
+  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
+  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
+  const connectionId = connectionReference?.connection?.id;
+
+  let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
+  let authenticationType = existingConnectionInput?.Authentication ?? 'None';
+
+  if (connectionId) {
+    try {
+      const connection = await ConnectionService().getConnection(connectionId);
+      const parameterValues = (connection?.properties as any)?.parameterValues;
+      if (parameterValues) {
+        mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
+        authenticationType = parameterValues.authenticationType ?? authenticationType;
+      }
+    } catch {
+      // Keep existing values when connection lookup fails.
+    }
+  }
+
+  // Merge the Connection block with manifest-serialized parameters (e.g., allowedTools, headers)
+  // so user-configured inputs are preserved alongside the connection settings.
+  const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
+
+  let inputs: Record<string, any> | undefined;
+  if (mcpServerUrl) {
+    inputs = {
+      Connection: {
+        Authentication: authenticationType,
+        McpServerUrl: mcpServerUrl,
+      },
+      ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
+    };
+  } else if (hasParameters) {
+    inputs = {
+      parameters: { ...inputParameters.parameters },
+    };
+  }
 
   return {
     type: type,
@@ -903,7 +993,6 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.OpenApiConnection: {
-      // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
         host: {
@@ -966,10 +1055,8 @@ const serializeHost = (
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
   for (const [key, value] of Object.entries(hostInfo)) {
     if (inputs[key]) {
-      // eslint-disable-next-line no-param-reassign
       inputs[key] = { ...inputs[key], ...value };
     } else {
-      // eslint-disable-next-line no-param-reassign
       inputs[key] = value;
     }
   }

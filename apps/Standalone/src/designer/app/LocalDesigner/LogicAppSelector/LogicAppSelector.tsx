@@ -23,6 +23,7 @@ const fileOptions = [
   { key: 'BlankAgent.json', text: 'Starter Agent' },
   { key: 'Agent.json', text: 'Simple Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
+  { key: 'AgentWithMcp.json', text: 'Agent with MCP Tools' },
 
   // A2A
   { key: 'divider_A2A', text: '-', itemType: DropdownMenuItemType.Divider },
