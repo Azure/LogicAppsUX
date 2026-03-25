@@ -219,13 +219,6 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     }));
   }
 
-  private _resolveConnectionId(connectionId: string | undefined): string | undefined {
-    if (connectionId && !connectionId.startsWith('/subscriptions/')) {
-      return `${this.options.workflowReferenceId}/${connectionId}`;
-    }
-    return connectionId;
-  }
-
   private _getPropertiesIfNeeded(isManagedIdentityConnection?: boolean):
     | {
         workflowReference: { name: string; id: string; type: string };
