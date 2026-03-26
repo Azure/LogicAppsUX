@@ -44,6 +44,7 @@ interface RetryPolicy {
   interval?: string;
   minimumInterval?: string;
   maximumInterval?: string;
+  httpStatusCodes?: number[];
 }
 
 /**
@@ -514,6 +515,7 @@ const getRetryPolicy = (
           interval: retryPolicy.interval,
           minimumInterval: retryPolicy.minimumInterval,
           maximumInterval: retryPolicy.maximumInterval,
+          httpStatusCodes: retryPolicy.httpStatusCodes,
         };
       }
       throw new Error('Cannot determine retry policy since it is assigned at run-time with an expression');

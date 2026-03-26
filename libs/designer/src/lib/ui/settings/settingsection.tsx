@@ -31,6 +31,7 @@ import {
   SettingTokenField,
   SettingDropdown,
   SearchableDropdownWithAddAll,
+  SettingTagPicker,
 } from '@microsoft/designer-ui';
 import type {
   MultiSelectSettingProps,
@@ -47,6 +48,7 @@ import type {
   SettingDropdownProps,
   ChangeState,
   SearchableDropdownOption,
+  SettingTagPickerProps,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
 import { type AppDispatch, type RootState, storeStateToUndoRedoHistory, useOperationInfo } from '../../core';
@@ -122,6 +124,10 @@ export type Settings = SettingBase &
     | {
         settingType: 'SettingDropdown';
         settingProp: SettingDropdownProps;
+      }
+    | {
+        settingType: 'SettingTagPicker';
+        settingProp: SettingTagPickerProps;
       }
   );
 
@@ -338,6 +344,8 @@ const Setting = ({
           return <RunAfter {...settingProp} />;
         case 'SettingDropdown':
           return <SettingDropdown {...settingProp} />;
+        case 'SettingTagPicker':
+          return <SettingTagPicker {...settingProp} />;
         default:
           return null;
       }

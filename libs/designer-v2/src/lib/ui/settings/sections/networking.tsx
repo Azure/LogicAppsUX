@@ -4,7 +4,7 @@ import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import type { Settings, SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
-import { getSettingLabel } from '@microsoft/designer-ui';
+import { getSettingLabel, HTTP_STATUS_CODE_OPTIONS } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useLegacyWorkflowParameters } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
@@ -26,6 +26,7 @@ export interface NetworkingSectionProps extends SectionProps {
   onRetryIntervalChange: TextChangeHandler;
   onRetryMinIntervalChange: TextChangeHandler;
   onRetryMaxIntervalChange: TextChangeHandler;
+  onRetryHttpStatusCodesChange: (selectedCodes: number[]) => void;
   onUploadChunkSizeChange: TextChangeHandler;
   onDownloadChunkSizeChange: TextChangeHandler;
 }
@@ -63,6 +64,7 @@ export const Networking = ({
   onRetryIntervalChange,
   onRetryMinIntervalChange,
   onRetryMaxIntervalChange,
+  onRetryHttpStatusCodesChange,
   onHeaderClick,
 }: NetworkingSectionProps): JSX.Element => {
   const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
@@ -297,6 +299,16 @@ export const Networking = ({
       example: 'PT1H',
     }
   );
+  const retryPolicyHttpStatusCodesTitle = intl.formatMessage({
+    defaultMessage: 'HTTP status codes',
+    id: 'cZoZJ5',
+    description: 'title for retry policy HTTP status codes setting',
+  });
+  const retryPolicyHttpStatusCodesTooltip = intl.formatMessage({
+    defaultMessage: 'Specify which HTTP status codes should trigger a retry. Select one or more status codes.',
+    id: '9emgHc',
+    description: 'tooltip for retry policy HTTP status codes setting',
+  });
 
   const getAsyncPatternSetting = (): Settings => {
     return {
@@ -560,6 +572,34 @@ export const Networking = ({
     };
   };
 
+  const getRetryHttpStatusCodesSetting = (): Settings => {
+    const selectedValues = (retryPolicy?.value?.httpStatusCodes ?? []).map((code) => code.toString());
+
+    return {
+      settingType: 'SettingTagPicker',
+      settingProp: {
+        readOnly,
+        options: HTTP_STATUS_CODE_OPTIONS,
+        selectedValues,
+        onSelectionChange: (values) => {
+          const selectedCodes = values.map((v) => Number.parseInt(v, 10));
+          onRetryHttpStatusCodesChange(selectedCodes);
+        },
+        placeholder: intl.formatMessage({
+          defaultMessage: 'Select HTTP status codes...',
+          id: 'PMDOD7',
+          description: 'Placeholder for HTTP status codes picker',
+        }),
+        customLabel: getSettingLabel(retryPolicyHttpStatusCodesTitle, retryPolicyHttpStatusCodesTooltip),
+        ariaLabel: retryPolicyHttpStatusCodesTitle,
+      },
+      visible:
+        retryPolicy?.isSupported &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.NONE &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.DEFAULT,
+    };
+  };
+
   const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
     nodeId,
@@ -582,6 +622,7 @@ export const Networking = ({
       getRetryIntervalSetting(),
       getRetryMinIntervalSetting(),
       getRetryMaxIntervalSetting(),
+      getRetryHttpStatusCodesSetting(),
     ],
     validationErrors,
   };
