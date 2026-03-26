@@ -411,7 +411,7 @@ export const AddFilePanel = ({
             </Button>
           </div>
         </DrawerHeader>
-        <DrawerBody className={styles.body} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 130px)', minHeight: '80vh' }}>
+        <DrawerBody className={styles.body}>
           {uploadError ? (
             <div>
               <MessageBar intent="error">
