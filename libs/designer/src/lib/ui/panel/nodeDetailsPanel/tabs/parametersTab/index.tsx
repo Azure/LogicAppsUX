@@ -52,6 +52,7 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { FoundryAgentDetails, buildFoundryPortalUrl, NavigateIcon, useFoundryAgentDetailsStyles } from '@microsoft/designer-ui';
+import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import {
   Button,
   Divider,
@@ -65,6 +66,7 @@ import {
   Spinner,
   Text,
   Textarea,
+  tokens,
 } from '@fluentui/react-components';
 import {
   PanelLocation,
@@ -380,6 +382,11 @@ const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
 const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
 const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
 
+const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
+type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+const RBAC_READY_STATUSES: ReadonlySet<FoundryRbacStatus> = new Set(['assigned', 'not-needed', 'failed']);
+const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
+
 export const ParameterSection = ({
   nodeId,
   group,
@@ -394,6 +401,7 @@ export const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
@@ -405,13 +413,93 @@ export const ParameterSection = ({
     nodeId,
     operationInfo?.connectorId
   );
-  const { data: foundryAgentsForNode, isLoading: foundryAgentsLoading } = useFoundryAgentsForNode(nodeId);
-  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
   const foundryAccountResourceId = useFoundryAccountResourceIdForNode(nodeId);
+
+  // Compute isAgentServiceConnection early so we can gate proxy queries behind RBAC completion.
+  const earlyParamGroups = useSelector(
+    (state: RootState) => state.operations.inputParameters[nodeId]?.parameterGroups ?? EMPTY_PARAM_GROUPS
+  );
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, earlyParamGroups);
+  }, [group.id, earlyParamGroups, operationInfo.connectorId]);
+
+  // Track RBAC assignment status so proxy queries don't fire before roles are assigned.
+  const [foundryRbacStatus, setFoundryRbacStatus] = useState<FoundryRbacStatus>('idle');
+  const rbacAssignedResourceRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isAgentServiceConnection || !foundryAccountResourceId) {
+      return;
+    }
+    if (rbacAssignedResourceRef.current === foundryAccountResourceId) {
+      return;
+    }
+    let cancelled = false;
+    const targetResourceId = foundryAccountResourceId;
+    rbacAssignedResourceRef.current = targetResourceId;
+    setFoundryRbacStatus('checking');
+    getMissingRoleDefinitions(targetResourceId, [
+      'Azure AI User',
+      'Azure AI Administrator',
+      'Azure AI Developer',
+      'Cognitive Services Contributor',
+    ])
+      .then((missingRoles) => {
+        if (cancelled || rbacAssignedResourceRef.current !== targetResourceId) {
+          return;
+        }
+        if (missingRoles.length === 0) {
+          setFoundryRbacStatus('not-needed');
+          return;
+        }
+        setFoundryRbacStatus('assigning');
+        return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
+          () => {
+            if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
+              setFoundryRbacStatus('assigned');
+            }
+          }
+        );
+      })
+      .catch((err) => {
+        console.error('Foundry RBAC assignment failed:', err);
+        if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
+          rbacAssignedResourceRef.current = undefined;
+          setFoundryRbacStatus('failed');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAgentServiceConnection, foundryAccountResourceId]);
+
+  // Gate Foundry proxy queries: don't fire until RBAC assignment has completed (or is unnecessary).
+  const foundryRbacReady = !isAgentServiceConnection || RBAC_READY_STATUSES.has(foundryRbacStatus);
+
+  const {
+    data: foundryAgentsForNode,
+    isLoading: foundryAgentsLoading,
+    isFetching: foundryAgentsFetching,
+    refetch: refetchFoundryAgents,
+  } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
+
+  // Track whether loading has been ongoing long enough to show a hint (new connections may take a minute for RBAC propagation).
+  const [showSlowLoadingHint, setShowSlowLoadingHint] = useState(false);
+  const isFoundryLoading =
+    foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching || foundryAgentsLoading;
+  useEffect(() => {
+    if (!isAgentServiceConnection || !isFoundryLoading) {
+      setShowSlowLoadingHint(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowSlowLoadingHint(true), 10_000);
+    return () => clearTimeout(timer);
+  }, [isAgentServiceConnection, isFoundryLoading]);
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
@@ -452,37 +540,6 @@ export const ParameterSection = ({
     () => rootState.operations.inputParameters[nodeId] ?? { parameterGroups: {} },
     [nodeId, rootState.operations.inputParameters]
   );
-
-  const isAgentServiceConnection = useMemo(() => {
-    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
-  }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
-
-  // When a Foundry connection becomes active, eagerly assign RBAC roles so the proxy can
-  // authenticate via MSI before the workflow is saved.
-  const rbacAssignedRef = useRef<string | undefined>(undefined);
-  useEffect(() => {
-    if (!isAgentServiceConnection || !foundryAccountResourceId || rbacAssignedRef.current === foundryAccountResourceId) {
-      return;
-    }
-    // Mark as in-progress to prevent concurrent attempts
-    const targetResourceId = foundryAccountResourceId;
-    rbacAssignedRef.current = targetResourceId;
-    getMissingRoleDefinitions(targetResourceId, [
-      'Azure AI User',
-      'Azure AI Administrator',
-      'Azure AI Developer',
-      'Cognitive Services Contributor',
-    ])
-      .then((missingRoles) =>
-        Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id)))
-      )
-      .catch(() => {
-        // Clear the ref on failure so subsequent renders can retry
-        if (rbacAssignedRef.current === targetResourceId) {
-          rbacAssignedRef.current = undefined;
-        }
-      });
-  }, [isAgentServiceConnection, foundryAccountResourceId]);
 
   // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
@@ -1419,6 +1476,15 @@ export const ParameterSection = ({
         return s;
       });
 
+  const handleRefreshFoundryAgents = useCallback(() => {
+    // Ungate the query in case RBAC is still checking/assigning, then refetch
+    if (!RBAC_READY_STATUSES.has(foundryRbacStatus)) {
+      setFoundryRbacStatus('not-needed');
+    }
+    // Small delay to let React re-render with enabled: true before refetching
+    setTimeout(() => refetchFoundryAgents(), 0);
+  }, [foundryRbacStatus, refetchFoundryAgents]);
+
   const createAgentInline = (
     <CreateFoundryAgentInline
       models={foundryModelsForNode ?? []}
@@ -1428,8 +1494,58 @@ export const ParameterSection = ({
       disabled={readOnly}
       showForm={isCreatingNewAgent}
       onShowFormChange={setIsCreatingNewAgent}
+      onRefresh={handleRefreshFoundryAgents}
+      isRefreshing={foundryAgentsFetching}
     />
   );
+
+  // Show a loading state while RBAC roles are being set up or agents are loading.
+  // Keeps messaging simple — no mention of RBAC/permissions. Retries happen silently in the background.
+  if (isAgentServiceConnection && isFoundryLoading && !foundryAgentsForNode?.length) {
+    const agentPickerSetting = settings.find(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
+    );
+    const filtered = filterFoundryManagedSettings(settings.filter((s) => s !== agentPickerSetting));
+    const loadingAgentsLabel = intl.formatMessage({
+      defaultMessage: 'Loading agents...',
+      id: '7oWsJU',
+      description: 'Spinner label shown while Foundry agents list is loading.',
+    });
+    const slowHintLabel = intl.formatMessage({
+      defaultMessage: 'This may take a moment for new connections.',
+      id: 'p+zBbS',
+      description: 'Hint shown after 10 seconds when loading Foundry agents takes longer than expected.',
+    });
+
+    return (
+      <>
+        {agentPickerSetting && (
+          <SettingsSection
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
+        )}
+        <div role="status" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '16px 0' }}>
+          <Spinner size="tiny" label={loadingAgentsLabel} />
+          {showSlowLoadingHint && (
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+              {slowHintLabel}
+            </Text>
+          )}
+        </div>
+        {filtered.length > 0 && (
+          <SettingsSection id={`${group.id}-after-foundry`} nodeId={nodeId} settings={filtered} showHeading={false} showSeparator={false} />
+        )}
+      </>
+    );
+  }
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
@@ -1791,6 +1907,10 @@ interface CreateFoundryAgentInlineProps {
   /** Controlled form visibility — lifted to parent so it can toggle other sections. */
   showForm: boolean;
   onShowFormChange: (show: boolean) => void;
+  /** Callback to refresh the agents list. */
+  onRefresh?: () => void;
+  /** Whether agents are currently loading — shows spinner on refresh icon. */
+  isRefreshing?: boolean;
 }
 
 function CreateFoundryAgentInline({
@@ -1801,6 +1921,8 @@ function CreateFoundryAgentInline({
   disabled,
   showForm,
   onShowFormChange,
+  onRefresh,
+  isRefreshing,
 }: CreateFoundryAgentInlineProps) {
   const intl = useIntl();
   const [name, setName] = useState('');
@@ -1899,15 +2021,31 @@ function CreateFoundryAgentInline({
 
   if (!showForm) {
     return (
-      <Button
-        appearance="transparent"
-        size="small"
-        onClick={() => onShowFormChange(true)}
-        disabled={disabled}
-        style={{ justifyContent: 'flex-start', paddingLeft: 0, color: 'var(--colorBrandForeground1)' }}
-      >
-        + {createNewLabel}
-      </Button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Button
+          appearance="transparent"
+          size="small"
+          onClick={() => onShowFormChange(true)}
+          disabled={disabled}
+          style={{ justifyContent: 'flex-start', paddingLeft: 0, color: 'var(--colorBrandForeground1)' }}
+        >
+          + {createNewLabel}
+        </Button>
+        {onRefresh && (
+          <Button
+            icon={isRefreshing ? <Spinner size="extra-tiny" /> : <RefreshIcon />}
+            appearance="transparent"
+            size="small"
+            onClick={onRefresh}
+            aria-label={intl.formatMessage({
+              defaultMessage: 'Refresh agents list',
+              id: '5Bxb+T',
+              description: 'Accessible label for the button that refreshes the list of Foundry agents.',
+            })}
+            style={{ minWidth: 'auto' }}
+          />
+        )}
+      </div>
     );
   }
 
