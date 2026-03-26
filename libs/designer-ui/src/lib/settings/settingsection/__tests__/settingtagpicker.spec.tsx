@@ -79,7 +79,7 @@ describe('ui/settings/settingtagpicker', () => {
     const tagPicker = renderer.getRenderOutput();
 
     const children = React.Children.toArray(tagPicker.props.children);
-    const combobox = children.find((child: any) => child?.props?.disabled !== undefined);
+    const combobox = children.find((child: any) => child?.props?.disabled !== undefined) as React.ReactElement | undefined;
     expect(combobox?.props?.disabled).toBe(true);
   });
 
@@ -115,7 +115,8 @@ describe('ui/settings/settingtagpicker', () => {
     });
 
     if (combobox) {
-      const options = React.Children.toArray(combobox.props.children);
+      const comboboxElement = combobox as React.ReactElement;
+      const options = React.Children.toArray(comboboxElement.props.children);
       // Should have 3 options (5 total - 2 selected)
       expect(options.length).toBe(3);
     }
