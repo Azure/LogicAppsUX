@@ -19,7 +19,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   const { metadata, onClose } = props;
   const styles = useDeploymentModelResourceStyles();
   const [name, setName] = useState(`model-${customLengthGuid(5)}`);
-  const [modelKey, setModelKey] = useState(constants.SUPPORTED_AGENT_MODELS[0]);
+  const [modelKey, setModelKey] = useState(constants.SUPPORTED_FOUNDRY_AGENT_MODELS[0]);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -92,6 +92,8 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   return (
     <>
       <Text className={styles.containerTitle}>{stringResources.CREATE_DEPLOYMENT_MODE}</Text>
+      <div>{'------------'}</div>
+
       <div className={styles.rowContainer}>
         <div className="msla-input-parameter-label">
           <Label text={stringResources.DEPLOYMENT_NAME} isRequiredField={true} />
@@ -124,7 +126,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
               id: guid(),
             },
           ]}
-          options={constants.SUPPORTED_AGENT_MODELS.map((supportedModel) => ({
+          options={constants.SUPPORTED_FOUNDRY_AGENT_MODELS.map((supportedModel) => ({
             key: supportedModel,
             displayName: supportedModel,
             value: supportedModel,
