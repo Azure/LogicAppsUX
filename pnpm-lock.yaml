@@ -30079,7 +30079,7 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   path-browserify@1.0.1: {}
 
