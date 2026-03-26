@@ -89,6 +89,7 @@ import {
   type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
+  AGENT_MODEL_CONFIG,
   clone,
   ConnectionService,
   EditorService,
@@ -976,24 +977,43 @@ export const ParameterSection = ({
       const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
 
       if (isAgentDeployment) {
-        const deploymentInfo = value?.length
-          ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
-          : undefined;
+        const selectedModelId = value?.length ? value[0]?.value : undefined;
+        const currentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value;
+
+        let modelName: string | undefined;
+        let modelFormat: string | undefined;
+        let modelVersion: string | undefined;
+
+        if (currentModelType === 'MicrosoftFoundry') {
+          // For Foundry Models, the deploymentId IS the model ID — use it directly
+          const config = selectedModelId ? AGENT_MODEL_CONFIG[selectedModelId] : undefined;
+          modelName = selectedModelId;
+          modelFormat = config?.format ?? 'OpenAI';
+          modelVersion = config?.version;
+        } else {
+          // For Azure OpenAI, look up the deployment from the API response
+          const deploymentInfo = selectedModelId
+            ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId)
+            : undefined;
+          modelName = deploymentInfo?.properties?.model?.name;
+          modelFormat = deploymentInfo?.properties?.model?.format;
+          modelVersion = deploymentInfo?.properties?.model?.version;
+        }
 
         updatedDependencies.inputs ??= {};
 
         const agentDeploymentKeys = [
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
-            default: deploymentInfo?.properties?.model?.name,
+            default: modelName,
           },
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
-            default: deploymentInfo?.properties?.model?.format,
+            default: modelFormat,
           },
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
-            default: deploymentInfo?.properties?.model?.version,
+            default: modelVersion,
           },
         ];
 
