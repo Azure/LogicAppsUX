@@ -21,6 +21,7 @@ import {
 import {
   ConnectionParameterEditorService,
   ConnectionService,
+  ConsumptionConnectionService,
   Capabilities,
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
@@ -407,12 +408,23 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   }, [enabledCapabilities, parametersByCapability]);
 
   // Don't show name for simple connections
-  const showNameInput = useMemo(
-    () =>
+  const showNameInput = useMemo(() => {
+    const isMcpClientConnection = connectorId?.toLowerCase().includes('mcpclient');
+
+    if (isMcpClientConnection) {
+      const connectionService = ConnectionService();
+      const isConsumptionSku = connectionService instanceof ConsumptionConnectionService;
+
+      if (isConsumptionSku) {
+        return false;
+      }
+    }
+
+    return (
       !(isUsingOAuth && !isMultiAuth) &&
-      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected),
-    [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
-  );
+      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected)
+    );
+  }, [connectorId, isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]);
 
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) {

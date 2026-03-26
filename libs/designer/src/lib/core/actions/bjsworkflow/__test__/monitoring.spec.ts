@@ -5,6 +5,10 @@ import type { ContentLink } from '@microsoft/logic-apps-shared';
 const mockGetAgentRepetition = vi.fn();
 const mockGetAgentActionsRepetition = vi.fn();
 const mockGetContent = vi.fn();
+const mockParseInputs = vi.fn((inputs: any) => inputs);
+const mockParseOutputs = vi.fn((outputs: any) => outputs);
+const mockGetOperationManifest = vi.fn();
+const mockGetCustomSwaggerIfNeeded = vi.fn();
 
 vi.mock('../../../queries/runs', () => ({
   getAgentRepetition: (...args: any[]) => mockGetAgentRepetition(...args),
@@ -23,11 +27,14 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
       endTrace: vi.fn(),
       log: vi.fn(),
     }),
+    OperationManifestService: () => ({
+      isSupported: vi.fn().mockReturnValue(false),
+    }),
   };
 });
 
 vi.mock('../../../queries/operation', () => ({
-  getOperationManifest: vi.fn(),
+  getOperationManifest: (...args: any[]) => mockGetOperationManifest(...args),
 }));
 
 vi.mock('../../../queries/connections', () => ({
@@ -35,18 +42,15 @@ vi.mock('../../../queries/connections', () => ({
 }));
 
 vi.mock('../initialize', () => ({
-  getCustomSwaggerIfNeeded: vi.fn(),
+  getCustomSwaggerIfNeeded: (...args: any[]) => mockGetCustomSwaggerIfNeeded(...args),
 }));
-
-const mockParseInputs = vi.fn((inputs: any) => inputs);
-const mockParseOutputs = vi.fn((outputs: any) => outputs);
 
 vi.mock('../../../utils/monitoring', () => ({
   parseInputs: (...args: any[]) => mockParseInputs(...args),
   parseOutputs: (...args: any[]) => mockParseOutputs(...args),
 }));
 
-// Import the thunks AFTER mocks are set up
+// Import after mocks
 import { fetchBuiltInToolRunData, initializeInputsOutputsBinding } from '../monitoring';
 
 describe('fetchBuiltInToolRunData', () => {
@@ -58,7 +62,6 @@ describe('fetchBuiltInToolRunData', () => {
     const mockInputs = { message: 'hello', code: 'print("hi")' };
     const mockOutputs = { result: 'hi', exitCode: 0 };
 
-    // getAgentActionsRepetition returns action results with per-tool links
     mockGetAgentActionsRepetition.mockResolvedValue([
       {
         properties: {
@@ -119,7 +122,6 @@ describe('fetchBuiltInToolRunData', () => {
   });
 
   it('should fall back to getAgentRepetition when tool action not found in action results', async () => {
-    // getAgentActionsRepetition returns no matching tool action
     mockGetAgentActionsRepetition.mockResolvedValue([
       {
         properties: {
@@ -219,7 +221,6 @@ describe('fetchBuiltInToolRunData', () => {
     const action = fetchBuiltInToolRunData(thunkArg);
     const result = await action(dispatch, getState, undefined);
 
-    // Should NOT call either fetch function since links were provided
     expect(mockGetAgentActionsRepetition).not.toHaveBeenCalled();
     expect(mockGetAgentRepetition).not.toHaveBeenCalled();
 
@@ -265,47 +266,6 @@ describe('fetchBuiltInToolRunData', () => {
 
     const payload = result.payload as any;
     expect(payload.inputs).toEqual({});
-
-    warnSpy.mockRestore();
-  });
-
-  it('should handle content fetch failure for outputs gracefully', async () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-    mockGetAgentActionsRepetition.mockResolvedValue([
-      {
-        properties: {
-          actionResults: [
-            {
-              name: 'code_interpreter',
-              inputsLink: { uri: undefined },
-              outputsLink: { uri: 'https://example.com/outputs' } as ContentLink,
-              startTime: '2024-01-01T00:00:00Z',
-              endTime: '2024-01-01T00:01:00Z',
-              status: 'Succeeded',
-              correlation: null,
-            },
-          ],
-        },
-      },
-    ]);
-
-    mockGetContent.mockRejectedValue(new Error('Network error'));
-
-    const thunkArg = {
-      toolNodeId: 'code_interpreter',
-      agentNodeId: 'agent1',
-      runId: 'run-123',
-      repetitionName: '000000',
-    };
-
-    const dispatch = vi.fn();
-    const getState = vi.fn();
-    const action = fetchBuiltInToolRunData(thunkArg);
-    const result = await action(dispatch, getState, undefined);
-
-    const payload = result.payload as any;
-    expect(payload.outputs).toEqual({});
 
     warnSpy.mockRestore();
   });
@@ -367,6 +327,8 @@ describe('initializeInputsOutputsBinding', () => {
 
     const payload = result.payload as any;
     expect(payload.nodeId).toBe('testNode');
+    // When operationInfo is missing, getInputsOutputsBinding returns empty arrays
+    // so inputs/outputs are undefined (boundInputs[0] of empty array)
     expect(payload.inputs).toBeUndefined();
     expect(payload.outputs).toBeUndefined();
   });

@@ -11,6 +11,19 @@ interface WorkflowPayload {
   connectionReferences?: ConnectionReferences;
 }
 
+const isBuiltInMcpConnectionReference = (connection: any): boolean => {
+  const connectionId = connection?.connection?.id?.toLowerCase?.() ?? '';
+
+  // ARM-managed connections use subscription-scoped resource IDs and should not be treated as built-in.
+  const isArmResource = connectionId.startsWith('/subscriptions/');
+  if (isArmResource) {
+    return false;
+  }
+
+  // Built-in MCP connections are under the connectionProviders path, not ARM /subscriptions paths.
+  return connectionId.includes('/connectionproviders/mcpclient/connections/');
+};
+
 export const getConsumptionWorkflowPayloadForCreate = (
   definition: LogicAppsV2.WorkflowDefinition,
   parameterDefinitions: Record<string, Template.ParameterDefinition>,
@@ -149,11 +162,14 @@ const convertDesignerWorkflowToConsumptionWorkflow = (
   } else {
     // Move connection data to parameters
     if (workflow?.connections) {
+      const filteredConnections = Object.fromEntries(
+        Object.entries(workflow.connections).filter(([, connection]) => !isBuiltInMcpConnectionReference(connection))
+      );
       workflow.parameters = {
         ...workflow.parameters,
         $connections: {
           value: {
-            ...workflow.connections,
+            ...filteredConnections,
           },
         } as WorkflowParameter,
       };
@@ -179,6 +195,9 @@ const convertDesignerWorkflowToConsumptionWorkflow = (
         workflow.parameters.$connections = { type: 'Object', value: {} };
       }
       Object.entries(workflow.connectionReferences ?? {}).forEach(([key, connection]: [key: string, value: any]) => {
+        if (isBuiltInMcpConnectionReference(connection)) {
+          return;
+        }
         workflow.parameters.$connections.value[key] = {
           id: connection.api.id,
           connectionId: connection.connection.id,

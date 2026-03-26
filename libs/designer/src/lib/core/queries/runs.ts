@@ -167,6 +167,46 @@ export const useAgentRepetition = (
   );
 };
 
+export const getAgentRepetition = async (nodeId: string, runId: string, repetitionName: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId, repetitionName }],
+    async () => {
+      return RunService().getAgentRepetition({ nodeId, runId }, repetitionName);
+    },
+    {
+      ...queryOpts,
+    }
+  );
+};
+
+export const getAgentActionsRepetition = async (
+  nodeId: string,
+  runId: string | undefined,
+  repetitionName: string,
+  runIndex: number | undefined
+) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(
+    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, runIndex }],
+    async () => {
+      const allActions: LogicAppsV2.RunRepetition[] = [];
+      const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
+      allActions.push(...(firstActions?.value ?? []));
+      let nextLink = firstActions.nextLink;
+      while (nextLink) {
+        const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
+        allActions.push(...(moreActions?.value ?? []));
+        nextLink = moreActions?.nextLink;
+      }
+      return allActions;
+    },
+    {
+      ...queryOpts,
+    }
+  );
+};
+
 export const useCancelRun = (runId: string) => {
   return useMutation([runsQueriesKeys.useCancelRun, { runId }], async () => {
     return await RunService().cancelRun(runId);

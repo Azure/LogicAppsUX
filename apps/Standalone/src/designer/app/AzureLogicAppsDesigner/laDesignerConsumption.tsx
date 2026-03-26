@@ -309,6 +309,7 @@ const DesignerEditorConsumption = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
           },
           showPerformanceDebug,
+          mcpClientToolEnabled: true,
         }}
       >
         {definition ? (

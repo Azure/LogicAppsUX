@@ -72,6 +72,11 @@ export async function isConnectionReferenceValid(
     if (!manifest?.properties?.connection?.required) {
       return true;
     }
+    // Built-in MCP connections are stored locally, not in API Hub,
+    // so skip the standard getConnection validation for them.
+    if (manifest?.properties?.connection?.type === 'mcp') {
+      return !!reference && !reference.connection.id.startsWith('__MOCK');
+    }
   }
   if (!reference) {
     return false;

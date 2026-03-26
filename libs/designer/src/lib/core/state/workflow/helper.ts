@@ -135,6 +135,10 @@ export const isManagedMcpOperation = (operation: { type?: string; kind?: string 
   return equals(operation?.type, Constants.NODE.TYPE.MCP_CLIENT) && equals(operation?.kind, Constants.NODE.KIND.MANAGED);
 };
 
+export const isBuiltInMcpOperation = (operation: { type?: string; kind?: string }) => {
+  return equals(operation?.type, Constants.NODE.TYPE.MCP_CLIENT) && !equals(operation?.kind, Constants.NODE.KIND.MANAGED);
+};
+
 export const isA2AWorkflow = (state: WorkflowState): boolean => {
   const workflowKind = state.workflowKind;
 
