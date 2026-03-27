@@ -92,8 +92,6 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   return (
     <>
       <Text className={styles.containerTitle}>{stringResources.CREATE_DEPLOYMENT_MODE}</Text>
-      <div>{'------------'}</div>
-
       <div className={styles.rowContainer}>
         <div className="msla-input-parameter-label">
           <Label text={stringResources.DEPLOYMENT_NAME} isRequiredField={true} />

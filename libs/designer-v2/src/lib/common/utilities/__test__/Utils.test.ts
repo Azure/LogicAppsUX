@@ -5,6 +5,7 @@ describe('AgentUtils', () => {
   describe('ModelType constants', () => {
     it('should have correct model type values', () => {
       expect(AgentUtils.ModelType.AzureOpenAI).toBe('Azure OpenAI');
+      expect(AgentUtils.ModelType.MicrosoftFoundry).toBe('Foundry Models');
       expect(AgentUtils.ModelType.FoundryService).toBe('Foundry project');
       expect(AgentUtils.ModelType.APIM).toBe('APIM Gen AI Gateway');
       expect(AgentUtils.ModelType.V1ChatCompletionsService).toBe('V1 Chat Completions Service');

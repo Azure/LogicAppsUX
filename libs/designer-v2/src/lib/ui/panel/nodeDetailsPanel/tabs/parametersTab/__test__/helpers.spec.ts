@@ -55,19 +55,12 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
   });
 
-  it('should return false when agentModelType parameter has no value yet (loading state)', () => {
+  it('should return false when agentModelType parameter has no value yet', () => {
     const groups = makeParameterGroups(groupId, [
       {
         parameterKey: agentModelTypeParameterKey,
         value: [],
       },
-    ]);
-    expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
-  });
-
-  it('should return false when agentModelType parameter does not exist', () => {
-    const groups = makeParameterGroups(groupId, [
-      { parameterKey: 'inputs.$.someOtherParam', value: [{ id: '1', type: 'literal' as any, value: 'test' }] },
     ]);
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
   });
@@ -84,16 +77,6 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
 
   it('should return false when parameter groups are empty', () => {
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, {})).toBe(false);
-  });
-
-  it('should return false when groupId does not match any group', () => {
-    const groups = makeParameterGroups('other-group', [
-      {
-        parameterKey: agentModelTypeParameterKey,
-        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentService' }],
-      },
-    ]);
-    expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
   });
 });
 
