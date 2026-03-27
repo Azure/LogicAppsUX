@@ -4,19 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import {
-  assetsFolderName,
-  containerTemplatesFolderName,
-  devContainerFileName,
-  devContainerFolderName,
-  tasksFileName,
-  vscodeFolderName,
-  workspaceTemplatesFolderName,
-} from '../../../constants';
+import { devContainerFileName, devContainerFolderName, tasksFileName, vscodeFolderName } from '../../../constants';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { getContainerTemplatePath, getWorkspaceTemplatePath } from '../../utils/assets';
 
 /**
  * Enables devcontainer support for an existing Logic App workspace
@@ -33,7 +26,8 @@ export async function enableDevContainer(context: IActionContext, workspaceFileP
   if (!workspaceFile) {
     const message = localize('noWorkspace', 'No workspace is currently open. Please open a Logic App workspace first.');
     vscode.window.showErrorMessage(message);
-    context.telemetry.properties.result = 'NoWorkspace';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.reason = 'NoWorkspace';
     return;
   }
 
@@ -60,7 +54,7 @@ export async function enableDevContainer(context: IActionContext, workspaceFileP
     context.telemetry.properties.step = 'devcontainerFolderCreated';
 
     // Copy devcontainer.json from templates
-    const devcontainerTemplatePath = path.join(__dirname, assetsFolderName, containerTemplatesFolderName, devContainerFileName);
+    const devcontainerTemplatePath = getContainerTemplatePath(devContainerFileName);
     const devcontainerDestPath = path.join(devcontainerPath, devContainerFileName);
 
     if (!(await fse.pathExists(devcontainerTemplatePath))) {
@@ -159,7 +153,7 @@ async function convertTasksJsonToDevContainer(context: IActionContext, tasksJson
   const tasksContent = await fse.readJSON(tasksJsonPath);
 
   // Get the devcontainer-compatible template
-  const devContainerTasksTemplatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, 'DevContainerTasksJsonFile');
+  const devContainerTasksTemplatePath = getWorkspaceTemplatePath('DevContainerTasksJsonFile');
 
   if (!(await fse.pathExists(devContainerTasksTemplatePath))) {
     throw new Error(localize('templateNotFound', 'DevContainer tasks template not found at: {0}', devContainerTasksTemplatePath));

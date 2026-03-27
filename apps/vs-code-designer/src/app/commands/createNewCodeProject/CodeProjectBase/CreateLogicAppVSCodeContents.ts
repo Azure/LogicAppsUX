@@ -1,8 +1,6 @@
 import { latestGAVersion, ProjectLanguage, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import {
-  assetsFolderName,
-  containerTemplatesFolderName,
   deploySubpathSetting,
   devContainerFileName,
   devContainerFolderName,
@@ -15,11 +13,11 @@ import {
   settingsFileName,
   tasksFileName,
   vscodeFolderName,
-  workspaceTemplatesFolderName,
 } from '../../../../constants';
 import path from 'path';
 import * as fse from 'fs-extra';
 import type { DebugConfiguration } from 'vscode';
+import { getContainerTemplatePath, getWorkspaceTemplatePath } from '../../../utils/assets';
 import { confirmEditJsonFile } from '../../../utils/fs';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../localize';
@@ -54,20 +52,20 @@ export async function writeSettingsJson(
 export async function writeExtensionsJson(context: IActionContext, vscodePath: string): Promise<void> {
   const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
   const extensionsJsonFile = 'ExtensionsJsonFile';
-  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, extensionsJsonFile);
+  const templatePath = getWorkspaceTemplatePath(extensionsJsonFile);
   await fse.copyFile(templatePath, extensionsJsonPath);
 }
 
 export async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
   const tasksJsonFile = context.isDevContainerProject ? 'DevContainerTasksJsonFile' : 'TasksJsonFile';
-  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, tasksJsonFile);
+  const templatePath = getWorkspaceTemplatePath(tasksJsonFile);
   await fse.copyFile(templatePath, tasksJsonPath);
 }
 
 export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
   const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
-  const templatePath = path.join(__dirname, assetsFolderName, containerTemplatesFolderName, devContainerFileName);
+  const templatePath = getContainerTemplatePath(devContainerFileName);
   await fse.copyFile(templatePath, devContainerJsonPath);
 }
 

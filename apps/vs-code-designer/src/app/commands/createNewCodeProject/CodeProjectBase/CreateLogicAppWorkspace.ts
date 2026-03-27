@@ -1,7 +1,6 @@
 import {
   appKindSetting,
   artifactsDirectory,
-  assetsFolderName,
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
   defaultVersionRange,
@@ -25,12 +24,12 @@ import {
   vscodeFolderName,
   workerRuntimeKey,
   workflowFileName,
-  workspaceTemplatesFolderName,
   type WorkflowType,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
+import { getRuleSetTemplatePath, getWorkspaceTemplatePath } from '../../../utils/assets';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
@@ -54,14 +53,14 @@ import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '..
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
     // SampleRuleSet.xml
-    const sampleRuleSetPath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'SampleRuleSet');
+    const sampleRuleSetPath = getRuleSetTemplatePath('SampleRuleSet');
     const sampleRuleSetXMLPath = path.join(context.projectPath, artifactsDirectory, rulesDirectory, 'SampleRuleSet.xml');
     const sampleRuleSetXMLContent = await fse.readFile(sampleRuleSetPath, 'utf-8');
     const sampleRuleSetXMLFileContent = sampleRuleSetXMLContent.replace(/<%= methodName %>/g, context.functionAppName);
     await fse.writeFile(sampleRuleSetXMLPath, sampleRuleSetXMLFileContent);
 
     // SchemaUser.xsd
-    const schemaUserPath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'SchemaUser');
+    const schemaUserPath = getRuleSetTemplatePath('SchemaUser');
     const schemaUserXSDPath = path.join(context.projectPath, artifactsDirectory, schemasDirectory, 'SchemaUser.xsd');
     const schemaUserXSDContent = await fse.readFile(schemaUserPath, 'utf-8');
     await fse.writeFile(schemaUserXSDPath, schemaUserXSDContent);
@@ -150,7 +149,7 @@ export async function createLocalConfigurationFiles(
 
   const gitignorePath = path.join(logicAppFolderPath, gitignoreFileName);
   const gitIgnoreFile = 'GitIgnoreFile';
-  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, gitIgnoreFile);
+  const templatePath = getWorkspaceTemplatePath(gitIgnoreFile);
   await fse.copyFile(templatePath, gitignorePath);
 
   const funcIgnorePath: string = path.join(logicAppFolderPath, funcIgnoreFileName);

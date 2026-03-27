@@ -1,19 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { onboardBinaries } from '../onboarding';
-import { useBinariesDependencies } from '../app/utils/binaries';
+import { onboardBinaries } from '../app/utils/runtimeDependencies';
 import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
 import { validateTasksJson } from '../app/utils/vsCodeConfig/tasks';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
+import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-// Factory mocks required to break problematic import chains:
-// - binaries: circular dep with onboarding.ts
-// - startDesignTimeApi: breaks chain → common.ts → azureConnectorWizard.ts → AzureWizardPromptStep
-vi.mock('../app/utils/binaries', () => ({
-  installBinaries: vi.fn(),
-  useBinariesDependencies: vi.fn(),
-  binariesExist: vi.fn(),
-}));
 vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
   promptStartDesignTimeOption: vi.fn(),
 }));
@@ -21,6 +13,11 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
 vi.mock('../app/commands/binaries/validateAndInstallBinaries');
 vi.mock('../app/utils/vsCodeConfig/tasks');
 vi.mock('../app/utils/devContainerUtils');
+vi.mock('../app/utils/vsCodeConfig/settings', () => ({
+  getGlobalSetting: vi.fn(),
+  getWorkspaceSetting: vi.fn(),
+  updateGlobalSetting: vi.fn(),
+}));
 vi.mock('../app/utils/telemetry', () => ({
   runWithDurationTelemetry: vi.fn(async (ctx, cmd, callback) => await callback()),
 }));
@@ -45,18 +42,17 @@ describe('onboardBinaries', () => {
   describe('devContainer workspace behavior', () => {
     it('should skip binaries validation in devContainer workspace', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(false);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
 
       await onboardBinaries(mockContext);
 
-      expect(useBinariesDependencies).toHaveBeenCalled();
       expect(validateAndInstallBinaries).not.toHaveBeenCalled();
       expect(validateTasksJson).not.toHaveBeenCalled();
     });
 
     it('should not set lastStep when skipping in devContainer', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(false);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
 
       await onboardBinaries(mockContext);
 
@@ -67,20 +63,19 @@ describe('onboardBinaries', () => {
   describe('non-devContainer workspace behavior', () => {
     it('should validate and install binaries when setting is enabled', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
       vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
       await onboardBinaries(mockContext);
 
-      expect(useBinariesDependencies).toHaveBeenCalled();
       expect(validateAndInstallBinaries).toHaveBeenCalled();
       expect(validateTasksJson).toHaveBeenCalled();
     });
 
     it('should set telemetry lastStep when validating binaries', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
       vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
@@ -91,7 +86,7 @@ describe('onboardBinaries', () => {
 
     it('should not validate when setting is disabled', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(false);
+      vi.mocked(getGlobalSetting).mockReturnValue(false);
 
       await onboardBinaries(mockContext);
 
@@ -107,7 +102,7 @@ describe('onboardBinaries', () => {
       (vscode.workspace as any).workspaceFolders = mockWorkspaceFolders;
 
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
       vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
@@ -118,7 +113,7 @@ describe('onboardBinaries', () => {
 
     it('should not call validateTasksJson in devContainer workspace', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(false);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
 
       await onboardBinaries(mockContext);
 
