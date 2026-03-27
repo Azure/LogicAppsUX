@@ -69,11 +69,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {
@@ -84,7 +80,7 @@
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "e2e:setup": "playwright install --with-deps",
-    "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
+    "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" \"apps/vs-code-react/src/**/*.{ts,tsx}\" --ignore \"**/node_modules/**\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --ignore \"apps/vs-code-react/src/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "generateArmToken": "node ./scripts/generateArmToken.js",
     "prepare": "husky || true",
     "publish": "turbo run build:lib && pnpm publish -r",

@@ -2,13 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { devContainerFolderName, devContainerFileName, tasksFileName, vscodeFolderName } from '../../../../constants';
+import * as assetUtils from '../../../utils/assets';
 
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');
@@ -22,33 +23,6 @@ import { enableDevContainer } from '../enableDevContainer';
 describe('enableDevContainer - Integration Tests', () => {
   let tempDir: string;
   let mockContext: IActionContext;
-  let assetsCopied = false;
-
-  beforeAll(async () => {
-    // Copy assets from src/assets to enableDevContainer directory for testing
-    const srcAssetsPath = path.resolve(__dirname, '..', '..', '..', '..', 'assets');
-    const destAssetsPath = path.resolve(__dirname, '..', '..', 'createNewCodeProject', 'CodeProjectBase', 'assets');
-    const destAssetsPath2 = path.resolve(__dirname, '..', 'assets');
-
-    // Check if assets need to be copied
-    if (await fse.pathExists(srcAssetsPath)) {
-      await fse.copy(srcAssetsPath, destAssetsPath);
-      await fse.copy(srcAssetsPath, destAssetsPath2);
-      assetsCopied = true;
-    }
-  });
-
-  afterAll(async () => {
-    // Clean up copied assets
-    const destAssetsPath = path.resolve(__dirname, '..', '..', 'createNewCodeProject', 'CodeProjectBase', 'assets');
-    const destAssetsPath2 = path.resolve(__dirname, '..', 'assets');
-    if (await fse.pathExists(destAssetsPath)) {
-      await fse.remove(destAssetsPath);
-    }
-    if (await fse.pathExists(destAssetsPath2)) {
-      await fse.remove(destAssetsPath2);
-    }
-  });
 
   beforeEach(async () => {
     // Create real temp directory
@@ -369,7 +343,8 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(showErrorMessageSpy.mock.calls[0][0]).toContain('No workspace is currently open');
 
       // Verify result
-      expect(mockContext.telemetry.properties.result).toBe('NoWorkspace');
+      expect(mockContext.telemetry.properties.result).toBe('Failed');
+      expect(mockContext.telemetry.properties.reason).toBe('NoWorkspace');
     });
 
     it('should verify devcontainer.json contains required properties', async () => {
@@ -487,9 +462,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const workspaceRootFolder = await createTestWorkspace(workspaceName, logicAppName);
       const workspaceFilePath = path.join(workspaceRootFolder, `${workspaceName}.code-workspace`);
 
-      // Remove the assets folder to simulate missing template
-      const destAssetsPath = path.resolve(__dirname, '..', 'assets');
-      await fse.remove(destAssetsPath);
+      vi.spyOn(assetUtils, 'getContainerTemplatePath').mockReturnValue(path.join(tempDir, 'missing-devcontainer.json'));
 
       try {
         await enableDevContainer(mockContext, workspaceFilePath);
@@ -499,11 +472,6 @@ describe('enableDevContainer - Integration Tests', () => {
         // Expected to throw
         expect(mockContext.telemetry.properties.result).toBe('Failed');
         expect(mockContext.telemetry.properties.error).toBeDefined();
-      }
-      const srcAssetsPath = path.resolve(__dirname, '..', '..', '..', '..', 'assets');
-      // Check if assets need to be copied
-      if (await fse.pathExists(srcAssetsPath)) {
-        await fse.copy(srcAssetsPath, destAssetsPath);
       }
     });
   });

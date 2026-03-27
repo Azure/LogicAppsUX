@@ -13,6 +13,7 @@ export default defineConfig({
   test: {
     name: packageJson.name,
     environment: 'node',
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
     restoreMocks: true,
@@ -20,10 +21,12 @@ export default defineConfig({
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
+      'out/**',
       '**/cypress/**',
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
-      // Exclude E2E tests in src/test/ui/ that use Mocha
+      // Exclude VS Code E2E suites that run under the extension test harness, not Vitest.
+      'src/test/e2e/**',
       'src/test/ui/**',
     ],
   },
