@@ -4,8 +4,10 @@ import {
   isAgentConnectorAndDeploymentId,
   isAgentConnectorAndFoundryAgentId,
   isAgentConnectorAndAgentModel,
+  isAgentConnectorAndConsumptionAgentModel,
   agentModelTypeParameterKey,
   getConnectionToAssign,
+  categorizeConnections,
 } from '../helpers';
 import type { ParameterGroup } from '../../../../../../core/state/operation/operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
@@ -173,5 +175,78 @@ describe('getConnectionToAssign', () => {
     expect(getConnectionToAssign('AzureOpenAI', [], foundryConns)).toBeNull();
     expect(getConnectionToAssign('MicrosoftFoundry', [], foundryConns)).toBeNull();
     expect(getConnectionToAssign('FoundryAgentService', azureConns, [])).toBeNull();
+  });
+});
+
+describe('isAgentConnectorAndConsumptionAgentModel', () => {
+  it('should return true for agent connector with agentModelType', () => {
+    expect(isAgentConnectorAndConsumptionAgentModel('/connectionProviders/agent', 'agentModelType')).toBe(true);
+  });
+
+  it('should return false for non-agent connector', () => {
+    expect(isAgentConnectorAndConsumptionAgentModel('other/connector', 'agentModelType')).toBe(false);
+  });
+
+  it('should return false for agent connector with non-model parameter', () => {
+    expect(isAgentConnectorAndConsumptionAgentModel('/connectionProviders/agent', 'deploymentId')).toBe(false);
+  });
+});
+
+describe('categorizeConnections', () => {
+  const makeConnection = (id: string, cognitiveServiceId?: string): Connection =>
+    ({
+      id,
+      name: id,
+      properties: {
+        connectionParameters: cognitiveServiceId
+          ? {
+              cognitiveServiceAccountId: {
+                metadata: { value: cognitiveServiceId },
+              },
+            }
+          : {},
+      },
+    }) as unknown as Connection;
+
+  it('should categorize Azure OpenAI connections (no foundry pattern)', () => {
+    const connections = [
+      makeConnection('conn-1', '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'),
+      makeConnection('conn-2'),
+    ];
+    const result = categorizeConnections(connections);
+    expect(result.azureOpenAI).toHaveLength(2);
+    expect(result.foundry).toHaveLength(0);
+  });
+
+  it('should categorize Foundry connections by resource pattern', () => {
+    const connections = [
+      makeConnection(
+        'foundry-conn',
+        '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/projects/myproject'
+      ),
+    ];
+    const result = categorizeConnections(connections);
+    expect(result.azureOpenAI).toHaveLength(0);
+    expect(result.foundry).toHaveLength(1);
+    expect(result.foundry[0].id).toBe('foundry-conn');
+  });
+
+  it('should handle mixed connections', () => {
+    const connections = [
+      makeConnection('azure-conn', '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'),
+      makeConnection(
+        'foundry-conn',
+        '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/projects/myproject'
+      ),
+    ];
+    const result = categorizeConnections(connections);
+    expect(result.azureOpenAI).toHaveLength(1);
+    expect(result.foundry).toHaveLength(1);
+  });
+
+  it('should return empty arrays for empty input', () => {
+    const result = categorizeConnections([]);
+    expect(result.azureOpenAI).toHaveLength(0);
+    expect(result.foundry).toHaveLength(0);
   });
 });

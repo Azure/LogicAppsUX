@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { AgentUtils, isDynamicConnection } from '../Utils';
+import { describe, it, expect, vi } from 'vitest';
+import { AgentUtils, isDynamicConnection, titleCase, isOpenApiSchemaVersion, getSKUDefaultHostOptions } from '../Utils';
 
 describe('AgentUtils', () => {
   describe('ModelType constants', () => {
@@ -129,5 +129,96 @@ describe('isDynamicConnection', () => {
 
   it('should handle undefined input', () => {
     expect(isDynamicConnection(undefined)).toBe(false);
+  });
+});
+
+describe('titleCase', () => {
+  it('should convert a string to title case', () => {
+    expect(titleCase('hello world')).toBe('Hello World');
+  });
+
+  it('should handle single word', () => {
+    expect(titleCase('hello')).toBe('Hello');
+  });
+
+  it('should handle empty string', () => {
+    expect(titleCase('')).toBe('');
+  });
+});
+
+describe('isOpenApiSchemaVersion', () => {
+  it('should return true for 2023-01-31-preview schema', () => {
+    expect(isOpenApiSchemaVersion({ $schema: 'https://schema.management.azure.com/2023-01-31-preview/workflowdefinition.json#' })).toBe(
+      true
+    );
+  });
+
+  it('should return false for non-preview schema', () => {
+    expect(isOpenApiSchemaVersion({ $schema: 'https://schema.management.azure.com/2016-06-01/workflowdefinition.json#' })).toBe(false);
+  });
+
+  it('should return falsy when $schema is undefined', () => {
+    expect(isOpenApiSchemaVersion({})).toBeFalsy();
+  });
+
+  it('should return falsy for null/undefined definition', () => {
+    expect(isOpenApiSchemaVersion(null)).toBeFalsy();
+    expect(isOpenApiSchemaVersion(undefined)).toBeFalsy();
+  });
+});
+
+describe('getSKUDefaultHostOptions', () => {
+  it('should return consumption options for consumption SKU', () => {
+    const result = getSKUDefaultHostOptions('consumption');
+    expect(result).toHaveProperty('recurrenceInterval');
+    expect(result).toHaveProperty('maximumWaitingRuns');
+  });
+
+  it('should return standard options for standard SKU', () => {
+    const result = getSKUDefaultHostOptions('standard');
+    expect(result).toHaveProperty('recurrenceInterval');
+    expect(result).toHaveProperty('maximumWaitingRuns');
+  });
+
+  it('should return empty object for unknown SKU', () => {
+    expect(getSKUDefaultHostOptions('Unknown')).toEqual({});
+  });
+});
+
+describe('AgentUtils.isFoundryAgentIdParameter', () => {
+  it('should return true for foundryAgentId parameter', () => {
+    expect(AgentUtils.isFoundryAgentIdParameter('foundryAgentId')).toBe(true);
+  });
+
+  it('should be case insensitive', () => {
+    expect(AgentUtils.isFoundryAgentIdParameter('FOUNDRYAGENTID')).toBe(true);
+    expect(AgentUtils.isFoundryAgentIdParameter('FoundryAgentId')).toBe(true);
+  });
+
+  it('should return false for other parameter names', () => {
+    expect(AgentUtils.isFoundryAgentIdParameter('deploymentId')).toBe(false);
+    expect(AgentUtils.isFoundryAgentIdParameter('agentModelType')).toBe(false);
+    expect(AgentUtils.isFoundryAgentIdParameter('')).toBe(false);
+  });
+
+  it('should handle undefined input', () => {
+    expect(AgentUtils.isFoundryAgentIdParameter(undefined)).toBe(false);
+  });
+});
+
+describe('AgentUtils.filterDynamicConnectionFeatures', () => {
+  it('should return true when connection is not dynamic', () => {
+    const connection = { properties: { features: 'StaticConnection' } } as any;
+    expect(AgentUtils.filterDynamicConnectionFeatures(connection)).toBe(true);
+  });
+
+  it('should return false when connection is dynamic and not in agent subgraph', () => {
+    const connection = { properties: { features: 'DynamicUserInvoked' } } as any;
+    expect(AgentUtils.filterDynamicConnectionFeatures(connection)).toBe(false);
+  });
+
+  it('should return true when connection has no features property', () => {
+    const connection = { properties: {} } as any;
+    expect(AgentUtils.filterDynamicConnectionFeatures(connection)).toBe(true);
   });
 });
