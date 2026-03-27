@@ -6,7 +6,7 @@ import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSeria
 import { getReactQueryClient, runsQueriesKeys } from '@microsoft/logic-apps-designer';
 import type { CustomCodeFileNameMapping, ServerNotificationData, AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
-import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
+import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, UploadFile, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
@@ -1376,4 +1376,74 @@ const listMcpServers = async (siteResourceId: string): Promise<any[]> => {
     mcpServers = [];
   }
   return mcpServers;
+};
+
+export const uploadFileToKnowledgeHub = async (
+  siteResourceId: string,
+  hubName: string,
+  content: { file: UploadFile; name: string; description?: string },
+  setIsLoading: (isLoading: boolean) => void
+): Promise<void> => {
+  const { file, name, description } = content;
+  const contentType = file.file.type || 'application/octet-stream';
+
+  const uri = `https://management.azure.com${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgehubs/${hubName}/knowledgeArtifacts/${name}?api-version=2018-11-01`;
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const base64Content = (reader.result as string).split(',')[1]; // Remove data URL prefix
+
+      const payload = {
+        description: description,
+        payload: {
+          '$content-type': contentType,
+          $content: base64Content,
+        },
+      };
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.onloadstart = () => {
+        setIsLoading(true);
+      };
+
+      xhr.onloadend = () => {
+        setIsLoading(false);
+        file.setProgress?.(1);
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        setIsLoading(false);
+        reject(new Error('Upload failed due to network error'));
+      };
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          file.setProgress?.(e.loaded / e.total);
+        }
+      };
+
+      xhr.open('PUT', uri, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', `Bearer ${environment.armToken}`);
+      xhr.setRequestHeader('Cache-Control', 'no-cache');
+
+      xhr.send(JSON.stringify(payload));
+    };
+
+    reader.onerror = () => {
+      setIsLoading(false);
+      reject(new Error('Failed to read file'));
+    };
+
+    reader.readAsDataURL(file.file);
+  });
 };

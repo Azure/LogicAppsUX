@@ -176,6 +176,14 @@ export default {
           'x-ms-editor': 'agentinstruction',
           type: 'array',
         },
+        knowledgeBaseName: {
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'knowledgebase',
+          'x-ms-editor-options': {
+            visibility: 'custom',
+          },
+          type: 'string',
+        },
         headers: {
           type: 'object',
           title: 'Headers',

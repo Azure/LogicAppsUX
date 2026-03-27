@@ -24,6 +24,7 @@ import type {
   IUserPreferenceService,
   IExperimentationService,
   ICognitiveServiceService,
+  IResourceService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -77,6 +78,7 @@ export interface ServiceOptions {
   runService?: IRunService;
   roleService?: IRoleService;
   editorService?: IEditorService;
+  resourceService?: IResourceService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
   customCodeService?: ICustomCodeService;

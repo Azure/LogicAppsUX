@@ -10,7 +10,7 @@ import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { AddFilePanel } from '../addfile';
-import { KnowledgePanelView } from '../../../../core/state/knowledge/panelSlice';
+import { KnowledgePanelView } from '../../../../../core/state/knowledge/panelSlice';
 
 // Mock queries
 const mockUseAllKnowledgeHubs = vi.fn();

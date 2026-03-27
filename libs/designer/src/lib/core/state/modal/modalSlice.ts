@@ -5,11 +5,13 @@ export interface ModalState {
   isCombineVariableOpen: boolean;
   resolveCombineVariable?: (useCombined: boolean) => void;
   isTriggerDescriptionOpen: boolean;
+  isKnowledgeConnectionOpen?: boolean;
 }
 
 const initialState: ModalState = {
   isCombineVariableOpen: false,
   isTriggerDescriptionOpen: false,
+  isKnowledgeConnectionOpen: false,
 };
 
 const modalSlice = createSlice({
@@ -33,9 +35,21 @@ const modalSlice = createSlice({
     closeTriggerDescriptionModal: (state) => {
       state.isTriggerDescriptionOpen = false;
     },
+    openKnowledgeConnectionModal: (state) => {
+      state.isKnowledgeConnectionOpen = true;
+    },
+    closeKnowledgeConnectionModal: (state) => {
+      state.isKnowledgeConnectionOpen = false;
+    },
   },
 });
 
-export const { openCombineVariableModal, closeCombineVariableModal, openTriggerDescriptionModal, closeTriggerDescriptionModal } =
-  modalSlice.actions;
+export const {
+  openCombineVariableModal,
+  closeCombineVariableModal,
+  openTriggerDescriptionModal,
+  closeTriggerDescriptionModal,
+  openKnowledgeConnectionModal,
+  closeKnowledgeConnectionModal,
+} = modalSlice.actions;
 export default modalSlice.reducer;

@@ -188,6 +188,7 @@ export default {
     DROPDOWN: 'dropdown',
     FILEPICKER: 'filepicker',
     FLOATINGACTIONMENU: 'floatingactionmenu',
+    KNOWLEDGE_BASE: 'knowledgebase',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
