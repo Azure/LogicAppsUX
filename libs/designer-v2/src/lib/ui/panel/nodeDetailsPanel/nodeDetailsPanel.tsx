@@ -154,7 +154,15 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   );
 
   const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string; message: string } => {
-    const validation = isOperationNameValid(originalId, newId, isTrigger, nodesMetadata, idReplacements, intl);
+    const validation = isOperationNameValid(
+      originalId,
+      newId,
+      selectedNodeData!.displayName,
+      isTrigger,
+      nodesMetadata,
+      idReplacements,
+      intl
+    );
     return { valid: validation.isValid, oldValue: validation.isValid ? newId : originalId, message: validation.message };
   };
 
@@ -284,5 +292,5 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 const handleTrackEvent = (_data: PageActionTelemetryData): void => {};
