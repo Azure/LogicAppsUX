@@ -204,7 +204,8 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
           properties: {
             model: {
               name: config?.name ?? model,
-              version: config?.version ?? '2025-04-14',
+              // version: config?.version ?? '2025-04-14',
+              version: config?.version ?? '2025-06-10',
               format: config?.format ?? 'OpenAI',
             },
             raiPolicyName: 'Microsoft.DefaultV2',

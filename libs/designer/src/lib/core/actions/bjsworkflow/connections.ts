@@ -125,6 +125,7 @@ const updateAgentParametersForConnection = (
   // Map display name to manifest parameter value
   const displayNameToManifestValue: Record<string, string> = {
     [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
+    [AgentUtils.ModelType.MicrosoftFoundry]: 'MicrosoftFoundry',
     [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
     [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
     [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',

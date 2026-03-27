@@ -30,6 +30,7 @@ export const isDynamicConnection = (feature?: string): boolean => {
 export class AgentUtils {
   public static ModelType = {
     AzureOpenAI: 'Azure OpenAI',
+    MicrosoftFoundry: 'Foundry Models',
     FoundryService: 'Foundry project',
     APIM: 'APIM Gen AI Gateway',
     V1ChatCompletionsService: 'V1 Chat Completions Service',
