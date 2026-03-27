@@ -105,6 +105,20 @@ describe('browse helper', () => {
       expect(mcpServers?.visible).toBeUndefined();
     });
 
+    test('should set mcpServers visible to false when disableMcpClientTools is true even if isAddingAgentTool is true', () => {
+      const categories = getActionCategories(false, true, true);
+      const mcpServers = categories.find((c) => c.key === 'mcpServers');
+
+      expect(mcpServers?.visible).toBe(false);
+    });
+
+    test('should set mcpServers visible to true when isAddingAgentTool is true and disableMcpClientTools is false', () => {
+      const categories = getActionCategories(false, true, false);
+      const mcpServers = categories.find((c) => c.key === 'mcpServers');
+
+      expect(mcpServers?.visible).toBe(true);
+    });
+
     test('should include aiAgent category', () => {
       const categories = getActionCategories();
       const aiAgent = categories.find((c) => c.key === 'aiAgent');
