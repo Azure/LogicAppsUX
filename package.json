@@ -108,7 +108,7 @@
     "dotenv": "^16.4.5",
     "find-process": "^1.4.7",
     "fs-extra": "^11.2.0",
-    "happy-dom": "^20.0.2",
+    "happy-dom": "^20.8.8",
     "react-window": "^2.2.6",
     "ts-node": "^10.9.2"
   },
