@@ -69,6 +69,22 @@ export const AzureConsumptionLogicAppSelector = () => {
     }
   }, [reloadRunIds, runId, runInstances?.value]);
 
+  // If url query has preset values, set them on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const resourceId = urlParams.get('id');
+    if (resourceId) {
+      dispatch(setAppid(resourceId));
+      dispatch(setResourcePath(resourceId));
+      const workflowName = resourceId.split('/').at(-1) ?? '';
+      dispatch(setWorkflowName(workflowName));
+    }
+    const runId = urlParams.get('runId');
+    if (runId) {
+      dispatch(changeRunId(runId));
+    }
+  }, [dispatch]);
+
   const runOptions =
     runInstances?.value
       ?.map<IDropdownOption>((runInstance) => ({

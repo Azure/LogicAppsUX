@@ -1,6 +1,6 @@
 import test from '@playwright/test';
 import { expect } from '../fixtures/opacityFixture';
-import { GoToMockWorkflow, LoadRunFile } from '../utils/GoToWorkflow';
+import { LoadMockDirect } from '../utils/GoToWorkflow';
 
 test.describe(
   'Monitoring view tests sanity check',
@@ -9,9 +9,7 @@ test.describe(
   },
   () => {
     test('Sanity check', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Monitoring view conditional');
-      await LoadRunFile(page, 'normalState');
+      await LoadMockDirect(page, 'MonitoringViewConditional.json', 'normalState');
 
       // Verify status for success action
       await expect(page.getByTestId('msla-pill-condition_2_status')).toBeVisible();
@@ -31,9 +29,7 @@ test.describe(
     });
 
     test('Sanity check for loading state', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Monitoring view conditional');
-      await LoadRunFile(page, 'loadingState');
+      await LoadMockDirect(page, 'MonitoringViewConditional.json', 'loadingState');
 
       // Verify trigger status
       await expect(page.getByTestId('msla-pill-when_a_http_request_is_received_status')).toBeVisible();

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { getSerializedWorkflowFromState } from './utils/designerFunctions';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { LoadMockDirect } from './utils/GoToWorkflow';
 
 test(
   'Mock: Expect Copy and Paste of Scopes to work on single workflow',
@@ -8,8 +8,7 @@ test(
     tag: '@mock',
   },
   async ({ page }) => {
-    await page.goto('/');
-    await GoToMockWorkflow(page, 'Conditionals');
+    await LoadMockDirect(page, 'Conditionals.json');
     await page.getByTestId('card-condition').click({
       button: 'right',
     });
