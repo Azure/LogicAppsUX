@@ -1,5 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+/**
+ * @vitest-environment jsdom
+ */
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 
 // Mock state values
@@ -20,6 +24,7 @@ vi.mock('react-redux', () => ({
   useSelector: (selector: (state: unknown) => unknown) =>
     selector({
       workflow: { workflowKind: mockWorkflowKind },
+      modal: { isKnowledgeConnectionOpen: false },
     }),
 }));
 
@@ -159,6 +164,10 @@ describe('Designer', () => {
     mockRecurrenceInterval = undefined;
     mockWorkflowKind = 'stateful';
     mockDispatch.mockClear();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   describe('rendering', () => {

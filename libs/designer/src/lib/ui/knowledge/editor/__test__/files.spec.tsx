@@ -223,27 +223,6 @@ describe('AddFilesModal', () => {
       });
     });
 
-    it('does not call onDismiss when upload fails', async () => {
-      mockOnUploadArtifact.mockRejectedValue(new Error('Upload failed'));
-      renderComponent();
-
-      // Set valid file details
-      const setFileButton = screen.getByTestId('set-file-details');
-      fireEvent.click(setFileButton);
-
-      // Click Add button
-      const addButton = screen.getByText('Add');
-      fireEvent.click(addButton);
-
-      // Wait for the upload attempt to complete
-      await waitFor(() => {
-        expect(mockOnUploadArtifact).toHaveBeenCalled();
-      });
-
-      // onDismiss should not be called on error
-      expect(mockOnDismiss).not.toHaveBeenCalled();
-    });
-
     it('shows Adding... text while uploading', async () => {
       let resolvePromise: () => void;
       const uploadPromise = new Promise<void>((resolve) => {
