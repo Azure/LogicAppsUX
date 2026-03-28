@@ -106,7 +106,7 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
   useEffect(() => {
     if (hubs && groupName) {
       setGroupDescription(hubs.find((hub) => equals(hub.name, groupName))?.description ?? '');
-      setExistingArtifactNames(hubs.find((hub) => equals(hub.name, groupName))?.artifacts.map((artifact) => artifact.name) ?? []);
+      setExistingArtifactNames(hubs.find((hub) => equals(hub.name, groupName))?.artifacts?.map((artifact) => artifact.name) ?? []);
     }
   }, [hubs, groupName]);
 
@@ -204,8 +204,9 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
             disabled={selectedFiles.length > 0}
             isMultiUpload={false}
             onAdd={(file) => {
-              setSelectedFiles((prev) => [...prev, file]);
-              setDetails({ selectedFiles: [...selectedFiles, file] });
+              const newSelectedFiles = [...selectedFiles, file];
+              setSelectedFiles(newSelectedFiles);
+              setDetails({ selectedFiles: newSelectedFiles });
             }}
           />
         ),
@@ -219,17 +220,17 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
 
   const handleDeleteFile = useCallback(
     (file: UploadFile) => {
-      setSelectedFiles((prev) => prev.filter((f) => f.uuid !== file.uuid));
-      setDetails({ selectedFiles: selectedFiles.filter((f) => f.uuid !== file.uuid) });
+      const newSelectedFiles = selectedFiles.filter((f) => f.uuid !== file.uuid);
       const newFileNames = { ...fileNames };
       delete newFileNames[file.uuid.toString()];
-      setFileNames(newFileNames);
-      setDetails({ fileNames: newFileNames });
-
       const newFileDescriptions = { ...fileDescriptions };
       delete newFileDescriptions[file.uuid.toString()];
+
+      setFileNames(newFileNames);
       setFileDescriptions(newFileDescriptions);
-      setDetails({ fileDescriptions: newFileDescriptions });
+      setSelectedFiles(newSelectedFiles);
+
+      setDetails({ selectedFiles: newSelectedFiles, fileNames: newFileNames, fileDescriptions: newFileDescriptions });
     },
     [fileDescriptions, fileNames, selectedFiles, setDetails]
   );

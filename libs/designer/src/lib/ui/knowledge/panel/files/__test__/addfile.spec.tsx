@@ -15,18 +15,18 @@ import { KnowledgePanelView } from '../../../../../core/state/knowledge/panelSli
 // Mock queries
 const mockUseAllKnowledgeHubs = vi.fn();
 const mockRefetch = vi.fn();
-vi.mock('../../../../core/knowledge/utils/queries', () => ({
+vi.mock('../../../../../core/knowledge/utils/queries', () => ({
   useAllKnowledgeHubs: (...args: any[]) => mockUseAllKnowledgeHubs(...args),
 }));
 
 // Mock helper functions
 const mockValidateArtifactNameAvailability = vi.fn();
-vi.mock('../../../../core/knowledge/utils/helper', () => ({
+vi.mock('../../../../../core/knowledge/utils/helper', () => ({
   validateArtifactNameAvailability: (...args: any[]) => mockValidateArtifactNameAvailability(...args),
 }));
 
 // Mock styles
-vi.mock('../styles', () => ({
+vi.mock('../../styles', () => ({
   usePanelStyles: () => ({
     drawer: 'mock-drawer',
     header: 'mock-header',
@@ -46,7 +46,7 @@ vi.mock('../styles', () => ({
 }));
 
 // Mock CreateGroup component
-vi.mock('../../modals/creategroup', () => ({
+vi.mock('../../../modals/creategroup', () => ({
   CreateGroup: ({ onDismiss, onCreate }: { onDismiss: () => void; onCreate: (name: string, description: string) => void }) => (
     <div data-testid="create-group-modal">
       <button data-testid="dismiss-modal" onClick={onDismiss}>
@@ -129,7 +129,6 @@ vi.mock('@microsoft/logic-apps-shared', async () => {
 describe('AddFilePanel Component', () => {
   const resourceId = '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.Web/sites/myApp';
   const mockOnUploadArtifact = vi.fn();
-  const mockDispatch = vi.fn();
 
   const createMockStore = (panelState = { isOpen: true, currentPanelView: KnowledgePanelView.AddFiles }) => {
     return configureStore({

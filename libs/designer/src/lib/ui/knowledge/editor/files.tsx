@@ -174,17 +174,13 @@ export const AddFilesModal = ({
             <FileUpload resourceId={resourceId} selectedHub={groupName} setDetails={handleSetFileDetails} />
           </DialogContent>
           <DialogActions>
-            <DialogTrigger disableButtonEnhancement>
-              <Button
-                appearance="primary"
-                disabled={
-                  !groupName || selectedFiles.length === 0 || sizeTooLargeError !== undefined || isUploading || !hasNonEmptyFileNames
-                }
-                onClick={handleAdd}
-              >
-                {isUploading ? INTL_TEXT.addingButton : INTL_TEXT.addButton}
-              </Button>
-            </DialogTrigger>
+            <Button
+              appearance="primary"
+              disabled={!groupName || selectedFiles.length === 0 || sizeTooLargeError !== undefined || isUploading || !hasNonEmptyFileNames}
+              onClick={handleAdd}
+            >
+              {isUploading ? INTL_TEXT.addingButton : INTL_TEXT.addButton}
+            </Button>
             <DialogTrigger disableButtonEnhancement>
               <Button onClick={onDismiss} disabled={isUploading}>
                 {INTL_TEXT.cancelButton}

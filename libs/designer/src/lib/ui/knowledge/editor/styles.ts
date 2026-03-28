@@ -48,10 +48,9 @@ export const useKnowledgeStyles = makeStyles({
   optionContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginLeft: '-28px',
   },
   artifactsList: {
-    padding: '6px 0 0 4px',
+    padding: '6px 0 0 24px',
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',

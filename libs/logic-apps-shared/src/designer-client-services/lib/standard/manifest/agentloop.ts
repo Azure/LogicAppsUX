@@ -177,6 +177,7 @@ export default {
           type: 'array',
         },
         knowledgeBaseName: {
+          title: 'Knowledge base',
           'x-ms-visibility': 'important',
           'x-ms-editor': 'knowledgebase',
           'x-ms-editor-options': {

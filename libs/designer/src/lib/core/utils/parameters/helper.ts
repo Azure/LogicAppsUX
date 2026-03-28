@@ -525,8 +525,8 @@ export function getParameterEditorProps(
     editorOptions = {
       ...editorOptions,
       hideLabel: true,
-      selectedHub: parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0]) ? parameterValue[0].value : undefined,
-      logicAppId: WorkflowService().getLogicAppId?.(),
+      hubName: parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0]) ? parameterValue[0].value : undefined,
+      logicAppId: WorkflowService().getLogicAppId?.() ?? '',
       EditorComponent: KnowledgeHubEditor,
     };
   } else if (!editor) {

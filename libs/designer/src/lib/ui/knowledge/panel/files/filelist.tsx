@@ -143,7 +143,7 @@ export const FileList = ({
               <div className={fileNames[item.uuid.toString()]?.error ? styles.errorInput : undefined}>
                 <Input
                   className={styles.inputText}
-                  value={fileNames[item.uuid.toString()]?.name}
+                  value={fileNames[item.uuid.toString()]?.name ?? ''}
                   placeholder={INTL_TEXT.namePlaceholder}
                   onChange={(e) => handleNameChange(item, e.target.value)}
                 />

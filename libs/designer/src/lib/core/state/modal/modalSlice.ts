@@ -5,7 +5,7 @@ export interface ModalState {
   isCombineVariableOpen: boolean;
   resolveCombineVariable?: (useCombined: boolean) => void;
   isTriggerDescriptionOpen: boolean;
-  isKnowledgeConnectionOpen?: boolean;
+  isKnowledgeConnectionOpen: boolean;
 }
 
 const initialState: ModalState = {

@@ -24,18 +24,19 @@ import { AddFilesModal } from './files';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/store';
 import { openKnowledgeConnectionModal } from '../../../core/state/modal/modalSlice';
+import { isLiteralValueSegment } from '../../../core/utils/parameters/segment';
 
 interface KnowledgeHubEditorOptions {
-  hubName?: string;
   logicAppId: string;
 }
 
-export const KnowledgeHubEditor = ({ editorOptions, onValueChange }: IEditorProps) => {
+export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEditorProps) => {
   const styles = useKnowledgeStyles();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { hubName, logicAppId } = editorOptions as KnowledgeHubEditorOptions;
-  const { data: connection } = useConnection();
+  const { logicAppId } = editorOptions as KnowledgeHubEditorOptions;
+  const hubName = useMemo(() => (value.length === 1 && isLiteralValueSegment(value[0]) ? value[0].value : undefined), [value]);
+  const { data: connection, isLoading: isConnectionLoading } = useConnection();
   const { data: hubs, isLoading, refetch } = useAllKnowledgeHubs(logicAppId);
 
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
@@ -91,6 +92,16 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange }: IEditorProp
       id: '1ZDLZA',
       description: 'Text for learn more link',
     }),
+    emptyArtifacts: intl.formatMessage({
+      defaultMessage: 'No hub artifacts found. You can create hub and upload files to get started.',
+      id: 'cBQnzA',
+      description: 'Text to indicate that there are no artifacts in the knowledge hub',
+    }),
+    noConnectionMessage: intl.formatMessage({
+      defaultMessage: 'Please create a connection to add knowledge hubs.',
+      id: 'F6xkfB',
+      description: 'Text to indicate that there is no connection',
+    }),
   };
 
   const handleOpenConnectionModal = useCallback(() => {
@@ -122,17 +133,17 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange }: IEditorProp
     [refetch]
   );
 
+  const [selectedHub, setSelectedHub] = useState<string>(hubName ?? '');
   const handleHubSelect = useCallback<NonNullable<DropdownProps['onOptionSelect']>>(
     (_event, data) => {
       if (data.optionValue) {
-        const hubName = hubs?.find((hub) => hub.id === data.optionValue)?.name;
+        const hubName = data.optionValue;
+        setSelectedHub(hubName ?? '');
         onValueChange?.({ value: [createLiteralValueSegment(hubName ?? '')] });
       }
     },
-    [hubs, onValueChange]
+    [onValueChange]
   );
-
-  const selectedHub = useMemo(() => hubs?.find((hub) => hub.name === hubName), [hubName, hubs]);
 
   return (
     <div className={styles.container}>
@@ -154,7 +165,7 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange }: IEditorProp
           {INTL_TEXT.connectionSectionLabel}
         </Label>
         {connection ? (
-          <Input value={connection.name} disabled={true} aria-label={INTL_TEXT.connectionSectionLabel} />
+          <Input id="connection-input" value={connection?.name ?? ''} disabled={true} aria-label={INTL_TEXT.connectionSectionLabel} />
         ) : (
           <Button className={styles.createButton} icon={<Add20Regular style={{ width: '18px' }} />} onClick={handleOpenConnectionModal}>
             {INTL_TEXT.createConnectionButtonText}
@@ -169,20 +180,26 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange }: IEditorProp
             {INTL_TEXT.sourcesSectionLabel}
           </Label>
           <Dropdown
-            placeholder={INTL_TEXT.selectKnowledgeHubPlaceholder}
-            value={selectedHub?.name ?? ''}
-            selectedOptions={selectedHub ? [selectedHub.id] : []}
+            id="knowledge-hub-dropdown"
+            placeholder={!isConnectionLoading && !connection ? INTL_TEXT.noConnectionMessage : INTL_TEXT.selectKnowledgeHubPlaceholder}
+            value={selectedHub ?? ''}
+            selectedOptions={selectedHub ? [selectedHub] : []}
             onOptionSelect={handleHubSelect}
             aria-label={INTL_TEXT.sourcesSectionLabel}
             style={{ flexGrow: 1 }}
             disabled={isLoading || !connection}
-            aria-expanded={true}
           >
-            {hubs?.map((hub) => (
-              <Option key={hub.id} value={hub.id} text={hub.name}>
-                <HubOption hub={hub} />
+            {hubs?.length === 0 ? (
+              <Option value="" text={INTL_TEXT.emptyArtifacts} disabled={true}>
+                {INTL_TEXT.emptyArtifacts}
               </Option>
-            ))}
+            ) : (
+              hubs?.map((hub) => (
+                <Option key={hub.id} value={hub.name} text={hub.name}>
+                  <HubOption hub={hub} />
+                </Option>
+              ))
+            )}
           </Dropdown>
         </Field>
         <Button
@@ -237,7 +254,7 @@ const HubOption = ({ hub }: { hub: KnowledgeHubExtended }) => {
       </div>
       {isExpanded && (
         <div className={styles.artifactsList}>
-          {hub.artifacts.map((artifact) => (
+          {(hub.artifacts ?? []).map((artifact) => (
             <div key={artifact.id} className={styles.artifactItem}>
               <Text className={styles.artifactName}>{artifact.name}</Text>
               <BadgeArtifact status={artifact.uploadStatus} />
