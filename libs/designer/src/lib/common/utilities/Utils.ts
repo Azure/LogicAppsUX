@@ -35,6 +35,25 @@ export class AgentUtils {
     APIM: 'APIM Gen AI Gateway',
     V1ChatCompletionsService: 'V1 Chat Completions Service',
   };
+
+  /** Maps manifest/parameter values (e.g. 'AzureOpenAI') to display names (e.g. 'Azure OpenAI'). */
+  public static ManifestToDisplayName: Record<string, string> = {
+    AzureOpenAI: AgentUtils.ModelType.AzureOpenAI,
+    MicrosoftFoundry: AgentUtils.ModelType.MicrosoftFoundry,
+    FoundryAgentService: AgentUtils.ModelType.FoundryService,
+    APIMGenAIGateway: AgentUtils.ModelType.APIM,
+    V1ChatCompletionsService: AgentUtils.ModelType.V1ChatCompletionsService,
+  };
+
+  /** Maps display names (e.g. 'Azure OpenAI') to manifest/parameter values (e.g. 'AzureOpenAI'). */
+  public static DisplayNameToManifest: Record<string, string> = {
+    [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
+    [AgentUtils.ModelType.MicrosoftFoundry]: 'MicrosoftFoundry',
+    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
+    [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
+    [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',
+  };
+
   public static isConnector = (connectorId?: string): boolean => {
     return equals(connectorId ?? '', 'connectionProviders/agent', true) || equals(connectorId ?? '', '/connectionProviders/agent', true);
   };

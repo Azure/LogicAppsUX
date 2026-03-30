@@ -19,6 +19,24 @@ describe('AgentUtils', () => {
     });
   });
 
+  describe('ManifestToDisplayName', () => {
+    it('should map all manifest values to their display names', () => {
+      expect(AgentUtils.ManifestToDisplayName.AzureOpenAI).toBe('Azure OpenAI');
+      expect(AgentUtils.ManifestToDisplayName.MicrosoftFoundry).toBe('Foundry Models');
+      expect(AgentUtils.ManifestToDisplayName.FoundryAgentService).toBe('Foundry project');
+      expect(AgentUtils.ManifestToDisplayName.APIMGenAIGateway).toBe('APIM Gen AI Gateway');
+      expect(AgentUtils.ManifestToDisplayName.V1ChatCompletionsService).toBe('V1 Chat Completions Service');
+    });
+  });
+
+  describe('DisplayNameToManifest', () => {
+    it('should be the inverse of ManifestToDisplayName', () => {
+      for (const [manifest, display] of Object.entries(AgentUtils.ManifestToDisplayName)) {
+        expect(AgentUtils.DisplayNameToManifest[display]).toBe(manifest);
+      }
+    });
+  });
+
   describe('isConnector', () => {
     it('should return true for agent connector without leading slash', () => {
       expect(AgentUtils.isConnector('connectionProviders/agent')).toBe(true);

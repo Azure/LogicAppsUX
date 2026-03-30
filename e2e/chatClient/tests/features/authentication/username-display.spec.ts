@@ -36,7 +36,8 @@ test.describe('Username Display', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Wait for user message to appear
-    await expect(page.getByText('Hello, this is a test message')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Hello, this is a test message').first()).toBeVisible({ timeout: 5000 });
 
     // The username 'Test User' should be displayed near the user message
     // Check for the username in the chat interface
@@ -60,7 +61,8 @@ test.describe('Username Display', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // User message should appear regardless of username
-    await expect(page.getByText('Test message')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Test message').first()).toBeVisible({ timeout: 5000 });
 
     // Chat interface should not crash and should be functional
     await expect(messageInput).toBeEnabled({ timeout: 10000 });
@@ -79,7 +81,8 @@ test.describe('Username Display', { tag: '@mock' }, () => {
     // Send first message
     await messageInput.fill('First message');
     await sendButton.click();
-    await expect(page.getByText('First message')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('First message').first()).toBeVisible({ timeout: 5000 });
 
     // Wait for response before sending second message
     await page.waitForTimeout(2000);
@@ -87,7 +90,8 @@ test.describe('Username Display', { tag: '@mock' }, () => {
     // Send second message
     await messageInput.fill('Second message');
     await sendButton.click();
-    await expect(page.getByText('Second message')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Second message').first()).toBeVisible({ timeout: 5000 });
 
     // Username should still be visible (for user messages)
     const userNameElements = page.getByText('Test User');
@@ -109,7 +113,8 @@ test.describe('Username Display', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Wait for both user message and agent response
-    await expect(page.getByText('Hello agent')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Hello agent').first()).toBeVisible({ timeout: 5000 });
 
     // Wait for agent response (mock returns "I received your message: <message>")
     await expect(page.getByText(/I received your message/i)).toBeVisible({ timeout: 10000 });
@@ -148,7 +153,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
     await messageInput.fill('Testing username display');
     await sendButton.click();
 
-    await expect(page.getByText('Testing username display')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Testing username display').first()).toBeVisible({ timeout: 5000 });
     // Verify the special character username is displayed correctly
     await expect(page.getByText("José O'Connor-Smith <test>")).toBeVisible({ timeout: 5000 });
   });
@@ -166,7 +172,8 @@ test.describe('Username Edge Cases', { tag: '@mock' }, () => {
     await messageInput.fill('Initial message');
     await sendButton.click();
 
-    await expect(page.getByText('Initial message')).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('Initial message').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Test User')).toBeVisible({ timeout: 5000 });
 
     // Scroll the page

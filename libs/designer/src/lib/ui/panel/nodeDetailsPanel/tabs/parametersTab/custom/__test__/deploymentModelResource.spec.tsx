@@ -87,7 +87,7 @@ describe('CustomDeploymentModelResource', () => {
     await waitFor(() => {
       expect(mockCreateNewDeployment).toHaveBeenCalledWith(
         expect.stringContaining('model-'),
-        constants.SUPPORTED_FOUNDRY_AGENT_MODELS[0],
+        constants.SUPPORTED_AGENT_OPENAI_MODELS[0],
         'test-account-id'
       );
     });

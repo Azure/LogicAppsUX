@@ -110,14 +110,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   });
 
   const agentModelTypeDisplayName = useMemo(() => {
-    const manifestToDisplayName: Record<string, string> = {
-      AzureOpenAI: AgentUtils.ModelType.AzureOpenAI,
-      MicrosoftFoundry: AgentUtils.ModelType.MicrosoftFoundry,
-      FoundryAgentService: AgentUtils.ModelType.FoundryService,
-      APIMGenAIGateway: AgentUtils.ModelType.APIM,
-      V1ChatCompletionsService: AgentUtils.ModelType.V1ChatCompletionsService,
-    };
-    return manifestToDisplayName[agentModelTypeFromState] ?? AgentUtils.ModelType.AzureOpenAI;
+    return AgentUtils.ManifestToDisplayName[agentModelTypeFromState] ?? AgentUtils.ModelType.AzureOpenAI;
   }, [agentModelTypeFromState]);
 
   const subLabel = useMemo(() => {

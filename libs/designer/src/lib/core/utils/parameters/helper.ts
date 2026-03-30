@@ -1890,9 +1890,6 @@ export const updateParameterAndDependencies = createAsyncThunk(
           });
         }
 
-        // for debugging
-        inputDependencies['inputs.$.agentModelSettings.deploymentModelProperties.name'].definition.default = 'foo';
-
         if (inputDependencies[key].dependencyType === 'AgentSchema') {
           const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
           if (!dependentParameter) {

@@ -123,14 +123,7 @@ const updateAgentParametersForConnection = (
   const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
 
   // Map display name to manifest parameter value
-  const displayNameToManifestValue: Record<string, string> = {
-    [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
-    [AgentUtils.ModelType.MicrosoftFoundry]: 'MicrosoftFoundry',
-    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
-    [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
-    [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',
-  };
-  let agentModelTypeValue = displayNameToManifestValue[rawModelType] ?? '';
+  let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawModelType] ?? '';
 
   // Fallback: detect Foundry connections by cognitiveServiceAccountId resource pattern
   if (!agentModelTypeValue) {
@@ -149,9 +142,9 @@ const updateAgentParametersForConnection = (
     const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
     const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
     const currentValue = existingParam?.value?.[0]?.value;
-    const validManifestValues = Object.values(displayNameToManifestValue);
+    const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
     if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
-      return;
+      agentModelTypeValue = currentValue;
     }
   }
 
