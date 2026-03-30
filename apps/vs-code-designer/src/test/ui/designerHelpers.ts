@@ -1764,8 +1764,37 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
     /* ignore */
   }
 
-  for (let attempt = 0; attempt < 5; attempt++) {
+  const MAX_ATTEMPTS = 3;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    let clickedOpenDesigner = false;
     try {
+      // On retries after a failed webview detection, re-do Quick Open to
+      // reveal workflow.json in the explorer (editor state changed).
+      if (attempt > 0) {
+        try {
+          await driver.switchTo().defaultContent();
+        } catch {
+          /* ignore */
+        }
+        try {
+          await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+          await sleep(1000);
+          const qi = await driver.findElement(By.css('.quick-input-box input'));
+          await qi.sendKeys(label + '/workflow.json');
+          await sleep(1500);
+          await qi.sendKeys(Key.ENTER);
+          await sleep(2000);
+        } catch {
+          /* ignore */
+        }
+        try {
+          await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+          await sleep(1500);
+        } catch {
+          /* ignore */
+        }
+      }
+
       // Scroll the selected workflow.json into view
       await driver.executeScript(`
         var items = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
@@ -1823,7 +1852,7 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
       }
 
       if (!targetRow) {
-        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/5)`);
+        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/${MAX_ATTEMPTS})`);
         await sleep(3000);
         continue;
       }
@@ -1841,11 +1870,12 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
           if (menuLabel.toLowerCase().includes('open designer') && !menuLabel.toLowerCase().includes('data map')) {
             console.log(`[openDesignerViaExplorer] Clicking: "${menuLabel}"`);
             await menuItem.click();
+            clickedOpenDesigner = true;
             await sleep(3000);
 
-            // Wait for webview iframe to appear
-            const deadline = Date.now() + 30_000;
-            let webviewFound = false;
+            // Wait for webview iframe to appear (60s on first attempt, 90s on retries)
+            const timeoutMs = attempt === 0 ? 60_000 : 90_000;
+            const deadline = Date.now() + timeoutMs;
             while (Date.now() < deadline) {
               try {
                 await dismissAllDialogs(driver);
@@ -1863,28 +1893,34 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
               }
               await sleep(500);
             }
-            if (!webviewFound) {
-              console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" within 30s — will retry`);
-              // Close any stuck editors before retrying
-              try {
-                await new EditorView().closeAllEditors();
-              } catch {
-                /* ignore */
-              }
-              await sleep(2000);
-              break; // break inner menu loop to retry from outer attempt loop
+
+            console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" within ${timeoutMs / 1000}s — will retry`);
+            // Switch to default content and close stuck editors before retrying
+            try {
+              await driver.switchTo().defaultContent();
+            } catch {
+              /* ignore */
             }
+            try {
+              await new EditorView().closeAllEditors();
+            } catch {
+              /* ignore */
+            }
+            await sleep(5000);
+            break; // break inner menu loop to retry from outer attempt loop
           }
         } catch {
           /* stale menu item */
         }
       }
 
-      // Dismiss context menu if "Open Designer" not found
-      await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/5)`);
+      if (!clickedOpenDesigner) {
+        // Dismiss context menu if "Open Designer" not found
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+        console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/${MAX_ATTEMPTS})`);
+      }
     } catch (e: any) {
-      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/${MAX_ATTEMPTS} failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
