@@ -84,6 +84,7 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
   const deadline = t0 + timeoutMs;
   let screenshotTaken = false;
   let terminalsDetectedAt = 0;
+  let fatalErrorCount = 0;
 
   while (Date.now() < deadline) {
     try {
@@ -95,6 +96,36 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
     if (!screenshotTaken && Date.now() - t0 > 5000) {
       await captureScreenshot(driver, 'debug-waiting-for-runtime');
       screenshotTaken = true;
+    }
+
+    // Detect fatal debug errors (processId resolution failure or preLaunchTask
+    // failure). These indicate the debug session can't start and we should
+    // fail fast instead of burning the full timeout.
+    try {
+      const fatalError = await driver.executeScript<string | null>(`
+        var selectors = ['.monaco-dialog-box', '[role="dialog"]', '.notification-toast'];
+        for (var s = 0; s < selectors.length; s++) {
+          var els = document.querySelectorAll(selectors[s]);
+          for (var i = 0; i < els.length; i++) {
+            var text = els[i].textContent || '';
+            if (text.includes('Error processing launch options') ||
+                text.includes('Error exists after running preLaunchTask')) {
+              return text.substring(0, 200);
+            }
+          }
+        }
+        return null;
+      `);
+      if (fatalError) {
+        fatalErrorCount++;
+        if (fatalErrorCount >= 3) {
+          console.log(`[debug] Fatal debug error detected (${fatalErrorCount}x): "${fatalError.substring(0, 100)}"`);
+          await captureScreenshot(driver, 'debug-fatal-error');
+          return false;
+        }
+      }
+    } catch {
+      /* ignore */
     }
 
     try {

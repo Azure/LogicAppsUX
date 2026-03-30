@@ -1845,6 +1845,7 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
 
             // Wait for webview iframe to appear
             const deadline = Date.now() + 30_000;
+            let webviewFound = false;
             while (Date.now() < deadline) {
               try {
                 await dismissAllDialogs(driver);
@@ -1862,8 +1863,17 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
               }
               await sleep(500);
             }
-            console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" within 30s`);
-            return false;
+            if (!webviewFound) {
+              console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" within 30s — will retry`);
+              // Close any stuck editors before retrying
+              try {
+                await new EditorView().closeAllEditors();
+              } catch {
+                /* ignore */
+              }
+              await sleep(2000);
+              break; // break inner menu loop to retry from outer attempt loop
+            }
           }
         } catch {
           /* stale menu item */

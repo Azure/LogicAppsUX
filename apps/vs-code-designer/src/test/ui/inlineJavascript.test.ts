@@ -20,7 +20,7 @@ import * as assert from 'assert';
 import { Workbench, EditorView, type WebDriver, VSBrowser } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { sleep, captureScreenshot } from './helpers';
+import { sleep, captureScreenshot, clearBlockingUI } from './helpers';
 import {
   TEST_TIMEOUT,
   DEPENDENCY_VALIDATION_TIMEOUT,
@@ -206,10 +206,22 @@ describe('Inline JavaScript Tests', function () {
       assert.ok(wf?.definition?.actions && Object.keys(wf.definition.actions).length > 0, 'Should have actions');
       assert.ok(wf?.definition?.triggers && Object.keys(wf.definition.triggers).length > 0, 'Should have triggers');
 
-      // Debug → Run → Verify
-      workbench = new Workbench();
-      await startDebugging(workbench, driver);
-      assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
+      // Debug → Run → Verify (with retry for flaky debug startup)
+      let runtimeReady = false;
+      for (let debugAttempt = 0; debugAttempt < 2; debugAttempt++) {
+        workbench = new Workbench();
+        await startDebugging(workbench, driver);
+        runtimeReady = await waitForRuntimeReady(driver);
+        if (runtimeReady) {
+          break;
+        }
+        console.log(`[inlineJS] Debug attempt ${debugAttempt + 1} failed — ${debugAttempt < 1 ? 'retrying' : 'giving up'}`);
+        await stopDebugging(driver);
+        try { await driver.switchTo().defaultContent(); } catch { /* ignore */ }
+        await clearBlockingUI(driver);
+        await sleep(5000);
+      }
+      assert.ok(runtimeReady, 'Runtime should start');
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);
