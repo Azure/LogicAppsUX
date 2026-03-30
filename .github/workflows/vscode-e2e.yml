@@ -11,8 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  vscode-e2e:
-    timeout-minutes: 90
+  # ─── Stage 1: Build extension + create test workspaces ───
+  setup:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
 
     steps:
@@ -59,8 +60,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
 
-      # Cache the auto-downloaded runtime dependencies (func, dotnet, node)
-      # so subsequent runs don't re-download ~500MB each time.
       - name: Cache Logic Apps runtime dependencies
         uses: actions/cache@v4
         with:
@@ -68,30 +67,124 @@ jobs:
           key: la-runtime-deps-${{ runner.os }}-v1
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
-          # Save even when tests fail so deps are available on next run
           save-always: true
 
-      - name: Run VS Code Extension E2E tests
+      - name: Create test workspaces (Phase 4.1)
         run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
         env:
-          # Run all phases (4.1 workspace creation through 4.7 smoke tests)
-          E2E_MODE: full
-          # Increase Node memory for CI
+          E2E_MODE: createonly
           NODE_OPTIONS: --max-old-space-size=4096
-          # Set TEMP so screenshot paths are predictable on Linux
-          # (process.env.TEMP is undefined on Ubuntu, causing fallback to cwd)
           TEMP: ${{ runner.temp }}
 
-      # Screenshots are written to $TEMP/test-resources/screenshots/ by both:
-      #   - Explicit test screenshots (e.g., inlineJS-after-request-trigger.png)
-      #   - ExTester auto-failure screenshots (captured on test failure)
-      # Upload ALL screenshots as artifacts so they're available for debugging
-      # after the pipeline finishes, even if the runner is recycled.
-      - name: Upload test screenshots (always)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            apps/vs-code-designer/dist/
+            apps/vs-code-designer/out/test/
+          retention-days: 1
+
+      - name: Upload test workspaces
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: vscode-e2e-screenshots
+          name: test-workspaces
+          path: ${{ runner.temp }}/la-e2e-test/
+          retention-days: 1
+
+      - name: Upload setup screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-setup
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ─── Stage 2: Run test suites in parallel ───
+  test:
+    needs: setup
+    timeout-minutes: 25
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mode: designerandui
+            name: Designer & UI
+          - mode: runtests
+            name: Runtime Tests
+          - mode: extendeddesigner
+            name: Extended Designer
+          - mode: conversiononly
+            name: Conversion
+
+    name: "E2E: ${{ matrix.name }}"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Download test workspaces
+        uses: actions/download-artifact@v4
+        with:
+          name: test-workspaces
+          path: ${{ runner.temp }}/la-e2e-test/
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Cache Logic Apps runtime dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+          save-always: true
+
+      - name: Run E2E tests (${{ matrix.name }})
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
+        env:
+          E2E_MODE: ${{ matrix.mode }}
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+
+      - name: Upload test screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{ matrix.mode }}
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/

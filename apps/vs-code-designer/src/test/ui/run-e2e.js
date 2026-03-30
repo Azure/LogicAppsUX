@@ -662,7 +662,7 @@ async function main() {
       // the CLI `code -r` command to connect. If the old socket persists,
       // the new VS Code can't bind, and `code -r` either connects to a
       // dead socket (silent failure) or opens in the wrong window.
-      await new Promise((r) => setTimeout(r, 5000));
+      await new Promise((r) => setTimeout(r, 2000));
 
       // Clean up stale IPC socket files so new VS Code gets a fresh socket
       if (isLinux || isMac) {
@@ -969,6 +969,54 @@ async function main() {
       process.exit(phase1Exit);
     }
 
+    if (e2eMode === 'designerandui') {
+      // Phases 4.2 (designer actions) + merged 4.6+4.7 (keyboard nav + remaining suites)
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      const wsResources = getPhase2Resources();
+      const exits = [];
+
+      await prepareFreshSession('phase2');
+      exits.push(await runPhase('Phase 4.2: designerActions', phase2Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 2000));
+      await prepareFreshSession('phase6+7');
+      exits.push(await runPhase('Phase 4.6+4.7: keyboardNavigation + remaining', [...phase6Files, ...phase7Files], { resources: wsResources }));
+
+      const finalExit = Math.max(...exits);
+      console.log(`\n=== designerandui results: 4.2=${exits[0]}, 4.6+4.7=${exits[1]} → exit ${finalExit} ===`);
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'runtests') {
+      // Phases 4.3+4.4 merged (inlineJavascript + statelessVariables)
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      const wsResources = getPhase2Resources();
+
+      await prepareFreshSession('phase3+4');
+      const mergedExit = await runPhase('Phase 4.3+4.4: inlineJavascript + statelessVariables', [...phase3Files, ...phase4Files], { resources: wsResources });
+
+      console.log(`\n=== runtests results: 4.3+4.4=${mergedExit} → exit ${mergedExit} ===`);
+      process.exit(mergedExit);
+    }
+
+    if (e2eMode === 'extendeddesigner') {
+      // Phase 4.5 only (designer view extended tests)
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      const wsResources = getPhase2Resources();
+
+      await prepareFreshSession('phase5');
+      const phase5Exit = await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources });
+
+      console.log(`\n=== extendeddesigner results: 4.5=${phase5Exit} → exit ${phase5Exit} ===`);
+      process.exit(phase5Exit);
+    }
+
     await prepareFreshSession('phase1');
     const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
     if (phase1Exit !== 0) {
@@ -979,7 +1027,7 @@ async function main() {
     // don't need design-time. That change happens before phase 4.8.
 
     console.log('\n=== Session boundary: closing createWorkspace session completely ===');
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await prepareFreshSession('phase2');
     const phase2Resources = getPhase2Resources();
 
@@ -990,38 +1038,29 @@ async function main() {
       console.log(`\n⚠ Phase 4.2 exited with code ${phase2Exit} — continuing to Phase 4.3`);
     }
 
-    // Phases 4.3–4.6: Each new test in its own fresh VS Code session
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await prepareFreshSession('phase3');
-    const phase3Exit = await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: phase2Resources });
-    if (phase3Exit !== 0) {
-      console.log(`\n⚠ Phase 4.3 exited with code ${phase3Exit} — continuing`);
+    // Phases 4.3+4.4: Merged into one session (same workspace, same settings)
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await prepareFreshSession('phase3+4');
+    const phase34Exit = await runPhase('Phase 4.3+4.4: inlineJavascript + statelessVariables', [...phase3Files, ...phase4Files], { resources: phase2Resources });
+    if (phase34Exit !== 0) {
+      console.log(`\n⚠ Phase 4.3+4.4 exited with code ${phase34Exit} — continuing`);
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await prepareFreshSession('phase4');
-    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: phase2Resources });
-    if (phase4Exit !== 0) {
-      console.log(`\n⚠ Phase 4.4 exited with code ${phase4Exit} — continuing`);
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // Phase 4.5: Extended designer tests (own session — heavier test)
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await prepareFreshSession('phase5');
     const phase5Exit = await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: phase2Resources });
     if (phase5Exit !== 0) {
       console.log(`\n⚠ Phase 4.5 exited with code ${phase5Exit} — continuing`);
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await prepareFreshSession('phase6');
-    const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
-    if (phase6Exit !== 0) {
-      console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
+    // Phases 4.6+4.7: Merged into one session (both lightweight UI tests)
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await prepareFreshSession('phase6+7');
+    const phase67Exit = await runPhase('Phase 4.6+4.7: keyboardNavigation + remaining', [...phase6Files, ...phase7Files], { resources: phase2Resources });
+    if (phase67Exit !== 0) {
+      console.log(`\n⚠ Phase 4.6+4.7 exited with code ${phase67Exit} — continuing`);
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await prepareFreshSession('phase7');
-    const phase7Exit = await runPhase('Phase 4.7: remaining suites', phase7Files);
 
     // Phases 4.8a–4.8e: Workspace conversion tests (ADO #31054994, Steps 5-15)
     // ALL conversion tests need validateDependencies ON so the extension fully
@@ -1043,7 +1082,7 @@ async function main() {
       return preferred?.wsDir && fs.existsSync(preferred.wsDir) ? [preferred.wsDir] : [];
     })();
     if (wsDir.length > 0) {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await prepareFreshSession('phase8a');
       phase8aExit = await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir });
       if (phase8aExit !== 0) console.log(`\n⚠ Phase 4.8a exited with code ${phase8aExit} — continuing`);
@@ -1095,7 +1134,7 @@ async function main() {
         )
       );
     }
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await prepareFreshSession('phase8b');
     phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
     if (phase8bExit !== 0) console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
@@ -1103,7 +1142,7 @@ async function main() {
     // Phase 4.8c: Multiple designers + add workflow
     // Re-enable full design-time — this test needs the designer to open.
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await prepareFreshSession('phase8c');
     const phase8cExit = await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: phase2Resources });
     if (phase8cExit !== 0) console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
@@ -1113,7 +1152,7 @@ async function main() {
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
     let phase8dExit = 0;
     if (wsDir.length > 0) {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await prepareFreshSession('phase8d');
       phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
       if (phase8dExit !== 0) console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
@@ -1133,7 +1172,7 @@ async function main() {
       return preferred?.appDir && fs.existsSync(preferred.appDir) ? [preferred.appDir] : [];
     })();
     if (appDir.length > 0) {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await prepareFreshSession('phase8e');
       phase8eExit = await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir });
       if (phase8eExit !== 0) console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
@@ -1143,11 +1182,9 @@ async function main() {
     const finalExit = Math.max(
       phase1Exit,
       phase2Exit,
-      phase3Exit,
-      phase4Exit,
+      phase34Exit,
       phase5Exit,
-      phase6Exit,
-      phase7Exit,
+      phase67Exit,
       phase8aExit,
       phase8bExit,
       phase8cExit,
@@ -1155,7 +1192,7 @@ async function main() {
       phase8eExit
     );
     console.log(
-      `\n=== Final results: 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit} → exit ${finalExit} ===`
+      `\n=== Final results: 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3+4.4=${phase34Exit}, 4.5=${phase5Exit}, 4.6+4.7=${phase67Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit} → exit ${finalExit} ===`
     );
     process.exit(finalExit);
   } catch (err) {
