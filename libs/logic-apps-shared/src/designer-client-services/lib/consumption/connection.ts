@@ -52,6 +52,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         'authority',
         'audience',
         'pfx',
+        'identity',
       ];
       for (const key of authKeys) {
         if (values[key] !== undefined) {
