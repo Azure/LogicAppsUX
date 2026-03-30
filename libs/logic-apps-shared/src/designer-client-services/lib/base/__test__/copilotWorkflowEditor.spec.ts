@@ -254,6 +254,128 @@ describe('BaseCopilotWorkflowEditorService', () => {
       expect(result.text).toBe(plainText);
     });
 
+    it('should repair unescaped double quotes inside JSON string values', async () => {
+      // Simulate LLM producing unescaped quotes in a note's content field
+      const brokenJson =
+        '{"type":"workflow","text":"Added note","workflow":{"definition":{"$schema":"test","contentVersion":"1.0","triggers":{},"actions":{}},"notes":{"abc-123":{"content":""The only way out is through." — Robert Frost","color":"#CCE5FF","metadata":{"position":{"x":0,"y":0},"width":200,"height":100}}}},"changes":[{"changeType":"added","targetType":"note","nodeIds":["abc-123"],"description":"Added a note"}]}';
+
+      mockFetch.mockReturnValueOnce(
+        makeFetchResponse({
+          choices: [{ message: { content: brokenJson } }],
+        })
+      );
+
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('add a note', simpleWorkflow);
+
+      expect(result.type).toBe('workflow');
+      expect(result.workflow).toBeDefined();
+      expect(result.workflow?.notes?.['abc-123']).toBeDefined();
+      expect(result.changes).toHaveLength(1);
+    });
+
+    it('should extract JSON wrapped in prose text (no code fence)', async () => {
+      const inner = JSON.stringify({ type: 'text', text: 'Extracted from prose' });
+      const proseWrapped = `Here is my response:\n\n${inner}\n\nHope that helps!`;
+
+      mockFetch.mockReturnValueOnce(
+        makeFetchResponse({
+          choices: [{ message: { content: proseWrapped } }],
+        })
+      );
+
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('test', simpleWorkflow);
+
+      expect(result.type).toBe('text');
+      expect(result.text).toBe('Extracted from prose');
+    });
+
+    it('should handle JSON in a bare code fence without language tag', async () => {
+      const inner = JSON.stringify({ type: 'text', text: 'From bare fence' });
+      const bareFence = `\`\`\`\n${inner}\n\`\`\``;
+
+      mockFetch.mockReturnValueOnce(
+        makeFetchResponse({
+          choices: [{ message: { content: bareFence } }],
+        })
+      );
+
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('test', simpleWorkflow);
+
+      expect(result.type).toBe('text');
+      expect(result.text).toBe('From bare fence');
+    });
+
+    it('should parse a large workflow response with notes and parameters', async () => {
+      // Exact response from a real LLM call that was displayed as text instead of being applied
+      const realLlmResponse =
+        '{"type":"workflow","text":"Added a random sample workflow with 14 actions including variables, data shaping, branching, looping, delay, and response, plus a documentation note.","changes":[{"changeType":"added","targetType":"action","nodeIds":["Initialize_RequestId"],"description":"Added an Initialize Variable action to store a generated request ID"},{"changeType":"added","targetType":"action","nodeIds":["Initialize_Items"],"description":"Added an Initialize Variable action with a sample array of items"},{"changeType":"added","targetType":"action","nodeIds":["Initialize_Total"],"description":"Added an Initialize Variable action to track a running total"},{"changeType":"added","targetType":"action","nodeIds":["Compose_RequestSummary"],"description":"Added a Compose action to summarize incoming request details"},{"changeType":"added","targetType":"action","nodeIds":["Parse_TestParameter"],"description":"Added a Compose action to surface the Test workflow parameter value"},{"changeType":"added","targetType":"action","nodeIds":["Condition_HasBody"],"description":"Added a condition to check whether the HTTP request body contains data"},{"changeType":"added","targetType":"action","nodeIds":["For_each_Item"],"description":"Added a loop to process each sample item"},{"changeType":"added","targetType":"action","nodeIds":["Delay_Before_Response"],"description":"Added a short wait before generating the response"},{"changeType":"added","targetType":"action","nodeIds":["Create_Final_Result"],"description":"Added a Compose action to build the final result payload"},{"changeType":"added","targetType":"action","nodeIds":["Return_Response"],"description":"Added an HTTP response action returning the workflow results"},{"changeType":"added","targetType":"note","nodeIds":["6e8d9b7b-f4c1-4f66-9cb9-2bb3a0b9d1a1"],"description":"Added a note documenting the sample workflow flow"}],"workflow":{"definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{"Test":{"type":"String"}},"triggers":{"When_an_HTTP_request_is_received":{"type":"Request","kind":"Http"}},"actions":{"Initialize_RequestId":{"type":"InitializeVariable","inputs":{"variables":[{"name":"RequestId","type":"string","value":"@guid()"}]}},"Initialize_Items":{"type":"InitializeVariable","runAfter":{"Initialize_RequestId":["Succeeded"]},"inputs":{"variables":[{"name":"Items","type":"array","value":[1,2,3,4,5]}]}},"Initialize_Total":{"type":"InitializeVariable","runAfter":{"Initialize_Items":["Succeeded"]},"inputs":{"variables":[{"name":"Total","type":"integer","value":0}]}},"Compose_RequestSummary":{"type":"Compose","runAfter":{"Initialize_Total":["Succeeded"]},"inputs":{"requestId":"@variables(\'RequestId\')","triggerName":"When_an_HTTP_request_is_received","receivedAt":"@utcNow()","body":"@triggerBody()"}},"Parse_TestParameter":{"type":"Compose","runAfter":{"Compose_RequestSummary":["Succeeded"]},"inputs":"@parameters(\'TestParam\')"},"Condition_HasBody":{"type":"If","runAfter":{"Parse_TestParameter":["Succeeded"]},"expression":{"and":[{"not":{"equals":["@string(triggerBody())",""]}},{"not":{"equals":["@string(triggerBody())","null"]}}]},"actions":{"Compose_Body_Found":{"type":"Compose","inputs":{"message":"Request body was provided","body":"@triggerBody()"}},"Set_Status_HasBody":{"type":"Compose","runAfter":{"Compose_Body_Found":["Succeeded"]},"inputs":"HasBody"}},"else":{"actions":{"Compose_No_Body":{"type":"Compose","inputs":{"message":"No request body was provided"}},"Set_Status_NoBody":{"type":"Compose","runAfter":{"Compose_No_Body":["Succeeded"]},"inputs":"NoBody"}}}},"For_each_Item":{"type":"Foreach","runAfter":{"Condition_HasBody":["Succeeded"]},"foreach":"@variables(\'Items\')","actions":{"Compose_Current_Item":{"type":"Compose","inputs":"@item()"},"Increment_Total":{"type":"IncrementVariable","runAfter":{"Compose_Current_Item":["Succeeded"]},"inputs":{"name":"Total","value":"@item()"}},"Compose_Item_Details":{"type":"Compose","runAfter":{"Increment_Total":["Succeeded"]},"inputs":{"item":"@item()","doubled":"@mul(item(),2)","runningTotal":"@variables(\'Total\')"}}}},"Compose_Array_Count":{"type":"Compose","runAfter":{"For_each_Item":["Succeeded"]},"inputs":"@length(variables(\'Items\'))"},"Compose_IsLargeTotal":{"type":"Compose","runAfter":{"Compose_Array_Count":["Succeeded"]},"inputs":"@greater(variables(\'Total\'),10)"},"Switch_On_Total":{"type":"Switch","runAfter":{"Compose_IsLargeTotal":["Succeeded"]},"expression":"@variables(\'Total\')","cases":{"Case_15":{"case":"15","actions":{"Compose_Total_Is_15":{"type":"Compose","inputs":"Total equals 15"}}},"DefaultRange":{"case":"0","actions":{"Compose_Total_DefaultRange":{"type":"Compose","inputs":"Total did not match the explicit case"}}}},"default":{"actions":{"Compose_Total_Default":{"type":"Compose","inputs":"Default branch executed"}}}},"Compose_Timestamp":{"type":"Compose","runAfter":{"Switch_On_Total":["Succeeded"]},"inputs":"@utcNow()"},"Delay_Before_Response":{"type":"Wait","runAfter":{"Compose_Timestamp":["Succeeded"]},"inputs":{"interval":{"count":1,"unit":"Second"}}},"Create_Final_Result":{"type":"Compose","runAfter":{"Delay_Before_Response":["Succeeded"]},"inputs":{"requestId":"@variables(\'RequestId\')","parameterValue":"@parameters(\'AAA\')","testParameter":"@parameters(\'TestParam\')","itemCount":"@outputs(\'Compose_Array_Count\')","total":"@variables(\'Total\')","isLarge":"@outputs(\'Compose_IsLargeTotal\')","timestamp":"@outputs(\'Compose_Timestamp\')","requestSummary":"@outputs(\'Compose_RequestSummary\')"}},"Return_Response":{"type":"Response","runAfter":{"Create_Final_Result":["Succeeded"]},"inputs":{"statusCode":200,"body":{"message":"Random sample workflow completed","result":"@outputs(\'Create_Final_Result\')"}}}},"outputs":{}},"kind":"stateful","notes":{"6e8d9b7b-f4c1-4f66-9cb9-2bb3a0b9d1a1":{"content":"## Sample workflow\\nThis example starts from an HTTP request, initializes variables, evaluates the request body, loops through sample items, calculates a total, and returns a response.","color":"#CCE5FF","metadata":{"position":{"x":-400,"y":0},"width":260,"height":140}}},"parameters":{"AAA":{"type":"String","value":"FFF"},"TestParam":{"type":"String","value":"TestA"}}}}';
+
+      mockFetch.mockReturnValueOnce(
+        makeFetchResponse({
+          choices: [{ message: { content: realLlmResponse } }],
+        })
+      );
+
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('create a random workflow, add 10-20 actions', simpleWorkflow);
+
+      expect(result.type).toBe('workflow');
+      expect(result.workflow).toBeDefined();
+      expect(result.workflow?.definition?.actions?.['Initialize_RequestId']).toBeDefined();
+      expect(result.workflow?.definition?.actions?.['Return_Response']).toBeDefined();
+      expect(result.workflow?.notes?.['6e8d9b7b-f4c1-4f66-9cb9-2bb3a0b9d1a1']).toBeDefined();
+      expect(result.workflow?.parameters?.['AAA']).toBeDefined();
+      expect(result.changes).toBeDefined();
+      expect(result.changes!.length).toBeGreaterThan(5);
+    });
+
+    it('should strip invisible Unicode characters (BOM, ZWSP) before parsing', async () => {
+      const validJson = JSON.stringify({ type: 'text', text: 'Cleaned up' });
+      // Prepend BOM (U+FEFF) and zero-width space (U+200B)
+      const withInvisible = '\uFEFF\u200B' + validJson + '\u200D';
+
+      mockFetch.mockReturnValueOnce(
+        makeFetchResponse({
+          choices: [{ message: { content: withInvisible } }],
+        })
+      );
+
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('test', simpleWorkflow);
+
+      expect(result.type).toBe('text');
+      expect(result.text).toBe('Cleaned up');
+    });
+
+    it('should detect finish_reason=length without crashing', async () => {
+      // Simulate a truncated response where finish_reason is 'length'
+      const truncated = '{"type":"workflow","text":"Added';
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      mockFetch.mockReturnValueOnce(
+        makeFetchResponse({
+          choices: [
+            {
+              message: { content: truncated },
+              finish_reason: 'length',
+            },
+          ],
+        })
+      );
+
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('test', simpleWorkflow);
+
+      // Should fall back to text since the JSON is incomplete
+      expect(result.type).toBe('text');
+      // Should have warned about truncation
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('truncated'), expect.anything(), expect.anything());
+      consoleSpy.mockRestore();
+    });
+
     it('should handle a response with a bare definition (no type wrapper)', async () => {
       const bareDefinition = {
         definition: {
