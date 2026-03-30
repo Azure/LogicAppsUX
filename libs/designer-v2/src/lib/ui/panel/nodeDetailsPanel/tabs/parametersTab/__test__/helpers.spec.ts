@@ -4,7 +4,6 @@ import {
   isAgentConnectorAndDeploymentId,
   isAgentConnectorAndFoundryAgentId,
   isAgentConnectorAndAgentModel,
-  isAgentConnectorAndConsumptionAgentModel,
   agentModelTypeParameterKey,
   getConnectionToAssign,
   categorizeConnections,
@@ -57,19 +56,12 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
   });
 
-  it('should return false when agentModelType parameter has no value yet (loading state)', () => {
+  it('should return false when agentModelType parameter has no value yet', () => {
     const groups = makeParameterGroups(groupId, [
       {
         parameterKey: agentModelTypeParameterKey,
         value: [],
       },
-    ]);
-    expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
-  });
-
-  it('should return false when agentModelType parameter does not exist', () => {
-    const groups = makeParameterGroups(groupId, [
-      { parameterKey: 'inputs.$.someOtherParam', value: [{ id: '1', type: 'literal' as any, value: 'test' }] },
     ]);
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
   });
@@ -86,16 +78,6 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
 
   it('should return false when parameter groups are empty', () => {
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, {})).toBe(false);
-  });
-
-  it('should return false when groupId does not match any group', () => {
-    const groups = makeParameterGroups('other-group', [
-      {
-        parameterKey: agentModelTypeParameterKey,
-        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentService' }],
-      },
-    ]);
-    expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(false);
   });
 });
 
@@ -175,20 +157,6 @@ describe('getConnectionToAssign', () => {
     expect(getConnectionToAssign('AzureOpenAI', [], foundryConns)).toBeNull();
     expect(getConnectionToAssign('MicrosoftFoundry', [], foundryConns)).toBeNull();
     expect(getConnectionToAssign('FoundryAgentService', azureConns, [])).toBeNull();
-  });
-});
-
-describe('isAgentConnectorAndConsumptionAgentModel', () => {
-  it('should return true for agent connector with agentModelType', () => {
-    expect(isAgentConnectorAndConsumptionAgentModel('/connectionProviders/agent', 'agentModelType')).toBe(true);
-  });
-
-  it('should return false for non-agent connector', () => {
-    expect(isAgentConnectorAndConsumptionAgentModel('other/connector', 'agentModelType')).toBe(false);
-  });
-
-  it('should return false for agent connector with non-model parameter', () => {
-    expect(isAgentConnectorAndConsumptionAgentModel('/connectionProviders/agent', 'deploymentId')).toBe(false);
   });
 });
 

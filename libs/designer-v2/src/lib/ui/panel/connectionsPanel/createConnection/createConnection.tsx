@@ -230,6 +230,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [connectionParameterSets, selectedParamSetIndex]
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
+  const showMultiAuthDropdown = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
 
   const hasOnlyOnPremGateway = useMemo(
     () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
@@ -908,7 +909,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           )}
 
           {/* Authentication Selection */}
-          {isMultiAuth && (
+          {showMultiAuthDropdown && (
             <ConnectionMultiAuthInput
               data-testId={'connection-multi-auth-input'}
               isLoading={isLoading}
