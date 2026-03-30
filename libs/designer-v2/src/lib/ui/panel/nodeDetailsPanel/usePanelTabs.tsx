@@ -19,7 +19,7 @@ import { scratchTab } from './tabs/scratchTab';
 import { settingsTab } from './tabs/settingsTab';
 import { testingTab } from './tabs/testingTab';
 import type { PanelTabProps } from '@microsoft/designer-ui';
-import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { equals, isBuiltInAgentTool, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -142,9 +142,12 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     if (isUnitTestView) {
       return [mockResultsTabItem];
     }
-    // Switch cases should only show parameters tab
+    // Switch cases and regular agent tools should only show parameters tab.
+    // Built-in agent tools (e.g. code_interpreter) are excluded — they need the monitoring tab
+    // to display their inputs/outputs since they don't have editable parameters.
     if (
       nodeMetaData &&
+      !isBuiltInAgentTool(nodeId) &&
       (nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE || nodeMetaData.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION)
     ) {
       return [parametersTabItem];

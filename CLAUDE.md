@@ -163,6 +163,13 @@ Each app and library has its own CLAUDE.md with specific guidance.
    - `/libs/designer/src/lib/ui/settings/` - Operation settings
    - `/libs/designer/src/lib/core/parsers/` - Workflow parsers
 
+5. **VS Code Extension E2E Tests**:
+   - `/apps/vs-code-designer/src/test/ui/SKILL.md` - Complete test knowledge base (700+ lines)
+   - `/apps/vs-code-designer/src/test/ui/designerHelpers.ts` - Shared designer test helpers
+   - `/apps/vs-code-designer/src/test/ui/runHelpers.ts` - Shared debug/run test helpers
+   - `/apps/vs-code-designer/src/test/ui/run-e2e.js` - Test launcher (7 phases)
+   - `/apps/vs-code-designer/CLAUDE.md` - VS Code extension development guide with E2E test rules
+
 ### Debugging Tips
 
 1. **Standalone Development**: Use `pnpm run start` for rapid development with hot reload

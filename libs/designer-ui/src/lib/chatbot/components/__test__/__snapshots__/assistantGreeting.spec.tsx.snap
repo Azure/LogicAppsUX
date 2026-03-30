@@ -25,7 +25,7 @@ exports[`AssistantGreeting > snapshots > should match snapshot with dark theme 1
         <div
           className="___8xiy8a0_0000000 fd1gkq"
         >
-          Some things you can ask:
+          Some things you can try:
         </div>
         <ul
           className="___fqnvug0_0000000 f2zxqi f11qmguv f1jlhsmd f1tyq0we f1g0x7ka fhxju0i f1qch9an fekwl8i fuxrj8o"
@@ -85,7 +85,7 @@ exports[`AssistantGreeting > snapshots > should match snapshot with light theme 
         <div
           className="___8xiy8a0_0000000 fd1gkq"
         >
-          Some things you can ask:
+          Some things you can try:
         </div>
         <ul
           className="___fqnvug0_0000000 f2zxqi f11qmguv f1jlhsmd f1tyq0we f1g0x7ka fhxju0i f1qch9an fekwl8i fuxrj8o"

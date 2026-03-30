@@ -36,6 +36,7 @@ export default {
           required: ['description'],
         },
         inputsLocation: [],
+        allowOperations: true,
       },
     },
     inputs: {
@@ -62,7 +63,6 @@ export default {
           type: 'string',
           title: 'Model ID',
           description: 'The model ID to use.',
-          default: 'gpt-4o-mini',
           'x-ms-visibility': 'hideInUI',
         },
         deploymentId: {

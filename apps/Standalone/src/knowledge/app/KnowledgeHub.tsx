@@ -4,23 +4,28 @@ import type { RootState } from '../state/Store';
 import { useSelector } from 'react-redux';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import {
+  BaseCognitiveServiceService,
+  BaseGatewayService,
   BaseResourceService,
   StandardConnectionService,
   type LocalConnectionModel,
   type ConnectionAndAppSetting,
   type ConnectionsData,
+  clone,
+  resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import { useKnowledgeStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import {
   createOrUpdateConnection,
+  uploadFileToKnowledgeHub,
   useAppSettings,
   useConnectionsData,
   useParametersData,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import { clone, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { Spinner } from '@fluentui/react-components';
+import { CustomConnectionParameterEditorService } from '../Services/connectionParameterEditor';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -72,12 +77,7 @@ export const KnowledgeHub = () => {
   );
 
   if (isSettingsLoading || isParametersLoading || isConnectionsLoading) {
-    return (
-      <>
-        <div id="knowledge-layer-host" className={styles.layerHost} />
-        <Spinner style={{ margin: '0 auto', paddingTop: '100px' }} size="large" />
-      </>
-    );
+    return <Spinner style={{ margin: '0 auto', paddingTop: '100px' }} size="large" />;
   }
 
   return (
@@ -87,8 +87,7 @@ export const KnowledgeHub = () => {
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
               <KnowledgeDataProvider resourceDetails={resourceDetails} services={services} isDarkMode={theme === 'dark'}>
-                <KnowledgeHubWizard />
-                <div id="knowledge-layer-host" className={styles.layerHost} />
+                <KnowledgeHubWizard onUploadArtifact={uploadFileToKnowledgeHub} />
               </KnowledgeDataProvider>
             </div>
           </div>
@@ -127,9 +126,30 @@ const getServices = (
     writeConnection: addConnection as any,
   });
 
+  const gatewayService = new BaseGatewayService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersions: {
+      subscription: apiVersion,
+      gateway: '2016-06-01',
+    },
+  });
+
+  const cognitiveService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+    identity: {} as any, // Placeholder for IIdentity, not used in this context
+  });
+
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
   return {
     connectionService,
     resourceService,
+    gatewayService,
+    cognitiveService,
+    connectionParameterEditorService,
     hostService: {} as any, // Placeholder for IHostService, not used in this context
   };
 };

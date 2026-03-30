@@ -65,11 +65,13 @@ export const SelectConnectionWrapper = () => {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
         let modelType = AgentUtils.ModelType.AzureOpenAI;
+        const cognitiveResourceId =
+          connectionReference?.resourceId ?? c.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
 
-        if (connectionReference?.resourceId) {
-          if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
+        if (cognitiveResourceId) {
+          if (foundryServiceConnectionRegex.test(cognitiveResourceId)) {
             modelType = AgentUtils.ModelType.FoundryService;
-          } else if (apimanagementRegex.test(connectionReference.resourceId ?? '')) {
+          } else if (apimanagementRegex.test(cognitiveResourceId)) {
             modelType = AgentUtils.ModelType.APIM;
           }
         } else if (!c.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value) {

@@ -616,6 +616,21 @@ function NetworkingSettings({
     );
   };
 
+  const onRetryHttpStatusCodesChange = (selectedCodes: number[]): void => {
+    updateSettings(
+      {
+        retryPolicy: {
+          isSupported: !!retryPolicy?.isSupported,
+          value: {
+            ...(retryPolicy?.value as any),
+            httpStatusCodes: selectedCodes.length > 0 ? selectedCodes : undefined,
+          },
+        },
+      },
+      true
+    );
+  };
+
   if (
     retryPolicy?.isSupported ||
     suppressWorkflowHeaders?.isSupported ||
@@ -662,6 +677,7 @@ function NetworkingSettings({
         onRetryIntervalChange={onRetryIntervalChange}
         onRetryMinIntervalChange={onRetryMinIntervalChange}
         onRetryMaxIntervalChange={onRetryMaxIntervalChange}
+        onRetryHttpStatusCodesChange={onRetryHttpStatusCodesChange}
       />
     );
   }

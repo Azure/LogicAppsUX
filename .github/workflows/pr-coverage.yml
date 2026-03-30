@@ -135,6 +135,11 @@ jobs:
             **/webviewCommunication.tsx
             # VS Code React intl files (localization catalog, not unit-test target)
             apps/vs-code-react/src/intl/**
+            # VS Code extension E2E and UI test harness files
+            apps/vs-code-designer/src/test/e2e/**
+            apps/vs-code-designer/src/test/ui/**
+            # Environment-specific utility excluded from coverage policy
+            apps/vs-code-designer/src/app/utils/codeless/getAuthorizationToken.ts
 
       - name: Check coverage on changed files
         id: coverage-check
@@ -186,6 +191,12 @@ jobs:
           for file in $CHANGED_FILES; do
             # Skip if file doesn't exist (might have been deleted)
             if [ ! -f "$file" ]; then
+              continue
+            fi
+
+            # Defensive skip for files excluded from the PR coverage gate
+            if [[ "$file" =~ ^apps/vs-code-designer/src/test/(e2e|ui)/ ]] || [ "$file" = "apps/vs-code-designer/src/app/utils/codeless/getAuthorizationToken.ts" ]; then
+              SKIPPED_FILES="$SKIPPED_FILES\n⏭️ \`$file\` - Coverage check excluded by workflow policy"
               continue
             fi
 

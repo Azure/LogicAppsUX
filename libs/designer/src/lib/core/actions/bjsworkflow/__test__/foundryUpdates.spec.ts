@@ -18,12 +18,12 @@ const mockHttpClient = {
   delete: vi.fn().mockResolvedValue({}),
 };
 
-// Mock the external dependencies
+// Mock the external dependencies — now uses proxy-based API
 vi.mock('@microsoft/logic-apps-shared', () => ({
-  updateFoundryAgent: vi.fn().mockResolvedValue({}),
+  updateFoundryAgentViaProxy: vi.fn().mockResolvedValue({}),
   CognitiveServiceService: vi.fn(() => ({
-    getFoundryAccessToken: vi.fn().mockResolvedValue('mock-token'),
     httpClient: mockHttpClient,
+    foundryProxyBaseUrl: 'https://management.azure.com/test/foundryProxy',
   })),
 }));
 
@@ -82,14 +82,68 @@ describe('foundryUpdates', () => {
     });
   });
 
+  describe('getPendingFoundryUpdate', () => {
+    it('should return undefined for nodes with no pending update', () => {
+      expect(getPendingFoundryUpdate('nonexistent')).toBeUndefined();
+    });
+
+    it('should round-trip selectedVersion through set/get', () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4', instructions: 'Be helpful' },
+        selectedVersion: '5',
+      });
+
+      const pending = getPendingFoundryUpdate('node-1');
+      expect(pending).toBeDefined();
+      expect(pending!.selectedVersion).toBe('5');
+      expect(pending!.updates.model).toBe('gpt-4');
+      expect(pending!.updates.instructions).toBe('Be helpful');
+    });
+
+    it('should preserve selectedVersion when only version changes', () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+        selectedVersion: '3',
+      });
+
+      // Simulate a second edit that overwrites with a new version
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-5' },
+        selectedVersion: '7',
+      });
+
+      const pending = getPendingFoundryUpdate('node-1');
+      expect(pending!.selectedVersion).toBe('7');
+      expect(pending!.updates.model).toBe('gpt-5');
+    });
+
+    it('should allow selectedVersion to be undefined', () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+      });
+
+      const pending = getPendingFoundryUpdate('node-1');
+      expect(pending).toBeDefined();
+      expect(pending!.selectedVersion).toBeUndefined();
+    });
+  });
+
   describe('flushPendingFoundryUpdates', () => {
     it('should return empty array when no pending updates', async () => {
       const results = await flushPendingFoundryUpdates();
       expect(results).toEqual([]);
     });
 
-    it('should call updateFoundryAgent for each pending update', async () => {
-      const { updateFoundryAgent } = await import('@microsoft/logic-apps-shared');
+    it('should call updateFoundryAgentViaProxy for each pending update', async () => {
+      const { updateFoundryAgentViaProxy } = await import('@microsoft/logic-apps-shared');
 
       setPendingFoundryUpdate('node-1', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
@@ -100,11 +154,13 @@ describe('foundryUpdates', () => {
       const results = await flushPendingFoundryUpdates();
       expect(results).toHaveLength(1);
       expect(results[0].status).toBe('fulfilled');
-      expect(updateFoundryAgent).toHaveBeenCalledWith(
-        mockHttpClient,
-        'https://acct.services.ai.azure.com/api/projects/proj',
+      expect(updateFoundryAgentViaProxy).toHaveBeenCalledWith(
+        {
+          httpClient: mockHttpClient,
+          proxyBaseUrl: 'https://management.azure.com/test/foundryProxy',
+          foundryEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        },
         'agent-1',
-        'mock-token',
         {
           model: 'gpt-4',
           instructions: 'Be helpful',
@@ -125,7 +181,7 @@ describe('foundryUpdates', () => {
 
     it('should return empty array when token getter is unavailable', async () => {
       const { CognitiveServiceService } = await import('@microsoft/logic-apps-shared');
-      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ getFoundryAccessToken: undefined, httpClient: undefined } as any);
+      vi.mocked(CognitiveServiceService).mockReturnValueOnce({ httpClient: undefined, foundryProxyBaseUrl: undefined } as any);
 
       setPendingFoundryUpdate('node-1', {
         projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
@@ -140,8 +196,8 @@ describe('foundryUpdates', () => {
     });
 
     it('should retain failed entries and throw consolidated error on partial failure', async () => {
-      const { updateFoundryAgent } = await import('@microsoft/logic-apps-shared');
-      vi.mocked(updateFoundryAgent)
+      const { updateFoundryAgentViaProxy } = await import('@microsoft/logic-apps-shared');
+      vi.mocked(updateFoundryAgentViaProxy)
         .mockResolvedValueOnce({} as any) // node-1 succeeds
         .mockRejectedValueOnce(new Error('API error')); // node-2 fails
 
@@ -209,6 +265,44 @@ describe('foundryUpdates', () => {
       const onFlushed = vi.fn();
       await flushPendingFoundryUpdates(onFlushed);
       expect(onFlushed).not.toHaveBeenCalled();
+    });
+
+    it('should NOT send selectedVersion to the API (it is UI-only state)', async () => {
+      const { updateFoundryAgentViaProxy } = await import('@microsoft/logic-apps-shared');
+      vi.mocked(updateFoundryAgentViaProxy).mockResolvedValueOnce({} as any);
+
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4', instructions: 'Be helpful' },
+        selectedVersion: '5',
+      });
+
+      await flushPendingFoundryUpdates();
+
+      // The third argument to updateFoundryAgentViaProxy should be the `updates` object only,
+      // with no selectedVersion property leaking through.
+      const callArgs = vi.mocked(updateFoundryAgentViaProxy).mock.calls.at(-1);
+      expect(callArgs).toBeDefined();
+      const updatesArg = callArgs![2];
+      expect(updatesArg).toEqual({ model: 'gpt-4', instructions: 'Be helpful' });
+      expect(updatesArg).not.toHaveProperty('selectedVersion');
+    });
+
+    it('should clear selectedVersion along with the entry after successful flush', async () => {
+      setPendingFoundryUpdate('node-1', {
+        projectEndpoint: 'https://acct.services.ai.azure.com/api/projects/proj',
+        agentId: 'agent-1',
+        updates: { model: 'gpt-4' },
+        selectedVersion: '5',
+      });
+
+      expect(getPendingFoundryUpdate('node-1')?.selectedVersion).toBe('5');
+
+      await flushPendingFoundryUpdates();
+
+      // The entire entry (including selectedVersion) should be gone
+      expect(getPendingFoundryUpdate('node-1')).toBeUndefined();
     });
   });
 });

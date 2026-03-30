@@ -3,10 +3,10 @@ import type { CallbackInfo, ConnectionsData, Note, ParametersData, Workflow } fr
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { runsQueriesKeys } from '@microsoft/logic-apps-designer';
+import { getReactQueryClient, runsQueriesKeys } from '@microsoft/logic-apps-designer';
 import type { CustomCodeFileNameMapping, ServerNotificationData, AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
-import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, VFSObject } from '@microsoft/logic-apps-shared';
+import type { AgentQueryParams, AgentURL, LogicAppsV2, McpServer, UploadFile, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from '@tanstack/react-query';
@@ -981,7 +981,16 @@ export const saveWorkflowStandard = async (
 
   if (isDraftSave) {
     if (workflows.length > 0) {
-      return deployArtifacts(siteResourceId, workflows[0].name, workflows[0].workflow, connectionsData, parametersData, settings, true);
+      return deployArtifacts(
+        siteResourceId,
+        workflows[0].name,
+        workflows[0].workflow,
+        connectionsData,
+        parametersData,
+        settings,
+        true,
+        notesData
+      );
     }
     return;
   }
@@ -1074,11 +1083,6 @@ export const saveWorkflowConsumption = async (
   },
   isDraftSave?: boolean
 ): Promise<any> => {
-  // Implement draft save logic for consumption if needed
-  if (isDraftSave) {
-    return;
-  }
-
   const shouldConvertToConsumption = options?.shouldConvertToConsumption ?? true;
 
   const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
@@ -1091,6 +1095,10 @@ export const saveWorkflowConsumption = async (
     },
   };
 
+  if (isDraftSave) {
+    return putConsumptionDraftWorkflow(outdatedWorkflow.id, outputWorkflow, { throwError: options?.throwError });
+  }
+
   try {
     await axios.put(`${baseUrl}${validateResourceId(outdatedWorkflow.id)}?api-version=2016-10-01`, JSON.stringify(outputWorkflow), {
       headers: {
@@ -1100,6 +1108,28 @@ export const saveWorkflowConsumption = async (
       },
     });
     clearDirtyState?.();
+  } catch (error) {
+    console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
+  }
+};
+
+const putConsumptionDraftWorkflow = async (workflowId: string, workflow: any, options?: { throwError?: boolean }): Promise<any> => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}${validateResourceId(workflowId)}/drafts/default?api-version=${consumptionApiVersion}`,
+      JSON.stringify(workflow),
+      {
+        headers: {
+          'If-Match': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+    return response;
   } catch (error) {
     console.log(error);
     if (options?.throwError) {
@@ -1279,7 +1309,8 @@ export const deployArtifacts = async (
   connectionsData?: ConnectionsData,
   parametersData?: ParametersData,
   settings?: Record<string, string>,
-  isDraft?: boolean
+  isDraft?: boolean,
+  notesData?: Record<string, Note>
 ) => {
   const data: any = {
     files: {},
@@ -1293,6 +1324,14 @@ export const deployArtifacts = async (
 
   if (parametersData) {
     data.files[isDraft ? Artifact.DraftParametersFile : Artifact.ParametersFile] = parametersData;
+  }
+
+  if (notesData) {
+    // Always write to draft notes file; additionally write to prod notes file on publish
+    data.files[`${workflowName}/${Artifact.DraftNotesFile}`] = notesData;
+    if (!isDraft) {
+      data.files[`${workflowName}/${Artifact.NotesFile}`] = notesData;
+    }
   }
 
   if (settings) {
@@ -1337,4 +1376,74 @@ const listMcpServers = async (siteResourceId: string): Promise<any[]> => {
     mcpServers = [];
   }
   return mcpServers;
+};
+
+export const uploadFileToKnowledgeHub = async (
+  siteResourceId: string,
+  hubName: string,
+  content: { file: UploadFile; name: string; description?: string },
+  setIsLoading: (isLoading: boolean) => void
+): Promise<void> => {
+  const { file, name, description } = content;
+  const contentType = file.file.type || 'application/octet-stream';
+
+  const uri = `https://management.azure.com${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgehubs/${hubName}/knowledgeArtifacts/${name}?api-version=2018-11-01`;
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const base64Content = (reader.result as string).split(',')[1]; // Remove data URL prefix
+
+      const payload = {
+        description: description,
+        payload: {
+          '$content-type': contentType,
+          $content: base64Content,
+        },
+      };
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.onloadstart = () => {
+        setIsLoading(true);
+      };
+
+      xhr.onloadend = () => {
+        setIsLoading(false);
+        file.setProgress?.(1);
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        setIsLoading(false);
+        reject(new Error('Upload failed due to network error'));
+      };
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          file.setProgress?.(e.loaded / e.total);
+        }
+      };
+
+      xhr.open('PUT', uri, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', `Bearer ${environment.armToken}`);
+      xhr.setRequestHeader('Cache-Control', 'no-cache');
+
+      xhr.send(JSON.stringify(payload));
+    };
+
+    reader.onerror = () => {
+      setIsLoading(false);
+      reject(new Error('Failed to read file'));
+    };
+
+    reader.readAsDataURL(file.file);
+  });
 };

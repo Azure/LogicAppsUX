@@ -30,6 +30,9 @@ import {
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
   BaseChatbotService,
+  BaseCopilotWorkflowEditorService,
+  InitCopilotWorkflowEditorService,
+  CONSUMPTION_SYSTEM_PROMPT,
   ConsumptionRunService,
   guid,
   startsWith,
@@ -52,6 +55,9 @@ import {
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   FloatingRunButton,
+  setIsWorkflowDirty,
+  setFocusNode,
+  changePanelNode,
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -65,7 +71,6 @@ const httpClient = new HttpClient();
 const DesignerEditorConsumption = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -398,7 +403,7 @@ const DesignerEditorConsumption = () => {
       return;
     }
 
-    if (isDraftMode && draftWorkflow) {
+    if (isDraftMode && draftWorkflow?.definition) {
       setConnectionReferences(draftConnectionReferences);
       setParameters(draftParameters);
       setNotes(draftNotes);
@@ -469,17 +474,37 @@ const DesignerEditorConsumption = () => {
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', height: 'inherit' }}>
-              {showChatBot ? (
-                <CoPilotChatbot
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={openFeedBackPanel}
-                  closeChatBot={() => {
-                    dispatch(setIsChatBotEnabled(false));
-                  }}
-                  getAuthToken={getAuthToken}
-                />
-              ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <CoPilotChatbot
+                isOpen={showChatBot}
+                getUpdatedWorkflow={getUpdatedWorkflow}
+                openFeedbackPanel={openFeedBackPanel}
+                closeChatBot={() => {
+                  dispatch(setIsChatBotEnabled(false));
+                }}
+                getAuthToken={getAuthToken}
+                enableWorkflowEditing={true}
+                autoApply={true}
+                onWorkflowProposed={(newWorkflow) => {
+                  setNotes(newWorkflow.notes ?? {});
+                  if (newWorkflow.parameters) {
+                    setParameters(newWorkflow.parameters);
+                  }
+                  setWorkflow({
+                    ...newWorkflow,
+                    id: guid(),
+                  });
+                  DesignerStore.dispatch(setIsWorkflowDirty(true));
+                }}
+                getNodeVisuals={(nodeId) => {
+                  const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
+                  return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
+                }}
+                onNodeClick={(nodeId) => {
+                  DesignerStore.dispatch(setFocusNode(nodeId));
+                  DesignerStore.dispatch(changePanelNode(nodeId));
+                }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0', minHeight: 0, minWidth: 0, overflow: 'hidden' }}>
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}
@@ -503,7 +528,7 @@ const DesignerEditorConsumption = () => {
                 {isCodeView ? (
                   <CodeViewEditor ref={codeEditorRef} isConsumption />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
+                  <>
                     <Designer />
                     <FloatingRunButton
                       siteResourceId={workflowId}
@@ -515,7 +540,7 @@ const DesignerEditorConsumption = () => {
                       isConsumption={true}
                       workflowReadOnly={derivedIsReadOnly}
                     />
-                  </div>
+                  </>
                 )}
                 <CombineInitializeVariableDialog />
                 <TriggerDescriptionDialog workflowId={workflowId} />
@@ -703,7 +728,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint, isDraftMode);
     },
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowAndArtifactsData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
@@ -753,6 +778,21 @@ const getDesignerServices = (
     // temporarily hardcoding location until we have deployed to all regions
     location: 'westcentralus',
   });
+
+  // Initialize CopilotWorkflowEditorService if API key is configured
+  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
+  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
+  if (copilotEditorApiKey && copilotEditorEndpoint) {
+    const copilotEditorService = new BaseCopilotWorkflowEditorService({
+      endpoint: copilotEditorEndpoint,
+      apiKey: copilotEditorApiKey,
+      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
+      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
+      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
+      systemPrompt: CONSUMPTION_SYSTEM_PROMPT,
+    });
+    InitCopilotWorkflowEditorService(copilotEditorService);
+  }
 
   // This isn't correct but without it I was getting errors
   //   It's fine just to unblock standalone consumption

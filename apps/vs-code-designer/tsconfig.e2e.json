@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "outDir": "./out/test/e2e",
+    "rootDir": "./src/test/e2e",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node", "mocha", "vscode"]
+  },
+  "include": ["src/test/e2e/**/*.ts"],
+  "exclude": ["node_modules"]
+}

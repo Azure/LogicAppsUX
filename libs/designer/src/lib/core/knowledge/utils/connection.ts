@@ -3,128 +3,15 @@ import type {
   ConnectionParameter,
   ConnectionParameterSetParameter,
   Connector,
+  Connection,
 } from '@microsoft/logic-apps-shared';
-import { ConnectionService, getIntl, getPropertyValue, ConnectionType, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
+import { ConnectionService, getIntl, ConnectionType, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 
 const getAllConnectionParameters = (intl: IntlShape) => {
   return {
-    cognitiveServiceAccountId: {
-      type: 'string',
-      uiDefinition: {
-        displayName: 'Azure Cognitive Service Account',
-        description: 'Select the Azure Cognitive Service Account to use for this connection',
-        tooltip: 'Select the Azure Cognitive Service Account to use for this connection',
-        constraints: {
-          clearText: true,
-          required: 'true',
-          serialize: false,
-        },
-      },
-    } as ConnectionParameter,
-    openAICompletionsModel: {
-      type: 'string',
-      uiDefinition: {
-        displayName: intl.formatMessage({
-          id: 'E7PMTh',
-          defaultMessage: 'Completions model',
-          description: 'Label for completions model connection parameter',
-        }),
-        description: intl.formatMessage({
-          id: 'ChIvwj',
-          defaultMessage: 'Select the completions model to use for this connection',
-          description: 'Description for completions model connection parameter',
-        }),
-        tooltip: intl.formatMessage({
-          id: 'die3ro',
-          defaultMessage: 'Select the completions model to use for this connection',
-          description: 'Tooltip for completions model connection parameter',
-        }),
-        constraints: {
-          clearText: true,
-          required: 'true',
-          propertyPath: ['openAI', 'completionsModel'],
-        },
-      },
-    } as ConnectionParameter,
-    openAIEmbeddingsModel: {
-      type: 'string',
-      uiDefinition: {
-        displayName: intl.formatMessage({
-          id: 'nsr+K2',
-          defaultMessage: 'Embeddings model',
-          description: 'Label for embeddings model connection parameter',
-        }),
-        description: intl.formatMessage({
-          id: 'bAzuvE',
-          defaultMessage: 'Select the embeddings model to use for this connection',
-          description: 'Description for embeddings model connection parameter',
-        }),
-        tooltip: intl.formatMessage({
-          id: 'BQY4w7',
-          defaultMessage: 'Select the embeddings model to use for this connection',
-          description: 'Tooltip for embeddings model connection parameter',
-        }),
-        constraints: {
-          clearText: true,
-          required: 'true',
-          propertyPath: ['openAI', 'embeddingsModel'],
-        },
-      },
-    } as ConnectionParameter,
-    openAIAuthenticationKey: {
-      type: 'securestring',
-      parameterSource: 'AppConfiguration',
-      uiDefinition: {
-        displayName: intl.formatMessage({
-          id: 'ZNPMjo',
-          defaultMessage: 'API key',
-          description: 'Label for API key connection parameter',
-        }),
-        description: intl.formatMessage({
-          id: 'fRWxou',
-          defaultMessage: 'Key will be filled automatically.',
-          description: 'Description for API key connection parameter',
-        }),
-        tooltip: intl.formatMessage({
-          id: 'tTSsMz',
-          defaultMessage: 'The API key to access the resource that hosts the AI model',
-          description: 'Tooltip for API key connection parameter',
-        }),
-        constraints: {
-          clearText: false,
-          required: 'true',
-          propertyPath: ['openAI', 'authentication', 'key'],
-        },
-      },
-    } as ConnectionParameter,
-    openAIEndpoint: {
-      type: 'string',
-      uiDefinition: {
-        displayName: intl.formatMessage({
-          id: 'tWAk7P',
-          defaultMessage: 'API endpoint',
-          description: 'Label for API endpoint connection parameter',
-        }),
-        description: intl.formatMessage({
-          id: '+K0G5q',
-          defaultMessage: 'Endpoint will be filled automatically.',
-          description: 'Description for API endpoint connection parameter',
-        }),
-        tooltip: intl.formatMessage({
-          id: 'GfHVO/',
-          defaultMessage: 'The endpoint of the resource that hosts the AI model',
-          description: 'Tooltip for API endpoint connection parameter',
-        }),
-        constraints: {
-          clearText: true,
-          required: 'true',
-          propertyPath: ['openAI', 'endpoint'],
-        },
-      },
-    } as ConnectionParameter,
-    openAIDBAuthenticationType: {
+    cosmosDBAuthenticationType: {
       type: 'string',
       uiDefinition: {
         displayName: 'Authentication type',
@@ -132,7 +19,7 @@ const getAllConnectionParameters = (intl: IntlShape) => {
         constraints: {
           clearText: true,
           required: 'true',
-          propertyPath: ['openAI', 'authentication', 'type'],
+          serializationPath: ['cosmosDB', 'authentication', 'type'],
         },
       },
     },
@@ -146,32 +33,6 @@ const getAllConnectionParameters = (intl: IntlShape) => {
           clearText: true,
           required: 'true',
           serialize: false,
-        },
-      },
-    } as ConnectionParameter,
-    cosmosDBAuthenticationKey: {
-      type: 'securestring',
-      parameterSource: 'AppConfiguration',
-      uiDefinition: {
-        displayName: intl.formatMessage({
-          id: 'G8AUbT',
-          defaultMessage: 'Key',
-          description: 'Label for key connection parameter',
-        }),
-        description: intl.formatMessage({
-          id: 'L84XBq',
-          defaultMessage: 'Key will be filled automatically.',
-          description: 'Description for key connection parameter',
-        }),
-        tooltip: intl.formatMessage({
-          id: 'sP4DTE',
-          defaultMessage: 'The key to access the resource that hosts the AI model',
-          description: 'Tooltip for key connection parameter',
-        }),
-        constraints: {
-          clearText: false,
-          required: 'true',
-          propertyPath: ['cosmosDB', 'authentication', 'key'],
         },
       },
     } as ConnectionParameter,
@@ -196,11 +57,37 @@ const getAllConnectionParameters = (intl: IntlShape) => {
         constraints: {
           clearText: true,
           required: 'true',
-          propertyPath: ['cosmosDB', 'endpoint'],
+          serializationPath: ['cosmosDB', 'endpoint'],
         },
       },
     } as ConnectionParameter,
-    cosmosDBAuthenticationType: {
+    cosmosDBKey: {
+      type: 'securestring',
+      parameterSource: 'AppConfiguration',
+      uiDefinition: {
+        displayName: intl.formatMessage({
+          id: 'G8AUbT',
+          defaultMessage: 'Key',
+          description: 'Label for key connection parameter',
+        }),
+        description: intl.formatMessage({
+          id: 'L84XBq',
+          defaultMessage: 'Key will be filled automatically.',
+          description: 'Description for key connection parameter',
+        }),
+        tooltip: intl.formatMessage({
+          id: 'sP4DTE',
+          defaultMessage: 'The key to access the resource that hosts the AI model',
+          description: 'Tooltip for key connection parameter',
+        }),
+        constraints: {
+          clearText: false,
+          required: 'true',
+          serializationPath: ['cosmosDB', 'authentication', 'key'],
+        },
+      },
+    } as ConnectionParameter,
+    openAIAuthenticationType: {
       type: 'string',
       uiDefinition: {
         displayName: 'Authentication type',
@@ -208,10 +95,124 @@ const getAllConnectionParameters = (intl: IntlShape) => {
         constraints: {
           clearText: true,
           required: 'true',
-          propertyPath: ['cosmosDB', 'authentication', 'type'],
+          serializationPath: ['openAI', 'authentication', 'type'],
         },
       },
     },
+    cognitiveServiceAccountId: {
+      type: 'string',
+      uiDefinition: {
+        displayName: 'Azure Cognitive Service Account',
+        description: 'Select the Azure Cognitive Service Account to use for this connection',
+        tooltip: 'Select the Azure Cognitive Service Account to use for this connection',
+        constraints: {
+          clearText: true,
+          required: 'true',
+          serialize: false,
+        },
+      },
+    } as ConnectionParameter,
+    openAIEndpoint: {
+      type: 'string',
+      uiDefinition: {
+        displayName: intl.formatMessage({
+          id: 'tWAk7P',
+          defaultMessage: 'API endpoint',
+          description: 'Label for API endpoint connection parameter',
+        }),
+        description: intl.formatMessage({
+          id: '+K0G5q',
+          defaultMessage: 'Endpoint will be filled automatically.',
+          description: 'Description for API endpoint connection parameter',
+        }),
+        tooltip: intl.formatMessage({
+          id: 'GfHVO/',
+          defaultMessage: 'The endpoint of the resource that hosts the AI model',
+          description: 'Tooltip for API endpoint connection parameter',
+        }),
+        constraints: {
+          clearText: true,
+          required: 'true',
+          serializationPath: ['openAI', 'endpoint'],
+        },
+      },
+    } as ConnectionParameter,
+    openAIKey: {
+      type: 'securestring',
+      parameterSource: 'AppConfiguration',
+      uiDefinition: {
+        displayName: intl.formatMessage({
+          id: 'ZNPMjo',
+          defaultMessage: 'API key',
+          description: 'Label for API key connection parameter',
+        }),
+        description: intl.formatMessage({
+          id: 'fRWxou',
+          defaultMessage: 'Key will be filled automatically.',
+          description: 'Description for API key connection parameter',
+        }),
+        tooltip: intl.formatMessage({
+          id: 'tTSsMz',
+          defaultMessage: 'The API key to access the resource that hosts the AI model',
+          description: 'Tooltip for API key connection parameter',
+        }),
+        constraints: {
+          clearText: false,
+          required: 'true',
+          serializationPath: ['openAI', 'authentication', 'key'],
+        },
+      },
+    } as ConnectionParameter,
+    openAICompletionsModel: {
+      type: 'string',
+      uiDefinition: {
+        displayName: intl.formatMessage({
+          id: 'E7PMTh',
+          defaultMessage: 'Completions model',
+          description: 'Label for completions model connection parameter',
+        }),
+        description: intl.formatMessage({
+          id: 'ChIvwj',
+          defaultMessage: 'Select the completions model to use for this connection',
+          description: 'Description for completions model connection parameter',
+        }),
+        tooltip: intl.formatMessage({
+          id: 'die3ro',
+          defaultMessage: 'Select the completions model to use for this connection',
+          description: 'Tooltip for completions model connection parameter',
+        }),
+        constraints: {
+          clearText: true,
+          required: 'true',
+          serializationPath: ['completionsOpenAI', 'completionsModel'],
+        },
+      },
+    } as ConnectionParameter,
+    openAIEmbeddingsModel: {
+      type: 'string',
+      uiDefinition: {
+        displayName: intl.formatMessage({
+          id: 'nsr+K2',
+          defaultMessage: 'Embeddings model',
+          description: 'Label for embeddings model connection parameter',
+        }),
+        description: intl.formatMessage({
+          id: 'bAzuvE',
+          defaultMessage: 'Select the embeddings model to use for this connection',
+          description: 'Description for embeddings model connection parameter',
+        }),
+        tooltip: intl.formatMessage({
+          id: 'BQY4w7',
+          defaultMessage: 'Select the embeddings model to use for this connection',
+          description: 'Tooltip for embeddings model connection parameter',
+        }),
+        constraints: {
+          clearText: true,
+          required: 'true',
+          serializationPath: ['embeddingsOpenAI', 'embeddingsModel'],
+        },
+      },
+    } as ConnectionParameter,
   };
 };
 
@@ -236,7 +237,7 @@ export const getOpenAIConnectionParameters = (intl: IntlShape): ConnectionParame
         parameters: {
           cognitiveServiceAccountId: allParameters.cognitiveServiceAccountId as ConnectionParameterSetParameter,
           openAIEndpoint: allParameters.openAIEndpoint as ConnectionParameterSetParameter,
-          openAIAuthenticationKey: allParameters.openAIAuthenticationKey as ConnectionParameterSetParameter,
+          openAIKey: allParameters.openAIKey as ConnectionParameterSetParameter,
           openAICompletionsModel: allParameters.openAICompletionsModel as ConnectionParameterSetParameter,
           openAIEmbeddingsModel: allParameters.openAIEmbeddingsModel as ConnectionParameterSetParameter,
         },
@@ -309,7 +310,7 @@ export const getCosmosDbConnectionParameters = (intl: IntlShape): ConnectionPara
         parameters: {
           cosmosDbServiceAccountId: allParameters.cosmosDbServiceAccountId as ConnectionParameterSetParameter,
           cosmosDBEndpoint: allParameters.cosmosDBEndpoint as ConnectionParameterSetParameter,
-          cosmosDBAuthenticationKey: allParameters.cosmosDBAuthenticationKey as ConnectionParameterSetParameter,
+          cosmosDBKey: allParameters.cosmosDBKey as ConnectionParameterSetParameter,
         },
         uiDefinition: {
           displayName: intl.formatMessage({
@@ -357,46 +358,16 @@ export const getCosmosDbConnectionParameters = (intl: IntlShape): ConnectionPara
   };
 };
 
-export const createConnection = async ({
-  displayName,
-  openAI,
-  cosmosDB,
-}: {
-  displayName: string;
-  openAI: {
-    authenticationType: string;
-    parameterValues: Record<string, any>;
-  };
-  cosmosDB: {
-    authenticationType: string;
-    parameterValues: Record<string, any>;
-  };
-}) => {
+export const createOrUpdateConnection = async (parameterValues: Record<string, any>) => {
   const intl = getIntl();
-  const allParams = getAllConnectionParameters(intl);
-  const connectionParameters = Object.keys(allParams).reduce(
-    (result: Record<string, ConnectionParameter>, key: string) => {
-      const parameter = getPropertyValue(allParams, key);
-      if (getPropertyValue(allParams, key).uiDefinition?.constraints?.serialize !== false) {
-        result[key] = parameter;
-      }
-
-      return result;
-    },
-    {} as Record<string, ConnectionParameter>
-  );
-  const allParameterValues = {
-    ...openAI.parameterValues,
-    ...cosmosDB.parameterValues,
-    openAIAuthenticationType: openAI.authenticationType,
-    cosmosDBAuthenticationType: cosmosDB.authenticationType,
-  };
+  const connectionParameters = getAllConnectionParameters(intl) as unknown as Record<string, ConnectionParameter>;
+  const displayName = parameterValues.displayName;
 
   try {
     const connection = await ConnectionService().createConnection(
       'HubConnection',
       { id: '/dummy/knowledgehub' } as unknown as Connector,
-      { displayName, connectionParameters: allParameterValues },
+      { displayName, connectionParameters: parameterValues },
       { connectionParameters, connectionMetadata: { required: true, type: ConnectionType.KnowledgeHub } }
     );
 
@@ -417,4 +388,37 @@ export const createConnection = async ({
       )
     );
   }
+};
+
+export const getConnectionParametersForEdit = (intl: IntlShape, connection: Connection | undefined | null) => {
+  const allParameters = getAllConnectionParameters(intl) as Record<string, ConnectionParameterSetParameter>;
+  const parameterValues: Record<string, any> = {};
+  const { connectionParameters, displayName } = connection?.properties ?? {};
+  const valueFromConnection = getObjectPropertyValue(connectionParameters ?? {}, ['data', 'metadata', 'value']);
+
+  for (const parameterName of Object.keys(allParameters)) {
+    const parameter = allParameters[parameterName];
+    if (parameter?.uiDefinition?.constraints?.serialize !== false) {
+      const propertyPath = parameter.uiDefinition?.constraints?.serializationPath ?? [
+        ...(parameter?.uiDefinition?.constraints?.propertyPath ?? []),
+        parameterName,
+      ];
+      parameterValues[parameterName] = getObjectPropertyValue(valueFromConnection ?? {}, propertyPath);
+    }
+  }
+
+  parameterValues['displayName'] = displayName;
+
+  const connectionParametersForUI = Object.keys(allParameters).reduce(
+    (result, parameterName) => {
+      const parameter = allParameters[parameterName];
+      if (parameter?.uiDefinition?.constraints?.serialize !== false) {
+        result[parameterName] = allParameters[parameterName];
+      }
+      return result;
+    },
+    {} as Record<string, ConnectionParameterSetParameter>
+  );
+
+  return { connectionParameters: connectionParametersForUI, parameterValues };
 };

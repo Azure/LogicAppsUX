@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StandardConnectionService } from '../connection';
 import type { StandardConnectionServiceOptions, ConnectionsData } from '../connection';
 import { mcpclientConnectorId } from '../../base/operationmanifest';
+import { ConnectionType } from '../../../../utils/src';
+import { InitLoggerService } from '../../logger';
 
 describe('StandardConnectionService', () => {
   const mockHttpClient = {
@@ -87,6 +89,118 @@ describe('StandardConnectionService', () => {
 
       expect(mcpConnection).toBeDefined();
       expect(mcpConnection?.properties.connectionParameters?.authentication).toBeUndefined();
+    });
+  });
+
+  describe('createConnection - MCP with ManagedServiceIdentity', () => {
+    const mockLoggerService = {
+      log: vi.fn(),
+      startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+      endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
+    };
+
+    it('should include identity in MCP connection authentication when user-assigned MI is selected', async () => {
+      InitLoggerService([mockLoggerService]);
+      let capturedConnectionData: any;
+      const writeConnection = vi.fn().mockImplementation((data: any) => {
+        capturedConnectionData = data;
+        return Promise.resolve();
+      });
+
+      const options = createMockOptions({});
+      (options as any).writeConnection = writeConnection;
+
+      const service = new StandardConnectionService(options);
+
+      const connector = {
+        id: 'connectionProviders/mcpclient',
+        type: 'connectionProviders/mcpclient',
+        name: 'mcpclient',
+        properties: {
+          displayName: 'MCP Client',
+          iconUri: '',
+          brandColor: '#000000',
+          capabilities: ['actions'],
+          description: 'MCP Client',
+        },
+      };
+
+      const connectionInfo = {
+        displayName: 'test-mcp-mi',
+        connectionParametersSet: {
+          name: 'ManagedServiceIdentity',
+          values: {
+            serverUrl: { value: 'https://mcp.example.com/sse' },
+            identity: {
+              value: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-id',
+            },
+            audience: { value: 'api://my-app' },
+          },
+        },
+      };
+
+      const parametersMetadata = {
+        connectionMetadata: { type: ConnectionType.Mcp },
+      };
+
+      await service.createConnection('test-conn', connector as any, connectionInfo, parametersMetadata as any);
+
+      expect(writeConnection).toHaveBeenCalledOnce();
+      const auth = capturedConnectionData.connectionData.authentication;
+      expect(auth.type).toBe('ManagedServiceIdentity');
+      expect(auth.identity).toBe('/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-id');
+      expect(auth.audience).toBe('api://my-app');
+    });
+
+    it('should not include identity in MCP connection when system-assigned MI is used', async () => {
+      InitLoggerService([mockLoggerService]);
+      let capturedConnectionData: any;
+      const writeConnection = vi.fn().mockImplementation((data: any) => {
+        capturedConnectionData = data;
+        return Promise.resolve();
+      });
+
+      const options = createMockOptions({});
+      (options as any).writeConnection = writeConnection;
+
+      const service = new StandardConnectionService(options);
+
+      const connector = {
+        id: 'connectionProviders/mcpclient',
+        type: 'connectionProviders/mcpclient',
+        name: 'mcpclient',
+        properties: {
+          displayName: 'MCP Client',
+          iconUri: '',
+          brandColor: '#000000',
+          capabilities: ['actions'],
+          description: 'MCP Client',
+        },
+      };
+
+      const connectionInfo = {
+        displayName: 'test-mcp-system-mi',
+        connectionParametersSet: {
+          name: 'ManagedServiceIdentity',
+          values: {
+            serverUrl: { value: 'https://mcp.example.com/sse' },
+            audience: { value: 'api://my-app' },
+          },
+        },
+      };
+
+      const parametersMetadata = {
+        connectionMetadata: { type: ConnectionType.Mcp },
+      };
+
+      await service.createConnection('test-conn', connector as any, connectionInfo, parametersMetadata as any);
+
+      expect(writeConnection).toHaveBeenCalledOnce();
+      const auth = capturedConnectionData.connectionData.authentication;
+      expect(auth.type).toBe('ManagedServiceIdentity');
+      expect(auth.identity).toBeUndefined();
+      expect(auth.audience).toBe('api://my-app');
     });
   });
 });

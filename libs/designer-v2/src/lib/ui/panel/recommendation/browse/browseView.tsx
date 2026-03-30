@@ -17,6 +17,7 @@ import type { AppDispatch } from '../../../../core';
 import { equals, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { getNodeId } from '../helpers';
 import { getTriggerCategories, getActionCategories, BrowseCategoryType } from './helper';
+import { useDisableMcpClientTools } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 interface BrowseViewProps {
   isTrigger?: boolean;
@@ -33,8 +34,9 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
 
   const allowAgents = equals(relationshipIds.graphId, 'root');
   const isAddingAgentTool = useIsAddingAgentTool();
+  const disableMcpClientTools = useDisableMcpClientTools();
 
-  const categories = isTrigger ? getTriggerCategories() : getActionCategories(allowAgents, isAddingAgentTool);
+  const categories = isTrigger ? getTriggerCategories() : getActionCategories(allowAgents, isAddingAgentTool, disableMcpClientTools);
 
   const addTriggerOperation = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>) => {

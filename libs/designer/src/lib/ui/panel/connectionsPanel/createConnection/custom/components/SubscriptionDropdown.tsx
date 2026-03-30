@@ -1,8 +1,8 @@
 import { isUndefinedOrEmptyString, type Subscription } from '@microsoft/logic-apps-shared';
 import { ConnectionParameterRow } from '../../connectionParameterRow';
 import { useIntl } from 'react-intl';
-import { useMemo, useRef, useState } from 'react';
-import type { IComboBox } from '@fluentui/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { IComboBox, IComboBoxStyles, IDropdownStyles } from '@fluentui/react';
 import { ComboBox, Spinner } from '@fluentui/react';
 import { useStyles } from '../styles';
 
@@ -12,6 +12,8 @@ interface SubscriptionDropdownProps {
   selectedSubscriptionId: string;
   setSelectedSubscriptionId: (subscriptionId: string) => void;
   title: string;
+  cssOverrides?: Record<string, string>;
+  styleOverrides?: Record<string, IDropdownStyles | IComboBoxStyles | any>;
 }
 
 export const SubscriptionDropdown = ({
@@ -20,6 +22,8 @@ export const SubscriptionDropdown = ({
   selectedSubscriptionId,
   setSelectedSubscriptionId,
   title,
+  cssOverrides,
+  styleOverrides,
 }: SubscriptionDropdownProps) => {
   const intl = useIntl();
   const styles = useStyles();
@@ -55,19 +59,33 @@ export const SubscriptionDropdown = ({
 
   const comboRef = useRef<IComboBox>(null);
 
+  useEffect(() => {
+    if (selectedSubscriptionId && subscriptionOptions.length > 0) {
+      const selectedOption = subscriptionOptions.find((option) => option.key === selectedSubscriptionId);
+      if (selectedOption) {
+        setSubscriptionInputText(selectedOption.text);
+      }
+    }
+  }, [selectedSubscriptionId, subscriptionOptions]);
+
   return (
-    <ConnectionParameterRow parameterKey={'subscription-id'} displayName={stringResources.SUBSCRIPTION} required={true}>
+    <ConnectionParameterRow
+      parameterKey={'subscription-id'}
+      displayName={stringResources.SUBSCRIPTION}
+      required={true}
+      cssOverrides={cssOverrides}
+    >
       <ComboBox
         data-automation-id="subscription-combobox"
         autoFocus={false}
         componentRef={comboRef}
-        allowFreeform
         autoComplete="on"
         required={true}
         disabled={isFetchingSubscriptions}
         placeholder={isFetchingSubscriptions ? stringResources.LOADING_SUBSCRIPTION : title}
         selectedKey={isUndefinedOrEmptyString(selectedSubscriptionId) ? null : selectedSubscriptionId}
         className={styles.subscriptionCombobox}
+        styles={styleOverrides?.combobox}
         options={subscriptionOptions}
         text={subscriptionInputText}
         onClick={() => {
