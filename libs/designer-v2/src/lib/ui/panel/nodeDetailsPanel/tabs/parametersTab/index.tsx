@@ -1031,29 +1031,11 @@ export const ParameterSection = ({
           },
         ];
 
-        const directDeploymentModelUpdates: { groupId: string; parameterId: string; propertiesToUpdate: Partial<ParameterInfo> }[] = [];
-
         for (const { key, default: defaultValue } of agentDeploymentKeys) {
           const dependency = buildDependentParam(key, defaultValue);
           if (dependency) {
             updatedDependencies.inputs[key] = dependency;
           }
-
-          // Also build a direct parameter update so the value is reliably written
-          // to Redux state without depending on the AgentSchema thunk pipeline.
-          const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
-          const resolvedValue = defaultValue ?? targetParam?.schema?.default;
-          if (targetParam && resolvedValue) {
-            directDeploymentModelUpdates.push({
-              groupId: group.id,
-              parameterId: targetParam.id,
-              propertiesToUpdate: { value: [createLiteralValueSegment(resolvedValue)] },
-            });
-          }
-        }
-
-        if (directDeploymentModelUpdates.length > 0) {
-          dispatch(updateNodeParameters({ nodeId, parameters: directDeploymentModelUpdates }));
         }
       }
 
