@@ -1,4 +1,3 @@
-import type { AppDispatch } from '../../../../../core/state/knowledge/store';
 import {
   TemplatesSection,
   type TemplatesSectionItem,
@@ -6,7 +5,6 @@ import {
   type KnowledgeConnectionTabProps,
 } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { closePanel } from '../../../../../core/state/knowledge/panelSlice';
 import Constants from '../../../../../common/constants';
 import { useState, useCallback, useMemo, type FormEvent, useEffect } from 'react';
 import {
@@ -29,7 +27,7 @@ import type { IComboBoxStyles, IDropdownStyles, ITextFieldStyles } from '@fluent
 
 export const basicsTab = (
   intl: IntlShape,
-  dispatch: AppDispatch,
+  close: () => void,
   connectionParameters: ConnectionParameterSets,
   connectionParameterValues: Record<string, any>,
   setConnectionParameterValues: (values: Record<string, any>) => void,
@@ -61,9 +59,7 @@ export const basicsTab = (
           id: 'FTrMxN',
           description: 'Button text for closing the panel',
         }),
-        onClick: () => {
-          dispatch(closePanel());
-        },
+        onClick: close,
         disabled: isCreating,
       },
       {

@@ -1,7 +1,7 @@
 import { KnowledgePanelView } from '../../../core/state/knowledge/panelSlice';
 import type { RootState } from '../../../core/state/knowledge/store';
 import { CreateConnectionPanel } from './connection/create';
-import { AddFilePanel } from './addfile';
+import { AddFilePanel } from './files/addfile';
 import { useSelector } from 'react-redux';
 import { EditConnectionPanel } from './connection/edit';
 import type { UploadFileHandler } from '@microsoft/logic-apps-shared';
