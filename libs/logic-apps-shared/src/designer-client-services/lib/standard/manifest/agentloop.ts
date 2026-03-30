@@ -56,7 +56,7 @@ export default {
               },
               {
                 value: 'MicrosoftFoundry',
-                displayName: 'Foundry Models (Preview)',
+                displayName: 'dd(Preview)',
               },
               {
                 value: 'FoundryAgentService',
@@ -495,7 +495,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['MicrosoftFoundry'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -510,7 +510,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['MicrosoftFoundry'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -525,7 +525,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['MicrosoftFoundry'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
