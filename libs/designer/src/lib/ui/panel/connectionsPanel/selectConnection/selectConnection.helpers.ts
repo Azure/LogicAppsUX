@@ -21,7 +21,7 @@ export const compareFlattenedConnections = (a: ConnectionWithFlattenedProperties
   if (!a.invalid && b.invalid) {
     return -1;
   }
-  return a.displayName.localeCompare(b.displayName);
+  return (a.displayName ?? '').localeCompare(b.displayName ?? '');
 };
 
 export const getLabelForConnection = (item: ConnectionProperties): string => {
