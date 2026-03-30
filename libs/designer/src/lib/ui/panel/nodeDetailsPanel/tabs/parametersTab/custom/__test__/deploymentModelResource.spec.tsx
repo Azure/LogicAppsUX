@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
 import { CustomDeploymentModelResource } from '../deploymentModelResource';
-import constants from '../../../../../../../common/constants';
+import { SUPPORTED_AGENT_OPENAI_MODELS, SUPPORTED_FOUNDRY_AGENT_MODELS } from '@microsoft/logic-apps-shared';
 
 const mockCreateNewDeployment = vi.fn();
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
@@ -54,11 +54,11 @@ describe('CustomDeploymentModelResource', () => {
   });
 
   it('should use SUPPORTED_FOUNDRY_AGENT_MODELS for the model dropdown', () => {
-    expect(constants.SUPPORTED_FOUNDRY_AGENT_MODELS).toBeDefined();
-    expect(constants.SUPPORTED_FOUNDRY_AGENT_MODELS.length).toBeGreaterThan(0);
+    expect(SUPPORTED_FOUNDRY_AGENT_MODELS).toBeDefined();
+    expect(SUPPORTED_FOUNDRY_AGENT_MODELS.length).toBeGreaterThan(0);
     // Verify the foundry list is a superset of the OpenAI list
-    for (const model of constants.SUPPORTED_AGENT_OPENAI_MODELS) {
-      expect(constants.SUPPORTED_FOUNDRY_AGENT_MODELS).toContain(model);
+    for (const model of SUPPORTED_AGENT_OPENAI_MODELS) {
+      expect(SUPPORTED_FOUNDRY_AGENT_MODELS).toContain(model);
     }
   });
 
@@ -87,7 +87,7 @@ describe('CustomDeploymentModelResource', () => {
     await waitFor(() => {
       expect(mockCreateNewDeployment).toHaveBeenCalledWith(
         expect.stringContaining('model-'),
-        constants.SUPPORTED_AGENT_OPENAI_MODELS[0],
+        SUPPORTED_AGENT_OPENAI_MODELS[0],
         'test-account-id'
       );
     });

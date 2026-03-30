@@ -1,3 +1,16 @@
+/** Supported OpenAI models for AzureOpenAI agent connections (subset of foundry models). */
+export const SUPPORTED_AGENT_OPENAI_MODELS: string[] = [
+  'gpt-5',
+  'gpt-5-chat',
+  'gpt-4.1',
+  'gpt-4',
+  'gpt-4o',
+  'gpt-35-turbo',
+  'gpt-4.1-mini',
+  'gpt-4.1-nano',
+  'gpt-4o-mini',
+];
+
 export const AGENT_MODEL_CONFIG: Record<string, { name: string; version: string; format: string }> = {
   'gpt-5.4-nano': { name: 'gpt-5.4-nano', version: '2025-08-01', format: 'OpenAI' },
   'gpt-5.4-mini': { name: 'gpt-5.4-mini', version: '2025-08-01', format: 'OpenAI' },
@@ -31,3 +44,6 @@ export const AGENT_MODEL_CONFIG: Record<string, { name: string; version: string;
   'gpt-4-32k': { name: 'gpt-4-32k', version: '0613', format: 'OpenAI' },
   'model-router-dev': { name: 'model-router-dev', version: '2025-05-15', format: 'OpenAI' },
 };
+
+/** Supported models for Foundry / MicrosoftFoundry agent connections (derived from AGENT_MODEL_CONFIG). */
+export const SUPPORTED_FOUNDRY_AGENT_MODELS: string[] = Object.keys(AGENT_MODEL_CONFIG);

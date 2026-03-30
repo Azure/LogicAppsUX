@@ -101,6 +101,8 @@ import {
   isRecordNotEmpty,
   RoleService,
   SUBGRAPH_TYPES,
+  SUPPORTED_AGENT_OPENAI_MODELS,
+  SUPPORTED_FOUNDRY_AGENT_MODELS,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
 import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
@@ -1722,8 +1724,7 @@ export const getEditorAndOptions = (
   // Handle agent connector with supported deployments
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
-    const supportedModels =
-      agentModelType === 'MicrosoftFoundry' ? constants.SUPPORTED_FOUNDRY_AGENT_MODELS : constants.SUPPORTED_AGENT_OPENAI_MODELS;
+    const supportedModels = agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
     const options = deploymentsForCognitiveServiceAccount
       .filter((deployment) => {
         const modelName = (deployment.properties?.model?.name ?? '').toLowerCase();
