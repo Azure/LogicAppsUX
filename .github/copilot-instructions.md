@@ -25,6 +25,24 @@ pnpm run build:lib  # or pnpm turbo run build:lib
 pnpm run build:extension
 ```
 
+### VS Code Extension E2E Tests (ExTester)
+```bash
+# Build + run all phases
+cd apps/vs-code-designer
+npx tsup --config tsup.e2e.test.config.ts
+node src/test/ui/run-e2e.js
+
+# Run specific phases
+$env:E2E_MODE="createonly"     # Phase 4.1: workspace creation
+$env:E2E_MODE="designeronly"   # Phase 4.2: designer lifecycle
+$env:E2E_MODE="newtestsonly"   # Phases 4.3-4.6: new tests
+node src/test/ui/run-e2e.js
+```
+
+**Key knowledge files for E2E tests:**
+- `apps/vs-code-designer/src/test/ui/SKILL.md` — Complete learning document (700+ lines)
+- `apps/vs-code-designer/CLAUDE.md` — Critical rules for writing new tests
+
 ### Testing
 ```bash
 # Run all unit tests
@@ -70,6 +88,16 @@ eslint --cache --fix
 # Format code (Biome)
 pnpm run check  # or biome check --write .
 ```
+
+**MANDATORY after every edit**: Run `npx biome check --write <files>` before committing.
+Do NOT use `--unsafe` flag — fix unsafe lint errors manually.
+Always verify compilation after changes: `npx tsup --config tsup.e2e.test.config.ts` (for E2E test files).
+
+**Biome rules to follow when writing code** (these cause errors if violated):
+- Use string literals (`'text'`) NOT template literals (`` `text` ``) when there are no interpolations
+- Avoid unnecessary `catch` bindings — use `catch {` not `catch (e) {` when `e` is unused
+- Keep imports organized and remove unused imports
+- Always use block statements with braces — `if (x) { break; }` not `if (x) break;`
 
 ### VS Code Extension
 ```bash

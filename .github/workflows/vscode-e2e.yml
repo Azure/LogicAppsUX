@@ -1,0 +1,99 @@
+name: VS Code Extension E2E Tests
+
+on:
+  push:
+    branches: [main, dev/*, hotfix/*]
+  pull_request:
+    branches: [main, dev/*, hotfix/*]
+
+concurrency:
+  group: vscode-e2e-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vscode-e2e:
+    timeout-minutes: 90
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Build extension
+        run: pnpm turbo run build:extension --cache-dir=.turbo
+
+      - name: Compile E2E tests
+        working-directory: apps/vs-code-designer
+        run: npx tsup --config tsup.e2e.test.config.ts
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      # Cache the auto-downloaded runtime dependencies (func, dotnet, node)
+      # so subsequent runs don't re-download ~500MB each time.
+      - name: Cache Logic Apps runtime dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+          # Save even when tests fail so deps are available on next run
+          save-always: true
+
+      - name: Run VS Code Extension E2E tests
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
+        env:
+          # Run all phases (4.1 workspace creation through 4.7 smoke tests)
+          E2E_MODE: full
+          # Increase Node memory for CI
+          NODE_OPTIONS: --max-old-space-size=4096
+          # Set TEMP so screenshot paths are predictable on Linux
+          # (process.env.TEMP is undefined on Ubuntu, causing fallback to cwd)
+          TEMP: ${{ runner.temp }}
+
+      # Screenshots are written to $TEMP/test-resources/screenshots/ by both:
+      #   - Explicit test screenshots (e.g., inlineJS-after-request-trigger.png)
+      #   - ExTester auto-failure screenshots (captured on test failure)
+      # Upload ALL screenshots as artifacts so they're available for debugging
+      # after the pipeline finishes, even if the runner is recycled.
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vscode-e2e-screenshots
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30

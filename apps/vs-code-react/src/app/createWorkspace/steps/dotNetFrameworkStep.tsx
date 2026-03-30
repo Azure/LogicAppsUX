@@ -96,10 +96,16 @@ export const DotNetFrameworkStep: React.FC = () => {
   );
 
   useEffect(() => {
-    if (functionFolderName) {
-      setFunctionFolderNameError(validateFunctionFolderName(functionFolderName));
-    }
+    setFunctionFolderNameError(validateFunctionFolderName(functionFolderName));
   }, [functionFolderName, validateFunctionFolderName]);
+
+  useEffect(() => {
+    setFunctionNamespaceError(validateFunctionNamespace(functionNamespace, intlText));
+  }, [functionNamespace, intlText]);
+
+  useEffect(() => {
+    setFunctionNameError(validateFunctionName(functionName, intlText));
+  }, [functionName, intlText]);
 
   const handleFunctionNamespaceChange = (event: React.FormEvent<HTMLInputElement>, data: InputOnChangeData) => {
     dispatch(setFunctionNamespace(data.value));

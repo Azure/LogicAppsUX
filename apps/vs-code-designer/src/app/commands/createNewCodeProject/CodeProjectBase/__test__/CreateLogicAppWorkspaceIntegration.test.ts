@@ -2,9 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import { WorkflowType, devContainerFolderName, devContainerFileName } from '../../../../../constants';
@@ -22,32 +23,11 @@ const { createWorkspaceStructure, getHostContent, createLibFolder, createLogicAp
 describe('createLogicAppWorkspace - Integration Tests', () => {
   let tempDir: string;
   let mockContext: IActionContext;
-  let assetsCopied = false;
 
   // Helper functions to compute paths based on workspace/logic app names
   const getWorkspaceRootFolder = (workspaceName: string) => path.join(tempDir, workspaceName);
   const getLogicAppFolderPath = (workspaceName: string, logicAppName: string) => path.join(tempDir, workspaceName, logicAppName);
   const getWorkspaceFilePath = (workspaceName: string) => path.join(tempDir, workspaceName, `${workspaceName}.code-workspace`);
-
-  beforeAll(async () => {
-    // Copy assets from src/assets to CodeProjectBase/assets for testing
-    const srcAssetsPath = path.resolve(__dirname, '..', '..', '..', '..', '..', 'assets');
-    const destAssetsPath = path.resolve(__dirname, '..', 'assets');
-
-    // Check if assets need to be copied
-    if (await fse.pathExists(srcAssetsPath)) {
-      await fse.copy(srcAssetsPath, destAssetsPath);
-      assetsCopied = true;
-    }
-  });
-
-  afterAll(async () => {
-    // Clean up copied assets
-    const destAssetsPath = path.resolve(__dirname, '..', 'assets');
-    if (await fse.pathExists(destAssetsPath)) {
-      await fse.remove(destAssetsPath);
-    }
-  });
 
   beforeEach(async () => {
     // Create real temp directory
@@ -334,18 +314,18 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
     it('should have application insights sampling enabled', async () => {
       const hostContent = await getHostContent();
-      expect(hostContent.logging.applicationInsights.samplingSettings.isEnabled).toBe(true);
+      expect(hostContent.logging!.applicationInsights!.samplingSettings!.isEnabled).toBe(true);
     });
 
     it('should exclude Request type from sampling', async () => {
       const hostContent = await getHostContent();
-      expect(hostContent.logging.applicationInsights.samplingSettings.excludedTypes).toBe('Request');
+      expect(hostContent.logging!.applicationInsights!.samplingSettings!.excludedTypes).toBe('Request');
     });
 
     it('should have workflows extension bundle', async () => {
       const hostContent = await getHostContent();
-      expect(hostContent.extensionBundle.id).toBe('Microsoft.Azure.Functions.ExtensionBundle.Workflows');
-      expect(hostContent.extensionBundle.version).toBe('[1.*, 2.0.0)');
+      expect(hostContent.extensionBundle!.id).toBe('Microsoft.Azure.Functions.ExtensionBundle.Workflows');
+      expect(hostContent.extensionBundle!.version).toBe('[1.*, 2.0.0)');
     });
   });
 

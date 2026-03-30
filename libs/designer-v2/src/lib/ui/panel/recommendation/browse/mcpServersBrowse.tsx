@@ -10,6 +10,7 @@ import { useMcpServersBrowseStyles } from './styles/McpServersBrowse.styles';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { openMcpToolWizard } from '../../../../core/state/panel/panelSlice';
 import { builtinMcpServerOperation, connectionToOperation, getOperationCardDataFromOperation, MCP_CLIENT_CONNECTOR_ID } from '../helpers';
+import { useDisableNativeMcpClientTools } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 type McpServerTab = 'all' | 'microsoft' | 'custom' | 'others';
 
@@ -24,6 +25,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
 
   const [selectedTab, setSelectedTab] = useState<McpServerTab>('all');
   const [sortOrder, setSortOrder] = useState<'a-to-z' | 'z-to-a'>('a-to-z');
+  const disableNativeMcpClientTools = useDisableNativeMcpClientTools();
 
   const { data: mcpServersData, isLoading: isServersLoading } = useMcpServersQuery();
 
@@ -127,7 +129,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
   }, []);
 
   const filteredAndSortedServers = useMemo(() => {
-    const connectionOperations = (mcpConnections ?? []).map(connectionToOperation);
+    const connectionOperations = disableNativeMcpClientTools ? [] : (mcpConnections ?? []).map(connectionToOperation);
 
     let filtered: DiscoveryOperation<DiscoveryResultTypes>[] = [];
 
@@ -147,14 +149,14 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
       return sortOrder === 'a-to-z' ? aName.localeCompare(bName) : bName.localeCompare(aName);
     });
 
-    if (selectedTab === 'all') {
+    if (selectedTab === 'all' && !disableNativeMcpClientTools) {
       return [builtinMcpServerOperation, ...filtered];
     }
     if (selectedTab === 'others') {
-      return [builtinMcpServerOperation, ...filtered];
+      return disableNativeMcpClientTools ? filtered : [builtinMcpServerOperation, ...filtered];
     }
     return filtered;
-  }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer]);
+  }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer, disableNativeMcpClientTools]);
 
   const displayingItemsText = intl.formatMessage(
     {
@@ -189,7 +191,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
           <Tab value="all">{allTabText}</Tab>
           <Tab value="microsoft">{microsoftTabText}</Tab>
           <Tab value="custom">{customTabText}</Tab>
-          <Tab value="others">{othersTabText}</Tab>
+          {!disableNativeMcpClientTools && <Tab value="others">{othersTabText}</Tab>}
         </TabList>
       </div>
 

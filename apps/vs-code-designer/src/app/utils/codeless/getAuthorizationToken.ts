@@ -3,8 +3,16 @@ import { getConfiguredAzureEnv } from '@microsoft/vscode-azext-azureauth';
 import { localize } from '../../../localize';
 import type { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AuthenticationSession } from 'vscode';
+import * as vscode from 'vscode';
 
 export async function getAuthData(tenantId?: string): Promise<AuthenticationSession> {
+  // When silentAuth is enabled (e.g. in automated test environments),
+  // use { silent: true } to avoid showing the "wants to sign in" dialog.
+  // This returns undefined if no cached session exists, instead of prompting.
+  const silentAuth = vscode.workspace.getConfiguration('azureLogicAppsStandard').get<boolean>('silentAuth', false);
+  if (silentAuth) {
+    return await getSessionFromVSCode(undefined, tenantId, { silent: true });
+  }
   return await getSessionFromVSCode(undefined, tenantId, { createIfNone: true });
 }
 
