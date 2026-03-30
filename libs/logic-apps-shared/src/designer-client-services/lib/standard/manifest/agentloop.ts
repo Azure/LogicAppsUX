@@ -56,7 +56,7 @@ export default {
               },
               {
                 value: 'MicrosoftFoundry',
-                displayName: 'dd(Preview)',
+                displayName: 'Foundry Models (Preview)',
               },
               {
                 value: 'FoundryAgentService',
