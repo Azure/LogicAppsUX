@@ -18,8 +18,10 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   const intl = useIntl();
   const { metadata, onClose } = props;
   const styles = useDeploymentModelResourceStyles();
+  const supportedModels =
+    metadata?.agentModelType === 'MicrosoftFoundry' ? constants.SUPPORTED_FOUNDRY_AGENT_MODELS : constants.SUPPORTED_AGENT_OPENAI_MODELS;
   const [name, setName] = useState(`model-${customLengthGuid(5)}`);
-  const [modelKey, setModelKey] = useState(constants.SUPPORTED_FOUNDRY_AGENT_MODELS[0]);
+  const [modelKey, setModelKey] = useState(supportedModels[0]);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -124,7 +126,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
               id: guid(),
             },
           ]}
-          options={constants.SUPPORTED_FOUNDRY_AGENT_MODELS.map((supportedModel) => ({
+          options={supportedModels.map((supportedModel) => ({
             key: supportedModel,
             displayName: supportedModel,
             value: supportedModel,

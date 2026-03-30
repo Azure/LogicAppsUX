@@ -15,7 +15,7 @@ export const CodeViewTab: React.FC<PanelTabProps> = (props) => {
   const queryData = useQuery(['serialization', { nodeId }], () => serializeOperation(rootState, nodeId), {
     retry: false,
     cacheTime: 0,
-    refetchOnMount: false,
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });

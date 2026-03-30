@@ -993,26 +993,25 @@ export const ParameterSection = ({
 
       if (isAgentDeployment) {
         const selectedModelId = value?.length ? value[0]?.value : undefined;
-        const currentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value;
 
-        let modelName: string | undefined;
-        let modelFormat: string | undefined;
-        let modelVersion: string | undefined;
+        // Look up the deployment from the API response (deployment.name = deploymentId, deployment.properties.model.name = modelId)
+        const deploymentInfo = selectedModelId
+          ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId)
+          : undefined;
 
-        if (currentModelType === 'MicrosoftFoundry') {
-          // For Foundry Models, the deploymentId IS the model ID — use it directly
-          const config = selectedModelId ? AGENT_MODEL_CONFIG[selectedModelId] : undefined;
-          modelName = selectedModelId;
-          modelFormat = config?.format ?? 'OpenAI';
-          modelVersion = config?.version;
-        } else {
-          // For Azure OpenAI, look up the deployment from the API response
-          const deploymentInfo = selectedModelId
-            ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId)
-            : undefined;
-          modelName = deploymentInfo?.properties?.model?.name;
-          modelFormat = deploymentInfo?.properties?.model?.format;
-          modelVersion = deploymentInfo?.properties?.model?.version;
+        const modelName = deploymentInfo?.properties?.model?.name;
+        let modelFormat = deploymentInfo?.properties?.model?.format;
+        let modelVersion = deploymentInfo?.properties?.model?.version;
+
+        // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
+        if (!modelFormat || !modelVersion) {
+          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          if (!modelFormat) {
+            modelFormat = config?.format ?? 'OpenAI';
+          }
+          if (!modelVersion) {
+            modelVersion = config?.version;
+          }
         }
 
         updatedDependencies.inputs ??= {};
@@ -1032,11 +1031,29 @@ export const ParameterSection = ({
           },
         ];
 
+        const directDeploymentModelUpdates: { groupId: string; parameterId: string; propertiesToUpdate: Partial<ParameterInfo> }[] = [];
+
         for (const { key, default: defaultValue } of agentDeploymentKeys) {
           const dependency = buildDependentParam(key, defaultValue);
           if (dependency) {
             updatedDependencies.inputs[key] = dependency;
           }
+
+          // Also build a direct parameter update so the value is reliably written
+          // to Redux state without depending on the AgentSchema thunk pipeline.
+          const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+          const resolvedValue = defaultValue ?? targetParam?.schema?.default;
+          if (targetParam && resolvedValue) {
+            directDeploymentModelUpdates.push({
+              groupId: group.id,
+              parameterId: targetParam.id,
+              propertiesToUpdate: { value: [createLiteralValueSegment(resolvedValue)] },
+            });
+          }
+        }
+
+        if (directDeploymentModelUpdates.length > 0) {
+          dispatch(updateNodeParameters({ nodeId, parameters: directDeploymentModelUpdates }));
         }
       }
 

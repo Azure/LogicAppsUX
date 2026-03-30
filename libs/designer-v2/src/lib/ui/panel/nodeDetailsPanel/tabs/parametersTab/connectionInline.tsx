@@ -9,6 +9,8 @@ import { useOperationInfo } from '../../../../../core';
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
 import { getAssistedConnectionProps } from '../../../../../core/utils/connectors/connections';
 import { customLengthGuid, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { ParameterGroupKeys } from '../../../../../core/utils/parameters/helper';
+import { AgentUtils } from '../../../../../common/utilities/Utils';
 import { Button, Text } from '@fluentui/react-components';
 import type { CreatedConnectionPayload } from '../../../connectionsPanel/createConnection/createConnectionWrapper';
 import { CreateConnectionInternal } from '../../../connectionsPanel/createConnection/createConnectionInternal';
@@ -98,13 +100,31 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
     [dispatch, nodeIds]
   );
 
+  const agentModelTypeFromState = useSelector((state: RootState) => {
+    const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+    const defaultGroup = paramGroups?.[ParameterGroupKeys.DEFAULT];
+    const param = defaultGroup?.parameters?.find((p: any) => p.parameterKey === 'inputs.$.agentModelType');
+    return param?.value?.[0]?.value ?? '';
+  });
+
+  const agentModelTypeDisplayName = useMemo(() => {
+    const manifestToDisplayName: Record<string, string> = {
+      AzureOpenAI: AgentUtils.ModelType.AzureOpenAI,
+      MicrosoftFoundry: AgentUtils.ModelType.MicrosoftFoundry,
+      FoundryAgentService: AgentUtils.ModelType.FoundryService,
+      APIMGenAIGateway: AgentUtils.ModelType.APIM,
+      V1ChatCompletionsService: AgentUtils.ModelType.V1ChatCompletionsService,
+    };
+    return manifestToDisplayName[agentModelTypeFromState] ?? AgentUtils.ModelType.AzureOpenAI;
+  }, [agentModelTypeFromState]);
+
   return (
     <>
       {!showSubComponent && hasExistingConnections ? (
         <Text style={{ fontSize: 12 }} id={noConnectionButtonId}>
           {isNullOrUndefined(selectedConnection)
             ? intlText.NO_CONNECTION_SELECTED
-            : `${intlText.CURRENT_CONNECTION}${selectedConnection.properties.displayName}`}{' '}
+            : `${intlText.CURRENT_CONNECTION}${selectedConnection.properties.displayName} (${agentModelTypeDisplayName})`}{' '}
         </Text>
       ) : showCreateConnection ? (
         <CreateConnectionInternal

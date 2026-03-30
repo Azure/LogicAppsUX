@@ -142,6 +142,19 @@ const updateAgentParametersForConnection = (
     }
   }
 
+  // If fallback detection yields the default 'AzureOpenAI', preserve existing valid value
+  // from the workflow definition (e.g., 'MicrosoftFoundry' that shares the same connection pattern)
+  if (agentModelTypeValue === 'AzureOpenAI') {
+    const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+    const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
+    const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
+    const currentValue = existingParam?.value?.[0]?.value;
+    const validManifestValues = Object.values(displayNameToManifestValue);
+    if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
+      return;
+    }
+  }
+
   // Get current parameter groups
   const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
   if (!parameterGroups) {

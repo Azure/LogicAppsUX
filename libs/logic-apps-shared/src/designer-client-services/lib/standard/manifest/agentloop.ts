@@ -495,7 +495,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
+                        values: ['MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -510,7 +510,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
+                        values: ['MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -525,7 +525,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
+                        values: ['MicrosoftFoundry'],
                       },
                     ],
                   },
