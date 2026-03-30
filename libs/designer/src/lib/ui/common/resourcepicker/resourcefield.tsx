@@ -76,7 +76,7 @@ const ResourceFieldDropdown = ({
   };
   const isDropdownSizeSmall = renderType === 'default';
 
-  const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
+  const sortedResources = useMemo(() => resources.sort((a, b) => (a.displayName ?? '').localeCompare(b.displayName ?? '')), [resources]);
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
     if (!isLoading) {
