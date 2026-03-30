@@ -1101,6 +1101,7 @@ function convertToMcpConnectionsData(
     processValue(connectionParametersSet.values, 'value', true);
     processValue(connectionParametersSet.values, 'key', true);
     processValue(connectionParametersSet.values, 'keyHeaderName', false);
+    processValue(connectionParametersSet.values, 'identity', false);
   }
 
   return {
