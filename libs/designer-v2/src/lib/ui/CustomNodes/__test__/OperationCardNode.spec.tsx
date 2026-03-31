@@ -27,7 +27,7 @@ vi.mock('react-hotkeys-hook', () => ({
 }));
 
 vi.mock('../../../core/queries/runs', () => ({
-  useNodeRepetition: vi.fn().mockReturnValue({ isFetching: false, data: undefined }),
+  useNodeRepetition: () => ({ isFetching: false, data: undefined }),
 }));
 
 vi.mock('../../../core/actions/bjsworkflow/copypaste', () => ({
@@ -56,7 +56,8 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useUnitTest: () => mockUseUnitTest(),
 }));
 
-vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
+vi.mock(import('../../../core/state/designerView/designerViewSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   setNodeContextMenuData: vi.fn((payload) => ({ type: 'designerView/setNodeContextMenuData', payload })),
   setShowDeleteModalNodeId: vi.fn((payload) => ({ type: 'designerView/setShowDeleteModalNodeId', payload })),
 }));
@@ -67,7 +68,8 @@ vi.mock('../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
 }));
 
-vi.mock('../../../core/state/operation/operationMetadataSlice', () => ({
+vi.mock(import('../../../core/state/operation/operationMetadataSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   ErrorLevel: { DynamicOutputs: 'DynamicOutputs', Connection: 'Connection' },
 }));
 
@@ -93,7 +95,8 @@ vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
 }));
 
-vi.mock('../../../core/state/panel/panelSlice', () => ({
+vi.mock(import('../../../core/state/panel/panelSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   changePanelNode: vi.fn((payload) => ({ type: 'panel/changePanelNode', payload })),
   setSelectedNodeId: vi.fn((payload) => ({ type: 'panel/setSelectedNodeId', payload })),
 }));
@@ -158,7 +161,8 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
 }));
 
-vi.mock('../../../core/state/workflow/workflowSlice', () => ({
+vi.mock(import('../../../core/state/workflow/workflowSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   setRepetitionRunData: vi.fn((payload) => ({ type: 'workflow/setRepetitionRunData', payload })),
 }));
 

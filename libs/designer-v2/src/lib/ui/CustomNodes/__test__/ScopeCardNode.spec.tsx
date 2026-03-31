@@ -35,9 +35,9 @@ vi.mock('../../../core/actions/bjsworkflow/move', () => ({
 }));
 
 vi.mock('../../../core/queries/runs', () => ({
-  useNodeRepetition: vi.fn().mockReturnValue({ isFetching: false, data: undefined }),
-  useAgentRepetition: vi.fn().mockReturnValue({ isFetching: false, data: undefined }),
-  useAgentActionsRepetition: vi.fn().mockReturnValue({ isFetching: false, data: undefined }),
+  useNodeRepetition: () => ({ isFetching: false, data: undefined }),
+  useAgentRepetition: () => ({ isFetching: false, data: undefined }),
+  useAgentActionsRepetition: () => ({ isFetching: false, data: undefined }),
 }));
 
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
@@ -48,7 +48,8 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => mockUseReadOnly(),
 }));
 
-vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
+vi.mock(import('../../../core/state/designerView/designerViewSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   setNodeContextMenuData: vi.fn((payload) => ({ type: 'designerView/setNodeContextMenuData', payload })),
   setShowDeleteModalNodeId: vi.fn((payload) => ({ type: 'designerView/setShowDeleteModalNodeId', payload })),
 }));
@@ -59,7 +60,8 @@ vi.mock('../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
 }));
 
-vi.mock('../../../core/state/operation/operationMetadataSlice', () => ({
+vi.mock(import('../../../core/state/operation/operationMetadataSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   ErrorLevel: { DynamicOutputs: 'DynamicOutputs', Connection: 'Connection' },
 }));
 
@@ -83,7 +85,8 @@ vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
 }));
 
-vi.mock('../../../core/state/panel/panelSlice', () => ({
+vi.mock(import('../../../core/state/panel/panelSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   changePanelNode: vi.fn((payload) => ({ type: 'panel/changePanelNode', payload })),
 }));
 
@@ -139,7 +142,8 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useFlowErrorsForNode: (...args: any[]) => mockUseFlowErrorsForNode(...args),
 }));
 
-vi.mock('../../../core/state/workflow/workflowSlice', () => ({
+vi.mock(import('../../../core/state/workflow/workflowSlice'), async (importOriginal) => ({
+  ...(await importOriginal()),
   setFocusElement: vi.fn((payload) => ({ type: 'workflow/setFocusElement', payload })),
   setRepetitionRunData: vi.fn((payload) => ({ type: 'workflow/setRepetitionRunData', payload })),
   setSubgraphRunData: vi.fn((payload) => ({ type: 'workflow/setSubgraphRunData', payload })),
