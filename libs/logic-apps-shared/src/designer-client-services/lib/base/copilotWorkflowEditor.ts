@@ -193,6 +193,12 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       }
 
       finalContent = assistantMessage.content ?? '';
+
+      // Detect truncated responses so we can warn but still attempt to parse
+      const finishReason = choice?.finish_reason as string | undefined;
+      if (finishReason === 'length') {
+        console.warn('[CopilotWorkflowEditor] LLM response was truncated (finish_reason=length).', 'Content length:', finalContent.length);
+      }
       break;
     }
 
@@ -384,62 +390,164 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
   }
 
   private _parseResponse(content: string, currentWorkflow: Workflow): WorkflowEditResponse {
-    // Try to extract JSON from a ```json code block
-    const jsonBlockMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
-    const jsonStr = jsonBlockMatch ? jsonBlockMatch[1] : content;
+    // Strip invisible Unicode characters that LLMs occasionally produce
+    // (BOM, zero-width spaces, etc.) which break JSON.parse
+    const sanitized = content.replace(/\u200B|\u200C|\u200D|\uFEFF|\u00A0/g, '');
 
-    try {
-      // Strip JS-style comments that LLMs sometimes inject (// … and /* … */)
-      const cleanedJson = this._stripJsonComments(jsonStr.trim());
-      const parsed = JSON.parse(cleanedJson);
+    // Try to extract JSON from a code block (```json or bare ```)
+    const jsonBlockMatch = sanitized.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    const jsonStr = jsonBlockMatch ? jsonBlockMatch[1] : sanitized;
+    const stripped = this._stripJsonComments(jsonStr.trim());
 
-      if (parsed.type === 'workflow' && parsed.workflow) {
-        const proposedWorkflow: Workflow = {
-          definition: parsed.workflow.definition ?? parsed.workflow,
-          connectionReferences: parsed.workflow.connectionReferences ?? currentWorkflow.connectionReferences ?? {},
-          parameters: parsed.workflow.parameters ?? currentWorkflow.parameters,
-          notes: parsed.workflow.notes ?? currentWorkflow.notes,
-          kind: parsed.workflow.kind ?? currentWorkflow.kind,
-        };
+    // Strategy 1: Direct JSON.parse
+    // Strategy 2: Repair unescaped quotes then JSON.parse
+    // Strategy 3: Extract outermost {...} from sanitized content (handles prose wrapping)
+    const parsed = this._tryJsonParse(stripped) ?? this._tryJsonParse(this._repairJson(stripped)) ?? this._tryExtractJson(sanitized);
 
-        const changes = this._parseChanges(parsed.changes);
-
-        return {
-          type: 'workflow',
-          text: parsed.text ?? 'Workflow updated.',
-          workflow: proposedWorkflow,
-          changes,
-        };
-      }
-
-      if (parsed.type === 'text') {
-        return {
-          type: 'text',
-          text: parsed.text ?? content,
-        };
-      }
-
-      // If parsed JSON has a "definition" key directly, treat it as a workflow
-      if (parsed.definition) {
-        return {
-          type: 'workflow',
-          text: 'Workflow updated.',
-          workflow: {
-            definition: parsed.definition,
-            connectionReferences: parsed.connectionReferences ?? currentWorkflow.connectionReferences ?? {},
-            parameters: parsed.parameters ?? currentWorkflow.parameters,
-            notes: parsed.notes ?? currentWorkflow.notes,
-            kind: parsed.kind ?? currentWorkflow.kind,
-          },
-        };
-      }
-
-      // Fallback: treat as text
-      return { type: 'text', text: parsed.text ?? content };
-    } catch {
-      // Could not parse JSON — treat entire content as a text reply
-      return { type: 'text', text: content };
+    if (parsed) {
+      return this._buildResponseFromParsed(parsed, sanitized, currentWorkflow);
     }
+
+    // All parsing strategies failed — log detailed diagnostics
+    const firstChars = sanitized.substring(0, 200);
+    const lastChars = sanitized.substring(Math.max(0, sanitized.length - 100));
+    const charCodes = Array.from(sanitized.substring(0, 10)).map((c) => c.charCodeAt(0));
+    console.warn('[CopilotWorkflowEditor] Failed to parse LLM response as JSON.', {
+      contentLength: sanitized.length,
+      firstChars,
+      lastChars,
+      firstCharCodes: charCodes,
+      directParseError: this._getParseError(stripped),
+      repairParseError: this._getParseError(this._repairJson(stripped)),
+    });
+
+    return { type: 'text', text: content };
+  }
+
+  private _getParseError(str: string): string {
+    try {
+      JSON.parse(str);
+      return 'no error';
+    } catch (e: unknown) {
+      return e instanceof Error ? e.message : String(e);
+    }
+  }
+
+  private _tryJsonParse(str: string): unknown | null {
+    try {
+      return JSON.parse(str);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Try to extract a JSON object by finding the outermost `{…}` in the content.
+   * Handles cases where the LLM wraps its JSON response in surrounding prose.
+   */
+  private _tryExtractJson(content: string): unknown | null {
+    const firstBrace = content.indexOf('{');
+    const lastBrace = content.lastIndexOf('}');
+    if (firstBrace === -1 || lastBrace <= firstBrace) {
+      return null;
+    }
+    const extracted = this._stripJsonComments(content.substring(firstBrace, lastBrace + 1));
+    return this._tryJsonParse(extracted) ?? this._tryJsonParse(this._repairJson(extracted));
+  }
+
+  /**
+   * Attempt to fix unescaped double quotes inside JSON string values.
+   * When inside a JSON string, if a `"` is followed (after optional whitespace)
+   * by a JSON structural character (`:`, `,`, `}`, `]`) or end-of-string, it is
+   * treated as the structural end of that string. Otherwise it is assumed to be
+   * an unescaped inner quote and is escaped as `\"`.
+   */
+  private _repairJson(str: string): string {
+    let result = '';
+    let inString = false;
+    let i = 0;
+    while (i < str.length) {
+      const ch = str[i];
+      if (inString) {
+        if (ch === '\\' && i + 1 < str.length) {
+          // Already-escaped character — pass through
+          result += ch + str[i + 1];
+          i += 2;
+          continue;
+        }
+        if (ch === '"') {
+          // Look ahead past whitespace for a structural JSON character
+          let j = i + 1;
+          while (j < str.length && (str[j] === ' ' || str[j] === '\t' || str[j] === '\n' || str[j] === '\r')) {
+            j++;
+          }
+          const next = j < str.length ? str[j] : '';
+          if (next === ':' || next === ',' || next === '}' || next === ']' || j >= str.length) {
+            // Structural end-of-string quote
+            inString = false;
+            result += ch;
+          } else {
+            // Unescaped inner quote — escape it
+            result += '\\"';
+          }
+        } else {
+          result += ch;
+        }
+      } else if (ch === '"') {
+        inString = true;
+        result += ch;
+      } else {
+        result += ch;
+      }
+      i++;
+    }
+    return result;
+  }
+
+  private _buildResponseFromParsed(parsed: any, rawContent: string, currentWorkflow: Workflow): WorkflowEditResponse {
+    if (parsed.type === 'workflow' && parsed.workflow) {
+      const proposedWorkflow: Workflow = {
+        definition: parsed.workflow.definition ?? parsed.workflow,
+        connectionReferences: parsed.workflow.connectionReferences ?? currentWorkflow.connectionReferences ?? {},
+        parameters: parsed.workflow.parameters ?? currentWorkflow.parameters,
+        notes: parsed.workflow.notes ?? currentWorkflow.notes,
+        kind: parsed.workflow.kind ?? currentWorkflow.kind,
+      };
+
+      const changes = this._parseChanges(parsed.changes);
+
+      return {
+        type: 'workflow',
+        text: parsed.text ?? 'Workflow updated.',
+        workflow: proposedWorkflow,
+        changes,
+      };
+    }
+
+    if (parsed.type === 'text') {
+      return {
+        type: 'text',
+        text: parsed.text ?? rawContent,
+      };
+    }
+
+    // If parsed JSON has a "definition" key directly, treat it as a workflow
+    if (parsed.definition) {
+      return {
+        type: 'workflow',
+        text: 'Workflow updated.',
+        workflow: {
+          definition: parsed.definition,
+          connectionReferences: parsed.connectionReferences ?? currentWorkflow.connectionReferences ?? {},
+          parameters: parsed.parameters ?? currentWorkflow.parameters,
+          notes: parsed.notes ?? currentWorkflow.notes,
+          kind: parsed.kind ?? currentWorkflow.kind,
+        },
+      };
+    }
+
+    // Fallback: treat as text
+    return { type: 'text', text: parsed.text ?? rawContent };
   }
 
   private _parseChanges(rawChanges: unknown): WorkflowChange[] | undefined {
