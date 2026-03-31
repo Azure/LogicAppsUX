@@ -9,13 +9,13 @@ import type { LogicAppsEdgeProps } from '../edge';
 
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
 
-vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+vi.mock(import('../../../core/state/designerOptions/designerOptionsSelectors'), () => ({
   useReadOnly: () => mockUseReadOnly(),
 }));
 
 const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 
-vi.mock('../../../core/state/panel/panelSelectors', () => ({
+vi.mock(import('../../../core/state/panel/panelSelectors'), () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
 }));
 
@@ -23,7 +23,7 @@ const mockUseActionMetadata = vi.fn().mockReturnValue({ runAfter: {} });
 const mockUseNodeEdgeTargets = vi.fn().mockReturnValue([]);
 const mockUseNodeMetadata = vi.fn().mockReturnValue({ graphId: 'root' });
 
-vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
+vi.mock(import('../../../core/state/workflow/workflowSelectors'), () => ({
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
   useNodeEdgeTargets: (...args: any[]) => mockUseNodeEdgeTargets(...args),
   useNodeMetadata: (...args: any[]) => mockUseNodeMetadata(...args),

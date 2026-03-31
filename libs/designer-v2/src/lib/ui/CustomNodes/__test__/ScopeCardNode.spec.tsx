@@ -26,15 +26,15 @@ vi.mock('react-hotkeys-hook', () => ({
   useHotkeys: () => ({ current: null }),
 }));
 
-vi.mock('../../../core/actions/bjsworkflow/copypaste', () => ({
+vi.mock(import('../../../core/actions/bjsworkflow/copypaste'), () => ({
   copyScopeOperation: vi.fn((payload) => ({ type: 'copyScopeOperation', payload })),
 }));
 
-vi.mock('../../../core/actions/bjsworkflow/move', () => ({
+vi.mock(import('../../../core/actions/bjsworkflow/move'), () => ({
   moveOperation: vi.fn((payload) => ({ type: 'moveOperation', payload })),
 }));
 
-vi.mock('../../../core/queries/runs', () => ({
+vi.mock(import('../../../core/queries/runs'), () => ({
   useNodeRepetition: () => ({ isFetching: false, data: undefined }),
   useAgentRepetition: () => ({ isFetching: false, data: undefined }),
   useAgentActionsRepetition: () => ({ isFetching: false, data: undefined }),
@@ -43,7 +43,7 @@ vi.mock('../../../core/queries/runs', () => ({
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
 
-vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+vi.mock(import('../../../core/state/designerOptions/designerOptionsSelectors'), () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
 }));
@@ -56,7 +56,7 @@ vi.mock(import('../../../core/state/designerView/designerViewSlice'), async (imp
 
 const mockUseIsA2AWorkflow = vi.fn().mockReturnValue(false);
 
-vi.mock('../../../core/state/designerView/designerViewSelectors', () => ({
+vi.mock(import('../../../core/state/designerView/designerViewSelectors'), () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
 }));
 
@@ -71,7 +71,7 @@ const mockUseOperationErrorInfo = vi.fn().mockReturnValue(undefined);
 const mockUseParameterValidationErrors = vi.fn().mockReturnValue([]);
 const mockUseTokenDependencies = vi.fn().mockReturnValue({ dependencies: {}, loopSources: {} });
 
-vi.mock('../../../core/state/operation/operationSelector', () => ({
+vi.mock(import('../../../core/state/operation/operationSelector'), () => ({
   useBrandColor: (...args: any[]) => mockUseBrandColor(...args),
   useIconUri: (...args: any[]) => mockUseIconUri(...args),
   useOperationErrorInfo: (...args: any[]) => mockUseOperationErrorInfo(...args),
@@ -81,7 +81,7 @@ vi.mock('../../../core/state/operation/operationSelector', () => ({
 
 const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 
-vi.mock('../../../core/state/panel/panelSelectors', () => ({
+vi.mock(import('../../../core/state/panel/panelSelectors'), () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
 }));
 
@@ -95,7 +95,7 @@ const mockUseConnectorName = vi.fn().mockReturnValue({ result: 'Test Connector' 
 const mockUseOperationInfo = vi.fn().mockReturnValue({ type: 'Scope', connectorId: 'test', operationId: 'test' });
 const mockUseOperationQuery = vi.fn().mockReturnValue({ isFetching: false, isError: false, isLoading: false });
 
-vi.mock('../../../core/state/selectors/actionMetadataSelector', () => ({
+vi.mock(import('../../../core/state/selectors/actionMetadataSelector'), () => ({
   useAllOperations: () => mockUseAllOperations(),
   useConnectorName: (...args: any[]) => mockUseConnectorName(...args),
   useOperationInfo: (...args: any[]) => mockUseOperationInfo(...args),
@@ -104,7 +104,7 @@ vi.mock('../../../core/state/selectors/actionMetadataSelector', () => ({
 
 const mockUseSettingValidationErrors = vi.fn().mockReturnValue([]);
 
-vi.mock('../../../core/state/setting/settingSelector', () => ({
+vi.mock(import('../../../core/state/setting/settingSelector'), () => ({
   useSettingValidationErrors: (...args: any[]) => mockUseSettingValidationErrors(...args),
 }));
 
@@ -124,7 +124,7 @@ const mockUseIsActionInSelectedTimelineRepetition = vi.fn().mockReturnValue(fals
 const mockUseHandoffActionsForAgent = vi.fn().mockReturnValue([]);
 const mockUseFlowErrorsForNode = vi.fn().mockReturnValue([]);
 
-vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
+vi.mock(import('../../../core/state/workflow/workflowSelectors'), () => ({
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
   useIsGraphCollapsed: (...args: any[]) => mockUseIsGraphCollapsed(...args),
   useIsLeafNode: (...args: any[]) => mockUseIsLeafNode(...args),
