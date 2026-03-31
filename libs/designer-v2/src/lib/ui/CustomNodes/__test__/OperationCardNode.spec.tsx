@@ -26,9 +26,8 @@ vi.mock('react-hotkeys-hook', () => ({
   useHotkeys: () => ({ current: null }),
 }));
 
-vi.mock('../../../core', () => ({
+vi.mock('../../../core/queries/runs', () => ({
   useNodeRepetition: vi.fn().mockReturnValue({ isFetching: false, data: undefined }),
-  useOperationInfo: vi.fn().mockReturnValue({ type: 'Action', connectorId: 'test', operationId: 'test' }),
 }));
 
 vi.mock('../../../core/actions/bjsworkflow/copypaste', () => ({
