@@ -37,6 +37,6 @@ export const useHandleStyles = makeStyles({
   },
 
   edgeDrawStartHighlighted: {
-    background: '#1f85ff',
+    background: 'var(--colorSelection)',
   },
 });
