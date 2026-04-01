@@ -1,14 +1,10 @@
-/**
- * @vitest-environment jsdom
- */
 import React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import type { NodeProps } from '@xyflow/react';
-import { mockUseIntl } from '../../../__test__/intl-test-helper';
 
-mockUseIntl();
+// react-intl's useIntl is already mocked by test-setup.ts via mockUseIntl()
 
 const mockDispatch = vi.fn();
 
@@ -26,15 +22,15 @@ vi.mock('react-hotkeys-hook', () => ({
   useHotkeys: () => ({ current: null }),
 }));
 
-vi.mock(import('../../../core/actions/bjsworkflow/copypaste'), () => ({
+vi.mock('../../../core/actions/bjsworkflow/copypaste', () => ({
   copyScopeOperation: vi.fn((payload) => ({ type: 'copyScopeOperation', payload })),
 }));
 
-vi.mock(import('../../../core/actions/bjsworkflow/move'), () => ({
+vi.mock('../../../core/actions/bjsworkflow/move', () => ({
   moveOperation: vi.fn((payload) => ({ type: 'moveOperation', payload })),
 }));
 
-vi.mock(import('../../../core/queries/runs'), () => ({
+vi.mock('../../../core/queries/runs', () => ({
   useNodeRepetition: () => ({ isFetching: false, data: undefined }),
   useAgentRepetition: () => ({ isFetching: false, data: undefined }),
   useAgentActionsRepetition: () => ({ isFetching: false, data: undefined }),
@@ -43,25 +39,23 @@ vi.mock(import('../../../core/queries/runs'), () => ({
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
 
-vi.mock(import('../../../core/state/designerOptions/designerOptionsSelectors'), () => ({
+vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
 }));
 
-vi.mock(import('../../../core/state/designerView/designerViewSlice'), async (importOriginal) => ({
-  ...(await importOriginal()),
+vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
   setNodeContextMenuData: vi.fn((payload) => ({ type: 'designerView/setNodeContextMenuData', payload })),
   setShowDeleteModalNodeId: vi.fn((payload) => ({ type: 'designerView/setShowDeleteModalNodeId', payload })),
 }));
 
 const mockUseIsA2AWorkflow = vi.fn().mockReturnValue(false);
 
-vi.mock(import('../../../core/state/designerView/designerViewSelectors'), () => ({
+vi.mock('../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
 }));
 
-vi.mock(import('../../../core/state/operation/operationMetadataSlice'), async (importOriginal) => ({
-  ...(await importOriginal()),
+vi.mock('../../../core/state/operation/operationMetadataSlice', () => ({
   ErrorLevel: { DynamicOutputs: 'DynamicOutputs', Connection: 'Connection' },
 }));
 
@@ -71,7 +65,7 @@ const mockUseOperationErrorInfo = vi.fn().mockReturnValue(undefined);
 const mockUseParameterValidationErrors = vi.fn().mockReturnValue([]);
 const mockUseTokenDependencies = vi.fn().mockReturnValue({ dependencies: {}, loopSources: {} });
 
-vi.mock(import('../../../core/state/operation/operationSelector'), () => ({
+vi.mock('../../../core/state/operation/operationSelector', () => ({
   useBrandColor: (...args: any[]) => mockUseBrandColor(...args),
   useIconUri: (...args: any[]) => mockUseIconUri(...args),
   useOperationErrorInfo: (...args: any[]) => mockUseOperationErrorInfo(...args),
@@ -81,12 +75,11 @@ vi.mock(import('../../../core/state/operation/operationSelector'), () => ({
 
 const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 
-vi.mock(import('../../../core/state/panel/panelSelectors'), () => ({
+vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
 }));
 
-vi.mock(import('../../../core/state/panel/panelSlice'), async (importOriginal) => ({
-  ...(await importOriginal()),
+vi.mock('../../../core/state/panel/panelSlice', () => ({
   changePanelNode: vi.fn((payload) => ({ type: 'panel/changePanelNode', payload })),
 }));
 
@@ -95,7 +88,7 @@ const mockUseConnectorName = vi.fn().mockReturnValue({ result: 'Test Connector' 
 const mockUseOperationInfo = vi.fn().mockReturnValue({ type: 'Scope', connectorId: 'test', operationId: 'test' });
 const mockUseOperationQuery = vi.fn().mockReturnValue({ isFetching: false, isError: false, isLoading: false });
 
-vi.mock(import('../../../core/state/selectors/actionMetadataSelector'), () => ({
+vi.mock('../../../core/state/selectors/actionMetadataSelector', () => ({
   useAllOperations: () => mockUseAllOperations(),
   useConnectorName: (...args: any[]) => mockUseConnectorName(...args),
   useOperationInfo: (...args: any[]) => mockUseOperationInfo(...args),
@@ -104,7 +97,7 @@ vi.mock(import('../../../core/state/selectors/actionMetadataSelector'), () => ({
 
 const mockUseSettingValidationErrors = vi.fn().mockReturnValue([]);
 
-vi.mock(import('../../../core/state/setting/settingSelector'), () => ({
+vi.mock('../../../core/state/setting/settingSelector', () => ({
   useSettingValidationErrors: (...args: any[]) => mockUseSettingValidationErrors(...args),
 }));
 
@@ -124,7 +117,7 @@ const mockUseIsActionInSelectedTimelineRepetition = vi.fn().mockReturnValue(fals
 const mockUseHandoffActionsForAgent = vi.fn().mockReturnValue([]);
 const mockUseFlowErrorsForNode = vi.fn().mockReturnValue([]);
 
-vi.mock(import('../../../core/state/workflow/workflowSelectors'), () => ({
+vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
   useIsGraphCollapsed: (...args: any[]) => mockUseIsGraphCollapsed(...args),
   useIsLeafNode: (...args: any[]) => mockUseIsLeafNode(...args),
@@ -142,8 +135,7 @@ vi.mock(import('../../../core/state/workflow/workflowSelectors'), () => ({
   useFlowErrorsForNode: (...args: any[]) => mockUseFlowErrorsForNode(...args),
 }));
 
-vi.mock(import('../../../core/state/workflow/workflowSlice'), async (importOriginal) => ({
-  ...(await importOriginal()),
+vi.mock('../../../core/state/workflow/workflowSlice', () => ({
   setFocusElement: vi.fn((payload) => ({ type: 'workflow/setFocusElement', payload })),
   setRepetitionRunData: vi.fn((payload) => ({ type: 'workflow/setRepetitionRunData', payload })),
   setSubgraphRunData: vi.fn((payload) => ({ type: 'workflow/setSubgraphRunData', payload })),
@@ -170,7 +162,7 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   useNodeIndex: () => 1,
 }));
 
-vi.mock(import('@xyflow/react'), async (importOriginal) => {
+vi.mock('@xyflow/react', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
@@ -236,13 +228,23 @@ describe('ScopeCardNode (v2)', () => {
     mockUseIconUri.mockReturnValue('test-icon-uri');
     mockUseOperationErrorInfo.mockReturnValue(undefined);
     mockUseParameterValidationErrors.mockReturnValue([]);
+    mockUseTokenDependencies.mockReturnValue({ dependencies: {}, loopSources: {} });
     mockUseSettingValidationErrors.mockReturnValue([]);
     mockUseFlowErrorsForNode.mockReturnValue([]);
     mockUseOperationQuery.mockReturnValue({ isFetching: false, isError: false, isLoading: false });
     mockUseParentNodeId.mockReturnValue(undefined);
     mockUseRunData.mockReturnValue(undefined);
+    mockUseRunIndex.mockReturnValue(0);
+    mockUseRunInstance.mockReturnValue(undefined);
+    mockUseParentRunIndex.mockReturnValue(undefined);
+    mockUseNodesMetadata.mockReturnValue({});
+    mockUseShouldNodeFocus.mockReturnValue(false);
+    mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(false);
     mockUseHandoffActionsForAgent.mockReturnValue([]);
     mockUseIsA2AWorkflow.mockReturnValue(false);
+    mockUseAllOperations.mockReturnValue({});
+    mockUseConnectorName.mockReturnValue({ result: 'Test Connector' });
+    mockUseOperationInfo.mockReturnValue({ type: 'Scope', connectorId: 'test', operationId: 'test' });
   });
 
   it('should render without crashing', () => {
