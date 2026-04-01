@@ -348,7 +348,7 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       axios:
-        specifier: ^1.13.5
+        specifier: 1.13.5
         version: 1.13.5(debug@4.4.3)
       axios-retry:
         specifier: ^3.5.0
@@ -615,7 +615,7 @@ importers:
         specifier: ^0.5.10
         version: 0.5.12
       axios:
-        specifier: ^1.13.5
+        specifier: 1.13.5
         version: 1.13.5(debug@4.4.3)
       azure-storage:
         specifier: ^2.10.3
@@ -1649,7 +1649,7 @@ importers:
         specifier: ^0.0.37
         version: 0.0.37
       axios:
-        specifier: ^1.13.5
+        specifier: 1.13.5
         version: 1.13.5(debug@4.4.3)
       react:
         specifier: 18.3.1
@@ -1695,7 +1695,7 @@ importers:
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: ^1.13.5
+        specifier: 1.13.5
         version: 1.13.5(debug@4.4.3)
       react:
         specifier: 18.3.1
@@ -9267,10 +9267,6 @@ packages:
     resolution: {integrity: sha512-zHXBLhP+QehSSbsS9Pt23Gg964240DPd6QCf8WpkqEXxQ7fhdZzYsocOr5u7apWonsS5EjZDmTF+/slGMyasvw==}
     engines: {node: '>= 0.4'}
 
-  es-define-property@1.0.0:
-    resolution: {integrity: sha512-jxayLKShrEqqzJ0eumQbVhTYQM27CfT1T35+gCgDFoL82JLsXqTJ76zv6A0YLOgEnLUMvLzsDsGIrl8NFpT2gQ==}
-    engines: {node: '>= 0.4'}
-
   es-define-property@1.0.1:
     resolution: {integrity: sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==}
     engines: {node: '>= 0.4'}
@@ -10159,10 +10155,6 @@ packages:
 
   has-proto@1.2.0:
     resolution: {integrity: sha512-KIL7eQPfHQRC8+XluaIw7BHUwwqL19bQn4hzNgdr+1wXoU0KKj6rufu47lhY7KbJR2C6T6+PfyN0Ea7wkSS+qQ==}
-    engines: {node: '>= 0.4'}
-
-  has-symbols@1.0.3:
-    resolution: {integrity: sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==}
     engines: {node: '>= 0.4'}
 
   has-symbols@1.1.0:
@@ -25192,7 +25184,7 @@ snapshots:
 
   call-bind@1.0.7:
     dependencies:
-      es-define-property: 1.0.0
+      es-define-property: 1.0.1
       es-errors: 1.3.0
       function-bind: 1.1.2
       get-intrinsic: 1.3.0
@@ -26458,7 +26450,7 @@ snapshots:
       data-view-buffer: 1.0.1
       data-view-byte-length: 1.0.1
       data-view-byte-offset: 1.0.0
-      es-define-property: 1.0.0
+      es-define-property: 1.0.1
       es-errors: 1.3.0
       es-object-atoms: 1.1.1
       es-set-tostringtag: 2.1.0
@@ -26554,10 +26546,6 @@ snapshots:
       typed-array-length: 1.0.7
       unbox-primitive: 1.1.0
       which-typed-array: 1.1.19
-
-  es-define-property@1.0.0:
-    dependencies:
-      get-intrinsic: 1.3.0
 
   es-define-property@1.0.1: {}
 
@@ -27768,13 +27756,11 @@ snapshots:
     dependencies:
       dunder-proto: 1.0.1
 
-  has-symbols@1.0.3: {}
-
   has-symbols@1.1.0: {}
 
   has-tostringtag@1.0.2:
     dependencies:
-      has-symbols: 1.0.3
+      has-symbols: 1.1.0
 
   has-yarn@3.0.0: {}
 
