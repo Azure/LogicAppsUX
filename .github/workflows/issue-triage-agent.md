@@ -124,6 +124,37 @@ Issues come from structured templates. Parse these fields for quick classificati
 
 ## Your Analysis Process
 
+### Step 0: Self-Calibrate from Past Triage
+
+Before analyzing this issue, calibrate your accuracy by reviewing your recent triage
+history. This makes you more accurate over time by learning from developer corrections.
+
+1. **Find your past triage comments** by searching:
+   `repo:Azure/LogicAppsUX "AI Triage Analysis" in:comments is:issue`
+   Look at the **10 most recent** results.
+
+2. **For each past issue**, compare your original analysis with the current state:
+   - Read your triage comment to see what component and priority you identified
+   - Read the issue's **current labels** — if a developer removed a label you added
+     or added one you missed, that is a correction signal
+   - Check for **replies to your triage comment** — developers may have posted
+     corrections like "this is actually a Connections issue" or "priority should be higher"
+   - Look for **structured feedback comments** containing "## Triage Feedback" —
+     these are machine-readable correction summaries from the feedback collector
+
+3. **Build a corrections list** from what you find. Examples:
+   - "I labeled issue #X as `Data Mapper` but developer changed to `Connections`"
+   - "I set `priority:medium` on issue #Y but developer upgraded to `priority:high`"
+   - "I missed the `regression` label on issue #Z — reporter confirmed it worked before"
+
+4. **Apply corrections to your current triage.** If you see a pattern:
+   - Same type of misclassification → adjust your approach for this issue
+   - Consistently missing a label type → look harder for that signal
+   - Root cause analysis was wrong for similar symptoms → try different angle
+
+**Budget: 1-2 minutes on calibration. Do not skip this step.** Even if you find no
+corrections, the calibration search confirms your accuracy is on track.
+
 ### Step 1: Classify the Issue Type
 Read the issue title, body, and labels. Determine:
 - Is this a **bug report** or **feature request**? (Check template fields and existing labels)
@@ -203,9 +234,8 @@ Reference specific functions, state slices, or data flow paths.]
 
 ---
 *Automated analysis by issue triage agent. May contain inaccuracies — verify before acting.*
+*Calibration: reviewed [N] past triage(s), [N] correction(s) applied.*
 ```
-
-For **feature requests**:
 ```
 ## AI Triage Analysis
 
@@ -224,9 +254,8 @@ Mention relevant patterns, services, or state slices.]
 
 ---
 *Automated analysis by issue triage agent. May contain inaccuracies — verify before acting.*
+*Calibration: reviewed [N] past triage(s), [N] correction(s) applied.*
 ```
-
-## Rules and Constraints
 
 1. **Always search the codebase** before commenting. Never guess file paths — verify they exist.
 2. **Use ONLY existing repo labels** listed in the `add-labels` safe-outputs above. Never invent labels.
