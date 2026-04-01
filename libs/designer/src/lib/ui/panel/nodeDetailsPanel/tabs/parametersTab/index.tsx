@@ -91,6 +91,7 @@ import {
   type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
+  AGENT_MODEL_CONFIG,
   clone,
   ConnectionService,
   EditorService,
@@ -102,6 +103,8 @@ import {
   isRecordNotEmpty,
   RoleService,
   SUBGRAPH_TYPES,
+  SUPPORTED_AGENT_OPENAI_MODELS,
+  SUPPORTED_FOUNDRY_AGENT_MODELS,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
 import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
@@ -1033,24 +1036,42 @@ export const ParameterSection = ({
       const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
 
       if (isAgentDeployment) {
-        const deploymentInfo = value?.length
-          ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
+        const selectedModelId = value?.length ? value[0]?.value : undefined;
+
+        // Look up the deployment from the API response (deployment.name = deploymentId, deployment.properties.model.name = modelId)
+        const deploymentInfo = selectedModelId
+          ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId)
           : undefined;
+
+        const modelName = deploymentInfo?.properties?.model?.name;
+        let modelFormat = deploymentInfo?.properties?.model?.format;
+        let modelVersion = deploymentInfo?.properties?.model?.version;
+
+        // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
+        if (!modelFormat || !modelVersion) {
+          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          if (!modelFormat) {
+            modelFormat = config?.format ?? 'OpenAI';
+          }
+          if (!modelVersion) {
+            modelVersion = config?.version;
+          }
+        }
 
         updatedDependencies.inputs ??= {};
 
         const agentDeploymentKeys = [
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
-            default: deploymentInfo?.properties?.model?.name,
+            default: modelName,
           },
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
-            default: deploymentInfo?.properties?.model?.format,
+            default: modelFormat,
           },
           {
             key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
-            default: deploymentInfo?.properties?.model?.version,
+            default: modelVersion,
           },
         ];
 
@@ -1347,6 +1368,10 @@ export const ParameterSection = ({
       setSectionExpanded(!sectionExpanded);
     }
   };
+  const currentAgentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value as
+    | string
+    | undefined;
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
@@ -1386,14 +1411,16 @@ export const ParameterSection = ({
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
         isA2AWorkflow,
-        foundryAgentsForNode ?? []
+        foundryAgentsForNode ?? [],
+        currentAgentModelType
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
         operationInfo,
         param,
         cognitiveServiceAccountId,
-        refetchAndSetDeploymentForCognitiveServiceAccount
+        refetchAndSetDeploymentForCognitiveServiceAccount,
+        currentAgentModelType
       );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
@@ -1747,7 +1774,8 @@ export const getCustomEditorForNewResource = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
   cognitiveServiceAccountId: string | undefined,
-  refetchDeploymentModels: (name?: string) => void
+  refetchDeploymentModels: (name?: string) => void,
+  agentModelType?: string
 ): NewResourceProps | undefined => {
   const hasInlineCreateResource = getPropertyValue(parameter.schema, ExtensionProperties.InlineCreateNewResource);
 
@@ -1765,7 +1793,7 @@ export const getCustomEditorForNewResource = (
         hideLabel: customEditor.hideLabel,
         editor: customEditor.editor,
         onClose: refetchDeploymentModels,
-        metadata: { cognitiveServiceAccountId: cognitiveServiceAccountId },
+        metadata: { cognitiveServiceAccountId: cognitiveServiceAccountId, agentModelType },
       };
     }
   }
@@ -1780,7 +1808,8 @@ export const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
   isA2AWorkflow?: boolean,
-  foundryAgents: any[] = []
+  foundryAgents: any[] = [],
+  agentModelType?: string
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1811,10 +1840,11 @@ export const getEditorAndOptions = (
   // Handle agent connector with supported deployments
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
+    const supportedModels = agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
     const options = deploymentsForCognitiveServiceAccount
       .filter((deployment) => {
         const modelName = (deployment.properties?.model?.name ?? '').toLowerCase();
-        return constants.SUPPORTED_AGENT_MODELS.includes(modelName);
+        return supportedModels.includes(modelName);
       })
       .map((deployment) => ({
         value: deployment.name,

@@ -55,6 +55,10 @@ export default {
                 displayName: 'Azure OpenAI',
               },
               {
+                value: 'MicrosoftFoundry',
+                displayName: 'Foundry Models (Preview)',
+              },
+              {
                 value: 'FoundryAgentService',
                 displayName: 'Foundry project (Preview)',
                 unSupportedWorkflowKind: ['agent'],
@@ -150,7 +154,7 @@ export default {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'APIMGenAIGateway', 'FoundryAgentService'],
+                values: ['AzureOpenAI', 'MicrosoftFoundry', 'APIMGenAIGateway', 'FoundryAgentService'],
               },
             ],
           },
@@ -175,6 +179,15 @@ export default {
           'x-ms-visibility': 'important',
           'x-ms-editor': 'agentinstruction',
           type: 'array',
+        },
+        knowledgeBaseName: {
+          title: 'Knowledge base',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'knowledgebase',
+          'x-ms-editor-options': {
+            visibility: 'custom',
+          },
+          type: 'string',
         },
         headers: {
           type: 'object',
@@ -211,7 +224,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -228,7 +241,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -245,7 +258,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -328,7 +341,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -396,7 +409,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -491,7 +504,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -506,7 +519,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -515,13 +528,13 @@ export default {
                   title: 'Model version',
                   description: 'Version of the model you are using',
                   type: 'string',
-                  default: '2025-04-14',
+                  default: '2025-06-10',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
