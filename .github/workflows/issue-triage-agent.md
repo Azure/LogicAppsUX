@@ -8,6 +8,7 @@ description: |
 on:
   issues:
     types: [opened, reopened]
+  roles: all
 
 permissions:
   contents: read
@@ -229,7 +230,7 @@ Mention relevant patterns, services, or state slices.]
 
 1. **Always search the codebase** before commenting. Never guess file paths — verify they exist.
 2. **Use ONLY existing repo labels** listed in the `add-labels` safe-outputs above. Never invent labels.
-3. **Do NOT apply more than 4 labels** per issue (component + priority + 1-2 classification).
+3. **Do NOT apply more than 5 labels** per issue (component + priority + 1-3 classification).
 4. **Do NOT close or assign** issues — only label and comment.
 5. **Do NOT remove existing labels** — only add new ones. The `triage` label from templates should stay.
 6. **Be honest about uncertainty** — say "likely" or "probable" rather than stating definitive root causes.
