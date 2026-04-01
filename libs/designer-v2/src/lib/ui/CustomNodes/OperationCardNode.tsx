@@ -353,7 +353,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           subtleBackground={isA2AWorkflow && isTrigger}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        {!isMcpClient && <EdgeDrawSourceHandle />}
+        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected} />}
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
