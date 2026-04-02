@@ -1093,8 +1093,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: ^4.18.1
+        version: 4.18.1
       pathfinding:
         specifier: 0.4.18
         version: 0.4.18
@@ -11311,6 +11311,9 @@ packages:
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
+
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
     engines: {node: '>=10'}
@@ -17875,7 +17878,7 @@ snapshots:
       cheerio: 1.0.0-rc.12
       feed: 4.2.2
       fs-extra: 11.2.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       reading-time: 1.5.0
@@ -17919,7 +17922,7 @@ snapshots:
       combine-promises: 1.2.0
       fs-extra: 11.2.0
       js-yaml: 4.1.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.8.1
@@ -18189,7 +18192,7 @@ snapshots:
       clsx: 2.1.1
       copy-text-to-clipboard: 3.2.0
       infima: 0.2.0-alpha.45
-      lodash: 4.17.21
+      lodash: 4.18.1
       nprogress: 0.2.0
       postcss: 8.5.6
       prism-react-renderer: 2.4.0(react@18.3.1)
@@ -18292,7 +18295,7 @@ snapshots:
       clsx: 2.1.1
       eta: 2.2.0
       fs-extra: 11.2.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.8.1
@@ -18368,7 +18371,7 @@ snapshots:
       fs-extra: 11.3.1
       joi: 17.12.2
       js-yaml: 4.1.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@swc/core'
@@ -18394,7 +18397,7 @@ snapshots:
       gray-matter: 4.0.3
       jiti: 1.21.0
       js-yaml: 4.1.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       micromatch: 4.0.8
       prompts: 2.4.2
       resolve-pathname: 3.0.0
@@ -23291,7 +23294,7 @@ snapshots:
       chalk: 4.1.2
       debug: 4.4.3(supports-color@8.1.1)
       js-yaml: 3.14.2
-      lodash: 4.17.21
+      lodash: 4.18.1
       pluralize: 2.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
@@ -24597,7 +24600,7 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 2.0.1
       lazystream: 1.0.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       normalize-path: 3.0.0
       readable-stream: 4.5.2
 
@@ -24754,7 +24757,7 @@ snapshots:
 
   async@2.6.4:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
 
   async@3.2.5: {}
 
@@ -25498,7 +25501,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       date-fns: 2.30.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       rxjs: 7.8.1
       shell-quote: 1.8.1
       spawn-command: 0.0.2
@@ -27969,7 +27972,7 @@ snapshots:
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
@@ -29001,6 +29004,8 @@ snapshots:
   lodash.uniq@4.5.0: {}
 
   lodash@4.17.21: {}
+
+  lodash@4.18.1: {}
 
   log-symbols@4.1.0:
     dependencies:
@@ -30856,7 +30861,7 @@ snapshots:
 
   pretty-error@4.0.0:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       renderkid: 3.0.0
 
   pretty-format@27.5.1:
@@ -31375,7 +31380,7 @@ snapshots:
   react-virtualized-tree@3.4.1(react-dom@18.3.1(react@18.3.1))(react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
     dependencies:
       classnames: 2.5.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       lodash.debounce: 4.0.8
       lodash.findindex: 4.6.0
       lodash.isequal: 4.5.0
@@ -31687,7 +31692,7 @@ snapshots:
       css-select: 4.3.0
       dom-converter: 0.2.0
       htmlparser2: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       strip-ansi: 6.0.1
 
   repeat-string@1.6.1: {}
