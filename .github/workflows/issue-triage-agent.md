@@ -18,6 +18,7 @@ tools:
   github:
     toolsets: [issues, labels, search, repos]
     lockdown: false
+    min-integrity: none
   bash: ["grep", "find", "cat", "head", "wc"]
 
 safe-outputs:
