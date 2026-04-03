@@ -11,7 +11,6 @@ import unitTestReducer from './state/unitTest/unitTestSlice';
 import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
-import modalReducer from './state/modal/modalSlice';
 import notesReducer from './state/notes/notesSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
@@ -37,7 +36,6 @@ export const store = configureStore({
     unitTest: unitTestReducer,
     customCode: customCodeReducer,
     undoRedo: undoRedoReducer,
-    modal: modalReducer,
     notes: notesReducer,
     // if is in dev environment, add devSlice to store
     ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),

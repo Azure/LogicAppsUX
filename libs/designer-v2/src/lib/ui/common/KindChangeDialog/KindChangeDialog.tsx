@@ -1,13 +1,12 @@
 import { useIntl } from 'react-intl';
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle } from '@fluentui/react-components';
-import { closeKindChangeDialog, useKindChangeDialogType } from '../../../core';
-import { useDispatch } from 'react-redux';
+import { useKindChangeDialogType, useCloseKindChange } from '../../../core/state/modal/ModalContext';
 
 export const KindChangeDialog = () => {
   const intl = useIntl();
-  const dispatch = useDispatch();
 
   const kindChangeDialogType = useKindChangeDialogType();
+  const closeKindChange = useCloseKindChange();
 
   const defaultTitleText = intl.formatMessage({
     defaultMessage: 'Update workflow before using this trigger',
@@ -59,7 +58,7 @@ export const KindChangeDialog = () => {
           : null;
 
   const closeCallback = () => {
-    dispatch(closeKindChangeDialog());
+    closeKindChange();
   };
 
   return (

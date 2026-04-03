@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeTriggerDescriptionModal } from '../../core/state/modal/modalSlice';
-import { useIsTriggerDescriptionModalOpen, useShouldPromptForTriggerDescription } from '../../core/state/modal/modalSelectors';
+import { useIsTriggerDescriptionModalOpen, useCloseTriggerDescription } from '../../core/state/modal/ModalContext';
+import { useShouldPromptForTriggerDescription } from '../../core/state/modal/modalSelectors';
 import {
   Button,
   Dialog,
@@ -29,6 +29,7 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
   const intl = useIntl();
   const dispatch = useDispatch();
   const isOpen = useIsTriggerDescriptionModalOpen();
+  const closeTriggerDescription = useCloseTriggerDescription();
   const shouldPrompt = useShouldPromptForTriggerDescription(props.workflowId ?? '');
 
   const dialogTitle = intl.formatMessage({
@@ -73,15 +74,15 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
 
   const confirmCallback = useCallback(() => {
     dispatch(setNodeDescription({ nodeId: triggerId, description: newDescriptionValue }));
-    dispatch(closeTriggerDescriptionModal());
+    closeTriggerDescription();
     props.onSubmit?.();
-  }, [dispatch, triggerId, newDescriptionValue, props]);
+  }, [dispatch, triggerId, newDescriptionValue, props, closeTriggerDescription]);
 
   const dismissCallback = useCallback(() => {
     const localFlagKey = `${LOCAL_STORAGE_KEYS.IGNORE_EMPTY_TRIGGER_DESCRIPTION}-${props.workflowId}`;
     localStorage.setItem(localFlagKey, 'true');
-    dispatch(closeTriggerDescriptionModal());
-  }, [dispatch, props.workflowId]);
+    closeTriggerDescription();
+  }, [closeTriggerDescription, props.workflowId]);
 
   const mainActionId = useSelector((state: RootState) => Object.keys(state.workflow.operations)?.[1]);
   const mainActionOperationInfo = useOperationInfo(mainActionId);

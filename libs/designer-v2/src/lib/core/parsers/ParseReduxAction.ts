@@ -5,7 +5,7 @@ import { updateWorkflowParameters } from '../actions/bjsworkflow/initialize';
 import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
-import { openCombineVariableModal } from '../state/modal/modalSlice';
+import { getModalService } from '../state/modal/ModalContext';
 import { initializeNotes } from '../state/notes/notesSlice';
 import { initializeStaticResultProperties } from '../state/operation/operationMetadataSlice';
 import { setCollapsedGraphIds } from '../state/workflow/workflowSlice';
@@ -77,9 +77,7 @@ export const initializeGraphState = createAsyncThunk<
             selectedDefinition = combineSequentialInitializeVariables(definition);
           }
         } else {
-          const useCombined = await new Promise<boolean>((resolve) => {
-            dispatch(openCombineVariableModal({ resolve }));
-          });
+          const useCombined = await getModalService().openCombineVariable();
 
           if (useCombined) {
             selectedDefinition = combineSequentialInitializeVariables(definition);

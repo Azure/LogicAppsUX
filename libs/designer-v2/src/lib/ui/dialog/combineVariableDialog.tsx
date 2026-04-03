@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { closeCombineVariableModal } from '../../core/state/modal/modalSlice';
-import { useIsCombineVariableModalOpen, useResolveCombineVariable } from '../../core/state/modal/modalSelectors';
+import { useIsCombineVariableModalOpen, useCloseCombineVariable } from '../../core/state/modal/ModalContext';
 import { Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
 
 export const CombineInitializeVariableDialog = () => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const isOpen = useIsCombineVariableModalOpen();
-  const resolve = useResolveCombineVariable();
+  const closeCombineVariable = useCloseCombineVariable();
 
   const [rememberChoice, setRememberChoice] = useState(false);
 
@@ -25,8 +22,7 @@ export const CombineInitializeVariableDialog = () => {
     if (rememberChoice) {
       localStorage.setItem(LOCAL_STORAGE_KEYS.COMBINE_INITIALIZE_VARIABLES, JSON.stringify(combine));
     }
-    dispatch(closeCombineVariableModal(combine));
-    resolve?.(combine);
+    closeCombineVariable(combine);
   };
 
   const title = intl.formatMessage({

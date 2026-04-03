@@ -1,276 +1,218 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import modalReducer, {
-  openCombineVariableModal,
-  closeCombineVariableModal,
-  openTriggerDescriptionModal,
-  closeTriggerDescriptionModal,
-  type ModalState,
-} from '../modal/modalSlice';
+/**
+ * @vitest-environment jsdom
+ */
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { createElement } from 'react';
+import {
+  ModalProvider,
+  useIsCombineVariableModalOpen,
+  useIsTriggerDescriptionModalOpen,
+  useKindChangeDialogType,
+  useCloseCombineVariable,
+  useOpenTriggerDescription,
+  useCloseTriggerDescription,
+  useOpenKindChange,
+  useCloseKindChange,
+  getModalService,
+} from '../modal/ModalContext';
 
-describe('modalSlice', () => {
-  const initialState: ModalState = {
-    isCombineVariableOpen: false,
-    isTriggerDescriptionOpen: false,
-  };
+const wrapper = ({ children }: { children: React.ReactNode }) => createElement(ModalProvider, null, children);
 
+describe('ModalContext', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describe('initial state', () => {
-    it('should return the initial state', () => {
-      expect(modalReducer(undefined, { type: 'unknown' })).toEqual(initialState);
+    it('should have all modals closed initially', () => {
+      const { result } = renderHook(
+        () => ({
+          isCombineOpen: useIsCombineVariableModalOpen(),
+          isTriggerOpen: useIsTriggerDescriptionModalOpen(),
+          kindChangeType: useKindChangeDialogType(),
+        }),
+        { wrapper }
+      );
+
+      expect(result.current.isCombineOpen).toBe(false);
+      expect(result.current.isTriggerOpen).toBe(false);
+      expect(result.current.kindChangeType).toBeUndefined();
     });
   });
 
-  describe('openCombineVariableModal', () => {
-    it('should open combine variable modal and set resolve function', () => {
-      const mockResolve = vi.fn();
-      const action = openCombineVariableModal({ resolve: mockResolve });
+  describe('combine variable modal', () => {
+    it('should open via getModalService and resolve with true on close', async () => {
+      const { result } = renderHook(
+        () => ({
+          isOpen: useIsCombineVariableModalOpen(),
+          close: useCloseCombineVariable(),
+        }),
+        { wrapper }
+      );
 
-      const result = modalReducer(initialState, action);
+      let resolvedValue: boolean | undefined;
+      act(() => {
+        getModalService()
+          .openCombineVariable()
+          .then((v) => {
+            resolvedValue = v;
+          });
+      });
 
-      expect(result.isCombineVariableOpen).toBe(true);
-      expect(result.resolveCombineVariable).toBe(mockResolve);
-      expect(result.isTriggerDescriptionOpen).toBe(false);
+      expect(result.current.isOpen).toBe(true);
+
+      act(() => {
+        result.current.close(true);
+      });
+
+      expect(result.current.isOpen).toBe(false);
+      // Allow microtask to resolve
+      await vi.waitFor(() => expect(resolvedValue).toBe(true));
     });
 
-    it('should open combine variable modal when trigger description modal is already open', () => {
-      const stateWithTriggerOpen: ModalState = {
-        ...initialState,
-        isTriggerDescriptionOpen: true,
-      };
-      const mockResolve = vi.fn();
-      const action = openCombineVariableModal({ resolve: mockResolve });
+    it('should resolve with false when closed with false', async () => {
+      const { result } = renderHook(
+        () => ({
+          isOpen: useIsCombineVariableModalOpen(),
+          close: useCloseCombineVariable(),
+        }),
+        { wrapper }
+      );
 
-      const result = modalReducer(stateWithTriggerOpen, action);
+      let resolvedValue: boolean | undefined;
+      act(() => {
+        getModalService()
+          .openCombineVariable()
+          .then((v) => {
+            resolvedValue = v;
+          });
+      });
 
-      expect(result.isCombineVariableOpen).toBe(true);
-      expect(result.resolveCombineVariable).toBe(mockResolve);
-      expect(result.isTriggerDescriptionOpen).toBe(true);
-    });
+      act(() => {
+        result.current.close(false);
+      });
 
-    it('should replace existing resolve function when modal is already open', () => {
-      const oldResolve = vi.fn();
-      const newResolve = vi.fn();
-      const stateWithModalOpen: ModalState = {
-        ...initialState,
-        isCombineVariableOpen: true,
-        resolveCombineVariable: oldResolve,
-      };
-      const action = openCombineVariableModal({ resolve: newResolve });
-
-      const result = modalReducer(stateWithModalOpen, action);
-
-      expect(result.isCombineVariableOpen).toBe(true);
-      expect(result.resolveCombineVariable).toBe(newResolve);
-      expect(result.resolveCombineVariable).not.toBe(oldResolve);
-    });
-  });
-
-  describe('closeCombineVariableModal', () => {
-    it('should close combine variable modal and call resolve function with true', () => {
-      const mockResolve = vi.fn();
-      const stateWithModalOpen: ModalState = {
-        ...initialState,
-        isCombineVariableOpen: true,
-        resolveCombineVariable: mockResolve,
-      };
-      const action = closeCombineVariableModal(true);
-
-      const result = modalReducer(stateWithModalOpen, action);
-
-      expect(result.isCombineVariableOpen).toBe(false);
-      expect(result.resolveCombineVariable).toBeUndefined();
-      expect(mockResolve).toHaveBeenCalledWith(true);
-      expect(mockResolve).toHaveBeenCalledTimes(1);
-    });
-
-    it('should close combine variable modal and call resolve function with false', () => {
-      const mockResolve = vi.fn();
-      const stateWithModalOpen: ModalState = {
-        ...initialState,
-        isCombineVariableOpen: true,
-        resolveCombineVariable: mockResolve,
-      };
-      const action = closeCombineVariableModal(false);
-
-      const result = modalReducer(stateWithModalOpen, action);
-
-      expect(result.isCombineVariableOpen).toBe(false);
-      expect(result.resolveCombineVariable).toBeUndefined();
-      expect(mockResolve).toHaveBeenCalledWith(false);
-      expect(mockResolve).toHaveBeenCalledTimes(1);
-    });
-
-    it('should close combine variable modal without calling resolve function when none exists', () => {
-      const stateWithModalOpen: ModalState = {
-        ...initialState,
-        isCombineVariableOpen: true,
-        resolveCombineVariable: undefined,
-      };
-      const action = closeCombineVariableModal(true);
-
-      const result = modalReducer(stateWithModalOpen, action);
-
-      expect(result.isCombineVariableOpen).toBe(false);
-      expect(result.resolveCombineVariable).toBeUndefined();
-      // No error should be thrown when resolve function doesn't exist
-    });
-
-    it('should close modal and preserve other modal states', () => {
-      const mockResolve = vi.fn();
-      const stateWithBothOpen: ModalState = {
-        isCombineVariableOpen: true,
-        resolveCombineVariable: mockResolve,
-        isTriggerDescriptionOpen: true,
-      };
-      const action = closeCombineVariableModal(false);
-
-      const result = modalReducer(stateWithBothOpen, action);
-
-      expect(result.isCombineVariableOpen).toBe(false);
-      expect(result.resolveCombineVariable).toBeUndefined();
-      expect(result.isTriggerDescriptionOpen).toBe(true);
-      expect(mockResolve).toHaveBeenCalledWith(false);
+      await vi.waitFor(() => expect(resolvedValue).toBe(false));
     });
   });
 
-  describe('openTriggerDescriptionModal', () => {
-    it('should open trigger description modal', () => {
-      const action = openTriggerDescriptionModal();
+  describe('trigger description modal', () => {
+    it('should open and close trigger description modal', () => {
+      const { result } = renderHook(
+        () => ({
+          isOpen: useIsTriggerDescriptionModalOpen(),
+          open: useOpenTriggerDescription(),
+          close: useCloseTriggerDescription(),
+        }),
+        { wrapper }
+      );
 
-      const result = modalReducer(initialState, action);
+      expect(result.current.isOpen).toBe(false);
 
-      expect(result.isTriggerDescriptionOpen).toBe(true);
-      expect(result.isCombineVariableOpen).toBe(false);
-      expect(result.resolveCombineVariable).toBeUndefined();
-    });
+      act(() => {
+        result.current.open();
+      });
+      expect(result.current.isOpen).toBe(true);
 
-    it('should open trigger description modal when combine variable modal is already open', () => {
-      const mockResolve = vi.fn();
-      const stateWithCombineOpen: ModalState = {
-        isCombineVariableOpen: true,
-        resolveCombineVariable: mockResolve,
-        isTriggerDescriptionOpen: false,
-      };
-      const action = openTriggerDescriptionModal();
-
-      const result = modalReducer(stateWithCombineOpen, action);
-
-      expect(result.isTriggerDescriptionOpen).toBe(true);
-      expect(result.isCombineVariableOpen).toBe(true);
-      expect(result.resolveCombineVariable).toBe(mockResolve);
-    });
-
-    it('should remain open when already open', () => {
-      const stateWithTriggerOpen: ModalState = {
-        ...initialState,
-        isTriggerDescriptionOpen: true,
-      };
-      const action = openTriggerDescriptionModal();
-
-      const result = modalReducer(stateWithTriggerOpen, action);
-
-      expect(result.isTriggerDescriptionOpen).toBe(true);
+      act(() => {
+        result.current.close();
+      });
+      expect(result.current.isOpen).toBe(false);
     });
   });
 
-  describe('closeTriggerDescriptionModal', () => {
-    it('should close trigger description modal', () => {
-      const stateWithTriggerOpen: ModalState = {
-        ...initialState,
-        isTriggerDescriptionOpen: true,
-      };
-      const action = closeTriggerDescriptionModal();
+  describe('kind change dialog', () => {
+    it('should open and close kind change dialog', () => {
+      const { result } = renderHook(
+        () => ({
+          type: useKindChangeDialogType(),
+          open: useOpenKindChange(),
+          close: useCloseKindChange(),
+        }),
+        { wrapper }
+      );
 
-      const result = modalReducer(stateWithTriggerOpen, action);
+      expect(result.current.type).toBeUndefined();
 
-      expect(result.isTriggerDescriptionOpen).toBe(false);
-      expect(result.isCombineVariableOpen).toBe(false);
-      expect(result.resolveCombineVariable).toBeUndefined();
+      act(() => {
+        result.current.open('toA2A');
+      });
+      expect(result.current.type).toBe('toA2A');
+
+      act(() => {
+        result.current.close();
+      });
+      expect(result.current.type).toBeUndefined();
     });
 
-    it('should close trigger description modal and preserve combine variable modal state', () => {
-      const mockResolve = vi.fn();
-      const stateWithBothOpen: ModalState = {
-        isCombineVariableOpen: true,
-        resolveCombineVariable: mockResolve,
-        isTriggerDescriptionOpen: true,
-      };
-      const action = closeTriggerDescriptionModal();
+    it('should open via getModalService', () => {
+      const { result } = renderHook(
+        () => ({
+          type: useKindChangeDialogType(),
+          close: useCloseKindChange(),
+        }),
+        { wrapper }
+      );
 
-      const result = modalReducer(stateWithBothOpen, action);
+      act(() => {
+        getModalService().openKindChange('fromStateless');
+      });
+      expect(result.current.type).toBe('fromStateless');
 
-      expect(result.isTriggerDescriptionOpen).toBe(false);
-      expect(result.isCombineVariableOpen).toBe(true);
-      expect(result.resolveCombineVariable).toBe(mockResolve);
-    });
-
-    it('should work when modal is already closed', () => {
-      const action = closeTriggerDescriptionModal();
-
-      const result = modalReducer(initialState, action);
-
-      expect(result.isTriggerDescriptionOpen).toBe(false);
-      expect(result).toEqual(initialState);
+      act(() => {
+        result.current.close();
+      });
+      expect(result.current.type).toBeUndefined();
     });
   });
 
   describe('modal interaction scenarios', () => {
-    it('should handle opening and closing both modals in sequence', () => {
-      let state = initialState;
-      const mockResolve = vi.fn();
+    it('should handle opening and closing both modals in sequence', async () => {
+      const { result } = renderHook(
+        () => ({
+          isCombineOpen: useIsCombineVariableModalOpen(),
+          isTriggerOpen: useIsTriggerDescriptionModalOpen(),
+          closeCombine: useCloseCombineVariable(),
+          openTrigger: useOpenTriggerDescription(),
+          closeTrigger: useCloseTriggerDescription(),
+        }),
+        { wrapper }
+      );
 
       // Open combine variable modal
-      state = modalReducer(state, openCombineVariableModal({ resolve: mockResolve }));
-      expect(state.isCombineVariableOpen).toBe(true);
-      expect(state.isTriggerDescriptionOpen).toBe(false);
+      let resolvedValue: boolean | undefined;
+      act(() => {
+        getModalService()
+          .openCombineVariable()
+          .then((v) => {
+            resolvedValue = v;
+          });
+      });
+      expect(result.current.isCombineOpen).toBe(true);
+      expect(result.current.isTriggerOpen).toBe(false);
 
       // Open trigger description modal
-      state = modalReducer(state, openTriggerDescriptionModal());
-      expect(state.isCombineVariableOpen).toBe(true);
-      expect(state.isTriggerDescriptionOpen).toBe(true);
+      act(() => {
+        result.current.openTrigger();
+      });
+      expect(result.current.isCombineOpen).toBe(true);
+      expect(result.current.isTriggerOpen).toBe(true);
 
       // Close combine variable modal
-      state = modalReducer(state, closeCombineVariableModal(true));
-      expect(state.isCombineVariableOpen).toBe(false);
-      expect(state.isTriggerDescriptionOpen).toBe(true);
-      expect(mockResolve).toHaveBeenCalledWith(true);
+      act(() => {
+        result.current.closeCombine(true);
+      });
+      expect(result.current.isCombineOpen).toBe(false);
+      expect(result.current.isTriggerOpen).toBe(true);
+      await vi.waitFor(() => expect(resolvedValue).toBe(true));
 
       // Close trigger description modal
-      state = modalReducer(state, closeTriggerDescriptionModal());
-      expect(state.isCombineVariableOpen).toBe(false);
-      expect(state.isTriggerDescriptionOpen).toBe(false);
-    });
-
-    it('should handle multiple resolve function changes', () => {
-      let state = initialState;
-      const firstResolve = vi.fn();
-      const secondResolve = vi.fn();
-      const thirdResolve = vi.fn();
-
-      // Open with first resolve function
-      state = modalReducer(state, openCombineVariableModal({ resolve: firstResolve }));
-      expect(state.resolveCombineVariable).toBe(firstResolve);
-
-      // Replace with second resolve function
-      state = modalReducer(state, openCombineVariableModal({ resolve: secondResolve }));
-      expect(state.resolveCombineVariable).toBe(secondResolve);
-
-      // Replace with third resolve function
-      state = modalReducer(state, openCombineVariableModal({ resolve: thirdResolve }));
-      expect(state.resolveCombineVariable).toBe(thirdResolve);
-
-      // Close and verify only the last resolve function is called
-      state = modalReducer(state, closeCombineVariableModal(false));
-      expect(firstResolve).not.toHaveBeenCalled();
-      expect(secondResolve).not.toHaveBeenCalled();
-      expect(thirdResolve).toHaveBeenCalledWith(false);
+      act(() => {
+        result.current.closeTrigger();
+      });
+      expect(result.current.isCombineOpen).toBe(false);
+      expect(result.current.isTriggerOpen).toBe(false);
     });
   });
 });

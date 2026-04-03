@@ -128,4 +128,4 @@ export { validateParameterValues, validateConnections } from './state/templates/
 export { setLocation, setSubscription, setResourceGroup } from './state/templates/workflowSlice';
 export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';
 export * from './state/modal/modalSelectors';
-export * from './state/modal/modalSlice';
+export * from './state/modal/ModalContext';

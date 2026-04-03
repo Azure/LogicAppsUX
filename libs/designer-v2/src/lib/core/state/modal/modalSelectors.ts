@@ -2,18 +2,7 @@ import { LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
-export const useIsCombineVariableModalOpen = () => {
-  return useSelector((state: RootState) => state.modal.isCombineVariableOpen);
-};
-
-export const useResolveCombineVariable = () => {
-  return useSelector((state: RootState) => state.modal.resolveCombineVariable);
-};
-
-export const useIsTriggerDescriptionModalOpen = () => {
-  return useSelector((state: RootState) => state.modal.isTriggerDescriptionOpen);
-};
-
+// This selector reads from state.workflow, so it stays as a Redux selector
 export const useShouldPromptForTriggerDescription = (workflowId: string) => {
   return useSelector((state: RootState) => {
     // Check for local storage flag
@@ -42,8 +31,4 @@ export const useShouldPromptForTriggerDescription = (workflowId: string) => {
 
     return true;
   });
-};
-
-export const useKindChangeDialogType = () => {
-  return useSelector((state: RootState) => state.modal.kindChangeDialogType);
 };

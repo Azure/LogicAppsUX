@@ -1,12 +1,14 @@
+/**
+ * @vitest-environment jsdom
+ */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, vi, beforeEach, it, expect } from 'vitest';
 import { KindChangeDialog } from '../KindChangeDialog';
 
 // Mock react-redux
-const mockDispatch = vi.fn();
 vi.mock('react-redux', () => ({
-  useDispatch: () => mockDispatch,
+  useDispatch: vi.fn(),
   useSelector: vi.fn(),
 }));
 
@@ -21,12 +23,12 @@ vi.mock('react-intl', async () => {
   };
 });
 
-// Mock the modal selectors
+// Mock the modal context
 let mockKindChangeDialogType: string | null = null;
-const mockCloseKindChangeDialogAction = { type: 'modal/closeKindChangeDialog' };
-vi.mock('../../../../core', () => ({
+const mockCloseKindChange = vi.fn();
+vi.mock('../../../../core/state/modal/ModalContext', () => ({
   useKindChangeDialogType: () => mockKindChangeDialogType,
-  closeKindChangeDialog: () => mockCloseKindChangeDialogAction,
+  useCloseKindChange: () => mockCloseKindChange,
 }));
 
 describe('KindChangeDialog', () => {
@@ -74,7 +76,7 @@ describe('KindChangeDialog', () => {
     expect(screen.getByText(/This preview version of logic apps does not yet support stateless logic apps/)).toBeInTheDocument();
   });
 
-  it('should dispatch closeKindChangeDialog action when Close button is clicked', () => {
+  it('should call closeKindChange when Close button is clicked', () => {
     mockKindChangeDialogType = 'toA2A';
 
     render(<KindChangeDialog />);
@@ -82,6 +84,6 @@ describe('KindChangeDialog', () => {
     const closeButton = screen.getByRole('button', { name: 'Close' });
     fireEvent.click(closeButton);
 
-    expect(mockDispatch).toHaveBeenCalledWith(mockCloseKindChangeDialogAction);
+    expect(mockCloseKindChange).toHaveBeenCalled();
   });
 });

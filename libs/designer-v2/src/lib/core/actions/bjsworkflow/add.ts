@@ -65,7 +65,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { operationSupportsSplitOn } from '../../utils/outputs';
 import { isA2AWorkflow, isManagedMcpOperation } from '../../state/workflow/helper';
-import { openKindChangeDialog } from '../../state/modal/modalSlice';
+import { getModalService } from '../../state/modal/ModalContext';
 import constants from '../../../common/constants';
 import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
 import { AgentUtils } from '../../../common/utilities/Utils';
@@ -97,7 +97,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
       const isA2ATrigger = equals(operation.type, 'Request') && equals(operation.kind, 'Agent');
       if (equals(workflowState.workflowKind, WorkflowKind.STATELESS) && isA2ATrigger) {
         // Can't switch to A2A if the workflow is stateless
-        dispatch(openKindChangeDialog({ type: 'fromStateless' }));
+        getModalService().openKindChange('fromStateless');
         return;
       }
 
@@ -109,7 +109,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
           );
           if (workflowHasHandoffs) {
             // Can't switch to stateful/stateless if there are handoffs in the workflow
-            dispatch(openKindChangeDialog({ type: 'toStateful' }));
+            getModalService().openKindChange('toStateful');
             return;
           }
         }
@@ -123,7 +123,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
         });
         if (workflowHasActionsAfterAgent) {
           // Can't switch to A2A if there are actions after an agent
-          dispatch(openKindChangeDialog({ type: 'toA2A' }));
+          getModalService().openKindChange('toA2A');
           return;
         }
       }
