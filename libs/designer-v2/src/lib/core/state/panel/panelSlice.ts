@@ -3,7 +3,7 @@ import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-share
 import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
+import { resetWorkflowState } from '../global';
 import type {
   ActionPanelFavoriteItem,
   ConnectionPanelContentState,
@@ -18,7 +18,6 @@ import type {
   RelationshipIds,
   WorkflowParametersPanelContentState,
 } from './panelTypes';
-import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 const getInitialConnectionContentState = (): ConnectionPanelContentState => ({
   isCreatingConnection: false,
@@ -401,7 +400,6 @@ export const panelSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
-    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.panel);
   },
 });
 

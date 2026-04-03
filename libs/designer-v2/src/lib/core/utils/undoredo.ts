@@ -15,7 +15,6 @@ export const getCompressedStateFromRootState = (rootState: RootState): Uint8Arra
     connections: rootState.connections,
     customCode: rootState.customCode,
     operations: rootState.operations,
-    panel: rootState.panel,
     settings: rootState.settings,
     tokens: rootState.tokens,
     workflow: rootState.workflow,

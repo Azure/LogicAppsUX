@@ -32,10 +32,10 @@ export interface StateHistoryItem {
   editedPanelNode?: string;
 }
 
-// Omitted slices: designerView, designerOptions, dev, undoRedo
+// Omitted slices: designerView, designerOptions, dev, panel, undoRedo
 export type UndoRedoPartialRootState = Pick<
   RootState,
-  'connections' | 'customCode' | 'operations' | 'panel' | 'settings' | 'tokens' | 'workflow' | 'workflowParameters' | 'notes'
+  'connections' | 'customCode' | 'operations' | 'settings' | 'tokens' | 'workflow' | 'workflowParameters' | 'notes'
 >;
 
 export const undoableWorkflowActionTypes = [

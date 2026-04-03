@@ -31,7 +31,6 @@ export const getMockedUndoRedoPartialRootState = (): UndoRedoPartialRootState =>
     connections: initialConnectionsState,
     customCode: initialCustomCodeState,
     operations: initialOperationsState,
-    panel: initialPanelState,
     settings: initialSettingsState,
     tokens: initialTokensState,
     workflow: initialWorkflowState,
