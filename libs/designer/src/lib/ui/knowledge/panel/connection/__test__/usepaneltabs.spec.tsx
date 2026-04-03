@@ -41,6 +41,8 @@ vi.mock('../../../../../core/knowledge/utils/connection', () => ({
 describe('useCreateConnectionPanelTabs Hook', () => {
   const mockSelectTab = vi.fn();
   const mockClose = vi.fn();
+  const mockOnCreate = vi.fn();
+  const mockOnError = vi.fn();
 
   const createMockStore = () => {
     return configureStore({
@@ -57,7 +59,10 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   );
 
   const renderUseCreateConnectionPanelTabs = () => {
-    return renderHook(() => useCreateConnectionPanelTabs({ selectTab: mockSelectTab, close: mockClose }), { wrapper });
+    return renderHook(
+      () => useCreateConnectionPanelTabs({ selectTab: mockSelectTab, close: mockClose, onCreate: mockOnCreate, onError: mockOnError }),
+      { wrapper }
+    );
   };
 
   beforeEach(() => {
@@ -238,7 +243,6 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('handles create error gracefully', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     mockCreateOrUpdateConnection.mockRejectedValueOnce(new Error('Create failed'));
 
     renderUseCreateConnectionPanelTabs();
@@ -250,12 +254,15 @@ describe('useCreateConnectionPanelTabs Hook', () => {
       await modelTabProps.onPrimaryButtonClick();
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error creating connection:', expect.any(Error));
-    consoleErrorSpy.mockRestore();
+    expect(mockOnError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: expect.any(String),
+        content: 'Create failed',
+      })
+    );
   });
 
   it('does not call close when create fails', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     mockCreateOrUpdateConnection.mockRejectedValueOnce(new Error('Create failed'));
 
     renderUseCreateConnectionPanelTabs();
@@ -268,7 +275,6 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     });
 
     expect(mockClose).not.toHaveBeenCalled();
-    consoleErrorSpy.mockRestore();
   });
 
   it('passes close function to basicsTab', () => {

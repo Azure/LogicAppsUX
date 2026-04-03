@@ -3,11 +3,23 @@ import { useCreateConnectionPanelTabs } from './usepaneltabs';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/knowledge/store';
 import { closePanel, KnowledgePanelView, selectPanelTab } from '../../../../core/state/knowledge/panelSlice';
-import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Text } from '@fluentui/react-components';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Text,
+} from '@fluentui/react-components';
 import { usePanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { setNotification } from '../../../../core/state/knowledge/optionsSlice';
+import type { ServerNotificationData } from '../../../mcp/servers/servers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -24,7 +36,25 @@ export const CreateConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement
     dispatch(closePanel());
   }, [dispatch]);
 
-  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs({ selectTab, close });
+  const [createError, setCreateError] = useState<ServerNotificationData | null>(null);
+  const onCreate = useCallback(() => {
+    dispatch(
+      setNotification({
+        title: intl.formatMessage({
+          defaultMessage: 'Connection created',
+          id: 'I1A+Jw',
+          description: 'Notification title for successful connection creation',
+        }),
+        content: intl.formatMessage({
+          defaultMessage: 'Knowledge hub connection has been created successfully.',
+          id: 'rj0Nby',
+          description: 'Notification content for successful connection creation',
+        }),
+      })
+    );
+  }, [dispatch, intl]);
+
+  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs({ selectTab, close, onCreate, onError: setCreateError });
   const { selectedTabId, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedTabId: state.knowledgeHubPanel.selectedTabId,
     isOpen: state.knowledgeHubPanel?.isOpen ?? false,
@@ -82,6 +112,14 @@ export const CreateConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body}>
+        {createError ? (
+          <MessageBar intent="error" style={{ marginBottom: 16 }}>
+            <MessageBarBody>
+              <MessageBarTitle>{createError.title}</MessageBarTitle>
+              {createError.content}
+            </MessageBarBody>
+          </MessageBar>
+        ) : null}
         <TemplateContent
           tabs={panelTabs}
           selectedTab={selectedTabId}

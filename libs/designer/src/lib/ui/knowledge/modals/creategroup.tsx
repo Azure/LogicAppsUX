@@ -27,58 +27,61 @@ export const CreateGroup = ({
 }: { resourceId: string; onDismiss: () => void; onCreate?: (groupName: string, groupDescription: string) => void }) => {
   const styles = useModalStyles();
   const intl = useIntl();
-  const INTL_TEXT = {
-    title: intl.formatMessage({
-      defaultMessage: 'Create a new group',
-      id: '4eYp8/',
-      description: 'Title for the create group modal',
+  const INTL_TEXT = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        defaultMessage: 'Create a new group',
+        id: '4eYp8/',
+        description: 'Title for the create group modal',
+      }),
+      subtitle: intl.formatMessage({
+        defaultMessage: 'Provide details to create a new group.',
+        id: 'fFhnXC',
+        description: 'Subtitle for the create group modal',
+      }),
+      loadingText: intl.formatMessage({
+        defaultMessage: 'Loading...',
+        id: 'Z4zCo6',
+        description: 'Text displayed while loading existing groups in the create group modal',
+      }),
+      nameLabel: intl.formatMessage({
+        defaultMessage: 'Name',
+        id: 'SOqf2M',
+        description: 'Label for the group name input field',
+      }),
+      namePlaceholder: intl.formatMessage({
+        defaultMessage: 'Enter a group name',
+        id: 'yGPRus',
+        description: 'Placeholder for the group name input field',
+      }),
+      descriptionLabel: intl.formatMessage({
+        defaultMessage: 'Description',
+        id: 'Cb02hn',
+        description: 'Label for the group description input field',
+      }),
+      descriptionPlaceholder: intl.formatMessage({
+        defaultMessage: 'Enter a description',
+        id: 'gcn3Jg',
+        description: 'Placeholder for the group description input field',
+      }),
+      createButton: intl.formatMessage({
+        defaultMessage: 'Create',
+        id: '9gb/xS',
+        description: 'Button text for creating a group',
+      }),
+      creatingButton: intl.formatMessage({
+        defaultMessage: 'Creating...',
+        id: 'RsXKPH',
+        description: 'Button text for creating a group when creation is in progress',
+      }),
+      cancelButton: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: '59OCrz',
+        description: 'Button text for canceling group creation',
+      }),
     }),
-    subtitle: intl.formatMessage({
-      defaultMessage: 'Provide details to create a new group.',
-      id: 'fFhnXC',
-      description: 'Subtitle for the create group modal',
-    }),
-    loadingText: intl.formatMessage({
-      defaultMessage: 'Loading...',
-      id: 'Z4zCo6',
-      description: 'Text displayed while loading existing groups in the create group modal',
-    }),
-    nameLabel: intl.formatMessage({
-      defaultMessage: 'Name',
-      id: 'SOqf2M',
-      description: 'Label for the group name input field',
-    }),
-    namePlaceholder: intl.formatMessage({
-      defaultMessage: 'Enter a group name',
-      id: 'yGPRus',
-      description: 'Placeholder for the group name input field',
-    }),
-    descriptionLabel: intl.formatMessage({
-      defaultMessage: 'Description',
-      id: 'Cb02hn',
-      description: 'Label for the group description input field',
-    }),
-    descriptionPlaceholder: intl.formatMessage({
-      defaultMessage: 'Enter a description',
-      id: 'gcn3Jg',
-      description: 'Placeholder for the group description input field',
-    }),
-    createButton: intl.formatMessage({
-      defaultMessage: 'Create',
-      id: '9gb/xS',
-      description: 'Button text for creating a group',
-    }),
-    creatingButton: intl.formatMessage({
-      defaultMessage: 'Creating...',
-      id: 'RsXKPH',
-      description: 'Button text for creating a group when creation is in progress',
-    }),
-    cancelButton: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      id: '59OCrz',
-      description: 'Button text for canceling group creation',
-    }),
-  };
+    [intl]
+  );
 
   const { data: hubs, isLoading } = useAllKnowledgeHubs(resourceId);
   const existingGroupNames = useMemo(() => hubs?.map((hub) => hub.name.toLowerCase()) || [], [hubs]);
