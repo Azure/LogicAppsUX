@@ -117,7 +117,7 @@ export const useAllConnectionErrors = (): Record<string, string> =>
     createSelector(getOperationState, (state) =>
       Object.entries(state.errors ?? {}).reduce((acc: any, [nodeId, errors]) => {
         const connectionError = errors?.[ErrorLevel.Connection];
-        // eslint-disable-next-line no-param-reassign
+
         if (connectionError) {
           acc[nodeId] = connectionError.message;
         }
@@ -299,3 +299,19 @@ export const useAllIcons = () =>
 
 export const useNodeConnectorId = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationInfo, nodeId)?.connectorId));
+
+export const getStaticResultForNodeId = (operationState: OperationMetadataState, nodeId: string) => {
+  return operationState.staticResultProperties[nodeId + 0];
+};
+
+export const useHasSchema = (connectorId: string, operationId: string) => {
+  return useSelector((rootState: RootState) => !!rootState.operations.staticResultSchemas[`${connectorId}-${operationId}`]);
+};
+
+export const useStaticResultSchema = (connectorId: string, operationId: string) => {
+  return useSelector((rootState: RootState) => rootState.operations.staticResultSchemas[`${connectorId}-${operationId}`]);
+};
+
+export const useStaticResultProperties = (propertyName: string) => {
+  return useSelector((rootState: RootState) => rootState.operations.staticResultProperties[propertyName]);
+};

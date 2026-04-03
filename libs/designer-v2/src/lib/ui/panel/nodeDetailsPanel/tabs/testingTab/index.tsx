@@ -2,10 +2,13 @@ import constants from '../../../../../common/constants';
 import type { AppDispatch } from '../../../../../core';
 import { StaticResultOption } from '../../../../../core/actions/bjsworkflow/staticresults';
 import { deleteStaticResult, updateStaticResults } from '../../../../../core/state/operation/operationMetadataSlice';
-import { useParameterStaticResult } from '../../../../../core/state/operation/operationSelector';
+import {
+  useParameterStaticResult,
+  useStaticResultProperties,
+  useStaticResultSchema,
+} from '../../../../../core/state/operation/operationSelector';
 import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { useStaticResultProperties, useStaticResultSchema } from '../../../../../core/state/staticresultschema/staitcresultsSelector';
 import {
   deinitializeStaticResultProperty,
   updateStaticResultProperties,

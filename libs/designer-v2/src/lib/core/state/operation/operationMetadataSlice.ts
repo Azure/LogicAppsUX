@@ -10,6 +10,7 @@ import type { ParameterInfo } from '@microsoft/designer-ui';
 import type {
   FilePickerInfo,
   InputParameter,
+  OpenApiSchema,
   OutputParameter,
   OpenAPIV2,
   OperationInfo,
@@ -127,6 +128,8 @@ export interface OperationMetadataState {
   settings: Record<string, Settings>;
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
+  staticResultSchemas: Record<string, OpenApiSchema>;
+  staticResultProperties: Record<string, any>;
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
@@ -147,6 +150,8 @@ export const initialState: OperationMetadataState = {
   operationMetadata: {},
   actionMetadata: {},
   staticResults: {},
+  staticResultSchemas: {},
+  staticResultProperties: {},
   repetitionInfos: {},
   errors: {},
   supportedChannels: {},
@@ -280,6 +285,8 @@ export const operationMetadataSlice = createSlice({
         state.operationMetadata = {};
         state.settings = {};
         state.staticResults = {};
+        state.staticResultSchemas = {};
+        state.staticResultProperties = {};
         state.actionMetadata = {};
         state.repetitionInfos = {};
         state.supportedChannels = {};
@@ -730,6 +737,28 @@ export const operationMetadataSlice = createSlice({
         inputParameters.dynamicLoadStatus = status;
       }
     },
+    // Static result schema/properties actions (merged from staticResultsSlice)
+    initializeStaticResultProperties: (state, action: PayloadAction<Record<string, any>>) => {
+      state.staticResultProperties = action.payload;
+    },
+    initScopeCopiedStaticResultProperties: (state, action: PayloadAction<Record<string, any>>) => {
+      const copiedConnections = action.payload;
+      Object.entries(copiedConnections).forEach(([nodeId, staticResultProperty]) => {
+        state.staticResultProperties[nodeId + 0] = staticResultProperty;
+      });
+    },
+    deinitializeStaticResultProperty: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      delete state.staticResultProperties[id];
+    },
+    addResultSchema: (state, action: PayloadAction<{ id: string; schema: OpenApiSchema }>) => {
+      const { id, schema } = action.payload;
+      state.staticResultSchemas[id] = schema;
+    },
+    updateStaticResultProperties: (state, action: PayloadAction<{ name: string; properties: any }>) => {
+      const { name, properties } = action.payload;
+      state.staticResultProperties[name] = properties;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -887,6 +916,11 @@ export const {
   updateDynamicDataLoadStatus,
   updateNodeDynamicInputLoadStatus,
   updateOperationDescription,
+  initializeStaticResultProperties,
+  initScopeCopiedStaticResultProperties,
+  deinitializeStaticResultProperty,
+  addResultSchema,
+  updateStaticResultProperties,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

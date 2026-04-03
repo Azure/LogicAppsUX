@@ -17,7 +17,6 @@ export const getCompressedStateFromRootState = (rootState: RootState): Uint8Arra
     operations: rootState.operations,
     panel: rootState.panel,
     settings: rootState.settings,
-    staticResults: rootState.staticResults,
     tokens: rootState.tokens,
     workflow: rootState.workflow,
     workflowParameters: rootState.workflowParameters,

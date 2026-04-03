@@ -194,7 +194,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       $schema:
         WorkflowService().getDefinitionSchema?.(unmap(rootState.operations.operationInfo)) ?? rootState.workflow.originalDefinition.$schema,
       actions: await getActions(rootState, options),
-      ...(Object.keys(rootState?.staticResults?.properties ?? {}).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
+      ...(Object.keys(rootState?.operations?.staticResultProperties ?? {}).length > 0
+        ? { staticResults: rootState.operations.staticResultProperties }
+        : {}),
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,

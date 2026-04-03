@@ -4,10 +4,14 @@ import constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
-import { deinitializeNodes, deinitializeOperationInfo, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
+import {
+  deinitializeNodes,
+  deinitializeOperationInfo,
+  updateNodeParameters,
+  deinitializeStaticResultProperty,
+} from '../../state/operation/operationMetadataSlice';
 import { clearPanel, setAlternateSelectedNode } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
-import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteMcpServer, deleteNode } from '../../state/workflow/workflowSlice';
 import { getParameterFromName } from '../../utils/parameters/helper';

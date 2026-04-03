@@ -2,10 +2,9 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import Constants from '../../../common/constants';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo, addResultSchema } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { changePanelNode, setIsPanelLoading } from '../../state/panel/panelSlice';
-import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
 import {

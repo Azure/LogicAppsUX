@@ -10,10 +10,10 @@ import {
   initializeOperationInfo,
   updateErrorDetails,
   updateNodeSettings,
+  addResultSchema,
 } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { changePanelNode, openPanel, setIsPanelLoading, setAlternateSelectedNode } from '../../state/panel/panelSlice';
-import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { WorkflowKind, type NodesMetadata, type WorkflowState } from '../../state/workflow/workflowInterfaces';

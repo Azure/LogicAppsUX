@@ -26,7 +26,6 @@ describe('undo redo utils', () => {
       operations: mockedInitialRootState.operations,
       panel: mockedInitialRootState.panel,
       settings: mockedInitialRootState.settings,
-      staticResults: mockedInitialRootState.staticResults,
       tokens: mockedInitialRootState.tokens,
       workflow: mockedInitialRootState.workflow,
       workflowParameters: mockedInitialRootState.workflowParameters,

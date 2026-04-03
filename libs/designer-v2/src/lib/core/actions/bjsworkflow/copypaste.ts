@@ -2,7 +2,11 @@ import type { ConnectionReference, ReferenceKey } from '../../../common/models/w
 import { getTriggerNodeId, setFocusNode, type RootState } from '../..';
 import { initCopiedConnectionMap, initScopeCopiedConnections } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import {
+  initializeNodes,
+  initializeOperationInfo,
+  initScopeCopiedStaticResultProperties,
+} from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
@@ -10,7 +14,7 @@ import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } 
 import { createIdCopy, getRecordEntry, LOCAL_STORAGE_KEYS, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
-import { getNodeOperationData } from '../../state/operation/operationSelector';
+import { getNodeOperationData, getStaticResultForNodeId } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
@@ -20,8 +24,6 @@ import { updateAllUpstreamNodes } from './initialize';
 import type { NodeTokens } from '../../state/tokens/tokensSlice';
 import { addDynamicTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
-import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
-import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -85,7 +87,7 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
         allConnectionData[actionName] = connectionReference;
       }
 
-      const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
+      const staticResult = getStaticResultForNodeId(state.operations, actionName);
       if (staticResult) {
         staticResults[actionName] = staticResult;
       }

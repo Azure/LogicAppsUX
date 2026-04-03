@@ -6,7 +6,6 @@ import { initialState as initialDesignerViewState } from '../core/state/designer
 import { initialState as initialOperationsState } from '../core/state/operation/operationMetadataSlice';
 import { initialState as initialPanelState } from '../core/state/panel/panelSlice';
 import { initialState as initialSettingsState } from '../core/state/setting/settingSlice';
-import { initialState as initialStaticResultsState } from '../core/state/staticresultschema/staticresultsSlice';
 import { initialState as initialTokensState } from '../core/state/tokens/tokensSlice';
 import { initialState as initialUndoRedoState } from '../core/state/undoRedo/undoRedoSlice';
 import { UndoRedoPartialRootState } from '../core/state/undoRedo/undoRedoTypes';
@@ -20,7 +19,6 @@ export const getMockedInitialRootState = (): RootState => {
     operations: initialOperationsState,
     panel: initialPanelState,
     settings: initialSettingsState,
-    staticResults: initialStaticResultsState,
     tokens: initialTokensState,
     workflow: initialWorkflowState,
     workflowParameters: initialWorkflowParametersState,
@@ -37,7 +35,6 @@ export const getMockedUndoRedoPartialRootState = (): UndoRedoPartialRootState =>
     operations: initialOperationsState,
     panel: initialPanelState,
     settings: initialSettingsState,
-    staticResults: initialStaticResultsState,
     tokens: initialTokensState,
     workflow: initialWorkflowState,
     workflowParameters: initialWorkflowParametersState,

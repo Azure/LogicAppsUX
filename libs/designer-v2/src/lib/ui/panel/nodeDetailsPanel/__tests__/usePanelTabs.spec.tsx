@@ -43,15 +43,13 @@ vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () =>
 }));
 vi.mock('../../../../core/state/operation/operationSelector', () => ({
   useParameterValidationErrors: (...args: any[]) => mocks.useParameterValidationErrors(...args),
+  useHasSchema: (...args: any[]) => mocks.useHasSchema(...args),
 }));
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
   useIsNodePinnedToOperationPanel: (...args: any[]) => mocks.useIsNodePinnedToOperationPanel(...args),
 }));
 vi.mock('../../../../core/state/setting/settingSelector', () => ({
   useSettingValidationErrors: (...args: any[]) => mocks.useSettingValidationErrors(...args),
-}));
-vi.mock('../../../../core/state/staticresultschema/staitcresultsSelector', () => ({
-  useHasSchema: (...args: any[]) => mocks.useHasSchema(...args),
 }));
 vi.mock('../../../../core/state/workflow/workflowSelectors', () => ({
   useRetryHistory: (...args: any[]) => mocks.useRetryHistory(...args),

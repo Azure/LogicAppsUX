@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-
-/* eslint-disable no-case-declarations */
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { getLegacyConnectionReferenceKey } from '../../actions/bjsworkflow/connections';
@@ -13,8 +10,13 @@ import type {
 import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger, getSwaggerForConnector } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel, initializeOperationInfo, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
-import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
+import {
+  DynamicLoadStatus,
+  ErrorLevel,
+  initializeOperationInfo,
+  updateErrorDetails,
+  addResultSchema,
+} from '../../state/operation/operationMetadataSlice';
 import type { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {

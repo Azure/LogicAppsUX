@@ -7,7 +7,7 @@ import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { openCombineVariableModal } from '../state/modal/modalSlice';
 import { initializeNotes } from '../state/notes/notesSlice';
-import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
+import { initializeStaticResultProperties } from '../state/operation/operationMetadataSlice';
 import { setCollapsedGraphIds } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
 import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
