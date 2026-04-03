@@ -13,7 +13,8 @@ import {
 import { setAlternateSelectedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance, useRunMode } from '../../../core/state/workflow/workflowSelectors';
-import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
+import { replaceId } from '../../../core/state/workflow/workflowSlice';
+import { updateOperationDescription } from '../../../core/state/operation/operationMetadataSlice';
 import { isOperationNameValid, isTriggerNode } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
@@ -106,8 +107,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const comment = nodeData?.comment;
       const showCommentBox = !isNullOrUndefined(comment);
       dispatch(
-        setNodeDescription({
-          nodeId,
+        updateOperationDescription({
+          id: nodeId,
           description: showCommentBox ? undefined : '',
         })
       );
@@ -164,7 +165,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   const onCommentChange = (nodeId: string, newDescription?: string) => {
-    dispatch(setNodeDescription({ nodeId, description: newDescription }));
+    dispatch(updateOperationDescription({ id: nodeId, description: newDescription }));
   };
 
   const dismissPanel = () => dispatch(clearPanel());

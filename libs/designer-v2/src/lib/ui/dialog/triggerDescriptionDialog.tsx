@@ -15,7 +15,7 @@ import {
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
-import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { updateOperationDescription } from '../../core/state/operation/operationMetadataSlice';
 import type { RootState } from '../../core';
 import { useOperationInfo, useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
 import { LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
@@ -73,7 +73,7 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
   const [newDescriptionValue, setDescriptionValue] = useState<string | undefined>();
 
   const confirmCallback = useCallback(() => {
-    dispatch(setNodeDescription({ nodeId: triggerId, description: newDescriptionValue }));
+    dispatch(updateOperationDescription({ id: triggerId, description: newDescriptionValue }));
     closeTriggerDescription();
     props.onSubmit?.();
   }, [dispatch, triggerId, newDescriptionValue, props, closeTriggerDescription]);

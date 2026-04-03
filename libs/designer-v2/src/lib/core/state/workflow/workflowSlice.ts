@@ -23,6 +23,7 @@ import type { AddSettingsPayload, NodeOperation } from '../operation/operationMe
 import {
   updateNodeParameters,
   updateNodeSettings,
+  updateOperationDescription,
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
@@ -97,14 +98,6 @@ export const workflowSlice = createSlice({
     },
     setRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
-    },
-    setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
-      const { nodeId, description } = action.payload;
-      const nodeOperation = getRecordEntry(state.operations, nodeId);
-      if (!nodeOperation) {
-        return;
-      }
-      nodeOperation.description = description;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (!state.graph) {
@@ -896,7 +889,7 @@ export const workflowSlice = createSlice({
         addMcpServer,
         addImplicitForeachNode,
         pasteScopeNode,
-        setNodeDescription,
+        updateOperationDescription,
         updateRunAfter,
         removeRunAfter,
         addRunAfter,
@@ -928,7 +921,6 @@ export const {
   deleteAgentTool,
   deleteMcpServer,
   updateNodeSizes,
-  setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,

@@ -676,7 +676,7 @@ export const operationMetadataSlice = createSlice({
       const nodeRepetition = getRecordEntry(state.repetitionInfos, id);
       state.repetitionInfos[id] = { ...nodeRepetition, ...repetition };
     },
-    updateOperationDescription: (state, action: PayloadAction<{ id: string; description: string }>) => {
+    updateOperationDescription: (state, action: PayloadAction<{ id: string; description?: string }>) => {
       const { id, description } = action.payload;
       const operationMetadata = getRecordEntry(state.operationMetadata, id);
       if (operationMetadata) {

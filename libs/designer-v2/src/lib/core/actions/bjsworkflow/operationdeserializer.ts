@@ -103,11 +103,6 @@ export interface NodeOutputsWithDependencies {
   dynamicOutput?: OutputParameter;
 }
 
-export interface OperationMetadata {
-  iconUri: string;
-  brandColor: string;
-}
-
 export interface PasteScopeAdditionalParams extends PasteScopeParams {
   existingOutputTokens: Record<string, NodeTokens>;
   rootTriggerId: string;
@@ -322,7 +317,11 @@ export const initializeOperationDetailsForManagedMcpServer = async (
         nodeInputs,
         nodeOutputs,
         nodeDependencies,
-        operationMetadata: { brandColor: getBrandColorFromConnector(connector), iconUri: getIconUriFromConnector(connector) },
+        operationMetadata: {
+          brandColor: getBrandColorFromConnector(connector),
+          iconUri: getIconUriFromConnector(connector),
+          description: operation?.description,
+        },
         settings,
         staticResult: operation?.runtimeConfiguration?.staticResult,
       },
@@ -421,7 +420,7 @@ export const initializeOperationDetailsForManifest = async (
         operationInfo: nodeOperationInfo,
         manifest,
         supportedChannels,
-        operationMetadata: { iconUri, brandColor },
+        operationMetadata: { iconUri, brandColor, description: operation?.description },
         staticResult: operation?.runtimeConfiguration?.staticResult,
       },
       ...childGraphInputs,

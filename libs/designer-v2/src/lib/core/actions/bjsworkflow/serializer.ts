@@ -497,7 +497,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
 
   return {
     type: operation.type,
-    ...optional('description', operationFromWorkflow?.description),
+    ...optional('description', getRecordEntry(rootState.operations.operationMetadata, operationId)?.description),
     ...optional('kind', operation.kind),
     ...inputsObject,
     ...childOperations,
@@ -521,8 +521,6 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   const manifest = await getOperationManifest(nativeMcpOperationInfo);
   const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
 
-  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
-
   const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
   const operation = parsedSwagger.getOperationByOperationId(operationId);
   if (!operation) {
@@ -544,7 +542,7 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   return {
     type: type,
     kind: kind,
-    ...optional('description', operationFromWorkflow.description),
+    ...optional('description', getRecordEntry(rootState.operations.operationMetadata, nodeId)?.description),
     ...optional('inputs', inputs),
   };
 };
@@ -611,7 +609,7 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
   return {
     type: type,
     kind: kind,
-    ...optional('description', operationFromWorkflow.description),
+    ...optional('description', getRecordEntry(rootState.operations.operationMetadata, nodeId)?.description),
     ...optional('inputs', inputs),
   };
 };
@@ -651,7 +649,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
 
   return {
     type: serializedType,
-    ...optional('description', operationFromWorkflow.description),
+    ...optional('description', getRecordEntry(rootState.operations.operationMetadata, operationId)?.description),
     ...optional('kind', kind),
     ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
@@ -676,7 +674,7 @@ export const serializeAgentConnectorOperation = async (
 
   return {
     type: operation.type,
-    ...optional('description', operationFromWorkflow?.description),
+    ...optional('description', getRecordEntry(rootState.operations.operationMetadata, operationId)?.description),
     ...optional('kind', operation.kind),
     ...optional('inputs', inputPathValue),
     ...optional('runAfter', runAfter),

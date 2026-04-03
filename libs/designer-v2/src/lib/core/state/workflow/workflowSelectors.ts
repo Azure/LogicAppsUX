@@ -40,7 +40,7 @@ export const useActionMetadata = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)));
 
 export const useNodeDescription = (id: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)?.description));
+  useSelector((state: RootState) => getRecordEntry(state.operations.operationMetadata, id)?.description);
 
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));

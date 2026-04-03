@@ -6,10 +6,11 @@ import {
   initializeNodes,
   initializeOperationInfo,
   initScopeCopiedStaticResultProperties,
+  updateOperationDescription,
 } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
-import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
+import { pasteNode, pasteScopeNode } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
 import { createIdCopy, getRecordEntry, LOCAL_STORAGE_KEYS, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -168,7 +169,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
     dispatch(initCopiedConnectionMap({ connectionReferences: { [nodeId]: connectionData } }));
   }
   if (comment) {
-    dispatch(setNodeDescription({ nodeId, description: comment }));
+    dispatch(updateOperationDescription({ id: nodeId, description: comment }));
   }
 
   dispatch(setIsPanelLoading(false));
