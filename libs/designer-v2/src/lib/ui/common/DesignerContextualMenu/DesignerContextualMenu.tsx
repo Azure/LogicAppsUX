@@ -17,7 +17,7 @@ import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { AddNoteMenuItem } from '../../../ui/menuItems/addNoteMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
-import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
+import { useSetShowDeleteModalNodeId } from '../../../core/state/designerView/DesignerViewContext';
 import { useOperationAlternateSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import {
   changePanelNode,
@@ -60,6 +60,7 @@ export const DesignerContextualMenu = () => {
   useEffect(() => setOpen(!!menuData?.location), [menuData?.location]);
 
   const dispatch = useDispatch<AppDispatch>();
+  const setShowDeleteModalNodeId = useSetShowDeleteModalNodeId();
 
   const rootState = useSelector((state: RootState) => state);
   const alternateSelectedNodeId = useOperationAlternateSelectedNodeId();
@@ -88,8 +89,8 @@ export const DesignerContextualMenu = () => {
   }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setShowDeleteModalNodeId(nodeId));
-  }, [dispatch, nodeId]);
+    setShowDeleteModalNodeId(nodeId);
+  }, [setShowDeleteModalNodeId, nodeId]);
 
   const pinClick = useCallback(() => {
     dispatch(

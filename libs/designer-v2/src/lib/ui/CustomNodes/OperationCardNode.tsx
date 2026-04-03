@@ -10,7 +10,7 @@ import {
   useSuppressDefaultNodeSelectFunctionality,
   useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { useSetNodeContextMenuData, useSetShowDeleteModalNodeId } from '../../core/state/designerView/DesignerViewContext';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -212,25 +212,25 @@ const DefaultNode = ({ id }: NodeProps) => {
     handleNodeSelection();
   }, [handleNodeSelection]);
 
+  const setNodeContextMenuData = useSetNodeContextMenuData();
+  const setShowDeleteModalNodeId = useSetShowDeleteModalNodeId();
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      dispatch(
-        setNodeContextMenuData({
-          nodeId: id,
-          location: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-        })
-      );
+      setNodeContextMenuData({
+        nodeId: id,
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
     },
-    [dispatch, id]
+    [setNodeContextMenuData, id]
   );
 
   const deleteClick = useCallback(() => {
-    dispatch(setShowDeleteModalNodeId(id));
-  }, [dispatch, id]);
+    setShowDeleteModalNodeId(id);
+  }, [setShowDeleteModalNodeId, id]);
 
   const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {

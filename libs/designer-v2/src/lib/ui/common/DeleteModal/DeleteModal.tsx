@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../core';
 import { useNodeMetadata, useNodeDisplayName, storeStateToUndoRedoHistory } from '../../../core';
 import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
 import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
-import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
+import { useSetShowDeleteModalNodeId } from '../../../core/state/designerView/DesignerViewContext';
 import { useActionMetadata, useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
 import { deleteAgentTool, deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 
 const DeleteModal = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const setShowDeleteModalNodeId = useSetShowDeleteModalNodeId();
 
   const nodeId = useShowDeleteModalNodeId();
   const nodeName = useNodeDisplayName(nodeId);
@@ -22,7 +23,7 @@ const DeleteModal = () => {
 
   const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
 
-  const onDismiss = useCallback(() => dispatch(setShowDeleteModalNodeId(undefined)), [dispatch]);
+  const onDismiss = useCallback(() => setShowDeleteModalNodeId(undefined), [setShowDeleteModalNodeId]);
 
   const handleDelete = useCallback(() => {
     if (!nodeId || !nodeData) {

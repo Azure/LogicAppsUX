@@ -43,7 +43,7 @@ import {
   onRedoClick,
   serializeWorkflow,
   getDocumentationMetadata,
-  resetDesignerView,
+  useResetDesignerView,
   downloadDocumentAsFile,
   useNodesAndDynamicDataInitialized,
   useChangeCount,
@@ -162,6 +162,7 @@ export const DesignerCommandBar = ({
   const isInitialized = useNodesAndDynamicDataInitialized();
 
   const dispatch = useDispatch<AppDispatch>();
+  const resetDesignerView = useResetDesignerView();
   const isCopilotReady = useNodesInitialized();
   const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
@@ -324,7 +325,7 @@ export const DesignerCommandBar = ({
         onClick={() => {
           showDesignerView();
           dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+          resetDesignerView();
         }}
       >
         Workflow
@@ -336,7 +337,7 @@ export const DesignerCommandBar = ({
         onClick={() => {
           showCodeView();
           dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+          resetDesignerView();
         }}
       >
         Code
@@ -348,7 +349,7 @@ export const DesignerCommandBar = ({
         onClick={() => {
           showMonitoringView();
           dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+          resetDesignerView();
         }}
       >
         Run history

@@ -3,7 +3,7 @@ import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
+import { useSetShowDeleteModalNodeId } from '../../../core/state/designerView/DesignerViewContext';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import {
   useIsPanelCollapsed,
@@ -85,11 +85,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(collapsePanel());
   }, [dispatch]);
 
+  const setShowDeleteModalNodeId = useSetShowDeleteModalNodeId();
   const handleDeleteClick = useCallback(
     (nodeId: string) => {
-      dispatch(setShowDeleteModalNodeId(nodeId));
+      setShowDeleteModalNodeId(nodeId);
     },
-    [dispatch]
+    [setShowDeleteModalNodeId]
   );
 
   const handlePinClick = useCallback(
@@ -284,5 +285,5 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 const handleTrackEvent = (_data: PageActionTelemetryData): void => {};

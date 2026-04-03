@@ -15,7 +15,7 @@ import {
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
   type RootState,
-  resetDesignerView,
+  useResetDesignerView,
   collapsePanel,
 } from '@microsoft/logic-apps-designer-v2';
 import { isNullOrEmpty, type Workflow } from '@microsoft/logic-apps-shared';
@@ -110,6 +110,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
+  const resetDesignerView = useResetDesignerView();
 
   const styles = useCommandBarStyles();
   const intlText = useIntlMessages(designerMessages);
@@ -245,7 +246,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         size="small"
         onClick={() => {
           dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+          resetDesignerView();
           switchToDesignerView();
         }}
       >
@@ -257,7 +258,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         size="small"
         onClick={() => {
           dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+          resetDesignerView();
           switchToCodeView();
         }}
       >
@@ -269,7 +270,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         size="small"
         onClick={() => {
           dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+          resetDesignerView();
           switchToMonitoringView();
         }}
       >

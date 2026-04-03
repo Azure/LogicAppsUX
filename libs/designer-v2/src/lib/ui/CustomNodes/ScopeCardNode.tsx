@@ -1,7 +1,7 @@
 import constants from '../../common/constants';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { useSetNodeContextMenuData, useSetShowDeleteModalNodeId } from '../../core/state/designerView/DesignerViewContext';
 import {
   useBrandColor,
   useIconUri,
@@ -222,9 +222,11 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     [dispatch, scopeId]
   );
 
+  const setShowDeleteModalNodeId = useSetShowDeleteModalNodeId();
+  const setNodeContextMenuData = useSetNodeContextMenuData();
   const deleteClick = useCallback(() => {
-    dispatch(setShowDeleteModalNodeId(scopeId));
-  }, [dispatch, scopeId]);
+    setShowDeleteModalNodeId(scopeId);
+  }, [setShowDeleteModalNodeId, scopeId]);
 
   const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {
@@ -244,17 +246,15 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      dispatch(
-        setNodeContextMenuData({
-          nodeId: scopeId,
-          location: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-        })
-      );
+      setNodeContextMenuData({
+        nodeId: scopeId,
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
     },
-    [dispatch, scopeId]
+    [setNodeContextMenuData, scopeId]
   );
 
   const opQuery = useOperationQuery(scopeId);

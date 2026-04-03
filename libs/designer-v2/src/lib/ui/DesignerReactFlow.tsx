@@ -30,14 +30,14 @@ import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowS
 import { addOperation, type AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
-import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
+import { useClampPan, useSetNodeContextMenuData } from '../core/state/designerView/DesignerViewContext';
 import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
-import { setNodeContextMenuData } from '../core/state/designerView/designerViewSlice';
 import { useNotes } from '../core/state/notes/notesSelectors';
 import { updateNote } from '../core/state/notes/notesSlice';
 
@@ -370,19 +370,18 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
+  const setNodeContextMenuData = useSetNodeContextMenuData();
   const onPaneContextMenu = useCallback(
     (e: React.MouseEvent | MouseEvent) => {
       e.preventDefault();
-      dispatch(
-        setNodeContextMenuData({
-          location: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-        })
-      );
+      setNodeContextMenuData({
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
     },
-    [dispatch]
+    [setNodeContextMenuData]
   );
 
   // Handle node changes (position, size)

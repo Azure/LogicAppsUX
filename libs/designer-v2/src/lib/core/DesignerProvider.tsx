@@ -2,6 +2,7 @@ import { resetWorkflowState } from '.';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
 import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
+import { DesignerViewProvider, useResetDesignerView } from './state/designerView/DesignerViewContext';
 import { store } from './store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
@@ -53,21 +54,23 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
           <ThemeProvider theme={azTheme} style={{ height: 'inherit' }}>
             <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
               <LayoutProvider>
-                <div
-                  data-color-scheme={themeName}
-                  className={`msla-theme-${themeName}`}
-                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'clip' }}
-                >
-                  <IntlProvider
-                    locale={locale}
-                    defaultLocale={locale}
-                    stringOverrides={options.hostOptions.stringOverrides}
-                    onError={onError}
+                <DesignerViewProvider>
+                  <div
+                    data-color-scheme={themeName}
+                    className={`msla-theme-${themeName}`}
+                    style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'clip' }}
                   >
-                    <ReduxReset id={id} />
-                    {children}
-                  </IntlProvider>
-                </div>
+                    <IntlProvider
+                      locale={locale}
+                      defaultLocale={locale}
+                      stringOverrides={options.hostOptions.stringOverrides}
+                      onError={onError}
+                    >
+                      <ReduxReset id={id} />
+                      {children}
+                    </IntlProvider>
+                  </div>
+                </DesignerViewProvider>
               </LayoutProvider>
               <div id="fluent-compat-component-mount" />
             </FluentProvider>
@@ -81,8 +84,10 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
 // Redux state persists even through component re-mounts (like with changing the key prop in a parent), so we need to reset the state when the key changes manually
 const ReduxReset = ({ id }: { id?: string }) => {
   const dispatch = useDispatch();
+  const resetDesignerView = useResetDesignerView();
   useEffect(() => {
     dispatch(resetWorkflowState());
-  }, [id, dispatch]);
+    resetDesignerView();
+  }, [id, dispatch, resetDesignerView]);
   return null;
 };

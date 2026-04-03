@@ -1,6 +1,5 @@
 import { openPanel } from '../core';
-import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
-import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
+import { useShowMinimap, useToggleMinimap } from '../core/state/designerView/DesignerViewContext';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -18,6 +17,7 @@ const CustomControls = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const showMinimap = useShowMinimap();
+  const toggleMinimap = useToggleMinimap();
   const searchId = 'control-search-button';
 
   const { fitView, zoomIn, zoomOut } = useReactFlow();
@@ -27,7 +27,7 @@ const CustomControls = () => {
       level: LogEntryLevel.Verbose,
       message: 'Minimap toggled.',
     });
-    dispatch(toggleMinimap());
+    toggleMinimap();
   };
 
   const searchToggleClick = () => {

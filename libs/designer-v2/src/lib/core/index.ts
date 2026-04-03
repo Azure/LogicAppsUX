@@ -109,7 +109,7 @@ export { updateNodeConnection } from './actions/bjsworkflow/connections';
 export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
 export { initializeNotes } from './state/notes/notesSlice';
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
-export { resetDesignerView } from './state/designerView/designerViewSlice';
+export { useResetDesignerView } from './state/designerView/DesignerViewContext';
 export * from './queries/role';
 export * from './queries/runs';
 export * from './queries/template';

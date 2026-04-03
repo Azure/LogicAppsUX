@@ -23,7 +23,7 @@ import {
   useNodeMetadata,
 } from '../../core/state/workflow/workflowSelectors';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
-import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
+import { useSetEdgeContextMenuData } from '../../core/state/designerView/DesignerViewContext';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
 import { DropTarget } from './dropTarget';
@@ -159,24 +159,23 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
           }
         );
 
+  const setEdgeContextMenuData = useSetEdgeContextMenuData();
   const actionButtonClick = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
       const rect = buttonRef.current?.getBoundingClientRect();
       e.preventDefault();
-      dispatch(
-        setEdgeContextMenuData({
-          graphId,
-          parentId,
-          childId,
-          isLeaf,
-          location: {
-            x: (rect?.left ?? 0) + (rect?.width ?? 0),
-            y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
-          },
-        })
-      );
+      setEdgeContextMenuData({
+        graphId,
+        parentId,
+        childId,
+        isLeaf,
+        location: {
+          x: (rect?.left ?? 0) + (rect?.width ?? 0),
+          y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
+        },
+      });
     },
-    [dispatch, graphId, parentId, childId, isLeaf]
+    [setEdgeContextMenuData, graphId, parentId, childId, isLeaf]
   );
 
   const buttonId = normalizeAutomationId(

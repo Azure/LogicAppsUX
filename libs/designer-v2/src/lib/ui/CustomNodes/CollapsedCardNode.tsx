@@ -1,7 +1,7 @@
 import { CollapsedCard } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import { setNodeContextMenuData } from '../../core/state/designerView/designerViewSlice';
+import { useSetNodeContextMenuData } from '../../core/state/designerView/DesignerViewContext';
 import { setFocusNode, type AppDispatch, type RootState } from '../../core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCollapsedMapping, useIsActionCollapsed, useShouldNodeFocus } from '../../core/state/workflow/workflowSelectors';
@@ -34,20 +34,19 @@ const CollapsedNode = ({ id }: NodeProps) => {
     }
   }, [dispatch, focusNodeId, id]);
 
+  const setNodeContextMenuData = useSetNodeContextMenuData();
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      dispatch(
-        setNodeContextMenuData({
-          nodeId: id,
-          location: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-        })
-      );
+      setNodeContextMenuData({
+        nodeId: id,
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
     },
-    [dispatch, id]
+    [setNodeContextMenuData, id]
   );
 
   return (

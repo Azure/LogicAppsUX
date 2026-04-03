@@ -1,7 +1,7 @@
 import connectionsReducer from './state/connection/connectionSlice';
 import customCodeReducer from './state/customcode/customcodeSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
-import designerViewReducer from './state/designerView/designerViewSlice';
+
 import devReducer from './state/dev/devSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
@@ -32,7 +32,6 @@ export const store = configureStore({
     connections: connectionsReducer,
     settings: settingsReducer,
     designerOptions: designerOptionsReducer,
-    designerView: designerViewReducer,
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
     unitTest: unitTestReducer,

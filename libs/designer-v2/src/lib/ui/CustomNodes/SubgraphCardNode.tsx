@@ -3,7 +3,7 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { useSetNodeContextMenuData, useSetShowDeleteModalNodeId } from '../../core/state/designerView/DesignerViewContext';
 import { useIconUri, useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
@@ -189,24 +189,24 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
 
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
+  const setShowDeleteModalNodeId = useSetShowDeleteModalNodeId();
+  const setNodeContextMenuData = useSetNodeContextMenuData();
   const deleteClick = useCallback(() => {
-    dispatch(setShowDeleteModalNodeId(id));
-  }, [dispatch, id]);
+    setShowDeleteModalNodeId(id);
+  }, [setShowDeleteModalNodeId, id]);
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      dispatch(
-        setNodeContextMenuData({
-          nodeId: subgraphId,
-          location: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-        })
-      );
+      setNodeContextMenuData({
+        nodeId: subgraphId,
+        location: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      });
     },
-    [dispatch, subgraphId]
+    [setNodeContextMenuData, subgraphId]
   );
 
   const opQuery = useOperationQuery(subgraphId);

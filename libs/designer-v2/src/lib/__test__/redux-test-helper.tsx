@@ -1,12 +1,10 @@
 import connectionsReducer from '../core/state/connection/connectionSlice';
 import designerOptionsReducer from '../core/state/designerOptions/designerOptionsSlice';
-import designerViewReducer from '../core/state/designerView/designerViewSlice';
 import operationMetadataReducer from '../core/state/operation/operationMetadataSlice';
 import panelReducer from '../core/state/panel/panelSlice';
 import unitTestReducer from '../core/state/unitTest/unitTestSlice';
 import customCodeReducer from '../core/state/customcode/customcodeSlice';
 import settingsReducer from '../core/state/setting/settingSlice';
-import staticResultsSchemasReducer from '../core/state/staticresultschema/staticresultsSlice';
 import tokens from '../core/state/tokens/tokensSlice';
 import workflowReducer from '../core/state/workflow/workflowSlice';
 import workflowParametersReducer from '../core/state/workflowparameters/workflowparametersSlice';
@@ -39,10 +37,8 @@ export function renderWithRedux(
         connections: connectionsReducer,
         settings: settingsReducer,
         designerOptions: designerOptionsReducer,
-        designerView: designerViewReducer,
         tokens: tokens,
         workflowParameters: workflowParametersReducer,
-        staticResults: staticResultsSchemasReducer,
         unitTest: unitTestReducer,
         customCode: customCodeReducer,
         undoRedo: undoRedoReducer,

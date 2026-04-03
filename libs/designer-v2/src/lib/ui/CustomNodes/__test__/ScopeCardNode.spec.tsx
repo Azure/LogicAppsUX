@@ -44,9 +44,9 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => mockUseReadOnly(),
 }));
 
-vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
-  setNodeContextMenuData: vi.fn((payload) => ({ type: 'designerView/setNodeContextMenuData', payload })),
-  setShowDeleteModalNodeId: vi.fn((payload) => ({ type: 'designerView/setShowDeleteModalNodeId', payload })),
+vi.mock('../../../core/state/designerView/DesignerViewContext', () => ({
+  useSetNodeContextMenuData: () => vi.fn(),
+  useSetShowDeleteModalNodeId: () => vi.fn(),
 }));
 
 const mockUseIsA2AWorkflow = vi.fn().mockReturnValue(false);

@@ -2,7 +2,6 @@ import { RootState } from '../core';
 import { initialConnectionsState } from '../core/state/connection/connectionSlice';
 import { initialState as initialCustomCodeState } from '../core/state/customcode/customcodeSlice';
 import { initialDesignerOptionsState } from '../core/state/designerOptions/designerOptionsSlice';
-import { initialState as initialDesignerViewState } from '../core/state/designerView/designerViewSlice';
 import { initialState as initialOperationsState } from '../core/state/operation/operationMetadataSlice';
 import { initialState as initialPanelState } from '../core/state/panel/panelSlice';
 import { initialState as initialSettingsState } from '../core/state/setting/settingSlice';
@@ -23,7 +22,6 @@ export const getMockedInitialRootState = (): RootState => {
     workflow: initialWorkflowState,
     workflowParameters: initialWorkflowParametersState,
     designerOptions: initialDesignerOptionsState,
-    designerView: initialDesignerViewState,
     undoRedo: initialUndoRedoState,
   };
 };
