@@ -22,7 +22,6 @@ import type {
 const getInitialConnectionContentState = (): ConnectionPanelContentState => ({
   isCreatingConnection: false,
   panelMode: 'Connection',
-  selectedNodeIds: [],
   expandedConnectorIds: [],
 });
 
@@ -33,7 +32,6 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
   relationshipIds: {
     graphId: 'root',
   },
-  selectedNodeIds: [],
   selectedOperationGroupId: '',
   selectedOperationId: '',
   favoriteOperations: [],
@@ -51,7 +49,6 @@ const getInitialNodeSearchContentState = (): NodeSearchPanelContentState => ({
 
 const getInitialOperationContentState = (): OperationPanelContentState => ({
   panelMode: 'Operation',
-  selectedNodeId: undefined,
   selectedNodeActiveTabId: undefined,
   alternateSelectedNode: {
     nodeId: undefined,
@@ -74,6 +71,7 @@ export const initialState: PanelState = {
   nodeSearchContent: getInitialNodeSearchContentState(),
   operationContent: getInitialOperationContentState(),
   previousPanelMode: undefined,
+  selectedNodeIds: [],
   workflowParametersContent: getInitialWorkflowParametersContentState(),
   runHistoryCollapsed: false,
 };
@@ -110,6 +108,7 @@ export const panelSlice = createSlice({
       state.errorContent = getInitialErrorContentState();
       state.nodeSearchContent = getInitialNodeSearchContentState();
       state.previousPanelMode = undefined;
+      state.selectedNodeIds = [];
       state.workflowParametersContent = getInitialWorkflowParametersContentState();
 
       if (clearPinnedState) {
@@ -138,12 +137,10 @@ export const panelSlice = createSlice({
       action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean; panelPersistence?: 'selected' | 'pinned' }>
     ) => {
       const { nodeId, updatePanelOpenState } = action.payload;
-      const hasSelectedNode = !!state.operationContent.selectedNodeId;
+      const hasSelectedNode = state.selectedNodeIds.length > 0;
 
       if (nodeId && !hasSelectedNode) {
-        state.connectionContent.selectedNodeIds = [nodeId];
-        state.discoveryContent.selectedNodeIds = [nodeId];
-        state.operationContent.selectedNodeId = nodeId;
+        state.selectedNodeIds = [nodeId];
       }
 
       state.operationContent.alternateSelectedNode = {
@@ -162,22 +159,15 @@ export const panelSlice = createSlice({
       }
     },
     setSelectedNodeId: (state, action: PayloadAction<string>) => {
-      const selectedNodes = [action.payload];
-
-      state.connectionContent.selectedNodeIds = selectedNodes;
-      state.discoveryContent.selectedNodeIds = selectedNodes;
-      state.operationContent.selectedNodeId = selectedNodes[0];
+      state.selectedNodeIds = [action.payload];
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
-      const selectedNodes = [action.payload];
-
       state.isCollapsed = false;
       state.currentPanelMode = 'Operation';
-      state.connectionContent.selectedNodeIds = selectedNodes;
-      state.operationContent.selectedNodeId = selectedNodes[0];
+      state.selectedNodeIds = [action.payload];
       state.operationContent.selectedNodeActiveTabId = undefined;
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
@@ -206,10 +196,10 @@ export const panelSlice = createSlice({
       state.currentPanelMode = 'Discovery';
       state.focusReturnElementId = focusReturnElementId;
       state.isCollapsed = false;
+      state.selectedNodeIds = [nodeId];
       state.discoveryContent.isAddingTrigger = !!addingTrigger;
       state.discoveryContent.isParallelBranch = isParallelBranch ?? false;
       state.discoveryContent.relationshipIds = relationshipIds;
-      state.discoveryContent.selectedNodeIds = [nodeId];
       state.discoveryContent.isAddingAgentTool = isAgentTool ?? false;
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
@@ -278,9 +268,7 @@ export const panelSlice = createSlice({
       state.isCollapsed = false;
       state.focusReturnElementId = focusReturnElementId;
       state.previousPanelMode = referencePanelMode;
-      state.connectionContent.selectedNodeIds = selectedNodes;
-      state.discoveryContent.selectedNodeIds = selectedNodes;
-      state.operationContent.selectedNodeId = selectedNodes[0];
+      state.selectedNodeIds = selectedNodes;
 
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
@@ -339,10 +327,11 @@ export const panelSlice = createSlice({
       ) {
         state.operationContent.alternateSelectedNode.nodeId = undefined;
       }
-      if (state.operationContent.selectedNodeId && !actionIds.includes(state.operationContent.selectedNodeId ?? '')) {
-        state.operationContent.selectedNodeId = undefined;
+      const selectedNodeId = state.selectedNodeIds[0];
+      if (selectedNodeId && !actionIds.includes(selectedNodeId)) {
+        state.selectedNodeIds = [];
       }
-      if (state.operationContent.alternateSelectedNode?.nodeId == null && state.operationContent.selectedNodeId == null) {
+      if (state.operationContent.alternateSelectedNode?.nodeId == null && state.selectedNodeIds.length === 0) {
         state.operationContent = getInitialOperationContentState();
         state.isCollapsed = true;
       }

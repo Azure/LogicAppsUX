@@ -29,6 +29,7 @@ export interface PanelState {
   nodeSearchContent: NodeSearchPanelContentState;
   operationContent: OperationPanelContentState;
   previousPanelMode: PanelMode | undefined;
+  selectedNodeIds: string[];
   workflowParametersContent: WorkflowParametersPanelContentState;
   runHistoryCollapsed: boolean;
 }
@@ -43,7 +44,6 @@ export interface RelationshipIds {
 export interface ConnectionPanelContentState {
   isCreatingConnection: boolean;
   panelMode: 'Connection';
-  selectedNodeIds: string[];
   expandedConnectorIds: string[];
 }
 
@@ -68,7 +68,6 @@ export interface DiscoveryPanelContentState {
   agentToolMetadata?: { newAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
-  selectedNodeIds: string[];
   selectedOperationGroupId: string;
   selectedOperationId: string;
   selectedBrowseCategory?: { key: string; title: string };
@@ -83,7 +82,6 @@ export interface ErrorPanelContentState {
 
 export interface OperationPanelContentState {
   panelMode: 'Operation';
-  selectedNodeId?: string;
   selectedNodeActiveTabId?: string;
   alternateSelectedNode?: {
     nodeId?: string;

@@ -4,8 +4,7 @@ import { useSelector } from 'react-redux';
 
 const getPanelState = (state: RootState) => state.panel;
 
-export const useConnectionPanelSelectedNodeIds = () =>
-  useSelector(createSelector(getPanelState, (state) => state.connectionContent.selectedNodeIds));
+export const useConnectionPanelSelectedNodeIds = () => useSelector(createSelector(getPanelState, (state) => state.selectedNodeIds));
 
 export const useCurrentPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.currentPanelMode));
 
@@ -15,8 +14,7 @@ export const useDiscoveryPanelSelectedOperationGroupId = () =>
 export const useDiscoveryPanelSelectedOperationId = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedOperationId));
 
-export const useDiscoveryPanelSelectedNodeIds = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedNodeIds));
+export const useDiscoveryPanelSelectedNodeIds = () => useSelector(createSelector(getPanelState, (state) => state.selectedNodeIds));
 
 export const useDiscoveryPanelIsAddingTrigger = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingTrigger));
@@ -64,7 +62,7 @@ export const useIsAlternateNodePinned = () =>
   useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'));
 
 export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent.selectedNodeId ?? '') === nodeId));
+  useSelector(createSelector(getPanelState, (state) => (state.selectedNodeIds[0] ?? '') === nodeId));
 
 export const useIsPanelInPinnedViewMode = (): boolean => {
   const selectedNodeId = useOperationPanelSelectedNodeId();
@@ -81,8 +79,7 @@ export const useOperationAlternateSelectedNode = () =>
 export const useOperationPanelAlternateNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.activeTabId));
 
-export const useOperationPanelSelectedNodeId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent?.selectedNodeId ?? ''));
+export const useOperationPanelSelectedNodeId = () => useSelector(createSelector(getPanelState, (state) => state.selectedNodeIds[0] ?? ''));
 
 export const useOperationPanelSelectedNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));

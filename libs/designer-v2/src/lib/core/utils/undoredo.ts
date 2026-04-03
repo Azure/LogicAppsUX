@@ -56,7 +56,7 @@ export const getEditedPanelTab = (actionType: string): string | undefined => {
 
 export const getEditedPanelNode = (actionType: string, rootState: RootState): string | undefined => {
   if (undoablePanelActionTypes.includes(actionType)) {
-    return rootState.panel.operationContent.selectedNodeId;
+    return rootState.panel.selectedNodeIds[0];
   }
   return undefined;
 };

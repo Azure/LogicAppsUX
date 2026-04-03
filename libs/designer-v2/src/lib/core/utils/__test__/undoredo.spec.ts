@@ -24,7 +24,6 @@ describe('undo redo utils', () => {
       connections: mockedInitialRootState.connections,
       customCode: mockedInitialRootState.customCode,
       operations: mockedInitialRootState.operations,
-      panel: mockedInitialRootState.panel,
       settings: mockedInitialRootState.settings,
       tokens: mockedInitialRootState.tokens,
       workflow: mockedInitialRootState.workflow,
@@ -46,10 +45,7 @@ describe('undo redo utils', () => {
       ...mockedInitialRootState,
       panel: {
         ...mockedInitialRootState.panel,
-        operationContent: {
-          ...mockedInitialRootState.panel.operationContent,
-          selectedNodeId: 'Initialize_Variable',
-        },
+        selectedNodeIds: ['Initialize_Variable'],
       },
     };
     expect(getEditedPanelNode(input, mockedInitialRootState)).toBe('Initialize_Variable');
@@ -61,10 +57,7 @@ describe('undo redo utils', () => {
       ...mockedInitialRootState,
       panel: {
         ...mockedInitialRootState.panel,
-        operationContent: {
-          ...mockedInitialRootState.panel.operationContent,
-          selectedNodeId: 'Initialize_Variable',
-        },
+        selectedNodeIds: ['Initialize_Variable'],
       },
     };
     expect(getEditedPanelNode('mockActionType', mockedInitialRootState)).toBe(undefined);

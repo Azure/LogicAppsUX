@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getMockedUndoRedoPartialRootState } from '../../../__test__/mock-root-state';
-import { setStateAfterUndoRedo } from '../global';
 import reducer, { initialState, openMcpToolWizard } from '../panel/panelSlice';
-import type { PanelState } from '../panel/panelTypes';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 
 // Mock LoggerService to avoid initialization errors
@@ -35,28 +32,6 @@ const mockMcpOperation: DiscoveryOperation<DiscoveryResultTypes> = {
 } as DiscoveryOperation<DiscoveryResultTypes>;
 
 describe('panel slice reducers', () => {
-  it('should set panel state on undo redo', async () => {
-    const undoRedoPartialRootState = getMockedUndoRedoPartialRootState();
-    const panelState: PanelState = {
-      ...undoRedoPartialRootState.panel,
-      isCollapsed: false,
-      connectionContent: {
-        selectedNodeIds: ['test'],
-        isCreatingConnection: true,
-        panelMode: 'Connection',
-      },
-    };
-    const state = reducer(
-      initialState,
-      setStateAfterUndoRedo({
-        ...undoRedoPartialRootState,
-        panel: panelState,
-      })
-    );
-
-    expect(state).toEqual(panelState);
-  });
-
   describe('openMcpToolWizard', () => {
     it('should set isConnectionLocked to false when no connectionId is provided', () => {
       const state = reducer(
