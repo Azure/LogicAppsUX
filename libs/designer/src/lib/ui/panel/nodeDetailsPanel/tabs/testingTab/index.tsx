@@ -13,7 +13,7 @@ import {
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
 import { isNullOrUndefined, type OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 export const TestingPanel: React.FC<PanelTabProps> = (props) => {
@@ -26,6 +26,25 @@ export const TestingPanel: React.FC<PanelTabProps> = (props) => {
   const name = selectedNode + 0;
   const staticResultOptions = parameterStaticResult?.staticResultOptions;
   const properties = useStaticResultProperties(name);
+
+  // Debug logging for Testing tab
+  useEffect(() => {
+    console.log('[DEBUG StaticResult] TestingPanel rendered', {
+      selectedNode,
+      connectorId,
+      operationId,
+      schemaId: `${connectorId}-${operationId}`,
+      hasSchema: !!staticResultSchema,
+      schemaProperties: staticResultSchema?.properties ? Object.keys(staticResultSchema.properties) : 'none',
+      outputsProperties: staticResultSchema?.properties?.outputs?.properties
+        ? Object.keys(staticResultSchema.properties.outputs.properties)
+        : 'none',
+      bodySchema: staticResultSchema?.properties?.outputs?.properties?.body
+        ? JSON.stringify(staticResultSchema.properties.outputs.properties.body, null, 2)
+        : 'none',
+      currentProperties: properties,
+    });
+  }, [selectedNode, connectorId, operationId, staticResultSchema, properties]);
 
   const selectPanelTabFn = isPanelPinned ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
 
