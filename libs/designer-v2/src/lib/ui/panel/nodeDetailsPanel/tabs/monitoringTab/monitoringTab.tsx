@@ -37,15 +37,10 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
     isError,
     isFetching,
     isLoading,
-    refetch,
-  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId }], getActionInputsOutputs, {
+  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId, actionTrackingId, startTime, endTime }], getActionInputsOutputs, {
     refetchOnWindowFocus: false,
-    initialData: { inputs: {}, outputs: {} },
+    placeholderData: { inputs: {}, outputs: {} },
   });
-
-  useEffect(() => {
-    refetch();
-  }, [runMetaData, refetch]);
 
   useEffect(() => {
     if (!isLoading) {
