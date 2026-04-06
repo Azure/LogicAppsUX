@@ -18,19 +18,11 @@ import { isOperationNameValid, isTriggerNode } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
+import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from './childWorkflowHelpers';
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
-import {
-  equals,
-  getObjectPropertyValue,
-  getRecordEntry,
-  HostService,
-  isNullOrEmpty,
-  isNullOrUndefined,
-  SUBGRAPH_TYPES,
-  WorkflowService,
-} from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry, HostService, isNullOrUndefined, SUBGRAPH_TYPES, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
@@ -198,23 +190,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     isResizeable,
   };
 
-  const getChildRunNameFromOutputs = (outputs: any): string | undefined => {
-    if (!isNullOrEmpty(outputs)) {
-      return getObjectPropertyValue(outputs, ['headers', 'value', 'x-ms-workflow-run-id']);
-    }
-    return undefined;
-  };
-
-  const getChildWorkflowIdFromInputs = (childWorkflowInputs: any): string | undefined => {
-    if (!isNullOrEmpty(childWorkflowInputs)) {
-      const workflow = getObjectPropertyValue(childWorkflowInputs, ['host.workflow.id']);
-      if (!isNullOrEmpty(workflow)) {
-        return workflow.value;
-      }
-    }
-    return undefined;
-  };
-
   const runName = useMemo(() => {
     return getChildRunNameFromOutputs(runData?.outputs);
   }, [runData?.outputs]);
@@ -284,5 +259,5 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 const handleTrackEvent = (_data: PageActionTelemetryData): void => {};
