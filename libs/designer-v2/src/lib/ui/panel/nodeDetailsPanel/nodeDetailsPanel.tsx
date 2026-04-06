@@ -19,19 +19,11 @@ import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
 import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from './childWorkflowHelpers';
+import { useRawInputsOutputs } from './useRawInputsOutputs';
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
-import {
-  equals,
-  getRecordEntry,
-  HostService,
-  isNullOrUndefined,
-  RunService,
-  SUBGRAPH_TYPES,
-  WorkflowService,
-} from '@microsoft/logic-apps-shared';
-import { useQuery } from '@tanstack/react-query';
+import { equals, getRecordEntry, HostService, isNullOrUndefined, SUBGRAPH_TYPES, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
@@ -75,10 +67,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNodeData = usePanelNodeData(selectedNode);
   const actionMetadata = useActionMetadata(selectedNode);
   const nodeType = actionMetadata?.type ?? '';
-
-  const actionTrackingId = runData?.correlation?.actionTrackingId;
-  const startTime = runData?.startTime;
-  const endTime = runData?.endTime;
 
   const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
 
@@ -206,16 +194,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   // Read raw (pre-binding) inputs/outputs from the shared React Query cache.
   // The MonitoringTab populates this cache; we subscribe here to get the raw data
   // before ManifestOutputsBinder drops properties not in the operation manifest schema.
-  const getActionInputsOutputs = useCallback(async () => {
-    const actionLinks = await RunService().getActionLinks(runData, selectedNode);
-    return { inputs: actionLinks.inputs ?? runData?.inputs ?? {}, outputs: actionLinks.outputs ?? runData?.outputs ?? {} };
-  }, [selectedNode, runData]);
-
-  const { data: rawInputsOutputs } = useQuery<any>(
-    ['actionInputsOutputs', { nodeId: selectedNode, actionTrackingId, startTime, endTime }],
-    getActionInputsOutputs,
-    { refetchOnWindowFocus: false, placeholderData: { inputs: {}, outputs: {} } }
-  );
+  const { data: rawInputsOutputs } = useRawInputsOutputs(selectedNode);
 
   const runName = useMemo(() => {
     return getChildRunNameFromOutputs(rawInputsOutputs?.outputs);
