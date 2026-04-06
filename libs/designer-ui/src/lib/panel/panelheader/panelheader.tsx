@@ -24,6 +24,10 @@ import {
   MoreVertical24Filled,
   MoreVertical24Regular,
   PinOffRegular,
+  ReplayFilled,
+  ReplayRegular,
+  ChevronRightFilled,
+  ChevronRightRegular,
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -61,6 +65,8 @@ export interface PanelHeaderProps {
 
 const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
+const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
+const ChevronRightIcon = bundleIcon(ChevronRightFilled, ChevronRightRegular);
 
 const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element => {
   const { nodeId, onClose } = props;
@@ -270,21 +276,12 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
       {canResubmit || canShowLogicAppRun ? (
         <div className="msla-panel-header-buttons">
           {canResubmit ? (
-            <Button
-              className="msla-panel-header-buttons__button"
-              icon={<Icon iconName="PlaybackRate1x" />}
-              onClick={() => resubmitOperation?.()}
-            >
+            <Button icon={<ResubmitIcon />} onClick={() => resubmitOperation?.()}>
               {resubmitButtonText}
             </Button>
           ) : null}
           {canShowLogicAppRun ? (
-            <Button
-              iconPosition="after"
-              className="msla-panel-header-buttons__button"
-              icon={<Icon iconName="ChevronRight" />}
-              onClick={() => showLogicAppRun?.()}
-            >
+            <Button iconPosition="after" icon={<ChevronRightIcon />} onClick={() => showLogicAppRun?.()}>
               {showLogicAppRunText}
             </Button>
           ) : null}

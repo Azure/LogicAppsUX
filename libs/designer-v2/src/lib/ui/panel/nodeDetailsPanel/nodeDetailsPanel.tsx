@@ -22,7 +22,16 @@ import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from './chil
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
-import { equals, getRecordEntry, HostService, isNullOrUndefined, SUBGRAPH_TYPES, WorkflowService } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  getRecordEntry,
+  HostService,
+  isNullOrUndefined,
+  RunService,
+  SUBGRAPH_TYPES,
+  WorkflowService,
+} from '@microsoft/logic-apps-shared';
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
@@ -66,6 +75,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNodeData = usePanelNodeData(selectedNode);
   const actionMetadata = useActionMetadata(selectedNode);
   const nodeType = actionMetadata?.type ?? '';
+
+  const actionTrackingId = runData?.correlation?.actionTrackingId;
+  const startTime = runData?.startTime;
+  const endTime = runData?.endTime;
 
   const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
 
@@ -190,20 +203,34 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     isResizeable,
   };
 
+  // Read raw (pre-binding) inputs/outputs from the shared React Query cache.
+  // The MonitoringTab populates this cache; we subscribe here to get the raw data
+  // before ManifestOutputsBinder drops properties not in the operation manifest schema.
+  const getActionInputsOutputs = useCallback(async () => {
+    const actionLinks = await RunService().getActionLinks(runData, selectedNode);
+    return { inputs: actionLinks.inputs ?? runData?.inputs ?? {}, outputs: actionLinks.outputs ?? runData?.outputs ?? {} };
+  }, [selectedNode, runData]);
+
+  const { data: rawInputsOutputs } = useQuery<any>(
+    ['actionInputsOutputs', { nodeId: selectedNode, actionTrackingId, startTime, endTime }],
+    getActionInputsOutputs,
+    { refetchOnWindowFocus: false, placeholderData: { inputs: {}, outputs: {} } }
+  );
+
   const runName = useMemo(() => {
-    return getChildRunNameFromOutputs(runData?.outputs);
-  }, [runData?.outputs]);
+    return getChildRunNameFromOutputs(rawInputsOutputs?.outputs);
+  }, [rawInputsOutputs?.outputs]);
 
   const canShowLogicAppRun = useMemo(() => {
     return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
   }, [nodeType, runName]);
 
   const showLogicAppRunClick = useCallback(() => {
-    const workflowId = getChildWorkflowIdFromInputs(runData?.inputs);
+    const workflowId = getChildWorkflowIdFromInputs(rawInputsOutputs?.inputs);
     if (workflowId && runName && !!HostService()) {
       HostService().openMonitorView?.(workflowId, runName);
     }
-  }, [runData?.inputs, runName]);
+  }, [rawInputsOutputs?.inputs, runName]);
 
   // Re-render panel when undo/redo is performed to update panel parameter values, title etc.
   const undoRedoClickToggle = useUndoRedoClickToggle();
