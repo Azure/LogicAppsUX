@@ -52,7 +52,8 @@ describe('middleware utils', () => {
 
   it.each<string>(undoableActionTypes)('saves state to history on undoable action: %s', (undoableActionType) => {
     vi.spyOn(undoRedoUtils, 'shouldSkipSavingStateToHistory').mockReturnValue(false);
-    vi.spyOn(undoRedoUtils, 'getCompressedStateFromRootState').mockReturnValue(new Uint8Array([1, 2, 3]));
+    const mockSlices = { connections: new Uint8Array([1, 2, 3]) };
+    vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState').mockReturnValue(mockSlices);
     vi.spyOn(undoRedoUtils, 'getEditedPanelTab').mockReturnValue(undefined);
     vi.spyOn(undoRedoUtils, 'getEditedPanelNode').mockReturnValue(undefined);
 
@@ -62,7 +63,7 @@ describe('middleware utils', () => {
     expect(next).toHaveBeenCalledWith(action);
     expect(store.dispatch).toHaveBeenCalledWith(
       saveStateToHistory({
-        stateHistoryItem: { compressedState: new Uint8Array([1, 2, 3]), editedPanelTab: undefined, editedPanelNode: undefined },
+        stateHistoryItem: { compressedSlices: mockSlices, editedPanelTab: undefined, editedPanelNode: undefined },
         limit: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
       })
     );
@@ -70,7 +71,7 @@ describe('middleware utils', () => {
 
   it('processes the action before saving state (action-first ordering)', () => {
     vi.spyOn(undoRedoUtils, 'shouldSkipSavingStateToHistory').mockReturnValue(false);
-    vi.spyOn(undoRedoUtils, 'getCompressedStateFromRootState').mockReturnValue(new Uint8Array([1]));
+    vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState').mockReturnValue({ connections: new Uint8Array([1]) });
     vi.spyOn(undoRedoUtils, 'getEditedPanelTab').mockReturnValue(undefined);
     vi.spyOn(undoRedoUtils, 'getEditedPanelNode').mockReturnValue(undefined);
 
@@ -93,7 +94,7 @@ describe('middleware utils', () => {
   });
 
   it('captures pre-mutation state for compression', () => {
-    const compressSpy = vi.spyOn(undoRedoUtils, 'getCompressedStateFromRootState').mockReturnValue(new Uint8Array([1]));
+    const compressSpy = vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState').mockReturnValue({ connections: new Uint8Array([1]) });
     vi.spyOn(undoRedoUtils, 'shouldSkipSavingStateToHistory').mockReturnValue(false);
     vi.spyOn(undoRedoUtils, 'getEditedPanelTab').mockReturnValue(undefined);
     vi.spyOn(undoRedoUtils, 'getEditedPanelNode').mockReturnValue(undefined);

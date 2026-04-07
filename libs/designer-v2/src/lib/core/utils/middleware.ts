@@ -2,7 +2,7 @@ import { default as CONSTANTS } from '../../common/constants';
 import { saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
 import { undoableActionTypes } from '../state/undoRedo/undoRedoTypes';
 import type { RootState } from '../store';
-import { getCompressedStateFromRootState, getEditedPanelNode, getEditedPanelTab, shouldSkipSavingStateToHistory } from './undoredo';
+import { getCompressedSlicesFromRootState, getEditedPanelNode, getEditedPanelTab, shouldSkipSavingStateToHistory } from './undoredo';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { Middleware } from '@reduxjs/toolkit';
 
@@ -30,10 +30,10 @@ export const storeStateHistoryMiddleware: Middleware =
     try {
       const editedPanelTab = getEditedPanelTab(action.type);
       const editedPanelNode = getEditedPanelNode(action.type, preState);
-      const compressedState = getCompressedStateFromRootState(preState);
+      const compressedSlices = getCompressedSlicesFromRootState(preState);
       dispatch(
         saveStateToHistory({
-          stateHistoryItem: { compressedState, editedPanelTab, editedPanelNode },
+          stateHistoryItem: { compressedSlices, editedPanelTab, editedPanelNode },
           limit: stateHistoryLimit,
         })
       );
