@@ -2,162 +2,8 @@
 
 exports[`lib/panel/panelHeader/main > should render 1`] = `
 <div
-  className="msla-panel-header"
-  id="Node Title"
+  className="body-109"
 >
-  <div
-    className="msla-panel-card-header"
-  >
-    <div
-      className="fui-Spinner rpp59a7 msla-card-header-spinner"
-      role="progressbar"
-    >
-      <span
-        className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
-      >
-        <span
-          className="fui-Spinner__spinnerTail rxov3xa"
-        />
-      </span>
-    </div>
-    <div
-      className="msla-panel-card-title-container"
-    >
-      <div
-        className="ms-TextField ms-TextField--borderless msla-card-title root-110"
-      >
-        <div
-          className="ms-TextField-wrapper"
-        >
-          <div
-            className="ms-TextField-fieldGroup fieldGroup-111"
-          >
-            <input
-              aria-invalid={false}
-              aria-label="Card title"
-              className="ms-TextField-field field-112"
-              id="nodeId-title"
-              maxLength={80}
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              onInput={[Function]}
-              onKeyDown={[Function]}
-              type="text"
-              value="Node Title"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <button
-      aria-haspopup="menu"
-      aria-label="More commands"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-panel-header-more-options"
-      data-tabster="{"restorer":{"type":1}}"
-      id="menur1"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onContextMenu={[Function]}
-      onFocus={[Function]}
-      onKeyDown={[Function]}
-      onKeyUp={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      onMouseMove={[Function]}
-      onMouseOver={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      role="button"
-      tabIndex={0}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2"
-      >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-          fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-          fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-    <button
-      aria-label="Close"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-panel-header-close-nav"
-      data-tabster="{"restorer":{"type":0}}"
-      id="msla-panel-header-close-nav"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2"
-      >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-          fill="currentColor"
-          height="1em"
-          viewBox="0 0 20 20"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-          fill="currentColor"
-          height="1em"
-          viewBox="0 0 20 20"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-  </div>
-</div>
-`;
-
-exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`] = `
-[
   <div
     className="msla-panel-header"
     id="Node Title"
@@ -181,18 +27,178 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         className="msla-panel-card-title-container"
       >
         <div
-          className="ms-TextField ms-TextField--borderless msla-card-title root-110"
+          className="ms-TextField ms-TextField--borderless msla-card-title root-111"
         >
           <div
             className="ms-TextField-wrapper"
           >
             <div
-              className="ms-TextField-fieldGroup fieldGroup-111"
+              className="ms-TextField-fieldGroup fieldGroup-112"
             >
               <input
                 aria-invalid={false}
                 aria-label="Card title"
-                className="ms-TextField-field field-112"
+                className="ms-TextField-field field-113"
+                id="nodeId-title"
+                maxLength={80}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyDown={[Function]}
+                type="text"
+                value="Node Title"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        aria-haspopup="menu"
+        aria-label="More commands"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        data-automation-id="msla-panel-header-more-options"
+        data-tabster="{"restorer":{"type":1}}"
+        id="menur1"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onMouseMove={[Function]}
+        onMouseOver={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        role="button"
+        tabIndex={0}
+        type="button"
+      >
+        <span
+          className="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+      <button
+        aria-label="Close"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        data-automation-id="msla-panel-header-close-nav"
+        data-tabster="{"restorer":{"type":0}}"
+        id="msla-panel-header-close-nav"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        <span
+          className="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`] = `
+<div
+  className="body-109"
+>
+  <div
+    className="msla-panel-header"
+    id="Node Title"
+  >
+    <div
+      className="msla-panel-card-header"
+    >
+      <div
+        className="fui-Spinner rpp59a7 msla-card-header-spinner"
+        role="progressbar"
+      >
+        <span
+          className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+        >
+          <span
+            className="fui-Spinner__spinnerTail rxov3xa"
+          />
+        </span>
+      </div>
+      <div
+        className="msla-panel-card-title-container"
+      >
+        <div
+          className="ms-TextField ms-TextField--borderless msla-card-title root-111"
+        >
+          <div
+            className="ms-TextField-wrapper"
+          >
+            <div
+              className="ms-TextField-fieldGroup fieldGroup-112"
+            >
+              <input
+                aria-invalid={false}
+                aria-label="Card title"
+                className="ms-TextField-field field-113"
                 id="nodeId-title"
                 maxLength={80}
                 onBlur={[Function]}
@@ -310,30 +316,51 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         </span>
       </button>
     </div>
-  </div>,
+  </div>
   <div
     className="msla-panel-header-buttons"
   >
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs"
       onClick={[Function]}
       type="button"
     >
       <span
         className="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
       >
-        <i
+        <svg
           aria-hidden={true}
-          className="root-123"
-          data-icon-name="PlaybackRate1x"
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          
-        </i>
+          <path
+            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Zm1.36-.23a.25.25 0 0 0-.36.23v4.06c0 .19.2.31.36.23l4.04-2.04a.25.25 0 0 0 0-.44L8.86 7.74Z"
+            fill="currentColor"
+          />
+        </svg>
       </span>
       Submit from this action
     </button>
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs"
       onClick={[Function]}
       type="button"
     >
@@ -341,141 +368,6 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       <span
         className="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
       >
-        <i
-          aria-hidden={true}
-          className="root-126"
-          data-icon-name="ChevronRight"
-        >
-          
-        </i>
-      </span>
-    </button>
-  </div>,
-]
-`;
-
-exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] = `
-<div
-  className="msla-panel-header"
-  id="Node Title"
->
-  <div
-    className="msla-panel-card-header"
-  >
-    <div
-      className="fui-Spinner rpp59a7 msla-card-header-spinner"
-      role="progressbar"
-    >
-      <span
-        className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
-      >
-        <span
-          className="fui-Spinner__spinnerTail rxov3xa"
-        />
-      </span>
-    </div>
-    <div
-      className="msla-panel-card-title-container"
-    >
-      <div
-        className="ms-TextField ms-TextField--borderless msla-card-title root-110"
-      >
-        <div
-          className="ms-TextField-wrapper"
-        >
-          <div
-            className="ms-TextField-fieldGroup fieldGroup-111"
-          >
-            <input
-              aria-invalid={false}
-              aria-label="Card title"
-              className="ms-TextField-field field-112"
-              id="nodeId-title"
-              maxLength={80}
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              onInput={[Function]}
-              onKeyDown={[Function]}
-              type="text"
-              value="Node Title"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <button
-      aria-haspopup="menu"
-      aria-label="More commands"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-panel-header-more-options"
-      data-tabster="{"restorer":{"type":1}}"
-      id="menur5"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onContextMenu={[Function]}
-      onFocus={[Function]}
-      onKeyDown={[Function]}
-      onKeyUp={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      onMouseMove={[Function]}
-      onMouseOver={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      role="button"
-      tabIndex={0}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2"
-      >
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
-          fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
-            fill="currentColor"
-          />
-        </svg>
-        <svg
-          aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
-          fill="currentColor"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
-    </button>
-    <button
-      aria-label="Close"
-      className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-      data-automation-id="msla-panel-header-close-nav"
-      data-tabster="{"restorer":{"type":0}}"
-      id="msla-panel-header-close-nav"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onPointerEnter={[Function]}
-      onPointerLeave={[Function]}
-      type="button"
-    >
-      <span
-        className="fui-Button__icon rywnvv2"
-      >
         <svg
           aria-hidden={true}
           className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
@@ -486,7 +378,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
+            d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
             fill="currentColor"
           />
         </svg>
@@ -500,7 +392,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+            d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
             fill="currentColor"
           />
         </svg>
@@ -510,8 +402,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
 </div>
 `;
 
-exports[`lib/panel/panelHeader/main > should render with panel header trigger info message 1`] = `
-[
+exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] = `
+<div
+  className="body-109"
+>
   <div
     className="msla-panel-header"
     id="Node Title"
@@ -535,18 +429,178 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         className="msla-panel-card-title-container"
       >
         <div
-          className="ms-TextField ms-TextField--borderless msla-card-title root-110"
+          className="ms-TextField ms-TextField--borderless msla-card-title root-111"
         >
           <div
             className="ms-TextField-wrapper"
           >
             <div
-              className="ms-TextField-fieldGroup fieldGroup-111"
+              className="ms-TextField-fieldGroup fieldGroup-112"
             >
               <input
                 aria-invalid={false}
                 aria-label="Card title"
-                className="ms-TextField-field field-112"
+                className="ms-TextField-field field-113"
+                id="nodeId-title"
+                maxLength={80}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onInput={[Function]}
+                onKeyDown={[Function]}
+                type="text"
+                value="Node Title"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        aria-haspopup="menu"
+        aria-label="More commands"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        data-automation-id="msla-panel-header-more-options"
+        data-tabster="{"restorer":{"type":1}}"
+        id="menur5"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onContextMenu={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onMouseMove={[Function]}
+        onMouseOver={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        role="button"
+        tabIndex={0}
+        type="button"
+      >
+        <span
+          className="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+      <button
+        aria-label="Close"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        data-automation-id="msla-panel-header-close-nav"
+        data-tabster="{"restorer":{"type":0}}"
+        id="msla-panel-header-close-nav"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onPointerEnter={[Function]}
+        onPointerLeave={[Function]}
+        type="button"
+      >
+        <span
+          className="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08-.07.08Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden={true}
+            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="1em"
+            viewBox="0 0 20 20"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/panel/panelHeader/main > should render with panel header trigger info message 1`] = `
+<div
+  className="body-109"
+>
+  <div
+    className="msla-panel-header"
+    id="Node Title"
+  >
+    <div
+      className="msla-panel-card-header"
+    >
+      <div
+        className="fui-Spinner rpp59a7 msla-card-header-spinner"
+        role="progressbar"
+      >
+        <span
+          className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+        >
+          <span
+            className="fui-Spinner__spinnerTail rxov3xa"
+          />
+        </span>
+      </div>
+      <div
+        className="msla-panel-card-title-container"
+      >
+        <div
+          className="ms-TextField ms-TextField--borderless msla-card-title root-111"
+        >
+          <div
+            className="ms-TextField-wrapper"
+          >
+            <div
+              className="ms-TextField-fieldGroup fieldGroup-112"
+            >
+              <input
+                aria-invalid={false}
+                aria-label="Card title"
+                className="ms-TextField-field field-113"
                 id="nodeId-title"
                 maxLength={80}
                 onBlur={[Function]}
@@ -664,7 +718,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         </span>
       </button>
     </div>
-  </div>,
+  </div>
   <div
     className="msla-panel-header-messages"
   >
@@ -735,30 +789,51 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         className="fui-MessageBar__bottomReflowSpacer r1vx593n"
       />
     </div>
-  </div>,
+  </div>
   <div
     className="msla-panel-header-buttons"
   >
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs"
       onClick={[Function]}
       type="button"
     >
       <span
         className="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
       >
-        <i
+        <svg
           aria-hidden={true}
-          className="root-123"
-          data-icon-name="PlaybackRate1x"
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          
-        </i>
+          <path
+            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Zm1.36-.23a.25.25 0 0 0-.36.23v4.06c0 .19.2.31.36.23l4.04-2.04a.25.25 0 0 0 0-.44L8.86 7.74Z"
+            fill="currentColor"
+          />
+        </svg>
       </span>
       Submit from this action
     </button>
     <button
-      className="fui-Button r1alrhcs msla-panel-header-buttons__button"
+      className="fui-Button r1alrhcs"
       onClick={[Function]}
       type="button"
     >
@@ -766,15 +841,36 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       <span
         className="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
       >
-        <i
+        <svg
           aria-hidden={true}
-          className="root-126"
-          data-icon-name="ChevronRight"
+          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          
-        </i>
+          <path
+            d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
+            fill="currentColor"
+          />
+        </svg>
+        <svg
+          aria-hidden={true}
+          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          fill="currentColor"
+          height="1em"
+          viewBox="0 0 20 20"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
+            fill="currentColor"
+          />
+        </svg>
       </span>
     </button>
-  </div>,
-]
+  </div>
+</div>
 `;
