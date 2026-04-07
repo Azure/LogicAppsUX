@@ -275,14 +275,13 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
       return node;
     }
 
-    let result: WorkflowNode | undefined;
     for (const child of node.children ?? []) {
       const childRes = traverseGraph(child);
       if (childRes) {
-        result = childRes;
+        return childRes;
       }
     }
-    return result;
+    return undefined;
   };
 
   return traverseGraph(graph);
@@ -295,12 +294,36 @@ export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return edges.map((edge) => edge.target);
 };
 
+// Memoized index of all workflow nodes by ID — only rebuilds when graph reference changes
+const buildNodeIndex = (graph: WorkflowNode | null): Map<string, WorkflowNode> => {
+  const index = new Map<string, WorkflowNode>();
+  if (!graph) {
+    return index;
+  }
+
+  const queue = new Queue<WorkflowNode>();
+  queue.enqueue(graph);
+  while (queue.size > 0) {
+    const node = queue.dequeue();
+    if (!node) {
+      break;
+    }
+    index.set(node.id, node);
+    for (const child of node.children ?? []) {
+      queue.enqueue(child);
+    }
+  }
+  return index;
+};
+
+const selectNodeIndex = createSelector([(state: RootState) => state.workflow.graph], buildNodeIndex);
+
 export const useWorkflowNode = (actionId?: string) => {
   return useSelector((state: RootState) => {
     if (!actionId) {
       return undefined;
     }
-    return getWorkflowNodeFromGraphState(state.workflow, actionId);
+    return selectNodeIndex(state).get(actionId);
   });
 };
 
@@ -460,14 +483,13 @@ export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
     if (node.id === graphId) {
       return path;
     }
-    let result: string[] | undefined;
     for (const child of node.children ?? []) {
       const childResult = traverseGraph(child, [...path, node.id]);
       if (childResult) {
-        result = childResult;
+        return childResult;
       }
     }
-    return result;
+    return undefined;
   };
 
   return [...(traverseGraph(graph) ?? []), graphId];
