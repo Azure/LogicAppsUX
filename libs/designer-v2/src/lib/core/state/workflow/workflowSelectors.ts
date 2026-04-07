@@ -97,54 +97,72 @@ export const useIsEverythingExpanded = () =>
 
 export const useWorkflowGraph = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.graph));
 
-export const useRootWorkflowGraphForLayout = () =>
-  useSelector(
-    createSelector(getWorkflowAndOperationState, (rootState) => {
-      const workflowState = rootState.workflow;
+const getHandoffAdjustedGraph = createSelector([getWorkflowAndOperationState], (rootState) => {
+  const graph = rootState.workflow.graph;
+  if (!graph) {
+    return undefined;
+  }
+  return handoffToolAdjustment(graph, rootState);
+});
 
-      const rootNode = workflowState.graph;
-      const collapsedIds = workflowState.collapsedGraphIds;
-      const collapsedActionsIds = workflowState.collapsedActionIds;
+const getCollapsedGraphBase = createSelector(
+  [
+    getHandoffAdjustedGraph,
+    (state: RootState) => state.workflow.collapsedGraphIds,
+    (state: RootState) => state.workflow.collapsedActionIds,
+  ],
+  (graph, collapsedIds, collapsedActionIds) => {
+    if (!graph) {
+      return undefined;
+    }
 
-      if (!rootNode) {
-        return undefined;
-      }
+    const hasCollapsedGraphs = Object.keys(collapsedIds).length > 0;
+    const hasCollapsedActions = Object.keys(collapsedActionIds).length > 0;
 
-      let newGraph = rootNode;
+    if (!hasCollapsedGraphs && !hasCollapsedActions) {
+      return graph;
+    }
 
-      newGraph = handoffToolAdjustment(newGraph, rootState);
+    let result = graph;
 
-      if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
-        return newGraph;
-      }
+    if (hasCollapsedActions) {
+      result = collapseFlowTree(result, collapsedActionIds).graph;
+    }
 
-      if (Object.keys(collapsedActionsIds).length !== 0) {
-        newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
-      }
+    if (hasCollapsedGraphs) {
+      result = {
+        ...result,
+        children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(result.children ?? []),
+      };
+    }
 
-      if (Object.keys(collapsedIds).length !== 0) {
-        newGraph = {
-          ...newGraph,
-          children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(newGraph.children ?? []),
-        };
-      }
+    return result;
+  },
+  {
+    memoizeOptions: {
+      maxSize: 5,
+    },
+  }
+);
 
-      return newGraph;
-    })
-  );
+export const useRootWorkflowGraphForLayout = () => useSelector(getCollapsedGraphBase);
 
-export const useCollapsedMapping = () =>
-  useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const rootNode = state.graph;
-      const collapsedActionsIds = state.collapsedActionIds;
-      if (!rootNode) {
-        return {};
-      }
+const getCollapsedMappingBase = createSelector(
+  [(state: RootState) => state.workflow.graph, (state: RootState) => state.workflow.collapsedActionIds],
+  (graph, collapsedActionIds) => {
+    if (!graph) {
+      return {};
+    }
+    return collapseFlowTree(graph, collapsedActionIds).collapsedMapping;
+  },
+  {
+    memoizeOptions: {
+      maxSize: 5,
+    },
+  }
+);
 
-      return collapseFlowTree(rootNode, collapsedActionsIds).collapsedMapping;
-    })
-  );
+export const useCollapsedMapping = () => useSelector(getCollapsedMappingBase);
 
 const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
 const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
