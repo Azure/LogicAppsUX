@@ -137,8 +137,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     if (isNullOrUndefined(agentRepetitionRunData)) {
       return;
     }
-    const [_, existingMetadata] = Object.entries(nodesMetaData).find(([id, _]) => id === scopeId) ?? ['', {}];
-    if (existingMetadata?.runData?.inputsLink?.uri === agentRepetitionRunData?.properties?.inputsLink?.uri) {
+    if (metadata?.runData?.inputsLink?.uri === agentRepetitionRunData?.properties?.inputsLink?.uri) {
       // if the inputsLink uri is the same, we don't need to update the repetition run data
       return;
     }
@@ -152,7 +151,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     selfRunData?.correlation?.actionTrackingId,
     isMonitoringView,
     isTimelineRepetitionSelected,
-    nodesMetaData,
+    metadata,
   ]);
 
   useEffect(() => {
