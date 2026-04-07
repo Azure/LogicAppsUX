@@ -19,7 +19,6 @@ import {
   useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
-  useNodesMetadata,
   useRunData,
   useParentRunIndex,
   useRunInstance,
@@ -40,7 +39,7 @@ import {
 } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
-import { getRepetitionName, getScopeRepetitionName } from '../common/LoopsPager/helper';
+import { getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -81,7 +80,6 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const parentNodeId = useParentNodeId(scopeId);
   const parentRunData = useRunData(parentNodeId ?? '');
   const selfRunData = useRunData(scopeId);
-  const nodesMetaData = useNodesMetadata();
   const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -95,10 +93,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
   const isA2AWorkflow = useIsA2AWorkflow();
-  const repetitionName = useMemo(
-    () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
-    [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
-  );
+  const repetitionName = useRepetitionName(parentRunIndex, scopeId, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView && !!runInstance,

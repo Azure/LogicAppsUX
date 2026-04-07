@@ -28,7 +28,6 @@ import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTe
 import {
   useNodeDisplayName,
   useNodeMetadata,
-  useNodesMetadata,
   useRunData,
   useParentRunIndex,
   useRunInstance,
@@ -44,7 +43,7 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
-import { getRepetitionName } from '../common/LoopsPager/helper';
+import { useRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -80,11 +79,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const parentRunData = useRunData(parentNodeId ?? '');
   const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
   const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
-  const nodesMetaData = useNodesMetadata();
-  const repetitionName = useMemo(
-    () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
-    [id, nodesMetaData, operationsInfo, parentRunIndex]
-  );
+  const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
