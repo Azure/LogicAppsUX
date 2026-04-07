@@ -1,7 +1,12 @@
 import constants from '../../../../../common/constants';
 import type { AppDispatch } from '../../../../../core';
 import { StaticResultOption } from '../../../../../core/actions/bjsworkflow/staticresults';
-import { deleteStaticResult, updateStaticResults } from '../../../../../core/state/operation/operationMetadataSlice';
+import {
+  deleteStaticResult,
+  updateStaticResults,
+  deinitializeStaticResultProperty,
+  updateStaticResultProperties,
+} from '../../../../../core/state/operation/operationMetadataSlice';
 import {
   useParameterStaticResult,
   useStaticResultProperties,
@@ -9,10 +14,6 @@ import {
 } from '../../../../../core/state/operation/operationSelector';
 import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import {
-  deinitializeStaticResultProperty,
-  updateStaticResultProperties,
-} from '../../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
 import { isNullOrUndefined, type OpenAPIV2 } from '@microsoft/logic-apps-shared';
