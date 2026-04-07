@@ -87,6 +87,10 @@ vi.mock('../../../../ui/menuItems/addNoteMenuItem', () => ({
   AddNoteMenuItem: () => <div data-testid="add-note-menu-item">Add Note</div>,
 }));
 
+vi.mock('../../../panel/nodeDetailsPanel/useRawInputsOutputs', () => ({
+  useRawInputsOutputs: () => ({ data: { inputs: {}, outputs: {} } }),
+}));
+
 describe('DesignerContextualMenu', () => {
   beforeEach(() => {
     vi.clearAllMocks();
