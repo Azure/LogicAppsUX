@@ -64,7 +64,7 @@ export const SelectConnectionWrapper = () => {
     if (AgentUtils.isConnector(connector?.id)) {
       return connectionData.filter((c) => {
         const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
-        let modelType = AgentUtils.ModelType.AzureOpenAI;
+        let modelType = AgentUtils.ModelType.MicrosoftFoundry;
         const cognitiveResourceId =
           connectionReference?.resourceId ?? c.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
 
@@ -88,7 +88,9 @@ export const SelectConnectionWrapper = () => {
         };
 
         // For A2A, hide the foundry connection from the list
-        return isA2A ? modelType === AgentUtils.ModelType.AzureOpenAI || modelType === AgentUtils.ModelType.V1ChatCompletionsService : true;
+        return isA2A
+          ? modelType === AgentUtils.ModelType.MicrosoftFoundry || modelType === AgentUtils.ModelType.V1ChatCompletionsService
+          : true;
       });
     }
 

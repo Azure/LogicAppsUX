@@ -131,20 +131,34 @@ const updateAgentParametersForConnection = (
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
       agentModelTypeValue = 'FoundryAgentService';
     } else {
-      agentModelTypeValue = 'AzureOpenAI';
+      agentModelTypeValue = 'MicrosoftFoundry';
     }
   }
 
-  // If fallback detection yields the default 'AzureOpenAI', preserve existing valid value
-  // from the workflow definition (e.g., 'MicrosoftFoundry' that shares the same connection pattern)
-  if (agentModelTypeValue === 'AzureOpenAI') {
+  // If fallback detection yields 'MicrosoftFoundry', check if we should preserve 'AzureOpenAI'
+  // for backward compatibility with older workflows that lack deploymentModelProperties.
+  if (agentModelTypeValue === 'MicrosoftFoundry') {
     const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
     const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
     const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
     const currentValue = existingParam?.value?.[0]?.value;
-    const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
-    if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
-      agentModelTypeValue = currentValue;
+
+    if (currentValue === 'AzureOpenAI') {
+      // Check if deploymentModelProperties exists in the workflow definition
+      const deploymentModelNameParam = defaultGrp?.parameters?.find(
+        (p) => p.parameterKey === 'inputs.$.agentModelSettings.deploymentModelProperties.name'
+      );
+      const hasDeploymentModelProperties = !!deploymentModelNameParam?.value?.[0]?.value;
+      if (!hasDeploymentModelProperties) {
+        // Preserve AzureOpenAI for backward compatibility (no deploymentModelProperties)
+        agentModelTypeValue = 'AzureOpenAI';
+      }
+    } else {
+      // Preserve other existing valid values (e.g., 'FoundryAgentService', 'APIMGenAIGateway')
+      const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
+      if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'MicrosoftFoundry') {
+        agentModelTypeValue = currentValue;
+      }
     }
   }
 

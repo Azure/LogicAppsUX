@@ -5,7 +5,7 @@ describe('AgentUtils', () => {
   describe('ModelType constants', () => {
     it('should have correct model type values', () => {
       expect(AgentUtils.ModelType.AzureOpenAI).toBe('Azure OpenAI');
-      expect(AgentUtils.ModelType.MicrosoftFoundry).toBe('Foundry Models');
+      expect(AgentUtils.ModelType.MicrosoftFoundry).toBe('MicrosoftFoundry (OpenAI)');
       expect(AgentUtils.ModelType.FoundryService).toBe('Foundry project');
       expect(AgentUtils.ModelType.APIM).toBe('APIM Gen AI Gateway');
       expect(AgentUtils.ModelType.V1ChatCompletionsService).toBe('V1 Chat Completions Service');
@@ -22,7 +22,7 @@ describe('AgentUtils', () => {
   describe('ManifestToDisplayName', () => {
     it('should map all manifest values to their display names', () => {
       expect(AgentUtils.ManifestToDisplayName.AzureOpenAI).toBe('Azure OpenAI');
-      expect(AgentUtils.ManifestToDisplayName.MicrosoftFoundry).toBe('Foundry Models');
+      expect(AgentUtils.ManifestToDisplayName.MicrosoftFoundry).toBe('MicrosoftFoundry (OpenAI)');
       expect(AgentUtils.ManifestToDisplayName.FoundryAgentService).toBe('Foundry project');
       expect(AgentUtils.ManifestToDisplayName.APIMGenAIGateway).toBe('APIM Gen AI Gateway');
       expect(AgentUtils.ManifestToDisplayName.V1ChatCompletionsService).toBe('V1 Chat Completions Service');

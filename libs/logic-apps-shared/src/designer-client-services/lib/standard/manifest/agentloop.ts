@@ -51,12 +51,12 @@ export default {
             readOnly: true,
             options: [
               {
-                value: 'AzureOpenAI',
-                displayName: 'Azure OpenAI',
-              },
-              {
                 value: 'MicrosoftFoundry',
                 displayName: 'Foundry Models (Preview)',
+              },
+              {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
               },
               {
                 value: 'FoundryAgentService',
@@ -74,7 +74,7 @@ export default {
             ],
           },
           type: 'string',
-          default: 'AzureOpenAI',
+          default: 'MicrosoftFoundry',
         },
         foundryAgentId: {
           type: 'string',
