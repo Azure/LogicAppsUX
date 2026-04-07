@@ -1,52 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { WorkflowNode } from '../../../parsers/models/workflowNode';
-
-/**
- * Inline the traversal logic (same as getWorkflowNodeFromGraphState) so we
- * avoid importing workflowSelectors — that module pulls in designer-ui which
- * requires a full DOM (navigator.userAgent) at import time.
- */
-const traverseGraphForNode = (root: WorkflowNode, actionId: string): WorkflowNode | undefined => {
-  if (root.id === actionId) {
-    return root;
-  }
-  for (const child of root.children ?? []) {
-    const result = traverseGraphForNode(child, actionId);
-    if (result) {
-      return result;
-    }
-  }
-  return undefined;
-};
-
-const traverseGraphForPath = (root: WorkflowNode, graphId: string): string[] => {
-  const walk = (node: WorkflowNode, path: string[] = []): string[] | undefined => {
-    if (node.id === graphId) {
-      return path;
-    }
-    for (const child of node.children ?? []) {
-      const result = walk(child, [...path, node.id]);
-      if (result) {
-        return result;
-      }
-    }
-    return undefined;
-  };
-  return [...(walk(root) ?? []), graphId];
-};
-
-const buildIndex = (graph: WorkflowNode): Map<string, WorkflowNode> => {
-  const index = new Map<string, WorkflowNode>();
-  const queue: WorkflowNode[] = [graph];
-  while (queue.length > 0) {
-    const node = queue.shift()!;
-    index.set(node.id, node);
-    for (const child of node.children ?? []) {
-      queue.push(child);
-    }
-  }
-  return index;
-};
+import type { WorkflowState } from '../workflowInterfaces';
+import { getWorkflowNodeFromGraphState, getWorkflowGraphPath, buildNodeIndex } from '../workflowGraphTraversal';
 
 /**
  * Builds a synthetic tree graph with the given breadth and depth.
@@ -74,24 +29,29 @@ const buildGraph = (breadth: number, depth: number): WorkflowNode => {
   };
 };
 
-describe('traverseGraphForNode', () => {
+/**
+ * Wraps a graph in a minimal WorkflowState for getWorkflowNodeFromGraphState.
+ */
+const wrapState = (graph: WorkflowNode): WorkflowState => ({ graph }) as unknown as WorkflowState;
+
+describe('getWorkflowNodeFromGraphState', () => {
   it('should find the root node', () => {
     const graph = buildGraph(3, 2);
-    const result = traverseGraphForNode(graph, 'root');
+    const result = getWorkflowNodeFromGraphState(wrapState(graph), 'root');
     expect(result).toBeDefined();
     expect(result?.id).toBe('root');
   });
 
   it('should find a deeply nested node', () => {
     const graph = buildGraph(2, 4);
-    const result = traverseGraphForNode(graph, 'node-0-0-0');
+    const result = getWorkflowNodeFromGraphState(wrapState(graph), 'node-0-0-0');
     expect(result).toBeDefined();
     expect(result?.id).toBe('node-0-0-0');
   });
 
   it('should return undefined for a non-existent node', () => {
     const graph = buildGraph(2, 3);
-    const result = traverseGraphForNode(graph, 'does-not-exist');
+    const result = getWorkflowNodeFromGraphState(wrapState(graph), 'does-not-exist');
     expect(result).toBeUndefined();
   });
 
@@ -102,33 +62,33 @@ describe('traverseGraphForNode', () => {
     }));
     const graph: WorkflowNode = { id: 'root', type: 'GRAPH_NODE' as const, children };
 
-    expect(traverseGraphForNode(graph, 'child-0')?.id).toBe('child-0');
-    expect(traverseGraphForNode(graph, 'child-99')?.id).toBe('child-99');
+    expect(getWorkflowNodeFromGraphState(wrapState(graph), 'child-0')?.id).toBe('child-0');
+    expect(getWorkflowNodeFromGraphState(wrapState(graph), 'child-99')?.id).toBe('child-99');
   });
 });
 
-describe('traverseGraphForPath', () => {
+describe('getWorkflowGraphPath', () => {
   it('should return path to the root node', () => {
     const graph = buildGraph(2, 3);
-    const path = traverseGraphForPath(graph, 'root');
+    const path = getWorkflowGraphPath(graph, 'root');
     expect(path).toEqual(['root']);
   });
 
   it('should return complete ancestor path for a nested node', () => {
     const graph = buildGraph(2, 3);
-    const path = traverseGraphForPath(graph, 'node-0-1');
+    const path = getWorkflowGraphPath(graph, 'node-0-1');
     expect(path).toEqual(['root', 'node-0', 'node-0-1']);
   });
 
   it('should return [graphId] for a non-existent node', () => {
     const graph = buildGraph(2, 2);
-    const path = traverseGraphForPath(graph, 'does-not-exist');
+    const path = getWorkflowGraphPath(graph, 'does-not-exist');
     expect(path).toEqual(['does-not-exist']);
   });
 
   it('should short-circuit after finding the target path', () => {
     const graph = buildGraph(3, 3);
-    const path = traverseGraphForPath(graph, 'node-0-0');
+    const path = getWorkflowGraphPath(graph, 'node-0-0');
     expect(path).toEqual(['root', 'node-0', 'node-0-0']);
   });
 });
@@ -146,7 +106,7 @@ describe('buildNodeIndex', () => {
     };
     collectIds(graph);
 
-    const index = buildIndex(graph);
+    const index = buildNodeIndex(graph);
 
     expect(index.size).toBe(allIds.length);
     for (const id of allIds) {

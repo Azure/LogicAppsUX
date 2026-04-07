@@ -3,6 +3,7 @@ import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNo
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
+import { getWorkflowNodeFromGraphState, getWorkflowGraphPath, buildNodeIndex } from './workflowGraphTraversal';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
@@ -264,28 +265,7 @@ export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
     })
   );
 
-export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: string) => {
-  const graph = state.graph;
-  if (!graph) {
-    return undefined;
-  }
-
-  const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
-    if (node.id === actionId) {
-      return node;
-    }
-
-    for (const child of node.children ?? []) {
-      const childRes = traverseGraph(child);
-      if (childRes) {
-        return childRes;
-      }
-    }
-    return undefined;
-  };
-
-  return traverseGraph(graph);
-};
+export { getWorkflowNodeFromGraphState };
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   const edges = useEdges()
@@ -295,27 +275,6 @@ export const useNodeEdgeTargets = (nodeId?: string): string[] => {
 };
 
 // Memoized index of all workflow nodes by ID — only rebuilds when graph reference changes
-const buildNodeIndex = (graph: WorkflowNode | null): Map<string, WorkflowNode> => {
-  const index = new Map<string, WorkflowNode>();
-  if (!graph) {
-    return index;
-  }
-
-  const queue = new Queue<WorkflowNode>();
-  queue.enqueue(graph);
-  while (queue.size > 0) {
-    const node = queue.dequeue();
-    if (!node) {
-      break;
-    }
-    index.set(node.id, node);
-    for (const child of node.children ?? []) {
-      queue.enqueue(child);
-    }
-  }
-  return index;
-};
-
 const selectNodeIndex = createSelector([(state: RootState) => state.workflow.graph], buildNodeIndex);
 
 export const useWorkflowNode = (actionId?: string) => {
@@ -478,22 +437,7 @@ export const useGetAllOperationNodesWithin = (nodeId: string) => {
   }, [graphNodes, nodeId]);
 };
 
-export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
-  const traverseGraph = (node: WorkflowNode, path: string[] = []): string[] | undefined => {
-    if (node.id === graphId) {
-      return path;
-    }
-    for (const child of node.children ?? []) {
-      const childResult = traverseGraph(child, [...path, node.id]);
-      if (childResult) {
-        return childResult;
-      }
-    }
-    return undefined;
-  };
-
-  return [...(traverseGraph(graph) ?? []), graphId];
-};
+export { getWorkflowGraphPath };
 
 export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
@@ -757,23 +701,23 @@ export const useAllAgentIds = (): string[] => {
 };
 
 // These edges are not actually present in the graph, but are used to represent handoffs between agents during graph calculations
+const selectHandoffEdges = createSelector(getWorkflowState, (state: WorkflowState) => {
+  const handoffEdges: WorkflowEdge[] = [];
+  for (const [nodeId, metadata] of Object.entries(state.nodesMetadata)) {
+    for (const agent of Object.values(metadata.handoffs ?? {})) {
+      handoffEdges.push({
+        id: `${nodeId}-${agent}`,
+        source: nodeId,
+        target: agent,
+        type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
+      });
+    }
+  }
+  return handoffEdges;
+});
+
 export const useHandoffEdges = (): WorkflowEdge[] => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const handoffEdges: WorkflowEdge[] = [];
-      for (const [nodeId, metadata] of Object.entries(state.nodesMetadata)) {
-        for (const agent of Object.values(metadata.handoffs ?? {})) {
-          handoffEdges.push({
-            id: `${nodeId}-${agent}`,
-            source: nodeId,
-            target: agent,
-            type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
-          });
-        }
-      }
-      return handoffEdges;
-    })
-  );
+  return useSelector(selectHandoffEdges);
 };
 
 export const useHandoffActionsForAgent = (agentId: string): any[] => {
