@@ -349,9 +349,9 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
     createSelector(getWorkflowState, (state: WorkflowState) => {
       let caseId = baseId;
       let caseCount = 1;
-      const idList = Object.keys(state.nodesMetadata);
+      const idSet = new Set(Object.keys(state.nodesMetadata));
 
-      while (idList.some((id) => id === caseId)) {
+      while (idSet.has(caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;
       }
@@ -394,10 +394,10 @@ export const useDisconnectedNodes = (): string[] => {
   const rootGraphNodeIds = useMemo(() => rootGraph?.children?.map((child) => child.id) ?? [], [rootGraph]);
   const connectedRootGraphNodeIds = useConnectedRootGraphNodeIds();
 
-  return useMemo(
-    () => rootGraphNodeIds.filter((nodeId) => !connectedRootGraphNodeIds.includes(nodeId)),
-    [connectedRootGraphNodeIds, rootGraphNodeIds]
-  );
+  return useMemo(() => {
+    const connectedSet = new Set(connectedRootGraphNodeIds);
+    return rootGraphNodeIds.filter((nodeId) => !connectedSet.has(nodeId));
+  }, [connectedRootGraphNodeIds, rootGraphNodeIds]);
 };
 
 export const useIsDisconnected = (nodeId: string): boolean => {
