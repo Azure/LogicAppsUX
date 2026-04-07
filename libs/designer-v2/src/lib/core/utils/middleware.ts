@@ -20,7 +20,7 @@ export const storeStateHistoryMiddleware: Middleware =
     // Process the action first so UI updates immediately
     const result = next(action);
 
-    const stateHistoryLimit = preState.designerOptions.hostOptions.maxStateHistorySize || CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
+    const stateHistoryLimit = preState.designerOptions.hostOptions.maxStateHistorySize ?? CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
     const idReplacements = preState.workflow.idReplacements;
 
     if (shouldSkipSavingStateToHistory(action, stateHistoryLimit, idReplacements)) {
