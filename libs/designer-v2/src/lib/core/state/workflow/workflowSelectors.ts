@@ -758,21 +758,22 @@ export const useAllAgentIds = (): string[] => {
 
 // These edges are not actually present in the graph, but are used to represent handoffs between agents during graph calculations
 export const useHandoffEdges = (): WorkflowEdge[] => {
-  const nodesMetadata = useNodesMetadata();
-  return useMemo(() => {
-    const handoffEdges: WorkflowEdge[] = [];
-    for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
-      for (const agent of Object.values(metadata.handoffs ?? {})) {
-        handoffEdges.push({
-          id: `${nodeId}-${agent}`,
-          source: nodeId,
-          target: agent,
-          type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
-        });
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const handoffEdges: WorkflowEdge[] = [];
+      for (const [nodeId, metadata] of Object.entries(state.nodesMetadata)) {
+        for (const agent of Object.values(metadata.handoffs ?? {})) {
+          handoffEdges.push({
+            id: `${nodeId}-${agent}`,
+            source: nodeId,
+            target: agent,
+            type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
+          });
+        }
       }
-    }
-    return handoffEdges;
-  }, [nodesMetadata]);
+      return handoffEdges;
+    })
+  );
 };
 
 export const useHandoffActionsForAgent = (agentId: string): any[] => {
