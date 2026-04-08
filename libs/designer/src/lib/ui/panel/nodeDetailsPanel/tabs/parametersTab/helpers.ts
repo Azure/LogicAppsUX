@@ -37,7 +37,7 @@ export const isAgentConnectorAndAgentServiceModel = (
   const agentConnector = AgentUtils.isConnector(connectorId ?? '');
   const parameterGroup = parameterGroups[groupId];
   const parameter = parameterGroup?.parameters?.find((param: any) => param.parameterKey === agentModelTypeParameterKey);
-  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentService';
+  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentServiceV2';
 };
 
 export const categorizeConnections = (connections: Connection[]): CategorizedConnections => {

@@ -59,7 +59,7 @@ export default {
                 displayName: 'Foundry Models (Preview)',
               },
               {
-                value: 'FoundryAgentService',
+                value: 'FoundryAgentServiceV2',
                 displayName: 'Foundry project (Preview)',
                 unSupportedWorkflowKind: ['agent'],
               },
@@ -76,22 +76,6 @@ export default {
           type: 'string',
           default: 'AzureOpenAI',
         },
-        foundryAgentId: {
-          type: 'string',
-          title: 'Agent',
-          description: 'The Foundry agent to use.',
-          'x-ms-visibility': 'important',
-          'x-ms-editor': 'combobox',
-          'x-ms-input-dependencies': {
-            type: 'visibility',
-            parameters: [
-              {
-                name: 'agentModelType',
-                values: ['FoundryAgentService'],
-              },
-            ],
-          },
-        },
         foundryAgentName: {
           type: 'string',
           title: 'Agent name',
@@ -102,38 +86,23 @@ export default {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['FoundryAgentService'],
+                values: ['FoundryAgentServiceV2'],
               },
             ],
           },
         },
-        foundryAgentVersion: {
+        foundryVersionName: {
           type: 'string',
-          title: 'Agent version',
-          description: 'Foundry agent API version (v2).',
-          default: 'v2',
+          title: 'Agent version name',
+          description: 'The version name of the Foundry agent.',
+          default: 'v1',
           'x-ms-visibility': 'internal',
           'x-ms-input-dependencies': {
             type: 'visibility',
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['FoundryAgentService'],
-              },
-            ],
-          },
-        },
-        foundryAgentVersionNumber: {
-          type: 'string',
-          title: 'Agent version number',
-          description: 'The selected Foundry agent version number.',
-          'x-ms-visibility': 'internal',
-          'x-ms-input-dependencies': {
-            type: 'visibility',
-            parameters: [
-              {
-                name: 'agentModelType',
-                values: ['FoundryAgentService'],
+                values: ['FoundryAgentServiceV2'],
               },
             ],
           },
@@ -154,7 +123,7 @@ export default {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'MicrosoftFoundry', 'APIMGenAIGateway', 'FoundryAgentService'],
+                values: ['AzureOpenAI', 'MicrosoftFoundry', 'APIMGenAIGateway'],
               },
             ],
           },

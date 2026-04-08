@@ -947,7 +947,7 @@ function convertToAgentConnectionsData(
       endpoint: isBringYourOwnKeyAuth || isClientCertificateAuth ? parameterValues?.['endpoint'] : parameterValues?.['openAIEndpoint'],
       // Only include resourceId if it has a value
       ...(cognitiveServiceAccountId && { resourceId: cognitiveServiceAccountId }),
-      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
+      type: isFoundryAgentServiceConnection ? 'FoundryAgentServiceV2' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
     pathLocation: [agentLocation],

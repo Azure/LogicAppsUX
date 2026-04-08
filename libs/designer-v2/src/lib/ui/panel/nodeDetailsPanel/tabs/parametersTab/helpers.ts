@@ -18,7 +18,7 @@ export const isAgentConnectorAndDeploymentId = (id: string, key: string): boolea
 };
 
 export const isAgentConnectorAndFoundryAgentId = (id: string, key: string): boolean => {
-  return AgentUtils.isConnector(id) && AgentUtils.isFoundryAgentIdParameter(key);
+  return AgentUtils.isConnector(id) && AgentUtils.isFoundryAgentNameParameter(key);
 };
 
 export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean => {
@@ -33,7 +33,7 @@ export const isAgentConnectorAndAgentServiceModel = (
   const agentConnector = AgentUtils.isConnector(connectorId ?? '');
   const parameterGroup = parameterGroups[groupId];
   const parameter = parameterGroup?.parameters?.find((param: any) => param.parameterKey === agentModelTypeParameterKey);
-  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentService';
+  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentServiceV2';
 };
 
 export const categorizeConnections = (connections: Connection[]): CategorizedConnections => {

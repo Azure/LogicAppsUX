@@ -384,7 +384,7 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
 // Stable parameter keys for Foundry-managed fields (not locale-dependent)
 const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
 const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
-const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
+const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentName';
 
 const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
 type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
@@ -545,7 +545,7 @@ export const ParameterSection = ({
     [nodeId, rootState.operations.inputParameters]
   );
 
-  // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
+  // Detect if the node already has a foundryAgentName but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
   // Only applies when agentModelType is truly empty (not yet loaded); if it's set to a
   // non-Foundry value (e.g. after switching connections) this must return false.
@@ -557,7 +557,7 @@ export const ParameterSection = ({
     if (agentModelType) {
       return false;
     }
-    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
+    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value;
   }, [isAgentServiceConnection, nodeInputs.parameterGroups, group.id]);
 
   // Derive the currently selected Foundry agent from parameter values
@@ -565,11 +565,11 @@ export const ParameterSection = ({
     if (!isAgentServiceConnection || !foundryAgentsForNode?.length) {
       return undefined;
     }
-    const agentId = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
-    if (!agentId) {
+    const agentName = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value;
+    if (!agentName) {
       return undefined;
     }
-    return foundryAgentsForNode.find((a) => a.id === agentId);
+    return foundryAgentsForNode.find((a) => (a.name ?? a.id) === agentName);
   }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
 
   // Fetch versions for the selected Foundry agent
@@ -593,7 +593,7 @@ export const ParameterSection = ({
       return selectedFoundryVersion;
     }
     if (foundryVersions?.length) {
-      const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber')?.value?.[0]?.value;
+      const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName')?.value?.[0]?.value;
       if (storedVersion && foundryVersions.some((v) => String(v.version) === storedVersion)) {
         return storedVersion;
       }
@@ -620,7 +620,7 @@ export const ParameterSection = ({
     }
 
     // Write version number to workflow parameter
-    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
     if (versionParam) {
       dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, effectiveFoundryVersion);
     }
@@ -662,7 +662,7 @@ export const ParameterSection = ({
       consumeVersionRefresh(nodeId);
 
       const latestVersion = String(foundryVersions[0].version);
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
       const storedVersion = versionParam?.value?.[0]?.value;
 
       if (latestVersion !== storedVersion) {
@@ -677,10 +677,10 @@ export const ParameterSection = ({
   // Reset pending overrides when the user switches to a different agent (not on initial load).
   // On remount, selectedFoundryAgent?.id goes undefined → actual ID as React Query resolves;
   // that transition must NOT clear the pending edits we just restored from the module store.
-  // Track the raw foundryAgentId parameter value to reliably detect agent switches,
+  // Track the raw foundryAgentName parameter value to reliably detect agent switches,
   // since selectedFoundryAgent depends on the React Query agents list loading.
   const rawFoundryAgentId = useMemo(
-    () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value as string | undefined,
+    () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value as string | undefined,
     [nodeInputs.parameterGroups, group.id]
   );
   const prevRawAgentIdRef = useRef<string | undefined>(rawFoundryAgentId);
@@ -704,7 +704,7 @@ export const ParameterSection = ({
 
       // Clear the stored version parameter in Redux so effectiveFoundryVersion
       // falls through to the latest version for the new agent.
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
       if (versionParam) {
         dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, '');
       }
@@ -827,7 +827,7 @@ export const ParameterSection = ({
       }
 
       // Sync version number to workflow parameter
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
       if (versionParam) {
         dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, version.version);
       }
@@ -877,14 +877,10 @@ export const ParameterSection = ({
   );
 
   const addFoundryDependentUpdates = useCallback(
-    (currentDependencies: typeof dependencies, parameterId: string, agentId?: string, agentName?: string | null) => {
+    (currentDependencies: typeof dependencies, parameterId: string, _agentId?: string, _agentName?: string | null) => {
       currentDependencies.inputs ??= {};
 
-      const foundryDependentKeys = [
-        { key: 'inputs.$.foundryAgentName', default: agentName ?? agentId },
-        { key: 'inputs.$.foundryAgentVersion', default: 'v2' },
-        { key: 'inputs.$.foundryAgentVersionNumber', default: '' },
-      ];
+      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: 'v1' }];
 
       for (const { key, default: defaultValue } of foundryDependentKeys) {
         const dependency = buildDependentParam(parameterId, key, defaultValue);
@@ -899,7 +895,7 @@ export const ParameterSection = ({
   const handleCreateFoundryAgent = useCallback(
     async (options: CreateFoundryAgentOptions) => {
       const newAgent = await createFoundryAgent.mutateAsync(options);
-      const foundryAgentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId');
+      const foundryAgentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName');
 
       if (foundryAgentParam) {
         const updatedDependencies = clone(dependencies);
@@ -910,7 +906,7 @@ export const ParameterSection = ({
             nodeId,
             groupId: group.id,
             parameterId: foundryAgentParam.id,
-            properties: { value: [createLiteralValueSegment(newAgent.id)] },
+            properties: { value: [createLiteralValueSegment(newAgent.name ?? newAgent.id)] },
             isTrigger,
             operationInfo,
             connectionReference,
@@ -1114,20 +1110,12 @@ export const ParameterSection = ({
         }
       }
 
-      // Auto-populate dependent fields when foundryAgentId changes
+      // Auto-populate dependent fields when foundryAgentName changes
       const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
       if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
-        const selectedAgentName = value?.length ? value[0]?.value : undefined;
-        const selectedAgentId = selectedAgentName ? selectedAgentName : undefined;
-        const selectedAgent = selectedAgentId ? foundryAgentsForNode.find((a: any) => a.id === selectedAgentId) : undefined;
-
         updatedDependencies.inputs ??= {};
 
-        const foundryDependentKeys = [
-          { key: 'inputs.$.foundryAgentName', default: selectedAgent?.name ?? selectedAgentName },
-          { key: 'inputs.$.foundryAgentVersion', default: 'v2' },
-          { key: 'inputs.$.foundryAgentVersionNumber', default: '' },
-        ];
+        const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: 'v1' }];
 
         for (const { key, default: defaultValue } of foundryDependentKeys) {
           const dependency = buildDependentParam(key, defaultValue);
@@ -1890,7 +1878,7 @@ export const getEditorAndOptions = (
   const isFoundryAgent = isAgentConnectorAndFoundryAgentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isFoundryAgent) {
     const options = foundryAgents.map((agent: any) => ({
-      value: agent.id,
+      value: agent.name ?? agent.id,
       displayName: `${agent.name ?? agent.id}${agent.model ? ` (${agent.model})` : ''}`,
     }));
 

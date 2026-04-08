@@ -23,7 +23,7 @@ describe('AgentUtils', () => {
     it('should map all manifest values to their display names', () => {
       expect(AgentUtils.ManifestToDisplayName.AzureOpenAI).toBe('Azure OpenAI');
       expect(AgentUtils.ManifestToDisplayName.MicrosoftFoundry).toBe('Foundry Models');
-      expect(AgentUtils.ManifestToDisplayName.FoundryAgentService).toBe('Foundry project');
+      expect(AgentUtils.ManifestToDisplayName.FoundryAgentServiceV2).toBe('Foundry project');
       expect(AgentUtils.ManifestToDisplayName.APIMGenAIGateway).toBe('APIM Gen AI Gateway');
       expect(AgentUtils.ManifestToDisplayName.V1ChatCompletionsService).toBe('V1 Chat Completions Service');
     });
@@ -203,24 +203,24 @@ describe('getSKUDefaultHostOptions', () => {
   });
 });
 
-describe('AgentUtils.isFoundryAgentIdParameter', () => {
-  it('should return true for foundryAgentId parameter', () => {
-    expect(AgentUtils.isFoundryAgentIdParameter('foundryAgentId')).toBe(true);
+describe('AgentUtils.isFoundryAgentNameParameter', () => {
+  it('should return true for foundryAgentName parameter', () => {
+    expect(AgentUtils.isFoundryAgentNameParameter('foundryAgentName')).toBe(true);
   });
 
   it('should be case insensitive', () => {
-    expect(AgentUtils.isFoundryAgentIdParameter('FOUNDRYAGENTID')).toBe(true);
-    expect(AgentUtils.isFoundryAgentIdParameter('FoundryAgentId')).toBe(true);
+    expect(AgentUtils.isFoundryAgentNameParameter('FOUNDRYAGENTNAME')).toBe(true);
+    expect(AgentUtils.isFoundryAgentNameParameter('FoundryAgentName')).toBe(true);
   });
 
   it('should return false for other parameter names', () => {
-    expect(AgentUtils.isFoundryAgentIdParameter('deploymentId')).toBe(false);
-    expect(AgentUtils.isFoundryAgentIdParameter('agentModelType')).toBe(false);
-    expect(AgentUtils.isFoundryAgentIdParameter('')).toBe(false);
+    expect(AgentUtils.isFoundryAgentNameParameter('deploymentId')).toBe(false);
+    expect(AgentUtils.isFoundryAgentNameParameter('agentModelType')).toBe(false);
+    expect(AgentUtils.isFoundryAgentNameParameter('')).toBe(false);
   });
 
   it('should handle undefined input', () => {
-    expect(AgentUtils.isFoundryAgentIdParameter(undefined)).toBe(false);
+    expect(AgentUtils.isFoundryAgentNameParameter(undefined)).toBe(false);
   });
 });
 

@@ -48,7 +48,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
 
   const hideResourceCreate = useMemo(() => !!operationParameterValues?.['hideCreate'], [operationParameterValues]);
   const isAgentServiceConnection = useMemo(
-    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentService', true),
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentServiceV2', true),
     [operationParameterValues]
   );
 

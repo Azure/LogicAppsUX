@@ -22,7 +22,7 @@ export default {
             notSupportedConnectionParameters: {
               AzureOpenAI: ['BringYourOwnKey', 'ClientCertificate'],
               MicrosoftFoundry: ['ManagedServiceIdentity', 'BringYourOwnKey', 'ClientCertificate'],
-              FoundryAgentService: ['Key', 'BringYourOwnKey', 'ClientCertificate'],
+              FoundryAgentServiceV2: ['Key', 'BringYourOwnKey', 'ClientCertificate'],
               APIMGenAIGateway: ['ManagedServiceIdentity', 'BringYourOwnKey', 'ClientCertificate'],
               V1ChatCompletionsService: ['Key', 'ManagedServiceIdentity'],
             },

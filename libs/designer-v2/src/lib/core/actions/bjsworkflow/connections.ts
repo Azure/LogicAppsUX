@@ -129,7 +129,7 @@ const updateAgentParametersForConnection = (
   if (!agentModelTypeValue) {
     const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'FoundryAgentService';
+      agentModelTypeValue = 'FoundryAgentServiceV2';
     } else {
       agentModelTypeValue = 'AzureOpenAI';
     }
