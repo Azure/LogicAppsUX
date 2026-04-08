@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
 import { Button, Spinner, SplitButton, Tooltip, Badge, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular, ImportantFilled } from '@fluentui/react-icons';
-import type { CallbackInfo, Workflow } from '@microsoft/logic-apps-shared';
+import type { Workflow } from '@microsoft/logic-apps-shared';
 import {
   canRunBeInvokedWithPayload,
   equals,
@@ -271,7 +271,7 @@ export const FloatingRunButton = ({
         triggerId,
         isConsumption: isConsumption ?? false,
       });
-      const callbackInfo: CallbackInfo = {
+      const callbackInfo = {
         value: runUrl,
         method: payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST',
       };
