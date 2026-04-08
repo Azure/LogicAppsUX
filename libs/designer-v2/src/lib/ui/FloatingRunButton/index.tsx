@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
 import { Button, Spinner, SplitButton, Tooltip, Badge, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { bundleIcon, FlashFilled, FlashRegular, FlashSettingsFilled, FlashSettingsRegular, ImportantFilled } from '@fluentui/react-icons';
-import type { Workflow } from '@microsoft/logic-apps-shared';
+import type { CallbackInfo, Workflow } from '@microsoft/logic-apps-shared';
 import {
   canRunBeInvokedWithPayload,
   equals,
@@ -49,6 +49,27 @@ export type PayloadData = {
   headers?: Record<string, string>;
   queries?: Record<string, string>;
   body?: string;
+};
+
+/**
+ * Constructs the ARM /run URL for triggering a published workflow.
+ * Standard workflows use the hostruntime management API path.
+ * Consumption workflows use the direct trigger path.
+ */
+export const getPublishedRunUrl = ({
+  siteResourceId,
+  workflowName,
+  triggerId,
+  isConsumption,
+}: {
+  siteResourceId: string;
+  workflowName: string;
+  triggerId: string;
+  isConsumption: boolean;
+}): string => {
+  return isConsumption
+    ? `${siteResourceId}/triggers/${triggerId}/run`
+    : `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/run`;
 };
 
 export interface FloatingRunButtonProps {
@@ -244,10 +265,13 @@ export const FloatingRunButton = ({
       }
 
       // Use the ARM /run endpoint directly (like V1) instead of listCallbackUrl + SAS invoke
-      const runUrl = isConsumption
-        ? `${siteResourceId}/triggers/${triggerId}/run`
-        : `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/run`;
-      const callbackInfo: any = {
+      const runUrl = getPublishedRunUrl({
+        siteResourceId: siteResourceId ?? '',
+        workflowName: workflowName ?? '',
+        triggerId,
+        isConsumption: isConsumption ?? false,
+      });
+      const callbackInfo: CallbackInfo = {
         value: runUrl,
         method: payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST',
       };
