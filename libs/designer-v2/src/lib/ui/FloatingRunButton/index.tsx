@@ -11,7 +11,6 @@ import {
   isNullOrEmpty,
   parseErrorMessage,
   RunService,
-  WorkflowService,
 } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -244,8 +243,14 @@ export const FloatingRunButton = ({
         return;
       }
 
-      const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
-      callbackInfo.method = payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
+      // Use the ARM /run endpoint directly (like V1) instead of listCallbackUrl + SAS invoke
+      const runUrl = isConsumption
+        ? `${siteResourceId}/triggers/${triggerId}/run`
+        : `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/run`;
+      const callbackInfo: any = {
+        value: runUrl,
+        method: payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST',
+      };
 
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
