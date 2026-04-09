@@ -268,6 +268,35 @@ describe('ConsumptionConnectionService', () => {
       expect(result.authParams.audience).toBe('api://my-app');
     });
 
+    it('should handle ManagedServiceIdentity parameters with identity', () => {
+      const result = (service as any).extractAuthParameters({
+        name: 'ManagedServiceIdentity',
+        values: {
+          audience: { value: 'api://my-app' },
+          identity: { value: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-id' },
+        },
+      });
+
+      expect(result.authenticationType).toBe('ManagedServiceIdentity');
+      expect(result.authParams.audience).toBe('api://my-app');
+      expect(result.authParams.identity).toBe(
+        '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-id'
+      );
+    });
+
+    it('should handle ManagedServiceIdentity without identity (system-assigned)', () => {
+      const result = (service as any).extractAuthParameters({
+        name: 'ManagedServiceIdentity',
+        values: {
+          audience: { value: 'api://my-app' },
+        },
+      });
+
+      expect(result.authenticationType).toBe('ManagedServiceIdentity');
+      expect(result.authParams.audience).toBe('api://my-app');
+      expect(result.authParams.identity).toBeUndefined();
+    });
+
     it('should only extract known auth keys', () => {
       const result = (service as any).extractAuthParameters({
         name: 'Custom',

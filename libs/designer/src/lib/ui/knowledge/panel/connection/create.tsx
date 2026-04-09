@@ -14,7 +14,17 @@ const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 export const CreateConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement | null }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs();
+  const selectTab = useCallback(
+    (tabId: string): void => {
+      dispatch(selectPanelTab(tabId));
+    },
+    [dispatch]
+  );
+  const close = useCallback(() => {
+    dispatch(closePanel());
+  }, [dispatch]);
+
+  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs({ selectTab, close });
   const { selectedTabId, isOpen, panelMode } = useSelector((state: RootState) => ({
     selectedTabId: state.knowledgeHubPanel.selectedTabId,
     isOpen: state.knowledgeHubPanel?.isOpen ?? false,

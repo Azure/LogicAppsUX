@@ -6,10 +6,10 @@ import { changePanelNode, setSelectedPanelActiveTab } from '../../state/panel/pa
 import { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../../state/undoRedo/undoRedoSlice';
 import type { RootState } from '../../store';
 import {
-  getCompressedStateFromRootState,
+  getCompressedSlicesFromRootState,
   getEditedPanelNode,
   getEditedPanelTab,
-  getRootStateFromCompressedState,
+  getRootStateFromCompressedSlices,
   shouldSkipSavingStateToHistory,
 } from '../../utils/undoredo';
 
@@ -17,7 +17,7 @@ export const storeStateToUndoRedoHistory = createAsyncThunk(
   'storeStateToUndoRedoHistory',
   async (action: AnyAction, { dispatch, getState }): Promise<void> => {
     const rootState = getState() as RootState;
-    const stateHistoryLimit = rootState.designerOptions.hostOptions.maxStateHistorySize || CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
+    const stateHistoryLimit = rootState.designerOptions.hostOptions.maxStateHistorySize ?? CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
     const idReplacements = rootState.workflow.idReplacements;
 
     if (shouldSkipSavingStateToHistory(action, stateHistoryLimit, idReplacements)) {
@@ -27,10 +27,10 @@ export const storeStateToUndoRedoHistory = createAsyncThunk(
     try {
       const editedPanelTab = getEditedPanelTab(action.type);
       const editedPanelNode = getEditedPanelNode(action.type, rootState);
-      const compressedState = getCompressedStateFromRootState(rootState);
+      const compressedSlices = getCompressedSlicesFromRootState(rootState);
       dispatch(
         saveStateToHistory({
-          stateHistoryItem: { compressedState, editedPanelTab, editedPanelNode },
+          stateHistoryItem: { compressedSlices, editedPanelTab, editedPanelNode },
           limit: stateHistoryLimit,
         })
       );
@@ -59,8 +59,8 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
   }
 
   const previousStateHistoryItem = undoRedoState.past[undoRedoState.past.length - 1];
-  const previousDecompressedState = getRootStateFromCompressedState(previousStateHistoryItem.compressedState);
-  const currentCompressedRootState = getCompressedStateFromRootState(currentRootState);
+  const previousDecompressedState = getRootStateFromCompressedSlices(previousStateHistoryItem.compressedSlices, currentRootState);
+  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState);
 
   // Change current state to previous state
   dispatch(setStateAfterUndoRedo(previousDecompressedState));
@@ -68,7 +68,7 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
   // Store current state to state history
   dispatch(
     updateStateHistoryOnUndoClick({
-      compressedState: currentCompressedRootState,
+      compressedSlices: currentCompressedSlices,
     })
   );
 
@@ -97,8 +97,8 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
   }
 
   const nextStateHistoryItem = undoRedoState.future[0];
-  const nextDecompressedState = getRootStateFromCompressedState(nextStateHistoryItem.compressedState);
-  const currentCompressedRootState = getCompressedStateFromRootState(currentRootState);
+  const nextDecompressedState = getRootStateFromCompressedSlices(nextStateHistoryItem.compressedSlices, currentRootState);
+  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState);
 
   // Change current state to next state
   dispatch(setStateAfterUndoRedo(nextDecompressedState));
@@ -106,7 +106,7 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
   // Store current state to state history
   dispatch(
     updateStateHistoryOnRedoClick({
-      compressedState: currentCompressedRootState,
+      compressedSlices: currentCompressedSlices,
     })
   );
 

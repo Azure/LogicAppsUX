@@ -20,10 +20,12 @@ export const usePanelStyles = makeStyles({
   },
   body: {
     padding: '0 20px',
-    overflow: 'hidden',
+    overflow: 'auto',
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    maxHeight: 'calc(100vh - 130px)',
+    minHeight: '80vh',
   },
   footer: {
     padding: `${tokens.spacingVerticalM} 20px`,

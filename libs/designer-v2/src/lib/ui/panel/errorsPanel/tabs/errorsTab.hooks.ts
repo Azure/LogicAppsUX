@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { MessageLevel } from '@microsoft/designer-ui';
+import { createSelector } from '@reduxjs/toolkit';
 
 import type { RootState } from '../../../../core';
 import { useAllConnectionErrors } from '../../../../core/state/operation/operationSelector';
@@ -11,19 +12,23 @@ import { useFlowErrors } from '../../../../core/state/workflow/workflowSelectors
 
 /// Input Parameters
 
-export const useAllInputErrors = () =>
-  useSelector((state: RootState): Record<string, string[]> => {
+const getAllInputErrors = createSelector(
+  [(state: RootState) => state.operations.inputParameters],
+  (inputParameters): Record<string, string[]> => {
     const validationErrorToShow: Record<string, string[]> = {};
-    for (const node of Object.entries(state.operations.inputParameters) ?? []) {
-      const errors = Object.values(node[1].parameterGroups).flatMap((parameterGroup) =>
+    for (const [nodeId, nodeParams] of Object.entries(inputParameters ?? {})) {
+      const errors = Object.values(nodeParams.parameterGroups).flatMap((parameterGroup) =>
         Object.values(parameterGroup.parameters).flatMap((parameter) => parameter.validationErrors ?? [])
       );
       if (errors.length > 0) {
-        validationErrorToShow[node[0]] = errors;
+        validationErrorToShow[nodeId] = errors;
       }
     }
     return validationErrorToShow;
-  });
+  }
+);
+
+export const useAllInputErrors = () => useSelector(getAllInputErrors);
 
 const useNumInputErrors = () => {
   const allInputErrors = useAllInputErrors();
@@ -82,14 +87,15 @@ export const useNumFlowErrors = () => {
 
 // Custom errors from host
 
-export const useHostCheckerErrors = () =>
-  useSelector((state: RootState): Record<string, Record<string, ErrorMessage[]>> => {
+const getHostCheckerErrors = createSelector(
+  [(state: RootState) => state.workflow.hostData.errorMessages, (state: RootState) => state.workflow.nodesMetadata],
+  (errorMessages, nodesMetadata): Record<string, Record<string, ErrorMessage[]>> => {
     const errorMessagesToShow: Record<string, Record<string, ErrorMessage[]>> = {};
 
-    const errorMessages = state.workflow.hostData.errorMessages[MessageLevel.Error] || [];
-    errorMessages.forEach((message: ErrorMessage) => {
+    const messages = errorMessages[MessageLevel.Error] || [];
+    messages.forEach((message: ErrorMessage) => {
       // Check if a node with matching id at least exists
-      if (!(message.nodeId in state.workflow.nodesMetadata)) {
+      if (!(message.nodeId in nodesMetadata)) {
         return;
       }
 
@@ -97,7 +103,10 @@ export const useHostCheckerErrors = () =>
       (messagesBySubtitle[message.subtitle] ||= []).push(message);
     });
     return errorMessagesToShow;
-  });
+  }
+);
+
+export const useHostCheckerErrors = () => useSelector(getHostCheckerErrors);
 
 const useNumHostCheckerErrors = () => {
   const hostCheckerErrors = useHostCheckerErrors();

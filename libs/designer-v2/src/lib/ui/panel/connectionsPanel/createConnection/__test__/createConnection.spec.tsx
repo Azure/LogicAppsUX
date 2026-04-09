@@ -469,8 +469,8 @@ describe('ui/createConnection', () => {
 
       // Connector description and submit button text helps validate correct values for isUsingOAuth
       expect(findConnectorConnectionDescription(createConnectionContainer)).toBeUndefined();
-      // MultiAuth input in the DOM helps validate the value of isMultiAuth
-      expect(findMultiAuthInput(createConnection)).toBeDefined();
+      // Single-value parameter set should NOT show multi-auth dropdown (auto-selected)
+      expect(findMultiAuthInput(createConnection)).toBeUndefined();
       // Not having LegacyMultiAuth input fields helps validate the value of showLegacyMultiAuth
       expect(findLegacyMultiAuth(createConnection)).toBeUndefined();
     });
@@ -490,8 +490,8 @@ describe('ui/createConnection', () => {
 
       // Connector description and submit button text helps validate correct values for isUsingOAuth
       expect(findConnectorConnectionDescription(createConnectionContainer)).toBeUndefined();
-      // MultiAuth input in the DOM helps validate the value of isMultiAuth
-      expect(findMultiAuthInput(createConnection)).toBeDefined();
+      // Single-value parameter set should NOT show multi-auth dropdown (auto-selected)
+      expect(findMultiAuthInput(createConnection)).toBeUndefined();
       // Not having LegacyMultiAuth input fields helps validate the value of showLegacyMultiAuth
       expect(findLegacyMultiAuth(createConnection)).toBeUndefined();
     });
@@ -511,8 +511,8 @@ describe('ui/createConnection', () => {
 
       // Connector description and submit button text helps validate correct values for isUsingOAuth
       expect(findConnectorConnectionDescription(createConnectionContainer)).toBeUndefined();
-      // MultiAuth input in the DOM helps validate the value of isMultiAuth
-      expect(findMultiAuthInput(createConnection)).toBeDefined();
+      // Single-value parameter set should NOT show multi-auth dropdown (auto-selected)
+      expect(findMultiAuthInput(createConnection)).toBeUndefined();
       // Not having LegacyMultiAuth input fields helps validate the value of showLegacyMultiAuth
       expect(findLegacyMultiAuth(createConnection)).toBeUndefined();
     });

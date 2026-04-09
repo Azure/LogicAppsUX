@@ -157,7 +157,7 @@ describe('ConsumptionOperationManifestService', () => {
       expect(msiSet).toBeDefined();
       expect(msiSet?.parameters.identity).toBeDefined();
       expect(msiSet?.parameters.identity.type).toBe('string');
-      expect(msiSet?.parameters.identity.uiDefinition.displayName).toBe('Managed Identity');
+      expect(msiSet?.parameters.identity.uiDefinition.displayName).toBe('Managed identity');
     });
 
     test('should define audience parameter in ManagedServiceIdentity parameter set', () => {

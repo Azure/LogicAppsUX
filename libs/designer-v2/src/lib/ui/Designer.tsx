@@ -1,4 +1,4 @@
-import { openPanel, useNodesInitialized } from '../core';
+import { openPanel, useNodesInitialized, onUndoClick, onRedoClick, useCanUndo, useCanRedo } from '../core';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import {
   useMonitoringView,
@@ -89,6 +89,27 @@ export const Designer = (props: DesignerProps) => {
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
     { enabled: isVSCode }
+  );
+
+  const canUndo = useCanUndo();
+  const canRedo = useCanRedo();
+
+  useHotkeys(
+    ['meta+z', 'ctrl+z'],
+    (event) => {
+      event.preventDefault();
+      dispatch(onUndoClick());
+    },
+    { enabled: !isReadOnly && canUndo }
+  );
+
+  useHotkeys(
+    ['meta+y', 'ctrl+y', 'meta+shift+z', 'ctrl+shift+z'],
+    (event) => {
+      event.preventDefault();
+      dispatch(onRedoClick());
+    },
+    { enabled: !isReadOnly && canRedo }
   );
 
   const isMonitoringView = useMonitoringView();

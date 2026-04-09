@@ -54,6 +54,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [operationParameterValues]
   );
 
+  const isMicrosoftFoundry = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'MicrosoftFoundry', true),
+    [operationParameterValues]
+  );
+
   const isAPIMGenAIGateway = useMemo(
     () => equals(operationParameterValues?.['agentModelType'] ?? '', 'APIMGenAIGateway', true),
     [operationParameterValues]
@@ -68,7 +73,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     isFetching: isFetchingAccount,
     data: allCognitiveServiceAccounts,
     refetch: refetchServiceAccounts,
-  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI);
+  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI || isMicrosoftFoundry);
 
   const {
     isFetching: isFetchingAPIManagementAccounts,

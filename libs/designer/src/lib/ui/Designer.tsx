@@ -28,6 +28,7 @@ import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { AgentChat } from './panel/agentChat/agentChat';
 import DesignerReactFlow from './DesignerReactFlow';
 import MonitoringTimeline from './MonitoringTimeline';
+import { DesignerDialog } from './DesignerDialog';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -142,6 +143,7 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
+          <DesignerDialog containerRef={designerContainerRef} />
           {hasChat ? <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} /> : null}
           <div
             className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}

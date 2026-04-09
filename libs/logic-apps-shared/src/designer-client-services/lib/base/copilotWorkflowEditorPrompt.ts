@@ -141,6 +141,7 @@ You MUST respond with a valid JSON object in one of these two formats.
 IMPORTANT:
 - Your response must be **strict JSON** — do NOT include any JavaScript-style comments (// or /* */). JSON does not support comments and they will cause parsing failures.
 - Do NOT wrap the response in markdown code fences (no \`\`\`json or \`\`\`). Return ONLY the raw JSON object.
+- Double quotes inside JSON string values MUST be escaped as \\" — for example: {"text":"He said \\"hello\\""}. Unescaped inner quotes will break JSON parsing and cause the response to fail.
 - Use compact JSON with no unnecessary whitespace, newlines, or indentation. The response is machine-parsed, not human-read.
 
 ### For workflow modifications:

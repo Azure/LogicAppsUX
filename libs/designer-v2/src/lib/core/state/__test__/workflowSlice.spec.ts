@@ -584,5 +584,35 @@ describe('workflow slice reducers', () => {
       expect((newState.nodesMetadata.test_node.runData as any)?.inputs).toEqual(newInputs);
       expect((newState.nodesMetadata.test_node.runData as any)?.outputs).toEqual(newOutputs);
     });
+
+    it('should write empty inputs/outputs when no existing data exists (regular actions like Response)', () => {
+      const state = { ...initialState };
+
+      state.nodesMetadata = {
+        Response: {
+          graphId: 'root',
+          isRoot: false,
+          isTrigger: false,
+          runData: {
+            status: 'Succeeded',
+          },
+        } as NodeMetadata,
+      };
+
+      const action = {
+        type: initializeInputsOutputsBinding.fulfilled.type,
+        payload: {
+          nodeId: 'Response',
+          inputs: {},
+          outputs: {},
+        },
+      };
+
+      const newState = reducer(state, action);
+
+      // Empty {} should be written (not left as undefined) so the UI shows "No outputs" instead of a download link
+      expect((newState.nodesMetadata.Response.runData as any)?.inputs).toEqual({});
+      expect((newState.nodesMetadata.Response.runData as any)?.outputs).toEqual({});
+    });
   });
 });

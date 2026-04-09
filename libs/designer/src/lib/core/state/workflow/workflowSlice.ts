@@ -831,15 +831,18 @@ export const workflowSlice = createSlice({
       const existingInputs = nodeMetadata.runData?.inputs;
       const existingOutputs = nodeMetadata.runData?.outputs;
 
-      // Don't overwrite existing inputs/outputs with empty values
-      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData)
+      // Only preserve existing inputs/outputs when they have content
+      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData).
+      // For regular actions, empty {} is a valid result and should be written.
       const hasNewInputs = inputs && Object.keys(inputs).length > 0;
       const hasNewOutputs = outputs && Object.keys(outputs).length > 0;
+      const hasExistingInputs = existingInputs && Object.keys(existingInputs).length > 0;
+      const hasExistingOutputs = existingOutputs && Object.keys(existingOutputs).length > 0;
 
       const nodeRunData = {
         ...nodeMetadata.runData,
-        inputs: hasNewInputs ? inputs : existingInputs,
-        outputs: hasNewOutputs ? outputs : existingOutputs,
+        inputs: hasNewInputs || !hasExistingInputs ? inputs : existingInputs,
+        outputs: hasNewOutputs || !hasExistingOutputs ? outputs : existingOutputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });

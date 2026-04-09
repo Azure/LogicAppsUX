@@ -74,7 +74,7 @@ export const getConnectionToAssign = (
   azureOpenAIConnections: Connection[],
   foundryConnections: Connection[]
 ): Connection | null => {
-  const connections = modelType === 'AzureOpenAI' ? azureOpenAIConnections : foundryConnections;
+  const connections = modelType === 'AzureOpenAI' || modelType === 'MicrosoftFoundry' ? azureOpenAIConnections : foundryConnections;
 
   if (connections.length === 0) {
     return null;

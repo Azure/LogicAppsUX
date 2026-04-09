@@ -17,7 +17,7 @@ export const storeStateToUndoRedoHistory = createAsyncThunk(
   'storeStateToUndoRedoHistory',
   async (action: AnyAction, { dispatch, getState }): Promise<void> => {
     const rootState = getState() as RootState;
-    const stateHistoryLimit = rootState.designerOptions.hostOptions.maxStateHistorySize || CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
+    const stateHistoryLimit = rootState.designerOptions.hostOptions.maxStateHistorySize ?? CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
     const idReplacements = rootState.workflow.idReplacements;
 
     if (shouldSkipSavingStateToHistory(action, stateHistoryLimit, idReplacements)) {

@@ -9,7 +9,13 @@ import {
   type WorkflowParameter,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
-import { TemplatesView, TemplatesDesignerProvider, templateStore, resetStateOnResourceChange } from '@microsoft/logic-apps-designer';
+import {
+  TemplatesView,
+  TemplatesDesignerProvider,
+  templateStore,
+  resetStateOnResourceChange,
+  parseWorkflowParameterValue,
+} from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -39,7 +45,6 @@ import { getDataForConsumption, WorkflowUtility } from '../../designer/app/Azure
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
-import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 
 const workflowIdentifier = '#workflowname#';
 
@@ -133,9 +138,20 @@ export const TemplatesConsumption = () => {
   };
 
   const services = useMemo(
-    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick, queryClient),
+    () =>
+      getServices(
+        workflowId!,
+        workflow as any,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        onBlankWorkflowClick,
+        queryClient,
+        workflowData
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, language]
+    [workflowId, workflow, tenantId, canonicalLocation, language, workflowData]
   );
 
   const resourceDetails = new ArmParser(workflowId ?? '');
@@ -252,7 +268,8 @@ const getServices = (
   location: string,
   locale: string | undefined,
   onBlankWorkflowClick: () => Promise<void>,
-  queryClient?: any
+  queryClient?: any,
+  workflowData?: any
 ): any => {
   const baseUrl = 'https://management.azure.com';
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
@@ -273,7 +290,7 @@ const getServices = (
   });
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))

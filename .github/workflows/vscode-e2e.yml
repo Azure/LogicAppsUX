@@ -3,8 +3,34 @@ name: VS Code Extension E2E Tests
 on:
   push:
     branches: [main, dev/*, hotfix/*]
+    paths:
+      - 'apps/vs-code-designer/**'
+      - 'apps/vs-code-react/**'
+      - 'libs/vscode-extension/**'
+      - 'libs/designer/**'
+      - 'libs/designer-ui/**'
+      - 'libs/designer-v2/**'
+      - 'libs/logic-apps-shared/**'
+      - 'libs/data-mapper-v2/**'
+      - 'libs/data-mapper/**'
+      - 'libs/chatbot/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/vscode-e2e.yml'
   pull_request:
     branches: [main, dev/*, hotfix/*]
+    paths:
+      - 'apps/vs-code-designer/**'
+      - 'apps/vs-code-react/**'
+      - 'libs/vscode-extension/**'
+      - 'libs/designer/**'
+      - 'libs/designer-ui/**'
+      - 'libs/designer-v2/**'
+      - 'libs/logic-apps-shared/**'
+      - 'libs/data-mapper-v2/**'
+      - 'libs/data-mapper/**'
+      - 'libs/chatbot/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/vscode-e2e.yml'
 
 concurrency:
   group: vscode-e2e-${{ github.head_ref || github.ref }}

@@ -110,7 +110,7 @@ export const CreateGroup = ({
   );
 
   return (
-    <Dialog open={true} onOpenChange={onDismiss}>
+    <Dialog open={true} onOpenChange={onDismiss} modalType="alert">
       <DialogSurface>
         <DialogBody>
           <DialogTitle

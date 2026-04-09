@@ -174,7 +174,7 @@ export const KnowledgeHubWizard = ({ onUploadArtifact }: { onUploadArtifact: Upl
   }
 
   return (
-    <div style={{ height: '93vh' }}>
+    <div style={{ height: '98.5vh' }}>
       <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
         <DescriptionWithLink text={INTL_TEXT.description} linkText={INTL_TEXT.learnMore} linkUrl="" />
         <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>

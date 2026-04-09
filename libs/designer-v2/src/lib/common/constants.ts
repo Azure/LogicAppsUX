@@ -174,7 +174,7 @@ export default {
   DEFAULT_FREQUENCY_VALUE: 'Second',
   DEFAULT_INTERVAL_VALUE: 15,
   DEFAULT_KEY_PREFIX: '$',
-  DEFAULT_MAX_STATE_HISTORY_SIZE: 0,
+  DEFAULT_MAX_STATE_HISTORY_SIZE: 20,
   DEFAULT_SCHEMA: SCHEMA.GA_20160601,
   EDITOR: {
     AGENT_INSTRUCTION: 'agentinstruction',
@@ -987,17 +987,6 @@ export default {
     INPUT: '-inputchannel-',
     OUTPUT: '-outputchannel-',
   },
-  SUPPORTED_AGENT_MODELS: [
-    'gpt-5',
-    'gpt-5-chat',
-    'gpt-4.1',
-    'gpt-4',
-    'gpt-4o',
-    'gpt-35-turbo',
-    'gpt-4.1-mini',
-    'gpt-4.1-nano',
-    'gpt-4o-mini',
-  ],
   HANDOFF_TOOL_NAME_MAX_LENGTH: 64,
   CONNECTION_IDS: {
     ACA_SESSION: '/serviceProviders/acasession',

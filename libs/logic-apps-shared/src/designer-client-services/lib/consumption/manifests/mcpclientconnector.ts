@@ -326,11 +326,13 @@ export default {
             identity: {
               type: 'string',
               uiDefinition: {
-                displayName: 'Managed Identity',
+                displayName: 'Managed identity',
                 constraints: {
+                  required: 'false',
+                  editor: 'identitypicker',
                   propertyPath: ['authentication'],
                 },
-                description: 'The managed identity resource ID',
+                description: 'The managed identity to use for authentication',
               },
             },
             audience: {

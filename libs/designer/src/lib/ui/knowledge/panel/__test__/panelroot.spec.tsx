@@ -16,7 +16,7 @@ const mockAddFilePanel = vi.fn();
 const mockCreateConnectionPanel = vi.fn();
 const mockEditConnectionPanel = vi.fn();
 
-vi.mock('../addfile', () => ({
+vi.mock('../files/addfile', () => ({
   AddFilePanel: (props: any) => {
     mockAddFilePanel(props);
     return (

@@ -24,6 +24,7 @@ import {
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
   validateWorkflowStandard,
+  uploadFileToKnowledgeHub,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -54,6 +55,7 @@ import {
   BaseCognitiveServiceService,
   RoleService,
   resolveConnectionsReferences,
+  BaseResourceService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -872,6 +874,7 @@ const getDesignerServices = (
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAgentUrl: () => fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? ''),
+    getLogicAppId: () => siteResourceId,
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
@@ -899,6 +902,7 @@ const getDesignerServices = (
       const workflowId: string = response.headers['x-ms-workflow-run-id'];
       dispatch(changeRunId(workflowId));
     },
+    uploadFileArtifact: uploadFileToKnowledgeHub,
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
@@ -978,6 +982,7 @@ const getDesignerServices = (
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
 
   return {
     appService,
@@ -1000,6 +1005,7 @@ const getDesignerServices = (
     cognitiveServiceService,
     connectionParameterEditorService,
     editorService,
+    resourceService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

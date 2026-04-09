@@ -50,7 +50,7 @@ describe('CreateGroup Component', () => {
 
   // Helper to get elements within the non-hidden dialog
   const getDialog = () => {
-    const dialogs = screen.getAllByRole('dialog');
+    const dialogs = screen.getAllByRole('alertdialog');
     return dialogs.find((d) => !d.closest('[aria-hidden="true"]'))!;
   };
 

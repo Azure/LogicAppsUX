@@ -1,7 +1,5 @@
-import type { AppDispatch } from '../../../../../core/state/knowledge/store';
 import type { KnowledgeConnectionTabProps, KnowledgeTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { selectPanelTab } from '../../../../../core/state/knowledge/panelSlice';
 import Constants from '../../../../../common/constants';
 import {
   ConnectionParameterEditorService,
@@ -23,7 +21,7 @@ import { comboboxStyles, dropdownStyles, getSelectedAuthIndex, secretFieldStyles
 
 export const modelTab = (
   intl: IntlShape,
-  dispatch: AppDispatch,
+  selectTab: (tabId: string) => void,
   connectionParameters: ConnectionParameterSets,
   connectionParameterValues: Record<string, any>,
   setConnectionParameterValues: (values: Record<string, any>) => void,
@@ -56,7 +54,7 @@ export const modelTab = (
           description: 'Button text for moving to the previous tab in the connection panel',
         }),
         onClick: () => {
-          dispatch(selectPanelTab(Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS));
+          selectTab(Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS);
         },
       },
       {

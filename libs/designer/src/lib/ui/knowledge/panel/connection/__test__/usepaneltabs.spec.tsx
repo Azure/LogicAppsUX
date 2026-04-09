@@ -21,12 +21,6 @@ vi.mock('../tabs/model', () => ({
   modelTab: (...args: any[]) => mockModelTab(...args),
 }));
 
-// Mock selectPanelTab action
-const mockSelectPanelTab = vi.fn((tab: string) => ({ type: 'knowledgeHubPanel/selectPanelTab', payload: tab }));
-vi.mock('../../../../../core/state/knowledge/panelSlice', () => ({
-  selectPanelTab: (tab: string) => mockSelectPanelTab(tab),
-}));
-
 // Mock connection utilities
 const mockCreateOrUpdateConnection = vi.fn().mockResolvedValue({});
 const mockCosmosDbParams = {
@@ -45,6 +39,9 @@ vi.mock('../../../../../core/knowledge/utils/connection', () => ({
 }));
 
 describe('useCreateConnectionPanelTabs Hook', () => {
+  const mockSelectTab = vi.fn();
+  const mockClose = vi.fn();
+
   const createMockStore = () => {
     return configureStore({
       reducer: {
@@ -58,6 +55,10 @@ describe('useCreateConnectionPanelTabs Hook', () => {
       <IntlProvider locale="en">{children}</IntlProvider>
     </Provider>
   );
+
+  const renderUseCreateConnectionPanelTabs = () => {
+    return renderHook(() => useCreateConnectionPanelTabs({ selectTab: mockSelectTab, close: mockClose }), { wrapper });
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,21 +81,21 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('returns an array of tabs', () => {
-    const { result } = renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    const { result } = renderUseCreateConnectionPanelTabs();
 
     expect(result.current).toBeInstanceOf(Array);
     expect(result.current).toHaveLength(2);
   });
 
   it('calls basicsTab with 7 arguments', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     expect(mockBasicsTab).toHaveBeenCalledTimes(1);
     expect(mockBasicsTab.mock.calls[0]).toHaveLength(7);
   });
 
   it('passes cosmosDbConnectionParameters to basicsTab', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const basicsTabCall = mockBasicsTab.mock.calls[0];
     // arg[2] is cosmosDbConnectionParameters
@@ -102,7 +103,7 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('passes isCreating=false to basicsTab initially', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const basicsTabCall = mockBasicsTab.mock.calls[0];
     // arg[5] is isCreating
@@ -110,7 +111,7 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('passes correct props object to basicsTab', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const basicsTabCall = mockBasicsTab.mock.calls[0];
     const props = basicsTabCall[6];
@@ -122,14 +123,14 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('calls modelTab with 7 arguments', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     expect(mockModelTab).toHaveBeenCalledTimes(1);
     expect(mockModelTab.mock.calls[0]).toHaveLength(7);
   });
 
   it('passes openAIConnectionParameters to modelTab', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const modelTabCall = mockModelTab.mock.calls[0];
     // arg[2] is openAIConnectionParameters
@@ -137,7 +138,7 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('passes isCreating=false to modelTab initially', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const modelTabCall = mockModelTab.mock.calls[0];
     // arg[5] is isCreating
@@ -145,7 +146,7 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('passes correct props object to modelTab', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const modelTabCall = mockModelTab.mock.calls[0];
     const props = modelTabCall[6];
@@ -157,21 +158,21 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('returns basicsTab as first tab', () => {
-    const { result } = renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    const { result } = renderUseCreateConnectionPanelTabs();
 
     expect(result.current[0].id).toBe('BASICS');
     expect(result.current[0].title).toBe('Basics');
   });
 
   it('returns modelTab as second tab', () => {
-    const { result } = renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    const { result } = renderUseCreateConnectionPanelTabs();
 
     expect(result.current[1].id).toBe('MODEL');
     expect(result.current[1].title).toBe('Model');
   });
 
-  it('handleMoveToModel dispatches selectPanelTab with MODEL', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+  it('handleMoveToModel calls selectTab with MODEL', () => {
+    renderUseCreateConnectionPanelTabs();
 
     // Get the onPrimaryButtonClick from basicsTab call
     const basicsTabCall = mockBasicsTab.mock.calls[0];
@@ -180,11 +181,11 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     // Call the onPrimaryButtonClick (handleMoveToModel)
     basicsTabProps.onPrimaryButtonClick();
 
-    expect(mockSelectPanelTab).toHaveBeenCalledWith('MODEL');
+    expect(mockSelectTab).toHaveBeenCalledWith('MODEL');
   });
 
   it('handleCreate calls createOrUpdateConnection', async () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     // Get the onPrimaryButtonClick from modelTab call
     const modelTabCall = mockModelTab.mock.calls[0];
@@ -198,8 +199,21 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     expect(mockCreateOrUpdateConnection).toHaveBeenCalled();
   });
 
+  it('handleCreate calls close after successful connection creation', async () => {
+    renderUseCreateConnectionPanelTabs();
+
+    const modelTabCall = mockModelTab.mock.calls[0];
+    const modelTabProps = modelTabCall[6];
+
+    await act(async () => {
+      await modelTabProps.onPrimaryButtonClick();
+    });
+
+    expect(mockClose).toHaveBeenCalled();
+  });
+
   it('memoizes tabs array when dependencies do not change', () => {
-    const { result, rerender } = renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    const { result, rerender } = renderUseCreateConnectionPanelTabs();
 
     const firstResult = result.current;
     rerender();
@@ -209,7 +223,7 @@ describe('useCreateConnectionPanelTabs Hook', () => {
   });
 
   it('sets basicsError when moving to model tab with empty values', () => {
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     // Get the onPrimaryButtonClick from basicsTab call
     const basicsTabCall = mockBasicsTab.mock.calls[0];
@@ -219,15 +233,15 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     basicsTabProps.onPrimaryButtonClick();
 
     // The subsequent render should pass error to basicsTab
-    // Check that basicsTab was called again or check the tabStatusIcon
-    expect(mockSelectPanelTab).toHaveBeenCalledWith('MODEL');
+    // Check that selectTab was called
+    expect(mockSelectTab).toHaveBeenCalledWith('MODEL');
   });
 
   it('handles create error gracefully', async () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     mockCreateOrUpdateConnection.mockRejectedValueOnce(new Error('Create failed'));
 
-    renderHook(() => useCreateConnectionPanelTabs(), { wrapper });
+    renderUseCreateConnectionPanelTabs();
 
     const modelTabCall = mockModelTab.mock.calls[0];
     const modelTabProps = modelTabCall[6];
@@ -238,5 +252,38 @@ describe('useCreateConnectionPanelTabs Hook', () => {
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error creating connection:', expect.any(Error));
     consoleErrorSpy.mockRestore();
+  });
+
+  it('does not call close when create fails', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    mockCreateOrUpdateConnection.mockRejectedValueOnce(new Error('Create failed'));
+
+    renderUseCreateConnectionPanelTabs();
+
+    const modelTabCall = mockModelTab.mock.calls[0];
+    const modelTabProps = modelTabCall[6];
+
+    await act(async () => {
+      await modelTabProps.onPrimaryButtonClick();
+    });
+
+    expect(mockClose).not.toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('passes close function to basicsTab', () => {
+    renderUseCreateConnectionPanelTabs();
+
+    const basicsTabCall = mockBasicsTab.mock.calls[0];
+    // arg[1] is close function
+    expect(basicsTabCall[1]).toBe(mockClose);
+  });
+
+  it('passes selectTab function to modelTab', () => {
+    renderUseCreateConnectionPanelTabs();
+
+    const modelTabCall = mockModelTab.mock.calls[0];
+    // arg[1] is selectTab function
+    expect(modelTabCall[1]).toBe(mockSelectTab);
   });
 });

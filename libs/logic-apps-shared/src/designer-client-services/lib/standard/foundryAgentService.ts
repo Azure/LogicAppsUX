@@ -273,7 +273,7 @@ function extractVersionsData(response: unknown): FoundryAgentVersion[] {
 
   // Wrapped shape: { result: { data: [...] } }
   const result = resp['result'] as Record<string, unknown> | undefined;
-  if (Array.isArray(result?.['data'])) {
+  if (result && Array.isArray(result['data'])) {
     return result['data'] as FoundryAgentVersion[];
   }
 

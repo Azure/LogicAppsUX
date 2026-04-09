@@ -556,7 +556,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint);
     },
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowAndArtifactsData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
