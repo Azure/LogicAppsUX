@@ -577,7 +577,8 @@ export const ParameterSection = ({
   // ignore stale selectedFoundryVersion/storedVersion during the transition render.
   const agentSwitchPendingRef = useRef(false);
 
-  // Derive the effective version: explicit selection > stored param > latest available
+  // Derive the effective version: explicit selection > latest available.
+  // foundryVersionName is a static service version ("v2"), NOT the agent version number.
   const effectiveFoundryVersion = useMemo(() => {
     if (agentSwitchPendingRef.current) {
       // Agent just switched — ignore stale selections, wait for new versions to load
@@ -590,14 +591,10 @@ export const ParameterSection = ({
       return selectedFoundryVersion;
     }
     if (foundryVersions?.length) {
-      const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName')?.value?.[0]?.value;
-      if (storedVersion && foundryVersions.some((v) => String(v.version) === storedVersion)) {
-        return storedVersion;
-      }
       return String(foundryVersions[0].version);
     }
     return undefined;
-  }, [selectedFoundryVersion, foundryVersions, nodeInputs.parameterGroups, group.id]);
+  }, [selectedFoundryVersion, foundryVersions]);
 
   // Persist the derived version into state AND sync to workflow parameters on initial load
   // or after an agent switch (hasInitializedVersion is reset when the agent changes).
@@ -614,11 +611,6 @@ export const ParameterSection = ({
     // Only overwrite selectedFoundryVersion if we don't already have a restored pending version
     if (!existingPendingUpdateRef.current?.selectedVersion) {
       setSelectedFoundryVersion(effectiveFoundryVersion);
-    }
-
-    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
-    if (versionParam) {
-      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, effectiveFoundryVersion);
     }
 
     // Sync model and instructions from the selected version to local state.
@@ -658,17 +650,11 @@ export const ParameterSection = ({
       consumeVersionRefresh(nodeId);
 
       const latestVersion = String(foundryVersions[0].version);
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
-      const storedVersion = versionParam?.value?.[0]?.value;
-
-      if (latestVersion !== storedVersion) {
+      if (latestVersion !== selectedFoundryVersion) {
         setSelectedFoundryVersion(latestVersion);
-        if (versionParam) {
-          dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, latestVersion);
-        }
       }
     }
-  }, [foundryVersions, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
+  }, [foundryVersions, nodeId, selectedFoundryVersion]);
 
   // Reset pending overrides when the user switches to a different agent (not on initial load).
   // On remount, selectedFoundryAgent?.id goes undefined → actual ID as React Query resolves;
@@ -697,13 +683,8 @@ export const ParameterSection = ({
       hasInitializedVersion.current = false;
       // Signal effectiveFoundryVersion to ignore stale state during the transition
       agentSwitchPendingRef.current = true;
-
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
-      if (versionParam) {
-        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, '');
-      }
     }
-  }, [isAgentServiceConnection, rawFoundryAgentName, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
+  }, [isAgentServiceConnection, rawFoundryAgentName, nodeId]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -820,11 +801,6 @@ export const ParameterSection = ({
         });
       }
 
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
-      if (versionParam) {
-        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, version.version);
-      }
-
       // Sync deploymentId to the version's model
       if (model) {
         const deploymentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.deploymentId');
@@ -873,7 +849,7 @@ export const ParameterSection = ({
     (currentDependencies: typeof dependencies, parameterId: string, _agentId?: string, _agentName?: string | null) => {
       currentDependencies.inputs ??= {};
 
-      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: 'v1' }];
+      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: 'v2' }];
 
       for (const { key, default: defaultValue } of foundryDependentKeys) {
         const dependency = buildDependentParam(parameterId, key, defaultValue);
