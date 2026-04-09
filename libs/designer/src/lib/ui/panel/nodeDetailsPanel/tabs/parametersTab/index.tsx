@@ -478,15 +478,9 @@ export const ParameterSection = ({
     };
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
-  // Let Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
-  const foundryRbacReady = true;
-
-  const {
-    data: foundryAgentsForNode,
-    isFetching: foundryAgentsFetching,
-    refetch: refetchFoundryAgents,
-  } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
-  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
+  // Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
+  const { data: foundryAgentsForNode, isFetching: foundryAgentsFetching, refetch: refetchFoundryAgents } = useFoundryAgentsForNode(nodeId);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
 
@@ -623,9 +617,9 @@ export const ParameterSection = ({
 
     // Write version name (e.g. "v7") to workflow parameter for the backend
     const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
-    const selectedVersionData2 = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
-    if (versionParam && selectedVersionData2) {
-      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${selectedVersionData2.version}`);
+    const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
+    if (versionParam && selectedVersionData) {
+      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${selectedVersionData.version}`);
     }
 
     // Sync model and instructions from the selected version to local state.
@@ -634,7 +628,6 @@ export const ParameterSection = ({
       existingPendingUpdateRef.current?.updates?.model !== undefined ||
       existingPendingUpdateRef.current?.updates?.instructions !== undefined;
     if (!hasPendingEdits) {
-      const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
       const model = selectedVersionData?.definition?.model;
       const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
 
@@ -878,7 +871,7 @@ export const ParameterSection = ({
   );
 
   const addFoundryDependentUpdates = useCallback(
-    (currentDependencies: typeof dependencies, parameterId: string, _agentId?: string, _agentName?: string | null) => {
+    (currentDependencies: typeof dependencies, parameterId: string) => {
       currentDependencies.inputs ??= {};
 
       const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
@@ -900,7 +893,7 @@ export const ParameterSection = ({
 
       if (foundryAgentParam) {
         const updatedDependencies = clone(dependencies);
-        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id, newAgent.id, newAgent.name);
+        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id);
 
         dispatch(
           updateParameterAndDependencies({
@@ -1100,12 +1093,7 @@ export const ParameterSection = ({
       // Auto-populate dependent fields when foundryAgentName changes
       const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
       if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
-        const selectedAgentName = value?.length ? value[0]?.value : undefined;
-        const selectedAgent = selectedAgentName
-          ? foundryAgentsForNode.find((agent) => agent.name === selectedAgentName || agent.id === selectedAgentName)
-          : undefined;
-
-        addFoundryDependentUpdates(updatedDependencies, id, selectedAgentName, selectedAgent?.name);
+        addFoundryDependentUpdates(updatedDependencies, id);
       }
 
       // Final dispatch to update parameter and dependencies

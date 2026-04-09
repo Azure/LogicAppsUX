@@ -479,15 +479,9 @@ export const ParameterSection = ({
     };
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
-  // Let Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
-  const foundryRbacReady = true;
-
-  const {
-    data: foundryAgentsForNode,
-    isFetching: foundryAgentsFetching,
-    refetch: refetchFoundryAgents,
-  } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
-  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
+  // Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
+  const { data: foundryAgentsForNode, isFetching: foundryAgentsFetching, refetch: refetchFoundryAgents } = useFoundryAgentsForNode(nodeId);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
 
@@ -567,7 +561,7 @@ export const ParameterSection = ({
     if (!agentName) {
       return undefined;
     }
-    return foundryAgentsForNode.find((a) => (a.name ?? a.id) === agentName);
+    return foundryAgentsForNode.find((a) => a.name === agentName || a.id === agentName);
   }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
 
   // Fetch versions for the selected Foundry agent
@@ -635,7 +629,6 @@ export const ParameterSection = ({
       existingPendingUpdateRef.current?.updates?.model !== undefined ||
       existingPendingUpdateRef.current?.updates?.instructions !== undefined;
     if (!hasPendingEdits) {
-      const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
       const model = selectedVersionData?.definition?.model;
       const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
 
@@ -879,7 +872,7 @@ export const ParameterSection = ({
   );
 
   const addFoundryDependentUpdates = useCallback(
-    (currentDependencies: typeof dependencies, parameterId: string, _agentId?: string, _agentName?: string | null) => {
+    (currentDependencies: typeof dependencies, parameterId: string) => {
       currentDependencies.inputs ??= {};
 
       const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
@@ -901,7 +894,7 @@ export const ParameterSection = ({
 
       if (foundryAgentParam) {
         const updatedDependencies = clone(dependencies);
-        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id, newAgent.id, newAgent.name);
+        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id);
 
         dispatch(
           updateParameterAndDependencies({
