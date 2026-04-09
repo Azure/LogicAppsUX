@@ -550,6 +550,8 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
   let authenticationType = existingConnectionInput?.Authentication ?? 'None';
+  let authIdentity: string | undefined = existingConnectionInput?.Identity;
+  let authAudience: string | undefined = existingConnectionInput?.Audience;
 
   if (connectionId) {
     try {
@@ -558,6 +560,8 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
       if (parameterValues) {
         mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
         authenticationType = parameterValues.authenticationType ?? authenticationType;
+        authIdentity = parameterValues.identity ?? authIdentity;
+        authAudience = parameterValues.audience ?? authAudience;
       }
     } catch {
       // Keep existing values when connection lookup fails.
@@ -570,11 +574,18 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   let inputs: Record<string, any> | undefined;
   if (mcpServerUrl) {
+    const connectionBlock: Record<string, any> = {
+      Authentication: authenticationType,
+      McpServerUrl: mcpServerUrl,
+    };
+    if (authIdentity) {
+      connectionBlock.Identity = authIdentity;
+    }
+    if (authAudience) {
+      connectionBlock.Audience = authAudience;
+    }
     inputs = {
-      Connection: {
-        Authentication: authenticationType,
-        McpServerUrl: mcpServerUrl,
-      },
+      Connection: connectionBlock,
       ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
     };
   } else if (hasParameters) {

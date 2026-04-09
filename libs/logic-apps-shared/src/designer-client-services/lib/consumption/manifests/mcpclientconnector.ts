@@ -323,6 +323,16 @@ export default {
                 description: 'Server URL',
               },
             },
+            identity: {
+              type: 'string',
+              uiDefinition: {
+                displayName: 'Managed Identity',
+                constraints: {
+                  propertyPath: ['authentication'],
+                },
+                description: 'The managed identity resource ID',
+              },
+            },
             audience: {
               type: 'string',
               uiDefinition: {
