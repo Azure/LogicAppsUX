@@ -89,4 +89,33 @@ describe('agentloop – Foundry V2 regression', () => {
       }
     });
   });
+
+  describe('knowledgeBaseName excludes V2', () => {
+    const kbVisValues = inputs.knowledgeBaseName['x-ms-input-dependencies'].parameters[0].values as string[];
+
+    it('should NOT include FoundryAgentServiceV2', () => {
+      expect(kbVisValues).not.toContain('FoundryAgentServiceV2');
+    });
+
+    it('should include AzureOpenAI and other non-V2 model types', () => {
+      expect(kbVisValues).toContain('AzureOpenAI');
+      expect(kbVisValues).toContain('MicrosoftFoundry');
+    });
+  });
+
+  describe('foundryVersionName contract', () => {
+    const field = inputs.foundryVersionName;
+
+    it('should have internal visibility (hidden from UI)', () => {
+      expect(field['x-ms-visibility']).toBe('internal');
+    });
+
+    it('default value should match v{N} pattern', () => {
+      expect(field.default).toMatch(/^v\d+$/);
+    });
+
+    it('should be a string type field', () => {
+      expect(field.type).toBe('string');
+    });
+  });
 });

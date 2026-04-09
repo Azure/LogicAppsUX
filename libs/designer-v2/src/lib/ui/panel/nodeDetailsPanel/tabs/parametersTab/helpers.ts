@@ -17,7 +17,7 @@ export const isAgentConnectorAndDeploymentId = (id: string, key: string): boolea
   return AgentUtils.isConnector(id) && AgentUtils.isDeploymentOrModelIdParameter(key);
 };
 
-export const isAgentConnectorAndFoundryAgentId = (id: string, key: string): boolean => {
+export const isAgentConnectorAndFoundryAgentName = (id: string, key: string): boolean => {
   return AgentUtils.isConnector(id) && AgentUtils.isFoundryAgentNameParameter(key);
 };
 

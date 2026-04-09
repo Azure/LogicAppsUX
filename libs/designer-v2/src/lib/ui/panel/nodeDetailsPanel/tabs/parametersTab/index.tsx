@@ -134,7 +134,7 @@ import {
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
-  isAgentConnectorAndFoundryAgentId,
+  isAgentConnectorAndFoundryAgentName,
 } from './helpers';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -882,7 +882,7 @@ export const ParameterSection = ({
     (currentDependencies: typeof dependencies, parameterId: string, _agentId?: string, _agentName?: string | null) => {
       currentDependencies.inputs ??= {};
 
-      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: '' }];
+      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
 
       for (const { key, default: defaultValue } of foundryDependentKeys) {
         const dependency = buildDependentParam(parameterId, key, defaultValue);
@@ -1113,11 +1113,11 @@ export const ParameterSection = ({
       }
 
       // Auto-populate dependent fields when foundryAgentName changes
-      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
+      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
       if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
         updatedDependencies.inputs ??= {};
 
-        const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: '' }];
+        const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
 
         for (const { key, default: defaultValue } of foundryDependentKeys) {
           const dependency = buildDependentParam(key, defaultValue);
@@ -1474,7 +1474,7 @@ export const ParameterSection = ({
           isDynamic: dynamicData !== undefined,
           isLoading:
             dynamicData?.status === DynamicLoadStatus.LOADING ||
-            (isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', param.parameterName ?? '') && !foundryAgentsForNode),
+            (isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', param.parameterName ?? '') && !foundryAgentsForNode),
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
@@ -1880,7 +1880,7 @@ export const getEditorAndOptions = (
   }
 
   // Handle Foundry agent picker combobox
-  const isFoundryAgent = isAgentConnectorAndFoundryAgentId(operationInfo?.connectorId, parameter.parameterName);
+  const isFoundryAgent = isAgentConnectorAndFoundryAgentName(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isFoundryAgent) {
     const options = foundryAgents.map((agent: any) => ({
       value: agent.name ?? agent.id,

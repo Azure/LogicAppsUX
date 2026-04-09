@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
-  isAgentConnectorAndFoundryAgentId,
+  isAgentConnectorAndFoundryAgentName,
   isAgentConnectorAndAgentModel,
   agentModelTypeParameterKey,
   getConnectionToAssign,
@@ -99,17 +99,17 @@ describe('isAgentConnectorAndDeploymentId', () => {
   });
 });
 
-describe('isAgentConnectorAndFoundryAgentId', () => {
+describe('isAgentConnectorAndFoundryAgentName', () => {
   it('should return true for agent connector with foundryAgentName', () => {
-    expect(isAgentConnectorAndFoundryAgentId('/connectionProviders/agent', 'foundryAgentName')).toBe(true);
+    expect(isAgentConnectorAndFoundryAgentName('/connectionProviders/agent', 'foundryAgentName')).toBe(true);
   });
 
   it('should return false for non-agent connector', () => {
-    expect(isAgentConnectorAndFoundryAgentId('other/connector', 'foundryAgentName')).toBe(false);
+    expect(isAgentConnectorAndFoundryAgentName('other/connector', 'foundryAgentName')).toBe(false);
   });
 
   it('should return false for agent connector with non-foundry parameter', () => {
-    expect(isAgentConnectorAndFoundryAgentId('/connectionProviders/agent', 'deploymentId')).toBe(false);
+    expect(isAgentConnectorAndFoundryAgentName('/connectionProviders/agent', 'deploymentId')).toBe(false);
   });
 });
 
