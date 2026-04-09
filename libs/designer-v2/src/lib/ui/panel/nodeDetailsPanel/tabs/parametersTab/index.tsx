@@ -1468,7 +1468,9 @@ export const ParameterSection = ({
           editorOptions,
           tokenEditor: true,
           isDynamic: dynamicData !== undefined,
-          isLoading: dynamicData?.status === DynamicLoadStatus.LOADING,
+          isLoading:
+            dynamicData?.status === DynamicLoadStatus.LOADING ||
+            (isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', param.parameterName ?? '') && !foundryAgentsForNode),
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
@@ -1558,7 +1560,7 @@ export const ParameterSection = ({
 
   // Show a loading state while RBAC roles are being set up or agents are loading.
   // Keeps messaging simple — no mention of RBAC/permissions. Retries happen silently in the background.
-  if (isAgentServiceConnection && isFoundryLoading && !foundryAgentsForNode?.length) {
+  if (isAgentServiceConnection && !foundryAgentsForNode) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
@@ -1606,7 +1608,7 @@ export const ParameterSection = ({
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
-  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && foundryAgentsFetching) {
+  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && !foundryAgentsForNode) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
@@ -1722,6 +1724,7 @@ export const ParameterSection = ({
       return (
         <>
           <SettingsSection
+            key={`${group.id}-agents-${foundryAgentsForNode?.length ?? 0}`}
             id={group.id}
             nodeId={nodeId}
             sectionName={group.description}
