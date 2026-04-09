@@ -870,21 +870,10 @@ export const ParameterSection = ({
     [nodeInputs.parameterGroups, group.id]
   );
 
-  const addFoundryDependentUpdates = useCallback(
-    (currentDependencies: typeof dependencies, parameterId: string) => {
-      currentDependencies.inputs ??= {};
-
-      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
-
-      for (const { key, default: defaultValue } of foundryDependentKeys) {
-        const dependency = buildDependentParam(parameterId, key, defaultValue);
-        if (dependency) {
-          currentDependencies.inputs[key] = dependency;
-        }
-      }
-    },
-    [buildDependentParam]
-  );
+  const addFoundryDependentUpdates = useCallback((_currentDependencies: typeof dependencies, _parameterId: string) => {
+    // foundryVersionName is written by the version init effect after
+    // versions load — no eager default needed here.
+  }, []);
 
   const handleCreateFoundryAgent = useCallback(
     async (options: CreateFoundryAgentOptions) => {

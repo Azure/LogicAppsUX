@@ -847,45 +847,10 @@ export const ParameterSection = ({
     ]
   );
 
-  const buildDependentParam = useCallback(
-    (parameterId: string, key: string, value?: string) => {
-      const parameterGroup = nodeInputs.parameterGroups[group.id];
-      const targetParam = parameterGroup?.parameters.find((param) => equals(key, param.parameterKey, true));
-      const resolvedValue = value ?? targetParam?.schema?.default;
-      if (resolvedValue === undefined || resolvedValue === null) {
-        return undefined;
-      }
-
-      return {
-        definition: targetParam?.schema,
-        dependencyType: 'AgentSchema' as const,
-        dependentParameters: { [parameterId]: { isValid: true } },
-        parameter: {
-          key,
-          name: targetParam?.parameterName ?? '',
-          type: targetParam?.type ?? '',
-          value: [createLiteralValueSegment(resolvedValue)],
-        },
-      };
-    },
-    [nodeInputs.parameterGroups, group.id]
-  );
-
-  const addFoundryDependentUpdates = useCallback(
-    (currentDependencies: typeof dependencies, parameterId: string) => {
-      currentDependencies.inputs ??= {};
-
-      const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
-
-      for (const { key, default: defaultValue } of foundryDependentKeys) {
-        const dependency = buildDependentParam(parameterId, key, defaultValue);
-        if (dependency) {
-          currentDependencies.inputs[key] = dependency;
-        }
-      }
-    },
-    [buildDependentParam]
-  );
+  const addFoundryDependentUpdates = useCallback((_currentDependencies: typeof dependencies, _parameterId: string) => {
+    // foundryVersionName is written by the version init effect after
+    // versions load — no eager default needed here.
+  }, []);
 
   const handleCreateFoundryAgent = useCallback(
     async (options: CreateFoundryAgentOptions) => {
@@ -1105,20 +1070,8 @@ export const ParameterSection = ({
         }
       }
 
-      // Auto-populate dependent fields when foundryAgentName changes
-      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
-      if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
-        updatedDependencies.inputs ??= {};
-
-        const foundryDependentKeys = [{ key: 'inputs.$.foundryVersionName', default: undefined }];
-
-        for (const { key, default: defaultValue } of foundryDependentKeys) {
-          const dependency = buildDependentParam(key, defaultValue);
-          if (dependency) {
-            updatedDependencies.inputs[key] = dependency;
-          }
-        }
-      }
+      // foundryVersionName is written by the version init effect after
+      // versions load — no eager default needed here.
 
       // Final dispatch to update parameter and dependencies
       dispatch(
