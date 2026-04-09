@@ -40,10 +40,10 @@ describe('agentloop – Foundry V2 regression', () => {
       expect(visValues).toEqual(['FoundryAgentServiceV2']);
     });
 
-    it('foundryVersionName is defined with visibility dependency on FoundryAgentServiceV2 and default "v1"', () => {
+    it('foundryVersionName is defined with visibility dependency on FoundryAgentServiceV2 and no default', () => {
       const field = inputs.foundryVersionName;
       expect(field).toBeDefined();
-      expect(field.default).toBe('v1');
+      expect(field.default).toBeUndefined();
       const visValues = field['x-ms-input-dependencies'].parameters[0].values;
       expect(visValues).toEqual(['FoundryAgentServiceV2']);
     });
@@ -110,8 +110,8 @@ describe('agentloop – Foundry V2 regression', () => {
       expect(field['x-ms-visibility']).toBe('internal');
     });
 
-    it('default value should match v{N} pattern', () => {
-      expect(field.default).toMatch(/^v\d+$/);
+    it('should have no default value (set dynamically from API)', () => {
+      expect(field.default).toBeUndefined();
     });
 
     it('should be a string type field', () => {

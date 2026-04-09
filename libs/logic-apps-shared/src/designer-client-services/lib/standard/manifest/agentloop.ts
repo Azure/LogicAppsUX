@@ -96,7 +96,6 @@ export default {
           type: 'string',
           title: 'Agent version name',
           description: 'The version name of the Foundry agent (e.g. v1, v7).',
-          default: 'v1',
           'x-ms-visibility': 'internal',
           'x-ms-input-dependencies': {
             type: 'visibility',
