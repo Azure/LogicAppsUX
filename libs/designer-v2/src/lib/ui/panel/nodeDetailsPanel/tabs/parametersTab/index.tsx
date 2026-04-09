@@ -679,20 +679,20 @@ export const ParameterSection = ({
   // that transition must NOT clear the pending edits we just restored from the module store.
   // Track the raw foundryAgentName parameter value to reliably detect agent switches,
   // since selectedFoundryAgent depends on the React Query agents list loading.
-  const rawFoundryAgentId = useMemo(
+  const rawFoundryAgentName = useMemo(
     () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value as string | undefined,
     [nodeInputs.parameterGroups, group.id]
   );
-  const prevRawAgentIdRef = useRef<string | undefined>(rawFoundryAgentId);
+  const prevRawAgentNameRef = useRef<string | undefined>(rawFoundryAgentName);
   useEffect(() => {
     if (!isAgentServiceConnection) {
       return;
     }
-    const prevId = prevRawAgentIdRef.current;
-    prevRawAgentIdRef.current = rawFoundryAgentId;
+    const prevId = prevRawAgentNameRef.current;
+    prevRawAgentNameRef.current = rawFoundryAgentName;
 
-    // Only clear when the agent param truly changes from one ID to another
-    if (prevId && rawFoundryAgentId && prevId !== rawFoundryAgentId) {
+    // Only clear when the agent param truly changes from one name to another
+    if (prevId && rawFoundryAgentName && prevId !== rawFoundryAgentName) {
       setPendingFoundryModel(undefined);
       setPendingFoundryInstructions(undefined);
       setSelectedFoundryVersion(undefined);
@@ -709,7 +709,7 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, '');
       }
     }
-  }, [isAgentServiceConnection, rawFoundryAgentId, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
+  }, [isAgentServiceConnection, rawFoundryAgentName, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -1608,7 +1608,7 @@ export const ParameterSection = ({
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
-  if (isAgentServiceConnection && rawFoundryAgentId && !selectedFoundryAgent && foundryAgentsLoading) {
+  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && foundryAgentsLoading) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );

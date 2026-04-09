@@ -47,6 +47,16 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(true);
   });
 
+  it('should return true when connector is agent and agentModelType is FoundryAgentService (V1 backward compat)', () => {
+    const groups = makeParameterGroups(groupId, [
+      {
+        parameterKey: agentModelTypeParameterKey,
+        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentService' }],
+      },
+    ]);
+    expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(true);
+  });
+
   it('should return false when agentModelType is AzureOpenAI', () => {
     const groups = makeParameterGroups(groupId, [
       {
