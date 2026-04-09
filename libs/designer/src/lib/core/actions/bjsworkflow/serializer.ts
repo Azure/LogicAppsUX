@@ -560,8 +560,12 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
       if (parameterValues) {
         mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
         authenticationType = parameterValues.authenticationType ?? authenticationType;
-        authIdentity = parameterValues.identity ?? authIdentity;
-        authAudience = parameterValues.audience ?? authAudience;
+        authIdentity = Object.prototype.hasOwnProperty.call(parameterValues, 'identity')
+          ? (parameterValues.identity ?? undefined)
+          : undefined;
+        authAudience = Object.prototype.hasOwnProperty.call(parameterValues, 'audience')
+          ? (parameterValues.audience ?? undefined)
+          : undefined;
       }
     } catch {
       // Keep existing values when connection lookup fails.
