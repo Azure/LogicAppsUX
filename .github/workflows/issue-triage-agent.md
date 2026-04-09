@@ -86,7 +86,8 @@ This is a monorepo with the following structure. Use this to map issues to compo
 | `libs/designer-v2/` | Next-gen designer (v2) — same architecture, newer implementation | — |
 | `libs/designer-ui/` | Stateless shared UI components (editors, panels, cards, tokens) | — |
 | `libs/data-mapper-v2/` | Visual data transformation tool | `Data Mapper` |
-| `libs/logic-apps-shared/` | Common utilities: HTTP client, connector models, expression parser, services | `Connections` (if connection-related) |
+| `libs/data-mapper/` | Legacy data mapper (v1, superseded by v2) | `Data Mapper` |
+| `libs/logic-apps-shared/` | Common utilities: HTTP client, connector models, expression parser, services, copilot | `Connections` (if connection-related) |
 | `libs/vscode-extension/` | VS Code extension shared utilities | `VSCode` |
 | `libs/chatbot/` | AI chatbot integration | `Agentic` |
 | `libs/a2a-core/` | A2A protocol chat client SDK | `Agentic` |
@@ -102,11 +103,19 @@ This is a monorepo with the following structure. Use this to map issues to compo
 | `ui/panel/nodeDetailsPanel/tabs/monitoringTab/` | Run monitoring views (inputs/outputs) | `Monitoring` |
 | `core/utils/parameters/` | Parameter handling, dynamic schema loading, coercion | — |
 | `core/utils/swagger/` | Swagger/OpenAPI connector initialization | `Connections` |
+| `ui/mcp/` | MCP (Model Context Protocol) resource integration | `MCP` |
+| `ui/templates/` | Template gallery and wizards | `Templates` |
+| `core/actions/bjsworkflow/agent*` | Agent connector and workflow support | `Agentic` |
+| `designer-client-services/lib/copilot/` | Copilot workflow editing service | `Agentic` |
+
+**Detailed library descriptions** are available in `.github/lib-descriptions/`.
+Read these files for deeper context about each library's responsibilities,
+boundaries, and common misattribution patterns.
 
 ### State Management Pattern
 - **Redux Toolkit** with feature-based slices in `core/state/`
 - **React Query** for server state with 24-hour cache
-- Key slices: `workflowSlice`, `operationMetadataSlice`, `connectionSlice`, `panelSlice`, `designerViewSlice`
+- Key slices: `workflowSlice`, `operationMetadataSlice`, `connectionSlice`, `panelSlice`, `designerViewSlice`, `notesSlice` (v2), `unitTestSlice` (v2)
 
 ## Issue Template Fields
 
@@ -122,6 +131,55 @@ Issues come from structured templates. Parse these fields for quick classificati
 ### Feature Requests contain:
 - **Priority dropdown**: `P1 - Critical` through `P4 - Low`
 - **Feature Area**: `Designer Canvas`, `Operation/Action Configuration`, `Templates`, `Data Mapper`, `Monitoring/Run History`, `Performance`, `Accessibility`, `VS Code Extension`, `Other`
+
+## Critical Thinking Rules
+
+Issue reporters are end users and sometimes developers — their descriptions of
+**symptoms** are generally reliable, but their **diagnoses** often are not. Apply
+these rules throughout your analysis:
+
+### Do NOT trust reporter root-cause claims
+- Reporters often speculate about what caused a bug ("this is a caching issue",
+  "the serializer is broken", "it's a race condition"). **Treat these as hypotheses,
+  not facts.** Always verify independently by searching the codebase.
+- If the reporter names a specific file, function, or component as the source of
+  the problem, **confirm it exists and is actually relevant** before including it
+  in your analysis. Reporters frequently misidentify which component is responsible.
+- Never echo the reporter's diagnosis back as your own finding. If you cannot
+  independently verify a claim through code search, say so explicitly.
+
+### Independently verify regression claims
+- Reporters may claim "this used to work" when the feature never worked that way,
+  or when they changed their own workflow definition.
+- Only apply the `regression` label if you find **concrete evidence** in the codebase:
+  recent commits that changed the relevant code path, a previously-passing test that
+  now fails, or a closed issue that fixed the same area and may have regressed.
+- If you cannot find evidence either way, note the reporter's claim but do NOT apply
+  the `regression` label. Instead, flag it for developer verification.
+
+### Separate symptoms from causes
+- Focus your analysis on **observable symptoms** (error messages, incorrect UI state,
+  unexpected behavior) rather than the reporter's theory about why it happens.
+- Search the codebase for the **symptoms** (error strings, UI component names,
+  API endpoints) rather than the reporter's suggested cause.
+
+### Verify component attribution
+- Reporters often blame the wrong layer. A "designer bug" may actually be a service
+  response issue. A "connection error" may be a parameter validation failure.
+- Use the library description files in `.github/lib-descriptions/` to understand
+  what each library is responsible for, then map the symptoms to the correct component.
+- When the reporter says "this is a [component] issue", verify by checking whether
+  the symptoms actually originate from that component's code.
+
+### Confidence signaling
+- Use **"reporter claims"** or **"reporter suggests"** when referencing unverified
+  assertions from the issue body.
+- Use **"code search confirms"** or **"verified in codebase"** only when you have
+  actually found supporting evidence.
+- Use **"unable to verify"** when you searched but found no supporting evidence.
+- If your analysis relies on an unverified reporter claim, explicitly flag it:
+  *"Note: This root cause is based on the reporter's claim and has not been
+  independently verified through code search."*
 
 ## Your Analysis Process
 
@@ -159,16 +217,33 @@ corrections, the calibration search confirms your accuracy is on track.
 ### Step 1: Classify the Issue Type
 Read the issue title, body, and labels. Determine:
 - Is this a **bug report** or **feature request**? (Check template fields and existing labels)
-- What **component** is affected? (Map to repo directory using the architecture table above)
+- What **observable symptoms** are described? (Separate from the reporter's diagnosis)
 - What **SKU** is involved? (Consumption, Standard, VS Code)
 - What **severity** did the reporter assign?
 
+**Important:** At this stage, note any claims the reporter makes about root cause,
+affected component, or regression status — but do NOT accept them as fact yet.
+These will be verified in the next steps.
+
+### Step 1.5: Read Library Descriptions
+Read the relevant library description files from `.github/lib-descriptions/` to
+understand the architecture of components that might be involved. These files
+describe each library's purpose, key subsystems, common issue patterns, and
+boundaries with other libraries.
+
+Use this context to:
+- Map the reported symptoms to the **correct** library
+- Understand the data flow path that could produce the reported symptoms
+- Identify which library boundaries the issue might cross
+
 ### Step 2: Search the Codebase
-For **bug reports**, search for code related to the symptoms:
-- Use `grep` to find error messages, function names, or keywords mentioned in the issue
-- Use `find` to locate relevant files in the identified component directory
+For **bug reports**, search for code related to the **symptoms**:
+- Use `grep` to find error messages, UI text, or observable behavior mentioned in the issue
+- Use `find` to locate relevant files in the component directory identified by your analysis
 - Use GitHub code search to find symbol definitions and references
 - Look for recent changes in related files that might have caused a regression
+- If the reporter suggests a specific root cause, search for evidence that supports
+  OR contradicts it — report what you actually find
 
 For **feature requests**, identify:
 - Where in the codebase the feature would be implemented
@@ -200,7 +275,10 @@ Apply ONE primary component label based on the affected code area.
 Only apply a label if you are reasonably confident. When in doubt, omit.
 
 #### Additional Labels
-- Apply `regression` if the reporter confirms it previously worked
+- Apply `regression` ONLY if you find corroborating evidence in the codebase (recent
+  changes to the relevant code path, reverted fixes, etc.). If the reporter claims
+  regression but you cannot verify it, note their claim in the comment but do NOT
+  apply the label.
 - Apply `Needs More Info` if the report lacks reproduction steps AND no workflow JSON
 - Apply `Cosmetic` if the issue is purely visual with no functional impact
 - Apply `error messaging` if the issue is about unclear/wrong error text
@@ -223,8 +301,10 @@ For **bug reports**:
 - `path/to/other.ts:L123-L145` — [one-line description of relevance]
 
 ### Probable Root Cause
-[2-4 sentences explaining what likely causes this based on the code you found.
-Reference specific functions, state slices, or data flow paths.]
+[2-4 sentences explaining what likely causes this based on your code search findings.
+Reference specific functions, state slices, or data flow paths that you verified exist.
+If the reporter suggested a root cause, state whether your search supports or
+contradicts it. Never simply restate the reporter's diagnosis as your own finding.]
 
 ### Suggested Investigation
 1. [First thing a developer should check]
@@ -268,3 +348,6 @@ Mention relevant patterns, services, or state slices.]
 8. **Backend vs UX**: If the issue is clearly a backend/runtime problem (not in this repo), note that explicitly in the comment and skip deep code search. Still add relevant labels.
 9. **Keep comments under 500 words** — actionable brevity over exhaustive analysis.
 10. **Never include secrets, tokens, or PII** from the issue or codebase in your comment.
+11. **Never parrot the reporter's root-cause diagnosis.** Your analysis must be based on code search, not on restating what the reporter wrote. If you cannot independently verify a claim, say so.
+12. **Read library description files** from `.github/lib-descriptions/` before mapping symptoms to components. Use these to understand library boundaries and responsibilities.
+13. **Distinguish symptoms from diagnosis** in your comment. The "Probable Root Cause" section must reflect your findings.

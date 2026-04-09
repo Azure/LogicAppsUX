@@ -45,7 +45,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
   const isAgentServiceConnection = useMemo(
-    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentService', true),
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentServiceV2', true),
     [operationParameterValues]
   );
 

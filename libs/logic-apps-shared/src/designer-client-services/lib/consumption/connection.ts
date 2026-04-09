@@ -51,6 +51,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         'tenant',
         'authority',
         'audience',
+        'identity',
         'pfx',
         'identity',
       ];

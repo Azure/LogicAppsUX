@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { getMockedInitialRootState } from '../../../__test__/mock-root-state';
 import {
-  getCompressedStateFromRootState,
+  getCompressedSlicesFromRootState,
   getEditedPanelNode,
   getEditedPanelTab,
-  getRootStateFromCompressedState,
+  getRootStateFromCompressedSlices,
   shouldSkipSavingStateToHistory,
 } from '../undoredo';
 import { updateParameterAndDependencies } from '../parameters/helper';
@@ -16,10 +16,14 @@ import { replaceId } from '../../state/workflow/workflowSlice';
 describe('undo redo utils', () => {
   it('should compress and decompress root state', () => {
     const mockedInitialRootState = getMockedInitialRootState();
-    const compressedState = getCompressedStateFromRootState(mockedInitialRootState);
-    const decompressedState = getRootStateFromCompressedState(compressedState);
-    const initialRootStateSize = Buffer.from(JSON.stringify(mockedInitialRootState)).byteLength;
-    expect(compressedState.byteLength).toBeLessThan(initialRootStateSize);
+    const compressedSlices = getCompressedSlicesFromRootState(mockedInitialRootState);
+    const decompressedState = getRootStateFromCompressedSlices(compressedSlices, mockedInitialRootState);
+
+    // All slices should be present as compressed Uint8Arrays
+    expect(compressedSlices.connections).toBeInstanceOf(Uint8Array);
+    expect(compressedSlices.workflow).toBeInstanceOf(Uint8Array);
+
+    // Roundtrip should produce equivalent state (stripped fields merged back from same state)
     expect(decompressedState).toEqual({
       connections: mockedInitialRootState.connections,
       customCode: mockedInitialRootState.customCode,
@@ -30,7 +34,30 @@ describe('undo redo utils', () => {
       tokens: mockedInitialRootState.tokens,
       workflow: mockedInitialRootState.workflow,
       workflowParameters: mockedInitialRootState.workflowParameters,
+      notes: mockedInitialRootState.notes,
     });
+  });
+
+  it('should reuse compressed bytes for unchanged slices on second capture', () => {
+    const mockedState = getMockedInitialRootState();
+    const firstCapture = getCompressedSlicesFromRootState(mockedState);
+    const secondCapture = getCompressedSlicesFromRootState(mockedState);
+
+    // Same references because slices haven't changed
+    expect(secondCapture.connections).toBe(firstCapture.connections);
+    expect(secondCapture.workflow).toBe(firstCapture.workflow);
+    expect(secondCapture.operations).toBe(firstCapture.operations);
+  });
+
+  it('should fall back to current state for missing slices during decompression', () => {
+    const mockedState = getMockedInitialRootState();
+    // Partial snapshot: only workflow slice present
+    const partialSlices = { workflow: getCompressedSlicesFromRootState(mockedState).workflow! };
+    const restored = getRootStateFromCompressedSlices(partialSlices, mockedState);
+
+    // Missing slices fall back to current state
+    expect(restored.connections).toBe(mockedState.connections);
+    expect(restored.operations).toBe(mockedState.operations);
   });
 
   it.each([

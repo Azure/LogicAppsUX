@@ -130,12 +130,12 @@ const updateAgentParametersForConnection = (
   if (!agentModelTypeValue) {
     const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'FoundryAgentService';
+      agentModelTypeValue = 'FoundryAgentServiceV2';
     } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
       agentModelTypeValue = 'MicrosoftFoundry';
     } else {
       // Default to AzureOpenAI, but preserve other existing valid values
-      // (e.g., 'FoundryAgentService', 'APIMGenAIGateway') that the regex couldn't detect
+      // (e.g., 'FoundryAgentServiceV2', 'APIMGenAIGateway') that the regex couldn't detect
       agentModelTypeValue = 'AzureOpenAI';
       const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
       const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];

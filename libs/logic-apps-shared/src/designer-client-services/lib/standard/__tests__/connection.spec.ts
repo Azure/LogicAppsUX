@@ -262,7 +262,7 @@ describe('StandardConnectionService', () => {
       expect(capturedConnectionData.connectionData.type).toBe('model');
     });
 
-    it('should NOT append /models for FoundryAgentService connections', async () => {
+    it('should NOT append /models for FoundryAgentServiceV2 connections', async () => {
       InitLoggerService([mockLoggerService]);
       let capturedConnectionData: any;
       const writeConnection = vi.fn().mockImplementation((data: any) => {
@@ -294,7 +294,7 @@ describe('StandardConnectionService', () => {
 
       expect(writeConnection).toHaveBeenCalledOnce();
       expect(capturedConnectionData.connectionData.resourceId).toBe(foundryResourceId);
-      expect(capturedConnectionData.connectionData.type).toBe('FoundryAgentService');
+      expect(capturedConnectionData.connectionData.type).toBe('FoundryAgentServiceV2');
     });
 
     it('should NOT append /models for APIM connections', async () => {
@@ -353,7 +353,7 @@ describe('Connection regex patterns', () => {
       expect(microsoftFoundryModelsRegex.test('/some/path/models/deployments')).toBe(false);
     });
 
-    it('should not match FoundryAgentService resourceIds', () => {
+    it('should not match FoundryAgentServiceV2 resourceIds', () => {
       expect(
         microsoftFoundryModelsRegex.test(
           '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/projects/myproject'
@@ -363,7 +363,7 @@ describe('Connection regex patterns', () => {
   });
 
   describe('foundryServiceConnectionRegex', () => {
-    it('should match FoundryAgentService resourceIds with /accounts/x/projects/y', () => {
+    it('should match FoundryAgentServiceV2 resourceIds with /accounts/x/projects/y', () => {
       expect(
         foundryServiceConnectionRegex.test(
           '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/projects/myproject'

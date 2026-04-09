@@ -23,7 +23,7 @@ describe('AgentUtils', () => {
     it('should map all manifest values to their display names', () => {
       expect(AgentUtils.ManifestToDisplayName.AzureOpenAI).toBe('Azure OpenAI');
       expect(AgentUtils.ManifestToDisplayName.MicrosoftFoundry).toBe('Foundry Models');
-      expect(AgentUtils.ManifestToDisplayName.FoundryAgentService).toBe('Foundry project');
+      expect(AgentUtils.ManifestToDisplayName.FoundryAgentServiceV2).toBe('Foundry project');
       expect(AgentUtils.ManifestToDisplayName.APIMGenAIGateway).toBe('APIM Gen AI Gateway');
       expect(AgentUtils.ManifestToDisplayName.V1ChatCompletionsService).toBe('V1 Chat Completions Service');
     });
@@ -204,11 +204,17 @@ describe('getSKUDefaultHostOptions', () => {
 });
 
 describe('AgentUtils.isFoundryAgentIdParameter', () => {
-  it('should return true for foundryAgentId parameter', () => {
+  it('should return true for foundryAgentName parameter', () => {
+    expect(AgentUtils.isFoundryAgentIdParameter('foundryAgentName')).toBe(true);
+  });
+
+  it('should return true for legacy foundryAgentId parameter', () => {
     expect(AgentUtils.isFoundryAgentIdParameter('foundryAgentId')).toBe(true);
   });
 
   it('should be case insensitive', () => {
+    expect(AgentUtils.isFoundryAgentIdParameter('FOUNDRYAGENTNAME')).toBe(true);
+    expect(AgentUtils.isFoundryAgentIdParameter('FoundryAgentName')).toBe(true);
     expect(AgentUtils.isFoundryAgentIdParameter('FOUNDRYAGENTID')).toBe(true);
     expect(AgentUtils.isFoundryAgentIdParameter('FoundryAgentId')).toBe(true);
   });

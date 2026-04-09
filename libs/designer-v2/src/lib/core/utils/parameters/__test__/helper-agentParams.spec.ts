@@ -41,7 +41,7 @@ describe('Parameter validation logic for Agent operations', () => {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'FoundryAgentService', 'APIMGenAIGateway'],
+                values: ['AzureOpenAI', 'FoundryAgentServiceV2', 'APIMGenAIGateway'],
               },
             ],
           },
@@ -301,7 +301,7 @@ describe('Parameter validation logic for Agent operations', () => {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'FoundryAgentService'],
+                values: ['AzureOpenAI', 'FoundryAgentServiceV2'],
               },
             ],
           },

@@ -471,6 +471,13 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
   const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+
+  // For FoundryAgentServiceV2, strip system messages — instructions live on the Foundry agent definition
+  if (inputPathValue?.parameters?.agentModelType === 'FoundryAgentServiceV2' && Array.isArray(inputPathValue?.parameters?.messages)) {
+    inputPathValue.parameters.messages = inputPathValue.parameters.messages.filter(
+      (msg: { role?: string }) => msg.role?.toLowerCase() !== 'system'
+    );
+  }
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
@@ -573,6 +580,8 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
   let authenticationType = existingConnectionInput?.Authentication ?? 'None';
+  let authIdentity: string | undefined = existingConnectionInput?.Identity;
+  let authAudience: string | undefined = existingConnectionInput?.Audience;
 
   if (connectionId) {
     try {
@@ -581,6 +590,12 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
       if (parameterValues) {
         mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
         authenticationType = parameterValues.authenticationType ?? authenticationType;
+        authIdentity = Object.prototype.hasOwnProperty.call(parameterValues, 'identity')
+          ? (parameterValues.identity ?? undefined)
+          : undefined;
+        authAudience = Object.prototype.hasOwnProperty.call(parameterValues, 'audience')
+          ? (parameterValues.audience ?? undefined)
+          : undefined;
       }
     } catch {
       // Keep existing values when connection lookup fails.
@@ -593,11 +608,18 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   let inputs: Record<string, any> | undefined;
   if (mcpServerUrl) {
+    const connectionBlock: Record<string, any> = {
+      Authentication: authenticationType,
+      McpServerUrl: mcpServerUrl,
+    };
+    if (authIdentity) {
+      connectionBlock.Identity = authIdentity;
+    }
+    if (authAudience) {
+      connectionBlock.Audience = authAudience;
+    }
     inputs = {
-      Connection: {
-        Authentication: authenticationType,
-        McpServerUrl: mcpServerUrl,
-      },
+      Connection: connectionBlock,
       ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
     };
   } else if (hasParameters) {

@@ -311,6 +311,106 @@ describe('ConsumptionConnectionService', () => {
       expect(result.authParams.unknownParam).toBeUndefined();
       expect(result.authParams.anotherUnknown).toBeUndefined();
     });
+
+    it('should extract ManagedServiceIdentity parameters including identity', () => {
+      const result = (service as any).extractAuthParameters({
+        name: 'ManagedServiceIdentity',
+        values: {
+          identity: {
+            value: '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity',
+          },
+          audience: { value: 'api://my-mcp-audience' },
+        },
+      });
+
+      expect(result.authenticationType).toBe('ManagedServiceIdentity');
+      expect(result.authParams.identity).toBe(
+        '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity'
+      );
+      expect(result.authParams.audience).toBe('api://my-mcp-audience');
+    });
+
+    it('should extract ManagedServiceIdentity with audience only (system-assigned identity)', () => {
+      const result = (service as any).extractAuthParameters({
+        name: 'ManagedServiceIdentity',
+        values: {
+          audience: { value: 'api://my-mcp-audience' },
+        },
+      });
+
+      expect(result.authenticationType).toBe('ManagedServiceIdentity');
+      expect(result.authParams.identity).toBeUndefined();
+      expect(result.authParams.audience).toBe('api://my-mcp-audience');
+    });
+  });
+
+  describe('createBuiltInMcpConnection with ManagedServiceIdentity', () => {
+    const mcpConnector: Partial<Connector> = {
+      id: 'connectionProviders/mcpclient',
+      type: 'connectionProviders/mcpclient',
+      name: 'mcpclient',
+      properties: {
+        displayName: 'MCP Client',
+        iconUri: 'https://example.com/icon.png',
+        brandColor: '#000000',
+        capabilities: ['builtin'],
+        description: 'MCP Client Connector',
+        generalInformation: {
+          displayName: 'MCP Client',
+          iconUrl: 'https://example.com/icon.png',
+        },
+      },
+    };
+
+    it('should include identity and audience in parameterValues for MSI auth', async () => {
+      const connectionInfo: ConnectionCreationInfo = {
+        displayName: 'msi-mcp-connection',
+        connectionParameters: {
+          serverUrl: { value: 'https://icm-mcp-ppe.azure-api.net/v1/' },
+        },
+        connectionParametersSet: {
+          name: 'ManagedServiceIdentity',
+          values: {
+            identity: {
+              value:
+                '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/XiaoyuAgenticWorkflow',
+            },
+            audience: { value: 'api://icmmcpapi-ppe' },
+          },
+        },
+      };
+
+      const result = await service.createConnection('test-msi-conn', mcpConnector as Connector, connectionInfo);
+
+      expect(result).toBeDefined();
+      expect((result.properties as any).parameterValues.authenticationType).toBe('ManagedServiceIdentity');
+      expect((result.properties as any).parameterValues.identity).toBe(
+        '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/XiaoyuAgenticWorkflow'
+      );
+      expect((result.properties as any).parameterValues.audience).toBe('api://icmmcpapi-ppe');
+      expect((result.properties as any).parameterValues.mcpServerUrl).toBe('https://icm-mcp-ppe.azure-api.net/v1/');
+    });
+
+    it('should store audience without identity for system-assigned MSI', async () => {
+      const connectionInfo: ConnectionCreationInfo = {
+        displayName: 'msi-system-conn',
+        connectionParameters: {
+          serverUrl: { value: 'https://mcp-server.example.com' },
+        },
+        connectionParametersSet: {
+          name: 'ManagedServiceIdentity',
+          values: {
+            audience: { value: 'api://my-audience' },
+          },
+        },
+      };
+
+      const result = await service.createConnection('test-system-msi', mcpConnector as Connector, connectionInfo);
+
+      expect((result.properties as any).parameterValues.authenticationType).toBe('ManagedServiceIdentity');
+      expect((result.properties as any).parameterValues.audience).toBe('api://my-audience');
+      expect((result.properties as any).parameterValues.identity).toBeUndefined();
+    });
   });
 
   describe('getConnector', () => {

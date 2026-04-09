@@ -64,7 +64,7 @@ const initialState: WorkflowLoadingState = {
   suppressDefaultNodeSelect: false,
   hostOptions: {
     displayRuntimeInfo: true,
-    maxStateHistorySize: 0,
+    maxStateHistorySize: 20,
     collapseGraphsByDefault: false,
     enableMultiVariable: true,
   },

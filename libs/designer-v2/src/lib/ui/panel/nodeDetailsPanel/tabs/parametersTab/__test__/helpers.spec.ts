@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
-  isAgentConnectorAndFoundryAgentId,
+  isAgentConnectorAndFoundryAgentName,
   isAgentConnectorAndAgentModel,
   agentModelTypeParameterKey,
   getConnectionToAssign,
@@ -36,11 +36,11 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
   const agentConnectorId = 'connectionProviders/agent';
   const groupId = 'default';
 
-  it('should return true when connector is agent and agentModelType is FoundryAgentService', () => {
+  it('should return true when connector is agent and agentModelType is FoundryAgentServiceV2', () => {
     const groups = makeParameterGroups(groupId, [
       {
         parameterKey: agentModelTypeParameterKey,
-        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentService' }],
+        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentServiceV2' }],
       },
     ]);
     expect(isAgentConnectorAndAgentServiceModel(agentConnectorId, groupId, groups)).toBe(true);
@@ -70,7 +70,7 @@ describe('isAgentConnectorAndAgentServiceModel', () => {
     const groups = makeParameterGroups(groupId, [
       {
         parameterKey: agentModelTypeParameterKey,
-        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentService' }],
+        value: [{ id: '1', type: 'literal' as any, value: 'FoundryAgentServiceV2' }],
       },
     ]);
     expect(isAgentConnectorAndAgentServiceModel('some/otherConnector', groupId, groups)).toBe(false);
@@ -99,17 +99,17 @@ describe('isAgentConnectorAndDeploymentId', () => {
   });
 });
 
-describe('isAgentConnectorAndFoundryAgentId', () => {
-  it('should return true for agent connector with foundryAgentId', () => {
-    expect(isAgentConnectorAndFoundryAgentId('/connectionProviders/agent', 'foundryAgentId')).toBe(true);
+describe('isAgentConnectorAndFoundryAgentName', () => {
+  it('should return true for agent connector with foundryAgentName', () => {
+    expect(isAgentConnectorAndFoundryAgentName('/connectionProviders/agent', 'foundryAgentName')).toBe(true);
   });
 
   it('should return false for non-agent connector', () => {
-    expect(isAgentConnectorAndFoundryAgentId('other/connector', 'foundryAgentId')).toBe(false);
+    expect(isAgentConnectorAndFoundryAgentName('other/connector', 'foundryAgentName')).toBe(false);
   });
 
   it('should return false for agent connector with non-foundry parameter', () => {
-    expect(isAgentConnectorAndFoundryAgentId('/connectionProviders/agent', 'deploymentId')).toBe(false);
+    expect(isAgentConnectorAndFoundryAgentName('/connectionProviders/agent', 'deploymentId')).toBe(false);
   });
 });
 
@@ -148,15 +148,15 @@ describe('getConnectionToAssign', () => {
     expect(result?.id).toBe('azure-1');
   });
 
-  it('should return first foundry connection when modelType is FoundryAgentService', () => {
-    const result = getConnectionToAssign('FoundryAgentService', azureConns, foundryConns);
+  it('should return first foundry connection when modelType is FoundryAgentServiceV2', () => {
+    const result = getConnectionToAssign('FoundryAgentServiceV2', azureConns, foundryConns);
     expect(result?.id).toBe('foundry-1');
   });
 
   it('should return null when no connections available for the model type', () => {
     expect(getConnectionToAssign('AzureOpenAI', [], foundryConns)).toBeNull();
     expect(getConnectionToAssign('MicrosoftFoundry', [], foundryConns)).toBeNull();
-    expect(getConnectionToAssign('FoundryAgentService', azureConns, [])).toBeNull();
+    expect(getConnectionToAssign('FoundryAgentServiceV2', azureConns, [])).toBeNull();
   });
 });
 

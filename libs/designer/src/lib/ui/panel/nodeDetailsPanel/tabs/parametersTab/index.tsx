@@ -134,7 +134,7 @@ import {
   isAgentConnectorAndAgentServiceModel,
   agentModelTypeParameterKey,
   isAgentConnectorAndDeploymentId,
-  isAgentConnectorAndFoundryAgentId,
+  isAgentConnectorAndFoundryAgentName,
 } from './helpers';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -383,7 +383,7 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
 // Stable parameter keys for Foundry-managed fields (not locale-dependent)
 const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
 const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
-const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
+const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentName';
 
 const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
 type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
@@ -478,23 +478,15 @@ export const ParameterSection = ({
     };
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
-  // Gate Foundry proxy queries: don't fire until RBAC assignment has completed (or is unnecessary).
-  const foundryRbacReady = !isAgentServiceConnection || RBAC_READY_STATUSES.has(foundryRbacStatus);
-
-  const {
-    data: foundryAgentsForNode,
-    isLoading: foundryAgentsLoading,
-    isFetching: foundryAgentsFetching,
-    refetch: refetchFoundryAgents,
-  } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
-  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId, foundryRbacReady);
+  // Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
+  const { data: foundryAgentsForNode, isFetching: foundryAgentsFetching, refetch: refetchFoundryAgents } = useFoundryAgentsForNode(nodeId);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const createFoundryAgent = useCreateFoundryAgent(nodeId);
   const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
 
   // Track whether loading has been ongoing long enough to show a hint (new connections may take a minute for RBAC propagation).
   const [showSlowLoadingHint, setShowSlowLoadingHint] = useState(false);
-  const isFoundryLoading =
-    foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching || foundryAgentsLoading;
+  const isFoundryLoading = foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching;
   useEffect(() => {
     if (!isAgentServiceConnection || !isFoundryLoading) {
       setShowSlowLoadingHint(false);
@@ -544,7 +536,7 @@ export const ParameterSection = ({
     [nodeId, rootState.operations.inputParameters]
   );
 
-  // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
+  // Detect if the node already has a foundryAgentName but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
   // Only applies when agentModelType is truly empty (not yet loaded); if it's set to a
   // non-Foundry value (e.g. after switching connections) this must return false.
@@ -556,7 +548,7 @@ export const ParameterSection = ({
     if (agentModelType) {
       return false;
     }
-    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
+    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value;
   }, [isAgentServiceConnection, nodeInputs.parameterGroups, group.id]);
 
   // Derive the currently selected Foundry agent from parameter values
@@ -564,11 +556,11 @@ export const ParameterSection = ({
     if (!isAgentServiceConnection || !foundryAgentsForNode?.length) {
       return undefined;
     }
-    const agentId = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
-    if (!agentId) {
+    const agentNameOrId = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value;
+    if (!agentNameOrId) {
       return undefined;
     }
-    return foundryAgentsForNode.find((a) => a.id === agentId);
+    return foundryAgentsForNode.find((a) => a.name === agentNameOrId || a.id === agentNameOrId);
   }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
 
   // Fetch versions for the selected Foundry agent
@@ -579,7 +571,9 @@ export const ParameterSection = ({
   // ignore stale selectedFoundryVersion/storedVersion during the transition render.
   const agentSwitchPendingRef = useRef(false);
 
-  // Derive the effective version: explicit selection > stored param > latest available
+  // Derive the effective version: explicit selection > stored param > latest available.
+  // foundryVersionName stores the version name (e.g. "v7") for the backend.
+  // The UI state (selectedFoundryVersion) uses the version number (e.g. "7") for dropdown matching.
   const effectiveFoundryVersion = useMemo(() => {
     if (agentSwitchPendingRef.current) {
       // Agent just switched — ignore stale selections, wait for new versions to load
@@ -592,9 +586,12 @@ export const ParameterSection = ({
       return selectedFoundryVersion;
     }
     if (foundryVersions?.length) {
-      const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber')?.value?.[0]?.value;
-      if (storedVersion && foundryVersions.some((v) => String(v.version) === storedVersion)) {
-        return storedVersion;
+      const storedVersionName = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName')?.value?.[0]?.value;
+      if (storedVersionName) {
+        const match = foundryVersions.find((v) => `v${v.version}` === storedVersionName);
+        if (match) {
+          return String(match.version);
+        }
       }
       return String(foundryVersions[0].version);
     }
@@ -618,10 +615,11 @@ export const ParameterSection = ({
       setSelectedFoundryVersion(effectiveFoundryVersion);
     }
 
-    // Write version number to workflow parameter
-    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
-    if (versionParam) {
-      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, effectiveFoundryVersion);
+    // Write version name (e.g. "v7") to workflow parameter for the backend
+    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
+    const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
+    if (versionParam && selectedVersionData) {
+      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${selectedVersionData.version}`);
     }
 
     // Sync model and instructions from the selected version to local state.
@@ -630,7 +628,6 @@ export const ParameterSection = ({
       existingPendingUpdateRef.current?.updates?.model !== undefined ||
       existingPendingUpdateRef.current?.updates?.instructions !== undefined;
     if (!hasPendingEdits) {
-      const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
       const model = selectedVersionData?.definition?.model;
       const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
 
@@ -661,37 +658,35 @@ export const ParameterSection = ({
       consumeVersionRefresh(nodeId);
 
       const latestVersion = String(foundryVersions[0].version);
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
-      const storedVersion = versionParam?.value?.[0]?.value;
-
-      if (latestVersion !== storedVersion) {
+      if (latestVersion !== selectedFoundryVersion) {
         setSelectedFoundryVersion(latestVersion);
+        const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
         if (versionParam) {
-          dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, latestVersion);
+          dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${foundryVersions[0].version}`);
         }
       }
     }
-  }, [foundryVersions, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
+  }, [foundryVersions, nodeInputs.parameterGroups, group.id, nodeId, dispatch, selectedFoundryVersion]);
 
   // Reset pending overrides when the user switches to a different agent (not on initial load).
   // On remount, selectedFoundryAgent?.id goes undefined → actual ID as React Query resolves;
   // that transition must NOT clear the pending edits we just restored from the module store.
-  // Track the raw foundryAgentId parameter value to reliably detect agent switches,
+  // Track the raw foundryAgentName parameter value to reliably detect agent switches,
   // since selectedFoundryAgent depends on the React Query agents list loading.
-  const rawFoundryAgentId = useMemo(
-    () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value as string | undefined,
+  const rawFoundryAgentName = useMemo(
+    () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value as string | undefined,
     [nodeInputs.parameterGroups, group.id]
   );
-  const prevRawAgentIdRef = useRef<string | undefined>(rawFoundryAgentId);
+  const prevRawAgentNameRef = useRef<string | undefined>(rawFoundryAgentName);
   useEffect(() => {
     if (!isAgentServiceConnection) {
       return;
     }
-    const prevId = prevRawAgentIdRef.current;
-    prevRawAgentIdRef.current = rawFoundryAgentId;
+    const prevId = prevRawAgentNameRef.current;
+    prevRawAgentNameRef.current = rawFoundryAgentName;
 
-    // Only clear when the agent param truly changes from one ID to another
-    if (prevId && rawFoundryAgentId && prevId !== rawFoundryAgentId) {
+    // Only clear when the agent param truly changes from one name to another
+    if (prevId && rawFoundryAgentName && prevId !== rawFoundryAgentName) {
       setPendingFoundryModel(undefined);
       setPendingFoundryInstructions(undefined);
       setSelectedFoundryVersion(undefined);
@@ -701,14 +696,14 @@ export const ParameterSection = ({
       // Signal effectiveFoundryVersion to ignore stale state during the transition
       agentSwitchPendingRef.current = true;
 
-      // Clear the stored version parameter in Redux so effectiveFoundryVersion
+      // Clear the stored version parameter so effectiveFoundryVersion
       // falls through to the latest version for the new agent.
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
       if (versionParam) {
         dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, '');
       }
     }
-  }, [isAgentServiceConnection, rawFoundryAgentId, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
+  }, [isAgentServiceConnection, rawFoundryAgentName, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -825,10 +820,10 @@ export const ParameterSection = ({
         });
       }
 
-      // Sync version number to workflow parameter
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      // Sync version name (e.g. "v7") to workflow parameter
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
       if (versionParam) {
-        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, version.version);
+        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${version.version}`);
       }
 
       // Sync deploymentId to the version's model
@@ -875,41 +870,26 @@ export const ParameterSection = ({
     [nodeInputs.parameterGroups, group.id]
   );
 
-  const addFoundryDependentUpdates = useCallback(
-    (currentDependencies: typeof dependencies, parameterId: string, agentId?: string, agentName?: string | null) => {
-      currentDependencies.inputs ??= {};
-
-      const foundryDependentKeys = [
-        { key: 'inputs.$.foundryAgentName', default: agentName ?? agentId },
-        { key: 'inputs.$.foundryAgentVersion', default: 'v2' },
-        { key: 'inputs.$.foundryAgentVersionNumber', default: '' },
-      ];
-
-      for (const { key, default: defaultValue } of foundryDependentKeys) {
-        const dependency = buildDependentParam(parameterId, key, defaultValue);
-        if (dependency) {
-          currentDependencies.inputs[key] = dependency;
-        }
-      }
-    },
-    [buildDependentParam]
-  );
+  const addFoundryDependentUpdates = useCallback((_currentDependencies: typeof dependencies, _parameterId: string) => {
+    // foundryVersionName is written by the version init effect after
+    // versions load — no eager default needed here.
+  }, []);
 
   const handleCreateFoundryAgent = useCallback(
     async (options: CreateFoundryAgentOptions) => {
       const newAgent = await createFoundryAgent.mutateAsync(options);
-      const foundryAgentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId');
+      const foundryAgentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName');
 
       if (foundryAgentParam) {
         const updatedDependencies = clone(dependencies);
-        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id, newAgent.id, newAgent.name);
+        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id);
 
         dispatch(
           updateParameterAndDependencies({
             nodeId,
             groupId: group.id,
             parameterId: foundryAgentParam.id,
-            properties: { value: [createLiteralValueSegment(newAgent.id)] },
+            properties: { value: [createLiteralValueSegment(newAgent.name ?? newAgent.id)] },
             isTrigger,
             operationInfo,
             connectionReference,
@@ -1099,13 +1079,10 @@ export const ParameterSection = ({
         }
       }
 
-      // Auto-populate dependent fields when foundryAgentId changes
-      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
+      // Auto-populate dependent fields when foundryAgentName changes
+      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
       if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
-        const selectedAgentId = value?.length ? value[0]?.value : undefined;
-        const selectedAgent = selectedAgentId ? foundryAgentsForNode.find((agent) => agent.id === selectedAgentId) : undefined;
-
-        addFoundryDependentUpdates(updatedDependencies, id, selectedAgentId, selectedAgent?.name);
+        addFoundryDependentUpdates(updatedDependencies, id);
       }
 
       // Final dispatch to update parameter and dependencies
@@ -1454,7 +1431,9 @@ export const ParameterSection = ({
           editorOptions,
           tokenEditor: true,
           isDynamic: dynamicData !== undefined,
-          isLoading: dynamicData?.status === DynamicLoadStatus.LOADING,
+          isLoading:
+            dynamicData?.status === DynamicLoadStatus.LOADING ||
+            (isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', param.parameterName ?? '') && !foundryAgentsForNode),
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
@@ -1544,7 +1523,7 @@ export const ParameterSection = ({
 
   // Show a loading state while RBAC roles are being set up or agents are loading.
   // Keeps messaging simple — no mention of RBAC/permissions. Retries happen silently in the background.
-  if (isAgentServiceConnection && isFoundryLoading && !foundryAgentsForNode?.length) {
+  if (isAgentServiceConnection && !foundryAgentsForNode) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
@@ -1592,7 +1571,7 @@ export const ParameterSection = ({
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
-  if (isAgentServiceConnection && rawFoundryAgentId && !selectedFoundryAgent && foundryAgentsLoading) {
+  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && !foundryAgentsForNode) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
@@ -1708,6 +1687,7 @@ export const ParameterSection = ({
       return (
         <>
           <SettingsSection
+            key={`${group.id}-agents-${foundryAgentsForNode?.length ?? 0}`}
             id={group.id}
             nodeId={nodeId}
             sectionName={group.description}
@@ -1874,10 +1854,10 @@ export const getEditorAndOptions = (
   }
 
   // Handle Foundry agent picker combobox
-  const isFoundryAgent = isAgentConnectorAndFoundryAgentId(operationInfo?.connectorId, parameter.parameterName);
+  const isFoundryAgent = isAgentConnectorAndFoundryAgentName(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isFoundryAgent) {
     const options = foundryAgents.map((agent: any) => ({
-      value: agent.id,
+      value: agent.name ?? agent.id,
       displayName: `${agent.name ?? agent.id}${agent.model ? ` (${agent.model})` : ''}`,
     }));
 

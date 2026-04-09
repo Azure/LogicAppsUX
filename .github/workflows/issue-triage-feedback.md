@@ -109,6 +109,13 @@ consumed by the triage agent's self-calibration step.
 - [Label] removed → [what this means: agent misclassified component/priority/type]
 - [Label] added → [what this means: agent missed this signal]
 
+### Root Cause Accuracy
+[Check if the triage comment's "Probable Root Cause" section merely restated the
+reporter's own diagnosis without independent verification. If a developer corrected
+the root cause analysis in a reply, note this. If the triage comment contained
+phrases like "code search confirms" or "verified in codebase" alongside claims that
+turned out to be wrong, flag this as a verification failure.]
+
 ### Developer Feedback
 [If a developer replied to the triage comment with corrections, quote the relevant
 parts here. If no developer feedback comments exist, write "No explicit developer
@@ -122,6 +129,8 @@ Examples of good lessons:
 - "Issues mentioning 'connection string' errors in Standard SKU are Connections issues, not Serialization."
 - "P3 issues affecting save/load workflows should be upgraded to priority:high."
 - "VS Code extension issues about webview rendering should use VSCode label, not the designer component."
+- "Agent parroted reporter's claim that this was a caching issue — actual root cause was a stale Redux selector."
+- "Reporter claimed regression but feature never worked this way — agent should have verified git history."
 
 ---
 *Automated feedback by triage feedback collector. Consumed by triage agent calibration.*

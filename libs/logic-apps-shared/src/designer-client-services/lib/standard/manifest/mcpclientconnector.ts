@@ -330,6 +330,7 @@ export default {
                 constraints: {
                   required: 'false',
                   editor: 'identitypicker',
+                  propertyPath: ['authentication'],
                 },
                 description: 'The managed identity to use for authentication',
               },
