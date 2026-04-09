@@ -48,6 +48,7 @@ import {
   LoggerService,
   LogEntryLevel,
   foundryServiceConnectionRegex,
+  microsoftFoundryModelsRegex,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -125,38 +126,24 @@ const updateAgentParametersForConnection = (
   // Map display name to manifest parameter value
   let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawModelType] ?? '';
 
-  // Fallback: detect Foundry connections by cognitiveServiceAccountId resource pattern
+  // Fallback: detect connection type by cognitiveServiceAccountId resource pattern
   if (!agentModelTypeValue) {
     const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
       agentModelTypeValue = 'FoundryAgentService';
-    } else {
+    } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
       agentModelTypeValue = 'MicrosoftFoundry';
-    }
-  }
-
-  // If fallback detection yields 'MicrosoftFoundry', check if we should preserve 'AzureOpenAI'
-  // for backward compatibility with older workflows that lack deploymentModelProperties.
-  if (agentModelTypeValue === 'MicrosoftFoundry') {
-    const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
-    const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
-    const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
-    const currentValue = existingParam?.value?.[0]?.value;
-
-    if (currentValue === 'AzureOpenAI') {
-      // Check if deploymentModelProperties exists in the workflow definition
-      const deploymentModelNameParam = defaultGrp?.parameters?.find(
-        (p) => p.parameterKey === 'inputs.$.agentModelSettings.deploymentModelProperties.name'
-      );
-      const hasDeploymentModelProperties = !!deploymentModelNameParam?.value?.[0]?.value;
-      if (!hasDeploymentModelProperties) {
-        // Preserve AzureOpenAI for backward compatibility (no deploymentModelProperties)
-        agentModelTypeValue = 'AzureOpenAI';
-      }
     } else {
-      // Preserve other existing valid values (e.g., 'FoundryAgentService', 'APIMGenAIGateway')
+      // Default to AzureOpenAI, but preserve other existing valid values
+      // (e.g., 'FoundryAgentService', 'APIMGenAIGateway') that the regex couldn't detect
+      agentModelTypeValue = 'AzureOpenAI';
+      const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+      const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
+      const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
+      const currentValue = existingParam?.value?.[0]?.value;
+
       const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
-      if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'MicrosoftFoundry') {
+      if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
         agentModelTypeValue = currentValue;
       }
     }

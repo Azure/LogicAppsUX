@@ -62,7 +62,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   );
 
   const onSubmit = useCallback(async () => {
-    const resourceId = metadata?.cognitiveServiceAccountId;
+    const resourceId = metadata?.cognitiveServiceAccountId?.replace(/\/models$/, '');
     if (!resourceId) {
       console.error('OpenAI account ID is not provided in metadata.');
       return;

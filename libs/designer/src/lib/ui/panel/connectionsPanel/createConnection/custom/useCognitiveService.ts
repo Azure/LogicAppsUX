@@ -93,7 +93,8 @@ const getServiceAccountId = (resourceId: string | undefined, isFoundryServiceCon
     return parts.length >= 2 ? parts.slice(0, -2).join('/') : resourceId;
   }
 
-  return resourceId;
+  // Strip /models suffix for MicrosoftFoundry connections
+  return resourceId.replace(/\/models$/, '');
 };
 
 export const getCognitiveServiceAccountDeploymentsForConnection = async (connection: Connection) => {

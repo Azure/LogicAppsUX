@@ -156,6 +156,7 @@ const knowledgeHubLocation = 'knowledgeHubConnections';
 const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+\/apis\/[^/]+/;
+export const microsoftFoundryModelsRegex = /\/models$/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -946,7 +947,11 @@ function convertToAgentConnectionsData(
       },
       endpoint: isBringYourOwnKeyAuth || isClientCertificateAuth ? parameterValues?.['endpoint'] : parameterValues?.['openAIEndpoint'],
       // Only include resourceId if it has a value
-      ...(cognitiveServiceAccountId && { resourceId: cognitiveServiceAccountId }),
+      // Append /models for standard Cognitive Services connections (MicrosoftFoundry) to distinguish from legacy AzureOpenAI
+      ...(cognitiveServiceAccountId && {
+        resourceId:
+          isFoundryAgentServiceConnection || isAPIMManagementConnection ? cognitiveServiceAccountId : `${cognitiveServiceAccountId}/models`,
+      }),
       type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
