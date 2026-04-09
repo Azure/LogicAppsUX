@@ -181,29 +181,42 @@ const updateAgentParametersForConnection = (
     },
   });
 
-  // Update visibility and clear values based on model type
-  const isV1 = agentModelTypeValue === 'V1ChatCompletionsService';
+  // Always clear deploymentId and modelId when switching connections
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: deploymentIdParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment('')],
+      preservedValue: undefined,
+    },
+  });
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: modelIdParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment('')],
+      preservedValue: undefined,
+    },
+  });
 
-  if (isV1) {
-    // V1 Chat Completions: show modelId, hide deploymentId
-    parametersToUpdate.push({
-      groupId: ParameterGroupKeys.DEFAULT,
-      parameterId: deploymentIdParam.id,
-      propertiesToUpdate: {
-        value: [createLiteralValueSegment('')],
-        preservedValue: undefined,
-      },
-    });
-  } else {
-    // AzureOpenAI/Foundry/APIM: show deploymentId, hide modelId
-    parametersToUpdate.push({
-      groupId: ParameterGroupKeys.DEFAULT,
-      parameterId: modelIdParam.id,
-      propertiesToUpdate: {
-        value: [createLiteralValueSegment('')],
-        preservedValue: undefined,
-      },
-    });
+  // Clear deploymentModelProperties (name, format, version) when switching connections
+  const deploymentModelPropertiesKeys = [
+    'inputs.$.agentModelSettings.deploymentModelProperties.name',
+    'inputs.$.agentModelSettings.deploymentModelProperties.format',
+    'inputs.$.agentModelSettings.deploymentModelProperties.version',
+  ];
+  for (const key of deploymentModelPropertiesKeys) {
+    const param = defaultGroup.parameters?.find((p) => p.parameterKey === key);
+    if (param) {
+      parametersToUpdate.push({
+        groupId: ParameterGroupKeys.DEFAULT,
+        parameterId: param.id,
+        propertiesToUpdate: {
+          value: [createLiteralValueSegment('')],
+          preservedValue: undefined,
+        },
+      });
+    }
   }
 
   dispatch(
