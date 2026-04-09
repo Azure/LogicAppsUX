@@ -448,6 +448,14 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
   const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+
+  // For FoundryAgentServiceV2, strip system messages — instructions live on the Foundry agent definition
+  if (inputPathValue?.parameters?.agentModelType === 'FoundryAgentServiceV2' && Array.isArray(inputPathValue?.parameters?.messages)) {
+    inputPathValue.parameters.messages = inputPathValue.parameters.messages.filter(
+      (msg: { role?: string }) => msg.role?.toLowerCase() !== 'system'
+    );
+  }
+
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;

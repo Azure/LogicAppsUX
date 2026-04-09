@@ -478,12 +478,11 @@ export const ParameterSection = ({
     };
   }, [isAgentServiceConnection, foundryAccountResourceId]);
 
-  // Gate Foundry proxy queries: don't fire until RBAC assignment has completed (or is unnecessary).
-  const foundryRbacReady = !isAgentServiceConnection || RBAC_READY_STATUSES.has(foundryRbacStatus);
+  // Let Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
+  const foundryRbacReady = true;
 
   const {
     data: foundryAgentsForNode,
-    isLoading: foundryAgentsLoading,
     isFetching: foundryAgentsFetching,
     refetch: refetchFoundryAgents,
   } = useFoundryAgentsForNode(nodeId, foundryRbacReady);
@@ -493,8 +492,7 @@ export const ParameterSection = ({
 
   // Track whether loading has been ongoing long enough to show a hint (new connections may take a minute for RBAC propagation).
   const [showSlowLoadingHint, setShowSlowLoadingHint] = useState(false);
-  const isFoundryLoading =
-    foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching || foundryAgentsLoading;
+  const isFoundryLoading = foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching;
   useEffect(() => {
     if (!isAgentServiceConnection || !isFoundryLoading) {
       setShowSlowLoadingHint(false);
@@ -1586,7 +1584,7 @@ export const ParameterSection = ({
 
   // Show a loading indicator while Foundry agent data is resolving.
   // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
-  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && foundryAgentsLoading) {
+  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && foundryAgentsFetching) {
     const agentPickerSetting = settings.find(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );

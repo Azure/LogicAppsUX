@@ -78,9 +78,10 @@ export default {
         },
         foundryAgentName: {
           type: 'string',
-          title: 'Agent name',
-          description: 'The display name of the selected Foundry agent.',
-          'x-ms-visibility': 'internal',
+          title: 'Agent',
+          description: 'The Foundry agent to use.',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
           'x-ms-input-dependencies': {
             type: 'visibility',
             parameters: [
@@ -157,6 +158,15 @@ export default {
             visibility: 'custom',
           },
           type: 'string',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['AzureOpenAI', 'MicrosoftFoundry', 'APIMGenAIGateway', 'V1ChatCompletionsService'],
+              },
+            ],
+          },
         },
         headers: {
           type: 'object',
