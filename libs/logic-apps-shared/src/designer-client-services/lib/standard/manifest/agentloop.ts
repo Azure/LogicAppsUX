@@ -331,8 +331,7 @@ export default {
                       {
                         value: 'code_interpreter',
                         displayName: 'Code Interpreter',
-                        description:
-                          'Enable the agent to write and execute JavaScript code for calculations, data analysis, and file processing.',
+                        description: 'Enable the agent to write and execute JavaScript code for calculations and data analysis.',
                       },
                     ],
                   },
