@@ -17,13 +17,11 @@ describe('agentloop – Foundry V2 regression', () => {
     });
 
     it('should contain the full expected set of dropdown values', () => {
-      expect(dropdownValues).toEqual([
-        'AzureOpenAI',
-        'MicrosoftFoundry',
-        'FoundryAgentServiceV2',
-        'APIMGenAIGateway',
-        'V1ChatCompletionsService',
-      ]);
+      expect(dropdownValues).toEqual(['MicrosoftFoundry', 'FoundryAgentServiceV2', 'APIMGenAIGateway', 'V1ChatCompletionsService']);
+    });
+
+    it('should NOT include AzureOpenAI (removed from new connection creation)', () => {
+      expect(dropdownValues).not.toContain('AzureOpenAI');
     });
 
     it('should label the V2 option as "Foundry project (Preview)"', () => {
