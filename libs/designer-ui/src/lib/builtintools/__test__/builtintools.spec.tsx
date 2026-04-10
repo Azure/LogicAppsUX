@@ -17,7 +17,7 @@ describe('lib/builtintools', () => {
     {
       value: 'code_interpreter',
       displayName: 'Code Interpreter',
-      description: 'Enable the agent to write and execute JavaScript code for calculations, and data analysis.',
+      description: 'Enable the agent to write and execute JavaScript code for calculations and data analysis.',
     },
   ];
 
@@ -60,7 +60,7 @@ describe('lib/builtintools', () => {
     );
 
     expect(getByText('Code Interpreter')).toBeTruthy();
-    expect(getByText('Enable the agent to write and execute JavaScript code for calculations, and data analysis.')).toBeTruthy();
+    expect(getByText('Enable the agent to write and execute JavaScript code for calculations and data analysis.')).toBeTruthy();
   });
 
   it('should render switch as unchecked when initialValue is empty', () => {

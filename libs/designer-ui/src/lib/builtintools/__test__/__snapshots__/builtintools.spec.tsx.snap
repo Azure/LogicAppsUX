@@ -27,7 +27,7 @@ exports[`lib/builtintools > should render with basic props 1`] = `
       <span
         className="___l0twgo0_0000000 fy9rknc fkfq4zb"
       >
-        Enable the agent to write and execute JavaScript code for calculations, and data analysis.
+        Enable the agent to write and execute JavaScript code for calculations and data analysis.
       </span>
     </div>
     <div
