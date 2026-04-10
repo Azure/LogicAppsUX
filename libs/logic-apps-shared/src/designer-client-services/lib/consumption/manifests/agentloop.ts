@@ -212,8 +212,11 @@ export default {
                       {
                         value: 'code_interpreter',
                         displayName: 'Code Interpreter',
-                        description:
-                          'Enable the agent to write and execute JavaScript code for calculations, data analysis, and file processing.',
+                        description: 'Enable the agent to write and execute JavaScript code for calculations, and data analysis.',
+                        infoMessage: 'Integration account is required to enable code interpreter.',
+                        infoLinkText: 'Read more',
+                        infoLinkUrl:
+                          'https://learn.microsoft.com/en-us/azure/logic-apps/enterprise-integration/create-integration-account?tabs=azure-portal%2Cconsumption#create-integration-account',
                       },
                     ],
                   },
