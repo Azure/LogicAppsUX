@@ -47,6 +47,7 @@ import {
   LoggerService,
   LogEntryLevel,
   foundryServiceConnectionRegex,
+  microsoftFoundryModelsRegex,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -125,26 +126,26 @@ const updateAgentParametersForConnection = (
   // Map display name to manifest parameter value
   let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawModelType] ?? '';
 
-  // Fallback: detect Foundry connections by cognitiveServiceAccountId resource pattern
+  // Fallback: detect connection type by cognitiveServiceAccountId resource pattern
   if (!agentModelTypeValue) {
     const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'FoundryAgentService';
+      agentModelTypeValue = 'FoundryAgentServiceV2';
+    } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
+      agentModelTypeValue = 'MicrosoftFoundry';
     } else {
+      // Default to AzureOpenAI, but preserve other existing valid values
+      // (e.g., 'FoundryAgentServiceV2', 'APIMGenAIGateway') that the regex couldn't detect
       agentModelTypeValue = 'AzureOpenAI';
-    }
-  }
+      const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+      const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
+      const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
+      const currentValue = existingParam?.value?.[0]?.value;
 
-  // If fallback detection yields the default 'AzureOpenAI', preserve existing valid value
-  // from the workflow definition (e.g., 'MicrosoftFoundry' that shares the same connection pattern)
-  if (agentModelTypeValue === 'AzureOpenAI') {
-    const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
-    const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
-    const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
-    const currentValue = existingParam?.value?.[0]?.value;
-    const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
-    if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
-      agentModelTypeValue = currentValue;
+      const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
+      if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
+        agentModelTypeValue = currentValue;
+      }
     }
   }
 
@@ -180,29 +181,42 @@ const updateAgentParametersForConnection = (
     },
   });
 
-  // Update visibility and clear values based on model type
-  const isV1 = agentModelTypeValue === 'V1ChatCompletionsService';
+  // Always clear deploymentId and modelId when switching connections
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: deploymentIdParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment('')],
+      preservedValue: undefined,
+    },
+  });
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: modelIdParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment('')],
+      preservedValue: undefined,
+    },
+  });
 
-  if (isV1) {
-    // V1 Chat Completions: show modelId, hide deploymentId
-    parametersToUpdate.push({
-      groupId: ParameterGroupKeys.DEFAULT,
-      parameterId: deploymentIdParam.id,
-      propertiesToUpdate: {
-        value: [createLiteralValueSegment('')],
-        preservedValue: undefined,
-      },
-    });
-  } else {
-    // AzureOpenAI/Foundry/APIM: show deploymentId, hide modelId
-    parametersToUpdate.push({
-      groupId: ParameterGroupKeys.DEFAULT,
-      parameterId: modelIdParam.id,
-      propertiesToUpdate: {
-        value: [createLiteralValueSegment('')],
-        preservedValue: undefined,
-      },
-    });
+  // Clear deploymentModelProperties (name, format, version) when switching connections
+  const deploymentModelPropertiesKeys = [
+    'inputs.$.agentModelSettings.deploymentModelProperties.name',
+    'inputs.$.agentModelSettings.deploymentModelProperties.format',
+    'inputs.$.agentModelSettings.deploymentModelProperties.version',
+  ];
+  for (const key of deploymentModelPropertiesKeys) {
+    const param = defaultGroup.parameters?.find((p) => p.parameterKey === key);
+    if (param) {
+      parametersToUpdate.push({
+        groupId: ParameterGroupKeys.DEFAULT,
+        parameterId: param.id,
+        propertiesToUpdate: {
+          value: [createLiteralValueSegment('')],
+          preservedValue: undefined,
+        },
+      });
+    }
   }
 
   dispatch(

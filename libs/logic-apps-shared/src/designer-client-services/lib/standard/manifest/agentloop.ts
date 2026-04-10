@@ -51,10 +51,6 @@ export default {
             readOnly: true,
             options: [
               {
-                value: 'AzureOpenAI',
-                displayName: 'Azure OpenAI',
-              },
-              {
                 value: 'MicrosoftFoundry',
                 displayName: 'Foundry Models (Preview)',
               },
@@ -74,7 +70,7 @@ export default {
             ],
           },
           type: 'string',
-          default: 'AzureOpenAI',
+          default: 'MicrosoftFoundry',
         },
         foundryAgentId: {
           type: 'string',
@@ -497,13 +493,12 @@ export default {
                   title: 'Model name',
                   description: 'Name of the model which you want to use for the agent',
                   type: 'string',
-                  default: 'gpt-4.1',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
+                        values: ['MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -512,13 +507,12 @@ export default {
                   title: 'Model format',
                   description: 'Format of the model you are using',
                   type: 'string',
-                  default: 'OpenAI',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
+                        values: ['MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -527,13 +521,12 @@ export default {
                   title: 'Model version',
                   description: 'Version of the model you are using',
                   type: 'string',
-                  default: '2025-06-10',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
+                        values: ['MicrosoftFoundry'],
                       },
                     ],
                   },
