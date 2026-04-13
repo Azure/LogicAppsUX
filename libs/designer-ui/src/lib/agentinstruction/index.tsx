@@ -3,7 +3,7 @@ import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetToken
 import { useIntl } from 'react-intl';
 import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
 import { StringEditor } from './../editor/string';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { parseAgentInstruction, AGENT_INSTRUCTION_TYPES, serializeAgentInstructions } from './util';
 import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
@@ -35,6 +35,21 @@ export const AgentInstructionEditor = ({
   const { systemMessage, userMessage } = useMemo(() => {
     return parseAgentInstruction(initialValue, setErrorMessage);
   }, [initialValue]);
+
+  // When system instructions are hidden (V2), strip the system message from the serialized value on load
+  const hasStrippedSystemRef = useRef(false);
+  useEffect(() => {
+    if (hideSystemInstructions && systemMessage.length > 0 && !hasStrippedSystemRef.current) {
+      hasStrippedSystemRef.current = true;
+      const reserialized = serializeAgentInstructions(
+        { value: userMessage, viewModel: { uncastedValue: userMessage } } as ChangeState,
+        AGENT_INSTRUCTION_TYPES.USER,
+        [],
+        userMessage
+      );
+      serializeValue?.({ value: reserialized });
+    }
+  }, [hideSystemInstructions, systemMessage, userMessage, serializeValue]);
   const userInstructionDescription = intl.formatMessage({
     defaultMessage:
       'Add optional prompts or questions for the agent. For better results, focus each item on a single specific prompt or question.',
@@ -64,7 +79,8 @@ export const AgentInstructionEditor = ({
   });
 
   const handleValueChange = (payload: ChangeState, agentLevel: AGENT_INSTRUCTION_TYPES) => {
-    const serializedValue = serializeAgentInstructions(payload, agentLevel, systemMessage, userMessage);
+    const effectiveSystemMessage = hideSystemInstructions ? [] : systemMessage;
+    const serializedValue = serializeAgentInstructions(payload, agentLevel, effectiveSystemMessage, userMessage);
     setErrorMessage(undefined);
     serializeValue?.({ value: serializedValue });
   };

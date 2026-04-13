@@ -111,7 +111,6 @@ const mockUseRunData = vi.fn().mockReturnValue(undefined);
 const mockUseRunIndex = vi.fn().mockReturnValue(0);
 const mockUseRunInstance = vi.fn().mockReturnValue(undefined);
 const mockUseParentRunIndex = vi.fn().mockReturnValue(undefined);
-const mockUseNodesMetadata = vi.fn().mockReturnValue({});
 const mockUseShouldNodeFocus = vi.fn().mockReturnValue(false);
 const mockUseIsActionInSelectedTimelineRepetition = vi.fn().mockReturnValue(false);
 const mockUseHandoffActionsForAgent = vi.fn().mockReturnValue([]);
@@ -128,7 +127,6 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useRunIndex: (...args: any[]) => mockUseRunIndex(...args),
   useRunInstance: () => mockUseRunInstance(),
   useParentRunIndex: (...args: any[]) => mockUseParentRunIndex(...args),
-  useNodesMetadata: () => mockUseNodesMetadata(),
   useShouldNodeFocus: (...args: any[]) => mockUseShouldNodeFocus(...args),
   useIsActionInSelectedTimelineRepetition: (...args: any[]) => mockUseIsActionInSelectedTimelineRepetition(...args),
   useHandoffActionsForAgent: (...args: any[]) => mockUseHandoffActionsForAgent(...args),
@@ -147,6 +145,7 @@ vi.mock('../../../core/state/workflow/workflowSlice', () => ({
 vi.mock('../../common/LoopsPager/helper', () => ({
   getRepetitionName: vi.fn().mockReturnValue('000000'),
   getScopeRepetitionName: vi.fn().mockReturnValue('000000'),
+  useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
@@ -237,7 +236,6 @@ describe('ScopeCardNode (v2)', () => {
     mockUseRunIndex.mockReturnValue(0);
     mockUseRunInstance.mockReturnValue(undefined);
     mockUseParentRunIndex.mockReturnValue(undefined);
-    mockUseNodesMetadata.mockReturnValue({});
     mockUseShouldNodeFocus.mockReturnValue(false);
     mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(false);
     mockUseHandoffActionsForAgent.mockReturnValue([]);

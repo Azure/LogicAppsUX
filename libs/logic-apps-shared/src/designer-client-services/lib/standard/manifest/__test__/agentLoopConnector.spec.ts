@@ -18,8 +18,8 @@ describe('agentLoopConnector', () => {
       expect(notSupported.MicrosoftFoundry).toEqual(['ManagedServiceIdentity', 'BringYourOwnKey', 'ClientCertificate']);
     });
 
-    it('should filter Key, BringYourOwnKey and ClientCertificate for FoundryAgentService', () => {
-      expect(notSupported.FoundryAgentService).toEqual(['Key', 'BringYourOwnKey', 'ClientCertificate']);
+    it('should filter Key, BringYourOwnKey and ClientCertificate for FoundryAgentServiceV2', () => {
+      expect(notSupported.FoundryAgentServiceV2).toEqual(['Key', 'BringYourOwnKey', 'ClientCertificate']);
     });
 
     it('should filter ManagedServiceIdentity, BringYourOwnKey and ClientCertificate for APIMGenAIGateway', () => {

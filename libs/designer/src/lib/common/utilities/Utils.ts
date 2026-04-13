@@ -40,7 +40,7 @@ export class AgentUtils {
   public static ManifestToDisplayName: Record<string, string> = {
     AzureOpenAI: AgentUtils.ModelType.AzureOpenAI,
     MicrosoftFoundry: AgentUtils.ModelType.MicrosoftFoundry,
-    FoundryAgentService: AgentUtils.ModelType.FoundryService,
+    FoundryAgentServiceV2: AgentUtils.ModelType.FoundryService,
     APIMGenAIGateway: AgentUtils.ModelType.APIM,
     V1ChatCompletionsService: AgentUtils.ModelType.V1ChatCompletionsService,
   };
@@ -49,7 +49,7 @@ export class AgentUtils {
   public static DisplayNameToManifest: Record<string, string> = {
     [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
     [AgentUtils.ModelType.MicrosoftFoundry]: 'MicrosoftFoundry',
-    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
+    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentServiceV2',
     [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
     [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',
   };
@@ -67,7 +67,7 @@ export class AgentUtils {
   };
 
   public static isFoundryAgentIdParameter = (parameterName?: string): boolean => {
-    return equals(parameterName ?? '', 'foundryAgentId', true);
+    return equals(parameterName ?? '', 'foundryAgentName', true) || equals(parameterName ?? '', 'foundryAgentId', true);
   };
 
   public static filterDynamicConnectionFeatures = (connections: Connection, nodeId?: string, state?: RootState): boolean => {

@@ -47,7 +47,7 @@ export interface DesignerOptionsState {
     recurrenceInterval?: LogicApps.Recurrence;
     maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
     stringOverrides?: Record<string, string>; // string overrides for localization
-    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
+    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 20)
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action

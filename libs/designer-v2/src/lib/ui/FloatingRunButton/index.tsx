@@ -11,7 +11,6 @@ import {
   isNullOrEmpty,
   parseErrorMessage,
   RunService,
-  WorkflowService,
 } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -50,6 +49,27 @@ export type PayloadData = {
   headers?: Record<string, string>;
   queries?: Record<string, string>;
   body?: string;
+};
+
+/**
+ * Constructs the ARM /run URL for triggering a published workflow.
+ * Standard workflows use the hostruntime management API path.
+ * Consumption workflows use the direct trigger path.
+ */
+export const getPublishedRunUrl = ({
+  siteResourceId,
+  workflowName,
+  triggerId,
+  isConsumption,
+}: {
+  siteResourceId: string;
+  workflowName: string;
+  triggerId: string;
+  isConsumption: boolean;
+}): string => {
+  return isConsumption
+    ? `${siteResourceId}/triggers/${triggerId}/run`
+    : `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/run`;
 };
 
 export interface FloatingRunButtonProps {
@@ -244,8 +264,17 @@ export const FloatingRunButton = ({
         return;
       }
 
-      const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
-      callbackInfo.method = payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST';
+      // Use the ARM /run endpoint directly (like V1) instead of listCallbackUrl + SAS invoke
+      const runUrl = getPublishedRunUrl({
+        siteResourceId: siteResourceId ?? '',
+        workflowName: workflowName ?? '',
+        triggerId,
+        isConsumption: isConsumption ?? false,
+      });
+      const callbackInfo = {
+        value: runUrl,
+        method: payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST',
+      };
 
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));

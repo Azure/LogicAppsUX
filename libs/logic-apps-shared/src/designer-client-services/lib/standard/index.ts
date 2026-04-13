@@ -6,6 +6,7 @@ export {
   escapeSpecialChars,
   foundryServiceConnectionRegex,
   apimanagementRegex,
+  microsoftFoundryModelsRegex,
 } from './connection';
 export { StandardConnectorService, type StandardConnectorServiceOptions } from './connector';
 export { StandardOperationManifestService, isServiceProviderOperation } from './operationmanifest';

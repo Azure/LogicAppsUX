@@ -9,7 +9,7 @@ import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { configureStore, type EnhancedStore } from '@reduxjs/toolkit';
-import { FloatingRunButton } from '../index';
+import { FloatingRunButton, getPublishedRunUrl } from '../index';
 import * as LogicAppsShared from '@microsoft/logic-apps-shared';
 import * as DesignerViewSelectors from '../../../core/state/designerView/designerViewSelectors';
 
@@ -367,6 +367,97 @@ describe('FloatingRunButton', () => {
       // Component renders without error with standard props
       expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
+  });
+});
+
+describe('getPublishedRunUrl', () => {
+  it('should construct standard ARM /run URL with hostruntime path', () => {
+    const result = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Web/sites/myApp',
+      workflowName: 'testWorkflow',
+      triggerId: 'manual',
+      isConsumption: false,
+    });
+
+    expect(result).toBe(
+      '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Web/sites/myApp/hostruntime/runtime/webhooks/workflow/api/management/workflows/testWorkflow/triggers/manual/run'
+    );
+  });
+
+  it('should construct consumption ARM /run URL without hostruntime path', () => {
+    const result = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Logic/workflows/myApp',
+      workflowName: 'myWorkflow',
+      triggerId: 'manual',
+      isConsumption: true,
+    });
+
+    expect(result).toBe('/subscriptions/123/resourceGroups/rg/providers/Microsoft.Logic/workflows/myApp/triggers/manual/run');
+  });
+
+  it('should not include workflowName in consumption URL', () => {
+    const result = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Logic/workflows/myApp',
+      workflowName: 'shouldNotAppearInPath',
+      triggerId: 'manual',
+      isConsumption: true,
+    });
+
+    expect(result).not.toContain('shouldNotAppearInPath');
+  });
+
+  it('should include workflowName in standard URL', () => {
+    const result = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Web/sites/myApp',
+      workflowName: 'myWorkflow',
+      triggerId: 'manual',
+      isConsumption: false,
+    });
+
+    expect(result).toContain('/workflows/myWorkflow/');
+  });
+
+  it('should produce ARM resource paths not SAS URLs', () => {
+    const standardResult = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Web/sites/myApp',
+      workflowName: 'wf',
+      triggerId: 'manual',
+      isConsumption: false,
+    });
+
+    const consumptionResult = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Logic/workflows/myApp',
+      workflowName: 'wf',
+      triggerId: 'manual',
+      isConsumption: true,
+    });
+
+    for (const url of [standardResult, consumptionResult]) {
+      expect(url).toMatch(/^\/subscriptions\//);
+      expect(url).toContain('/triggers/manual/run');
+      expect(url).not.toContain('listCallbackUrl');
+      expect(url).not.toContain('invoke');
+      expect(url).not.toContain('sig=');
+    }
+  });
+
+  it('should end with /run for both standard and consumption', () => {
+    const standardResult = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Web/sites/myApp',
+      workflowName: 'wf',
+      triggerId: 'trigger1',
+      isConsumption: false,
+    });
+
+    const consumptionResult = getPublishedRunUrl({
+      siteResourceId: '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Logic/workflows/myApp',
+      workflowName: 'wf',
+      triggerId: 'trigger1',
+      isConsumption: true,
+    });
+
+    expect(standardResult).toMatch(/\/triggers\/trigger1\/run$/);
+    expect(consumptionResult).toMatch(/\/triggers\/trigger1\/run$/);
   });
 });
 

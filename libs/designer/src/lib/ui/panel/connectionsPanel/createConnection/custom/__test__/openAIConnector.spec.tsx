@@ -390,10 +390,10 @@ describe('CustomOpenAIConnector', () => {
     });
   });
 
-  describe('FoundryAgentService — cognitiveServiceAccountId parameter', () => {
+  describe('FoundryAgentServiceV2 — cognitiveServiceAccountId parameter', () => {
     const foundryProps = {
       ...defaultProps,
-      operationParameterValues: { agentModelType: 'FoundryAgentService' },
+      operationParameterValues: { agentModelType: 'FoundryAgentServiceV2' },
     };
 
     beforeEach(() => {

@@ -24,7 +24,7 @@ export const undoRedoSlice = createSlice({
     updateStateHistoryOnUndoClick: (state, action: PayloadAction<StateHistoryItem>) => {
       // Add current edited panel details to state being added to history
       const newStateItem: StateHistoryItem = {
-        compressedState: action.payload.compressedState,
+        compressedSlices: action.payload.compressedSlices,
         editedPanelTab: state.currentEditedPanelTab,
         editedPanelNode: state.currentEditedPanelNode,
       };
@@ -40,7 +40,7 @@ export const undoRedoSlice = createSlice({
     updateStateHistoryOnRedoClick: (state, action: PayloadAction<StateHistoryItem>) => {
       // Add current edited panel details to state being added to history
       const newStateItem: StateHistoryItem = {
-        compressedState: action.payload.compressedState,
+        compressedSlices: action.payload.compressedSlices,
         editedPanelTab: state.currentEditedPanelTab,
         editedPanelNode: state.currentEditedPanelNode,
       };

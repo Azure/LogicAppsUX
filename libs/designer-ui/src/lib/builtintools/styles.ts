@@ -26,10 +26,20 @@ export const useBuiltinToolsStyles = makeStyles({
     flex: 1,
     gap: tokens.spacingVerticalXXS,
   },
+  toolNameRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalXS,
+  },
   toolName: {
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase200,
     color: tokens.colorNeutralForeground1,
+  },
+  infoIcon: {
+    fontSize: tokens.fontSizeBase300,
+    color: tokens.colorNeutralForeground3,
+    cursor: 'pointer',
   },
   toolDescription: {
     fontSize: tokens.fontSizeBase200,

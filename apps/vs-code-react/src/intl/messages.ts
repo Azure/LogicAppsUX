@@ -1019,6 +1019,16 @@ export const designerMessages = defineMessages({
     id: 'gHm7zV',
     description: 'Errors button',
   },
+  UNDO: {
+    defaultMessage: 'Undo',
+    id: 'pvRsdK',
+    description: 'Undo button',
+  },
+  REDO: {
+    defaultMessage: 'Redo',
+    id: 'wBjdul',
+    description: 'Redo button',
+  },
   REFRESH: {
     defaultMessage: 'Refresh',
     id: 'rREwxg',

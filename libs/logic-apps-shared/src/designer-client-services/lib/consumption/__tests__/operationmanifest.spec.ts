@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ConsumptionOperationManifestService } from '../operationmanifest';
+import mcpclientconnector from '../manifests/mcpclientconnector';
 import type { IHttpClient } from '../../httpClient';
 
 describe('ConsumptionOperationManifestService', () => {
@@ -145,6 +146,34 @@ describe('ConsumptionOperationManifestService', () => {
 
       expect(result).toBeDefined();
       expect(result.properties).toBeDefined();
+    });
+  });
+
+  describe('MCP connector ManagedServiceIdentity parameters', () => {
+    test('should define identity parameter in ManagedServiceIdentity parameter set', () => {
+      const paramSets = mcpclientconnector.properties.connectionParameterSets?.values;
+      const msiSet = paramSets?.find((p: any) => p.name === 'ManagedServiceIdentity');
+
+      expect(msiSet).toBeDefined();
+      expect(msiSet?.parameters.identity).toBeDefined();
+      expect(msiSet?.parameters.identity.type).toBe('string');
+      expect(msiSet?.parameters.identity.uiDefinition.displayName).toBe('Managed identity');
+    });
+
+    test('should define audience parameter in ManagedServiceIdentity parameter set', () => {
+      const paramSets = mcpclientconnector.properties.connectionParameterSets?.values;
+      const msiSet = paramSets?.find((p: any) => p.name === 'ManagedServiceIdentity');
+
+      expect(msiSet).toBeDefined();
+      expect(msiSet?.parameters.audience).toBeDefined();
+      expect(msiSet?.parameters.audience.uiDefinition.constraints.required).toBe('true');
+    });
+
+    test('should mark identity as authentication property path', () => {
+      const paramSets = mcpclientconnector.properties.connectionParameterSets?.values;
+      const msiSet = paramSets?.find((p: any) => p.name === 'ManagedServiceIdentity');
+
+      expect(msiSet?.parameters.identity.uiDefinition.constraints.propertyPath).toEqual(['authentication']);
     });
   });
 });
