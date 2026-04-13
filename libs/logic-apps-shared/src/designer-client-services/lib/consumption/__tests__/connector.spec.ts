@@ -390,5 +390,31 @@ describe('ConsumptionConnectorService', () => {
         password: 'cert-pass',
       });
     });
+
+    it('should build ManagedServiceIdentity authentication with audience only', () => {
+      const result = buildAuth({
+        authenticationType: 'ManagedServiceIdentity',
+        audience: 'https://my-mcp-server.example.com',
+      });
+
+      expect(result).toEqual({
+        type: 'ManagedServiceIdentity',
+        audience: 'https://my-mcp-server.example.com',
+      });
+    });
+
+    it('should build ManagedServiceIdentity authentication with audience and identity', () => {
+      const result = buildAuth({
+        authenticationType: 'ManagedServiceIdentity',
+        audience: 'https://my-mcp-server.example.com',
+        identity: '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity',
+      });
+
+      expect(result).toEqual({
+        type: 'ManagedServiceIdentity',
+        audience: 'https://my-mcp-server.example.com',
+        identity: '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity',
+      });
+    });
   });
 });

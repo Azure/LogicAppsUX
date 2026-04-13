@@ -268,6 +268,9 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       authentication['value'] = connectionProperties['value'];
     } else if (mappedAuthType === 'ManagedServiceIdentity') {
       authentication['audience'] = connectionProperties['audience'];
+      if (connectionProperties['identity']) {
+        authentication['identity'] = connectionProperties['identity'];
+      }
     }
 
     return authentication;

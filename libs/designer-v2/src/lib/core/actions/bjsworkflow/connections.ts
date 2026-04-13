@@ -310,11 +310,22 @@ const updateNodeConnectionAndProperties = async (
 };
 
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  if (!isConnectionMultiAuthManagedIdentityType(connection, connector) && !isConnectionSingleAuthManagedIdentityType(connection)) {
+  // For managed MCP connections, always include MSI auth properties if the Logic App has a managed identity.
+  // These connectors don't follow the standard multi-auth/single-auth MSI detection patterns.
+  const isManagedMcp = connector.id?.toLowerCase().includes('mcp') && !connector.properties?.capabilities?.includes('builtin');
+  if (
+    !isManagedMcp &&
+    !isConnectionMultiAuthManagedIdentityType(connection, connector) &&
+    !isConnectionSingleAuthManagedIdentityType(connection)
+  ) {
     return undefined;
   }
 
   const identity = WorkflowService().getAppIdentity?.();
+  if (!identity) {
+    return undefined;
+  }
+
   const userAssignedIdentity =
     equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
       ? Object.keys(identity?.userAssignedIdentities)[0]
@@ -576,10 +587,36 @@ export async function getConnectionsApiAndMapping(deserializedWorkflow: Deserial
             type: 'mcpclient',
           },
           createdTime: new Date().toISOString(),
-          parameterValues: {
-            mcpServerUrl,
-            authenticationType: connectionInput?.Authentication ?? 'None',
-          },
+          parameterValues: (() => {
+            const auth = connectionInput?.Authentication;
+            const values: Record<string, any> = { mcpServerUrl };
+            if (typeof auth === 'object' && auth !== null) {
+              values.authenticationType = auth.type ?? 'None';
+              // Extract all auth-related properties back to flat parameterValues
+              const authPropertyKeys = [
+                'audience',
+                'identity',
+                'key',
+                'keyHeaderName',
+                'username',
+                'password',
+                'value',
+                'clientId',
+                'secret',
+                'tenant',
+                'authority',
+                'pfx',
+              ];
+              for (const prop of authPropertyKeys) {
+                if (auth[prop] !== undefined) {
+                  values[prop] = auth[prop];
+                }
+              }
+            } else {
+              values.authenticationType = auth ?? 'None';
+            }
+            return values;
+          })(),
         },
       } as any;
       // Store in ConnectionService so getConnection() can find it later
