@@ -1039,10 +1039,19 @@ export const ParameterSection = ({
         // Only populate deploymentModelProperties for MicrosoftFoundry.
         // For AzureOpenAI the backend derives model info from the deployment itself.
         if (currentModelType === 'MicrosoftFoundry' && selectedModelId) {
-          const config = AGENT_MODEL_CONFIG[selectedModelId];
-          const modelName = selectedModelId;
-          const modelFormat = config?.format ?? 'OpenAI';
-          const modelVersion = config?.version;
+          const deploymentInfo = deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId);
+          const modelName = deploymentInfo?.properties?.model?.name;
+          let modelFormat = deploymentInfo?.properties?.model?.format;
+          let modelVersion = deploymentInfo?.properties?.model?.version;
+          if (!modelFormat || !modelVersion) {
+            const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+            if (!modelFormat) {
+              modelFormat = config?.format ?? 'OpenAI';
+            }
+            if (!modelVersion) {
+              modelVersion = config?.version;
+            }
+          }
 
           updatedDependencies.inputs ??= {};
 
