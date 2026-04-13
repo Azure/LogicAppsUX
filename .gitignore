@@ -47,9 +47,6 @@ test-extensions
 /apps/vs-code-designer/*.vsix
 .vscode-test
 
-# Claude Code local settings
-.claude/settings.local.json
-
 # System Files
 .DS_Store
 Thumbs.db
