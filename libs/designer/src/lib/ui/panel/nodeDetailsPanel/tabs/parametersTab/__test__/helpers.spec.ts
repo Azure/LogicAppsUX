@@ -1,4 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+vi.mock('../../../../connectionsPanel/createConnection/custom/useCognitiveService', () => ({
+  getCognitiveServiceAccountDeploymentsForConnection: vi.fn(),
+}));
+
 import {
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
@@ -8,16 +13,22 @@ import {
   agentModelTypeParameterKey,
   getConnectionToAssign,
   categorizeConnections,
+  getFirstDeploymentInfo,
+  getFirstDeploymentModelName,
 } from '../helpers';
+import { getCognitiveServiceAccountDeploymentsForConnection } from '../../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import type { ParameterGroup } from '../../../../../../core/state/operation/operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Connection } from '@microsoft/logic-apps-shared';
+
+const mockGetDeployments = vi.mocked(getCognitiveServiceAccountDeploymentsForConnection);
 
 function makeParameterGroups(groupId: string, parameters: Partial<ParameterInfo>[]): Record<string, ParameterGroup> {
   return {
     [groupId]: {
       id: groupId,
       description: '',
+      rawInputs: [],
       parameters: parameters.map((p, i) => ({
         id: `param-${i}`,
         label: '',
@@ -252,5 +263,128 @@ describe('categorizeConnections', () => {
     const result = categorizeConnections([]);
     expect(result.azureOpenAI).toHaveLength(0);
     expect(result.foundry).toHaveLength(0);
+  });
+});
+
+describe('getFirstDeploymentInfo', () => {
+  const dummyConnection = { id: 'conn-1', name: 'conn-1', properties: {} } as unknown as Connection;
+
+  beforeEach(() => {
+    mockGetDeployments.mockReset();
+  });
+
+  it('should return undefined when connection has no deployments', async () => {
+    mockGetDeployments.mockResolvedValue([]);
+    const result = await getFirstDeploymentInfo(dummyConnection);
+    expect(result).toBeUndefined();
+  });
+
+  it('should return correct deployment info when deployment has full model properties', async () => {
+    mockGetDeployments.mockResolvedValue([
+      {
+        name: 'my-deployment',
+        properties: {
+          model: {
+            name: 'gpt-4o',
+            format: 'OpenAI',
+            version: '2024-11-20',
+          },
+        },
+      },
+    ]);
+    const result = await getFirstDeploymentInfo(dummyConnection);
+    expect(result).toEqual({
+      deploymentName: 'my-deployment',
+      modelName: 'gpt-4o',
+      modelFormat: 'OpenAI',
+      modelVersion: '2024-11-20',
+    });
+  });
+
+  it('should return first deployment when multiple deployments exist', async () => {
+    mockGetDeployments.mockResolvedValue([
+      {
+        name: 'deploy-1',
+        properties: { model: { name: 'gpt-4o', format: 'OpenAI', version: '2024-11-20' } },
+      },
+      {
+        name: 'deploy-2',
+        properties: { model: { name: 'gpt-4', format: 'OpenAI', version: 'turbo-2024-04-09' } },
+      },
+    ]);
+    const result = await getFirstDeploymentInfo(dummyConnection);
+    expect(result?.deploymentName).toBe('deploy-1');
+    expect(result?.modelName).toBe('gpt-4o');
+  });
+
+  it('should handle deployment with missing model properties gracefully', async () => {
+    mockGetDeployments.mockResolvedValue([
+      {
+        name: 'deploy-no-model',
+        properties: {},
+      },
+    ]);
+    const result = await getFirstDeploymentInfo(dummyConnection);
+    expect(result).toEqual({
+      deploymentName: 'deploy-no-model',
+      modelName: '',
+      modelFormat: undefined,
+      modelVersion: undefined,
+    });
+  });
+
+  it('should handle deployment with partial model properties', async () => {
+    mockGetDeployments.mockResolvedValue([
+      {
+        name: 'deploy-partial',
+        properties: {
+          model: {
+            name: 'gpt-4o',
+          },
+        },
+      },
+    ]);
+    const result = await getFirstDeploymentInfo(dummyConnection);
+    expect(result).toEqual({
+      deploymentName: 'deploy-partial',
+      modelName: 'gpt-4o',
+      modelFormat: undefined,
+      modelVersion: undefined,
+    });
+  });
+
+  it('should default deploymentName to empty string when name is undefined', async () => {
+    mockGetDeployments.mockResolvedValue([
+      {
+        properties: { model: { name: 'gpt-4o', format: 'OpenAI', version: '2024-11-20' } },
+      },
+    ]);
+    const result = await getFirstDeploymentInfo(dummyConnection);
+    expect(result?.deploymentName).toBe('');
+  });
+});
+
+describe('getFirstDeploymentModelName', () => {
+  const dummyConnection = { id: 'conn-1', name: 'conn-1', properties: {} } as unknown as Connection;
+
+  beforeEach(() => {
+    mockGetDeployments.mockReset();
+  });
+
+  it('should return deployment name when deployments exist', async () => {
+    mockGetDeployments.mockResolvedValue([
+      {
+        name: 'my-deployment',
+        properties: { model: { name: 'gpt-4o', format: 'OpenAI', version: '2024-11-20' } },
+      },
+    ]);
+    const result = await getFirstDeploymentModelName(dummyConnection);
+    expect(result).toBe('my-deployment');
+  });
+
+  it('should return empty string when no deployments exist', async () => {
+    mockGetDeployments.mockResolvedValue([]);
+    const result = await getFirstDeploymentModelName(dummyConnection);
+    expect(result).toBe('');
   });
 });
