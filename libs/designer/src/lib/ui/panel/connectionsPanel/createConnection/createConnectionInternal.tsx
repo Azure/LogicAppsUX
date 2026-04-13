@@ -373,11 +373,6 @@ export function getConnectionParameterSetValues(
 
   return {
     name: selectedParameterSetName,
-    values: Object.keys(filteredParameterValues).reduce((acc: any, key) => {
-      acc[key] = {
-        value: filteredParameterValues[key],
-      };
-      return acc;
-    }, {}),
+    values: Object.fromEntries(Object.keys(filteredParameterValues).map((key) => [key, { value: filteredParameterValues[key] }])),
   };
 }

@@ -1,4 +1,4 @@
-import Constants from '../../../common/constants';
+import Constants, { isManagedMcpConnector, MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -312,9 +312,8 @@ const updateNodeConnectionAndProperties = async (
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
   // For managed MCP connections, always include MSI auth properties if the Logic App has a managed identity.
   // These connectors don't follow the standard multi-auth/single-auth MSI detection patterns.
-  const isManagedMcp = connector.id?.toLowerCase().includes('mcp') && !connector.properties?.capabilities?.includes('builtin');
   if (
-    !isManagedMcp &&
+    !isManagedMcpConnector(connector) &&
     !isConnectionMultiAuthManagedIdentityType(connection, connector) &&
     !isConnectionSingleAuthManagedIdentityType(connection)
   ) {
@@ -593,21 +592,7 @@ export async function getConnectionsApiAndMapping(deserializedWorkflow: Deserial
             if (typeof auth === 'object' && auth !== null) {
               values.authenticationType = auth.type ?? 'None';
               // Extract all auth-related properties back to flat parameterValues
-              const authPropertyKeys = [
-                'audience',
-                'identity',
-                'key',
-                'keyHeaderName',
-                'username',
-                'password',
-                'value',
-                'clientId',
-                'secret',
-                'tenant',
-                'authority',
-                'pfx',
-              ];
-              for (const prop of authPropertyKeys) {
+              for (const prop of MCP_AUTH_PROPERTY_KEYS) {
                 if (auth[prop] !== undefined) {
                   values[prop] = auth[prop];
                 }

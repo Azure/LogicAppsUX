@@ -1,4 +1,4 @@
-import Constants from '../../../common/constants';
+import Constants, { MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
 import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -579,20 +579,6 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
   const connectionId = connectionReference?.connection?.id;
 
   // All auth-related property keys that can appear in parameterValues
-  const mcpAuthPropertyKeys = [
-    'audience',
-    'identity',
-    'key',
-    'keyHeaderName',
-    'username',
-    'password',
-    'value',
-    'clientId',
-    'secret',
-    'tenant',
-    'authority',
-    'pfx',
-  ];
 
   let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
   // Authentication can be a string (e.g., 'None') or an object (e.g., { type: 'ManagedServiceIdentity', audience: '...' })
@@ -602,8 +588,8 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
   const existingAuth = existingConnectionInput?.Authentication;
   if (typeof existingAuth === 'object' && existingAuth !== null) {
     authenticationType = existingAuth.type ?? 'None';
-    for (const prop of mcpAuthPropertyKeys) {
-      if (existingAuth[prop] !== undefined) {
+    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+      if (existingAuth[prop] != null) {
         authParams[prop] = existingAuth[prop];
       }
     }
@@ -620,8 +606,8 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
         authenticationType = parameterValues.authenticationType ?? authenticationType;
         // Collect all auth-related params from parameterValues
         authParams = {};
-        for (const prop of mcpAuthPropertyKeys) {
-          if (parameterValues[prop] !== undefined && parameterValues[prop] !== null) {
+        for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+          if (parameterValues[prop] != null) {
             authParams[prop] = parameterValues[prop];
           }
         }
