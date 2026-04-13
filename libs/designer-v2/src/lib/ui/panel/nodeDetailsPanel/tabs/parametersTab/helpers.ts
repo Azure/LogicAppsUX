@@ -53,9 +53,30 @@ export const categorizeConnections = (connections: Connection[]): CategorizedCon
   );
 };
 
-export const getFirstDeploymentModelName = async (connection: Connection): Promise<string> => {
+export interface FirstDeploymentInfo {
+  deploymentName: string;
+  modelName: string;
+  modelFormat?: string;
+  modelVersion?: string;
+}
+
+export const getFirstDeploymentInfo = async (connection: Connection): Promise<FirstDeploymentInfo | undefined> => {
   const deploymentModels = await getCognitiveServiceAccountDeploymentsForConnection(connection);
-  return deploymentModels.length > 0 ? deploymentModels[0].name : '';
+  if (deploymentModels.length === 0) {
+    return undefined;
+  }
+  const first = deploymentModels[0];
+  return {
+    deploymentName: first.name ?? '',
+    modelName: first.properties?.model?.name ?? '',
+    modelFormat: first.properties?.model?.format,
+    modelVersion: first.properties?.model?.version,
+  };
+};
+
+export const getFirstDeploymentModelName = async (connection: Connection): Promise<string> => {
+  const info = await getFirstDeploymentInfo(connection);
+  return info?.deploymentName ?? '';
 };
 
 export const getDeploymentIdParameter = (state: RootState, nodeId: string): ParameterInfo | undefined => {

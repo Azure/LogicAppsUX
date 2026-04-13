@@ -130,7 +130,7 @@ import {
   getConnectionToAssign,
   getDeploymentIdParameter,
   agentModelTypeParameterKey,
-  getFirstDeploymentModelName,
+  getFirstDeploymentInfo,
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
@@ -315,7 +315,9 @@ const updateConnectionAndDeployment = async (
   nodeId: string,
   connector: Connector,
   connection: Connection,
-  deploymentIdParamId: string
+  deploymentIdParamId: string,
+  state?: RootState,
+  modelType?: string
 ): Promise<void> => {
   try {
     // Update connection
@@ -329,24 +331,65 @@ const updateConnectionAndDeployment = async (
 
     ConnectionService().setupConnectionIfNeeded(connection);
 
-    // Get deployment model name
-    const deploymentModelName = await getFirstDeploymentModelName(connection);
+    // Get deployment info (name + model properties)
+    const deploymentInfo = await getFirstDeploymentInfo(connection);
+    const deploymentModelName = deploymentInfo?.deploymentName ?? '';
 
     // Update deployment model parameter
-    dispatch(
-      updateNodeParameters({
-        nodeId,
-        parameters: [
-          {
-            groupId: ParameterGroupKeys.DEFAULT,
-            parameterId: deploymentIdParamId,
-            propertiesToUpdate: {
-              value: [createLiteralValueSegment(deploymentModelName)],
-            },
-          },
-        ],
-      })
-    );
+    const parametersToUpdate: Array<{
+      groupId: string;
+      parameterId: string;
+      propertiesToUpdate: { value: any[] };
+    }> = [
+      {
+        groupId: ParameterGroupKeys.DEFAULT,
+        parameterId: deploymentIdParamId,
+        propertiesToUpdate: {
+          value: [createLiteralValueSegment(deploymentModelName)],
+        },
+      },
+    ];
+
+    // Also populate deploymentModelProperties for MicrosoftFoundry
+    if (modelType === 'MicrosoftFoundry' && state && deploymentInfo) {
+      const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+      const defaultGroup = parameterGroups?.[ParameterGroupKeys.DEFAULT];
+      if (defaultGroup) {
+        const modelName = deploymentInfo.modelName;
+        let modelFormat = deploymentInfo.modelFormat;
+        let modelVersion = deploymentInfo.modelVersion;
+        if (!modelFormat || !modelVersion) {
+          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          if (!modelFormat) {
+            modelFormat = config?.format ?? 'OpenAI';
+          }
+          if (!modelVersion) {
+            modelVersion = config?.version;
+          }
+        }
+
+        const deploymentModelPropertiesMap: Record<string, string | undefined> = {
+          'inputs.$.agentModelSettings.deploymentModelProperties.name': modelName,
+          'inputs.$.agentModelSettings.deploymentModelProperties.format': modelFormat,
+          'inputs.$.agentModelSettings.deploymentModelProperties.version': modelVersion,
+        };
+
+        for (const [key, val] of Object.entries(deploymentModelPropertiesMap)) {
+          const param = defaultGroup.parameters.find((p) => p.parameterKey === key);
+          if (param && val) {
+            parametersToUpdate.push({
+              groupId: ParameterGroupKeys.DEFAULT,
+              parameterId: param.id,
+              propertiesToUpdate: {
+                value: [createLiteralValueSegment(val)],
+              },
+            });
+          }
+        }
+      }
+    }
+
+    dispatch(updateNodeParameters({ nodeId, parameters: parametersToUpdate }));
   } catch {
     clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParamId);
   }
@@ -377,7 +420,15 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
     }
 
     // Update connection and deployment model
-    await updateConnectionAndDeployment(dispatch, nodeId, connector, connectionToAssign, deploymentIdParam.id);
+    await updateConnectionAndDeployment(
+      dispatch,
+      nodeId,
+      connector,
+      connectionToAssign,
+      deploymentIdParam.id,
+      getState() as RootState,
+      modelType
+    );
   }
 );
 
