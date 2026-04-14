@@ -296,6 +296,8 @@ export interface OperationManifestProperties {
   dynamicContent?: {
     payloadConfiguration?: string[];
   };
+
+  enableAgentHarness?: boolean;
 }
 
 export type SubgraphType =

@@ -15,6 +15,7 @@ import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 const mocks = {
   useNodeMetadata: vi.fn(),
   useOperationInfo: vi.fn(),
+  useOperationManifest: vi.fn(),
   useIsA2AWorkflow: vi.fn(),
   useIsAgenticWorkflowOnly: vi.fn(),
   usePanelTabHideKeys: vi.fn(),
@@ -59,6 +60,9 @@ vi.mock('../../../../core/state/workflow/workflowSelectors', () => ({
 vi.mock('../../../../core/utils/graph', () => ({
   isTriggerNode: (...args: any[]) => mocks.isTriggerNode(...args),
 }));
+vi.mock('../../../../core/state/selectors/actionMetadataSelector', () => ({
+  useOperationManifest: (...args: any[]) => mocks.useOperationManifest(...args),
+}));
 
 // Mock tabs - IDs must match constants.PANEL_TAB_NAMES values
 vi.mock('../tabs/aboutTab', () => ({
@@ -85,6 +89,9 @@ vi.mock('../tabs/settingsTab', () => ({
 }));
 vi.mock('../tabs/testingTab', () => ({
   testingTab: vi.fn(() => ({ id: 'TESTING', title: 'Testing', visible: true, content: null, order: 5 })),
+}));
+vi.mock('../tabs/agentHarnessTab/agentHarnessTab', () => ({
+  agentHarnessTab: vi.fn(() => ({ id: 'AGENT_HARNESS', title: 'Agent Harness', visible: true, content: null, order: 3 })),
 }));
 vi.mock('../tabs/channelsTab', () => ({
   channelsTab: vi.fn(() => ({ id: 'CHANNELS', title: 'Channels', visible: true, content: null, order: 3 })),
@@ -127,6 +134,7 @@ describe('usePanelTabs', () => {
     mocks.useHasSchema.mockReturnValue(false);
     mocks.useRetryHistory.mockReturnValue(null);
     mocks.isTriggerNode.mockReturnValue(false);
+    mocks.useOperationManifest.mockReturnValue({ data: undefined });
   });
 
   afterEach(() => vi.clearAllMocks());
@@ -230,6 +238,37 @@ describe('usePanelTabs', () => {
 
       mocks.useMonitoringView.mockReturnValue(true);
       expect(getTabIds(renderTabs().result)).not.toContain(constants.PANEL_TAB_NAMES.HANDOFF);
+    });
+
+    it('shows agent harness tab for agent nodes when enableAgentHarness is true', () => {
+      setAgentNode();
+      mocks.useOperationManifest.mockReturnValue({ data: { properties: { enableAgentHarness: true } } });
+      expect(getTabIds(renderTabs().result)).toContain(constants.PANEL_TAB_NAMES.AGENT_HARNESS);
+    });
+
+    it('hides agent harness tab when enableAgentHarness is false', () => {
+      setAgentNode();
+      mocks.useOperationManifest.mockReturnValue({ data: { properties: { enableAgentHarness: false } } });
+      expect(getTabIds(renderTabs().result)).not.toContain(constants.PANEL_TAB_NAMES.AGENT_HARNESS);
+    });
+
+    it('hides agent harness tab for non-agent nodes', () => {
+      mocks.useOperationInfo.mockReturnValue({ type: 'http', kind: 'http', connectorId: 'test', operationId: 'test' });
+      mocks.useOperationManifest.mockReturnValue({ data: { properties: { enableAgentHarness: true } } });
+      expect(getTabIds(renderTabs().result)).not.toContain(constants.PANEL_TAB_NAMES.AGENT_HARNESS);
+    });
+
+    it('hides agent harness tab in monitoring view', () => {
+      setAgentNode();
+      mocks.useOperationManifest.mockReturnValue({ data: { properties: { enableAgentHarness: true } } });
+      mocks.useMonitoringView.mockReturnValue(true);
+      expect(getTabIds(renderTabs().result)).not.toContain(constants.PANEL_TAB_NAMES.AGENT_HARNESS);
+    });
+
+    it('hides agent harness tab when manifest data is not loaded', () => {
+      setAgentNode();
+      mocks.useOperationManifest.mockReturnValue({ data: undefined });
+      expect(getTabIds(renderTabs().result)).not.toContain(constants.PANEL_TAB_NAMES.AGENT_HARNESS);
     });
   });
 

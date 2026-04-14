@@ -457,6 +457,7 @@ const DesignerEditorConsumption = () => {
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
+            integrationAccount: (workflowAndArtifactsData?.properties as any)?.integrationAccount,
           },
           showPerformanceDebug,
         }}

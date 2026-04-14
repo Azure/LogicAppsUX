@@ -54,6 +54,7 @@ export interface DesignerOptionsState {
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
     disableMcpClientTools?: boolean; // hide MCP client tools from browse panel
     disableNativeMcpClientTools?: boolean; // hide native (built-in) MCP client tools tab from browse panel
+    integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   panelTabHideKeys?: PANEL_TAB_NAMES[];

@@ -95,6 +95,11 @@ export interface IWorkflowService {
    * Opens an Azure Portal blade
    */
   openBlade?(bladeReference: BladeReference | Promise<BladeReference>, options?: OpenBladeOptions): Promise<boolean>;
+
+  /**
+   * Gets sandbox configurations from the integration account.
+   */
+  getSandboxConfigurations?(integrationAccountId: string): Promise<any[]>;
 }
 
 let service: IWorkflowService;

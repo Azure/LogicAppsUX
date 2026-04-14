@@ -10,6 +10,7 @@ export default {
       'Action in which the AI agent decides at each step which tools to use and how, and which text to generate to respond to the user.',
 
     allowChildOperations: true,
+    enableAgentHarness: true,
     subGraphDetails: {
       tools: {
         isAdditive: true,
