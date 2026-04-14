@@ -1541,7 +1541,7 @@ export const ParameterSection = ({
       };
     });
 
-  // Hide AI model & collapse system instructions when Foundry manages them
+  // Hide AI model, system instructions, and user instructions when Foundry manages them
   const filterFoundryManagedSettings = (items: typeof settings) =>
     items
       .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_DEPLOYMENT_KEY))
@@ -1551,7 +1551,12 @@ export const ParameterSection = ({
             ...s,
             settingProp: {
               ...s.settingProp,
-              editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
+              editorOptions: {
+                ...(s.settingProp as any).editorOptions,
+                hideSystemInstructions: true,
+                hideUserInstructions: true,
+                hideLabel: true,
+              },
             },
           };
         }

@@ -34,7 +34,7 @@ export interface FoundryAgentDetailsProps {
  * encoding for the subscription segment of the URL.
  * Falls back to the raw value if the input is not a valid GUID.
  */
-function guidToBase64Url(guid: string): string {
+export function guidToBase64Url(guid: string): string {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(guid)) {
     return guid;
   }

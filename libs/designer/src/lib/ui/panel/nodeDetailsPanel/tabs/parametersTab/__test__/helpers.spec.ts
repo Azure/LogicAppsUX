@@ -388,3 +388,20 @@ describe('getFirstDeploymentModelName', () => {
     expect(result).toBe('');
   });
 });
+
+describe('Foundry managed settings — regression contract', () => {
+  // Reads the parametersTab source to ensure filterFoundryManagedSettings
+  // hides both system and user instructions for Foundry agent connections.
+  it('filterFoundryManagedSettings should set both hideSystemInstructions and hideUserInstructions', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const source = fs.readFileSync(path.resolve(__dirname, '../index.tsx'), 'utf-8');
+
+    const fnStart = source.indexOf('filterFoundryManagedSettings');
+    expect(fnStart).toBeGreaterThan(-1);
+
+    const fnBody = source.slice(fnStart, fnStart + 800);
+    expect(fnBody).toContain('hideSystemInstructions: true');
+    expect(fnBody).toContain('hideUserInstructions: true');
+  });
+});
