@@ -1,11 +1,6 @@
 import { describe, vi, beforeEach, it, expect } from 'vitest';
 import { InitExperimentationServiceService } from '../experimentation';
-import {
-  enableAPIMGatewayConnection,
-  enableCodeInterpreterConsumption,
-  enableCodeInterpreterStandard,
-  EXP_FLAGS,
-} from '../experimentationFlags';
+import { enableAPIMGatewayConnection, EXP_FLAGS } from '../experimentationFlags';
 
 describe('lib/designer-client-services/experimentationFlags', () => {
   let mockIsFeatureEnabled: ReturnType<typeof vi.fn>;
@@ -29,36 +24,6 @@ describe('lib/designer-client-services/experimentationFlags', () => {
     it('should return false when feature flag is disabled', async () => {
       mockIsFeatureEnabled.mockResolvedValue(false);
       const result = await enableAPIMGatewayConnection();
-      expect(result).toBe(false);
-    });
-  });
-
-  describe('enableCodeInterpreterConsumption', () => {
-    it('should return true when feature flag is enabled', async () => {
-      mockIsFeatureEnabled.mockResolvedValue(true);
-      const result = await enableCodeInterpreterConsumption();
-      expect(result).toBe(true);
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith(EXP_FLAGS.ENABLE_CODE_INTERPRETER_CONSUMPTION);
-    });
-
-    it('should return false when feature flag is disabled', async () => {
-      mockIsFeatureEnabled.mockResolvedValue(false);
-      const result = await enableCodeInterpreterConsumption();
-      expect(result).toBe(false);
-    });
-  });
-
-  describe('enableCodeInterpreterStandard', () => {
-    it('should return true when feature flag is enabled', async () => {
-      mockIsFeatureEnabled.mockResolvedValue(true);
-      const result = await enableCodeInterpreterStandard();
-      expect(result).toBe(true);
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith(EXP_FLAGS.ENABLE_CODE_INTERPRETER_STANDARD);
-    });
-
-    it('should return false when feature flag is disabled', async () => {
-      mockIsFeatureEnabled.mockResolvedValue(false);
-      const result = await enableCodeInterpreterStandard();
       expect(result).toBe(false);
     });
   });
