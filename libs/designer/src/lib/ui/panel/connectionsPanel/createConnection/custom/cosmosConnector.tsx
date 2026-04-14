@@ -95,7 +95,7 @@ export const CosmosDbConnector = (props: ConnectionParameterProps) => {
         const accountResponse = await ResourceService().executeResourceAction(`${accountId}/listKeys`, 'POST', {
           'api-version': '2025-11-01-preview',
         });
-        setKeyValue?.('cosmosDBKey', accountResponse?.primaryReadonlyMasterKey ?? accountResponse?.primaryMasterKey ?? '');
+        setKeyValue?.('cosmosDBKey', accountResponse?.primaryMasterKey ?? accountResponse?.secondaryMasterKey ?? '');
         setErrorMessage('');
       } catch (e: any) {
         LoggerService().log({

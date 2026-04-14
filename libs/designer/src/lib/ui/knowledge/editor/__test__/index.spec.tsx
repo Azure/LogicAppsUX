@@ -305,7 +305,7 @@ describe('KnowledgeHubEditor', () => {
 
       renderComponent();
 
-      expect(screen.getByText('Please create a connection to add knowledge hubs.')).toBeInTheDocument();
+      expect(screen.getByText('Create a connection to add knowledge hubs.')).toBeInTheDocument();
     });
 
     it('shows placeholder text when connection exists', () => {
@@ -462,7 +462,9 @@ describe('KnowledgeHubEditor', () => {
       fireEvent.click(dropdown);
 
       await waitFor(() => {
-        expect(screen.getByText('No hub artifacts found. You can create hub and upload files to get started.')).toBeInTheDocument();
+        expect(
+          screen.getByText(`Can't find knowledge base artifacts. Create a knowledge base and upload files to get started.`)
+        ).toBeInTheDocument();
       });
     });
   });

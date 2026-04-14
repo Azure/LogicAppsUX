@@ -7,6 +7,8 @@ import React from 'react';
 import { render, screen, cleanup, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { IntlProvider } from 'react-intl';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { KnowledgeList, type KnowledgeHubItem } from '../knowledgelist';
 import { ArtifactCreationStatus, type KnowledgeHubExtended as KnowledgeHub } from '@microsoft/logic-apps-shared';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -59,12 +61,26 @@ const createTestQueryClient = () =>
     },
   });
 
+const createMockStore = () =>
+  configureStore({
+    reducer: {
+      knowledgeHubPanel: () => ({
+        isOpen: false,
+        currentPanelView: null,
+        selectedTabId: undefined,
+      }),
+    },
+  });
+
 const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient) => {
   const client = queryClient ?? createTestQueryClient();
+  const store = createMockStore();
   return render(
-    <QueryClientProvider client={client}>
-      <IntlProvider locale="en">{component}</IntlProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={client}>
+        <IntlProvider locale="en">{component}</IntlProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 };
 

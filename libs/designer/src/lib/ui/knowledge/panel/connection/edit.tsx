@@ -2,7 +2,18 @@ import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesSection, 
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/knowledge/store';
 import { closePanel, KnowledgePanelView } from '../../../../core/state/knowledge/panelSlice';
-import { Button, Drawer, DrawerBody, DrawerFooter, DrawerHeader, MessageBar, Spinner, Text } from '@fluentui/react-components';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Spinner,
+  Text,
+} from '@fluentui/react-components';
 import { useEditPanelStyles, usePanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
@@ -10,6 +21,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useConnection } from '../../../../core/knowledge/utils/queries';
 import { createOrUpdateConnection, getConnectionParametersForEdit } from '../../../../core/knowledge/utils/connection';
 import { type ConnectionParameterSetParameter, equals, isEmptyString } from '@microsoft/logic-apps-shared';
+import { setNotification } from '../../../../core/state/knowledge/optionsSlice';
+import type { ServerNotificationData } from '../../../mcp/servers/servers';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -38,68 +51,71 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
 
   const [isSaving, setIsSaving] = useState(false);
   const styles = { ...usePanelStyles(), ...useEditPanelStyles() };
-  const INTL_TEXT = {
-    loadingText: intl.formatMessage({
-      defaultMessage: 'Loading connection details...',
-      id: 'VDsEqR',
-      description: 'Text displayed while loading connection details',
+  const INTL_TEXT = useMemo(
+    () => ({
+      loadingText: intl.formatMessage({
+        defaultMessage: 'Loading connection details...',
+        id: 'VDsEqR',
+        description: 'Text displayed while loading connection details',
+      }),
+      infoText: intl.formatMessage({
+        defaultMessage: 'You can edit only the names for the connection and models at this time.',
+        id: 'K6VGan',
+        description: 'Informational text for edit connection panel',
+      }),
+      updateTitle: intl.formatMessage({
+        defaultMessage: 'Update connection',
+        id: 'CwKE/Q',
+        description: 'Header for the panel to update a knowledge hub connection',
+      }),
+      closeAriaLabel: intl.formatMessage({
+        id: 'kdCuJZ',
+        defaultMessage: 'Close panel',
+        description: 'Aria label for close button',
+      }),
+      buttonText: intl.formatMessage({
+        id: 'luCPhK',
+        defaultMessage: 'Save',
+        description: 'Button text for update connection',
+      }),
+      savingText: intl.formatMessage({
+        id: 'ZbcukP',
+        defaultMessage: 'Saving...',
+        description: 'Button text for when the connection is being updated',
+      }),
+      cancelButton: intl.formatMessage({
+        id: 'jfBXq8',
+        defaultMessage: 'Cancel',
+        description: 'Button text for cancelling updating the connection',
+      }),
+      errorText: intl.formatMessage({
+        id: '2XMSCZ',
+        defaultMessage: 'Requires a parameter value.',
+        description: 'Error message when a required parameter value is missing',
+      }),
+      detailsTitle: intl.formatMessage({
+        id: 'ISO6j1',
+        defaultMessage: 'Details',
+        description: 'Knowledge hub connection details label',
+      }),
+      cosmosDBTitle: intl.formatMessage({
+        id: 'mQb69n',
+        defaultMessage: 'Cosmos database',
+        description: 'Azure Cosmos DB details label',
+      }),
+      openAITitle: intl.formatMessage({
+        id: 'FeqzjX',
+        defaultMessage: 'Azure OpenAI model',
+        description: 'Azure OpenAI model label',
+      }),
+      displayNameFieldLabel: intl.formatMessage({
+        id: '3cdEwu',
+        defaultMessage: 'Connection display name',
+        description: 'Label for the display name field in edit connection panel',
+      }),
     }),
-    infoText: intl.formatMessage({
-      defaultMessage: 'You can edit only the names for the connection and models at this time.',
-      id: 'K6VGan',
-      description: 'Informational text for edit connection panel',
-    }),
-    updateTitle: intl.formatMessage({
-      defaultMessage: 'Update connection',
-      id: 'CwKE/Q',
-      description: 'Header for the panel to update a knowledge hub connection',
-    }),
-    closeAriaLabel: intl.formatMessage({
-      id: 'kdCuJZ',
-      defaultMessage: 'Close panel',
-      description: 'Aria label for close button',
-    }),
-    buttonText: intl.formatMessage({
-      id: 'luCPhK',
-      defaultMessage: 'Save',
-      description: 'Button text for update connection',
-    }),
-    savingText: intl.formatMessage({
-      id: 'ZbcukP',
-      defaultMessage: 'Saving...',
-      description: 'Button text for when the connection is being updated',
-    }),
-    cancelButton: intl.formatMessage({
-      id: 'jfBXq8',
-      defaultMessage: 'Cancel',
-      description: 'Button text for cancelling updating the connection',
-    }),
-    errorText: intl.formatMessage({
-      id: '2XMSCZ',
-      defaultMessage: 'Requires a parameter value.',
-      description: 'Error message when a required parameter value is missing',
-    }),
-    detailsTitle: intl.formatMessage({
-      id: 'ISO6j1',
-      defaultMessage: 'Details',
-      description: 'Knowledge hub connection details label',
-    }),
-    cosmosDBTitle: intl.formatMessage({
-      id: 'mQb69n',
-      defaultMessage: 'Cosmos database',
-      description: 'Azure Cosmos DB details label',
-    }),
-    openAITitle: intl.formatMessage({
-      id: 'FeqzjX',
-      defaultMessage: 'Azure OpenAI model',
-      description: 'Azure OpenAI model label',
-    }),
-    displayNameFieldLabel: intl.formatMessage({
-      id: '3cdEwu',
-      defaultMessage: 'Connection display name',
-      description: 'Label for the display name field in edit connection panel',
-    }),
-  };
+    [intl]
+  );
 
   const handleDismiss = useCallback(() => {
     dispatch(closePanel());
@@ -166,18 +182,41 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
     return items;
   }, [getParameterItem, connectionParameters, connectionParameterValues]);
 
+  const [updateError, setUpdateError] = useState<ServerNotificationData | null>(null);
   const handleSave = useCallback(async () => {
     setIsSaving(true);
+    setUpdateError(null);
     try {
-      await createOrUpdateConnection(connectionParameterValues);
-      // TODO: Setup toast notification for success and failure cases
+      await createOrUpdateConnection(connectionParameterValues, /* isCreate */ false);
+      dispatch(
+        setNotification({
+          title: intl.formatMessage({
+            defaultMessage: 'Connection updated',
+            id: 'QzjaQG',
+            description: 'Notification title for successful connection update',
+          }),
+          content: intl.formatMessage({
+            defaultMessage: 'Successfully updated details for knowledge hub connection.',
+            id: 'QW+oZz',
+            description: 'Notification content for successful connection update',
+          }),
+        })
+      );
       handleDismiss();
     } catch (error) {
-      console.error('Error updating connection:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setUpdateError({
+        title: intl.formatMessage({
+          defaultMessage: 'Failed to update connection',
+          id: '9mG3yl',
+          description: 'Error title when connection update fails',
+        }),
+        content: errorMessage,
+      });
     } finally {
       setIsSaving(false);
     }
-  }, [connectionParameterValues, handleDismiss]);
+  }, [connectionParameterValues, dispatch, handleDismiss, intl]);
 
   const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
@@ -216,6 +255,14 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
         </div>
       </DrawerHeader>
       <DrawerBody className={styles.body}>
+        {updateError ? (
+          <MessageBar intent="error" style={{ marginBottom: 16 }}>
+            <MessageBarBody>
+              <MessageBarTitle>{updateError.title}</MessageBarTitle>
+              {updateError.content}
+            </MessageBarBody>
+          </MessageBar>
+        ) : null}
         {isLoading ? (
           <div className={styles.loadingContainer}>
             <Spinner size="huge" />
