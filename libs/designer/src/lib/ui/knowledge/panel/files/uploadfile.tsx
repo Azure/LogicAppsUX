@@ -112,8 +112,9 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
 
   useEffect(() => {
     if (hubs && groupName) {
-      setGroupDescription(hubs.find((hub) => equals(hub.name, groupName))?.description ?? '');
-      setExistingArtifactNames(hubs.find((hub) => equals(hub.name, groupName))?.artifacts?.map((artifact) => artifact.name) ?? []);
+      const selectedHubData = hubs.find((hub) => equals(hub.name, groupName));
+      setGroupDescription(selectedHubData?.description ?? '');
+      setExistingArtifactNames(selectedHubData?.artifacts?.map((artifact) => artifact.name) ?? []);
     }
   }, [hubs, groupName]);
 

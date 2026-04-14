@@ -12,6 +12,9 @@ import {
   Input,
   Textarea,
   Spinner,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { Dismiss24Regular } from '@fluentui/react-icons';
@@ -19,6 +22,7 @@ import { useCallback, useState, useMemo } from 'react';
 import { createKnowledgeHub, validateHubNameAvailability } from '../../../core/knowledge/utils/helper';
 import { useAllKnowledgeHubs } from '../../../core/knowledge/utils/queries';
 import { useModalStyles } from './styles';
+import type { ServerNotificationData } from '../../mcp/servers/servers';
 
 export const CreateGroup = ({
   resourceId,
@@ -90,6 +94,7 @@ export const CreateGroup = ({
   const [description, setDescription] = useState('');
   const [nameError, setNameError] = useState<string | undefined>(undefined);
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<ServerNotificationData | null>(null);
 
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,12 +109,33 @@ export const CreateGroup = ({
     async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      setIsCreating(true);
-      await createKnowledgeHub(resourceId, name, description);
-      onCreate?.(name, description);
-      setIsCreating(false);
+      try {
+        setIsCreating(true);
+        await createKnowledgeHub(resourceId, name, description);
+        onCreate?.(name, description);
+        setCreateError(null);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        setCreateError({
+          title: intl.formatMessage({
+            defaultMessage: 'Failed to create group',
+            id: 'GyPgdO',
+            description: 'Error title when group creation fails',
+          }),
+          content: intl.formatMessage(
+            {
+              id: 'isF2bJ',
+              defaultMessage: 'Failed to create group: {errorMessage}',
+              description: 'Error message when group creation fails',
+            },
+            { errorMessage }
+          ),
+        });
+      } finally {
+        setIsCreating(false);
+      }
     },
-    [description, name, onCreate, resourceId]
+    [description, intl, name, onCreate, resourceId]
   );
 
   return (
@@ -131,6 +157,14 @@ export const CreateGroup = ({
               <Spinner label={INTL_TEXT.loadingText} size="large" />
             ) : (
               <div className={styles.groupSection}>
+                {createError ? (
+                  <MessageBar intent="error" style={{ marginBottom: 16, display: 'flex' }}>
+                    <MessageBarBody>
+                      <MessageBarTitle>{createError.title}</MessageBarTitle>
+                      <Text>{createError.content}</Text>
+                    </MessageBarBody>
+                  </MessageBar>
+                ) : null}
                 <Field label={INTL_TEXT.nameLabel} required={true} validationMessage={nameError}>
                   <Input placeholder={INTL_TEXT.namePlaceholder} value={name} onChange={handleNameChange} />
                 </Field>

@@ -1,4 +1,12 @@
-import { ResourceService, LoggerService, LogEntryLevel, getIntl, isNullOrEmpty, equals } from '@microsoft/logic-apps-shared';
+import {
+  ResourceService,
+  LoggerService,
+  LogEntryLevel,
+  getIntl,
+  isNullOrEmpty,
+  equals,
+  getObjectPropertyValue,
+} from '@microsoft/logic-apps-shared';
 
 export const createKnowledgeHub = async (siteResourceId: string, groupName: string, description: string) => {
   try {
@@ -9,12 +17,13 @@ export const createKnowledgeHub = async (siteResourceId: string, groupName: stri
         'api-version': '2018-11-01',
         'Content-Type': 'application/json',
       },
-      JSON.stringify({ description })
+      { description }
     );
 
     return response;
   } catch (errorResponse: any) {
-    const error = errorResponse?.error || {};
+    const errorMessage = getObjectPropertyValue(errorResponse, ['error', 'message']) ?? getObjectPropertyValue(errorResponse, ['message']);
+    const error = errorResponse?.error || errorResponse;
     // For now log the error
     LoggerService().log({
       level: LogEntryLevel.Error,
@@ -22,6 +31,8 @@ export const createKnowledgeHub = async (siteResourceId: string, groupName: stri
       error,
       message: `Error while creating knowledge hub for the app: ${siteResourceId}`,
     });
+
+    throw new Error(errorMessage);
   }
 };
 
