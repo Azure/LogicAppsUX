@@ -21,10 +21,6 @@ export const useFoundryAgentDetailsStyles = makeStyles({
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorNeutralForeground3,
   },
-  labelRow: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   instructionsTextarea: {
     width: '100%',
     minHeight: '200px',

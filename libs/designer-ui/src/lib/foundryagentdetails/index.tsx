@@ -220,9 +220,7 @@ export function FoundryAgentDetails({
       </div>
 
       <div className={styles.row}>
-        <div className={styles.labelRow}>
-          <Text className={styles.label}>{instructionsLabel}</Text>
-        </div>
+        <Text className={styles.label}>{instructionsLabel}</Text>
         <Textarea
           className={styles.instructionsTextarea}
           key={agent.id}

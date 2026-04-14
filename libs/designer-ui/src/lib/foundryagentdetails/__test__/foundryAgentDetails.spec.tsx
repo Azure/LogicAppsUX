@@ -14,24 +14,24 @@ function renderWithIntl(component: React.ReactElement) {
   return renderer.create(<IntlProvider locale="en">{component}</IntlProvider>);
 }
 
+const baseAgent: FoundryAgent = {
+  id: 'agent-1',
+  name: 'TestAgent',
+  model: 'gpt-4',
+  instructions: 'You are a helpful assistant.',
+  tools: [],
+  metadata: {},
+  created_at: 1700000000,
+  object: 'agent',
+  description: 'Test agent',
+};
+
+const baseModels: FoundryModel[] = [
+  { id: 'gpt-4', name: 'GPT-4' },
+  { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
+];
+
 describe('FoundryAgentDetails', () => {
-  const baseAgent: FoundryAgent = {
-    id: 'agent-1',
-    name: 'TestAgent',
-    model: 'gpt-4',
-    instructions: 'You are a helpful assistant.',
-    tools: [],
-    metadata: {},
-    created_at: 1700000000,
-    object: 'agent',
-    description: 'Test agent',
-  };
-
-  const baseModels: FoundryModel[] = [
-    { id: 'gpt-4', name: 'GPT-4' },
-    { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
-  ];
-
   const baseVersions: FoundryAgentVersion[] = [
     {
       id: 'agent-1:3',
@@ -122,23 +122,6 @@ describe('FoundryAgentDetails', () => {
 
 describe('FoundryAgentDetails — pending edits persistence', () => {
   afterEach(cleanup);
-
-  const baseAgent: FoundryAgent = {
-    id: 'agent-1',
-    name: 'TestAgent',
-    model: 'gpt-4',
-    instructions: 'Original instructions from Foundry.',
-    tools: [],
-    metadata: {},
-    created_at: 1700000000,
-    object: 'agent',
-    description: 'Test agent',
-  };
-
-  const baseModels: FoundryModel[] = [
-    { id: 'gpt-4', name: 'GPT-4' },
-    { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
-  ];
 
   it('should display selectedInstructions (pending edits) instead of agent.instructions on initial render', () => {
     const pendingText = 'User-edited instructions that should persist';
@@ -378,23 +361,6 @@ describe('guidToBase64Url', () => {
 
 describe('FoundryAgentDetails — UI polish', () => {
   afterEach(cleanup);
-
-  const baseAgent: FoundryAgent = {
-    id: 'agent-1',
-    name: 'TestAgent',
-    model: 'gpt-4',
-    instructions: 'You are a helpful assistant.',
-    tools: [],
-    metadata: {},
-    created_at: 1700000000,
-    object: 'agent',
-    description: 'Test agent',
-  };
-
-  const baseModels: FoundryModel[] = [
-    { id: 'gpt-4', name: 'GPT-4' },
-    { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
-  ];
 
   it('should not render a "Defined in Foundry" badge', () => {
     render(
