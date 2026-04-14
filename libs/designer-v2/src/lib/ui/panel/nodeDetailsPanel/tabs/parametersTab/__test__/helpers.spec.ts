@@ -361,10 +361,10 @@ describe('Foundry managed settings — regression contract', () => {
     const path = await import('path');
     const source = fs.readFileSync(path.resolve(__dirname, '../index.tsx'), 'utf-8');
 
-    const fnStart = source.indexOf('filterFoundryManagedSettings');
-    expect(fnStart).toBeGreaterThan(-1);
+    const functionMatch = source.match(/filterFoundryManagedSettings[\s\S]*?=>\s*[\s\S]*?\n  \);/);
+    expect(functionMatch).not.toBeNull();
 
-    const fnBody = source.slice(fnStart, fnStart + 800);
+    const fnBody = functionMatch?.[0] ?? '';
     expect(fnBody).toContain('hideSystemInstructions: true');
   });
 });

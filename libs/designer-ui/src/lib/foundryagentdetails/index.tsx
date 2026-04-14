@@ -62,7 +62,7 @@ export function buildFoundryPortalUrl(projectResourceId: string | undefined, age
     return undefined;
   }
   const [, subscriptionId, resourceGroup, account, project] = match;
-  const encodedSubscriptionId = guidToBase64Url(subscriptionId);
+  const encodedSubscriptionId = encodeURIComponent(guidToBase64Url(subscriptionId));
   const baseUrl = `https://ai.azure.com/nextgen/r/${encodedSubscriptionId},${encodeURIComponent(resourceGroup)},,${encodeURIComponent(account)},${encodeURIComponent(project)}/build/agents/${encodeURIComponent(agentId)}/build`;
   return versionNumber ? `${baseUrl}?version=${encodeURIComponent(versionNumber)}` : baseUrl;
 }
