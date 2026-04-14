@@ -38,71 +38,80 @@ import {
 import { CreateGroup } from '../modals/creategroup';
 import { type KnowledgeHubItem, KnowledgeList } from './knowledgelist';
 import { DeleteModal } from '../modals/delete';
+import type { ServerNotificationData } from '../../mcp/servers/servers';
+import { setNotification, clearNotification } from '../../../core/state/knowledge/optionsSlice';
+import { ToasterNotification } from '../notification';
 
 export const KnowledgeHubWizard = ({ onUploadArtifact }: { onUploadArtifact: UploadFileHandler }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const styles = useWizardStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, resourceGroup, logicAppName } = useSelector((state: RootState) => ({
+  const { subscriptionId, resourceGroup, logicAppName, notification } = useSelector((state: RootState) => ({
     subscriptionId: state.resource.subscriptionId,
     resourceGroup: state.resource.resourceGroup,
     logicAppName: state.resource.logicAppName,
+    notification: state.options.notification,
   }));
   const logicAppId = useMemo(
     () => getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName ?? ''),
     [subscriptionId, resourceGroup, logicAppName]
   );
   const intl = useIntl();
-  const INTL_TEXT = {
-    description: intl.formatMessage({
-      defaultMessage:
-        'Add knowledge sources to build a knowledge base that the agent uses to generate accurate, context-aware responses and insights.',
-      id: 'DIH5g2',
-      description: 'Description displayed above the knowledge hubs list',
+  const INTL_TEXT = useMemo(
+    () => ({
+      description: intl.formatMessage({
+        defaultMessage:
+          'Add knowledge sources to build a knowledge base that the agent uses to generate accurate, context-aware responses and insights.',
+        id: 'DIH5g2',
+        description: 'Description displayed above the knowledge hubs list',
+      }),
+      learnMore: intl.formatMessage({
+        defaultMessage: 'Learn more about knowledge sources',
+        id: 'P2FkOv',
+        description: 'Link text for learning more about knowledge bases',
+      }),
+      newButton: intl.formatMessage({
+        defaultMessage: 'New',
+        id: 'DgXA3v',
+        description: 'Button text for creating new knowledge hub',
+      }),
+      addFilesItem: intl.formatMessage({
+        defaultMessage: 'Add files',
+        id: 'FBabb+',
+        description: 'Menu item for adding files to knowledge hub',
+      }),
+      addGroupItem: intl.formatMessage({
+        defaultMessage: 'Create new group',
+        id: '0TLYdu',
+        description: 'Menu item for adding group of files to knowledge hub',
+      }),
+      refreshButton: intl.formatMessage({
+        defaultMessage: 'Refresh',
+        id: 'YMwLWl',
+        description: 'Button text for refreshing the knowledge hubs list',
+      }),
+      refreshingButton: intl.formatMessage({
+        defaultMessage: 'Refreshing...',
+        id: '7fI0ys',
+        description: 'Button text for refreshing the knowledge hubs list when refresh is in progress',
+      }),
+      connectionButton: intl.formatMessage({
+        defaultMessage: 'Connection',
+        id: 'q80Qpn',
+        description: 'Button text for knowledge hub connection settings',
+      }),
+      deleteButton: intl.formatMessage({
+        defaultMessage: 'Delete',
+        id: 'LWm9b4',
+        description: 'Button text for deleting a knowledge hub',
+      }),
     }),
-    learnMore: intl.formatMessage({
-      defaultMessage: 'Learn more about knowledge sources',
-      id: 'P2FkOv',
-      description: 'Link text for learning more about knowledge bases',
-    }),
-    newButton: intl.formatMessage({
-      defaultMessage: 'New',
-      id: 'DgXA3v',
-      description: 'Button text for creating new knowledge hub',
-    }),
-    addFilesItem: intl.formatMessage({
-      defaultMessage: 'Add files',
-      id: 'FBabb+',
-      description: 'Menu item for adding files to knowledge hub',
-    }),
-    addGroupItem: intl.formatMessage({
-      defaultMessage: 'Create new group',
-      id: '0TLYdu',
-      description: 'Menu item for adding group of files to knowledge hub',
-    }),
-    refreshButton: intl.formatMessage({
-      defaultMessage: 'Refresh',
-      id: 'YMwLWl',
-      description: 'Button text for refreshing the knowledge hubs list',
-    }),
-    refreshingButton: intl.formatMessage({
-      defaultMessage: 'Refreshing...',
-      id: '7fI0ys',
-      description: 'Button text for refreshing the knowledge hubs list when refresh is in progress',
-    }),
-    connectionButton: intl.formatMessage({
-      defaultMessage: 'Connection',
-      id: 'q80Qpn',
-      description: 'Button text for knowledge hub connection settings',
-    }),
-    deleteButton: intl.formatMessage({
-      defaultMessage: 'Delete',
-      id: 'LWm9b4',
-      description: 'Button text for deleting a knowledge hub',
-    }),
-  };
+    [intl]
+  );
   const { data: allHubs, isLoading, refetch, isRefetching } = useAllKnowledgeHubs(logicAppId);
   const { data: connection, isLoading: isConnectionLoading } = useConnection();
+  const showNotification = useMemo(() => notification !== undefined, [notification]);
+  const handleClearNotification = useCallback(() => dispatch(clearNotification()), [dispatch]);
 
   const [hubs, setHubs] = useState<KnowledgeHub[] | undefined>(undefined);
   const [showAddGroup, setShowAddGroup] = useState(false);
@@ -126,19 +135,43 @@ export const KnowledgeHubWizard = ({ onUploadArtifact }: { onUploadArtifact: Upl
 
   const handleDeleteClick = useCallback(() => setShowDeleteModal(true), []);
   const handleCloseDeleteModal = useCallback(() => setShowDeleteModal(false), []);
-  const handleOnDeleteComplete = useCallback(async () => {
-    await refetch();
-    setSelectedArtifacts([]);
-  }, [refetch]);
+  const handleOnDeleteComplete = useCallback(
+    async (data: ServerNotificationData) => {
+      dispatch(setNotification(data));
+      await refetch();
+      setSelectedArtifacts([]);
+    },
+    [dispatch, refetch]
+  );
 
   const handleAddGroup = useCallback(() => setShowAddGroup(true), []);
   const handleCloseAddGroup = useCallback(() => setShowAddGroup(false), []);
 
   const handleRefreshHubs = useCallback(async () => refetch(), [refetch]);
-  const handleOnCreateGroup = useCallback(() => {
-    handleRefreshHubs();
-    setShowAddGroup(false);
-  }, [handleRefreshHubs]);
+  const handleOnCreateGroup = useCallback(
+    (name: string) => {
+      dispatch(
+        setNotification({
+          title: intl.formatMessage({
+            id: '/RFd5i',
+            defaultMessage: 'Successfully created the group.',
+            description: 'Title for the toaster after creating a group in add files panel',
+          }),
+          content: intl.formatMessage(
+            {
+              id: 's2f0XK',
+              defaultMessage: 'Group {name} has been created and selected.',
+              description: 'Content for the toaster after creating a group in add files panel',
+            },
+            { name }
+          ),
+        })
+      );
+      handleRefreshHubs();
+      setShowAddGroup(false);
+    },
+    [dispatch, handleRefreshHubs, intl]
+  );
 
   const handleConnectionClick = useCallback(() => {
     dispatch(openPanelView({ panelView: connection ? KnowledgePanelView.EditConnection : KnowledgePanelView.CreateConnection }));
@@ -175,6 +208,9 @@ export const KnowledgeHubWizard = ({ onUploadArtifact }: { onUploadArtifact: Upl
 
   return (
     <div style={{ height: '98.5vh' }}>
+      {showNotification && notification ? (
+        <ToasterNotification title={notification.title} content={notification.content} onClear={handleClearNotification} />
+      ) : null}
       <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
         <DescriptionWithLink text={INTL_TEXT.description} linkText={INTL_TEXT.learnMore} linkUrl="" />
         <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
@@ -258,23 +294,26 @@ const NoConnectionsView = () => {
   const styles = useWizardStyles();
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const INTL_TEXT = {
-    title: intl.formatMessage({
-      defaultMessage: 'Ground responses and insights with knowledge',
-      id: '76TGL0',
-      description: 'Title displayed when there are no connections and hubs in the logic apps.',
+  const INTL_TEXT = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        defaultMessage: 'Ground responses and insights with knowledge',
+        id: '76TGL0',
+        description: 'Title displayed when there are no connections and hubs in the logic apps.',
+      }),
+      description: intl.formatMessage({
+        defaultMessage: 'Set up your knowledge base and add sources that the agent will reference for accuracy.',
+        id: 'L2xC0I',
+        description: 'Description displayed when there are no connections and hubs in the logic apps.',
+      }),
+      buttonText: intl.formatMessage({
+        defaultMessage: 'Set up',
+        id: 'XZ5kRn',
+        description: 'Button text for setting up',
+      }),
     }),
-    description: intl.formatMessage({
-      defaultMessage: 'Set up your knowledge base and add sources that the agent will reference for accuracy.',
-      id: 'L2xC0I',
-      description: 'Description displayed when there are no connections and hubs in the logic apps.',
-    }),
-    buttonText: intl.formatMessage({
-      defaultMessage: 'Set up',
-      id: 'XZ5kRn',
-      description: 'Button text for setting up',
-    }),
-  };
+    [intl]
+  );
 
   const isDarkMode = useSelector((state: RootState) => state.options.isDarkMode);
   const handleSetup = useCallback(() => dispatch(openPanelView({ panelView: KnowledgePanelView.CreateConnection })), [dispatch]);
@@ -300,23 +339,26 @@ const EmptyKnowledgeBaseView = () => {
   const styles = useWizardStyles();
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const INTL_TEXT = {
-    title: intl.formatMessage({
-      defaultMessage: 'Add file sources to your Knowledge base',
-      id: 'AhAJr6',
-      description: 'Title displayed when there are no hubs in the logic apps.',
+  const INTL_TEXT = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        defaultMessage: 'Add file sources to your Knowledge base',
+        id: 'AhAJr6',
+        description: 'Title displayed when there are no hubs in the logic apps.',
+      }),
+      description: intl.formatMessage({
+        defaultMessage: 'Add sources that the agent will reference for accuracy.',
+        id: 'ZTC15w',
+        description: 'Description displayed when there are no hubs in the logic apps.',
+      }),
+      buttonText: intl.formatMessage({
+        defaultMessage: 'Add files',
+        id: 'k/8PVE',
+        description: 'Button text for adding files',
+      }),
     }),
-    description: intl.formatMessage({
-      defaultMessage: 'Add sources that the agent will reference for accuracy.',
-      id: 'ZTC15w',
-      description: 'Description displayed when there are no hubs in the logic apps.',
-    }),
-    buttonText: intl.formatMessage({
-      defaultMessage: 'Add files',
-      id: 'k/8PVE',
-      description: 'Button text for adding files',
-    }),
-  };
+    [intl]
+  );
 
   const isDarkMode = useSelector((state: RootState) => state.options.isDarkMode);
   const handleSetup = useCallback(() => dispatch(openPanelView({ panelView: KnowledgePanelView.AddFiles })), [dispatch]);

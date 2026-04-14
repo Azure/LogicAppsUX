@@ -7,6 +7,9 @@ import {
   DialogSurface,
   DialogTitle,
   DialogTrigger,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
 } from '@fluentui/react-components';
 import { Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -18,17 +21,21 @@ import { useConnectionStyles } from './styles';
 import type { AppDispatch, RootState } from '../../../core/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeKnowledgeConnectionModal } from '../../../core/state/modal/modalSlice';
+import type { ServerNotificationData } from '../../mcp/servers/servers';
 
 export const CreateConnectionModal = ({ mountNode }: { mountNode: HTMLElement | null }) => {
   const styles = useConnectionStyles();
   const intl = useIntl();
-  const INTL_TEXT = {
-    title: intl.formatMessage({
-      defaultMessage: 'Create Connection',
-      id: 'ub55NF',
-      description: 'Title for the create connection modal',
+  const INTL_TEXT = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        defaultMessage: 'Create Connection',
+        id: 'ub55NF',
+        description: 'Title for the create connection modal',
+      }),
     }),
-  };
+    [intl]
+  );
 
   const { isKnowledgeConnectionOpen } = useSelector((state: RootState) => ({
     isKnowledgeConnectionOpen: state.modal.isKnowledgeConnectionOpen,
@@ -41,8 +48,13 @@ export const CreateConnectionModal = ({ mountNode }: { mountNode: HTMLElement | 
     }
   }, [dispatch, isKnowledgeConnectionOpen]);
 
+  const [createError, setCreateError] = useState<ServerNotificationData | null>(null);
   const [selectedTabId, setSelectedTabId] = useState(Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS);
-  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs({ selectTab: setSelectedTabId, close: onDismiss });
+  const panelTabs: KnowledgeTabProps[] = useCreateConnectionPanelTabs({
+    selectTab: setSelectedTabId,
+    close: onDismiss,
+    onError: setCreateError,
+  });
 
   const selectedTabProps = useMemo(
     () => (selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0]),
@@ -64,6 +76,14 @@ export const CreateConnectionModal = ({ mountNode }: { mountNode: HTMLElement | 
           </DialogTitle>
           <DialogContent>
             <div className={styles.content}>
+              {createError ? (
+                <MessageBar intent="error" style={{ marginBottom: 16 }}>
+                  <MessageBarBody>
+                    <MessageBarTitle>{createError.title}</MessageBarTitle>
+                    {createError.content}
+                  </MessageBarBody>
+                </MessageBar>
+              ) : null}
               <TemplateContent
                 tabs={panelTabs}
                 selectedTab={selectedTabId}

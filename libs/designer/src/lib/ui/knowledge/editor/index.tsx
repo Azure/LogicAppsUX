@@ -41,68 +41,71 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
 
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
 
-  const INTL_TEXT = {
-    title: intl.formatMessage({
-      defaultMessage: 'Knowledge base',
-      id: '8/Vjz3',
-      description: 'Title for knowledge hub editor',
+  const INTL_TEXT = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        defaultMessage: 'Knowledge base',
+        id: '8/Vjz3',
+        description: 'Title for knowledge hub editor',
+      }),
+      description: intl.formatMessage({
+        defaultMessage: 'Create a connection and add knowledge hub sources your agent will use to generate responses.',
+        id: 'uMVVuc',
+        description: 'Description for knowledge hub editor',
+      }),
+      connectionSectionLabel: intl.formatMessage({
+        defaultMessage: 'Connection',
+        id: 'Ij0UEU',
+        description: 'Label for connection section',
+      }),
+      createConnectionButtonText: intl.formatMessage({
+        defaultMessage: 'Create',
+        id: 'IxkaoV',
+        description: 'Text for create connection button',
+      }),
+      sourcesSectionLabel: intl.formatMessage({
+        defaultMessage: 'Sources',
+        id: 'w63mKE',
+        description: 'Label for sources section',
+      }),
+      selectKnowledgeHubPlaceholder: intl.formatMessage({
+        defaultMessage: 'Select a knowledge hub',
+        id: '5Vbd0e',
+        description: 'Placeholder text for knowledge hub dropdown',
+      }),
+      uploadFilesButtonText: intl.formatMessage({
+        defaultMessage: 'Upload',
+        id: 'HMSDoJ',
+        description: 'Text for upload files button',
+      }),
+      connectionModalTitle: intl.formatMessage({
+        defaultMessage: 'Create Connection',
+        id: 'so2OVS',
+        description: 'Title for create connection modal',
+      }),
+      uploadModalTitle: intl.formatMessage({
+        defaultMessage: 'Upload Files',
+        id: '874l4V',
+        description: 'Title for upload files modal',
+      }),
+      learnMore: intl.formatMessage({
+        defaultMessage: 'Learn more',
+        id: '1ZDLZA',
+        description: 'Text for learn more link',
+      }),
+      emptyArtifacts: intl.formatMessage({
+        defaultMessage: `Can't find knowledge base artifacts. Create a knowledge base and upload files to get started.`,
+        id: 'kIxrfq',
+        description: 'Text to indicate that there are no artifacts in the knowledge hub',
+      }),
+      noConnectionMessage: intl.formatMessage({
+        defaultMessage: 'Create a connection to add knowledge hubs.',
+        id: 'wwXFYB',
+        description: 'Text to indicate that there is no connection',
+      }),
     }),
-    description: intl.formatMessage({
-      defaultMessage: 'Create a connection and add knowledge hub sources your agent will use to generate responses.',
-      id: 'uMVVuc',
-      description: 'Description for knowledge hub editor',
-    }),
-    connectionSectionLabel: intl.formatMessage({
-      defaultMessage: 'Connection',
-      id: 'Ij0UEU',
-      description: 'Label for connection section',
-    }),
-    createConnectionButtonText: intl.formatMessage({
-      defaultMessage: 'Create',
-      id: 'IxkaoV',
-      description: 'Text for create connection button',
-    }),
-    sourcesSectionLabel: intl.formatMessage({
-      defaultMessage: 'Sources',
-      id: 'w63mKE',
-      description: 'Label for sources section',
-    }),
-    selectKnowledgeHubPlaceholder: intl.formatMessage({
-      defaultMessage: 'Select a knowledge hub',
-      id: '5Vbd0e',
-      description: 'Placeholder text for knowledge hub dropdown',
-    }),
-    uploadFilesButtonText: intl.formatMessage({
-      defaultMessage: 'Upload',
-      id: 'HMSDoJ',
-      description: 'Text for upload files button',
-    }),
-    connectionModalTitle: intl.formatMessage({
-      defaultMessage: 'Create Connection',
-      id: 'so2OVS',
-      description: 'Title for create connection modal',
-    }),
-    uploadModalTitle: intl.formatMessage({
-      defaultMessage: 'Upload Files',
-      id: '874l4V',
-      description: 'Title for upload files modal',
-    }),
-    learnMore: intl.formatMessage({
-      defaultMessage: 'Learn more',
-      id: '1ZDLZA',
-      description: 'Text for learn more link',
-    }),
-    emptyArtifacts: intl.formatMessage({
-      defaultMessage: 'No hub artifacts found. You can create hub and upload files to get started.',
-      id: 'cBQnzA',
-      description: 'Text to indicate that there are no artifacts in the knowledge hub',
-    }),
-    noConnectionMessage: intl.formatMessage({
-      defaultMessage: 'Please create a connection to add knowledge hubs.',
-      id: 'F6xkfB',
-      description: 'Text to indicate that there is no connection',
-    }),
-  };
+    [intl]
+  );
 
   const handleOpenConnectionModal = useCallback(() => {
     dispatch(openKnowledgeConnectionModal());
@@ -274,23 +277,26 @@ const BadgeArtifact = ({ status }: { status: ArtifactCreationStatus }) => {
   const style: React.CSSProperties = { width: '20%' };
 
   const intl = useIntl();
-  const INTL_TEXT = {
-    inProgressStatus: intl.formatMessage({
-      defaultMessage: 'In progress',
-      id: 'gyfZhJ',
-      description: 'Text to indicate that the artifact upload is in progress',
+  const INTL_TEXT = useMemo(
+    () => ({
+      inProgressStatus: intl.formatMessage({
+        defaultMessage: 'In progress',
+        id: 'gyfZhJ',
+        description: 'Text to indicate that the artifact upload is in progress',
+      }),
+      completedStatus: intl.formatMessage({
+        defaultMessage: 'Complete',
+        id: '9euy52',
+        description: 'Text to indicate that the artifact upload is completed',
+      }),
+      failedStatus: intl.formatMessage({
+        defaultMessage: 'Error',
+        id: 'fs92Nu',
+        description: 'Text to indicate that the artifact upload has failed',
+      }),
     }),
-    completedStatus: intl.formatMessage({
-      defaultMessage: 'Complete',
-      id: '9euy52',
-      description: 'Text to indicate that the artifact upload is completed',
-    }),
-    failedStatus: intl.formatMessage({
-      defaultMessage: 'Error',
-      id: 'fs92Nu',
-      description: 'Text to indicate that the artifact upload has failed',
-    }),
-  };
+    [intl]
+  );
 
   switch (status) {
     case ArtifactCreationStatus.InProgress: {

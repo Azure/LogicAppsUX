@@ -135,43 +135,46 @@ const Basics = ({
   setConnectionParameterValues: (values: Record<string, any>) => void;
 }) => {
   const styles = useCreatePanelStyles();
-  const INTL_TEXT = {
-    detailsTitle: intl.formatMessage({
-      defaultMessage: 'Details',
-      id: 'flNr70',
-      description: 'Title for the connection details section in basics tab for quick app create panel',
+  const INTL_TEXT = useMemo(
+    () => ({
+      detailsTitle: intl.formatMessage({
+        defaultMessage: 'Details',
+        id: 'flNr70',
+        description: 'Title for the connection details section in basics tab for quick app create panel',
+      }),
+      detailsDescription: intl.formatMessage({
+        defaultMessage: 'Enter a display name for your connection. You can edit this name later.',
+        id: 'dpHuNn',
+        description: 'Description for the connection details section in basics tab for quick app create panel',
+      }),
+      nameLabel: intl.formatMessage({
+        defaultMessage: 'Display name',
+        id: '+NW+ab',
+        description: 'Label for the name field in basics tab for quick app create panel',
+      }),
+      namePlaceholder: intl.formatMessage({
+        defaultMessage: 'Enter a display name for your connection.',
+        id: 'ibx+yu',
+        description: 'Placeholder for the name field in basics tab for quick app create panel',
+      }),
+      nameError: intl.formatMessage({
+        defaultMessage: 'Requires a name.',
+        id: '1YRXiO',
+        description: 'Error message when name field is left empty in basics tab for quick app create panel',
+      }),
+      databaseTitle: intl.formatMessage({
+        defaultMessage: 'Database',
+        id: '6+XmJg',
+        description: 'Title for the database section in basics tab for quick app create panel',
+      }),
+      databaseDescription: intl.formatMessage({
+        defaultMessage: 'Set up a database for your knowledge base.',
+        id: '9o9MIz',
+        description: 'Description for the database section in basics tab for quick app create panel',
+      }),
     }),
-    detailsDescription: intl.formatMessage({
-      defaultMessage: 'Enter a display name for your connection. You can edit this name later.',
-      id: 'dpHuNn',
-      description: 'Description for the connection details section in basics tab for quick app create panel',
-    }),
-    nameLabel: intl.formatMessage({
-      defaultMessage: 'Display name',
-      id: '+NW+ab',
-      description: 'Label for the name field in basics tab for quick app create panel',
-    }),
-    namePlaceholder: intl.formatMessage({
-      defaultMessage: 'Enter a display name for your connection.',
-      id: 'ibx+yu',
-      description: 'Placeholder for the name field in basics tab for quick app create panel',
-    }),
-    nameError: intl.formatMessage({
-      defaultMessage: 'Requires a name.',
-      id: '1YRXiO',
-      description: 'Error message when name field is left empty in basics tab for quick app create panel',
-    }),
-    databaseTitle: intl.formatMessage({
-      defaultMessage: 'Database',
-      id: '6+XmJg',
-      description: 'Title for the database section in basics tab for quick app create panel',
-    }),
-    databaseDescription: intl.formatMessage({
-      defaultMessage: 'Set up a database for your knowledge base.',
-      id: '9o9MIz',
-      description: 'Description for the database section in basics tab for quick app create panel',
-    }),
-  };
+    [intl]
+  );
 
   const [operationParameterValues, setOperationParameterValues] = useState<Record<string, any>>({});
   const [name, setName] = useState<string | undefined>(connectionParameterValues.displayName);

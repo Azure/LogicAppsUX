@@ -4,7 +4,7 @@
 import { describe, vi, expect, it, beforeEach, afterEach } from 'vitest';
 // biome-ignore lint/correctness/noUnusedImports: using react for render
 import React from 'react';
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
@@ -47,6 +47,13 @@ vi.mock('@fluentui/react-components', () => ({
     </button>
   ),
   Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  MessageBar: ({ children, intent, style }: { children: React.ReactNode; intent?: string; style?: React.CSSProperties }) => (
+    <div data-testid="error-message-bar" data-intent={intent} style={style}>
+      {children}
+    </div>
+  ),
+  MessageBarBody: ({ children }: { children: React.ReactNode }) => <div data-testid="error-message-body">{children}</div>,
+  MessageBarTitle: ({ children }: { children: React.ReactNode }) => <span data-testid="error-message-title">{children}</span>,
 }));
 
 // Import CreateConnectionPanel after mocks
@@ -65,6 +72,8 @@ vi.mock('../../styles', () => ({
 
 // Mock useCreateConnectionPanelTabs
 const mockSelectTab = vi.fn();
+let capturedOnError: ((data: { title: string; content: string } | null) => void) | undefined;
+
 const mockPanelTabs = [
   {
     id: 'BASICS',
@@ -81,7 +90,10 @@ const mockPanelTabs = [
 ];
 
 vi.mock('../usepaneltabs', () => ({
-  useCreateConnectionPanelTabs: () => mockPanelTabs,
+  useCreateConnectionPanelTabs: ({ onError }: { onError: (data: { title: string; content: string } | null) => void }) => {
+    capturedOnError = onError;
+    return mockPanelTabs;
+  },
 }));
 
 // Mock TemplateContent and TemplatesPanelFooter
@@ -300,6 +312,37 @@ describe('CreateConnectionPanel Component', () => {
       renderComponent(store);
 
       expect(screen.getByText('Create')).toBeInTheDocument();
+    });
+  });
+
+  describe('Error Message Bar', () => {
+    it('does not render error message bar when there is no error', () => {
+      renderComponent();
+
+      expect(screen.queryByTestId('error-message-bar')).not.toBeInTheDocument();
+    });
+
+    it('renders error message bar when createError is set', async () => {
+      const { rerender } = renderComponent();
+
+      // Simulate error by calling the captured onError callback
+      act(() => {
+        capturedOnError?.({ title: 'Connection Error', content: 'Failed to create connection' });
+      });
+
+      // Re-render to pick up state change
+      rerender(
+        <Provider store={createMockStore()}>
+          <IntlProvider locale="en">
+            <CreateConnectionPanel mountNode={null} />
+          </IntlProvider>
+        </Provider>
+      );
+
+      expect(screen.getByTestId('error-message-bar')).toBeInTheDocument();
+      expect(screen.getByTestId('error-message-bar')).toHaveAttribute('data-intent', 'error');
+      expect(screen.getByTestId('error-message-title')).toHaveTextContent('Connection Error');
+      expect(screen.getByTestId('error-message-body')).toHaveTextContent('Failed to create connection');
     });
   });
 });

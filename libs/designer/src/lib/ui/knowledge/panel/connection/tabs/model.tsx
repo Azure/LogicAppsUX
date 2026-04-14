@@ -92,13 +92,16 @@ const Model = ({
   setConnectionParameterValues: (values: Record<string, any>) => void;
 }) => {
   const styles = useCreatePanelStyles();
-  const INTL_TEXT = {
-    description: intl.formatMessage({
-      defaultMessage: 'Set up a model for your knowledge base.',
-      id: 'snTAYI',
-      description: 'Description for the model tab in create connection panel',
+  const INTL_TEXT = useMemo(
+    () => ({
+      description: intl.formatMessage({
+        defaultMessage: 'Set up a model for your knowledge base.',
+        id: 'snTAYI',
+        description: 'Description for the model tab in create connection panel',
+      }),
     }),
-  };
+    [intl]
+  );
 
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(
     getSelectedAuthIndex(connectionParameterSets, connectionParameterValues.openAIAuthenticationType)
