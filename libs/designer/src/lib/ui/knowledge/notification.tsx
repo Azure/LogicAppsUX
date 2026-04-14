@@ -18,7 +18,7 @@ const getToastIntent = (type: NotificationType): ToastIntent => {
   return type === 'success' ? 'success' : 'error';
 };
 
-export const ToasterNotification = ({ type = 'success', title, content, duration = 10000 }: ToasterNotificationProps) => {
+export const ToasterNotification = ({ type = 'success', title, content, duration = 5000, onClear }: ToasterNotificationProps) => {
   const toasterId = useId('knowledge-toaster');
   const toastId = useId('knowledge-toast');
   const { dispatchToast } = useToastController(toasterId);
@@ -34,9 +34,14 @@ export const ToasterNotification = ({ type = 'success', title, content, duration
         intent: getToastIntent(type),
         position: 'top-end',
         timeout: duration,
+        onStatusChange: (_e, data) => {
+          if (data.status === 'unmounted') {
+            onClear?.();
+          }
+        },
       }
     );
-  }, [dispatchToast, toastId, title, content, type, duration]);
+  }, [dispatchToast, toastId, title, content, type, duration, onClear]);
 
   useEffect(() => {
     showToast();

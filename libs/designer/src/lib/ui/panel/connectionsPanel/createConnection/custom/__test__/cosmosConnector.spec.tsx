@@ -1,6 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
+import '@testing-library/jest-dom/vitest';
 import { describe, vi, expect, it, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
@@ -319,8 +320,8 @@ describe('CosmosDbConnector', () => {
   describe('account selection with key authentication', () => {
     it('sets endpoint and key when selecting account with key auth', async () => {
       mockExecuteResourceAction.mockResolvedValue({
-        primaryReadonlyMasterKey: 'readonly-key',
         primaryMasterKey: 'master-key',
+        secondaryMasterKey: 'secondary-key',
       });
 
       const setKeyValue = vi.fn();
@@ -342,14 +343,14 @@ describe('CosmosDbConnector', () => {
 
       await waitFor(() => {
         expect(setKeyValue).toHaveBeenCalledWith('cosmosDBEndpoint', 'https://cosmos1.documents.azure.com');
-        expect(setKeyValue).toHaveBeenCalledWith('cosmosDBKey', 'readonly-key');
+        expect(setKeyValue).toHaveBeenCalledWith('cosmosDBKey', 'master-key');
         expect(setValue).toHaveBeenCalledWith(accountId);
       });
     });
 
-    it('uses primaryMasterKey when primaryReadonlyMasterKey is not available', async () => {
+    it('uses secondaryMasterKey when primaryMasterKey is not available', async () => {
       mockExecuteResourceAction.mockResolvedValue({
-        primaryMasterKey: 'master-key',
+        secondaryMasterKey: 'secondary-key',
       });
 
       const setKeyValue = vi.fn();
@@ -369,7 +370,7 @@ describe('CosmosDbConnector', () => {
       });
 
       await waitFor(() => {
-        expect(setKeyValue).toHaveBeenCalledWith('cosmosDBKey', 'master-key');
+        expect(setKeyValue).toHaveBeenCalledWith('cosmosDBKey', 'secondary-key');
       });
     });
 
