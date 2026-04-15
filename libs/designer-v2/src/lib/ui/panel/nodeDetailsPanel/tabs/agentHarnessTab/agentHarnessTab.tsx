@@ -15,6 +15,7 @@ import {
   DataGridHeaderCell,
   DataGridRow,
   createTableColumn,
+  Badge,
 } from '@fluentui/react-components';
 import type { TableColumnDefinition } from '@fluentui/react-components';
 import { useMemo } from 'react';
@@ -100,25 +101,6 @@ const inputFileColumns: TableColumnDefinition<InputFileRow>[] = [
   }),
 ];
 
-// DataGrid column definitions for Skills
-interface SkillRow {
-  repository: string;
-  folders: string;
-}
-
-const skillColumns: TableColumnDefinition<SkillRow>[] = [
-  createTableColumn<SkillRow>({
-    columnId: 'repository',
-    renderHeaderCell: () => 'Repository',
-    renderCell: (item) => <Text>{item.repository}</Text>,
-  }),
-  createTableColumn<SkillRow>({
-    columnId: 'folders',
-    renderHeaderCell: () => 'Folders',
-    renderCell: (item) => <Text>{item.folders}</Text>,
-  }),
-];
-
 export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId } = props;
   const intl = useIntl();
@@ -152,12 +134,6 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
   const inputFileItems: InputFileRow[] = useMemo(
     () => (harnessData.inputFiles ?? []).map((f) => ({ name: f.name, content: f.content })),
     [harnessData.inputFiles]
-  );
-
-  // Prepare data for Skills DataGrid
-  const skillItems: SkillRow[] = useMemo(
-    () => (harnessData.skills ?? []).map((s) => ({ repository: s.repository, folders: (s.folders ?? []).join(', ') })),
-    [harnessData.skills]
   );
 
   const intlText = useMemo(
@@ -211,9 +187,19 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
       }),
       sandboxMismatchWarning: intl.formatMessage({
         defaultMessage:
-          'The selected sandbox configuration belongs to a different integration account. Please update the sandbox configuration to match the current integration account.',
-        id: 'j5+6cn',
+          'The selected sandbox configuration belongs to a different integration account. Please update to match the current account.',
+        id: '6F5v5s',
         description: 'Warning when sandbox configuration does not match integration account',
+      }),
+      repositoryLabel: intl.formatMessage({
+        defaultMessage: 'Repository',
+        id: '9+y/1L',
+        description: 'Label for skill repository',
+      }),
+      foldersLabel: intl.formatMessage({
+        defaultMessage: 'Folders',
+        id: 'vGVzfn',
+        description: 'Label for skill folders',
       }),
       readyStatus: intl.formatMessage({
         defaultMessage: 'Ready',
@@ -280,7 +266,6 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
           <Dropdown
             value={harnessData.type === 'GHCP' ? 'GHCP (GitHub Copilot)' : (harnessData.type ?? '')}
             selectedOptions={[harnessData.type ?? 'GHCP']}
-            disabled
           >
             <Option value="GHCP">GHCP (GitHub Copilot)</Option>
           </Dropdown>
@@ -299,12 +284,15 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
         </div>
 
         <div className={styles.fieldRow}>
-          <Field label={intlText.sandboxConfigLabel}>
+          <Field
+            label={intlText.sandboxConfigLabel}
+            validationState={hasSandboxMismatch ? 'warning' : undefined}
+            validationMessage={hasSandboxMismatch ? intlText.sandboxMismatchWarning : undefined}
+          >
             <Dropdown
               placeholder={intlText.selectSandboxPlaceholder}
               value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId ?? ''}
               selectedOptions={harnessData.sandboxConfigurationId ? [harnessData.sandboxConfigurationId] : []}
-              disabled
             >
               <Option value="">{intlText.nonePlaceholder}</Option>
               {(sandboxConfigurations ?? []).map((config: any) => (
@@ -326,14 +314,6 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
             </div>
           )}
         </div>
-
-        {hasSandboxMismatch && (
-          <MessageBar intent="warning" layout="multiline">
-            <MessageBarBody>
-              <Text>{intlText.sandboxMismatchWarning}</Text>
-            </MessageBarBody>
-          </MessageBar>
-        )}
       </div>
 
       {/* Input Files */}
@@ -355,20 +335,38 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
       )}
 
       {/* Skills */}
-      {skillItems.length > 0 && (
+      {(harnessData.skills ?? []).length > 0 && (
         <div className={styles.section}>
           <Text className={styles.sectionTitle}>{intlText.skillsTitle}</Text>
           <Text className={styles.sectionSubtitle}>{intlText.skillsSubtitle}</Text>
-          <DataGrid items={skillItems} columns={skillColumns} getRowId={(item) => item.repository}>
-            <DataGridHeader>
-              <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
-            </DataGridHeader>
-            <DataGridBody<SkillRow>>
-              {({ item, rowId }) => (
-                <DataGridRow key={rowId}>{({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}</DataGridRow>
-              )}
-            </DataGridBody>
-          </DataGrid>
+          <div className={styles.skillsList}>
+            {(harnessData.skills ?? []).map((skill, index) => (
+              <div key={`${skill.repository}-${index}`} className={styles.skillCard}>
+                <div className={styles.skillField}>
+                  <Text size={200} weight="semibold">
+                    {intlText.repositoryLabel}
+                  </Text>
+                  <Text size={200} className={styles.skillValue}>
+                    {skill.repository}
+                  </Text>
+                </div>
+                {skill.folders && skill.folders.length > 0 && (
+                  <div className={styles.skillField}>
+                    <Text size={200} weight="semibold">
+                      {intlText.foldersLabel}
+                    </Text>
+                    <div className={styles.badgeRow}>
+                      {skill.folders.map((folder) => (
+                        <Badge key={folder} appearance="outline" size="small">
+                          {folder}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

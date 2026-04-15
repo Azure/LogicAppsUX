@@ -37,4 +37,31 @@ export const useAgentHarnessTabStyles = makeStyles({
     borderRadius: '50%',
     backgroundColor: tokens.colorPaletteGreenForeground1,
   },
+  skillsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  skillCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    padding: '10px 12px',
+    borderRadius: tokens.borderRadiusMedium,
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    backgroundColor: tokens.colorNeutralBackground2,
+  },
+  skillField: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+  },
+  skillValue: {
+    wordBreak: 'break-all' as const,
+  },
+  badgeRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '4px',
+  },
 });

@@ -229,7 +229,7 @@ describe('AgentHarnessTab', () => {
       expect(screen.queryByText('Skills')).toBeNull();
     });
 
-    it('renders skills DataGrid when skills present', () => {
+    it('renders skill cards when skills present', () => {
       mockActionMetadata.mockReturnValue(
         createOperation({
           type: 'GHCP',
@@ -240,7 +240,9 @@ describe('AgentHarnessTab', () => {
       const elements = screen.getAllByText('Skills');
       expect(elements.length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('contoso/repo')).toBeTruthy();
-      expect(screen.getByText('src, lib')).toBeTruthy();
+      // Folders are now rendered as individual badges
+      expect(screen.getByText('src')).toBeTruthy();
+      expect(screen.getByText('lib')).toBeTruthy();
     });
   });
 
