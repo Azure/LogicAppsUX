@@ -218,8 +218,32 @@ describe('AgentHarnessTab', () => {
       const elements = screen.getAllByText('Input Files');
       expect(elements.length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('data.csv')).toBeTruthy();
-      expect(screen.getByText('@triggerBody()')).toBeTruthy();
+      // Expression content is rendered as a token pill with the @-prefix stripped
+      expect(screen.getByText('triggerBody()')).toBeTruthy();
       expect(screen.getByText('config.json')).toBeTruthy();
+    });
+
+    it('renders expression content as token pill with extracted variable name', () => {
+      mockActionMetadata.mockReturnValue(
+        createOperation({
+          type: 'GHCP',
+          inputFiles: [{ name: 'doc.txt', content: "@{variables('documentContent')}" }],
+        })
+      );
+      renderWithProviders(TEST_NODE_ID);
+      // variables('documentContent') is extracted to just 'documentContent'
+      expect(screen.getByText('documentContent')).toBeTruthy();
+    });
+
+    it('renders non-expression content as plain text', () => {
+      mockActionMetadata.mockReturnValue(
+        createOperation({
+          type: 'GHCP',
+          inputFiles: [{ name: 'static.txt', content: 'plain text value' }],
+        })
+      );
+      renderWithProviders(TEST_NODE_ID);
+      expect(screen.getByText('plain text value')).toBeTruthy();
     });
   });
 
