@@ -74,11 +74,13 @@ export const MCP_AUTH_PROPERTY_KEYS = [
 
 /**
  * Checks whether a connector is a managed MCP connector (API Hub MCP, not built-in).
- * Uses the managedApis path segment + 'mcp' suffix convention (e.g., a365mcp, githubmcp, stripemcp).
+ * Uses the connector type ('McpClient') or the managedApis path segment + 'mcp' suffix convention
+ * (e.g., a365mcp, githubmcp, stripemcp) as a fallback.
  */
-export const isManagedMcpConnector = (connector: { id?: string; properties?: { capabilities?: string[] } }): boolean => {
+export const isManagedMcpConnector = (connector: { id?: string; type?: string; properties?: { capabilities?: string[] } }): boolean => {
   const id = connector.id?.toLowerCase() ?? '';
-  return /managedapis\/[^/]*mcp/.test(id) && !connector.properties?.capabilities?.includes('builtin');
+  const isMcp = connector.type?.toLowerCase() === 'mcpclient' || /managedapis\/[^/]*mcp/.test(id);
+  return isMcp && !connector.properties?.capabilities?.includes('builtin');
 };
 
 export default {
