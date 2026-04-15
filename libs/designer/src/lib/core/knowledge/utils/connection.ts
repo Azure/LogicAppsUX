@@ -5,7 +5,14 @@ import type {
   Connector,
   Connection,
 } from '@microsoft/logic-apps-shared';
-import { ConnectionService, getIntl, ConnectionType, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionService,
+  getIntl,
+  ConnectionType,
+  getObjectPropertyValue,
+  LogEntryLevel,
+  LoggerService,
+} from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 
@@ -358,7 +365,7 @@ export const getCosmosDbConnectionParameters = (intl: IntlShape): ConnectionPara
   };
 };
 
-export const createOrUpdateConnection = async (parameterValues: Record<string, any>) => {
+export const createOrUpdateConnection = async (parameterValues: Record<string, any>, isCreate = true) => {
   const intl = getIntl();
   const connectionParameters = getAllConnectionParameters(intl) as unknown as Record<string, ConnectionParameter>;
   const displayName = parameterValues.displayName;
@@ -377,6 +384,14 @@ export const createOrUpdateConnection = async (parameterValues: Record<string, a
     return connection;
   } catch (error: any) {
     const errorMessage = getObjectPropertyValue(error, ['error', 'message']) ?? getObjectPropertyValue(error, ['message']);
+
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: `KnowledgeHub.${isCreate ? 'Create' : 'Update'}Connection`,
+      error,
+      message: `Failed to ${isCreate ? 'create' : 'update'} connection with display name ${displayName}`,
+    });
+
     throw new Error(
       intl.formatMessage(
         {

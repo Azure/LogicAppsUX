@@ -29,6 +29,25 @@ export interface FoundryAgentDetailsProps {
 }
 
 /**
+ * Converts a GUID string (e.g. "11e43792-2b16-4f94-...") to base64url by
+ * treating the hex digits as raw bytes. The Foundry portal expects this
+ * encoding for the subscription segment of the URL.
+ * Falls back to the raw value if the input is not a valid GUID.
+ */
+export function guidToBase64Url(guid: string): string {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(guid)) {
+    return guid;
+  }
+  const hex = guid.replace(/-/g, '');
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = Number.parseInt(hex.substring(i * 2, i * 2 + 2), 16);
+  }
+  const binary = Array.from(bytes, (b) => String.fromCharCode(b)).join('');
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/**
  * Builds the Foundry Portal URL for editing an agent.
  * When versionNumber is provided, appends ?version={N}. Otherwise opens the latest.
  */
@@ -43,7 +62,8 @@ export function buildFoundryPortalUrl(projectResourceId: string | undefined, age
     return undefined;
   }
   const [, subscriptionId, resourceGroup, account, project] = match;
-  const baseUrl = `https://ai.azure.com/nextgen/r/${encodeURIComponent(subscriptionId)},${encodeURIComponent(resourceGroup)},,${encodeURIComponent(account)},${encodeURIComponent(project)}/build/agents/${encodeURIComponent(agentId)}/build`;
+  const encodedSubscriptionId = encodeURIComponent(guidToBase64Url(subscriptionId));
+  const baseUrl = `https://ai.azure.com/nextgen/r/${encodedSubscriptionId},${encodeURIComponent(resourceGroup)},,${encodeURIComponent(account)},${encodeURIComponent(project)}/build/agents/${encodeURIComponent(agentId)}/build`;
   return versionNumber ? `${baseUrl}?version=${encodeURIComponent(versionNumber)}` : baseUrl;
 }
 
@@ -108,11 +128,6 @@ export function FoundryAgentDetails({
     defaultMessage: 'Instructions',
     id: 'PvFzkM',
     description: 'Label for agent instructions',
-  });
-  const definedInFoundry = intl.formatMessage({
-    defaultMessage: 'Defined in Foundry',
-    id: 'fZbvAd',
-    description: 'Badge indicating instructions are from Foundry',
   });
 
   const hasVersions = versions && versions.length > 0;
@@ -205,10 +220,7 @@ export function FoundryAgentDetails({
       </div>
 
       <div className={styles.row}>
-        <div className={styles.labelRow}>
-          <Text className={styles.label}>{instructionsLabel}</Text>
-          <Text className={styles.badge}>{definedInFoundry}</Text>
-        </div>
+        <Text className={styles.label}>{instructionsLabel}</Text>
         <Textarea
           className={styles.instructionsTextarea}
           key={agent.id}

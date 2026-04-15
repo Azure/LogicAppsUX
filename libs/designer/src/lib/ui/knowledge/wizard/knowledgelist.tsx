@@ -39,6 +39,10 @@ import { ArtifactCreationStatus, equals, getPropertyValue, type KnowledgeHubExte
 import { useListStyles } from '../wizard/styles';
 import { useQueryClient } from '@tanstack/react-query';
 import { DeleteModal } from '../modals/delete';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../../core/state/knowledge/store';
+import type { ServerNotificationData } from '../../mcp/servers/servers';
+import { setNotification } from '../../../core/state/knowledge/optionsSlice';
 
 export interface KnowledgeHubItem {
   id: string;
@@ -65,89 +69,93 @@ export const KnowledgeList = ({
   const intl = useIntl();
   const styles = useListStyles();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const INTL_TEXT = {
-    tableAriaLabel: intl.formatMessage({
-      defaultMessage: 'List of knowledge hubs',
-      id: 'JLWOQY',
-      description: 'The aria label for the knowledge hubs table',
+  const INTL_TEXT = useMemo(
+    () => ({
+      tableAriaLabel: intl.formatMessage({
+        defaultMessage: 'List of knowledge hubs',
+        id: 'JLWOQY',
+        description: 'The aria label for the knowledge hubs table',
+      }),
+      nameLabel: intl.formatMessage({
+        defaultMessage: 'Name',
+        id: '5m1Ozg',
+        description: 'The label for the name column',
+      }),
+      typeLabel: intl.formatMessage({
+        defaultMessage: 'Type',
+        id: 'XXOaU8',
+        description: 'The label for the type column',
+      }),
+      agentLabel: intl.formatMessage({
+        defaultMessage: 'Agent',
+        id: 'IOAsSh',
+        description: 'Label for the agent column',
+      }),
+      descriptionLabel: intl.formatMessage({
+        defaultMessage: 'Description',
+        id: 'Uf1R8k',
+        description: 'Label for the description column',
+      }),
+      createdDateLabel: intl.formatMessage({
+        defaultMessage: 'Created',
+        id: 'Lsac0i',
+        description: 'Label for the created date column',
+      }),
+      statusLabel: intl.formatMessage({
+        defaultMessage: 'Upload status',
+        id: 'xfUoo5',
+        description: 'Label for the status column',
+      }),
+      uploadLabel: intl.formatMessage({
+        defaultMessage: 'Upload artifacts',
+        id: 'mfpHrs',
+        description: 'Label for the upload artifacts action',
+      }),
+      deleteLabel: intl.formatMessage({
+        defaultMessage: 'Delete',
+        id: '8M2YfK',
+        description: 'Label for the delete action',
+      }),
+      selectAll: intl.formatMessage({
+        defaultMessage: 'Select all',
+        id: '5GHXCP',
+        description: 'Label for select all checkbox',
+      }),
+      selectRow: intl.formatMessage({
+        defaultMessage: 'Select row',
+        id: '/BY2cI',
+        description: 'Label for select row checkbox',
+      }),
+      inProgressStatus: intl.formatMessage({
+        defaultMessage: 'In progress',
+        id: 'gyfZhJ',
+        description: 'Text to indicate that the artifact upload is in progress',
+      }),
+      completedStatus: intl.formatMessage({
+        defaultMessage: 'Complete',
+        id: '9euy52',
+        description: 'Text to indicate that the artifact upload is completed',
+      }),
+      failedStatus: intl.formatMessage({
+        defaultMessage: 'Error',
+        id: 'fs92Nu',
+        description: 'Text to indicate that the artifact upload has failed',
+      }),
+      collapseHub: intl.formatMessage({
+        defaultMessage: 'Collapse hub',
+        id: 'UXbZTn',
+        description: 'Aria label for collapse hub button',
+      }),
+      expandHub: intl.formatMessage({
+        defaultMessage: 'Expand hub',
+        id: 'hfz4Il',
+        description: 'Aria label for expand hub button',
+      }),
     }),
-    nameLabel: intl.formatMessage({
-      defaultMessage: 'Name',
-      id: '5m1Ozg',
-      description: 'The label for the name column',
-    }),
-    typeLabel: intl.formatMessage({
-      defaultMessage: 'Type',
-      id: 'XXOaU8',
-      description: 'The label for the type column',
-    }),
-    agentLabel: intl.formatMessage({
-      defaultMessage: 'Agent',
-      id: 'IOAsSh',
-      description: 'Label for the agent column',
-    }),
-    descriptionLabel: intl.formatMessage({
-      defaultMessage: 'Description',
-      id: 'Uf1R8k',
-      description: 'Label for the description column',
-    }),
-    createdDateLabel: intl.formatMessage({
-      defaultMessage: 'Created',
-      id: 'Lsac0i',
-      description: 'Label for the created date column',
-    }),
-    statusLabel: intl.formatMessage({
-      defaultMessage: 'Upload status',
-      id: 'xfUoo5',
-      description: 'Label for the status column',
-    }),
-    uploadLabel: intl.formatMessage({
-      defaultMessage: 'Upload artifacts',
-      id: 'mfpHrs',
-      description: 'Label for the upload artifacts action',
-    }),
-    deleteLabel: intl.formatMessage({
-      defaultMessage: 'Delete',
-      id: '8M2YfK',
-      description: 'Label for the delete action',
-    }),
-    selectAll: intl.formatMessage({
-      defaultMessage: 'Select all',
-      id: '5GHXCP',
-      description: 'Label for select all checkbox',
-    }),
-    selectRow: intl.formatMessage({
-      defaultMessage: 'Select row',
-      id: '/BY2cI',
-      description: 'Label for select row checkbox',
-    }),
-    inProgressStatus: intl.formatMessage({
-      defaultMessage: 'In progress',
-      id: 'gyfZhJ',
-      description: 'Text to indicate that the artifact upload is in progress',
-    }),
-    completedStatus: intl.formatMessage({
-      defaultMessage: 'Complete',
-      id: '9euy52',
-      description: 'Text to indicate that the artifact upload is completed',
-    }),
-    failedStatus: intl.formatMessage({
-      defaultMessage: 'Error',
-      id: 'fs92Nu',
-      description: 'Text to indicate that the artifact upload has failed',
-    }),
-    collapseHub: intl.formatMessage({
-      defaultMessage: 'Collapse hub',
-      id: 'UXbZTn',
-      description: 'Aria label for collapse hub button',
-    }),
-    expandHub: intl.formatMessage({
-      defaultMessage: 'Expand hub',
-      id: 'hfz4Il',
-      description: 'Aria label for expand hub button',
-    }),
-  };
+    [intl]
+  );
 
   const [allItems, setAllItems] = useState<Record<string, KnowledgeHubItem>>(createAllItems(hubs, /* existingItems: */ {}));
 
@@ -157,26 +165,29 @@ export const KnowledgeList = ({
     }
   }, [hubs]);
 
-  const columns = [
-    createTableColumn<KnowledgeHubItem>({
-      columnId: 'name',
-    }),
-    createTableColumn<KnowledgeHubItem>({
-      columnId: 'type',
-    }),
-    createTableColumn<KnowledgeHubItem>({
-      columnId: 'description',
-    }),
-    createTableColumn<KnowledgeHubItem>({
-      columnId: 'createdDate',
-    }),
-    createTableColumn<KnowledgeHubItem>({
-      columnId: 'status',
-    }),
-    createTableColumn<KnowledgeHubItem>({
-      columnId: 'actions',
-    }),
-  ];
+  const columns = useMemo(
+    () => [
+      createTableColumn<KnowledgeHubItem>({
+        columnId: 'name',
+      }),
+      createTableColumn<KnowledgeHubItem>({
+        columnId: 'type',
+      }),
+      createTableColumn<KnowledgeHubItem>({
+        columnId: 'description',
+      }),
+      createTableColumn<KnowledgeHubItem>({
+        columnId: 'createdDate',
+      }),
+      createTableColumn<KnowledgeHubItem>({
+        columnId: 'status',
+      }),
+      createTableColumn<KnowledgeHubItem>({
+        columnId: 'actions',
+      }),
+    ],
+    []
+  );
 
   // Getting the viewable items based on the expanded/collapsed state of the hubs
   const items = useMemo(
@@ -323,39 +334,44 @@ export const KnowledgeList = ({
     setShowDeleteModal(true);
   }, []);
   const handleCloseDeleteModal = useCallback(() => setShowDeleteModal(false), []);
-  const handleOnDeleteComplete = useCallback(() => {
-    const itemDeleted = artifactToDelete;
-    setShowDeleteModal(false);
+  const handleOnDeleteComplete = useCallback(
+    (data: ServerNotificationData) => {
+      const itemDeleted = artifactToDelete;
+      setShowDeleteModal(false);
 
-    if (!itemDeleted) {
-      return;
-    }
-
-    if (selectedItems.includes(itemDeleted.id)) {
-      setSelectedArtifactItems(selectedItems.filter((id) => !equals(id, itemDeleted.id)));
-    }
-    setArtifactToDelete(null);
-    queryClient.setQueryData(['knowledgehubs', resourceId.toLowerCase()], (oldData: KnowledgeHub[] | undefined) => {
-      if (oldData) {
-        if (itemDeleted.parentId === null) {
-          // Hub group deleted, remove the whole hub
-          return oldData.filter((hub) => !equals(hub.name, itemDeleted.name));
-        }
-        // Artifact deleted, remove the artifact from the hub
-        return oldData.map((hub) => {
-          if (equals(hub.name, itemDeleted.parentId)) {
-            return {
-              ...hub,
-              artifacts: hub.artifacts.filter((artifact) => !equals(artifact.name, itemDeleted.name)),
-            };
-          }
-          return hub;
-        });
+      if (!itemDeleted) {
+        return;
       }
 
-      return oldData;
-    });
-  }, [artifactToDelete, queryClient, resourceId, selectedItems, setSelectedArtifactItems]);
+      dispatch(setNotification(data));
+
+      if (selectedItems.includes(itemDeleted.id)) {
+        setSelectedArtifactItems(selectedItems.filter((id) => !equals(id, itemDeleted.id)));
+      }
+      setArtifactToDelete(null);
+      queryClient.setQueryData(['knowledgehubs', resourceId.toLowerCase()], (oldData: KnowledgeHub[] | undefined) => {
+        if (oldData) {
+          if (itemDeleted.parentId === null) {
+            // Hub group deleted, remove the whole hub
+            return oldData.filter((hub) => !equals(hub.name, itemDeleted.name));
+          }
+          // Artifact deleted, remove the artifact from the hub
+          return oldData.map((hub) => {
+            if (equals(hub.name, itemDeleted.parentId)) {
+              return {
+                ...hub,
+                artifacts: hub.artifacts.filter((artifact) => !equals(artifact.name, itemDeleted.name)),
+              };
+            }
+            return hub;
+          });
+        }
+
+        return oldData;
+      });
+    },
+    [artifactToDelete, dispatch, queryClient, resourceId, selectedItems, setSelectedArtifactItems]
+  );
 
   const handleUploadArtifacts = useCallback(
     (item: KnowledgeHubItem, event: React.MouseEvent) => {

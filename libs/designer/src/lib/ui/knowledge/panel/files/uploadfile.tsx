@@ -9,6 +9,9 @@ import { useAllKnowledgeHubs } from '../../../../core/knowledge/utils/queries';
 import { type UploadFile, equals } from '@microsoft/logic-apps-shared';
 import { FileList } from './filelist';
 import { CreateGroup } from '../../modals/creategroup';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../../../core/state/knowledge/store';
+import { setNotification } from '../../../../core/state/knowledge/optionsSlice';
 
 const UploadSizeLimit = 16 * 1024 * 1024; // 16MB
 interface FileUploadProps {
@@ -24,67 +27,71 @@ interface FileUploadProps {
 
 export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadProps) => {
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const styles = { ...usePanelStyles(), ...useAddFilePanelStyles() };
 
   const { data: hubs, isLoading, refetch } = useAllKnowledgeHubs(resourceId);
 
-  const INTL_TEXT = {
-    title: intl.formatMessage({
-      id: 'SUo94t',
-      defaultMessage: 'Add files',
-      description: 'Title for add files panel',
+  const INTL_TEXT = useMemo(
+    () => ({
+      title: intl.formatMessage({
+        id: 'SUo94t',
+        defaultMessage: 'Add files',
+        description: 'Title for add files panel',
+      }),
+      groupSectionTitle: intl.formatMessage({
+        id: 'YNy+xR',
+        defaultMessage: 'Group',
+        description: 'Section title for group details in add files panel',
+      }),
+      groupSectionDescription: intl.formatMessage({
+        id: 'H0G+5i',
+        defaultMessage: 'Create a group or select an existing one to manage your knowledge base files.',
+        description: 'Section description for group details in add files panel',
+      }),
+      learnMore: intl.formatMessage({
+        id: 'R7UxBX',
+        defaultMessage: 'Learn more',
+        description: 'Link text for learning more about knowledge base group',
+      }),
+      nameLabel: intl.formatMessage({
+        id: '2Do8Lp',
+        defaultMessage: 'Name',
+        description: 'Label for the group name input field in add files panel',
+      }),
+      namePlaceholder: intl.formatMessage({
+        id: 'ASLx7+',
+        defaultMessage: 'Choose or create a new group',
+        description: 'Placeholder for the group name field in add files panel',
+      }),
+      loading: intl.formatMessage({
+        id: 'h0ATm8',
+        defaultMessage: 'Loading groups...',
+        description: 'Placeholder text while loading groups in add files panel',
+      }),
+      createGroupLabel: intl.formatMessage({
+        id: 'ddpKN/',
+        defaultMessage: 'Create a new group',
+        description: 'Label for the create new group option in add files panel',
+      }),
+      groupDescriptionLabel: intl.formatMessage({
+        id: 'J+HlnI',
+        defaultMessage: 'Description',
+        description: 'Label for the group description input field in add files panel',
+      }),
+      addFilesSectionDescription: intl.formatMessage({
+        id: 'ifDZq4',
+        defaultMessage: `Files are added to the specified group. Each file can't exceed 16 MB. Total upload can't exceed 100 MB.`,
+        description: 'Section description for file details in add files panel',
+      }),
+      largeFileError: intl.formatMessage({
+        id: 'zuszqq',
+        defaultMessage: 'File size must be less than 16 MB.',
+        description: 'Error message when uploaded file exceeds size limit in add files panel',
+      }),
     }),
-    groupSectionTitle: intl.formatMessage({
-      id: 'YNy+xR',
-      defaultMessage: 'Group',
-      description: 'Section title for group details in add files panel',
-    }),
-    groupSectionDescription: intl.formatMessage({
-      id: 'H0G+5i',
-      defaultMessage: 'Create a group or select an existing one to manage your knowledge base files.',
-      description: 'Section description for group details in add files panel',
-    }),
-    learnMore: intl.formatMessage({
-      id: 'R7UxBX',
-      defaultMessage: 'Learn more',
-      description: 'Link text for learning more about knowledge base group',
-    }),
-    nameLabel: intl.formatMessage({
-      id: '2Do8Lp',
-      defaultMessage: 'Name',
-      description: 'Label for the group name input field in add files panel',
-    }),
-    namePlaceholder: intl.formatMessage({
-      id: 'ASLx7+',
-      defaultMessage: 'Choose or create a new group',
-      description: 'Placeholder for the group name field in add files panel',
-    }),
-    loading: intl.formatMessage({
-      id: 'h0ATm8',
-      defaultMessage: 'Loading groups...',
-      description: 'Placeholder text while loading groups in add files panel',
-    }),
-    createGroupLabel: intl.formatMessage({
-      id: 'ddpKN/',
-      defaultMessage: 'Create a new group',
-      description: 'Label for the create new group option in add files panel',
-    }),
-    groupDescriptionLabel: intl.formatMessage({
-      id: 'J+HlnI',
-      defaultMessage: 'Description',
-      description: 'Label for the group description input field in add files panel',
-    }),
-    addFilesSectionDescription: intl.formatMessage({
-      id: 'ifDZq4',
-      defaultMessage: `Files are added to the specified group. Each file can't exceed 16 MB. Total upload can't exceed 100 MB.`,
-      description: 'Section description for file details in add files panel',
-    }),
-    largeFileError: intl.formatMessage({
-      id: 'zuszqq',
-      defaultMessage: 'File size must be less than 16 MB.',
-      description: 'Error message when uploaded file exceeds size limit in add files panel',
-    }),
-  };
+    [intl]
+  );
 
   const options = useMemo(
     () =>
@@ -105,8 +112,9 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
 
   useEffect(() => {
     if (hubs && groupName) {
-      setGroupDescription(hubs.find((hub) => equals(hub.name, groupName))?.description ?? '');
-      setExistingArtifactNames(hubs.find((hub) => equals(hub.name, groupName))?.artifacts?.map((artifact) => artifact.name) ?? []);
+      const selectedHubData = hubs.find((hub) => equals(hub.name, groupName));
+      setGroupDescription(selectedHubData?.description ?? '');
+      setExistingArtifactNames(selectedHubData?.artifacts?.map((artifact) => artifact.name) ?? []);
     }
   }, [hubs, groupName]);
 
@@ -117,9 +125,28 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
       setGroupDescription(description);
       setSearchTerm(undefined);
       setShowCreateModal(false);
+
+      dispatch(
+        setNotification({
+          title: intl.formatMessage({
+            id: '/RFd5i',
+            defaultMessage: 'Successfully created the group.',
+            description: 'Title for the toaster after creating a group in add files panel',
+          }),
+          content: intl.formatMessage(
+            {
+              id: 's2f0XK',
+              defaultMessage: 'Group {name} has been created and selected.',
+              description: 'Content for the toaster after creating a group in add files panel',
+            },
+            { name }
+          ),
+        })
+      );
+
       await refetch();
     },
-    [refetch, setDetails]
+    [dispatch, intl, refetch, setDetails]
   );
   const groupSectionItems = useMemo(() => {
     return [

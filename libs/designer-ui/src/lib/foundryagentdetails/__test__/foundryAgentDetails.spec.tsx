@@ -7,31 +7,31 @@ import * as renderer from 'react-test-renderer';
 import { cleanup, render, screen } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { describe, vi, it, expect, afterEach } from 'vitest';
-import { FoundryAgentDetails, buildFoundryPortalUrl } from '../index';
+import { FoundryAgentDetails, buildFoundryPortalUrl, guidToBase64Url } from '../index';
 import type { FoundryAgent, FoundryAgentVersion, FoundryModel } from '@microsoft/logic-apps-shared';
 
 function renderWithIntl(component: React.ReactElement) {
   return renderer.create(<IntlProvider locale="en">{component}</IntlProvider>);
 }
 
+const baseAgent: FoundryAgent = {
+  id: 'agent-1',
+  name: 'TestAgent',
+  model: 'gpt-4',
+  instructions: 'You are a helpful assistant.',
+  tools: [],
+  metadata: {},
+  created_at: 1700000000,
+  object: 'agent',
+  description: 'Test agent',
+};
+
+const baseModels: FoundryModel[] = [
+  { id: 'gpt-4', name: 'GPT-4' },
+  { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
+];
+
 describe('FoundryAgentDetails', () => {
-  const baseAgent: FoundryAgent = {
-    id: 'agent-1',
-    name: 'TestAgent',
-    model: 'gpt-4',
-    instructions: 'You are a helpful assistant.',
-    tools: [],
-    metadata: {},
-    created_at: 1700000000,
-    object: 'agent',
-    description: 'Test agent',
-  };
-
-  const baseModels: FoundryModel[] = [
-    { id: 'gpt-4', name: 'GPT-4' },
-    { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
-  ];
-
   const baseVersions: FoundryAgentVersion[] = [
     {
       id: 'agent-1:3',
@@ -122,23 +122,6 @@ describe('FoundryAgentDetails', () => {
 
 describe('FoundryAgentDetails — pending edits persistence', () => {
   afterEach(cleanup);
-
-  const baseAgent: FoundryAgent = {
-    id: 'agent-1',
-    name: 'TestAgent',
-    model: 'gpt-4',
-    instructions: 'Original instructions from Foundry.',
-    tools: [],
-    metadata: {},
-    created_at: 1700000000,
-    object: 'agent',
-    description: 'Test agent',
-  };
-
-  const baseModels: FoundryModel[] = [
-    { id: 'gpt-4', name: 'GPT-4' },
-    { id: 'gpt-35-turbo', name: 'GPT-3.5 Turbo' },
-  ];
 
   it('should display selectedInstructions (pending edits) instead of agent.instructions on initial render', () => {
     const pendingText = 'User-edited instructions that should persist';
@@ -334,5 +317,66 @@ describe('buildFoundryPortalUrl', () => {
     const url = buildFoundryPortalUrl(resourceId, 'agent-1');
     expect(url).not.toContain('?version=');
     expect(url).toContain('/build/agents/agent-1/build');
+  });
+
+  it('should base64url-encode a real GUID subscription ID in the portal URL', () => {
+    const resourceId =
+      '/subscriptions/11e43792-2b16-4f94-b5ea-de10eade3aef/resourceGroups/CARLOSAIRESOURCEGROUP/providers/Microsoft.CognitiveServices/accounts/carlosbrooklynproject-resource/projects/carlosbrooklynproject';
+    const url = buildFoundryPortalUrl(resourceId, 'TESTONE', '8');
+    expect(url).toContain('EeQ3kisWT5S16t4Q6t467w');
+    expect(url).not.toContain('11e43792-2b16-4f94-b5ea-de10eade3aef');
+    expect(url).toContain('CARLOSAIRESOURCEGROUP');
+    expect(url).toContain('/build/agents/TESTONE/build?version=8');
+  });
+
+  it('should pass through non-GUID subscription IDs unchanged', () => {
+    const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.CognitiveServices/accounts/acct-1/projects/proj-1';
+    const url = buildFoundryPortalUrl(resourceId, 'agent-1');
+    expect(url).toContain('sub-1,rg-1,,acct-1,proj-1');
+  });
+});
+
+describe('guidToBase64Url', () => {
+  it('should convert a valid GUID to base64url encoding', () => {
+    expect(guidToBase64Url('11e43792-2b16-4f94-b5ea-de10eade3aef')).toBe('EeQ3kisWT5S16t4Q6t467w');
+  });
+
+  it('should handle uppercase GUIDs', () => {
+    expect(guidToBase64Url('11E43792-2B16-4F94-B5EA-DE10EADE3AEF')).toBe('EeQ3kisWT5S16t4Q6t467w');
+  });
+
+  it('should return the input unchanged for non-GUID strings', () => {
+    expect(guidToBase64Url('sub-1')).toBe('sub-1');
+    expect(guidToBase64Url('not-a-guid')).toBe('not-a-guid');
+    expect(guidToBase64Url('')).toBe('');
+  });
+
+  it('should produce URL-safe output (no +, /, or = characters)', () => {
+    const result = guidToBase64Url('ffffffff-ffff-ffff-ffff-ffffffffffff');
+    expect(result).not.toContain('+');
+    expect(result).not.toContain('/');
+    expect(result).not.toContain('=');
+  });
+});
+
+describe('FoundryAgentDetails — UI polish', () => {
+  afterEach(cleanup);
+
+  it('should not render a "Defined in Foundry" badge', () => {
+    render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+      </IntlProvider>
+    );
+    expect(screen.queryByText('Defined in Foundry')).toBeNull();
+  });
+
+  it('should render the Instructions label without a badge', () => {
+    render(
+      <IntlProvider locale="en">
+        <FoundryAgentDetails agent={baseAgent} models={baseModels} onModelChange={vi.fn()} onInstructionsChange={vi.fn()} />
+      </IntlProvider>
+    );
+    expect(screen.getByText('Instructions')).toBeInTheDocument();
   });
 });
