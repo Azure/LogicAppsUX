@@ -739,6 +739,13 @@ const getDesignerServices = (
     notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
+    getSandboxConfigurations: async (integrationAccountId: string) => {
+      const response = await httpClient.get<{ value: any[] }>({
+        uri: `${baseUrl}${integrationAccountId}/sandboxConfigurations`,
+        queryParameters: { 'api-version': '2016-06-01' },
+      });
+      return response.value ?? [];
+    },
   };
 
   const functionService = new BaseFunctionService({

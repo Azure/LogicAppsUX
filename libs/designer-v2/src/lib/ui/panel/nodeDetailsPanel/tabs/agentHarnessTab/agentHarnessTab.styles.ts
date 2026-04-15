@@ -24,4 +24,17 @@ export const useAgentHarnessTabStyles = makeStyles({
     flexDirection: 'column',
     gap: '4px',
   },
+  sandboxStatus: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground3,
+  },
+  statusDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: tokens.colorPaletteGreenForeground1,
+  },
 });

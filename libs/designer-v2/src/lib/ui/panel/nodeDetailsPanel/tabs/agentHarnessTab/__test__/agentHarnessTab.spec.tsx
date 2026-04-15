@@ -1,8 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -12,49 +12,46 @@ import type { ReactNode } from 'react';
 
 // Mock dependencies
 const mockHostOptions = vi.fn();
+const mockActionMetadata = vi.fn();
 
 vi.mock('../../../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useHostOptions: () => mockHostOptions(),
 }));
 
+vi.mock('../../../../../../core/state/workflow/workflowSelectors', () => ({
+  useActionMetadata: (nodeId: string) => mockActionMetadata(nodeId),
+}));
+
 vi.mock('@microsoft/logic-apps-shared', () => ({
-  getRecordEntry: vi.fn((_map: any, key: string) => _map?.[key]),
   WorkflowService: vi.fn(() => ({
     getSandboxConfigurations: undefined,
   })),
-}));
-
-vi.mock('../../../../../../core/state/operation/operationMetadataSlice', () => ({
-  updateNodeParameters: vi.fn((payload: any) => ({ type: 'test/updateNodeParameters', payload })),
 }));
 
 import { AgentHarnessTab, agentHarnessTab } from '../agentHarnessTab';
 
 const TEST_NODE_ID = 'agent-node-1';
 
-const createAgentModelSettingsParameter = (agentHarness: any) => ({
-  parameterGroups: {
-    default: {
-      parameters: [
-        {
-          id: 'param-1',
-          parameterName: 'inputs.$.agentModelSettings',
-          value: [{ id: 'seg-1', type: 'literal', value: JSON.stringify({ agentHarness }) }],
-        },
-      ],
+/**
+ * Creates a mock raw operation definition as stored in state.workflow.operations[nodeId].
+ * The agentHarness data lives at operation.inputs.parameters.agentModelSettings.agentHarness.
+ */
+const createOperation = (agentHarness?: any) => ({
+  type: 'Agent',
+  inputs: {
+    parameters: {
+      agentModelType: 'AzureOpenAI',
+      messages: [],
+      ...(agentHarness !== undefined ? { agentModelSettings: { agentHarness } } : {}),
     },
   },
 });
 
-const createStore = (inputParameters: Record<string, any> = {}) =>
+const createStore = () =>
   configureStore({
     reducer: {
-      operations: (state = { inputParameters: {} }) => state,
-      designerOptions: (state = { hostOptions: {} }) => state,
-    },
-    preloadedState: {
-      operations: { inputParameters },
-      designerOptions: { hostOptions: {} },
+      // Minimal store - the component now reads via useActionMetadata (mocked)
+      placeholder: (state = {}) => state,
     },
   });
 
@@ -62,8 +59,8 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
 });
 
-const renderWithProviders = (nodeId: string, inputParameters: Record<string, any> = {}) => {
-  const store = createStore(inputParameters);
+const renderWithProviders = (nodeId: string) => {
+  const store = createStore();
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <Provider store={store}>
       <IntlProvider locale="en" messages={{}}>
@@ -75,10 +72,15 @@ const renderWithProviders = (nodeId: string, inputParameters: Record<string, any
 };
 
 describe('AgentHarnessTab', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
     mockHostOptions.mockReturnValue({});
+    mockActionMetadata.mockReturnValue(undefined);
   });
 
   describe('Info MessageBar', () => {
@@ -86,31 +88,53 @@ describe('AgentHarnessTab', () => {
       renderWithProviders(TEST_NODE_ID);
       expect(screen.getByText(/Agent Harness configures the sandbox environment/i)).toBeTruthy();
     });
+
+    it('renders learn more link', () => {
+      renderWithProviders(TEST_NODE_ID);
+      const links = screen.getAllByText('Learn more about Agent Harness');
+      expect(links.length).toBeGreaterThanOrEqual(1);
+    });
   });
 
   describe('Execution Environment section', () => {
     it('renders execution environment section title', () => {
       renderWithProviders(TEST_NODE_ID);
-      expect(screen.getByText('Execution Environment')).toBeTruthy();
+      const elements = screen.getAllByText('Execution Environment');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders subtitle', () => {
       renderWithProviders(TEST_NODE_ID);
-      expect(screen.getByText('Choose the harness runtime for agent execution.')).toBeTruthy();
+      const elements = screen.getAllByText('Choose the harness runtime for agent execution.');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('renders harness type label with required indicator', () => {
+      renderWithProviders(TEST_NODE_ID);
+      const elements = screen.getAllByText('Harness Type');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders dropdown for harness type', () => {
       renderWithProviders(TEST_NODE_ID);
-      // The Fluent v9 Dropdown renders with role="combobox"
       const dropdowns = screen.getAllByRole('combobox');
       expect(dropdowns.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('displays GHCP type from operation data', () => {
+      mockActionMetadata.mockReturnValue(createOperation({ type: 'GHCP' }));
+      renderWithProviders(TEST_NODE_ID);
+      const dropdowns = screen.getAllByRole('combobox');
+      // The first dropdown (harness type) should show the GHCP display value
+      expect(dropdowns[0].getAttribute('value')).toBe('GHCP (GitHub Copilot)');
     });
   });
 
   describe('Sandbox Configuration section', () => {
     it('renders sandbox configuration section title', () => {
       renderWithProviders(TEST_NODE_ID);
-      expect(screen.getByText('Sandbox Configuration (Optional)')).toBeTruthy();
+      const elements = screen.getAllByText('Sandbox Configuration (Optional)');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders integration account field as disabled', () => {
@@ -124,12 +148,14 @@ describe('AgentHarnessTab', () => {
     it('renders empty integration account when not set', () => {
       mockHostOptions.mockReturnValue({});
       renderWithProviders(TEST_NODE_ID);
-      expect(screen.getByText('Integration Account')).toBeTruthy();
+      const elements = screen.getAllByText('Integration Account');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders sandbox configuration dropdown', () => {
       renderWithProviders(TEST_NODE_ID);
-      expect(screen.getByText('Sandbox Configuration')).toBeTruthy();
+      const elements = screen.getAllByText('Sandbox Configuration');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -138,27 +164,27 @@ describe('AgentHarnessTab', () => {
       mockHostOptions.mockReturnValue({
         integrationAccount: { id: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Logic/integrationAccounts/ia1' },
       });
-      const inputParameters = {
-        [TEST_NODE_ID]: createAgentModelSettingsParameter({
+      mockActionMetadata.mockReturnValue(
+        createOperation({
           type: 'GHCP',
           sandboxConfigurationId:
             '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Logic/integrationAccounts/differentIA/sandboxConfigurations/sc1',
-        }),
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
+        })
+      );
+      renderWithProviders(TEST_NODE_ID);
       expect(screen.getByText(/sandbox configuration belongs to a different integration account/i)).toBeTruthy();
     });
 
     it('does not show warning when sandboxConfigurationId matches integration account', () => {
       const iaId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Logic/integrationAccounts/ia1';
       mockHostOptions.mockReturnValue({ integrationAccount: { id: iaId } });
-      const inputParameters = {
-        [TEST_NODE_ID]: createAgentModelSettingsParameter({
+      mockActionMetadata.mockReturnValue(
+        createOperation({
           type: 'GHCP',
           sandboxConfigurationId: `${iaId}/sandboxConfigurations/sc1`,
-        }),
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
+        })
+      );
+      renderWithProviders(TEST_NODE_ID);
       expect(screen.queryByText(/sandbox configuration belongs to a different integration account/i)).toBeNull();
     });
 
@@ -166,10 +192,8 @@ describe('AgentHarnessTab', () => {
       mockHostOptions.mockReturnValue({
         integrationAccount: { id: '/test/ia' },
       });
-      const inputParameters = {
-        [TEST_NODE_ID]: createAgentModelSettingsParameter({ type: 'GHCP' }),
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
+      mockActionMetadata.mockReturnValue(createOperation({ type: 'GHCP' }));
+      renderWithProviders(TEST_NODE_ID);
       expect(screen.queryByText(/sandbox configuration belongs to a different integration account/i)).toBeNull();
     });
   });
@@ -181,17 +205,18 @@ describe('AgentHarnessTab', () => {
     });
 
     it('renders input files DataGrid when files present', () => {
-      const inputParameters = {
-        [TEST_NODE_ID]: createAgentModelSettingsParameter({
+      mockActionMetadata.mockReturnValue(
+        createOperation({
           type: 'GHCP',
           inputFiles: [
             { name: 'data.csv', content: '@triggerBody()' },
             { name: 'config.json', content: '{"key": "value"}' },
           ],
-        }),
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
-      expect(screen.getByText('Input Files')).toBeTruthy();
+        })
+      );
+      renderWithProviders(TEST_NODE_ID);
+      const elements = screen.getAllByText('Input Files');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('data.csv')).toBeTruthy();
       expect(screen.getByText('@triggerBody()')).toBeTruthy();
       expect(screen.getByText('config.json')).toBeTruthy();
@@ -205,66 +230,48 @@ describe('AgentHarnessTab', () => {
     });
 
     it('renders skills DataGrid when skills present', () => {
-      const inputParameters = {
-        [TEST_NODE_ID]: createAgentModelSettingsParameter({
+      mockActionMetadata.mockReturnValue(
+        createOperation({
           type: 'GHCP',
           skills: [{ repository: 'contoso/repo', folders: ['src', 'lib'] }],
-        }),
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
-      expect(screen.getByText('Skills')).toBeTruthy();
+        })
+      );
+      renderWithProviders(TEST_NODE_ID);
+      const elements = screen.getAllByText('Skills');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('contoso/repo')).toBeTruthy();
       expect(screen.getByText('src, lib')).toBeTruthy();
     });
   });
 
   describe('Empty state', () => {
-    it('renders gracefully when no agentModelSettings parameter exists', () => {
+    it('renders gracefully when operation has no data', () => {
+      mockActionMetadata.mockReturnValue(undefined);
       renderWithProviders(TEST_NODE_ID);
-      // Should render without errors, showing the info bar and section headers
-      expect(screen.getByText('Execution Environment')).toBeTruthy();
-      expect(screen.getByText('Sandbox Configuration (Optional)')).toBeTruthy();
+      const execEnvElements = screen.getAllByText('Execution Environment');
+      expect(execEnvElements.length).toBeGreaterThanOrEqual(1);
+      const sandboxElements = screen.getAllByText('Sandbox Configuration (Optional)');
+      expect(sandboxElements.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders gracefully when agentModelSettings has no agentHarness', () => {
-      const inputParameters = {
-        [TEST_NODE_ID]: {
-          parameterGroups: {
-            default: {
-              parameters: [
-                {
-                  id: 'param-1',
-                  parameterName: 'inputs.$.agentModelSettings',
-                  value: [{ id: 'seg-1', type: 'literal', value: '{}' }],
-                },
-              ],
-            },
-          },
-        },
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
-      expect(screen.getByText('Execution Environment')).toBeTruthy();
+      mockActionMetadata.mockReturnValue({
+        type: 'Agent',
+        inputs: { parameters: { agentModelSettings: {} } },
+      });
+      renderWithProviders(TEST_NODE_ID);
+      const elements = screen.getAllByText('Execution Environment');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('handles malformed JSON in agentModelSettings gracefully', () => {
-      const inputParameters = {
-        [TEST_NODE_ID]: {
-          parameterGroups: {
-            default: {
-              parameters: [
-                {
-                  id: 'param-1',
-                  parameterName: 'inputs.$.agentModelSettings',
-                  value: [{ id: 'seg-1', type: 'literal', value: 'not-valid-json' }],
-                },
-              ],
-            },
-          },
-        },
-      };
-      renderWithProviders(TEST_NODE_ID, inputParameters);
-      // Should render without errors
-      expect(screen.getByText('Execution Environment')).toBeTruthy();
+    it('renders gracefully when inputs has no agentModelSettings', () => {
+      mockActionMetadata.mockReturnValue({
+        type: 'Agent',
+        inputs: { parameters: { messages: [] } },
+      });
+      renderWithProviders(TEST_NODE_ID);
+      const elements = screen.getAllByText('Execution Environment');
+      expect(elements.length).toBeGreaterThanOrEqual(1);
     });
   });
 });

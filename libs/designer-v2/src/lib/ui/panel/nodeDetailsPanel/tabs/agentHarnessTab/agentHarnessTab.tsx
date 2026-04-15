@@ -1,6 +1,7 @@
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import {
   Text,
+  Link,
   MessageBar,
   MessageBarBody,
   Dropdown,
@@ -16,22 +17,21 @@ import {
   createTableColumn,
 } from '@fluentui/react-components';
 import type { TableColumnDefinition } from '@fluentui/react-components';
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector, useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 
 import constants from '../../../../../common/constants';
 import { useHostOptions } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useActionMetadata } from '../../../../../core/state/workflow/workflowSelectors';
 import { useAgentHarnessTabStyles } from './agentHarnessTab.styles';
-import type { RootState, AppDispatch } from '../../../../../core/store';
-import { getRecordEntry, WorkflowService } from '@microsoft/logic-apps-shared';
-import { updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
+import { WorkflowService } from '@microsoft/logic-apps-shared';
 
 // Types for agent harness data
 interface AgentHarnessInputFile {
   name: string;
   content: string;
+  contentType?: string;
 }
 
 interface AgentHarnessSkill {
@@ -47,38 +47,17 @@ interface AgentHarnessData {
 }
 
 /**
- * Extracts agentHarness data from the agentModelSettings parameter in Redux state.
+ * Extracts agentHarness data from the raw workflow operation definition.
+ * agentHarness is not in the manifest schema, so it's not parsed into inputParameters.
+ * Instead it lives in the raw operation at state.workflow.operations[nodeId].
  */
-const useAgentHarnessData = (nodeId: string): { data: AgentHarnessData; parameterId?: string; groupId?: string } => {
-  const nodeInputs = useSelector((state: RootState) => getRecordEntry(state.operations.inputParameters, nodeId));
+const useAgentHarnessData = (nodeId: string): AgentHarnessData => {
+  const operation = useActionMetadata(nodeId) as any;
 
   return useMemo(() => {
-    if (!nodeInputs) {
-      return { data: {} };
-    }
-
-    for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
-      const group = nodeInputs.parameterGroups[groupId];
-      for (const param of group.parameters) {
-        if (param.parameterName.includes('agentModelSettings')) {
-          try {
-            // The parameter value is stored as a ValueSegment array
-            const rawValue = param.value?.map((v) => v.value).join('') || '{}';
-            const parsed = JSON.parse(rawValue);
-            return {
-              data: parsed?.agentHarness ?? {},
-              parameterId: param.id,
-              groupId,
-            };
-          } catch {
-            return { data: {}, parameterId: param.id, groupId };
-          }
-        }
-      }
-    }
-
-    return { data: {} };
-  }, [nodeInputs]);
+    const agentModelSettings = operation?.inputs?.parameters?.agentModelSettings;
+    return agentModelSettings?.agentHarness ?? {};
+  }, [operation]);
 };
 
 /**
@@ -144,12 +123,19 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId } = props;
   const intl = useIntl();
   const styles = useAgentHarnessTabStyles();
-  const dispatch = useDispatch<AppDispatch>();
   const hostOptions = useHostOptions();
   const integrationAccount = hostOptions.integrationAccount;
 
-  const { data: harnessData, parameterId, groupId } = useAgentHarnessData(nodeId);
+  const harnessData = useAgentHarnessData(nodeId);
   const { data: sandboxConfigurations } = useSandboxConfigurations(integrationAccount?.id);
+
+  // Find the selected sandbox configuration object for status display
+  const selectedSandboxConfig = useMemo(() => {
+    if (!harnessData.sandboxConfigurationId || !sandboxConfigurations) {
+      return undefined;
+    }
+    return sandboxConfigurations.find((c: any) => c.id === harnessData.sandboxConfigurationId);
+  }, [harnessData.sandboxConfigurationId, sandboxConfigurations]);
 
   // Check for sandbox configuration mismatch
   const hasSandboxMismatch = useMemo(() => {
@@ -174,40 +160,18 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
     [harnessData.skills]
   );
 
-  // Update agentHarness in Redux when dropdown values change
-  const updateHarnessField = useCallback(
-    (field: string, value: string) => {
-      if (!parameterId || !groupId) {
-        return;
-      }
-
-      const updatedHarness = { ...harnessData, [field]: value };
-      const fullValue = JSON.stringify({ agentHarness: updatedHarness });
-
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              groupId,
-              parameterId,
-              propertiesToUpdate: {
-                value: [{ id: crypto.randomUUID(), type: 'literal' as const, value: fullValue }],
-              },
-            },
-          ],
-        })
-      );
-    },
-    [dispatch, nodeId, parameterId, groupId, harnessData]
-  );
-
   const intlText = useMemo(
     () => ({
       infoMessage: intl.formatMessage({
-        defaultMessage: 'The Agent Harness configures the sandbox environment where the agent executes code and accesses resources.',
-        id: 's+momK',
+        defaultMessage:
+          'The Agent Harness configures the sandbox environment where the agent executes. It provisions an isolated compute container with tools, repos, and skills.',
+        id: 'Q6Z2NJ',
         description: 'Info message explaining agent harness',
+      }),
+      learnMore: intl.formatMessage({
+        defaultMessage: 'Learn more about Agent Harness',
+        id: 'A5szs0',
+        description: 'Learn more link text for agent harness',
       }),
       executionEnvironmentTitle: intl.formatMessage({
         defaultMessage: 'Execution Environment',
@@ -219,14 +183,20 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
         id: '2RtLQr',
         description: 'Subtitle for execution environment section',
       }),
+      harnessTypeLabel: intl.formatMessage({
+        defaultMessage: 'Harness Type',
+        id: 'XI42nf',
+        description: 'Label for harness type dropdown',
+      }),
       sandboxConfigTitle: intl.formatMessage({
         defaultMessage: 'Sandbox Configuration (Optional)',
         id: 'OMr20n',
         description: 'Title for sandbox configuration section',
       }),
       sandboxConfigSubtitle: intl.formatMessage({
-        defaultMessage: 'Link a pre-built sandbox with pre-installed dependencies and tools. If not specified, a default sandbox is used.',
-        id: 'Ehv21q',
+        defaultMessage:
+          'Link a pre-built sandbox with cloned repos and skills from an Integration Account. If not set, a clean sandbox with the default base image is used.',
+        id: 'Q+ZabC',
         description: 'Subtitle for sandbox configuration section',
       }),
       integrationAccountLabel: intl.formatMessage({
@@ -245,14 +215,25 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
         id: 'j5+6cn',
         description: 'Warning when sandbox configuration does not match integration account',
       }),
+      readyStatus: intl.formatMessage({
+        defaultMessage: 'Ready',
+        id: 'L4bdPd',
+        description: 'Status label when sandbox configuration is ready',
+      }),
+      snapshotLabel: intl.formatMessage({
+        defaultMessage: 'snapshot:',
+        id: 'wyq78z',
+        description: 'Label for sandbox configuration snapshot ID',
+      }),
       inputFilesTitle: intl.formatMessage({
         defaultMessage: 'Input Files',
         id: '3V1451',
         description: 'Title for input files section',
       }),
       inputFilesSubtitle: intl.formatMessage({
-        defaultMessage: 'Files to upload to the sandbox. Values can contain dynamic content or expressions.',
-        id: 'UE3Ti7',
+        defaultMessage:
+          'Files to upload to the sandbox workspace before the agent runs. Content comes from previous workflow actions or expressions.',
+        id: 'bpLNfa',
         description: 'Subtitle for input files section',
       }),
       skillsTitle: intl.formatMessage({
@@ -284,7 +265,10 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
       {/* Info MessageBar */}
       <MessageBar intent="info" layout="multiline">
         <MessageBarBody>
-          <Text>{intlText.infoMessage}</Text>
+          <Text>{intlText.infoMessage} </Text>
+          <Link href="https://aka.ms/LogicApps/AgentHarness" target="_blank">
+            {intlText.learnMore}
+          </Link>
         </MessageBarBody>
       </MessageBar>
 
@@ -292,11 +276,11 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
       <div className={styles.section}>
         <Text className={styles.sectionTitle}>{intlText.executionEnvironmentTitle}</Text>
         <Text className={styles.sectionSubtitle}>{intlText.executionEnvironmentSubtitle}</Text>
-        <Field>
+        <Field label={intlText.harnessTypeLabel} required>
           <Dropdown
             value={harnessData.type === 'GHCP' ? 'GHCP (GitHub Copilot)' : (harnessData.type ?? '')}
             selectedOptions={[harnessData.type ?? 'GHCP']}
-            onOptionSelect={(_e, data) => updateHarnessField('type', data.optionValue as string)}
+            disabled
           >
             <Option value="GHCP">GHCP (GitHub Copilot)</Option>
           </Dropdown>
@@ -318,13 +302,9 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
           <Field label={intlText.sandboxConfigLabel}>
             <Dropdown
               placeholder={intlText.selectSandboxPlaceholder}
-              value={
-                sandboxConfigurations?.find((c: any) => c.id === harnessData.sandboxConfigurationId)?.name ??
-                harnessData.sandboxConfigurationId ??
-                ''
-              }
+              value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId ?? ''}
               selectedOptions={harnessData.sandboxConfigurationId ? [harnessData.sandboxConfigurationId] : []}
-              onOptionSelect={(_e, data) => updateHarnessField('sandboxConfigurationId', data.optionValue as string)}
+              disabled
             >
               <Option value="">{intlText.nonePlaceholder}</Option>
               {(sandboxConfigurations ?? []).map((config: any) => (
@@ -334,6 +314,17 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
               ))}
             </Dropdown>
           </Field>
+          {selectedSandboxConfig?.properties?.status && (
+            <div className={styles.sandboxStatus}>
+              <div className={styles.statusDot} />
+              <Text size={200}>{selectedSandboxConfig.properties.status}</Text>
+              {selectedSandboxConfig.properties?.snapshotId && (
+                <Text size={200}>
+                  {intlText.snapshotLabel} {selectedSandboxConfig.properties.snapshotId}
+                </Text>
+              )}
+            </div>
+          )}
         </div>
 
         {hasSandboxMismatch && (
