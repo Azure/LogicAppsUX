@@ -1,15 +1,8 @@
 import type { Connector, OperationInfo, OperationManifest } from '../../../utils/src';
 import { ConnectionType, equals } from '../../../utils/src';
-import { enableCodeInterpreterStandard } from '../experimentationFlags';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
-import {
-  agentType,
-  getBuiltInOperationInfo,
-  isBuiltInOperation,
-  mcpclientConnectorId,
-  supportedBaseManifestObjects,
-} from '../base/operationmanifest';
+import { getBuiltInOperationInfo, isBuiltInOperation, mcpclientConnectorId, supportedBaseManifestObjects } from '../base/operationmanifest';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { getClientBuiltInConnectors } from '../base/search';
 import { aiOperationsGroup } from './operations/operationgroups';
@@ -161,15 +154,6 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) {
-      if (operationId === agentType) {
-        const isCodeInterpreterEnabled = await enableCodeInterpreterStandard();
-        if (!isCodeInterpreterEnabled) {
-          const manifest: OperationManifest = JSON.parse(JSON.stringify(supportedManifest));
-          delete (manifest.properties?.inputs?.properties as any)?.agentModelSettings?.properties?.agentChatCompletionSettings?.properties
-            ?.builtinTools;
-          return manifest;
-        }
-      }
       return supportedManifest;
     }
 

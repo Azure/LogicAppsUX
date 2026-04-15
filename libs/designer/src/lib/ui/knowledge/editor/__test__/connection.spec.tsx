@@ -4,7 +4,7 @@
 import { describe, vi, expect, it, beforeEach, afterEach } from 'vitest';
 // biome-ignore lint/correctness/noUnusedImports: using react for render
 import React from 'react';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
@@ -18,7 +18,37 @@ vi.mock('../styles', () => ({
   }),
 }));
 
+// Mock Fluent UI components
+vi.mock('@fluentui/react-components', () => ({
+  Button: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
+    <button onClick={onClick} aria-label={ariaLabel}>
+      {children}
+    </button>
+  ),
+  Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) => (open ? <div data-testid="dialog">{children}</div> : null),
+  DialogActions: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-actions">{children}</div>,
+  DialogBody: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-body">{children}</div>,
+  DialogContent: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-content">{children}</div>,
+  DialogSurface: ({ children }: { children: React.ReactNode; mountNode?: any }) => <div data-testid="dialog-surface">{children}</div>,
+  DialogTitle: ({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) => (
+    <div data-testid="dialog-title">
+      {children}
+      {action}
+    </div>
+  ),
+  DialogTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  MessageBar: ({ children, intent, style }: { children: React.ReactNode; intent?: string; style?: React.CSSProperties }) => (
+    <div data-testid="error-message-bar" data-intent={intent} style={style}>
+      {children}
+    </div>
+  ),
+  MessageBarBody: ({ children }: { children: React.ReactNode }) => <div data-testid="error-message-body">{children}</div>,
+  MessageBarTitle: ({ children }: { children: React.ReactNode }) => <span data-testid="error-message-title">{children}</span>,
+}));
+
 // Mock useCreateConnectionPanelTabs
+let capturedOnError: ((data: { title: string; content: string } | null) => void) | undefined;
+
 const mockPanelTabs = [
   {
     id: 'basics',
@@ -43,7 +73,10 @@ const mockPanelTabs = [
 ];
 
 vi.mock('../../panel/connection/usepaneltabs', () => ({
-  useCreateConnectionPanelTabs: () => mockPanelTabs,
+  useCreateConnectionPanelTabs: ({ onError }: { onError: (data: { title: string; content: string } | null) => void }) => {
+    capturedOnError = onError;
+    return mockPanelTabs;
+  },
 }));
 
 // Mock TemplateContent and TemplatesPanelFooter from designer-ui
@@ -150,6 +183,37 @@ describe('CreateConnectionModal', () => {
 
       const closeButton = screen.getByLabelText('close');
       expect(closeButton).toBeInTheDocument();
+    });
+  });
+
+  describe('Error Message Bar', () => {
+    it('does not render error message bar when there is no error', () => {
+      renderComponent();
+
+      expect(screen.queryByTestId('error-message-bar')).not.toBeInTheDocument();
+    });
+
+    it('renders error message bar when createError is set', async () => {
+      const { rerender } = renderComponent();
+
+      // Simulate error by calling the captured onError callback
+      act(() => {
+        capturedOnError?.({ title: 'Connection Error', content: 'Failed to create connection' });
+      });
+
+      // Re-render to pick up state change
+      rerender(
+        <Provider store={createMockStore()}>
+          <IntlProvider locale="en">
+            <CreateConnectionModal mountNode={null} />
+          </IntlProvider>
+        </Provider>
+      );
+
+      expect(screen.getByTestId('error-message-bar')).toBeInTheDocument();
+      expect(screen.getByTestId('error-message-bar')).toHaveAttribute('data-intent', 'error');
+      expect(screen.getByTestId('error-message-title')).toHaveTextContent('Connection Error');
+      expect(screen.getByTestId('error-message-body')).toHaveTextContent('Failed to create connection');
     });
   });
 });

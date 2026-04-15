@@ -19,6 +19,16 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   }),
   isNullOrEmpty: (value: string | undefined | null) => value === undefined || value === null || value === '',
   equals: (a: string, b: string) => a?.toLowerCase() === b?.toLowerCase(),
+  getObjectPropertyValue: (obj: any, path: string[]) => {
+    let current = obj;
+    for (const key of path) {
+      if (current === null || current === undefined) {
+        return undefined;
+      }
+      current = current[key];
+    }
+    return current;
+  },
 }));
 
 describe('knowledge helper utils', () => {
@@ -44,7 +54,7 @@ describe('knowledge helper utils', () => {
           'api-version': '2018-11-01',
           'Content-Type': 'application/json',
         },
-        JSON.stringify({ description })
+        { description }
       );
     });
 
@@ -57,11 +67,11 @@ describe('knowledge helper utils', () => {
       expect(result).toEqual(response);
     });
 
-    it('should log error when API call fails', async () => {
+    it('should log error and throw when API call fails', async () => {
       const errorResponse = { error: { code: 'BadRequest', message: 'Invalid hub name' } };
       mockExecuteResourceAction.mockRejectedValue(errorResponse);
 
-      await createKnowledgeHub(siteResourceId, groupName, description);
+      await expect(createKnowledgeHub(siteResourceId, groupName, description)).rejects.toThrow('Invalid hub name');
 
       expect(mockLog).toHaveBeenCalledTimes(1);
       expect(mockLog).toHaveBeenCalledWith({
@@ -72,23 +82,21 @@ describe('knowledge helper utils', () => {
       });
     });
 
-    it('should return undefined when API call fails', async () => {
+    it('should throw error when API call fails', async () => {
       mockExecuteResourceAction.mockRejectedValue({ error: { message: 'Failed' } });
 
-      const result = await createKnowledgeHub(siteResourceId, groupName, description);
-
-      expect(result).toBeUndefined();
+      await expect(createKnowledgeHub(siteResourceId, groupName, description)).rejects.toThrow('Failed');
     });
 
     it('should handle error response without error property', async () => {
       mockExecuteResourceAction.mockRejectedValue({ message: 'Network error' });
 
-      await createKnowledgeHub(siteResourceId, groupName, description);
+      await expect(createKnowledgeHub(siteResourceId, groupName, description)).rejects.toThrow('Network error');
 
       expect(mockLog).toHaveBeenCalledWith({
         level: 'Error',
         area: 'KnowledgeHub.createKnowledgeHub',
-        error: {},
+        error: { message: 'Network error' },
         message: `Error while creating knowledge hub for the app: ${siteResourceId}`,
       });
     });

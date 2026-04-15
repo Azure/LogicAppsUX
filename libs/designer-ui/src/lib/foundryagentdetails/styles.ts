@@ -1,15 +1,15 @@
-import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useFoundryAgentDetailsStyles = makeStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalS,
+    gap: tokens.spacingVerticalM,
     marginTop: tokens.spacingVerticalS,
-    padding: tokens.spacingVerticalS,
+    padding: tokens.spacingVerticalM,
     backgroundColor: tokens.colorNeutralBackground2,
     borderRadius: tokens.borderRadiusMedium,
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke2),
+    boxShadow: `0px 0px 0px 1px ${tokens.colorNeutralStroke2}, 0px 1px 2px -1px rgba(0, 0, 0, 0.06)`,
   },
   row: {
     display: 'flex',
@@ -21,26 +21,11 @@ export const useFoundryAgentDetailsStyles = makeStyles({
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorNeutralForeground3,
   },
-  badge: {
-    fontSize: tokens.fontSizeBase100,
-    color: tokens.colorNeutralForeground3,
-    backgroundColor: tokens.colorNeutralBackground4,
-    borderRadius: tokens.borderRadiusSmall,
-    paddingLeft: tokens.spacingHorizontalXS,
-    paddingRight: tokens.spacingHorizontalXS,
-    paddingTop: '1px',
-    paddingBottom: '1px',
-    marginLeft: tokens.spacingHorizontalXS,
-  },
-  labelRow: {
-    display: 'flex',
-    alignItems: 'center',
-  },
   instructionsTextarea: {
     width: '100%',
-    minHeight: '60px',
+    minHeight: '200px',
     '& textarea': {
-      minHeight: '60px',
+      minHeight: '200px',
     },
   },
   portalLink: {

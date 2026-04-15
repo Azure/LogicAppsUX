@@ -9,13 +9,18 @@ import {
   getCosmosDbConnectionParameters,
   getOpenAIConnectionParameters,
 } from '../../../../core/knowledge/utils/connection';
+import type { ServerNotificationData } from '../../../mcp/servers/servers';
 
 export const useCreateConnectionPanelTabs = ({
   selectTab,
   close,
+  onCreate,
+  onError,
 }: {
   selectTab: (tabId: string) => void;
   close: () => void;
+  onCreate?: () => void;
+  onError: (data: ServerNotificationData | null) => void;
 }): KnowledgeTabProps[] => {
   const intl = useIntl();
   const cosmosDbConnectionParameters = getCosmosDbConnectionParameters(intl);
@@ -37,15 +42,24 @@ export const useCreateConnectionPanelTabs = ({
   const handleCreate = useCallback(async () => {
     try {
       setIsCreating(true);
+      onError(null);
       await createOrUpdateConnection({ ...cosmosDbConnectionParametersValues, ...openAIConnectionParametersValues });
-      // TODO: Setup toast notification for success and failure cases
+      onCreate?.();
       close();
     } catch (error) {
-      console.error('Error creating connection:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      onError({
+        title: intl.formatMessage({
+          defaultMessage: 'Failed to create connection',
+          id: 'k47GxU',
+          description: 'Error title when connection creation fails',
+        }),
+        content: errorMessage,
+      });
     } finally {
       setIsCreating(false);
     }
-  }, [cosmosDbConnectionParametersValues, openAIConnectionParametersValues, close]);
+  }, [cosmosDbConnectionParametersValues, openAIConnectionParametersValues, onCreate, close, onError, intl]);
   const basicsTabItem = useMemo(
     () =>
       basicsTab(
