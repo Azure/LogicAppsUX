@@ -24,6 +24,16 @@ export const useAgentHarnessTabStyles = makeStyles({
     flexDirection: 'column',
     gap: '4px',
   },
+  labelRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalXS,
+  },
+  infoIcon: {
+    fontSize: tokens.fontSizeBase300,
+    color: tokens.colorNeutralForeground3,
+    cursor: 'pointer',
+  },
   sandboxStatus: {
     display: 'flex',
     alignItems: 'center',

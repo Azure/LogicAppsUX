@@ -8,6 +8,8 @@ import {
   Option,
   Field,
   Input,
+  Label,
+  Tooltip,
   DataGrid,
   DataGridBody,
   DataGridCell,
@@ -17,6 +19,7 @@ import {
   createTableColumn,
   Badge,
 } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 import type { TableColumnDefinition } from '@fluentui/react-components';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -244,6 +247,16 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
         id: 'xmtXdX',
         description: 'Label for integration account field',
       }),
+      integrationAccountInfoMessage: intl.formatMessage({
+        defaultMessage: 'An integration account must be linked to the workflow to select a sandbox configuration.',
+        id: 'jftxJs',
+        description: 'Info tooltip message for integration account field',
+      }),
+      readMore: intl.formatMessage({
+        defaultMessage: 'Read more',
+        id: 'xuu6iZ',
+        description: 'Read more link text',
+      }),
       sandboxConfigLabel: intl.formatMessage({
         defaultMessage: 'Sandbox Configuration',
         id: 'sBIkgt',
@@ -342,42 +355,63 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
         <Text className={styles.sectionSubtitle}>{intlText.sandboxConfigSubtitle}</Text>
 
         <div className={styles.fieldRow}>
-          <Field label={intlText.integrationAccountLabel}>
-            <Input value={integrationAccount?.name ?? ''} disabled />
-          </Field>
+          <div className={styles.labelRow}>
+            <Label>{intlText.integrationAccountLabel}</Label>
+            <Tooltip
+              relationship="description"
+              content={
+                <span>
+                  {intlText.integrationAccountInfoMessage}{' '}
+                  <Link
+                    href="https://learn.microsoft.com/en-us/azure/logic-apps/enterprise-integration/create-integration-account?tabs=azure-portal%2Cconsumption#create-integration-account"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    inline
+                  >
+                    {intlText.readMore}
+                  </Link>
+                </span>
+              }
+            >
+              <Info16Regular className={styles.infoIcon} tabIndex={0} aria-label={intlText.integrationAccountInfoMessage} />
+            </Tooltip>
+          </div>
+          <Input value={integrationAccount?.name ?? ''} disabled />
         </div>
 
-        <div className={styles.fieldRow}>
-          <Field
-            label={intlText.sandboxConfigLabel}
-            validationState={hasSandboxMismatch ? 'warning' : undefined}
-            validationMessage={hasSandboxMismatch ? intlText.sandboxMismatchWarning : undefined}
-          >
-            <Dropdown
-              placeholder={intlText.selectSandboxPlaceholder}
-              value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId ?? ''}
-              selectedOptions={harnessData.sandboxConfigurationId ? [harnessData.sandboxConfigurationId] : []}
+        {integrationAccount && (
+          <div className={styles.fieldRow}>
+            <Field
+              label={intlText.sandboxConfigLabel}
+              validationState={hasSandboxMismatch ? 'warning' : undefined}
+              validationMessage={hasSandboxMismatch ? intlText.sandboxMismatchWarning : undefined}
             >
-              <Option value="">{intlText.nonePlaceholder}</Option>
-              {(sandboxConfigurations ?? []).map((config: any) => (
-                <Option key={config.id} value={config.id}>
-                  {config.name ?? config.id}
-                </Option>
-              ))}
-            </Dropdown>
-          </Field>
-          {selectedSandboxConfig?.properties?.status && (
-            <div className={styles.sandboxStatus}>
-              <div className={styles.statusDot} />
-              <Text size={200}>{selectedSandboxConfig.properties.status}</Text>
-              {selectedSandboxConfig.properties?.snapshotId && (
-                <Text size={200}>
-                  {intlText.snapshotLabel} {selectedSandboxConfig.properties.snapshotId}
-                </Text>
-              )}
-            </div>
-          )}
-        </div>
+              <Dropdown
+                placeholder={intlText.selectSandboxPlaceholder}
+                value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId ?? ''}
+                selectedOptions={harnessData.sandboxConfigurationId ? [harnessData.sandboxConfigurationId] : []}
+              >
+                <Option value="">{intlText.nonePlaceholder}</Option>
+                {(sandboxConfigurations ?? []).map((config: any) => (
+                  <Option key={config.id} value={config.id}>
+                    {config.name ?? config.id}
+                  </Option>
+                ))}
+              </Dropdown>
+            </Field>
+            {selectedSandboxConfig?.properties?.status && (
+              <div className={styles.sandboxStatus}>
+                <div className={styles.statusDot} />
+                <Text size={200}>{selectedSandboxConfig.properties.status}</Text>
+                {selectedSandboxConfig.properties?.snapshotId && (
+                  <Text size={200}>
+                    {intlText.snapshotLabel} {selectedSandboxConfig.properties.snapshotId}
+                  </Text>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Input Files */}

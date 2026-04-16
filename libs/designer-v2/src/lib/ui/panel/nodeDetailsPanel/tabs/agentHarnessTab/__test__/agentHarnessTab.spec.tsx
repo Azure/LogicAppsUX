@@ -152,10 +152,23 @@ describe('AgentHarnessTab', () => {
       expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('renders sandbox configuration dropdown', () => {
+    it('renders sandbox configuration dropdown when integration account is set', () => {
+      mockHostOptions.mockReturnValue({ integrationAccount: { id: '/test/ia', name: 'TestIA' } });
       renderWithProviders(TEST_NODE_ID);
       const elements = screen.getAllByText('Sandbox Configuration');
       expect(elements.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('does not render sandbox configuration dropdown when no integration account', () => {
+      mockHostOptions.mockReturnValue({});
+      renderWithProviders(TEST_NODE_ID);
+      expect(screen.queryByText('Sandbox Configuration')).toBeNull();
+    });
+
+    it('renders info icon next to integration account label', () => {
+      renderWithProviders(TEST_NODE_ID);
+      const infoIcon = screen.getByLabelText(/integration account must be linked/i);
+      expect(infoIcon).toBeTruthy();
     });
   });
 
