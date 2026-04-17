@@ -166,4 +166,178 @@ describe('browse helper', () => {
       expect(humanInTheLoop?.connectorFilters?.name).toContain('teams');
     });
   });
+
+  describe('hiddenBrowseCategories', () => {
+    describe('action categories', () => {
+      test('should hide aiAgent when included in hiddenCategories', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent']);
+        const aiAgent = categories.find((c) => c.key === 'aiAgent');
+        expect(aiAgent?.visible).toBe(false);
+      });
+
+      test('should hide humanInTheLoop when included in hiddenCategories', () => {
+        const categories = getActionCategories(false, false, false, ['humanInTheLoop']);
+        const humanInTheLoop = categories.find((c) => c.key === 'humanInTheLoop');
+        expect(humanInTheLoop?.visible).toBe(false);
+      });
+
+      test('should hide multiple categories', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent', 'humanInTheLoop', 'favorites']);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'humanInTheLoop')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'favorites')?.visible).toBe(false);
+      });
+
+      test('should not affect non-hidden categories', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent']);
+        const actionInApp = categories.find((c) => c.key === 'actionInApp');
+        expect(actionInApp?.visible).toBeUndefined(); // undefined = visible by default
+      });
+
+      test('should work with empty array', () => {
+        const categories = getActionCategories(true, false, false, []);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(true);
+      });
+
+      test('should work with undefined', () => {
+        const categories = getActionCategories(true, false, false, undefined);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(true);
+      });
+
+      test('should respect allowAgents flag even when not in hiddenCategories', () => {
+        const categoriesWithAgents = getActionCategories(true, false, false, []);
+        const categoriesWithoutAgents = getActionCategories(false, false, false, []);
+
+        expect(categoriesWithAgents.find((c) => c.key === 'aiAgent')?.visible).toBe(true);
+        expect(categoriesWithoutAgents.find((c) => c.key === 'aiAgent')?.visible).toBe(false);
+      });
+
+      test('should hide aiAgent via hiddenCategories even when allowAgents is true', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent']);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(false);
+      });
+    });
+
+    describe('trigger categories', () => {
+      test('should hide manual trigger when included in hiddenCategories', () => {
+        const categories = getTriggerCategories(['manual']);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBe(false);
+      });
+
+      test('should hide schedule trigger when included in hiddenCategories', () => {
+        const categories = getTriggerCategories(['schedule']);
+        expect(categories.find((c) => c.key === 'schedule')?.visible).toBe(false);
+      });
+
+      test('should hide multiple trigger categories', () => {
+        const categories = getTriggerCategories(['manual', 'schedule', 'appEvent']);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'schedule')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'appEvent')?.visible).toBe(false);
+      });
+
+      test('should not affect non-hidden trigger categories', () => {
+        const categories = getTriggerCategories(['manual']);
+        const schedule = categories.find((c) => c.key === 'schedule');
+        expect(schedule?.visible).toBeUndefined(); // undefined = visible by default
+      });
+
+      test('should work with empty array for triggers', () => {
+        const categories = getTriggerCategories([]);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBeUndefined();
+      });
+
+      test('should work with undefined for triggers', () => {
+        const categories = getTriggerCategories(undefined);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBeUndefined();
+      });
+    });
+  });
+
+  describe('hiddenBrowseCategories', () => {
+    describe('action categories', () => {
+      test('should hide aiAgent when included in hiddenCategories', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent']);
+        const aiAgent = categories.find((c) => c.key === 'aiAgent');
+        expect(aiAgent?.visible).toBe(false);
+      });
+
+      test('should hide humanInTheLoop when included in hiddenCategories', () => {
+        const categories = getActionCategories(false, false, false, ['humanInTheLoop']);
+        const humanInTheLoop = categories.find((c) => c.key === 'humanInTheLoop');
+        expect(humanInTheLoop?.visible).toBe(false);
+      });
+
+      test('should hide multiple categories', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent', 'humanInTheLoop', 'favorites']);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'humanInTheLoop')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'favorites')?.visible).toBe(false);
+      });
+
+      test('should not affect non-hidden categories', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent']);
+        const actionInApp = categories.find((c) => c.key === 'actionInApp');
+        expect(actionInApp?.visible).toBeUndefined(); // undefined = visible by default
+      });
+
+      test('should work with empty array', () => {
+        const categories = getActionCategories(true, false, false, []);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(true);
+      });
+
+      test('should work with undefined', () => {
+        const categories = getActionCategories(true, false, false, undefined);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(true);
+      });
+
+      test('should respect allowAgents flag even when not in hiddenCategories', () => {
+        const categoriesWithAgents = getActionCategories(true, false, false, []);
+        const categoriesWithoutAgents = getActionCategories(false, false, false, []);
+
+        expect(categoriesWithAgents.find((c) => c.key === 'aiAgent')?.visible).toBe(true);
+        expect(categoriesWithoutAgents.find((c) => c.key === 'aiAgent')?.visible).toBe(false);
+      });
+
+      test('should hide aiAgent via hiddenCategories even when allowAgents is true', () => {
+        const categories = getActionCategories(true, false, false, ['aiAgent']);
+        expect(categories.find((c) => c.key === 'aiAgent')?.visible).toBe(false);
+      });
+    });
+
+    describe('trigger categories', () => {
+      test('should hide manual trigger when included in hiddenCategories', () => {
+        const categories = getTriggerCategories(['manual']);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBe(false);
+      });
+
+      test('should hide schedule trigger when included in hiddenCategories', () => {
+        const categories = getTriggerCategories(['schedule']);
+        expect(categories.find((c) => c.key === 'schedule')?.visible).toBe(false);
+      });
+
+      test('should hide multiple trigger categories', () => {
+        const categories = getTriggerCategories(['manual', 'schedule', 'appEvent']);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'schedule')?.visible).toBe(false);
+        expect(categories.find((c) => c.key === 'appEvent')?.visible).toBe(false);
+      });
+
+      test('should not affect non-hidden trigger categories', () => {
+        const categories = getTriggerCategories(['manual']);
+        const schedule = categories.find((c) => c.key === 'schedule');
+        expect(schedule?.visible).toBeUndefined(); // undefined = visible by default
+      });
+
+      test('should work with empty array for triggers', () => {
+        const categories = getTriggerCategories([]);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBeUndefined();
+      });
+
+      test('should work with undefined for triggers', () => {
+        const categories = getTriggerCategories(undefined);
+        expect(categories.find((c) => c.key === 'manual')?.visible).toBeUndefined();
+      });
+    });
+  });
 });

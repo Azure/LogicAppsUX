@@ -70,6 +70,10 @@ export const useDisableNativeMcpClientTools = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions?.disableNativeMcpClientTools ?? false);
 };
 
+export const useHiddenBrowseCategories = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.hiddenBrowseCategories ?? []);
+};
+
 export const useAreDesignerOptionsInitialized = () => {
   return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
 };
