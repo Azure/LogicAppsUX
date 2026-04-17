@@ -7,6 +7,8 @@ import { equals } from '@microsoft/logic-apps-shared';
 import { getSupportedChannels } from '../../utils/agent';
 import constants from '../../../common/constants';
 
+const EMPTY_ARRAY: string[] = [];
+
 export const useReadOnly = () => {
   return useSelector((state: RootState) => state.designerOptions.readOnly);
 };
@@ -71,7 +73,7 @@ export const useDisableNativeMcpClientTools = () => {
 };
 
 export const useHiddenBrowseCategories = () => {
-  return useSelector((state: RootState) => state.designerOptions.hostOptions?.hiddenBrowseCategories ?? []);
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.hiddenBrowseCategories ?? EMPTY_ARRAY);
 };
 
 export const useAreDesignerOptionsInitialized = () => {
