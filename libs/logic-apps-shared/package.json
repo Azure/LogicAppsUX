@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-shared",
-  "version": "5.110.0",
+  "version": "5.120.0",
   "dependencies": {
     "@formatjs/intl": "^2.10.1",
     "@xyflow/react": "^12.3.5",

@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "5.110.0",
+  "version": "5.120.0",
   "dependencies": {
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@microsoft/logic-apps-shared": "workspace:*",
