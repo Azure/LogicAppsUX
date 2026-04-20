@@ -73,7 +73,11 @@ vi.mock('@microsoft/designer-ui', () => ({
       <button
         data-testid="add-large-file-button"
         disabled={disabled}
-        onClick={() => onAdd({ uuid: 456, file: new File(['x'.repeat(20 * 1024 * 1024)], 'large.pdf', { type: 'application/pdf' }) })}
+        onClick={() => {
+          const file = new File(['test'], 'large.pdf', { type: 'application/pdf' });
+          Object.defineProperty(file, 'size', { value: 20 * 1024 * 1024 });
+          onAdd({ uuid: 456, file });
+        }}
       >
         Add Large File
       </button>
