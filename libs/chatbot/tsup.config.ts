@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   treeshake: true,
   outDir: 'build/lib',
-  sourcemap: 'inline',
+  sourcemap: true,
   minify: false,
   clean: true,
   // dts: true,
