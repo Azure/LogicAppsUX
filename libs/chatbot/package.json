@@ -2,9 +2,9 @@
   "name": "@microsoft/logic-apps-chatbot",
   "version": "5.120.0",
   "dependencies": {
-    "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.70.0",
-    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/react": "^8.110.2",
+    "@fluentui/react-components": "^9.70.0",
+    "@fluentui/react-icons": "^2.0.224",
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
     "react-intl": "6.3.0"

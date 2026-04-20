@@ -68,7 +68,7 @@
     }
   },
   "dependencies": {
-    "@fluentui/react-components": "9.70.0",
+    "@fluentui/react-components": "^9.70.0",
     "@fluentui/react-icons": "^2.0.306",
     "dompurify": "3.3.2",
     "eventemitter3": "^5.0.1",
