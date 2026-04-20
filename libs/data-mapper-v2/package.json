@@ -52,7 +52,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": ["build/lib/**/*"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
