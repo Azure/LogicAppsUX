@@ -45,6 +45,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   showEdgeDrawing: false,
   panelTabHideKeys: [],
   mcpClientToolEnabled: false,
+  knowledgeHubEnabled: false,
   hostOptions: {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
@@ -182,6 +183,7 @@ export const designerOptionsSlice = createSlice({
       };
       state.showPerformanceDebug = action.payload.showPerformanceDebug;
       state.mcpClientToolEnabled = action.payload.mcpClientToolEnabled;
+      state.knowledgeHubEnabled = action.payload.knowledgeHubEnabled;
       state.designerOptionsInitialized = true;
       state.isVSCode = action.payload.isVSCode ?? false;
     },

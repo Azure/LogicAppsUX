@@ -225,6 +225,7 @@ export default {
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
     RECURRENCE: 'recurrence',
+    KNOWLEDGE_BASE: 'knowledgebase',
   },
   EDITOR_OPTIONS: {
     LANGUAGE: {

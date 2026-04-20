@@ -58,6 +58,7 @@ export interface DesignerOptionsState {
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
+  knowledgeHubEnabled?: boolean;
 }
 
 export interface ServiceOptions {

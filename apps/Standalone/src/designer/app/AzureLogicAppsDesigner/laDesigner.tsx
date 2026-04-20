@@ -486,6 +486,7 @@ const DesignerEditor = () => {
           showEdgeDrawing,
           showPerformanceDebug,
           mcpClientToolEnabled: true,
+          knowledgeHubEnabled: true,
         }}
       >
         {workflow?.definition ? (

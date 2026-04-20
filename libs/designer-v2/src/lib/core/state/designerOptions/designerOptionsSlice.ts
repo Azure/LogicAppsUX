@@ -50,6 +50,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     hideContentTransferSettings: false,
     collapseGraphsByDefault: false,
   },
+  knowledgeHubEnabled: false,
 };
 
 export const initializeServices = createAsyncThunk(
@@ -174,6 +175,7 @@ export const designerOptionsSlice = createSlice({
       state.showPerformanceDebug = action.payload.showPerformanceDebug;
       state.designerOptionsInitialized = true;
       state.isVSCode = action.payload.isVSCode ?? false;
+      state.knowledgeHubEnabled = action.payload.knowledgeHubEnabled ?? false;
     },
   },
   extraReducers: (builder) => {

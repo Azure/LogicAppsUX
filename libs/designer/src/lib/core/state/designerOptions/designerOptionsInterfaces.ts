@@ -59,6 +59,7 @@ export interface DesignerOptionsState {
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
   mcpClientToolEnabled?: boolean;
+  knowledgeHubEnabled?: boolean;
 }
 
 export interface ServiceOptions {

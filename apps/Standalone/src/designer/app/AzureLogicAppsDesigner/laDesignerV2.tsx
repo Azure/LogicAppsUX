@@ -24,6 +24,7 @@ import {
   useWorkflowApp,
   validateWorkflowStandard,
   deployArtifacts,
+  uploadFileToKnowledgeHub,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -657,6 +658,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showPerformanceDebug,
+          knowledgeHubEnabled: true,
         }}
       >
         {workflow?.definition ? (
@@ -1075,6 +1077,7 @@ const getDesignerServices = (
       const workflowId: string = response.headers['x-ms-workflow-run-id'];
       dispatch(changeRunId(workflowId));
     },
+    uploadFileArtifact: uploadFileToKnowledgeHub,
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
