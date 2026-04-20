@@ -8,6 +8,7 @@ export * from './lib/expression/parser';
 export * from './lib/expression/scanner';
 export * from './lib/expression/evaluator';
 export * from './lib/manifest/parser';
+export * from './lib/manifest/__test__/data/manifests';
 export * from './lib/swagger/parser';
 export * from './lib/swagger/parameterprocessor';
 export { UriTemplateGenerator, UriTemplateParser } from './lib/swagger/uritemplateparser';
