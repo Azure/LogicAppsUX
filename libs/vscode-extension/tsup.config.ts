@@ -5,7 +5,7 @@ export default defineConfig({
   treeshake: true,
   sourcemap: true,
   outDir: 'build/lib',
-  minify: false,
+  minify: true,
   clean: true,
   splitting: false,
   tsconfig: 'tsconfig.json',
