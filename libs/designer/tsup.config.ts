@@ -11,7 +11,7 @@ export default defineConfig({
   // dts: true,
   splitting: false,
   tsconfig: 'tsconfig.json',
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   external: ['react', '@xyflow/react/dist/style.css'],
   injectStyle: false,
   loader: {

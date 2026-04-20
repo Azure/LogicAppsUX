@@ -11,7 +11,7 @@ export default defineConfig({
   // dts: true,
   splitting: true,
   tsconfig: 'tsconfig.json',
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   external: ['react'],
   injectStyle: false,
   loader: {

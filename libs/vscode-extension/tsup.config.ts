@@ -9,7 +9,7 @@ export default defineConfig({
   clean: true,
   splitting: false,
   tsconfig: 'tsconfig.json',
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   external: ['react'],
   injectStyle: false,
   loader: {
