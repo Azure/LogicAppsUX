@@ -81,7 +81,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -95,7 +95,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -127,7 +127,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -141,7 +141,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -241,7 +241,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -255,7 +255,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -287,7 +287,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -301,7 +301,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -330,7 +330,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -338,13 +338,13 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Z"
+            d="M4.25 6a7 7 0 1 1-1.24 3.57A.53.53 0 0 0 2.5 9a.47.47 0 0 0-.48.44L2 10a8 8 0 1 0 1.5-4.66V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H4.25Zm5.24.88A1 1 0 0 0 8 7.75v4.5a1 1 0 0 0 1.5.87l3.99-2.25a1 1 0 0 0 0-1.74l-4-2.25Z"
             fill="currentColor"
           />
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -352,7 +352,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Zm1.36-.23a.25.25 0 0 0-.36.23v4.06c0 .19.2.31.36.23l4.04-2.04a.25.25 0 0 0 0-.44L8.86 7.74Z"
+            d="M4.25 6a7 7 0 1 1-1.24 3.57A.53.53 0 0 0 2.5 9a.47.47 0 0 0-.48.44L2 10a8 8 0 1 0 1.5-4.66V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H4.25ZM8 7.75a1 1 0 0 1 1.5-.87l3.99 2.25a1 1 0 0 1 0 1.74l-4 2.25A1 1 0 0 1 8 12.25v-4.5ZM13 10 9 7.75v4.5L13 10Z"
             fill="currentColor"
           />
         </svg>
@@ -370,7 +370,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -384,7 +384,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -483,7 +483,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -497,7 +497,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -529,7 +529,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -543,7 +543,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -643,7 +643,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -657,7 +657,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             viewBox="0 0 24 24"
@@ -689,7 +689,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -703,7 +703,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -767,7 +767,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           >
             <svg
               aria-hidden={true}
-              className="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+              className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
               fill="currentColor"
               height="1em"
               viewBox="0 0 20 20"
@@ -803,7 +803,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -811,13 +811,13 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Z"
+            d="M4.25 6a7 7 0 1 1-1.24 3.57A.53.53 0 0 0 2.5 9a.47.47 0 0 0-.48.44L2 10a8 8 0 1 0 1.5-4.66V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H4.25Zm5.24.88A1 1 0 0 0 8 7.75v4.5a1 1 0 0 0 1.5.87l3.99-2.25a1 1 0 0 0 0-1.74l-4-2.25Z"
             fill="currentColor"
           />
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -825,7 +825,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 6.5v-3a.5.5 0 0 1 1 0v1.2a7.98 7.98 0 0 1 7.94-2.46A8 8 0 1 1 2 9.48a.5.5 0 1 1 1 .07A6.97 6.97 0 0 0 3 10a7 7 0 1 0 1.25-4H6a.5.5 0 0 1 0 1H3.5a.5.5 0 0 1-.5-.5Zm4.5 1.47c0-.93.98-1.54 1.81-1.12l4.04 2.03c.92.47.92 1.77 0 2.24l-4.04 2.03a1.25 1.25 0 0 1-1.81-1.12V7.97Zm1.36-.23a.25.25 0 0 0-.36.23v4.06c0 .19.2.31.36.23l4.04-2.04a.25.25 0 0 0 0-.44L8.86 7.74Z"
+            d="M4.25 6a7 7 0 1 1-1.24 3.57A.53.53 0 0 0 2.5 9a.47.47 0 0 0-.48.44L2 10a8 8 0 1 0 1.5-4.66V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H4.25ZM8 7.75a1 1 0 0 1 1.5-.87l3.99 2.25a1 1 0 0 1 0 1.74l-4 2.25A1 1 0 0 1 8 12.25v-4.5ZM13 10 9 7.75v4.5L13 10Z"
             fill="currentColor"
           />
         </svg>
@@ -843,7 +843,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
@@ -857,7 +857,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="1em"
           viewBox="0 0 20 20"
