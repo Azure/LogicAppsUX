@@ -37,7 +37,34 @@ jobs:
       with:
         name: designer-playwright-report-${{ matrix.shardIndex }}
         path: blob-report/
-        retention-days: 30
+        retention-days: 1
+
+  merge-reports:
+    if: ${{ !cancelled() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: designer-playwright-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: designer-playwright-report
+          path: playwright-report
+          retention-days: 14
 
   chat-client-tests:
     name: Chat Client E2E Tests
