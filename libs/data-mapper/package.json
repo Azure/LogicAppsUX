@@ -24,7 +24,7 @@
     "react-dnd-html5-backend": "16.0.1",
     "react-icons": "4.8.0",
     "react-intl": "6.3.0",
-    "react-redux": "8.0.2",
+    "react-redux": "^8.0.2",
     "reactflow": "^11.11.4",
     "redux-thunk": "2.4.2",
     "redux-undo": "1.1.0",
