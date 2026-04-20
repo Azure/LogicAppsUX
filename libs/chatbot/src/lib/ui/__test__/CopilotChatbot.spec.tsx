@@ -84,7 +84,12 @@ describe('ui/CopilotChatbot', () => {
     mockGetWorkflowEdit.mockReset();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    // Flush pending setTimeout callbacks (component uses 100ms delays for setFocus)
+    // to prevent "window is not defined" errors after test environment teardown
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
     cleanup();
     vi.clearAllMocks();
   });
