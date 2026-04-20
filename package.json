@@ -3,6 +3,7 @@
   "version": "5.110.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
     "@faker-js/faker": "^8.4.1",
@@ -60,8 +61,7 @@
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.8",
     "vite-plugin-node-polyfills": "^0.23.0",
-    "vitest": "^3.2.4",
-    "@eslint/compat": "^2.0.0"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18",
@@ -69,7 +69,11 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --write"
+    ]
   },
   "private": true,
   "scripts": {
@@ -77,8 +81,8 @@
     "build:lib": "turbo run build:lib",
     "build:extension": "turbo run build:extension",
     "check": "biome check --write .",
-    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
-    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
+    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/src/compiled-lang/\" ",
+    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/src/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "e2e:setup": "playwright install --with-deps",
     "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" \"apps/vs-code-react/src/**/*.{ts,tsx}\" --ignore \"**/node_modules/**\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --ignore \"apps/vs-code-react/src/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "generateArmToken": "node ./scripts/generateArmToken.js",
