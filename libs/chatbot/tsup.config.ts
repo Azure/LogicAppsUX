@@ -11,7 +11,16 @@ export default defineConfig({
   splitting: false,
   tsconfig: 'tsconfig.json',
   format: ['esm'],
-  external: ['react'],
+  external: [
+    'react',
+    'react-dom',
+    '@microsoft/logic-apps-shared',
+    '@microsoft/designer-ui',
+    '@fluentui/react',
+    '@fluentui/react-components',
+    '@fluentui/react-icons',
+    'react-intl',
+  ],
   injectStyle: false,
   loader: {
     '.svg': 'dataurl',
