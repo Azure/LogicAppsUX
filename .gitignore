@@ -8,6 +8,7 @@
 /out-tsc
 build 
 .nx
+tsup.config.bundled_*
 # dependencies
 node_modules
 /CodeCoverage
