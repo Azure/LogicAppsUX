@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/designer-ui",
-  "version": "5.110.0",
+  "version": "5.120.0",
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.0",
     "@codemirror/commands": "^6.6.0",
