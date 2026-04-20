@@ -6,7 +6,7 @@ on:
     branches: [main, dev/*, hotfix/*]
 
 jobs:
-  test:
+  designer-e2e-shards:
     timeout-minutes: 90
     runs-on: ubuntu-latest
     strategy:
@@ -39,9 +39,9 @@ jobs:
         path: blob-report/
         retention-days: 1
 
-  merge-reports:
+  test:
     if: ${{ !cancelled() }}
-    needs: [test]
+    needs: [designer-e2e-shards]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
