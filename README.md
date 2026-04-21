@@ -25,6 +25,31 @@ This repository is organized as a PNPM-powered monorepo with Turborepo for manag
 
 See each application's README for more details and setup instructions.
 
+## AI-Assisted Development (Knowledge Graphs)
+
+Each library has a [Graphify](https://graphify.net/) knowledge graph that maps code structure, god nodes (most-connected abstractions), and cross-file relationships. AI coding assistants automatically use these graphs for structural navigation instead of grepping raw files.
+
+**Works out of the box:** `GRAPH_REPORT.md` files are committed and referenced in `CLAUDE.md` — any AI assistant reads them automatically.
+
+**Optional CLI setup** (for graph queries, one-time):
+```bash
+pipx install graphifyy              # Requires Python 3.10+
+graphify copilot install            # Hook into GitHub Copilot CLI
+```
+
+**Rebuild graphs after major refactors:**
+```bash
+./scripts/graphify-rebuild.sh               # All libs (seconds, no LLM cost)
+./scripts/graphify-rebuild.sh designer-v2   # Specific lib
+```
+
+**Query examples:**
+```bash
+graphify query "how does serialization work?" --graph libs/designer-v2/src/graphify-out/graph.json
+graphify path "serializeWorkflow" "BJSDeserializer" --graph libs/designer-v2/src/graphify-out/graph.json
+graphify explain "getOperationSettings" --graph libs/designer-v2/src/graphify-out/graph.json
+```
+
 ## Scripts & Tooling
 
 - **Monorepo management:** [PNPM](https://pnpm.io/) (`pnpm-workspace.yaml`), [Turborepo](https://turbo.build/).
