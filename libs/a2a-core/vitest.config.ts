@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    pool: 'forks',
+    pool: process.env.CI ? 'forks' : 'threads',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['./src/react/test/setup.ts'],
     coverage: {

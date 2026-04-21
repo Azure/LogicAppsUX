@@ -9,7 +9,7 @@ export default defineConfig({
     name: packageJson.name,
     globals: true,
     environment: 'jsdom',
-    pool: 'forks',
+    pool: process.env.CI ? 'forks' : 'threads',
     setupFiles: './src/test/setup.ts',
     root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],

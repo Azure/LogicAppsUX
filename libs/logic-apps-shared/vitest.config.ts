@@ -8,7 +8,7 @@ export default defineProject({
     name: packageJson.name,
     globals: true,
     environment: 'jsdom',
-    pool: 'forks',
+    pool: process.env.CI ? 'forks' : 'threads',
     setupFiles: ['test-setup.ts'],
     coverage: {
       enabled: !!process.env.COLLECT_COVERAGE,
