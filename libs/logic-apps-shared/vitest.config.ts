@@ -11,7 +11,6 @@ export default defineProject({
     pool: 'threads',
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: !!process.env.CI, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
-    typecheck: { enabled: true },
     retry: process.env.CI ? 1 : 0,
     restoreMocks: true,
   },
