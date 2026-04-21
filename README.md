@@ -105,6 +105,73 @@ pnpm run graphify:rebuild -- designer-v2
 
 Requires Python 3.10+ and `pipx install graphifyy`. The `pnpm run graphify:setup` command handles both.
 
+### Before & after: Real examples from this repo
+
+#### "What are the core abstractions in designer-v2?"
+
+| | Without Graphify | With Graphify |
+|---|---|---|
+| **Approach** | Grep for exports → read 10+ key files → build mental model | Read `GRAPH_REPORT.md` → god nodes listed with edge counts |
+| **Files read** | 10-15 files (store, providers, serializer, slices, etc.) | 1 file |
+| **Lines scanned** | ~9,351 lines across key files | ~3,235 lines (full report) or ~12 lines (god nodes section) |
+| **Tokens consumed** | ~37,000 | ~200 (god nodes section only) |
+| **AI turns needed** | 3-5 (explore → read → synthesize) | 1 |
+| **Answer quality** | Depends on which files the AI happens to read | Definitive — ranked by actual connectivity |
+
+**With Graphify, the answer is immediate:**
+```
+God Nodes (most connected):
+1. getOperationSettings()         — 52 edges
+2. getReactQueryClient()          — 45 edges
+3. isNullOrUndefined()            — 32 edges
+4. initializeOperationDetails()   — 24 edges
+5. getOperationManifest()         — 21 edges
+```
+
+#### "What depends on getOperationSettings?"
+
+| | Without Graphify | With Graphify |
+|---|---|---|
+| **Approach** | `grep -rn "getOperationSettings"` → 15 matches → read each file for context | `graphify explain "getOperationSettings()"` |
+| **Files read** | 15 files × 200-500 lines each | 0 files — structured output from graph |
+| **Tokens consumed** | ~8,000-30,000 | ~800 |
+| **What you get** | Line matches with no relationship context | 52 typed connections: callers, callees, with EXTRACTED/INFERRED tags and source locations |
+
+**With Graphify:**
+```
+Node: getOperationSettings()
+  Source:    settings.ts L130 | Community: 8 | Degree: 52
+  --> initializeOperationDetails()        [calls] [INFERRED]
+  --> initializeOperationDetailsForManifest() [calls] [INFERRED]
+  --> isSplitOnSupported()                [calls] [EXTRACTED]
+  --> isRetryPolicySupported()            [calls] [EXTRACTED]
+  --> isConcurrencySupported()            [calls] [EXTRACTED]
+  ... and 47 more with source locations
+```
+
+#### "What are the surprising/hidden couplings in the codebase?"
+
+| | Without Graphify | With Graphify |
+|---|---|---|
+| **Approach** | Impossible with grep — requires reading hundreds of files and mentally cross-referencing import graphs | Listed in GRAPH_REPORT.md "Surprising Connections" section |
+| **Tokens consumed** | 80,000+ (if even attempted) | ~200 |
+| **Time** | 5-10 minutes across multiple AI turns | Instant |
+
+**With Graphify (from the actual report):**
+```
+Surprising Connections:
+- DesignerReactFlow() --calls--> useNotes()
+  ui/DesignerReactFlow.tsx → core/state/notes/notesSelectors.ts
+
+- usePanelTabs() --calls--> useSettingValidationErrors()
+  ui/panel/nodeDetailsPanel/usePanelTabs.tsx → core/state/setting/settingSelector.ts
+
+- onComboboxMenuOpen() --calls--> loadDynamicValuesForParameter()
+  ui/panel/.../parametersTab/index.tsx → core/utils/parameters/helper.ts
+```
+
+These are the hidden couplings that cause unexpected bugs when you change "unrelated" code.
+
 ### Use cases: How knowledge graphs improve AI-assisted development
 
 #### 1. Onboarding — "Where do I even start?"
