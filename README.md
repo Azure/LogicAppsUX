@@ -27,27 +27,83 @@ See each application's README for more details and setup instructions.
 
 ## AI-Assisted Development (Knowledge Graphs)
 
-Each library has a [Graphify](https://graphify.net/) knowledge graph that maps code structure, god nodes (most-connected abstractions), and cross-file relationships. AI coding assistants automatically use these graphs for structural navigation instead of grepping raw files.
+This repo uses [Graphify](https://graphify.net/) to maintain per-library knowledge graphs that map code structure, identify core abstractions, and surface cross-file relationships. These graphs help both AI coding assistants and developers navigate the codebase structurally instead of grepping blindly.
 
-**Works out of the box:** `GRAPH_REPORT.md` files are committed and referenced in `CLAUDE.md` — any AI assistant reads them automatically. Graphs are **auto-rebuilt by CI** when source code changes on main.
+### What's in the graphs
 
-**Optional CLI setup** (one-time, for graph queries):
+Each library has a `graphify-out/` directory inside `src/` containing:
+
+| File | Purpose |
+|------|---------|
+| `GRAPH_REPORT.md` | God nodes (most-connected abstractions), communities, surprising connections, suggested questions |
+| `graph.json` | Full queryable graph — nodes, edges, communities, confidence scores |
+
+**Current library graphs:**
+
+| Library | Nodes | Edges | God Nodes (top 3) |
+|---------|-------|-------|--------------------|
+| designer-v2 | 2,314 | 3,210 | `getOperationSettings` (52), `getReactQueryClient` (45), `initializeOperationDetails` (24) |
+| designer | 2,410 | 3,370 | `getOperationSettings` (52), `getReactQueryClient` (45), `initializeOperationDetails` (25) |
+| designer-ui | 1,228 | 964 | See `libs/designer-ui/src/graphify-out/GRAPH_REPORT.md` |
+| logic-apps-shared | 1,242 | 1,876 | See `libs/logic-apps-shared/src/graphify-out/GRAPH_REPORT.md` |
+| data-mapper-v2 | 446 | 488 | See `libs/data-mapper-v2/src/graphify-out/GRAPH_REPORT.md` |
+| a2a-core | 408 | 417 | See `libs/a2a-core/src/graphify-out/GRAPH_REPORT.md` |
+| chatbot | 22 | 5 | See `libs/chatbot/src/graphify-out/GRAPH_REPORT.md` |
+| vscode-extension | 51 | 38 | See `libs/vscode-extension/src/graphify-out/GRAPH_REPORT.md` |
+
+### How graphs stay up to date
+
+Graphs are **auto-rebuilt by CI** via the `update-knowledge-graphs.yml` GitHub Action whenever TypeScript source files change on `main`. No manual action needed — pull latest main and the graphs are current.
+
+### AI assistant integration
+
+Graphs work automatically with AI coding tools — no per-user setup required:
+
+| Tool | How it picks up graphs | Setup needed? |
+|------|----------------------|---------------|
+| **GitHub Copilot CLI** | `.github/copilot-instructions.md` | None — reads from repo |
+| **VS Code Copilot Chat** | `.github/copilot-instructions.md` | None — reads from repo |
+| **Claude Code** | `CLAUDE.md` | None — reads from repo |
+| **Cursor** | Add `.cursor/rules/` if needed | Optional |
+
+### Optional: CLI queries (power users)
+
+For interactive graph queries, install the Graphify CLI:
+
 ```bash
-pnpm run graphify:setup              # Installs graphify CLI + Copilot hook
+# One-time setup — installs graphify CLI + Copilot CLI skill
+pnpm run graphify:setup
+
+# Query the graph
+graphify query "how does the serialization pipeline work?" \
+  --graph libs/designer-v2/src/graphify-out/graph.json
+
+# Trace shortest path between two abstractions
+graphify path "serializeWorkflow" "BJSDeserializer" \
+  --graph libs/designer-v2/src/graphify-out/graph.json
+
+# Explain a god node and its neighbors
+graphify explain "getOperationSettings" \
+  --graph libs/designer-v2/src/graphify-out/graph.json
+
+# Generate interactive HTML visualization (open in browser)
+cd libs/designer-v2 && graphify update src/
+open src/graphify-out/graph.html
 ```
 
-**Rebuild graphs after major refactors:**
+### Manual rebuild
+
+If you need to rebuild graphs locally (e.g., on a feature branch before CI runs):
+
 ```bash
-pnpm run graphify:rebuild                       # All libs (seconds, no LLM cost)
-pnpm run graphify:rebuild -- designer-v2        # Specific lib
+# Rebuild all libs (pure AST extraction, no LLM, runs in seconds)
+pnpm run graphify:rebuild
+
+# Rebuild a specific lib
+pnpm run graphify:rebuild -- designer-v2
 ```
 
-**Query examples:**
-```bash
-graphify query "how does serialization work?" --graph libs/designer-v2/src/graphify-out/graph.json
-graphify path "serializeWorkflow" "BJSDeserializer" --graph libs/designer-v2/src/graphify-out/graph.json
-graphify explain "getOperationSettings" --graph libs/designer-v2/src/graphify-out/graph.json
-```
+Requires Python 3.10+ and `pipx install graphifyy`. The `pnpm run graphify:setup` command handles both.
 
 ## Scripts & Tooling
 
