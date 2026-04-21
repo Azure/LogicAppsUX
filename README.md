@@ -188,6 +188,22 @@ We gave two AI agents the same question about this repo: *"I need to change how 
 
 **The key difference isn't speed — it's completeness and confidence.** The blind agent missed 3 of 8 call sites because it hit its exploration budget. The graph agent found all 8 and could verify completeness against the graph's known edge count. When an AI tells you "this is the full list" vs "I might be missing some" — that's the difference between a safe refactor and a broken deploy.
 
+#### Implementation quality: Planning a new feature
+
+We gave two AI agents the same implementation task: *"Add a new 'timeout' host option that lets the host configure a default timeout for all HTTP actions."* One explored blind, the other started with the knowledge graph.
+
+| Dimension | Without Graphify | With Graphify |
+|-----------|-----------------|---------------|
+| **Files identified** | 5 files to change | 7 files to change (caught `agent.ts` and `mcp/utils/helper.ts` — two add-operation paths the blind agent missed entirely) |
+| **Pattern discovery** | Found `requestOptions` pattern but had to guess about similar patterns | Identified `maxWaitingRuns` as the closest precedent by name from the graph report — exact same host-option-to-settings pattern |
+| **Call site completeness** | Found 3 call sites in `add.ts` but missed `agent.ts:274` and `mcp/utils/helper.ts:109` | Found all 5 call sites — graph's `initializeOperationDetails` node (24 edges) mapped the complete call chain |
+| **Deserialization safety** | Flagged the risk but said "not explored" — couldn't verify it was safe | Verified: "operationdeserializer.ts path always has `operation` defined, so it's safe" — confirmed from the graph that deserialization and add-operation are separate communities |
+| **Dual-timeout confusion** | Missed the distinction between action timeout (`Settings.timeout`) and request timeout (`Settings.requestOptions.timeout`) | Called it out explicitly as a high-severity risk: "There are TWO timeout settings — clarify with product which one" |
+| **Pseudocode provided** | No | Yes — exact code block for the `requestOptions` change with ISO 8601 conversion |
+| **Risks identified** | 6 risks, 2 marked "guessed" | 6 risks, all verified against the graph + code. Honest about the 1 gap (serialization path not inspected) |
+
+**The implementation difference:** The blind agent produced a plan that would compile and mostly work — but would silently miss HTTP actions added via the agent tool path and MCP path. Those would get no default timeout while regular HTTP actions would. The graph agent's plan covers all paths because the graph showed all 5 entry points into `getOperationSettings()`. That's the difference between a feature that works in the happy path and a feature that works everywhere.
+
 ### Use cases: How knowledge graphs improve AI-assisted development
 
 #### 1. Onboarding — "Where do I even start?"
