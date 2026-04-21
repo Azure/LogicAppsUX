@@ -105,6 +105,100 @@ pnpm run graphify:rebuild -- designer-v2
 
 Requires Python 3.10+ and `pipx install graphifyy`. The `pnpm run graphify:setup` command handles both.
 
+### Use cases: How knowledge graphs improve AI-assisted development
+
+#### 1. Onboarding — "Where do I even start?"
+
+Instead of asking an AI assistant to explore a 96K-line library blind, point it at the graph report:
+
+```
+Read libs/designer-v2/src/graphify-out/GRAPH_REPORT.md and tell me the top 5
+most important abstractions in this library and how they relate.
+```
+
+The report immediately surfaces `getOperationSettings` (52 edges), `getReactQueryClient` (45 edges), and `initializeOperationDetails` (24 edges) as the core of the system — no grepping needed.
+
+#### 2. Architecture questions — "How does X connect to Y?"
+
+```bash
+# How does the operation settings system connect to the broader codebase?
+graphify explain "getOperationSettings()" --graph libs/designer-v2/src/graphify-out/graph.json
+```
+
+Output shows all 52 connections — which functions call it, which modules depend on it, extracted vs inferred relationships with confidence scores and source locations.
+
+```bash
+# What's the shortest path between serialization and the React Query cache?
+graphify path "serializeWorkflow()" "getReactQueryClient()" \
+  --graph libs/designer-v2/src/graphify-out/graph.json
+```
+
+#### 3. Impact analysis — "What breaks if I change this function?"
+
+Before refactoring a god node, check its graph neighborhood:
+
+```bash
+graphify explain "parameterValueToString()" --graph libs/designer-v2/src/graphify-out/graph.json
+```
+
+This reveals 17 direct connections — every caller and callee. Your AI assistant can then scope the refactor precisely instead of doing a broad grep that misses indirect dependencies.
+
+#### 4. Bug investigation — "Why is this UI component reading from that Redux slice?"
+
+```bash
+graphify query "what connects panel UI to Redux state" \
+  --graph libs/designer-v2/src/graphify-out/graph.json
+```
+
+Returns the exact selector chain: `panelSelectors.ts` → `useOperationPanelSelectedNodeId()` → panel slice. Shows which community each belongs to, revealing whether the coupling is intentional (same community) or surprising (cross-community bridge).
+
+#### 5. PR reviews — "Does this change touch a god node?"
+
+The `GRAPH_REPORT.md` lists the top god nodes with edge counts. If a PR modifies `getOperationSettings` (52 edges) or `initializeOperationDetails` (24 edges), reviewers know it's high-impact. AI assistants reading the report can flag this automatically.
+
+#### 6. Cross-library dependency understanding
+
+```bash
+# What are the core abstractions in the shared library?
+graphify explain "getReactQueryClient()" --graph libs/logic-apps-shared/src/graphify-out/graph.json
+
+# Compare god nodes between v1 and v2
+diff <(grep "God Nodes" -A 12 libs/designer/src/graphify-out/GRAPH_REPORT.md) \
+     <(grep "God Nodes" -A 12 libs/designer-v2/src/graphify-out/GRAPH_REPORT.md)
+```
+
+#### 7. New feature planning — "Where should I add this?"
+
+Ask your AI assistant with graph context:
+
+```
+I need to add a new panel type for workflow annotations. Based on the graph
+report in libs/designer-v2/src/graphify-out/GRAPH_REPORT.md, which community
+should this live in and what existing patterns should I follow?
+```
+
+The community structure tells the assistant where similar features cluster, and the god nodes tell it which abstractions to integrate with.
+
+#### 8. Discovering surprising connections
+
+The `GRAPH_REPORT.md` has a "Surprising Connections" section that flags unexpected cross-file or cross-community edges. For designer-v2, this surfaced:
+
+- `DesignerReactFlow()` → `useNotes()` — UI component reaching into notes state
+- `usePanelTabs()` → `useSettingValidationErrors()` — panel tabs coupled to settings validation
+- `onComboboxMenuOpen()` → `loadDynamicValuesForParameter()` — UI event triggering parameter loading
+
+These are the hidden couplings that cause unexpected bugs when you change "unrelated" code.
+
+### How it works under the hood
+
+Graphify runs a three-stage pipeline on each library:
+
+1. **AST extraction** (Tree-sitter) — Parses TypeScript/TSX files to extract classes, functions, imports, call graphs, and docstrings. This is deterministic and fast (~seconds for 600+ files).
+2. **Graph construction** (NetworkX) — Merges all extracted nodes and edges into a graph. Infers additional relationships from import chains and call patterns (tagged `INFERRED` with confidence scores).
+3. **Community detection** (Leiden algorithm) — Clusters the graph into communities by edge density. No embeddings or vector DB needed — the graph topology IS the similarity signal.
+
+Every relationship is tagged: `EXTRACTED` (found in source), `INFERRED` (reasonable inference, with confidence 0-1), or `AMBIGUOUS` (flagged for review). You always know what was found vs guessed.
+
 ## Scripts & Tooling
 
 - **Monorepo management:** [PNPM](https://pnpm.io/) (`pnpm-workspace.yaml`), [Turborepo](https://turbo.build/).
