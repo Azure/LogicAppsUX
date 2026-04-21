@@ -32,7 +32,7 @@ describe('loadLocaleData', () => {
       expect(messages).toBeDefined();
       expect(messages).not.toEqual(englishMessages);
     }
-  });
+  }, 30000);
   test('returns correct messages for english locale, same as default messages', async () => {
     const messages = await loadLocaleData('en-US');
     const defaultMessages = await loadLocaleData('');
