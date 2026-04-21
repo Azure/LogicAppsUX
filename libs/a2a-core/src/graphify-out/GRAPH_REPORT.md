@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src  (2026-04-21)
+# Graph Report - libs/a2a-core/src  (2026-04-21)
 
 ## Corpus Check
 - 139 files · ~78,988 words
@@ -152,15 +152,15 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `messageHandler()` --calls--> `isJsonRpcError()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/client/a2a-client.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/types/schemas.ts
+  libs/a2a-core/src/client/a2a-client.ts → libs/a2a-core/src/types/schemas.ts
 - `formatErrorMessage()` --calls--> `extractErrorDetails()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/react/utils/errorUtils.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/types/errors.ts
+  libs/a2a-core/src/react/utils/errorUtils.ts → libs/a2a-core/src/types/errors.ts
 - `MessageComponent()` --calls--> `sanitizeHtml()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/react/components/Message/Message.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/utils/sanitize.ts
+  libs/a2a-core/src/react/components/Message/Message.tsx → libs/a2a-core/src/utils/sanitize.ts
 - `manualAuthFlow()` --calls--> `openPopupWindow()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/examples/obo-authentication.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/utils/popup-window.ts
+  libs/a2a-core/src/examples/obo-authentication.ts → libs/a2a-core/src/utils/popup-window.ts
 - `ExampleWithHooks()` --calls--> `useA2A()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/examples/obo-authentication.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/a2a-core/src/react/use-a2a.ts
+  libs/a2a-core/src/examples/obo-authentication.ts → libs/a2a-core/src/react/use-a2a.ts
 
 ## Communities
 

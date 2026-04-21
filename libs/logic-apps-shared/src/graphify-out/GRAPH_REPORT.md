@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src  (2026-04-21)
+# Graph Report - libs/logic-apps-shared/src  (2026-04-21)
 
 ## Corpus Check
 - 328 files · ~198,704 words
@@ -289,15 +289,15 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `filterStateful()` --calls--> `includes()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/designer-client-services/lib/standard/search.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+  libs/logic-apps-shared/src/designer-client-services/lib/standard/search.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
 - `includePathItemParameters()` --calls--> `map()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/parsers/lib/swagger/parser.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+  libs/logic-apps-shared/src/parsers/lib/swagger/parser.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
 - `getTriggerFromDefinition()` --calls--> `map()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/logicapps.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+  libs/logic-apps-shared/src/utils/src/lib/helpers/logicapps.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
 - `canRunBeInvokedWithPayload()` --calls--> `equals()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/logicapps.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+  libs/logic-apps-shared/src/utils/src/lib/helpers/logicapps.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
 - `getIdentityDropdownOptions()` --calls--> `equals()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/connections.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+  libs/logic-apps-shared/src/utils/src/lib/helpers/connections.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
 
 ## Communities
 

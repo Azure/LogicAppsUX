@@ -42,6 +42,16 @@ jobs:
             fi
           done
 
+      - name: Strip absolute paths
+        run: |
+          for f in libs/*/src/graphify-out/graph.json libs/*/src/graphify-out/GRAPH_REPORT.md; do
+            if [ -f "$f" ]; then
+              sed -i "s|$GITHUB_WORKSPACE/||g; s|$GITHUB_WORKSPACE||g" "$f"
+              encoded=$(echo "$GITHUB_WORKSPACE" | tr '/' '_' | tr '[:upper:]' '[:lower:]' | sed 's/^_//')
+              sed -i "s|${encoded}_||g" "$f"
+            fi
+          done
+
       - name: Check for changes
         id: check
         run: |

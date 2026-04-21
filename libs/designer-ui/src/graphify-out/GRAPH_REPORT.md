@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src  (2026-04-21)
+# Graph Report - libs/designer-ui/src  (2026-04-21)
 
 ## Corpus Check
 - 558 files · ~175,202 words
@@ -501,15 +501,15 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `handleUpdateRootProps()` --calls--> `onChange()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/querybuilder/SimpleQueryBuilder.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/authentication/CollapsedAuthentication.tsx
+  libs/designer-ui/src/lib/querybuilder/SimpleQueryBuilder.tsx → libs/designer-ui/src/lib/authentication/CollapsedAuthentication.tsx
 - `tokenClicked()` --calls--> `buildInlineCodeTextFromToken()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/code/index.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/code/util.ts
+  libs/designer-ui/src/lib/code/index.tsx → libs/designer-ui/src/lib/code/util.ts
 - `formatShownProperties()` --calls--> `createLiteralValueSegment()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/staticResult/util.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/editor/base/utils/helper.ts
+  libs/designer-ui/src/lib/staticResult/util.ts → libs/designer-ui/src/lib/editor/base/utils/helper.ts
 - `serialize()` --calls--> `createLiteralValueSegment()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/floatingactionmenu/floatingactionmenuinputs/helper.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/editor/base/utils/helper.ts
+  libs/designer-ui/src/lib/floatingactionmenu/floatingactionmenuinputs/helper.ts → libs/designer-ui/src/lib/editor/base/utils/helper.ts
 - `appendStringSegment()` --calls--> `$createExtendedTextNode()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/editor/base/utils/parsesegments.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-ui/src/lib/editor/base/nodes/extendedTextNode.tsx
+  libs/designer-ui/src/lib/editor/base/utils/parsesegments.ts → libs/designer-ui/src/lib/editor/base/nodes/extendedTextNode.tsx
 
 ## Communities
 

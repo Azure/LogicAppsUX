@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src  (2026-04-21)
+# Graph Report - libs/designer/src  (2026-04-21)
 
 ## Corpus Check
 - 700 files · ~389,686 words
@@ -488,15 +488,15 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `usePanelTabs()` --calls--> `useSettingValidationErrors()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/ui/panel/nodeDetailsPanel/usePanelTabs.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/core/state/setting/settingSelector.ts
+  libs/designer/src/lib/ui/panel/nodeDetailsPanel/usePanelTabs.tsx → libs/designer/src/lib/core/state/setting/settingSelector.ts
 - `createOrUpdateAgentParameter()` --calls--> `createLiteralValueSegment()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/core/utils/parameters/segment.ts
+  libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx → libs/designer/src/lib/core/utils/parameters/segment.ts
 - `isValueSegment()` --calls--> `isNullOrUndefined()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/core/utils/parameters/segment.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/connectionInline.tsx
+  libs/designer/src/lib/core/utils/parameters/segment.ts → libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/connectionInline.tsx
 - `getRepetitionName()` --calls--> `getAllParentsForNode()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/ui/common/LoopsPager/helper.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/core/utils/graph.ts
+  libs/designer/src/lib/ui/common/LoopsPager/helper.ts → libs/designer/src/lib/core/utils/graph.ts
 - `getWorkflowResourcesInTemplate()` --calls--> `getReactQueryClient()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/core/queries/clone.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer/src/lib/core/ReactQueryProvider.tsx
+  libs/designer/src/lib/core/queries/clone.ts → libs/designer/src/lib/core/ReactQueryProvider.tsx
 
 ## Communities
 

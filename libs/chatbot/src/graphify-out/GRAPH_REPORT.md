@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/chatbot/src  (2026-04-21)
+# Graph Report - libs/chatbot/src  (2026-04-21)
 
 ## Corpus Check
 - 17 files · ~6,276 words

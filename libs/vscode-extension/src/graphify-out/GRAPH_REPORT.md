@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/vscode-extension/src  (2026-04-21)
+# Graph Report - libs/vscode-extension/src  (2026-04-21)
 
 ## Corpus Check
 - 31 files · ~9,900 words

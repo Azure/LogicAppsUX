@@ -62,6 +62,20 @@ for lib in "${LIBS[@]}"; do
   cd "$REPO_ROOT"
 done
 
+# Strip absolute paths to make outputs portable across machines
+echo ""
+echo "Stripping absolute paths..."
+for f in "$LIBS_DIR"/*/src/graphify-out/graph.json "$LIBS_DIR"/*/src/graphify-out/GRAPH_REPORT.md; do
+  if [ -f "$f" ]; then
+    # Strip the absolute repo root from source_file paths and text
+    sed -i.bak "s|$REPO_ROOT/||g; s|$REPO_ROOT||g" "$f"
+    # Strip the underscore-encoded absolute path from node IDs
+    encoded_prefix=$(echo "$REPO_ROOT" | tr '/' '_' | tr '[:upper:]' '[:lower:]' | sed 's/^_//')
+    sed -i.bak "s|${encoded_prefix}_||g" "$f"
+    rm -f "$f.bak"
+  fi
+done
+
 echo ""
 echo "Done. Reports at libs/<lib>/src/graphify-out/GRAPH_REPORT.md"
 echo "Interactive HTML: run 'graphify update src/' in any lib, then open graphify-out/graph.html"

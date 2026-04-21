@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src  (2026-04-21)
+# Graph Report - libs/data-mapper-v2/src  (2026-04-21)
 
 ## Corpus Check
 - 143 files · ~77,576 words
@@ -146,15 +146,15 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `deleteConnectionFromConnections()` --calls--> `isFunctionData()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/core/state/DataMapSlice.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/utils/Function.Utils.ts
+  libs/data-mapper-v2/src/core/state/DataMapSlice.ts → libs/data-mapper-v2/src/utils/Function.Utils.ts
 - `isEqualToCustomValue()` --calls--> `isCustomValueConnection()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/mapHandling/__test__/MapHandlingTestUtilis.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/utils/Connection.Utils.ts
+  libs/data-mapper-v2/src/mapHandling/__test__/MapHandlingTestUtilis.ts → libs/data-mapper-v2/src/utils/Connection.Utils.ts
 - `getCoordinatesForHandle()` --calls--> `isFunctionNode()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/components/common/reactflow/edges/useEdgePath.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/utils/ReactFlow.Util.ts
+  libs/data-mapper-v2/src/components/common/reactflow/edges/useEdgePath.ts → libs/data-mapper-v2/src/utils/ReactFlow.Util.ts
 - `generateDataMapXslt()` --calls--> `DataMapperApiServiceInstance()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/core/queries/datamap.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/core/services/dataMapperApiService/index.ts
+  libs/data-mapper-v2/src/core/queries/datamap.ts → libs/data-mapper-v2/src/core/services/dataMapperApiService/index.ts
 - `testDataMap()` --calls--> `DataMapperApiServiceInstance()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/core/queries/datamap.ts → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/data-mapper-v2/src/core/services/dataMapperApiService/index.ts
+  libs/data-mapper-v2/src/core/queries/datamap.ts → libs/data-mapper-v2/src/core/services/dataMapperApiService/index.ts
 
 ## Communities
 

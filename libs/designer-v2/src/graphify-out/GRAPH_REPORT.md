@@ -1,4 +1,4 @@
-# Graph Report - /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src  (2026-04-21)
+# Graph Report - libs/designer-v2/src  (2026-04-21)
 
 ## Corpus Check
 - 678 files · ~523,625 words
@@ -503,15 +503,15 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `DesignerReactFlow()` --calls--> `useNotes()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/ui/DesignerReactFlow.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/core/state/notes/notesSelectors.ts
+  libs/designer-v2/src/lib/ui/DesignerReactFlow.tsx → libs/designer-v2/src/lib/core/state/notes/notesSelectors.ts
 - `DesignerReactFlow()` --calls--> `useClampPan()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/ui/DesignerReactFlow.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/core/state/designerView/designerViewSelectors.ts
+  libs/designer-v2/src/lib/ui/DesignerReactFlow.tsx → libs/designer-v2/src/lib/core/state/designerView/designerViewSelectors.ts
 - `usePanelTabs()` --calls--> `useSettingValidationErrors()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/usePanelTabs.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/core/state/setting/settingSelector.ts
+  libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/usePanelTabs.tsx → libs/designer-v2/src/lib/core/state/setting/settingSelector.ts
 - `onComboboxMenuOpen()` --calls--> `loadDynamicValuesForParameter()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/core/utils/parameters/helper.ts
+  libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx → libs/designer-v2/src/lib/core/utils/parameters/helper.ts
 - `createOrUpdateAgentParameter()` --calls--> `createLiteralValueSegment()`  [INFERRED]
-  /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx → /Users/krrishmittal/Documents/Code/LogicAppsUX/libs/designer-v2/src/lib/core/utils/parameters/segment.ts
+  libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx → libs/designer-v2/src/lib/core/utils/parameters/segment.ts
 
 ## Communities
 
