@@ -16,20 +16,20 @@
     "@codemirror/search": "^6.5.0",
     "@codemirror/state": "^6.4.0",
     "@codemirror/view": "^6.28.0",
-    "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.70.0",
-    "@fluentui/react-hooks": "8.6.20",
-    "@fluentui/react-icons": "2.0.224",
-    "@fluentui/theme": "2.6.25",
-    "@fluentui/utilities": "8.15.0",
-    "@lexical/html": "0.33.1",
-    "@lexical/link": "0.33.1",
-    "@lexical/list": "0.33.1",
-    "@lexical/react": "0.33.1",
-    "@lexical/rich-text": "0.33.1",
-    "@lexical/selection": "0.33.1",
-    "@lexical/table": "0.33.1",
-    "@lexical/utils": "0.33.1",
+    "@fluentui/react": "^8.110.2",
+    "@fluentui/react-components": "^9.70.0",
+    "@fluentui/react-hooks": "^8.6.20",
+    "@fluentui/react-icons": "^2.0.224",
+    "@fluentui/theme": "^2.6.25",
+    "@fluentui/utilities": "^8.15.0",
+    "@lexical/html": "^0.33.1",
+    "@lexical/link": "^0.33.1",
+    "@lexical/list": "^0.33.1",
+    "@lexical/react": "^0.33.1",
+    "@lexical/rich-text": "^0.33.1",
+    "@lexical/selection": "^0.33.1",
+    "@lexical/table": "^0.33.1",
+    "@lexical/utils": "^0.33.1",
     "@lezer/common": "^1.2.0",
     "@lezer/highlight": "^1.2.0",
     "@lezer/lr": "^1.4.0",
@@ -38,13 +38,13 @@
     "@xyflow/react": "^12.3.5",
     "dompurify": "3.3.2",
     "fuse.js": "6.6.2",
-    "lexical": "0.33.1",
+    "lexical": "^0.33.1",
     "prism-react-renderer": "2.3.1",
     "react-dnd": "16.0.1",
     "react-infinite-scroll-component": "6.1.0",
     "react-intl": "6.3.0",
     "react-markdown": "8.0.5",
-    "react-use": "17.4.0"
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
     "@types/dompurify": "3.2.0",
@@ -61,10 +61,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "build/lib/**/*",
-    "src"
-  ],
+  "files": ["build/lib/**/*"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -77,14 +74,14 @@
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
   "publishConfig": {
-    "main": "build/lib/index.cjs",
+    "main": "build/lib/index.js",
     "module": "build/lib/index.js",
     "types": "build/lib/index.d.ts",
     "exports": {
       ".": {
-        "types:": "./build/lib/index.d.ts",
+        "types": "./build/lib/index.d.ts",
         "import": "./build/lib/index.js",
-        "default": "./build/lib/index.cjs"
+        "default": "./build/lib/index.js"
       },
       "./package.json": "./package.json",
       "./build/lib/index.css": "./build/lib/index.css"

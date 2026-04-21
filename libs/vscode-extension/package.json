@@ -34,19 +34,19 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": ["build/lib/**/*"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
   "publishConfig": {
-    "main": "build/lib/index.cjs",
+    "main": "build/lib/index.js",
     "module": "build/lib/index.js",
     "types": "build/lib/index.d.ts",
     "exports": {
       ".": {
-        "types:": "./build/lib/index.d.ts",
+        "types": "./build/lib/index.d.ts",
         "import": "./build/lib/index.js",
-        "default": "./build/lib/index.cjs"
+        "default": "./build/lib/index.js"
       },
       "./package.json": "./package.json",
       "./build/lib/index.css": "./build/lib/index.css"

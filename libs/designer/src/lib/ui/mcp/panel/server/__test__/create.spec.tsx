@@ -1,6 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
+import '@testing-library/jest-dom/vitest';
 import { describe, vi, expect, it, beforeEach } from 'vitest';
 // biome-ignore lint/correctness/noUnusedImports: using react for render
 import React from 'react';
@@ -497,7 +498,6 @@ describe('CreateServer', () => {
     });
 
     it('shows loading state during submission', async () => {
-      const user = userEvent.setup();
       let resolvePromise: () => void;
       const pendingPromise = new Promise<void>((resolve) => {
         resolvePromise = resolve;
@@ -509,14 +509,17 @@ describe('CreateServer', () => {
       const nameInput = screen.getByTestId('textfield-name');
       const descriptionInput = screen.getByTestId('textarea-description');
       const workflow1Option = screen.getByTestId('option-workflow1');
-      const submitButton = screen.getByTestId('footer-button-0');
 
-      await user.clear(nameInput);
-      await user.type(nameInput, 'TestServer');
-      await user.clear(descriptionInput);
-      await user.type(descriptionInput, 'Test Description');
+      // Use fireEvent.change for direct, synchronous control to avoid keyboard event
+      // interference from Fluent UI's tabster focus-trapping
+      fireEvent.change(nameInput, { target: { value: 'TestServer' } });
+      fireEvent.change(descriptionInput, { target: { value: 'Test Description' } });
       fireEvent.click(workflow1Option);
 
+      // Add a small delay to ensure state updates complete
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const submitButton = screen.getByTestId('footer-button-0');
       fireEvent.click(submitButton);
 
       await waitFor(() => {
