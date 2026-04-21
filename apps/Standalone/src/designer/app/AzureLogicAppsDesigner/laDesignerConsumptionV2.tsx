@@ -740,8 +740,11 @@ const getDesignerServices = (
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
     getSandboxConfigurations: async (integrationAccountId: string) => {
+      // Agent harness sandbox APIs are only available in limited regions.
+      // Use the regional ARM endpoint (brazilus) to route requests to a supported region.
+      const sandboxBaseUrl = 'https://brazilus.management.azure.com';
       const response = await httpClient.get<{ value: any[] }>({
-        uri: `${baseUrl}${integrationAccountId}/sandboxConfigurations`,
+        uri: `${sandboxBaseUrl}${integrationAccountId}/sandboxConfigurations`,
         queryParameters: { 'api-version': '2016-06-01' },
       });
       return response.value ?? [];

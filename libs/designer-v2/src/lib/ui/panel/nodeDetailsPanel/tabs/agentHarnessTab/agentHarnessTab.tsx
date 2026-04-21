@@ -388,7 +388,7 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
             >
               <Dropdown
                 placeholder={intlText.selectSandboxPlaceholder}
-                value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId ?? ''}
+                value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId?.split('/').pop() ?? ''}
                 selectedOptions={harnessData.sandboxConfigurationId ? [harnessData.sandboxConfigurationId] : []}
               >
                 <Option value="">{intlText.nonePlaceholder}</Option>
