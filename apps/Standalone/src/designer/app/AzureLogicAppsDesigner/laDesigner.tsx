@@ -906,6 +906,7 @@ const getDesignerServices = (
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
+    isKnowledgeHubEnabled: () => true,
   };
 
   const hostService: IHostService = {
