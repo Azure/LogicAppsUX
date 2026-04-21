@@ -40,7 +40,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "jsdom": "^26.0.0",
     "typescript": "^5.3.3",
-    "vite": "^6.4.1",
+    "vite": "^6.4.2",
     "vite-bundle-analyzer": "^1.1.0",
     "vitest": "^3.2.4"
   },
