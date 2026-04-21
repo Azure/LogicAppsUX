@@ -69,12 +69,24 @@ export const useListStyles = makeStyles({
 
   nameCell: {
     display: 'flex',
+    minWidth: 0,
   },
 
   nameText: {
     display: 'flex',
     gap: '8px',
     marginTop: '6px',
+    minWidth: 0,
+    alignItems: 'flex-start',
+  },
+
+  nameIcon: {
+    flexShrink: 0,
+  },
+
+  nameLabel: {
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
   },
 
   hubNameCell: {},
