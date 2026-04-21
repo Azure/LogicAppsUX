@@ -109,6 +109,8 @@ Requires Python 3.10+ and `pipx install graphifyy`. The `pnpm run graphify:setup
 
 #### "What are the core abstractions in designer-v2?"
 
+**Prompt:** *"What are the most important functions and abstractions in the designer-v2 library? Rank them by how central they are to the codebase."*
+
 | | Without Graphify | With Graphify |
 |---|---|---|
 | **Approach** | Grep for exports → read 10+ key files → build mental model | Read `GRAPH_REPORT.md` → god nodes listed with edge counts |
@@ -130,6 +132,8 @@ God Nodes (most connected):
 
 #### "What depends on getOperationSettings?"
 
+**Prompt:** *"I need to understand the full dependency chain of `getOperationSettings()`. What calls it, what does it call, and what consumes its output?"*
+
 | | Without Graphify | With Graphify |
 |---|---|---|
 | **Approach** | `grep -rn "getOperationSettings"` → 15 matches → read each file for context | `graphify explain "getOperationSettings()"` |
@@ -150,6 +154,8 @@ Node: getOperationSettings()
 ```
 
 #### "What are the surprising/hidden couplings in the codebase?"
+
+**Prompt:** *"What are the non-obvious dependencies in designer-v2? Show me cross-module connections that a developer wouldn't expect from the directory structure alone."*
 
 | | Without Graphify | With Graphify |
 |---|---|---|
@@ -174,7 +180,14 @@ These are the hidden couplings that cause unexpected bugs when you change "unrel
 
 #### Response quality: Real side-by-side test
 
-We gave two AI agents the same question about this repo: *"I need to change how operation settings are resolved. What will I break and what's the safest way to approach this?"* One explored blind (grep/view), the other started with the knowledge graph.
+We gave two AI agents the exact same prompt. One explored blind (grep/view only), the other started with the knowledge graph.
+
+**Prompt given to both agents:**
+> *"I need to change how operation settings are resolved. What will I break and what's the safest way to approach this?"*
+>
+> The library is at `libs/designer-v2/src/`. Focus on giving a concrete, actionable answer — what files, what functions, what dependencies. Be specific about what you're confident about vs what you might be missing.
+
+The blind agent was limited to ~10 tool calls (grep/glob/view). The graph agent was instructed to read `GRAPH_REPORT.md` and run `graphify explain "getOperationSettings()"` before exploring further.
 
 | Dimension | Without Graphify | With Graphify |
 |-----------|-----------------|---------------|
@@ -190,7 +203,14 @@ We gave two AI agents the same question about this repo: *"I need to change how 
 
 #### Implementation quality: Planning a new feature
 
-We gave two AI agents the same implementation task: *"Add a new 'timeout' host option that lets the host configure a default timeout for all HTTP actions."* One explored blind, the other started with the knowledge graph.
+We gave two AI agents the exact same implementation prompt. One explored blind, the other started with the knowledge graph.
+
+**Prompt given to both agents:**
+> *"Add a new 'timeout' host option to designer-v2 that lets the host configure a default timeout (in seconds) for all HTTP actions. When set, the designer should pre-populate the timeout setting for any new HTTP action added to the canvas."*
+>
+> The library is at `libs/designer-v2/src/`. DO NOT write the code — produce an implementation plan: which files need to change and why, the sequence of changes, which existing patterns to follow, what tests to add/update, and risks/edge cases.
+
+The blind agent was limited to ~12 tool calls. The graph agent was instructed to read `GRAPH_REPORT.md`, run `graphify explain` on `getOperationSettings()` and `initializeOperationDetails()`, and query `"how are host options used in designer"` before exploring further.
 
 | Dimension | Without Graphify | With Graphify |
 |-----------|-----------------|---------------|
