@@ -334,7 +334,7 @@ export function toParameterInfoMap(
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
-    if (!inputParameter.dynamicSchema) {
+    if (!inputParameter.dynamicSchema && !equals(inputParameter.editor, 'knowledgebase')) {
       const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }

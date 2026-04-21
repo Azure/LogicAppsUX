@@ -401,11 +401,11 @@ export const KnowledgeList = ({
             ) : null}
             <div className={mergeClasses(styles.nameText, className)}>
               {isHubGroup ? (
-                <FolderOpen20Regular style={{ color: tokens.colorStatusWarningForegroundInverted }} />
+                <FolderOpen20Regular className={styles.nameIcon} style={{ color: tokens.colorStatusWarningForegroundInverted }} />
               ) : (
-                <DocumentText20Regular />
+                <DocumentText20Regular className={styles.nameIcon} />
               )}
-              <Text size={300} title={item.name}>
+              <Text size={300} title={item.name} className={styles.nameLabel}>
                 {item.name}
               </Text>
             </div>
@@ -419,6 +419,8 @@ export const KnowledgeList = ({
       handleExpandCollapse,
       styles.artifactNameCell,
       styles.nameCell,
+      styles.nameIcon,
+      styles.nameLabel,
       styles.nameText,
       styles.rowCell,
     ]
@@ -529,7 +531,9 @@ export const KnowledgeList = ({
               onClick={toggleAllRows}
               onKeyDown={toggleAllKeydown}
             />
-            <TableHeaderCell className={styles.tableCell}>{INTL_TEXT.nameLabel}</TableHeaderCell>
+            <TableHeaderCell className={styles.tableCell} style={{ width: '20%' }}>
+              {INTL_TEXT.nameLabel}
+            </TableHeaderCell>
             <TableHeaderCell className={styles.tableCell} style={{ width: '10%' }}>
               {INTL_TEXT.typeLabel}
             </TableHeaderCell>

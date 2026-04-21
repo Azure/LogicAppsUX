@@ -302,7 +302,7 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
         title={INTL_TEXT.groupSectionTitle}
         titleHtmlFor={'groupNameSectionLabel'}
         description={INTL_TEXT.groupSectionDescription}
-        descriptionLink={{ text: INTL_TEXT.learnMore, href: 'https://www.microsoft.com' }}
+        descriptionLink={{ text: INTL_TEXT.learnMore, href: 'https://go.microsoft.com/fwlink/?linkid=2362000' }}
         items={groupSectionItems}
         cssOverrides={{ sectionItem: styles.sectionItem }}
       />
@@ -310,7 +310,7 @@ export const FileUpload = ({ resourceId, selectedHub, setDetails }: FileUploadPr
         title={INTL_TEXT.title}
         titleHtmlFor={'addFilesSectionLabel'}
         description={INTL_TEXT.addFilesSectionDescription}
-        descriptionLink={{ text: INTL_TEXT.learnMore, href: 'https://www.microsoft.com' }}
+        descriptionLink={{ text: INTL_TEXT.learnMore, href: 'https://go.microsoft.com/fwlink/?linkid=2361803' }}
         items={addSectionItems}
       />
       <TemplatesSection
