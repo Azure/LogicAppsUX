@@ -7,7 +7,7 @@ export default defineProject({
   test: {
     name: packageJson.name,
     environment: 'jsdom',
-    pool: 'threads',
+    pool: 'forks',
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: !!process.env.CI, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
     retry: process.env.CI ? 1 : 0,

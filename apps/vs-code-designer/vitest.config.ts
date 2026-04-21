@@ -13,7 +13,7 @@ export default defineConfig({
   test: {
     name: packageJson.name,
     environment: 'node',
-    pool: 'threads',
+    pool: 'forks',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: !!process.env.CI, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
