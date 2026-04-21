@@ -31,16 +31,15 @@ Each library has a [Graphify](https://graphify.net/) knowledge graph that maps c
 
 **Works out of the box:** `GRAPH_REPORT.md` files are committed and referenced in `CLAUDE.md` — any AI assistant reads them automatically.
 
-**Optional CLI setup** (for graph queries, one-time):
+**Optional CLI setup** (one-time, for graph queries):
 ```bash
-pipx install graphifyy              # Requires Python 3.10+
-graphify copilot install            # Hook into GitHub Copilot CLI
+pnpm run graphify:setup              # Installs graphify CLI + Copilot hook
 ```
 
 **Rebuild graphs after major refactors:**
 ```bash
-./scripts/graphify-rebuild.sh               # All libs (seconds, no LLM cost)
-./scripts/graphify-rebuild.sh designer-v2   # Specific lib
+pnpm run graphify:rebuild                       # All libs (seconds, no LLM cost)
+pnpm run graphify:rebuild -- designer-v2        # Specific lib
 ```
 
 **Query examples:**

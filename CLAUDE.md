@@ -186,13 +186,13 @@ Each library has a Graphify knowledge graph at `libs/<lib>/src/graphify-out/` co
 
 **Before deep-diving into a library**, read its `GRAPH_REPORT.md` for structural context — it identifies the core abstractions and their relationships without reading every file.
 
-### Quick commands (requires `pipx install graphifyy`)
+### Quick commands (one-time setup: `pnpm run graphify:setup`)
 ```bash
 # Rebuild all graphs (pure AST, no LLM, runs in seconds)
-./scripts/graphify-rebuild.sh
+pnpm run graphify:rebuild
 
 # Rebuild a specific lib
-./scripts/graphify-rebuild.sh designer-v2
+pnpm run graphify:rebuild -- designer-v2
 
 # Query a graph
 graphify query "how does serialization work?" --graph libs/designer-v2/src/graphify-out/graph.json

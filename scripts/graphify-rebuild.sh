@@ -34,9 +34,13 @@ if ! command -v graphify &>/dev/null; then
   exit 1
 fi
 
-# Determine which libs to build
+# Determine which libs to build (filter out '--' from pnpm passthrough)
 if [ $# -gt 0 ]; then
-  LIBS=("$@")
+  LIBS=()
+  for arg in "$@"; do
+    [ "$arg" != "--" ] && LIBS+=("$arg")
+  done
+  [ ${#LIBS[@]} -eq 0 ] && LIBS=("${ALL_LIBS[@]}")
 else
   LIBS=("${ALL_LIBS[@]}")
 fi
