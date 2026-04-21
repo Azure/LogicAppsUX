@@ -207,3 +207,19 @@ pnpm run test:e2e --grep "test name"
 - No stateful logic in `designer-ui` library
 - Write unit tests for new functionality
 - Use Vitest with JSDOM for testing
+
+## Knowledge Graphs (Graphify)
+
+Each library has a knowledge graph at `libs/<lib>/src/graphify-out/` that maps code structure, god nodes (most-connected abstractions), and cross-file relationships. These are auto-rebuilt by CI when source code changes on main.
+
+**Before exploring a library, read its `GRAPH_REPORT.md` first** — it tells you the core abstractions, how they connect, and what's surprising. This is faster and more accurate than grepping.
+
+Available graph reports:
+- `libs/designer-v2/src/graphify-out/GRAPH_REPORT.md` — designer-v2 (2314 nodes)
+- `libs/designer/src/graphify-out/GRAPH_REPORT.md` — designer v1 (2410 nodes)
+- `libs/designer-ui/src/graphify-out/GRAPH_REPORT.md` — designer-ui (1228 nodes)
+- `libs/logic-apps-shared/src/graphify-out/GRAPH_REPORT.md` — shared utilities (1242 nodes)
+- `libs/data-mapper-v2/src/graphify-out/GRAPH_REPORT.md` — data mapper (446 nodes)
+- `libs/a2a-core/src/graphify-out/GRAPH_REPORT.md` — A2A core (408 nodes)
+
+When answering architecture questions, check the relevant GRAPH_REPORT.md for god nodes and community structure before searching raw files.
