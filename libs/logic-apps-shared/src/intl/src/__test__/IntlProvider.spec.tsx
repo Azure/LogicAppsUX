@@ -24,12 +24,13 @@ describe('loadLocaleData', () => {
       'ja',
       'ko',
     ];
-    const englishMessages = await loadLocaleData('en-US');
-    for (const locale of locales) {
-      const messages = await loadLocaleData(locale);
+    const [englishMessages, ...localeMessages] = await Promise.all([
+      loadLocaleData('en-US'),
+      ...locales.map((locale) => loadLocaleData(locale)),
+    ]);
+    for (const messages of localeMessages) {
       expect(messages).toBeDefined();
       expect(messages).not.toEqual(englishMessages);
-      // Add more specific checks here based on the expected structure of your messages
     }
   });
   test('returns correct messages for english locale, same as default messages', async () => {
