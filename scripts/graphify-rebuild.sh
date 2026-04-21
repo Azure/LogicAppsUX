@@ -62,19 +62,25 @@ for lib in "${LIBS[@]}"; do
   cd "$REPO_ROOT"
 done
 
-# Strip absolute paths to make outputs portable across machines
+# Strip absolute paths to make outputs portable across machines.
+# Uses Python for safe literal string replacement (no regex metachar issues).
 echo ""
 echo "Stripping absolute paths..."
-for f in "$LIBS_DIR"/*/src/graphify-out/graph.json "$LIBS_DIR"/*/src/graphify-out/GRAPH_REPORT.md; do
-  if [ -f "$f" ]; then
-    # Strip the absolute repo root from source_file paths and text
-    sed -i.bak "s|$REPO_ROOT/||g; s|$REPO_ROOT||g" "$f"
-    # Strip the underscore-encoded absolute path from node IDs
-    encoded_prefix=$(echo "$REPO_ROOT" | tr '/' '_' | tr '[:upper:]' '[:lower:]' | sed 's/^_//')
-    sed -i.bak "s|${encoded_prefix}_||g" "$f"
-    rm -f "$f.bak"
-  fi
-done
+python3 - "$REPO_ROOT" "$LIBS_DIR" << 'PYSTRIP'
+import sys
+from pathlib import Path
+
+repo_root = sys.argv[1]
+libs_dir = Path(sys.argv[2])
+encoded_prefix = repo_root.replace("/", "_").lower().lstrip("_")
+
+for f in sorted(libs_dir.glob("*/src/graphify-out/graph.json")) + sorted(libs_dir.glob("*/src/graphify-out/GRAPH_REPORT.md")):
+    content = f.read_text()
+    content = content.replace(repo_root + "/", "")
+    content = content.replace(repo_root, "")
+    content = content.replace(encoded_prefix + "_", "")
+    f.write_text(content)
+PYSTRIP
 
 echo ""
 echo "Done. Reports at libs/<lib>/src/graphify-out/GRAPH_REPORT.md"

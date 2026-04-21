@@ -22,7 +22,7 @@ for candidate in python3.13 python3.12 python3.11 python3.10 python3; do
     version=$("$candidate" --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
     major=$(echo "$version" | cut -d. -f1)
     minor=$(echo "$version" | cut -d. -f2)
-    if [ "$major" -ge 3 ] && [ "$minor" -ge 10 ]; then
+    if [ "$major" -gt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -ge 10 ]; }; then
       PYTHON="$candidate"
       break
     fi
@@ -48,6 +48,9 @@ fi
 echo "Using Python: $PYTHON ($($PYTHON --version))"
 
 # --- Install pipx if needed ---
+# Ensure PATH includes pipx/local bin dir early so pipx is usable after install
+export PATH="$HOME/.local/bin:$PATH"
+
 if ! command -v pipx &>/dev/null; then
   echo "Installing pipx..."
   if command -v brew &>/dev/null; then
@@ -56,11 +59,12 @@ if ! command -v pipx &>/dev/null; then
   else
     "$PYTHON" -m pip install --user pipx 2>&1 | tail -2
   fi
+  export PATH="$HOME/.local/bin:$PATH"
 fi
 
 # --- Install graphify ---
 if command -v graphify &>/dev/null || [ -x "$HOME/.local/bin/graphify" ]; then
-  echo "Graphify already installed: $(graphify --help 2>&1 | head -1 || echo 'OK')"
+  echo "Graphify already installed."
 else
   echo "Installing graphify..."
   pipx install graphifyy --python "$PYTHON" 2>&1 | tail -3

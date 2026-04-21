@@ -33,24 +33,33 @@ jobs:
 
       - name: Rebuild all knowledge graphs
         run: |
+          set -o pipefail
           LIBS="designer-v2 designer designer-ui logic-apps-shared data-mapper-v2 a2a-core chatbot vscode-extension"
           for lib in $LIBS; do
             if [ -d "libs/$lib/src" ]; then
               cd "libs/$lib"
-              graphify update src/ 2>&1 | grep -E "Rebuilt|error" || true
+              graphify update src/ 2>&1 | grep -E "Rebuilt|error"
               cd "$GITHUB_WORKSPACE"
             fi
           done
 
       - name: Strip absolute paths
         run: |
-          for f in libs/*/src/graphify-out/graph.json libs/*/src/graphify-out/GRAPH_REPORT.md; do
-            if [ -f "$f" ]; then
-              sed -i "s|$GITHUB_WORKSPACE/||g; s|$GITHUB_WORKSPACE||g" "$f"
-              encoded=$(echo "$GITHUB_WORKSPACE" | tr '/' '_' | tr '[:upper:]' '[:lower:]' | sed 's/^_//')
-              sed -i "s|${encoded}_||g" "$f"
-            fi
-          done
+          python3 - "$GITHUB_WORKSPACE" << 'PYSTRIP'
+          import sys
+          from pathlib import Path
+
+          workspace = sys.argv[1]
+          encoded = workspace.replace("/", "_").lower().lstrip("_")
+
+          for pattern in ["libs/*/src/graphify-out/graph.json", "libs/*/src/graphify-out/GRAPH_REPORT.md"]:
+              for f in sorted(Path(".").glob(pattern)):
+                  content = f.read_text()
+                  content = content.replace(workspace + "/", "")
+                  content = content.replace(workspace, "")
+                  content = content.replace(encoded + "_", "")
+                  f.write_text(content)
+          PYSTRIP
 
       - name: Check for changes
         id: check
