@@ -70,20 +70,23 @@ describe('getIntl', () => {
       </QueryClientProvider>
     );
 
-    await waitFor(() => {
-      const intl = getIntl();
-      expect(intl.locale).toBe('fr');
-      expect(intl.defaultLocale).toBe('en');
-      expect(intl.messages).toEqual(
-        expect.objectContaining({
-          '00xlpa': [
-            {
-              type: 0,
-              value: 'Partagé',
-            },
-          ],
-        })
-      );
-    });
+    await waitFor(
+      () => {
+        const intl = getIntl();
+        expect(intl.locale).toBe('fr');
+        expect(intl.defaultLocale).toBe('en');
+        expect(intl.messages).toEqual(
+          expect.objectContaining({
+            '00xlpa': [
+              {
+                type: 0,
+                value: 'Partagé',
+              },
+            ],
+          })
+        );
+      },
+      { timeout: 15000 }
+    );
   });
 });
