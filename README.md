@@ -29,7 +29,7 @@ See each application's README for more details and setup instructions.
 
 Each library has a [Graphify](https://graphify.net/) knowledge graph that maps code structure, god nodes (most-connected abstractions), and cross-file relationships. AI coding assistants automatically use these graphs for structural navigation instead of grepping raw files.
 
-**Works out of the box:** `GRAPH_REPORT.md` files are committed and referenced in `CLAUDE.md` — any AI assistant reads them automatically.
+**Works out of the box:** `GRAPH_REPORT.md` files are committed and referenced in `CLAUDE.md` — any AI assistant reads them automatically. Graphs are **auto-rebuilt by CI** when source code changes on main.
 
 **Optional CLI setup** (one-time, for graph queries):
 ```bash
