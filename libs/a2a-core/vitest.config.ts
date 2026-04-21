@@ -9,7 +9,7 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['./src/react/test/setup.ts'],
     coverage: {
-      enabled: !!process.env.CI,
+      enabled: !!process.env.COLLECT_COVERAGE,
       provider: 'istanbul',
       include: ['src/**/*'],
       reporter: ['html', 'cobertura', 'lcov'],

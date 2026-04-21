@@ -10,7 +10,7 @@ export default defineProject({
     pool: 'forks',
     setupFiles: ['test-setup.ts'],
     coverage: {
-      enabled: !!process.env.CI,
+      enabled: !!process.env.COLLECT_COVERAGE,
       provider: 'istanbul',
       include: ['src/app/**/*', 'src/state/**/*'],
       exclude: ['src/intl/**/*'],

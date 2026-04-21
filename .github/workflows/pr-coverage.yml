@@ -42,6 +42,8 @@ jobs:
         run: pnpm turbo run build --cache-dir=.turbo
 
       - name: Run tests with coverage
+        env:
+          COLLECT_COVERAGE: true
         run: |
           pnpm turbo run test:lib --cache-dir=.turbo
           pnpm turbo run test:iframe-app --cache-dir=.turbo
