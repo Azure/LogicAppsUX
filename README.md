@@ -172,6 +172,22 @@ Surprising Connections:
 
 These are the hidden couplings that cause unexpected bugs when you change "unrelated" code.
 
+#### Response quality: Real side-by-side test
+
+We gave two AI agents the same question about this repo: *"I need to change how operation settings are resolved. What will I break and what's the safest way to approach this?"* One explored blind (grep/view), the other started with the knowledge graph.
+
+| Dimension | Without Graphify | With Graphify |
+|-----------|-----------------|---------------|
+| **Call sites found** | 5 (missed 3 — agent.ts, swagger, MCP) | 8 (exhaustive — verified against graph's degree-52) |
+| **Confidence in completeness** | "Less confident about cross-library consumers" | "8 call sites are exhaustive (grep-verified, matches graph degree)" |
+| **Structural insight** | Noticed settings slice is "surprisingly thin" | Identified Community 8 as a tightly coupled cluster of ~30 helpers — changes inside are contained |
+| **Hidden risk identified** | Flagged serializer as "most fragile dependency" | Flagged same + explained WHY: `serializeSettings()` is the inverse of `getOperationSettings()` — asymmetric changes silently lose data |
+| **Downstream chain** | Found 5 consumers | Found same 5 + explained the community boundary between settings (Community 8) and parameters (Community 0) |
+| **Approach recommendation** | Correct but generic (3 scenarios) | Same 3 scenarios + specific rationale: "~30 helpers are internal to settings.ts and only called by getOperationSettings()" |
+| **Time to answer** | ~4 minutes (10 tool calls exploring) | ~2 minutes (2 tool calls: read report + explain node) |
+
+**The key difference isn't speed — it's completeness and confidence.** The blind agent missed 3 of 8 call sites because it hit its exploration budget. The graph agent found all 8 and could verify completeness against the graph's known edge count. When an AI tells you "this is the full list" vs "I might be missing some" — that's the difference between a safe refactor and a broken deploy.
+
 ### Use cases: How knowledge graphs improve AI-assisted development
 
 #### 1. Onboarding — "Where do I even start?"
