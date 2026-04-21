@@ -156,7 +156,7 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
         </Text>
         <div>
           <Text size={200}>{INTL_TEXT.description}</Text>
-          <Link href="https://aka.ms/LogicApps/knowledgehubdocs" target="_blank" className={styles.link}>
+          <Link href="https://go.microsoft.com/fwlink/?linkid=2361415" target="_blank" rel="noopener noreferrer" className={styles.link}>
             {INTL_TEXT.learnMore}
             <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
           </Link>

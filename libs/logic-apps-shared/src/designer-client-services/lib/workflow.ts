@@ -92,6 +92,11 @@ export interface IWorkflowService {
   ): Promise<void>;
 
   /**
+   * Flag to determine if knowledge hub features should be enabled in the workflow designer
+   */
+  isKnowledgeHubEnabled?(): boolean;
+
+  /**
    * Opens an Azure Portal blade
    */
   openBlade?(bladeReference: BladeReference | Promise<BladeReference>, options?: OpenBladeOptions): Promise<boolean>;

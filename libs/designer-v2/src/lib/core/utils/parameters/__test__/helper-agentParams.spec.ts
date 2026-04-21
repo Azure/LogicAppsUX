@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { isParameterRequired, createParameterInfo } from '../helper';
-import type { ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
+import { isParameterRequired, createParameterInfo, toParameterInfoMap } from '../helper';
+import type { InputParameter, ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
 
 describe('Parameter validation logic for Agent operations', () => {
   describe('isParameterRequired', () => {
@@ -314,6 +314,94 @@ describe('Parameter validation logic for Agent operations', () => {
       expect(parameterInfo.required).toBe(true);
       // But when validating, isParameterRequired should return false due to input dependencies
       expect(isParameterRequired(parameterInfo)).toBe(false);
+    });
+  });
+
+  describe('toParameterInfoMap - knowledgebase parameter hiding', () => {
+    it('should exclude parameters with editor: "knowledgebase" from the result', () => {
+      const inputParameters: InputParameter[] = [
+        {
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          type: 'object',
+          title: 'Agent Knowledge',
+          required: false,
+          editor: 'knowledgebase',
+          schema: {
+            type: 'object',
+          },
+        } as any,
+        {
+          name: 'messages',
+          key: 'inputs.$.messages',
+          type: 'array',
+          title: 'Messages',
+          required: true,
+          editor: 'array',
+          schema: {
+            type: 'array',
+          },
+        } as any,
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should only contain 'messages', not 'agentKnowledge'
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('messages');
+    });
+
+    it('should exclude parameters with editor: "knowledgebase" regardless of case', () => {
+      const inputParameters: InputParameter[] = [
+        {
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          type: 'object',
+          title: 'Agent Knowledge',
+          required: false,
+          editor: 'Knowledgebase', // Different casing
+          schema: {
+            type: 'object',
+          },
+        } as any,
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should be empty since knowledgebase parameters are hidden
+      expect(result).toHaveLength(0);
+    });
+
+    it('should include all parameters when none have editor: "knowledgebase"', () => {
+      const inputParameters: InputParameter[] = [
+        {
+          name: 'deploymentId',
+          key: 'inputs.$.deploymentId',
+          type: 'string',
+          title: 'Deployment ID',
+          required: false,
+          editor: 'textbox',
+          schema: {
+            type: 'string',
+          },
+        } as any,
+        {
+          name: 'temperature',
+          key: 'inputs.$.temperature',
+          type: 'number',
+          title: 'Temperature',
+          required: false,
+          editor: 'textbox',
+          schema: {
+            type: 'number',
+          },
+        } as any,
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.parameterName)).toEqual(['deploymentId', 'temperature']);
     });
   });
 });

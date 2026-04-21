@@ -6,9 +6,14 @@ on:
     branches: [main, dev/*, hotfix/*]
 
 jobs:
-  test:
+  designer-e2e-shards:
     timeout-minutes: 90
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -24,13 +29,42 @@ jobs:
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
     - name: Run Designer Playwright tests
-      run: pnpm run test:e2e:designer --grep @mock
+      run: pnpm run test:e2e:designer --grep @mock --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      env:
+        TEST_SHARDED: true
     - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: designer-playwright-report
-        path: playwright-report/
-        retention-days: 30
+        name: designer-playwright-report-${{ matrix.shardIndex }}
+        path: blob-report/
+        retention-days: 1
+
+  test:
+    if: ${{ !cancelled() }}
+    needs: [designer-e2e-shards]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: designer-playwright-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: designer-playwright-report
+          path: playwright-report
+          retention-days: 14
 
   chat-client-tests:
     name: Chat Client E2E Tests

@@ -332,9 +332,10 @@ export function toParameterInfoMap(
   shouldEncodeBasedOnMetadata = true
 ): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
+  const isKnowledgeHubEnabled = WorkflowService()?.isKnowledgeHubEnabled ? WorkflowService()?.isKnowledgeHubEnabled?.() : true;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
-    if (!inputParameter.dynamicSchema) {
+    if (!inputParameter.dynamicSchema && !(!isKnowledgeHubEnabled && equals(inputParameter.editor, constants.EDITOR.KNOWLEDGE_BASE))) {
       const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
