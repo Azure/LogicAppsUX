@@ -13,9 +13,11 @@ export default defineConfig({
   test: {
     name: packageJson.name,
     environment: 'node',
+    pool: 'threads',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    coverage: { enabled: !!process.env.CI, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    retry: process.env.CI ? 1 : 0,
     restoreMocks: true,
     // Exclude E2E tests that use Mocha instead of Vitest
     exclude: [

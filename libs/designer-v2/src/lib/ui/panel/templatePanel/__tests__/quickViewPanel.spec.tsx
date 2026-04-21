@@ -3,7 +3,7 @@ import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
 import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
-import { screen } from '@testing-library/react';
+import { screen, cleanup } from '@testing-library/react';
 import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
@@ -243,6 +243,16 @@ describe('panel/templatePanel/quickViewPanel', () => {
     newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
     newState.workflow.isConsumption = false;
     store = setupStore(newState);
+
+    cleanup();
+    const queryClient = getReactQueryClient();
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <QuickViewPanel showCreate={true} workflowId={defaultWorkflowId} />
+      </QueryClientProvider>,
+      { store }
+    );
+
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
     expect(screen.queryByText('No connections are needed in this template')).toBeNull();
   });

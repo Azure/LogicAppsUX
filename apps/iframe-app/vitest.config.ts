@@ -9,10 +9,12 @@ export default defineConfig({
     name: packageJson.name,
     globals: true,
     environment: 'jsdom',
+    pool: 'threads',
     setupFiles: './src/test/setup.ts',
     root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    coverage: { enabled: !!process.env.CI, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    retry: process.env.CI ? 1 : 0,
   },
   resolve: {
     alias: {

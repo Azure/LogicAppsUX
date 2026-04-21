@@ -43,7 +43,7 @@
     "build": "vite build",
     "build:extension": "vite build --outDir ../../vs-code-designer/dist/vs-code-react",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "test:extension-unit": "vitest run --retry=3"
+    "test:extension-unit": "vitest run"
   },
   "type": "module"
 }

@@ -5,15 +5,17 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    pool: 'threads',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['./src/react/test/setup.ts'],
     coverage: {
-      enabled: true,
+      enabled: !!process.env.CI,
       provider: 'istanbul',
       include: ['src/**/*'],
       reporter: ['html', 'cobertura', 'lcov'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.config.ts', '**/index.ts'],
     },
+    retry: process.env.CI ? 1 : 0,
   },
   resolve: {
     alias: {
