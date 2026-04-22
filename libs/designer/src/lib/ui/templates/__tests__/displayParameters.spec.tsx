@@ -303,6 +303,6 @@ describe('ui/templates/DisplayParameters', () => {
     const parameter1 = workflow1Manifest?.parameters[0];
     expect(screen.getByText(parameter1.displayName)).toBeDefined();
     expect(screen.getByText(parameter1.type)).toBeDefined();
-    expect(screen.getAllByRole('button').find((button) => button.ariaLabel === 'Open folder')).toBeDefined();
+    expect(screen.getAllByRole('button').find((button) => button.getAttribute('aria-label') === 'Open folder')).toBeDefined();
   });
 });

@@ -152,10 +152,9 @@ describe('HttpClient', () => {
     it('should make POST requests with body', async () => {
       const mockFetch = vi.mocked(fetch);
       mockFetch.mockImplementationOnce(async (request) => {
-        // Clone request to read body without consuming it
+        // Read body from the request
         const req = request as Request;
-        const clonedReq = req.clone();
-        const body = await clonedReq.text();
+        const body = await req.text();
         expect(body).toBe(JSON.stringify({ name: 'test', value: 42 }));
 
         return {

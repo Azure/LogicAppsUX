@@ -6,7 +6,7 @@ export default defineProject({
   plugins: [react()],
   test: {
     name: packageJson.name,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     pool: process.env.CI ? 'forks' : 'threads',
     setupFiles: ['test-setup.ts'],
     coverage: {

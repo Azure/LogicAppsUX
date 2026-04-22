@@ -12,7 +12,7 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+            style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
           />
           <button
             aria-expanded="true"
@@ -156,11 +156,11 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
                 </div>
                 <pre
                   class="prism-code language-json"
-                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                  style="color: #000000; background-color: #ffffff;"
                 >
                   <div
                     class="token-line"
-                    style="color: rgb(0, 0, 0);"
+                    style="color: #000000;"
                   >
                     <span
                       class="token plain"
@@ -189,7 +189,7 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
         />
         <button
           aria-expanded="true"
@@ -333,11 +333,11 @@ exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
               </div>
               <pre
                 class="prism-code language-json"
-                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                style="color: #000000; background-color: #ffffff;"
               >
                 <div
                   class="token-line"
-                  style="color: rgb(0, 0, 0);"
+                  style="color: #000000;"
                 >
                   <span
                     class="token plain"
@@ -423,7 +423,7 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+            style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
           />
           <button
             aria-expanded="true"
@@ -567,11 +567,11 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
                 </div>
                 <pre
                   class="prism-code language-json"
-                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                  style="color: #000000; background-color: #ffffff;"
                 >
                   <div
                     class="token-line"
-                    style="color: rgb(0, 0, 0);"
+                    style="color: #000000;"
                   >
                     <span
                       class="token plain"
@@ -600,7 +600,7 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
         />
         <button
           aria-expanded="true"
@@ -744,11 +744,11 @@ exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
               </div>
               <pre
                 class="prism-code language-json"
-                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                style="color: #000000; background-color: #ffffff;"
               >
                 <div
                   class="token-line"
-                  style="color: rgb(0, 0, 0);"
+                  style="color: #000000;"
                 >
                   <span
                     class="token plain"
@@ -834,7 +834,7 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+            style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
           />
           <button
             aria-expanded="true"
@@ -911,7 +911,7 @@ exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
         />
         <button
           aria-expanded="true"
@@ -1045,7 +1045,7 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+            style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
           />
           <button
             aria-expanded="true"
@@ -1189,11 +1189,11 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
                 </div>
                 <pre
                   class="prism-code language-json"
-                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                  style="color: #000000; background-color: #ffffff;"
                 >
                   <div
                     class="token-line"
-                    style="color: rgb(0, 0, 0);"
+                    style="color: #000000;"
                   >
                     <span
                       class="token plain"
@@ -1222,7 +1222,7 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
         />
         <button
           aria-expanded="true"
@@ -1366,11 +1366,11 @@ exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
               </div>
               <pre
                 class="prism-code language-json"
-                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                style="color: #000000; background-color: #ffffff;"
               >
                 <div
                   class="token-line"
-                  style="color: rgb(0, 0, 0);"
+                  style="color: #000000;"
                 >
                   <span
                     class="token plain"
@@ -1457,7 +1457,7 @@ exports[`OutputsPanel > Should render OutputsPanel with secured outputs 1`] = `
         >
           <div
             class="msla-trace-inputs-outputs-header-text"
-            style="border-color: #000000b3;"
+            style="border-color: #000000B3;"
           >
             Outputs
           </div>
@@ -1487,7 +1487,7 @@ exports[`OutputsPanel > Should render OutputsPanel with secured outputs 1`] = `
       >
         <div
           class="msla-trace-inputs-outputs-header-text"
-          style="border-color: #000000b3;"
+          style="border-color: #000000B3;"
         >
           Outputs
         </div>
@@ -1573,7 +1573,7 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
           class="msla-trace-inputs-outputs-header"
         >
           <div
-            style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+            style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
           />
           <button
             aria-expanded="true"
@@ -1679,11 +1679,11 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
                 </div>
                 <pre
                   class="prism-code language-json"
-                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                  style="color: #000000; background-color: #ffffff;"
                 >
                   <div
                     class="token-line"
-                    style="color: rgb(0, 0, 0);"
+                    style="color: #000000;"
                   >
                     <span
                       class="token plain"
@@ -1712,7 +1712,7 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
         class="msla-trace-inputs-outputs-header"
       >
         <div
-          style="border-radius: 8px; background: rgb(0, 0, 0); min-height: 32px; min-width: 6px;"
+          style="border-radius: 8px; background: #000000; min-height: 32px; min-width: 6px;"
         />
         <button
           aria-expanded="true"
@@ -1818,11 +1818,11 @@ exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
               </div>
               <pre
                 class="prism-code language-json"
-                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                style="color: #000000; background-color: #ffffff;"
               >
                 <div
                   class="token-line"
-                  style="color: rgb(0, 0, 0);"
+                  style="color: #000000;"
                 >
                   <span
                     class="token plain"

@@ -7,7 +7,7 @@ export default defineProject({
   test: {
     name: packageJson.name,
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     pool: process.env.CI ? 'forks' : 'threads',
     setupFiles: ['test-setup.ts'],
     coverage: {

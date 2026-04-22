@@ -5,10 +5,11 @@ import { Message } from '../Message';
 import type { Message as MessageType } from '../../../types';
 
 // Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
+Object.defineProperty(navigator, 'clipboard', {
+  value: {
     writeText: vi.fn().mockResolvedValue(undefined),
   },
+  configurable: true,
 });
 
 describe('Message - Code Block Headers', () => {

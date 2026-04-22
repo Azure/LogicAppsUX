@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     pool: process.env.CI ? 'forks' : 'threads',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['./src/react/test/setup.ts'],

@@ -104,7 +104,7 @@ describe('Modal Components', () => {
       renderWithProviders(<DeleteModal {...defaultProps} />);
 
       const deleteButton = screen.getByText('Delete');
-      expect(deleteButton).toHaveStyle({ background: expect.any(String) });
+      expect(deleteButton.style.background).toBeTruthy();
     });
 
     it('renders as an open dialog', () => {
