@@ -294,7 +294,7 @@ describe('StandardConnectionService', () => {
 
       expect(writeConnection).toHaveBeenCalledOnce();
       expect(capturedConnectionData.connectionData.resourceId).toBe(foundryResourceId);
-      expect(capturedConnectionData.connectionData.type).toBe('FoundryAgentServiceV2');
+      expect(capturedConnectionData.connectionData.type).toBe('model');
     });
 
     it('should NOT append /models for APIM connections', async () => {
