@@ -1,14 +1,21 @@
-import { defineProject } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import packageJson from './package.json';
 
-export default defineProject({
+export default defineConfig({
   plugins: [react()],
   test: {
     name: packageJson.name,
     environment: 'happy-dom',
     pool: process.env.CI ? 'forks' : 'threads',
-    setupFiles: ['test-setup.ts'],
+    setupFiles: ['../shared-test-utils/fluentui-react-icons-mock.ts', 'test-setup.ts'],
+    deps: {
+      optimizer: {
+        ssr: {
+          enabled: true,
+        },
+      },
+    },
     coverage: {
       enabled: !!process.env.COLLECT_COVERAGE,
       provider: 'istanbul',

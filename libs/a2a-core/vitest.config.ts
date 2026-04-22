@@ -7,7 +7,14 @@ export default defineConfig({
     environment: 'happy-dom',
     pool: process.env.CI ? 'forks' : 'threads',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
-    setupFiles: ['./src/react/test/setup.ts'],
+    setupFiles: ['../shared-test-utils/fluentui-react-icons-mock.ts', './src/react/test/setup.ts'],
+    deps: {
+      optimizer: {
+        ssr: {
+          enabled: true,
+        },
+      },
+    },
     coverage: {
       enabled: !!process.env.COLLECT_COVERAGE,
       provider: 'istanbul',
