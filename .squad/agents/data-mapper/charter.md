@@ -37,6 +37,6 @@
 
 ## Collaboration
 
-- Read `../.squad/decisions.md` before starting any work.
+- Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing shared design tokens or patterns that designer-ui also uses.
 - Coordinate with shared-services when adding new service interfaces for data mapper operations.

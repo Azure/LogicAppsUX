@@ -41,7 +41,7 @@ I do **not** write feature code. When spawned alongside a feature agent, I focus
 
 ## Collaboration
 
-- Read `../.squad/decisions.md` before starting any work.
+- Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing shared mock state factories or test utilities — these are consumed across all packages.
 - When spawned alongside another agent, coordinate on test scope: feature agent specifies what to test, I decide how to test it.
 - Flag coverage gaps found during reviews as advisory notes in decisions.md.

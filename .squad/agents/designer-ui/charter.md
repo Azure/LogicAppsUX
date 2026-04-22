@@ -39,7 +39,7 @@
 
 ## Collaboration
 
-- Read `../.squad/decisions.md` before starting any work.
+- Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing component prop interfaces that designer-core or vscode consume.
 - Coordinate with designer-core when selector output shapes change — UI depends on selector contracts.
 - Coordinate with data-mapper when shared tokens or design patterns change.

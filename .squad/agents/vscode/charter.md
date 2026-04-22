@@ -36,6 +36,6 @@ Changes to both `apps/vs-code-designer/` and `apps/vs-code-react/` are handled b
 
 ## Collaboration
 
-- Read `../.squad/decisions.md` before starting any work.
+- Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing the webview ↔ extension message protocol — both sides must stay in sync.
 - Coordinate with designer-core and designer-ui when upgrading the designer version consumed by the extension.

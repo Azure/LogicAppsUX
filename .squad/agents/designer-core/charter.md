@@ -42,6 +42,6 @@ Changes to these functions require extra care and testing.
 
 ## Collaboration
 
-- Read `../.squad/decisions.md` before starting any work.
+- Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing exported state shapes, selector signatures, or serialization format — these affect designer-ui, vscode, and test agents.
 - Coordinate with shared-services when service interface changes affect action creators.

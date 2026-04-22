@@ -28,67 +28,52 @@ pnpm run test:lib    # Run unit tests
 ### Structure
 ```
 /src/lib
-  /commands/         - Command definitions
-  /models/           - Shared types
+  /helpers/          - Utility helper functions
+  /models/           - Shared types, extension commands, workflow models
   /services/         - Service implementations
-  /utils/            - Utility functions
 ```
 
 ## Key Features
 
 ### Extension Commands
-Command definitions and constants:
+Command constants defined in `src/lib/models/extensioncommand.ts`:
 ```typescript
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps'
 
-// Command identifiers
-ExtensionCommand.openDesigner
-ExtensionCommand.saveWorkflow
-ExtensionCommand.createConnection
+// Command identifiers (examples)
+ExtensionCommand.initialize
+ExtensionCommand.loadRun
+ExtensionCommand.dispose
 ```
 
 ### Webview Communication
-Message protocol for extension ↔ webview:
+The VS Code webviews communicate via the standard `acquireVsCodeApi()` pattern:
 ```typescript
-// From webview to extension
-import { sendMessage } from '@microsoft/vscode-extension-logic-apps'
-sendMessage({ command: 'SAVE', payload: workflow })
+// In webview (vs-code-react)
+const vscode = acquireVsCodeApi()
+vscode.postMessage({ command: ExtensionCommand.initialize, data: payload })
 
-// Message types
-interface WebviewMessage {
-  command: string
-  payload: unknown
-}
+// In extension host (vs-code-designer)
+panel.webview.onDidReceiveMessage((msg) => {
+  switch (msg.command) {
+    case ExtensionCommand.initialize: // handle...
+  }
+})
 ```
 
 ### Service Adapters
-VS Code-specific service implementations:
-```typescript
-import { VSCodeConnectionService } from '@microsoft/vscode-extension-logic-apps'
-
-// Adapts designer services for VS Code environment
-const service = new VSCodeConnectionService(context)
-```
+VS Code-specific service implementations adapt designer services for the extension environment. See `apps/vs-code-react/src/app/designer/servicesHelper.ts`.
 
 ## Usage
 
 ### In Extension Host (`vs-code-designer`)
-```typescript
-import {
-  ExtensionCommand,
-  handleWebviewMessage
-} from '@microsoft/vscode-extension-logic-apps'
-
-panel.webview.onDidReceiveMessage(handleWebviewMessage)
-```
+The extension host creates webview panels and handles message passing with the VS Code API directly.
 
 ### In Webview (`vs-code-react`)
 ```typescript
-import { sendMessage } from '@microsoft/vscode-extension-logic-apps'
-
-const saveWorkflow = (workflow) => {
-  sendMessage({ command: 'SAVE_WORKFLOW', payload: workflow })
-}
+// Communication via acquireVsCodeApi (see apps/vs-code-react/src/webviewCommunication.tsx)
+const vscode = acquireVsCodeApi()
+vscode.postMessage({ command: 'save_workflow', data: workflow })
 ```
 
 ## Dependencies

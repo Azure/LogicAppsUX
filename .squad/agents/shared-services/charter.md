@@ -38,6 +38,6 @@ I own the **contract**, not the consumption. When changing an interface, I ensur
 
 ## Collaboration
 
-- Read `../.squad/decisions.md` before starting any work.
+- Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing any exported interface, type, or service contract — these are consumed by designer-core, designer-ui, vscode, and data-mapper.
 - Breaking changes require a migration plan documented in decisions.md before implementation.

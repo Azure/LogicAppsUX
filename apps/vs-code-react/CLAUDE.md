@@ -47,8 +47,9 @@ Uses `@microsoft/vscode-extension-logic-apps` for messaging:
 ```typescript
 import { ExtensionCommand, sendMessage } from '@microsoft/vscode-extension-logic-apps'
 
-// Send message to extension
-sendMessage({ command: ExtensionCommand.save, data: workflow })
+// Communication with extension host (see webviewCommunication.tsx)
+const vscode = acquireVsCodeApi()
+vscode.postMessage({ command: 'save_workflow', data: workflow })
 
 // Receive from extension (via state initialization)
 // Extension sends initial state when webview loads
@@ -62,7 +63,7 @@ sendMessage({ command: ExtensionCommand.save, data: workflow })
 
 ## Build Output
 
-Built files go to `vs-code-designer/dist/vs-code-react/`:
+Built files go to `apps/vs-code-designer/dist/vs-code-react/`:
 - `index.html` - Webview HTML entry
 - `assets/` - JS/CSS bundles
 
