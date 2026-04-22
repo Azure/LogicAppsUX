@@ -92,7 +92,7 @@
     "start": "turbo run dev",
     "start:arm": "npm run generateArmToken && npm run start",
     "start:e2e": "turbo run e2e",
-    "test:lib": "turbo run test:lib --concurrency=1",
+    "test:lib": "turbo run test:lib --concurrency=3",
     "test:iframe-app": "turbo run test:iframe-app",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

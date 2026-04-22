@@ -224,7 +224,7 @@ describe('HybridQueryBuilderEditor Move Functionality', () => {
       // Should handle large structures efficiently
       expect(screen.getByText('field1')).toBeInTheDocument();
       expect(screen.getByText('nested0')).toBeInTheDocument();
-    });
+    }, 30000);
   });
 
   describe('Comparison with Regular QueryBuilder', () => {

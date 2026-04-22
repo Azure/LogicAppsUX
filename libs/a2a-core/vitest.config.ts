@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
-    pool: process.env.CI ? 'forks' : 'threads',
+    pool: process.env.CI ? 'vmThreads' : 'threads',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['../shared-test-utils/fluentui-react-icons-mock.ts', './src/react/test/setup.ts'],
     deps: {
