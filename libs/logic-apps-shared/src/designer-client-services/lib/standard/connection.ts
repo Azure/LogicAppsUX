@@ -952,7 +952,7 @@ function convertToAgentConnectionsData(
         resourceId:
           isFoundryAgentServiceConnection || isAPIMManagementConnection ? cognitiveServiceAccountId : `${cognitiveServiceAccountId}/models`,
       }),
-      type: isFoundryAgentServiceConnection ? 'FoundryAgentServiceV2' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
+      type: isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
     pathLocation: [agentLocation],

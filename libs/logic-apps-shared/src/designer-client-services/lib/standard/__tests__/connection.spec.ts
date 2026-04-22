@@ -262,7 +262,7 @@ describe('StandardConnectionService', () => {
       expect(capturedConnectionData.connectionData.type).toBe('model');
     });
 
-    it('should NOT append /models for FoundryAgentServiceV2 connections', async () => {
+    it('should NOT append /models for Foundry project connections and should save type as model', async () => {
       InitLoggerService([mockLoggerService]);
       let capturedConnectionData: any;
       const writeConnection = vi.fn().mockImplementation((data: any) => {
@@ -294,7 +294,7 @@ describe('StandardConnectionService', () => {
 
       expect(writeConnection).toHaveBeenCalledOnce();
       expect(capturedConnectionData.connectionData.resourceId).toBe(foundryResourceId);
-      expect(capturedConnectionData.connectionData.type).toBe('FoundryAgentServiceV2');
+      expect(capturedConnectionData.connectionData.type).toBe('model');
     });
 
     it('should NOT append /models for APIM connections', async () => {
