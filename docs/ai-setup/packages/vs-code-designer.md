@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/vs-code-designer.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for vs-code-designer. Generated files: apps/vs-code-designer/CLAUDE.md, .github/instructions/vs-code-designer.instructions.md -->
 
 # VS Code Designer Extension
 

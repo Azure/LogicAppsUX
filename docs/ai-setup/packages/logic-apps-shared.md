@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/logic-apps-shared.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for logic-apps-shared. Generated files: libs/logic-apps-shared/CLAUDE.md, .github/instructions/logic-apps-shared.instructions.md -->
 
 # Logic Apps Shared
 

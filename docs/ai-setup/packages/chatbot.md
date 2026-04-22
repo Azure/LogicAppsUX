@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/chatbot.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for chatbot. Generated files: libs/chatbot/CLAUDE.md, .github/instructions/chatbot.instructions.md -->
 
 # Logic Apps Chatbot
 

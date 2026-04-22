@@ -107,7 +107,8 @@
     "vscode:designer:e2e:ui": "turbo run vscode:designer:e2e:ui",
     "vscode:designer:e2e:headless": "turbo run vscode:designer:e2e:headless",
     "graphify:setup": "./scripts/graphify-setup.sh",
-    "graphify:rebuild": "./scripts/graphify-rebuild.sh"
+    "graphify:rebuild": "./scripts/graphify-rebuild.sh",
+    "ai:generate": "./scripts/generate-ai-docs.sh"
   },
   "type": "module",
   "dependencies": {

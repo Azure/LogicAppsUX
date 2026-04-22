@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/vs-code-react.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for vs-code-react. Generated files: apps/vs-code-react/CLAUDE.md, .github/instructions/vs-code-react.instructions.md -->
 
 # VS Code React Webviews
 

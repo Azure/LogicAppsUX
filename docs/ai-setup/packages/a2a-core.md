@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/a2a-core.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for a2a-core. Generated files: libs/a2a-core/CLAUDE.md, .github/instructions/a2a-core.instructions.md -->
 
 # A2A Core (Logic Apps Chat SDK)
 

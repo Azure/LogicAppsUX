@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/vscode-extension.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for vscode-extension. Generated files: libs/vscode-extension/CLAUDE.md, .github/instructions/vscode-extension.instructions.md -->
 
 # VS Code Extension Library
 

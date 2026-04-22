@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/data-mapper-v2.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for data-mapper-v2. Generated files: libs/data-mapper-v2/CLAUDE.md, .github/instructions/data-mapper-v2.instructions.md -->
 
 # Data Mapper V2
 

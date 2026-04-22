@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/designer-ui.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for designer-ui. Generated files: libs/designer-ui/CLAUDE.md, .github/instructions/designer-ui.instructions.md -->
 
 # Designer UI
 

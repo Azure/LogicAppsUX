@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/docs-site.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for docs-site. Generated files: apps/docs/CLAUDE.md, .github/instructions/docs-site.instructions.md -->
 
 # Documentation Site
 

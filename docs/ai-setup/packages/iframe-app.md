@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/iframe-app.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for iframe-app. Generated files: apps/iframe-app/CLAUDE.md, .github/instructions/iframe-app.instructions.md -->
 
 # A2A Chat Iframe App
 

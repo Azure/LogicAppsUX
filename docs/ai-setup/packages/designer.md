@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/designer.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for designer. Generated files: libs/designer/CLAUDE.md, .github/instructions/designer.instructions.md -->
 
 # Logic Apps Designer
 

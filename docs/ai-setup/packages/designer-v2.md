@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/designer-v2.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for designer-v2. Generated files: libs/designer-v2/CLAUDE.md, .github/instructions/designer-v2.instructions.md -->
 
 # Logic Apps Designer V2
 

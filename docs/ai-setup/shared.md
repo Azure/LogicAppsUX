@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/. DO NOT EDIT directly. Run: pnpm run ai:generate -->
-
+<!-- This is the canonical AI instruction source. Tool-specific files are generated from this. Edit here, then run: pnpm run ai:generate -->
 
 # Logic Apps UX — AI Assistant Guide
 

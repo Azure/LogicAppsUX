@@ -1,5 +1,4 @@
-<!-- AUTO-GENERATED from docs/ai-setup/packages/standalone.md. DO NOT EDIT directly. -->
-
+<!-- Canonical source for standalone. Generated files: apps/Standalone/CLAUDE.md, .github/instructions/standalone.instructions.md -->
 
 # Standalone App
 
