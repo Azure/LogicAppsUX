@@ -6,6 +6,7 @@ export default defineConfig({
     name: packageJson.name,
     environment: 'happy-dom',
     pool: process.env.CI ? 'vmThreads' : 'threads',
+    isolate: false,
     setupFiles: ['../shared-test-utils/fluentui-react-icons-mock.ts', 'test-setup.ts'],
     deps: {
       optimizer: {
