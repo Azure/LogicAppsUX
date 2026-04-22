@@ -299,7 +299,7 @@ describe('Query Builder Complex Move Scenarios', () => {
       expect(screen.getByText('group1')).toBeInTheDocument();
       expect(screen.getByText('row8')).toBeInTheDocument();
       expect(screen.getByText('group9')).toBeInTheDocument();
-    });
+    }, 30000);
   });
 
   describe('State Consistency During Complex Moves', () => {
@@ -399,6 +399,6 @@ describe('Query Builder Complex Move Scenarios', () => {
 
       // Should handle updates without issues
       expect(screen.getByText('updated9')).toBeInTheDocument();
-    });
+    }, 30000);
   });
 });

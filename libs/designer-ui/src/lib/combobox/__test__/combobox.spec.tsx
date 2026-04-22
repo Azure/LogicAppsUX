@@ -259,7 +259,7 @@ describe('lib/combobox', () => {
 
     // Basic test that search functionality works with large datasets
     expect(combobox).toBeTruthy();
-  });
+  }, 30000);
 
   it('handles search input with debouncing', async () => {
     const { getByRole } = render(

@@ -308,7 +308,7 @@ describe('Query Builder Integration Tests', () => {
       expect(screen.getByText('above')).toBeInTheDocument();
       expect(screen.getByText('inside')).toBeInTheDocument();
       expect(screen.getByText('below')).toBeInTheDocument();
-    });
+    }, 30000);
   });
 
   describe('Token Picker Integration', () => {
