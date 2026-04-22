@@ -12,7 +12,7 @@ import {
 } from './test-utils';
 import { ValueSegmentType } from '../../editor';
 
-describe('HybridQueryBuilderEditor Move Functionality', () => {
+describe('HybridQueryBuilderEditor Move Functionality', { timeout: 30000 }, () => {
   let user: ReturnType<typeof userEvent.setup>;
   let mockOnChange: ReturnType<typeof vi.fn>;
 

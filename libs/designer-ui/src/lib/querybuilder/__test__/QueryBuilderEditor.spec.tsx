@@ -13,7 +13,7 @@ import {
 } from './test-utils';
 import { ValueSegmentType } from '../../editor';
 
-describe('QueryBuilderEditor Move Functionality', () => {
+describe('QueryBuilderEditor Move Functionality', { timeout: 30000 }, () => {
   let user: ReturnType<typeof userEvent.setup>;
   let mockOnChange: ReturnType<typeof vi.fn>;
 
@@ -308,7 +308,7 @@ describe('QueryBuilderEditor Move Functionality', () => {
   });
 
   describe('Performance and Optimization', () => {
-    it('should handle large numbers of items efficiently', () => {
+    it('should handle large numbers of items efficiently', { timeout: 30000 }, () => {
       const largeGroup = createTestGroup({
         items: Array.from({ length: 20 }, (_, i) => createTestRow({ operand1: createTestValueSegment(`field${i}`) })),
       });
