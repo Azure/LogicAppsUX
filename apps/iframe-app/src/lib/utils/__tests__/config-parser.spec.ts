@@ -104,11 +104,11 @@ describe('config-parser', () => {
     });
 
     it('should use agentCard param when provided', () => {
-      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=https://custom.com/agent-card.json');
+      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=https://custom.logic.azure.com/agent-card.json');
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe('https://custom.com/agent-card.json');
+      expect(config.props.agentCard).toBe('https://custom.logic.azure.com/agent-card.json');
     });
   });
 

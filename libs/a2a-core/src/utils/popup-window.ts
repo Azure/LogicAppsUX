@@ -10,10 +10,34 @@ export interface PopupWindowResult {
   error?: Error;
 }
 
+const ALLOWED_POPUP_PROTOCOLS = new Set(['https:']);
+
 /**
- * Opens a popup window and returns a promise that resolves when the window is closed
+ * Validates that a URL uses an allowed protocol (https: only).
+ * Blocks javascript:, data:, vbscript:, and other dangerous schemes.
+ */
+export function validatePopupUrl(url: string): URL {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`Invalid URL for authentication popup: ${url}`);
+  }
+
+  if (!ALLOWED_POPUP_PROTOCOLS.has(parsed.protocol)) {
+    throw new Error(`Blocked authentication popup with disallowed protocol: ${parsed.protocol}`);
+  }
+
+  return parsed;
+}
+
+/**
+ * Opens a popup window and returns a promise that resolves when the window is closed.
+ * Only allows https: URLs to prevent DOM XSS via javascript: protocol injection.
  */
 export async function openPopupWindow(url: string, windowName = 'a2a-auth', options: PopupWindowOptions = {}): Promise<PopupWindowResult> {
+  validatePopupUrl(url);
+
   const {
     width = 600,
     height = 700,
@@ -31,6 +55,7 @@ export async function openPopupWindow(url: string, windowName = 'a2a-auth', opti
     'scrollbars=yes',
     'resizable=yes',
     'status=no',
+    'noopener',
   ].join(',');
 
   const popup = window.open(url, windowName, features);
