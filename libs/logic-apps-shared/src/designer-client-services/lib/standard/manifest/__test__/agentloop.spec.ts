@@ -116,4 +116,20 @@ describe('agentloop – Foundry V2 regression', () => {
       expect(field.type).toBe('string');
     });
   });
+
+  describe('deploymentModelProperties visibility', () => {
+    const agentModelSettings = inputs.agentModelSettings?.properties as Record<string, any>;
+    const deploymentModelProps = agentModelSettings?.deploymentModelProperties?.properties as Record<string, any>;
+
+    it.each(['name', 'format', 'version'])('%s should be visible for both AzureOpenAI and MicrosoftFoundry', (field) => {
+      const visValues = deploymentModelProps[field]['x-ms-input-dependencies'].parameters[0].values as string[];
+      expect(visValues).toContain('AzureOpenAI');
+      expect(visValues).toContain('MicrosoftFoundry');
+    });
+
+    it.each(['name', 'format', 'version'])('%s should NOT be visible for FoundryAgentServiceV2', (field) => {
+      const visValues = deploymentModelProps[field]['x-ms-input-dependencies'].parameters[0].values as string[];
+      expect(visValues).not.toContain('FoundryAgentServiceV2');
+    });
+  });
 });
