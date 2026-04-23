@@ -522,9 +522,18 @@ export const operationMetadataSlice = createSlice({
         if (!param) {
           continue;
         }
+        // Read the current agentHarness object.  `preservedValue` is the authoritative
+        // source during serialization (parameterValueToString returns it when set), so we
+        // must read from it first, update it, and then keep param.value in sync.
         const firstSegment = param.value?.[0];
         let current: any = {};
-        if (firstSegment?.type === ValueSegmentType.LITERAL && typeof firstSegment.value === 'string' && firstSegment.value.length > 0) {
+        if (param.preservedValue !== undefined && param.preservedValue !== null) {
+          current = typeof param.preservedValue === 'string' ? JSON.parse(param.preservedValue) : { ...param.preservedValue };
+        } else if (
+          firstSegment?.type === ValueSegmentType.LITERAL &&
+          typeof firstSegment.value === 'string' &&
+          firstSegment.value.length > 0
+        ) {
           try {
             current = JSON.parse(firstSegment.value);
           } catch {
@@ -538,6 +547,8 @@ export const operationMetadataSlice = createSlice({
         } else {
           delete current.sandboxConfigurationId;
         }
+        // Update both preservedValue (used by the serializer) and value segments (used by the UI)
+        param.preservedValue = current;
         param.value = [
           {
             id: firstSegment?.id ?? guid(),
