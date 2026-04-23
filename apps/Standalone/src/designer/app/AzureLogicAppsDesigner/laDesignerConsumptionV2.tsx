@@ -740,11 +740,15 @@ const getDesignerServices = (
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
     getSandboxConfigurations: async (integrationAccountId: string) => {
-      const response = await httpClient.get<{ value: any[] }>({
+      const response = await httpClient.get<any>({
         uri: `${baseUrl}${integrationAccountId}/sandboxConfigurations`,
         queryParameters: { 'api-version': '2016-06-01' },
       });
-      return response.value ?? [];
+      // This endpoint returns a bare JSON array, not the usual ARM { value: [...] } envelope.
+      if (Array.isArray(response)) {
+        return response;
+      }
+      return response?.value ?? [];
     },
   };
 

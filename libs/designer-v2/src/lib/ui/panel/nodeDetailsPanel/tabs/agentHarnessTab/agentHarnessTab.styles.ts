@@ -46,6 +46,16 @@ export const useAgentHarnessTabStyles = makeStyles({
     height: '8px',
     borderRadius: '50%',
     backgroundColor: tokens.colorPaletteGreenForeground1,
+    flexShrink: 0,
+  },
+  statusDotFailed: {
+    backgroundColor: tokens.colorPaletteRedForeground1,
+  },
+  statusDotPending: {
+    backgroundColor: tokens.colorPaletteYellowForeground1,
+  },
+  snapshotText: {
+    wordBreak: 'break-all' as const,
   },
   skillsList: {
     display: 'flex',
