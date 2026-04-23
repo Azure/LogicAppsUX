@@ -24,6 +24,11 @@ describe('popup-window', () => {
       expect(() => validatePopupUrl('http://example.com/auth')).toThrow('disallowed protocol');
     });
 
+    it('should allow http: for localhost in development', () => {
+      expect(() => validatePopupUrl('http://localhost:3001/mock-consent')).not.toThrow();
+      expect(() => validatePopupUrl('http://127.0.0.1:3001/mock-consent')).not.toThrow();
+    });
+
     it('should reject invalid URLs', () => {
       expect(() => validatePopupUrl('not-a-url')).toThrow('Invalid URL');
       expect(() => validatePopupUrl('')).toThrow('Invalid URL');

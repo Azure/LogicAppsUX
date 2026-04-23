@@ -15,6 +15,7 @@ const ALLOWED_POPUP_PROTOCOLS = new Set(['https:']);
 /**
  * Validates that a URL uses an allowed protocol (https: only).
  * Blocks javascript:, data:, vbscript:, and other dangerous schemes.
+ * Allows http: for localhost URLs in development environments.
  */
 export function validatePopupUrl(url: string): URL {
   let parsed: URL;
@@ -22,6 +23,11 @@ export function validatePopupUrl(url: string): URL {
     parsed = new URL(url);
   } catch {
     throw new Error(`Invalid URL for authentication popup: ${url}`);
+  }
+
+  // Allow http: for localhost in development
+  if (parsed.protocol === 'http:' && (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1')) {
+    return parsed;
   }
 
   if (!ALLOWED_POPUP_PROTOCOLS.has(parsed.protocol)) {
