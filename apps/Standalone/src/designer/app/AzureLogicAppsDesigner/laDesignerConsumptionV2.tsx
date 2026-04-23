@@ -30,9 +30,8 @@ import {
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
   BaseChatbotService,
-  BaseCopilotWorkflowEditorService,
+  ArmCopilotWorkflowEditorService,
   InitCopilotWorkflowEditorService,
-  CONSUMPTION_SYSTEM_PROMPT,
   ConsumptionRunService,
   guid,
   startsWith,
@@ -779,20 +778,15 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
-  // Initialize CopilotWorkflowEditorService if API key is configured
-  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
-  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
-  if (copilotEditorApiKey && copilotEditorEndpoint) {
-    const copilotEditorService = new BaseCopilotWorkflowEditorService({
-      endpoint: copilotEditorEndpoint,
-      apiKey: copilotEditorApiKey,
-      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
-      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
-      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
-      systemPrompt: CONSUMPTION_SYSTEM_PROMPT,
-    });
-    InitCopilotWorkflowEditorService(copilotEditorService);
-  }
+  // Initialize CopilotWorkflowEditorService using the ARM v3 endpoint
+  const copilotEditorService = new ArmCopilotWorkflowEditorService({
+    baseUrl,
+    subscriptionId,
+    location,
+    apiVersion: '2026-03-01-preview',
+    getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
+  });
+  InitCopilotWorkflowEditorService(copilotEditorService);
 
   // This isn't correct but without it I was getting errors
   //   It's fine just to unblock standalone consumption

@@ -32,7 +32,7 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
-  BaseCopilotWorkflowEditorService,
+  ArmCopilotWorkflowEditorService,
   InitCopilotWorkflowEditorService,
   BaseExperimentationService,
   BaseUserPreferenceService,
@@ -1119,19 +1119,15 @@ const getDesignerServices = (
     location,
   });
 
-  // Initialize CopilotWorkflowEditorService if API key is configured
-  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
-  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
-  if (copilotEditorApiKey && copilotEditorEndpoint) {
-    const copilotEditorService = new BaseCopilotWorkflowEditorService({
-      endpoint: copilotEditorEndpoint,
-      apiKey: copilotEditorApiKey,
-      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
-      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
-      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
-    });
-    InitCopilotWorkflowEditorService(copilotEditorService);
-  }
+  // Initialize CopilotWorkflowEditorService using the ARM v3 endpoint
+  const copilotEditorService = new ArmCopilotWorkflowEditorService({
+    baseUrl: armUrl,
+    subscriptionId,
+    location,
+    apiVersion: '2026-03-01-preview',
+    getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
+  });
+  InitCopilotWorkflowEditorService(copilotEditorService);
 
   const customCodeService = new StandardCustomCodeService({
     apiVersion: '2018-11-01',

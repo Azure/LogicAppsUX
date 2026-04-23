@@ -43,6 +43,9 @@ export type { ChatbotServiceOptions } from './chatbot';
 // CopilotWorkflowEditor
 export { BaseCopilotWorkflowEditorService } from './copilotWorkflowEditor';
 export type { CopilotWorkflowEditorServiceOptions } from './copilotWorkflowEditor';
+export { ArmCopilotWorkflowEditorService } from './armCopilotWorkflowEditor';
+export type { ArmCopilotWorkflowEditorServiceOptions } from './armCopilotWorkflowEditor';
+export { parseCopilotResponse } from './copilotWorkflowEditorParsing';
 export { COPILOT_WORKFLOW_TOOLS, executeCopilotTool } from './copilotWorkflowEditorTools';
 export type { CopilotToolDefinition } from './copilotWorkflowEditorTools';
 export { DEFAULT_SYSTEM_PROMPT, STANDARD_SYSTEM_PROMPT, CONSUMPTION_SYSTEM_PROMPT } from './copilotWorkflowEditorPrompt';
