@@ -1096,11 +1096,11 @@ export const ParameterSection = ({
         const selectedModelId = value?.length ? value[0]?.value : undefined;
         const currentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value;
 
-        // Only populate deploymentModelProperties for MicrosoftFoundry.
-        // For AzureOpenAI the backend derives model info from the deployment itself.
-        if (currentModelType === 'MicrosoftFoundry' && selectedModelId) {
+        // Populate deploymentModelProperties for both AzureOpenAI and MicrosoftFoundry.
+        // The backend requires name/format/version for AzureOpenAI model type.
+        if ((currentModelType === 'MicrosoftFoundry' || currentModelType === 'AzureOpenAI') && selectedModelId) {
           const deploymentInfo = deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId);
-          const modelName = deploymentInfo?.properties?.model?.name;
+          const modelName = deploymentInfo?.properties?.model?.name ?? selectedModelId;
           let modelFormat = deploymentInfo?.properties?.model?.format;
           let modelVersion = deploymentInfo?.properties?.model?.version;
           if (!modelFormat || !modelVersion) {
