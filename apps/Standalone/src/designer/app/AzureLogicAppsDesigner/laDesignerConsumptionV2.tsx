@@ -743,11 +743,15 @@ const getDesignerServices = (
       // Agent harness sandbox APIs are only available in limited regions.
       // Use the regional ARM endpoint (brazilus) to route requests to a supported region.
       const sandboxBaseUrl = 'https://brazilus.management.azure.com';
-      const response = await httpClient.get<{ value: any[] }>({
+      const response = await httpClient.get<any>({
         uri: `${sandboxBaseUrl}${integrationAccountId}/sandboxConfigurations`,
         queryParameters: { 'api-version': '2016-06-01' },
       });
-      return response.value ?? [];
+      // This endpoint returns a bare JSON array, not the usual ARM { value: [...] } envelope.
+      if (Array.isArray(response)) {
+        return response;
+      }
+      return response?.value ?? [];
     },
   };
 

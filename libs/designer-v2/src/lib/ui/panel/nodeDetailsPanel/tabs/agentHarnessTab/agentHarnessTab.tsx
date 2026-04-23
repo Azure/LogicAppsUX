@@ -18,17 +18,21 @@ import {
   DataGridRow,
   createTableColumn,
   Badge,
+  mergeClasses,
 } from '@fluentui/react-components';
 import { Info16Regular } from '@fluentui/react-icons';
 import type { TableColumnDefinition } from '@fluentui/react-components';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
+import { useDispatch, useSelector } from 'react-redux';
 
 import constants from '../../../../../common/constants';
+import type { AppDispatch, RootState } from '../../../../../core/store';
 import { useHostOptions } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useActionMetadata } from '../../../../../core/state/workflow/workflowSelectors';
+import { setAgentHarnessSandboxConfigurationId } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useAgentHarnessTabStyles } from './agentHarnessTab.styles';
+import { ValueSegmentType } from '@microsoft/designer-ui';
 import { WorkflowService } from '@microsoft/logic-apps-shared';
 
 // FX expression token colors — duplicated here to avoid heavy transitive imports from parameters/helper
@@ -55,18 +59,46 @@ interface AgentHarnessData {
   skills?: AgentHarnessSkill[];
 }
 
+const AGENT_HARNESS_PARAMETER_KEY = 'inputs.$.agentModelSettings.agentHarness';
+
 /**
- * Extracts agentHarness data from the raw workflow operation definition.
- * agentHarness is not in the manifest schema, so it's not parsed into inputParameters.
- * Instead it lives in the raw operation at state.workflow.operations[nodeId].
+ * Reads the agentHarness data from the manifest-parsed parameters store. Since the
+ * agent manifest declares `agentHarness` as an opaque object with internal visibility,
+ * deserialize/serialize and code view round-trip through this store — so both reads
+ * and writes here stay 1:1 with what the rest of the designer sees.
  */
 const useAgentHarnessData = (nodeId: string): AgentHarnessData => {
-  const operation = useActionMetadata(nodeId) as any;
+  const parameterValueSegments = useSelector((state: RootState) => {
+    const nodeInputs = state.operations.inputParameters[nodeId];
+    if (!nodeInputs) {
+      return undefined;
+    }
+    for (const group of Object.values(nodeInputs.parameterGroups)) {
+      const param = group.parameters.find((p) => p.parameterKey === AGENT_HARNESS_PARAMETER_KEY);
+      if (param) {
+        return param.value;
+      }
+    }
+    return undefined;
+  });
 
   return useMemo(() => {
-    const agentModelSettings = operation?.inputs?.parameters?.agentModelSettings;
-    return agentModelSettings?.agentHarness ?? {};
-  }, [operation]);
+    const firstSegment = parameterValueSegments?.[0];
+    if (!firstSegment) {
+      return {};
+    }
+    if (typeof firstSegment.value === 'object' && firstSegment.value !== null) {
+      return firstSegment.value as AgentHarnessData;
+    }
+    if (firstSegment.type === ValueSegmentType.LITERAL && typeof firstSegment.value === 'string' && firstSegment.value.length > 0) {
+      try {
+        return JSON.parse(firstSegment.value) as AgentHarnessData;
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  }, [parameterValueSegments]);
 };
 
 /**
@@ -141,6 +173,29 @@ const isExpression = (value: string): boolean => {
   return trimmed.startsWith('@');
 };
 
+/**
+ * ADC's errorMessage looks like:
+ *   "ADC API request failed. Method: 'PUT'. Path: '...'. Status: '...'. Response: '{"detail":"..."}'"
+ * Extract the `detail` field from the embedded JSON response so we can surface a
+ * concise reason in the UI instead of the full boilerplate.
+ */
+const extractErrorDetail = (errorMessage?: string): string | undefined => {
+  if (!errorMessage) {
+    return undefined;
+  }
+  const firstBrace = errorMessage.indexOf('{');
+  const lastBrace = errorMessage.lastIndexOf('}');
+  if (firstBrace === -1 || lastBrace <= firstBrace) {
+    return undefined;
+  }
+  try {
+    const parsed = JSON.parse(errorMessage.slice(firstBrace, lastBrace + 1));
+    return typeof parsed?.detail === 'string' ? parsed.detail : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 // DataGrid column definitions for Input Files
 interface InputFileRow {
   name: string;
@@ -172,18 +227,34 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId } = props;
   const intl = useIntl();
   const styles = useAgentHarnessTabStyles();
+  const dispatch = useDispatch<AppDispatch>();
   const hostOptions = useHostOptions();
   const integrationAccount = hostOptions.integrationAccount;
 
   const harnessData = useAgentHarnessData(nodeId);
   const { data: sandboxConfigurations } = useSandboxConfigurations(integrationAccount?.id);
 
-  // Find the selected sandbox configuration object for status display
+  const onSandboxConfigChange = useCallback(
+    (_e: unknown, data: { optionValue?: string }) => {
+      dispatch(setAgentHarnessSandboxConfigurationId({ nodeId, sandboxConfigurationId: data.optionValue || undefined }));
+    },
+    [dispatch, nodeId]
+  );
+
+  // Find the selected sandbox configuration object for status display.
+  // ARM IDs are case-insensitive, and the workflow may store either the full ARM path
+  // or just the resource name — fall back to matching by the last path segment.
   const selectedSandboxConfig = useMemo(() => {
-    if (!harnessData.sandboxConfigurationId || !sandboxConfigurations) {
+    if (!harnessData.sandboxConfigurationId || !sandboxConfigurations?.length) {
       return undefined;
     }
-    return sandboxConfigurations.find((c: any) => c.id === harnessData.sandboxConfigurationId);
+    const target = harnessData.sandboxConfigurationId.toLowerCase();
+    const targetName = target.split('/').pop() ?? target;
+    return sandboxConfigurations.find((c: any) => {
+      const cid = (c.id ?? '').toLowerCase();
+      const cname = (c.name ?? '').toLowerCase();
+      return cid === target || cname === target || cname === targetName;
+    });
   }, [harnessData.sandboxConfigurationId, sandboxConfigurations]);
 
   // Check for sandbox configuration mismatch
@@ -277,16 +348,6 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
         defaultMessage: 'Folders',
         id: 'vGVzfn',
         description: 'Label for skill folders',
-      }),
-      readyStatus: intl.formatMessage({
-        defaultMessage: 'Ready',
-        id: 'L4bdPd',
-        description: 'Status label when sandbox configuration is ready',
-      }),
-      snapshotLabel: intl.formatMessage({
-        defaultMessage: 'snapshot:',
-        id: 'wyq78z',
-        description: 'Label for sandbox configuration snapshot ID',
       }),
       inputFilesTitle: intl.formatMessage({
         defaultMessage: 'Input Files',
@@ -389,7 +450,8 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
               <Dropdown
                 placeholder={intlText.selectSandboxPlaceholder}
                 value={selectedSandboxConfig?.name ?? harnessData.sandboxConfigurationId?.split('/').pop() ?? ''}
-                selectedOptions={harnessData.sandboxConfigurationId ? [harnessData.sandboxConfigurationId] : []}
+                selectedOptions={selectedSandboxConfig?.id ? [selectedSandboxConfig.id] : []}
+                onOptionSelect={onSandboxConfigChange}
               >
                 <Option value="">{intlText.nonePlaceholder}</Option>
                 {(sandboxConfigurations ?? []).map((config: any) => (
@@ -399,15 +461,24 @@ export const AgentHarnessTab: React.FC<PanelTabProps> = (props) => {
                 ))}
               </Dropdown>
             </Field>
-            {selectedSandboxConfig?.properties?.status && (
+            {selectedSandboxConfig?.properties?.provisioningState && (
               <div className={styles.sandboxStatus}>
-                <div className={styles.statusDot} />
-                <Text size={200}>{selectedSandboxConfig.properties.status}</Text>
-                {selectedSandboxConfig.properties?.snapshotId && (
-                  <Text size={200}>
-                    {intlText.snapshotLabel} {selectedSandboxConfig.properties.snapshotId}
-                  </Text>
-                )}
+                <div
+                  className={mergeClasses(
+                    styles.statusDot,
+                    selectedSandboxConfig.properties.provisioningState === 'Failed' && styles.statusDotFailed,
+                    selectedSandboxConfig.properties.provisioningState !== 'Ready' &&
+                      selectedSandboxConfig.properties.provisioningState !== 'Failed' &&
+                      styles.statusDotPending
+                  )}
+                />
+                <Text size={200}>{selectedSandboxConfig.properties.provisioningState}</Text>
+                {selectedSandboxConfig.properties.provisioningState === 'Failed' &&
+                  extractErrorDetail(selectedSandboxConfig.properties.errorMessage) && (
+                    <Text size={200} className={styles.snapshotText}>
+                      {extractErrorDetail(selectedSandboxConfig.properties.errorMessage)}
+                    </Text>
+                  )}
               </div>
             )}
           </div>

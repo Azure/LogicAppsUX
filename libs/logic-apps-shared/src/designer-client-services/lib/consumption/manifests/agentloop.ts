@@ -302,6 +302,10 @@ export default {
                 },
               },
             },
+            agentHarness: {
+              type: 'object',
+              'x-ms-visibility': 'internal',
+            },
           },
         },
       },
