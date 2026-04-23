@@ -1062,47 +1062,22 @@ export const ParameterSection = ({
             })
           );
         }
-
-        // Clear deploymentModelProperties when switching away from MicrosoftFoundry.
-        // For AzureOpenAI the backend derives model info from the deployment itself.
-        if (newValue !== 'MicrosoftFoundry') {
-          updatedDependencies.inputs ??= {};
-          for (const key of [
-            'inputs.$.agentModelSettings.deploymentModelProperties.name',
-            'inputs.$.agentModelSettings.deploymentModelProperties.format',
-            'inputs.$.agentModelSettings.deploymentModelProperties.version',
-          ]) {
-            const targetParam = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
-            if (targetParam) {
-              updatedDependencies.inputs[key] = {
-                definition: targetParam.schema,
-                dependencyType: 'AgentSchema' as const,
-                dependentParameters: { [id]: { isValid: true } },
-                parameter: {
-                  key,
-                  name: targetParam.parameterName ?? '',
-                  type: targetParam.type ?? '',
-                  value: [createLiteralValueSegment('')],
-                },
-              };
-            }
-          }
-        }
       }
 
       const isAgentDeployment = isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
 
       if (isAgentDeployment) {
         const selectedModelId = value?.length ? value[0]?.value : undefined;
-        const currentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value;
 
-        // Only populate deploymentModelProperties for MicrosoftFoundry.
-        // For AzureOpenAI the backend derives model info from the deployment itself.
-        if (currentModelType === 'MicrosoftFoundry' && selectedModelId) {
+        if (selectedModelId) {
+          // Look up the deployment from the API response (deployment.name = deploymentId, deployment.properties.model.name = modelId)
           const deploymentInfo = deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId);
+
           const modelName = deploymentInfo?.properties?.model?.name;
           let modelFormat = deploymentInfo?.properties?.model?.format;
           let modelVersion = deploymentInfo?.properties?.model?.version;
+
+          // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
           if (!modelFormat || !modelVersion) {
             const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
             if (!modelFormat) {

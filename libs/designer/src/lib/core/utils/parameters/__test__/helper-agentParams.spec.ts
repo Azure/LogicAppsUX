@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isParameterRequired, createParameterInfo, toParameterInfoMap } from '../helper';
+import { isParameterRequired, createParameterInfo, toParameterInfoMap, shouldUseParameterInGroup } from '../helper';
 import type { InputParameter, ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
 import * as LogicAppsShared from '@microsoft/logic-apps-shared';
 
@@ -12,6 +12,98 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
   };
 });
 describe('Parameter validation logic for Agent operations', () => {
+  describe('shouldUseParameterInGroup - visibility controls serialization inclusion', () => {
+    const makeAgentModelTypeParam = (modelTypeValue: string): ParameterInfo =>
+      ({
+        id: 'agentModelType',
+        parameterName: 'agentModelType',
+        parameterKey: 'inputs.$.agentModelType',
+        required: true,
+        type: 'string',
+        value: [{ id: '1', type: 'literal', value: modelTypeValue }],
+        info: { format: 'text' },
+        label: 'Agent Model Type',
+      }) as any;
+
+    const makeDeploymentModelPropParam = (propName: string, visibleForValues: string[]): ParameterInfo =>
+      ({
+        id: `deploymentModelProperties.${propName}`,
+        parameterName: propName,
+        parameterKey: `inputs.$.agentModelSettings.deploymentModelProperties.${propName}`,
+        required: false,
+        type: 'string',
+        value: [{ id: '1', type: 'literal', value: 'some-value' }],
+        info: {
+          format: 'text',
+          dependencies: {
+            type: 'visibility',
+            parameters: [{ name: 'agentModelType', values: visibleForValues }],
+          },
+        },
+        label: `Model ${propName}`,
+      }) as any;
+
+    it('should include deploymentModelProperties.name for AzureOpenAI when visibility includes AzureOpenAI', () => {
+      const agentModelType = makeAgentModelTypeParam('AzureOpenAI');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(true);
+    });
+
+    it('should include deploymentModelProperties.name for MicrosoftFoundry when visibility includes MicrosoftFoundry', () => {
+      const agentModelType = makeAgentModelTypeParam('MicrosoftFoundry');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(true);
+    });
+
+    it('should exclude deploymentModelProperties.name for AzureOpenAI when visibility only includes MicrosoftFoundry', () => {
+      const agentModelType = makeAgentModelTypeParam('AzureOpenAI');
+      const nameParam = makeDeploymentModelPropParam('name', ['MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      // This is the bug scenario: visibility=['MicrosoftFoundry'] causes AzureOpenAI fields to be dropped from serialization
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(false);
+    });
+
+    it('should include all three deploymentModelProperties for AzureOpenAI with correct visibility', () => {
+      const agentModelType = makeAgentModelTypeParam('AzureOpenAI');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const formatParam = makeDeploymentModelPropParam('format', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const versionParam = makeDeploymentModelPropParam('version', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam, formatParam, versionParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(true);
+      expect(shouldUseParameterInGroup(formatParam, allParams)).toBe(true);
+      expect(shouldUseParameterInGroup(versionParam, allParams)).toBe(true);
+    });
+
+    it('should include parameters without visibility dependencies', () => {
+      const paramWithoutDeps: ParameterInfo = {
+        id: 'messages',
+        parameterName: 'messages',
+        parameterKey: 'inputs.$.messages',
+        required: true,
+        type: 'array',
+        value: [],
+        info: { format: 'text' },
+        label: 'Messages',
+      } as any;
+
+      expect(shouldUseParameterInGroup(paramWithoutDeps, [paramWithoutDeps])).toBe(true);
+    });
+
+    it('should exclude parameter when dependent parameter value is not in allowed values', () => {
+      const agentModelType = makeAgentModelTypeParam('V1ChatCompletionsService');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(false);
+    });
+  });
+
   describe('isParameterRequired', () => {
     it('should return false for hidden parameters', () => {
       const parameterInfo: ParameterInfo = {
