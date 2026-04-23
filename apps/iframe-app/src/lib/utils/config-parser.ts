@@ -49,7 +49,7 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
   return { trustedParentOrigin: trustedAuthority };
 }
 
-const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com', '.azurewebsites.net', '.azure-api.net'];
+const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
 
 /**
  * Validates that an agent card URL uses HTTPS and points to a trusted Microsoft domain.
@@ -63,9 +63,13 @@ function validateAgentCardUrl(url: string): string {
     throw new Error(`Invalid agent card URL: ${url}`);
   }
 
-  // Allow localhost for development
+  // Allow localhost only when the iframe itself is running locally (development)
+  const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
-    return url;
+    if (isLocalDevelopment) {
+      return url;
+    }
+    throw new Error('Agent card URLs pointing to localhost are only allowed during local development.');
   }
 
   if (parsed.protocol !== 'https:') {

@@ -5,6 +5,7 @@ import type { AuthConfig, HttpClientOptions, AuthRequiredHandler, AuthRequiredPa
 import { SSEClient } from '../streaming/sse-client';
 import type { SSEMessage } from '../streaming/types';
 import { JsonRpcErrorResponse } from '../types/errors';
+import { validatePopupUrl } from '../utils/popup-window';
 
 export interface A2AClientConfig {
   agentCard: AgentCard;
@@ -410,13 +411,9 @@ export class A2AClient {
 
                                 // Validate protocol to prevent DOM XSS via javascript: URLs
                                 try {
-                                  const parsedUrl = new URL(consentLinkUrl);
-                                  if (parsedUrl.protocol !== 'https:') {
-                                    console.error('[a2a-client] Blocked consent link with disallowed protocol:', parsedUrl.protocol);
-                                    continue;
-                                  }
+                                  validatePopupUrl(consentLinkUrl);
                                 } catch {
-                                  console.error('[a2a-client] Malformed consent link URL - skipping:', consentLinkUrl);
+                                  console.error('[a2a-client] Blocked unsafe consent link URL - skipping:', consentLinkUrl);
                                   continue;
                                 }
 

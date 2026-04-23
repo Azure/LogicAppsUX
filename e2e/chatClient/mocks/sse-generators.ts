@@ -460,7 +460,7 @@ export function generateSSEResponse(requestId: string, userMessage: string, mess
                   kind: 'data',
                   data: {
                     messageType: 'InTaskAuthRequired',
-                    consentLink: 'http://localhost:3001/mock-consent',
+                    consentLink: 'https://localhost:3001/mock-consent',
                     status: 'Unauthenticated',
                     serviceName: 'Microsoft Graph',
                     serviceIcon: 'https://example.com/icons/graph.png',
