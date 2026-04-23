@@ -51,6 +51,7 @@ describe('popup-window', () => {
         closed: false,
         focus: vi.fn(),
         close: vi.fn(),
+        opener: window,
       };
 
       // Store original window.open
@@ -76,8 +77,13 @@ describe('popup-window', () => {
       openPopupWindow('https://example.com/auth');
 
       expect(window.open).toHaveBeenCalledWith('https://example.com/auth', 'a2a-auth', expect.stringContaining('width=600'));
-      expect(window.open).toHaveBeenCalledWith('https://example.com/auth', 'a2a-auth', expect.stringContaining('noopener'));
       expect(mockPopup.focus).toHaveBeenCalled();
+    });
+
+    it('should null out window.opener to prevent parent page access', () => {
+      openPopupWindow('https://example.com/auth');
+
+      expect(mockPopup.opener).toBeNull();
     });
 
     it('should reject javascript: URLs before calling window.open', async () => {

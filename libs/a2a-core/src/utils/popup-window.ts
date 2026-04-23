@@ -61,13 +61,23 @@ export async function openPopupWindow(url: string, windowName = 'a2a-auth', opti
     'scrollbars=yes',
     'resizable=yes',
     'status=no',
-    'noopener',
   ].join(',');
 
   const popup = window.open(url, windowName, features);
 
   if (!popup) {
     throw new Error('Failed to open popup window. Please check your popup blocker settings.');
+  }
+
+  // Prevent the opened window from accessing window.opener (XSS mitigation).
+  // We set this after opening instead of using the 'noopener' window feature,
+  // because 'noopener' causes window.open() to return null, which prevents
+  // us from monitoring when the popup closes.
+  try {
+    popup.opener = null;
+  } catch {
+    // Cross-origin windows may throw — this is expected and acceptable
+    // since cross-origin popups can't access opener anyway.
   }
 
   // Focus the popup
