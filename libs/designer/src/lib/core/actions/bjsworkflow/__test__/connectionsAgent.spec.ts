@@ -53,7 +53,7 @@ describe('updateAgentParametersForConnection – model type resolution', () => {
     it('maps known display names to manifest values', () => {
       expect(resolveAgentModelType('Azure OpenAI', '')).toBe('AzureOpenAI');
       expect(resolveAgentModelType('Foundry Models', '')).toBe('MicrosoftFoundry');
-      expect(resolveAgentModelType('Foundry project', '')).toBe('FoundryAgentServiceV2');
+      expect(resolveAgentModelType('Foundry project', '')).toBe('FoundryAgentService');
       expect(resolveAgentModelType('APIM Gen AI Gateway', '')).toBe('APIMGenAIGateway');
     });
   });
@@ -99,9 +99,9 @@ describe('updateAgentParametersForConnection – model type resolution', () => {
       expect(result).toBe('APIMGenAIGateway');
     });
 
-    it('preserves existing FoundryAgentServiceV2 when fallback would yield AzureOpenAI', () => {
-      const result = resolveAgentModelType('', '', 'FoundryAgentServiceV2');
-      expect(result).toBe('FoundryAgentServiceV2');
+    it('preserves existing FoundryAgentService when fallback would yield AzureOpenAI', () => {
+      const result = resolveAgentModelType('', '', 'FoundryAgentService');
+      expect(result).toBe('FoundryAgentService');
     });
 
     it('does NOT preserve existing AzureOpenAI (uses fallback as-is)', () => {
