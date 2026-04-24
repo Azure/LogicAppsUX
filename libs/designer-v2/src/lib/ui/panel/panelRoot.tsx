@@ -118,28 +118,27 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
 
   const isLoadingPanel = useIsPanelLoading();
 
-  const LoadingComponent = () => (
+  const loadingContent = (
     <div className="msla-loading-container">
       <Spinner size={'large'} />
     </div>
   );
 
-  const Content = () =>
-    isLoadingPanel ? (
-      <LoadingComponent />
-    ) : currentPanelMode === 'WorkflowParameters' ? (
-      <WorkflowParametersPanel {...commonPanelProps} />
-    ) : currentPanelMode === 'Discovery' ? (
-      <RecommendationPanelContext {...commonPanelProps} />
-    ) : currentPanelMode === 'NodeSearch' ? (
-      <NodeSearchDialog {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
-    ) : currentPanelMode === 'Connection' ? (
-      <ConnectionPanel {...commonPanelProps} />
-    ) : currentPanelMode === 'Error' ? (
-      <ErrorsPanel {...commonPanelProps} />
-    ) : currentPanelMode === 'Assertions' ? (
-      <AssertionsPanel {...commonPanelProps} />
-    ) : null; // Caught above
+  const content = isLoadingPanel ? (
+    loadingContent
+  ) : currentPanelMode === 'WorkflowParameters' ? (
+    <WorkflowParametersPanel {...commonPanelProps} />
+  ) : currentPanelMode === 'Discovery' ? (
+    <RecommendationPanelContext {...commonPanelProps} />
+  ) : currentPanelMode === 'NodeSearch' ? (
+    <NodeSearchDialog {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
+  ) : currentPanelMode === 'Connection' ? (
+    <ConnectionPanel {...commonPanelProps} />
+  ) : currentPanelMode === 'Error' ? (
+    <ErrorsPanel {...commonPanelProps} />
+  ) : currentPanelMode === 'Assertions' ? (
+    <AssertionsPanel {...commonPanelProps} />
+  ) : null; // Caught above
 
   if (isUndefined(currentPanelMode)) {
     return null;
@@ -155,7 +154,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
           }
         }}
       >
-        <Content />
+        {content}
       </Dialog>
     );
   }
@@ -213,7 +212,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
       }}
     >
       {isResizeable ? <PanelResizer updatePanelWidth={setWidth} /> : null}
-      <Content />
+      {content}
     </Panel>
   );
 };
