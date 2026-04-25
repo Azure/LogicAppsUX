@@ -48,10 +48,15 @@ export interface BrowseCategoryConfig {
   connectorFilters?: ConnectorFilterTypes;
 }
 
-export const getTriggerCategories = (): BrowseCategoryConfig[] => {
+/**
+ * Get trigger categories for the browse panel.
+ * @param hiddenCategories - Array of category keys to hide. Available keys: 'manual', 'schedule', 'appEvent', 'azure', 'workflowExecution', 'chatMessage', 'evaluation', 'otherWays'
+ * @returns Array of trigger category configurations
+ */
+export const getTriggerCategories = (hiddenCategories?: string[]): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
-  return [
+  const categories = [
     {
       key: 'manual',
       text: intl.formatMessage({
@@ -183,16 +188,28 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
       type: BrowseCategoryType.BROWSE,
     },
   ];
+
+  // Apply hidden categories filter
+  return categories.map((category) => (hiddenCategories?.includes(category.key) ? { ...category, visible: false } : category));
 };
 
+/**
+ * Get action categories for the browse panel.
+ * @param allowAgents - Whether to show AI agent category (based on graph root)
+ * @param isAddingAgentTool - Whether currently adding an agent tool
+ * @param disableMcpClientTools - Whether to disable MCP client tools category
+ * @param hiddenCategories - Array of category keys to hide. Available keys: 'favorites', 'mcpServers', 'aiAgent', 'actionInApp', 'dataTransformation', 'simpleOperations', 'humanInTheLoop'
+ * @returns Array of action category configurations
+ */
 export const getActionCategories = (
   allowAgents?: boolean,
   isAddingAgentTool?: boolean,
-  disableMcpClientTools?: boolean
+  disableMcpClientTools?: boolean,
+  hiddenCategories?: string[]
 ): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
-  return [
+  const categories = [
     {
       key: 'favorites',
       text: intl.formatMessage({
@@ -337,4 +354,7 @@ export const getActionCategories = (
       },
     },
   ];
+
+  // Apply hidden categories filter
+  return categories.map((category) => (hiddenCategories?.includes(category.key) ? { ...category, visible: false } : category));
 };
