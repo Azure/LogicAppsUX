@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
@@ -21,6 +24,7 @@ const mockUseNodeMetadata = vi.fn();
 const mockUseOperationInfo = vi.fn();
 const mockUseIsA2AWorkflow = vi.fn();
 const mockUseIsAgenticWorkflowOnly = vi.fn();
+const mockUseOperationManifest = vi.fn();
 
 vi.mock('../../../../core', () => ({
   useNodeMetadata: (...args: any[]) => mockUseNodeMetadata(...args),
@@ -36,6 +40,10 @@ vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () =>
 vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
   useIsAgenticWorkflowOnly: () => mockUseIsAgenticWorkflowOnly(),
+}));
+
+vi.mock('../../../../core/state/selectors/actionMetadataSelector', () => ({
+  useOperationManifest: (...args: any[]) => mockUseOperationManifest(...args),
 }));
 
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
@@ -107,6 +115,10 @@ vi.mock('../tabs/handoffTab', () => ({
   handoffTab: () => ({ id: 'handoff', title: 'Handoff', order: 7, visible: true, content: null }),
 }));
 
+vi.mock('../tabs/agentHarnessTab/agentHarnessTab', () => ({
+  agentHarnessTab: () => ({ id: 'agentHarness', title: 'Agent Harness', order: 8, visible: true, content: null }),
+}));
+
 describe('usePanelTabs', () => {
   const createWrapper = () => {
     const store = configureStore({
@@ -133,6 +145,7 @@ describe('usePanelTabs', () => {
     mockUseOperationInfo.mockReturnValue({ type: 'Action', connectorId: 'test', operationId: 'test' });
     mockUseIsA2AWorkflow.mockReturnValue(false);
     mockUseIsAgenticWorkflowOnly.mockReturnValue(false);
+    mockUseOperationManifest.mockReturnValue({ data: undefined, isLoading: false, isFetched: true });
   });
 
   it('should return only mockResultsTab when isUnitTestView is true', () => {
