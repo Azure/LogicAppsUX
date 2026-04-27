@@ -3,6 +3,7 @@ import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { useIsA2AWorkflow, useIsAgenticWorkflowOnly } from '../../../core/state/designerView/designerViewSelectors';
 import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -23,6 +24,7 @@ import { equals, isBuiltInAgentTool, SUBGRAPH_TYPES } from '@microsoft/logic-app
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { agentHarnessTab } from './tabs/agentHarnessTab/agentHarnessTab';
 import { channelsTab } from './tabs/channelsTab';
 import { handoffTab } from './tabs/handoffTab';
 
@@ -42,6 +44,8 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
   const isA2AWorkflow = useIsA2AWorkflow();
   const isAgenticWorkflowOnly = useIsAgenticWorkflowOnly();
+  const operationManifestQuery = useOperationManifest(operationInfo);
+  const enableAgentHarness = operationManifestQuery.data?.properties?.enableAgentHarness ?? false;
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
 
@@ -110,6 +114,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     [intl, tabProps, isAgentNode, isA2AWorkflow, isMonitoringView]
   );
 
+  const agentHarnessTabItem = useMemo(
+    () => ({
+      ...agentHarnessTab(intl, tabProps),
+      visible: isAgentNode && enableAgentHarness && !isMonitoringView,
+    }),
+    [intl, tabProps, isAgentNode, enableAgentHarness, isMonitoringView]
+  );
+
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
 
   const testingTabItem = useMemo(
@@ -161,6 +173,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
             settingsTabItem,
             channelsTabItem,
             handoffTabItem,
+            agentHarnessTabItem,
             codeViewTabItem,
             testingTabItem,
             aboutTabItem,
@@ -176,6 +189,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     mockResultsTabItem,
     isUnitTestView,
     aboutTabItem,
+    agentHarnessTabItem,
     channelsTabItem,
     handoffTabItem,
     codeViewTabItem,

@@ -52,6 +52,7 @@ export interface DesignerOptionsState {
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
+    integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
