@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GroupType, QueryBuilderEditor } from '../index';
 import { HybridQueryBuilderEditor } from '../HybridQueryBuilder';
@@ -233,7 +233,7 @@ describe('Query Builder Integration Tests', () => {
   });
 
   describe('Move Functionality Integration', () => {
-    it('should maintain move functionality across component switches', async () => {
+    it('should maintain move functionality across component switches', () => {
       const testGroup = createTestGroup({
         items: [
           createTestRow({ operand1: createTestValueSegment('item1') }),
@@ -255,7 +255,8 @@ describe('Query Builder Integration Tests', () => {
       });
       expect(moreButtons.length).toBeGreaterThan(0);
 
-      await user.click(moreButtons[1]); // Click on middle item
+      // Use fireEvent instead of userEvent to avoid slow TooltipHost/Callout interactions in JSDOM
+      fireEvent.click(moreButtons[1]); // Click on middle item
       expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
       expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
 
@@ -273,7 +274,7 @@ describe('Query Builder Integration Tests', () => {
       });
       expect(hybridMoreButtons.length).toBeGreaterThan(0);
 
-      await user.click(hybridMoreButtons[1]);
+      fireEvent.click(hybridMoreButtons[1]);
       expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
       expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
     }, 10000);
