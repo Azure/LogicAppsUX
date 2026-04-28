@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { stripJsonComments, repairJson, parseCopilotResponse } from '../copilotWorkflowEditorParsing';
+import { stripJsonComments, repairJson, parseCopilotResponse } from '../copilot/copilotWorkflowEditorParsing';
 import type { Workflow } from '../../../../utils/src';
 import { WorkflowChangeType, WorkflowChangeTargetType } from '../../copilotWorkflowEditor';
 

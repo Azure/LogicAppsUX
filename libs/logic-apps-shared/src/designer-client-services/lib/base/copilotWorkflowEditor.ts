@@ -1,7 +1,7 @@
 import type { ICopilotWorkflowEditorService, WorkflowEditResponse } from '../copilotWorkflowEditor';
 import type { Workflow } from '../../../utils/src';
 import { ArgumentException } from '../../../utils/src';
-import { parseCopilotResponse } from './copilotWorkflowEditorParsing';
+import { parseCopilotResponse } from './copilot/copilotWorkflowEditorParsing';
 import axios from 'axios';
 
 export interface BaseCopilotWorkflowEditorServiceOptions {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { executeCopilotTool, COPILOT_WORKFLOW_TOOLS } from '../copilotWorkflowEditorTools';
+import { executeCopilotTool, COPILOT_WORKFLOW_TOOLS } from '../copilot/copilotWorkflowEditorTools';
 
 // ---------------------------------------------------------------------------
 // Mock the service singletons used by the tool handlers

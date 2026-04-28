@@ -1,6 +1,6 @@
-import { SearchService } from '../search';
-import { ConnectionService } from '../connection';
-import type { DiscoveryOpArray, OpenAPIV2 } from '../../../utils/src';
+import { SearchService } from '../../search';
+import { ConnectionService } from '../../connection';
+import type { DiscoveryOpArray, OpenAPIV2 } from '../../../../utils/src';
 
 // ---------------------------------------------------------------------------
 // Tool definitions (OpenAI function-calling format)

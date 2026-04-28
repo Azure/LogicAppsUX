@@ -1,6 +1,6 @@
-import type { WorkflowEditResponse, WorkflowChange } from '../copilotWorkflowEditor';
-import { WorkflowChangeType, WorkflowChangeTargetType } from '../copilotWorkflowEditor';
-import type { Workflow } from '../../../utils/src';
+import type { WorkflowEditResponse, WorkflowChange } from '../../copilotWorkflowEditor';
+import { WorkflowChangeType, WorkflowChangeTargetType } from '../../copilotWorkflowEditor';
+import type { Workflow } from '../../../../utils/src';
 
 /**
  * Strip JavaScript-style comments from a string so that JSON.parse can succeed
