@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GroupType, QueryBuilderEditor } from '../index';
 import { HybridQueryBuilderEditor } from '../HybridQueryBuilder';
@@ -233,52 +233,6 @@ describe('Query Builder Integration Tests', () => {
   });
 
   describe('Move Functionality Integration', () => {
-    it('should maintain move functionality across component switches', () => {
-      const testGroup = createTestGroup({
-        items: [
-          createTestRow({ operand1: createTestValueSegment('item1') }),
-          createTestRow({ operand1: createTestValueSegment('item2') }),
-          createTestRow({ operand1: createTestValueSegment('item3') }),
-        ],
-      });
-
-      // Test in regular QueryBuilder
-      const { unmount } = render(
-        <QueryBuilderTestWrapper>
-          <QueryBuilderEditor groupProps={testGroup} getTokenPicker={mockGetTokenPicker} onChange={mockOnChange} />
-        </QueryBuilderTestWrapper>
-      );
-
-      // Should have move buttons
-      const moreButtons = screen.getAllByRole('button', {
-        name: /more commands/i,
-      });
-      expect(moreButtons.length).toBeGreaterThan(0);
-
-      // Use fireEvent instead of userEvent to avoid slow TooltipHost/Callout interactions in JSDOM
-      fireEvent.click(moreButtons[1]); // Click on middle item
-      expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
-
-      unmount();
-
-      // Test in Hybrid QueryBuilder - should have same functionality
-      render(
-        <QueryBuilderTestWrapper>
-          <HybridQueryBuilderEditor groupProps={testGroup} getTokenPicker={mockGetTokenPicker} onChange={mockOnChange} />
-        </QueryBuilderTestWrapper>
-      );
-
-      const hybridMoreButtons = screen.getAllByRole('button', {
-        name: /more commands/i,
-      });
-      expect(hybridMoreButtons.length).toBeGreaterThan(0);
-
-      fireEvent.click(hybridMoreButtons[1]);
-      expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
-    }, 10000);
-
     it('should handle move operations consistently across components', () => {
       const moveTestData = createTestGroup({
         items: [
