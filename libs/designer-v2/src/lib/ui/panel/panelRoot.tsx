@@ -144,7 +144,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     return null;
   }
 
-  if (dialogModes.includes(currentPanelMode)) {
+  if (dialogModes.includes(currentPanelMode) && content) {
     return (
       <Dialog
         open={true}
