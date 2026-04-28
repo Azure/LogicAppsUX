@@ -185,7 +185,7 @@ function buildResponseFromParsed(parsed: any, rawContent: string, currentWorkflo
 
 /**
  * Parses a raw LLM response string into a structured WorkflowEditResponse.
- * Shared by both the direct-to-LLM service and the ARM-proxied v3 service.
+ * Used by BaseCopilotWorkflowEditorService to parse the ARM backend response.
  */
 export function parseCopilotResponse(content: string, currentWorkflow: Workflow): WorkflowEditResponse {
   const sanitized = content.replace(/\u200B|\u200C|\u200D|\uFEFF|\u00A0/g, '');
@@ -200,14 +200,8 @@ export function parseCopilotResponse(content: string, currentWorkflow: Workflow)
     return buildResponseFromParsed(parsed, sanitized, currentWorkflow);
   }
 
-  const firstChars = sanitized.substring(0, 200);
-  const lastChars = sanitized.substring(Math.max(0, sanitized.length - 100));
-  const charCodes = Array.from(sanitized.substring(0, 10)).map((c) => c.charCodeAt(0));
   console.warn('[CopilotWorkflowEditor] Failed to parse LLM response as JSON.', {
     contentLength: sanitized.length,
-    firstChars,
-    lastChars,
-    firstCharCodes: charCodes,
     directParseError: getParseError(stripped),
     repairParseError: getParseError(repairJson(stripped)),
   });

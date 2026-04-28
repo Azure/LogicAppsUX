@@ -45,9 +45,15 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       throw new ArgumentException('location required for BaseCopilotWorkflowEditorService');
     }
     const accessToken = await getAccessToken();
+    if (!accessToken) {
+      throw new ArgumentException('getAccessToken returned an empty or undefined token');
+    }
+    if (!accessToken.startsWith('Bearer ')) {
+      throw new ArgumentException('getAccessToken must return a Bearer-prefixed token (e.g. "Bearer eyJ...")');
+    }
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Logic/locations/${location}/generateCopilotResponse`;
 
-    const sku = this._resolvesku(workflow);
+    const sku = this._resolveSku(workflow);
 
     const requestBody = {
       properties: {
@@ -84,7 +90,7 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
   /**
    * Maps the workflow kind to a SKU string expected by the v3 endpoint.
    */
-  private _resolvesku(workflow: Workflow): string {
+  private _resolveSku(workflow: Workflow): string {
     const kind = workflow.kind?.toLowerCase();
     if (kind === 'stateful' || kind === 'stateless') {
       return 'standard';

@@ -96,6 +96,18 @@ describe('BaseCopilotWorkflowEditorService', () => {
       await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('location');
     });
 
+    it('should throw when getAccessToken returns an empty string', async () => {
+      mockGetAccessToken.mockResolvedValueOnce('');
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('empty or undefined');
+    });
+
+    it('should throw when getAccessToken returns a non-Bearer token', async () => {
+      mockGetAccessToken.mockResolvedValueOnce('token-without-prefix');
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('Bearer-prefixed');
+    });
+
     it('should call the correct ARM endpoint', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'Hello' }));
 
