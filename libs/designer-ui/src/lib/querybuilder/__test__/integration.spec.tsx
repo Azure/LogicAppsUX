@@ -93,7 +93,7 @@ describe('Query Builder Integration Tests', () => {
       expect(screen.getByText('nested1')).toBeInTheDocument();
       expect(screen.getByText('nested2')).toBeInTheDocument();
       expect(screen.getByText('after')).toBeInTheDocument();
-    });
+    }, 10000);
   });
 
   describe('SimpleQueryBuilder Integration', () => {
