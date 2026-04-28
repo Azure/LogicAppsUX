@@ -34,6 +34,7 @@ test.describe(
     test('Create workflow should show update information for empty workflow in consumption.', async ({ page }) => {
       await page.goto('/templates');
       await page.getByText('Consumption', { exact: true }).click();
+      await page.waitForLoadState('networkidle');
       await GoToMockTemplate(page, '[Mock] Basic Workflow Only Template');
       await page.getByRole('button', { name: 'Use this template' }).click();
       await expect(page.getByText('Update workflow from template', { exact: true })).toBeVisible();
@@ -45,6 +46,7 @@ test.describe(
       const parameterValue = 'Parameter Value';
       await page.goto('/templates');
       await page.getByText('Consumption', { exact: true }).click();
+      await page.waitForLoadState('networkidle');
       await GoToMockTemplate(page, '[Mock] Simple Parameters Only Template');
       await page.getByRole('button', { name: 'Use this template' }).click();
 

@@ -1,14 +1,13 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { OperationActionDataFromOperation } from '../helper';
+import * as connectors from '../../../../../connectors';
+import * as utils from '../../../../../utils';
 
-vi.mock('../../../../../connectors', () => ({
-  isBuiltInConnector: vi.fn((api) => api.id?.startsWith('connectionProviders/') ?? false),
-}));
-
-vi.mock('../../../../../utils', () => ({
-  getConnectorCategoryString: vi.fn(() => 'Built-in'),
-}));
+beforeEach(() => {
+  vi.spyOn(connectors, 'isBuiltInConnector').mockImplementation((api: any) => api.id?.startsWith('connectionProviders/') ?? false);
+  vi.spyOn(utils, 'getConnectorCategoryString').mockReturnValue('Built-in');
+});
 
 describe('helper', () => {
   describe('OperationActionDataFromOperation', () => {

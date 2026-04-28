@@ -3,21 +3,22 @@
  */
 import '@testing-library/jest-dom/vitest';
 import { render, screen, cleanup } from '@testing-library/react';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { AssistantGreeting } from '../assistantGreeting';
 import type { AssistantGreetingItem } from '../conversationItem';
 import { ConversationItemType, FlowOrigin } from '../conversationItem';
 import { FluentProvider, webLightTheme, webDarkTheme } from '@fluentui/react-components';
 import { IntlProvider } from 'react-intl';
 import renderer from 'react-test-renderer';
+import * as feedbackHelper from '../../feedbackHelper';
 
-vi.mock('../../feedbackHelper', () => ({
-  useFeedbackMessage: () => ({
+beforeEach(() => {
+  vi.spyOn(feedbackHelper, 'useFeedbackMessage').mockReturnValue({
     feedbackMessage: null,
     onMessageReactionClicked: vi.fn(),
     reaction: undefined,
-  }),
-}));
+  });
+});
 
 const mockItem: AssistantGreetingItem = {
   type: ConversationItemType.Greeting,

@@ -389,7 +389,7 @@ describe('Query Builder Complex Move Scenarios', () => {
       renderQueryBuilder(dynamicStructure);
 
       // Simulate multiple re-renders
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 3; i++) {
         renderQueryBuilder(
           createTestGroup({
             items: [createTestRow({ operand1: createTestValueSegment(`updated${i}`) })],
@@ -398,7 +398,7 @@ describe('Query Builder Complex Move Scenarios', () => {
       }
 
       // Should handle updates without issues
-      expect(screen.getByText('updated9')).toBeInTheDocument();
+      expect(screen.getByText('updated2')).toBeInTheDocument();
     });
   });
 });

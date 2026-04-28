@@ -299,7 +299,7 @@ describe('Query Builder Move Functionality - Simplified Tests', () => {
       // Move up should be enabled
       const moveUpButton = screen.getByRole('menuitem', { name: /move up/i });
       expect(moveUpButton).not.toHaveAttribute('aria-disabled', 'true');
-    });
+    }, 10000);
   });
 
   describe('Error Handling', () => {

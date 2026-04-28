@@ -3,16 +3,16 @@ import { WorkflowparameterField } from '../workflowparametersField';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { describe, vi, beforeEach, it, expect } from 'vitest';
+import * as styles from '../styles';
 
-// Mock makeStyles
-vi.mock('../styles', () => ({
-  useWorkflowParameterStyles: () => ({
+beforeEach(() => {
+  vi.spyOn(styles, 'useWorkflowParameterStyles').mockReturnValue({
     field: 'mock-field-class',
     fieldLabel: 'mock-field-label-class',
     fieldEditor: 'mock-field-editor-class',
     fieldError: 'mock-field-error-class',
-  }),
-}));
+  });
+});
 
 // Test wrapper component
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
