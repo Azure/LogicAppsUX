@@ -6,7 +6,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
-    setupFiles: ['./src/react/test/setup.ts'],
+    setupFiles: ['./src/react/test/setup.ts', '../shared-test-utils/fluentui-react-icons-mock.ts'],
     coverage: {
       enabled: true,
       provider: 'istanbul',

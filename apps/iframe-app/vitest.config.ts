@@ -9,7 +9,7 @@ export default defineConfig({
     name: packageJson.name,
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
+    setupFiles: ['./src/test/setup.ts', '../../libs/shared-test-utils/fluentui-react-icons-mock.ts'],
     root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
