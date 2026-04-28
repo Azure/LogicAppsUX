@@ -190,8 +190,8 @@ function buildResponseFromParsed(parsed: any, rawContent: string, currentWorkflo
 export function parseCopilotResponse(content: string, currentWorkflow: Workflow): WorkflowEditResponse {
   const sanitized = content.replace(/\u200B|\u200C|\u200D|\uFEFF|\u00A0/g, '');
 
-  const jsonBlockMatch = sanitized.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  const jsonStr = jsonBlockMatch ? jsonBlockMatch[1] : sanitized;
+  const jsonBlockMatch = sanitized.match(/```(?:json)?\n?([\s\S]*?)```/i);
+  const jsonStr = jsonBlockMatch ? jsonBlockMatch[1].trim() : sanitized;
   const stripped = stripJsonComments(jsonStr.trim());
 
   const parsed = tryJsonParse(stripped) ?? tryJsonParse(repairJson(stripped)) ?? tryExtractJson(sanitized);
