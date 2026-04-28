@@ -4,7 +4,7 @@ import { ArgumentException } from '../../../utils/src';
 import { parseCopilotResponse } from './copilotWorkflowEditorParsing';
 import axios from 'axios';
 
-export interface ArmCopilotWorkflowEditorServiceOptions {
+export interface BaseCopilotWorkflowEditorServiceOptions {
   /** ARM base URL (e.g. https://management.azure.com) */
   baseUrl: string;
   /** Azure subscription ID */
@@ -18,45 +18,34 @@ export interface ArmCopilotWorkflowEditorServiceOptions {
 }
 
 /**
- * Copilot workflow editor service that calls the ARM v3 generateCopilotResponse
+ * Copilot workflow editor service that calls the generateCopilotResponse
  * endpoint instead of making direct LLM calls. The backend handles all LLM
  * orchestration (system prompts, tool calling, etc.) server-side.
  */
-export class ArmCopilotWorkflowEditorService implements ICopilotWorkflowEditorService {
-  private readonly baseUrl: string;
-  private readonly subscriptionId: string;
-  private readonly location: string;
-  private readonly apiVersion: string;
-  private readonly getAccessToken: () => Promise<string>;
-
-  constructor(options: ArmCopilotWorkflowEditorServiceOptions) {
-    const { baseUrl, subscriptionId, location, apiVersion, getAccessToken } = options;
+export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorService {
+  constructor(public readonly options: BaseCopilotWorkflowEditorServiceOptions) {
+    const { baseUrl, subscriptionId, apiVersion, getAccessToken } = options;
     if (!baseUrl) {
-      throw new ArgumentException('baseUrl required for ArmCopilotWorkflowEditorService');
+      throw new ArgumentException('baseUrl required for BaseCopilotWorkflowEditorService');
     }
     if (!subscriptionId) {
-      throw new ArgumentException('subscriptionId required for ArmCopilotWorkflowEditorService');
-    }
-    if (!location) {
-      throw new ArgumentException('location required for ArmCopilotWorkflowEditorService');
+      throw new ArgumentException('subscriptionId required for BaseCopilotWorkflowEditorService');
     }
     if (!apiVersion) {
-      throw new ArgumentException('apiVersion required for ArmCopilotWorkflowEditorService');
+      throw new ArgumentException('apiVersion required for BaseCopilotWorkflowEditorService');
     }
     if (!getAccessToken) {
-      throw new ArgumentException('getAccessToken required for ArmCopilotWorkflowEditorService');
+      throw new ArgumentException('getAccessToken required for BaseCopilotWorkflowEditorService');
     }
-
-    this.baseUrl = baseUrl;
-    this.subscriptionId = subscriptionId;
-    this.location = location;
-    this.apiVersion = apiVersion;
-    this.getAccessToken = getAccessToken;
   }
 
   async getWorkflowEdit(prompt: string, workflow: Workflow, signal?: AbortSignal): Promise<WorkflowEditResponse> {
-    const accessToken = await this.getAccessToken();
-    const uri = `${this.baseUrl}/subscriptions/${this.subscriptionId}/providers/Microsoft.Logic/locations/${this.location}/generateCopilotResponse`;
+    const { baseUrl, subscriptionId, location, apiVersion, getAccessToken } = this.options;
+    if (!location) {
+      throw new ArgumentException('location required for BaseCopilotWorkflowEditorService');
+    }
+    const accessToken = await getAccessToken();
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Logic/locations/${location}/generateCopilotResponse`;
 
     const sku = this._resolvesku(workflow);
 
@@ -80,7 +69,7 @@ export class ArmCopilotWorkflowEditorService implements ICopilotWorkflowEditorSe
         'Content-Type': 'application/json',
         Authorization: accessToken,
       },
-      params: { 'api-version': this.apiVersion },
+      params: { 'api-version': apiVersion },
       signal,
     });
 

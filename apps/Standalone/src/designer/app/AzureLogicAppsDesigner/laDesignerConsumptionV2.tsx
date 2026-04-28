@@ -30,8 +30,7 @@ import {
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
   BaseChatbotService,
-  ArmCopilotWorkflowEditorService,
-  InitCopilotWorkflowEditorService,
+  BaseCopilotWorkflowEditorService,
   ConsumptionRunService,
   guid,
   startsWith,
@@ -778,15 +777,14 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
-  // Initialize CopilotWorkflowEditorService using the ARM v3 endpoint
-  const copilotEditorService = new ArmCopilotWorkflowEditorService({
+  // Initialize CopilotWorkflowEditorService
+  const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
     baseUrl,
     subscriptionId,
     location,
     apiVersion: '2026-03-01-preview',
     getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
   });
-  InitCopilotWorkflowEditorService(copilotEditorService);
 
   // This isn't correct but without it I was getting errors
   //   It's fine just to unblock standalone consumption
@@ -823,6 +821,7 @@ const getDesignerServices = (
     roleService,
     hostService,
     chatbotService,
+    copilotWorkflowEditorService,
     customCodeService,
     cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),

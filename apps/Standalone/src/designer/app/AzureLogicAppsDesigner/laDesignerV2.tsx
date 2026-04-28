@@ -32,8 +32,7 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
-  ArmCopilotWorkflowEditorService,
-  InitCopilotWorkflowEditorService,
+  BaseCopilotWorkflowEditorService,
   BaseExperimentationService,
   BaseUserPreferenceService,
   BaseFunctionService,
@@ -81,7 +80,6 @@ import isEqual from 'lodash.isequal';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeViewV2';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 import { CustomEditorService } from './Services/customEditorService';
@@ -121,7 +119,7 @@ const DesignerEditor = () => {
   } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
   const { data: artifactData, isLoading: artifactsLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
-  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
+  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, hostingPlan);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
 
@@ -307,7 +305,6 @@ const DesignerEditor = () => {
   );
 
   // Services
-
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
   const services = useMemo(
@@ -1119,15 +1116,14 @@ const getDesignerServices = (
     location,
   });
 
-  // Initialize CopilotWorkflowEditorService using the ARM v3 endpoint
-  const copilotEditorService = new ArmCopilotWorkflowEditorService({
+  // Initialize CopilotWorkflowEditorService
+  const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
     baseUrl: armUrl,
     subscriptionId,
     location,
     apiVersion: '2026-03-01-preview',
     getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
   });
-  InitCopilotWorkflowEditorService(copilotEditorService);
 
   const customCodeService = new StandardCustomCodeService({
     apiVersion: '2018-11-01',
@@ -1169,6 +1165,7 @@ const getDesignerServices = (
     roleService,
     hostService,
     chatbotService,
+    copilotWorkflowEditorService,
     customCodeService,
     cognitiveServiceService,
     connectionParameterEditorService,

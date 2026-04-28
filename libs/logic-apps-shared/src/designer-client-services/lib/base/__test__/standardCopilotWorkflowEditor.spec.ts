@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { ArmCopilotWorkflowEditorService } from '../armCopilotWorkflowEditor';
-import type { ArmCopilotWorkflowEditorServiceOptions } from '../armCopilotWorkflowEditor';
+import { BaseCopilotWorkflowEditorService } from '../standardCopilotWorkflowEditor';
+import type { BaseCopilotWorkflowEditorServiceOptions } from '../standardCopilotWorkflowEditor';
 import type { Workflow } from '../../../../utils/src';
 
 // ---------------------------------------------------------------------------
@@ -17,7 +17,7 @@ vi.mock('axios', () => ({
 
 const mockGetAccessToken = vi.fn();
 
-const defaultOptions: ArmCopilotWorkflowEditorServiceOptions = {
+const defaultOptions: BaseCopilotWorkflowEditorServiceOptions = {
   baseUrl: 'https://management.azure.com',
   subscriptionId: 'sub-123',
   location: 'westus2',
@@ -49,7 +49,7 @@ function mockPostResponse(responsePayload: string) {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('ArmCopilotWorkflowEditorService', () => {
+describe('BaseCopilotWorkflowEditorService', () => {
   beforeEach(() => {
     mockGetAccessToken.mockResolvedValue('Bearer test-token');
   });
@@ -62,27 +62,28 @@ describe('ArmCopilotWorkflowEditorService', () => {
 
   describe('constructor', () => {
     it('should throw when baseUrl is empty', () => {
-      expect(() => new ArmCopilotWorkflowEditorService({ ...defaultOptions, baseUrl: '' })).toThrow('baseUrl');
+      expect(() => new BaseCopilotWorkflowEditorService({ ...defaultOptions, baseUrl: '' })).toThrow('baseUrl');
     });
 
     it('should throw when subscriptionId is empty', () => {
-      expect(() => new ArmCopilotWorkflowEditorService({ ...defaultOptions, subscriptionId: '' })).toThrow('subscriptionId');
-    });
-
-    it('should throw when location is empty', () => {
-      expect(() => new ArmCopilotWorkflowEditorService({ ...defaultOptions, location: '' })).toThrow('location');
+      expect(() => new BaseCopilotWorkflowEditorService({ ...defaultOptions, subscriptionId: '' })).toThrow('subscriptionId');
     });
 
     it('should throw when apiVersion is empty', () => {
-      expect(() => new ArmCopilotWorkflowEditorService({ ...defaultOptions, apiVersion: '' })).toThrow('apiVersion');
+      expect(() => new BaseCopilotWorkflowEditorService({ ...defaultOptions, apiVersion: '' })).toThrow('apiVersion');
     });
 
     it('should throw when getAccessToken is not provided', () => {
-      expect(() => new ArmCopilotWorkflowEditorService({ ...defaultOptions, getAccessToken: undefined as any })).toThrow('getAccessToken');
+      expect(() => new BaseCopilotWorkflowEditorService({ ...defaultOptions, getAccessToken: undefined as any })).toThrow('getAccessToken');
     });
 
     it('should construct successfully with valid options', () => {
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      expect(svc).toBeDefined();
+    });
+
+    it('should construct successfully when location is empty', () => {
+      const svc = new BaseCopilotWorkflowEditorService({ ...defaultOptions, location: '' });
       expect(svc).toBeDefined();
     });
   });
@@ -90,10 +91,15 @@ describe('ArmCopilotWorkflowEditorService', () => {
   // ── getWorkflowEdit ─────────────────────────────────────────────────────
 
   describe('getWorkflowEdit', () => {
+    it('should throw when location is empty', async () => {
+      const svc = new BaseCopilotWorkflowEditorService({ ...defaultOptions, location: '' });
+      await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('location');
+    });
+
     it('should call the correct ARM endpoint', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'Hello' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test prompt', simpleWorkflow);
 
       expect(mockAxiosPost).toHaveBeenCalledOnce();
@@ -106,7 +112,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should pass api-version as query parameter', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'Hello' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test prompt', simpleWorkflow);
 
       const [, , config] = mockAxiosPost.mock.calls[0];
@@ -116,7 +122,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should include Authorization header from getAccessToken', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'Hello' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test prompt', simpleWorkflow);
 
       const [, , config] = mockAxiosPost.mock.calls[0];
@@ -126,7 +132,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should send prompt in request body as query', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'Hello' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('Add an HTTP action', simpleWorkflow);
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -136,7 +142,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should send workflow definition and kind in request body', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'Hello' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', simpleWorkflow);
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -151,7 +157,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
       };
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', workflowWithParams);
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -161,7 +167,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should exclude parameters from request body when empty', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', simpleWorkflow);
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -175,7 +181,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
       };
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', workflowWithNotes);
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -186,7 +192,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
       const workflowNoNotes: Workflow = { ...simpleWorkflow, notes: {} };
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', workflowNoNotes);
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -206,7 +212,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
       };
       mockPostResponse(JSON.stringify(workflowResponse));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       const result = await svc.getWorkflowEdit('add an action', simpleWorkflow);
 
       expect(result.type).toBe('workflow');
@@ -217,7 +223,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
       const textResponse = { type: 'text', text: 'This workflow has no actions.' };
       mockPostResponse(JSON.stringify(textResponse));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       const result = await svc.getWorkflowEdit('describe this workflow', simpleWorkflow);
 
       expect(result.type).toBe('text');
@@ -227,7 +233,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should throw when API returns no response text', async () => {
       mockAxiosPost.mockResolvedValueOnce({ data: { properties: {} } });
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
 
       await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('No response received from copilot API');
     });
@@ -235,7 +241,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should throw when response data is null', async () => {
       mockAxiosPost.mockResolvedValueOnce({ data: null });
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
 
       await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('No response received from copilot API');
     });
@@ -244,7 +250,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
       const controller = new AbortController();
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', simpleWorkflow, controller.signal);
 
       const [, , config] = mockAxiosPost.mock.calls[0];
@@ -258,7 +264,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should resolve "Stateful" kind to "standard" SKU', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', { ...simpleWorkflow, kind: 'Stateful' });
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -268,7 +274,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should resolve "Stateless" kind to "standard" SKU', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', { ...simpleWorkflow, kind: 'Stateless' });
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -278,7 +284,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should resolve "stateful" (lowercase) kind to "standard" SKU', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', { ...simpleWorkflow, kind: 'stateful' });
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -288,7 +294,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should resolve undefined kind to "consumption" SKU', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', { ...simpleWorkflow, kind: undefined });
 
       const [, body] = mockAxiosPost.mock.calls[0];
@@ -298,7 +304,7 @@ describe('ArmCopilotWorkflowEditorService', () => {
     it('should resolve unknown kind to "consumption" SKU', async () => {
       mockPostResponse(JSON.stringify({ type: 'text', text: 'ok' }));
 
-      const svc = new ArmCopilotWorkflowEditorService(defaultOptions);
+      const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
       await svc.getWorkflowEdit('test', { ...simpleWorkflow, kind: 'SomeOtherKind' });
 
       const [, body] = mockAxiosPost.mock.calls[0];
