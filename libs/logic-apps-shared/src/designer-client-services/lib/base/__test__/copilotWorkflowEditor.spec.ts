@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { BaseCopilotWorkflowEditorService } from '../standardCopilotWorkflowEditor';
-import type { BaseCopilotWorkflowEditorServiceOptions } from '../standardCopilotWorkflowEditor';
+import { BaseCopilotWorkflowEditorService } from '../copilotWorkflowEditor';
+import type { BaseCopilotWorkflowEditorServiceOptions } from '../copilotWorkflowEditor';
 import type { Workflow } from '../../../../utils/src';
 
 // ---------------------------------------------------------------------------

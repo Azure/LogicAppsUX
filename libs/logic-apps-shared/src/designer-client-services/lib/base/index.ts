@@ -41,8 +41,8 @@ export * from './operations';
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
 // CopilotWorkflowEditor
-export { BaseCopilotWorkflowEditorService } from './standardCopilotWorkflowEditor';
-export type { BaseCopilotWorkflowEditorServiceOptions } from './standardCopilotWorkflowEditor';
+export { BaseCopilotWorkflowEditorService } from './copilotWorkflowEditor';
+export type { BaseCopilotWorkflowEditorServiceOptions } from './copilotWorkflowEditor';
 export { parseCopilotResponse } from './copilotWorkflowEditorParsing';
 export { COPILOT_WORKFLOW_TOOLS, executeCopilotTool } from './copilotWorkflowEditorTools';
 export type { CopilotToolDefinition } from './copilotWorkflowEditorTools';
