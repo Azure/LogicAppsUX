@@ -18,6 +18,7 @@ import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTa
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
+import { localize } from './localize';
 import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import { verifyLocalConnectionKeys } from './app/utils/appSettings/connectionKeys';
@@ -68,19 +69,62 @@ export async function activate(context: vscode.ExtensionContext) {
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', {
     resolveDebugConfiguration: async (folder, debugConfig) => {
+      const logDebugAttach = (message: string) => {
+        if (ext.outputChannel) {
+          ext.outputChannel.appendLog(message);
+        }
+      };
+
       if (!debugConfig.funcRuntime) {
         debugConfig.funcRuntime = 'coreclr';
       }
+
       const maxRetries = 3;
       const delayMs = 5000;
+      const debugConfigName = debugConfig.name ?? folder?.name ?? 'logic app';
+      logDebugAttach(
+        localize(
+          'resolveDebugConfigurationStart',
+          'Resolving logic app debug configuration "{0}" for workspace "{1}". funcRuntime={2}, customCodeRuntime={3}.',
+          debugConfigName,
+          folder?.uri.fsPath ?? 'unknown workspace',
+          debugConfig.funcRuntime,
+          debugConfig.customCodeRuntime ?? 'none'
+        )
+      );
+
       for (let i = 0; i < maxRetries; i++) {
         try {
           await vscode.commands.executeCommand(extensionCommand.debugLogicApp, debugConfig, folder);
+          logDebugAttach(
+            localize(
+              'resolveDebugConfigurationSucceeded',
+              'Logic app debug configuration "{0}" resolved on attempt {1}/{2}.',
+              debugConfigName,
+              i + 1,
+              maxRetries
+            )
+          );
           break;
         } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          logDebugAttach(
+            localize(
+              'resolveDebugConfigurationFailed',
+              'Logic app debug configuration "{0}" failed on attempt {1}/{2}. Error: {3}',
+              debugConfigName,
+              i + 1,
+              maxRetries,
+              errorMessage
+            )
+          );
           if (i === maxRetries - 1) {
             throw error;
           }
+
+          logDebugAttach(
+            localize('resolveDebugConfigurationRetry', 'Retrying logic app debug configuration "{0}" in {1} ms.', debugConfigName, delayMs)
+          );
         }
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       }

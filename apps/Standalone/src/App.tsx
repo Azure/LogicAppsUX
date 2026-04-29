@@ -6,6 +6,7 @@ import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
 import { store as configureTemplateStore } from './configuretemplate/state/Store';
 import { store as mcpStore } from './mcp/state/Store';
+import { store as knowledgeStore } from './knowledge/state/Store';
 import { store as cloneToStandardStore } from './clonetostandard/state/store';
 import { store as vscodeStore } from '../../vs-code-react/src/state/store';
 import { lazy, Suspense } from 'react';
@@ -21,6 +22,8 @@ export const App = () => {
       <Route path="/templates" element={<TemplatesStandalone />} />
       <Route path="/configuretemplate" element={<ConfigureTemplateStandalone />} />
       <Route path="/mcp" element={<McpStandalone />} />
+      <Route path="/knowledge" element={<KnowledgeHubStandalone />} />
+      <Route path="/mcpserver" element={<McpServerStandalone />} />
       <Route path="/clonetostandard" element={<CloneToStandard />} />
       <Route path="/vscode/*" element={<VSCodeStandalone />} />
       {/* Using path="*"" means "match anything", so this route
@@ -103,6 +106,24 @@ const McpStandalone = () => (
   </Provider>
 );
 const McpWrapperLazy = lazy(() => import('./mcp/app/McpShell').then((m) => ({ default: m.McpWrapper as any })));
+
+const McpServerStandalone = () => (
+  <Provider store={mcpStore}>
+    <Suspense fallback={null}>
+      <McpServerWrapperLazy />
+    </Suspense>
+  </Provider>
+);
+const McpServerWrapperLazy = lazy(() => import('./mcp/app/McpShell').then((m) => ({ default: m.McpServerWrapper as any })));
+
+const KnowledgeHubStandalone = () => (
+  <Provider store={knowledgeStore}>
+    <Suspense fallback={null}>
+      <KnowledgeHubWrapperLazy />
+    </Suspense>
+  </Provider>
+);
+const KnowledgeHubWrapperLazy = lazy(() => import('./knowledge/app/Shell').then((m) => ({ default: m.KnowledgeHubWrapper as any })));
 
 const CloneToStandard = () => (
   <Provider store={cloneToStandardStore}>

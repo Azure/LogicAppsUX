@@ -6892,7 +6892,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copilot chat canceled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Conversation Copilot annulée]]></Val>
+            <Val><![CDATA[Copilot Chat annulée]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

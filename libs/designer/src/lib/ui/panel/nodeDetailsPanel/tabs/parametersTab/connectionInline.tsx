@@ -8,13 +8,14 @@ import { useOperationManifest } from '../../../../../core/state/selectors/action
 import { useOperationInfo } from '../../../../../core';
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
 import { getAssistedConnectionProps } from '../../../../../core/utils/connectors/connections';
-import { customLengthGuid, equals, foundryServiceConnectionRegex, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { customLengthGuid, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { ParameterGroupKeys } from '../../../../../core/utils/parameters/helper';
+import { AgentUtils } from '../../../../../common/utilities/Utils';
 import { Button, Text } from '@fluentui/react-components';
 import type { CreatedConnectionPayload } from '../../../connectionsPanel/createConnection/createConnectionWrapper';
 import { CreateConnectionInternal } from '../../../connectionsPanel/createConnection/createConnectionInternal';
 import type { AppDispatch, RootState } from '../../../../../core';
 import { TeachingPopup } from '@microsoft/designer-ui';
-import { AgentUtils } from '../../../../../common/utilities/Utils';
 
 const agentFirstConnetionKey = 'agent-first-connection-teaching-popup';
 interface ConnectionInlineProps {
@@ -101,30 +102,26 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
     [dispatch, nodeIds]
   );
 
-  const subLabel = useMemo(() => {
-    const reference = isNullOrUndefined(selectedConnection)
-      ? undefined
-      : allReferenceKeys.find((key) => allReferences[key] && equals(allReferences[key].connection.id, selectedConnection?.id, true));
-    const agentModelType =
-      reference && foundryServiceConnectionRegex.test(allReferences[reference]?.resourceId ?? '')
-        ? AgentUtils.ModelType.FoundryService
-        : AgentUtils.ModelType.AzureOpenAI;
+  const agentModelTypeFromState = useSelector((state: RootState) => {
+    const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+    const defaultGroup = paramGroups?.[ParameterGroupKeys.DEFAULT];
+    const param = defaultGroup?.parameters?.find((p: any) => p.parameterKey === 'inputs.$.agentModelType');
+    return param?.value?.[0]?.value ?? '';
+  });
 
+  const agentModelTypeDisplayName = useMemo(() => {
+    return AgentUtils.ManifestToDisplayName[agentModelTypeFromState] ?? AgentUtils.ModelType.AzureOpenAI;
+  }, [agentModelTypeFromState]);
+
+  const subLabel = useMemo(() => {
     return (
       <Text style={{ fontSize: 12 }} id={noConnectionButtonId}>
         {isNullOrUndefined(selectedConnection)
           ? intlText.NO_CONNECTION_SELECTED
-          : `${intlText.CURRENT_CONNECTION}${selectedConnection.properties.displayName} (${agentModelType})`}
+          : `${intlText.CURRENT_CONNECTION}${selectedConnection.properties.displayName} (${agentModelTypeDisplayName})`}
       </Text>
     );
-  }, [
-    selectedConnection,
-    allReferenceKeys,
-    allReferences,
-    noConnectionButtonId,
-    intlText.NO_CONNECTION_SELECTED,
-    intlText.CURRENT_CONNECTION,
-  ]);
+  }, [selectedConnection, noConnectionButtonId, intlText.NO_CONNECTION_SELECTED, intlText.CURRENT_CONNECTION, agentModelTypeDisplayName]);
 
   if (subLabelOnly) {
     return subLabel;

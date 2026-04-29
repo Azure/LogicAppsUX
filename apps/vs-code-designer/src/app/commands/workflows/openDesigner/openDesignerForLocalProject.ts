@@ -116,10 +116,22 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await startDesignTimeApi(this.projectPath);
 
-    if (!ext.designTimeInstances.has(this.projectPath)) {
+    const designTimeInstance = ext.designTimeInstances.get(this.projectPath);
+    if (!designTimeInstance) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
     }
-    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+    if (designTimeInstance.startupError) {
+      throw new Error(
+        localize(
+          'designTimeStartupFailed',
+          'Design time failed to start for project {0}. {1}',
+          this.projectPath,
+          designTimeInstance.startupError
+        )
+      );
+    }
+
+    const designTimePort = designTimeInstance.port;
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
@@ -181,6 +193,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
+
+    // Show notification about designer version
+    this.showDesignerVersionNotification();
   }
 
   private async _handleWebviewMsg(msg: any) {
@@ -309,6 +324,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       }
       case ExtensionCommand.fileABug: {
         await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
+
+      case ExtensionCommand.getDesignerVersion: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.getDesignerVersion,
+          data: this.getDesignerVersion(),
+        });
         break;
       }
 

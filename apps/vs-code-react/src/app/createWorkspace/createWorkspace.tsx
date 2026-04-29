@@ -11,7 +11,7 @@ import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
-import { nameValidation } from './validation/helper';
+import { functionNameValidation, nameValidation, namespaceValidation } from './validation/helper';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 
@@ -47,6 +47,7 @@ export const CreateWorkspace: React.FC = () => {
     packageValidationResults,
     logicAppsWithoutCustomCode,
     separator,
+    isDevContainerProject,
   } = createWorkspaceState;
 
   // Set flow type when component mounts
@@ -267,8 +268,8 @@ export const CreateWorkspace: React.FC = () => {
           if (!functionFolderNameValid) {
             return false;
           }
-          const functionNamespaceValid = functionNamespace.trim() !== '' && nameValidation.test(functionNamespace.trim());
-          const functionNameValid = functionName.trim() !== '' && nameValidation.test(functionName.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
           if (!functionNamespaceValid || !functionNameValid) {
             return false;
@@ -340,8 +341,8 @@ export const CreateWorkspace: React.FC = () => {
             nameValidation.test(functionFolderName.trim()) &&
             !isNameAlreadyInWorkspace(functionFolderName.trim()) &&
             functionFolderName.trim().toLowerCase() !== logicAppName.trim().toLowerCase();
-          const functionNamespaceValid = functionNamespace.trim() !== '' && nameValidation.test(functionNamespace.trim());
-          const functionNameValid = functionName.trim() !== '' && nameValidation.test(functionName.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
           const functionFieldsValid = functionNamespaceValid && functionNameValid && functionFolderNameValid;
 
@@ -434,6 +435,7 @@ export const CreateWorkspace: React.FC = () => {
     const baseData = {
       workspaceProjectPath,
       workspaceName,
+      isDevContainerProject,
       projectType,
     };
 

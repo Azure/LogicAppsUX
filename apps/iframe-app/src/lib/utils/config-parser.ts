@@ -16,26 +16,6 @@ interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
 
-// This is a temporary workaround for identity providers until we have a proper way to configure them through server side
-const DEFAULT_IDENTITY_PROVIDERS: Record<string, IdentityProvider> = {
-  microsoft: {
-    signInEndpoint: '/.auth/login/aad',
-    name: 'Microsoft',
-  },
-  google: {
-    signInEndpoint: '/.auth/login/google',
-    name: 'Google',
-  },
-  facebook: {
-    signInEndpoint: '/.auth/login/facebook',
-    name: 'Facebook',
-  },
-  github: {
-    signInEndpoint: '/.auth/login/github',
-    name: 'GitHub',
-  },
-};
-
 const ALLOWED_PORTAL_AUTHORITIES = [
   'df.onecloud.azure-test.net',
   'portal.azure.com',
@@ -69,12 +49,50 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
   return { trustedParentOrigin: trustedAuthority };
 }
 
+const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
+
+/**
+ * Validates that an agent card URL uses HTTPS and points to a trusted Microsoft domain.
+ * Blocks arbitrary external URLs to prevent chat hijacking via agentCard parameter injection.
+ */
+function validateAgentCardUrl(url: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`Invalid agent card URL: ${url}`);
+  }
+
+  // Allow localhost only when the iframe itself is running locally (development)
+  const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
+    if (isLocalDevelopment) {
+      return url;
+    }
+    throw new Error('Agent card URLs pointing to localhost are only allowed during local development.');
+  }
+
+  if (parsed.protocol !== 'https:') {
+    throw new Error(`Agent card URL must use HTTPS protocol, got: ${parsed.protocol}`);
+  }
+
+  const isTrustedDomain = ALLOWED_AGENT_CARD_DOMAINS.some(
+    (domain) => parsed.hostname === domain.slice(1) || parsed.hostname.endsWith(domain)
+  );
+
+  if (!isTrustedDomain) {
+    throw new Error(`Agent card URL domain is not trusted: ${parsed.hostname}. Allowed domains: ${ALLOWED_AGENT_CARD_DOMAINS.join(', ')}`);
+  }
+
+  return url;
+}
+
 function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): string {
   // Support both 'agent' and 'agentCard' parameters
   const agentCard = dataset.agentCard || params.get('agentCard') || params.get('agent');
 
   if (agentCard) {
-    return agentCard;
+    return validateAgentCardUrl(agentCard);
   }
 
   // Transform current URL to agent card URL if we're in an iframe context
@@ -190,8 +208,8 @@ export function parseIframeConfig(): IframeConfig {
   // Get agent card URL
   const agentCard = extractAgentCardUrl(params, dataset);
 
-  // Get API key
-  const apiKey = params.get('apiKey') || dataset.apiKey;
+  // Get API key (case-insensitive for URL normalization by servers)
+  const apiKey = params.get('apiKey') || params.get('apikey') || dataset.apiKey;
 
   // Get OBO user token
   const oboUserToken = params.get('oboUserToken') || dataset.oboUserToken;
@@ -228,7 +246,7 @@ export function parseIframeConfig(): IframeConfig {
     welcomeMessage: brandSubtitle || dataset.welcomeMessage || params.get('welcomeMessage') || undefined,
     metadata: parseMetadata(params, dataset),
     apiKey: apiKey || undefined,
-    identityProviders: window.IDENTITY_PROVIDERS || DEFAULT_IDENTITY_PROVIDERS || undefined,
+    identityProviders: parseIdentityProviders(),
     oboUserToken: oboUserToken || undefined,
     ...fileUploadConfig,
   };
@@ -255,20 +273,34 @@ export function parseIframeConfig(): IframeConfig {
   };
 }
 
-// Create storage configuration for server-side chat history
-// Extract base agent URL (remove .well-known/agent-card.json if present)
-export const getAgentBaseUrl = (cardUrl: string | undefined): string => {
-  if (!cardUrl) {
-    return '';
-  }
-  // Remove .well-known/agent-card.json from the URL, preserving query params and hash fragments
-  return cardUrl.replace(/\/\.well-known\/agent-card\.json(?=\?|#|$)/, '');
-};
-
 // Declare global type for TypeScript
 declare global {
   interface Window {
     LOGGED_IN_USER_NAME?: string;
-    IDENTITY_PROVIDERS?: Record<string, IdentityProvider>;
+    IDENTITY_PROVIDERS?: string;
   }
+}
+
+/**
+ * Parses the IDENTITY_PROVIDERS global variable from a JSON string.
+ * @returns The parsed identity providers or undefined if invalid/not set
+ */
+export function parseIdentityProviders(): Record<string, IdentityProvider> | undefined {
+  const identityProviders = window.IDENTITY_PROVIDERS;
+
+  if (!identityProviders) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(identityProviders);
+    // Arrays are objects but not valid Record<string, IdentityProvider> format
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+      return parsed as Record<string, IdentityProvider>;
+    }
+  } catch (e) {
+    console.error('Failed to parse IDENTITY_PROVIDERS:', e);
+  }
+
+  return undefined;
 }

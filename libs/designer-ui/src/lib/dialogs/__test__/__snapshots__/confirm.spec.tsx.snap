@@ -1,34 +1,66 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`ui/dialogs/_confirm > should render 1`] = `
-<Dialog
-  dialogContentProps={
-    {
-      "title": "Title",
-    }
-  }
-  hidden={false}
-  modalProps={
-    {
-      "firstFocusableSelector": "dialog-ok-button",
-      "isBlocking": true,
-    }
-  }
-  onDismiss={[MockFunction spy]}
+<body
+  data-tabster="{"root":{}}"
 >
-  Message
-  <StyledDialogFooterBase>
-    <CustomizedPrimaryButton
-      className="dialog-ok-button"
-      onClick={[MockFunction spy]}
+  <div>
+    <span
+      hidden=""
+    />
+  </div>
+  <div
+    class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+    data-portal-node="true"
+    dir="ltr"
+  >
+    <div
+      aria-hidden="true"
+      class="fui-DialogSurface__backdrop r1e18s3l"
+    />
+    <div
+      aria-labelledby="dialog-title-r1"
+      aria-modal="true"
+      class="fui-DialogSurface r1u3t6p6"
+      data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r0","isOthersAccessible":false,"isTrapped":true}}"
+      role="alertdialog"
+      tabindex="-1"
     >
-      OK
-    </CustomizedPrimaryButton>
-    <CustomizedDefaultButton
-      onClick={[MockFunction spy]}
-    >
-      Cancel
-    </CustomizedDefaultButton>
-  </StyledDialogFooterBase>
-</Dialog>
+      <div
+        class="fui-DialogBody rhwx3p8"
+      >
+        <h2
+          class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
+          id="dialog-title-r1"
+        >
+          Title
+        </h2>
+        <div
+          class="fui-DialogContent r1v5zwsm"
+        >
+          Message
+        </div>
+        <div
+          class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
+        >
+          <button
+            class="fui-Button r1alrhcs"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
+            type="button"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+    <span
+      hidden=""
+    />
+  </div>
+</body>
 `;

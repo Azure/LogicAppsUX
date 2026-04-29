@@ -19,6 +19,8 @@ describe('bjsworkflow initialize', () => {
         getOperationInfo: () => Promise.resolve({} as any),
         getOperationManifest: () => Promise.resolve({} as any),
         getOperation: () => Promise.resolve({} as any),
+        isBuiltInConnector: () => false,
+        getBuiltInConnector: () => ({}) as any,
       };
       InitOperationManifestService(operationManifestService);
     });
@@ -202,6 +204,114 @@ describe('bjsworkflow initialize', () => {
       expect(allowedToolsParam?.editor).toBe('combobox');
       expect(allowedToolsParam?.editorOptions?.multiSelect).toBe(true);
       expect(allowedToolsParam?.editorOptions?.serialization).toEqual({ valueType: 'array' });
+    });
+  });
+
+  describe('updateParameterConditionalVisibilityAndRefreshOutputs', () => {
+    let mockDispatch: Mock;
+    let mockGetState: Mock;
+
+    beforeEach(() => {
+      mockDispatch = vi.fn();
+      mockGetState = vi.fn();
+    });
+
+    test('should execute thunk successfully with valid payload', async () => {
+      const mockInputParameters = {
+        'test-node': {
+          parameterGroups: {
+            'test-group': {
+              parameters: [
+                {
+                  id: 'test-param',
+                  parameterName: 'test-param',
+                  value: [{ value: 'test-value' }],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      mockGetState.mockReturnValue({
+        operations: {
+          inputParameters: mockInputParameters,
+        },
+      });
+
+      const payload = {
+        nodeId: 'test-node',
+        groupId: 'test-group',
+        parameterId: 'test-param',
+        value: true,
+        operationInfo: { type: 'Agent', kind: 'test', connectorId: 'test-connector', operationId: 'test-operation' },
+        isTrigger: false,
+      };
+
+      const thunk = initialize.updateParameterConditionalVisibilityAndRefreshOutputs(payload);
+      await expect(thunk(mockDispatch, mockGetState, undefined)).resolves.not.toThrow();
+    });
+
+    test('should handle missing input parameters gracefully', async () => {
+      mockGetState.mockReturnValue({
+        operations: {
+          inputParameters: {},
+        },
+      });
+
+      const payload = {
+        nodeId: 'missing-node',
+        groupId: 'default',
+        parameterId: 'test-param',
+        value: true,
+        operationInfo: { type: 'Compose', kind: 'test', connectorId: 'test-connector', operationId: 'test-operation' },
+        isTrigger: false,
+      };
+
+      const thunk = initialize.updateParameterConditionalVisibilityAndRefreshOutputs(payload);
+
+      // Should not throw when input parameters are missing
+      await expect(thunk(mockDispatch, mockGetState, undefined)).resolves.not.toThrow();
+      expect(mockGetState).toHaveBeenCalled();
+    });
+
+    test('should dispatch parameter visibility update for Agent operations', async () => {
+      const mockInputParameters = {
+        'agent-node': {
+          parameterGroups: {
+            default: {
+              parameters: [
+                {
+                  id: 'test-param',
+                  parameterName: 'agentModelSettings.agentChatCompletionSettings.responseFormat.type',
+                  value: [{ value: 'json_schema' }],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      mockGetState.mockReturnValue({
+        operations: {
+          inputParameters: mockInputParameters,
+        },
+      });
+
+      const payload = {
+        nodeId: 'agent-node',
+        groupId: 'default',
+        parameterId: 'test-param',
+        value: true,
+        operationInfo: { type: 'Agent', kind: 'test', connectorId: 'agent-connector', operationId: 'agent-operation' },
+        isTrigger: false,
+      };
+
+      const thunk = initialize.updateParameterConditionalVisibilityAndRefreshOutputs(payload);
+      await thunk(mockDispatch, mockGetState, undefined);
+
+      expect(mockDispatch).toHaveBeenCalled();
+      expect(mockGetState).toHaveBeenCalled();
     });
   });
 });

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { DebugConfiguration } from 'vscode';
 import { debugSymbolDll, extensionBundleId, extensionCommand } from '../../constants';
 
@@ -15,6 +15,19 @@ export async function getDebugSymbolDll(): Promise<string> {
   const bundleVersionNumber = await getBundleVersionNumber();
 
   return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
+}
+
+export function getCustomCodeRuntime(targetFramework: TargetFramework): 'coreclr' | 'clr' {
+  return targetFramework === TargetFramework.NetFx ? 'clr' : 'coreclr';
+}
+
+/**
+ * Determines whether the given project type and target framework use the modern
+ * LogicAppFolderToPublish csproj property (as opposed to the legacy LogicAppFolder).
+ * Modern .NET frameworks (Net8, Net10, etc.) use LogicAppFolderToPublish for custom code projects.
+ */
+export function usesPublishFolderProperty(projectType: ProjectType, targetFramework: TargetFramework): boolean {
+  return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;
 }
 
 /**
@@ -38,7 +51,7 @@ export const getDebugConfiguration = (
       type: 'logicapp',
       request: 'launch',
       funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+      customCodeRuntime: getCustomCodeRuntime(customCodeTargetFramework),
       isCodeless: true,
     };
   }

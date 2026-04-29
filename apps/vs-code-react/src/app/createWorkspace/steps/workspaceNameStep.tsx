@@ -259,6 +259,7 @@ export const WorkspaceNameStep: React.FC = () => {
           )}
         </Field>
       </div>
+      {/* DevContainer toggle hidden — feature not ready to ship. Re-enable when ready. */}
     </div>
   );
 };

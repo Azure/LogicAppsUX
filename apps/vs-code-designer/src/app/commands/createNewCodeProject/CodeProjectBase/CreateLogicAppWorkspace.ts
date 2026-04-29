@@ -1,10 +1,10 @@
 import {
   appKindSetting,
   artifactsDirectory,
-  assetsFolderName,
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
   defaultVersionRange,
+  devContainerFolderName,
   extensionBundleId,
   extensionCommand,
   funcIgnoreFileName,
@@ -24,12 +24,12 @@ import {
   vscodeFolderName,
   workerRuntimeKey,
   workflowFileName,
-  workspaceTemplatesFolderName,
   type WorkflowType,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
+import { getRuleSetTemplatePath, getWorkspaceTemplatePath } from '../../../utils/assets';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
@@ -47,21 +47,20 @@ import type {
   StandardApp,
 } from '@microsoft/vscode-extension-logic-apps';
 import { WorkerRuntime, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
+import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
-import { isLogicAppProject } from '../../../utils/verifyIsProject';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
     // SampleRuleSet.xml
-    const sampleRuleSetPath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'SampleRuleSet');
+    const sampleRuleSetPath = getRuleSetTemplatePath('SampleRuleSet');
     const sampleRuleSetXMLPath = path.join(context.projectPath, artifactsDirectory, rulesDirectory, 'SampleRuleSet.xml');
     const sampleRuleSetXMLContent = await fse.readFile(sampleRuleSetPath, 'utf-8');
     const sampleRuleSetXMLFileContent = sampleRuleSetXMLContent.replace(/<%= methodName %>/g, context.functionAppName);
     await fse.writeFile(sampleRuleSetXMLPath, sampleRuleSetXMLFileContent);
 
     // SchemaUser.xsd
-    const schemaUserPath = path.join(__dirname, assetsFolderName, 'RuleSetProjectTemplate', 'SchemaUser');
+    const schemaUserPath = getRuleSetTemplatePath('SchemaUser');
     const schemaUserXSDPath = path.join(context.projectPath, artifactsDirectory, schemasDirectory, 'SchemaUser.xsd');
     const schemaUserXSDContent = await fse.readFile(schemaUserPath, 'utf-8');
     await fse.writeFile(schemaUserXSDPath, schemaUserXSDContent);
@@ -150,7 +149,7 @@ export async function createLocalConfigurationFiles(
 
   const gitignorePath = path.join(logicAppFolderPath, gitignoreFileName);
   const gitIgnoreFile = 'GitIgnoreFile';
-  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, gitIgnoreFile);
+  const templatePath = getWorkspaceTemplatePath(gitIgnoreFile);
   await fse.copyFile(templatePath, gitignorePath);
 
   const funcIgnorePath: string = path.join(logicAppFolderPath, funcIgnoreFileName);
@@ -170,6 +169,11 @@ export async function createWorkspaceStructure(myWebviewProjectContext: IWebview
   // push functions folder
   if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
     workspaceFolders.push({ name: myWebviewProjectContext.functionFolderName, path: `./${myWebviewProjectContext.functionFolderName}` });
+  }
+
+  // Add .devcontainer folder for devcontainer projects
+  if (myWebviewProjectContext.isDevContainerProject) {
+    workspaceFolders.push({ name: devContainerFolderName, path: devContainerFolderName });
   }
 
   const workspaceData = {
@@ -241,6 +245,8 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   // .vscode folder
   await createLogicAppVsCodeContents(myWebviewProjectContext, logicAppFolderPath);
 
+  await createDevContainerContents(myWebviewProjectContext, workspaceFolder);
+
   await createLocalConfigurationFiles(myWebviewProjectContext, logicAppFolderPath);
 
   if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
@@ -263,71 +269,4 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   }
 
   await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
-}
-
-export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
-  addLocalFuncTelemetry(context);
-
-  const myWebviewProjectContext: IWebviewProjectContext = options;
-  // Create the workspace folder
-  const workspaceFolder = workspaceRootFolder;
-  // Path to the logic app folder
-  const logicAppFolderPath = path.join(workspaceFolder, myWebviewProjectContext.logicAppName);
-
-  // Check if the logic app directory already exists
-  const logicAppExists = await fse.pathExists(logicAppFolderPath);
-  let doesLogicAppExist = false;
-  if (logicAppExists) {
-    // Check if it's actually a Logic App project
-    doesLogicAppExist = await isLogicAppProject(logicAppFolderPath);
-  }
-
-  // Check if we're in a workspace and get the workspace folder
-  if (vscode.workspace.workspaceFile) {
-    // Get the directory containing the .code-workspace file
-    const workspaceFilePath = vscode.workspace.workspaceFile.fsPath;
-    myWebviewProjectContext.workspaceFilePath = workspaceFilePath;
-    myWebviewProjectContext.shouldCreateLogicAppProject = !doesLogicAppExist;
-    // need to get logic app in projects
-    await updateWorkspaceFile(myWebviewProjectContext);
-  } else {
-    // Fall back to the newly created workspace folder if not in a workspace
-    vscode.window.showErrorMessage(
-      localize('notInWorkspace', 'Please open an existing logic app workspace before trying to add a new logic app project.')
-    );
-    return;
-  }
-
-  const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
-  mySubContext.logicAppName = options.logicAppName;
-  mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
-  mySubContext.functionFolderName = options.functionFolderName;
-  mySubContext.functionAppName = options.functionName;
-  mySubContext.functionAppNamespace = options.functionNamespace;
-  mySubContext.targetFramework = options.targetFramework;
-  mySubContext.workspacePath = workspaceFolder;
-
-  if (!doesLogicAppExist) {
-    await createLogicAppAndWorkflow(myWebviewProjectContext, logicAppFolderPath);
-
-    // .vscode folder
-    await createLogicAppVsCodeContents(myWebviewProjectContext, logicAppFolderPath);
-
-    await createLocalConfigurationFiles(myWebviewProjectContext, logicAppFolderPath);
-
-    if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
-      await gitInit(workspaceFolder);
-    }
-
-    await createArtifactsFolder(mySubContext);
-    await createRulesFiles(mySubContext);
-    await createLibFolder(mySubContext);
-  }
-
-  if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
-    const createFunctionAppFilesStep = new CreateFunctionAppFiles();
-    await createFunctionAppFilesStep.setup(mySubContext);
-  }
-  vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }

@@ -18,7 +18,7 @@ describe('config-parser - contextId support', () => {
   });
 
   it('should parse contextId from URL parameters', () => {
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-123');
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json&contextId=ctx-123');
 
     const config = parseIframeConfig();
 
@@ -26,7 +26,7 @@ describe('config-parser - contextId support', () => {
   });
 
   it('should parse contextId from data attributes', () => {
-    document.documentElement.dataset.agentCard = 'test';
+    document.documentElement.dataset.agentCard = 'https://localhost:3000/agent-card.json';
     document.documentElement.dataset.contextId = 'ctx-456';
 
     const config = parseIframeConfig();
@@ -35,7 +35,7 @@ describe('config-parser - contextId support', () => {
   });
 
   it('should prefer URL parameter over data attribute for contextId', () => {
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-url');
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json&contextId=ctx-url');
     document.documentElement.dataset.contextId = 'ctx-data';
 
     const config = parseIframeConfig();
@@ -44,7 +44,7 @@ describe('config-parser - contextId support', () => {
   });
 
   it('should return undefined when no contextId is provided', () => {
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test');
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json');
 
     const config = parseIframeConfig();
 
@@ -54,7 +54,7 @@ describe('config-parser - contextId support', () => {
   it('should handle contextId without logging', () => {
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-789');
+    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json&contextId=ctx-789');
 
     const config = parseIframeConfig();
 
@@ -68,7 +68,9 @@ describe('config-parser - contextId support', () => {
 
   it('should handle contextId with special characters', () => {
     const contextId = 'ctx_123-456.789~abc';
-    (window as any).location = new URL(`http://localhost:3000/iframe?agentCard=test&contextId=${encodeURIComponent(contextId)}`);
+    (window as any).location = new URL(
+      `http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json&contextId=${encodeURIComponent(contextId)}`
+    );
 
     const config = parseIframeConfig();
 
@@ -77,7 +79,9 @@ describe('config-parser - contextId support', () => {
 
   it('should work with both single and multi-session modes', () => {
     // Single session with contextId
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-single&singleSession=true');
+    (window as any).location = new URL(
+      'http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json&contextId=ctx-single&singleSession=true'
+    );
 
     let config = parseIframeConfig();
 
@@ -85,7 +89,9 @@ describe('config-parser - contextId support', () => {
     expect(config.multiSession).toBe(false);
 
     // Multi-session with contextId (contextId will be available but not used)
-    (window as any).location = new URL('http://localhost:3000/iframe?agentCard=test&contextId=ctx-multi&singleSession=false');
+    (window as any).location = new URL(
+      'http://localhost:3000/iframe?agentCard=https://localhost:3000/agent-card.json&contextId=ctx-multi&singleSession=false'
+    );
 
     config = parseIframeConfig();
 

@@ -20,6 +20,7 @@ import { IframeWrapper } from '../components/IframeWrapper';
 import { ErrorDisplay } from '../components/ErrorDisplay';
 import { parseIframeConfig, type IframeConfig } from './utils/config-parser';
 import '../styles/base.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Main application component that uses the configuration
 function App() {
@@ -33,6 +34,8 @@ function App() {
       return null;
     }
   }, []);
+
+  const queryClient = useMemo(() => new QueryClient(), []);
 
   if (error) {
     return (
@@ -53,7 +56,9 @@ function App() {
 
   return (
     <div style={{ height: '100vh' }}>
-      <IframeWrapper config={config} />
+      <QueryClientProvider client={queryClient}>
+        <IframeWrapper config={config} />
+      </QueryClientProvider>
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import constants from '../../../common/constants';
 import type { NodeOperation } from '../../../core/state/operation/operationMetadataSlice';
 import type { NodesMetadata } from '../../../core/state/workflow/workflowInterfaces';
+import type { RootState } from '../../../core/store';
 import { getAllParentsForNode } from '../../../core/utils/graph';
 import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { useSelector } from 'react-redux';
 
 /**
  * Gets number of loops for loop nodes.
@@ -69,4 +71,17 @@ export const getRepetitionName = (
  */
 export const getScopeRepetitionName = (index: number | undefined): string => {
   return String(index).padStart(6, '0');
+};
+
+/**
+ * Hook that computes the repetition name inside a selector.
+ * Returns a string primitive, so useSelector's default === comparison
+ * prevents re-renders when the name hasn't actually changed.
+ */
+export const useRepetitionName = (
+  parentRunIndex: number | undefined,
+  nodeId: string,
+  operationsInfo: Record<string, NodeOperation>
+): string => {
+  return useSelector((state: RootState) => getRepetitionName(parentRunIndex, nodeId, state.workflow.nodesMetadata, operationsInfo));
 };

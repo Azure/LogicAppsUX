@@ -19,7 +19,9 @@ export const TemplatesPanelHeader = ({ title, onBackClick, children, rightAction
       <div className={styles.titleSection}>
         <div className={styles.titleWrapper}>
           <div className={styles.titleRow}>
-            <Text className={styles.title}>{title}</Text>
+            <Text className={styles.title} as="h2">
+              {title}
+            </Text>
             {rightAction && <div className={styles.rightActionWrapper}>{rightAction}</div>}
           </div>
           {onBackClick && (

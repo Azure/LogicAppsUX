@@ -60,7 +60,7 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'WEBSITE_NODE_DEFAULT_VERSION'
-          value: '~18'
+          value: '~20'
         }
         {
           name: 'AzureWebJobsStorage'

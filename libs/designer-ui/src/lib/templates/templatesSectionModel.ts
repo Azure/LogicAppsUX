@@ -37,6 +37,7 @@ interface BaseTextInputFieldItem extends BaseFieldItem {
 
 interface TextFieldItem extends BaseTextInputFieldItem {
   type: 'textfield';
+  isSecret?: boolean;
   onChange: (value: string) => void;
   contentAfter?: Slot<'span'>;
 }
@@ -56,6 +57,7 @@ interface DropdownItem extends BaseTextInputFieldItem {
   onOptionSelect: (selectedOptions: string[]) => void;
   selectedOptions: string[];
   multiselect?: boolean;
+  controlled?: boolean;
 }
 
 interface RadioGroupItem extends BaseFieldItem {
@@ -93,6 +95,7 @@ interface BaseTemplatesSectionProps {
     href: string;
   };
   cssOverrides?: Record<string, string>;
+  onRenderInfoBar?: () => React.ReactNode;
 }
 
 interface ContentBasedProps extends BaseTemplatesSectionProps {

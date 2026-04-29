@@ -16,7 +16,6 @@ import * as path from 'path';
 import * as fse from 'fs-extra';
 import { isCSharpProject } from './detectProjectLanguage';
 import {
-  assetsFolderName,
   azureWebJobsStorageKey,
   connectionsFileName,
   funcIgnoreFileName,
@@ -34,6 +33,7 @@ import { getGlobalSetting } from './vsCodeConfig/settings';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { getContainingWorkspace } from './workspace';
+import { getExtensionAssetPath } from './extensionAssets';
 import AdmZip from 'adm-zip';
 
 interface ICachedTextDocument {
@@ -332,7 +332,7 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
     });
 
     // Create README.md file
-    const readMePath = path.join(__dirname, assetsFolderName, 'readmes', 'importReadMe.md');
+    const readMePath = getExtensionAssetPath('readmes', 'importReadMe.md');
     const readMeContent = fse.readFileSync(readMePath, 'utf8');
     fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
   } catch (error) {

@@ -13,6 +13,7 @@ import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/d
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
+import { useMcpServersQuery } from '../../../core/queries/browse';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -43,6 +44,9 @@ export const SearchView: FC<SearchViewProps> = ({
   const enableNestedAgentLoops = useEnableNestedAgentLoops();
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const { data: mcpServersData } = useMcpServersQuery();
+  const mcpServers = useMemo(() => mcpServersData?.data ?? [], [mcpServersData?.data]);
 
   const [searchResults, setSearchResults] = useState<DiscoveryOpArray>([]);
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
@@ -134,14 +138,15 @@ export const SearchView: FC<SearchViewProps> = ({
 
   useDebouncedEffect(
     () => {
-      const searchResultsPromise = new DefaultSearchOperationsService(allOperations).searchOperations(searchTerm, filterAgenticLoops);
+      const operations = isAgentTool ? [...allOperations, ...mcpServers] : allOperations;
+      const searchResultsPromise = new DefaultSearchOperationsService(operations).searchOperations(searchTerm, filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filterAgenticLoops],
+    [searchTerm, allOperations, filterAgenticLoops, isAgentTool, mcpServers],
     200
   );
 

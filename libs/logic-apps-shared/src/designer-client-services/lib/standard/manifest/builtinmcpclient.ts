@@ -26,21 +26,20 @@ export default {
             type: 'string',
           },
           title: 'Allowed tools',
-          // 'x-ms-editor-options': {
-          //   multiSelect: true,
-          //   titleSeparator: ',',
-          //   serialization: {
-          //     valueType: 'array'
-          //   }
-          // },
-          // 'x-ms-dynamic-list': {
-          //   dynamicState: {
-          //     operationId: 'gettools',
-          //   },
-          //   parameters: {},
-          //   itemPath: '',
-          //   itemValuePath: 'Name',
-          // },
+          'x-ms-editor': 'combobox',
+          'x-ms-editor-options': {
+            multiSelect: true,
+            titleSeparator: ',',
+            serialization: {
+              valueType: 'array',
+            },
+          },
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              apiType: 'mcp',
+              operationId: 'listMcpTools',
+            },
+          },
         },
       },
     },

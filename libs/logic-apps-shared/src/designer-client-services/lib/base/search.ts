@@ -8,7 +8,7 @@ import type {
   DiscoveryWorkflowTrigger,
   BuiltInOperation,
 } from '../../../utils/src';
-import { ArgumentException, equals, isCustomConnectorId, normalizeConnectorIds } from '../../../utils/src';
+import { ArgumentException, equals, normalizeConnectorIds } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -341,6 +341,14 @@ export abstract class BaseSearchService implements ISearchService {
 
   public async getRequestWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
     return this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
+  }
+
+  public async getAgentWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
+    const requestWorkflows = await this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
+    return requestWorkflows.filter((workflow: any) => {
+      const triggers = workflow.properties?.definition?.triggers ?? {};
+      return Object.values(triggers).some((trigger: any) => trigger.kind?.toLowerCase() === 'agent');
+    });
   }
 
   public async getBatchWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {

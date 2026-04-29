@@ -37,6 +37,9 @@ type FuncInstance = {
   childFuncPid?: string;
   port?: number;
   isStarting?: boolean;
+  startupError?: string;
+  startupPromise?: Promise<void>;
+  validationRetryCount?: number;
 };
 
 // biome-ignore lint/style/noNamespace:

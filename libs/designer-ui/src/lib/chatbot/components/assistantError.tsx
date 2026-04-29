@@ -1,8 +1,8 @@
 import { useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
+import type { ChatBubbleAction } from './chatBubble';
 import { ChatBubble } from './chatBubble';
 import type { AssistantErrorItem } from './conversationItem';
 import { TechnicalErrorMessage } from './technicalErrorMessage';
-import type { IButtonProps } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 type AssistantErrorProps = {
@@ -41,7 +41,7 @@ export const AssistantError = ({ item }: AssistantErrorProps) => {
     }),
   };
 
-  const additionalFooterActions: IButtonProps[] | undefined = [];
+  const additionalFooterActions: ChatBubbleAction[] = [];
   additionalFooterActions.push(reportBugButton);
 
   return (

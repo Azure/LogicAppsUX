@@ -9,16 +9,16 @@ export const agentMcpWorkflowDefinitionInput = {
   contentVersion: '1.0.0.0',
   parameters: {},
   triggers: {
-    'manual': {
+    manual: {
       type: 'Request',
       kind: 'Http',
       inputs: {
-        schema: {}
-      }
-    }
+        schema: {},
+      },
+    },
   },
   actions: {
-    'WorkflowAgent': {
+    WorkflowAgent: {
       type: 'Agent',
       inputs: {
         parameters: {
@@ -26,45 +26,45 @@ export const agentMcpWorkflowDefinitionInput = {
           messages: [
             {
               role: 'System',
-              content: 'You are a helpful assistant that can use tools to accomplish tasks.'
+              content: 'You are a helpful assistant that can use tools to accomplish tasks.',
             },
             {
               role: 'User',
-              content: 'Help me manage files and data.'
-            }
-          ]
-        }
+              content: 'Help me manage files and data.',
+            },
+          ],
+        },
       },
       tools: {
-        'McpFileServer': {
-            type: 'McpClientTool',
-            kind: 'BuiltIn',
-            inputs: {
-                parameters: {
-                    mcpServerPath: '/servers/filesystem',
-                    toolName: 'list_files',
-                }
-            }
-        }
+        McpFileServer: {
+          type: 'McpClientTool',
+          kind: 'BuiltIn',
+          inputs: {
+            parameters: {
+              mcpServerPath: '/servers/filesystem',
+              toolName: 'list_files',
+            },
+          },
+        },
       },
       runAfter: {},
       limit: {
         timeout: 'PT2H',
-        count: 50
-      }
+        count: 50,
+      },
     },
-    'ResponseAction': {
+    ResponseAction: {
       type: 'Response',
       inputs: {
         statusCode: 200,
-        body: '@outputs("WorkflowAgent")'
+        body: '@outputs("WorkflowAgent")',
       },
       runAfter: {
-        'WorkflowAgent': ['SUCCEEDED']
-      }
-    }
+        WorkflowAgent: ['SUCCEEDED'],
+      },
+    },
   },
-  outputs: {}
+  outputs: {},
 };
 
 export const expectedAgentMcpWorkflowDefinitionOutput = {
@@ -92,16 +92,16 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
             children: [
               {
                 height: 40,
-                id: "WorkflowAgent-addCase-#subgraph",
-                type: "SUBGRAPH_CARD_NODE",
+                id: 'WorkflowAgent-addCase-#subgraph',
+                type: 'SUBGRAPH_CARD_NODE',
                 width: 200,
               },
             ],
             edges: [],
-            id: "WorkflowAgent-addCase",
+            id: 'WorkflowAgent-addCase',
             subGraphLocation: undefined,
-            type: "HIDDEN_NODE",
-        },
+            type: 'HIDDEN_NODE',
+          },
         ],
         edges: [
           {
@@ -124,15 +124,12 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
       },
       createWorkflowNode('ResponseAction'),
     ],
-    edges: [
-      createWorkflowEdge('manual', 'WorkflowAgent'),
-      createWorkflowEdge('WorkflowAgent', 'ResponseAction'),
-    ],
+    edges: [createWorkflowEdge('manual', 'WorkflowAgent'), createWorkflowEdge('WorkflowAgent', 'ResponseAction')],
   },
   actionData: {
     manual: {
       inputs: {
-        schema: {}
+        schema: {},
       },
       kind: 'Http',
       type: 'Request',
@@ -144,30 +141,30 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
           messages: [
             {
               role: 'System',
-              content: 'You are a helpful assistant that can use tools to accomplish tasks.'
+              content: 'You are a helpful assistant that can use tools to accomplish tasks.',
             },
             {
               role: 'User',
-              content: 'Help me manage files and data.'
-            }
-          ]
-        }
+              content: 'Help me manage files and data.',
+            },
+          ],
+        },
       },
       tools: {
-        'McpFileServer': {
-            type: 'McpClientTool',
-            kind: 'BuiltIn',
-            inputs: {
-                parameters: {
-                    mcpServerPath: '/servers/filesystem',
-                    toolName: 'list_files',
-                }
-            }
-        }
+        McpFileServer: {
+          type: 'McpClientTool',
+          kind: 'BuiltIn',
+          inputs: {
+            parameters: {
+              mcpServerPath: '/servers/filesystem',
+              toolName: 'list_files',
+            },
+          },
+        },
       },
       limit: {
         timeout: 'PT2H',
-        count: 50
+        count: 50,
       },
       runAfter: {},
       type: 'Agent',
@@ -175,27 +172,27 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
     ResponseAction: {
       inputs: {
         statusCode: 200,
-        body: '@outputs("WorkflowAgent")'
+        body: '@outputs("WorkflowAgent")',
       },
       runAfter: {
-        'WorkflowAgent': ['SUCCEEDED']
+        WorkflowAgent: ['SUCCEEDED'],
       },
       type: 'Response',
     },
     McpFileServer: {
-        type: 'McpClientTool',
-        kind: 'BuiltIn',
-        inputs: {
-            parameters: {
-                mcpServerPath: '/servers/filesystem',
-                toolName: 'list_files',
-            }
-        }
+      type: 'McpClientTool',
+      kind: 'BuiltIn',
+      inputs: {
+        parameters: {
+          mcpServerPath: '/servers/filesystem',
+          toolName: 'list_files',
+        },
+      },
     },
   },
   nodesMetadata: {
     manual: { graphId: 'root', isRoot: true, isTrigger: true },
-    WorkflowAgent: { 
+    WorkflowAgent: {
       graphId: 'root',
       actionCount: 1,
       parentNodeId: undefined,
@@ -204,13 +201,13 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
     McpFileServer: {
       graphId: 'WorkflowAgent',
       parentNodeId: 'WorkflowAgent',
-      subgraphType: "MCP_CLIENT",
+      subgraphType: 'MCP_CLIENT',
     },
     'WorkflowAgent-addCase': {
-       actionCount: 0,
-       graphId: 'WorkflowAgent',
-       parentNodeId: 'WorkflowAgent',
-       subgraphType: 'AGENT_ADD_CONDITON',
+      actionCount: 0,
+      graphId: 'WorkflowAgent',
+      parentNodeId: 'WorkflowAgent',
+      subgraphType: 'AGENT_ADD_CONDITON',
     },
   },
 };

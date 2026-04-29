@@ -18,6 +18,7 @@ export const ExtensionCommand = {
   export_package: 'export-package',
   getFunctionDisplayExpanded: 'getFunctionDisplayExpanded',
   getDataMapperVersion: 'getDataMapperVersion',
+  getDesignerVersion: 'getDesignerVersion',
   add_status: 'add-status',
   saveDataMapDefinition: 'saveDataMapDefinition',
   saveDataMapMetadata: 'saveDataMapMetadata',

@@ -7,7 +7,7 @@ export default defineProject({
   test: {
     name: packageJson.name,
     environment: 'happy-dom',
-    setupFiles: ['test-setup.ts'],
+    setupFiles: ['test-setup.ts', '../shared-test-utils/fluentui-react-icons-mock.ts'],
     globalSetup: './test-globals.ts',
     root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],

@@ -53,6 +53,7 @@ export interface AzureConnectorDetails {
   tenantId?: string;
   clientId?: string;
   workflowManagementBaseUrl?: string;
+  defaultHostName?: string;
 }
 
 export interface WorkflowParameter {
@@ -122,5 +123,6 @@ export type MismatchBehavior = (typeof MismatchBehavior)[keyof typeof MismatchBe
 export const TargetFramework = {
   NetFx: 'net472',
   Net8: 'net8',
+  Net10: 'net10.0',
 } as const;
 export type TargetFramework = (typeof TargetFramework)[keyof typeof TargetFramework];

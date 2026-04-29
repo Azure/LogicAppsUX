@@ -61,11 +61,12 @@ export const getListHeight = (isSingleColumn: boolean): number => (isSingleColum
 
 export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => {
   const { id, properties } = operation;
-  const { summary: title, description, api, trigger, annotation, capabilities } = properties;
+  const { summary: title, description, api, trigger, annotation, capabilities, operationType } = properties;
+  const isMcpClientTool = operationType === 'McpClientTool';
 
   return {
     id,
-    title,
+    title: title + (isMcpClientTool ? ' (MCP)' : ''),
     description,
     brandColor: api.brandColor,
     iconUri: api.iconUri,

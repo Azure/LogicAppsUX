@@ -1,9 +1,45 @@
-import { getDebugConfiguration } from '../debug';
+import { getCustomCodeRuntime, getDebugConfiguration, usesPublishFolderProperty } from '../debug';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { extensionCommand } from '../../../constants';
-import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 describe('debug', () => {
+  describe('getCustomCodeRuntime', () => {
+    it('should return coreclr for .NET 8', () => {
+      expect(getCustomCodeRuntime(TargetFramework.Net8)).toBe('coreclr');
+    });
+
+    it('should return coreclr for .NET 10', () => {
+      expect(getCustomCodeRuntime(TargetFramework.Net10)).toBe('coreclr');
+    });
+
+    it('should return clr for .NET Framework', () => {
+      expect(getCustomCodeRuntime(TargetFramework.NetFx)).toBe('clr');
+    });
+  });
+
+  describe('usesPublishFolderProperty', () => {
+    it('should return true for custom code with .NET 8', () => {
+      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.Net8)).toBe(true);
+    });
+
+    it('should return true for custom code with .NET 10', () => {
+      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.Net10)).toBe(true);
+    });
+
+    it('should return false for custom code with .NET Framework', () => {
+      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.NetFx)).toBe(false);
+    });
+
+    it('should return false for rules engine projects', () => {
+      expect(usesPublishFolderProperty(ProjectType.rulesEngine, TargetFramework.Net8)).toBe(false);
+    });
+
+    it('should return false for standard logic app projects', () => {
+      expect(usesPublishFolderProperty(ProjectType.logicApp, TargetFramework.Net8)).toBe(false);
+    });
+  });
+
   describe('getDebugConfiguration', () => {
     beforeEach(() => {
       vi.clearAllMocks();
@@ -12,6 +48,19 @@ describe('debug', () => {
     describe('with custom code target framework', () => {
       it('should return launch configuration for .NET 8 custom code with v4 function runtime', () => {
         const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net8);
+        expect(result).toEqual({
+          name: 'Run/Debug logic app with local function TestLogicApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'coreclr',
+          isCodeless: true,
+        });
+      });
+
+      it('should return launch configuration for .NET 10 custom code with v4 function runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net10);
+
         expect(result).toEqual({
           name: 'Run/Debug logic app with local function TestLogicApp',
           type: 'logicapp',

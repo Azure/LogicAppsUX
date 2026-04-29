@@ -266,6 +266,11 @@ export interface GetDataMapperVersionMessage {
   data: number;
 }
 
+export interface GetDesignerVersionMessage {
+  command: typeof ExtensionCommand.getDesignerVersion;
+  data: number;
+}
+
 // Designer Message Interfaces
 export interface ReceiveCallbackMessage {
   command: typeof ExtensionCommand.receiveCallback;

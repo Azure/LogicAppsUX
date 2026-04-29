@@ -1,7 +1,8 @@
-import { type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
-import { mergeClasses } from '@fluentui/react-components';
+import { Button, InlineDrawer, DrawerBody, DrawerHeader, DrawerHeaderTitle } from '@fluentui/react-components';
+import { DismissRegular, ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
+  type ChatInputHandle,
   ChatSuggestion,
   ChatSuggestionGroup,
   type ConversationItem,
@@ -9,10 +10,9 @@ import {
   PanelLocation,
   ProgressCardWithStopButton,
 } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useChatbotStyles, useChatbotDarkStyles } from './styles';
-import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
+import { useChatbotStyles } from './styles';
 
 export const defaultChatbotPanelWidth = '360px';
 
@@ -21,16 +21,12 @@ interface ChatbotUIProps {
     width?: string;
     location?: PanelLocation;
     isOpen?: boolean;
-    hasCloseButton?: boolean;
-    isBlocking?: boolean;
     onDismiss?: () => void;
     header?: React.ReactNode;
   };
   inputBox: {
     disabled?: boolean;
-    value?: string;
     placeholder?: string;
-    onChange?: (value: string) => void;
     onSubmit: (value: string) => void;
     readOnly?: boolean;
   };
@@ -67,35 +63,21 @@ const QUERY_MAX_LENGTH = 2000;
 export const ChatbotUI = (props: ChatbotUIProps) => {
   const {
     body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
-    inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly },
+    inputBox: { disabled, placeholder, onSubmit, readOnly },
     data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
   const intl = useIntl();
-  const { isInverted } = useTheme();
-  const textInputRef = useRef<ITextField>(null);
+  const textInputRef = useRef<ChatInputHandle>(null);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSubmit = useCallback(() => {
+    onSubmit(inputValue);
+    setInputValue('');
+  }, [onSubmit, inputValue]);
 
   // Styles
   const styles = useChatbotStyles();
-  const darkStyles = useChatbotDarkStyles();
-
-  const inputIconButtonStyles = useMemo(
-    () => ({
-      enabled: {
-        root: {
-          backgroundColor: 'transparent',
-          color: isInverted ? 'rgb(200, 200, 200)' : 'rgb(51, 51, 51)',
-        },
-      },
-      disabled: {
-        root: {
-          backgroundColor: 'transparent',
-          color: isInverted ? 'rgb(79, 79, 79)' : 'rgb(200, 200, 200)',
-        },
-      },
-    }),
-    [isInverted]
-  );
 
   useEffect(() => {
     if (focus) {
@@ -141,16 +123,15 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   }, [intl]);
 
   const inputDisabled = !!(answerGenerationInProgress || disabled);
-  const trimmedLength = value.trim().length;
+  const trimmedLength = inputValue.trim().length;
   const submitDisabled = answerGenerationInProgress || trimmedLength < QUERY_MIN_LENGTH;
   const resolvedPlaceholder = placeholder ?? intlText.inputPlaceHolder;
 
   const showFooter = protectedMessage || canSave || canTest || !readOnly;
 
   return (
-    <div className={mergeClasses(styles.container, isInverted && darkStyles.container)}>
-      {props?.panel?.header}
-      <div className={mergeClasses(styles.content, isInverted && darkStyles.content)}>
+    <div className={styles.container}>
+      <div className={styles.content}>
         {answerGenerationInProgress && (
           <ProgressCardWithStopButton onStopButtonClick={abort} progressState={progressState} stopButtonLabel={progressStop} />
         )}
@@ -174,22 +155,18 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
           ) : null}
           {readOnly ? null : (
             <ChatInput
-              textFieldRef={textInputRef}
+              ref={textInputRef}
               disabled={inputDisabled}
               isMultiline
               maxQueryLength={QUERY_MAX_LENGTH}
-              onQueryChange={(_ev, newValue) => onChange?.(newValue ?? '')}
+              onQueryChange={(_ev, newValue) => setInputValue(newValue ?? '')}
               placeholder={resolvedPlaceholder}
-              query={value}
+              query={inputValue}
               showCharCount
               submitButtonProps={{
                 title: submitString ?? intlText.submitButton,
                 disabled: submitDisabled,
-                iconProps: {
-                  iconName: 'Send',
-                  styles: submitDisabled ? inputIconButtonStyles.disabled : inputIconButtonStyles.enabled,
-                },
-                onClick: () => onSubmit(value),
+                onClick: handleSubmit,
               }}
             />
           )}
@@ -201,20 +178,28 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
 
 export const AssistantChat = (props: ChatbotUIProps) => {
   const {
-    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, hasCloseButton = false, isBlocking, onDismiss },
+    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, onDismiss, header },
   } = props;
 
+  const intl = useIntl();
+  const closeButtonLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    id: 'ZihyUf',
+    description: 'Label for the close button in the chatbot header',
+  });
+
   return (
-    <Panel
-      type={location === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
-      isOpen={isOpen}
-      customWidth={width}
-      hasCloseButton={hasCloseButton}
-      isBlocking={isBlocking}
-      layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
-      onDismiss={onDismiss}
-    >
-      <ChatbotUI {...props} />
-    </Panel>
+    <InlineDrawer open={isOpen} position={location === PanelLocation.Right ? 'end' : 'start'} style={{ width, height: '100%' }} separator>
+      <DrawerHeader>
+        <DrawerHeaderTitle
+          action={<Button appearance="subtle" aria-label={closeButtonLabel} icon={<DismissRegular />} onClick={onDismiss} />}
+        >
+          {header}
+        </DrawerHeaderTitle>
+      </DrawerHeader>
+      <DrawerBody style={{ padding: 0 }}>
+        <ChatbotUI {...props} />
+      </DrawerBody>
+    </InlineDrawer>
   );
 };

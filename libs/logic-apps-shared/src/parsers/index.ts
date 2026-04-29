@@ -1,3 +1,4 @@
+export * from './lib/common/helpers/dereferenceJsonSchema';
 export * from './lib/common/helpers/keysutility';
 export * from './lib/common/helpers/expression';
 export * from './lib/common/helpers/utils';

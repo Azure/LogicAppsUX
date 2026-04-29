@@ -25,27 +25,33 @@ export interface StateHistory {
   currentEditedPanelNode?: string;
 }
 
+export const UNDO_REDO_SLICE_NAMES = [
+  'connections',
+  'customCode',
+  'operations',
+  'panel',
+  'settings',
+  'staticResults',
+  'tokens',
+  'workflow',
+  'workflowParameters',
+  'notes',
+] as const;
+
+export type UndoRedoSliceName = (typeof UNDO_REDO_SLICE_NAMES)[number];
+
+// Per-slice compressed data. Absent entries mean the slice was unchanged from the previous snapshot.
+export type CompressedSliceMap = Partial<Record<UndoRedoSliceName, Uint8Array>>;
+
 export interface StateHistoryItem {
-  compressedState: Uint8Array;
+  compressedSlices: CompressedSliceMap;
   // Track which panel triggered the state save to set it back on undo/redo to show users where the change was.
   editedPanelTab?: string;
   editedPanelNode?: string;
 }
 
 // Omitted slices: designerView, designerOptions, dev, undoRedo
-export type UndoRedoPartialRootState = Pick<
-  RootState,
-  | 'connections'
-  | 'customCode'
-  | 'operations'
-  | 'panel'
-  | 'settings'
-  | 'staticResults'
-  | 'tokens'
-  | 'workflow'
-  | 'workflowParameters'
-  | 'notes'
->;
+export type UndoRedoPartialRootState = Pick<RootState, UndoRedoSliceName>;
 
 export const undoableWorkflowActionTypes = [
   addNode,

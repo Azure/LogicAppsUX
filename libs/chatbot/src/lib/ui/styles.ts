@@ -23,7 +23,6 @@ export const useChatbotStyles = makeStyles({
   header: {
     display: 'flex',
     flexDirection: 'row',
-    ...shorthands.padding(tokens.spacingVerticalM),
     alignItems: 'center',
     fontSize: tokens.fontSizeBase600,
     fontWeight: tokens.fontWeightBold,
@@ -37,72 +36,35 @@ export const useChatbotStyles = makeStyles({
   headerIcon: {
     color: '#2899f5', // Keep original brand blue
     transform: 'scale(1.5)',
-    ...shorthands.margin(0, 0, '5px', '5px'),
-  },
-
-  headerTitleContainer: {
-    // Nested styles handled in separate classes
+    width: '32px',
+    height: '32px',
+    margin: 0,
   },
 
   headerTitle: {
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase400,
-    lineHeight: '28px',
-    ...shorthands.margin(0, tokens.spacingHorizontalM),
+    lineHeight: '24px',
+    margin: 0,
   },
 
   headerSubtitle: {
-    marginLeft: tokens.spacingHorizontalM,
     width: 'fit-content',
     fontSize: tokens.fontSizeBase200,
     fontWeight: tokens.fontWeightRegular,
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
     lineHeight: '15px',
     color: tokens.colorNeutralForeground2,
-  },
-
-  // Mode pill styles
-  headerModePill: {
-    ...shorthands.margin('0', tokens.spacingHorizontalXS),
-    width: 'fit-content',
-    fontSize: tokens.fontSizeBase200,
-    fontWeight: tokens.fontWeightSemibold,
-    textTransform: 'uppercase',
-    color: tokens.colorNeutralForeground2,
-    backgroundColor: tokens.colorNeutralBackground2,
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
-    ...shorthands.padding('3.5px', tokens.spacingHorizontalS),
-    lineHeight: '15px',
+    display: 'block',
   },
 
   shieldCheckmarkRegular: {
-    paddingRight: '2px',
+    paddingRight: '4px',
   },
 
-  headerModeProtectedPill: {
-    ...shorthands.margin('0', tokens.spacingHorizontalXS),
-    width: 'fit-content',
-    fontSize: tokens.fontSizeBase200,
-    display: 'flex',
-    alignItems: 'center',
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorNeutralForegroundInverted,
-    backgroundColor: '#387a25', // Keep original green for protected mode
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
-    ...shorthands.padding('3px', tokens.spacingHorizontalS),
-    lineHeight: '10px',
-  },
-
-  protectedMessageLink: {
-    color: tokens.colorNeutralForegroundInverted,
-    selectors: {
-      ':hover': {
-        color: tokens.colorNeutralForegroundInverted,
-      },
-      ':focus': {
-        color: `${tokens.colorNeutralForegroundInverted} !important`,
-      },
-    },
+  protectedBadgeLink: {
+    textDecorationLine: 'none',
+    marginLeft: '16px',
+    lineHeight: '12px',
   },
 
   collapseButton: {
@@ -150,7 +112,7 @@ export const useChatbotStyles = makeStyles({
     fontSize: '10.5px',
     display: 'flex',
     fontWeight: tokens.fontWeightBold,
-    color: '#489d42', // Keep original green
+    color: tokens.colorPaletteGreenBorderActive,
     lineHeight: '12px',
   },
 

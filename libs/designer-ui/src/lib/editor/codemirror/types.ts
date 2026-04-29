@@ -8,6 +8,8 @@ export interface CodeMirrorEditorProps {
   className?: string;
   defaultValue?: string;
   value?: string;
+  originalValue?: string;
+  showMerge?: boolean;
   language?: string;
   height?: string;
   width?: string;
@@ -32,6 +34,7 @@ export interface CodeMirrorEditorProps {
     vertical?: 'auto' | 'hidden' | 'visible';
   };
   monacoContainerStyle?: React.CSSProperties;
+  noBorder?: boolean;
   indentWithTab?: boolean;
 
   // Event callbacks

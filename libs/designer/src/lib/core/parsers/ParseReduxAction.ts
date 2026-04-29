@@ -205,13 +205,17 @@ export const detectSequentialInitializeVariables = (definition: LogicAppsV2.Work
 };
 
 /**
- * Checks if a variable value contains references to other variables
- * using patterns: @{variable({name})} or @variable({name})
+ * Checks if a variable value contains references to other variables.
+ * Detects variables() calls in any context including:
+ * - Direct references: @variables('name') or @{variables('name')}
+ * - Nested in expressions: @{substring(variables('name'), ...)}
+ * - Inside other functions: @{length(variables('name'))}
  */
 export const hasVariableReference = (value: any): boolean => {
   if (typeof value === 'string') {
-    // Check for @{variable(...)} or @variable(...) patterns
-    const variableReferencePattern = /@\{?variables?\s*\([^)]*\)\}?/i;
+    // Check for variable(s)(...) anywhere in the string, including nested in expressions.
+    // This catches @variable('x'), @variables('x'), @{variables('x')}, and @{substring(variables('x'), ...)} etc.
+    const variableReferencePattern = /\bvariables?\s*\(/i;
     return variableReferencePattern.test(value);
   }
   if (Array.isArray(value)) {

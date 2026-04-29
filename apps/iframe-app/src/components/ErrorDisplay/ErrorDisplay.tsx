@@ -24,16 +24,14 @@ export function ErrorDisplay({ title, message, details }: ErrorDisplayProps) {
 
   return (
     <div className={styles.container}>
-      <div>
-        <h3 className={styles.title}>{title}</h3>
-        <p className={styles.message}>{message}</p>
-        {details && (
-          <>
-            {details.url && <p className={styles.details}>URL: {details.url}</p>}
-            {details.parameters && <p className={styles.detailsSecondary}>Parameters: {details.parameters}</p>}
-          </>
-        )}
-      </div>
+      <h3 className={styles.title}>{title}</h3>
+      <p className={styles.message}>{message}</p>
+      {details && (
+        <>
+          {details.url && <p className={styles.details}>URL: {details.url}</p>}
+          {details.parameters && <p className={styles.detailsSecondary}>Parameters: {details.parameters}</p>}
+        </>
+      )}
     </div>
   );
 }

@@ -1,0 +1,268 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/index.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_index_ts",
+      "community": 4,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "Svg.d.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/types/Svg.d.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_types_svg_d_ts",
+      "community": 5,
+      "norm_label": "svg.d.ts"
+    },
+    {
+      "label": "index.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/index.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_index_tsx",
+      "community": 6,
+      "norm_label": "index.tsx"
+    },
+    {
+      "label": "styles.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/styles.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_styles_ts",
+      "community": 7,
+      "norm_label": "styles.ts"
+    },
+    {
+      "label": "CopilotChatbot.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/CopilotChatbot.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_copilotchatbot_tsx",
+      "community": 8,
+      "norm_label": "copilotchatbot.tsx"
+    },
+    {
+      "label": "panelheader.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/panelheader.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_panelheader_tsx",
+      "community": 1,
+      "norm_label": "panelheader.tsx"
+    },
+    {
+      "label": "CopilotPanelHeader()",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/panelheader.tsx",
+      "source_location": "L8",
+      "id": "panelheader_copilotpanelheader",
+      "community": 1,
+      "norm_label": "copilotpanelheader()"
+    },
+    {
+      "label": "styles.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/styles.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_styles_ts",
+      "community": 9,
+      "norm_label": "styles.ts"
+    },
+    {
+      "label": "ChatbotUi.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/ChatbotUi.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_chatbotui_tsx",
+      "community": 3,
+      "norm_label": "chatbotui.tsx"
+    },
+    {
+      "label": "protectedMessage()",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/ChatbotUi.tsx",
+      "source_location": "L145",
+      "id": "chatbotui_protectedmessage",
+      "community": 3,
+      "norm_label": "protectedmessage()"
+    },
+    {
+      "label": "ChatbotUi.spec.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/__test__/ChatbotUi.spec.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_test_chatbotui_spec_tsx",
+      "community": 10,
+      "norm_label": "chatbotui.spec.tsx"
+    },
+    {
+      "label": "chatbot.spec.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/__test__/chatbot.spec.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_test_chatbot_spec_tsx",
+      "community": 11,
+      "norm_label": "chatbot.spec.tsx"
+    },
+    {
+      "label": "CopilotChatbot.spec.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/__test__/CopilotChatbot.spec.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_test_copilotchatbot_spec_tsx",
+      "community": 12,
+      "norm_label": "copilotchatbot.spec.tsx"
+    },
+    {
+      "label": "panelheader.spec.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/ui/__test__/panelheader.spec.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_ui_test_panelheader_spec_tsx",
+      "community": 13,
+      "norm_label": "panelheader.spec.tsx"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/core/util/index.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_core_util_index_ts",
+      "community": 2,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "isSuccessResponse()",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/core/util/index.ts",
+      "source_location": "L1",
+      "id": "index_issuccessresponse",
+      "community": 2,
+      "norm_label": "issuccessresponse()"
+    },
+    {
+      "label": "intl-test-helper.tsx",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/__test__/intl-test-helper.tsx",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_test_intl_test_helper_tsx",
+      "community": 0,
+      "norm_label": "intl-test-helper.tsx"
+    },
+    {
+      "label": "mockUseIntl()",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/__test__/intl-test-helper.tsx",
+      "source_location": "L25",
+      "id": "intl_test_helper_mockuseintl",
+      "community": 0,
+      "norm_label": "mockuseintl()"
+    },
+    {
+      "label": "getTestIntl()",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/__test__/intl-test-helper.tsx",
+      "source_location": "L29",
+      "id": "intl_test_helper_gettestintl",
+      "community": 0,
+      "norm_label": "gettestintl()"
+    },
+    {
+      "label": "constants.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/common/constants.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_common_constants_ts",
+      "community": 14,
+      "norm_label": "constants.ts"
+    },
+    {
+      "label": "workflow.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/common/models/workflow.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_common_models_workflow_ts",
+      "community": 15,
+      "norm_label": "workflow.ts"
+    },
+    {
+      "label": "Query.ts",
+      "file_type": "code",
+      "source_file": "libs/chatbot/src/lib/common/models/Query.ts",
+      "source_location": "L1",
+      "id": "libs_chatbot_src_lib_common_models_query_ts",
+      "community": 16,
+      "norm_label": "query.ts"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "libs/chatbot/src/lib/ui/panelheader.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "libs_chatbot_src_lib_ui_panelheader_tsx",
+      "_tgt": "panelheader_copilotpanelheader",
+      "source": "libs_chatbot_src_lib_ui_panelheader_tsx",
+      "target": "panelheader_copilotpanelheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "libs/chatbot/src/lib/ui/ChatbotUi.tsx",
+      "source_location": "L145",
+      "weight": 1.0,
+      "_src": "libs_chatbot_src_lib_ui_chatbotui_tsx",
+      "_tgt": "chatbotui_protectedmessage",
+      "source": "libs_chatbot_src_lib_ui_chatbotui_tsx",
+      "target": "chatbotui_protectedmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "libs/chatbot/src/lib/core/util/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "libs_chatbot_src_lib_core_util_index_ts",
+      "_tgt": "index_issuccessresponse",
+      "source": "libs_chatbot_src_lib_core_util_index_ts",
+      "target": "index_issuccessresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "libs/chatbot/src/lib/__test__/intl-test-helper.tsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "libs_chatbot_src_lib_test_intl_test_helper_tsx",
+      "_tgt": "intl_test_helper_mockuseintl",
+      "source": "libs_chatbot_src_lib_test_intl_test_helper_tsx",
+      "target": "intl_test_helper_mockuseintl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "libs/chatbot/src/lib/__test__/intl-test-helper.tsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "libs_chatbot_src_lib_test_intl_test_helper_tsx",
+      "_tgt": "intl_test_helper_gettestintl",
+      "source": "libs_chatbot_src_lib_test_intl_test_helper_tsx",
+      "target": "intl_test_helper_gettestintl",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

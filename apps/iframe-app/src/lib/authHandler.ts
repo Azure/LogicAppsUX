@@ -18,6 +18,14 @@ interface JwtPayload {
 
 export interface AuthInformation {
   isAuthenticated: boolean;
+  /**
+   * Indicates whether Azure App Service EasyAuth is configured on the Logic App.
+   * - `true`: EasyAuth is configured (/.auth/me returns 401, 403, 302, or 200)
+   * - `false`: EasyAuth is NOT configured (/.auth/me returns 404 or network error)
+   *
+   * When false, the application should skip authentication flows entirely.
+   */
+  isEasyAuthConfigured: boolean;
   error: Error | null;
   username?: string;
 }
@@ -139,16 +147,43 @@ export function getBaseUrl(agentCardUrl?: string): string {
 /**
  * Checks the current authentication status via EasyAuth /.auth/me endpoint
  * Also extracts username from the JWT token if available
+ *
+ * Easy Auth can be configured to return different status codes for unauthenticated requests:
+ * - 401 Unauthorized
+ * - 403 Forbidden
+ * - 404 Not Found (this means Easy Auth is NOT configured)
+ * - 302 Redirect
+ *
+ * Any of 401, 403, or 302 indicates Easy Auth IS configured but user is not authenticated.
  */
 export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation> {
   try {
     const response = await fetch(`${baseUrl}/.auth/me`, {
       method: 'GET',
       credentials: 'include', // Important: include cookies for cross-origin
+      redirect: 'manual', // Don't follow redirects - we want to detect 302
     });
 
+    const status = response.status;
+
+    // 404 means Easy Auth is not configured on this Logic App
+    if (status === 404) {
+      return { isAuthenticated: false, isEasyAuthConfigured: false, error: null };
+    }
+
+    // 401, 403 mean Easy Auth is configured but user is not authenticated
+    if (status === 401 || status === 403) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: null };
+    }
+
+    // 0 status with opaqueredirect type means a 302 redirect was attempted
+    // This happens when redirect: 'manual' is set and server tries to redirect
+    if (response.type === 'opaqueredirect' || status === 0) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: null };
+    }
+
     if (!response.ok) {
-      return { isAuthenticated: false, error: new Error('Failed to fetch authentication status') };
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: new Error('Failed to fetch authentication status') };
     }
 
     const data = await response.json();
@@ -156,9 +191,10 @@ export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation>
     const isAuthenticated = Array.isArray(data) && data.length > 0;
     const username = extractUsernameFromToken(data[0]?.access_token);
 
-    return { isAuthenticated, error: null, username };
+    return { isAuthenticated, isEasyAuthConfigured: true, error: null, username };
   } catch (error) {
-    return { isAuthenticated: false, error: error as Error };
+    // Network errors or other failures - assume Easy Auth is not configured
+    return { isAuthenticated: false, isEasyAuthConfigured: false, error: error as Error };
   }
 }
 
@@ -261,7 +297,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
       return;
     }
 
-    // Single path for auth checking - prevents duplicate success calls
+    // Re-check: another tick may have completed during the async block above
     if (completed) {
       return;
     }
@@ -284,12 +320,9 @@ export function openLoginPopup(options: LoginPopupOptions): void {
 
       if (authInfo.isAuthenticated) {
         handleSuccess(authInfo);
-      } else if (!authInfo.isAuthenticated) {
-        // Only fail if popup is closed AND not authenticated
-        handleFailure(authInfo.error as Error);
-      } else if (popupIsClosed && !completed) {
-        // Only fail if popup is closed AND not authenticated
-        handleFailure(new Error('Login cancelled or failed'));
+      } else if (popupIsClosed) {
+        // Only fail when popup is closed AND user is not authenticated
+        handleFailure(authInfo.error ?? new Error('Login cancelled or failed'));
       }
       // If not authenticated but popup still open, keep polling
     } catch (error) {
@@ -298,7 +331,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
         handleFailure(err);
       }
     }
-  }, 500); // Poll every 500ms
+  }, 500);
 
   // Timeout handler
   const timeoutId = setTimeout(() => {
@@ -306,7 +339,6 @@ export function openLoginPopup(options: LoginPopupOptions): void {
       return;
     }
     console.log('[Auth] Login timed out');
-    cleanup();
     if (!popup.closed) {
       popup.close();
     }

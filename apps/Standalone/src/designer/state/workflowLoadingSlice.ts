@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { getStateHistory, setStateHistory } from './historyHelpers';
 import type { RootState } from './store';
 import type { ConnectionReferences, WorkflowParameter } from '@microsoft/logic-apps-designer';
@@ -65,7 +64,7 @@ const initialState: WorkflowLoadingState = {
   suppressDefaultNodeSelect: false,
   hostOptions: {
     displayRuntimeInfo: true,
-    maxStateHistorySize: 0,
+    maxStateHistorySize: 20,
     collapseGraphsByDefault: false,
     enableMultiVariable: true,
   },

@@ -6880,7 +6880,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copilot chat canceled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Copilot チャットがキャンセルされました]]></Val>
+            <Val><![CDATA[Copilot Chat がキャンセルされました]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10418,15 +10418,6 @@
           <Val><![CDATA[Required. The number to multiply Multiplicand 1 with.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[必須。Multiplicand 1 と乗算する数値。]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";TxdbTq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select a logic app]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[ロジック アプリを選択します]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

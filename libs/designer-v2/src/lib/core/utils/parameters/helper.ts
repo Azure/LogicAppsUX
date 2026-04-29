@@ -1,10 +1,10 @@
-/* eslint-disable no-case-declarations  */
 import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import { AgentUtils } from '../../../common/utilities/Utils';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
+import { updateOutputsAndTokens, getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
@@ -26,6 +26,7 @@ import {
   addDynamicInputs,
   updateNodeParameters,
   clearDynamicIO,
+  updateNodeDynamicInputLoadStatus,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { type NodesMetadata, type Operations as Actions, WorkflowKind } from '../../state/workflow/workflowInterfaces';
@@ -166,7 +167,6 @@ import type {
   OperationInfo,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
-import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
 
@@ -286,10 +286,8 @@ export function addRecurrenceParametersInGroup(
   if (recurrenceParameters.length) {
     const intl = getIntl();
     if (recurrence.useLegacyParameterGroup) {
-      // eslint-disable-next-line no-param-reassign
       parameterGroups[ParameterGroupKeys.DEFAULT].parameters = recurrenceParameters;
     } else {
-      // eslint-disable-next-line no-param-reassign
       parameterGroups[ParameterGroupKeys.RECURRENCE] = {
         id: ParameterGroupKeys.RECURRENCE,
         description: intl.formatMessage({
@@ -336,7 +334,7 @@ export function toParameterInfoMap(
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
-    if (!inputParameter.dynamicSchema) {
+    if (!inputParameter.dynamicSchema && !equals(inputParameter.editor, 'knowledgebase')) {
       const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
@@ -1079,7 +1077,6 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
 
 export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
-    // eslint-disable-next-line no-param-reassign
     valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
   }
 }
@@ -1950,6 +1947,18 @@ export const updateParameterAndDependencies = createAsyncThunk(
         loadDefaultValues !== undefined ? loadDefaultValues : true
       );
     }
+
+    // For Agent operations, if the responseFormat.type parameter changes, update output tokens
+    if (
+      operationInfo?.type === 'Agent' &&
+      updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
+    ) {
+      const rootState = getState() as RootState;
+      const nodeInputs = rootState.operations.inputParameters[nodeId];
+      const settings = rootState.operations.settings[nodeId] || {};
+
+      await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
+    }
   }
 );
 
@@ -2161,6 +2170,8 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
+    dispatch(updateNodeDynamicInputLoadStatus({ nodeId, status: DynamicLoadStatus.LOADING }));
+
     const allInputs = getState().operations.inputParameters[nodeId];
     const variables = getAllVariables(variableDeclarations);
 
@@ -2292,6 +2303,8 @@ export const loadDynamicContentForInputsInNode = async (
         message: errorMessage,
         error: error instanceof Error ? error : undefined,
       });
+
+      dispatch(updateNodeDynamicInputLoadStatus({ nodeId, status: DynamicLoadStatus.FAILED }));
 
       dispatch(
         updateErrorDetails({
@@ -3685,7 +3698,6 @@ export function getExpressionTokenTitle(expression: Expression): string {
     case ExpressionType.StringLiteral:
       return (expression as ExpressionLiteral).value;
     case ExpressionType.Function: {
-      // eslint-disable-next-line no-case-declarations
       const functionExpression = expression as ExpressionFunction;
       return `${functionExpression.name}(${functionExpression.arguments.length > 0 ? '...' : ''})`;
     }
@@ -4013,9 +4025,9 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
-        // eslint-disable-next-line no-useless-escape
+
         tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        // eslint-disable-next-line no-useless-escape
+
         tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 

@@ -80,6 +80,7 @@ export const useMcpStandardStyles = makeStyles({
     margin: '0 16px',
     boxShadow: `inset 0 2px 8px ${tokens.colorNeutralShadowAmbient}`,
     position: 'relative',
+    overflow: 'auto',
   },
 
   wizardWrapper: {

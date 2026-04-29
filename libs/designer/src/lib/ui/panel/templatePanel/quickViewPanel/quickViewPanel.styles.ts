@@ -4,6 +4,7 @@ export const useStyles = makeStyles({
   drawer: {
     zIndex: 1000,
     height: '100%',
+    position: 'fixed',
   },
   header: {
     ...shorthands.padding('0', tokens.spacingHorizontalL),

@@ -21,6 +21,7 @@ import { executeIfNotActive } from '../utils/taskUtils';
 import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
+import { getChildProcessesWithScript } from '../utils/findChildProcess/findChildProcess';
 import { getWindowsProcess } from '../utils/windowsProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
@@ -37,6 +38,7 @@ import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
+const workflowProcessRegex = /(dotnet|func)(\.exe|)$/i;
 
 /**
  * Starts the function host task and waits for it to be ready, then returns the child func.exe process ID.
@@ -115,7 +117,20 @@ export async function pickFuncProcessInternal(
   }
 
   const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
-  return await pickChildProcess(taskInfo);
+  const preferHostChildProcess = process.platform === Platform.windows && !debugConfig.customCodeRuntime;
+  ext.outputChannel.appendLog(
+    localize(
+      'resolveWorkflowDebugProcess',
+      'Resolving workflow debug process for project "{0}". funcRuntime={1}, customCodeRuntime={2}, isCodeless={3}, preferHostChildProcess={4}, platform={5}.',
+      projectPath,
+      debugConfig.funcRuntime ?? 'undefined',
+      debugConfig.customCodeRuntime ?? 'none',
+      String(Boolean(debugConfig.isCodeless)),
+      String(preferHostChildProcess),
+      process.platform
+    )
+  );
+  return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
 }
 
 /**
@@ -264,7 +279,7 @@ async function startFuncTask(
             const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
             if (response.parsedBody.state.toLowerCase() === 'running') {
               funcTaskReadyEmitter.fire(workspaceFolder);
-              taskInfo.childProcessId = [await pickChildProcess(taskInfo), await pickFuncHostChildProcess(taskInfo)];
+              taskInfo.childProcessId = await getWorkflowDebugProcessCandidates(taskInfo);
               return taskInfo;
             }
           } catch (error) {
@@ -295,11 +310,86 @@ async function startFuncTask(
   }
 }
 
+/**
+ * Discover (or reuse cached) child process IDs for workflow debug attachment.
+ */
+async function getWorkflowDebugProcessCandidates(taskInfo: IRunningFuncTask): Promise<Array<string | undefined>> {
+  const hasCachedFirstChildProcessId = (taskInfo.childProcessId?.length ?? 0) >= 1;
+  const hasCachedHostChildProcessId = (taskInfo.childProcessId?.length ?? 0) >= 2;
+  const firstChildProcessId = hasCachedFirstChildProcessId ? taskInfo.childProcessId?.[0] : await pickChildProcess(taskInfo);
+  const hostChildProcessId = hasCachedHostChildProcessId ? taskInfo.childProcessId?.[1] : await pickFuncHostChildProcess(taskInfo);
+
+  return [firstChildProcessId, hostChildProcessId];
+}
+
+export async function pickWorkflowDebugProcess(taskInfo: IRunningFuncTask, preferHostChildProcess = false): Promise<string> {
+  const [firstChildProcessId, hostChildProcessId] = await getWorkflowDebugProcessCandidates(taskInfo);
+  taskInfo.childProcessId = [firstChildProcessId, hostChildProcessId];
+  const selectedProcessId =
+    process.platform === Platform.windows && preferHostChildProcess
+      ? (hostChildProcessId ?? firstChildProcessId ?? String(taskInfo.processId))
+      : (firstChildProcessId ?? hostChildProcessId ?? String(taskInfo.processId));
+
+  ext.outputChannel.appendLog(
+    localize(
+      'workflowDebugProcessSelection',
+      'Workflow debug process selection: rootPid={0}, firstChildPid={1}, hostChildPid={2}, preferHostChildProcess={3}, selectedPid={4}, platform={5}.',
+      String(taskInfo.processId),
+      firstChildProcessId ?? 'undefined',
+      hostChildProcessId ?? 'undefined',
+      String(preferHostChildProcess),
+      selectedProcessId,
+      process.platform
+    )
+  );
+
+  if (process.platform === Platform.windows && preferHostChildProcess) {
+    return selectedProcessId;
+  }
+
+  return selectedProcessId;
+}
+
 export async function findChildProcess(processId: number): Promise<string | undefined> {
   const children: OSAgnosticProcess[] =
     process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);
-  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
+  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => workflowProcessRegex.test(c.command || ''));
   return child ? child.pid.toString() : String(processId);
+}
+
+async function getMatchingWorkflowChildProcess(processId: number): Promise<OSAgnosticProcess | undefined> {
+  const children: OSAgnosticProcess[] =
+    process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);
+
+  return children.reverse().find((candidate) => workflowProcessRegex.test(candidate.command || ''));
+}
+
+async function tryUseActiveTerminalProcess(taskInfo: IRunningFuncTask): Promise<OSAgnosticProcess | undefined> {
+  if (process.platform !== Platform.windows || !vscode.window.activeTerminal) {
+    return undefined;
+  }
+
+  const terminalPid = await vscode.window.activeTerminal.processId;
+  if (!terminalPid || terminalPid === taskInfo.processId) {
+    return undefined;
+  }
+
+  const terminalChild = await getMatchingWorkflowChildProcess(terminalPid);
+  if (!terminalChild) {
+    return undefined;
+  }
+
+  ext.outputChannel.appendLog(
+    localize(
+      'workflowDebugTerminalFallback',
+      'Falling back from tracked task PID "{0}" to active terminal PID "{1}" for workflow debug process resolution.',
+      String(taskInfo.processId),
+      String(terminalPid)
+    )
+  );
+
+  taskInfo.processId = terminalPid;
+  return terminalChild;
 }
 
 /**
@@ -318,9 +408,12 @@ export async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<stri
       taskInfo.processId = terminalPid;
     }
   }
-  const children: OSAgnosticProcess[] =
-    process.platform === Platform.windows ? await getWindowsChildren(taskInfo.processId) : await getUnixChildren(taskInfo.processId);
-  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
+
+  let child = await getMatchingWorkflowChildProcess(taskInfo.processId);
+  if (!child) {
+    child = await tryUseActiveTerminalProcess(taskInfo);
+  }
+
   return child ? child.pid.toString() : String(taskInfo.processId);
 }
 
@@ -356,6 +449,31 @@ export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]>
 }
 
 export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
+  try {
+    const processes = await getChildProcessesWithScript(pid);
+    if (processes.length > 0) {
+      ext.outputChannel.appendLog(
+        localize(
+          'workflowDebugProcessScript',
+          'Resolved Windows child processes for PID "{0}" using the PowerShell child-process script.',
+          pid
+        )
+      );
+      return processes.map((c) => {
+        return { command: c.name, pid: c.processId };
+      });
+    }
+  } catch (error) {
+    ext.outputChannel.appendLog(
+      localize(
+        'workflowDebugProcessScriptFallback',
+        'Falling back to process-tree for Windows child process resolution on PID "{0}". Error: {1}',
+        pid,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
+  }
+
   const processes: IProcessInfo[] = await getWindowsProcess(pid);
   return (processes || []).map((c) => {
     return { command: c.name, pid: c.pid };

@@ -243,6 +243,11 @@ export const workspaceMessages = defineMessages({
     id: 'RRuHNc',
     description: 'Workspace name validation message text',
   },
+  USE_DEV_CONTAINER_LABEL: {
+    defaultMessage: 'Use Dev Container',
+    id: '0Va6gs',
+    description: 'Label for dev container toggle option',
+  },
   // Logic app details messages
   LOGIC_APP_DETAILS: {
     defaultMessage: 'Logic app details',
@@ -355,6 +360,16 @@ export const workspaceMessages = defineMessages({
     id: 'q1dxkD',
     description: '.NET 8 description',
   },
+  DOTNET_10: {
+    defaultMessage: '.NET 10',
+    id: 'JsTRX9',
+    description: '.NET 10 option',
+  },
+  DOTNET_10_DESCRIPTION: {
+    defaultMessage: 'Use the latest .NET 10 for modern development and performance',
+    id: 'Q1tyGI',
+    description: '.NET 10 description',
+  },
   FUNCTION_NAMESPACE: {
     defaultMessage: 'Function namespace',
     id: 'mr/BC/',
@@ -385,14 +400,19 @@ export const workspaceMessages = defineMessages({
     id: 'ZY5ygq',
     description: 'Function namespace empty text',
   },
+  FUNCTION_NAMESPACE_VALIDATION: {
+    defaultMessage: 'Function namespace must be a valid C# namespace.',
+    id: '7/FvCp',
+    description: 'Function namespace validation message text',
+  },
   FUNCTION_NAME_EMPTY: {
     defaultMessage: 'Function name cannot be empty.',
     id: 'MbFszg',
     description: 'Function name empty text',
   },
   FUNCTION_NAME_VALIDATION: {
-    defaultMessage: 'Function name must start with a letter and can only contain letters, digits, "_" and "-".',
-    id: 'DdAlJ9',
+    defaultMessage: 'Function name must start with a letter and can only contain letters, digits, and "_".',
+    id: 'rD0nnU',
     description: 'Function name validation message text',
   },
   FUNCTION_FOLDER_NAME_EMPTY: {
@@ -998,6 +1018,16 @@ export const designerMessages = defineMessages({
     defaultMessage: 'Errors',
     id: 'gHm7zV',
     description: 'Errors button',
+  },
+  UNDO: {
+    defaultMessage: 'Undo',
+    id: 'pvRsdK',
+    description: 'Undo button',
+  },
+  REDO: {
+    defaultMessage: 'Redo',
+    id: 'wBjdul',
+    description: 'Redo button',
   },
   REFRESH: {
     defaultMessage: 'Refresh',
