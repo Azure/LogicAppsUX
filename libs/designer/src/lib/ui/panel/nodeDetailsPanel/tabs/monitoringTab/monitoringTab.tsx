@@ -27,13 +27,16 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const startTime = runMetaData?.startTime;
   const endTime = runMetaData?.endTime;
 
-  const getActionInputsOutputs = useCallback(() => {
-    // For built-in tools that already have inputs/outputs from fetchBuiltInToolRunData,
-    // use the cached data instead of fetching via getActionLinks (which would fail)
-    if (runMetaData?.inputs || runMetaData?.outputs) {
-      return Promise.resolve({ inputs: runMetaData.inputs ?? {}, outputs: runMetaData.outputs ?? {} });
-    }
-    return RunService().getActionLinks(runMetaData, selectedNodeId);
+  const getActionInputsOutputs = useCallback(async () => {
+    // Always fetch fresh raw inputs/outputs from the API.
+    // Do NOT return runMetaData.inputs/outputs here — after binding, those contain
+    // BoundParameters (wrapped in {displayName, value}), and re-feeding them as raw
+    // inputs creates infinite recursive nesting.
+    const actionLinks = (await RunService().getActionLinks(runMetaData, selectedNodeId)) ?? {};
+    return {
+      inputs: actionLinks.inputs ?? {},
+      outputs: actionLinks.outputs ?? {},
+    };
   }, [selectedNodeId, runMetaData]);
 
   const {
@@ -41,15 +44,11 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
     isError,
     isFetching,
     isLoading,
-    refetch,
-  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId }], getActionInputsOutputs, {
+  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId, actionTrackingId, startTime, endTime }], getActionInputsOutputs, {
     refetchOnWindowFocus: false,
-    initialData: { inputs: {}, outputs: {} },
+    placeholderData: { inputs: {}, outputs: {} },
+    enabled: !isNullOrUndefined(runMetaData),
   });
-
-  useEffect(() => {
-    refetch();
-  }, [runMetaData, refetch]);
 
   useEffect(() => {
     if (!isLoading) {
