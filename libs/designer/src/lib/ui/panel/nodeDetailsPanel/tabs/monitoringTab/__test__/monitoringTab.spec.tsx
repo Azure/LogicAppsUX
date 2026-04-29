@@ -32,22 +32,21 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
   };
 });
 
-vi.mock('@microsoft/designer-ui', async (importOriginal) => {
-  const actual: any = await importOriginal();
-  return {
-    ...actual,
-    ErrorSection: vi.fn(() => <div data-testid="error-section" />),
-  };
-});
+vi.mock('@microsoft/designer-ui', () => ({
+  ErrorSection: vi.fn(() => <div data-testid="error-section" />),
+  SecureDataSection: vi.fn(() => <div data-testid="secure-data-section" />),
+  ValuesPanel: vi.fn(() => <div data-testid="values-panel" />),
+  getStatusString: vi.fn(() => 'Succeeded'),
+}));
 
+const mockUseQuery = vi.fn(() => ({
+  data: { inputs: {}, outputs: {} },
+  isError: false,
+  isFetching: false,
+  isLoading: false,
+}));
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({
-    data: { inputs: {}, outputs: {} },
-    isError: false,
-    isFetching: false,
-    isLoading: false,
-    refetch: vi.fn(),
-  })),
+  useQuery: (...args: any[]) => mockUseQuery(...args),
 }));
 
 vi.mock('../../../../../../core/actions/bjsworkflow/monitoring', () => ({
@@ -68,7 +67,6 @@ vi.mock('../propertiesPanel', () => ({
 
 import { MonitoringPanel } from '../monitoringTab';
 import { useRunData } from '../../../../../../core/state/workflow/workflowSelectors';
-import { useQuery } from '@tanstack/react-query';
 
 describe('MonitoringPanel', () => {
   beforeEach(() => {
@@ -77,6 +75,7 @@ describe('MonitoringPanel', () => {
       status: 'Succeeded',
       startTime: '2024-01-01T00:00:00Z',
       endTime: '2024-01-01T00:01:00Z',
+      correlation: { actionTrackingId: 'track-1' },
     });
   });
 
@@ -96,35 +95,104 @@ describe('MonitoringPanel', () => {
     expect(screen.getByTestId('properties-panel')).toBeDefined();
   });
 
-  it('should use cached data for built-in tools with existing inputs/outputs', () => {
-    const cachedInputs = { code: { displayName: 'Code', value: 'print("hi")' } };
-    const cachedOutputs = { result: { displayName: 'Result', value: 'hi' } };
+  it('should always call getActionLinks even when runData has existing inputs/outputs', async () => {
+    const existingInputs = { code: { displayName: 'Code', value: 'print("hi")' } };
+    const existingOutputs = { result: { displayName: 'Result', value: 'hi' } };
 
     (useRunData as any).mockReturnValue({
       status: 'Succeeded',
-      inputs: cachedInputs,
-      outputs: cachedOutputs,
+      inputs: existingInputs,
+      outputs: existingOutputs,
       startTime: '2024-01-01T00:00:00Z',
+      correlation: { actionTrackingId: 'track-2' },
     });
+
+    mockGetActionLinks.mockResolvedValue({ inputs: { method: 'GET' }, outputs: { statusCode: 200 } });
 
     render(<MonitoringPanel nodeId="code_interpreter" />);
 
-    // The query should resolve with cached data instead of calling getActionLinks
-    // Verify that getActionLinks was NOT called
-    expect(mockGetActionLinks).not.toHaveBeenCalled();
+    // Extract the query function passed to useQuery and invoke it
+    const lastCall = mockUseQuery.mock.calls.at(-1)!;
+    const queryFn = lastCall[1] as () => Promise<any>;
+    const result = await queryFn();
+
+    // The query function should always call getActionLinks, never short-circuit
+    expect(mockGetActionLinks).toHaveBeenCalled();
+    expect(result).toEqual({ inputs: { method: 'GET' }, outputs: { statusCode: 200 } });
   });
 
-  it('should call getActionLinks for regular nodes without cached data', () => {
+  it('should use stable query key with actionTrackingId, startTime, and endTime', () => {
+    render(<MonitoringPanel nodeId="test-node" />);
+
+    const queryKey = mockUseQuery.mock.calls.at(-1)![0];
+    expect(queryKey).toEqual([
+      'actionInputsOutputs',
+      {
+        nodeId: 'test-node',
+        actionTrackingId: 'track-1',
+        startTime: '2024-01-01T00:00:00Z',
+        endTime: '2024-01-01T00:01:00Z',
+      },
+    ]);
+  });
+
+  it('should not re-feed already-bound BoundParameters as raw inputs (regression)', async () => {
+    // Simulate the scenario that caused infinite scrolling:
+    // runData.inputs already contains BoundParameters from a previous binding cycle
+    const alreadyBoundInputs = {
+      method: { displayName: 'Method', value: 'GET' },
+    };
+
     (useRunData as any).mockReturnValue({
       status: 'Succeeded',
+      inputs: alreadyBoundInputs,
       startTime: '2024-01-01T00:00:00Z',
+      correlation: { actionTrackingId: 'track-3' },
     });
 
-    // The useQuery mock handles this, but we can verify getActionLinks would be called
-    // by checking the query function behavior
-    render(<MonitoringPanel nodeId="regular-node" />);
+    // getActionLinks returns fresh raw data from the API
+    mockGetActionLinks.mockResolvedValue({ inputs: { method: 'GET' }, outputs: {} });
 
-    // The component should render successfully
-    expect(screen.getByTestId('inputs-panel')).toBeDefined();
+    render(<MonitoringPanel nodeId="test-node" />);
+
+    const queryFn = mockUseQuery.mock.calls.at(-1)![1] as () => Promise<any>;
+    const result = await queryFn();
+
+    // The query function must return raw API data, NOT the already-bound BoundParameters.
+    // If it returned alreadyBoundInputs, the binding would wrap {displayName, value}
+    // inside another {displayName, value}, creating infinite recursive nesting.
+    expect(result.inputs).toEqual({ method: 'GET' });
+    expect(result.inputs).not.toHaveProperty('method.displayName');
+  });
+
+  it('should return empty inputs/outputs when getActionLinks returns nullish values', async () => {
+    mockGetActionLinks.mockResolvedValue({ inputs: null, outputs: undefined });
+
+    render(<MonitoringPanel nodeId="test-node" />);
+
+    const queryFn = mockUseQuery.mock.calls.at(-1)![1] as () => Promise<any>;
+    const result = await queryFn();
+
+    expect(result).toEqual({ inputs: {}, outputs: {} });
+  });
+
+  it('should handle getActionLinks returning null/undefined entirely', async () => {
+    mockGetActionLinks.mockResolvedValue(null);
+
+    render(<MonitoringPanel nodeId="test-node" />);
+
+    const queryFn = mockUseQuery.mock.calls.at(-1)![1] as () => Promise<any>;
+    const result = await queryFn();
+
+    expect(result).toEqual({ inputs: {}, outputs: {} });
+  });
+
+  it('should disable the query when runMetaData is null', () => {
+    (useRunData as any).mockReturnValue(null);
+
+    render(<MonitoringPanel nodeId="test-node" />);
+
+    const queryOptions = mockUseQuery.mock.calls.at(-1)![2];
+    expect(queryOptions.enabled).toBe(false);
   });
 });
