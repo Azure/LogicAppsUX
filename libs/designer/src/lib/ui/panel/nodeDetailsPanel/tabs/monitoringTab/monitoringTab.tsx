@@ -2,14 +2,14 @@ import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
 import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
+import { useRawInputsOutputs } from '../../useRawInputsOutputs';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
-import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
-import { useCallback, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../../core';
 import { initializeInputsOutputsBinding } from '../../../../../core/actions/bjsworkflow/monitoring';
@@ -22,37 +22,15 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
-  // Extract stable identifiers to detect when run data actually changes
+  const { data: inputOutputs, isError, isFetching, isLoading } = useRawInputsOutputs(selectedNodeId);
+
   const actionTrackingId = runMetaData?.correlation?.actionTrackingId;
   const startTime = runMetaData?.startTime;
   const endTime = runMetaData?.endTime;
 
-  const getActionInputsOutputs = useCallback(async () => {
-    // Always fetch fresh raw inputs/outputs from the API.
-    // Do NOT return runMetaData.inputs/outputs here — after binding, those contain
-    // BoundParameters (wrapped in {displayName, value}), and re-feeding them as raw
-    // inputs creates infinite recursive nesting.
-    const actionLinks = (await RunService().getActionLinks(runMetaData, selectedNodeId)) ?? {};
-    return {
-      inputs: actionLinks.inputs ?? {},
-      outputs: actionLinks.outputs ?? {},
-    };
-  }, [selectedNodeId, runMetaData]);
-
-  const {
-    data: inputOutputs,
-    isError,
-    isFetching,
-    isLoading,
-  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId, actionTrackingId, startTime, endTime }], getActionInputsOutputs, {
-    refetchOnWindowFocus: false,
-    placeholderData: { inputs: {}, outputs: {} },
-    enabled: !isNullOrUndefined(runMetaData),
-  });
-
   useEffect(() => {
-    if (!isLoading) {
-      dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
+    if (!isLoading && inputOutputs) {
+      dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs as any }));
     }
   }, [dispatch, inputOutputs, selectedNodeId, isLoading, actionTrackingId, startTime, endTime]);
 
