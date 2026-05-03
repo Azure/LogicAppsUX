@@ -41,6 +41,7 @@ export function createAzureWizard(wizardContext: IAzureConnectorsContext, projec
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
+
 class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsContext> {
   private _projectPath: string;
 
