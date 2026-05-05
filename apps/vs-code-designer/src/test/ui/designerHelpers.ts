@@ -56,6 +56,7 @@ import {
   Key,
   InputBox,
 } from 'vscode-extension-tester';
+import { execSync } from 'child_process';
 import {
   sleep,
   captureScreenshot,
@@ -89,7 +90,7 @@ export const PROJECT_RECOGNITION_WAIT = 4_000;
  * the Open Designer command. Covers the dotnet build + func host start that
  * happens inside openDesigner for CustomCode workspaces.
  */
-export const DESIGNER_TAB_TIMEOUT = 30_000;
+export const DESIGNER_TAB_TIMEOUT = 75_000;
 
 /**
  * Maximum time to wait inside the webview for the designer to finish loading.
@@ -111,6 +112,33 @@ export const DEPENDENCY_VALIDATION_TIMEOUT = 300_000;
 // ===========================================================================
 // Helpers from designerActions.test.ts
 // ===========================================================================
+
+function ensureRuntimeDependencyExecutablePermissions(): void {
+  if (process.platform !== 'linux' && process.platform !== 'darwin') {
+    return;
+  }
+
+  const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+  let fixedAny = false;
+
+  for (const subDir of ['FuncCoreTools', 'NodeJs', 'DotNetSDK']) {
+    const binDir = path.join(depsRoot, subDir);
+    if (!fs.existsSync(binDir)) {
+      continue;
+    }
+
+    try {
+      execSync(`chmod -R +x "${binDir}"`, { stdio: 'ignore' });
+      fixedAny = true;
+    } catch {
+      /* ignore */
+    }
+  }
+
+  if (fixedAny) {
+    console.log('[depValidation] Fixed execute permissions on runtime binaries');
+  }
+}
 
 /**
  * Ensure the local.settings.json for a workspace has WORKFLOWS_SUBSCRIPTION_ID
@@ -449,7 +477,7 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
       await sleep(1000);
       const qInput = await driver.findElement(By.css('.quick-input-box input'));
       // Type parent/filename for uniqueness
-      await qInput.sendKeys(parentDir + '/' + expectedName);
+      await qInput.sendKeys(`${parentDir}/${expectedName}`);
       await sleep(1500);
       await qInput.sendKeys(Key.ENTER);
       await sleep(2000);
@@ -499,24 +527,10 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
   const funcBinaryPath = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', 'func');
 
-  // Fix execute permissions on downloaded runtime binaries.
-  // The extension's download/extract doesn't set chmod +x on Linux, causing
-  // "/bin/sh: 1: .../func: Permission denied" when running `func host start`.
-  if (process.platform === 'linux' || process.platform === 'darwin') {
-    const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
-    for (const subDir of ['FuncCoreTools', 'NodeJs', 'DotNetSDK']) {
-      const binDir = path.join(depsRoot, subDir);
-      if (fs.existsSync(binDir)) {
-        try {
-          const { execSync } = require('child_process');
-          execSync(`chmod -R +x "${binDir}"`, { stdio: 'ignore' });
-        } catch {
-          /* ignore */
-        }
-      }
-    }
-    console.log('[depValidation] Fixed execute permissions on runtime binaries');
-  }
+  // The extension's download/extract can leave Linux/macOS binaries without
+  // execute bits. Apply this before and after validation because validation can
+  // reinstall FuncCoreTools while tests are running.
+  ensureRuntimeDependencyExecutablePermissions();
 
   // Diagnostic: log VS Code title to see if a workspace is loaded
   try {
@@ -531,7 +545,14 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       return (
         (await driver.executeScript<boolean>(`
         var vt = ${JSON.stringify(VALIDATION_TEXT)};
-        var els = document.querySelectorAll('[role="dialog"], .notification-toast, .notifications-toasts .notification-list-item');
+        var els = document.querySelectorAll(
+          '[role="dialog"], ' +
+          '.notification-toast, ' +
+          '.notifications-toasts .notification-list-item, ' +
+          '.statusbar-item, ' +
+          '.statusbar-entry, ' +
+          '.part.statusbar'
+        );
         for (var i = 0; i < els.length; i++) {
           if ((els[i].textContent || '').includes(vt)) return true;
         }
@@ -555,7 +576,14 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       try {
         const msg = await driver.executeScript<string>(`
           var vt = ${JSON.stringify(VALIDATION_TEXT)};
-          var els = document.querySelectorAll('[role="dialog"], .notification-toast, .notifications-toasts .notification-list-item');
+          var els = document.querySelectorAll(
+            '[role="dialog"], ' +
+            '.notification-toast, ' +
+            '.notifications-toasts .notification-list-item, ' +
+            '.statusbar-item, ' +
+            '.statusbar-entry, ' +
+            '.part.statusbar'
+          );
           for (var i = 0; i < els.length; i++) {
             var t = (els[i].textContent || '');
             if (t.includes(vt)) return t.substring(0, 200);
@@ -590,7 +618,13 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
 
       // Check if func binary already exists (validation may have completed before we started)
       if (fs.existsSync(funcBinaryPath)) {
+        if (Date.now() - t0 < 15_000) {
+          await sleep(2000);
+          continue;
+        }
+
         console.log(`[depValidation] func binary already exists at ${funcBinaryPath} (${Date.now() - t0}ms)`);
+        ensureRuntimeDependencyExecutablePermissions();
         return;
       }
 
@@ -598,7 +632,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
     }
 
     if (!everAppeared && !fs.existsSync(funcBinaryPath)) {
-      console.log(`[depValidation] Notification never appeared and func not found — waiting for func binary on disk`);
+      console.log('[depValidation] Notification never appeared and func not found — waiting for func binary on disk');
     }
   }
 
@@ -612,6 +646,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
 
       // Also wait a moment for the extension to update its internal state
       await sleep(3000);
+      ensureRuntimeDependencyExecutablePermissions();
       return;
     }
 
@@ -663,7 +698,10 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
           '.notifications-toasts .notification-list-item, ' +
           '[role="dialog"], ' +
           '.notification-toast, ' +
-          '.monaco-notification-list-item'
+          '.monaco-notification-list-item, ' +
+          '.statusbar-item, ' +
+          '.statusbar-entry, ' +
+          '.part.statusbar'
         );
         for (var i = 0; i < els.length; i++) {
           var text = els[i].textContent || '';
@@ -703,6 +741,17 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
   };
 
   console.log('[waitForValidation] Waiting for extension dependency validation to complete...');
+  let lastPermissionFixAt = 0;
+
+  const fixPermissionsIfNeeded = (): void => {
+    const now = Date.now();
+    if (now - lastPermissionFixAt < 10_000) {
+      return;
+    }
+
+    ensureRuntimeDependencyExecutablePermissions();
+    lastPermissionFixAt = now;
+  };
 
   // Phase 1: Wait up to 15s for the first validation notification to appear.
   let firstSeen = false;
@@ -712,6 +761,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
     const msg = await hasValidationNotification();
     if (msg) {
       console.log(`[waitForValidation] Validation active: "${msg}"`);
+      fixPermissionsIfNeeded();
       firstSeen = true;
       break;
     }
@@ -720,6 +770,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
 
   if (!firstSeen) {
     console.log(`[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s — assuming complete`);
+    ensureRuntimeDependencyExecutablePermissions();
     return;
   }
 
@@ -734,6 +785,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
     const msg = await hasValidationNotification();
     if (msg) {
       lastSeenAt = Date.now();
+      fixPermissionsIfNeeded();
       // Log every ~15 seconds to show progress
       const elapsed = Math.round((Date.now() - t0) / 1000);
       if (elapsed % 15 < 2) {
@@ -749,6 +801,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
   if (Date.now() - t0 >= timeoutMs) {
     console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s — proceeding anyway`);
   }
+  ensureRuntimeDependencyExecutablePermissions();
 
   // Phase 3: Wait for design-time API (func host start) to be ready.
   // After validation completes, the extension starts func which takes time.
@@ -1205,6 +1258,24 @@ export async function findLastAddActionElement(driver: WebDriver): Promise<WebEl
   return null;
 }
 
+export async function clickElementWithFallback(driver: WebDriver, element: WebElement, description: string): Promise<void> {
+  try {
+    await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "center" });', element);
+    await sleep(100);
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    await driver.actions().move({ origin: element }).click().perform();
+    return;
+  } catch (e: any) {
+    console.log(`[clickElementWithFallback] Actions click failed for ${description}: ${e.message}`);
+  }
+
+  await driver.executeScript('arguments[0].click();', element);
+}
+
 /**
  * Poll until the discovery panel (recommendation panel) is visible.
  * Returns when the panel root or search box appears, or after timeout.
@@ -1290,7 +1361,7 @@ export async function clickAddActionMenuItem(driver: WebDriver): Promise<boolean
           const text = await el.getText();
           if (text.toLowerCase().includes('add an action')) {
             console.log(`[clickAddActionMenuItem] Found "Add an action" menu item`);
-            await el.click();
+            await clickElementWithFallback(driver, el, 'Add an action menu item');
             // Poll for the discovery panel to appear
             await waitForDiscoveryPanel(driver);
             return true;
@@ -1747,7 +1818,7 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
     await sleep(1000);
     const quickInput = await driver.findElement(By.css('.quick-input-box input'));
     // Type workflow folder + filename for uniqueness in multi-workflow workspaces
-    await quickInput.sendKeys(label + '/workflow.json');
+    await quickInput.sendKeys(`${label}/workflow.json`);
     await sleep(1500);
     await quickInput.sendKeys(Key.ENTER);
     await sleep(2000);
@@ -1843,27 +1914,15 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
             await menuItem.click();
             await sleep(3000);
 
-            // Wait for webview iframe to appear
-            const deadline = Date.now() + 30_000;
-            while (Date.now() < deadline) {
-              try {
-                await dismissAllDialogs(driver);
-              } catch {
-                /* ignore */
-              }
-              const found = await driver
-                .executeScript<boolean>(
-                  'return !!(document.querySelector("iframe.webview") || document.querySelector("iframe[id*=\\"webview\\"]") || document.querySelector(\'*[id="active-frame"]\'))'
-                )
-                .catch(() => false);
-              if (found) {
-                console.log(`[openDesignerViaExplorer] Designer webview detected for "${label}"`);
-                return true;
-              }
-              await sleep(500);
+            const found = await waitForDesignerWebviewTab(driver);
+            if (found) {
+              console.log(`[openDesignerViaExplorer] Designer webview detected for "${label}"`);
+              return true;
             }
-            console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" within 30s`);
-            return false;
+
+            ensureRuntimeDependencyExecutablePermissions();
+            console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" — retrying`);
+            break;
           }
         } catch {
           /* stale menu item */

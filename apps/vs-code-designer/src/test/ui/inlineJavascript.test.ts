@@ -36,6 +36,7 @@ import {
   countCanvasNodes,
   waitForNodeCountIncrease,
   clickAddActionMenuItem,
+  clickElementWithFallback,
   clickSaveButton,
   readWorkflowJson,
   fillCodeEditor,
@@ -148,7 +149,7 @@ describe('Inline JavaScript Tests', function () {
       await sleep(2000);
       const addAction1 = await findAddActionElement(driver);
       assert.ok(addAction1, 'Add action element should be visible');
-      await addAction1.click();
+      await clickElementWithFallback(driver, addAction1, 'first add action button');
       await sleep(500);
       await clickAddActionMenuItem(driver);
       assert.ok(await waitForDiscoveryPanel(driver), 'Discovery panel should open for action');
@@ -167,7 +168,7 @@ describe('Inline JavaScript Tests', function () {
       // Add Response action — use findLastAddActionElement to add AFTER the JS action
       const addAction2 = await findLastAddActionElement(driver);
       if (addAction2) {
-        await addAction2.click();
+        await clickElementWithFallback(driver, addAction2, 'last add action button');
         await sleep(500);
         await clickAddActionMenuItem(driver);
       }

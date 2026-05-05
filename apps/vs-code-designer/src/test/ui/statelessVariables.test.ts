@@ -30,6 +30,7 @@ import {
   countCanvasNodes,
   waitForNodeCountIncrease,
   clickAddActionMenuItem,
+  clickElementWithFallback,
   clickSaveButton,
   readWorkflowJson,
   openNodeSettingsPanel,
@@ -143,7 +144,7 @@ describe('Stateless Variable Tests', function () {
       await sleep(2000);
       const addAction = await findAddActionElement(driver);
       assert.ok(addAction, 'Add action element should exist');
-      await addAction.click();
+      await clickElementWithFallback(driver, addAction, 'add action button');
       await sleep(500);
       await clickAddActionMenuItem(driver);
       assert.ok(await waitForDiscoveryPanel(driver), 'Discovery panel should open');
@@ -299,7 +300,7 @@ describe('Stateless Variable Tests', function () {
       // Add Response action — use last + button to add AFTER variable action
       const addAction2 = await findLastAddActionElement(driver);
       if (addAction2) {
-        await addAction2.click();
+        await clickElementWithFallback(driver, addAction2, 'last add action button');
         await sleep(500);
         await clickAddActionMenuItem(driver);
       }

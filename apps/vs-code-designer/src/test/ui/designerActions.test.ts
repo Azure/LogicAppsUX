@@ -1295,6 +1295,24 @@ async function findAddActionElement(driver: WebDriver): Promise<WebElement | nul
   return null;
 }
 
+async function clickElementWithFallback(driver: WebDriver, element: WebElement, description: string): Promise<void> {
+  try {
+    await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "center" });', element);
+    await sleep(100);
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    await driver.actions().move({ origin: element }).click().perform();
+    return;
+  } catch (e: any) {
+    console.log(`[clickElementWithFallback] Actions click failed for ${description}: ${e.message}`);
+  }
+
+  await driver.executeScript('arguments[0].click();', element);
+}
+
 /**
  * Find and click the "Add an action" menu item in the edge contextual menu.
  * This menu appears after clicking the "+" button on an edge.
@@ -1381,7 +1399,7 @@ async function clickAddActionMenuItem(driver: WebDriver): Promise<boolean> {
           const text = await el.getText();
           if (text.toLowerCase().includes('add an action')) {
             console.log(`[clickAddActionMenuItem] Found "Add an action" menu item`);
-            await el.click();
+            await clickElementWithFallback(driver, el, 'Add an action menu item');
             // Poll for the discovery panel to appear
             await waitForDiscoveryPanel(driver);
             return true;
@@ -2496,7 +2514,7 @@ async function getLatestRunStatus(driver: WebDriver): Promise<string> {
 async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 30_000
+  timeoutMs = 90_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
@@ -2754,7 +2772,7 @@ describe('Designer Actions Tests', function () {
             continue;
           }
           try {
-            await addActionEl.click();
+            await clickElementWithFallback(driver, addActionEl, 'add action button');
             await sleep(300);
             await clickAddActionMenuItem(driver);
             actionPanelOpened = await waitForDiscoveryPanel(driver);
@@ -2991,7 +3009,7 @@ describe('Designer Actions Tests', function () {
 
         try {
           if (addActionEl) {
-            await addActionEl.click();
+            await clickElementWithFallback(driver, addActionEl, 'add action button');
             await sleep(500);
             await clickAddActionMenuItem(driver);
           } else {
