@@ -50,6 +50,9 @@ export const useFocusElement = () => useSelector(createSelector(getWorkflowState
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
 
+export const useIsCopilotModifiedNode = (nodeId: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => !!state.copilotModifiedNodeIds?.[nodeId]));
+
 export const useWorkflowChangeCount = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.changeCount));
 
 export const useTimelineRepetitionIndex = () =>
