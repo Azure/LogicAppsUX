@@ -92,6 +92,7 @@ export interface DesignerCommandBarProps {
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
   supportsUnitTest?: boolean;
+  showRunHistory?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -108,6 +109,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToCodeView,
   switchToMonitoringView,
   supportsUnitTest,
+  showRunHistory = true,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -264,18 +266,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       >
         Code
       </Button>
-      <Button
-        appearance={isMonitoringView ? 'primary' : 'subtle'}
-        className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
-        size="small"
-        onClick={() => {
-          dispatch(collapsePanel());
-          dispatch(resetDesignerView());
-          switchToMonitoringView();
-        }}
-      >
-        Run history
-      </Button>
+      {showRunHistory ? (
+        <Button
+          appearance={isMonitoringView ? 'primary' : 'subtle'}
+          className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
+          size="small"
+          onClick={() => {
+            dispatch(collapsePanel());
+            dispatch(resetDesignerView());
+            switchToMonitoringView();
+          }}
+        >
+          Run history
+        </Button>
+      ) : null}
     </Card>
   );
 

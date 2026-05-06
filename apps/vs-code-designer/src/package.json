@@ -54,11 +54,6 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.openRunHistory",
-        "title": "Open run history",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.viewContent",
         "title": "View content",
         "category": "Azure Logic Apps"
@@ -718,18 +713,13 @@
           "group": "navigation@1"
         },
         {
-          "command": "azureLogicAppsStandard.openOverview",
-          "when": "logicApps.hasProject && resourceLangId==csharp && resourcePath in azureLogicAppsStandard.codefulWorkflowFiles",
-          "group": "navigation@1"
-        },
-        {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "logicApps.hasProject && resourceFilename==workflow.json",
           "group": "navigation@3"
         },
         {
-          "command": "azureLogicAppsStandard.openRunHistory",
-          "when": "resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true",
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "logicApps.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true",
           "group": "navigation@3"
         },
         {
@@ -779,10 +769,6 @@
           "when": "logicApps.hasProject && resourceFilename==workflow.json"
         },
         {
-          "command": "azureLogicAppsStandard.openRunHistory",
-          "when": "resourceFilename==Program.cs"
-        },
-        {
           "command": "azureLogicAppsStandard.viewContent",
           "when": "never"
         },
@@ -800,11 +786,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "logicApps.hasProject && resourceLangId==csharp && resourcePath in azureLogicAppsStandard.codefulWorkflowFiles"
-        },
-        {
-          "command": "azureLogicAppsStandard.openOverview",
-          "when": "logicApps.hasProject && resourceLangId==csharp && azureLogicAppsStandard.isCodefulWorkflowFile"
+          "when": "logicApps.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true"
         },
         {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",

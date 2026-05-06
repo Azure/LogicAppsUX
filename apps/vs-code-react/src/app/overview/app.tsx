@@ -2,7 +2,7 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
+import { Overview, type OverviewPropertiesProps, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import { type Runs, StandardRunService, Theme, equals, isNullOrUndefined, isRuntimeUp } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -13,6 +13,7 @@ import invariant from 'tiny-invariant';
 import { useOverviewStyles } from './overviewStyles';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { fetchAgentUrl } from './services/workflowService';
+import { Dropdown, Field, Option, useId } from '@fluentui/react-components';
 
 export interface CallbackInfo {
   method?: string;
@@ -21,17 +22,33 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
-  const { apiVersion, baseUrl, accessToken, workflowProperties, hostVersion, azureDetails, kind, connectionData } = workflowState;
+  const { apiVersion, baseUrl, accessToken, workflowProperties, workflowPropertiesList, hostVersion, azureDetails, kind, connectionData } =
+    workflowState;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const styles = useOverviewStyles();
+  const dropdownId = useId('workflow-dropdown');
+  const workflowOptions = useMemo<OverviewPropertiesProps[]>(() => {
+    return workflowPropertiesList?.length ? workflowPropertiesList : [workflowProperties];
+  }, [workflowPropertiesList, workflowProperties]);
+  const [selectedWorkflowName, setSelectedWorkflowName] = useState(workflowOptions[0]?.name ?? workflowProperties.name);
+  const selectedWorkflowProperties = useMemo(() => {
+    return workflowOptions.find((workflow) => workflow.name === selectedWorkflowName) ?? workflowOptions[0] ?? workflowProperties;
+  }, [selectedWorkflowName, workflowOptions, workflowProperties]);
+  const selectedWorkflowKind = selectedWorkflowProperties.kind ?? kind;
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
   });
 
   const isAgentWorkflow = useMemo(() => {
-    return equals(kind, 'agent', true);
-  }, [kind]);
+    return equals(selectedWorkflowKind, 'agent', true);
+  }, [selectedWorkflowKind]);
+
+  useEffect(() => {
+    if (!workflowOptions.some((workflow) => workflow.name === selectedWorkflowName)) {
+      setSelectedWorkflowName(workflowOptions[0]?.name ?? '');
+    }
+  }, [selectedWorkflowName, workflowOptions]);
 
   const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(true);
   useEffect(() => {
@@ -75,10 +92,10 @@ export const OverviewApp = () => {
     return new StandardRunService({
       baseUrl: baseUrl,
       apiVersion: apiVersion,
-      workflowName: workflowProperties.name,
+      workflowName: selectedWorkflowProperties.name,
       httpClient,
     });
-  }, [baseUrl, apiVersion, workflowProperties.name, httpClient]);
+  }, [baseUrl, apiVersion, selectedWorkflowProperties.name, httpClient]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (!runService) {
@@ -92,13 +109,13 @@ export const OverviewApp = () => {
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>(
-    [QueryKeys.runsData],
+    [QueryKeys.runsData, selectedWorkflowProperties.name],
     loadRuns,
     {
       getNextPageParam: (lastPage) => lastPage.nextLink,
       refetchInterval: 5000, // 5 seconds refresh interval
       refetchIntervalInBackground: false, // It will automatically refetch when window is focused
-      enabled: isWorkflowRuntimeRunning,
+      enabled: isWorkflowRuntimeRunning && !!selectedWorkflowProperties.name,
     }
   );
 
@@ -115,10 +132,10 @@ export const OverviewApp = () => {
     isLoading: runTriggerLoading,
     error: runTriggerError,
   } = useMutation(async () => {
-    if (!workflowProperties.callbackInfo) {
+    if (!selectedWorkflowProperties.callbackInfo) {
       throw new Error('Cannot run trigger: Workflow runtime is not running or callback URL is not available');
     }
-    await runService?.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
+    await runService?.runTrigger(selectedWorkflowProperties.callbackInfo as CallbackInfo);
     return refetch();
   });
 
@@ -130,11 +147,11 @@ export const OverviewApp = () => {
   );
 
   const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
-    ['agentUrl', isWorkflowRuntimeRunning, baseUrl],
+    ['agentUrl', isWorkflowRuntimeRunning, baseUrl, selectedWorkflowProperties.name],
     async () => {
       invariant(!!httpClient, 'Agent URL should not be retrieved unless httpClient is available');
       return fetchAgentUrl(
-        workflowProperties.name,
+        selectedWorkflowProperties.name,
         baseUrl,
         httpClient,
         clientId,
@@ -149,7 +166,7 @@ export const OverviewApp = () => {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      enabled: isWorkflowRuntimeRunning && isAgentWorkflow && !isNullOrUndefined(httpClient),
+      enabled: isWorkflowRuntimeRunning && isAgentWorkflow && !!selectedWorkflowProperties.name && !isNullOrUndefined(httpClient),
     }
   );
 
@@ -180,7 +197,29 @@ export const OverviewApp = () => {
 
   return (
     <div className={styles.overviewContainer}>
+      {workflowState.isCodeful && workflowOptions.length > 1 ? (
+        <Field className={styles.workflowSelector} label={intlText.WORKFLOW}>
+          <Dropdown
+            id={dropdownId}
+            placeholder={intlText.SELECT_WORKFLOW}
+            selectedOptions={[selectedWorkflowProperties.name]}
+            value={selectedWorkflowProperties.name}
+            onOptionSelect={(_, data) => {
+              if (data.optionValue) {
+                setSelectedWorkflowName(data.optionValue);
+              }
+            }}
+          >
+            {workflowOptions.map((workflow) => (
+              <Option key={workflow.name} value={workflow.name}>
+                {workflow.name}
+              </Option>
+            ))}
+          </Dropdown>
+        </Field>
+      ) : null}
       <Overview
+        key={selectedWorkflowProperties.name}
         corsNotice={workflowState.corsNotice}
         errorMessage={errorMessage}
         hasMoreRuns={hasNextPage}
@@ -191,7 +230,7 @@ export const OverviewApp = () => {
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         runItems={runItems ?? []}
-        workflowProperties={workflowState.workflowProperties}
+        workflowProperties={selectedWorkflowProperties}
         isRefreshing={isRefetching}
         onLoadMoreRuns={fetchNextPage}
         onLoadRuns={refetch}

@@ -79,12 +79,10 @@ import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
 import { openLanguageServerConnectionView } from './workflows/languageServer/connectionView';
-import { openRunHistory } from './workflows/openRunHistory';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.openRunHistory, openRunHistory);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
   );
