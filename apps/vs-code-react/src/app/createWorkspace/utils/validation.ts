@@ -28,7 +28,7 @@ export const validateFunctionName = (name: string, intlText: any) => {
   if (!name) {
     return intlText.EMPTY_FUNCTION_NAME;
   }
-  if (!nameValidation.test(name)) {
+  if (!functionNameValidation.test(name)) {
     return intlText.FUNCTION_NAME_VALIDATION_MESSAGE;
   }
   return undefined;

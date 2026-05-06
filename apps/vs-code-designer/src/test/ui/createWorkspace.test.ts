@@ -43,7 +43,7 @@ import {
  *     - RadioGroup: "Logic app (Standard)" | "Logic app with custom code" | "Logic app with rules engine"
  *   Section 3 - WorkflowTypeStep:
  *     - "Workflow name" (Input, required, regex validated)
- *     - "Workflow type" (Dropdown/combobox: Stateful | Stateless | Autonomous Agents (Preview) | Conversational Agents)
+ *     - "Workflow type" (Dropdown/combobox: Stateful | Stateless | Autonomous agents (Preview) | Conversational agents (Preview))
  *
  * Form structure (Step 1 - Review + Create):
  *   - Shows summary of all choices
@@ -93,7 +93,7 @@ interface WorkspaceManifestEntry {
   /** Logic app type */
   appType: 'standard' | 'customCode' | 'rulesEngine';
   /** Workflow type value */
-  wfType: 'Stateful' | 'Stateless' | 'Autonomous Agents (Preview)' | 'Conversational Agents';
+  wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
   /** Custom code / rules engine folder name (if applicable) */
   ccFolderName?: string;
   /** Function file name (if applicable) */
@@ -141,7 +141,7 @@ function buildManifestEntry(
     appName: string;
     wfName: string;
     appType: 'standard' | 'customCode' | 'rulesEngine';
-    wfType: 'Stateful' | 'Stateless' | 'Autonomous Agents (Preview)' | 'Conversational Agents';
+    wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
     ccFolderName?: string;
     fnName?: string;
     fnNamespace?: string;
@@ -1091,7 +1091,7 @@ function deepVerifyWorkspace(
     appName: string;
     wfName: string;
     appType: 'standard' | 'customCode' | 'rulesEngine';
-    wfType: 'Stateful' | 'Stateless' | 'Autonomous Agents (Preview)' | 'Conversational Agents';
+    wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
     ccFolderName?: string;
     fnName?: string;
     fnNamespace?: string;
@@ -1134,8 +1134,8 @@ function deepVerifyWorkspace(
     const expectedKindMap: Record<string, string> = {
       Stateful: 'Stateful',
       Stateless: 'Stateless',
-      'Autonomous Agents (Preview)': 'Stateful',
-      'Conversational Agents': 'Agent',
+      'Autonomous agents (Preview)': 'Stateful',
+      'Conversational agents (Preview)': 'Agent',
     };
     const expectedKind = expectedKindMap[wfType] || 'Stateful';
     if (kind !== expectedKind) {
@@ -1161,13 +1161,13 @@ function deepVerifyWorkspace(
         throw new Error(`Rules engine workflow.json missing "Call_a_local_rules_function" action. Actions: ${JSON.stringify(actionNames)}`);
       }
       console.log('[deepVerify] Rules engine InvokeFunction action present ✔');
-    } else if (wfType === 'Autonomous Agents (Preview)' || wfType === 'Conversational Agents') {
+    } else if (wfType === 'Autonomous agents (Preview)' || wfType === 'Conversational agents (Preview)') {
       if (actionNames.some((a) => a.toLowerCase().includes('agent'))) {
         console.log('[deepVerify] Agent action present ✔');
       } else {
         console.log('[deepVerify] Warning: Agent action not found (may be expected for this combination)');
       }
-      if (wfType === 'Conversational Agents') {
+      if (wfType === 'Conversational agents (Preview)') {
         if (triggerNames.some((t) => t.toLowerCase().includes('chat_session'))) {
           console.log('[deepVerify] Conversational agent trigger "When_a_new_chat_session_starts" present ✔');
         }
@@ -1756,7 +1756,7 @@ describe('Create Workspace Tests', function () {
       }
       await driver.actions().sendKeys(Key.ESCAPE).perform();
       await sleep(300);
-      const expectedOptions = ['Stateful', 'Stateless', 'Autonomous Agents', 'Conversational Agents'];
+      const expectedOptions = ['Stateful', 'Stateless', 'Autonomous agents (Preview)', 'Conversational agents (Preview)'];
       for (const expected of expectedOptions) {
         if (!optionTexts.some((opt) => opt.includes(expected))) {
           throw new Error(`Expected dropdown option "${expected}" not found. Available: ${JSON.stringify(optionTexts)}`);
@@ -1976,6 +1976,41 @@ describe('Create Workspace Tests', function () {
       }
 
       throw new Error(`Could not find rules engine input for label "${labelText}"`);
+    }
+
+    async function findCustomCodeInputByLabel(drv: WebDriver, labelText: string): Promise<WebElement> {
+      const labelXpath =
+        labelText === 'Function name'
+          ? "contains(text(), 'Function name') and not(contains(text(), 'namespace'))"
+          : `contains(text(), ${toXPathLiteral(labelText)})`;
+
+      const scopedLabels = await drv.findElements(
+        By.xpath(`//label[contains(text(), 'Custom code folder name')]/following::label[${labelXpath}]`)
+      );
+
+      for (const labelEl of scopedLabels) {
+        try {
+          if (!(await labelEl.isDisplayed())) {
+            continue;
+          }
+
+          const forAttr = await labelEl.getAttribute('for');
+          if (!forAttr) {
+            continue;
+          }
+
+          const inputs = await drv.findElements(By.id(forAttr));
+          for (const input of inputs) {
+            if (await input.isDisplayed()) {
+              return input;
+            }
+          }
+        } catch {
+          // Try next candidate label.
+        }
+      }
+
+      throw new Error(`Could not find custom code input for label "${labelText}"`);
     }
 
     /**
@@ -2572,22 +2607,11 @@ describe('Create Workspace Tests', function () {
     });
 
     it('should disable Next for invalid custom code function namespace', async () => {
-      let nsInput: WebElement | null = null;
-      for (const label of ['Function namespace', 'Namespace', 'namespace']) {
-        try {
-          nsInput = await findInputByLabel(driver, label);
-          break;
-        } catch {
-          // Try next
-        }
-      }
-      if (!nsInput) {
-        try {
-          nsInput = await findInputByLabel(driver, 'Function namespace');
-        } catch {
-          throw new Error('Could not find function namespace input');
-        }
-      }
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+
+      const nsInput = await findCustomCodeInputByLabel(driver, 'Function namespace');
 
       await clearAndType(nsInput, '123.Bad.Namespace');
       await sleep(TYPE_SETTLE);
@@ -2609,18 +2633,11 @@ describe('Create Workspace Tests', function () {
     });
 
     it('should enable Next for dotted namespace like MyCompany.Functions', async () => {
-      let nsInput: WebElement | null = null;
-      for (const label of ['Function namespace', 'Namespace', 'namespace']) {
-        try {
-          nsInput = await findInputByLabel(driver, label);
-          break;
-        } catch {
-          // Try next
-        }
-      }
-      if (!nsInput) {
-        throw new Error('Could not find function namespace input');
-      }
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+
+      const nsInput = await findCustomCodeInputByLabel(driver, 'Function namespace');
 
       // Dotted namespace must be accepted and Next button must enable
       await clearAndType(nsInput, 'MyCompany.Functions');
@@ -2646,18 +2663,11 @@ describe('Create Workspace Tests', function () {
     });
 
     it('should disable Next when custom code function namespace is cleared', async () => {
-      let nsInput: WebElement | null = null;
-      for (const label of ['Function namespace', 'Namespace', 'namespace']) {
-        try {
-          nsInput = await findInputByLabel(driver, label);
-          break;
-        } catch {
-          // Try next
-        }
-      }
-      if (!nsInput) {
-        throw new Error('Could not find function namespace input');
-      }
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+
+      const nsInput = await findCustomCodeInputByLabel(driver, 'Function namespace');
 
       await clearAndType(nsInput, 'TempNamespace');
       await sleep(TYPE_SETTLE);
@@ -2674,30 +2684,11 @@ describe('Create Workspace Tests', function () {
     });
 
     it('should disable Next for invalid custom code function name', async () => {
-      // Find function name input (NOT namespace)
-      let fnInput: WebElement | null = null;
-      const fnLabels = await driver.findElements(
-        By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
-      );
-      if (fnLabels.length > 0) {
-        const forAttr = await fnLabels[0].getAttribute('for');
-        if (forAttr) {
-          const inputs = await driver.findElements(By.id(forAttr));
-          if (inputs.length > 0) {
-            fnInput = inputs[0];
-          }
-        }
-        if (!fnInput) {
-          const parent = await fnLabels[0].findElement(By.xpath('..'));
-          const inputs = await parent.findElements(By.css('input'));
-          if (inputs.length > 0) {
-            fnInput = inputs[0];
-          }
-        }
-      }
-      if (!fnInput) {
-        fnInput = await findInputByLabel(driver, 'Function name');
-      }
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+
+      const fnInput = await findCustomCodeInputByLabel(driver, 'Function name');
 
       await clearAndType(fnInput, '999func');
       await sleep(TYPE_SETTLE);
@@ -2712,29 +2703,11 @@ describe('Create Workspace Tests', function () {
     });
 
     it('should disable Next when custom code function name is cleared', async () => {
-      let fnInput: WebElement | null = null;
-      const fnLabels = await driver.findElements(
-        By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
-      );
-      if (fnLabels.length > 0) {
-        const forAttr = await fnLabels[0].getAttribute('for');
-        if (forAttr) {
-          const inputs = await driver.findElements(By.id(forAttr));
-          if (inputs.length > 0) {
-            fnInput = inputs[0];
-          }
-        }
-        if (!fnInput) {
-          const parent = await fnLabels[0].findElement(By.xpath('..'));
-          const inputs = await parent.findElements(By.css('input'));
-          if (inputs.length > 0) {
-            fnInput = inputs[0];
-          }
-        }
-      }
-      if (!fnInput) {
-        fnInput = await findInputByLabel(driver, 'Function name');
-      }
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+
+      const fnInput = await findCustomCodeInputByLabel(driver, 'Function name');
 
       await clearAndType(fnInput, uniqueName('tempfn'));
       await sleep(TYPE_SETTLE);
@@ -2751,29 +2724,11 @@ describe('Create Workspace Tests', function () {
     });
 
     it('should disable Next for hyphenated custom code function name', async () => {
-      let fnInput: WebElement | null = null;
-      const fnLabels = await driver.findElements(
-        By.xpath("//label[contains(text(), 'Function name') and not(contains(text(), 'namespace'))]")
-      );
-      if (fnLabels.length > 0) {
-        const forAttr = await fnLabels[0].getAttribute('for');
-        if (forAttr) {
-          const inputs = await driver.findElements(By.id(forAttr));
-          if (inputs.length > 0) {
-            fnInput = inputs[0];
-          }
-        }
-        if (!fnInput) {
-          const parent = await fnLabels[0].findElement(By.xpath('..'));
-          const inputs = await parent.findElements(By.css('input'));
-          if (inputs.length > 0) {
-            fnInput = inputs[0];
-          }
-        }
-      }
-      if (!fnInput) {
-        fnInput = await findInputByLabel(driver, 'Function name');
-      }
+      await ensureOnProjectSetupStep(driver);
+      await selectRadioOption(driver, 'Logic app with custom code');
+      await sleep(1000);
+
+      const fnInput = await findCustomCodeInputByLabel(driver, 'Function name');
 
       await clearAndType(fnInput, 'my-func');
       await sleep(TYPE_SETTLE);
@@ -3640,7 +3595,7 @@ describe('Create Workspace Tests', function () {
       this.timeout(180_000);
 
       const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Autonomous Agents (Preview)');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Autonomous agents (Preview)');
       await sleep(1000);
 
       // Verify Autonomous Agents description: "AI agents" or "automate complex tasks"
@@ -3673,7 +3628,7 @@ describe('Create Workspace Tests', function () {
       this.timeout(180_000);
 
       const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Conversational Agents');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Conversational agents (Preview)');
       await sleep(1000);
 
       // Verify Conversational Agents description: "natural language" or "human interaction" or "LLMs"
@@ -4337,7 +4292,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'Logic app (Standard)',
-        wfType: 'Autonomous Agents (Preview)',
+        wfType: 'Autonomous agents (Preview)',
       });
 
       console.log('[createAutonomousAgent] Waiting for Next button...');
@@ -4370,7 +4325,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'standard',
-        wfType: 'Autonomous Agents (Preview)',
+        wfType: 'Autonomous agents (Preview)',
       });
 
       appendToWorkspaceManifest(
@@ -4379,7 +4334,7 @@ describe('Create Workspace Tests', function () {
           appName,
           wfName,
           appType: 'standard',
-          wfType: 'Autonomous Agents (Preview)',
+          wfType: 'Autonomous agents (Preview)',
         })
       );
 
@@ -4409,7 +4364,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'Logic app (Standard)',
-        wfType: 'Conversational Agents',
+        wfType: 'Conversational agents (Preview)',
       });
 
       console.log('[createConversationalAgent] Waiting for Next button...');
@@ -4442,7 +4397,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'standard',
-        wfType: 'Conversational Agents',
+        wfType: 'Conversational agents (Preview)',
       });
 
       appendToWorkspaceManifest(
@@ -4451,7 +4406,7 @@ describe('Create Workspace Tests', function () {
           appName,
           wfName,
           appType: 'standard',
-          wfType: 'Conversational Agents',
+          wfType: 'Conversational agents (Preview)',
         })
       );
 
@@ -4761,7 +4716,7 @@ describe('Create Workspace Tests', function () {
 
       await clearAndType(await findInputByLabel(driver, 'Workflow name'), wfName);
       const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Autonomous Agents (Preview)');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Autonomous agents (Preview)');
 
       const nextButton = await waitForNextButton(driver);
       await nextButton.click();
@@ -4779,7 +4734,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'customCode',
-        wfType: 'Autonomous Agents (Preview)',
+        wfType: 'Autonomous agents (Preview)',
         ccFolderName,
         fnName,
         fnNamespace,
@@ -4791,7 +4746,7 @@ describe('Create Workspace Tests', function () {
           appName,
           wfName,
           appType: 'customCode',
-          wfType: 'Autonomous Agents (Preview)',
+          wfType: 'Autonomous agents (Preview)',
           ccFolderName,
           fnName,
           fnNamespace,
@@ -4836,7 +4791,7 @@ describe('Create Workspace Tests', function () {
 
       await clearAndType(await findInputByLabel(driver, 'Workflow name'), wfName);
       const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Conversational Agents');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Conversational agents (Preview)');
 
       const nextButton = await waitForNextButton(driver);
       await nextButton.click();
@@ -4854,7 +4809,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'customCode',
-        wfType: 'Conversational Agents',
+        wfType: 'Conversational agents (Preview)',
         ccFolderName,
         fnName,
         fnNamespace,
@@ -4866,7 +4821,7 @@ describe('Create Workspace Tests', function () {
           appName,
           wfName,
           appType: 'customCode',
-          wfType: 'Conversational Agents',
+          wfType: 'Conversational agents (Preview)',
           ccFolderName,
           fnName,
           fnNamespace,
@@ -5081,7 +5036,7 @@ describe('Create Workspace Tests', function () {
 
       await clearAndType(await findInputByLabel(driver, 'Workflow name'), wfName);
       const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Autonomous Agents (Preview)');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Autonomous agents (Preview)');
 
       const nextButton = await waitForNextButton(driver);
       await nextButton.click();
@@ -5099,7 +5054,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'rulesEngine',
-        wfType: 'Autonomous Agents (Preview)',
+        wfType: 'Autonomous agents (Preview)',
         ccFolderName: reFolderName,
         fnName,
         fnNamespace,
@@ -5111,7 +5066,7 @@ describe('Create Workspace Tests', function () {
           appName,
           wfName,
           appType: 'rulesEngine',
-          wfType: 'Autonomous Agents (Preview)',
+          wfType: 'Autonomous agents (Preview)',
           ccFolderName: reFolderName,
           fnName,
           fnNamespace,
@@ -5203,7 +5158,7 @@ describe('Create Workspace Tests', function () {
 
       await clearAndType(await findInputByLabel(driver, 'Workflow name'), wfName);
       const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Conversational Agents');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Conversational agents (Preview)');
 
       const nextButton = await waitForNextButton(driver);
       await nextButton.click();
@@ -5221,7 +5176,7 @@ describe('Create Workspace Tests', function () {
         appName,
         wfName,
         appType: 'rulesEngine',
-        wfType: 'Conversational Agents',
+        wfType: 'Conversational agents (Preview)',
         ccFolderName: reFolderName,
         fnName,
         fnNamespace,
@@ -5233,7 +5188,7 @@ describe('Create Workspace Tests', function () {
           appName,
           wfName,
           appType: 'rulesEngine',
-          wfType: 'Conversational Agents',
+          wfType: 'Conversational agents (Preview)',
           ccFolderName: reFolderName,
           fnName,
           fnNamespace,

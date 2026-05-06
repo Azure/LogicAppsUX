@@ -15,6 +15,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { By, Key, ModalDialog, type WebDriver } from 'vscode-extension-tester';
 
+type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
+
 // ===========================================================================
 // General utilities
 // ===========================================================================
@@ -500,9 +502,9 @@ export async function openActivityBarItem(driver: WebDriver, title: string): Pro
  * Expand a tree-view item in the sidebar by navigating through the given path.
  * Returns the final tree item element.
  */
-export async function expandTreeViewItem(driver: WebDriver, path: string[]): Promise<import('selenium-webdriver').WebElement | null> {
+export async function expandTreeViewItem(driver: WebDriver, path: string[]): Promise<WebDriverElement | null> {
   let currentElements = await driver.findElements(By.css('.pane-body .monaco-list-row'));
-  let lastFound: import('selenium-webdriver').WebElement | null = null;
+  let lastFound: WebDriverElement | null = null;
 
   for (const segment of path) {
     let found = false;
