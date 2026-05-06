@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { TemplateOverview } from './templateoverview';
 import { setLayerHostSelector, Spinner, SpinnerSize, Text } from '@fluentui/react';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
@@ -73,16 +73,28 @@ const SingleTemplateView = ({
       dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
     }
   }, [dispatch, showSummary]);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
-    <>
-      <QuickViewPanel
-        showCreate={true}
-        showCloseButton={showCloseButton}
-        onClose={onClose}
-        workflowId={Object.keys(workflows)[0]}
-        panelWidth={panelWidth}
-      />
-      <CreateWorkflowPanel showCloseButton={showCloseButton} createWorkflow={createWorkflow} panelWidth={panelWidth} onClose={onClose} />
+    <div>
+      <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <QuickViewPanel
+          mountNode={containerRef?.current}
+          showCreate={true}
+          showCloseButton={showCloseButton}
+          onClose={onClose}
+          workflowId={Object.keys(workflows)[0]}
+          panelWidth={panelWidth}
+        />
+        <CreateWorkflowPanel
+          mountNode={containerRef?.current}
+          showCloseButton={showCloseButton}
+          createWorkflow={createWorkflow}
+          panelWidth={panelWidth}
+          onClose={onClose}
+        />
+      </div>
       <div
         id={'msla-layer-host'}
         style={{
@@ -91,6 +103,6 @@ const SingleTemplateView = ({
           visibility: 'hidden',
         }}
       />
-    </>
+    </div>
   );
 };

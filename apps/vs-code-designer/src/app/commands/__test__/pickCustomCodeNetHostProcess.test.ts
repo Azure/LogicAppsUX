@@ -18,6 +18,11 @@ vi.mock('vscode', () => ({
   },
 }));
 
+const originalProcessPlatform = process.platform;
+const mockProcessPlatform = (platform: NodeJS.Platform) => {
+  Object.defineProperty(process, 'platform', { value: platform, configurable: true });
+};
+
 describe('pickCustomCodeNetHostProcess', async () => {
   const testLogicAppName = 'LogicApp';
   const testFunctionAppName = 'FunctionApp';
@@ -50,6 +55,8 @@ describe('pickCustomCodeNetHostProcess', async () => {
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
+    vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
+    vi.spyOn(pickFuncProcessModule, 'getUnixChildren').mockResolvedValue([]);
     vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
@@ -116,6 +123,8 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
+    vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
+    vi.spyOn(pickFuncProcessModule, 'getUnixChildren').mockResolvedValue([]);
     vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
@@ -164,15 +173,17 @@ describe('pickNetHostChildProcess', async () => {
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid.toString());
+    vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
     vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
   afterEach(() => {
+    mockProcessPlatform(originalProcessPlatform);
     vi.restoreAllMocks();
   });
 
   it('should return the pid of a child process matching dotnet.exe on Windows', async () => {
-    vi.stubGlobal('process', { platform: 'win32' });
+    mockProcessPlatform('win32');
     vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([
       { command: 'other.exe', pid: 11111 },
       { command: 'dotnet.exe', pid: testDotnetPid },
@@ -185,7 +196,7 @@ describe('pickNetHostChildProcess', async () => {
   });
 
   it('should return the pid of a child process matching dotnet on Unix', async () => {
-    vi.stubGlobal('process', { platform: 'linux' });
+    mockProcessPlatform('linux');
     vi.spyOn(pickFuncProcessModule, 'getUnixChildren').mockResolvedValue([
       { command: 'other', pid: 11111 },
       { command: 'dotnet', pid: testDotnetPid },
@@ -198,7 +209,7 @@ describe('pickNetHostChildProcess', async () => {
   });
 
   it('should return the pid of a child process matching func on Unix', async () => {
-    vi.stubGlobal('process', { platform: 'linux' });
+    mockProcessPlatform('linux');
     vi.spyOn(pickFuncProcessModule, 'getUnixChildren').mockResolvedValue([
       { command: 'func.exe', pid: testDotnetPid },
       { command: 'other', pid: 11111 },
@@ -210,16 +221,14 @@ describe('pickNetHostChildProcess', async () => {
   });
 
   it('should return undefined if no matching child process is found', async () => {
-    vi.stubGlobal('process', { platform: 'win32' });
+    mockProcessPlatform('win32');
     const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');
     const result = await pickNetHostChildProcessMocked({ startTime: Date.now(), processId: testFuncPid });
     expect(result).toBeUndefined();
   });
 
   it('should return undefined if pickChildProcess returns undefined', async () => {
-    vi.stubGlobal('process', { platform: 'win32' });
-    const getWindowsChildren = vi.fn();
-    const getUnixChildren = vi.fn();
+    mockProcessPlatform('win32');
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(undefined as any);
 
     const { pickNetHostChildProcess: pickNetHostChildProcessMocked } = await import('../pickCustomCodeNetHostProcess');

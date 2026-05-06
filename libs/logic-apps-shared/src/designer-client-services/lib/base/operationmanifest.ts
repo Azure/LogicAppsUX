@@ -42,6 +42,7 @@ import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
 import handoffManifest from './manifests/handoff';
+import invokeFunctionManifest from './manifests/invokefunction';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
@@ -76,6 +77,7 @@ const xmlcompose = 'xmlcompose';
 const xmlparse = 'xmlparse';
 export const flatfiledecoding = 'flatfiledecoding';
 export const flatfileencoding = 'flatfileencoding';
+const flatfileschemageneration = 'flatfileschemageneration';
 const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const swiftmtdecode = 'swiftmtdecode';
@@ -212,6 +214,7 @@ export const supportedBaseManifestTypes = [
   xmlparse,
   flatfiledecoding,
   flatfileencoding,
+  flatfileschemageneration,
   scope,
   swiftdecode,
   swiftencode,
@@ -345,6 +348,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case xmlvalidation:
     case flatfiledecoding:
     case flatfileencoding:
+    case flatfileschemageneration:
     case scope:
     case swiftdecode:
     case swiftencode:
@@ -686,6 +690,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/flatFileOperations',
     operationId: 'flatFileEncoding',
   },
+  [flatfileschemageneration]: {
+    connectorId: 'connectionProviders/flatFileOperations',
+    operationId: 'flatFileSchemaGeneration',
+  },
   [scope]: {
     connectorId: controlConnectorId,
     operationId: scope,
@@ -803,6 +811,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [httpwebhooktrigger, httpWebhookTriggerManifest],
   [incrementvariable, incrementManifest],
   [initializevariable, initializeManifest],
+  [invokefunction, invokeFunctionManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],

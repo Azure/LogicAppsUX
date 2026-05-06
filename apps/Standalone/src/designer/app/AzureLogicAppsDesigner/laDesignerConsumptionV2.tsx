@@ -30,6 +30,7 @@ import {
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
   BaseChatbotService,
+  BaseCopilotWorkflowEditorService,
   ConsumptionRunService,
   guid,
   startsWith,
@@ -52,6 +53,9 @@ import {
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   FloatingRunButton,
+  setIsWorkflowDirty,
+  setFocusNode,
+  changePanelNode,
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -65,7 +69,6 @@ const httpClient = new HttpClient();
 const DesignerEditorConsumption = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -398,7 +401,7 @@ const DesignerEditorConsumption = () => {
       return;
     }
 
-    if (isDraftMode && draftWorkflow) {
+    if (isDraftMode && draftWorkflow?.definition) {
       setConnectionReferences(draftConnectionReferences);
       setParameters(draftParameters);
       setNotes(draftNotes);
@@ -452,6 +455,7 @@ const DesignerEditorConsumption = () => {
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
+            integrationAccount: (workflowAndArtifactsData?.properties as any)?.integrationAccount,
           },
           showPerformanceDebug,
         }}
@@ -469,17 +473,37 @@ const DesignerEditorConsumption = () => {
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', height: 'inherit' }}>
-              {showChatBot ? (
-                <CoPilotChatbot
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={openFeedBackPanel}
-                  closeChatBot={() => {
-                    dispatch(setIsChatBotEnabled(false));
-                  }}
-                  getAuthToken={getAuthToken}
-                />
-              ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <CoPilotChatbot
+                isOpen={showChatBot}
+                getUpdatedWorkflow={getUpdatedWorkflow}
+                openFeedbackPanel={openFeedBackPanel}
+                closeChatBot={() => {
+                  dispatch(setIsChatBotEnabled(false));
+                }}
+                getAuthToken={getAuthToken}
+                enableWorkflowEditing={true}
+                autoApply={true}
+                onWorkflowProposed={(newWorkflow) => {
+                  setNotes(newWorkflow.notes ?? {});
+                  if (newWorkflow.parameters) {
+                    setParameters(newWorkflow.parameters);
+                  }
+                  setWorkflow({
+                    ...newWorkflow,
+                    id: guid(),
+                  });
+                  DesignerStore.dispatch(setIsWorkflowDirty(true));
+                }}
+                getNodeVisuals={(nodeId) => {
+                  const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
+                  return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
+                }}
+                onNodeClick={(nodeId) => {
+                  DesignerStore.dispatch(setFocusNode(nodeId));
+                  DesignerStore.dispatch(changePanelNode(nodeId));
+                }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0', minHeight: 0, minWidth: 0, overflow: 'hidden' }}>
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}
@@ -503,7 +527,7 @@ const DesignerEditorConsumption = () => {
                 {isCodeView ? (
                   <CodeViewEditor ref={codeEditorRef} isConsumption />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
+                  <>
                     <Designer />
                     <FloatingRunButton
                       siteResourceId={workflowId}
@@ -515,7 +539,7 @@ const DesignerEditorConsumption = () => {
                       isConsumption={true}
                       workflowReadOnly={derivedIsReadOnly}
                     />
-                  </div>
+                  </>
                 )}
                 <CombineInitializeVariableDialog />
                 <TriggerDescriptionDialog workflowId={workflowId} />
@@ -703,7 +727,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint, isDraftMode);
     },
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowAndArtifactsData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
@@ -712,6 +736,20 @@ const getDesignerServices = (
     },
     notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
+    },
+    getSandboxConfigurations: async (integrationAccountId: string) => {
+      // Agent harness sandbox APIs are only available in limited regions.
+      // Use the regional ARM endpoint (brazilus) to route requests to a supported region.
+      const sandboxBaseUrl = 'https://brazilus.management.azure.com';
+      const response = await httpClient.get<any>({
+        uri: `${sandboxBaseUrl}${integrationAccountId}/sandboxConfigurations`,
+        queryParameters: { 'api-version': '2016-06-01' },
+      });
+      // This endpoint returns a bare JSON array, not the usual ARM { value: [...] } envelope.
+      if (Array.isArray(response)) {
+        return response;
+      }
+      return response?.value ?? [];
     },
   };
 
@@ -754,6 +792,15 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
+  // Initialize CopilotWorkflowEditorService
+  const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
+    baseUrl,
+    subscriptionId,
+    location,
+    apiVersion: '2026-03-01-preview',
+    getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
+  });
+
   // This isn't correct but without it I was getting errors
   //   It's fine just to unblock standalone consumption
   const customCodeService = new StandardCustomCodeService({
@@ -789,6 +836,7 @@ const getDesignerServices = (
     roleService,
     hostService,
     chatbotService,
+    copilotWorkflowEditorService,
     customCodeService,
     cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),

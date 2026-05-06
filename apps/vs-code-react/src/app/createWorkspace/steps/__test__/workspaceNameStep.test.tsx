@@ -94,8 +94,11 @@ describe('WorkspaceNameStep', () => {
 
   it('should render project path and workspace name inputs', () => {
     renderWithStore();
-    // The labels should be rendered
-    expect(screen.getByRole('switch')).toBeInTheDocument();
+    // The switch is hidden (devcontainer feature not shipped)
+    expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+    // But the text inputs should still be rendered
+    const textboxes = screen.getAllByRole('textbox');
+    expect(textboxes.length).toBeGreaterThan(0);
   });
 
   it('should render Browse button', () => {
@@ -132,14 +135,10 @@ describe('WorkspaceNameStep', () => {
   });
 
   describe('dev container switch', () => {
-    it('should dispatch setIsDevContainerProject when switch is toggled', () => {
-      const { store } = renderWithStore({ isDevContainerProject: false });
-      const switchControl = screen.getByRole('switch');
-
-      fireEvent.click(switchControl);
-
-      const state = store.getState().createWorkspace;
-      expect(state.isDevContainerProject).toBe(true);
+    it('should not render the dev container switch (feature hidden)', () => {
+      renderWithStore({ isDevContainerProject: false });
+      const switches = screen.queryAllByRole('switch');
+      expect(switches).toHaveLength(0);
     });
   });
 

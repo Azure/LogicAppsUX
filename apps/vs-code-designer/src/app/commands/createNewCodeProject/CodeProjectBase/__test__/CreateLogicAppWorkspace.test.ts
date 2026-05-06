@@ -61,6 +61,7 @@ vi.mock('fs-extra', () => ({
 
 vi.mock('path', () => ({
   join: vi.fn(),
+  resolve: vi.fn(),
 }));
 
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
@@ -101,6 +102,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
     // Restore path.join to use actual implementation
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
 
     // Default getGlobalSetting behavior
     vi.mocked(vscodeConfigModule.getGlobalSetting).mockReturnValue(testLspDirectory);
@@ -598,6 +600,7 @@ describe('createLogicAppWorkspace', () => {
 
     // Restore path.join to use actual implementation
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
 
     // Mock vscode functions
     vi.mocked(vscode.window.showInformationMessage).mockResolvedValue(undefined);
@@ -930,6 +933,7 @@ describe('updateWorkspaceFile', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.readJson).mockResolvedValue({ folders: [] });
     vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
   });
@@ -1077,6 +1081,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
     vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
   });
@@ -1149,6 +1154,7 @@ describe('createLocalConfigurationFiles', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.writeFile).mockResolvedValue(undefined);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
   });
@@ -1369,6 +1375,7 @@ describe('createArtifactsFolder', () => {
 
   beforeEach(() => {
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.mkdirSync).mockReturnValue(undefined);
   });
 
@@ -1429,6 +1436,7 @@ describe('createRulesFiles - Testing Actual Implementation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.readFile).mockResolvedValue('Sample content with <%= methodName %>' as any);
     vi.mocked(fse.writeFile).mockResolvedValue(undefined);
   });
@@ -1517,6 +1525,7 @@ describe('createLibFolder - Testing Actual Implementation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.mkdirSync).mockReturnValue(undefined);
   });
 

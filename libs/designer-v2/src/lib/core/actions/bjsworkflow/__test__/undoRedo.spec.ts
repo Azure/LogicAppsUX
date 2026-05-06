@@ -8,7 +8,7 @@ import * as undoRedoSlice from '../../../state/undoRedo/undoRedoSlice';
 import { addNode } from '../../../state/workflow/workflowSlice';
 import { RootState } from '../../../store';
 import * as undoRedoUtils from '../../../utils/undoredo';
-import { getCompressedStateFromRootState, getRootStateFromCompressedState } from '../../../utils/undoredo';
+import { getCompressedSlicesFromRootState, getRootStateFromCompressedSlices } from '../../../utils/undoredo';
 import { onRedoClick, onUndoClick, storeStateToUndoRedoHistory } from '../undoRedo';
 
 describe('undo redo actions', () => {
@@ -31,13 +31,13 @@ describe('undo redo actions', () => {
     vi.spyOn(undoRedoUtils, 'getEditedPanelTab').mockReturnValue('PARAMETERS');
     vi.spyOn(undoRedoUtils, 'getEditedPanelNode').mockReturnValue('Initialize_Variable');
 
-    const compressedState = getCompressedStateFromRootState(mockedInitialRootState);
+    const compressedSlices = getCompressedSlicesFromRootState(mockedInitialRootState);
 
     const action = storeStateToUndoRedoHistory({ type: addNode.type });
     await action(dispatch, getState, undefined);
     expect(getState).toHaveBeenCalled();
     expect(saveStateToHistoryMock).toHaveBeenCalledWith({
-      stateHistoryItem: { compressedState, editedPanelTab: 'PARAMETERS', editedPanelNode: 'Initialize_Variable' },
+      stateHistoryItem: { compressedSlices, editedPanelTab: 'PARAMETERS', editedPanelNode: 'Initialize_Variable' },
       limit: mockedInitialRootState.designerOptions.hostOptions.maxStateHistorySize,
     });
 
@@ -47,7 +47,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
     expect(getState).toHaveBeenCalled();
     expect(saveStateToHistoryMock).toHaveBeenCalledWith({
-      stateHistoryItem: { compressedState, editedPanelTab: undefined, editedPanelNode: undefined },
+      stateHistoryItem: { compressedSlices, editedPanelTab: undefined, editedPanelNode: undefined },
       limit: mockedInitialRootState.designerOptions.hostOptions.maxStateHistorySize,
     });
   });
@@ -84,13 +84,13 @@ describe('undo redo actions', () => {
     expect(setSelectedPanelActiveTab).not.toHaveBeenCalled();
 
     // Past array has a compressed state, it should undo to the state
-    const compressedState = getCompressedStateFromRootState(mockedInitialRootState);
-    const decompressedState = getRootStateFromCompressedState(compressedState);
+    const compressedSlices = getCompressedSlicesFromRootState(mockedInitialRootState);
+    const decompressedState = getRootStateFromCompressedSlices(compressedSlices, mockedInitialRootState);
 
     mockedInitialRootState = {
       ...mockedInitialRootState,
       undoRedo: {
-        past: [{ compressedState }],
+        past: [{ compressedSlices }],
         future: [],
         stateHistoryItemIndex: -1,
       },
@@ -100,7 +100,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedState });
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices });
     expect(changePanelNode).not.toHaveBeenCalled();
     expect(setSelectedPanelActiveTab).not.toHaveBeenCalled();
 
@@ -108,7 +108,7 @@ describe('undo redo actions', () => {
     mockedInitialRootState = {
       ...mockedInitialRootState,
       undoRedo: {
-        past: [{ compressedState, editedPanelTab: 'PARAMETERS', editedPanelNode: 'Initialize_Variable' }],
+        past: [{ compressedSlices, editedPanelTab: 'PARAMETERS', editedPanelNode: 'Initialize_Variable' }],
         future: [],
         stateHistoryItemIndex: -1,
       },
@@ -118,7 +118,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedState });
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices });
     expect(changePanelNode).toHaveBeenCalledWith('Initialize_Variable');
     expect(setSelectedPanelActiveTab).toHaveBeenCalledWith('PARAMETERS');
   });
@@ -140,14 +140,14 @@ describe('undo redo actions', () => {
     expect(setSelectedPanelActiveTab).not.toHaveBeenCalled();
 
     // Future array has a compressed state, it should redo to the state
-    const compressedState = getCompressedStateFromRootState(mockedInitialRootState);
-    const decompressedState = getRootStateFromCompressedState(compressedState);
+    const compressedSlices = getCompressedSlicesFromRootState(mockedInitialRootState);
+    const decompressedState = getRootStateFromCompressedSlices(compressedSlices, mockedInitialRootState);
 
     mockedInitialRootState = {
       ...mockedInitialRootState,
       undoRedo: {
         past: [],
-        future: [{ compressedState }],
+        future: [{ compressedSlices }],
         stateHistoryItemIndex: -1,
       },
     };
@@ -156,7 +156,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedState });
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices });
     expect(changePanelNode).not.toHaveBeenCalled();
     expect(setSelectedPanelActiveTab).not.toHaveBeenCalled();
 
@@ -165,7 +165,7 @@ describe('undo redo actions', () => {
       ...mockedInitialRootState,
       undoRedo: {
         past: [],
-        future: [{ compressedState }],
+        future: [{ compressedSlices }],
         stateHistoryItemIndex: -1,
         currentEditedPanelNode: 'Initialize_Variable',
         currentEditedPanelTab: 'PARAMETERS',
@@ -176,7 +176,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedState });
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices });
     expect(changePanelNode).toHaveBeenCalledWith('Initialize_Variable');
     expect(setSelectedPanelActiveTab).toHaveBeenCalledWith('PARAMETERS');
   });

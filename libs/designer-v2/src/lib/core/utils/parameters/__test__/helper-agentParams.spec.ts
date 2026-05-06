@@ -1,8 +1,100 @@
 import { describe, it, expect } from 'vitest';
-import { isParameterRequired, createParameterInfo } from '../helper';
-import type { ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
+import { isParameterRequired, createParameterInfo, toParameterInfoMap, shouldUseParameterInGroup } from '../helper';
+import type { InputParameter, ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
 
 describe('Parameter validation logic for Agent operations', () => {
+  describe('shouldUseParameterInGroup - visibility controls serialization inclusion', () => {
+    const makeAgentModelTypeParam = (modelTypeValue: string): ParameterInfo =>
+      ({
+        id: 'agentModelType',
+        parameterName: 'agentModelType',
+        parameterKey: 'inputs.$.agentModelType',
+        required: true,
+        type: 'string',
+        value: [{ id: '1', type: 'literal', value: modelTypeValue }],
+        info: { format: 'text' },
+        label: 'Agent Model Type',
+      }) as any;
+
+    const makeDeploymentModelPropParam = (propName: string, visibleForValues: string[]): ParameterInfo =>
+      ({
+        id: `deploymentModelProperties.${propName}`,
+        parameterName: propName,
+        parameterKey: `inputs.$.agentModelSettings.deploymentModelProperties.${propName}`,
+        required: false,
+        type: 'string',
+        value: [{ id: '1', type: 'literal', value: 'some-value' }],
+        info: {
+          format: 'text',
+          dependencies: {
+            type: 'visibility',
+            parameters: [{ name: 'agentModelType', values: visibleForValues }],
+          },
+        },
+        label: `Model ${propName}`,
+      }) as any;
+
+    it('should include deploymentModelProperties.name for AzureOpenAI when visibility includes AzureOpenAI', () => {
+      const agentModelType = makeAgentModelTypeParam('AzureOpenAI');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(true);
+    });
+
+    it('should include deploymentModelProperties.name for MicrosoftFoundry when visibility includes MicrosoftFoundry', () => {
+      const agentModelType = makeAgentModelTypeParam('MicrosoftFoundry');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(true);
+    });
+
+    it('should exclude deploymentModelProperties.name for AzureOpenAI when visibility only includes MicrosoftFoundry', () => {
+      const agentModelType = makeAgentModelTypeParam('AzureOpenAI');
+      const nameParam = makeDeploymentModelPropParam('name', ['MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      // This is the bug scenario: visibility=['MicrosoftFoundry'] causes AzureOpenAI fields to be dropped from serialization
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(false);
+    });
+
+    it('should include all three deploymentModelProperties for AzureOpenAI with correct visibility', () => {
+      const agentModelType = makeAgentModelTypeParam('AzureOpenAI');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const formatParam = makeDeploymentModelPropParam('format', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const versionParam = makeDeploymentModelPropParam('version', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam, formatParam, versionParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(true);
+      expect(shouldUseParameterInGroup(formatParam, allParams)).toBe(true);
+      expect(shouldUseParameterInGroup(versionParam, allParams)).toBe(true);
+    });
+
+    it('should include parameters without visibility dependencies', () => {
+      const paramWithoutDeps: ParameterInfo = {
+        id: 'messages',
+        parameterName: 'messages',
+        parameterKey: 'inputs.$.messages',
+        required: true,
+        type: 'array',
+        value: [],
+        info: { format: 'text' },
+        label: 'Messages',
+      } as any;
+
+      expect(shouldUseParameterInGroup(paramWithoutDeps, [paramWithoutDeps])).toBe(true);
+    });
+
+    it('should exclude parameter when dependent parameter value is not in allowed values', () => {
+      const agentModelType = makeAgentModelTypeParam('V1ChatCompletionsService');
+      const nameParam = makeDeploymentModelPropParam('name', ['AzureOpenAI', 'MicrosoftFoundry']);
+      const allParams = [agentModelType, nameParam];
+
+      expect(shouldUseParameterInGroup(nameParam, allParams)).toBe(false);
+    });
+  });
+
   describe('isParameterRequired', () => {
     it('should return false for hidden parameters', () => {
       const parameterInfo: ParameterInfo = {
@@ -41,7 +133,7 @@ describe('Parameter validation logic for Agent operations', () => {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'FoundryAgentService', 'APIMGenAIGateway'],
+                values: ['AzureOpenAI', 'FoundryAgentServiceV2', 'APIMGenAIGateway'],
               },
             ],
           },
@@ -301,7 +393,7 @@ describe('Parameter validation logic for Agent operations', () => {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'FoundryAgentService'],
+                values: ['AzureOpenAI', 'FoundryAgentServiceV2'],
               },
             ],
           },
@@ -314,6 +406,94 @@ describe('Parameter validation logic for Agent operations', () => {
       expect(parameterInfo.required).toBe(true);
       // But when validating, isParameterRequired should return false due to input dependencies
       expect(isParameterRequired(parameterInfo)).toBe(false);
+    });
+  });
+
+  describe('toParameterInfoMap - knowledgebase parameter hiding', () => {
+    it('should exclude parameters with editor: "knowledgebase" from the result', () => {
+      const inputParameters: InputParameter[] = [
+        {
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          type: 'object',
+          title: 'Agent Knowledge',
+          required: false,
+          editor: 'knowledgebase',
+          schema: {
+            type: 'object',
+          },
+        } as any,
+        {
+          name: 'messages',
+          key: 'inputs.$.messages',
+          type: 'array',
+          title: 'Messages',
+          required: true,
+          editor: 'array',
+          schema: {
+            type: 'array',
+          },
+        } as any,
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should only contain 'messages', not 'agentKnowledge'
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('messages');
+    });
+
+    it('should exclude parameters with editor: "knowledgebase" regardless of case', () => {
+      const inputParameters: InputParameter[] = [
+        {
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          type: 'object',
+          title: 'Agent Knowledge',
+          required: false,
+          editor: 'Knowledgebase', // Different casing
+          schema: {
+            type: 'object',
+          },
+        } as any,
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should be empty since knowledgebase parameters are hidden
+      expect(result).toHaveLength(0);
+    });
+
+    it('should include all parameters when none have editor: "knowledgebase"', () => {
+      const inputParameters: InputParameter[] = [
+        {
+          name: 'deploymentId',
+          key: 'inputs.$.deploymentId',
+          type: 'string',
+          title: 'Deployment ID',
+          required: false,
+          editor: 'textbox',
+          schema: {
+            type: 'string',
+          },
+        } as any,
+        {
+          name: 'temperature',
+          key: 'inputs.$.temperature',
+          type: 'number',
+          title: 'Temperature',
+          required: false,
+          editor: 'textbox',
+          schema: {
+            type: 'number',
+          },
+        } as any,
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.parameterName)).toEqual(['deploymentId', 'temperature']);
     });
   });
 });

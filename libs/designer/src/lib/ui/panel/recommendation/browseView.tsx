@@ -54,7 +54,7 @@ const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
     return (
       getPriorityValue(b) - getPriorityValue(a) ||
       getRunTimeValue(a) - getRunTimeValue(b) ||
-      a.properties.displayName?.localeCompare(b.properties.displayName)
+      (a.properties.displayName ?? '').localeCompare(b.properties.displayName ?? '')
     );
   });
 };

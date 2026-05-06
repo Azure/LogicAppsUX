@@ -43,6 +43,15 @@ export {
   parseWorkflowParameterValue,
 } from './actions/bjsworkflow/serializer';
 export {
+  flushPendingFoundryUpdates,
+  hasPendingFoundryUpdates,
+  setPendingFoundryUpdate,
+  clearPendingFoundryUpdate,
+  getPendingFoundryUpdate,
+  consumeVersionRefresh,
+  needsVersionRefresh,
+} from './actions/bjsworkflow/foundryUpdates';
+export {
   setSelectedNodeId,
   changePanelNode,
   clearPanel,
@@ -69,6 +78,8 @@ export { McpWizardProvider } from './mcp/McpWizardProvider';
 export { resetMcpStateOnResourceChange } from './actions/bjsworkflow/mcp';
 export { McpServerDataProvider } from './mcp/McpServerDataProvider';
 export type { McpServerCreateData } from './mcp/utils/serializer';
+export { KnowledgeDataProvider } from './knowledge/KnowledgeDataProvider';
+export { KnowledgeWizardProvider } from './knowledge/KnowledgeWizardProvider';
 export {
   validateParameter,
   parameterValueToString,

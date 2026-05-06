@@ -3,6 +3,7 @@ import { initialConnectionsState } from '../core/state/connection/connectionSlic
 import { initialState as initialCustomCodeState } from '../core/state/customcode/customcodeSlice';
 import { initialDesignerOptionsState } from '../core/state/designerOptions/designerOptionsSlice';
 import { initialState as initialDesignerViewState } from '../core/state/designerView/designerViewSlice';
+import { initialState as initialNotesState } from '../core/state/notes/notesSlice';
 import { initialState as initialOperationsState } from '../core/state/operation/operationMetadataSlice';
 import { initialState as initialPanelState } from '../core/state/panel/panelSlice';
 import { initialState as initialSettingsState } from '../core/state/setting/settingSlice';
@@ -24,6 +25,7 @@ export const getMockedInitialRootState = (): RootState => {
     tokens: initialTokensState,
     workflow: initialWorkflowState,
     workflowParameters: initialWorkflowParametersState,
+    notes: initialNotesState,
     designerOptions: initialDesignerOptionsState,
     designerView: initialDesignerViewState,
     undoRedo: initialUndoRedoState,
@@ -41,5 +43,6 @@ export const getMockedUndoRedoPartialRootState = (): UndoRedoPartialRootState =>
     tokens: initialTokensState,
     workflow: initialWorkflowState,
     workflowParameters: initialWorkflowParametersState,
+    notes: initialNotesState,
   };
 };

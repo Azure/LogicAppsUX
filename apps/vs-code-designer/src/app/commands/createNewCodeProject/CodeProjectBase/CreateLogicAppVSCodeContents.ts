@@ -1,8 +1,6 @@
 import { latestGAVersion, ProjectLanguage, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import {
-  assetsFolderName,
-  containerTemplatesFolderName,
   deploySubpathSetting,
   dotnetExtensionId,
   dotnetPublishTaskLabel,
@@ -21,14 +19,15 @@ import {
   settingsFileName,
   tasksFileName,
   vscodeFolderName,
-  workspaceTemplatesFolderName,
 } from '../../../../constants';
 import path from 'path';
 import * as fse from 'fs-extra';
 import type { DebugConfiguration } from 'vscode';
+import { getContainerTemplatePath, getWorkspaceTemplatePath } from '../../../utils/assets';
 import { confirmEditJsonFile } from '../../../utils/fs';
 import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
+import { getCustomCodeRuntime } from '../../../utils/debug';
 import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
 import { binariesExist } from '../../../utils/binaries';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -38,16 +37,21 @@ import {
   tryGetLogicAppCustomCodeFunctionsProjects,
 } from '../../../utils/customCodeUtils';
 
-async function writeSettingsJson(context: IWebviewProjectContext, additionalSettings: ISettingToAdd[], vscodePath: string): Promise<void> {
+export async function writeSettingsJson(
+  context: IWebviewProjectContext,
+  additionalSettings: ISettingToAdd[],
+  vscodePath: string
+): Promise<void> {
   const { targetFramework, logicAppType } = context;
 
-  const settings: ISettingToAdd[] = additionalSettings.concat(
+  const settings: ISettingToAdd[] = [
+    ...additionalSettings,
     { key: projectLanguageSetting, value: logicAppType === ProjectType.codeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript },
     { key: funcVersionSetting, value: latestGAVersion },
     // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
     { prefix: 'debug', key: 'internalConsoleOptions', value: 'neverOpen' },
-    { prefix: 'azureFunctions', key: 'suppressProject', value: true }
-  );
+    { prefix: 'azureFunctions', key: 'suppressProject', value: true },
+  ];
 
   const settingsJsonPath: string = path.join(vscodePath, settingsFileName);
 
@@ -75,10 +79,8 @@ export async function writeExtensionsJson(webviewProjectContext: IWebviewProject
   const { logicAppType } = webviewProjectContext;
   const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
   const extensionsJsonFile = 'ExtensionsJsonFile';
-  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, extensionsJsonFile);
-
-  // Read the template file
-  const templateContent = await fse.readFile(templatePath, 'utf8');
+  const templatePath = getWorkspaceTemplatePath(extensionsJsonFile);
+  const templateContent = await fse.readFile(templatePath, 'utf-8');
   const extensionsData = JSON.parse(templateContent);
 
   if (logicAppType !== ProjectType.logicApp) {
@@ -151,32 +153,27 @@ const getCodefulTasks = (targetFramework: string) => {
   ];
 };
 
-async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string) {
+export async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
   const tasksJsonFile = context.isDevContainerProject ? 'DevContainerTasksJsonFile' : 'TasksJsonFile';
-  const templatePath = path.join(__dirname, assetsFolderName, workspaceTemplatesFolderName, tasksJsonFile);
-
-  // Read the template file
-  const templateContent = await fse.readFile(templatePath, 'utf8');
+  const templatePath = getWorkspaceTemplatePath(tasksJsonFile);
+  const templateContent = await fse.readFile(templatePath, 'utf-8');
   const tasksData = JSON.parse(templateContent);
 
   if (logicAppType === ProjectType.codeful && targetFramework) {
-    // Get the codeful-specific tasks
     const codefulTasks = getCodefulTasks(targetFramework);
     tasksData.tasks = codefulTasks;
 
-    // Write the modified tasks.json file
     await fse.writeJson(tasksJsonPath, tasksData, { spaces: 2 });
   } else {
-    // For non-codeful projects, just copy the template
     await fse.copyFile(templatePath, tasksJsonPath);
   }
 }
 
 export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
   const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
-  const templatePath = path.join(__dirname, assetsFolderName, containerTemplatesFolderName, devContainerFileName);
+  const templatePath = getContainerTemplatePath(devContainerFileName);
   await fse.copyFile(templatePath, devContainerJsonPath);
 }
 
@@ -202,7 +199,7 @@ export function getDebugConfiguration(
       type: 'logicapp',
       request: 'launch',
       funcRuntime: 'coreclr',
-      customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+      customCodeRuntime: getCustomCodeRuntime(customCodeTargetFramework),
       isCodeless: true,
     };
   }
@@ -245,12 +242,8 @@ async function tryGetCustomCodeTargetFramework(context: IWebviewProjectContext):
 }
 
 export function insertLaunchConfig(existingConfigs: DebugConfiguration[] | undefined, newConfig: DebugConfiguration): DebugConfiguration[] {
-  // tslint:disable-next-line: strict-boolean-expressions
-  existingConfigs = existingConfigs || [];
-  // Remove configs that match the one we're about to add
-  existingConfigs = existingConfigs.filter((l1) => !isDebugConfigEqual(l1, newConfig));
-  existingConfigs.push(newConfig);
-  return existingConfigs;
+  const configs = (existingConfigs ?? []).filter((existingConfig) => !isDebugConfigEqual(existingConfig, newConfig));
+  return [...configs, newConfig];
 }
 
 export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {

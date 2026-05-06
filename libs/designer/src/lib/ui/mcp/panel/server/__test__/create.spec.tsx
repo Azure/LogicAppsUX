@@ -1,6 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
+import '@testing-library/jest-dom/vitest';
 import { describe, vi, expect, it, beforeEach } from 'vitest';
 // biome-ignore lint/correctness/noUnusedImports: using react for render
 import React from 'react';
@@ -321,7 +322,7 @@ describe('CreateServer', () => {
     });
 
     it('displays validation errors for name field', async () => {
-      mockValidateMcpServerName.mockReturnValue('Name is required');
+      mockValidateMcpServerName.mockReturnValue('Requires a name.');
       const user = userEvent.setup();
 
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
@@ -330,7 +331,7 @@ describe('CreateServer', () => {
       await user.type(nameInput, 'invalid');
 
       await waitFor(() => {
-        expect(screen.getByText('Name is required')).toBeInTheDocument();
+        expect(screen.getByText('Requires a name.')).toBeInTheDocument();
       });
     });
 
@@ -497,7 +498,6 @@ describe('CreateServer', () => {
     });
 
     it('shows loading state during submission', async () => {
-      const user = userEvent.setup();
       let resolvePromise: () => void;
       const pendingPromise = new Promise<void>((resolve) => {
         resolvePromise = resolve;
@@ -509,14 +509,17 @@ describe('CreateServer', () => {
       const nameInput = screen.getByTestId('textfield-name');
       const descriptionInput = screen.getByTestId('textarea-description');
       const workflow1Option = screen.getByTestId('option-workflow1');
-      const submitButton = screen.getByTestId('footer-button-0');
 
-      await user.clear(nameInput);
-      await user.type(nameInput, 'TestServer');
-      await user.clear(descriptionInput);
-      await user.type(descriptionInput, 'Test Description');
+      // Use fireEvent.change for direct, synchronous control to avoid keyboard event
+      // interference from Fluent UI's tabster focus-trapping
+      fireEvent.change(nameInput, { target: { value: 'TestServer' } });
+      fireEvent.change(descriptionInput, { target: { value: 'Test Description' } });
       fireEvent.click(workflow1Option);
 
+      // Add a small delay to ensure state updates complete
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const submitButton = screen.getByTestId('footer-button-0');
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -528,22 +531,23 @@ describe('CreateServer', () => {
     });
 
     it('closes panel after successful submission', async () => {
-      const user = userEvent.setup();
-
       renderWithProviders({ onUpdate: mockOnUpdate, onClose: mockOnClose });
 
       const nameInput = screen.getByTestId('textfield-name');
       const descriptionInput = screen.getByTestId('textarea-description');
       const workflow1Option = screen.getByTestId('option-workflow1');
-      const submitButton = screen.getByTestId('footer-button-0');
 
-      await user.clear(nameInput);
-      await user.type(nameInput, 'TestServer');
-      await user.clear(descriptionInput);
-      await user.type(descriptionInput, 'Test Description');
+      // Use fireEvent.change for direct, synchronous control to avoid keyboard event
+      // interference from Fluent UI's tabster focus-trapping (consistent with the
+      // "calls onUpdate with correct data" test above)
+      fireEvent.change(nameInput, { target: { value: 'TestServer' } });
+      fireEvent.change(descriptionInput, { target: { value: 'Test Description' } });
       fireEvent.click(workflow1Option);
 
-      fireEvent.click(submitButton);
+      // Wait for state updates to settle so the submit button is enabled
+      await waitFor(() => expect(screen.getByTestId('footer-button-0')).toBeEnabled());
+
+      fireEvent.click(screen.getByTestId('footer-button-0'));
 
       await waitFor(() => {
         expect(mockClosePanel).toHaveBeenCalled();

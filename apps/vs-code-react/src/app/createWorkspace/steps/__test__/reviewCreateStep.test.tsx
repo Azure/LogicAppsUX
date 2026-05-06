@@ -133,7 +133,7 @@ describe('ReviewCreateStep', () => {
         workflowName: 'test-workflow',
       });
       // The workflow section heading should not be rendered
-      expect(screen.queryByText('Workflow Configuration')).not.toBeInTheDocument();
+      expect(screen.queryByText('Workflow configuration')).not.toBeInTheDocument();
     });
   });
 
@@ -163,7 +163,7 @@ describe('ReviewCreateStep', () => {
         functionNamespace: 'MyApp.Functions',
         functionName: 'ProcessOrder',
       });
-      expect(screen.getByText('Custom Code Configuration')).toBeInTheDocument();
+      expect(screen.getByText('Custom code configuration')).toBeInTheDocument();
       expect(screen.getByText('MyFunctions')).toBeInTheDocument();
       expect(screen.getByText('MyApp.Functions')).toBeInTheDocument();
       expect(screen.getByText('ProcessOrder')).toBeInTheDocument();
@@ -186,6 +186,15 @@ describe('ReviewCreateStep', () => {
       });
       expect(screen.getByText('.NET 8')).toBeInTheDocument();
     });
+
+    it('should display dot net framework correctly for net10.0', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        logicAppType: ProjectType.customCode,
+        targetFramework: 'net10.0',
+      });
+      expect(screen.getByText('.NET 10')).toBeInTheDocument();
+    });
   });
 
   describe('rules engine configuration', () => {
@@ -197,7 +206,7 @@ describe('ReviewCreateStep', () => {
         functionNamespace: 'MyApp.Rules',
         functionName: 'EvaluateRules',
       });
-      expect(screen.getByText('Function Configuration')).toBeInTheDocument();
+      expect(screen.getByText('Function configuration')).toBeInTheDocument();
       expect(screen.getByText('RulesFunctions')).toBeInTheDocument();
       expect(screen.getByText('MyApp.Rules')).toBeInTheDocument();
       expect(screen.getByText('EvaluateRules')).toBeInTheDocument();
@@ -213,25 +222,27 @@ describe('ReviewCreateStep', () => {
         logicAppsWithoutCustomCode: [{ label: 'existing-app' }],
         workflowName: 'should-not-appear',
       });
-      expect(screen.queryByText('Workflow Configuration')).not.toBeInTheDocument();
+      expect(screen.queryByText('Workflow configuration')).not.toBeInTheDocument();
     });
   });
 
   describe('dev container setting', () => {
-    it('should display Yes when dev container is enabled', () => {
+    it('should not display dev container row in review (feature hidden)', () => {
       renderWithStore({
         flowType: 'createWorkspace',
         isDevContainerProject: true,
       });
-      expect(screen.getByText('Yes')).toBeInTheDocument();
+      expect(screen.queryByText('Use Dev Container')).not.toBeInTheDocument();
     });
 
-    it('should display No when dev container is disabled', () => {
+    it('should not show Yes/No for dev container when feature is hidden', () => {
       renderWithStore({
         flowType: 'createWorkspace',
         isDevContainerProject: false,
       });
-      expect(screen.getByText('No')).toBeInTheDocument();
+      // The "No" text should not appear as a dev container value
+      // (it may appear elsewhere, so we check for the label specifically)
+      expect(screen.queryByText('Use Dev Container')).not.toBeInTheDocument();
     });
   });
 });

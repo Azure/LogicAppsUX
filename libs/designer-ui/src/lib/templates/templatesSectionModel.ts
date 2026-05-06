@@ -37,6 +37,7 @@ interface BaseTextInputFieldItem extends BaseFieldItem {
 
 interface TextFieldItem extends BaseTextInputFieldItem {
   type: 'textfield';
+  isSecret?: boolean;
   onChange: (value: string) => void;
   contentAfter?: Slot<'span'>;
 }

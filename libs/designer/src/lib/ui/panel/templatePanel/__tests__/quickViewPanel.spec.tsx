@@ -202,10 +202,12 @@ describe('panel/templatePanel/quickViewPanel', () => {
 
   beforeEach(() => {
     const queryClient = getReactQueryClient();
-
+    const ref = React.createRef<HTMLDivElement>();
     renderWithProviders(
       <QueryClientProvider client={queryClient}>
-        <QuickViewPanel showCreate={true} workflowId={defaultWorkflowId} />
+        <div ref={ref}>
+          <QuickViewPanel showCreate={true} workflowId={defaultWorkflowId} mountNode={ref.current} />
+        </div>
       </QueryClientProvider>,
       { store }
     );

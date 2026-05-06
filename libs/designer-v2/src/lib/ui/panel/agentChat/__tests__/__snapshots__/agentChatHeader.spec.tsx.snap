@@ -40,7 +40,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -54,7 +54,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -82,7 +82,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -90,13 +90,13 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3.5 8a4.5 4.5 0 0 1 7.33-3.5H9.75a.75.75 0 0 0 0 1.5h2.5c.41 0 .75-.34.75-.75v-2.5a.75.75 0 0 0-1.5 0v.38A6 6 0 1 0 14 8a.75.75 0 0 0-1.5 0 4.5 4.5 0 1 1-9 0Z"
+            d="M3.5 8a4.5 4.5 0 0 1 7.85-3h-1.6a.75.75 0 0 0 0 1.5h3c.41 0 .75-.34.75-.75v-3a.75.75 0 0 0-1.5 0v.78a6 6 0 1 0 1.94 5.32.75.75 0 0 0-1.49-.2A4.5 4.5 0 0 1 3.5 8Z"
             fill="currentColor"
           />
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -104,7 +104,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 8a5 5 0 0 1 9-3H9.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.03A6 6 0 1 0 14 8a.5.5 0 0 0-1 0A5 5 0 0 1 3 8Z"
+            d="M3 8a5 5 0 0 1 9-3h-2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.53A5.99 5.99 0 0 0 2 8a6 6 0 0 0 11.98.54.5.5 0 0 0-1-.08A5 5 0 0 1 3 8Z"
             fill="currentColor"
           />
         </svg>
@@ -124,7 +124,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -138,7 +138,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot when showing s
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -196,7 +196,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -204,13 +204,13 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3.5 8a4.5 4.5 0 0 1 7.33-3.5H9.75a.75.75 0 0 0 0 1.5h2.5c.41 0 .75-.34.75-.75v-2.5a.75.75 0 0 0-1.5 0v.38A6 6 0 1 0 14 8a.75.75 0 0 0-1.5 0 4.5 4.5 0 1 1-9 0Z"
+            d="M3.5 8a4.5 4.5 0 0 1 7.85-3h-1.6a.75.75 0 0 0 0 1.5h3c.41 0 .75-.34.75-.75v-3a.75.75 0 0 0-1.5 0v.78a6 6 0 1 0 1.94 5.32.75.75 0 0 0-1.49-.2A4.5 4.5 0 0 1 3.5 8Z"
             fill="currentColor"
           />
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -218,7 +218,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 8a5 5 0 0 1 9-3H9.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.03A6 6 0 1 0 14 8a.5.5 0 0 0-1 0A5 5 0 0 1 3 8Z"
+            d="M3 8a5 5 0 0 1 9-3h-2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.53A5.99 5.99 0 0 0 2 8a6 6 0 0 0 11.98.54.5.5 0 0 0-1-.08A5 5 0 0 1 3 8Z"
             fill="currentColor"
           />
         </svg>
@@ -238,7 +238,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -252,7 +252,7 @@ exports[`AgentChatHeader > renders correctly and matches snapshot with dark mode
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -310,7 +310,7 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -318,13 +318,13 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3.5 8a4.5 4.5 0 0 1 7.33-3.5H9.75a.75.75 0 0 0 0 1.5h2.5c.41 0 .75-.34.75-.75v-2.5a.75.75 0 0 0-1.5 0v.38A6 6 0 1 0 14 8a.75.75 0 0 0-1.5 0 4.5 4.5 0 1 1-9 0Z"
+            d="M3.5 8a4.5 4.5 0 0 1 7.85-3h-1.6a.75.75 0 0 0 0 1.5h3c.41 0 .75-.34.75-.75v-3a.75.75 0 0 0-1.5 0v.78a6 6 0 1 0 1.94 5.32.75.75 0 0 0-1.49-.2A4.5 4.5 0 0 1 3.5 8Z"
             fill="currentColor"
           />
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -332,7 +332,7 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3 8a5 5 0 0 1 9-3H9.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.03A6 6 0 1 0 14 8a.5.5 0 0 0-1 0A5 5 0 0 1 3 8Z"
+            d="M3 8a5 5 0 0 1 9-3h-2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0v1.53A5.99 5.99 0 0 0 2 8a6 6 0 0 0 11.98.54.5.5 0 0 0-1-.08A5 5 0 0 1 3 8Z"
             fill="currentColor"
           />
         </svg>
@@ -352,7 +352,7 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"
@@ -366,7 +366,7 @@ exports[`AgentChatHeader > renders correctly when dark mode is on 1`] = `
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="16"
           viewBox="0 0 16 16"

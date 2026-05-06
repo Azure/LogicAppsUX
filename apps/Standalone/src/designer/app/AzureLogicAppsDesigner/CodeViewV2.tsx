@@ -58,20 +58,19 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
     hasChanges: () => changesMade,
   }));
 
-  return (
-    <div>
-      {isNullOrUndefined(code) ? null : (
-        <CodeMirrorEditor
-          height="100vh"
-          language={EditorLanguage.json}
-          value={code}
-          overviewRulerBorder={true}
-          scrollBeyondLastLine={false}
-          fontSize={13}
-          onContentChanged={handleContentChanged}
-          indentWithTab={true}
-        />
-      )}
+  return isNullOrUndefined(code) ? null : (
+    <div style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+      <CodeMirrorEditor
+        height="100%"
+        language={EditorLanguage.json}
+        value={code}
+        overviewRulerBorder={true}
+        scrollBeyondLastLine={false}
+        noBorder={true}
+        fontSize={13}
+        onContentChanged={handleContentChanged}
+        indentWithTab={true}
+      />
     </div>
   );
 });

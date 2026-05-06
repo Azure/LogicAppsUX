@@ -2,8 +2,8 @@ import { floatingPanelZIndex } from '../floatingPanel/FloatingPanel';
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { bundleIcon } from '@fluentui/react-icons';
+import type { FluentIcon } from '@fluentui/react-icons';
 import { useMemo } from 'react';
-import type { IconType } from 'react-icons/lib';
 
 const useStyles = makeStyles({
   btnContainer: {
@@ -31,8 +31,8 @@ export interface ButtonContainerProps {
 }
 
 export interface ButtonContainerButtonProps {
-  regularIcon: IconType;
-  filledIcon: IconType;
+  regularIcon: FluentIcon;
+  filledIcon: FluentIcon;
   tooltip: string;
   filled?: boolean;
   onClick: () => void;

@@ -50,11 +50,11 @@ export default {
             readOnly: true,
             options: [
               {
-                value: 'AzureOpenAI',
-                displayName: 'Azure OpenAI',
+                value: 'MicrosoftFoundry',
+                displayName: 'Foundry Models (Preview)',
               },
               {
-                value: 'FoundryAgentService',
+                value: 'FoundryAgentServiceV2',
                 displayName: 'Foundry project (Preview)',
                 unSupportedWorkflowKind: ['agent'],
               },
@@ -69,7 +69,38 @@ export default {
             ],
           },
           type: 'string',
-          default: 'AzureOpenAI',
+          default: 'MicrosoftFoundry',
+        },
+        foundryAgentName: {
+          type: 'string',
+          title: 'Agent',
+          description: 'The Foundry agent to use.',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['FoundryAgentServiceV2'],
+              },
+            ],
+          },
+        },
+        foundryVersionName: {
+          type: 'string',
+          title: 'Agent version name',
+          description: 'The version name of the Foundry agent (e.g. v1, v7).',
+          'x-ms-visibility': 'internal',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['FoundryAgentServiceV2'],
+              },
+            ],
+          },
         },
         deploymentId: {
           type: 'string',
@@ -87,7 +118,7 @@ export default {
             parameters: [
               {
                 name: 'agentModelType',
-                values: ['AzureOpenAI', 'FoundryAgentService', 'APIMGenAIGateway'],
+                values: ['AzureOpenAI', 'MicrosoftFoundry', 'APIMGenAIGateway'],
               },
             ],
           },
@@ -112,6 +143,24 @@ export default {
           'x-ms-visibility': 'important',
           'x-ms-editor': 'agentinstruction',
           type: 'array',
+        },
+        knowledgeBaseName: {
+          title: 'Knowledge base',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'knowledgebase',
+          'x-ms-editor-options': {
+            visibility: 'custom',
+          },
+          type: 'string',
+          'x-ms-input-dependencies': {
+            type: 'visibility',
+            parameters: [
+              {
+                name: 'agentModelType',
+                values: ['AzureOpenAI', 'MicrosoftFoundry', 'APIMGenAIGateway', 'V1ChatCompletionsService'],
+              },
+            ],
+          },
         },
         headers: {
           type: 'object',
@@ -148,7 +197,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -165,7 +214,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -182,7 +231,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -247,18 +296,15 @@ export default {
                 },
                 builtinTools: {
                   type: 'array',
-                  title: 'Built in tools',
-                  'x-ms-editor': 'dropdown',
+                  title: 'Built-in Tools',
+                  'x-ms-visibility': 'important',
+                  'x-ms-editor': 'builtintools',
                   'x-ms-editor-options': {
-                    multiSelect: true,
-                    titleSeparator: ',',
-                    serialization: {
-                      valueType: 'array',
-                    },
                     options: [
                       {
                         value: 'code_interpreter',
-                        displayName: 'Code interpreter',
+                        displayName: 'Code Interpreter',
+                        description: 'Enable the agent to write and execute JavaScript code for calculations, and data analysis.',
                       },
                     ],
                   },
@@ -267,7 +313,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['FoundryAgentService'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -335,7 +381,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -424,13 +470,12 @@ export default {
                   title: 'Model name',
                   description: 'Name of the model which you want to use for the agent',
                   type: 'string',
-                  default: 'gpt-4.1',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -439,13 +484,12 @@ export default {
                   title: 'Model format',
                   description: 'Format of the model you are using',
                   type: 'string',
-                  default: 'OpenAI',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },
@@ -454,13 +498,12 @@ export default {
                   title: 'Model version',
                   description: 'Version of the model you are using',
                   type: 'string',
-                  default: '2025-04-14',
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
                       {
                         name: 'agentModelType',
-                        values: ['AzureOpenAI'],
+                        values: ['AzureOpenAI', 'MicrosoftFoundry'],
                       },
                     ],
                   },

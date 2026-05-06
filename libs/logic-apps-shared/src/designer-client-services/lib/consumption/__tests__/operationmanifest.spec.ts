@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ConsumptionOperationManifestService } from '../operationmanifest';
+import mcpclientconnector from '../manifests/mcpclientconnector';
 import type { IHttpClient } from '../../httpClient';
 
 describe('ConsumptionOperationManifestService', () => {
@@ -29,6 +30,18 @@ describe('ConsumptionOperationManifestService', () => {
   });
 
   describe('getOperationInfo', () => {
+    test('should return correct operation info for mcpclienttool type', async () => {
+      const definition = {
+        type: 'McpClientTool',
+        inputs: {},
+      };
+
+      const result = await operationManifestService.getOperationInfo(definition, false);
+
+      expect(result.connectorId).toBe('connectionProviders/mcpclient');
+      expect(result.operationId).toBe('nativemcpclient');
+    });
+
     test('should return correct operation info for workflow type', async () => {
       const definition = {
         type: 'workflow',
@@ -91,6 +104,11 @@ describe('ConsumptionOperationManifestService', () => {
   });
 
   describe('isSupported', () => {
+    test('should return true for mcpclienttool builtin operation type', () => {
+      const result = operationManifestService.isSupported('mcpclienttool', 'builtin');
+      expect(result).toBe(true);
+    });
+
     test('should return true for nestedagent operation type', () => {
       const result = operationManifestService.isSupported('nestedagent');
       expect(result).toBe(true);
@@ -108,6 +126,14 @@ describe('ConsumptionOperationManifestService', () => {
   });
 
   describe('getOperationManifest', () => {
+    test('should return MCP manifest for nativemcpclient operation', async () => {
+      const result = await operationManifestService.getOperationManifest('connectionProviders/mcpclient', 'nativemcpclient');
+
+      expect(result).toBeDefined();
+      expect(result.properties).toBeDefined();
+      expect(result.properties.description).toBe('Uses an MCP server');
+    });
+
     test('should return manifest for invokenestedagent operation', async () => {
       const result = await operationManifestService.getOperationManifest('/connectionProviders/workflow', 'invokenestedagent');
 
@@ -120,6 +146,34 @@ describe('ConsumptionOperationManifestService', () => {
 
       expect(result).toBeDefined();
       expect(result.properties).toBeDefined();
+    });
+  });
+
+  describe('MCP connector ManagedServiceIdentity parameters', () => {
+    test('should define identity parameter in ManagedServiceIdentity parameter set', () => {
+      const paramSets = mcpclientconnector.properties.connectionParameterSets?.values;
+      const msiSet = paramSets?.find((p: any) => p.name === 'ManagedServiceIdentity');
+
+      expect(msiSet).toBeDefined();
+      expect(msiSet?.parameters.identity).toBeDefined();
+      expect(msiSet?.parameters.identity.type).toBe('string');
+      expect(msiSet?.parameters.identity.uiDefinition.displayName).toBe('Managed identity');
+    });
+
+    test('should define audience parameter in ManagedServiceIdentity parameter set', () => {
+      const paramSets = mcpclientconnector.properties.connectionParameterSets?.values;
+      const msiSet = paramSets?.find((p: any) => p.name === 'ManagedServiceIdentity');
+
+      expect(msiSet).toBeDefined();
+      expect(msiSet?.parameters.audience).toBeDefined();
+      expect(msiSet?.parameters.audience.uiDefinition.constraints.required).toBe('true');
+    });
+
+    test('should mark identity as authentication property path', () => {
+      const paramSets = mcpclientconnector.properties.connectionParameterSets?.values;
+      const msiSet = paramSets?.find((p: any) => p.name === 'ManagedServiceIdentity');
+
+      expect(msiSet?.parameters.identity.uiDefinition.constraints.propertyPath).toEqual(['authentication']);
     });
   });
 });

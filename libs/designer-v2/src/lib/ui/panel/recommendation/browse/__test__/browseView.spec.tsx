@@ -131,6 +131,7 @@ const createTestStore = () =>
       panel: () => ({}),
       operations: () => ({}),
       workflow: () => ({}),
+      designerOptions: () => ({ hostOptions: {} }),
     },
   });
 
@@ -316,7 +317,7 @@ describe('BrowseView', () => {
       render(<BrowseView isTrigger={false} onOperationClick={mockOnOperationClick} />, { wrapper: createWrapper() });
 
       // getActionCategories should be called with allowAgents=true
-      expect(mockGetActionCategories).toHaveBeenCalledWith(true, false);
+      expect(mockGetActionCategories).toHaveBeenCalledWith(true, false, false);
     });
 
     test('should pass allowAgents as false when graphId is not root', () => {
@@ -329,7 +330,7 @@ describe('BrowseView', () => {
       render(<BrowseView isTrigger={false} onOperationClick={mockOnOperationClick} />, { wrapper: createWrapper() });
 
       // getActionCategories should be called with allowAgents=false
-      expect(mockGetActionCategories).toHaveBeenCalledWith(false, false);
+      expect(mockGetActionCategories).toHaveBeenCalledWith(false, false, false);
     });
 
     test('should pass isAddingAgentTool to getActionCategories', () => {
@@ -337,7 +338,7 @@ describe('BrowseView', () => {
 
       render(<BrowseView isTrigger={false} onOperationClick={mockOnOperationClick} />, { wrapper: createWrapper() });
 
-      expect(mockGetActionCategories).toHaveBeenCalledWith(true, true);
+      expect(mockGetActionCategories).toHaveBeenCalledWith(true, true, false);
     });
   });
 });

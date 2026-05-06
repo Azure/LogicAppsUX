@@ -35,11 +35,12 @@ export async function executeDotnetTemplateCommand(
   ...args: string[]
 ): Promise<string> {
   const framework: string = await getFramework(context, workingDirectory);
+  const jsonCliFramework = getJsonCliFramework(framework);
   const jsonDllPath: string = ext.context.asAbsolutePath(
-    path.join(assetsFolderName, 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
+    path.join(assetsFolderName, 'dotnetJsonCli', jsonCliFramework, 'Microsoft.TemplateEngine.JsonCli.dll')
   );
 
-  return await executeCommand(
+  return executeCommand(
     undefined,
     workingDirectory,
     getDotNetCommand(),
@@ -50,6 +51,20 @@ export async function executeDotnetTemplateCommand(
     operation,
     ...args
   );
+}
+
+/**
+ * Maps a detected .NET framework version to the corresponding dotnetJsonCli asset folder.
+ * The JsonCli DLLs are framework-agnostic and forward-compatible, so newer frameworks
+ * (e.g. net10.0) can reuse the net8.0 binaries.
+ */
+export function getJsonCliFramework(framework: string): string {
+  const supportedJsonCliFrameworks = ['net8.0', 'net6.0', 'netcoreapp3.0', 'netcoreapp2.0'];
+  if (supportedJsonCliFrameworks.includes(framework)) {
+    return framework;
+  }
+  // Fall back to net8.0 for newer frameworks (e.g. net10.0)
+  return 'net8.0';
 }
 
 export function getDotnetItemTemplatePath(version: FuncVersion, projTemplateKey: string): string {
@@ -87,25 +102,20 @@ export async function validateDotnetInstalled(context: IActionContext): Promise<
  */
 export async function getFramework(context: IActionContext, workingDirectory: string | undefined, isCodeful = false): Promise<string> {
   if (!cachedFramework || isCodeful) {
-    let versions = '';
     const dotnetBinariesLocation = getDotNetCommand();
+    const versionSources: string[] = [];
 
-    versions = (await useBinariesDependencies()) ? await getLocalDotNetVersionFromBinaries() : versions;
-
-    try {
-      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--version');
-    } catch {
-      // ignore
+    if (await useBinariesDependencies()) {
+      versionSources.push((await getLocalDotNetVersionFromBinaries()) ?? '');
     }
 
-    try {
-      versions += await executeCommand(undefined, workingDirectory, dotnetBinariesLocation, '--list-sdks');
-    } catch {
-      // ignore
-    }
+    versionSources.push(await tryGetDotnetVersionOutput(dotnetBinariesLocation, workingDirectory, '--version'));
+    versionSources.push(await tryGetDotnetVersionOutput(dotnetBinariesLocation, workingDirectory, '--list-sdks'));
+
+    const versions = versionSources.join('\n');
 
     // Prioritize "LTS", then "Current", then "Preview"
-    const netVersions: string[] = ['8', '6', '3', '2', '9', '10'];
+    const netVersions: string[] = ['10', '8', '6', '3', '2', '9'];
 
     const semVersions: SemVer[] = netVersions.map((v) => semVerCoerce(v) as SemVer);
 
@@ -144,4 +154,16 @@ export async function getFramework(context: IActionContext, workingDirectory: st
   }
 
   return cachedFramework;
+}
+
+async function tryGetDotnetVersionOutput(
+  dotnetCommand: string,
+  workingDirectory: string | undefined,
+  commandArgument: '--version' | '--list-sdks'
+): Promise<string> {
+  try {
+    return await executeCommand(undefined, workingDirectory, dotnetCommand, commandArgument);
+  } catch {
+    return '';
+  }
 }

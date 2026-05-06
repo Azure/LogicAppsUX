@@ -34,8 +34,15 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
       // Simply invoke the callback with a fake telemetry context.
       return callback({
         telemetry: { properties: {}, measurements: {} },
-        errorHandling: {},
-        ui: {},
+        errorHandling: { issueProperties: {} },
+        ui: {
+          onDidFinishPrompt: vi.fn(),
+          showQuickPick: vi.fn(),
+          showInputBox: vi.fn(),
+          showWarningMessage: vi.fn(),
+          showOpenDialog: vi.fn(),
+          showWorkspaceFolderPick: vi.fn(),
+        },
         valuesToMask: [],
       });
     },
@@ -60,6 +67,7 @@ vi.mock('os', () => ({
   arch: vi.fn(() => 'x64'),
   homedir: vi.fn(() => '/Users/testuser'),
   tmpdir: vi.fn(() => '/tmp'),
+  platform: vi.fn(() => 'darwin'),
   EOL: '\n',
 }));
 

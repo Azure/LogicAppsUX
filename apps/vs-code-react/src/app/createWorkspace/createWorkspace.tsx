@@ -12,7 +12,7 @@ import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { getValidationRequirements, nameValidation } from './utils/validation';
+import { functionNameValidation, getValidationRequirements, nameValidation, namespaceValidation } from './utils/validation';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 import { CreateWorkflowSetup } from '../createWorkflow/createWorkflowSetup';
 
@@ -259,8 +259,8 @@ const CreateWorkspaceInternal = () => {
           if (!functionFolderNameValid) {
             return false;
           }
-          const functionNamespaceValid = functionNamespace.trim() !== '' && nameValidation.test(functionNamespace.trim());
-          const functionNameValid = functionName.trim() !== '' && nameValidation.test(functionName.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
           if (!functionNamespaceValid || !functionNameValid) {
             return false;
@@ -332,8 +332,8 @@ const CreateWorkspaceInternal = () => {
             nameValidation.test(functionFolderName.trim()) &&
             !isNameAlreadyInWorkspace(functionFolderName.trim()) &&
             functionFolderName.trim().toLowerCase() !== logicAppName.trim().toLowerCase();
-          const functionNamespaceValid = functionNamespace.trim() !== '' && nameValidation.test(functionNamespace.trim());
-          const functionNameValid = functionName.trim() !== '' && nameValidation.test(functionName.trim());
+          const functionNamespaceValid = functionNamespace.trim() !== '' && namespaceValidation.test(functionNamespace.trim());
+          const functionNameValid = functionName.trim() !== '' && functionNameValidation.test(functionName.trim());
 
           const functionFieldsValid = functionNamespaceValid && functionNameValid && functionFolderNameValid;
 

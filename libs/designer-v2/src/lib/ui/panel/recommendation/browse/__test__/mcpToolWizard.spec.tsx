@@ -360,6 +360,30 @@ describe('McpToolWizard', () => {
       const cancelButtons = screen.getAllByTestId('create-connection-cancel');
       expect(cancelButtons.length).toBeGreaterThan(0);
     });
+
+    test('should not show create-connection description text in empty state', () => {
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      expect(screen.queryByText('Create a new connection for the MCP server.')).toBeNull();
+    });
+
+    test('should not show create-connection description text when connections exist', () => {
+      mockUseConnectionsForConnector.mockReturnValue({
+        data: [
+          {
+            id: 'conn-1',
+            name: 'connection-1',
+            properties: { displayName: 'Connection 1' },
+          },
+        ],
+        isLoading: false,
+        refetch: vi.fn(),
+      } as any);
+
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      expect(screen.queryByText('Create a new connection for the MCP server.')).toBeNull();
+    });
   });
 
   describe('Wizard Navigation', () => {

@@ -84,6 +84,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
       onEditorRef,
       onMouseDown,
       openTokenPicker,
+      noBorder,
       indentWithTab,
     },
     ref
@@ -189,12 +190,13 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         ...baseThemeSpec,
         '&': {
           ...baseThemeSpec['&'],
-          border: `1px solid ${isInverted ? '#605e5c' : '#8a8886'}`,
-          borderRadius: '2px',
+          ...(noBorder
+            ? { border: 'none', borderRadius: '0' }
+            : { border: `1px solid ${isInverted ? '#605e5c' : '#8a8886'}`, borderRadius: '2px' }),
         },
         '&.cm-focused': {
           outline: 'none',
-          borderColor: '#0078d4',
+          ...(noBorder ? {} : { borderColor: '#0078d4' }),
         },
         '.cm-gutters': {
           borderRight: `1px solid ${isInverted ? '#3b3a39' : '#e1e1e1'}`,

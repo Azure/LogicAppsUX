@@ -2,12 +2,13 @@ import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 export const nameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
+export const functionNameValidation = /^[a-z][a-z\d_]*$/i;
 
 export const validateWorkflowName = (name: string, intlText: any) => {
   if (!name) {
     return intlText.EMPTY_WORKFLOW_NAME;
   }
-  if (!nameValidation.test(name)) {
+  if (!functionNameValidation.test(name)) {
     return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
   }
   return undefined;

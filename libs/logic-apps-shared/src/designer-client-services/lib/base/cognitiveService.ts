@@ -12,6 +12,9 @@ export interface BaseCognitiveServiceServiceOptions {
 }
 
 export class BaseCognitiveServiceService implements ICognitiveServiceService {
+  getFoundryAccessToken?: () => Promise<string>;
+  public readonly httpClient: IHttpClient;
+
   constructor(public readonly options: BaseCognitiveServiceServiceOptions) {
     const { apiVersion, httpClient } = options;
     if (!apiVersion) {
@@ -21,6 +24,8 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     if (!httpClient) {
       throw new ArgumentException('httpClient required for workflow app');
     }
+
+    this.httpClient = httpClient;
   }
 
   async fetchCognitiveServiceAccountById(accountId: string): Promise<any> {

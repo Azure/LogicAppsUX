@@ -3,13 +3,13 @@ import { useReadOnly } from '../../../../core/state/designerOptions/designerOpti
 import { useHandleStyles } from './handles.styles';
 import { mergeClasses } from '@fluentui/react-components';
 
-export const EdgeDrawSourceHandle = () => {
+export const EdgeDrawSourceHandle = ({ highlighted }: { highlighted?: boolean }) => {
   const styles = useHandleStyles();
   const readOnly = useReadOnly();
 
   return (
     <Handle
-      className={mergeClasses(styles.nodeHandle, styles.bottom, styles.edgeDrawStart)}
+      className={mergeClasses(styles.nodeHandle, styles.bottom, styles.edgeDrawStart, highlighted && styles.edgeDrawStartHighlighted)}
       type="source"
       position={Position.Bottom}
       isConnectable={true}

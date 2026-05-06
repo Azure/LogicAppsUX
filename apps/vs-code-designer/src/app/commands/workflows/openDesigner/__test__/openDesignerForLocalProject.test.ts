@@ -3,7 +3,8 @@ import { ext } from '../../../../../extensionVariables';
 
 // Mock dependencies before importing the class
 vi.mock('../../../../../localize', () => ({
-  localize: (_key: string, defaultMsg: string) => defaultMsg,
+  localize: (_key: string, defaultMsg: string, ...args: string[]) =>
+    defaultMsg.replace(/{(\d+)}/g, (_match, index) => args[Number(index)] ?? ''),
 }));
 
 vi.mock('../../../../utils/codeless/common', () => ({
@@ -92,6 +93,7 @@ describe('OpenDesignerForLocalProject', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    ext.designTimeInstances.clear();
   });
 
   describe('constructor', () => {
@@ -126,6 +128,37 @@ describe('OpenDesignerForLocalProject', () => {
       await instance.createPanel();
 
       expect(mockPanel.reveal).toHaveBeenCalled();
+    });
+
+    it('should fail before creating a panel when design-time startup failed', async () => {
+      const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
+      const { getLogicAppProjectRoot } = await import('../../../../utils/codeless/connection');
+
+      vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
+      vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+      ext.designTimeInstances.set('/test/project', {
+        port: 7071,
+        isStarting: false,
+        startupError: 'func host failed to start',
+      });
+
+      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+
+      await expect(instance.createPanel()).rejects.toThrow(
+        'Design time failed to start for project /test/project. func host failed to start'
+      );
+    });
+
+    it('should fail when no design-time instance is available for the project', async () => {
+      const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
+      const { getLogicAppProjectRoot } = await import('../../../../utils/codeless/connection');
+
+      vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
+      vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+
+      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+
+      await expect(instance.createPanel()).rejects.toThrow('Design time is not running for project /test/project.');
     });
   });
 });

@@ -120,6 +120,7 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
+    vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
     vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
@@ -167,6 +168,7 @@ describe('pickCustomCodeWorkerChildProcess', async () => {
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid.toString());
+    vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
     vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 

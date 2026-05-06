@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, type AnyAction } from '@reduxjs/toolkit';
 import { createWorkspaceSlice, type CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
@@ -45,8 +45,10 @@ vi.mock('react-router-dom', () => ({
 
 import { CreateWorkspace, CreateWorkspaceFromPackage, CreateWorkspaceStructure, CreateLogicApp } from '../createWorkspace';
 
-const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
-  const defaultState: CreateWorkspaceState = {
+const setTestCreateWorkspaceState = 'test/setCreateWorkspaceState';
+
+const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): CreateWorkspaceState => {
+  return {
     currentStep: 0,
     packagePath: { fsPath: '', path: '' },
     workspaceProjectPath: { fsPath: '/home/user/projects', path: '/home/user/projects' },
@@ -76,10 +78,19 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     isDevContainerProject: false,
     ...overrides,
   };
+};
+
+const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
+  const defaultState = createDefaultState(overrides);
 
   return configureStore({
     reducer: {
-      createWorkspace: createWorkspaceSlice.reducer,
+      createWorkspace: (state: CreateWorkspaceState | undefined, action: AnyAction) => {
+        if (action.type === setTestCreateWorkspaceState) {
+          return action.payload as CreateWorkspaceState;
+        }
+        return createWorkspaceSlice.reducer(state, action);
+      },
     },
     preloadedState: {
       createWorkspace: defaultState,
@@ -87,15 +98,17 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
   });
 };
 
-const renderWithStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
+const renderWithStore = (overrides: Partial<CreateWorkspaceState> = {}, ui: React.ReactElement = <CreateWorkspace />) => {
   const store = createTestStore(overrides);
+  const desiredState = createDefaultState(overrides);
+  const rendered = render(<Provider store={store}>{ui}</Provider>);
+  act(() => {
+    store.dispatch({ type: setTestCreateWorkspaceState, payload: desiredState });
+  });
+
   return {
     store,
-    ...render(
-      <Provider store={store}>
-        <CreateWorkspace />
-      </Provider>
-    ),
+    ...rendered,
   };
 };
 
@@ -252,19 +265,17 @@ describe('CreateWorkspace', () => {
     });
 
     it('should enable Next for convertToWorkspace with just workspace path and name', () => {
-      const store = createTestStore({
-        flowType: 'convertToWorkspace',
-        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
-        pathValidationResults: { '/valid/path': true },
-        workspaceName: 'valid-name',
-        logicAppType: '',
-        logicAppName: '',
-        currentStep: 0,
-      });
-      render(
-        <Provider store={store}>
-          <CreateWorkspaceStructure />
-        </Provider>
+      renderWithStore(
+        {
+          flowType: 'convertToWorkspace',
+          workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+          pathValidationResults: { '/valid/path': true },
+          workspaceName: 'valid-name',
+          logicAppType: '',
+          logicAppName: '',
+          currentStep: 0,
+        },
+        <CreateWorkspaceStructure />
       );
       const buttons = screen.getAllByRole('button');
       const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
@@ -309,18 +320,16 @@ describe('CreateWorkspace', () => {
     });
 
     it('should send createLogicApp command for createLogicApp flow', () => {
-      const store = createTestStore({
-        flowType: 'createLogicApp',
-        currentStep: 1,
-        logicAppType: ProjectType.logicApp,
-        logicAppName: 'my-app',
-        workflowType: 'Stateful-Codeless',
-        workflowName: 'my-wf',
-      });
-      render(
-        <Provider store={store}>
-          <CreateLogicApp />
-        </Provider>
+      renderWithStore(
+        {
+          flowType: 'createLogicApp',
+          currentStep: 1,
+          logicAppType: ProjectType.logicApp,
+          logicAppName: 'my-app',
+          workflowType: 'Stateful-Codeless',
+          workflowName: 'my-wf',
+        },
+        <CreateLogicApp />
       );
 
       const buttons = screen.getAllByRole('button');
@@ -374,6 +383,43 @@ describe('CreateWorkspace', () => {
         );
       }
     });
+
+    it('should accept dotted namespace (e.g. MyCompany.Functions) for customCode projects', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        currentStep: 1,
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'my-ws',
+        logicAppType: ProjectType.customCode,
+        logicAppName: 'my-app',
+        workflowType: 'Stateful-Codeless',
+        workflowName: 'my-wf',
+        functionFolderName: 'funcs',
+        functionNamespace: 'MyCompany.Functions',
+        functionName: 'MyFunc',
+        targetFramework: 'net8',
+      });
+
+      const buttons = screen.getAllByRole('button');
+      const createButton = buttons.find(
+        (b) => (b.textContent?.includes('Create') || b.textContent?.includes('Workspace')) && !b.hasAttribute('disabled')
+      );
+
+      expect(createButton).toBeDefined();
+
+      if (createButton) {
+        fireEvent.click(createButton);
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          expect.objectContaining({
+            command: 'createWorkspace',
+            data: expect.objectContaining({
+              functionNamespace: 'MyCompany.Functions',
+            }),
+          })
+        );
+      }
+    });
   });
 
   describe('step navigation', () => {
@@ -394,6 +440,36 @@ describe('CreateWorkspace', () => {
       const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
 
       if (nextButton && !nextButton.hasAttribute('disabled')) {
+        fireEvent.click(nextButton);
+        const state = store.getState().createWorkspace;
+        expect(state.currentStep).toBe(1);
+      }
+    });
+
+    it('should enable Next button for custom code with dotted namespace', () => {
+      const { store } = renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'valid-name',
+        logicAppType: ProjectType.customCode,
+        logicAppName: 'valid-app',
+        workflowType: 'Stateful-Codeless',
+        workflowName: 'valid-wf',
+        functionFolderName: 'funcs',
+        functionNamespace: 'My.Namespace',
+        functionName: 'MyFunc',
+        targetFramework: 'net8',
+        currentStep: 0,
+      });
+
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+
+      expect(nextButton).toBeDefined();
+      expect(nextButton?.hasAttribute('disabled')).toBe(false);
+
+      if (nextButton) {
         fireEvent.click(nextButton);
         const state = store.getState().createWorkspace;
         expect(state.currentStep).toBe(1);

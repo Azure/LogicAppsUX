@@ -1,174 +1,170 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { window, workspace } from 'vscode';
+import axios from 'axios';
+import * as cp from 'child_process';
+import findProcess from 'find-process';
+import * as os from 'os';
+import * as portfinder from 'portfinder';
+import { ext } from '../../../../extensionVariables';
+import * as workspaceUtils from '../../workspace';
+import { startAllDesignTimeApis, startDesignTimeApi, stopDesignTimeApi } from '../startDesignTimeApi';
 
-// Create mock functions
-const mockCheckFuncProcessId = vi.fn();
-const mockGetChildProcessesWithScript = vi.fn();
-const mockExistsSync = vi.fn();
-const mockReadFileSync = vi.fn();
+vi.mock('../../appSettings/localSettings', () => ({
+  addOrUpdateLocalAppSettings: vi.fn(),
+  getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+}));
 
-// Mock dependencies
-vi.mock('fs', () => ({
-  default: {
-    existsSync: mockExistsSync,
-    readFileSync: mockReadFileSync,
-  },
-  existsSync: mockExistsSync,
-  readFileSync: mockReadFileSync,
+vi.mock('../../fs', () => ({
+  writeFormattedJson: vi.fn(),
+}));
+
+vi.mock('../common', () => ({
+  updateFuncIgnore: vi.fn(),
+}));
+
+vi.mock('../../funcCoreTools/funcVersion', () => ({
+  getFunctionsCommand: vi.fn(() => 'func'),
+}));
+
+vi.mock('../../vsCodeConfig/settings', () => ({
+  getWorkspaceSetting: vi.fn(),
+  updateGlobalSetting: vi.fn(),
+}));
+
+vi.mock('../../../commands/pickFuncProcess', () => ({
+  findChildProcess: vi.fn(),
 }));
 
 vi.mock('../../findChildProcess/findChildProcess', () => ({
-  getChildProcessesWithScript: mockGetChildProcessesWithScript,
+  getChildProcessesWithScript: vi.fn(),
 }));
 
-// Import the module after mocks are set up
-const mockModule = await import('../startDesignTimeApi');
+vi.mock('axios', () => ({
+  default: {
+    get: vi.fn(),
+  },
+  get: vi.fn(),
+}));
 
-describe('validateRunningFuncProcess - caching', () => {
-  const testProjectPath = '/test/project';
-  const testPid = 12345;
-  const VALIDATION_CACHE_TTL = 60000; // 60 seconds
+vi.mock('find-process', () => ({
+  default: vi.fn(),
+}));
 
+vi.mock('../../workspace', () => ({
+  getWorkspaceLogicAppFolders: vi.fn(),
+}));
+
+vi.mock('portfinder', () => ({
+  getPortPromise: vi.fn(),
+}));
+
+describe('startAllDesignTimeApis', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
-
-    // Setup default mocks
-    mockExistsSync.mockReturnValue(true);
-    mockReadFileSync.mockReturnValue(testPid.toString());
-    mockGetChildProcessesWithScript.mockResolvedValue([testPid]);
+    ext.designTimeInstances.clear();
+    (workspace as any).workspaceFolders = [];
+    workspace.fs.createDirectory = vi.fn().mockRejectedValue(new Error('skip startup after logging')) as any;
+    vi.mocked(window.showErrorMessage).mockResolvedValue(undefined as any);
+    vi.mocked(axios.get).mockRejectedValue(new Error('API not ready'));
+    vi.mocked(portfinder.getPortPromise).mockResolvedValue(7071 as never);
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-    vi.resetAllMocks();
+  it('logs and exits when no workspace folders are available', async () => {
+    await startAllDesignTimeApis();
+
+    expect(workspaceUtils.getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No workspace folders found. Skipping design-time startup.');
   });
 
-  it('should cache validation results for 60 seconds', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('logs zero-project startup when the workspace contains no Logic App folders', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue([]);
 
-    if (validateRunningFuncProcess) {
-      // First call should execute PowerShell validation
-      await validateRunningFuncProcess(testProjectPath);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(1);
+    await startAllDesignTimeApis();
 
-      // Second call within 60s should use cache
-      await validateRunningFuncProcess(testProjectPath);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(1); // Still 1, not 2
-    }
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Starting design-time APIs for 0 Logic App project(s) in the current workspace.'
+    );
+    expect(portfinder.getPortPromise).not.toHaveBeenCalled();
   });
 
-  it('should skip PowerShell validation when using cache', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('starts each Logic App project discovered in the workspace', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
 
-    if (validateRunningFuncProcess) {
-      // First validation
-      await validateRunningFuncProcess(testProjectPath);
-      const firstCallCount = mockGetChildProcessesWithScript.mock.calls.length;
+    await startAllDesignTimeApis();
 
-      // Advance time by 30 seconds (within 60s cache window)
-      vi.advanceTimersByTime(30000);
-
-      // Second validation should skip PowerShell
-      await validateRunningFuncProcess(testProjectPath);
-      const secondCallCount = mockGetChildProcessesWithScript.mock.calls.length;
-
-      expect(secondCallCount).toBe(firstCallCount); // No new calls
-    }
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Starting design-time APIs for 2 Logic App project(s) in the current workspace.'
+    );
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-one');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-two');
+    expect(portfinder.getPortPromise).toHaveBeenCalledTimes(2);
   });
 
-  it('should run validation after cache expires', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('rejects when Logic App folder discovery fails', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockRejectedValue(new Error('folder discovery failed'));
 
-    if (validateRunningFuncProcess) {
-      // First validation
-      await validateRunningFuncProcess(testProjectPath);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(1);
-
-      // Advance time past cache TTL (60+ seconds)
-      vi.advanceTimersByTime(VALIDATION_CACHE_TTL + 1000);
-
-      // Second validation should run PowerShell again
-      await validateRunningFuncProcess(testProjectPath);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(2);
-    }
+    await expect(startAllDesignTimeApis()).rejects.toThrow('folder discovery failed');
   });
 
-  it('should cache per project path', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('cleans up startup state after a startup failure', async () => {
+    await startDesignTimeApi('D:/workspace/app-one');
 
-    if (validateRunningFuncProcess) {
-      const projectPath1 = '/test/project1';
-      const projectPath2 = '/test/project2';
+    const designTimeInstance = ext.designTimeInstances.get('D:/workspace/app-one');
 
-      // Validate first project
-      await validateRunningFuncProcess(projectPath1);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(1);
-
-      // Validate second project should not use cache from first
-      await validateRunningFuncProcess(projectPath2);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(2);
-
-      // Validate first project again should use cache
-      await validateRunningFuncProcess(projectPath1);
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(2); // Still 2
-    }
+    expect(designTimeInstance).toEqual(
+      expect.objectContaining({
+        isStarting: false,
+        startupError: expect.stringContaining('skip startup after logging'),
+      })
+    );
+    expect(designTimeInstance?.startupPromise).toBeUndefined();
   });
 
-  it('should avoid repeated expensive PowerShell executions', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('reuses the in-flight startup promise for concurrent calls on the same project', async () => {
+    let rejectCreateDirectory: ((error: Error) => void) | undefined;
+    const createDirectoryPromise = new Promise<void>((_resolve, reject) => {
+      rejectCreateDirectory = reject;
+    });
+    workspace.fs.createDirectory = vi.fn().mockReturnValue(createDirectoryPromise) as any;
 
-    if (validateRunningFuncProcess) {
-      // Simulate expensive PowerShell execution (~940ms)
-      mockGetChildProcessesWithScript.mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 940));
-        return [testPid];
-      });
+    const firstStart = startDesignTimeApi('D:/workspace/app-one');
+    const secondStart = startDesignTimeApi('D:/workspace/app-one');
 
-      // First call - expensive
-      const start1 = Date.now();
-      await validateRunningFuncProcess(testProjectPath);
-      await vi.runAllTimersAsync();
-      const duration1 = Date.now() - start1;
+    expect(portfinder.getPortPromise).toHaveBeenCalledTimes(1);
 
-      // Second call - should be instant (cached)
-      const start2 = Date.now();
-      await validateRunningFuncProcess(testProjectPath);
-      const duration2 = Date.now() - start2;
+    rejectCreateDirectory?.(new Error('startup still failed'));
+    await Promise.all([firstStart, secondStart]);
 
-      // First call should have executed PowerShell
-      expect(duration1).toBeGreaterThanOrEqual(900);
-      // Second call should be instant (no PowerShell execution)
-      expect(duration2).toBeLessThan(10);
-    }
+    const designTimeInstance = ext.designTimeInstances.get('D:/workspace/app-one');
+    expect(designTimeInstance?.startupPromise).toBeUndefined();
+    expect(designTimeInstance?.startupError).toContain('startup still failed');
   });
 
-  it('should validate with correct PID when cache miss', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('does not restart a running linux design-time host when the tracked child func process is valid', async () => {
+    vi.mocked(os.platform).mockReturnValue('linux' as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { port: 7071, process: { pid: 111 } as any, childFuncPid: '222' });
+    vi.mocked(axios.get).mockResolvedValueOnce({} as any);
+    vi.mocked(findProcess).mockImplementation(async (_query, pid) => (Number(pid) === 222 ? [{ name: 'func' }] : [{ name: 'sh' }]) as any);
 
-    if (validateRunningFuncProcess) {
-      const expectedPid = 54321;
-      mockReadFileSync.mockReturnValue(expectedPid.toString());
-      mockGetChildProcessesWithScript.mockResolvedValue([expectedPid, 99999, 88888]);
+    await startDesignTimeApi('D:/workspace/app-one');
 
-      await validateRunningFuncProcess(testProjectPath);
-
-      // Should have called with the PID from file
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledWith(expect.anything(), expectedPid);
-    }
+    expect(portfinder.getPortPromise).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(
+      'Invalid func child process PID set for project at "D:/workspace/app-one". Restarting workflow design-time API.'
+    );
   });
 
-  it('should handle multiple rapid validations efficiently', async () => {
-    const validateRunningFuncProcess = (mockModule as any).validateRunningFuncProcess;
+  it('kills both the tracked child and wrapper shell on linux when stopping design time', async () => {
+    vi.mocked(os.platform).mockReturnValue('linux' as any);
+    vi.mocked(cp.spawn).mockReturnValue({} as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
 
-    if (validateRunningFuncProcess) {
-      // Simulate 10 rapid validation calls
-      const validations = Array.from({ length: 10 }, () => validateRunningFuncProcess(testProjectPath));
+    stopDesignTimeApi('D:/workspace/app-one');
 
-      await Promise.all(validations);
-      await vi.runAllTimersAsync();
-
-      // Should only execute PowerShell once due to caching
-      expect(mockGetChildProcessesWithScript).toHaveBeenCalledTimes(1);
-    }
+    expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '222']);
+    expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '111']);
   });
 });

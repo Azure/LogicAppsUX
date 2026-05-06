@@ -131,7 +131,7 @@ export async function getTemplateKeyFromProjFile(
 
   switch (version) {
     case FuncVersion.v4: {
-      targetFramework = DotnetVersion.net8;
+      targetFramework = DotnetVersion.net10;
       break;
     }
     case FuncVersion.v3: {

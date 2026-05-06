@@ -103,6 +103,7 @@ const CustomFieldInput = (item: TemplatesSectionItem): JSX.Element | null => {
           onChange={(_event, data) => item.onChange(data.value ?? '')}
           onBlur={item.onBlur}
           contentAfter={item.contentAfter}
+          type={item.isSecret ? 'password' : undefined}
         />
       );
 

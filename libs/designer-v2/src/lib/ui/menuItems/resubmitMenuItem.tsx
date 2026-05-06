@@ -1,7 +1,9 @@
-import { Icon } from '@fluentui/react';
 import { MenuItem } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
+import { bundleIcon, ReplayFilled, ReplayRegular } from '@fluentui/react-icons';
+
+const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
 export interface ResubmitMenuItemProps {
   onClick: (e: any) => void;
 }
@@ -23,7 +25,7 @@ export const ResubmitMenuItem = (props: ResubmitMenuItemProps) => {
   });
 
   return (
-    <MenuItem key={resubmitDescription} icon={<Icon iconName="PlaybackRate1x" />} onClick={onClick}>
+    <MenuItem key={resubmitDescription} icon={<ResubmitIcon />} onClick={onClick}>
       {resubmitButtonText}
     </MenuItem>
   );

@@ -239,9 +239,11 @@ export async function getAzureConnectorDetailsForLocalProject(
   if (subscriptionId) {
     const authData = await getAuthData(tenantId);
     accessToken = `Bearer ${authData?.accessToken}`;
-    const [parsedClientId, parsedTenantId] = authData.account.id.split('.');
-    tenantId = parsedTenantId;
-    clientId = parsedClientId;
+    if (authData?.account?.id) {
+      const [parsedClientId, parsedTenantId] = authData.account.id.split('.');
+      tenantId = parsedTenantId;
+      clientId = parsedClientId;
+    }
   }
 
   // Compute enabled AFTER the wizard block — subscriptionId may now have a value

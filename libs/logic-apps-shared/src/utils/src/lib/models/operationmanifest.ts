@@ -76,6 +76,7 @@ export const ConnectionType = {
   ApiConnection: 'apiconnection',
   Agent: 'agent',
   Mcp: 'mcp',
+  KnowledgeHub: 'knowledgehub',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
@@ -295,6 +296,8 @@ export interface OperationManifestProperties {
   dynamicContent?: {
     payloadConfiguration?: string[];
   };
+
+  enableAgentHarness?: boolean;
 }
 
 export type SubgraphType =

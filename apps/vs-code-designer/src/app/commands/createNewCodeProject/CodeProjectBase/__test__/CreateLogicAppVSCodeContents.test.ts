@@ -37,6 +37,13 @@ describe('CreateLogicAppVSCodeContents', () => {
     isDevContainerProject: false,
   } as any;
 
+  const mockContextCustomCodeNet10: IWebviewProjectContext = {
+    logicAppName: 'TestLogicAppCustomCodeNet10',
+    logicAppType: ProjectType.customCode,
+    targetFramework: TargetFramework.Net10,
+    isDevContainerProject: false,
+  } as any;
+
   const mockContextCustomCodeNetFx: IWebviewProjectContext = {
     logicAppName: 'TestLogicAppCustomCodeNetFx',
     logicAppType: ProjectType.customCode,
@@ -158,6 +165,22 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(Object.keys(settingsData)).toHaveLength(4);
     });
 
+    it('should create settings.json without deploySubpath for net10 custom code project', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNet10, logicAppFolderPath);
+
+      const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
+      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
+      const settingsCallback = settingsCall[2];
+      const settingsData = settingsCallback({});
+
+      expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'JavaScript');
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
+      expect(settingsData).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
+      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.deploySubpath');
+      expect(Object.keys(settingsData)).toHaveLength(4);
+    });
+
     it('should create settings.json without deploySubpath for netfx custom code project', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNetFx, logicAppFolderPath);
 
@@ -235,6 +258,25 @@ describe('CreateLogicAppVSCodeContents', () => {
         request: 'launch',
         funcRuntime: 'coreclr',
         customCodeRuntime: 'coreclr', // Net8
+        isCodeless: true,
+      });
+    });
+
+    it('should create launch.json with logicapp configuration for .NET 10 custom code projects', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNet10, logicAppFolderPath);
+
+      const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
+      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
+      const launchCallback = launchCall[2];
+      const launchData = launchCallback({ configurations: [] });
+
+      const config = launchData.configurations[0];
+      expect(config).toMatchObject({
+        name: expect.stringContaining('Run/Debug logic app with local function TestLogicAppCustomCodeNet10'),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        customCodeRuntime: 'coreclr',
         isCodeless: true,
       });
     });
@@ -323,6 +365,16 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(fse.writeJson).toHaveBeenCalledWith(extensionsJsonPath, JSON.parse(extensionsJsonFileContent), { spaces: 2 });
     });
 
+    it('should use an extensions.json template that recommends reopening in containers', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
+
+      const extensionsJsonPath = path.join(logicAppFolderPath, '.vscode', 'extensions.json');
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === extensionsJsonPath);
+      const extensionsData = writeCall?.[1] as { recommendations: string[] };
+
+      expect(extensionsData.recommendations).toContain('ms-vscode-remote.remote-containers');
+    });
+
     it('should copy tasks.json from template', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
@@ -383,6 +435,18 @@ describe('CreateLogicAppVSCodeContents', () => {
 
     it('should return logicapp configuration with coreclr for Net8 custom code', () => {
       const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', TargetFramework.Net8);
+
+      expect(config).toMatchObject({
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        customCodeRuntime: 'coreclr',
+        isCodeless: true,
+      });
+    });
+
+    it('should return logicapp configuration with coreclr for Net10 custom code', () => {
+      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', TargetFramework.Net10);
 
       expect(config).toMatchObject({
         type: 'logicapp',

@@ -7,6 +7,15 @@ execSync(
   { stdio: 'inherit' }
 );
 
+// Generate Foundry data-plane token (audience: https://ai.azure.com)
+try {
+  execSync(
+    'az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 --resource https://ai.azure.com > ./apps/Standalone/src/environments/jsonImport/foundryToken.json',
+    { stdio: 'inherit' }
+  );
+  // eslint-disable-next-line no-empty
+} catch {}
+
 const tokenFilePath = 'apps/Standalone/src/environments/jsonImport/armToken.json';
 const tokenData = JSON.parse(fs.readFileSync(tokenFilePath, 'utf8'));
 const token = tokenData.accessToken;

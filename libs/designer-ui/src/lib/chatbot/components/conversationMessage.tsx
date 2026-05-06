@@ -7,7 +7,7 @@ import { ConnectionsSetupMessage } from './connectionsSetupMessage';
 import { ConversationItemType } from './conversationItem';
 import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conversationItem';
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import Markdown from 'react-markdown';
 import { ToolReply } from './toolReply';
 import { AgentHeader } from './agentHeader';
@@ -16,7 +16,7 @@ type ConversationMessageProps = {
   item: ConversationItem;
 };
 
-export const ConversationMessage = ({ item }: ConversationMessageProps) => {
+export const ConversationMessage = memo(({ item }: ConversationMessageProps) => {
   switch (item.type) {
     case ConversationItemType.Query:
       return <UserMessage item={item} />;
@@ -39,7 +39,9 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
     default:
       return null;
   }
-};
+});
+
+ConversationMessage.displayName = 'ConversationMessage';
 
 const UserMessage = ({ item }: { item: UserQueryItem }) => {
   const { id, text, date, dataScrollTarget } = item;
