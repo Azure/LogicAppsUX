@@ -103,7 +103,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
  */
 async function isDevContainerWorkspace(workspaceFilePath: string, workspaceFolder: string): Promise<boolean> {
   // Read the workspace file
-  const workspaceFileContent = await fse.readJSON(workspaceFilePath);
+  const workspaceFileContent = await fse.readJson(workspaceFilePath);
 
   // Check if .devcontainer folder is in the workspace folders
   const folders = workspaceFileContent.folders || [];

@@ -12,9 +12,7 @@ vi.mock('fs-extra', () => ({
   copyFile: vi.fn(),
   pathExists: vi.fn(),
   readFile: vi.fn(),
-  readJson: vi.fn(),
   writeJson: vi.fn(),
-  writeJSON: vi.fn(),
 }));
 vi.mock('../../../../utils/fs', () => ({
   confirmEditJsonFile: vi.fn(),
@@ -100,9 +98,7 @@ describe('CreateLogicAppVSCodeContents', () => {
       }
       return '{}';
     });
-    vi.mocked(fse.readJson).mockResolvedValue({});
     vi.mocked(fse.writeJson).mockResolvedValue(undefined);
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
 
     // Mock confirmEditJsonFile to capture what would be written
     vi.mocked(fsUtils.confirmEditJsonFile).mockImplementation(async (context, filePath, callback) => {

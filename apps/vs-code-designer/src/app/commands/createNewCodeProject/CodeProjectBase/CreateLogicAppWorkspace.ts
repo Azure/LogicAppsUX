@@ -279,7 +279,7 @@ export async function createWorkspaceStructure(webviewProjectContext: IWebviewPr
   const workspaceData = {
     folders: workspaceFolders,
   };
-  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
+  await fse.writeJson(workspaceFilePath, workspaceData, { spaces: 2 });
 }
 
 /**
@@ -308,7 +308,7 @@ export async function updateWorkspaceFile(context: IWebviewProjectContext) {
     workspaceContent.folders.push(testsFolder);
   }
 
-  await fse.writeJSON(context.workspaceFilePath, workspaceContent, { spaces: 2 });
+  await fse.writeJson(context.workspaceFilePath, workspaceContent, { spaces: 2 });
 }
 
 export async function createLogicAppWorkspace(context: IActionContext, options: any, fromPackage: boolean): Promise<void> {

@@ -114,9 +114,9 @@ class ExportEngine {
       this.addStatus(this.intlText.DEPLOYING_CONNECTIONS);
       ext.logTelemetry(this.context, 'exportLastStep', 'deployConnections');
 
-      const connectionsTemplate = await fse.readJSON(templatePath);
-      const parametersFile = await fse.readJSON(`${this.targetDirectory}/parameters.json`);
-      const localSettingsFile = await fse.readJSON(`${this.targetDirectory}/${localSettingsFileName}`);
+      const connectionsTemplate = await fse.readJson(templatePath);
+      const parametersFile = await fse.readJson(`${this.targetDirectory}/parameters.json`);
+      const localSettingsFile = await fse.readJson(`${this.targetDirectory}/${localSettingsFileName}`);
 
       try {
         await this.getResourceGroup();

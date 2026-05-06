@@ -81,7 +81,7 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
     folders: workspaceFolders,
   };
 
-  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
+  await fse.writeJson(workspaceFilePath, workspaceData, { spaces: 2 });
 
   const uri = vscode.Uri.file(workspaceFilePath);
 

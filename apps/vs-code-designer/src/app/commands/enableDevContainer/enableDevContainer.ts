@@ -111,7 +111,7 @@ async function convertWorkspaceTasksToDevContainer(context: IActionContext, work
   }
 
   const workspaceFilePath = path.join(workspaceRootFolder, workspaceFileName);
-  const workspaceContent = await fse.readJSON(workspaceFilePath);
+  const workspaceContent = await fse.readJson(workspaceFilePath);
   const folders = workspaceContent.folders || [];
 
   let tasksConverted = 0;
@@ -150,7 +150,7 @@ async function convertWorkspaceTasksToDevContainer(context: IActionContext, work
  * @param tasksJsonPath - Path to the tasks.json file
  */
 async function convertTasksJsonToDevContainer(context: IActionContext, tasksJsonPath: string): Promise<void> {
-  const tasksContent = await fse.readJSON(tasksJsonPath);
+  const tasksContent = await fse.readJson(tasksJsonPath);
 
   // Get the devcontainer-compatible template
   const devContainerTasksTemplatePath = getWorkspaceTemplatePath('DevContainerTasksJsonFile');
@@ -159,7 +159,7 @@ async function convertTasksJsonToDevContainer(context: IActionContext, tasksJson
     throw new Error(localize('templateNotFound', 'DevContainer tasks template not found at: {0}', devContainerTasksTemplatePath));
   }
 
-  const devContainerTasksTemplate = await fse.readJSON(devContainerTasksTemplatePath);
+  const devContainerTasksTemplate = await fse.readJson(devContainerTasksTemplatePath);
 
   // Replace the tasks with devcontainer-compatible versions
   // Keep the version, but update tasks and inputs
@@ -167,7 +167,7 @@ async function convertTasksJsonToDevContainer(context: IActionContext, tasksJson
   tasksContent.inputs = devContainerTasksTemplate.inputs;
 
   // Write the updated tasks.json
-  await fse.writeJSON(tasksJsonPath, tasksContent, { spaces: 2 });
+  await fse.writeJson(tasksJsonPath, tasksContent, { spaces: 2 });
 }
 
 /**
@@ -176,7 +176,7 @@ async function convertTasksJsonToDevContainer(context: IActionContext, tasksJson
  * @param devContainerFolderName - Name of the devcontainer folder
  */
 async function addDevContainerToWorkspace(workspaceFilePath: string, devContainerFolderName: string): Promise<void> {
-  const workspaceContent = await fse.readJSON(workspaceFilePath);
+  const workspaceContent = await fse.readJson(workspaceFilePath);
 
   // Ensure folders array exists
   if (!workspaceContent.folders) {
@@ -196,6 +196,6 @@ async function addDevContainerToWorkspace(workspaceFilePath: string, devContaine
     });
 
     // Write updated workspace file
-    await fse.writeJSON(workspaceFilePath, workspaceContent, { spaces: 2 });
+    await fse.writeJson(workspaceFilePath, workspaceContent, { spaces: 2 });
   }
 }

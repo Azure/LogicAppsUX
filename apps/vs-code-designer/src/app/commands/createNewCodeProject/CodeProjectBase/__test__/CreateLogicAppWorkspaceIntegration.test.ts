@@ -74,7 +74,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(workspaceExists).toBe(true);
 
       // Verify workspace file content
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       expect(workspaceContent).toHaveProperty('folders');
       expect(workspaceContent.folders).toHaveLength(1);
       expect(workspaceContent.folders[0]).toEqual({
@@ -101,7 +101,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       const workspaceExists = await fse.pathExists(workspaceFilePath);
       expect(workspaceExists).toBe(true);
 
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       expect(workspaceContent.folders).toHaveLength(2);
       expect(workspaceContent.folders[0]).toEqual({
         name: 'CustomCodeApp',
@@ -131,7 +131,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       const workspaceExists = await fse.pathExists(workspaceFilePath);
       expect(workspaceExists).toBe(true);
 
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       expect(workspaceContent.folders).toHaveLength(2);
       expect(workspaceContent.folders[0].name).toBe('RulesEngineApp');
       expect(workspaceContent.folders[1].name).toBe('RulesFunctions');
@@ -197,7 +197,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(workflowJsonExists).toBe(true);
 
       // Verify workflow.json content
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
       expect(workflowContent).toHaveProperty('definition');
       expect(workflowContent.definition).toHaveProperty('$schema');
       expect(workflowContent.definition.$schema).toContain('Microsoft.Logic');
@@ -226,7 +226,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       expect(workflowContent.kind).toBe('Stateful');
     });
@@ -250,7 +250,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       expect(workflowContent.kind).toBe('Stateless');
     });
@@ -274,7 +274,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Verify all required definition properties
       expect(workflowContent.definition).toHaveProperty('$schema');
@@ -433,7 +433,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       const workspaceExists = await fse.pathExists(workspacePath);
       expect(workspaceExists).toBe(true);
 
-      const workspaceContent = await fse.readJSON(workspacePath);
+      const workspaceContent = await fse.readJson(workspacePath);
       expect(workspaceContent.folders).toHaveLength(1);
       expect(workspaceContent.folders[0].name).toBe(options.logicAppName);
 
@@ -469,7 +469,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
       // Verify workspace file has both folders
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
-      const workspaceContent = await fse.readJSON(workspacePath);
+      const workspaceContent = await fse.readJson(workspacePath);
       expect(workspaceContent.folders).toHaveLength(2);
       expect(workspaceContent.folders[0].name).toBe(options.logicAppName);
       expect(workspaceContent.folders[1].name).toBe('MyFunctions');
@@ -527,7 +527,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       const workspaceExists = await fse.pathExists(workspacePath);
       expect(workspaceExists).toBe(true);
 
-      const workspaceContent = await fse.readJSON(workspacePath);
+      const workspaceContent = await fse.readJson(workspacePath);
       expect(workspaceContent.folders[0].name).toBe('Test-LogicApp_456');
     });
 
@@ -566,7 +566,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
 
       // Should not throw when reading JSON
-      const workspaceContent = await fse.readJSON(workspacePath);
+      const workspaceContent = await fse.readJson(workspacePath);
       expect(workspaceContent).toBeDefined();
       expect(typeof workspaceContent).toBe('object');
     });
@@ -590,7 +590,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowPath);
+      const workflowContent = await fse.readJson(workflowPath);
 
       // Validate JSON structure
       expect(workflowContent).toBeDefined();
@@ -636,7 +636,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Agentic workflows should have Stateful kind
       expect(workflowContent.kind).toBe('Stateful');
@@ -679,7 +679,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Agent workflows should have Agent kind
       expect(workflowContent.kind).toBe('Agent');
@@ -717,7 +717,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       const agentAction = workflowContent.definition.actions.Default_Agent;
       expect(agentAction.inputs.parameters).toHaveProperty('agentModelSettings');
@@ -747,7 +747,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'AgentWithTools', 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       const agentAction = workflowContent.definition.actions.Default_Agent;
       expect(agentAction).toHaveProperty('tools');
@@ -778,7 +778,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'StandardWorkflow', 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Standard logic app should have empty actions and triggers
       expect(workflowContent.definition.actions).toEqual({});
@@ -807,7 +807,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'CustomCodeWorkflow', 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Custom code should have InvokeFunction action
       expect(workflowContent.definition.actions).toHaveProperty('Call_a_local_function_in_this_logic_app');
@@ -854,7 +854,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'RulesWorkflow', 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Rules engine should have specific InvokeFunction action
       expect(workflowContent.definition.actions).toHaveProperty('Call_a_local_rules_function_in_this_logic_app');
@@ -901,7 +901,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'CustomWorkflow', 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       // Verify workflow is stateless
       expect(workflowContent.kind).toBe('Stateless');
@@ -933,7 +933,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'XmlRulesWorkflow', 'workflow.json');
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
 
       const rulesAction = workflowContent.definition.actions.Call_a_local_rules_function_in_this_logic_app;
       const xmlInput = rulesAction.inputs.parameters.inputXml;
@@ -975,7 +975,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(devContainerJsonExists).toBe(true);
 
       // Verify devcontainer.json has required properties
-      const devContainerContent = await fse.readJSON(devContainerJsonPath);
+      const devContainerContent = await fse.readJson(devContainerJsonPath);
       expect(devContainerContent).toHaveProperty('name');
       expect(devContainerContent).toHaveProperty('image');
       expect(devContainerContent).toHaveProperty('customizations');
@@ -997,7 +997,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
       // Verify workspace file includes .devcontainer folder
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       expect(workspaceContent.folders).toHaveLength(2);
 
@@ -1030,7 +1030,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
       // Verify workspace file does NOT include .devcontainer folder
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       expect(workspaceContent.folders).toHaveLength(1);
       expect(workspaceContent.folders[0].name).toBe('NonDevContainerApp');
@@ -1123,7 +1123,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
       // Verify workspace file includes both logic app, function folder, and .devcontainer
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       expect(workspaceContent.folders).toHaveLength(3);
       expect(workspaceContent.folders.some((f: any) => f.name === 'CustomCodeDevApp')).toBe(true);
@@ -1154,7 +1154,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
       // Verify workspace file structure
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       expect(workspaceContent.folders).toHaveLength(3);
       expect(workspaceContent.folders.some((f: any) => f.name === 'RulesDevApp')).toBe(true);

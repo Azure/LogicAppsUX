@@ -48,10 +48,8 @@ vi.mock('../../../../utils/fs', () => ({
 }));
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(),
-  writeJSON: vi.fn(),
   writeJson: vi.fn(),
   readJson: vi.fn(),
-  readJSON: vi.fn(),
   pathExists: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
@@ -608,7 +606,7 @@ describe('createLogicAppWorkspace', () => {
 
     // Mock fs-extra functions
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
     vi.mocked(fse.readJson).mockResolvedValue({ folders: [] });
     vi.mocked(fse.readFile).mockResolvedValue('Sample content with <%= methodName %>' as any);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
@@ -657,7 +655,7 @@ describe('createLogicAppWorkspace', () => {
   it('should create workspace file with correct structure for standard logic app', async () => {
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsLogicApp);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -684,7 +682,7 @@ describe('createLogicAppWorkspace', () => {
 
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsCustomCode);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -715,7 +713,7 @@ describe('createLogicAppWorkspace', () => {
 
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsRulesEngine);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -935,13 +933,13 @@ describe('updateWorkspaceFile', () => {
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
     vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.readJson).mockResolvedValue({ folders: [] });
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
   });
 
   it('should add logic app folder to workspace', async () => {
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsForUpdate);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -964,7 +962,7 @@ describe('updateWorkspaceFile', () => {
   it('should add function folder for custom code projects', async () => {
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsCustomCode);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -991,7 +989,7 @@ describe('updateWorkspaceFile', () => {
   it('should add function folder for rules engine projects', async () => {
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsRulesEngine);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -1023,7 +1021,7 @@ describe('updateWorkspaceFile', () => {
 
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(optionsNoCreate);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const folders = writeCall[1].folders;
     const hasLogicApp = folders.some((f: any) => f.name === 'TestLogicApp');
 
@@ -1040,13 +1038,13 @@ describe('updateWorkspaceFile', () => {
 
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsForUpdate);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const folders = writeCall[1].folders;
     const testsIndex = folders.findIndex((f: any) => f.name === 'Tests');
 
     // Tests folder should be moved to the end after the logic app folder is added
     expect(testsIndex).toBe(folders.length - 1);
-    expect(fse.writeJSON).toHaveBeenCalledWith(
+    expect(fse.writeJson).toHaveBeenCalledWith(
       mockOptionsForUpdate.workspaceFilePath,
       expect.objectContaining({
         folders: expect.arrayContaining([expect.objectContaining({ name: 'Tests' })]),
@@ -1061,7 +1059,7 @@ describe('updateWorkspaceFile', () => {
 
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsForUpdate);
 
-    expect(fse.writeJSON).toHaveBeenCalledWith(
+    expect(fse.writeJson).toHaveBeenCalledWith(
       mockOptionsForUpdate.workspaceFilePath,
       expect.objectContaining({
         folders: expect.arrayContaining([
@@ -1083,7 +1081,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
     vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
   });
 
   it('should create workspace folder and file for standard logic app', async () => {
@@ -1100,7 +1098,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
     expect(fse.ensureDir).toHaveBeenCalledWith(actualPath.join('test', 'workspace', 'MyWorkspace'));
 
     // Verify workspace file structure - actual function logic
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     expect(writeCall[0]).toContain('MyWorkspace.code-workspace');
     expect(writeCall[1]).toEqual({
       folders: [{ name: 'MyLogicApp', path: './MyLogicApp' }],
@@ -1118,7 +1116,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
 
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     expect(writeCall[1].folders).toHaveLength(2);
     expect(writeCall[1].folders[1]).toEqual({
       name: 'MyFunctions',
