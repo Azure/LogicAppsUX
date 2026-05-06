@@ -19,11 +19,8 @@ namespace <%= logicAppNamespace %>
         public static void AddWorkflow()
         {
             var builder = WorkflowBuilderFactory.CreateStatefulWorkflow(<%= flowName %>, WorkflowTriggers.BuiltIn.CreateHttpTrigger());
-            var compose = WorkflowActions.BuiltIn.Compose(inputs: () => $"The trigger output {builder.TriggerOutput.Body}");
-            builder.AddAction(compose);
-
             var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
-                location: () => $"{builder.TriggerOutput.Body}",
+                location: () => "98058",
                 units: () => unitsInput.Imperial);
             builder.AddAction(getCurrentWeatherAction);
 

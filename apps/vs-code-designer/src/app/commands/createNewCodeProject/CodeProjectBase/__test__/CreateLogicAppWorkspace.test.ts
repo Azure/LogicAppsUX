@@ -69,6 +69,7 @@ vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
 
 // Import actual path for test setup (not affected by mock)
 const actualPath = await vi.importActual<typeof import('path')>('path');
+const actualFs = await vi.importActual<typeof import('fs')>('fs');
 
 // Import the module after mocks are set up
 const mockModule = await import('../CreateLogicAppWorkspace');
@@ -78,6 +79,21 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   const testProjectName = 'TestProject';
   const testWorkflowName = 'TestWorkflow';
   const testLspDirectory = '/test/lsp';
+
+  describe('StatefulCodefulWorkflow template content', () => {
+    it('should avoid unsupported member-expression startup patterns while keeping MSN Weather', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/StatefulCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('location: () => "98058"');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
+      expect(templateContent).not.toContain('WorkflowActions.BuiltIn.Compose');
+      expect(templateContent).not.toContain('builder.TriggerOutput.Body');
+    });
+  });
 
   beforeEach(() => {
     // Reset all mocks
