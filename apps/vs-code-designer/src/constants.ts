@@ -103,7 +103,7 @@ export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
-export const workflowappRuntime = 'node|20';
+export const workflowappRuntime = 'node|22';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
 export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
@@ -337,7 +337,7 @@ export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationD
 export const DependencyVersion = {
   dotnet8: '8.0.318',
   funcCoreTools: '4.0.7030',
-  nodeJs: '20.18.3',
+  nodeJs: '24.15.0',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 

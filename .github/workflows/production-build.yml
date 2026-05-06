@@ -54,7 +54,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - uses: pnpm/action-setup@v3
         with:
@@ -84,9 +84,9 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Node.js version 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v1
         with:
-          node-version: 20
+          node-version: 24
 
       - uses: pnpm/action-setup@v3
         with:
@@ -148,7 +148,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           
       - uses: pnpm/action-setup@v3
         with:
