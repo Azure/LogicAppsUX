@@ -61,13 +61,15 @@ function getLastWebviewConfig(): WorkspaceWebviewCommandConfig {
 
 describe('workspace webview command wrappers', () => {
   const context = { telemetry: { properties: {}, measurements: {} } } as any;
+  const workspaceRoot = 'D:\\workspace';
+  const logicAppRoot = path.join(workspaceRoot, 'LogicApp');
 
   beforeEach(() => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFile = undefined;
     (vscode.workspace.fs.readFile as Mock).mockReset();
-    (getWorkspaceRoot as Mock).mockResolvedValue('D:\\workspace');
-    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('D:\\workspace\\LogicApp');
+    (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
+    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(logicAppRoot);
     (isCodefulProject as Mock).mockResolvedValue(false);
     (getLogicAppWithoutCustomCode as Mock).mockResolvedValue([]);
   });
@@ -153,15 +155,15 @@ describe('workspace webview command wrappers', () => {
   });
 
   it('createWorkflow passes codeful metadata and wires createLogicAppWorkflow', async () => {
-    const projectRoot = 'D:\\workspace\\CodefulLogicApp';
-    (getWorkspaceRoot as Mock).mockResolvedValue('D:\\workspace');
+    const projectRoot = path.join(workspaceRoot, 'CodefulLogicApp');
+    (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(projectRoot);
     (isCodefulProject as Mock).mockResolvedValue(true);
 
     await createWorkflow(context);
 
     expect(getWorkspaceRoot).toHaveBeenCalledWith(context);
-    expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, 'D:\\workspace', true);
+    expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, workspaceRoot, true);
     expect(isCodefulProject).toHaveBeenCalledWith(projectRoot);
 
     const config = getLastWebviewConfig();

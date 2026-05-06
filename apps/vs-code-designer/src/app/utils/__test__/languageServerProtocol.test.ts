@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
 import { installLSPSDK } from '../languageServerProtocol';
+import path from 'path';
 
 const mocks = vi.hoisted(() => {
   const extractAllTo = vi.fn();
@@ -38,10 +39,11 @@ vi.mock('../vsCodeConfig/settings', () => ({
 
 describe('installLSPSDK', () => {
   const targetDirectory = 'D:\\runtime-dependencies';
-  const lspServerPath = `${targetDirectory}\\LSPServer`;
-  const lspVersionMarker = `${targetDirectory}\\.lspserver-version`;
-  const sdkDirectoryPath = `${targetDirectory}\\${lspDirectory}`;
-  const sdkVersionMarker = `${targetDirectory}\\.lspsdk-version`;
+  const lspServerPath = path.join(targetDirectory, 'LSPServer');
+  const lspVersionMarker = path.join(targetDirectory, '.lspserver-version');
+  const sdkDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const sdkVersionMarker = path.join(targetDirectory, '.lspsdk-version');
+  const sdkPackageName = 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg';
   const oldMarker = '2024-01-01T00:00:00.000Z';
   const currentMarker = '2024-03-01T00:00:00.000Z';
   const oldSourceTime = new Date('2024-01-15T00:00:00.000Z');
@@ -72,10 +74,7 @@ describe('installLSPSDK', () => {
     expect(mocks.admZip).toHaveBeenCalledWith(expect.stringContaining('LSPServer.zip'));
     expect(mocks.extractAllTo).toHaveBeenCalledWith(targetDirectory, true, true);
     expect(mocks.ensureDir).toHaveBeenCalledWith(sdkDirectoryPath);
-    expect(mocks.copyFile).toHaveBeenCalledWith(
-      expect.stringContaining('Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg'),
-      `${sdkDirectoryPath}\\Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg`
-    );
+    expect(mocks.copyFile).toHaveBeenCalledWith(expect.stringContaining(sdkPackageName), path.join(sdkDirectoryPath, sdkPackageName));
     expect(mocks.writeFile).toHaveBeenCalledWith(lspVersionMarker, newSourceTime.toISOString());
     expect(mocks.writeFile).toHaveBeenCalledWith(sdkVersionMarker, newSourceTime.toISOString());
   });

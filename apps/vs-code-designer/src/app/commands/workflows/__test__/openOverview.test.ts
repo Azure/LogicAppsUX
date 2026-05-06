@@ -1,5 +1,6 @@
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import path from 'path';
 import * as vscode from 'vscode';
 import { ext } from '../../../../extensionVariables';
 import { openOverview } from '../openOverview';
@@ -177,8 +178,8 @@ vi.mock('../../../languageServer/languageServer', () => ({
 }));
 
 const context = { telemetry: { properties: {}, measurements: {} } } as any;
-const workflowFilePath = 'D:\\project\\workflow-a\\workflow.json';
-const codefulFilePath = 'D:\\project\\Workflows.cs';
+const workflowFilePath = path.join('D:\\project', 'workflow-a', 'workflow.json');
+const codefulFilePath = path.join('D:\\project', 'Workflows.cs');
 
 interface MockPanel {
   active: boolean;
