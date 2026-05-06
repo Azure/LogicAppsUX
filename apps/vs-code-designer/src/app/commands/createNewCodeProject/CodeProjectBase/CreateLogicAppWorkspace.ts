@@ -118,29 +118,18 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
  */
 export const addWorkflowToProgram = async (programFilePath: string, workflowName: string): Promise<void> => {
   const programContent = await fse.readFile(programFilePath, 'utf-8');
+  const hostRunIndex = programContent.indexOf('host.Run();');
 
-  // Find the location to insert the new workflow builder
-  // Look for the "Build all workflows" comment or insert before host.Run()
-  const buildCallRegex = /(\s*)(\/\/ Build all workflows\s*\n(?:\s*\/\/.*\n)*\s*)(.*?)(\s*host\.Run\(\);)/s;
-
-  const match = programContent.match(buildCallRegex);
-  if (match) {
-    // Insert the new workflow builder before host.Run()
-    const indent = match[1];
-    const newBuildCall = `\n${indent}${workflowName}.AddWorkflow();`;
-    const updatedContent = programContent.replace(buildCallRegex, `$1$2$3${newBuildCall}\n$4`);
-    await fse.writeFile(programFilePath, updatedContent);
-  } else {
-    // Fallback: try to insert before host.Run() directly
-    const fallbackRegex = /(\s*)(host\.Run\(\);)/;
-    const fallbackMatch = programContent.match(fallbackRegex);
-    if (fallbackMatch) {
-      const indent = fallbackMatch[1];
-      const newBuildCall = `${indent}${workflowName}.AddWorkflow();\n`;
-      const updatedContent = programContent.replace(fallbackRegex, `${newBuildCall}$1$2`);
-      await fse.writeFile(programFilePath, updatedContent);
-    }
+  if (hostRunIndex === -1) {
+    return;
   }
+
+  const hostRunLineStart = programContent.lastIndexOf('\n', hostRunIndex) + 1;
+  const hostRunIndent = programContent.slice(hostRunLineStart, hostRunIndex).match(/^[ \t]*/)?.[0] ?? '';
+  const newBuildCall = `${hostRunIndent}${workflowName}.AddWorkflow();\n`;
+  const updatedContent = `${programContent.slice(0, hostRunLineStart)}${newBuildCall}${programContent.slice(hostRunLineStart)}`;
+
+  await fse.writeFile(programFilePath, updatedContent);
 };
 
 export const createCodefulWorkflowFile = async (
