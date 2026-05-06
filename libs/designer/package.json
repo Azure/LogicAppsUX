@@ -52,7 +52,7 @@
     "@types/file-saver": "^2.0.5"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=20"
   },
   "exports": {
     ".": {
