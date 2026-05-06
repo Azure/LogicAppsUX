@@ -6,475 +6,1352 @@
     {
       "label": "index.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/index.ts",
+      "source_file": "index.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_index_ts",
-      "community": 4,
-      "norm_label": "index.ts"
-    },
-    {
-      "label": "project.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/project.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_project_ts",
-      "community": 5,
-      "norm_label": "project.ts"
-    },
-    {
-      "label": "bundleFeed.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/bundleFeed.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_bundlefeed_ts",
+      "id": "index_ts",
       "community": 6,
-      "norm_label": "bundlefeed.ts"
-    },
-    {
-      "label": "parameter.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/parameter.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_parameter_ts",
-      "community": 7,
-      "norm_label": "parameter.ts"
-    },
-    {
-      "label": "cliFeed.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/cliFeed.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_clifeed_ts",
-      "community": 8,
-      "norm_label": "clifeed.ts"
-    },
-    {
-      "label": "operatingSystem.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/operatingSystem.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_operatingsystem_ts",
-      "community": 9,
-      "norm_label": "operatingsystem.ts"
-    },
-    {
-      "label": "workflow.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/workflow.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_workflow_ts",
-      "community": 10,
-      "norm_label": "workflow.ts"
-    },
-    {
-      "label": "process.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/process.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_process_ts",
-      "community": 11,
-      "norm_label": "process.ts"
-    },
-    {
-      "label": "language.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/language.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_language_ts",
-      "community": 12,
-      "norm_label": "language.ts"
-    },
-    {
-      "label": "extensioncommand.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/extensioncommand.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_extensioncommand_ts",
-      "community": 13,
-      "norm_label": "extensioncommand.ts"
-    },
-    {
-      "label": "context.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/context.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_context_ts",
-      "community": 14,
-      "norm_label": "context.ts"
-    },
-    {
-      "label": "launch.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/launch.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_launch_ts",
-      "community": 15,
-      "norm_label": "launch.ts"
-    },
-    {
-      "label": "connection.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/connection.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_connection_ts",
-      "community": 16,
-      "norm_label": "connection.ts"
-    },
-    {
-      "label": "hybridLogicApp.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/hybridLogicApp.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_hybridlogicapp_ts",
-      "community": 17,
-      "norm_label": "hybridlogicapp.ts"
-    },
-    {
-      "label": "host.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/host.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_host_ts",
-      "community": 18,
-      "norm_label": "host.ts"
-    },
-    {
-      "label": "index.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/index.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_index_ts",
-      "community": 19,
       "norm_label": "index.ts"
-    },
-    {
-      "label": "dataMapper.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/dataMapper.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_datamapper_ts",
-      "community": 20,
-      "norm_label": "datamapper.ts"
-    },
-    {
-      "label": "artifact.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/artifact.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_artifact_ts",
-      "community": 21,
-      "norm_label": "artifact.ts"
-    },
-    {
-      "label": "tasks.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/tasks.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_tasks_ts",
-      "community": 22,
-      "norm_label": "tasks.ts"
-    },
-    {
-      "label": "unitTest.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/unitTest.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_unittest_ts",
-      "community": 23,
-      "norm_label": "unittest.ts"
-    },
-    {
-      "label": "functions.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/functions.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_functions_ts",
-      "community": 24,
-      "norm_label": "functions.ts"
-    },
-    {
-      "label": "IBindingTemplate.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/templates/IBindingTemplate.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_templates_ibindingtemplate_ts",
-      "community": 25,
-      "norm_label": "ibindingtemplate.ts"
-    },
-    {
-      "label": "index.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/templates/index.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_templates_index_ts",
-      "community": 26,
-      "norm_label": "index.ts"
-    },
-    {
-      "label": "IWorkflowTemplate.ts",
-      "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/models/templates/IWorkflowTemplate.ts",
-      "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_models_templates_iworkflowtemplate_ts",
-      "community": 27,
-      "norm_label": "iworkflowtemplate.ts"
     },
     {
       "label": "authorization.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
+      "source_file": "lib/helpers/authorization.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_helpers_authorization_ts",
-      "community": 3,
+      "id": "lib_helpers_authorization_ts",
+      "community": 4,
       "norm_label": "authorization.ts"
     },
     {
       "label": "getBaseGraphApi()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
+      "source_file": "lib/helpers/authorization.ts",
       "source_location": "L1",
-      "id": "authorization_getbasegraphapi",
-      "community": 3,
+      "id": "helpers_authorization_getbasegraphapi",
+      "community": 4,
       "norm_label": "getbasegraphapi()"
     },
     {
       "label": "index.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/helpers/index.ts",
+      "source_file": "lib/helpers/index.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_helpers_index_ts",
-      "community": 28,
+      "id": "lib_helpers_index_ts",
+      "community": 7,
       "norm_label": "index.ts"
     },
     {
       "label": "authorization.spec.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/helpers/__test__/authorization.spec.ts",
+      "source_file": "lib/helpers/__test__/authorization.spec.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_helpers_test_authorization_spec_ts",
-      "community": 29,
+      "id": "lib_helpers_test_authorization_spec_ts",
+      "community": 4,
       "norm_label": "authorization.spec.ts"
     },
     {
       "label": "JwtHelper.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_file": "lib/services/JwtHelper.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_services_jwthelper_ts",
-      "community": 2,
+      "id": "lib_services_jwthelper_ts",
+      "community": 3,
       "norm_label": "jwthelper.ts"
     },
     {
       "label": "JwtTokenHelper",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_file": "lib/services/JwtHelper.ts",
       "source_location": "L18",
-      "id": "jwthelper_jwttokenhelper",
-      "community": 2,
+      "id": "services_jwthelper_jwttokenhelper",
+      "community": 3,
       "norm_label": "jwttokenhelper"
     },
     {
       "label": ".createInstance()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_file": "lib/services/JwtHelper.ts",
       "source_location": "L19",
-      "id": "jwthelper_jwttokenhelper_createinstance",
-      "community": 2,
+      "id": "services_jwthelper_jwttokenhelper_createinstance",
+      "community": 3,
       "norm_label": ".createinstance()"
     },
     {
       "label": ".extractJwtTokenPayload()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_file": "lib/services/JwtHelper.ts",
       "source_location": "L23",
-      "id": "jwthelper_jwttokenhelper_extractjwttokenpayload",
-      "community": 2,
+      "id": "services_jwthelper_jwttokenhelper_extractjwttokenpayload",
+      "community": 3,
       "norm_label": ".extractjwttokenpayload()"
     },
     {
       "label": ".decodeJwt()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_file": "lib/services/JwtHelper.ts",
       "source_location": "L29",
-      "id": "jwthelper_jwttokenhelper_decodejwt",
-      "community": 2,
+      "id": "services_jwthelper_jwttokenhelper_decodejwt",
+      "community": 3,
       "norm_label": ".decodejwt()"
     },
     {
       "label": ".base64DecodeStringUrlSafe()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_file": "lib/services/JwtHelper.ts",
       "source_location": "L42",
-      "id": "jwthelper_jwttokenhelper_base64decodestringurlsafe",
-      "community": 2,
+      "id": "services_jwthelper_jwttokenhelper_base64decodestringurlsafe",
+      "community": 3,
       "norm_label": ".base64decodestringurlsafe()"
     },
     {
       "label": "index.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/index.ts",
+      "source_file": "lib/services/index.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_services_index_ts",
-      "community": 30,
+      "id": "lib_services_index_ts",
+      "community": 8,
       "norm_label": "index.ts"
     },
     {
       "label": "httpClient.ts",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "community": 1,
+      "id": "lib_services_httpclient_ts",
+      "community": 0,
       "norm_label": "httpclient.ts"
     },
     {
       "label": "HttpClient",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L12",
-      "id": "httpclient_httpclient",
-      "community": 1,
+      "id": "services_httpclient_httpclient",
+      "community": 0,
       "norm_label": "httpclient"
     },
     {
       "label": ".constructor()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L18",
-      "id": "httpclient_httpclient_constructor",
-      "community": 1,
+      "id": "services_httpclient_httpclient_constructor",
+      "community": 0,
       "norm_label": ".constructor()"
     },
     {
       "label": ".dispose()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L25",
-      "id": "httpclient_httpclient_dispose",
-      "community": 1,
+      "id": "services_httpclient_httpclient_dispose",
+      "community": 0,
       "norm_label": ".dispose()"
     },
     {
       "label": ".get()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L27",
-      "id": "httpclient_httpclient_get",
+      "id": "services_httpclient_httpclient_get",
       "community": 0,
       "norm_label": ".get()"
     },
     {
       "label": ".patch()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L53",
-      "id": "httpclient_httpclient_patch",
+      "id": "services_httpclient_httpclient_patch",
       "community": 0,
       "norm_label": ".patch()"
     },
     {
       "label": ".post()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L79",
-      "id": "httpclient_httpclient_post",
+      "id": "services_httpclient_httpclient_post",
       "community": 0,
       "norm_label": ".post()"
     },
     {
       "label": ".put()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L110",
-      "id": "httpclient_httpclient_put",
+      "id": "services_httpclient_httpclient_put",
       "community": 0,
       "norm_label": ".put()"
     },
     {
       "label": ".delete()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L141",
-      "id": "httpclient_httpclient_delete",
-      "community": 1,
+      "id": "services_httpclient_httpclient_delete",
+      "community": 0,
       "norm_label": ".delete()"
     },
     {
       "label": ".getRequestUrl()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L165",
-      "id": "httpclient_httpclient_getrequesturl",
+      "id": "services_httpclient_httpclient_getrequesturl",
       "community": 0,
       "norm_label": ".getrequesturl()"
     },
     {
       "label": "isArmResourceId()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L184",
-      "id": "httpclient_isarmresourceid",
+      "id": "services_httpclient_isarmresourceid",
       "community": 0,
       "norm_label": "isarmresourceid()"
     },
     {
       "label": "getExtraHeaders()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L188",
-      "id": "httpclient_getextraheaders",
-      "community": 1,
+      "id": "services_httpclient_getextraheaders",
+      "community": 0,
       "norm_label": "getextraheaders()"
     },
     {
       "label": "isUrl()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L194",
-      "id": "httpclient_isurl",
-      "community": 1,
+      "id": "services_httpclient_isurl",
+      "community": 0,
       "norm_label": "isurl()"
     },
     {
       "label": "isSuccessResponse()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L198",
-      "id": "httpclient_issuccessresponse",
+      "id": "services_httpclient_issuccessresponse",
       "community": 0,
       "norm_label": "issuccessresponse()"
     },
     {
       "label": "parseResponse()",
       "file_type": "code",
-      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_file": "lib/services/httpClient.ts",
       "source_location": "L202",
-      "id": "httpclient_parseresponse",
+      "id": "services_httpclient_parseresponse",
       "community": 0,
       "norm_label": "parseresponse()"
     },
     {
       "label": "httpClient.spec.ts",
       "file_type": "code",
+      "source_file": "lib/services/__test__/httpClient.spec.ts",
+      "source_location": "L1",
+      "id": "lib_services_test_httpclient_spec_ts",
+      "community": 0,
+      "norm_label": "httpclient.spec.ts"
+    },
+    {
+      "label": "unitTest.ts",
+      "file_type": "code",
+      "source_file": "lib/models/unitTest.ts",
+      "source_location": "L1",
+      "id": "lib_models_unittest_ts",
+      "community": 9,
+      "norm_label": "unittest.ts"
+    },
+    {
+      "label": "parameter.ts",
+      "file_type": "code",
+      "source_file": "lib/models/parameter.ts",
+      "source_location": "L1",
+      "id": "lib_models_parameter_ts",
+      "community": 10,
+      "norm_label": "parameter.ts"
+    },
+    {
+      "label": "tasks.ts",
+      "file_type": "code",
+      "source_file": "lib/models/tasks.ts",
+      "source_location": "L1",
+      "id": "lib_models_tasks_ts",
+      "community": 11,
+      "norm_label": "tasks.ts"
+    },
+    {
+      "label": "language.ts",
+      "file_type": "code",
+      "source_file": "lib/models/language.ts",
+      "source_location": "L1",
+      "id": "lib_models_language_ts",
+      "community": 12,
+      "norm_label": "language.ts"
+    },
+    {
+      "label": "project.ts",
+      "file_type": "code",
+      "source_file": "lib/models/project.ts",
+      "source_location": "L1",
+      "id": "lib_models_project_ts",
+      "community": 13,
+      "norm_label": "project.ts"
+    },
+    {
+      "label": "artifact.ts",
+      "file_type": "code",
+      "source_file": "lib/models/artifact.ts",
+      "source_location": "L1",
+      "id": "lib_models_artifact_ts",
+      "community": 14,
+      "norm_label": "artifact.ts"
+    },
+    {
+      "label": "functions.ts",
+      "file_type": "code",
+      "source_file": "lib/models/functions.ts",
+      "source_location": "L1",
+      "id": "lib_models_functions_ts",
+      "community": 15,
+      "norm_label": "functions.ts"
+    },
+    {
+      "label": "bundleFeed.ts",
+      "file_type": "code",
+      "source_file": "lib/models/bundleFeed.ts",
+      "source_location": "L1",
+      "id": "lib_models_bundlefeed_ts",
+      "community": 16,
+      "norm_label": "bundlefeed.ts"
+    },
+    {
+      "label": "host.ts",
+      "file_type": "code",
+      "source_file": "lib/models/host.ts",
+      "source_location": "L1",
+      "id": "lib_models_host_ts",
+      "community": 17,
+      "norm_label": "host.ts"
+    },
+    {
+      "label": "extensioncommand.ts",
+      "file_type": "code",
+      "source_file": "lib/models/extensioncommand.ts",
+      "source_location": "L1",
+      "id": "lib_models_extensioncommand_ts",
+      "community": 18,
+      "norm_label": "extensioncommand.ts"
+    },
+    {
+      "label": "launch.ts",
+      "file_type": "code",
+      "source_file": "lib/models/launch.ts",
+      "source_location": "L1",
+      "id": "lib_models_launch_ts",
+      "community": 19,
+      "norm_label": "launch.ts"
+    },
+    {
+      "label": "cliFeed.ts",
+      "file_type": "code",
+      "source_file": "lib/models/cliFeed.ts",
+      "source_location": "L1",
+      "id": "lib_models_clifeed_ts",
+      "community": 20,
+      "norm_label": "clifeed.ts"
+    },
+    {
+      "label": "process.ts",
+      "file_type": "code",
+      "source_file": "lib/models/process.ts",
+      "source_location": "L1",
+      "id": "lib_models_process_ts",
+      "community": 21,
+      "norm_label": "process.ts"
+    },
+    {
+      "label": "operatingSystem.ts",
+      "file_type": "code",
+      "source_file": "lib/models/operatingSystem.ts",
+      "source_location": "L1",
+      "id": "lib_models_operatingsystem_ts",
+      "community": 22,
+      "norm_label": "operatingsystem.ts"
+    },
+    {
+      "label": "context.ts",
+      "file_type": "code",
+      "source_file": "lib/models/context.ts",
+      "source_location": "L1",
+      "id": "lib_models_context_ts",
+      "community": 23,
+      "norm_label": "context.ts"
+    },
+    {
+      "label": "dataMapper.ts",
+      "file_type": "code",
+      "source_file": "lib/models/dataMapper.ts",
+      "source_location": "L1",
+      "id": "lib_models_datamapper_ts",
+      "community": 24,
+      "norm_label": "datamapper.ts"
+    },
+    {
+      "label": "connection.ts",
+      "file_type": "code",
+      "source_file": "lib/models/connection.ts",
+      "source_location": "L1",
+      "id": "lib_models_connection_ts",
+      "community": 25,
+      "norm_label": "connection.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "lib/models/index.ts",
+      "source_location": "L1",
+      "id": "lib_models_index_ts",
+      "community": 26,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "hybridLogicApp.ts",
+      "file_type": "code",
+      "source_file": "lib/models/hybridLogicApp.ts",
+      "source_location": "L1",
+      "id": "lib_models_hybridlogicapp_ts",
+      "community": 27,
+      "norm_label": "hybridlogicapp.ts"
+    },
+    {
+      "label": "workflow.ts",
+      "file_type": "code",
+      "source_file": "lib/models/workflow.ts",
+      "source_location": "L1",
+      "id": "lib_models_workflow_ts",
+      "community": 28,
+      "norm_label": "workflow.ts"
+    },
+    {
+      "label": "IWorkflowTemplate.ts",
+      "file_type": "code",
+      "source_file": "lib/models/templates/IWorkflowTemplate.ts",
+      "source_location": "L1",
+      "id": "lib_models_templates_iworkflowtemplate_ts",
+      "community": 29,
+      "norm_label": "iworkflowtemplate.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "lib/models/templates/index.ts",
+      "source_location": "L1",
+      "id": "lib_models_templates_index_ts",
+      "community": 30,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "IBindingTemplate.ts",
+      "file_type": "code",
+      "source_file": "lib/models/templates/IBindingTemplate.ts",
+      "source_location": "L1",
+      "id": "lib_models_templates_ibindingtemplate_ts",
+      "community": 31,
+      "norm_label": "ibindingtemplate.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/index.ts",
+      "source_location": "L1",
+      "community": 32,
+      "norm_label": "index.ts",
+      "id": "libs_vscode_extension_src_index_ts"
+    },
+    {
+      "label": "project.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/project.ts",
+      "source_location": "L1",
+      "community": 33,
+      "norm_label": "project.ts",
+      "id": "libs_vscode_extension_src_lib_models_project_ts"
+    },
+    {
+      "label": "bundleFeed.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/bundleFeed.ts",
+      "source_location": "L1",
+      "community": 34,
+      "norm_label": "bundlefeed.ts",
+      "id": "libs_vscode_extension_src_lib_models_bundlefeed_ts"
+    },
+    {
+      "label": "parameter.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/parameter.ts",
+      "source_location": "L1",
+      "community": 35,
+      "norm_label": "parameter.ts",
+      "id": "libs_vscode_extension_src_lib_models_parameter_ts"
+    },
+    {
+      "label": "cliFeed.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/cliFeed.ts",
+      "source_location": "L1",
+      "community": 36,
+      "norm_label": "clifeed.ts",
+      "id": "libs_vscode_extension_src_lib_models_clifeed_ts"
+    },
+    {
+      "label": "operatingSystem.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/operatingSystem.ts",
+      "source_location": "L1",
+      "community": 37,
+      "norm_label": "operatingsystem.ts",
+      "id": "libs_vscode_extension_src_lib_models_operatingsystem_ts"
+    },
+    {
+      "label": "workflow.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/workflow.ts",
+      "source_location": "L1",
+      "community": 38,
+      "norm_label": "workflow.ts",
+      "id": "libs_vscode_extension_src_lib_models_workflow_ts"
+    },
+    {
+      "label": "process.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/process.ts",
+      "source_location": "L1",
+      "community": 39,
+      "norm_label": "process.ts",
+      "id": "libs_vscode_extension_src_lib_models_process_ts"
+    },
+    {
+      "label": "language.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/language.ts",
+      "source_location": "L1",
+      "community": 40,
+      "norm_label": "language.ts",
+      "id": "libs_vscode_extension_src_lib_models_language_ts"
+    },
+    {
+      "label": "extensioncommand.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/extensioncommand.ts",
+      "source_location": "L1",
+      "community": 41,
+      "norm_label": "extensioncommand.ts",
+      "id": "libs_vscode_extension_src_lib_models_extensioncommand_ts"
+    },
+    {
+      "label": "context.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/context.ts",
+      "source_location": "L1",
+      "community": 42,
+      "norm_label": "context.ts",
+      "id": "libs_vscode_extension_src_lib_models_context_ts"
+    },
+    {
+      "label": "launch.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/launch.ts",
+      "source_location": "L1",
+      "community": 43,
+      "norm_label": "launch.ts",
+      "id": "libs_vscode_extension_src_lib_models_launch_ts"
+    },
+    {
+      "label": "connection.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/connection.ts",
+      "source_location": "L1",
+      "community": 44,
+      "norm_label": "connection.ts",
+      "id": "libs_vscode_extension_src_lib_models_connection_ts"
+    },
+    {
+      "label": "hybridLogicApp.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/hybridLogicApp.ts",
+      "source_location": "L1",
+      "community": 45,
+      "norm_label": "hybridlogicapp.ts",
+      "id": "libs_vscode_extension_src_lib_models_hybridlogicapp_ts"
+    },
+    {
+      "label": "host.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/host.ts",
+      "source_location": "L1",
+      "community": 46,
+      "norm_label": "host.ts",
+      "id": "libs_vscode_extension_src_lib_models_host_ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/index.ts",
+      "source_location": "L1",
+      "community": 47,
+      "norm_label": "index.ts",
+      "id": "libs_vscode_extension_src_lib_models_index_ts"
+    },
+    {
+      "label": "dataMapper.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/dataMapper.ts",
+      "source_location": "L1",
+      "community": 48,
+      "norm_label": "datamapper.ts",
+      "id": "libs_vscode_extension_src_lib_models_datamapper_ts"
+    },
+    {
+      "label": "artifact.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/artifact.ts",
+      "source_location": "L1",
+      "community": 49,
+      "norm_label": "artifact.ts",
+      "id": "libs_vscode_extension_src_lib_models_artifact_ts"
+    },
+    {
+      "label": "tasks.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/tasks.ts",
+      "source_location": "L1",
+      "community": 50,
+      "norm_label": "tasks.ts",
+      "id": "libs_vscode_extension_src_lib_models_tasks_ts"
+    },
+    {
+      "label": "unitTest.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/unitTest.ts",
+      "source_location": "L1",
+      "community": 51,
+      "norm_label": "unittest.ts",
+      "id": "libs_vscode_extension_src_lib_models_unittest_ts"
+    },
+    {
+      "label": "functions.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/functions.ts",
+      "source_location": "L1",
+      "community": 52,
+      "norm_label": "functions.ts",
+      "id": "libs_vscode_extension_src_lib_models_functions_ts"
+    },
+    {
+      "label": "IBindingTemplate.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/templates/IBindingTemplate.ts",
+      "source_location": "L1",
+      "community": 53,
+      "norm_label": "ibindingtemplate.ts",
+      "id": "libs_vscode_extension_src_lib_models_templates_ibindingtemplate_ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/templates/index.ts",
+      "source_location": "L1",
+      "community": 54,
+      "norm_label": "index.ts",
+      "id": "libs_vscode_extension_src_lib_models_templates_index_ts"
+    },
+    {
+      "label": "IWorkflowTemplate.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/models/templates/IWorkflowTemplate.ts",
+      "source_location": "L1",
+      "community": 55,
+      "norm_label": "iworkflowtemplate.ts",
+      "id": "libs_vscode_extension_src_lib_models_templates_iworkflowtemplate_ts"
+    },
+    {
+      "label": "authorization.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
+      "source_location": "L1",
+      "community": 5,
+      "norm_label": "authorization.ts",
+      "id": "libs_vscode_extension_src_lib_helpers_authorization_ts"
+    },
+    {
+      "label": "getBaseGraphApi()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
+      "source_location": "L1",
+      "community": 5,
+      "norm_label": "getbasegraphapi()",
+      "id": "authorization_getbasegraphapi"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/helpers/index.ts",
+      "source_location": "L1",
+      "community": 56,
+      "norm_label": "index.ts",
+      "id": "libs_vscode_extension_src_lib_helpers_index_ts"
+    },
+    {
+      "label": "authorization.spec.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/helpers/__test__/authorization.spec.ts",
+      "source_location": "L1",
+      "community": 57,
+      "norm_label": "authorization.spec.ts",
+      "id": "libs_vscode_extension_src_lib_helpers_test_authorization_spec_ts"
+    },
+    {
+      "label": "JwtHelper.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_location": "L1",
+      "community": 2,
+      "norm_label": "jwthelper.ts",
+      "id": "libs_vscode_extension_src_lib_services_jwthelper_ts"
+    },
+    {
+      "label": "JwtTokenHelper",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_location": "L18",
+      "community": 2,
+      "norm_label": "jwttokenhelper",
+      "id": "jwthelper_jwttokenhelper"
+    },
+    {
+      "label": ".createInstance()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_location": "L19",
+      "community": 2,
+      "norm_label": ".createinstance()",
+      "id": "jwthelper_jwttokenhelper_createinstance"
+    },
+    {
+      "label": ".extractJwtTokenPayload()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_location": "L23",
+      "community": 2,
+      "norm_label": ".extractjwttokenpayload()",
+      "id": "jwthelper_jwttokenhelper_extractjwttokenpayload"
+    },
+    {
+      "label": ".decodeJwt()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_location": "L29",
+      "community": 2,
+      "norm_label": ".decodejwt()",
+      "id": "jwthelper_jwttokenhelper_decodejwt"
+    },
+    {
+      "label": ".base64DecodeStringUrlSafe()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
+      "source_location": "L42",
+      "community": 2,
+      "norm_label": ".base64decodestringurlsafe()",
+      "id": "jwthelper_jwttokenhelper_base64decodestringurlsafe"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/index.ts",
+      "source_location": "L1",
+      "community": 58,
+      "norm_label": "index.ts",
+      "id": "libs_vscode_extension_src_lib_services_index_ts"
+    },
+    {
+      "label": "httpClient.ts",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L1",
+      "community": 1,
+      "norm_label": "httpclient.ts",
+      "id": "libs_vscode_extension_src_lib_services_httpclient_ts"
+    },
+    {
+      "label": "HttpClient",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L12",
+      "community": 1,
+      "norm_label": "httpclient",
+      "id": "httpclient_httpclient"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L18",
+      "community": 1,
+      "norm_label": ".constructor()",
+      "id": "httpclient_httpclient_constructor"
+    },
+    {
+      "label": ".dispose()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L25",
+      "community": 1,
+      "norm_label": ".dispose()",
+      "id": "httpclient_httpclient_dispose"
+    },
+    {
+      "label": ".get()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L27",
+      "community": 1,
+      "norm_label": ".get()",
+      "id": "httpclient_httpclient_get"
+    },
+    {
+      "label": ".patch()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L53",
+      "community": 1,
+      "norm_label": ".patch()",
+      "id": "httpclient_httpclient_patch"
+    },
+    {
+      "label": ".post()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L79",
+      "community": 1,
+      "norm_label": ".post()",
+      "id": "httpclient_httpclient_post"
+    },
+    {
+      "label": ".put()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L110",
+      "community": 1,
+      "norm_label": ".put()",
+      "id": "httpclient_httpclient_put"
+    },
+    {
+      "label": ".delete()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L141",
+      "community": 1,
+      "norm_label": ".delete()",
+      "id": "httpclient_httpclient_delete"
+    },
+    {
+      "label": ".getRequestUrl()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L165",
+      "community": 1,
+      "norm_label": ".getrequesturl()",
+      "id": "httpclient_httpclient_getrequesturl"
+    },
+    {
+      "label": "isArmResourceId()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L184",
+      "community": 1,
+      "norm_label": "isarmresourceid()",
+      "id": "httpclient_isarmresourceid"
+    },
+    {
+      "label": "getExtraHeaders()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L188",
+      "community": 1,
+      "norm_label": "getextraheaders()",
+      "id": "httpclient_getextraheaders"
+    },
+    {
+      "label": "isUrl()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L194",
+      "community": 1,
+      "norm_label": "isurl()",
+      "id": "httpclient_isurl"
+    },
+    {
+      "label": "isSuccessResponse()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L198",
+      "community": 1,
+      "norm_label": "issuccessresponse()",
+      "id": "httpclient_issuccessresponse"
+    },
+    {
+      "label": "parseResponse()",
+      "file_type": "code",
+      "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+      "source_location": "L202",
+      "community": 1,
+      "norm_label": "parseresponse()",
+      "id": "httpclient_parseresponse"
+    },
+    {
+      "label": "httpClient.spec.ts",
+      "file_type": "code",
       "source_file": "libs/vscode-extension/src/lib/services/__test__/httpClient.spec.ts",
       "source_location": "L1",
-      "id": "libs_vscode_extension_src_lib_services_test_httpclient_spec_ts",
-      "community": 31,
-      "norm_label": "httpclient.spec.ts"
+      "community": 59,
+      "norm_label": "httpclient.spec.ts",
+      "id": "libs_vscode_extension_src_lib_services_test_httpclient_spec_ts"
     }
   ],
   "links": [
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "lib/helpers/authorization.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_helpers_authorization_ts",
+      "target": "helpers_authorization_getbasegraphapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/helpers/__test__/authorization.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_helpers_test_authorization_spec_ts",
+      "target": "helpers_authorization_getbasegraphapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "lib_services_jwthelper_ts",
+      "target": "services_jwthelper_jwttokenhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "services_jwthelper_jwttokenhelper",
+      "target": "services_jwthelper_jwttokenhelper_createinstance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "services_jwthelper_jwttokenhelper",
+      "target": "services_jwthelper_jwttokenhelper_extractjwttokenpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "services_jwthelper_jwttokenhelper",
+      "target": "services_jwthelper_jwttokenhelper_decodejwt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "services_jwthelper_jwttokenhelper",
+      "target": "services_jwthelper_jwttokenhelper_base64decodestringurlsafe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "services_jwthelper_jwttokenhelper_extractjwttokenpayload",
+      "target": "services_jwthelper_jwttokenhelper_decodejwt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/JwtHelper.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "services_jwthelper_jwttokenhelper_extractjwttokenpayload",
+      "target": "services_jwthelper_jwttokenhelper_base64decodestringurlsafe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "lib_services_httpclient_ts",
+      "target": "services_httpclient_httpclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L184",
+      "weight": 1.0,
+      "source": "lib_services_httpclient_ts",
+      "target": "services_httpclient_isarmresourceid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L188",
+      "weight": 1.0,
+      "source": "lib_services_httpclient_ts",
+      "target": "services_httpclient_getextraheaders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L194",
+      "weight": 1.0,
+      "source": "lib_services_httpclient_ts",
+      "target": "services_httpclient_isurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L198",
+      "weight": 1.0,
+      "source": "lib_services_httpclient_ts",
+      "target": "services_httpclient_issuccessresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L202",
+      "weight": 1.0,
+      "source": "lib_services_httpclient_ts",
+      "target": "services_httpclient_parseresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_dispose",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_delete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L165",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient",
+      "target": "services_httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/__test__/httpClient.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_services_test_httpclient_spec_ts",
+      "target": "services_httpclient_httpclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_constructor",
+      "target": "services_httpclient_getextraheaders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_get",
+      "target": "services_httpclient_isarmresourceid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_get",
+      "target": "services_httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_patch",
+      "target": "services_httpclient_isarmresourceid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_patch",
+      "target": "services_httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_patch",
+      "target": "services_httpclient_issuccessresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_patch",
+      "target": "services_httpclient_parseresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_post",
+      "target": "services_httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_post",
+      "target": "services_httpclient_issuccessresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_post",
+      "target": "services_httpclient_parseresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_put",
+      "target": "services_httpclient_isarmresourceid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_put",
+      "target": "services_httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_put",
+      "target": "services_httpclient_issuccessresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_put",
+      "target": "services_httpclient_parseresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L176",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_getrequesturl",
+      "target": "services_httpclient_isurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/services/httpClient.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "source": "services_httpclient_httpclient_getrequesturl",
+      "target": "services_httpclient_isarmresourceid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_helpers_authorization_ts",
-      "_tgt": "authorization_getbasegraphapi",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_helpers_authorization_ts",
-      "target": "authorization_getbasegraphapi",
-      "confidence_score": 1.0
+      "target": "authorization_getbasegraphapi"
     },
     {
       "relation": "contains",
@@ -482,11 +1359,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L18",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_jwthelper_ts",
-      "_tgt": "jwthelper_jwttokenhelper",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_jwthelper_ts",
-      "target": "jwthelper_jwttokenhelper",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper"
     },
     {
       "relation": "method",
@@ -494,11 +1369,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L19",
       "weight": 1.0,
-      "_src": "jwthelper_jwttokenhelper",
-      "_tgt": "jwthelper_jwttokenhelper_createinstance",
+      "confidence_score": 1.0,
       "source": "jwthelper_jwttokenhelper",
-      "target": "jwthelper_jwttokenhelper_createinstance",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper_createinstance"
     },
     {
       "relation": "method",
@@ -506,11 +1379,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L23",
       "weight": 1.0,
-      "_src": "jwthelper_jwttokenhelper",
-      "_tgt": "jwthelper_jwttokenhelper_extractjwttokenpayload",
+      "confidence_score": 1.0,
       "source": "jwthelper_jwttokenhelper",
-      "target": "jwthelper_jwttokenhelper_extractjwttokenpayload",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper_extractjwttokenpayload"
     },
     {
       "relation": "method",
@@ -518,11 +1389,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L29",
       "weight": 1.0,
-      "_src": "jwthelper_jwttokenhelper",
-      "_tgt": "jwthelper_jwttokenhelper_decodejwt",
+      "confidence_score": 1.0,
       "source": "jwthelper_jwttokenhelper",
-      "target": "jwthelper_jwttokenhelper_decodejwt",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper_decodejwt"
     },
     {
       "relation": "method",
@@ -530,11 +1399,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "jwthelper_jwttokenhelper",
-      "_tgt": "jwthelper_jwttokenhelper_base64decodestringurlsafe",
+      "confidence_score": 1.0,
       "source": "jwthelper_jwttokenhelper",
-      "target": "jwthelper_jwttokenhelper_base64decodestringurlsafe",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper_base64decodestringurlsafe"
     },
     {
       "relation": "calls",
@@ -542,11 +1409,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L24",
       "weight": 1.0,
-      "_src": "jwthelper_jwttokenhelper_extractjwttokenpayload",
-      "_tgt": "jwthelper_jwttokenhelper_decodejwt",
+      "confidence_score": 1.0,
       "source": "jwthelper_jwttokenhelper_extractjwttokenpayload",
-      "target": "jwthelper_jwttokenhelper_decodejwt",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper_decodejwt"
     },
     {
       "relation": "calls",
@@ -554,11 +1419,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/JwtHelper.ts",
       "source_location": "L25",
       "weight": 1.0,
-      "_src": "jwthelper_jwttokenhelper_extractjwttokenpayload",
-      "_tgt": "jwthelper_jwttokenhelper_base64decodestringurlsafe",
+      "confidence_score": 1.0,
       "source": "jwthelper_jwttokenhelper_extractjwttokenpayload",
-      "target": "jwthelper_jwttokenhelper_base64decodestringurlsafe",
-      "confidence_score": 1.0
+      "target": "jwthelper_jwttokenhelper_base64decodestringurlsafe"
     },
     {
       "relation": "contains",
@@ -566,11 +1429,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L12",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "_tgt": "httpclient_httpclient",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "target": "httpclient_httpclient",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient"
     },
     {
       "relation": "contains",
@@ -578,11 +1439,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L184",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "_tgt": "httpclient_isarmresourceid",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "target": "httpclient_isarmresourceid",
-      "confidence_score": 1.0
+      "target": "httpclient_isarmresourceid"
     },
     {
       "relation": "contains",
@@ -590,11 +1449,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L188",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "_tgt": "httpclient_getextraheaders",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "target": "httpclient_getextraheaders",
-      "confidence_score": 1.0
+      "target": "httpclient_getextraheaders"
     },
     {
       "relation": "contains",
@@ -602,11 +1459,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L194",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "_tgt": "httpclient_isurl",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "target": "httpclient_isurl",
-      "confidence_score": 1.0
+      "target": "httpclient_isurl"
     },
     {
       "relation": "contains",
@@ -614,11 +1469,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L198",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "_tgt": "httpclient_issuccessresponse",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "target": "httpclient_issuccessresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_issuccessresponse"
     },
     {
       "relation": "contains",
@@ -626,11 +1479,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L202",
       "weight": 1.0,
-      "_src": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "_tgt": "httpclient_parseresponse",
+      "confidence_score": 1.0,
       "source": "libs_vscode_extension_src_lib_services_httpclient_ts",
-      "target": "httpclient_parseresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_parseresponse"
     },
     {
       "relation": "method",
@@ -638,11 +1489,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L18",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_constructor",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_constructor",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_constructor"
     },
     {
       "relation": "method",
@@ -650,11 +1499,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L25",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_dispose",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_dispose",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_dispose"
     },
     {
       "relation": "method",
@@ -662,11 +1509,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L27",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_get",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_get",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_get"
     },
     {
       "relation": "method",
@@ -674,11 +1519,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L53",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_patch",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_patch",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_patch"
     },
     {
       "relation": "method",
@@ -686,11 +1529,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L79",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_post",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_post",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_post"
     },
     {
       "relation": "method",
@@ -698,11 +1539,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L110",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_put",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_put",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_put"
     },
     {
       "relation": "method",
@@ -710,11 +1549,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L141",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_delete",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_delete",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_delete"
     },
     {
       "relation": "method",
@@ -722,11 +1559,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L165",
       "weight": 1.0,
-      "_src": "httpclient_httpclient",
-      "_tgt": "httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient",
-      "target": "httpclient_httpclient_getrequesturl",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_getrequesturl"
     },
     {
       "relation": "calls",
@@ -734,11 +1569,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L22",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_constructor",
-      "_tgt": "httpclient_getextraheaders",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_constructor",
-      "target": "httpclient_getextraheaders",
-      "confidence_score": 1.0
+      "target": "httpclient_getextraheaders"
     },
     {
       "relation": "calls",
@@ -746,11 +1579,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L28",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_get",
-      "_tgt": "httpclient_isarmresourceid",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_get",
-      "target": "httpclient_isarmresourceid",
-      "confidence_score": 1.0
+      "target": "httpclient_isarmresourceid"
     },
     {
       "relation": "calls",
@@ -758,11 +1589,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L31",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_get",
-      "_tgt": "httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_get",
-      "target": "httpclient_httpclient_getrequesturl",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_getrequesturl"
     },
     {
       "relation": "calls",
@@ -770,11 +1599,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L54",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_patch",
-      "_tgt": "httpclient_isarmresourceid",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_patch",
-      "target": "httpclient_isarmresourceid",
-      "confidence_score": 1.0
+      "target": "httpclient_isarmresourceid"
     },
     {
       "relation": "calls",
@@ -782,11 +1609,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L57",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_patch",
-      "_tgt": "httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_patch",
-      "target": "httpclient_httpclient_getrequesturl",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_getrequesturl"
     },
     {
       "relation": "calls",
@@ -794,11 +1619,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L72",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_patch",
-      "_tgt": "httpclient_issuccessresponse",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_patch",
-      "target": "httpclient_issuccessresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_issuccessresponse"
     },
     {
       "relation": "calls",
@@ -806,11 +1629,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L76",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_patch",
-      "_tgt": "httpclient_parseresponse",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_patch",
-      "target": "httpclient_parseresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_parseresponse"
     },
     {
       "relation": "calls",
@@ -818,11 +1639,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L83",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_post",
-      "_tgt": "httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_post",
-      "target": "httpclient_httpclient_getrequesturl",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_getrequesturl"
     },
     {
       "relation": "calls",
@@ -830,11 +1649,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L100",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_post",
-      "_tgt": "httpclient_issuccessresponse",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_post",
-      "target": "httpclient_issuccessresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_issuccessresponse"
     },
     {
       "relation": "calls",
@@ -842,11 +1659,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L104",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_post",
-      "_tgt": "httpclient_parseresponse",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_post",
-      "target": "httpclient_parseresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_parseresponse"
     },
     {
       "relation": "calls",
@@ -854,11 +1669,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L111",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_put",
-      "_tgt": "httpclient_isarmresourceid",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_put",
-      "target": "httpclient_isarmresourceid",
-      "confidence_score": 1.0
+      "target": "httpclient_isarmresourceid"
     },
     {
       "relation": "calls",
@@ -866,11 +1679,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L114",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_put",
-      "_tgt": "httpclient_httpclient_getrequesturl",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_put",
-      "target": "httpclient_httpclient_getrequesturl",
-      "confidence_score": 1.0
+      "target": "httpclient_httpclient_getrequesturl"
     },
     {
       "relation": "calls",
@@ -878,11 +1689,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L134",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_put",
-      "_tgt": "httpclient_issuccessresponse",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_put",
-      "target": "httpclient_issuccessresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_issuccessresponse"
     },
     {
       "relation": "calls",
@@ -890,11 +1699,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L138",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_put",
-      "_tgt": "httpclient_parseresponse",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_put",
-      "target": "httpclient_parseresponse",
-      "confidence_score": 1.0
+      "target": "httpclient_parseresponse"
     },
     {
       "relation": "calls",
@@ -902,11 +1709,9 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L176",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_getrequesturl",
-      "_tgt": "httpclient_isurl",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_getrequesturl",
-      "target": "httpclient_isurl",
-      "confidence_score": 1.0
+      "target": "httpclient_isurl"
     },
     {
       "relation": "calls",
@@ -914,12 +1719,11 @@
       "source_file": "libs/vscode-extension/src/lib/services/httpClient.ts",
       "source_location": "L178",
       "weight": 1.0,
-      "_src": "httpclient_httpclient_getrequesturl",
-      "_tgt": "httpclient_isarmresourceid",
+      "confidence_score": 1.0,
       "source": "httpclient_httpclient_getrequesturl",
-      "target": "httpclient_isarmresourceid",
-      "confidence_score": 1.0
+      "target": "httpclient_isarmresourceid"
     }
   ],
-  "hyperedges": []
+  "hyperedges": [],
+  "built_at_commit": "299674b2429b014e0544370c2eb815140069ed1b"
 }
