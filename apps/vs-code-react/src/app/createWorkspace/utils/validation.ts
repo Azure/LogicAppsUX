@@ -16,20 +16,20 @@ export const validateWorkflowName = (name: string, intlText: any) => {
 
 export const validateFunctionNamespace = (namespace: string, intlText: any) => {
   if (!namespace) {
-    return intlText.EMPTY_FUNCTION_NAMESPACE;
+    return intlText.FUNCTION_NAMESPACE_EMPTY;
   }
   if (!namespaceValidation.test(namespace)) {
-    return intlText.FUNCTION_NAMESPACE_VALIDATION_MESSAGE;
+    return intlText.FUNCTION_NAMESPACE_VALIDATION;
   }
   return undefined;
 };
 
 export const validateFunctionName = (name: string, intlText: any) => {
   if (!name) {
-    return intlText.EMPTY_FUNCTION_NAME;
+    return intlText.FUNCTION_NAME_EMPTY;
   }
   if (!functionNameValidation.test(name)) {
-    return intlText.FUNCTION_NAME_VALIDATION_MESSAGE;
+    return intlText.FUNCTION_NAME_VALIDATION;
   }
   return undefined;
 };
