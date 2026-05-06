@@ -295,6 +295,7 @@ export interface UpdateCallbackInfoMessage {
   command: typeof ExtensionCommand.update_callback_info;
   data: {
     callbackInfo?: ICallbackUrlResponse;
+    workflowName?: string;
   };
 }
 

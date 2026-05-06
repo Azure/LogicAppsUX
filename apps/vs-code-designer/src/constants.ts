@@ -137,7 +137,6 @@ export const designerApiLoadTimeout = 300000;
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',
-  openRunHistory: 'azureLogicAppsStandard.openRunHistory',
   activate: 'azureLogicAppsStandard.activate',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
@@ -229,7 +228,9 @@ export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionC
 
 // Extension context
 export const customExtensionContext = {
-  isAgentCodeful: 'azureLogicAppsStandard.isAgentCodeful',
+  isCodeful: 'azureLogicAppsStandard.isCodeful',
+  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
+  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
 } as const;
 export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 

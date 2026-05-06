@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
-import { pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcessInternal } from '../pickCustomCodeWorkerProcess';
+import {
+  pickCustomCodeNetHostProcess,
+  pickCustomCodeNetHostProcessInternal,
+  pickCustomCodeWorkerChildProcess,
+} from '../pickCustomCodeWorkerProcess';
 import * as validatePreDebug from '../../debug/validatePreDebug';
 import { IRunningFuncTask, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
 import * as pickFuncProcessModule from '../pickFuncProcess';
@@ -143,6 +147,7 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
 
 describe('pickCustomCodeWorkerChildProcess', async () => {
   const testFuncPid = 12345;
+  const testChildFuncPid = 54321;
   const testDotnetPid = 67890;
   const testLogicAppName = 'LogicApp';
   const testLogicAppPath = path.join('path', 'to', testLogicAppName);
@@ -177,8 +182,7 @@ describe('pickCustomCodeWorkerChildProcess', async () => {
     ]);
 
     // Re-import to get the mocked version
-    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
-    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
+    const result = await pickCustomCodeWorkerChildProcess(testFuncTask, false);
     expect(result).toBe(testDotnetPid.toString());
   });
 
@@ -190,27 +194,35 @@ describe('pickCustomCodeWorkerChildProcess', async () => {
       { command: 'other2', pid: 11112 },
     ]);
 
-    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
-    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
+    const result = await pickCustomCodeWorkerChildProcess(testFuncTask, false);
     expect(result).toBe(testDotnetPid.toString());
   });
 
-  it('should return the pid of a child process matching func on Unix', async () => {
+  it('should return the pid of a codeful child process matching dotnet on Unix', async () => {
     vi.stubGlobal('process', { platform: 'linux' });
-    vi.spyOn(pickFuncProcessModule, 'getUnixChildren').mockResolvedValue([
-      { command: 'func.exe', pid: testDotnetPid },
-      { command: 'other', pid: 11111 },
-    ]);
+    vi.spyOn(pickFuncProcessModule, 'getUnixChildren').mockImplementation((pid: Number) => {
+      if (pid === Number(testFuncPid)) {
+        return Promise.resolve([
+          { command: 'func', pid: testChildFuncPid },
+          { command: 'other', pid: 11111 },
+        ]);
+      } else if (pid === Number(testChildFuncPid)) {
+        return Promise.resolve([
+          { command: 'dotnet', pid: testDotnetPid },
+          { command: 'other', pid: 22222 },
+        ]);
+      } else {
+        return Promise.resolve([]);
+      }
+    });
 
-    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
-    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
+    const result = await pickCustomCodeWorkerChildProcess(testFuncTask, false /* isNetFxWorker */, false /* isCodeless */);
     expect(result).toBe(testDotnetPid.toString());
   });
 
   it('should return undefined if no matching child process is found', async () => {
     vi.stubGlobal('process', { platform: 'win32' });
-    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
-    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
+    const result = await pickCustomCodeWorkerChildProcess(testFuncTask, false);
     expect(result).toBeUndefined();
   });
 
@@ -220,8 +232,7 @@ describe('pickCustomCodeWorkerChildProcess', async () => {
     const getUnixChildren = vi.fn();
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(undefined as any);
 
-    const { pickCustomCodeWorkerChildProcess: pickCustomCodeWorkerChildProcessMocked } = await import('../pickCustomCodeWorkerProcess');
-    const result = await pickCustomCodeWorkerChildProcessMocked(testFuncTask, false);
+    const result = await pickCustomCodeWorkerChildProcess(testFuncTask, false);
     expect(result).toBeUndefined();
   });
 });

@@ -13,6 +13,7 @@ export interface OverviewCommandBarProps {
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
   isWorkflowRuntimeRunning?: boolean;
+  hasCallbackInfo?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
 }
@@ -24,6 +25,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
   agentUrlLoading,
   agentUrlData,
   isWorkflowRuntimeRunning,
+  hasCallbackInfo,
   onRefresh,
   onRunTrigger,
   triggerName,
@@ -59,7 +61,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       icon: <PlayRegular />,
       title: Resources.OVERVIEW_RUN_TRIGGER,
       onClick: onRunTrigger,
-      disabled: !isWorkflowRuntimeRunning || !triggerName,
+      disabled: !isWorkflowRuntimeRunning || !triggerName || !hasCallbackInfo,
     });
   }
 

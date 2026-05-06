@@ -172,7 +172,7 @@ export const LogicAppTypeStep: React.FC = () => {
               </Text>
             </div>
             <div className={styles.radioOption}>
-              <Radio value={ProjectType.agentCodeful} label={intlText.CODEFUL_LABEL} />
+              <Radio value={ProjectType.codeful} label={intlText.CODEFUL_LABEL} />
               <Text size={200} style={{ marginLeft: '24px', color: 'var(--colorNeutralForeground2)' }}>
                 {intlText.CODEFUL_DESCRIPTION}
               </Text>

@@ -94,7 +94,6 @@ export namespace ext {
     export: 'export',
     overview: 'overview',
     unitTest: 'unitTest',
-    runHistory: 'runHistory',
     languageServer: 'languageServer',
     createWorkspace: 'createWorkspace',
     createWorkspaceFromPackage: 'createWorkspaceFromPackage',

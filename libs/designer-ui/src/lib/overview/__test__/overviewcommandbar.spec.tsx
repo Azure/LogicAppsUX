@@ -26,7 +26,9 @@ describe('lib/overview/overviewcommandbar', () => {
   });
 
   it('renders with Run trigger button', () => {
-    const tree = renderer.create(<OverviewCommandBar {...minimal} triggerName={'Request'} isWorkflowRuntimeRunning={true} />).toJSON();
+    const tree = renderer
+      .create(<OverviewCommandBar {...minimal} triggerName={'Request'} isWorkflowRuntimeRunning={true} hasCallbackInfo={true} />)
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

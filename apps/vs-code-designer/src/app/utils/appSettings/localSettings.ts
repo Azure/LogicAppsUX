@@ -200,9 +200,9 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
   // Add codeful-specific settings
   if (isCodeful) {
     Object.assign(baseSettings.Values, {
-      AzureFunctionsJobHost__extensionBundle__version: '[1.141.0.12]',
+      AzureFunctionsJobHost__extensionBundle__version: '[1.160.24]',
       WORKFLOW_CODEFUL_ENABLED: 'true',
-      FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://cdnforlogicappsv2.blob.core.windows.net/apseth-test',
+      FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://cdnforlogicappsv2.blob.core.windows.net/la-sdk-private',
     });
   }
 

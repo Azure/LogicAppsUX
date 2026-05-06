@@ -7,9 +7,9 @@ import {
   useThemeObserver,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type { Connection, ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
-import { getRecordEntry, Theme } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, isArmResourceId, Theme } from '@microsoft/logic-apps-shared';
 import { getDesignerServices } from '../designer/servicesHelper';
 import { VSCodeContext } from '../../webviewCommunication';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,7 +24,13 @@ const ConnectionView = ({
   connectorName,
   connectorType,
   currentConnectionId,
-}: { connectorName: string; connectorType: string; currentConnectionId: string }) => {
+  pendingLocalConnectionDataRef,
+}: {
+  connectorName: string;
+  connectorType: string;
+  currentConnectionId: string;
+  pendingLocalConnectionDataRef: React.MutableRefObject<any>;
+}) => {
   const vscode = useContext(VSCodeContext);
   const sendMsgToVsix = useCallback(
     (msg: any) => {
@@ -38,19 +44,30 @@ const ConnectionView = ({
   }, [sendMsgToVsix]);
 
   const onConnectionSuccessful = (connection: Connection) => {
-    const designerState = DesignerStore.getState();
-    const { connectionsMapping, connectionReferences: referencesObject } = designerState.connections;
-    const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
-      const referenceKey = getRecordEntry(connectionsMapping, nodeId);
-      if (!referenceKey || !referencesObject[referenceKey]) {
+    if (isArmResourceId(connection.id)) {
+      // Managed API connection: send connectionReferences so the extension host
+      // can persist them to connections.json (mirrors the designer save flow).
+      const designerState = DesignerStore.getState();
+      const { connectionsMapping, connectionReferences: referencesObject } = designerState.connections;
+      const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
+        const referenceKey = getRecordEntry(connectionsMapping, nodeId);
+        if (!referenceKey || !referencesObject[referenceKey]) {
+          return references;
+        }
+
+        references[referenceKey] = referencesObject[referenceKey];
         return references;
-      }
+      }, {});
 
-      references[referenceKey] = referencesObject[referenceKey];
-      return references;
-    }, {});
-
-    sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection: connection, connectionReferences });
+      sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection, connectionReferences });
+    } else {
+      // Local connection: include the connectionAndSetting captured from the
+      // writeConnection callback so the extension host can write connections.json
+      // and update the C# source in a single atomic handler.
+      const connectionAndSetting = pendingLocalConnectionDataRef.current;
+      pendingLocalConnectionDataRef.current = null;
+      sendMsgToVsix({ command: ExtensionCommand.insert_connection, connection, connectionAndSetting });
+    }
   };
 
   return (
@@ -97,6 +114,29 @@ export const LanguageServerConnectionView = () => {
     [vscode]
   );
 
+  // Ref to capture connectionAndSetting from the writeConnection callback
+  // (addConnection message) so it can be included in the insert_connection
+  // message for local connections — avoids a race between two separate messages.
+  const pendingLocalConnectionDataRef = useRef<any>(null);
+
+  // Wrap the vscode context so addConnection messages are intercepted for
+  // local connections. The connection data is captured in the ref and sent
+  // atomically with insert_connection instead.
+  // TODO(aeldridge): The add connection logic should be decoupled from existing designer flows so this workaround is not necessary.
+  const wrappedVscode = useMemo(
+    () => ({
+      ...vscode,
+      postMessage: (msg: any) => {
+        if (msg?.command === ExtensionCommand.addConnection) {
+          pendingLocalConnectionDataRef.current = msg.connectionAndSetting;
+          return;
+        }
+        vscode.postMessage(msg);
+      },
+    }),
+    [vscode]
+  );
+
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
       connectionInfo: FileSystemConnectionInfo,
@@ -121,7 +161,7 @@ export const LanguageServerConnectionView = () => {
       connectionData,
       panelMetaData,
       fileSystemConnectionCreate,
-      vscode,
+      wrappedVscode,
       oauthRedirectUrl,
       hostVersion,
       queryClient,
@@ -136,6 +176,7 @@ export const LanguageServerConnectionView = () => {
     connectionData,
     panelMetaData,
     vscode,
+    wrappedVscode,
     oauthRedirectUrl,
     dispatch,
     hostVersion,
@@ -168,7 +209,12 @@ export const LanguageServerConnectionView = () => {
           }}
           appSettings={panelMetaData?.localSettings}
         >
-          <ConnectionView connectorName={connectorName} connectorType={connectorType} currentConnectionId={currentConnectionId} />
+          <ConnectionView
+            connectorName={connectorName}
+            connectorType={connectorType}
+            currentConnectionId={currentConnectionId}
+            pendingLocalConnectionDataRef={pendingLocalConnectionDataRef}
+          />
         </BJSWorkflowProvider>
       </DesignerProvider>
     </div>

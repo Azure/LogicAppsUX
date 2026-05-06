@@ -21,26 +21,37 @@ export async function getDebugSymbolDll(): Promise<string> {
  * Generates a debug configuration for a Logic App based on the function version and optional custom code framework.
  * @param version - The Azure Functions runtime version (v1, v2, v3, or v4)
  * @param logicAppName - The name of the Logic App to debug
- * @param customCodeTargetFramework - Optional target framework for custom code (.NET 8 or .NET Framework)
+ * @param customCodeTargetFramework - Optional target framework for custom code (.NET 8 or .NET Framework).
+ *   When provided, returns a launch configuration with `type: 'logicapp'`.
+ * @param isCodeless - Whether the project uses codeless (JSON) workflow definitions. Defaults to `true`.
+ *   - `true` (custom code): includes `customCodeRuntime` for attaching a second debugger to the .NET host.
+ *   - `false` (codeful): omits `customCodeRuntime` since the workflow IS the compiled code.
  *
  * @returns A DebugConfiguration object with either:
- * - Launch configuration for Logic Apps with custom code, including both function and custom code runtime settings
- * - Attach configuration for standard Logic Apps, allowing process selection for debugging
+ * - Launch configuration for Logic Apps with custom code (isCodeless=true), including both function and custom code runtime settings
+ * - Launch configuration for codeful Logic Apps (isCodeless=false), with function runtime only
+ * - Attach configuration for standard Logic Apps (no customCodeTargetFramework), allowing process selection for debugging
  */
 export const getDebugConfiguration = (
   version: FuncVersion,
   logicAppName: string,
-  customCodeTargetFramework?: TargetFramework
+  customCodeTargetFramework?: TargetFramework,
+  isCodeless = true
 ): DebugConfiguration => {
   if (customCodeTargetFramework) {
-    return {
-      name: `Run/Debug logic app with local function ${logicAppName}`,
+    const config: DebugConfiguration = {
+      name: isCodeless ? `Run/Debug logic app with local function ${logicAppName}` : `Run/Debug logic app ${logicAppName}`,
       type: 'logicapp',
       request: 'launch',
       funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
-      isCodeless: true,
+      isCodeless,
     };
+
+    if (isCodeless) {
+      config.customCodeRuntime = customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr';
+    }
+
+    return config;
   }
 
   return {

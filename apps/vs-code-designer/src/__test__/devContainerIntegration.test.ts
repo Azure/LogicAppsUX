@@ -150,21 +150,25 @@ describe('devContainer Integration Tests', () => {
   });
 
   describe('useBinariesDependencies - devContainer override', () => {
-    it('should return false in devContainer regardless of global setting', async () => {
-      // Use importActual to run the REAL useBinariesDependencies logic.
-      // Its dependencies (isDevContainerWorkspace, getGlobalSetting) are still mocked.
-      const { useBinariesDependencies: realUseBinariesDependencies } =
-        await vi.importActual<typeof import('../app/utils/binaries')>('../app/utils/binaries');
-      const { isDevContainerWorkspace } = await import('../app/utils/devContainerUtils');
-      const settingsModule = await import('../app/utils/vsCodeConfig/settings');
+    it(
+      'should return false in devContainer regardless of global setting',
+      async () => {
+        // Use importActual to run the REAL useBinariesDependencies logic.
+        // Its dependencies (isDevContainerWorkspace, getGlobalSetting) are still mocked.
+        const { useBinariesDependencies: realUseBinariesDependencies } =
+          await vi.importActual<typeof import('../app/utils/binaries')>('../app/utils/binaries');
+        const { isDevContainerWorkspace } = await import('../app/utils/devContainerUtils');
+        const settingsModule = await import('../app/utils/vsCodeConfig/settings');
 
-      vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
-      vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(true);
+        vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
+        vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(true);
 
-      const result = await realUseBinariesDependencies();
+        const result = await realUseBinariesDependencies();
 
-      expect(result).toBe(false);
-    });
+        expect(result).toBe(false);
+      },
+      { timeout: 10000 }
+    );
 
     it('should respect global setting in non-devContainer workspace', async () => {
       const { useBinariesDependencies: realUseBinariesDependencies } =

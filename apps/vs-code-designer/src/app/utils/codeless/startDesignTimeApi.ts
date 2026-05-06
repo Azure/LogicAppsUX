@@ -19,9 +19,15 @@ import {
   appKindSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+
+// Cache validation results to avoid expensive process checks (3-4 seconds on Windows)
+// This balances safety (detecting wrong func process) with performance
+// Key: projectPath, Value: { timestamp, isValid }
+const processValidationCache = new Map<string, { timestamp: number; isValid: boolean }>();
+const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
-import { updateFuncIgnore } from '../codeless/common';
+import { getAzureConnectorDetailsForLocalProject, updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -139,6 +145,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       actionContext.telemetry.properties.startDesignTimeApi = 'true';
       updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
       actionContext.telemetry.measurements.startDesignTimeApiDuration = (Date.now() - loadDesignTimeStart) / 1000;
+
+      // Pre-warm Azure details cache and auth token in the background
+      // so connection view opens are fast
+      getAzureConnectorDetailsForLocalProject(actionContext, projectPath).catch(() => {});
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : error;
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
@@ -167,8 +177,19 @@ function extractPinnedVersion(input: string): string | null {
 }
 
 async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+  // Check cache first to avoid expensive validation (3-4+ seconds on Windows)
+  const cached = processValidationCache.get(projectPath);
+  const now = Date.now();
+  if (cached && now - cached.timestamp < VALIDATION_CACHE_TTL) {
+    return;
+  }
+
   const correctFuncProcess = await checkFuncProcessId(projectPath);
-  if (!correctFuncProcess) {
+
+  if (correctFuncProcess) {
+    // Cache successful validation
+    processValidationCache.set(projectPath, { timestamp: now, isValid: true });
+  } else {
     ext.outputChannel.appendLog(
       localize(
         'invalidChildFuncPid',
@@ -176,6 +197,8 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
         projectPath
       )
     );
+    // Clear cache since we're restarting
+    processValidationCache.delete(projectPath);
     stopDesignTimeApi(projectPath);
     await startDesignTimeApi(projectPath);
   }
@@ -183,20 +206,46 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
 
 async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   let correctId = false;
-  let { process, childFuncPid } = ext.designTimeInstances.get(projectPath);
+  const designTimeInst = ext.designTimeInstances.get(projectPath);
+  if (!designTimeInst) {
+    return false;
+  }
+
+  let { process, childFuncPid } = designTimeInst;
+
+  // Reduce retries and delay for faster checks (was 3 retries * 1000ms = 3s worst case)
   let retries = 0;
-  while (!childFuncPid && retries < 3) {
-    await delay(1000);
+  while (!childFuncPid && retries < 2) {
+    await delay(500); // Reduced from 1000ms to 500ms
     ({ process, childFuncPid } = ext.designTimeInstances.get(projectPath));
     retries++;
   }
   if (!childFuncPid) {
-    return false;
+    ext.outputChannel.appendLog('Design-time child func PID not set yet. Attempting live resolution from current child processes.');
   }
 
   if (os.platform() === Platform.windows) {
     const children = await getChildProcessesWithScript(process.pid);
-    correctId = children.some((p) => p.processId.toString() === childFuncPid && p.name === 'func.exe');
+    const resolvedChildFuncPid =
+      childFuncPid ??
+      [...children]
+        .reverse()
+        .find((p) => /func(\.exe|)$/i.test(p.name || ''))
+        ?.processId?.toString();
+
+    if (resolvedChildFuncPid && resolvedChildFuncPid !== childFuncPid) {
+      designTimeInst.childFuncPid = resolvedChildFuncPid;
+      childFuncPid = resolvedChildFuncPid;
+      ext.outputChannel.appendLog(`Design-time child func PID updated during validation to ${resolvedChildFuncPid}`);
+    }
+
+    ext.outputChannel.appendLog(`Checking for func.exe child process. Looking for PID: ${childFuncPid}, Found ${children.length} children`);
+    correctId = children.some((p) => {
+      const matches = p.processId.toString() === childFuncPid && /func(\.exe|)$/i.test(p.name || '');
+      ext.outputChannel.appendLog(`  Child: PID=${p.processId}, Name=${p.name}, Matches=${matches}`);
+      return matches;
+    });
+    ext.outputChannel.appendLog(`Process validation result: ${correctId ? 'VALID' : 'INVALID'}`);
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {
@@ -207,6 +256,21 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     });
   }
   return correctId;
+}
+
+async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500): Promise<string | undefined> {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const childFuncPid = await findChildProcess(processId);
+    if (childFuncPid) {
+      return childFuncPid;
+    }
+
+    if (attempt < retries - 1) {
+      await delay(delayMs);
+    }
+  }
+
+  return undefined;
 }
 
 export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
@@ -243,7 +307,10 @@ export async function waitForDesignTimeStartUp(
     }
     if (setDesignTimeInst) {
       const designTimeInst = ext.designTimeInstances.get(projectPath);
-      designTimeInst.childFuncPid = await findChildProcess(designTimeInst.process.pid);
+      designTimeInst.childFuncPid = await resolveChildFuncPid(designTimeInst.process.pid);
+      ext.outputChannel.appendLog(
+        `Design-time child func PID ${designTimeInst.childFuncPid ? `resolved to ${designTimeInst.childFuncPid}` : 'was not resolved during startup'}`
+      );
       designTimeInst.isStarting = false;
     }
     context.telemetry.measurements.waitForDesignTimeStartupDuration = (Date.now() - initialTime) / 1000;
@@ -336,7 +403,9 @@ export function stopDesignTimeApi(projectPath: string): void {
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+    if (childFuncPid) {
+      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+    }
     cp.exec(`taskkill /pid ${process.pid} /t /f`);
   } else {
     cp.spawn('kill', ['-9'].concat(`${process.pid}`));
@@ -393,9 +462,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
           await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
         }
 
-        const isCodeful = (await isCodefulProject(projectPath)) ?? false;
-
-        if (autoStartDesignTime && !isCodeful) {
+        if (autoStartDesignTime) {
           startDesignTimeApi(projectPath);
         }
       }

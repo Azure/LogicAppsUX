@@ -5,4 +5,8 @@ export const useOverviewStyles = makeStyles({
     height: '100vh',
     padding: `0 ${tokens.spacingHorizontalXL}`,
   },
+  workflowSelector: {
+    maxWidth: '400px',
+    paddingTop: tokens.spacingVerticalM,
+  },
 });

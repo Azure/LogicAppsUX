@@ -19,6 +19,9 @@ vi.mock('fs-extra', () => ({
 vi.mock('../../../../utils/fs', () => ({
   confirmEditJsonFile: vi.fn(),
 }));
+vi.mock('../../../../utils/binaries', () => ({
+  binariesExist: vi.fn().mockReturnValue(false),
+}));
 
 describe('CreateLogicAppVSCodeContents', () => {
   const mockContext: IWebviewProjectContext = {
@@ -44,6 +47,13 @@ describe('CreateLogicAppVSCodeContents', () => {
   const mockContextRulesEngine: IWebviewProjectContext = {
     logicAppName: 'TestLogicAppRulesEngine',
     logicAppType: ProjectType.rulesEngine,
+    targetFramework: TargetFramework.NetFx,
+    isDevContainerProject: false,
+  } as any;
+
+  const mockContextCodeful: IWebviewProjectContext = {
+    logicAppName: 'TestLogicAppCodeful',
+    logicAppType: ProjectType.codeful,
     targetFramework: TargetFramework.NetFx,
     isDevContainerProject: false,
   } as any;
@@ -267,6 +277,45 @@ describe('CreateLogicAppVSCodeContents', () => {
       });
     });
 
+    it('should create settings.json with codeful-specific settings for codeful project', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
+
+      const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
+      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
+      const settingsCallback = settingsCall[2];
+      const settingsData = settingsCallback({});
+
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'C#');
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
+      expect(settingsData).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
+      expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
+      expect(settingsData).toHaveProperty('azureFunctions.deploySubpath');
+      expect(settingsData).toHaveProperty('azureFunctions.preDeployTask', 'publish');
+      expect(settingsData).toHaveProperty('azureFunctions.projectSubpath');
+      expect(settingsData).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
+      expect(settingsData).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
+      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.deploySubpath');
+    });
+
+    it('should create launch.json with logicapp configuration for codeful projects', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
+
+      const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
+      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
+      const launchCallback = launchCall[2];
+      const launchData = launchCallback({ configurations: [] });
+
+      const config = launchData.configurations[0];
+      expect(config).toMatchObject({
+        name: expect.stringContaining('Run/Debug logic app TestLogicAppCodeful'),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      });
+      expect(config).not.toHaveProperty('customCodeRuntime');
+    });
+
     it('should copy extensions.json from template', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
@@ -354,6 +403,19 @@ describe('CreateLogicAppVSCodeContents', () => {
         customCodeRuntime: 'clr',
         isCodeless: true,
       });
+    });
+
+    it('should return logicapp configuration with isCodeless false for codeful project', () => {
+      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', undefined, true);
+
+      expect(config).toMatchObject({
+        name: expect.stringContaining('Run/Debug logic app TestLogicApp'),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      });
+      expect(config).not.toHaveProperty('customCodeRuntime');
     });
   });
 });

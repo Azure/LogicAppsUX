@@ -1082,6 +1082,16 @@ export const overviewMessages = defineMessages({
     id: 'VWH06W',
     description: 'Debug project error message',
   },
+  WORKFLOW: {
+    defaultMessage: 'Workflow',
+    id: 'lW2CUD',
+    description: 'Text for workflow label',
+  },
+  SELECT_WORKFLOW: {
+    defaultMessage: 'Select a workflow',
+    id: 'zbBPqf',
+    description: 'Text for workflow dropdown placeholder',
+  },
 });
 
 export const chatMessages = defineMessages({

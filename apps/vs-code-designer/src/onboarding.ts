@@ -47,16 +47,19 @@ export const startOnboarding = async (activateContext: IActionContext) => {
     activateContext.telemetry.properties.skippedOnboarding = 'true';
     activateContext.telemetry.properties.skippedReason = 'devContainer';
     return;
-  }
+  }  
 
-  callWithTelemetryAndErrorHandling(autoRuntimeDependenciesValidationAndInstallationSetting, async (actionContext: IActionContext) => {
-    const binariesInstallStartTime = Date.now();
-    await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
-      activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
-      await installBinaries(actionContext);
-    });
-    activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
-  });
+  await callWithTelemetryAndErrorHandling(
+    autoRuntimeDependenciesValidationAndInstallationSetting,
+    async (actionContext: IActionContext) => {
+      const binariesInstallStartTime = Date.now();
+      await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+        activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
+        await installBinaries(actionContext);
+      });
+      activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
+    }
+  );
 
   await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {

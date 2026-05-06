@@ -21,7 +21,6 @@ import {
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { RouteName } from '@microsoft/vscode-extension-logic-apps';
-import { RunHistoryApp } from '../app/runHistory/app';
 
 export const Router: React.FC = () => {
   return (
@@ -40,7 +39,6 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
         <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
-        <Route path={`/${RouteName.runHistory}`} element={<RunHistoryApp />} />
         <Route path={`/${RouteName.languageServer}`} element={<LanguageServerConnectionView />}>
           <Route path={`${RouteName.connectionView}`} element={<LanguageServerConnectionView />} />
         </Route>

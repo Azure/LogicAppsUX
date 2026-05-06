@@ -9,7 +9,7 @@ describe('debug', () => {
       vi.clearAllMocks();
     });
 
-    describe('with custom code target framework', () => {
+    describe('with custom code target framework (default isCodeless=true)', () => {
       it('should return launch configuration for .NET 8 custom code with v4 function runtime', () => {
         const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net8);
         expect(result).toEqual({
@@ -59,6 +59,34 @@ describe('debug', () => {
           customCodeRuntime: 'coreclr',
           isCodeless: true,
         });
+      });
+    });
+
+    describe('with codeful project (isCodeless=false)', () => {
+      it('should return launch configuration without customCodeRuntime for .NET 8 codeful with v4 runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v4, 'CodefulApp', TargetFramework.Net8, false);
+
+        expect(result).toEqual({
+          name: 'Run/Debug logic app CodefulApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          isCodeless: false,
+        });
+        expect(result).not.toHaveProperty('customCodeRuntime');
+      });
+
+      it('should return launch configuration without customCodeRuntime for .NET Framework codeful with v1 runtime', () => {
+        const result = getDebugConfiguration(FuncVersion.v1, 'CodefulApp', TargetFramework.NetFx, false);
+
+        expect(result).toEqual({
+          name: 'Run/Debug logic app CodefulApp',
+          type: 'logicapp',
+          request: 'launch',
+          funcRuntime: 'clr',
+          isCodeless: false,
+        });
+        expect(result).not.toHaveProperty('customCodeRuntime');
       });
     });
 
