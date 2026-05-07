@@ -3,7 +3,7 @@ import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import { type Runs, StandardRunService, Theme, equals, isNullOrUndefined, isRuntimeUp } from '@microsoft/logic-apps-shared';
+import { type Runs, StandardRunService, Theme, equals, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useIntlMessages, overviewMessages } from '../../intl';
@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useOverviewStyles } from './overviewStyles';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import { isOverviewRuntimeAvailable, shouldShowLocalDebugError } from './runtime';
 import { fetchAgentUrl } from './services/workflowService';
 
 export interface CallbackInfo {
@@ -33,27 +34,6 @@ export const OverviewApp = () => {
     return equals(kind, 'agent', true);
   }, [kind]);
 
-  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(true);
-  useEffect(() => {
-    const pingRuntimeApi = async () => {
-      setIsWorkflowRuntimeRunning(await isRuntimeUp(baseUrl));
-    };
-
-    pingRuntimeApi();
-    const interval = setInterval(async () => {
-      pingRuntimeApi();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [baseUrl]);
-
-  const clientId = azureDetails?.clientId ?? '';
-  const tenantId = azureDetails?.tenantId ?? '';
-  const azureSubscriptionId = azureDetails?.subscriptionId ?? '';
-  const resourceGroupName = azureDetails?.resourceGroupName ?? '';
-
-  const intlText = useIntlMessages(overviewMessages);
-
   const httpClient = useMemo(() => {
     if (!baseUrl) {
       return;
@@ -66,6 +46,43 @@ export const OverviewApp = () => {
       hostVersion: hostVersion,
     });
   }, [accessToken, baseUrl, hostVersion]);
+
+  const [isWorkflowRuntimeRunning, setIsWorkflowRuntimeRunning] = useState(() =>
+    workflowState.isLocal ? true : Boolean(workflowProperties.callbackInfo)
+  );
+  useEffect(() => {
+    let isDisposed = false;
+    const pingRuntimeApi = async () => {
+      const runtimeAvailable = await isOverviewRuntimeAvailable({
+        apiVersion,
+        baseUrl,
+        callbackInfo: workflowProperties.callbackInfo,
+        httpClient,
+        isLocal: workflowState.isLocal,
+      });
+
+      if (!isDisposed) {
+        setIsWorkflowRuntimeRunning(runtimeAvailable);
+      }
+    };
+
+    pingRuntimeApi();
+    const interval = setInterval(async () => {
+      pingRuntimeApi();
+    }, 5000);
+
+    return () => {
+      isDisposed = true;
+      clearInterval(interval);
+    };
+  }, [apiVersion, baseUrl, httpClient, workflowProperties.callbackInfo, workflowState.isLocal]);
+
+  const clientId = azureDetails?.clientId ?? '';
+  const tenantId = azureDetails?.tenantId ?? '';
+  const azureSubscriptionId = azureDetails?.subscriptionId ?? '';
+  const resourceGroupName = azureDetails?.resourceGroupName ?? '';
+
+  const intlText = useIntlMessages(overviewMessages);
 
   const runService = useMemo(() => {
     if (!baseUrl || !httpClient) {
@@ -152,7 +169,7 @@ export const OverviewApp = () => {
   );
 
   const errorMessage = useMemo((): string | undefined => {
-    if (!isWorkflowRuntimeRunning) {
+    if (shouldShowLocalDebugError(workflowState.isLocal, isWorkflowRuntimeRunning)) {
       return intlText.DEBUG_PROJECT_ERROR;
     }
     let loadingErrorMessage: string | undefined;
@@ -174,7 +191,7 @@ export const OverviewApp = () => {
     }
 
     return loadingErrorMessage ?? triggerErrorMessage;
-  }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR]);
+  }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR, workflowState.isLocal]);
 
   return (
     <div className={styles.overviewContainer}>
