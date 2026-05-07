@@ -11,8 +11,9 @@
  *      the 'Do you want to create the workspace now?' dialog
  *   2. Clicking 'Yes' opens the Create Workspace webview
  *   3. The Create Workspace form can be filled out (path, names, etc.)
- *   4. Completing the wizard creates a .code-workspace file on disk
- *   5. The original legacy project files remain untouched
+ *   4. A single Create click starts creation and disables/shows pending UI
+ *   5. Completing the wizard creates a .code-workspace file on disk
+ *   6. The original legacy project files remain untouched
  *
  * Phase 4.8b — own session, startup resource = temp legacy project folder
  */
@@ -156,6 +157,39 @@ async function waitForCreateWorkspaceDialog(driver: WebDriver, timeoutMs = 60_00
     await sleep(2000);
   }
   return null;
+}
+
+/** Verify one Create click starts work instead of requiring repeated clicks. */
+async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorkspaceFile: string, timeoutMs = 15_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (fs.existsSync(expectedWorkspaceFile)) {
+      console.log('[createWs] Workspace file already exists after single Create click');
+      return;
+    }
+
+    try {
+      const buttons = await driver.findElements(
+        By.xpath('//button[contains(normalize-space(.), "Create") or contains(normalize-space(.), "Creating")]')
+      );
+      for (const button of buttons) {
+        const text = await button.getText().catch(() => '');
+        const disabled = await button.getAttribute('disabled').catch(() => null);
+        const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+
+        if (disabled !== null || ariaDisabled === 'true' || text.toLowerCase().includes('creating')) {
+          console.log(`[createWs] Single Create click entered pending state: text="${text}", disabled=${disabled}, aria=${ariaDisabled}`);
+          return;
+        }
+      }
+    } catch {
+      // The webview may already be disposing/opening the new workspace.
+    }
+
+    await sleep(250);
+  }
+
+  assert.fail('A single Create click did not start workspace creation or enter pending UI state');
 }
 
 describe('Workspace Conversion — Create Workspace from Legacy Project', function () {
@@ -373,23 +407,27 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
       console.log(`[createWs] Next button not found: ${e.message}`);
     }
 
-    // ── Step 6: Click 'Create workspace' button ──
+    const expectedWsDir = path.join(wsParentDir, wsName);
+    const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
+
+    // ── Step 6: Click 'Create workspace' button exactly once ──
     try {
       const createBtn = await driver.findElement(By.xpath('//button[contains(text(), "Create")]'));
-      await createBtn.click();
-      console.log('[createWs] Clicked Create workspace');
+      const disabledBeforeClick = await createBtn.getAttribute('disabled').catch(() => null);
+      assert.strictEqual(disabledBeforeClick, null, 'Create button should be enabled before clicking');
+
+      await driver.actions().move({ origin: createBtn }).click().perform();
+      console.log('[createWs] Clicked Create workspace once');
+      await waitForSingleCreateClickToStart(driver, expectedWsFile);
       await sleep(5000); // Wait for workspace creation
       await captureScreenshot(driver, 'create-ws-after-create', EXPLICIT_SCREENSHOT_DIR);
     } catch (e: any) {
-      console.log(`[createWs] Create button not found: ${e.message}`);
+      assert.fail(`Single Create click should start workspace creation: ${e.message}`);
     }
 
     // ── Step 7: Verify the workspace was created on disk ──
     await webview.switchBack();
     await sleep(2000);
-
-    const expectedWsDir = path.join(wsParentDir, wsName);
-    const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
 
     if (fs.existsSync(expectedWsFile)) {
       console.log(`[createWs] .code-workspace file created: ${expectedWsFile} ✓`);
@@ -405,6 +443,7 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
         const wsFiles = fs.readdirSync(expectedWsDir);
         console.log(`[createWs] Contents of ${expectedWsDir}: ${JSON.stringify(wsFiles)}`);
       }
+      assert.fail(`Single Create click should create .code-workspace at ${expectedWsFile}`);
     }
 
     // ── Step 8: Verify the original legacy project is completely untouched ──

@@ -7,12 +7,12 @@ import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType } from '../../state/createWorkspaceSlice';
+import { nextStep, previousStep, setCurrentStep, setFlowType, setLoading } from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { functionNameValidation, nameValidation, namespaceValidation } from './validation/helper';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 
 export const CreateWorkspace: React.FC = () => {
@@ -432,6 +432,12 @@ export const CreateWorkspace: React.FC = () => {
   };
 
   const handleCreate = () => {
+    if (isLoading) {
+      return;
+    }
+
+    dispatch(setLoading(true));
+
     const baseData = {
       workspaceProjectPath,
       workspaceName,
@@ -514,12 +520,12 @@ export const CreateWorkspace: React.FC = () => {
     // Send the appropriate command based on flow type
     const command =
       flowType === 'createWorkspaceFromPackage'
-        ? 'createWorkspaceFromPackage'
+        ? ExtensionCommand.createWorkspaceFromPackage
         : flowType === 'convertToWorkspace'
-          ? 'createWorkspaceStructure'
+          ? ExtensionCommand.createWorkspaceStructure
           : flowType === 'createLogicApp'
-            ? 'createLogicApp'
-            : 'createWorkspace';
+            ? ExtensionCommand.createLogicApp
+            : ExtensionCommand.createWorkspace;
 
     vscode.postMessage({ command, data });
   };

@@ -338,6 +338,44 @@ describe('CreateWorkspace', () => {
       }
     });
 
+    it('should send createWorkspaceStructure command and enter loading state for convertToWorkspace flow', () => {
+      const store = createTestStore({
+        flowType: 'convertToWorkspace',
+        currentStep: 1,
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'my-ws',
+        logicAppType: '',
+        logicAppName: '',
+        workflowType: '',
+        workflowName: '',
+      });
+      render(
+        <Provider store={store}>
+          <CreateWorkspaceStructure />
+        </Provider>
+      );
+
+      const buttons = screen.getAllByRole('button');
+      const createButton = buttons.find((b) => b.textContent?.includes('Create') && !b.hasAttribute('disabled'));
+
+      expect(createButton).toBeDefined();
+
+      if (createButton) {
+        fireEvent.click(createButton);
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          expect.objectContaining({
+            command: 'createWorkspaceStructure',
+            data: expect.objectContaining({
+              workspaceName: 'my-ws',
+            }),
+          })
+        );
+        expect(store.getState().createWorkspace.isLoading).toBe(true);
+        expect(createButton).toBeDisabled();
+      }
+    });
+
     it('should include function fields for customCode logicAppType', () => {
       renderWithStore({
         flowType: 'createWorkspace',

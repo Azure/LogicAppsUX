@@ -65,6 +65,7 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   };
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
+  let isCreateInProgress = false;
 
   // Standard message handlers
   const messageHandlers = {
@@ -83,6 +84,11 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
     },
 
     [createCommand]: async (message: any) => {
+      if (isCreateInProgress) {
+        return;
+      }
+
+      isCreateInProgress = true;
       await callWithTelemetryAndErrorHandling(panelName.replace(/\s+/g, ''), async (activateContext: IActionContext) => {
         await createHandler(activateContext, message.data);
       });

@@ -961,6 +961,61 @@ async function main() {
       process.exit(finalExit);
     }
 
+    if (e2eMode === 'conversioncreateonly') {
+      // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
+      // click Yes, then verify one Create click starts and completes workspace creation.
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+
+      const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
+      const legacyWfDir = path.join(legacyDir, 'testworkflow');
+      if (!fs.existsSync(legacyWfDir)) {
+        fs.mkdirSync(legacyWfDir, { recursive: true });
+        fs.writeFileSync(
+          path.join(legacyDir, 'host.json'),
+          JSON.stringify(
+            { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
+            null,
+            2
+          )
+        );
+        fs.writeFileSync(
+          path.join(legacyDir, 'local.settings.json'),
+          JSON.stringify(
+            {
+              IsEncrypted: false,
+              Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
+            },
+            null,
+            2
+          )
+        );
+        fs.writeFileSync(
+          path.join(legacyWfDir, 'workflow.json'),
+          JSON.stringify(
+            {
+              definition: {
+                $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+                contentVersion: '1.0.0.0',
+                actions: {},
+                triggers: {},
+                outputs: {},
+              },
+              kind: 'Stateful',
+            },
+            null,
+            2
+          )
+        );
+        console.log(`  Created legacy project at: ${legacyDir}`);
+      }
+
+      await prepareFreshSession('phase8b-only');
+      const phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
+      process.exit(phase8bExit);
+    }
+
     if (e2eMode === 'createonly') {
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
