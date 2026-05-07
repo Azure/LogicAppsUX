@@ -277,10 +277,21 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
     it('should not update Program.cs when adding provider-based agents to an existing project', async () => {
       const agenticCodefulTemplate = 'public class <%= flowNameClass %> : IWorkflowProvider { }';
+      const existingProgramContent = `class Program {
+        public static void Main()
+        {
+            WorkflowFactory.ConfigureServices(services);
+            services.AddWorkflowProviders(typeof(Program).Assembly);
+            host.Run();
+        }
+      }`;
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
         if (filePath.includes('AgenticCodefulWorkflow')) {
           return Promise.resolve(agenticCodefulTemplate);
+        }
+        if (filePath.includes('Program.cs')) {
+          return Promise.resolve(existingProgramContent);
         }
         return Promise.reject(new Error('Unexpected file read'));
       });
@@ -352,7 +363,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
         expect(programWriteCall).toBeDefined();
         expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
-        expect(programWriteCall[1]).toContain(`${testWorkflowName}.AddWorkflow()`);
+        expect(programWriteCall[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
       }
     });
 
@@ -394,8 +405,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
         expect(programWriteCall).toBeDefined();
         expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
-        expect(programWriteCall[1]).toContain('FirstWorkflow.AddWorkflow()');
-        expect(programWriteCall[1]).toContain(`${testWorkflowName}.AddWorkflow()`);
+        expect(programWriteCall[1]).not.toContain('FirstWorkflow.AddWorkflow()');
+        expect(programWriteCall[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
       }
     });
 
@@ -524,8 +535,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
     });
   });
 
-  describe('addWorkflowToProgram', () => {
-    it('should insert workflow before host.Run() call', async () => {
+  describe('repairCodefulProgramFile', () => {
+    it('should remove legacy AddWorkflow calls before host.Run()', async () => {
       const programContent = `class Program {
         public static void Main() {
             // Build all workflows
@@ -538,32 +549,19 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       vi.mocked(fse.readFile).mockResolvedValue(programContent);
       vi.mocked(fse.writeFile).mockResolvedValue(undefined);
 
-      const addWorkflowToProgram = (mockModule as any).addWorkflowToProgram;
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
 
-      if (addWorkflowToProgram) {
-        await addWorkflowToProgram('/test/Program.cs', 'SecondWorkflow');
-
-        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledOnce();
-        const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
-
-        // Verify new workflow was added
-        expect(updatedContent).toContain('FirstWorkflow.AddWorkflow()');
-        expect(updatedContent).toContain('SecondWorkflow.AddWorkflow()');
-        expect(updatedContent).toContain('host.Run()');
-
-        // Verify SecondWorkflow comes after FirstWorkflow but before host.Run()
-        const firstIndex = updatedContent.indexOf('FirstWorkflow.AddWorkflow()');
-        const secondIndex = updatedContent.indexOf('SecondWorkflow.AddWorkflow()');
-        const hostRunIndex = updatedContent.indexOf('host.Run()');
-
-        expect(secondIndex).toBeGreaterThan(firstIndex);
-        expect(hostRunIndex).toBeGreaterThan(secondIndex);
-      }
+      expect(vi.mocked(fse.writeFile)).toHaveBeenCalledOnce();
+      const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
+      expect(updatedContent).not.toContain('FirstWorkflow.AddWorkflow()');
+      expect(updatedContent).toContain('host.Run()');
     });
 
-    it('should handle Program.cs without "Build all workflows" comment', async () => {
+    it('should not update provider-style Program.cs files with no legacy registration', async () => {
       const programContent = `class Program {
         public static void Main() {
+            WorkflowFactory.ConfigureServices(services);
+            services.AddWorkflowProviders(typeof(Program).Assembly);
             host.Run();
         }
       }`;
@@ -571,29 +569,17 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       vi.mocked(fse.readFile).mockResolvedValue(programContent);
       vi.mocked(fse.writeFile).mockResolvedValue(undefined);
 
-      const addWorkflowToProgram = (mockModule as any).addWorkflowToProgram;
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
 
-      if (addWorkflowToProgram) {
-        await addWorkflowToProgram('/test/Program.cs', 'NewWorkflow');
-
-        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledOnce();
-        const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
-
-        // Verify workflow was added before host.Run()
-        expect(updatedContent).toContain('NewWorkflow.AddWorkflow()');
-        expect(updatedContent).toContain('host.Run()');
-
-        const workflowIndex = updatedContent.indexOf('NewWorkflow.AddWorkflow()');
-        const hostRunIndex = updatedContent.indexOf('host.Run()');
-        expect(hostRunIndex).toBeGreaterThan(workflowIndex);
-      }
+      expect(vi.mocked(fse.writeFile)).not.toHaveBeenCalled();
     });
 
-    it('should preserve existing formatting and indentation', async () => {
+    it('should preserve non-legacy content and indentation', async () => {
       const programContent = `class Program {
         public static void Main() {
             // Build all workflows
             FirstWorkflow.AddWorkflow();
+            Console.WriteLine("keep this");
             
             host.Run();
         }
@@ -602,20 +588,14 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       vi.mocked(fse.readFile).mockResolvedValue(programContent);
       vi.mocked(fse.writeFile).mockResolvedValue(undefined);
 
-      const addWorkflowToProgram = (mockModule as any).addWorkflowToProgram;
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
 
-      if (addWorkflowToProgram) {
-        await addWorkflowToProgram('/test/Program.cs', 'ThirdWorkflow');
-
-        const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
-
-        // Verify indentation is preserved
-        expect(updatedContent).toMatch(/\s{12}FirstWorkflow\.AddWorkflow\(\);/);
-        expect(updatedContent).toMatch(/\s{12}ThirdWorkflow\.AddWorkflow\(\);/);
-      }
+      const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
+      expect(updatedContent).not.toContain('FirstWorkflow.AddWorkflow()');
+      expect(updatedContent).toContain('            Console.WriteLine("keep this");');
     });
 
-    it('should handle multiple existing workflows', async () => {
+    it('should remove multiple existing legacy workflow registrations', async () => {
       const programContent = `class Program {
         // Build all workflows
         WorkflowOne.AddWorkflow();
@@ -628,20 +608,14 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       vi.mocked(fse.readFile).mockResolvedValue(programContent);
       vi.mocked(fse.writeFile).mockResolvedValue(undefined);
 
-      const addWorkflowToProgram = (mockModule as any).addWorkflowToProgram;
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
 
-      if (addWorkflowToProgram) {
-        await addWorkflowToProgram('/test/Program.cs', 'WorkflowFour');
+      const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
 
-        const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
-
-        // Verify all workflows are present
-        expect(updatedContent).toContain('WorkflowOne.AddWorkflow()');
-        expect(updatedContent).toContain('WorkflowTwo.AddWorkflow()');
-        expect(updatedContent).toContain('WorkflowThree.AddWorkflow()');
-        expect(updatedContent).toContain('WorkflowFour.AddWorkflow()');
-        expect(updatedContent).toContain('host.Run()');
-      }
+      expect(updatedContent).not.toContain('WorkflowOne.AddWorkflow()');
+      expect(updatedContent).not.toContain('WorkflowTwo.AddWorkflow()');
+      expect(updatedContent).not.toContain('WorkflowThree.AddWorkflow()');
+      expect(updatedContent).toContain('host.Run()');
     });
   });
 

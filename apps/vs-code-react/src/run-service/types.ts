@@ -1,4 +1,5 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
+import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { ApiHubServiceDetails, SchemaType, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type {
   MapDefinitionData,
@@ -296,6 +297,15 @@ export interface UpdateCallbackInfoMessage {
   data: {
     callbackInfo?: ICallbackUrlResponse;
     workflowName?: string;
+  };
+}
+
+export interface UpdateWorkflowPropertiesMessage {
+  command: typeof ExtensionCommand.update_workflow_properties;
+  data: {
+    workflowProperties: OverviewPropertiesProps;
+    workflowPropertiesList?: OverviewPropertiesProps[];
+    kind?: string;
   };
 }
 

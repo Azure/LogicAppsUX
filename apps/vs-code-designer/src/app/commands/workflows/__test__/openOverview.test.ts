@@ -306,6 +306,55 @@ describe('openOverview', () => {
     disposePanel();
   });
 
+  it('uses trigger details to resolve callback URLs when runtime workflow metadata omits trigger type', async () => {
+    const codefulContent = 'WorkflowFactory.CreateStatefulWorkflow("workflow-a", workflow);';
+    mocks.readFileSync.mockReturnValue(codefulContent);
+    mocks.sendRequest.mockImplementation(async (_context: any, request: { url: string; method: string }) => {
+      if (request.url.endsWith('/workflows?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({
+          value: [
+            {
+              name: 'workflow-a',
+              kind: 'Stateful',
+            },
+          ],
+        });
+      }
+
+      if (request.url.endsWith('/workflows/workflow-a/triggers?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({
+          value: [
+            {
+              name: 'manual',
+              properties: {
+                type: 'Request',
+                kind: 'Http',
+              },
+            },
+          ],
+        });
+      }
+
+      if (request.url.includes('/listCallbackUrl?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: `callback:${request.url}`, method: 'POST' });
+      }
+
+      throw new Error(`Unexpected request ${request.url}`);
+    });
+
+    await openOverview(context, vscode.Uri.file(codefulFilePath));
+    const initializePayload = await sendInitializeMessage();
+
+    expect(initializePayload.workflowPropertiesList).toHaveLength(1);
+    expect(initializePayload.workflowPropertiesList[0].triggerName).toBe('manual');
+    expect(initializePayload.workflowPropertiesList[0].callbackInfo.value).toContain(
+      '/workflows/workflow-a/triggers/manual/listCallbackUrl'
+    );
+    expect(initializePayload.workflowPropertiesList[0].callbackInfo.value).not.toContain('/triggers/manual/run');
+
+    disposePanel();
+  });
+
   it('posts callback URL updates with workflow names for a centralized codeful overview when the runtime base URL appears', async () => {
     vi.useFakeTimers();
     (ext as any).workflowRuntimePort = undefined;
@@ -354,6 +403,68 @@ describe('openOverview', () => {
         callbackInfo: expect.objectContaining({
           value: expect.stringContaining('/workflows/workflow-b/triggers/manual/listCallbackUrl'),
         }),
+      },
+    });
+
+    disposePanel();
+    vi.useRealTimers();
+  });
+
+  it('refreshes source-fallback codeful workflows from runtime metadata when the runtime base URL appears', async () => {
+    vi.useFakeTimers();
+    (ext as any).workflowRuntimePort = undefined;
+    const codefulContent = 'WorkflowFactory.CreateStatefulWorkflow("source-workflow", workflow);';
+    mocks.readFileSync.mockReturnValue(codefulContent);
+    mocks.sendRequest.mockImplementation(async (_context: any, request: { url: string }) => {
+      if (request.url.endsWith('/workflows?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({
+          value: [
+            {
+              name: 'runtime-workflow',
+              kind: 'Stateful',
+              triggers: {
+                manual: {
+                  type: 'Request',
+                  kind: 'Http',
+                },
+              },
+            },
+          ],
+        });
+      }
+
+      if (request.url.includes('/listCallbackUrl?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: `callback:${request.url}`, method: 'POST' });
+      }
+
+      throw new Error(`Unexpected request ${request.url}`);
+    });
+
+    await openOverview(context, vscode.Uri.file(codefulFilePath));
+    const initializePayload = await sendInitializeMessage();
+
+    expect(initializePayload.workflowPropertiesList.map((workflow: any) => workflow.name)).toEqual(['source-workflow']);
+
+    (ext as any).workflowRuntimePort = 7071;
+    await vi.advanceTimersByTimeAsync(5000);
+
+    expect(panel.webview.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.update_workflow_properties,
+      data: {
+        workflowProperties: expect.objectContaining({
+          name: 'runtime-workflow',
+          triggerName: 'manual',
+          callbackInfo: expect.objectContaining({
+            value: expect.stringContaining('/workflows/runtime-workflow/triggers/manual/listCallbackUrl'),
+          }),
+        }),
+        workflowPropertiesList: [
+          expect.objectContaining({
+            name: 'runtime-workflow',
+            triggerName: 'manual',
+          }),
+        ],
+        kind: 'Stateful',
       },
     });
 

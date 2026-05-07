@@ -113,21 +113,18 @@ export async function createLogicAppAndWorkflow(webviewProjectContext: IWebviewP
   }
 }
 
-/**
- * Adds a workflow Build() call to an existing Program.cs file.
- */
-export const addWorkflowToProgram = async (programFilePath: string, workflowName: string): Promise<void> => {
-  const programContent = await fse.readFile(programFilePath, 'utf-8');
-  const hostRunIndex = programContent.indexOf('host.Run();');
+const legacyAddWorkflowCallRegex = /^[ \t]*[A-Za-z_]\w*\.AddWorkflow\(\);\r?\n?/gm;
 
-  if (hostRunIndex === -1) {
+/**
+ * Removes old static workflow registration calls from Program.cs.
+ */
+export const repairCodefulProgramFile = async (programFilePath: string): Promise<void> => {
+  const programContent = await fse.readFile(programFilePath, 'utf-8');
+  const updatedContent = programContent.replace(legacyAddWorkflowCallRegex, '');
+
+  if (updatedContent === programContent) {
     return;
   }
-
-  const hostRunLineStart = programContent.lastIndexOf('\n', hostRunIndex) + 1;
-  const hostRunIndent = programContent.slice(hostRunLineStart, hostRunIndex).match(/^[ \t]*/)?.[0] ?? '';
-  const newBuildCall = `${hostRunIndent}${workflowName}.AddWorkflow();\n`;
-  const updatedContent = `${programContent.slice(0, hostRunLineStart)}${newBuildCall}${programContent.slice(hostRunLineStart)}`;
 
   await fse.writeFile(programFilePath, updatedContent);
 };
@@ -168,7 +165,9 @@ export const createCodefulWorkflowFile = async (
 
   // Create or update Program.cs with the shared entry point
   const programFilePath = path.join(logicAppFolderPath, 'Program.cs');
-  if (!(await fse.pathExists(programFilePath))) {
+  if (await fse.pathExists(programFilePath)) {
+    await repairCodefulProgramFile(programFilePath);
+  } else {
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');

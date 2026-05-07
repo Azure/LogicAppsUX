@@ -101,19 +101,6 @@ export async function debugLogicApp(
       context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
       throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
     }
-  } else if (debugConfig.isCodeless === false) {
-    const codefulNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
-      context,
-      resolvedWorkspaceFolder,
-      projectPath,
-      false /* isCodeless */
-    );
-    functionLaunchConfig = {
-      name: localize('attachToCustomCodeFunc', 'Debug local function'),
-      type: debugConfig.funcRuntime,
-      request: 'attach',
-      processId: codefulNetHostProcessId,
-    };
   }
 
   if (functionLaunchConfig?.processId) {
@@ -135,7 +122,7 @@ export async function debugLogicApp(
         String(customCodeAttachStarted)
       )
     );
-  } else if (debugConfig.customCodeRuntime || debugConfig.isCodeless === false) {
+  } else if (debugConfig.customCodeRuntime) {
     ext.outputChannel.appendLog(
       localize(
         'customCodeDebugAttachSkipped',

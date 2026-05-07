@@ -12,6 +12,7 @@ export const ExtensionCommand = {
   loadDataMap: 'loadDataMap',
   update_runtime_base_url: 'update-runtime-base-url',
   update_callback_info: 'update-callback-info',
+  update_workflow_properties: 'update-workflow-properties',
   update_access_token: 'update-access-token',
   update_export_path: 'update-export-path',
   update_panel_metadata: 'update-panel-metadata',

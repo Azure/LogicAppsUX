@@ -26,6 +26,7 @@ import type {
   PackageExistenceResultMessage,
   UpdateRuntimeBaseUrlMessage,
   UpdateCallbackInfoMessage,
+  UpdateWorkflowPropertiesMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -68,6 +69,7 @@ import {
   addStatus,
   setFinalStatus,
   updateCallbackInfo,
+  updateWorkflowProperties,
   updateBaseUrl,
 } from './state/WorkflowSlice';
 import { changeDataMapperVersion, changeDesignerVersion, initialize } from './state/projectSlice';
@@ -364,6 +366,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_callback_info: {
             dispatch(updateCallbackInfo(message.data));
+            break;
+          }
+          case ExtensionCommand.update_workflow_properties: {
+            dispatch(updateWorkflowProperties((message as UpdateWorkflowPropertiesMessage).data));
             break;
           }
           case ExtensionCommand.update_access_token: {

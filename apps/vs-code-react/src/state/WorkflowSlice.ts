@@ -30,6 +30,12 @@ export interface UpdateCallbackInfoPayload {
   workflowName?: string;
 }
 
+export interface UpdateWorkflowPropertiesPayload {
+  workflowProperties: OverviewPropertiesProps;
+  workflowPropertiesList?: OverviewPropertiesProps[];
+  kind?: string;
+}
+
 export const Status = {
   InProgress: 'InProgress',
   Succeeded: 'Succeeded',
@@ -163,6 +169,12 @@ export const workflowSlice = createSlice({
         };
       }
     },
+    updateWorkflowProperties: (state: WorkflowState, action: PayloadAction<UpdateWorkflowPropertiesPayload>) => {
+      const { workflowProperties, workflowPropertiesList, kind } = action.payload;
+      state.workflowProperties = workflowProperties;
+      state.workflowPropertiesList = workflowPropertiesList;
+      state.kind = kind ?? workflowProperties.kind ?? state.kind;
+    },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
@@ -225,6 +237,7 @@ export const {
   initializeWorkflow,
   updateBaseUrl,
   updateCallbackInfo,
+  updateWorkflowProperties,
   updateAccessToken,
   updateSelectedWorkFlows,
   updateSelectedSubscripton,
