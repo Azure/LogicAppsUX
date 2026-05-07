@@ -14,12 +14,16 @@ import {
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
+import { delay } from '../delay';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import type { MessageItem } from 'vscode';
+
+const azuriteStartupRetryCount = 10;
+const azuriteStartupRetryDelayMs = 500;
 
 /**
  * Prompts user to set azurite.location and Start Azurite.
@@ -42,7 +46,7 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
 
       const showAutoStartAzuriteWarningSetting = !!getWorkspaceSetting<boolean>(showAutoStartAzuriteWarning);
 
-      const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
+      let autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
       context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
 
       if (showAutoStartAzuriteWarningSetting) {
@@ -60,6 +64,8 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         } else if (result === enableMessage) {
           await updateGlobalSetting(showAutoStartAzuriteWarning, false);
           await updateGlobalSetting(autoStartAzuriteSetting, true);
+          autoStartAzurite = true;
+          context.telemetry.properties.autoStartAzurite = 'true';
 
           // User has not configured workspace azurite.location.
           if (!azuriteLocationExtSetting) {
@@ -92,7 +98,31 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
         context.telemetry.properties.azuriteLocation = azuriteLocation;
+        await waitForAzuriteReady(context, projectPath);
       }
     }
   }
+}
+
+async function waitForAzuriteReady(context: IActionContext, projectPath: string): Promise<void> {
+  for (let attempt = 1; attempt <= azuriteStartupRetryCount; attempt++) {
+    context.telemetry.properties.azuriteStartupAttempt = attempt.toString();
+    if (await validateEmulatorIsRunning(context, projectPath, false)) {
+      context.telemetry.properties.azuriteReady = 'true';
+      return;
+    }
+
+    if (attempt < azuriteStartupRetryCount) {
+      await delay(azuriteStartupRetryDelayMs);
+    }
+  }
+
+  context.telemetry.properties.azuriteReady = 'false';
+  throw new Error(
+    localize(
+      'azuriteFailedToStart',
+      'Azurite did not become ready within "{0}" seconds. Make sure the Azurite extension is installed and running, then try debugging again.',
+      (azuriteStartupRetryCount * azuriteStartupRetryDelayMs) / 1000
+    )
+  );
 }
