@@ -73,9 +73,9 @@ describe('extension utilities', () => {
   });
 
   it('scans only codeful projects for workflow C# files', async () => {
-    const settingsUri = { fsPath: 'D:\\workspace\\logicapp\\local.settings.json' };
-    const workflowUri = { fsPath: 'D:\\workspace\\logicapp\\Workflow.cs' };
-    const unrelatedUri = { fsPath: 'D:\\workspace\\other\\Workflow.cs' };
+    const settingsUri = { fsPath: '/workspace/logicapp/local.settings.json' };
+    const workflowUri = { fsPath: '/workspace/logicapp/Workflow.cs' };
+    const unrelatedUri = { fsPath: '/workspace/other/Workflow.cs' };
     (vscode.workspace.findFiles as any).mockResolvedValueOnce([settingsUri]).mockResolvedValueOnce([workflowUri, unrelatedUri]);
     (hasCodefulWorkflowSetting as any).mockResolvedValue(true);
     (vscode.workspace.openTextDocument as any).mockResolvedValue({
