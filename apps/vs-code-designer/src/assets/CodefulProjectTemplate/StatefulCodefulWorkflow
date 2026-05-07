@@ -5,27 +5,28 @@
 namespace <%= logicAppNamespace %>
 {
     using Microsoft.Azure.Workflows.Sdk;
-    using Microsoft.Azure.Workflows.Sdk.Connectors;
     using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
 
     /// <summary>
     /// <%= flowName %> Stateful Workflow.
     /// </summary>
-    public static class <%= flowNameClass %>
+    public class <%= flowNameClass %> : IWorkflowProvider
     {
         /// <summary>
-        /// Adds the HTTP request/response workflow.
+        /// Gets the HTTP request/response workflow definition.
         /// </summary>
-        public static void AddWorkflow()
+        public FlowDefinition[] GetWorkflows()
         {
-            var builder = WorkflowBuilderFactory.CreateStatefulWorkflow(<%= flowName %>, WorkflowTriggers.BuiltIn.CreateHttpTrigger());
+            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+
             var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
                 location: () => "98058",
                 units: () => unitsInput.Imperial);
-            builder.AddAction(getCurrentWeatherAction);
 
             var response = WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}");
-            builder.AddAction(response);
+            var workflow = trigger.Then(getCurrentWeatherAction).Then(response);
+
+            return new[] { WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow) };
         }
     }
 }

@@ -88,9 +88,59 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
       expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather');
       expect(templateContent).toContain('location: () => "98058"');
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
+      expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).not.toContain('WorkflowActions.BuiltIn.Compose');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory');
+      expect(templateContent).not.toContain('AddWorkflow()');
       expect(templateContent).not.toContain('builder.TriggerOutput.Body');
+    });
+  });
+
+  describe('AgentCodefulWorkflow template content', () => {
+    it('should use the provider-based conversational agent SDK template', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgentCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
+      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger()');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
+      expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
+      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
+      expect(templateContent).not.toContain('AddWorkflow()');
+    });
+  });
+
+  describe('AgenticCodefulWorkflow template content', () => {
+    it('should use the provider-based autonomous agent SDK template', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgenticCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
+      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateHttpTrigger()');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
+      expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
+      expect(templateContent).toContain('MessageRole.User');
+      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).not.toContain('AddWorkflow()');
+    });
+  });
+
+  describe('nuget template content', () => {
+    it('should use a project-local package cache for the codeful SDK package', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/nuget', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('<add key="globalPackagesFolder" value=".nuget\\packages" />');
+      expect(templateContent).toContain('<add key="current" value=<%= lspDirectory %> />');
     });
   });
 
@@ -111,6 +161,143 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   });
 
   describe('createAgentCodefulWorkflowFile', () => {
+    it('should create conversational agent provider workflow without adding a Program.cs AddWorkflow call', async () => {
+      const agentCodefulTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgentCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+      const programTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/ProgramFile', import.meta.url),
+        'utf-8'
+      );
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgentCodefulWorkflow')) {
+          return Promise.resolve(agentCodefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.agentCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgentCodefulWorkflow'), 'utf-8');
+      const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+      expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateAgentWorkflow("${testWorkflowName}", workflow)`);
+
+      const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+      expect(programWriteCall?.[1]).toContain(`namespace ${testProjectName}`);
+      expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should create autonomous agent provider workflow from the AgenticCodeful template', async () => {
+      const agenticCodefulTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgenticCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+      const programTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/ProgramFile', import.meta.url),
+        'utf-8'
+      );
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgenticCodefulWorkflow')) {
+          return Promise.resolve(agenticCodefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.agenticCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgenticCodefulWorkflow'), 'utf-8');
+      const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+      expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateStatefulWorkflow("${testWorkflowName}", workflow)`);
+
+      const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+      expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should create stateful provider workflow without adding a Program.cs AddWorkflow call', async () => {
+      const statefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { stateful content }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('StatefulCodefulWorkflow')) {
+          return Promise.resolve(statefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.statefulCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulWorkflow'), 'utf-8');
+      const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+      expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should not update Program.cs when adding provider-based agents to an existing project', async () => {
+      const agenticCodefulTemplate = 'public class <%= flowNameClass %> : IWorkflowProvider { }';
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgenticCodefulWorkflow')) {
+          return Promise.resolve(agenticCodefulTemplate);
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(true);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        'SecondWorkflow',
+        WorkflowType.agenticCodeful
+      );
+
+      const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
+      expect(writtenFiles).toEqual([expect.stringContaining('SecondWorkflow.cs')]);
+    });
+
     it('should create workflow file with workflow name (not Program.cs) for first workflow', async () => {
       const agentCodefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { }';
       const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';

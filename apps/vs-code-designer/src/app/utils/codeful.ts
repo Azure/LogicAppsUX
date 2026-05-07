@@ -62,9 +62,10 @@ const isCodefulNet8Csproj = (csprojContent: string): boolean => {
  */
 export const detectStatefulCodefulWorkflow = (fileContent: string): string | undefined => {
   // Pattern to match: WorkflowBuilderFactory.CreateStatefulWorkflow(<workflowName>, ...)
+  // or WorkflowFactory.CreateStatefulWorkflow(<workflowName>, ...)
   // This handles: variables, string literals, template placeholders like <%= flowName %>
   // Using [\s\S]*? to match across line breaks
-  const pattern = /WorkflowBuilderFactory[\s\S]*?\.CreateStatefulWorkflow\s*\(\s*([^,)]+)/;
+  const pattern = /Workflow(?:Builder)?Factory[\s\S]*?\.CreateStatefulWorkflow\s*\(\s*([^,)]+)/;
   const match = fileContent.match(pattern);
 
   if (match && match[1]) {
@@ -93,9 +94,11 @@ export const detectStatefulCodefulWorkflow = (fileContent: string): string | und
  */
 export const detectAgentCodefulWorkflow = (fileContent: string): string | undefined => {
   // Pattern to match: WorkflowBuilderFactory.CreateConversationalAgent(<workflowName>)
+  // or WorkflowFactory.CreateAgentWorkflow(<workflowName>, ...)
   // This handles: variables, string literals, template placeholders like <%= flowName %>
   // Using [\s\S]*? to match across line breaks
-  const pattern = /WorkflowBuilderFactory[\s\S]*?\.CreateConversationalAgent\s*\(\s*([^,)]+)/;
+  const pattern =
+    /(?:WorkflowBuilderFactory[\s\S]*?\.CreateConversationalAgent|WorkflowFactory[\s\S]*?\.CreateAgentWorkflow)\s*\(\s*([^,)]+)/;
   const match = fileContent.match(pattern);
 
   if (match && match[1]) {

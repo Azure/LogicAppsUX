@@ -166,7 +166,6 @@ describe('startOnboarding', () => {
     vi.mocked(promptStartDesignTimeOption).mockResolvedValue(undefined);
 
     await startOnboarding(mockContext);
-    await vi.waitFor(() => expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeDefined());
 
     expect(mockContext.telemetry.properties.isDevContainer).toBe('false');
     expect(mockContext.telemetry.properties.lastStep).toBeDefined();
@@ -175,6 +174,28 @@ describe('startOnboarding', () => {
     expect(scheduleStartAllDesignTimeApis).not.toHaveBeenCalled();
     expect(typeof mockContext.telemetry.measurements.binariesInstallDuration).toBe('number');
     expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should wait for dependency onboarding before prompting for design-time startup', async () => {
+    let resolveInstallBinaries = () => {};
+    const installBinariesSpy = vi.spyOn(binaries, 'installBinaries').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveInstallBinaries = resolve;
+        })
+    );
+    vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+    vi.mocked(promptStartDesignTimeOption).mockResolvedValue(undefined);
+
+    const onboardingPromise = startOnboarding(mockContext);
+    await vi.waitFor(() => expect(installBinariesSpy).toHaveBeenCalled());
+
+    expect(promptStartDesignTimeOption).not.toHaveBeenCalled();
+
+    resolveInstallBinaries();
+    await onboardingPromise;
+
+    expect(promptStartDesignTimeOption).toHaveBeenCalledWith(mockContext);
   });
 
   it('should bypass the auto-start prompt path entirely for devContainer workspaces', async () => {

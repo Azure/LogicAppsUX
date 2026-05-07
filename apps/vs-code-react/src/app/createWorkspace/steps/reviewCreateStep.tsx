@@ -73,6 +73,8 @@ export const ReviewCreateStep: React.FC = () => {
         return intlText.LOGIC_APP_CUSTOM_CODE;
       case ProjectType.rulesEngine:
         return intlText.LOGIC_APP_RULES_ENGINE;
+      case ProjectType.codeful:
+        return intlText.CODEFUL_LABEL;
       default:
         return type || intlText.NOT_SPECIFIED;
     }
@@ -85,9 +87,13 @@ export const ReviewCreateStep: React.FC = () => {
       case 'Stateless-Codeless':
         return intlText.STATELESS_TITLE;
       case 'Agentic-Codeless':
+      case 'Agentic-Codeful':
         return intlText.AUTONOMOUS_TITLE;
       case 'Agent-Codeless':
+      case 'Agent-Codeful':
         return intlText.AGENT_TITLE;
+      case 'Stateful-Codeful':
+        return intlText.STATEFUL_TITLE;
       default:
         return type || intlText.NOT_SPECIFIED;
     }

@@ -309,6 +309,16 @@ describe('codeful.ts', () => {
 
       expect(result).toBe('MultilineWorkflow');
     });
+
+    it('should detect provider-based stateful workflow factory names', () => {
+      const fileContent = `
+        return new[] { WorkflowFactory.CreateStatefulWorkflow("AutonomousAgentWorkflow", workflow) };
+      `;
+
+      const result = detectStatefulCodefulWorkflow(fileContent);
+
+      expect(result).toBe('AutonomousAgentWorkflow');
+    });
   });
 
   describe('detectAgentCodefulWorkflow', () => {
@@ -394,6 +404,16 @@ describe('codeful.ts', () => {
 
       expect(result).toBe('MultilineAgent');
     });
+
+    it('should detect provider-based conversational agent workflow factory names', () => {
+      const fileContent = `
+        return new[] { WorkflowFactory.CreateAgentWorkflow("ConversationalAgentWorkflow", workflow) };
+      `;
+
+      const result = detectAgentCodefulWorkflow(fileContent);
+
+      expect(result).toBe('ConversationalAgentWorkflow');
+    });
   });
 
   describe('detectCodefulWorkflow', () => {
@@ -413,6 +433,32 @@ describe('codeful.ts', () => {
     it('should detect agent workflow and return correct type', () => {
       const fileContent = `
         var agent = WorkflowBuilderFactory.CreateConversationalAgent("AgentWorkflow");
+      `;
+
+      const result = detectCodefulWorkflow(fileContent);
+
+      expect(result).toEqual({
+        workflowName: 'AgentWorkflow',
+        workflowType: 'agent',
+      });
+    });
+
+    it('should detect provider-based autonomous agent workflow as stateful', () => {
+      const fileContent = `
+        return new[] { WorkflowFactory.CreateStatefulWorkflow("AgenticWorkflow", workflow) };
+      `;
+
+      const result = detectCodefulWorkflow(fileContent);
+
+      expect(result).toEqual({
+        workflowName: 'AgenticWorkflow',
+        workflowType: 'stateful',
+      });
+    });
+
+    it('should detect provider-based conversational agent workflow as agent', () => {
+      const fileContent = `
+        return new[] { WorkflowFactory.CreateAgentWorkflow("AgentWorkflow", workflow) };
       `;
 
       const result = detectCodefulWorkflow(fileContent);

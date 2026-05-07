@@ -198,9 +198,13 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 }
 
-export function deactivate(): Promise<any> {
+export async function deactivate(): Promise<void> {
   stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
-  ext.telemetryReporter.dispose();
-  return undefined;
+  try {
+    await ext.languageClient?.stop();
+  } finally {
+    ext.languageClient = undefined;
+    ext.telemetryReporter.dispose();
+  }
 }

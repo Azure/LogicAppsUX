@@ -132,13 +132,25 @@ export const addWorkflowToProgram = async (programFilePath: string, workflowName
   await fse.writeFile(programFilePath, updatedContent);
 };
 
+const getCodefulWorkflowTemplateFileName = (workflowType: WorkflowType): string => {
+  switch (workflowType) {
+    case WorkflowType.statefulCodeful:
+      return 'StatefulCodefulWorkflow';
+    case WorkflowType.agenticCodeful:
+      return 'AgenticCodefulWorkflow';
+    case WorkflowType.agentCodeful:
+    default:
+      return 'AgentCodefulWorkflow';
+  }
+};
+
 export const createCodefulWorkflowFile = async (
   logicAppFolderPath: string,
   logicAppName: string,
   workflowName: string,
   workflowType: WorkflowType
 ) => {
-  const workflowTemplateFileName = workflowType === WorkflowType.statefulCodeful ? 'StatefulCodefulWorkflow' : 'AgentCodefulWorkflow';
+  const workflowTemplateFileName = getCodefulWorkflowTemplateFileName(workflowType);
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
@@ -156,16 +168,13 @@ export const createCodefulWorkflowFile = async (
 
   // Create or update Program.cs with the shared entry point
   const programFilePath = path.join(logicAppFolderPath, 'Program.cs');
-  if (await fse.pathExists(programFilePath)) {
-    // Program.cs exists, add this workflow to it
-    await addWorkflowToProgram(programFilePath, capitalizedWorkflowName);
-  } else {
+  if (!(await fse.pathExists(programFilePath))) {
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
     const programContent = templateProgramContent
       .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`)
-      .replace(/<%= workflowBuilders %>/g, `${capitalizedWorkflowName}.AddWorkflow();`);
+      .replace(/<%= workflowBuilders %>/g, '');
     await fse.writeFile(programFilePath, programContent);
 
     // Create the .csproj file (only for first workflow)

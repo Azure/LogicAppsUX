@@ -33,6 +33,7 @@ import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { publishCodefulProject } from './publishCodefulProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { delay } from '../utils/delay';
 
@@ -89,6 +90,7 @@ export async function pickFuncProcessInternal(
   }
 
   await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+  await publishCodefulProject(context, workspaceFolder.uri);
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);

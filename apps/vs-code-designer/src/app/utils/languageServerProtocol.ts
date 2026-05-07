@@ -2,8 +2,14 @@ import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils
 import path from 'path';
 import * as fse from 'fs-extra';
 import { autoRuntimeDependenciesPathSettingKey, assetsFolderName, lspDirectory } from '../../constants';
+import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import AdmZip from 'adm-zip';
+import { createHash } from 'crypto';
+
+const lspServerDirectoryName = 'LSPServer';
+const lspServerHashMarkerName = '.lspserver-hash';
+const lspSdkHashMarkerName = '.lspsdk-hash';
 
 export async function installLSPSDK(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
@@ -11,77 +17,146 @@ export async function installLSPSDK(): Promise<void> {
     await fse.ensureDir(targetDirectory);
 
     // Check if LSPServer needs to be extracted or updated
-    const lspServerPath = path.join(targetDirectory, 'LSPServer');
     const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
-    const versionMarkerFile = path.join(targetDirectory, '.lspserver-version');
-    // Temporary method to determine whether to exract or update...add a more permanent method after
-    const shouldExtract = await shouldExtractOrUpdate(serverZipFile, versionMarkerFile, lspServerPath);
-
-    if (shouldExtract) {
-      try {
-        const zip = new AdmZip(serverZipFile);
-        await zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true);
-
-        // Write version marker with zip file's modification time
-        const zipStats = await fse.stat(serverZipFile);
-        await fse.writeFile(versionMarkerFile, zipStats.mtime.toISOString());
-      } catch (error) {
-        throw new Error(`Error extracting LSP server: ${error}`);
-      }
-    }
+    const serverHashMarkerFile = path.join(targetDirectory, lspServerHashMarkerName);
+    const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
+    const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
+    const serverZipHash = await getFileHash(serverZipFile);
+    const shouldExtract = await shouldUpdateFromHash(serverZipHash, serverHashMarkerFile, lspServerDllPath);
 
     // Check if SDK needs to be copied or updated
     const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
     const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
-    const sdkVersionMarkerFile = path.join(targetDirectory, '.lspsdk-version');
+    const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
+    const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
+    const sdkHash = await getFileHash(sdkNupkgFile);
 
-    const shouldCopy = await shouldExtractOrUpdate(sdkNupkgFile, sdkVersionMarkerFile, lspDirectoryPath);
+    const shouldCopy = await shouldCopySdkFromHash(sdkHash, sdkHashMarkerFile, destinationFile);
+
+    if (shouldExtract || shouldCopy) {
+      await stopLanguageClientForUpdate();
+    }
+
+    if (shouldExtract) {
+      try {
+        if (await fse.pathExists(lspServerPath)) {
+          await fse.remove(lspServerPath);
+        }
+
+        const zip = new AdmZip(serverZipFile);
+        await zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true);
+
+        if (!(await fse.pathExists(lspServerDllPath))) {
+          throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
+        }
+
+        await fse.writeFile(serverHashMarkerFile, serverZipHash);
+        await removeLegacyLspMarkers(targetDirectory);
+        await cleanupStaleLspServerFolders(targetDirectory);
+      } catch (error) {
+        throw new Error(`Error extracting LSP server: ${formatLockedFileError(error)}`);
+      }
+    }
 
     if (shouldCopy) {
       try {
         await fse.ensureDir(lspDirectoryPath);
 
-        const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
         await fse.copyFile(sdkNupkgFile, destinationFile);
 
-        // Write version marker with SDK file's modification time
-        const sdkStats = await fse.stat(sdkNupkgFile);
-        await fse.writeFile(sdkVersionMarkerFile, sdkStats.mtime.toISOString());
+        await fse.writeFile(sdkHashMarkerFile, sdkHash);
+        await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
       } catch (error) {
-        throw new Error(`Error copying sdk: ${error}`);
+        throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
       }
     }
   });
 }
 
 /**
- * Determines if a file should be extracted/copied by comparing modification times.
- * @param sourceFile - The source zip or file to check
- * @param versionMarkerFile - The version marker file that stores the last extraction time
- * @param targetPath - The target directory/file path
- * @returns true if extraction/copy is needed, false otherwise
+ * Determines if an asset should be installed by comparing content hashes.
+ * @param sourceHash - The source file hash to compare
+ * @param hashMarkerFile - The hash marker file that stores the last installed source hash
+ * @param targetPath - The required installed target path
+ * @returns true if installation is needed, false otherwise
  */
-async function shouldExtractOrUpdate(sourceFile: string, versionMarkerFile: string, targetPath: string): Promise<boolean> {
-  // If target doesn't exist, we need to extract
+async function shouldUpdateFromHash(sourceHash: string, hashMarkerFile: string, targetPath: string): Promise<boolean> {
   if (!(await fse.pathExists(targetPath))) {
     return true;
   }
 
-  // If version marker doesn't exist, we need to extract
-  if (!(await fse.pathExists(versionMarkerFile))) {
+  if (!(await fse.pathExists(hashMarkerFile))) {
     return true;
   }
 
   try {
-    // Compare source file modification time with stored version
-    const sourceStats = await fse.stat(sourceFile);
-    const storedVersion = await fse.readFile(versionMarkerFile, 'utf-8');
-    const storedTime = new Date(storedVersion.trim());
-
-    // If source is newer than stored version, we need to extract
-    return sourceStats.mtime > storedTime;
+    const storedHash = (await fse.readFile(hashMarkerFile, 'utf-8')).trim();
+    return storedHash !== sourceHash;
   } catch {
-    // If there's any error reading versions, extract to be safe
     return true;
   }
+}
+
+async function shouldCopySdkFromHash(sourceHash: string, hashMarkerFile: string, destinationFile: string): Promise<boolean> {
+  if (await shouldUpdateFromHash(sourceHash, hashMarkerFile, destinationFile)) {
+    return true;
+  }
+
+  try {
+    return (await getFileHash(destinationFile)) !== sourceHash;
+  } catch {
+    return true;
+  }
+}
+
+async function getFileHash(filePath: string): Promise<string> {
+  const fileContent = await fse.readFile(filePath);
+  return createHash('sha256').update(fileContent).digest('hex');
+}
+
+async function removeLegacyLspMarkers(targetDirectory: string): Promise<void> {
+  await fse.remove(path.join(targetDirectory, '.lspserver-version'));
+  await fse.remove(path.join(targetDirectory, '.lspserver-path'));
+}
+
+async function cleanupStaleLspServerFolders(targetDirectory: string): Promise<void> {
+  try {
+    const entries = await fse.readdir(targetDirectory);
+    await Promise.all(
+      entries
+        .filter((entry) => entry.startsWith(`${lspServerDirectoryName}-`))
+        .map((entry) => fse.remove(path.join(targetDirectory, entry)))
+    );
+  } catch (error) {
+    ext.outputChannel?.appendLog(`Unable to clean stale LSP server folders: ${error}`);
+  }
+}
+
+async function stopLanguageClientForUpdate(): Promise<void> {
+  const languageClient = ext.languageClient;
+  if (!languageClient) {
+    return;
+  }
+
+  try {
+    await languageClient.stop();
+    if (ext.languageClient === languageClient) {
+      ext.languageClient = undefined;
+    }
+  } catch (error) {
+    throw new Error(`Error stopping LSP server before update: ${error}`);
+  }
+}
+
+function formatLockedFileError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  const code = error instanceof Error && 'code' in error ? String(error.code) : '';
+  const isLockedFileError =
+    code === 'EBUSY' || message.includes('EBUSY') || message.includes('resource busy') || message.includes('locked');
+
+  if (!isLockedFileError) {
+    return String(error);
+  }
+
+  return `${String(error)}. The Logic Apps language server appears to still be using files in the dependency folder. Close or reload VS Code, stop the dotnet process running SdkLspServer.dll, and retry dependency installation.`;
 }

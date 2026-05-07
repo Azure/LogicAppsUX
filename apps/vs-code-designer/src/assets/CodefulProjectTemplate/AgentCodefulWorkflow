@@ -4,36 +4,31 @@
 
 namespace <%= logicAppNamespace %>
 {
-    using System;
     using Microsoft.Azure.Workflows.Sdk;
-    using Microsoft.Azure.Workflows.Sdk.Connectors;
     using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
-    using Microsoft.Extensions.Hosting;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// <%= flowName %> Agent Workflow.
+    /// Conversational agent workflow class.
     /// </summary>
-    public static class <%= flowNameClass %>
+    public class <%= flowNameClass %> : IWorkflowProvider
     {
         /// <summary>
-        /// Main Class.
+        /// Gets the agent workflow definition.
         /// </summary>
-        public static void AddWorkflow()
+        public FlowDefinition[] GetWorkflows()
         {
-            // Create a workflow agent builder for the "TestFlow" workflow.
-            var builder = WorkflowBuilderFactory.CreateConversationalAgent(<%= flowName %>);
+            var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
 
-            #region agent configuration
-            var agent = new AgentBuilder
-            {
-                AgentModelType = AgentModelType.AzureOpenAI,
-                DeploymentId = "gpt-4.1",
-                AgentModelSettings = new AgentModelSettings
+            var agent = WorkflowActions.BuiltIn.Agent(
+                agentModelType: AgentModelType.AzureOpenAI,
+                deploymentId: "gpt-4.1",
+                agentModelSettings: new AgentModelSettings
                 {
                     AgentChatCompletionSettings = new AgentChatCompletionSettings
                     {
                         MaxTokens = 3000,
-                        Temperature = 0,
+                        Temperature = 0.7,
                         FrequencyPenalty = 0.1,
                         PresencePenalty = 0.1,
                         TopP = 0.1,
@@ -45,48 +40,73 @@ namespace <%= logicAppNamespace %>
                         Version = "2024-11-20"
                     }
                 },
-                Messages = new AgentPromptMessage[]
-                    {
-                        new AgentPromptMessage
-                        {
-                            Role = MessageRole.System,
-                            Content = "You are an agent to get the weather. Greet the user warmly and provide the current weather conditions for their location, including temperature, weather type (e.g., sunny, cloudy, rainy), humidity, and wind speed. If a forecast is available, summarize the expected weather for the next 24 hours. Make the response clear and conversational, and suggest whether it’s a good day for outdoor activities based on the weather.\r\n\r\n"
-                        }
-                    },
-                ConnectionName = "agent",
-            };
-            #endregion
-
-            #region Add tool to the agent
-            agent.AddTool(b =>
+                connectionName: "agent",
+                messages: () => new AgentPromptMessage[]
                 {
-                    var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
-                        location: () => "WA",
-                        units: () => unitsInput.Imperial);
-                    b.AddAction(getCurrentWeatherAction);
+                    new AgentPromptMessage
+                    {
+                        Role = MessageRole.System,
+                        Content = "You are an agent to respond the weather to the user and send an email"
+                    }
+                }
+            ).WithName("WeatherAgent");
 
+            agent.AddTool(toolContext =>
+                {
+                    return WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+                        location: () => toolContext.Parameters.Location,
+                        units: () => unitsInput.Imperial
+                    );
                 },
-            description: "Gets the weather",
-            parameters: new WeatherObject());
-            #endregion
+                description: "This tool gets the weather",
+                parameters: new WeatherParameters());
 
-            builder.AddAgent(agent);
+            agent.AddTool(toolContext =>
+                {
+                    return WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2(
+                        emailMessageto: () => toolContext.Parameters.Recipient,
+                        emailMessagesubject: () => toolContext.Parameters.Subject,
+                        emailMessagebody: () => toolContext.Parameters.Body);
+                },
+               description: "This tool will send an email",
+               parameters: new EmailParameters());
+
+            var workflow = trigger.Then(agent);
+
+            return new[] { WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow) };
         }
-    }
-
-    /// <summary>
-    /// Weather agent parameter class.
-    /// </summary>
-    public class WeatherObject
-    {
-        /// <summary>
-        /// current weather location property.
-        /// </summary>
-        public string CurrentWeatherLocation { get; set; } = string.Empty;
 
         /// <summary>
-        /// current weather location property.
+        /// The weather parameters.
         /// </summary>
-        public string Weatherdetails { get; set; } = string.Empty;
+        private class WeatherParameters
+        {
+            /// <summary>
+            /// The location.
+            /// </summary>
+            [JsonProperty(Required = Required.Default)]
+            public string? Location { get; set; }
+        }
+
+        /// <summary>
+        /// The email parameters.
+        /// </summary>
+        private class EmailParameters
+        {
+            /// <summary>
+            /// The email recipient.
+            /// </summary>
+            public string? Recipient { get; set; }
+
+            /// <summary>
+            /// The email subject.
+            /// </summary>
+            public string? Subject { get; set; }
+
+            /// <summary>
+            /// The email body.
+            /// </summary>
+            public string? Body { get; set; }
+        }
     }
 }

@@ -159,11 +159,9 @@ export default class LogicAppsLanguageServer {
 
     // Create the language client and start the client.
     ext.languageClient = new LanguageClient('logicAppsLanguageServer', 'Logic Apps language server', serverOptions, clientOptions);
+    ext.context?.subscriptions.push(ext.languageClient);
 
-    ext.languageClient.start().catch((err) => {
-      console.error('Failed to start language client', err);
-      throw err;
-    });
+    await ext.languageClient.start();
   }
 
   private async getSDKPaths() {
@@ -247,7 +245,7 @@ export default class LogicAppsLanguageServer {
 export const startLanguageServerProtocol = async () => {
   await callWithTelemetryAndErrorHandling(onStartLanguageServerProtocol, async (context: IActionContext) => {
     const languageServer = new LogicAppsLanguageServer(context);
-    languageServer.start();
+    await languageServer.start();
   });
 };
 

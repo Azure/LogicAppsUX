@@ -21,7 +21,11 @@ namespace <%= logicAppNamespace %>
             // Configure the worker.
             var host = new HostBuilder()
                 .ConfigureFunctionsWorkerDefaults()
-                .ConfigureServices(services => WorkflowBuilderFactory.ConfigureServices(services))
+                .ConfigureServices(services =>
+                {
+                    WorkflowFactory.ConfigureServices(services);
+                    services.AddWorkflowProviders(typeof(Program).Assembly);
+                })
                 .Build();
 
             // Build all workflows
