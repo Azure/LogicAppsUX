@@ -104,7 +104,6 @@ const DesignerEditor = () => {
     language,
     hostOptions,
     hostingPlan,
-    showConnectionsPanel,
     showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
@@ -477,7 +476,6 @@ const DesignerEditor = () => {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
-          showConnectionsPanel,
           showEdgeDrawing,
           showPerformanceDebug,
           mcpClientToolEnabled: true,
@@ -538,7 +536,6 @@ const DesignerEditor = () => {
                   isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
-                  showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
                   toggleMonitoringView={toggleMonitoringView}
                   showRunHistory={showRunHistory}
