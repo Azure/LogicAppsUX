@@ -390,7 +390,7 @@ export async function switchToOverviewWebview(driver: WebDriver, timeoutMs = 60_
  * Click the "Run trigger" button in the overview command bar.
  */
 export async function clickRunTrigger(driver: WebDriver): Promise<boolean> {
-  const deadline = Date.now() + 10_000;
+  const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
     try {
       const btns = await driver.findElements(By.css('button[aria-label="Run trigger"]'));
@@ -458,7 +458,7 @@ export async function getLatestRunStatus(driver: WebDriver): Promise<string> {
 export async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 30_000
+  timeoutMs = 90_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;

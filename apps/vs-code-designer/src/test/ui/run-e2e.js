@@ -505,6 +505,8 @@ async function main() {
   const funcBinary = path.join(depsRoot, 'FuncCoreTools', 'func');
   const dotnetBinary = path.join(depsRoot, 'DotNetSDK', 'dotnet');
   const nodeBinary = path.join(depsRoot, 'NodeJs', 'node');
+  const runtimeDependenciesReady = () => [funcBinary, dotnetBinary, nodeBinary].every((binaryPath) => fs.existsSync(binaryPath));
+  const shouldValidateRuntimeDependencies = () => !runtimeDependenciesReady();
 
   // Create a VS Code settings file. Called before each phase group so we can
   // enable dependency validation for Phase 4.1 (first run) and disable it
@@ -791,8 +793,7 @@ async function main() {
       // Ensure VS Code and ChromeDriver are downloaded
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
-      // Keep dependency validation on to ensure extension activates properly
-      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
       const phase2Resources = getPhase2Resources();
@@ -806,8 +807,7 @@ async function main() {
       // Run only the new tests (phases 4.3–4.6) each in their own session
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
-      // Keep dependency validation on to ensure extension activates properly
-      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits = [];
 
@@ -975,8 +975,11 @@ async function main() {
       console.log(`\n⚠ Phase 4.1 exited with code ${phase1Exit} — continuing to Phase 4.2 anyway (workspaces may still have been created)`);
     }
 
-    // After Phase 4.1, keep dependency validation ON but the conversion phases
-    // don't need design-time. That change happens before phase 4.8.
+    // Phase 4.1 performs the dependency download/validation. Later designer
+    // phases use the explicit binary paths above and skip revalidation when all
+    // binaries are present, avoiding CI flakes where validation overwrites func
+    // without executable bits while the test is opening the designer.
+    writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
     console.log('\n=== Session boundary: closing createWorkspace session completely ===');
     await new Promise((resolve) => setTimeout(resolve, 5000));

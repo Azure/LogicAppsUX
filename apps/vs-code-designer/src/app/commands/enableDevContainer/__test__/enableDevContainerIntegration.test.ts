@@ -44,7 +44,9 @@ describe('enableDevContainer - Integration Tests', () => {
 
     // Mock ext.outputChannel
     const { ext } = await import('../../../../extensionVariables');
+    ext.designTimeInstances.clear();
     ext.outputChannel = {
+      appendLog: vi.fn(),
       appendLine: vi.fn(),
       show: vi.fn(),
     } as any;
@@ -56,6 +58,8 @@ describe('enableDevContainer - Integration Tests', () => {
   });
 
   afterEach(async () => {
+    const { ext } = await import('../../../../extensionVariables');
+    ext.designTimeInstances.clear();
     if (tempDir) {
       await fse.remove(tempDir);
     }
