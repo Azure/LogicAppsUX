@@ -194,7 +194,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
-    const bundleVersionNumber = await getBundleVersionNumber();
+    const bundleVersionNumber = await getBundleVersionNumber(projectPath);
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
