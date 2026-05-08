@@ -76,16 +76,19 @@ export async function executeCopilotTool(toolName: string, rawArgs: string): Pro
 
   switch (toolName) {
     case 'discover_connectors': {
-      let capabilities = args['capabilities'] as string[] | string | undefined;
+      const rawCapabilities = args['capabilities'] as string[] | string | undefined;
+      let capabilities: string[] | undefined;
       // The LLM sometimes returns capabilities as a JSON string instead of an array
-      if (typeof capabilities === 'string') {
+      if (Array.isArray(rawCapabilities)) {
+        capabilities = rawCapabilities;
+      } else if (typeof rawCapabilities === 'string') {
         try {
-          capabilities = JSON.parse(capabilities);
+          capabilities = JSON.parse(rawCapabilities);
         } catch {
-          capabilities = [capabilities];
+          capabilities = [rawCapabilities];
         }
       }
-      return discoverConnectors(capabilities as string[] | undefined);
+      return discoverConnectors(capabilities);
     }
     case 'get_connector_operations':
       return getConnectorOperations(String(args['connectorId'] ?? ''));
