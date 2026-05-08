@@ -104,6 +104,7 @@ function getParseError(str: string): string {
 
 /**
  * Try to extract a JSON object by finding the outermost `{…}` in the content.
+ * If the JSON is truncated (missing closing braces), attempt to repair by appending them.
  */
 function tryExtractJson(content: string): unknown | null {
   const firstBrace = content.indexOf('{');
@@ -112,7 +113,43 @@ function tryExtractJson(content: string): unknown | null {
     return null;
   }
   const extracted = stripJsonComments(content.substring(firstBrace, lastBrace + 1));
-  return tryJsonParse(extracted) ?? tryJsonParse(repairJson(extracted));
+  const result = tryJsonParse(extracted) ?? tryJsonParse(repairJson(extracted));
+  if (result) {
+    return result;
+  }
+
+  // Attempt to repair truncated JSON by closing unclosed braces/brackets
+  let repaired = extracted;
+  let openBraces = 0;
+  let openBrackets = 0;
+  let inStr = false;
+  for (let i = 0; i < repaired.length; i++) {
+    const c = repaired[i];
+    if (inStr) {
+      if (c === '\\' && i + 1 < repaired.length) {
+        i++;
+      } else if (c === '"') {
+        inStr = false;
+      }
+    } else if (c === '"') {
+      inStr = true;
+    } else if (c === '{') {
+      openBraces++;
+    } else if (c === '}') {
+      openBraces--;
+    } else if (c === '[') {
+      openBrackets++;
+    } else if (c === ']') {
+      openBrackets--;
+    }
+  }
+
+  if (openBraces > 0 || openBrackets > 0) {
+    repaired += ']'.repeat(Math.max(0, openBrackets)) + '}'.repeat(Math.max(0, openBraces));
+    return tryJsonParse(repaired) ?? tryJsonParse(repairJson(repaired));
+  }
+
+  return null;
 }
 
 function parseChanges(rawChanges: unknown): WorkflowChange[] | undefined {
