@@ -158,16 +158,18 @@ export function getFunctionsCommand(): string {
 
 export async function setFunctionsCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
-  const binariesExist = fs.existsSync(funcBinariesPath);
   let command = ext.funcCliPath;
-  if (binariesExist) {
-    command = path.join(funcBinariesPath, ext.funcCliPath);
-    fs.chmodSync(funcBinariesPath, 0o777);
+  if (binariesLocation) {
+    const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
+    const binariesExist = fs.existsSync(funcBinariesPath);
+    if (binariesExist) {
+      command = path.join(funcBinariesPath, ext.funcCliPath);
+      fs.chmodSync(funcBinariesPath, 0o777);
 
-    const funcExist = await fs.existsSync(command);
-    if (funcExist) {
-      fs.chmodSync(command, 0o777);
+      const funcExist = await fs.existsSync(command);
+      if (funcExist) {
+        fs.chmodSync(command, 0o777);
+      }
     }
   }
 
