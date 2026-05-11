@@ -105,7 +105,12 @@ export class StandaloneOAuthPopup implements IOAuthPopup {
       if (origin !== redirectOrigin) {
         return;
       }
-      this._msg = decodeURIComponent(event.data);
+      // event.data may be a string (URL-encoded JSON) or already an object
+      if (typeof event.data === 'object') {
+        this._msg = JSON.stringify(event.data);
+      } else {
+        this._msg = decodeURIComponent(event.data);
+      }
       window.removeEventListener('message', listener);
       this._popupWindow?.close();
     };
@@ -120,10 +125,15 @@ export class StandaloneOAuthPopup implements IOAuthPopup {
 
   private handlePopup(resolve: any, reject: any, timeoutCounter: number) {
     if (this._popupWindow?.closed) {
-      const storageValue = this._msg ? decodeURIComponent(this._msg) : undefined;
-
-      if (storageValue) {
-        resolve(JSON.parse(storageValue));
+      if (this._msg) {
+        try {
+          resolve(JSON.parse(this._msg));
+        } catch {
+          reject({
+            name: 'Error',
+            message: 'Failed to parse OAuth response',
+          });
+        }
       } else {
         reject({
           name: 'Error',

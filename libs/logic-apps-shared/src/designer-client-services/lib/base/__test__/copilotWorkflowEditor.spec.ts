@@ -242,20 +242,24 @@ describe('BaseCopilotWorkflowEditorService', () => {
       expect(result.text).toBe('This workflow has no actions.');
     });
 
-    it('should throw when API returns no response text', async () => {
+    it('should return text fallback when API returns no response text', async () => {
       mockAxiosPost.mockResolvedValueOnce({ data: { properties: {} } });
 
       const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('test', simpleWorkflow);
 
-      await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('No response received from copilot API');
+      expect(result.type).toBe('text');
+      expect(result.text).toBe('Sorry, I was unable to generate a response. Please try again.');
     });
 
-    it('should throw when response data is null', async () => {
+    it('should return text fallback when response data is null', async () => {
       mockAxiosPost.mockResolvedValueOnce({ data: null });
 
       const svc = new BaseCopilotWorkflowEditorService(defaultOptions);
+      const result = await svc.getWorkflowEdit('test', simpleWorkflow);
 
-      await expect(svc.getWorkflowEdit('test', simpleWorkflow)).rejects.toThrow('No response received from copilot API');
+      expect(result.type).toBe('text');
+      expect(result.text).toBe('Sorry, I was unable to generate a response. Please try again.');
     });
 
     it('should pass abort signal to axios', async () => {
