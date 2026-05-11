@@ -166,7 +166,7 @@ export async function setFunctionsCommand(): Promise<void> {
       command = path.join(funcBinariesPath, ext.funcCliPath);
       fs.chmodSync(funcBinariesPath, 0o777);
 
-      const funcExist = await fs.existsSync(command);
+      const funcExist = fs.existsSync(command);
       if (funcExist) {
         fs.chmodSync(command, 0o777);
       }
