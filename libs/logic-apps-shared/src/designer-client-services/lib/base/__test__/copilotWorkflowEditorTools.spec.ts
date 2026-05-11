@@ -127,13 +127,13 @@ describe('executeCopilotTool', () => {
       expect(parsed['send email via outlook'][0].operationId).toBe('SendEmail');
     });
 
-    it('should fall back to getAllOperations and filter when getActiveSearchOperations is unavailable', async () => {
+    it('should fall back to getBuiltInOperations and filter when getActiveSearchOperations is unavailable', async () => {
       delete mockSearchService.getActiveSearchOperations;
-      const allOps = [
+      const builtInOps = [
         makeOperation('SendEmail', '/connectors/outlook', 'Outlook', 'Send an email'),
         makeOperation('GetRows', '/connectors/sql', 'SQL Server', 'Get rows from table'),
       ];
-      mockSearchService.getAllOperations.mockResolvedValue(allOps);
+      mockSearchService.getBuiltInOperations = vi.fn().mockResolvedValue(builtInOps);
       mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
 
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['email'] }));
@@ -289,17 +289,15 @@ describe('executeCopilotTool', () => {
       expect(parsed.results).toHaveLength(2);
     });
 
-    it('should fall back to filtering getAllOperations when getOperationsByConnector is unavailable', async () => {
+    it('should return no results when getOperationsByConnector is unavailable', async () => {
       delete mockSearchService.getOperationsByConnector;
-      const allOps = [makeOperation('Op1', '/connectors/outlook', 'Outlook'), makeOperation('Op2', '/connectors/sql', 'SQL')];
-      mockSearchService.getAllOperations.mockResolvedValue(allOps);
       mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
 
       const result = await executeCopilotTool('get_connector_operations', JSON.stringify({ connectorId: '/connectors/outlook' }));
       const parsed = JSON.parse(result);
 
-      expect(parsed.results).toHaveLength(1);
-      expect(parsed.results[0].operationId).toBe('Op1');
+      expect(parsed.results).toHaveLength(0);
+      expect(parsed.message).toBeDefined();
     });
 
     it('should return a message when no operations found', async () => {

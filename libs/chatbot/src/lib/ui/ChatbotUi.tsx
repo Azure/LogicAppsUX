@@ -132,9 +132,7 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {answerGenerationInProgress && (
-          <ProgressCardWithStopButton onStopButtonClick={abort} progressState={progressState} stopButtonLabel={progressStop} />
-        )}
+        {answerGenerationInProgress && <ProgressCardWithStopButton progressState={progressState} />}
         {isSaving && <ProgressCardWithStopButton progressState={progressSave} />}
         {messages.map((item, index) => (
           <ConversationMessage key={`${index}-${item.id}`} item={item} />
@@ -163,6 +161,9 @@ export const ChatbotUI = (props: ChatbotUIProps) => {
               placeholder={resolvedPlaceholder}
               query={inputValue}
               showCharCount
+              isGenerating={answerGenerationInProgress}
+              stopButtonTitle={progressStop}
+              onStopClick={abort}
               submitButtonProps={{
                 title: submitString ?? intlText.submitButton,
                 disabled: submitDisabled,
