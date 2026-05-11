@@ -20,7 +20,7 @@ import { LogicAppStep } from './deploymentCenterScriptsSteps/LogicAppStep';
 import { LogicAppMSIStep } from './deploymentCenterScriptsSteps/LogicAppMSIStep';
 import { DeploymentTargetStep } from './DeploymentTargetStep';
 
-// (NOTE: anandgmenon) Added DeploymentTargetStep to ADO pipeline flow to support Hybrid deployment.
+// Added DeploymentTargetStep to ADO pipeline flow to support Hybrid deployment.
 export class DeploymentScriptTypeStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
@@ -51,7 +51,7 @@ export class DeploymentScriptTypeStep extends AzureWizardPromptStep<IAzureDeploy
     let executeSteps: AzureWizardExecuteStep<IAzureDeploymentScriptsContext>[] = [];
     if (context.deploymentScriptType === DeploymentScriptType.azureDevOpsPipeline) {
       context.telemetry.properties.deploymentScriptType = 'azureDevOpsPipeline';
-      // (NOTE: anandgmenon) DeploymentTargetStep branches to Standard or Hybrid sub-wizard.
+      // DeploymentTargetStep branches to Standard or Hybrid sub-wizard.
       // Each branch injects SubscriptionAndResourceGroupStep before its target-specific steps
       // so subscriptionId is available when needed (e.g. ConnectedEnvironmentStep for Hybrid).
       promptSteps = [

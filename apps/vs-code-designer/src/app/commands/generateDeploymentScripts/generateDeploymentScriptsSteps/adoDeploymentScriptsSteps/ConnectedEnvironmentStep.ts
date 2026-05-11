@@ -10,8 +10,7 @@ import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
 import type { IAzureDeploymentScriptsContext } from '../../generateDeploymentScripts';
 
-// (NOTE: anandgmenon) Prompts user to select an existing Connected Environment for Hybrid deployment.
-// Similar to the createLogicApp ConnectedEnvironmentStep but typed for the deployment scripts wizard context.
+// Prompts user to select an existing Connected Environment for Hybrid deployment.
 // Extracts the connected environment name and its resource group from the ARM resource ID.
 export class ConnectedEnvironmentStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
@@ -34,13 +33,16 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<IAzureDeploy
   }
 
   private async getPicks(context: IAzureDeploymentScriptsContext): Promise<IAzureQuickPickItem<ConnectedEnvironment>[]> {
-    // (NOTE: anandgmenon) Spread subscription onto context to satisfy AzExtClientContext — same pattern as LogicAppStep.
+    // Spread subscription onto context to satisfy AzExtClientContext — same pattern as LogicAppStep.
     const subscriptionNode = await ext.rgApi.appResourceTree.findTreeItem(`/subscriptions/${context.subscriptionId}`, context);
     if (!subscriptionNode) {
       throw new Error(`Failed to find a subscription with ID "${context.subscriptionId}".`);
     }
     const client = await createContainerClient({ ...context, ...subscriptionNode.subscription });
-    const envList = await uiUtils.listAllIterator(client.connectedEnvironments.listBySubscription());
+    const allEnvs = await uiUtils.listAllIterator(client.connectedEnvironments.listBySubscription());
+    // Filter by the selected resource group's location to avoid cross-region mismatches.
+    const location = context.resourceGroup?.location;
+    const envList = location ? allEnvs.filter((env) => env.location === location) : allEnvs;
     const picks = envList.map((env) => ({
       label: env.name,
       description: env.location,

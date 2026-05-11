@@ -39,7 +39,7 @@ export interface IAzureDeploymentScriptsContext extends IProjectWizardContext, I
   isValidWorkspace: boolean;
   logicAppNode?: SlotTreeItem;
   msiClientId?: string;
-  // (NOTE: anandgmenon) Hybrid deployment support — determines which pipeline templates and ARM templates are generated.
+  // Hybrid deployment support — determines which pipeline templates and ARM templates are generated.
   deploymentTarget?: DeploymentTargetType;
   connectedEnvironmentName?: string;
   connectedEnvironmentResourceGroup?: string;

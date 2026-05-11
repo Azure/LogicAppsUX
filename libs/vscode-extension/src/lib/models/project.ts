@@ -130,7 +130,7 @@ export const DeploymentScriptType = {
 } as const;
 export type DeploymentScriptType = (typeof DeploymentScriptType)[keyof typeof DeploymentScriptType];
 
-// (NOTE: anandgmenon) Standard deploys to App Service, Hybrid deploys to Container Apps.
+// Standard deploys to App Service, Hybrid deploys to Container Apps.
 export const DeploymentTargetType = {
   standard: 'standard',
   hybrid: 'hybrid',

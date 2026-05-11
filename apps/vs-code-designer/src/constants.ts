@@ -409,7 +409,7 @@ export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const deployedLogicAppNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])?$/;
 export const deployedStorageAccountNameValidation = /^[a-z0-9]{3,24}$/;
 export const deployedAppServicePlanNameValidation = /^[a-zA-Z0-9-]{1,60}$/;
-// (NOTE: anandgmenon) Connected environment names follow the same rules as Container Apps resource names.
+// Connected environment names follow the same rules as Container Apps resource names.
 export const connectedEnvironmentNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,60}[a-zA-Z0-9])?$/;
 export const resourceGroupNameValidation = /^[-\w._()]{1,90}$/;
 export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;

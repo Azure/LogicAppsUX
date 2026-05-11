@@ -88,13 +88,13 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     context.telemetry.properties.lastStep = 'generateManagedConnectionsDeploymentArtifacts';
     await GenerateADODeploymentScriptsStep.generateManagedConnectionsDeploymentArtifacts(context);
 
-    // (NOTE: anandgmenon) For Hybrid, skip the Standard IaC API entirely — it generates App Service infrastructure
-    // which is wrong for Container Apps. Instead, generate ARM templates and pipeline YAML directly.
+    // For Hybrid, skip the Standard IaC API — it generates App Service infrastructure.
+    // Instead, generate ARM templates and pipeline YAML for Container Apps directly.
     if (context.deploymentTarget === DeploymentTargetType.hybrid) {
       context.telemetry.properties.lastStep = 'generateHybridDeploymentArtifacts';
       await GenerateADODeploymentScriptsStep.generateHybridDeploymentArtifacts(context);
 
-      // (NOTE: anandgmenon) Transform managed connection templates for Hybrid — replace Microsoft.Web/Sites
+      // Transform managed connection templates for Hybrid — replace Microsoft.Web/Sites
       // identity references with AAD parameters since Hybrid uses Container Apps, not App Service.
       context.telemetry.properties.lastStep = 'transformConnectionTemplatesForHybrid';
       const hybridInfraFolder = path.join(context.deploymentFolderPath, context.logicAppName, 'infrastructure');
@@ -371,12 +371,12 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     return managedConnections;
   }
 
-  // (NOTE: anandgmenon) Generates all Hybrid deployment artifacts: ARM infrastructure templates + pipeline YAML.
+  // Generates all Hybrid deployment artifacts: ARM infrastructure templates + pipeline YAML.
   // Hybrid Logic Apps are Microsoft.App/containerApps (kind: workflowapp), NOT Microsoft.Web/sites.
   // Three ARM resources: containerApp, logicApp (scoped on containerApp), connectedEnvironments/storages (SMB).
-  // Secrets (AAD creds, SQL connection string, SMB password) are placeholders — users fill via ADO secret variables.
+  // Secrets (AAD creds, SQL connection string, SMB password) must be supplied via ADO secret variables.
   private static async generateHybridDeploymentArtifacts(context: IAzureDeploymentScriptsContext): Promise<void> {
-    // (NOTE: anandgmenon) Place artifacts under deployment/<logicAppName>/ to match the Standard IaC API structure.
+    // Place artifacts under deployment/<logicAppName>/ to match the Standard IaC API structure.
     const logicAppFolder = path.join(context.deploymentFolderPath, context.logicAppName);
     const infraFolder = path.join(logicAppFolder, 'infrastructure');
     const pipelinesFolder = path.join(logicAppFolder, 'pipelines');
@@ -389,7 +389,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     }
 
     // --- Workflow parameters ---
-    // (NOTE: anandgmenon) The Build task requires workflowparameters/parameters.json when deploymentFolder is set.
+    // The Build task requires workflowparameters/parameters.json when deploymentFolder is set.
     // Copy the app's parameters.json so the build task can overlay deployment-specific values.
     const workflowParamsFolder = path.join(logicAppFolder, 'workflowparameters');
     if (!fs.existsSync(workflowParamsFolder)) {
@@ -415,7 +415,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     GenerateADODeploymentScriptsStep.generateHybridPipelineTemplates(context, pipelinesFolder);
   }
 
-  // (NOTE: anandgmenon) ARM template for Hybrid Logic Apps — 3 resources matching Azure Portal deployment:
+  // ARM template for Hybrid Logic Apps — 3 resources matching Azure Portal deployment:
   // 1. Microsoft.App/containerApps (kind: workflowapp) — the Container App hosting the logic app
   // 2. Microsoft.App/logicApps — the logic app scoped on the container app
   // 3. Microsoft.App/connectedEnvironments/storages — SMB file share for artifacts
@@ -552,7 +552,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     };
   }
 
-  // (NOTE: anandgmenon) Post-process managed connection templates for Hybrid deployments.
+  // Post-process managed connection templates for Hybrid deployments.
   // The Consumption API generates access policies referencing Microsoft.Web/Sites to resolve managed identity,
   // but Hybrid Logic Apps are Container Apps — replace with explicit AAD parameters.
   private static transformConnectionTemplatesForHybrid(infraFolder: string): void {
@@ -612,10 +612,10 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     for (const resource of resources) {
       if (resource.type === 'accessPolicies' && resource.properties?.principal?.identity) {
         const identity = resource.properties.principal.identity;
-        if (typeof identity.objectId === 'string' && identity.objectId.includes('Microsoft.Web/Sites')) {
+        if (typeof identity.objectId === 'string' && identity.objectId.toLowerCase().includes('microsoft.web/sites')) {
           identity.objectId = "[parameters('aadObjectId')]";
         }
-        if (typeof identity.tenantId === 'string' && identity.tenantId.includes('Microsoft.Web/Sites')) {
+        if (typeof identity.tenantId === 'string' && identity.tenantId.toLowerCase().includes('microsoft.web/sites')) {
           identity.tenantId = "[parameters('aadTenantId')]";
         }
       }
@@ -626,7 +626,8 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     }
   }
 
-  // (NOTE: anandgmenon) ARM parameters file — all secrets are placeholders so no sensitive data is committed.
+  // ARM parameters file — secrets are excluded and must be supplied via ADO pipeline secret variables
+  // using overrideParameters in the CD pipeline's ARM deployment task.
   private static generateHybridArmParameters(context: IAzureDeploymentScriptsContext): Record<string, unknown> {
     return {
       $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#',
@@ -638,20 +639,19 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
         connectedEnvironmentName: { value: context.connectedEnvironmentName || '' },
         connectedEnvironmentResourceGroup: { value: context.connectedEnvironmentResourceGroup || '' },
         customLocationId: { value: '<your-custom-location-resource-id>' },
-        sqlConnectionString: { value: '<your-sql-connection-string>' },
         fileShareHostName: { value: '<your-smb-host>' },
         fileSharePath: { value: '<your-smb-share-name>' },
         fileShareUsername: { value: '<your-smb-username>' },
-        fileSharePassword: { value: '<your-smb-password>' },
         aadClientId: { value: '<your-aad-client-id>' },
-        aadClientSecret: { value: '<your-aad-client-secret>' },
         aadObjectId: { value: '<your-aad-object-id>' },
         aadTenantId: { value: '<your-aad-tenant-id>' },
+        // DO NOT add secrets here — supply via ADO pipeline secret variables:
+        // sqlConnectionString, fileSharePassword, aadClientSecret
       },
     };
   }
 
-  // (NOTE: anandgmenon) Generates Hybrid CI/CD pipeline YAML and variable files.
+  // Generates Hybrid CI/CD pipeline YAML and variable files.
   // CI: HybridBuild task (copy, transform auth, archive).
   // CD: ARM deployment (infrastructure) → ConnectionsDeployment → HybridRelease.
   private static generateHybridPipelineTemplates(context: IAzureDeploymentScriptsContext, pipelinesFolder: string): void {

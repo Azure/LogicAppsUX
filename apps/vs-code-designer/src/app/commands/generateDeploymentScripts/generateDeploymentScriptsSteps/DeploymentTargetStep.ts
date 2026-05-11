@@ -11,7 +11,7 @@ import { AppServicePlanNameStep } from './adoDeploymentScriptsSteps/AppServicePl
 import { ConnectedEnvironmentStep } from './adoDeploymentScriptsSteps/ConnectedEnvironmentStep';
 import { SubscriptionAndResourceGroupStep } from './SubscriptionAndResourceGroupStep';
 
-// (NOTE: anandgmenon) Prompts user to choose Standard (App Service) vs Hybrid (Container Apps) deployment target.
+// Prompts user to choose Standard (App Service) vs Hybrid (Container Apps) deployment target.
 export class DeploymentTargetStep extends AzureWizardPromptStep<IAzureDeploymentScriptsContext> {
   public hideStepCount = true;
 
@@ -38,7 +38,7 @@ export class DeploymentTargetStep extends AzureWizardPromptStep<IAzureDeployment
     context.telemetry.properties.deploymentTarget = context.deploymentTarget;
   }
 
-  // (NOTE: anandgmenon) Branches wizard steps based on deployment target.
+  // Branches wizard steps based on deployment target.
   // SubscriptionAndResourceGroupStep is injected here (after target selection) so subscriptionId
   // is available for ConnectedEnvironmentStep in the Hybrid path.
   public async getSubWizard(context: IAzureDeploymentScriptsContext): Promise<IWizardOptions<IAzureDeploymentScriptsContext>> {
