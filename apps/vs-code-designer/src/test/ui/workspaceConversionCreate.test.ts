@@ -23,7 +23,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as assert from 'assert';
 import { Workbench, WebView, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
-import { sleep, captureScreenshot, openFolderInSession } from './helpers';
+import { sleep, captureScreenshot, dismissNotifications, openFolderInSession } from './helpers';
 
 const TEST_TIMEOUT = 180_000;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -37,7 +37,7 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
   new Date().toISOString().replace(/[:.]/g, '-')
 );
 
-const LEGACY_PROJECT_DIR = path.join(os.tmpdir(), 'la-e2e-test', 'legacy-project');
+const LEGACY_PROJECT_DIR = process.env.LA_E2E_LEGACY_PROJECT_DIR || path.join(os.tmpdir(), 'la-e2e-test', 'legacy-project');
 
 /** Snapshot the legacy project state before conversion */
 interface LegacySnapshot {
@@ -192,6 +192,46 @@ async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorksp
   assert.fail('A single Create click did not start workspace creation or enter pending UI state');
 }
 
+async function waitForButtonByText(driver: WebDriver, label: string, timeoutMs = 10_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.xpath(`//button[contains(normalize-space(.), "${label}")]`));
+    for (const button of buttons) {
+      const disabled = await button.getAttribute('disabled').catch(() => null);
+      const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+      const isDisplayed = await button.isDisplayed().catch(() => false);
+      const isEnabled = await button.isEnabled().catch(() => false);
+      if (isDisplayed && isEnabled && disabled === null && ariaDisabled !== 'true') {
+        return button;
+      }
+    }
+    await sleep(250);
+  }
+
+  assert.fail(`Unable to find enabled "${label}" button`);
+}
+
+async function dismissQuickInputIfVisible(driver: WebDriver): Promise<void> {
+  const quickInputVisible = await driver
+    .executeScript<boolean>('return !!document.querySelector(".quick-input-widget:not(.hidden)")')
+    .catch(() => false);
+  if (quickInputVisible) {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+    await sleep(500);
+  }
+}
+
+async function dismissOuterNotificationsAndReturnToWebview(driver: WebDriver, webview: WebView): Promise<void> {
+  try {
+    await webview.switchBack();
+    await driver.switchTo().defaultContent();
+    await dismissQuickInputIfVisible(driver);
+    await dismissNotifications(driver);
+  } finally {
+    await webview.switchToFrame();
+  }
+}
+
 describe('Workspace Conversion — Create Workspace from Legacy Project', function () {
   this.timeout(TEST_TIMEOUT);
 
@@ -203,27 +243,31 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     this.timeout(60_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
 
-    // Clean up any previous legacy project directory with retry logic.
-    // On Windows, the previous VS Code session may still hold locks on
-    // files like workflow-designtime/ — we retry a few times with delays.
-    if (fs.existsSync(LEGACY_PROJECT_DIR)) {
-      for (let attempt = 1; attempt <= 5; attempt++) {
-        try {
-          fs.rmSync(LEGACY_PROJECT_DIR, { recursive: true, force: true });
-          break;
-        } catch (err: unknown) {
-          const msg = err instanceof Error ? err.message : String(err);
-          console.log(`[createWs] Cleanup attempt ${attempt}/5 failed: ${msg}`);
-          if (attempt === 5) {
-            // Last attempt: try to just recreate over the top instead of failing
-            console.log('[createWs] Could not fully remove legacy dir; proceeding anyway');
-          } else {
-            await sleep(2000);
+    if (process.env.LA_E2E_LEGACY_PROJECT_DIR) {
+      assert.ok(fs.existsSync(LEGACY_PROJECT_DIR), `Legacy project fixture should exist: ${LEGACY_PROJECT_DIR}`);
+    } else {
+      // Clean up any previous legacy project directory with retry logic.
+      // On Windows, the previous VS Code session may still hold locks on
+      // files like workflow-designtime/ — we retry a few times with delays.
+      if (fs.existsSync(LEGACY_PROJECT_DIR)) {
+        for (let attempt = 1; attempt <= 5; attempt++) {
+          try {
+            fs.rmSync(LEGACY_PROJECT_DIR, { recursive: true, force: true });
+            break;
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            console.log(`[createWs] Cleanup attempt ${attempt}/5 failed: ${msg}`);
+            if (attempt === 5) {
+              // Last attempt: try to just recreate over the top instead of failing
+              console.log('[createWs] Could not fully remove legacy dir; proceeding anyway');
+            } else {
+              await sleep(2000);
+            }
           }
         }
       }
+      createLegacyProject(LEGACY_PROJECT_DIR);
     }
-    createLegacyProject(LEGACY_PROJECT_DIR);
 
     // Snapshot the legacy project BEFORE conversion
     legacySnapshot = snapshotLegacyProject(LEGACY_PROJECT_DIR);
@@ -296,6 +340,7 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
       }
     }
     await sleep(2000);
+    await dismissQuickInputIfVisible(driver);
     assert.ok(yesClicked, '"Yes" button should be clickable');
 
     // ── Step 3: Wait for the Create Workspace webview and switch into it ──
@@ -357,6 +402,7 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     const appName = 'e2econvertapp';
     const wfName = 'e2econvertwf';
     const wsParentDir = path.join(os.tmpdir(), 'la-e2e-test');
+    fs.mkdirSync(wsParentDir, { recursive: true });
 
     // Fill workspace parent folder path (first input)
     try {
@@ -398,13 +444,20 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
 
     // ── Step 5: Click Next to go to review step ──
     try {
-      const nextBtn = await driver.findElement(By.xpath('//button[contains(text(), "Next")]'));
-      await nextBtn.click();
+      await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+      const nextBtn = await waitForButtonByText(driver, 'Next');
+      await driver.actions().move({ origin: nextBtn }).click().perform();
       console.log('[createWs] Clicked Next');
       await sleep(2000);
       await captureScreenshot(driver, 'create-ws-review-step', EXPLICIT_SCREENSHOT_DIR);
+      const reviewVisible = await driver
+        .findElements(By.xpath('//*[contains(normalize-space(.), "Review + create")]'))
+        .then((elements) => elements.length > 0)
+        .catch(() => false);
+      assert.ok(reviewVisible, 'Review + create step should be visible after clicking Next');
     } catch (e: any) {
-      console.log(`[createWs] Next button not found: ${e.message}`);
+      await captureScreenshot(driver, 'create-ws-next-failed', EXPLICIT_SCREENSHOT_DIR);
+      assert.fail(`Next button should advance to review step: ${e.message}`);
     }
 
     const expectedWsDir = path.join(wsParentDir, wsName);
@@ -412,9 +465,12 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
 
     // ── Step 6: Click 'Create workspace' button exactly once ──
     try {
-      const createBtn = await driver.findElement(By.xpath('//button[contains(text(), "Create")]'));
+      await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+      const createBtn = await waitForButtonByText(driver, 'Create');
       const disabledBeforeClick = await createBtn.getAttribute('disabled').catch(() => null);
-      assert.strictEqual(disabledBeforeClick, null, 'Create button should be enabled before clicking');
+      const ariaDisabledBeforeClick = await createBtn.getAttribute('aria-disabled').catch(() => null);
+      assert.strictEqual(disabledBeforeClick, null, 'Create button should not have disabled attribute before clicking');
+      assert.notStrictEqual(ariaDisabledBeforeClick, 'true', 'Create button should not be aria-disabled before clicking');
 
       await driver.actions().move({ origin: createBtn }).click().perform();
       console.log('[createWs] Clicked Create workspace once');

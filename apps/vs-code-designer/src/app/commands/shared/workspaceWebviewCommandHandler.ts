@@ -89,9 +89,21 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
       }
 
       isCreateInProgress = true;
+      let createSucceeded = false;
       await callWithTelemetryAndErrorHandling(panelName.replace(/\s+/g, ''), async (activateContext: IActionContext) => {
-        await createHandler(activateContext, message.data);
+        try {
+          await createHandler(activateContext, message.data);
+          createSucceeded = true;
+        } finally {
+          if (!createSucceeded) {
+            isCreateInProgress = false;
+          }
+        }
       });
+      if (!createSucceeded) {
+        isCreateInProgress = false;
+        return;
+      }
       if (onResolve) {
         onResolve(true);
       }

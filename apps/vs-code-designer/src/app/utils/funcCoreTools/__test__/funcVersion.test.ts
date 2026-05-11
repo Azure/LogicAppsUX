@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
+  chmodSync: vi.fn(),
 }));
 
 vi.mock('../../../../localize', () => ({
@@ -29,8 +30,20 @@ vi.mock('../cpUtils', () => ({
 }));
 
 import * as fs from 'fs';
-import { getGlobalSetting } from '../../vsCodeConfig/settings';
-import { getFunctionsCommand } from '../funcVersion';
+import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
+import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../../vsCodeConfig/settings';
+import { executeCommand } from '../cpUtils';
+import {
+  addLocalFuncTelemetry,
+  checkSupportedFuncVersion,
+  getDefaultFuncVersion,
+  getFunctionsCommand,
+  getLocalFuncCoreToolsVersion,
+  setFunctionsCommand,
+  tryGetLocalFuncVersion,
+  tryGetMajorVersion,
+  tryParseFuncVersion,
+} from '../funcVersion';
 
 describe('getFunctionsCommand', () => {
   beforeEach(() => {
@@ -92,5 +105,102 @@ describe('getFunctionsCommand', () => {
     vi.mocked(getGlobalSetting).mockReturnValue(undefined as any);
 
     expect(() => getFunctionsCommand()).toThrow('Functions Core Tools Binary Path Setting is empty');
+  });
+});
+
+describe('function runtime version helpers', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('parses major versions and supported function versions', () => {
+    expect(tryGetMajorVersion('~4')).toBe('4');
+    expect(tryGetMajorVersion('v3.0.0')).toBe('3');
+    expect(tryGetMajorVersion('not-a-version')).toBeUndefined();
+    expect(tryParseFuncVersion('4.0.0')).toBe(FuncVersion.v4);
+    expect(tryParseFuncVersion(undefined)).toBeUndefined();
+  });
+
+  it('gets the default version from workspace setting, local CLI, or backup', async () => {
+    const context = { telemetry: { properties: {}, measurements: {} } } as any;
+    vi.mocked(getWorkspaceSettingFromAnyFolder).mockReturnValueOnce('~3' as any);
+    await expect(getDefaultFuncVersion(context)).resolves.toBe(FuncVersion.v3);
+    expect(context.telemetry.properties.runtimeSource).toBe('VSCodeSetting');
+
+    vi.mocked(getWorkspaceSettingFromAnyFolder).mockReturnValueOnce(undefined as any);
+    vi.mocked(getGlobalSetting).mockImplementation((key: string) => (key === 'funcCoreToolsBinaryPath' ? 'func' : undefined) as any);
+    vi.mocked(executeCommand).mockResolvedValueOnce('4.0.5198');
+    await expect(getDefaultFuncVersion(context)).resolves.toBe(FuncVersion.v4);
+    expect(context.telemetry.properties.runtimeSource).toBe('LocalFuncCli');
+
+    vi.mocked(getWorkspaceSettingFromAnyFolder).mockReturnValueOnce(undefined as any);
+    vi.mocked(executeCommand).mockRejectedValueOnce(new Error('not installed'));
+    await expect(getDefaultFuncVersion(context)).resolves.toBe(latestGAVersion);
+    expect(context.telemetry.properties.runtimeSource).toBe('Backup');
+  });
+
+  it('gets local function CLI versions from semver output and legacy command output', async () => {
+    vi.mocked(getGlobalSetting).mockImplementation((key: string) => (key === 'funcCoreToolsBinaryPath' ? 'func' : undefined) as any);
+    vi.mocked(executeCommand).mockResolvedValueOnce('4.0.5198');
+
+    await expect(getLocalFuncCoreToolsVersion()).resolves.toBe('4.0.5198');
+
+    vi.mocked(executeCommand).mockResolvedValueOnce('Azure Functions Core Tools (220.0.0-beta.0)');
+    await expect(getLocalFuncCoreToolsVersion()).resolves.toBe('2.0.1-beta.25');
+
+    vi.mocked(executeCommand).mockResolvedValueOnce('Azure Functions Core Tools (3.0.3904)');
+    await expect(tryGetLocalFuncVersion()).resolves.toBe(FuncVersion.v3);
+
+    vi.mocked(executeCommand).mockResolvedValueOnce('unparseable output');
+    await expect(getLocalFuncCoreToolsVersion()).resolves.toBeNull();
+
+    vi.mocked(executeCommand).mockRejectedValueOnce(new Error('version failed'));
+    await expect(getLocalFuncCoreToolsVersion()).resolves.toBeNull();
+  });
+
+  it('adds local function telemetry asynchronously', async () => {
+    vi.mocked(getGlobalSetting).mockImplementation((key: string) => (key === 'funcCoreToolsBinaryPath' ? 'func' : undefined) as any);
+    vi.mocked(executeCommand).mockResolvedValueOnce('4.0.5198');
+    const context = { telemetry: { properties: {}, measurements: {} } } as any;
+
+    addLocalFuncTelemetry(context);
+    await vi.waitFor(() => expect(context.telemetry.properties.funcCliVersion).toBe('4.0.5198'));
+
+    vi.mocked(executeCommand).mockResolvedValueOnce('unparseable output');
+    addLocalFuncTelemetry(context);
+    await vi.waitFor(() => expect(context.telemetry.properties.funcCliVersion).toBe('none'));
+  });
+
+  it('validates supported versions', () => {
+    expect(() => checkSupportedFuncVersion(FuncVersion.v4)).not.toThrow();
+    expect(() => checkSupportedFuncVersion('~1' as FuncVersion)).toThrow('not supported');
+  });
+
+  it('sets the function command from installed binaries or falls back to the bundled command', async () => {
+    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
+      if (key === 'autoRuntimeDependenciesPath') {
+        return '/cache/dependencies' as any;
+      }
+      return undefined;
+    });
+    vi.mocked(fs.existsSync).mockReturnValueOnce(true).mockReturnValueOnce(true);
+
+    await setFunctionsCommand();
+
+    expect(fs.chmodSync).toHaveBeenCalledTimes(2);
+    expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', expect.stringContaining('FuncCoreTools'));
+
+    vi.clearAllMocks();
+    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
+      if (key === 'autoRuntimeDependenciesPath') {
+        return '/cache/dependencies' as any;
+      }
+      return undefined;
+    });
+    vi.mocked(fs.existsSync).mockReturnValueOnce(false);
+
+    await setFunctionsCommand();
+
+    expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
   });
 });

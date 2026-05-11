@@ -1,5 +1,6 @@
 import {
   getBundleVersionNumber,
+  getDependenciesVersion,
   getExtensionBundleFolder,
   getLatestVersionRange,
   addDefaultBundle,
@@ -221,6 +222,14 @@ describe('getExtensionBundleFolder', () => {
       // Should use the last occurrence
       expect(result).toBe('C:\\Path\\ExtensionBundles\\');
     });
+
+    it('should use the bundle ID fallback when ExtensionBundles is not followed by a separator', async () => {
+      mockedExecuteCommand.mockResolvedValue('C:\\Path\\ExtensionBundlesMicrosoft.Azure.Functions.ExtensionBundle\\1.0.0');
+
+      const result = await getExtensionBundleFolder();
+
+      expect(result).toBe('C:\\Path\\ExtensionBundles');
+    });
   });
 
   describe('error handling', () => {
@@ -245,6 +254,12 @@ describe('getExtensionBundleFolder', () => {
       const mockOutput = 'ExtensionBundles\\SomeFolder\\1.0.0';
 
       mockedExecuteCommand.mockResolvedValue(mockOutput);
+
+      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+    });
+
+    it('should throw error when a path line cannot be parsed as an extension bundle path', async () => {
+      mockedExecuteCommand.mockResolvedValue('C:\\Path\\ExtensionBundles');
 
       await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
     });
@@ -486,6 +501,26 @@ describe('getLatestVersionRange', () => {
   it('should return a valid semver range string', () => {
     const result = getLatestVersionRange();
     expect(result).toMatch(/^\[.*\)$/);
+  });
+});
+
+describe('getDependenciesVersion', () => {
+  it('loads dependency feed using a local settings source URI override', async () => {
+    const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
+    vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
+      Values: {
+        FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://bundles.example.com',
+      },
+    } as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue({ id: extensionBundleId } as any);
+    const context = { telemetry: { properties: {}, measurements: {} } };
+
+    await expect(getDependenciesVersion(context as any)).resolves.toEqual({ id: extensionBundleId });
+
+    expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
+      context,
+      `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
+    );
   });
 });
 

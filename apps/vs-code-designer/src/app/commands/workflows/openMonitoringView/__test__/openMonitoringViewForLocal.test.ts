@@ -1,9 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ext } from '../../../../../extensionVariables';
+import { openUrl } from '@microsoft/vscode-azext-utils';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import { workspace } from 'vscode';
 
 // Mock dependencies before importing the class
 vi.mock('../../../../../localize', () => ({
   localize: (_key: string, defaultMsg: string) => defaultMsg,
+}));
+
+vi.mock('fs', () => ({
+  promises: {
+    readFile: vi.fn(() => Promise.resolve(JSON.stringify({ definition: {} }))),
+  },
+  readFileSync: vi.fn(() => JSON.stringify({ definition: {} })),
 }));
 
 vi.mock('../../../../utils/codeless/common', () => ({
@@ -58,7 +68,21 @@ vi.mock('../../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthorizationTokenFromNode: vi.fn().mockResolvedValue('mock-token'),
 }));
 
+import { promises } from 'fs';
 import OpenMonitoringViewForLocal from '../openMonitoringViewForLocal';
+import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
+import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
+import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
+import { getAzureConnectorDetailsForLocalProject } from '../../../../utils/codeless/common';
+import {
+  getConnectionsFromFile,
+  getCustomCodeFromFiles,
+  getLogicAppProjectRoot,
+  getParametersFromFile,
+} from '../../../../utils/codeless/connection';
+import { createUnitTestFromRun } from '../../unitTest/codefulUnitTest/createUnitTestFromRun';
+import { sendRequest } from '../../../../utils/requestUtils';
 
 describe('OpenMonitoringViewForLocal', () => {
   const mockContext = { telemetry: { properties: {}, measurements: {} } } as any;
@@ -67,6 +91,20 @@ describe('OpenMonitoringViewForLocal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    (ext as any).context = { extensionPath: '/extension', subscriptions: [] };
+    (ext as any).telemetryReporter = { sendTelemetryEvent: vi.fn() };
+    (ext as any).extensionVersion = '1.0.0';
+    (ext as any).workflowRuntimePort = 8080;
+    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+    vi.mocked(getConnectionsFromFile).mockResolvedValue('{}');
+    vi.mocked(getParametersFromFile).mockResolvedValue({});
+    vi.mocked(getCustomCodeFromFiles).mockResolvedValue({});
+    vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
+    vi.mocked(getAzureConnectorDetailsForLocalProject).mockResolvedValue({ accessToken: 'token', enabled: false } as any);
+    vi.mocked(getArtifactsInLocalProject).mockResolvedValue({ maps: {}, schemas: [] } as any);
+    vi.mocked(getBundleVersionNumber).mockResolvedValue('1.0.0');
+    vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
+    vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
   });
 
   describe('constructor', () => {
@@ -91,6 +129,96 @@ describe('OpenMonitoringViewForLocal', () => {
       await instance.createPanel();
 
       expect(mockReveal).toHaveBeenCalled();
+    });
+
+    it('creates a monitoring panel and caches it', async () => {
+      const instance = new OpenMonitoringViewForLocal(mockContext, mockRunId, mockWorkflowFilePath);
+
+      await instance.createPanel();
+
+      expect(mockContext.telemetry.properties.extensionBundleVersion).toBe('1.0.0');
+      expect((instance as any).panel.webview.html).toBe('<html></html>');
+    });
+  });
+
+  describe('metadata', () => {
+    it('builds monitoring metadata using the project path for bundle resolution', async () => {
+      const instance = new OpenMonitoringViewForLocal(mockContext, mockRunId, mockWorkflowFilePath);
+
+      const metadata = await (instance as any)._getDesignerPanelMetadata();
+
+      expect(getBundleVersionNumber).toHaveBeenCalledWith('/test/project');
+      expect(metadata.workflowName).toBe('test-workflow');
+      expect(metadata.extensionBundleVersion).toBe('1.0.0');
+      expect(metadata.workflowDetails).toEqual({});
+    });
+  });
+
+  describe('webview messages', () => {
+    function createMessageHarness() {
+      const instance = new OpenMonitoringViewForLocal(mockContext, mockRunId, mockWorkflowFilePath);
+      (instance as any).panelMetadata = {};
+      (instance as any).connectionData = {};
+      (instance as any).workflowDetails = {};
+      (instance as any).apiHubServiceDetails = {};
+      (instance as any).baseUrl = 'http://localhost:7071/admin';
+      (instance as any).oauthRedirectUrl = 'vscode://auth';
+      (instance as any).sendMsgToWebview = vi.fn();
+      (instance as any).openContent = vi.fn();
+      return instance;
+    }
+
+    it('handles monitoring webview commands', async () => {
+      const instance = createMessageHarness();
+
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.initialize });
+      await (instance as any)._handleWebviewMsg({
+        command: ExtensionCommand.showContent,
+        header: 'Header',
+        id: 'content-id',
+        title: 'Title',
+        content: 'Content',
+      });
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.resubmitRun });
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.logTelemetry, data: { area: 'monitoringArea' } });
+      await (instance as any)._handleWebviewMsg({
+        command: ExtensionCommand.createUnitTestFromRun,
+        runId: 'run-123',
+        definition: { assertions: [] },
+      });
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.fileABug });
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.getDesignerVersion });
+      await (instance as any)._handleWebviewMsg({ command: 'unknown' });
+
+      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+        expect.objectContaining({ command: ExtensionCommand.initialize_frame })
+      );
+      expect((instance as any).openContent).toHaveBeenCalledWith('Header', 'content-id', 'Title', 'Content');
+      expect(sendRequest).toHaveBeenCalledWith(
+        mockContext,
+        expect.objectContaining({
+          method: 'POST',
+          url: expect.stringContaining('/workflows/test-workflow/triggers/manual/histories/run-123/resubmit'),
+        })
+      );
+      expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('monitoringArea', { area: 'monitoringArea' });
+      expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.objectContaining({ fsPath: mockWorkflowFilePath }), 'run-123', {
+        assertions: [],
+      });
+      expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+        expect.objectContaining({ command: ExtensionCommand.getDesignerVersion })
+      );
+    });
+
+    it('shows an error when resubmitting a run fails', async () => {
+      const instance = createMessageHarness();
+      vi.mocked(promises.readFile).mockRejectedValueOnce(new Error('read failed'));
+
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.resubmitRun });
+
+      const vscode = await import('vscode');
+      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith('Workflow run resubmit failed: read failed', 'OK');
     });
   });
 });
