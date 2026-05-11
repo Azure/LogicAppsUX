@@ -38,10 +38,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-docs-
 
-      - name: Set up Node.js version 20.x
-        uses: actions/setup-node@v1
+      - name: Set up Node.js version 24.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 24.x
 
       - uses: pnpm/action-setup@v3
         with:
