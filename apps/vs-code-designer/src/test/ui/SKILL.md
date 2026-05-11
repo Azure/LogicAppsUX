@@ -16,6 +16,7 @@ TRUE end-to-end tests using `vscode-extension-tester` (ExTester v8.21.0) that la
 
 | File | Purpose |
 |------|---------|
+| `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -45,12 +46,17 @@ cd apps/vs-code-designer
 # 2. Compile the test TypeScript (uses tsup → CJS for Mocha)
 npx tsup --config tsup.e2e.test.config.ts
 
-# 3. Run all tests (Phase 4.1 + 4.2)
+# 3. Run all tests (Phase 4.0+)
 node src/test/ui/run-e2e.js
 
 # 4. Run only Phase 4.2 (designer tests) using existing workspaces
 $env:E2E_MODE="designeronly"    # PowerShell
 export E2E_MODE=designeronly    # bash
+node src/test/ui/run-e2e.js
+
+# 5. Run only the plain-folder startup regression test
+$env:E2E_MODE="nonlogicappstartup"  # PowerShell
+export E2E_MODE=nonlogicappstartup  # bash
 node src/test/ui/run-e2e.js
 
 # Or use the PowerShell helper (kills stuck processes first):
@@ -68,7 +74,8 @@ pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
 
 | Value | Behavior |
 |-------|----------|
-| (unset) | Runs Phase 4.1 (createWorkspace) first, then Phase 4.2 (designer) if Phase 4.1 passes |
+| (unset) | Runs Phase 4.0 (non-Logic-App startup), Phase 4.1 (createWorkspace), then later designer/conversion phases |
+| `nonlogicappstartup` | Runs only Phase 4.0 with minimal settings and no runtime dependency paths |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
 
 **IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.

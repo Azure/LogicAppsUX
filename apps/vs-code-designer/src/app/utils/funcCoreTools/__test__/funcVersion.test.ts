@@ -86,11 +86,10 @@ describe('funcVersion - command resolution', () => {
       await setFunctionsCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
+      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_DIR);
+      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_EXE);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o777);
-      // Regression guard: existsSync result must be a synchronous boolean, not a Promise.
-      const existsResult = fs.existsSync(FUNC_EXE);
-      expect(typeof existsResult).toBe('boolean');
     });
   });
 

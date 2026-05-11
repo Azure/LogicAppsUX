@@ -82,6 +82,7 @@ describe('dotnet command resolution', () => {
   afterEach(() => {
     Object.defineProperty(process, 'platform', { value: originalPlatform });
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   describe('setDotNetCommand', () => {
@@ -140,6 +141,7 @@ describe('dotnet command resolution', () => {
         '/home/me/logic-app',
         'terminal'
       );
+      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], '/home/me/logic-app', 'omnisharp');
     });
 
     it('writes <dotNetBinariesPath>/dotnet on macOS and updates terminal.integrated.env.osx', async () => {
@@ -157,17 +159,21 @@ describe('dotnet command resolution', () => {
         '/Users/me/logic-app',
         'terminal'
       );
+      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], '/Users/me/logic-app', 'omnisharp');
     });
 
     it('still writes the global setting when getWorkspaceLogicAppFolders throws', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockRejectedValue(new Error('boom'));
+      const error = new Error('boom');
+      vi.mocked(getWorkspaceLogicAppFolders).mockRejectedValue(error);
 
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(error);
     });
   });
 

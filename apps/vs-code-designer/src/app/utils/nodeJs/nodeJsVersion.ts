@@ -48,7 +48,9 @@ export function getNpmCommand(): string {
       command = path.join(nodeJsBinariesPath, ext.npmCliPath);
     } else {
       const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
-      command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
+      if (nodeSubFolder) {
+        command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
+      }
     }
   }
   return command;
@@ -73,16 +75,17 @@ export async function setNodeJsCommand(): Promise<void> {
         command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
       } else {
         const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
-        command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
-
-        fs.chmodSync(nodeJsBinariesPath, 0o777);
+        if (nodeSubFolder) {
+          command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
+          fs.chmodSync(nodeJsBinariesPath, 0o777);
+        }
       }
     }
   }
   await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
 }
 
-function getNodeSubFolder(directoryPath: string): string {
+function getNodeSubFolder(directoryPath: string): string | undefined {
   try {
     const items = fs.readdirSync(directoryPath);
 
@@ -99,5 +102,5 @@ function getNodeSubFolder(directoryPath: string): string {
     console.error('Error:', errorMessage);
   }
 
-  return ''; // No 'node' subfolders found
+  return undefined;
 }
