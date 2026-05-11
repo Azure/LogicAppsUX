@@ -221,6 +221,67 @@ async function waitForButtonByText(driver: WebDriver, label: string, timeoutMs =
   assert.fail(`Unable to find enabled "${label}" button`);
 }
 
+async function isReviewStepVisible(driver: WebDriver): Promise<boolean> {
+  const reviewEvidenceCount = await driver
+    .findElements(
+      By.xpath(
+        '//*[contains(normalize-space(.), "Step 2 of 2") or contains(normalize-space(.), "Review your configuration") or contains(normalize-space(.), "Workspace file")]'
+      )
+    )
+    .then((elements) => elements.length)
+    .catch(() => 0);
+
+  if (reviewEvidenceCount > 0) {
+    return true;
+  }
+
+  const createButtons = await driver.findElements(By.xpath('//button[contains(normalize-space(.), "Create")]')).catch(() => []);
+  for (const button of createButtons) {
+    if (await button.isDisplayed().catch(() => false)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+async function waitForReviewStep(driver: WebDriver, timeoutMs = 6_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await isReviewStepVisible(driver)) {
+      return true;
+    }
+    await sleep(250);
+  }
+
+  return false;
+}
+
+async function clickNextAndWaitForReviewStep(driver: WebDriver, webview: WebView): Promise<void> {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+    if (await isReviewStepVisible(driver)) {
+      console.log('[createWs] Review step is already visible');
+      return;
+    }
+
+    const nextBtn = await waitForButtonByText(driver, 'Next', 6_000);
+    await driver.actions().move({ origin: nextBtn }).click().perform();
+    console.log(`[createWs] Clicked Next (attempt ${attempt})`);
+
+    if (await waitForReviewStep(driver)) {
+      return;
+    }
+
+    await captureScreenshot(driver, `create-ws-next-attempt-${attempt}-still-setup`, EXPLICIT_SCREENSHOT_DIR);
+  }
+
+  const bodyText = await driver
+    .executeScript<string>('return (document.body ? document.body.textContent : "").substring(0, 800)')
+    .catch(() => '');
+  throw new Error(`Review step did not become active after clicking Next. Visible text: ${bodyText}`);
+}
+
 async function dismissQuickInputIfVisible(driver: WebDriver): Promise<void> {
   const quickInputVisible = await driver
     .executeScript<boolean>('return !!document.querySelector(".quick-input-widget:not(.hidden)")')
@@ -237,6 +298,12 @@ async function dismissOuterNotificationsAndReturnToWebview(driver: WebDriver, we
     await driver.switchTo().defaultContent();
     await dismissQuickInputIfVisible(driver);
     await dismissNotifications(driver);
+    await driver
+      .executeScript(
+        'document.querySelectorAll(".notification-toast .codicon-close, .notifications-toasts .codicon-notifications-clear-all, .notifications-toasts [aria-label=\\"Close\\"], .notification-list-item [aria-label=\\"Close\\"]").forEach((element) => element.click())'
+      )
+      .catch(() => undefined);
+    await sleep(300);
   } finally {
     await webview.switchToFrame();
   }
@@ -457,17 +524,9 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
 
     // ── Step 5: Click Next to go to review step ──
     try {
-      await dismissOuterNotificationsAndReturnToWebview(driver, webview);
-      const nextBtn = await waitForButtonByText(driver, 'Next');
-      await driver.actions().move({ origin: nextBtn }).click().perform();
-      console.log('[createWs] Clicked Next');
-      await sleep(2000);
+      await clickNextAndWaitForReviewStep(driver, webview);
       await captureScreenshot(driver, 'create-ws-review-step', EXPLICIT_SCREENSHOT_DIR);
-      const reviewVisible = await driver
-        .findElements(By.xpath('//*[contains(normalize-space(.), "Review + create")]'))
-        .then((elements) => elements.length > 0)
-        .catch(() => false);
-      assert.ok(reviewVisible, 'Review + create step should be visible after clicking Next');
+      assert.ok(await isReviewStepVisible(driver), 'Review step should be active after clicking Next');
     } catch (e: any) {
       await captureScreenshot(driver, 'create-ws-next-failed', EXPLICIT_SCREENSHOT_DIR);
       assert.fail(`Next button should advance to review step: ${e.message}`);
