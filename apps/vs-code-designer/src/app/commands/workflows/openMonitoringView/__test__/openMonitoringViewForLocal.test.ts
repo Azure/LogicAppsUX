@@ -34,6 +34,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   isEmptyString: vi.fn((s: any) => !s || (typeof s === 'string' && s.trim().length === 0)),
   resolveConnectionsReferences: vi.fn(() => ({})),
   getTriggerName: vi.fn(() => 'manual'),
+  getRunTriggerName: vi.fn(() => 'manual'),
   HTTP_METHODS: { POST: 'POST', GET: 'GET' },
 }));
 

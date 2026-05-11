@@ -154,6 +154,16 @@ async function waitForCreateWorkspaceDialog(driver: WebDriver, timeoutMs = 60_00
     } catch {
       // No dialog elements
     }
+    try {
+      const quickInputVisible = await driver.executeScript<boolean>('return !!document.querySelector(".quick-input-widget:not(.hidden)")');
+      if (quickInputVisible) {
+        console.log('[createDialog] Confirming lingering quick input before waiting for conversion dialog');
+        await driver.actions().sendKeys(Key.ENTER).perform();
+        await sleep(1000);
+      }
+    } catch {
+      // No quick input visible
+    }
     await sleep(2000);
   }
   return null;
@@ -402,7 +412,10 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     const appName = 'e2econvertapp';
     const wfName = 'e2econvertwf';
     const wsParentDir = path.join(os.tmpdir(), 'la-e2e-test');
+    const expectedWsDir = path.join(wsParentDir, wsName);
+    const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
     fs.mkdirSync(wsParentDir, { recursive: true });
+    fs.rmSync(expectedWsDir, { recursive: true, force: true });
 
     // Fill workspace parent folder path (first input)
     try {
@@ -459,9 +472,6 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
       await captureScreenshot(driver, 'create-ws-next-failed', EXPLICIT_SCREENSHOT_DIR);
       assert.fail(`Next button should advance to review step: ${e.message}`);
     }
-
-    const expectedWsDir = path.join(wsParentDir, wsName);
-    const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
 
     // ── Step 6: Click 'Create workspace' button exactly once ──
     try {

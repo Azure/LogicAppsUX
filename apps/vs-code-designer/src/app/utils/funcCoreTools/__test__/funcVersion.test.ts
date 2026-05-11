@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
@@ -13,26 +13,38 @@ vi.mock('../../../../localize', () => ({
   localize: vi.fn((_key: string, defaultValue: string) => defaultValue),
 }));
 
+vi.mock('../../../../extensionVariables', () => ({
+  ext: {
+    funcCliPath: 'func',
+    outputChannel: { appendLog: vi.fn() },
+  },
+}));
+
 vi.mock('../../vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
   getWorkspaceSettingFromAnyFolder: vi.fn(),
   updateGlobalSetting: vi.fn(),
 }));
 
-vi.mock('../../../../extensionVariables', () => ({
-  ext: {
-    funcCliPath: 'func',
-  },
-}));
-
 vi.mock('../cpUtils', () => ({
   executeCommand: vi.fn(),
 }));
 
+vi.mock('../../../../constants', async () => {
+  const actual = await vi.importActual<typeof import('../../../../constants')>('../../../../constants');
+  return {
+    ...actual,
+    autoRuntimeDependenciesPathSettingKey: 'autoRuntimeDependenciesPath',
+    funcCoreToolsBinaryPathSettingKey: 'funcCoreToolsBinaryPath',
+    funcDependencyName: 'FuncCoreTools',
+  };
+});
+
 import * as fs from 'fs';
+import * as path from 'path';
 import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
-import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../../vsCodeConfig/settings';
 import { executeCommand } from '../cpUtils';
+import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../../vsCodeConfig/settings';
 import {
   addLocalFuncTelemetry,
   checkSupportedFuncVersion,
@@ -45,72 +57,121 @@ import {
   tryParseFuncVersion,
 } from '../funcVersion';
 
-describe('getFunctionsCommand', () => {
+const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
+const FUNC_DIR = path.join(BIN_ROOT, 'FuncCoreTools');
+const FUNC_EXE = path.join(FUNC_DIR, 'func');
+
+describe('funcVersion - command resolution', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getGlobalSetting).mockReset();
+    vi.mocked(getWorkspaceSettingFromAnyFolder).mockReset();
+    vi.mocked(updateGlobalSetting).mockReset();
+    vi.mocked(executeCommand).mockReset();
+    vi.mocked(fs.existsSync).mockReset();
+    vi.mocked(fs.chmodSync).mockReset();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  describe('getFunctionsCommand', () => {
+    it('returns the configured binary path when set', () => {
+      vi.mocked(getGlobalSetting).mockImplementation(
+        (key: string) => (key === 'funcCoreToolsBinaryPath' ? '/custom/path/to/func' : undefined) as any
+      );
 
-  it('returns the global setting value when it is populated', () => {
-    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
-      if (key === 'funcCoreToolsBinaryPath') {
-        return '/configured/func' as any;
-      }
-      return undefined;
+      expect(getFunctionsCommand()).toBe('/custom/path/to/func');
     });
 
-    expect(getFunctionsCommand()).toBe('/configured/func');
-  });
-
-  it('self-heals by inspecting the local binaries folder when the setting is empty', () => {
-    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
-      if (key === 'funcCoreToolsBinaryPath') {
+    it('self-heals by inspecting the local binaries folder when the setting is empty', () => {
+      vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
+        if (key === 'funcCoreToolsBinaryPath') {
+          return undefined;
+        }
+        if (key === 'autoRuntimeDependenciesPath') {
+          return BIN_ROOT as any;
+        }
         return undefined;
-      }
-      if (key === 'autoRuntimeDependenciesPath') {
-        return '/cache/dependencies' as any;
-      }
-      return undefined;
-    });
-    vi.mocked(fs.existsSync).mockImplementation((p: any) => {
-      const value = String(p);
-      // path.join on Windows uses backslashes; on POSIX, forward slashes. Accept either.
-      return value.includes('FuncCoreTools');
+      });
+      vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_EXE);
+
+      expect(getFunctionsCommand()).toBe(FUNC_EXE);
     });
 
-    const command = getFunctionsCommand();
-    expect(command).toContain('FuncCoreTools');
-    expect(command.endsWith('func')).toBe(true);
-  });
-
-  it('throws when the setting is empty and the local binaries are not yet on disk', () => {
-    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
-      if (key === 'funcCoreToolsBinaryPath') {
+    it('throws when the setting is empty and the local binaries are not yet on disk', () => {
+      vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
+        if (key === 'funcCoreToolsBinaryPath') {
+          return undefined;
+        }
+        if (key === 'autoRuntimeDependenciesPath') {
+          return BIN_ROOT as any;
+        }
         return undefined;
-      }
-      if (key === 'autoRuntimeDependenciesPath') {
-        return '/cache/dependencies' as any;
-      }
-      return undefined;
-    });
-    vi.mocked(fs.existsSync).mockReturnValue(false);
+      });
+      vi.mocked(fs.existsSync).mockReturnValue(false);
 
-    expect(() => getFunctionsCommand()).toThrow('Functions Core Tools Binary Path Setting is empty');
+      expect(() => getFunctionsCommand()).toThrow('Functions Core Tools Binary Path Setting is empty');
+    });
+
+    it('throws when neither the setting nor the dependency path is configured', () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(undefined as any);
+
+      expect(() => getFunctionsCommand()).toThrow('Functions Core Tools Binary Path Setting is empty');
+    });
   });
 
-  it('throws when neither the setting nor the dependency path is configured', () => {
-    vi.mocked(getGlobalSetting).mockReturnValue(undefined as any);
+  describe('setFunctionsCommand', () => {
+    it('writes ext.funcCliPath when no binaries location is configured', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(undefined as any);
 
-    expect(() => getFunctionsCommand()).toThrow('Functions Core Tools Binary Path Setting is empty');
+      await setFunctionsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+      expect(fs.existsSync).not.toHaveBeenCalled();
+      expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
+
+    it('writes ext.funcCliPath when the func binaries directory does not exist', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+
+      await setFunctionsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_DIR);
+      expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
+
+    it('writes the joined func path and chmods only the directory when the executable is missing', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
+      vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR);
+
+      await setFunctionsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_EXE, 0o777);
+    });
+
+    it('writes the joined func path and chmods both the directory and the executable when both exist', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+
+      await setFunctionsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
+      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_DIR);
+      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o777);
+    });
   });
 });
 
 describe('function runtime version helpers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getGlobalSetting).mockReset();
+    vi.mocked(getWorkspaceSettingFromAnyFolder).mockReset();
+    vi.mocked(executeCommand).mockReset();
   });
 
   it('parses major versions and supported function versions', () => {
@@ -174,33 +235,5 @@ describe('function runtime version helpers', () => {
   it('validates supported versions', () => {
     expect(() => checkSupportedFuncVersion(FuncVersion.v4)).not.toThrow();
     expect(() => checkSupportedFuncVersion('~1' as FuncVersion)).toThrow('not supported');
-  });
-
-  it('sets the function command from installed binaries or falls back to the bundled command', async () => {
-    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
-      if (key === 'autoRuntimeDependenciesPath') {
-        return '/cache/dependencies' as any;
-      }
-      return undefined;
-    });
-    vi.mocked(fs.existsSync).mockReturnValueOnce(true).mockReturnValueOnce(true);
-
-    await setFunctionsCommand();
-
-    expect(fs.chmodSync).toHaveBeenCalledTimes(2);
-    expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', expect.stringContaining('FuncCoreTools'));
-
-    vi.clearAllMocks();
-    vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
-      if (key === 'autoRuntimeDependenciesPath') {
-        return '/cache/dependencies' as any;
-      }
-      return undefined;
-    });
-    vi.mocked(fs.existsSync).mockReturnValueOnce(false);
-
-    await setFunctionsCommand();
-
-    expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
   });
 });
