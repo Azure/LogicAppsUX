@@ -43,10 +43,11 @@ export function getNpmCommand(): string {
   }
   const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
   if (fs.existsSync(nodeJsBinariesPath)) {
-    // windows the executable is at root folder, linux & macos its in the bin
-    command = path.join(nodeJsBinariesPath, ext.npmCliPath);
-    if (process.platform !== Platform.windows) {
-      const nodeSubFolder = getNodeSubFolder(command);
+    // windows the executable is at root folder, linux & macos its in <node-v*>/bin
+    if (process.platform === Platform.windows) {
+      command = path.join(nodeJsBinariesPath, ext.npmCliPath);
+    } else {
+      const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
     }
   }
@@ -67,10 +68,11 @@ export async function setNodeJsCommand(): Promise<void> {
     const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
     const binariesExist = fs.existsSync(nodeJsBinariesPath);
     if (binariesExist) {
-      // windows the executable is at root folder, linux & macos its in the bin
-      command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
-      if (process.platform !== Platform.windows) {
-        const nodeSubFolder = getNodeSubFolder(command);
+      // windows the executable is at root folder, linux & macos its in <node-v*>/bin
+      if (process.platform === Platform.windows) {
+        command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
+      } else {
+        const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
         command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
 
         fs.chmodSync(nodeJsBinariesPath, 0o777);
