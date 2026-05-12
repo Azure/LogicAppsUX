@@ -37,6 +37,12 @@ Use this playbook when adding, fixing, or reviewing tests for the VS Code Logic 
 9. Close editors before opening overview webviews.
 10. Prefer built-in operations such as Request and Response for reliable designer tests.
 11. Avoid connector-dependent operations unless dependencies are explicitly provisioned.
+12. For debug-path regressions:
+    - create workspaces through the VS Code webview, not by hand;
+    - reopen the generated `.code-workspace` as the startup resource in a fresh phase/session;
+    - verify design-time startup evidence such as `workflow-designtime/`;
+    - capture terminal/output/log diagnostics on failure;
+    - prove the root cause and absence of downstream prompts, not only prompt suppression.
 
 ## Unit Test Workflow
 
@@ -75,6 +81,9 @@ Before final status, the test agent should answer:
 - Which `run-e2e.js` phase covers the E2E path?
 - What validation commands ran?
 - Are any gaps intentional, blocked, or follow-up work?
+- If this is a debug regression, did the test use the same `run-e2e.js` launch path and `launch.json` shape as users?
+- Did the test prove design-time startup happened before debug assertions?
+- Did the test assert that incorrect fallback prompts did not appear?
 
 ## Knowledge Updates
 

@@ -52,3 +52,11 @@ Curated durable learnings extracted from Copilot sessions. Add entries through `
 - Source: `session_store_sql` session/file/turn audit on 2026-05-11.
 - Applies to: `session-knowledge-curator`.
 - Status: verified.
+
+### Telemetry wrappers can hide terminal failures
+
+- Learning: `callWithTelemetryAndErrorHandling` can swallow callback errors, so flows that must stop after a telemetry-wrapped failure should record failure state and surface a deterministic error after the wrapper returns.
+- Why it matters: The Azurite auto-start regression continued into `AzureWebJobsStorage` validation after readiness failure because the telemetry wrapper reported the error but allowed later debug validation to run.
+- Source: Azurite auto-start debug regression session; `apps/vs-code-designer/src/app/commands/pickFuncProcess.ts`; `apps/vs-code-designer/src/app/utils/startRuntimeApi.ts`.
+- Applies to: `vscode`, `test`, `vscode-test-specialist`, `senior-swe-reviewer`.
+- Status: verified.

@@ -43,3 +43,11 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 - Source: Azure/logicapps-migration-assistant#24 and #27.
 - Applies to: `ci-sentinel`, `test`, `chief-engineer`.
 - Status: verified.
+
+### Debug E2E failures need diagnostics before retries
+
+- Learning: VS Code debug/runtime E2E failures should collect visible workbench text, terminal state, and Azure Logic Apps output logs before adding sleeps or retries.
+- Why it matters: The Azurite investigation only became actionable after logs showed design-time startup, the Logic Apps debug configuration, and the exact point where Azurite readiness failed.
+- Source: Azurite auto-start debug regression session; `apps/vs-code-designer/src/test/ui/azuriteAutostartFailureAssert.test.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
