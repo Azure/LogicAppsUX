@@ -286,38 +286,56 @@ async function findInputByLabel(driver: WebDriver, labelText: string): Promise<W
   const candidateLabels = visibleLabels.length > 0 ? visibleLabels : labels;
   const exactLabels: WebElement[] = [];
   for (const label of candidateLabels) {
-    const text = (await label.getText()).trim();
-    const afterMatch = text.substring(labelText.length);
-    if (afterMatch === '' || /^[\s*]/.test(afterMatch)) {
-      exactLabels.push(label);
+    try {
+      const text = (await label.getText()).trim();
+      const afterMatch = text.substring(labelText.length);
+      if (afterMatch === '' || /^[\s*]/.test(afterMatch)) {
+        exactLabels.push(label);
+      }
+    } catch {
+      // Ignore stale/non-rendered labels
     }
   }
 
   const labelsToSearch = exactLabels.length > 0 ? exactLabels : candidateLabels;
 
   for (const label of labelsToSearch) {
-    const forAttr = await label.getAttribute('for');
-    if (forAttr) {
-      const inputs = await driver.findElements(By.id(forAttr));
-      for (const input of inputs) {
-        try {
-          if (await input.isDisplayed()) {
-            return input;
+    try {
+      const forAttr = await label.getAttribute('for');
+      if (forAttr) {
+        const inputs = await driver.findElements(By.id(forAttr));
+        for (const input of inputs) {
+          try {
+            if (await input.isDisplayed()) {
+              return input;
+            }
+          } catch {
+            // Try next input
           }
-        } catch {
-          // Try next input
+        }
+        if (inputs.length > 0) {
+          return inputs[0];
         }
       }
-      if (inputs.length > 0) {
-        return inputs[0];
-      }
+    } catch {
+      // Try next label
     }
   }
 
   for (const label of labelsToSearch) {
-    let container = await label.findElement(By.xpath('..'));
+    let container: WebElement;
+    try {
+      container = await label.findElement(By.xpath('..'));
+    } catch {
+      continue;
+    }
     for (let depth = 0; depth < 3; depth++) {
-      const inputs = await container.findElements(By.css('input'));
+      let inputs: WebElement[] = [];
+      try {
+        inputs = await container.findElements(By.css('input'));
+      } catch {
+        break;
+      }
       for (const input of inputs) {
         try {
           if (await input.isDisplayed()) {
