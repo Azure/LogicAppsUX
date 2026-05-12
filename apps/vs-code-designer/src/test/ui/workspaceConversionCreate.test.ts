@@ -11,8 +11,9 @@
  *      the 'Do you want to create the workspace now?' dialog
  *   2. Clicking 'Yes' opens the Create Workspace webview
  *   3. The Create Workspace form can be filled out (path, names, etc.)
- *   4. Completing the wizard creates a .code-workspace file on disk
- *   5. The original legacy project files remain untouched
+ *   4. A single Create click starts creation and disables/shows pending UI
+ *   5. Completing the wizard creates a .code-workspace file on disk
+ *   6. The original legacy project files remain untouched
  *
  * Phase 4.8b — own session, startup resource = temp legacy project folder
  */
@@ -22,7 +23,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as assert from 'assert';
 import { Workbench, WebView, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
-import { sleep, captureScreenshot, openFolderInSession } from './helpers';
+import { sleep, captureScreenshot, dismissNotifications, openFolderInSession } from './helpers';
 
 const TEST_TIMEOUT = 180_000;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -36,7 +37,7 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
   new Date().toISOString().replace(/[:.]/g, '-')
 );
 
-const LEGACY_PROJECT_DIR = path.join(os.tmpdir(), 'la-e2e-test', 'legacy-project');
+const LEGACY_PROJECT_DIR = process.env.LA_E2E_LEGACY_PROJECT_DIR || path.join(os.tmpdir(), 'la-e2e-test', 'legacy-project');
 
 /** Snapshot the legacy project state before conversion */
 interface LegacySnapshot {
@@ -153,9 +154,159 @@ async function waitForCreateWorkspaceDialog(driver: WebDriver, timeoutMs = 60_00
     } catch {
       // No dialog elements
     }
+    try {
+      const quickInputVisible = await driver.executeScript<boolean>('return !!document.querySelector(".quick-input-widget:not(.hidden)")');
+      if (quickInputVisible) {
+        console.log('[createDialog] Confirming lingering quick input before waiting for conversion dialog');
+        await driver.actions().sendKeys(Key.ENTER).perform();
+        await sleep(1000);
+      }
+    } catch {
+      // No quick input visible
+    }
     await sleep(2000);
   }
   return null;
+}
+
+/** Verify one Create click starts work instead of requiring repeated clicks. */
+async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorkspaceFile: string, timeoutMs = 15_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (fs.existsSync(expectedWorkspaceFile)) {
+      console.log('[createWs] Workspace file already exists after single Create click');
+      return;
+    }
+
+    try {
+      const buttons = await driver.findElements(
+        By.xpath('//button[contains(normalize-space(.), "Create") or contains(normalize-space(.), "Creating")]')
+      );
+      for (const button of buttons) {
+        const text = await button.getText().catch(() => '');
+        const disabled = await button.getAttribute('disabled').catch(() => null);
+        const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+
+        if (disabled !== null || ariaDisabled === 'true' || text.toLowerCase().includes('creating')) {
+          console.log(`[createWs] Single Create click entered pending state: text="${text}", disabled=${disabled}, aria=${ariaDisabled}`);
+          return;
+        }
+      }
+    } catch {
+      // The webview may already be disposing/opening the new workspace.
+    }
+
+    await sleep(250);
+  }
+
+  assert.fail('A single Create click did not start workspace creation or enter pending UI state');
+}
+
+async function waitForButtonByText(driver: WebDriver, label: string, timeoutMs = 10_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.xpath(`//button[contains(normalize-space(.), "${label}")]`));
+    for (const button of buttons) {
+      const disabled = await button.getAttribute('disabled').catch(() => null);
+      const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+      const isDisplayed = await button.isDisplayed().catch(() => false);
+      const isEnabled = await button.isEnabled().catch(() => false);
+      if (isDisplayed && isEnabled && disabled === null && ariaDisabled !== 'true') {
+        return button;
+      }
+    }
+    await sleep(250);
+  }
+
+  assert.fail(`Unable to find enabled "${label}" button`);
+}
+
+async function isReviewStepVisible(driver: WebDriver): Promise<boolean> {
+  const reviewEvidenceCount = await driver
+    .findElements(
+      By.xpath(
+        '//*[contains(normalize-space(.), "Step 2 of 2") or contains(normalize-space(.), "Review your configuration") or contains(normalize-space(.), "Workspace file")]'
+      )
+    )
+    .then((elements) => elements.length)
+    .catch(() => 0);
+
+  if (reviewEvidenceCount > 0) {
+    return true;
+  }
+
+  const createButtons = await driver.findElements(By.xpath('//button[contains(normalize-space(.), "Create")]')).catch(() => []);
+  for (const button of createButtons) {
+    if (await button.isDisplayed().catch(() => false)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+async function waitForReviewStep(driver: WebDriver, timeoutMs = 6_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await isReviewStepVisible(driver)) {
+      return true;
+    }
+    await sleep(250);
+  }
+
+  return false;
+}
+
+async function clickNextAndWaitForReviewStep(driver: WebDriver, webview: WebView): Promise<void> {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+    if (await isReviewStepVisible(driver)) {
+      console.log('[createWs] Review step is already visible');
+      return;
+    }
+
+    const nextBtn = await waitForButtonByText(driver, 'Next', 6_000);
+    await driver.actions().move({ origin: nextBtn }).click().perform();
+    console.log(`[createWs] Clicked Next (attempt ${attempt})`);
+
+    if (await waitForReviewStep(driver)) {
+      return;
+    }
+
+    await captureScreenshot(driver, `create-ws-next-attempt-${attempt}-still-setup`, EXPLICIT_SCREENSHOT_DIR);
+  }
+
+  const bodyText = await driver
+    .executeScript<string>('return (document.body ? document.body.textContent : "").substring(0, 800)')
+    .catch(() => '');
+  throw new Error(`Review step did not become active after clicking Next. Visible text: ${bodyText}`);
+}
+
+async function dismissQuickInputIfVisible(driver: WebDriver): Promise<void> {
+  const quickInputVisible = await driver
+    .executeScript<boolean>('return !!document.querySelector(".quick-input-widget:not(.hidden)")')
+    .catch(() => false);
+  if (quickInputVisible) {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+    await sleep(500);
+  }
+}
+
+async function dismissOuterNotificationsAndReturnToWebview(driver: WebDriver, webview: WebView): Promise<void> {
+  try {
+    await webview.switchBack();
+    await driver.switchTo().defaultContent();
+    await dismissQuickInputIfVisible(driver);
+    await dismissNotifications(driver);
+    await driver
+      .executeScript(
+        'document.querySelectorAll(".notification-toast .codicon-close, .notifications-toasts .codicon-notifications-clear-all, .notifications-toasts [aria-label=\\"Close\\"], .notification-list-item [aria-label=\\"Close\\"]").forEach((element) => element.click())'
+      )
+      .catch(() => undefined);
+    await sleep(300);
+  } finally {
+    await webview.switchToFrame();
+  }
 }
 
 describe('Workspace Conversion — Create Workspace from Legacy Project', function () {
@@ -169,27 +320,31 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     this.timeout(60_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
 
-    // Clean up any previous legacy project directory with retry logic.
-    // On Windows, the previous VS Code session may still hold locks on
-    // files like workflow-designtime/ — we retry a few times with delays.
-    if (fs.existsSync(LEGACY_PROJECT_DIR)) {
-      for (let attempt = 1; attempt <= 5; attempt++) {
-        try {
-          fs.rmSync(LEGACY_PROJECT_DIR, { recursive: true, force: true });
-          break;
-        } catch (err: unknown) {
-          const msg = err instanceof Error ? err.message : String(err);
-          console.log(`[createWs] Cleanup attempt ${attempt}/5 failed: ${msg}`);
-          if (attempt === 5) {
-            // Last attempt: try to just recreate over the top instead of failing
-            console.log('[createWs] Could not fully remove legacy dir; proceeding anyway');
-          } else {
-            await sleep(2000);
+    if (process.env.LA_E2E_LEGACY_PROJECT_DIR) {
+      assert.ok(fs.existsSync(LEGACY_PROJECT_DIR), `Legacy project fixture should exist: ${LEGACY_PROJECT_DIR}`);
+    } else {
+      // Clean up any previous legacy project directory with retry logic.
+      // On Windows, the previous VS Code session may still hold locks on
+      // files like workflow-designtime/ — we retry a few times with delays.
+      if (fs.existsSync(LEGACY_PROJECT_DIR)) {
+        for (let attempt = 1; attempt <= 5; attempt++) {
+          try {
+            fs.rmSync(LEGACY_PROJECT_DIR, { recursive: true, force: true });
+            break;
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            console.log(`[createWs] Cleanup attempt ${attempt}/5 failed: ${msg}`);
+            if (attempt === 5) {
+              // Last attempt: try to just recreate over the top instead of failing
+              console.log('[createWs] Could not fully remove legacy dir; proceeding anyway');
+            } else {
+              await sleep(2000);
+            }
           }
         }
       }
+      createLegacyProject(LEGACY_PROJECT_DIR);
     }
-    createLegacyProject(LEGACY_PROJECT_DIR);
 
     // Snapshot the legacy project BEFORE conversion
     legacySnapshot = snapshotLegacyProject(LEGACY_PROJECT_DIR);
@@ -262,6 +417,7 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
       }
     }
     await sleep(2000);
+    await dismissQuickInputIfVisible(driver);
     assert.ok(yesClicked, '"Yes" button should be clickable');
 
     // ── Step 3: Wait for the Create Workspace webview and switch into it ──
@@ -323,6 +479,10 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     const appName = 'e2econvertapp';
     const wfName = 'e2econvertwf';
     const wsParentDir = path.join(os.tmpdir(), 'la-e2e-test');
+    const expectedWsDir = path.join(wsParentDir, wsName);
+    const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
+    fs.mkdirSync(wsParentDir, { recursive: true });
+    fs.rmSync(expectedWsDir, { recursive: true, force: true });
 
     // Fill workspace parent folder path (first input)
     try {
@@ -364,32 +524,35 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
 
     // ── Step 5: Click Next to go to review step ──
     try {
-      const nextBtn = await driver.findElement(By.xpath('//button[contains(text(), "Next")]'));
-      await nextBtn.click();
-      console.log('[createWs] Clicked Next');
-      await sleep(2000);
+      await clickNextAndWaitForReviewStep(driver, webview);
       await captureScreenshot(driver, 'create-ws-review-step', EXPLICIT_SCREENSHOT_DIR);
+      assert.ok(await isReviewStepVisible(driver), 'Review step should be active after clicking Next');
     } catch (e: any) {
-      console.log(`[createWs] Next button not found: ${e.message}`);
+      await captureScreenshot(driver, 'create-ws-next-failed', EXPLICIT_SCREENSHOT_DIR);
+      assert.fail(`Next button should advance to review step: ${e.message}`);
     }
 
-    // ── Step 6: Click 'Create workspace' button ──
+    // ── Step 6: Click 'Create workspace' button exactly once ──
     try {
-      const createBtn = await driver.findElement(By.xpath('//button[contains(text(), "Create")]'));
-      await createBtn.click();
-      console.log('[createWs] Clicked Create workspace');
+      await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+      const createBtn = await waitForButtonByText(driver, 'Create');
+      const disabledBeforeClick = await createBtn.getAttribute('disabled').catch(() => null);
+      const ariaDisabledBeforeClick = await createBtn.getAttribute('aria-disabled').catch(() => null);
+      assert.strictEqual(disabledBeforeClick, null, 'Create button should not have disabled attribute before clicking');
+      assert.notStrictEqual(ariaDisabledBeforeClick, 'true', 'Create button should not be aria-disabled before clicking');
+
+      await driver.actions().move({ origin: createBtn }).click().perform();
+      console.log('[createWs] Clicked Create workspace once');
+      await waitForSingleCreateClickToStart(driver, expectedWsFile);
       await sleep(5000); // Wait for workspace creation
       await captureScreenshot(driver, 'create-ws-after-create', EXPLICIT_SCREENSHOT_DIR);
     } catch (e: any) {
-      console.log(`[createWs] Create button not found: ${e.message}`);
+      assert.fail(`Single Create click should start workspace creation: ${e.message}`);
     }
 
     // ── Step 7: Verify the workspace was created on disk ──
     await webview.switchBack();
     await sleep(2000);
-
-    const expectedWsDir = path.join(wsParentDir, wsName);
-    const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
 
     if (fs.existsSync(expectedWsFile)) {
       console.log(`[createWs] .code-workspace file created: ${expectedWsFile} ✓`);
@@ -405,6 +568,7 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
         const wsFiles = fs.readdirSync(expectedWsDir);
         console.log(`[createWs] Contents of ${expectedWsDir}: ${JSON.stringify(wsFiles)}`);
       }
+      assert.fail(`Single Create click should create .code-workspace at ${expectedWsFile}`);
     }
 
     // ── Step 8: Verify the original legacy project is completely untouched ──

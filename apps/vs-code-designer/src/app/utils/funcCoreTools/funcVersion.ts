@@ -147,9 +147,26 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
 
 /**
  * Get the functions binaries executable or use the system functions executable.
+ *
+ * The path is normally written to the global setting by `setFunctionsCommand` after binary install.
+ * In a freshly opened window the install is still racing with whatever the user does next, so we
+ * also self-heal here: if the global setting is empty but the binaries already exist on disk
+ * (which they do once `installBinaries` finishes in any window), we run `setFunctionsCommand`
+ * synchronously and re-read the setting.
  */
 export function getFunctionsCommand(): string {
-  const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  let command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  if (!command) {
+    const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+    const funcBinariesPath = binariesLocation ? path.join(binariesLocation, funcDependencyName) : undefined;
+    if (funcBinariesPath && fs.existsSync(funcBinariesPath)) {
+      const candidate = path.join(funcBinariesPath, ext.funcCliPath);
+      if (fs.existsSync(candidate)) {
+        command = candidate;
+      }
+    }
+  }
+
   if (!command) {
     throw Error('Functions Core Tools Binary Path Setting is empty');
   }

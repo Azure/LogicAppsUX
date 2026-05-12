@@ -90,6 +90,51 @@ function rebuildExtensionsJson(extensionsDir) {
   console.log(`  ✓ Rebuilt extensions.json with ${entries.length} entries`);
 }
 
+function createLegacyProjectFixture(label) {
+  const legacyRoot = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-${label}-`));
+  const legacyDir = path.join(legacyRoot, 'legacy-project');
+  const legacyWfDir = path.join(legacyDir, 'testworkflow');
+  fs.mkdirSync(legacyWfDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(legacyDir, 'host.json'),
+    JSON.stringify(
+      { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(legacyDir, 'local.settings.json'),
+    JSON.stringify(
+      {
+        IsEncrypted: false,
+        Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
+      },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(legacyWfDir, 'workflow.json'),
+    JSON.stringify(
+      {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          actions: {},
+          triggers: {},
+          outputs: {},
+        },
+        kind: 'Stateful',
+      },
+      null,
+      2
+    )
+  );
+  console.log(`  Created legacy project at: ${legacyDir}`);
+  return legacyDir;
+}
+
 /**
  * Run async tasks with a concurrency limit.
  * Returns results in the same order as the input tasks.
@@ -976,53 +1021,12 @@ async function main() {
       }
 
       // Phase 4.8b: Open legacy project folder (no .code-workspace), click Yes
-      const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
-      // Create the legacy project for this test
-      const legacyWfDir = path.join(legacyDir, 'testworkflow');
-      if (!fs.existsSync(legacyWfDir)) {
-        fs.mkdirSync(legacyWfDir, { recursive: true });
-        fs.writeFileSync(
-          path.join(legacyDir, 'host.json'),
-          JSON.stringify(
-            { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
-            null,
-            2
-          )
-        );
-        fs.writeFileSync(
-          path.join(legacyDir, 'local.settings.json'),
-          JSON.stringify(
-            {
-              IsEncrypted: false,
-              Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
-            },
-            null,
-            2
-          )
-        );
-        fs.writeFileSync(
-          path.join(legacyWfDir, 'workflow.json'),
-          JSON.stringify(
-            {
-              definition: {
-                $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-                contentVersion: '1.0.0.0',
-                actions: {},
-                triggers: {},
-                outputs: {},
-              },
-              kind: 'Stateful',
-            },
-            null,
-            2
-          )
-        );
-        console.log(`  Created legacy project at: ${legacyDir}`);
-      }
+      const legacyDir = createLegacyProjectFixture('conversiononly');
       // Phase 4.8b: Enable dependency validation so extension fully activates
       // and shows the conversion dialog for legacy projects.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
       await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
       exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
       await new Promise((r) => setTimeout(r, 3000));
 
@@ -1069,6 +1073,21 @@ async function main() {
         `\n=== Conversion tests results: 4.8a=${exits[0]}, 4.8b=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${exits[3]}, 4.8e=${exits[4]} → exit ${finalExit} ===`
       );
       process.exit(finalExit);
+    }
+
+    if (e2eMode === 'conversioncreateonly') {
+      // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
+      // click Yes, then verify one Create click starts and completes workspace creation.
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+
+      const legacyDir = createLegacyProjectFixture('conversioncreateonly');
+
+      await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+      const phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
+      process.exit(phase8bExit);
     }
 
     if (e2eMode === 'createonly') {
@@ -1176,49 +1195,10 @@ async function main() {
     // to detect the legacy project and show the conversion dialog.
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
     let phase8bExit = 0;
-    const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
-    const legacyWfDir = path.join(legacyDir, 'testworkflow');
-    if (!fs.existsSync(legacyWfDir)) {
-      fs.mkdirSync(legacyWfDir, { recursive: true });
-      fs.writeFileSync(
-        path.join(legacyDir, 'host.json'),
-        JSON.stringify(
-          { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
-          null,
-          2
-        )
-      );
-      fs.writeFileSync(
-        path.join(legacyDir, 'local.settings.json'),
-        JSON.stringify(
-          {
-            IsEncrypted: false,
-            Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
-          },
-          null,
-          2
-        )
-      );
-      fs.writeFileSync(
-        path.join(legacyWfDir, 'workflow.json'),
-        JSON.stringify(
-          {
-            definition: {
-              $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-              contentVersion: '1.0.0.0',
-              actions: {},
-              triggers: {},
-              outputs: {},
-            },
-            kind: 'Stateful',
-          },
-          null,
-          2
-        )
-      );
-    }
+    const legacyDir = createLegacyProjectFixture('phase8b');
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase8b');
+    process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
     phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
     if (phase8bExit !== 0) console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
 
