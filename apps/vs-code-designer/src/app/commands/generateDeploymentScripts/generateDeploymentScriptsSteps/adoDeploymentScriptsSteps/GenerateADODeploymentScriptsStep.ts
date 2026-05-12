@@ -454,11 +454,12 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
           subscriptionId: "[parameters('subscriptionId')]",
           properties: {
             mode: 'Incremental',
+            expressionEvaluationOptions: {
+              scope: 'outer',
+            },
             template: {
               $schema: 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#',
               contentVersion: '1.0.0.0',
-              parameters: {},
-              variables: {},
               resources: [
                 {
                   apiVersion: '2024-02-02-preview',
@@ -674,21 +675,21 @@ jobs:
   - task: AzureLogicAppsHybridBuild@0
     displayName: 'Azure Logic Apps Hybrid Build'
     inputs:
-      sourceFolder: '\$(Build.SourcesDirectory)/\$(logicAppName)'
-      deploymentFolder: '\$(System.DefaultWorkingDirectory)/deployment/\$(logicAppName)/'
-      archiveFile: '\$(Build.ArtifactStagingDirectory)/\$(Build.BuildId).zip'
+      sourceFolder: '${'$'}(Build.SourcesDirectory)/${'$'}(logicAppName)'
+      deploymentFolder: '${'$'}(System.DefaultWorkingDirectory)/deployment/${'$'}(logicAppName)/'
+      archiveFile: '${'$'}(Build.ArtifactStagingDirectory)/${'$'}(Build.BuildId).zip'
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish logic app zip artifact'
     inputs:
-      targetPath: '\$(Build.ArtifactStagingDirectory)/\$(Build.BuildId).zip'
-      artifact: '\$(logicAppCIArtifactName)'
+      targetPath: '${'$'}(Build.ArtifactStagingDirectory)/${'$'}(Build.BuildId).zip'
+      artifact: '${'$'}(logicAppCIArtifactName)'
       publishLocation: 'pipeline'
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish infrastructure artifacts'
     inputs:
-      targetPath: '\$(Build.SourcesDirectory)/deployment/\$(logicAppName)/infrastructure'
+      targetPath: '${'$'}(Build.SourcesDirectory)/deployment/${'$'}(logicAppName)/infrastructure'
       artifact: 'infrastructure'
       publishLocation: 'pipeline'
 `;
@@ -718,7 +719,7 @@ resources:
 jobs:
 - deployment: deploy_hybrid_logicapp
   displayName: Deploy Hybrid Logic App
-  environment: \$(logicAppEnvironment)
+  environment: ${'$'}(logicAppEnvironment)
   strategy:
     runOnce:
       deploy:
@@ -727,36 +728,36 @@ jobs:
           displayName: 'Deploy Hybrid Logic App Infrastructure'
           inputs:
             deploymentScope: 'Resource Group'
-            azureResourceManagerConnection: '\$(azureServiceConnection)'
-            subscriptionId: '\$(subscriptionId)'
+            azureResourceManagerConnection: '${'$'}(azureServiceConnection)'
+            subscriptionId: '${'$'}(subscriptionId)'
             action: 'Create Or Update Resource Group'
-            resourceGroupName: '\$(resourceGroupName)'
-            location: '\$(location)'
+            resourceGroupName: '${'$'}(resourceGroupName)'
+            location: '${'$'}(location)'
             templateLocation: 'Linked artifact'
-            csmFile: '\$(Pipeline.Workspace)/cipipeline/infrastructure/hybrid-logicapp-template.json'
-            csmParametersFile: '\$(Pipeline.Workspace)/cipipeline/infrastructure/hybrid-logicapp-parameters.json'
+            csmFile: '${'$'}(Pipeline.Workspace)/cipipeline/infrastructure/hybrid-logicapp-template.json'
+            csmParametersFile: '${'$'}(Pipeline.Workspace)/cipipeline/infrastructure/hybrid-logicapp-parameters.json'
             overrideParameters: >-
-              -sqlConnectionString "\$(sqlConnectionString)"
-              -fileSharePassword "\$(fileSharePassword)"
-              -aadClientSecret "\$(aadClientSecret)"
+              -sqlConnectionString "${'$'}(sqlConnectionString)"
+              -fileSharePassword "${'$'}(fileSharePassword)"
+              -aadClientSecret "${'$'}(aadClientSecret)"
             deploymentMode: 'Incremental'
 
         - task: AzureLogicAppsHybridConnectionsDeployment@0
           displayName: 'Deploy Managed Connections'
           condition: eq(variables['deployConnections'], 'true')
           inputs:
-            connectedServiceName: '\$(azureServiceConnection)'
-            subscriptionId: '\$(subscriptionId)'
-            resourceGroupName: '\$(resourceGroupName)'
-            location: '\$(location)'
-            sourcePackagePath: '\$(Pipeline.Workspace)/cipipeline/\$(logicAppCIArtifactName)/\$(resources.pipeline.cipipeline.runID).zip'
-            outputPackagePath: '\$(Pipeline.Workspace)/cipipeline/\$(logicAppCIArtifactName)/\$(resources.pipeline.cipipeline.runID)-transformed.zip'
-            armTemplatePath: '\$(Pipeline.Workspace)/cipipeline/infrastructure'
+            connectedServiceName: '${'$'}(azureServiceConnection)'
+            subscriptionId: '${'$'}(subscriptionId)'
+            resourceGroupName: '${'$'}(resourceGroupName)'
+            location: '${'$'}(location)'
+            sourcePackagePath: '${'$'}(Pipeline.Workspace)/cipipeline/${'$'}(logicAppCIArtifactName)/${'$'}(resources.pipeline.cipipeline.runID).zip'
+            outputPackagePath: '${'$'}(Pipeline.Workspace)/cipipeline/${'$'}(logicAppCIArtifactName)/${'$'}(resources.pipeline.cipipeline.runID)-transformed.zip'
+            armTemplatePath: '${'$'}(Pipeline.Workspace)/cipipeline/infrastructure'
             deployConnections: true
 
         - script: |
-            transformedZip="\$(Pipeline.Workspace)/cipipeline/\$(logicAppCIArtifactName)/\$(resources.pipeline.cipipeline.runID)-transformed.zip"
-            originalZip="\$(Pipeline.Workspace)/cipipeline/\$(logicAppCIArtifactName)/\$(resources.pipeline.cipipeline.runID).zip"
+            transformedZip="${'$'}(Pipeline.Workspace)/cipipeline/${'$'}(logicAppCIArtifactName)/${'$'}(resources.pipeline.cipipeline.runID)-transformed.zip"
+            originalZip="${'$'}(Pipeline.Workspace)/cipipeline/${'$'}(logicAppCIArtifactName)/${'$'}(resources.pipeline.cipipeline.runID).zip"
             if [ -f "$transformedZip" ]; then
               echo "##vso[task.setvariable variable=deployPackagePath]$transformedZip"
             else
@@ -767,11 +768,11 @@ jobs:
         - task: AzureLogicAppsHybridRelease@0
           displayName: 'Azure Logic Apps Hybrid Release'
           inputs:
-            connectedServiceName: '\$(azureServiceConnection)'
-            hybridConnectionName: '\$(hybridServiceConnection)'
-            containerAppName: '\$(containerAppName)'
-            resourceGroupName: '\$(resourceGroupName)'
-            package: '\$(deployPackagePath)'
+            connectedServiceName: '${'$'}(azureServiceConnection)'
+            hybridConnectionName: '${'$'}(hybridServiceConnection)'
+            containerAppName: '${'$'}(containerAppName)'
+            resourceGroupName: '${'$'}(resourceGroupName)'
+            package: '${'$'}(deployPackagePath)'
 `;
 
     fs.writeFileSync(path.join(pipelinesFolder, 'CD-pipeline.yml'), cdPipelineContent);
