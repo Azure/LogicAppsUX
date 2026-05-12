@@ -75,7 +75,6 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     showRunHistory,
     hostOptions,
-    showConnectionsPanel,
     showEdgeDrawing,
     suppressDefaultNodeSelect,
     showPerformanceDebug,
@@ -301,7 +300,6 @@ const DesignerEditorConsumption = () => {
           readOnly,
           isMonitoringView,
           useLegacyWorkflowParameters: true,
-          showConnectionsPanel,
           showEdgeDrawing,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
@@ -359,7 +357,6 @@ const DesignerEditorConsumption = () => {
                   isDesignerView={designerView}
                   isUnitTest={false}
                   isMonitoringView={isMonitoringView}
-                  showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
                   toggleMonitoringView={toggleMonitoringView}
                   showRunHistory={showRunHistory}

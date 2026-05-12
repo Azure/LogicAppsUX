@@ -1,5 +1,6 @@
 import {
   getBundleVersionNumber,
+  getDependenciesVersion,
   getExtensionBundleFolder,
   getLatestVersionRange,
   addDefaultBundle,
@@ -222,6 +223,14 @@ describe('getExtensionBundleFolder', () => {
       // Should use the last occurrence
       expect(result).toBe('C:\\Path\\ExtensionBundles\\');
     });
+
+    it('should use the bundle ID fallback when ExtensionBundles is not followed by a separator', async () => {
+      mockedExecuteCommand.mockResolvedValue('C:\\Path\\ExtensionBundlesMicrosoft.Azure.Functions.ExtensionBundle\\1.0.0');
+
+      const result = await getExtensionBundleFolder();
+
+      expect(result).toBe('C:\\Path\\ExtensionBundles');
+    });
   });
 
   describe('error handling', () => {
@@ -250,6 +259,12 @@ describe('getExtensionBundleFolder', () => {
       await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
     });
 
+    it('should throw error when a path line cannot be parsed as an extension bundle path', async () => {
+      mockedExecuteCommand.mockResolvedValue('C:\\Path\\ExtensionBundles');
+
+      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+    });
+
     it('should handle executeCommand throwing an error', async () => {
       mockedExecuteCommand.mockRejectedValue(new Error('Command failed'));
 
@@ -266,6 +281,40 @@ describe('getExtensionBundleFolder', () => {
       mockedExecuteCommand.mockResolvedValue('   \n  \r\n  \n   ');
 
       await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+    });
+
+    it('should throw a friendly dependencies-not-ready error when getFunctionsCommand throws', async () => {
+      const funcVersionMod = await import('../funcCoreTools/funcVersion');
+      vi.mocked(funcVersionMod.getFunctionsCommand).mockImplementationOnce(() => {
+        throw new Error('Functions Core Tools Binary Path Setting is empty');
+      });
+
+      await expect(getExtensionBundleFolder()).rejects.toThrow(
+        'Logic Apps Standard runtime dependencies are still installing. Please wait a moment and try again.'
+      );
+      expect(mockedExecuteCommand).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('working directory selection', () => {
+    it('uses the provided workingDirectory when supplied', async () => {
+      const mockOutput =
+        'C:\\Users\\test\\.azure-functions-core-tools\\Functions\\ExtensionBundles\\Microsoft.Azure.Functions.ExtensionBundle.Workflows\\1.138.54\r\n';
+      mockedExecuteCommand.mockResolvedValue(mockOutput);
+
+      await getExtensionBundleFolder('/explicit/project/path');
+
+      expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/explicit/project/path', 'func', 'GetExtensionBundlePath');
+    });
+
+    it('falls back to the first workspace folder when no workingDirectory is provided', async () => {
+      const mockOutput =
+        'C:\\Users\\test\\.azure-functions-core-tools\\Functions\\ExtensionBundles\\Microsoft.Azure.Functions.ExtensionBundle.Workflows\\1.138.54\r\n';
+      mockedExecuteCommand.mockResolvedValue(mockOutput);
+
+      await getExtensionBundleFolder();
+
+      expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/mock/workspace', 'func', 'GetExtensionBundlePath');
     });
   });
 
@@ -404,6 +453,18 @@ describe('getBundleVersionNumber', () => {
     await expect(getBundleVersionNumber()).rejects.toThrow('Extension bundle could not be found.');
   });
 
+  it('forwards an explicit workingDirectory through to getExtensionBundleFolder', async () => {
+    const mockFolders = ['1.2.3'];
+    mockedFse.readdir.mockResolvedValue(mockFolders as any);
+    mockedFse.stat.mockImplementation(() => {
+      return Promise.resolve({ isDirectory: () => true } as any);
+    });
+
+    await getBundleVersionNumber('/explicit/project/path');
+
+    expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/explicit/project/path', 'func', 'GetExtensionBundlePath');
+  });
+
   it('should handle mixed version formats correctly', async () => {
     const mockFolders = ['1.0', '1.0.0', '1.0.0.1'];
     mockedFse.readdir.mockResolvedValue(mockFolders as any);
@@ -442,6 +503,26 @@ describe('getLatestVersionRange', () => {
   it('should return a valid semver range string', () => {
     const result = getLatestVersionRange();
     expect(result).toMatch(/^\[.*\)$/);
+  });
+});
+
+describe('getDependenciesVersion', () => {
+  it('loads dependency feed using a local settings source URI override', async () => {
+    const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
+    vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
+      Values: {
+        FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://bundles.example.com',
+      },
+    } as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue({ id: extensionBundleId } as any);
+    const context = { telemetry: { properties: {}, measurements: {} } };
+
+    await expect(getDependenciesVersion(context as any)).resolves.toEqual({ id: extensionBundleId });
+
+    expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
+      context,
+      `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
+    );
   });
 });
 

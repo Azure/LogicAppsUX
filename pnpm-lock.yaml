@@ -593,6 +593,9 @@ importers:
       '@types/mocha':
         specifier: ^10.0.10
         version: 10.0.10
+      '@types/semver':
+        specifier: ^7.5.0
+        version: 7.5.8
       '@types/vscode':
         specifier: 1.103.0
         version: 1.103.0
@@ -22552,7 +22555,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@20.12.7)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
 
   '@vitest/utils@3.2.4':
     dependencies:

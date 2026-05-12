@@ -1,15 +1,42 @@
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import * as fs from 'fs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { ext } from '../../../../extensionVariables';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
-import { createWorkspaceWebviewCommandHandler, type WorkspaceWebviewCommandConfig } from '../workspaceWebviewCommandHandler';
+import { createWorkspaceWebviewCommandHandler } from '../workspaceWebviewCommandHandler';
 
-vi.mock('../../../../localize', () => ({
-  localize: (_key: string, defaultValue: string, ...args: unknown[]) =>
-    defaultValue.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
+vi.mock('vscode', () => ({
+  ViewColumn: { Active: 1 },
+  Uri: { file: vi.fn((filePath: string) => ({ fsPath: filePath })) },
+  window: {
+    createWebviewPanel: vi.fn(),
+    showOpenDialog: vi.fn(),
+  },
+}));
+
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  callWithTelemetryAndErrorHandling: vi.fn(),
+}));
+
+vi.mock('fs', () => ({
+  existsSync: vi.fn(),
+  statSync: vi.fn(),
+}));
+
+vi.mock('../../../../extensionVariables', () => ({
+  ext: {
+    extensionVersion: '1.0.0',
+    context: {
+      extensionPath: '/extension',
+      subscriptions: [],
+    },
+    outputChannel: {
+      appendLog: vi.fn(),
+      appendLine: vi.fn(),
+      append: vi.fn(),
+    },
+  },
 }));
 
 vi.mock('../../../utils/codeless/common', () => ({
@@ -22,136 +49,246 @@ vi.mock('../../../utils/codeless/getWebViewHTML', () => ({
   getWebViewHTML: vi.fn(),
 }));
 
-function baseConfig(overrides: Partial<WorkspaceWebviewCommandConfig> = {}): WorkspaceWebviewCommandConfig {
-  return {
-    panelName: 'Create workspace',
-    panelGroupKey: 'createWorkspace',
-    projectName: ProjectName.createWorkspace,
-    createCommand: ExtensionCommand.createWorkspace,
-    createHandler: vi.fn(),
-    ...overrides,
+vi.mock('../../../../localize', () => ({
+  localize: (_key: string, defaultValue: string) => defaultValue,
+}));
+
+interface MockPanel {
+  webview: {
+    html: string;
+    onDidReceiveMessage: ReturnType<typeof vi.fn>;
+    postMessage: ReturnType<typeof vi.fn>;
   };
+  onDidDispose: ReturnType<typeof vi.fn>;
+  dispose: ReturnType<typeof vi.fn>;
+  iconPath?: unknown;
+  active?: boolean;
+  reveal?: ReturnType<typeof vi.fn>;
+}
+
+function createDeferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>((resolver) => {
+    resolve = resolver;
+  });
+  return { promise, resolve };
 }
 
 describe('createWorkspaceWebviewCommandHandler', () => {
-  let messageHandler: ((message: any) => Promise<void>) | undefined;
-  let disposeHandler: (() => void) | undefined;
-  let panel: any;
+  let panel: MockPanel;
+  let receivedMessageHandler: ((message: any) => Promise<void>) | undefined;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    messageHandler = undefined;
-    disposeHandler = undefined;
-    (ext as any).context = { extensionPath: 'D:\\extension', subscriptions: [] };
+    receivedMessageHandler = undefined;
     panel = {
-      active: true,
-      reveal: vi.fn(),
-      dispose: vi.fn(),
-      onDidDispose: vi.fn((callback: () => void) => {
-        disposeHandler = callback;
-      }),
       webview: {
         html: '',
-        asWebviewUri: vi.fn((uri: any) => uri),
-        onDidReceiveMessage: vi.fn((callback: (message: any) => Promise<void>) => {
-          messageHandler = callback;
+        onDidReceiveMessage: vi.fn((handler: (message: any) => Promise<void>) => {
+          receivedMessageHandler = handler;
         }),
         postMessage: vi.fn(),
       },
+      onDidDispose: vi.fn(),
+      dispose: vi.fn(),
     };
-    (vscode.window.createWebviewPanel as Mock).mockReturnValue(panel);
-    (vscode.window as any).showOpenDialog = vi.fn();
-    (getWebViewHTML as Mock).mockResolvedValue('<html />');
-    (tryGetWebviewPanel as Mock).mockReturnValue(undefined);
-    (fs.existsSync as Mock).mockReturnValue(false);
-    (fs as any).statSync = vi.fn();
+
+    vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
+    vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
+    vi.mocked(vscode.window.createWebviewPanel).mockReturnValue(panel as any);
+    vi.mocked(callWithTelemetryAndErrorHandling).mockImplementation(async (_eventName, callback: any) => {
+      try {
+        await callback({ telemetry: { properties: {}, measurements: {} } });
+      } catch {
+        // Match the extension helper behavior: errors are reported through telemetry and not rethrown.
+      }
+    });
   });
 
-  it('reveals an existing inactive panel instead of creating a new one', async () => {
-    const existingPanel = { active: false, reveal: vi.fn() };
-    (tryGetWebviewPanel as Mock).mockReturnValue(existingPanel);
+  async function createHandlerHarness(createHandler = vi.fn().mockResolvedValue(undefined), onResolve = vi.fn()) {
+    await createWorkspaceWebviewCommandHandler({
+      panelName: 'Create Workspace',
+      panelGroupKey: 'workspace',
+      projectName: 'LogicApp',
+      createCommand: ExtensionCommand.createWorkspaceStructure,
+      createHandler,
+      onResolve,
+    });
 
-    await createWorkspaceWebviewCommandHandler(baseConfig());
+    expect(receivedMessageHandler).toBeDefined();
+    return { createHandler, onResolve, sendMessage: receivedMessageHandler as (message: any) => Promise<void> };
+  }
 
-    expect(existingPanel.reveal).toHaveBeenCalledWith(vscode.ViewColumn.Active);
+  it('posts initialization data to the webview', async () => {
+    const { sendMessage } = await createHandlerHarness();
+
+    await sendMessage({ command: ExtensionCommand.initialize });
+
+    expect(panel.webview.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        command: ExtensionCommand.initialize_frame,
+        data: expect.objectContaining({
+          project: 'LogicApp',
+          hostVersion: '1.0.0',
+        }),
+      })
+    );
+    expect(cacheWebviewPanel).toHaveBeenCalledWith('workspace', 'Create Workspace', panel);
+  });
+
+  it('reveals an existing panel instead of creating another one', async () => {
+    const reveal = vi.fn();
+    vi.mocked(tryGetWebviewPanel).mockReturnValue({ active: false, reveal } as any);
+
+    await createWorkspaceWebviewCommandHandler({
+      panelName: 'Create Workspace',
+      panelGroupKey: 'workspace',
+      projectName: 'LogicApp',
+      createCommand: ExtensionCommand.createWorkspaceStructure,
+      createHandler: vi.fn(),
+    });
+
+    expect(reveal).toHaveBeenCalledWith(vscode.ViewColumn.Active);
     expect(vscode.window.createWebviewPanel).not.toHaveBeenCalled();
   });
 
-  it('initializes, validates, selects paths, and invokes the configured create handler', async () => {
-    const createHandler = vi.fn().mockResolvedValue(undefined);
+  it('ignores duplicate create messages while creation is in progress', async () => {
+    const deferred = createDeferred();
+    const createHandler = vi.fn().mockReturnValue(deferred.promise);
+    const { sendMessage } = await createHandlerHarness(createHandler);
+
+    const firstCreate = sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
+    const secondCreate = sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
+
+    expect(createHandler).toHaveBeenCalledTimes(1);
+    deferred.resolve();
+    await Promise.all([firstCreate, secondCreate]);
+    expect(panel.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets the in-progress guard after a failed create so the user can retry', async () => {
+    const createHandler = vi.fn().mockRejectedValueOnce(new Error('create failed')).mockResolvedValueOnce(undefined);
     const onResolve = vi.fn();
-    const config = baseConfig({
-      createHandler,
-      onResolve,
-      extraInitializeData: { workspaceName: 'MyWorkspace' },
-      dialogOptions: {
-        workspace: { canSelectMany: false, openLabel: 'Pick workspace' },
-        package: { canSelectMany: false, openLabel: 'Pick package', filters: { Packages: ['zip'] } },
-      },
-    });
+    const { sendMessage } = await createHandlerHarness(createHandler, onResolve);
 
-    await createWorkspaceWebviewCommandHandler(config);
+    await sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
+    await sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
 
-    expect(vscode.window.createWebviewPanel).toHaveBeenCalledWith('CreateWorkspace', 'Create workspace', vscode.ViewColumn.Active, {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-    });
-    expect(panel.webview.html).toBe('<html />');
-    expect(cacheWebviewPanel).toHaveBeenCalledWith('createWorkspace', 'Create workspace', panel);
+    expect(createHandler).toHaveBeenCalledTimes(2);
+    expect(onResolve).toHaveBeenCalledWith(true);
+    expect(panel.dispose).toHaveBeenCalledTimes(1);
+  });
 
-    await messageHandler?.({ command: ExtensionCommand.initialize });
-    expect(panel.webview.postMessage).toHaveBeenCalledWith({
-      command: ExtensionCommand.initialize_frame,
-      data: expect.objectContaining({
-        apiVersion: '2021-03-01',
-        project: ProjectName.createWorkspace,
-        hostVersion: ext.extensionVersion,
-        workspaceName: 'MyWorkspace',
-      }),
-    });
+  it('removes the cached panel when disposed', async () => {
+    await createHandlerHarness();
+    const disposeHandler = vi.mocked(panel.onDidDispose).mock.calls[0][0];
 
-    (vscode.window.showOpenDialog as Mock).mockResolvedValue([{ fsPath: 'D:\\selected', path: '\\selected' }]);
-    await messageHandler?.({ command: ExtensionCommand.select_folder });
-    expect(vscode.window.showOpenDialog).toHaveBeenCalledWith(config.dialogOptions?.workspace);
+    disposeHandler();
+
+    expect(removeWebviewPanelFromCache).toHaveBeenCalledWith('workspace', 'Create Workspace');
+  });
+
+  it('resolves with false when disposed before the user invokes create', async () => {
+    const onResolve = vi.fn();
+    await createHandlerHarness(vi.fn().mockResolvedValue(undefined), onResolve);
+    const disposeHandler = vi.mocked(panel.onDidDispose).mock.calls[0][0];
+
+    disposeHandler();
+
+    expect(onResolve).toHaveBeenCalledWith(false);
+  });
+
+  it('posts folder and package selections back to the webview', async () => {
+    const { sendMessage } = await createHandlerHarness();
+    vi.mocked(vscode.window.showOpenDialog)
+      .mockResolvedValueOnce([{ fsPath: 'C:\\workspace', path: '/workspace' }] as any)
+      .mockResolvedValueOnce([{ fsPath: 'C:\\Downloads\\package.zip', path: '/Downloads/package.zip' }] as any);
+
+    await sendMessage({ command: ExtensionCommand.select_folder });
+    await sendMessage({ command: ExtensionCommand.update_package_path });
+
     expect(panel.webview.postMessage).toHaveBeenCalledWith({
       command: ExtensionCommand.update_workspace_path,
-      data: { targetDirectory: { fsPath: 'D:\\selected', path: '\\selected' } },
+      data: {
+        targetDirectory: {
+          fsPath: 'C:\\workspace',
+          path: '/workspace',
+        },
+      },
+    });
+    expect(panel.webview.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.update_package_path,
+      data: {
+        targetDirectory: {
+          fsPath: 'C:\\Downloads\\package.zip',
+          path: '/Downloads/package.zip',
+        },
+      },
+    });
+  });
+
+  it('validates folder, file, package, and invalid paths', async () => {
+    const fs = await import('fs');
+    const { sendMessage } = await createHandlerHarness();
+    vi.mocked(fs.existsSync).mockImplementation((pathToValidate: any) => pathToValidate !== 'missing');
+    vi.mocked(fs.statSync).mockImplementation((pathToValidate: any) => {
+      const value = String(pathToValidate);
+      return {
+        isDirectory: () => value.includes('folder'),
+        isFile: () => value.includes('file') || value.includes('package'),
+      } as any;
     });
 
-    (fs.existsSync as Mock).mockReturnValue(true);
-    (fs as any).statSync.mockReturnValue({ isDirectory: () => false, isFile: () => true });
-    await messageHandler?.({
+    await sendMessage({
       command: ExtensionCommand.validatePath,
-      data: { path: 'D:\\package.zip', type: ExtensionCommand.package_file },
+      data: { path: 'C:\\folder', type: ExtensionCommand.workspace_folder },
+    });
+    await sendMessage({
+      command: ExtensionCommand.validatePath,
+      data: { path: 'C:\\file.workflow', type: ExtensionCommand.workspace_file },
+    });
+    await sendMessage({
+      command: ExtensionCommand.validatePath,
+      data: { path: 'C:\\package.zip', type: ExtensionCommand.package_file },
+    });
+    await sendMessage({
+      command: ExtensionCommand.validatePath,
+      data: { path: 'missing' },
+    });
+
+    expect(panel.webview.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.workspace_existence_result,
+      data: {
+        project: 'LogicApp',
+        workspacePath: 'C:\\folder',
+        exists: true,
+        type: ExtensionCommand.workspace_folder,
+      },
+    });
+    expect(panel.webview.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.workspace_existence_result,
+      data: {
+        project: 'LogicApp',
+        workspacePath: 'C:\\file.workflow',
+        exists: true,
+        type: ExtensionCommand.workspace_file,
+      },
     });
     expect(panel.webview.postMessage).toHaveBeenCalledWith({
       command: ExtensionCommand.package_existence_result,
       data: {
-        project: ProjectName.createWorkspace,
-        path: 'D:\\package.zip',
+        project: 'LogicApp',
+        path: 'C:\\package.zip',
         isValid: true,
       },
     });
-
-    await messageHandler?.({
-      command: ExtensionCommand.createWorkspace,
-      data: { workspaceName: 'MyWorkspace' },
-      _diagnostics: { source: 'test' },
+    expect(panel.webview.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.validatePath,
+      data: {
+        project: 'LogicApp',
+        path: 'missing',
+        isValid: false,
+      },
     });
-    expect(createHandler).toHaveBeenCalledWith(expect.objectContaining({ telemetry: expect.any(Object) }), {
-      workspaceName: 'MyWorkspace',
-    });
-    expect(onResolve).toHaveBeenCalledWith(true);
-    expect(panel.dispose).toHaveBeenCalled();
-  });
-
-  it('removes cached panels and resolves false when the panel is disposed', async () => {
-    const onResolve = vi.fn();
-    await createWorkspaceWebviewCommandHandler(baseConfig({ onResolve }));
-
-    disposeHandler?.();
-
-    expect(removeWebviewPanelFromCache).toHaveBeenCalledWith('createWorkspace', 'Create workspace');
-    expect(onResolve).toHaveBeenCalledWith(false);
   });
 });

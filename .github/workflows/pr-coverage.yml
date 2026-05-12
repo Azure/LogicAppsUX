@@ -140,6 +140,10 @@ jobs:
             # Store assembly and webview app composition are covered by lower-level unit tests and E2E
             apps/vs-code-react/src/state/store.ts
             apps/vs-code-react/src/app/designer/appV2.tsx
+            # VS Code overview React shell (orchestration glue; meaningful logic
+            # lives in overview/runtime.ts, services/workflowService.ts, and
+            # shared helpers, all of which are unit-tested).
+            apps/vs-code-react/src/app/overview/app.tsx
             # VS Code extension E2E and UI test harness files
             apps/vs-code-designer/src/test/e2e/**
             apps/vs-code-designer/src/test/ui/**

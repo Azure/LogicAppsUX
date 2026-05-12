@@ -46,6 +46,7 @@ const mocks = vi.hoisted(() => {
     getLocalSettingsJson: vi.fn().mockResolvedValue({ Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } }),
     getLogicAppProjectRoot: vi.fn().mockResolvedValue('D:\\project'),
     getRequestTriggerName: vi.fn(),
+    getRunTriggerName: vi.fn().mockReturnValue('manual'),
     getStandardAppData: vi.fn((workflowName: string, workflowContent: any) => ({
       name: workflowName,
       kind: workflowContent?.kind ?? 'Stateful',
@@ -90,6 +91,7 @@ vi.mock('fs', () => ({
 
 vi.mock('@microsoft/logic-apps-shared', () => ({
   getRequestTriggerName: mocks.getRequestTriggerName,
+  getRunTriggerName: mocks.getRunTriggerName,
   getTriggerName: mocks.getTriggerName,
   HTTP_METHODS: {
     GET: 'GET',
@@ -252,6 +254,7 @@ describe('openOverview', () => {
     mocks.getLocalSettingsJson.mockResolvedValue({ Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } });
     mocks.getLogicAppProjectRoot.mockResolvedValue('D:\\project');
     mocks.getRequestTriggerName.mockReturnValue('manual');
+    mocks.getRunTriggerName.mockReturnValue('manual');
     mocks.getTriggerName.mockReturnValue('manual');
     mocks.isRuntimeUp.mockResolvedValue(true);
     mocks.readdirSync.mockReturnValue([]);
@@ -502,6 +505,7 @@ describe('openOverview', () => {
 
   it('uses the management run endpoint for codeless local workflows without request triggers', async () => {
     mocks.getRequestTriggerName.mockReturnValue(undefined);
+    mocks.getRunTriggerName.mockReturnValue('recurrence');
     mocks.getTriggerName.mockReturnValue('recurrence');
     mockWorkflowJson({
       triggers: {

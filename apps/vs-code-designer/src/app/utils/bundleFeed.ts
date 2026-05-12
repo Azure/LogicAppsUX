@@ -276,13 +276,13 @@ export function resetCachedBundleVersion(): void {
  * @returns {Promise<string>} A promise that resolves to the highest bundle version number as a string (e.g., "1.2.3").
  * @throws {Error} If the extension bundle folder is missing or contains no subdirectories.
  */
-export async function getBundleVersionNumber(): Promise<string> {
+export async function getBundleVersionNumber(workingDirectory?: string): Promise<string> {
   // Return cached version if available (saves ~450ms on subsequent calls)
   if (cachedBundleVersion) {
     return cachedBundleVersion;
   }
 
-  const bundleFolderRoot = await getExtensionBundleFolder();
+  const bundleFolderRoot = await getExtensionBundleFolder(workingDirectory);
   const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
   let bundleVersionNumber = '0.0.0';
 
@@ -305,16 +305,34 @@ export async function getBundleVersionNumber(): Promise<string> {
 
 /**
  * Gets extension bundle folder path.
+ * @param workingDirectory Optional directory to run `func GetExtensionBundlePath` in. When omitted,
+ *   falls back to the first VS Code workspace folder. Callers that already know the Logic App
+ *   project root should pass it in to avoid resolving against an unrelated folder (for example,
+ *   a custom-code subproject that was sorted first by the workspace).
  * @returns {string} Extension bundle folder path.
  */
-export async function getExtensionBundleFolder(): Promise<string> {
-  const command = getFunctionsCommand();
+export async function getExtensionBundleFolder(workingDirectory?: string): Promise<string> {
+  let command: string;
+  try {
+    command = getFunctionsCommand();
+  } catch (commandError) {
+    const dependenciesNotReadyError = new Error(
+      localize('dependenciesNotReady', 'Logic Apps Standard runtime dependencies are still installing. Please wait a moment and try again.')
+    );
+    if (ext.outputChannel) {
+      ext.outputChannel.appendLog(dependenciesNotReadyError.message);
+      ext.outputChannel.appendLog(JSON.stringify(commandError));
+      ext.telemetryReporter?.sendTelemetryEvent('bundleDependenciesNotReady', { value: dependenciesNotReadyError.message });
+    }
+    throw dependenciesNotReadyError;
+  }
+
   const outputChannel = ext.outputChannel;
-  const workingDirectory = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  const resolvedWorkingDirectory = workingDirectory ?? vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   let extensionBundlePath = '';
   try {
-    const result = await executeCommand(outputChannel, workingDirectory, command, 'GetExtensionBundlePath');
+    const result = await executeCommand(outputChannel, resolvedWorkingDirectory, command, 'GetExtensionBundlePath');
 
     // Split by newlines and find the line that contains the actual path
     const lines = result

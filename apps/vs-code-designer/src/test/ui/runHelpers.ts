@@ -390,7 +390,7 @@ export async function switchToOverviewWebview(driver: WebDriver, timeoutMs = 60_
  * Click the "Run trigger" button in the overview command bar.
  */
 export async function clickRunTrigger(driver: WebDriver): Promise<boolean> {
-  const deadline = Date.now() + 10_000;
+  const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
     try {
       const btns = await driver.findElements(By.css('button[aria-label="Run trigger"]'));

@@ -7,7 +7,7 @@ import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType, resetState } from '../../state/createWorkspaceSlice';
+import { nextStep, previousStep, setCurrentStep, setFlowType, setLoading, resetState } from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
@@ -423,6 +423,10 @@ const CreateWorkspaceInternal = () => {
   };
 
   const handleCreate = () => {
+    if (isLoading) {
+      return;
+    }
+
     // Validate that required paths exist before proceeding
     const requirements = getValidationRequirements(flowType, logicAppType);
 
@@ -450,6 +454,8 @@ const CreateWorkspaceInternal = () => {
       logicAppType,
       flowType,
     });
+
+    dispatch(setLoading(true));
 
     const baseData = {
       workspaceProjectPath,

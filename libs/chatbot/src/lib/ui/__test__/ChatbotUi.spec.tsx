@@ -15,21 +15,29 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
-    ChatInput: React.forwardRef(({ query, onQueryChange, placeholder, disabled, submitButtonProps }: any, ref: any) => (
-      <div data-testid="chat-input">
-        <input
-          ref={ref}
-          data-testid="chat-input-field"
-          value={query}
-          onChange={(e) => onQueryChange?.(e, e.target.value)}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
-        <button data-testid="submit-button" disabled={submitButtonProps?.disabled} onClick={submitButtonProps?.onClick}>
-          {submitButtonProps?.title}
-        </button>
-      </div>
-    )),
+    ChatInput: React.forwardRef(
+      ({ query, onQueryChange, placeholder, disabled, submitButtonProps, isGenerating, onStopClick }: any, ref: any) => (
+        <div data-testid="chat-input">
+          <input
+            ref={ref}
+            data-testid="chat-input-field"
+            value={query}
+            onChange={(e) => onQueryChange?.(e, e.target.value)}
+            placeholder={placeholder}
+            disabled={disabled}
+          />
+          {isGenerating && onStopClick ? (
+            <button data-testid="stop-button" onClick={onStopClick}>
+              Stop
+            </button>
+          ) : (
+            <button data-testid="submit-button" disabled={submitButtonProps?.disabled} onClick={submitButtonProps?.onClick}>
+              {submitButtonProps?.title}
+            </button>
+          )}
+        </div>
+      )
+    ),
     ChatSuggestion: ({ text, onClick }: any) => (
       <button data-testid={`suggestion-${text}`} onClick={onClick}>
         {text}
@@ -189,14 +197,14 @@ describe('ui/ChatbotUi/ChatbotUI', () => {
       expect(onSubmit).toHaveBeenCalledWith('Test query here');
     });
 
-    it('should disable submit when answer generation is in progress', () => {
+    it('should show stop button instead of submit when answer generation is in progress', () => {
       const props = createDefaultProps({
         body: { messages: [], focus: false, answerGenerationInProgress: true, setFocus: vi.fn() },
       });
       renderWithProviders(<ChatbotUI {...props} />);
 
-      const submitButton = screen.getByTestId('submit-button');
-      expect(submitButton.getAttribute('disabled')).not.toBeNull();
+      expect(screen.queryByTestId('submit-button')).toBeNull();
+      expect(screen.getByTestId('stop-button')).toBeDefined();
     });
 
     it('should disable input when answer generation is in progress', () => {

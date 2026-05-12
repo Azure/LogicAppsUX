@@ -30,6 +30,7 @@ import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
+import { shouldUpdateOverviewCallbackInfo } from './overviewCallbackInfo';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -410,7 +411,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
                 callbackInfo = workflowPropertiesList?.[0]?.callbackInfo;
               } else if (getCallbackInfo) {
                 const updatedCallbackInfo = await getCallbackInfo(baseUrl);
-                if (updatedCallbackInfo?.value !== callbackInfo?.value || updatedCallbackInfo?.basePath !== callbackInfo?.basePath) {
+                if (shouldUpdateOverviewCallbackInfo(callbackInfo, updatedCallbackInfo)) {
                   callbackInfo = updatedCallbackInfo;
                   panel.webview.postMessage({
                     command: ExtensionCommand.update_callback_info,
