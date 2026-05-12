@@ -265,7 +265,138 @@ git unhide-agents     # ONLY in agent-dev
 
 # 🎯 Outcome
 
-- ✅ Clean PRs (no agent noise)
-- ✅ Local agent flexibility
-- ✅ Centralized agent evolution
-- ✅ No accidental commits
+
+# ✅✅ Update `agent-dev` with latest `main` (using rebase)
+
+## 🔥 Exact commands
+
+```bash
+cd ../la-agent-dev   # or wherever your agent-dev worktree is
+
+git fetch origin
+
+git checkout agent-dev
+
+git rebase origin/main
+```
+
+---
+
+# 🧠 What this actually does
+
+```text
+Before:
+main ──────●─────●─────●
+              \
+agent-dev       ●─────●
+
+After rebase:
+main ──────●─────●─────●
+                          \
+agent-dev                   ●─────●
+```
+
+👉 Your `agent-dev` commits are **replayed on top of latest `main`**
+
+---
+
+# ⚠️ If there are conflicts (you will hit this eventually)
+
+### Step 1 — resolve conflicts (likely in `.github` / `.squad`)
+
+```bash
+# fix files manually
+git add .
+```
+
+### Step 2 — continue
+
+```bash
+git rebase --continue
+```
+
+### Repeat until done
+
+---
+
+# ✅ Push the rebased branch
+
+Since history changed:
+
+```bash
+git push --force-with-lease
+```
+
+👉 **IMPORTANT:** always use `--force-with-lease`, not `--force`
+
+---
+
+# 🧠 Why you want rebase (for your setup)
+
+Given your agent workflow:
+
+*   `agent-dev` = **source of truth for agents**
+*   feature branches = **consume agents**
+
+Rebasing gives you:
+
+✅ Linear history  
+✅ Agents always built on latest `main`  
+✅ No merge commits polluting agent history
+
+---
+
+# ⚡ Recommended alias (you’ll use this a lot)
+
+```bash
+git config --global alias.sync-agent-dev "!f() { \
+  git fetch origin && \
+  git checkout agent-dev && \
+  git rebase origin/main && \
+  git push --force-with-lease; \
+}; f"
+```
+
+---
+
+## ✅ Usage
+
+```bash
+git sync-agent-dev
+```
+
+---
+
+# ⚠️ Important gotcha (specific to YOU)
+
+Since `.github/` and `.squad/` are:
+
+*   heavily modified in `agent-dev`
+*   rarely changed in `main`
+
+👉 If conflicts happen:
+
+**Always prefer `agent-dev` version unless main has intentional updates**
+
+Quick resolution shortcut:
+
+```bash
+git checkout --ours .github .squad
+git add .
+git rebase --continue
+```
+
+---
+
+# ✅ TL;DR
+
+```bash
+git checkout agent-dev
+git fetch origin
+git rebase origin/main
+git push --force-with-lease
+```
+
+---
+
+If you want next step: I can give you a **one-command version that also re-hides agents after rebase + validates no accidental changes slipped in** (fits perfectly into your workflow).
