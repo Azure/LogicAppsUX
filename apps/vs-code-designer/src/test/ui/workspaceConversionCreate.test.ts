@@ -173,6 +173,7 @@ async function waitForCreateWorkspaceDialog(driver: WebDriver, timeoutMs = 60_00
 /** Verify one Create click starts work instead of requiring repeated clicks. */
 async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorkspaceFile: string, timeoutMs = 15_000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
+  let lastButtonState = '';
   while (Date.now() < deadline) {
     if (fs.existsSync(expectedWorkspaceFile)) {
       console.log('[createWs] Workspace file already exists after single Create click');
@@ -181,12 +182,13 @@ async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorksp
 
     try {
       const buttons = await driver.findElements(
-        By.xpath('//button[contains(normalize-space(.), "Create") or contains(normalize-space(.), "Creating")]')
+        By.xpath('//button[normalize-space(.) = "Create workspace" or normalize-space(.) = "Creating..."]')
       );
       for (const button of buttons) {
         const text = await button.getText().catch(() => '');
         const disabled = await button.getAttribute('disabled').catch(() => null);
         const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+        lastButtonState = `text="${text}", disabled=${disabled}, aria=${ariaDisabled}`;
 
         if (disabled !== null || ariaDisabled === 'true' || text.toLowerCase().includes('creating')) {
           console.log(`[createWs] Single Create click entered pending state: text="${text}", disabled=${disabled}, aria=${ariaDisabled}`);
@@ -200,6 +202,8 @@ async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorksp
     await sleep(250);
   }
 
+  console.log(`[createWs] Create did not enter pending state. Last button state: ${lastButtonState || 'not found'}`);
+  console.log(`[createWs] Wizard diagnostics after Create click: ${await getWizardDiagnostics(driver)}`);
   assert.fail('A single Create click did not start workspace creation or enter pending UI state');
 }
 
@@ -207,6 +211,25 @@ async function waitForButtonByText(driver: WebDriver, label: string, timeoutMs =
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     const buttons = await driver.findElements(By.xpath(`//button[contains(normalize-space(.), "${label}")]`));
+    for (const button of buttons) {
+      const disabled = await button.getAttribute('disabled').catch(() => null);
+      const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+      const isDisplayed = await button.isDisplayed().catch(() => false);
+      const isEnabled = await button.isEnabled().catch(() => false);
+      if (isDisplayed && isEnabled && disabled === null && ariaDisabled !== 'true') {
+        return button;
+      }
+    }
+    await sleep(250);
+  }
+
+  assert.fail(`Unable to find enabled "${label}" button`);
+}
+
+async function waitForButtonByExactText(driver: WebDriver, label: string, timeoutMs = 10_000): Promise<WebElement> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.xpath(`//button[normalize-space(.) = ${toXPathLiteral(label)}]`));
     for (const button of buttons) {
       const disabled = await button.getAttribute('disabled').catch(() => null);
       const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
@@ -770,14 +793,15 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     // ── Step 6: Click 'Create workspace' button exactly once ──
     try {
       await dismissOuterNotificationsAndReturnToWebview(driver, webview);
-      const createBtn = await waitForButtonByText(driver, 'Create');
+      const createBtn = await waitForButtonByExactText(driver, 'Create workspace');
       const disabledBeforeClick = await createBtn.getAttribute('disabled').catch(() => null);
       const ariaDisabledBeforeClick = await createBtn.getAttribute('aria-disabled').catch(() => null);
       assert.strictEqual(disabledBeforeClick, null, 'Create button should not have disabled attribute before clicking');
       assert.notStrictEqual(ariaDisabledBeforeClick, 'true', 'Create button should not be aria-disabled before clicking');
 
-      await driver.actions().move({ origin: createBtn }).click().perform();
-      console.log('[createWs] Clicked Create workspace once');
+      await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', createBtn).catch(() => undefined);
+      await driver.executeScript('arguments[0].click();', createBtn);
+      console.log('[createWs] Clicked exact Create workspace button once');
       await waitForSingleCreateClickToStart(driver, expectedWsFile);
       await sleep(5000); // Wait for workspace creation
       await captureScreenshot(driver, 'create-ws-after-create', EXPLICIT_SCREENSHOT_DIR);
