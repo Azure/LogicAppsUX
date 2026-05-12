@@ -22,12 +22,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as assert from 'assert';
-import { Workbench, WebView, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
+import { WebView, type WebDriver, type WebElement, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissNotifications, openFolderInSession } from './helpers';
 
 const TEST_TIMEOUT = 180_000;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_VERSION = '[1.*, 2.0.0)';
+const TYPE_SETTLE = 300;
 
 const EXPLICIT_SCREENSHOT_DIR = path.join(
   process.env.TEMP || process.cwd(),
@@ -172,6 +173,7 @@ async function waitForCreateWorkspaceDialog(driver: WebDriver, timeoutMs = 60_00
 /** Verify one Create click starts work instead of requiring repeated clicks. */
 async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorkspaceFile: string, timeoutMs = 15_000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
+  let lastButtonState = '';
   while (Date.now() < deadline) {
     if (fs.existsSync(expectedWorkspaceFile)) {
       console.log('[createWs] Workspace file already exists after single Create click');
@@ -180,12 +182,13 @@ async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorksp
 
     try {
       const buttons = await driver.findElements(
-        By.xpath('//button[contains(normalize-space(.), "Create") or contains(normalize-space(.), "Creating")]')
+        By.xpath('//button[normalize-space(.) = "Create workspace" or normalize-space(.) = "Creating..."]')
       );
       for (const button of buttons) {
         const text = await button.getText().catch(() => '');
         const disabled = await button.getAttribute('disabled').catch(() => null);
         const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+        lastButtonState = `text="${text}", disabled=${disabled}, aria=${ariaDisabled}`;
 
         if (disabled !== null || ariaDisabled === 'true' || text.toLowerCase().includes('creating')) {
           console.log(`[createWs] Single Create click entered pending state: text="${text}", disabled=${disabled}, aria=${ariaDisabled}`);
@@ -199,6 +202,8 @@ async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorksp
     await sleep(250);
   }
 
+  console.log(`[createWs] Create did not enter pending state. Last button state: ${lastButtonState || 'not found'}`);
+  console.log(`[createWs] Wizard diagnostics after Create click: ${await getWizardDiagnostics(driver)}`);
   assert.fail('A single Create click did not start workspace creation or enter pending UI state');
 }
 
@@ -219,6 +224,233 @@ async function waitForButtonByText(driver: WebDriver, label: string, timeoutMs =
   }
 
   assert.fail(`Unable to find enabled "${label}" button`);
+}
+
+async function waitForButtonByExactText(driver: WebDriver, label: string, timeoutMs = 10_000): Promise<WebElement> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.xpath(`//button[normalize-space(.) = ${toXPathLiteral(label)}]`));
+    for (const button of buttons) {
+      const disabled = await button.getAttribute('disabled').catch(() => null);
+      const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+      const isDisplayed = await button.isDisplayed().catch(() => false);
+      const isEnabled = await button.isEnabled().catch(() => false);
+      if (isDisplayed && isEnabled && disabled === null && ariaDisabled !== 'true') {
+        return button;
+      }
+    }
+    await sleep(250);
+  }
+
+  assert.fail(`Unable to find enabled "${label}" button`);
+}
+
+function toXPathLiteral(value: string): string {
+  if (!value.includes("'")) {
+    return `'${value}'`;
+  }
+
+  if (!value.includes('"')) {
+    return `"${value}"`;
+  }
+
+  const parts = value.split("'");
+  return `concat(${parts
+    .map((part, index) => {
+      const literals = [];
+      if (part) {
+        literals.push(`'${part}'`);
+      }
+      if (index < parts.length - 1) {
+        literals.push(`"'"`);
+      }
+      return literals.join(', ');
+    })
+    .filter(Boolean)
+    .join(', ')})`;
+}
+
+async function findInputByLabel(driver: WebDriver, labelText: string): Promise<WebElement> {
+  const labels = await driver.findElements(By.xpath(`//label[contains(text(), ${toXPathLiteral(labelText)})]`));
+  const visibleLabels: WebElement[] = [];
+  for (const label of labels) {
+    try {
+      if (await label.isDisplayed()) {
+        visibleLabels.push(label);
+      }
+    } catch {
+      // Ignore stale/non-rendered labels
+    }
+  }
+
+  const candidateLabels = visibleLabels.length > 0 ? visibleLabels : labels;
+  const exactLabels: WebElement[] = [];
+  for (const label of candidateLabels) {
+    try {
+      const text = (await label.getText()).trim();
+      const afterMatch = text.substring(labelText.length);
+      if (afterMatch === '' || /^[\s*]/.test(afterMatch)) {
+        exactLabels.push(label);
+      }
+    } catch {
+      // Ignore stale/non-rendered labels
+    }
+  }
+
+  const labelsToSearch = exactLabels.length > 0 ? exactLabels : candidateLabels;
+
+  for (const label of labelsToSearch) {
+    try {
+      const forAttr = await label.getAttribute('for');
+      if (forAttr) {
+        const inputs = await driver.findElements(By.id(forAttr));
+        for (const input of inputs) {
+          try {
+            if (await input.isDisplayed()) {
+              return input;
+            }
+          } catch {
+            // Try next input
+          }
+        }
+        if (inputs.length > 0) {
+          return inputs[0];
+        }
+      }
+    } catch {
+      // Try next label
+    }
+  }
+
+  for (const label of labelsToSearch) {
+    let container: WebElement;
+    try {
+      container = await label.findElement(By.xpath('..'));
+    } catch {
+      continue;
+    }
+    for (let depth = 0; depth < 3; depth++) {
+      let inputs: WebElement[] = [];
+      try {
+        inputs = await container.findElements(By.css('input'));
+      } catch {
+        break;
+      }
+      for (const input of inputs) {
+        try {
+          if (await input.isDisplayed()) {
+            return input;
+          }
+        } catch {
+          // Try next input
+        }
+      }
+      if (inputs.length > 0) {
+        return inputs[0];
+      }
+
+      try {
+        container = await container.findElement(By.xpath('..'));
+      } catch {
+        break;
+      }
+    }
+  }
+
+  const ariaInputs = await driver.findElements(By.css(`input[aria-label="${labelText}"]`));
+  for (const input of ariaInputs) {
+    try {
+      if (await input.isDisplayed()) {
+        return input;
+      }
+    } catch {
+      // Try next input
+    }
+  }
+  if (ariaInputs.length > 0) {
+    return ariaInputs[0];
+  }
+
+  throw new Error(`Could not find input for label "${labelText}"`);
+}
+
+async function clearAndType(driver: WebDriver, element: WebElement, text: string): Promise<void> {
+  await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', element).catch(() => undefined);
+  try {
+    await element.click();
+  } catch {
+    await driver.executeScript('arguments[0].click();', element);
+  }
+  await sleep(100);
+  await element.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE);
+  await sleep(100);
+  await element.sendKeys(text);
+  await driver
+    .executeScript(
+      'arguments[0].dispatchEvent(new Event("input", { bubbles: true })); arguments[0].dispatchEvent(new Event("change", { bubbles: true })); arguments[0].blur();',
+      element
+    )
+    .catch(() => undefined);
+  await sleep(TYPE_SETTLE);
+}
+
+async function getInputValue(input: WebElement): Promise<string> {
+  return (await input.getAttribute('value').catch(() => '')) ?? '';
+}
+
+async function waitForLabeledInputValue(driver: WebDriver, labelText: string, expectedValue: string, timeoutMs = 5_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  let lastValue = '';
+  while (Date.now() < deadline) {
+    const input = await findInputByLabel(driver, labelText);
+    lastValue = await getInputValue(input);
+    if (lastValue === expectedValue) {
+      return;
+    }
+    await sleep(250);
+  }
+
+  throw new Error(`Input "${labelText}" value did not settle. Expected "${expectedValue}", got "${lastValue}"`);
+}
+
+async function getWizardDiagnostics(driver: WebDriver): Promise<string> {
+  return await driver
+    .executeScript<string>(`
+      const labels = Array.from(document.querySelectorAll('label')).map((label) => {
+        const htmlFor = label.getAttribute('for');
+        const input = htmlFor ? document.getElementById(htmlFor) : label.closest('[class*="field"], div')?.querySelector('input');
+        return {
+          label: (label.textContent || '').trim(),
+          value: input && 'value' in input ? input.value : undefined,
+          disabled: input ? input.disabled : undefined,
+          ariaDisabled: input ? input.getAttribute('aria-disabled') : undefined,
+        };
+      });
+      const buttons = Array.from(document.querySelectorAll('button')).map((button) => ({
+        text: (button.textContent || '').trim(),
+        disabled: button.disabled,
+        ariaDisabled: button.getAttribute('aria-disabled'),
+      }));
+      const errors = Array.from(document.querySelectorAll('[role="alert"], [class*="error"], [class*="Error"]'))
+        .map((element) => (element.textContent || '').trim())
+        .filter(Boolean);
+      return JSON.stringify({
+        labels,
+        buttons,
+        errors,
+        bodyText: (document.body?.textContent || '').replace(/\\s+/g, ' ').trim().substring(0, 1000),
+      });
+    `)
+    .catch((error: unknown) => `diagnostics unavailable: ${error instanceof Error ? error.message : String(error)}`);
+}
+
+async function getButtonState(button: WebElement): Promise<string> {
+  const text = await button.getText().catch(() => '');
+  const disabled = await button.getAttribute('disabled').catch(() => null);
+  const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+  const isDisplayed = await button.isDisplayed().catch(() => false);
+  const isEnabled = await button.isEnabled().catch(() => false);
+  return `text="${text}", disabled=${disabled}, ariaDisabled=${ariaDisabled}, displayed=${isDisplayed}, enabled=${isEnabled}`;
 }
 
 async function isReviewStepVisible(driver: WebDriver): Promise<boolean> {
@@ -245,6 +477,51 @@ async function isReviewStepVisible(driver: WebDriver): Promise<boolean> {
   return false;
 }
 
+async function waitForConvertSetupReady(
+  driver: WebDriver,
+  expectedPath: string,
+  expectedWorkspaceName: string,
+  timeoutMs = 20_000
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  let lastDiagnostics = '';
+
+  while (Date.now() < deadline) {
+    const pathValue = await findInputByLabel(driver, 'Workspace parent folder path')
+      .then(getInputValue)
+      .catch(() => '');
+    const workspaceNameValue = await findInputByLabel(driver, 'Workspace name')
+      .then(getInputValue)
+      .catch(() => '');
+    const bodyText = await driver.executeScript<string>('return document.body?.textContent || ""').catch(() => '');
+    const nextButtons = await driver.findElements(By.xpath('//button[contains(normalize-space(.), "Next")]')).catch(() => []);
+    const enabledNext = [];
+    for (const button of nextButtons) {
+      const disabled = await button.getAttribute('disabled').catch(() => null);
+      const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+      const isDisplayed = await button.isDisplayed().catch(() => false);
+      const isEnabled = await button.isEnabled().catch(() => false);
+      if (isDisplayed && isEnabled && disabled === null && ariaDisabled !== 'true') {
+        enabledNext.push(button);
+      }
+    }
+
+    const valuesReady = pathValue === expectedPath && workspaceNameValue === expectedWorkspaceName;
+    const validationReady = bodyText.includes('Valid path') && bodyText.includes('Available');
+    if (valuesReady && validationReady && enabledNext.length > 0) {
+      console.log('[createWs] Convert setup is ready for review navigation');
+      return;
+    }
+
+    lastDiagnostics = `path="${pathValue}", workspaceName="${workspaceNameValue}", validationReady=${validationReady}, enabledNext=${enabledNext.length}`;
+    await sleep(500);
+  }
+
+  console.log(`[createWs] Setup readiness timed out: ${lastDiagnostics}`);
+  console.log(`[createWs] Wizard diagnostics: ${await getWizardDiagnostics(driver)}`);
+  throw new Error(`Convert setup did not become ready for review navigation: ${lastDiagnostics}`);
+}
+
 async function waitForReviewStep(driver: WebDriver, timeoutMs = 6_000): Promise<boolean> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -258,21 +535,41 @@ async function waitForReviewStep(driver: WebDriver, timeoutMs = 6_000): Promise<
 }
 
 async function clickNextAndWaitForReviewStep(driver: WebDriver, webview: WebView): Promise<void> {
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    await dismissOuterNotificationsAndReturnToWebview(driver, webview);
-    if (await isReviewStepVisible(driver)) {
-      console.log('[createWs] Review step is already visible');
-      return;
-    }
+  await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+  if (await isReviewStepVisible(driver)) {
+    console.log('[createWs] Review step is already visible');
+    return;
+  }
 
+  for (let attempt = 1; attempt <= 3; attempt++) {
     const nextBtn = await waitForButtonByText(driver, 'Next', 6_000);
+    console.log(`[createWs] Next button before attempt ${attempt}: ${await getButtonState(nextBtn)}`);
+    await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', nextBtn).catch(() => undefined);
     await driver.actions().move({ origin: nextBtn }).click().perform();
-    console.log(`[createWs] Clicked Next (attempt ${attempt})`);
+    console.log(`[createWs] Clicked Next via Actions API (attempt ${attempt})`);
 
     if (await waitForReviewStep(driver)) {
       return;
     }
 
+    const jsBtn = await waitForButtonByText(driver, 'Next', 2_000);
+    await driver.executeScript('arguments[0].click();', jsBtn).catch(() => undefined);
+    console.log(`[createWs] Clicked Next via JS fallback (attempt ${attempt})`);
+
+    if (await waitForReviewStep(driver, 3_000)) {
+      return;
+    }
+
+    const keyboardBtn = await waitForButtonByText(driver, 'Next', 2_000);
+    await driver.executeScript('arguments[0].focus();', keyboardBtn).catch(() => undefined);
+    await driver.actions().sendKeys(Key.ENTER).perform();
+    console.log(`[createWs] Pressed Enter on Next fallback (attempt ${attempt})`);
+
+    if (await waitForReviewStep(driver, 3_000)) {
+      return;
+    }
+
+    console.log(`[createWs] Wizard diagnostics after Next attempt ${attempt}: ${await getWizardDiagnostics(driver)}`);
     await captureScreenshot(driver, `create-ws-next-attempt-${attempt}-still-setup`, EXPLICIT_SCREENSHOT_DIR);
   }
 
@@ -313,7 +610,6 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
   this.timeout(TEST_TIMEOUT);
 
   let driver: WebDriver;
-  let workbench: Workbench;
   let legacySnapshot: LegacySnapshot;
 
   before(async function () {
@@ -351,7 +647,6 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     console.log(`[createWs] Legacy project snapshot: ${legacySnapshot.files.length} files`);
 
     driver = VSBrowser.instance.driver;
-    workbench = new Workbench();
   });
 
   afterEach(async () => {
@@ -476,51 +771,32 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
 
     // ── Step 4: Fill in the form fields ──
     const wsName = 'e2econvertws';
-    const appName = 'e2econvertapp';
-    const wfName = 'e2econvertwf';
     const wsParentDir = path.join(os.tmpdir(), 'la-e2e-test');
     const expectedWsDir = path.join(wsParentDir, wsName);
     const expectedWsFile = path.join(expectedWsDir, `${wsName}.code-workspace`);
     fs.mkdirSync(wsParentDir, { recursive: true });
     fs.rmSync(expectedWsDir, { recursive: true, force: true });
 
-    // Fill workspace parent folder path (first input)
+    // Fill only the two fields required by the convert-to-workspace flow.
     try {
-      const inputs = await driver.findElements(By.css('input'));
-      if (inputs.length >= 1) {
-        // First input is usually the path field
-        await inputs[0].click();
-        await inputs[0].sendKeys(Key.chord(Key.CONTROL, 'a'));
-        await inputs[0].sendKeys(wsParentDir);
-        console.log(`[createWs] Filled path: ${wsParentDir}`);
-      }
-      // Fill workspace name (second input)
-      if (inputs.length >= 2) {
-        await inputs[1].click();
-        await inputs[1].sendKeys(Key.chord(Key.CONTROL, 'a'));
-        await inputs[1].sendKeys(wsName);
-        console.log(`[createWs] Filled workspace name: ${wsName}`);
-      }
-      // Fill logic app name (third input)
-      if (inputs.length >= 3) {
-        await inputs[2].click();
-        await inputs[2].sendKeys(Key.chord(Key.CONTROL, 'a'));
-        await inputs[2].sendKeys(appName);
-        console.log(`[createWs] Filled app name: ${appName}`);
-      }
-      // Fill workflow name (may be fourth input or further)
-      if (inputs.length >= 4) {
-        await inputs[3].click();
-        await inputs[3].sendKeys(Key.chord(Key.CONTROL, 'a'));
-        await inputs[3].sendKeys(wfName);
-        console.log(`[createWs] Filled workflow name: ${wfName}`);
-      }
-    } catch (e: any) {
-      console.log(`[createWs] Error filling form: ${e.message}`);
+      const pathInput = await findInputByLabel(driver, 'Workspace parent folder path');
+      await clearAndType(driver, pathInput, wsParentDir);
+      await waitForLabeledInputValue(driver, 'Workspace parent folder path', wsParentDir);
+      console.log(`[createWs] Filled path: ${wsParentDir}`);
+
+      const wsNameInput = await findInputByLabel(driver, 'Workspace name');
+      await clearAndType(driver, wsNameInput, wsName);
+      await waitForLabeledInputValue(driver, 'Workspace name', wsName);
+      console.log(`[createWs] Filled workspace name: ${wsName}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(`[createWs] Error filling form: ${message}`);
+      console.log(`[createWs] Wizard diagnostics after fill error: ${await getWizardDiagnostics(driver)}`);
+      throw error;
     }
 
     await captureScreenshot(driver, 'create-ws-form-filled', EXPLICIT_SCREENSHOT_DIR);
-    await sleep(1500);
+    await waitForConvertSetupReady(driver, wsParentDir, wsName);
 
     // ── Step 5: Click Next to go to review step ──
     try {
@@ -535,14 +811,15 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     // ── Step 6: Click 'Create workspace' button exactly once ──
     try {
       await dismissOuterNotificationsAndReturnToWebview(driver, webview);
-      const createBtn = await waitForButtonByText(driver, 'Create');
+      const createBtn = await waitForButtonByExactText(driver, 'Create workspace');
       const disabledBeforeClick = await createBtn.getAttribute('disabled').catch(() => null);
       const ariaDisabledBeforeClick = await createBtn.getAttribute('aria-disabled').catch(() => null);
       assert.strictEqual(disabledBeforeClick, null, 'Create button should not have disabled attribute before clicking');
       assert.notStrictEqual(ariaDisabledBeforeClick, 'true', 'Create button should not be aria-disabled before clicking');
 
-      await driver.actions().move({ origin: createBtn }).click().perform();
-      console.log('[createWs] Clicked Create workspace once');
+      await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', createBtn).catch(() => undefined);
+      await driver.executeScript('arguments[0].click();', createBtn);
+      console.log('[createWs] Clicked exact Create workspace button once');
       await waitForSingleCreateClickToStart(driver, expectedWsFile);
       await sleep(5000); // Wait for workspace creation
       await captureScreenshot(driver, 'create-ws-after-create', EXPLICIT_SCREENSHOT_DIR);
