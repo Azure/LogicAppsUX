@@ -144,6 +144,7 @@ async function codefulNugetConfigUsesExtensionSdkCache(
 }
 
 function getXmlAddValue(xml: string, sectionName: string, key: string): string | undefined {
+  // lgtm[js/incomplete-sanitization] This skips XML comments in local project config before regex parsing; it is not HTML output sanitization.
   const sectionMatch = xml
     .replace(/<!--[\s\S]*?-->/g, '')
     .match(new RegExp(`<${sectionName}\\b[^>]*>([\\s\\S]*?)<\\/${sectionName}>`, 'i'));
@@ -196,7 +197,7 @@ export interface CodefulCsprojBuildHookInfo {
 }
 
 const findTargetAfterTargets = (csprojContent: string, targetName: string): string | null => {
-  // Strip XML comments so `<!-- <Target ... /> -->` does not register as a real target.
+  // lgtm[js/incomplete-sanitization] This skips XML comments in local .csproj before regex parsing; it is not HTML output sanitization.
   const stripped = csprojContent.replace(/<!--[\s\S]*?-->/g, '');
   const targetTagRegex = /<Target\b([^>]*?)\/?>/g;
   let match: RegExpExecArray | null;
