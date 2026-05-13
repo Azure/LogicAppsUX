@@ -194,8 +194,8 @@ $env:E2E_MODE = "conversioncreateonly"    # Phase 4.8b only (builds own legacy f
 $env:E2E_MODE = "nonlogicappstartup"      # Phase 4.0 only
 
 # CI matrix shard modes (each runs on its own GitHub Actions runner):
-$env:E2E_MODE = "independentonly"         # 4.0 + 4.7 + 4.8b — no Phase 4.1 dep
-$env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2
+$env:E2E_MODE = "independentonly"         # 4.0 + 4.8b — no Phase 4.1 dep
+$env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2, 4.7
 $env:E2E_MODE = "createplusnewtests"      # 4.1 → 4.3, 4.4, 4.5, 4.6
 $env:E2E_MODE = "createplusconversion"    # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
 node src/test/ui/run-e2e.js

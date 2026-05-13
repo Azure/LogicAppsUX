@@ -71,8 +71,8 @@ E2E_MODE="designeronly"  # Phase 4.2: designer lifecycle
 E2E_MODE="newtestsonly"  # Phases 4.3-4.6: new tests
 
 # CI matrix shard modes (each runs on its own GitHub Actions runner):
-E2E_MODE="independentonly"      # 4.0 + 4.7 + 4.8b (no Phase 4.1 dep)
-E2E_MODE="createplusdesigner"   # 4.1 → 4.2
+E2E_MODE="independentonly"      # 4.0 + 4.8b (no Phase 4.1 dep)
+E2E_MODE="createplusdesigner"   # 4.1 → 4.2, 4.7
 E2E_MODE="createplusnewtests"   # 4.1 → 4.3-4.6
 E2E_MODE="createplusconversion" # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
 ```

@@ -1125,12 +1125,6 @@ async function main() {
       await prepareFreshSession('phase0-only');
       exits.push(await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files));
 
-      // Phase 4.7: demo/smoke/standalone/dataMapper — no workspace dependency.
-      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
-      await new Promise((r) => setTimeout(r, 3000));
-      await prepareFreshSession('phase7-only');
-      exits.push(await runPhase('Phase 4.7: remaining suites', phase7Files));
-
       // Phase 4.8b: conversionCreate — builds its own legacy fixture, so it
       // does not need Phase 4.1's created-workspaces.json manifest.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
@@ -1141,7 +1135,7 @@ async function main() {
       exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
 
       const finalExit = Math.max(...exits);
-      console.log(`\n=== Independent shard results: 4.0=${exits[0]}, 4.7=${exits[1]}, 4.8b=${exits[2]} → exit ${finalExit} ===`);
+      console.log(`\n=== Independent shard results: 4.0=${exits[0]}, 4.8b=${exits[1]} → exit ${finalExit} ===`);
       process.exit(finalExit);
     }
 
@@ -1151,8 +1145,8 @@ async function main() {
       const exits = [];
 
       // Phase 4.1: createWorkspace — needed to produce the manifest consumed
-      // by Phase 4.2. Keep validation ON for the first phase so binaries are
-      // downloaded and resolved.
+      // by Phase 4.2 and Phase 4.7 (dataMapper.test.ts asserts the manifest
+      // exists in its `before` hook).
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
       await prepareFreshSession('phase1-shard');
       exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
@@ -1164,8 +1158,17 @@ async function main() {
       const phase2Resources = getPhase2Resources();
       exits.push(await runPhase('Phase 4.2: designerActions', phase2Files, { resources: phase2Resources }));
 
+      // Phase 4.7: demo/smoke/standalone/dataMapper. dataMapper depends on
+      // Phase 4.1's manifest; the others are quick (~14s total for the three).
+      // Co-locating with `designer` keeps them all on a Phase-4.1-aware runner
+      // and balances shard wall-time.
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase7-shard');
+      exits.push(await runPhase('Phase 4.7: remaining suites', phase7Files));
+
       const finalExit = Math.max(...exits);
-      console.log(`\n=== Designer shard results: 4.1=${exits[0]}, 4.2=${exits[1]} → exit ${finalExit} ===`);
+      console.log(`\n=== Designer shard results: 4.1=${exits[0]}, 4.2=${exits[1]}, 4.7=${exits[2]} → exit ${finalExit} ===`);
       process.exit(finalExit);
     }
 
