@@ -68,8 +68,9 @@ pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
 
 | Value | Behavior |
 |-------|----------|
-| (unset) | Runs Phase 4.1 (createWorkspace) first, then Phase 4.2 (designer) if Phase 4.1 passes |
+| (unset) | Runs the full phase suite through `run-e2e.js` |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
+| `azuriteonly` | Runs the Azurite auto-start debug regression create/assert phases |
 
 **IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
 
@@ -145,6 +146,22 @@ The Compose action parameter panel uses a Lexical contenteditable editor, not a 
 - If settings cleanup encounters file locks, clear stale VS Code test processes and retry with the existing cleanup fallback (`settings/User` deletion path).
 - Use actions-only runs while iterating on discovery panel selectors, then promote to full Phase 4.2 once stable.
 
+### Azurite auto-start failure regression pattern
+
+The Azurite auto-start regression showed that prompt suppression is not enough: the test must prove the debug path stops after Azurite readiness fails and does not continue into `AzureWebJobsStorage` validation.
+
+For Azurite auto-start failure coverage:
+- Wire the test through `run-e2e.js` with a dedicated `E2E_MODE`.
+- Use a unique temp workspace parent per run so stale Windows locks cannot poison the next run.
+- Create the Logic App workspace through the Create Workspace webview instead of hand-authoring a folder.
+- Patch generated `launch.json` only after creation, using `type: "logicapp"`, `request: "launch"`, `funcRuntime: "coreclr"`, and `isCodeless: true`.
+- End the creation session, then reopen the generated `.code-workspace` in a fresh session.
+- Wait for `workflow-designtime/`; if it is missing, design-time startup did not actually happen.
+- Install a fake Azurite extension that registers `azurite.start` but does not start Azurite.
+- Block ports `10000`, `10001`, and `10002` with fast HTTP responders, not bare TCP sockets.
+- Assert the Azurite timeout is visible.
+- Assert `Failed to verify "AzureWebJobsStorage" connection` and `Debug anyway` do not appear.
+- Capture visible workbench text plus terminal/output logs when the expected timeout is not visible.
 
 ### How ExTester Loads the Extension
 

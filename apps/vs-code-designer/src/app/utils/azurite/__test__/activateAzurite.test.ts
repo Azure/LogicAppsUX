@@ -10,6 +10,7 @@ import {
 } from '../../../../constants';
 import { executeOnAzurite } from '../../../azuriteExtension/executeOnAzuriteExt';
 import { validateEmulatorIsRunning } from '../../../debug/validatePreDebug';
+import { delay } from '../../delay';
 import { updateWorkspaceSetting } from '../../vsCodeConfig/settings';
 import { activateAzurite } from '../activateAzurite';
 
@@ -59,6 +60,8 @@ vi.mock('../../vsCodeConfig/settings', () => ({
 
 describe('activateAzurite', () => {
   const projectPath = 'D:\\workspace\\LogicApp';
+  const azuriteTimeoutMessage =
+    'Azurite did not become ready within "5" seconds. Make sure the Azurite extension is installed and running, then try debugging again.';
   const context = {
     telemetry: {
       properties: {},
@@ -92,5 +95,29 @@ describe('activateAzurite', () => {
     expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(2, context, projectPath, false);
     expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(3, context, projectPath, false);
     expect(context.telemetry.properties.azuriteReady).toBe('true');
+  });
+
+  it('throws a startup error after Azurite does not become ready', async () => {
+    vi.mocked(validateEmulatorIsRunning).mockResolvedValue(false);
+
+    await expect(activateAzurite(context, projectPath)).rejects.toThrow(azuriteTimeoutMessage);
+
+    expect(executeOnAzurite).toHaveBeenCalledTimes(1);
+    expect(validateEmulatorIsRunning).toHaveBeenCalledTimes(11);
+    expect(delay).toHaveBeenCalledTimes(9);
+    expect(context.telemetry.properties.azuriteStartupAttempt).toBe('10');
+    expect(context.telemetry.properties.azuriteReady).toBe('false');
+  });
+
+  it('propagates Azurite extension startup errors without waiting for readiness', async () => {
+    const extensionError = new Error('Azurite extension is not installed or is unavailable in the current VS Code extension host.');
+    vi.mocked(validateEmulatorIsRunning).mockResolvedValue(false);
+    vi.mocked(executeOnAzurite).mockRejectedValue(extensionError);
+
+    await expect(activateAzurite(context, projectPath)).rejects.toThrow(extensionError.message);
+
+    expect(validateEmulatorIsRunning).toHaveBeenCalledTimes(1);
+    expect(delay).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.azuriteReady).toBeUndefined();
   });
 });

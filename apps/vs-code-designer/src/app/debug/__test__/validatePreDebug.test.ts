@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as azureStorage from 'azure-storage';
 import { autoStartAzuriteSetting, localEmulatorConnectionString } from '../../../constants';
 import { validateFuncCoreToolsInstalled } from '../../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage } from '../../utils/appSettings/localSettings';
@@ -82,5 +83,28 @@ describe('validatePreDebug', () => {
       expect.objectContaining({ modal: true }),
       expect.objectContaining({ title: 'Debug anyway' })
     );
+  });
+
+  it('keeps Debug anyway available in pre-debug validation when Azurite auto-start is disabled', async () => {
+    vi.mocked(validateFuncCoreToolsInstalled).mockResolvedValue(true);
+    vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => {
+      return key === autoStartAzuriteSetting ? false : undefined;
+    });
+    context.ui.showWarningMessage.mockImplementation(async (_message: string, _options: unknown, debugAnyway: unknown) => debugAnyway);
+
+    const result = await preDebugValidate(context, projectPath);
+
+    expect(result).toBe(true);
+    expect(context.ui.showWarningMessage).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to verify "AzureWebJobsStorage"'),
+      expect.objectContaining({ modal: true }),
+      expect.objectContaining({ title: 'Debug anyway' })
+    );
+  });
+
+  it('probes the local emulator when AzureWebJobsStorage uses development storage', async () => {
+    await validateEmulatorIsRunning(context, projectPath, false);
+
+    expect(azureStorage.createBlobService).toHaveBeenCalledWith(localEmulatorConnectionString);
   });
 });

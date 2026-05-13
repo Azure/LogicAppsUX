@@ -76,6 +76,40 @@ export async function captureScreenshot(driver: WebDriver, fileName: string, scr
 /** Dismiss any VS Code notification toasts that may block interactions. */
 export async function dismissNotifications(driver: WebDriver): Promise<void> {
   try {
+    const dismissedKnownPrompt = await driver.executeScript<number>(`
+      const containers = Array.from(document.querySelectorAll('.notification-toast, .notification-list-item, [role="dialog"]'));
+      let dismissed = 0;
+      for (const container of containers) {
+        const text = (container.textContent || '').toLowerCase();
+        const isKnownSignInPrompt =
+          text.includes('visual studio subscription benefits') ||
+          text.includes('c# dev kit') ||
+          (text.includes('sign in') && text.includes('subscription benefits'));
+        if (!isKnownSignInPrompt) {
+          continue;
+        }
+
+        const candidates = Array.from(
+          container.querySelectorAll('button, .monaco-text-button, .monaco-button, .action-label, [role="button"], [aria-label="Close"]')
+        );
+        const closeButton =
+          candidates.find((button) => {
+            const label = ((button.textContent || button.getAttribute('aria-label') || button.getAttribute('title') || '')).toLowerCase();
+            return label.includes('close') || label.includes('not now') || label.includes('dismiss') || label.includes('cancel');
+          }) ||
+          container.querySelector('[aria-label="Close"], .codicon-close, .action-label.codicon-close, .codicon-notifications-clear-all');
+        if (closeButton) {
+          closeButton.click();
+          dismissed++;
+        }
+      }
+      return dismissed;
+    `);
+    if (dismissedKnownPrompt > 0) {
+      console.log(`[dismissNotifications] Dismissed ${dismissedKnownPrompt} known sign-in prompt(s)`);
+      await sleep(500);
+    }
+
     const closeButtons = await driver.findElements(
       By.css('.notifications-toasts .codicon-notifications-clear-all, .notification-toast .action-label.codicon-close')
     );
@@ -215,16 +249,44 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
         }
       }
 
-      if (messageText.includes('sign in') || messageText.includes('Sign in') || messageText.includes('wants to sign in')) {
+      if (
+        messageText.includes('sign in') ||
+        messageText.includes('Sign in') ||
+        messageText.includes('wants to sign in') ||
+        messageText.includes('Visual Studio subscription benefits') ||
+        messageText.includes('C# Dev Kit')
+      ) {
         try {
-          const cancelBtns = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          const cancelBtns = await dialogs[0].findElements(
+            By.css('button, .monaco-text-button, .monaco-button, .action-label, [role="button"]')
+          );
           for (const btn of cancelBtns) {
-            const label = await btn.getText().catch(() => '');
-            if (label.toLowerCase().includes('cancel')) {
+            const label =
+              (await btn.getText().catch(() => '')) ||
+              (await btn.getAttribute('aria-label').catch(() => '')) ||
+              (await btn.getAttribute('title').catch(() => ''));
+            const lower = label.toLowerCase();
+            if (lower.includes('cancel') || lower.includes('close') || lower.includes('not now') || lower.includes('dismiss')) {
+              console.log(`[dismissAllDialogs] Clicking "${label}" on sign-in prompt`);
               await btn.click();
               await sleep(1000);
               return true;
             }
+          }
+          const closedWithScript = await driver.executeScript<boolean>(
+            `
+              const dialog = arguments[0];
+              const closeButton = dialog.querySelector('[aria-label="Close"], .codicon-close, .action-label.codicon-close');
+              if (!closeButton) return false;
+              closeButton.click();
+              return true;
+            `,
+            dialogs[0]
+          );
+          if (closedWithScript) {
+            console.log('[dismissAllDialogs] Closed sign-in prompt via script');
+            await sleep(1000);
+            return true;
           }
         } catch {
           /* ignore */
@@ -639,11 +701,13 @@ export async function openFolderInSession(driver: WebDriver, folderPath: string)
       await dialogInput.sendKeys(Key.ENTER);
       await sleep(5000);
 
-      // Check if folder opened by looking at the title
+      // Check if folder opened by looking at the title. VS Code can append
+      // suffixes like "[Administrator]", so require the folder name itself.
       const title = await driver.getTitle().catch(() => '');
       console.log(`[openFolderInSession] VS Code title: "${title}"`);
+      const expectedFolderName = path.basename(folderPath);
 
-      if (title !== 'Visual Studio Code') {
+      if (title.toLowerCase().includes(expectedFolderName.toLowerCase())) {
         console.log('[openFolderInSession] Folder opened successfully');
         return;
       }
@@ -670,5 +734,5 @@ export async function openFolderInSession(driver: WebDriver, folderPath: string)
       await sleep(2000);
     }
   }
-  console.log('[openFolderInSession] All attempts exhausted');
+  throw new Error(`Unable to open folder in VS Code: ${folderPath}`);
 }

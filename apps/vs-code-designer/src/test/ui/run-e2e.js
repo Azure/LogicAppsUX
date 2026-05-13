@@ -90,6 +90,72 @@ function rebuildExtensionsJson(extensionsDir) {
   console.log(`  ✓ Rebuilt extensions.json with ${entries.length} entries`);
 }
 
+function installFakeAzuriteExtension(extensionsDir) {
+  console.log('\n=== Installing fake Azurite extension for failure E2E ===');
+  fs.mkdirSync(extensionsDir, { recursive: true });
+  for (const entry of fs.readdirSync(extensionsDir)) {
+    if (entry === 'extensions.json' || entry === '.obsolete') continue;
+    if (entry.toLowerCase().startsWith('azurite.azurite')) {
+      fs.rmSync(path.join(extensionsDir, entry), { recursive: true, force: true });
+      console.log(`  Removed real Azurite extension: ${entry}`);
+    }
+  }
+
+  const fakeDirName = 'azurite.azurite-0.0.0-e2e';
+  const fakeDir = path.join(extensionsDir, fakeDirName);
+  fs.mkdirSync(fakeDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(fakeDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: 'azurite',
+        publisher: 'Azurite',
+        version: '0.0.0-e2e',
+        engines: { vscode: '^1.80.0' },
+        main: './extension.js',
+        activationEvents: ['*'],
+        contributes: {
+          configuration: {
+            type: 'object',
+            title: 'Azurite',
+            properties: {
+              'azurite.location': {
+                type: 'string',
+                default: '',
+                description: 'Azurite workspace location.',
+              },
+            },
+          },
+          commands: [
+            {
+              command: 'azurite.start',
+              title: 'Azurite: Start',
+            },
+          ],
+        },
+      },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(fakeDir, 'extension.js'),
+    [
+      "const vscode = require('vscode');",
+      'function activate(context) {',
+      "  context.subscriptions.push(vscode.commands.registerCommand('azurite.start', async () => {",
+      "    console.log('[fake-azurite-e2e] azurite.start invoked without starting emulator');",
+      '  }));',
+      '}',
+      'function deactivate() {}',
+      'module.exports = { activate, deactivate };',
+      '',
+    ].join('\n')
+  );
+  rebuildExtensionsJson(extensionsDir);
+  console.log(`  ✓ Fake Azurite extension installed: ${fakeDirName}`);
+}
+
 /**
  * Run async tasks with a concurrency limit.
  * Returns results in the same order as the input tasks.
@@ -550,6 +616,8 @@ async function main() {
       'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,
       // Suppress the "Start design time?" prompt dialog on project load.
       'azureLogicAppsStandard.showStartDesignTimeMessage': false,
+      // Suppress connection parameterization prompts in prompt-sensitive phases.
+      'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
       // Suppress "wants to sign in" auth dialog — uses silent auth that
       // returns undefined instead of prompting when no cached token exists.
       'azureLogicAppsStandard.silentAuth': true,
@@ -601,6 +669,25 @@ async function main() {
   const phase6Files = [testFile('keyboardNavigation.test.js')];
 
   const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
+  const phase9CreateFiles = [testFile('azuriteAutostartFailure.test.js')];
+  const phase9Files = [testFile('azuriteAutostartFailureAssert.test.js')];
+  const azuriteWorkspaceParentDir = path.join(os.tmpdir(), 'la-e2e-test', `azurite-autostart-failure-parent-${process.pid}-${Date.now()}`);
+  const azuriteWorkspaceFile = path.join(azuriteWorkspaceParentDir, 'azuritews', 'azuritews.code-workspace');
+
+  const cleanupAzuriteWorkspace = async () => {
+    for (let attempt = 1; attempt <= 8; attempt++) {
+      try {
+        fs.rmSync(azuriteWorkspaceParentDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+        return;
+      } catch (error) {
+        if (attempt === 8) {
+          console.warn(`  Could not remove Azurite E2E workspace: ${error.message}`);
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
+  };
 
   // Conversion tests (ADO #31054994, Steps 5-15)
   // Each gets its own session because they need different startup folders.
@@ -961,6 +1048,34 @@ async function main() {
       process.exit(finalExit);
     }
 
+    if (e2eMode === 'azuriteonly') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+      process.env.AZURITE_E2E_WORKSPACE_PARENT = azuriteWorkspaceParentDir;
+      process.env.AZURITE_E2E_STEP = 'create';
+      await prepareFreshSession('phase9-create-only');
+      const phase9CreateExit = await runPhase('Phase 4.9a: azurite workspace creation', phase9CreateFiles);
+      if (phase9CreateExit !== 0) {
+        process.exit(phase9CreateExit);
+      }
+
+      installFakeAzuriteExtension(extDir);
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: true });
+      process.env.AZURITE_E2E_STEP = 'assert';
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase9-assert-only');
+      const phase9Exit = await runPhase('Phase 4.9b: azuriteAutostartFailure', phase9Files, {
+        resources: [azuriteWorkspaceFile],
+      });
+      delete process.env.AZURITE_E2E_STEP;
+      delete process.env.AZURITE_E2E_WORKSPACE_PARENT;
+      if (phase9Exit === 0) {
+        await cleanupAzuriteWorkspace();
+      }
+      process.exit(phase9Exit);
+    }
+
     if (e2eMode === 'createonly') {
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
@@ -1142,6 +1257,29 @@ async function main() {
       if (phase8eExit !== 0) console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
     }
 
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    process.env.AZURITE_E2E_WORKSPACE_PARENT = azuriteWorkspaceParentDir;
+    process.env.AZURITE_E2E_STEP = 'create';
+    await prepareFreshSession('phase9-create');
+    const phase9CreateExit = await runPhase('Phase 4.9a: azurite workspace creation', phase9CreateFiles);
+    if (phase9CreateExit !== 0) console.log(`\n⚠ Phase 4.9a exited with code ${phase9CreateExit} — continuing`);
+
+    installFakeAzuriteExtension(extDir);
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: true });
+    process.env.AZURITE_E2E_STEP = 'assert';
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase9-assert');
+    const phase9Exit = await runPhase('Phase 4.9b: azuriteAutostartFailure', phase9Files, {
+      resources: [azuriteWorkspaceFile],
+    });
+    delete process.env.AZURITE_E2E_STEP;
+    delete process.env.AZURITE_E2E_WORKSPACE_PARENT;
+    if (phase9Exit === 0) {
+      await cleanupAzuriteWorkspace();
+    }
+    if (phase9Exit !== 0) console.log(`\n⚠ Phase 4.9 exited with code ${phase9Exit} — continuing`);
+
     // Exit with worst exit code from all phases
     // Note: phase8dExit (conversionYes) is excluded from the final exit code
     // because this test is environment-flaky in CI — the "Yes"/"Open Workspace"
@@ -1158,13 +1296,15 @@ async function main() {
       phase8aExit,
       phase8bExit,
       phase8cExit,
-      phase8eExit
+      phase8eExit,
+      phase9CreateExit,
+      phase9Exit
     );
     if (phase8dExit !== 0) {
       console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
     }
     console.log(
-      `\n=== Final results: 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit} → exit ${finalExit} ===`
+      `\n=== Final results: 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.9=${phase9Exit} → exit ${finalExit} ===`
     );
     process.exit(finalExit);
   } catch (err) {

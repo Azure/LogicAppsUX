@@ -71,8 +71,14 @@ export async function pickFuncProcessInternal(
   projectPath: string
 ): Promise<string | undefined> {
   await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
     await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-      await activateAzurite(context, projectPath);
+      try {
+        await activateAzurite(actionContext, projectPath);
+      } catch (error) {
+        actionContext.errorHandling.suppressDisplay = true;
+        throw error instanceof Error ? error : new Error(String(error));
+      }
     });
   });
 
