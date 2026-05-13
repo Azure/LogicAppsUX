@@ -17,6 +17,7 @@ import {
   type WebElement,
   Key,
 } from 'vscode-extension-tester';
+import { clearBlockingUI } from './helpers';
 
 /**
  * Create Workspace E2E Tests
@@ -259,11 +260,7 @@ async function selectCreateWorkspaceCommand(workbench: Workbench): Promise<void>
       break; // setText succeeded
     } catch (e: any) {
       console.log(`[selectCreateWorkspaceCommand] Attempt ${attempt + 1}/3: setText failed: ${e.message}`);
-      try {
-        await input?.cancel();
-      } catch {
-        // Ignore cancel error
-      }
+      await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand');
       await sleep(2000);
       if (attempt === 2) {
         throw e;
@@ -321,7 +318,7 @@ async function selectCreateWorkspaceCommand(workbench: Workbench): Promise<void>
   }
 
   if (!bestPick) {
-    await input.cancel();
+    await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand:no-match');
     throw new Error(`Could not find "Create new logic app workspace..." command.\nAvailable picks: ${JSON.stringify(allLabels)}`);
   }
 
@@ -339,39 +336,50 @@ async function waitForExtensionReady(workbench: Workbench, timeoutMs = 60_000): 
   const startTime = Date.now();
   let lastError = '';
   let lastPickLabels: string[] = [];
+  const driver = workbench.getDriver();
 
   // Try with shorter search terms that are more likely to match
   // CRITICAL: Prefix with '> ' to stay in command mode (not file search)
   const searchTerms = ['> logic app workspace', '> Create new logic app', '> create workspace'];
 
   while (Date.now() - startTime < timeoutMs) {
+    await clearBlockingUI(driver);
     for (const searchTerm of searchTerms) {
-      const input = await workbench.openCommandPrompt();
-      await sleep(500);
+      let input: InputBox | QuickOpenBox | undefined;
+      try {
+        input = await workbench.openCommandPrompt();
+        await sleep(500);
 
-      // Use setText which calls clear() first - but we add '> ' prefix
-      // to keep the palette in command mode
-      await input.setText(searchTerm);
-      await sleep(2000);
+        // Use setText which calls clear() first - but we add '> ' prefix
+        // to keep the palette in command mode
+        await input.setText(searchTerm);
+        await sleep(2000);
 
-      const picks = await input.getQuickPicks();
-      lastPickLabels = [];
+        const picks = await input.getQuickPicks();
+        lastPickLabels = [];
 
-      for (const pick of picks) {
-        const label = await pick.getLabel();
-        lastPickLabels.push(label);
-        const lower = label.toLowerCase();
-        if (lower.includes('workspace') && !lower.includes('package') && !lower.includes('from')) {
-          console.log(`[waitForExtensionReady] Found command: "${label}" (search: "${searchTerm}")`);
-          await input.cancel();
-          await sleep(300);
-          return;
+        for (const pick of picks) {
+          const label = await pick.getLabel();
+          lastPickLabels.push(label);
+          const lower = label.toLowerCase();
+          if (lower.includes('workspace') && !lower.includes('package') && !lower.includes('from')) {
+            console.log(`[waitForExtensionReady] Found command: "${label}" (search: "${searchTerm}")`);
+            await safeCancelQuickInput(input, 'waitForExtensionReady:found');
+            await sleep(300);
+            return;
+          }
         }
-      }
 
-      console.log(`[waitForExtensionReady] Search "${searchTerm}" picks: [${lastPickLabels.join(', ')}]`);
-      await input.cancel();
-      await sleep(300);
+        console.log(`[waitForExtensionReady] Search "${searchTerm}" picks: [${lastPickLabels.join(', ')}]`);
+        await safeCancelQuickInput(input, 'waitForExtensionReady:not-found');
+        await sleep(300);
+      } catch (e: any) {
+        lastError = `Search "${searchTerm}" failed: ${e?.message || e}`;
+        console.log(`[waitForExtensionReady] ${lastError}`);
+        await safeCancelQuickInput(input, 'waitForExtensionReady:error');
+        await clearBlockingUI(driver);
+        await sleep(1000);
+      }
     }
 
     lastError = `Command not found after ${Date.now() - startTime}ms. Last picks: [${lastPickLabels.join(', ')}]`;
@@ -380,6 +388,14 @@ async function waitForExtensionReady(workbench: Workbench, timeoutMs = 60_000): 
   }
 
   throw new Error(`Extension not ready after ${timeoutMs}ms: ${lastError}`);
+}
+
+async function safeCancelQuickInput(input: InputBox | QuickOpenBox | undefined, context: string): Promise<void> {
+  try {
+    await input?.cancel();
+  } catch (e: any) {
+    console.log(`[${context}] Ignoring quick input cancel failure: ${e?.message || e}`);
+  }
 }
 
 /**
