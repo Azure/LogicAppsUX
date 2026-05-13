@@ -143,7 +143,6 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 | 4.5 | designerViewExtended.test.ts | Parallel branches + run-after (ADO #10109401) |
 | 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down navigation (ADO #10273324) |
 | 4.7 | dataMapper.test.ts, demo, smoke, standalone | Data Mapper + generic tests |
-| 4.9 | azuriteAutostartFailure.test.ts, azuriteAutostartFailureAssert.test.ts | Azurite auto-start debug regression |
 
 ### Shared Helper Modules
 
@@ -180,8 +179,6 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 
 12. **Always run tests automatically after creating or modifying them**: After writing or editing any test file, immediately: lint (`npx biome check --write`), build (`npx tsup`), and run (`node src/test/ui/run-e2e.js`) — don't wait for the user to ask. Report pass/fail results with any failure details.
 
-13. **Debug regression tests must use the real workspace launch flow**: Create the workspace through the Create Workspace webview, reopen the generated `.code-workspace` in a fresh `run-e2e.js` phase, wait for `workflow-designtime/`, and validate terminal/output/log evidence. Do not replace the suite path with one-off scripts, hand-made workspaces, or the wrong launch configuration.
-
 ### Running Tests
 
 ```bash
@@ -189,13 +186,23 @@ cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts   # Compile
 
 # Run modes:
-$env:E2E_MODE = "full"           # All phases (4.1-4.9)
-$env:E2E_MODE = "createonly"     # Phase 4.1 only
-$env:E2E_MODE = "designeronly"   # Phase 4.2 only
-$env:E2E_MODE = "newtestsonly"   # Phases 4.3-4.6 only
-$env:E2E_MODE = "azuriteonly"    # Phase 4.9 Azurite auto-start debug regression
+$env:E2E_MODE = "full"                    # All phases (single runner, ~30+ min) — local debug fallback
+$env:E2E_MODE = "createonly"              # Phase 4.1 only
+$env:E2E_MODE = "designeronly"            # Phase 4.2 only (requires prior 4.1 manifest)
+$env:E2E_MODE = "newtestsonly"            # Phases 4.3-4.6 only (requires prior 4.1 manifest)
+$env:E2E_MODE = "conversiononly"          # Phases 4.8a-e only (requires prior 4.1 manifest)
+$env:E2E_MODE = "conversioncreateonly"    # Phase 4.8b only (builds own legacy fixture)
+$env:E2E_MODE = "nonlogicappstartup"      # Phase 4.0 only
+
+# CI matrix shard modes (each runs on its own GitHub Actions runner):
+$env:E2E_MODE = "independentonly"         # 4.0 + 4.7 + 4.8b — no Phase 4.1 dep
+$env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2
+$env:E2E_MODE = "createplusnewtests"      # 4.1 → 4.3, 4.4, 4.5, 4.6
+$env:E2E_MODE = "createplusconversion"    # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
 node src/test/ui/run-e2e.js
 ```
+
+The four `createplus*` / `independentonly` modes are how `.github/workflows/vscode-e2e.yml` shards the suite across parallel runners. `full` remains the single-runner debug fallback.
 
 ### Mandatory: Lint and Format After Every Edit
 

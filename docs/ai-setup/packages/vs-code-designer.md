@@ -185,12 +185,23 @@ cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts   # Compile
 
 # Run modes:
-$env:E2E_MODE = "full"           # All phases (4.1-4.7)
-$env:E2E_MODE = "createonly"     # Phase 4.1 only
-$env:E2E_MODE = "designeronly"   # Phase 4.2 only
-$env:E2E_MODE = "newtestsonly"   # Phases 4.3-4.6 only
+$env:E2E_MODE = "full"                    # All phases (single runner, ~30+ min) — local debug fallback
+$env:E2E_MODE = "createonly"              # Phase 4.1 only
+$env:E2E_MODE = "designeronly"            # Phase 4.2 only (requires prior 4.1 manifest)
+$env:E2E_MODE = "newtestsonly"            # Phases 4.3-4.6 only (requires prior 4.1 manifest)
+$env:E2E_MODE = "conversiononly"          # Phases 4.8a-e only (requires prior 4.1 manifest)
+$env:E2E_MODE = "conversioncreateonly"    # Phase 4.8b only (builds own legacy fixture)
+$env:E2E_MODE = "nonlogicappstartup"      # Phase 4.0 only
+
+# CI matrix shard modes (each runs on its own GitHub Actions runner):
+$env:E2E_MODE = "independentonly"         # 4.0 + 4.7 + 4.8b — no Phase 4.1 dep
+$env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2
+$env:E2E_MODE = "createplusnewtests"      # 4.1 → 4.3, 4.4, 4.5, 4.6
+$env:E2E_MODE = "createplusconversion"    # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
 node src/test/ui/run-e2e.js
 ```
+
+The four `createplus*` / `independentonly` modes are how `.github/workflows/vscode-e2e.yml` shards the suite across parallel runners. `full` remains the single-runner debug fallback.
 
 ### Mandatory: Lint and Format After Every Edit
 

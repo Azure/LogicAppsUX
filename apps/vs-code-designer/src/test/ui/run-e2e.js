@@ -1098,6 +1098,191 @@ async function main() {
       process.exit(phase1Exit);
     }
 
+    // ----------------------------------------------------------------------
+    // CI matrix shard modes — each is intended to run on a separate runner.
+    // The full suite is divided into four shards so total CI wall-time drops
+    // from ~30+ min on a single runner to ~12-15 min critical path.
+    //
+    //   - independentonly: phases that don't depend on Phase 4.1 workspaces.
+    //   - createplusdesigner: Phase 4.1 → Phase 4.2 (designer lifecycle).
+    //   - createplusnewtests: Phase 4.1 → Phases 4.3-4.6 (single-test phases).
+    //   - createplusconversion: Phase 4.1 → Phases 4.8a/c/d/e (workspace
+    //     conversion; 4.8b is in `independentonly` because it builds its own
+    //     legacy fixture and does not need Phase 4.1).
+    //
+    // Phase 4.1 is intentionally re-run in three shards (Stage 1 of the
+    // parallelization plan). Stage 2 will replace this with an artifact-shared
+    // workspace setup job.
+    // ----------------------------------------------------------------------
+
+    if (e2eMode === 'independentonly') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const exits = [];
+
+      // Phase 4.0: nonLogicAppStartup — plain folder, no Logic App context.
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
+      await prepareFreshSession('phase0-only');
+      exits.push(await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files));
+
+      // Phase 4.7: demo/smoke/standalone/dataMapper — no workspace dependency.
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase7-only');
+      exits.push(await runPhase('Phase 4.7: remaining suites', phase7Files));
+
+      // Phase 4.8b: conversionCreate — builds its own legacy fixture, so it
+      // does not need Phase 4.1's created-workspaces.json manifest.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      const legacyDir = createLegacyProjectFixture('independentonly');
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+      exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
+
+      const finalExit = Math.max(...exits);
+      console.log(`\n=== Independent shard results: 4.0=${exits[0]}, 4.7=${exits[1]}, 4.8b=${exits[2]} → exit ${finalExit} ===`);
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'createplusdesigner') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const exits = [];
+
+      // Phase 4.1: createWorkspace — needed to produce the manifest consumed
+      // by Phase 4.2. Keep validation ON for the first phase so binaries are
+      // downloaded and resolved.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-shard');
+      exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
+
+      // Phase 4.2: designerActions — reuse workspaces from Phase 4.1.
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 5000));
+      await prepareFreshSession('phase2-shard');
+      const phase2Resources = getPhase2Resources();
+      exits.push(await runPhase('Phase 4.2: designerActions', phase2Files, { resources: phase2Resources }));
+
+      const finalExit = Math.max(...exits);
+      console.log(`\n=== Designer shard results: 4.1=${exits[0]}, 4.2=${exits[1]} → exit ${finalExit} ===`);
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'createplusnewtests') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const exits = [];
+
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-shard');
+      exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
+
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      const wsResources = getPhase2Resources();
+
+      await new Promise((r) => setTimeout(r, 5000));
+      await prepareFreshSession('phase3-shard');
+      exits.push(await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase4-shard');
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase5-shard');
+      exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase6-shard');
+      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
+
+      const finalExit = Math.max(...exits);
+      console.log(
+        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'createplusconversion') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const exits = [];
+
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-shard');
+      exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
+
+      const wsResources = getPhase2Resources();
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      const readManifest = () => {
+        try {
+          return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        } catch {
+          return null;
+        }
+      };
+      const findPreferred = (m) =>
+        m && (m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard'));
+
+      const wsDir = (() => {
+        const preferred = findPreferred(readManifest());
+        return preferred?.wsDir && fs.existsSync(preferred.wsDir) ? [preferred.wsDir] : [];
+      })();
+      const appDir = (() => {
+        const preferred = findPreferred(readManifest());
+        return preferred?.appDir && fs.existsSync(preferred.appDir) ? [preferred.appDir] : [];
+      })();
+
+      // Phase 4.8a: Open workspace dir, click No on conversion dialog
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      if (wsDir.length > 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        await prepareFreshSession('phase8a-shard');
+        exits.push(await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir }));
+      } else {
+        console.warn('  No workspace directory found for phase 4.8a — skipping');
+        exits.push(0);
+      }
+
+      // Phase 4.8c: Multiple designers + add workflow — needs full design-time
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase8c-shard');
+      exits.push(await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: wsResources }));
+
+      // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      let phase8dExit = 0;
+      if (wsDir.length > 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        await prepareFreshSession('phase8d-shard');
+        phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
+      }
+
+      // Phase 4.8e: Open logic app subfolder, click No
+      if (appDir.length > 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        await prepareFreshSession('phase8e-shard');
+        exits.push(await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir }));
+      } else {
+        console.warn('  No app directory found for phase 4.8e — skipping');
+        exits.push(0);
+      }
+
+      // Mirror `full` mode behaviour: 4.8d (conversionYes) is environment-flaky
+      // in CI (xvfb dialog interaction), so log its result but exclude from
+      // the shard exit code.
+      const finalExit = Math.max(...exits);
+      if (phase8dExit !== 0) {
+        console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
+      }
+      console.log(
+        `\n=== Conversion shard results: 4.1=${exits[0]}, 4.8a=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${phase8dExit}, 4.8e=${exits[3]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
+    }
+
     writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
     await prepareFreshSession('phase0');
     const phase0Exit = await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files);

@@ -38,8 +38,21 @@ concurrency:
 
 jobs:
   vscode-e2e:
-    timeout-minutes: 90
+    name: vscode-e2e (${{ matrix.shard }})
+    timeout-minutes: 35
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: independent
+            e2e_mode: independentonly
+          - shard: designer
+            e2e_mode: createplusdesigner
+          - shard: newtests
+            e2e_mode: createplusnewtests
+          - shard: conversion
+            e2e_mode: createplusconversion
 
     steps:
       - name: Checkout
@@ -87,6 +100,7 @@ jobs:
 
       # Cache the auto-downloaded runtime dependencies (func, dotnet, node)
       # so subsequent runs don't re-download ~500MB each time.
+      # Shared across all matrix shards via a stable key (not shard-scoped).
       - name: Cache Logic Apps runtime dependencies
         uses: actions/cache@v4
         with:
@@ -97,11 +111,11 @@ jobs:
           # Save even when tests fail so deps are available on next run
           save-always: true
 
-      - name: Run VS Code Extension E2E tests
+      - name: Run VS Code Extension E2E tests (${{ matrix.shard }})
         run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
         env:
-          # Run all phases (4.1 workspace creation through 4.7 smoke tests)
-          E2E_MODE: full
+          # Shard-specific subset of phases (see apps/vs-code-designer/src/test/ui/run-e2e.js).
+          E2E_MODE: ${{ matrix.e2e_mode }}
           # Increase Node memory for CI
           NODE_OPTIONS: --max-old-space-size=4096
           # Set TEMP so screenshot paths are predictable on Linux
@@ -117,9 +131,26 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: vscode-e2e-screenshots
+          name: vscode-e2e-screenshots-${{ matrix.shard }}
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/
           if-no-files-found: ignore
           retention-days: 30
+
+  # Rollup status check so branch protection can require a single check name
+  # ("vscode-e2e-summary") regardless of how many shards we add later.
+  vscode-e2e-summary:
+    name: vscode-e2e-summary
+    needs: vscode-e2e
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all shards passed
+        run: |
+          echo "Shard results: ${{ toJSON(needs.vscode-e2e.result) }}"
+          if [ "${{ needs.vscode-e2e.result }}" != "success" ]; then
+            echo "::error::One or more vscode-e2e matrix shards failed (${{ needs.vscode-e2e.result }})"
+            exit 1
+          fi
+          echo "All vscode-e2e shards passed."
