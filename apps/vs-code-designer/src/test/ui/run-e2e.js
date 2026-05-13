@@ -1279,6 +1279,29 @@ async function main() {
     await prepareFreshSession('phase7');
     const phase7Exit = await runPhase('Phase 4.7: remaining suites', phase7Files);
 
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    process.env.AZURITE_E2E_WORKSPACE_PARENT = azuriteWorkspaceParentDir;
+    process.env.AZURITE_E2E_STEP = 'create';
+    await prepareFreshSession('phase9-create');
+    const phase9CreateExit = await runPhase('Phase 4.9a: azurite workspace creation', phase9CreateFiles);
+    if (phase9CreateExit !== 0) console.log(`\n⚠ Phase 4.9a exited with code ${phase9CreateExit} — continuing`);
+
+    installFakeAzuriteExtension(extDir);
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: true });
+    process.env.AZURITE_E2E_STEP = 'assert';
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase9-assert');
+    const phase9Exit = await runPhase('Phase 4.9b: azuriteAutostartFailure', phase9Files, {
+      resources: [azuriteWorkspaceFile],
+    });
+    delete process.env.AZURITE_E2E_STEP;
+    delete process.env.AZURITE_E2E_WORKSPACE_PARENT;
+    if (phase9Exit === 0) {
+      await cleanupAzuriteWorkspace();
+    }
+    if (phase9Exit !== 0) console.log(`\n⚠ Phase 4.9 exited with code ${phase9Exit} — continuing`);
+
     // Phases 4.8a–4.8e: Workspace conversion tests (ADO #31054994, Steps 5-15)
     // ALL conversion tests need validateDependencies ON so the extension fully
     // activates and can detect legacy projects / show the conversion dialog.
@@ -1355,29 +1378,6 @@ async function main() {
       phase8eExit = await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir });
       if (phase8eExit !== 0) console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
     }
-
-    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    process.env.AZURITE_E2E_WORKSPACE_PARENT = azuriteWorkspaceParentDir;
-    process.env.AZURITE_E2E_STEP = 'create';
-    await prepareFreshSession('phase9-create');
-    const phase9CreateExit = await runPhase('Phase 4.9a: azurite workspace creation', phase9CreateFiles);
-    if (phase9CreateExit !== 0) console.log(`\n⚠ Phase 4.9a exited with code ${phase9CreateExit} — continuing`);
-
-    installFakeAzuriteExtension(extDir);
-    writeTestSettings({ validateDependencies: false, autoStartDesignTime: true });
-    process.env.AZURITE_E2E_STEP = 'assert';
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await prepareFreshSession('phase9-assert');
-    const phase9Exit = await runPhase('Phase 4.9b: azuriteAutostartFailure', phase9Files, {
-      resources: [azuriteWorkspaceFile],
-    });
-    delete process.env.AZURITE_E2E_STEP;
-    delete process.env.AZURITE_E2E_WORKSPACE_PARENT;
-    if (phase9Exit === 0) {
-      await cleanupAzuriteWorkspace();
-    }
-    if (phase9Exit !== 0) console.log(`\n⚠ Phase 4.9 exited with code ${phase9Exit} — continuing`);
 
     // Exit with worst exit code from all phases
     // Note: phase8dExit (conversionYes) is excluded from the final exit code

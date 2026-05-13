@@ -121,6 +121,21 @@ async function selectCreateWorkspaceCommand(workbench: Workbench): Promise<void>
   throw new Error(`Could not find Create Workspace command. Available picks: ${JSON.stringify(labels)}`);
 }
 
+async function withTimeout<T>(operation: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutHandle = setTimeout(() => reject(new Error(`${label} did not complete within ${timeoutMs}ms`)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([operation, timeout]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+}
+
 async function switchToCreateWorkspaceWebview(driver: WebDriver): Promise<WebView> {
   await dismissNotifications(driver);
   await driver.switchTo().defaultContent();
@@ -393,7 +408,7 @@ describe('Azurite auto-start failure E2E workspace creation', function () {
   if (E2E_STEP === 'create') {
     it('creates a Logic Apps workspace through the Create Workspace webview', async function () {
       this.timeout(TEST_TIMEOUT);
-      await createWorkspaceFromWebview(new Workbench(), driver);
+      await withTimeout(createWorkspaceFromWebview(new Workbench(), driver), 180_000, 'Create Workspace webview flow');
       configureGeneratedWorkspaceForAzuriteFailure();
     });
   } else {
