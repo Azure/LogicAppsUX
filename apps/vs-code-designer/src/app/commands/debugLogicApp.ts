@@ -72,8 +72,8 @@ export async function debugLogicApp(
     )
   );
 
+  let functionLaunchConfig: vscode.DebugConfiguration | undefined;
   if (debugConfig.customCodeRuntime) {
-    let functionLaunchConfig: vscode.DebugConfiguration;
     if (debugConfig.customCodeRuntime === 'coreclr') {
       const customCodeNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
         context,
@@ -101,35 +101,35 @@ export async function debugLogicApp(
       context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
       throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
     }
-
-    if (functionLaunchConfig?.processId) {
-      ext.outputChannel.appendLog(
-        localize(
-          'customCodeDebugAttachAttempt',
-          'Attempting custom code debug attach for "{0}" using runtime "{1}" and process ID "{2}".',
-          logicAppName,
-          String(functionLaunchConfig.type),
-          String(functionLaunchConfig.processId)
-        )
-      );
-      const customCodeAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, functionLaunchConfig);
-      ext.outputChannel.appendLog(
-        localize(
-          'customCodeDebugAttachResult',
-          'Custom code debug attach request for "{0}" completed with result "{1}".',
-          logicAppName,
-          String(customCodeAttachStarted)
-        )
-      );
-    } else {
-      ext.outputChannel.appendLog(
-        localize(
-          'customCodeDebugAttachSkipped',
-          'Skipping custom code debug attach for "{0}" because no custom code worker process was found.',
-          logicAppName
-        )
-      );
-    }
-    context.telemetry.properties.result = 'Succeeded';
   }
+
+  if (functionLaunchConfig?.processId) {
+    ext.outputChannel.appendLog(
+      localize(
+        'customCodeDebugAttachAttempt',
+        'Attempting custom code debug attach for "{0}" using runtime "{1}" and process ID "{2}".',
+        logicAppName,
+        String(functionLaunchConfig.type),
+        String(functionLaunchConfig.processId)
+      )
+    );
+    const customCodeAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, functionLaunchConfig);
+    ext.outputChannel.appendLog(
+      localize(
+        'customCodeDebugAttachResult',
+        'Custom code debug attach request for "{0}" completed with result "{1}".',
+        logicAppName,
+        String(customCodeAttachStarted)
+      )
+    );
+  } else if (debugConfig.customCodeRuntime) {
+    ext.outputChannel.appendLog(
+      localize(
+        'customCodeDebugAttachSkipped',
+        'Skipping custom code debug attach for "{0}" because no custom code worker process was found.',
+        logicAppName
+      )
+    );
+  }
+  context.telemetry.properties.result = 'Succeeded';
 }

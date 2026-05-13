@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "e2e": "E2E=true vite",
+    "e2e": "vite --mode e2e",
     "preview": "vite preview",
     "test:iframe-app": "vitest run --retry=3",
     "test": "vitest run --retry=3",

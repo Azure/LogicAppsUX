@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { nameValidation } from '../validation/helper';
+import { nameValidation } from '../utils/validation';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();

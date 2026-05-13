@@ -90,6 +90,63 @@ function rebuildExtensionsJson(extensionsDir) {
   console.log(`  ✓ Rebuilt extensions.json with ${entries.length} entries`);
 }
 
+/**
+ * Install the bundled codeful task recorder extension into the test
+ * extensions directory. Returns the install location.
+ *
+ * The recorder is a plain-JS extension at
+ * `src/test/ui/codefulTaskRecorderExtension/`. It subscribes to
+ * `vscode.tasks.*` events and appends them to a JSONL file pointed to by
+ * `process.env.LA_E2E_TASK_EVENTS_JSONL`. It also contributes the
+ * `la-e2e.startDebug`, `la-e2e.stopDebug`, and `la-e2e.recorderPing`
+ * commands used by Phase 4.10.
+ */
+function installCodefulTaskRecorderExtension(extDir) {
+  const recorderSrc = path.join(__dirname, 'codefulTaskRecorderExtension');
+  if (!fs.existsSync(path.join(recorderSrc, 'package.json'))) {
+    throw new Error(`Recorder extension source missing at ${recorderSrc}`);
+  }
+  const recorderPkg = JSON.parse(fs.readFileSync(path.join(recorderSrc, 'package.json'), 'utf8'));
+  const target = path.join(extDir, `${recorderPkg.publisher}.${recorderPkg.name}-${recorderPkg.version}`);
+
+  // Remove stale copies of the recorder before reinstalling.
+  if (fs.existsSync(extDir)) {
+    for (const entry of fs.readdirSync(extDir)) {
+      if (entry.toLowerCase().startsWith(`${recorderPkg.publisher}.${recorderPkg.name}`.toLowerCase())) {
+        fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
+      }
+    }
+  }
+
+  fs.mkdirSync(target, { recursive: true });
+  // Plain JS extension — just copy the source as-is.
+  for (const entry of fs.readdirSync(recorderSrc, { withFileTypes: true })) {
+    const src = path.join(recorderSrc, entry.name);
+    const dst = path.join(target, entry.name);
+    if (entry.isDirectory()) {
+      copyDirSync(src, dst);
+    } else {
+      fs.copyFileSync(src, dst);
+    }
+  }
+
+  console.log(`  ✓ Installed codeful task recorder at ${target}`);
+  return target;
+}
+
+/**
+ * DEPRECATED-AS-PRECEDENT. Do not copy this pattern for new VS Code E2E tests.
+ *
+ * Synthetic fixtures violate `.squad/decisions.md` D-001 ("No synthetic Logic
+ * App fixtures for VS Code E2E tests"). This helper exists only because it
+ * predates the rule. New tests must create workspaces through the real Create
+ * Workspace webview and reopen the generated `.code-workspace` in a fresh
+ * `run-e2e.js` phase. See also `.squad/knowledge/vscode-e2e-testing.md` and
+ * `apps/vs-code-designer/src/test/ui/SKILL.md` § 1.5 Rule 1.
+ *
+ * Build a synthetic "legacy" project fixture for the legacy/standard
+ * non-Logic-App regression tests.
+ */
 function createLegacyProjectFixture(label) {
   const legacyRoot = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-${label}-`));
   const legacyDir = path.join(legacyRoot, 'legacy-project');
@@ -683,6 +740,11 @@ async function main() {
       // Suppress "wants to sign in" auth dialog — uses silent auth that
       // returns undefined instead of prompting when no cached token exists.
       'azureLogicAppsStandard.silentAuth': true,
+      // Short pick-process timeout for Phase 4.10. The codeful-debug
+      // recorder test asserts task dispatch, so bound process picking after
+      // the generated task chain has started instead of waiting the default
+      // 60 s. Other phases never reach pickProcess so this is harmless.
+      'azureLogicAppsStandard.pickProcessTimeout': 15,
     };
     if (includeRuntimeDependencyPaths) {
       const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
@@ -754,6 +816,9 @@ async function main() {
   // Wave 2: Tests that involve window reload or different folder open scenarios
   const phase8dFiles = [testFile('workspaceConversionYes.test.js')];
   const phase8eFiles = [testFile('workspaceConversionSubfolder.test.js')];
+
+  const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
+  const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
   console.log(`\nE2E mode: ${e2eMode}`);
@@ -898,10 +963,233 @@ async function main() {
     } catch {
       /* ignore */
     }
+    // ExTester runs Mocha in this Node process. Some phases intentionally reuse
+    // the same compiled test file with different env gates (for example
+    // createWorkspace.test.js in Phase 4.1 and Phase 4.10A), so clear cached
+    // test modules before adding them to a new Mocha instance.
+    for (const file of files) {
+      try {
+        delete require.cache[require.resolve(file)];
+      } catch {
+        /* ignore */
+      }
+    }
     const phaseTester = new ExTester(undefined, undefined, extDir);
     const code = await phaseTester.runTests(files, phaseRunOptions);
     console.log(`  ${phaseName} exit code: ${code}`);
     return code;
+  };
+
+  const configureCodefulRecorderEnvironment = () => {
+    const eventsFile = path.join(os.tmpdir(), 'la-e2e-test', 'codeful-events.jsonl');
+    const triggerDir = path.join(os.tmpdir(), 'la-e2e-test', 'triggers');
+    fs.mkdirSync(path.dirname(eventsFile), { recursive: true });
+    fs.mkdirSync(triggerDir, { recursive: true });
+    try {
+      for (const entry of fs.readdirSync(triggerDir)) {
+        fs.unlinkSync(path.join(triggerDir, entry));
+      }
+    } catch {
+      /* ignore */
+    }
+    try {
+      fs.writeFileSync(eventsFile, '');
+    } catch {
+      /* ignore */
+    }
+    process.env.LA_E2E_TASK_EVENTS_JSONL = eventsFile;
+    process.env.CODEFUL_TASK_EVENTS_JSONL = eventsFile;
+    process.env.LA_E2E_TRIGGER_DIR = triggerDir;
+    console.log(`  Events file: ${eventsFile}`);
+    console.log(`  Trigger dir:  ${triggerDir}`);
+  };
+
+  const loadCodefulDebugWorkspaces = () => {
+    const manifestPath = path.join(os.tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error(`Codeful debug manifest not found: ${manifestPath}`);
+    }
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const codefulEntries = manifest.filter((entry) => entry.appType === 'codeful');
+    const modern = codefulEntries.find((entry) => /modern/i.test(entry.label)) || codefulEntries[0];
+    const legacy = codefulEntries.find((entry) => /legacy/i.test(entry.label)) || codefulEntries[1];
+    for (const [variant, entry] of [
+      ['modern', modern],
+      ['legacy', legacy],
+    ]) {
+      if (!entry) {
+        throw new Error(`Missing ${variant} codeful workspace entry in ${manifestPath}`);
+      }
+      for (const requiredPath of [entry.wsFilePath, entry.appDir]) {
+        if (!requiredPath || !fs.existsSync(requiredPath)) {
+          throw new Error(`Missing ${variant} codeful generated path: ${requiredPath}`);
+        }
+      }
+    }
+    return { modern, legacy };
+  };
+
+  const patchLegacyCodefulCsproj = (entry) => {
+    const csprojFiles = fs.readdirSync(entry.appDir).filter((name) => name.endsWith('.csproj'));
+    if (csprojFiles.length !== 1) {
+      throw new Error(`Expected exactly one codeful .csproj in ${entry.appDir}, found ${csprojFiles.length}: ${csprojFiles.join(', ')}`);
+    }
+    const csprojPath = path.join(entry.appDir, csprojFiles[0]);
+    let updated = fs.readFileSync(csprojPath, 'utf8');
+    for (const targetName of ['CopyToCodefulFolder', 'ReplaceLanguageNetCore']) {
+      const targetMatch = updated.match(new RegExp(`<Target\\b[^>]*Name=["']${targetName}["'][^>]*>`));
+      if (!targetMatch) {
+        throw new Error(`Could not find ${targetName} target in ${csprojPath}`);
+      }
+      const targetTag = targetMatch[0];
+      const updatedTag = targetTag.replace(/(AfterTargets=["'])Build;Publish(["'])/, '$1Publish$2');
+      if (updatedTag === targetTag) {
+        throw new Error(`Could not patch ${targetName} AfterTargets from Build;Publish to Publish in ${csprojPath}`);
+      }
+      updated = updated.replace(targetTag, updatedTag);
+    }
+    fs.writeFileSync(csprojPath, updated, 'utf8');
+    console.log(`  Patched legacy codeful targets AfterTargets=Publish in ${csprojPath}`);
+  };
+
+  const patchGeneratedCodefulProjectForDebugGuard = (entry, variant) => {
+    const workflowFile = path.join(entry.appDir, `${entry.wfName}.cs`);
+    const programFile = path.join(entry.appDir, 'Program.cs');
+
+    for (const requiredPath of [workflowFile, programFile]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(`Missing generated ${variant} codeful file required for debug-guard patch: ${requiredPath}`);
+      }
+    }
+
+    const originalWorkflow = fs.readFileSync(workflowFile, 'utf8');
+    const namespaceName = originalWorkflow.match(/namespace\s+([A-Za-z_][A-Za-z0-9_.]*)/)?.[1];
+    const className = originalWorkflow.match(/public\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/)?.[1];
+    if (!namespaceName || !className) {
+      throw new Error(`Could not read namespace/class from generated codeful workflow: ${workflowFile}`);
+    }
+
+    // Phase 4.10 validates the VS Code debug task chain, not connector
+    // execution. The current generated template uses an MSN Weather managed
+    // connector and the preview SDK package no longer exposes the generated
+    // IWorkflowProvider/AddWorkflowProviders surface. Keep the project
+    // D-001-compliant by patching only the generated files after the real
+    // Create Workspace webview completes: use built-in HTTP trigger/Response
+    // APIs that compile with the package currently referenced by the template,
+    // and remove the stale provider-registration call.
+    const patchedWorkflow = `// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace ${namespaceName}
+{
+    using Microsoft.Azure.Workflows.Sdk;
+
+    /// <summary>
+    /// "${entry.wfName}" connector-free Stateful workflow for the Phase 4.10 debug task guard.
+    /// </summary>
+    public class ${className}
+    {
+        /// <summary>
+        /// Gets a built-in HTTP request/response workflow definition.
+        /// </summary>
+        public IWorkflowTrigger GetWorkflow()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+            var response = WorkflowActions.BuiltIn.Response(responseBody: () => "ok");
+            var workflow = trigger.Then(response);
+
+            return WorkflowFactory.CreateStatefulWorkflow("${entry.wfName}", workflow);
+        }
+    }
+}
+`;
+
+    fs.writeFileSync(workflowFile, patchedWorkflow, 'utf8');
+
+    const originalProgram = fs.readFileSync(programFile, 'utf8');
+    const patchedProgram = originalProgram.replace(/^\s*services\.AddWorkflowProviders\(typeof\(Program\)\.Assembly\);\r?\n/m, '');
+    if (patchedProgram === originalProgram && originalProgram.includes('AddWorkflowProviders')) {
+      throw new Error(`Could not remove stale AddWorkflowProviders call from ${programFile}`);
+    }
+    fs.writeFileSync(programFile, patchedProgram, 'utf8');
+
+    for (const connectionArtifact of ['connections.json', 'parameters.json']) {
+      const artifactPath = path.join(entry.appDir, connectionArtifact);
+      if (fs.existsSync(artifactPath)) {
+        fs.rmSync(artifactPath, { force: true });
+        console.log(`  Removed ${variant} connector artifact: ${artifactPath}`);
+      }
+    }
+
+    console.log(`  Patched ${variant} generated codeful workflow to built-in HTTP trigger + Response: ${workflowFile}`);
+  };
+
+  const removeDesignTimeEvidence = async (entry, variant) => {
+    const designTimeDir = path.join(entry.appDir, 'workflow-designtime');
+    for (let attempt = 1; attempt <= 6; attempt++) {
+      try {
+        fs.rmSync(designTimeDir, { recursive: true, force: true });
+        console.log(`  Removed stale ${variant} design-time evidence: ${designTimeDir}`);
+        return;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (attempt === 6 && !/EBUSY|EPERM|resource busy|locked/i.test(message)) {
+          throw err;
+        }
+        if (attempt === 6) {
+          console.log(
+            `  Could not remove stale ${variant} design-time evidence because it is locked; continuing so the fresh phase must update it: ${message}`
+          );
+          return;
+        }
+        console.log(`  Waiting to remove stale ${variant} design-time evidence (attempt ${attempt}): ${message}`);
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
+  };
+
+  const runCodefulDebugPhases = async (labelPrefix) => {
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    process.env.LA_E2E_CODEFUL_CREATE_ONLY = '1';
+    await prepareFreshSession(`${labelPrefix}-phase10a-create`);
+    const createExit = await runPhase('Phase 4.10A: create codeful workspaces', [testFile('createWorkspace.test.js')]);
+    delete process.env.LA_E2E_CODEFUL_CREATE_ONLY;
+    if (createExit !== 0) {
+      console.log(`\n⚠ Phase 4.10A exited with code ${createExit}; skipping Phase 4.10B`);
+      return createExit;
+    }
+
+    const { modern, legacy } = loadCodefulDebugWorkspaces();
+    patchGeneratedCodefulProjectForDebugGuard(modern, 'modern');
+    patchGeneratedCodefulProjectForDebugGuard(legacy, 'legacy');
+    patchLegacyCodefulCsproj(legacy);
+
+    installCodefulTaskRecorderExtension(extDir);
+    rebuildExtensionsJson(extDir);
+    configureCodefulRecorderEnvironment();
+
+    process.env.LA_E2E_CODEFUL_MODERN_DIR = modern.appDir;
+    process.env.LA_E2E_CODEFUL_LEGACY_DIR = legacy.appDir;
+    process.env.LA_E2E_CODEFUL_MODERN_WORKSPACE = modern.wsFilePath;
+    process.env.LA_E2E_CODEFUL_LEGACY_WORKSPACE = legacy.wsFilePath;
+    console.log(`  Modern codeful workspace: ${modern.wsFilePath}`);
+    console.log(`  Legacy codeful workspace: ${legacy.wsFilePath}`);
+
+    writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+
+    process.env.LA_E2E_CODEFUL_VARIANT = 'modern';
+    await prepareFreshSession(`${labelPrefix}-phase10b-modern`);
+    await removeDesignTimeEvidence(modern, 'modern');
+    const modernExit = await runPhase('Phase 4.10B-modern: codefulDebugTasks', phase10ModernFiles, { resources: [modern.wsFilePath] });
+
+    process.env.LA_E2E_CODEFUL_VARIANT = 'legacy';
+    await prepareFreshSession(`${labelPrefix}-phase10b-legacy`);
+    await removeDesignTimeEvidence(legacy, 'legacy');
+    const legacyExit = await runPhase('Phase 4.10B-legacy: codefulDebugTasks', phase10LegacyFiles, { resources: [legacy.wsFilePath] });
+    delete process.env.LA_E2E_CODEFUL_VARIANT;
+
+    return Math.max(modernExit, legacyExit);
   };
 
   try {
@@ -931,6 +1219,13 @@ async function main() {
       }
       return phase2Resources;
     };
+
+    if (e2eMode === 'codefuldebugonly') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const phase10Exit = await runCodefulDebugPhases('phase10-only');
+      process.exit(phase10Exit);
+    }
 
     if (e2eMode === 'nonlogicappstartup') {
       // Startup regression test: intentionally omit runtime dependency paths to
@@ -1241,6 +1536,19 @@ async function main() {
       if (phase8eExit !== 0) console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
     }
 
+    // Phase 4.10: D-001-compliant codeful debug F5 task pattern regression guard.
+    // Phase A creates real codeful workspaces through the Create Workspace webview.
+    // Phase B reopens each generated .code-workspace in a fresh VS Code session
+    // with the task-recorder extension installed and asserts F5 task events.
+    let phase10Exit = 0;
+    try {
+      phase10Exit = await runCodefulDebugPhases('phase10');
+      if (phase10Exit !== 0) console.log(`\n⚠ Phase 4.10 exited with code ${phase10Exit} — continuing`);
+    } catch (err) {
+      phase10Exit = 1;
+      console.log(`\n⚠ Phase 4.10 setup error: ${err.message || err} — continuing`);
+    }
+
     // Exit with worst exit code from all phases
     // Note: phase8dExit (conversionYes) is excluded from the final exit code
     // because this test is environment-flaky in CI — the "Yes"/"Open Workspace"
@@ -1258,13 +1566,14 @@ async function main() {
       phase8aExit,
       phase8bExit,
       phase8cExit,
-      phase8eExit
+      phase8eExit,
+      phase10Exit
     );
     if (phase8dExit !== 0) {
       console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
     }
     console.log(
-      `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit} → exit ${finalExit} ===`
+      `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
     );
     process.exit(finalExit);
   } catch (err) {

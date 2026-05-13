@@ -23,7 +23,7 @@ import { createUnitTestFromRun } from '../unitTest/codefulUnitTest/createUnitTes
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
+import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
 import * as path from 'path';
@@ -62,33 +62,30 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       this.getPanelOptions()
     );
     this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
-    };
-
-    this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
     };
 
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-    const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
-    this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
-    if (this.projectPath) {
-      this.localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;
-    } else {
+    if (!this.projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
+    this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+
+    // Fetch panel metadata which does all operations in parallel internally
     this.panelMetadata = await this._getDesignerPanelMetadata();
+
+    // Reuse data from panelMetadata instead of fetching again
+    this.localSettings = this.panelMetadata.localSettings;
+
     this.panel.webview.html = await this.getWebviewContent({
-      connectionsData: connectionsData,
-      parametersData: parametersData,
-      localSettings: this.localSettings,
-      artifacts: await getArtifactsInLocalProject(this.projectPath),
-      azureDetails: await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath),
+      connectionsData: this.panelMetadata.connectionsData,
+      parametersData: this.panelMetadata.parametersData,
+      localSettings: this.panelMetadata.localSettings,
+      artifacts: this.panelMetadata.artifacts,
+      azureDetails: this.panelMetadata.azureDetails,
     });
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
@@ -130,6 +127,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             isMonitoringView: this.isMonitoringView,
             runId: this.runId,
             hostVersion: ext.extensionVersion,
+            supportsUnitTest: this.isLocal && this.localSettings?.['WORKFLOW_CODEFUL_ENABLED'] !== 'true',
           },
         });
         break;
@@ -192,22 +190,34 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   }
 
   private async _getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-    const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-    const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
-    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
-    const bundleVersionNumber = await getBundleVersionNumber(projectPath);
 
-    let localSettings: Record<string, string>;
-    let azureDetails: AzureConnectorDetails;
-
-    if (projectPath) {
-      azureDetails = await getAzureConnectorDetailsForLocalProject(this.context, projectPath);
-      localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values;
-    } else {
+    if (!projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
+
+    // Parallelize all file reads and API calls for better performance
+    const [
+      connectionsData,
+      parametersData,
+      customCodeData,
+      bundleVersionNumber,
+      azureDetails,
+      localSettingsResult,
+      artifacts,
+      workflowContent,
+    ] = await Promise.all([
+      getConnectionsFromFile(this.context, this.workflowFilePath),
+      getParametersFromFile(this.context, this.workflowFilePath),
+      getCustomCodeFromFiles(this.workflowFilePath),
+      getBundleVersionNumber(projectPath),
+      getAzureConnectorDetailsForLocalProject(this.context, projectPath),
+      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)),
+      getArtifactsInLocalProject(projectPath),
+      this._getWorkflowContent(),
+    ]);
+
+    const localSettings = localSettingsResult.Values;
 
     return {
       panelId: this.panelName,
@@ -220,11 +230,37 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       accessToken: azureDetails.accessToken,
       workflowName: this.workflowName,
       workflowDetails: {},
-      artifacts: await getArtifactsInLocalProject(projectPath),
+      artifacts,
       standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
       extensionBundleVersion: bundleVersionNumber,
     };
+  }
+
+  private async _getWorkflowContent(): Promise<any> {
+    if (!this.workflowFilePath.endsWith('.cs')) {
+      return JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+    }
+
+    try {
+      const runUrl = `${this.baseUrl}/workflows/${this.workflowName}/runs/${this.runId}?api-version=${this.apiVersion}`;
+      const runResponse: string = await sendRequest(this.context, {
+        url: runUrl,
+        method: HTTP_METHODS.GET,
+      });
+      const runData = JSON.parse(runResponse);
+
+      if (runData.properties?.workflow?.properties?.definition) {
+        return {
+          definition: runData.properties.workflow.properties.definition,
+          kind: runData.properties.workflow.properties.kind || 'Stateful',
+        };
+      }
+    } catch {
+      // Codeful run data can be unavailable while the local runtime is starting.
+    }
+
+    return { definition: {}, kind: 'Stateful' };
   }
 }

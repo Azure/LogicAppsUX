@@ -159,6 +159,17 @@ async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
     const message = await dialog.getMessage();
     console.log(`[dismissAllDialogs] ModalDialog found: "${message.substring(0, 150)}"`);
 
+    if (message.includes('AzureWebJobsStorage') || message.includes('local emulator installed and running')) {
+      try {
+        await dialog.pushButton('Debug anyway');
+        console.log('[dismissAllDialogs] Clicked "Debug anyway" on storage verification dialog');
+        await sleep(1000);
+        return true;
+      } catch {
+        // Button not found — fall through to raw selectors.
+      }
+    }
+
     // Special case: Auth dialogs — Cancel sign-in since we're running locally
     // and don't need Azure auth for the overview/runtime
     if (
@@ -220,6 +231,23 @@ async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
         /* ignore */
       }
       console.log(`[dismissAllDialogs] Found ${containerSel}: "${messageText}"`);
+
+      if (messageText.includes('AzureWebJobsStorage') || messageText.includes('local emulator installed and running')) {
+        try {
+          const buttons = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          for (const btn of buttons) {
+            const label = await btn.getText().catch(() => '');
+            if (label.toLowerCase().includes('debug anyway')) {
+              console.log('[dismissAllDialogs] Clicking "Debug anyway" on storage verification dialog');
+              await btn.click();
+              await sleep(1000);
+              return true;
+            }
+          }
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
+      }
 
       // Special case: Auth dialogs — Cancel sign-in for local testing
       if (messageText.includes('sign in') || messageText.includes('Sign in') || messageText.includes('wants to sign in')) {

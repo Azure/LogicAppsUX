@@ -2,7 +2,7 @@ import type { IWorkerRuntime } from './cliFeed';
 import type { FuncVersion } from './functions';
 import type { IParsedHostJson } from './host';
 import type { ProjectLanguage } from './language';
-import type { TargetFramework, WorkflowProjectType } from './workflow';
+import type { TargetFramework, WorkflowProjectType, WorkflowType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
@@ -13,9 +13,11 @@ export const ProjectName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
+  languageServer: 'languageServer',
   createWorkspace: 'createWorkspace',
   createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   createLogicApp: 'createLogicApp',
+  createWorkflow: 'createWorkflow',
   createWorkspaceStructure: 'createWorkspaceStructure',
 } as const;
 export type ProjectNameType = (typeof ProjectName)[keyof typeof ProjectName];
@@ -97,11 +99,10 @@ export interface IWebviewProjectContext extends IActionContext {
   workspaceProjectPath: ITargetDirectory;
   workspaceName: string;
   logicAppName: string;
-  logicAppType: string;
-  projectType: string;
-  targetFramework: string;
+  logicAppType: ProjectType;
+  targetFramework?: TargetFramework;
   workflowName: string;
-  workflowType: string;
+  workflowType?: WorkflowType;
   functionFolderName?: string;
   functionName?: string;
   functionNamespace?: string;
@@ -122,6 +123,7 @@ export const ProjectType = {
   logicApp: 'logicApp',
   customCode: 'customCode',
   rulesEngine: 'rulesEngine',
+  codeful: 'codeful',
 } as const;
 export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
 
@@ -131,6 +133,28 @@ export const DeploymentScriptType = {
 } as const;
 export type DeploymentScriptType = (typeof DeploymentScriptType)[keyof typeof DeploymentScriptType];
 
+export const RouteName = {
+  export: 'export',
+  instance_selection: 'instance-selection',
+  workflows_selection: 'workflows-selection',
+  validation: 'validation',
+  overview: 'overview',
+  summary: 'summary',
+  status: 'status',
+  review: 'review',
+  designer: 'designer',
+  dataMapper: 'dataMapper',
+  unitTest: 'unitTest',
+  languageServer: 'languageServer',
+  connectionView: 'connectionView',
+  createWorkspace: 'createWorkspace',
+  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
+  createLogicApp: 'createLogicApp',
+  createWorkspaceStructure: 'createWorkspaceStructure',
+  createWorkflow: 'createWorkflow',
+};
+
+export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
 export interface ITargetDirectory {
   fsPath: string;
   path: string;

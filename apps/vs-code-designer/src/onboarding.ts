@@ -29,14 +29,17 @@ export const startOnboarding = async (activateContext: IActionContext) => {
     activateContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
     ext.outputChannel.appendLog('Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.');
   } else {
-    callWithTelemetryAndErrorHandling(autoRuntimeDependenciesValidationAndInstallationSetting, async (actionContext: IActionContext) => {
-      const binariesInstallStartTime = Date.now();
-      await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
-        activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
-        await installBinaries(actionContext);
-      });
-      activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
-    });
+    await callWithTelemetryAndErrorHandling(
+      autoRuntimeDependenciesValidationAndInstallationSetting,
+      async (actionContext: IActionContext) => {
+        const binariesInstallStartTime = Date.now();
+        await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+          activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
+          await installBinaries(actionContext);
+        });
+        activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
+      }
+    );
   }
 
   await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
