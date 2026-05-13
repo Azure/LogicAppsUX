@@ -27,8 +27,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
 
   await vscode.window.withProgress(
     {
-      location: vscode.ProgressLocation.Notification, // Location of the progress indicator
-      title: localize('validateRuntimeDependency', 'Validating Runtime Dependency'), // Title displayed in the progress notification
+      location: vscode.ProgressLocation.Window,
+      title: localize('validateRuntimeDependency', 'Validating Runtime Dependency'),
       cancellable: false, // Allow the user to cancel the task
     },
     async (progress, token) => {

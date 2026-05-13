@@ -361,14 +361,14 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(fse.writeJson).toHaveBeenCalledWith(extensionsJsonPath, JSON.parse(extensionsJsonFileContent), { spaces: 2 });
     });
 
-    it('should use an extensions.json template that recommends reopening in containers', async () => {
+    it('should use an extensions.json template that does not recommend Dev Containers', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const extensionsJsonPath = path.join(logicAppFolderPath, '.vscode', 'extensions.json');
       const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === extensionsJsonPath);
       const extensionsData = writeCall?.[1] as { recommendations: string[] };
 
-      expect(extensionsData.recommendations).toContain('ms-vscode-remote.remote-containers');
+      expect(extensionsData.recommendations).not.toContain('ms-vscode-remote.remote-containers');
     });
 
     it('should copy tasks.json from template', async () => {

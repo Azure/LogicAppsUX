@@ -36,9 +36,9 @@ export interface WorkspaceManifestEntry {
   /** Workflow folder name */
   wfName: string;
   /** Logic app type */
-  appType: 'standard' | 'customCode' | 'rulesEngine';
+  appType: 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
   /** Workflow type value */
-  wfType: 'Stateful' | 'Stateless' | 'Autonomous Agents (Preview)' | 'Conversational Agents';
+  wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
   /** Custom code / rules engine folder name (if applicable) */
   ccFolderName?: string;
   /** Function file name (if applicable) */

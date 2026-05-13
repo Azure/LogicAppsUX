@@ -3,7 +3,6 @@
     "ms-azuretools.vscode-azurelogicapps",
     "ms-azuretools.vscode-azurefunctions",
     "ms-dotnettools.csharp",
-    "ms-dotnettools.csdevkit",
-    "ms-vscode-remote.remote-containers"
+    "ms-dotnettools.csdevkit"
   ]
 }

@@ -143,6 +143,7 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 | 4.5 | designerViewExtended.test.ts | Parallel branches + run-after (ADO #10109401) |
 | 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down navigation (ADO #10273324) |
 | 4.7 | dataMapper.test.ts, demo, smoke, standalone | Data Mapper + generic tests |
+| 4.10 | codefulDebugTasks.test.ts | Codeful F5 skips `publish` task when csproj already runs `CopyToCodefulFolder`/`ReplaceLanguageNetCore` on Build (regression guard for `pickFuncProcess` → `publishCodefulProject({ skipIfBuildPopulatesCodeful: true })`). Uses a fake task-recorder extension that subscribes to `vscode.tasks.*` events and emits JSONL; the test asserts `publishStart === 0` (modern csproj with `AfterTargets="Build;Publish"`) vs. `publishStart === 1` (legacy csproj with `AfterTargets="Publish"` only). ~27 min for both variants. |
 
 ### Shared Helper Modules
 
@@ -186,10 +187,11 @@ cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts   # Compile
 
 # Run modes:
-$env:E2E_MODE = "full"           # All phases (4.1-4.7)
-$env:E2E_MODE = "createonly"     # Phase 4.1 only
-$env:E2E_MODE = "designeronly"   # Phase 4.2 only
-$env:E2E_MODE = "newtestsonly"   # Phases 4.3-4.6 only
+$env:E2E_MODE = "full"             # All phases (4.1-4.7, 4.10)
+$env:E2E_MODE = "createonly"       # Phase 4.1 only
+$env:E2E_MODE = "designeronly"     # Phase 4.2 only
+$env:E2E_MODE = "newtestsonly"     # Phases 4.3-4.6 only
+$env:E2E_MODE = "codefuldebugonly" # Phase 4.10 only (~27 min)
 node src/test/ui/run-e2e.js
 ```
 

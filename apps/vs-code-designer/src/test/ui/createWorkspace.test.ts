@@ -91,7 +91,7 @@ interface WorkspaceManifestEntry {
   /** Workflow folder name */
   wfName: string;
   /** Logic app type */
-  appType: 'standard' | 'customCode' | 'rulesEngine';
+  appType: 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
   /** Workflow type value */
   wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
   /** Custom code / rules engine folder name (if applicable) */
@@ -140,7 +140,7 @@ function buildManifestEntry(
     wsName: string;
     appName: string;
     wfName: string;
-    appType: 'standard' | 'customCode' | 'rulesEngine';
+    appType: 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
     wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
     ccFolderName?: string;
     fnName?: string;
@@ -1090,7 +1090,7 @@ function deepVerifyWorkspace(
     wsName: string;
     appName: string;
     wfName: string;
-    appType: 'standard' | 'customCode' | 'rulesEngine';
+    appType: 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
     wfType: 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
     ccFolderName?: string;
     fnName?: string;
@@ -1115,7 +1115,7 @@ function deepVerifyWorkspace(
   if (!folderNames.includes(appName)) {
     throw new Error(`.code-workspace missing logic app folder "${appName}". Folders: ${JSON.stringify(folderNames)}`);
   }
-  if (appType !== 'standard' && ccFolderName) {
+  if (appType !== 'standard' && appType !== 'codeful' && ccFolderName) {
     if (!folderNames.includes(ccFolderName)) {
       throw new Error(`.code-workspace missing function folder "${ccFolderName}". Folders: ${JSON.stringify(folderNames)}`);
     }
@@ -1151,6 +1151,9 @@ function deepVerifyWorkspace(
     console.log(`[deepVerify] workflow.json actions: ${JSON.stringify(actionNames)}`);
     console.log(`[deepVerify] workflow.json triggers: ${JSON.stringify(triggerNames)}`);
 
+    if (appType === 'codeful') {
+      throw new Error(`Codeful workspace must not contain codeless workflow.json at ${wfJsonPath}`);
+    }
     if (appType === 'customCode') {
       if (!actionNames.some((a) => a.toLowerCase().includes('call_a_local_function'))) {
         throw new Error(`Custom code workflow.json missing "Call_a_local_function" action. Actions: ${JSON.stringify(actionNames)}`);
@@ -1183,17 +1186,42 @@ function deepVerifyWorkspace(
   const localSettingsPath = path.join(appDir, 'local.settings.json');
   if (fs.existsSync(hostJsonPath)) {
     console.log('[deepVerify] host.json exists ✔');
+  } else if (appType === 'codeful') {
+    throw new Error(`Codeful workspace missing required host.json: ${hostJsonPath}`);
   } else {
     console.log('[deepVerify] Warning: host.json not found');
   }
   if (fs.existsSync(localSettingsPath)) {
     console.log('[deepVerify] local.settings.json exists ✔');
+  } else if (appType === 'codeful') {
+    throw new Error(`Codeful workspace missing required local.settings.json: ${localSettingsPath}`);
   } else {
     console.log('[deepVerify] Warning: local.settings.json not found');
   }
 
+  if (appType === 'codeful') {
+    const csFile = path.join(appDir, `${wfName}.cs`);
+    const csprojFile = path.join(appDir, `${appName}.csproj`);
+    const programFile = path.join(appDir, 'Program.cs');
+    const unexpectedWorkflowJson = path.join(appDir, wfName, 'workflow.json');
+    const codefulContents = fs.existsSync(appDir) ? fs.readdirSync(appDir) : [];
+    console.log(`[deepVerify] Codeful app folder contents: ${JSON.stringify(codefulContents)}`);
+
+    for (const requiredFile of [csFile, csprojFile, programFile]) {
+      if (!fs.existsSync(requiredFile)) {
+        throw new Error(`Codeful workspace missing required generated file: ${requiredFile}`);
+      }
+      console.log(`[deepVerify] Codeful generated file exists: ${path.basename(requiredFile)} OK`);
+    }
+
+    if (fs.existsSync(unexpectedWorkflowJson)) {
+      throw new Error(`Codeful workspace must not generate codeless workflow.json: ${unexpectedWorkflowJson}`);
+    }
+    console.log('[deepVerify] Codeful workspace has no workflow.json OK');
+  }
+
   // --- 5. Function app files (custom code / rules engine) ---
-  if (appType !== 'standard' && ccFolderName && fnName) {
+  if (appType !== 'standard' && appType !== 'codeful' && ccFolderName && fnName) {
     const fnDir = path.join(wsDir, ccFolderName);
     const csFile = path.join(fnDir, `${fnName}.cs`);
     const csprojFile = path.join(fnDir, `${fnName}.csproj`);
@@ -1561,6 +1589,12 @@ describe('Create Workspace Tests', function () {
   describe('Pre-creation webview tests (single shared webview)', function () {
     this.timeout(TEST_TIMEOUT);
 
+    before(function () {
+      if (process.env.LA_E2E_CODEFUL_CREATE_ONLY === '1') {
+        this.skip();
+      }
+    });
+
     let webview: WebView;
 
     before(async function () {
@@ -1665,7 +1699,12 @@ describe('Create Workspace Tests', function () {
       console.log('[formElements] Back button disabled/absent ✓');
 
       // 5. All 3 radio options present
-      const expectedRadioLabels = ['Logic app (Standard)', 'Logic app with custom code', 'Logic app with rules engine'];
+      const expectedRadioLabels = [
+        'Logic app (Standard)',
+        'Logic app (codeful)',
+        'Logic app with custom code',
+        'Logic app with rules engine',
+      ];
       const missingLabels: string[] = [];
       for (const label of expectedRadioLabels) {
         if (!pageText.includes(label)) {
@@ -1676,10 +1715,10 @@ describe('Create Workspace Tests', function () {
         throw new Error(`Missing radio labels: ${JSON.stringify(missingLabels)}`);
       }
       const radios = await driver.findElements(By.css('input[type="radio"]'));
-      if (radios.length < 3) {
-        throw new Error(`Expected at least 3 radio inputs, found ${radios.length}`);
+      if (radios.length < 4) {
+        throw new Error(`Expected at least 4 radio inputs, found ${radios.length}`);
       }
-      console.log('[formElements] 3 radio options present ✓');
+      console.log('[formElements] 4 radio options present OK');
 
       // 6. Radio description keywords
       const descKeywords = [
@@ -3906,11 +3945,128 @@ describe('Create Workspace Tests', function () {
   }); // end pre-creation webview tests (single shared webview)
 
   // =========================================================================
+  // CODEFUL DEBUG CREATION TESTS - D-001 Phase A for Phase 4.10.
+  // Creates real codeful workspaces through the Create Workspace webview, then
+  // records them in the shared manifest for a fresh debug phase to reopen.
+  // =========================================================================
+  describe('Codeful debug workspace creation tests', function () {
+    this.timeout(360_000);
+
+    before(function () {
+      if (process.env.LA_E2E_CODEFUL_CREATE_ONLY !== '1') {
+        this.skip();
+      }
+      try {
+        if (fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
+          fs.unlinkSync(WORKSPACE_MANIFEST_PATH);
+          console.log(`[codefulCreation:before] Cleared stale manifest at ${WORKSPACE_MANIFEST_PATH}`);
+        }
+      } catch {
+        // Ignore stale manifest cleanup failures.
+      }
+    });
+
+    afterEach(async function () {
+      if (this.currentTest?.state === 'failed') {
+        try {
+          const failName = (this.currentTest.title || 'unknown').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 80);
+          await captureScreenshot(driver, `FAIL-codeful-${failName}`);
+        } catch {
+          /* screenshot failed - don't mask the real error */
+        }
+      }
+      try {
+        await driver.switchTo().defaultContent();
+        await dismissNotifications(driver);
+        await new EditorView().closeAllEditors();
+      } catch {
+        console.log('[codefulCreation:afterEach] Warning: could not reset workbench');
+      }
+      await sleep(1000);
+    });
+
+    async function createCodefulWorkspace(label: string, prefix: string): Promise<void> {
+      const wsName = uniqueName(`${prefix}ws`);
+      const appName = uniqueName(`${prefix}app`);
+      const wfName = uniqueName(`${prefix}wf`);
+
+      console.log(`[${label}] Opening Create Workspace command...`);
+      await selectCreateWorkspaceCommand(workbench);
+      const webview = await switchToWebviewFrame(driver);
+
+      console.log(`[${label}] Filling codeful workspace fields...`);
+      await fillStandardFormFields(driver, tempDir, {
+        wsName,
+        appName,
+        wfName,
+        appType: 'Logic app (codeful)',
+        wfType: 'Stateful',
+      });
+
+      const nextButton = await waitForNextButton(driver);
+      await nextButton.click();
+      await sleep(2000);
+
+      const reviewText = await driver.findElement(By.css('body')).getText();
+      console.log(`[${label}] Review page text (first 800 chars): ${reviewText.substring(0, 800)}`);
+      for (const expected of [wsName, appName, wfName]) {
+        if (!reviewText.includes(expected)) {
+          await webview.switchBack();
+          throw new Error(`[${label}] Review page missing expected value: ${expected}`);
+        }
+      }
+      if (!reviewText.toLowerCase().includes('codeful')) {
+        await webview.switchBack();
+        throw new Error(`[${label}] Review page did not show codeful project type`);
+      }
+
+      await clickCreateWorkspaceButton(driver, webview);
+
+      deepVerifyWorkspace(tempDir, {
+        wsName,
+        appName,
+        wfName,
+        appType: 'codeful',
+        wfType: 'Stateful',
+      });
+
+      appendToWorkspaceManifest(
+        buildManifestEntry(label, tempDir, {
+          wsName,
+          appName,
+          wfName,
+          appType: 'codeful',
+          wfType: 'Stateful',
+        })
+      );
+
+      await captureScreenshot(driver, `${prefix}-codeful-passed`);
+      console.log(`[${label}] PASSED: real codeful workspace created and verified`);
+    }
+
+    it('should create modern codeful workspace through Create Workspace webview', async function () {
+      this.timeout(240_000);
+      await createCodefulWorkspace('CodefulDebug + Modern', 'cfmodern');
+    });
+
+    it('should create legacy-control codeful workspace through Create Workspace webview', async function () {
+      this.timeout(240_000);
+      await createCodefulWorkspace('CodefulDebug + Legacy', 'cflegacy');
+    });
+  });
+
+  // =========================================================================
   // CREATION TESTS - These run last because vscode.openFolder may disrupt
   // the test VS Code instance after workspace creation.
   // =========================================================================
   describe('Workspace creation tests', function () {
     this.timeout(180_000);
+
+    before(function () {
+      if (process.env.LA_E2E_CODEFUL_CREATE_ONLY === '1') {
+        this.skip();
+      }
+    });
 
     before(() => {
       // Clear any stale manifest from a previous run so this run starts fresh

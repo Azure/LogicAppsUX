@@ -8,15 +8,39 @@ import { ext } from '../../extensionVariables';
 import { getWorkspaceRoot } from '../utils/workspace';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { isCodefulProject } from '../utils/codeful';
+import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded, isCodefulProject } from '../utils/codeful';
+
+/**
+ * Optional behaviors for {@link publishCodefulProject}.
+ */
+export interface PublishCodefulProjectOptions {
+  /**
+   * When true, inspect the codeful project's `.csproj` and skip the explicit
+   * `publish` task if the modern template hooks `CopyToCodefulFolder` /
+   * `ReplaceLanguageNetCore` to `AfterTargets="Build;Publish"`. In that case
+   * the Debug `Build` step that `func: host start` chains via `dependsOn` is
+   * sufficient to populate `lib/codeful/`, and running `publish` first only
+   * results in a duplicated clean+build cycle whose output is overwritten by
+   * the subsequent Debug build.
+   *
+   * Used by the debug (F5) pipeline. Deploy paths must leave this `false` so
+   * `bin/Release/<tfm>/publish/` is always produced for `azureFunctions.deploySubpath`.
+   */
+  skipIfBuildPopulatesCodeful?: boolean;
+}
 
 /**
  * Builds a custom code functions project.
  * @param {IActionContext} context - The action context.
  * @param {vscode.Uri} node - The URI of the project to build or the corresponding logic app project.
+ * @param {PublishCodefulProjectOptions} [options] - Optional behaviors. See {@link PublishCodefulProjectOptions}.
  * @returns {Promise<void>} - A promise that resolves when the build process is complete.
  */
-export async function publishCodefulProject(context: IActionContext, node: vscode.Uri): Promise<void> {
+export async function publishCodefulProject(
+  context: IActionContext,
+  node: vscode.Uri,
+  options?: PublishCodefulProjectOptions
+): Promise<void> {
   const workspaceFolderPath = await getWorkspaceRoot(context);
   const nodePath = node?.fsPath || workspaceFolderPath;
 
@@ -33,6 +57,29 @@ export async function publishCodefulProject(context: IActionContext, node: vscod
     const message = `Skipping publish: Path "${nodePath}" is not a codeful project.`;
     ext.outputChannel.appendLog(message);
     return;
+  }
+
+  await invalidateCodefulSdkCacheIfNeeded(nodePath);
+
+  if (options?.skipIfBuildPopulatesCodeful) {
+    const buildHooks = await inspectCodefulCsprojBuildHooks(nodePath);
+    if (buildHooks) {
+      context.telemetry.properties.csprojCopyAfterTargets = buildHooks.copyAfterTargets ?? '';
+      context.telemetry.properties.csprojReplaceLangAfterTargets = buildHooks.replaceLangAfterTargets ?? '';
+    }
+    if (buildHooks?.runsOnBuild) {
+      context.telemetry.properties.publishSkipped = 'true';
+      context.telemetry.properties.publishSkippedReason = 'csprojCopyToCodefulRunsOnBuild';
+      ext.outputChannel.appendLog(
+        localize(
+          'skipPublishCodefulBuildHooks',
+          'Skipping publishCodefulProject for "{0}": codeful project .csproj runs CopyToCodefulFolder/ReplaceLanguageNetCore on Build (AfterTargets="Build;Publish"). The local debug build will populate lib/codeful.',
+          nodePath
+        )
+      );
+      return;
+    }
+    context.telemetry.properties.publishSkipped = 'false';
   }
 
   try {

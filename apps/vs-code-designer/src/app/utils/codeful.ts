@@ -1,6 +1,13 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import { localSettingsFileName } from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, localSettingsFileName, lspDirectory } from '../../constants';
+import { ext } from '../../extensionVariables';
+import { getGlobalSetting } from './vsCodeConfig/settings';
+
+const codefulSdkPackageId = 'Microsoft.Azure.Workflows.Sdk';
+const codefulSdkPackageVersion = '1.0.0-preview.1';
+const lspSdkHashMarkerName = '.lspsdk-hash';
+const codefulSdkProjectHashMarkerName = '.logicapps-lspsdk-hash';
 
 /**
  * Checks if the codeful agent is enabled for a given folder by examining the local settings file.
@@ -32,7 +39,11 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
  * @returns {Promise<boolean>} Returns true if the folder is a custom code functions project, otherwise false.
  */
 export const isCodefulProject = async (folderPath: string): Promise<boolean> => {
-  if (!fse.statSync(folderPath).isDirectory()) {
+  try {
+    if (!fse.statSync(folderPath).isDirectory()) {
+      return false;
+    }
+  } catch {
     return false;
   }
   const files = await fse.readdir(folderPath);
@@ -46,6 +57,111 @@ export const isCodefulProject = async (folderPath: string): Promise<boolean> => 
 };
 
 /**
+ * Invalidates only the project-local cache entry for the extension-shipped codeful SDK
+ * when the VSIX ships changed nupkg bits with the same package ID/version.
+ */
+export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Promise<boolean> => {
+  if (!(await isCodefulProject(projectPath))) {
+    return false;
+  }
+
+  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const nugetConfigPath = path.join(projectPath, 'nuget.config');
+  const installedSdkHashMarkerPath = path.join(targetDirectory, lspSdkHashMarkerName);
+
+  if (
+    !(await fse.pathExists(installedSdkHashMarkerPath)) ||
+    !(await fse.pathExists(nugetConfigPath)) ||
+    !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, lspDirectoryPath))
+  ) {
+    return false;
+  }
+
+  const installedSdkHash = (await fse.readFile(installedSdkHashMarkerPath, 'utf-8')).trim();
+  if (!installedSdkHash) {
+    return false;
+  }
+
+  const projectNugetFolder = path.join(projectPath, '.nuget');
+  const projectSdkHashMarkerPath = path.join(projectNugetFolder, codefulSdkProjectHashMarkerName);
+  const projectSdkPackagePath = path.join(projectNugetFolder, 'packages', codefulSdkPackageId.toLowerCase(), codefulSdkPackageVersion);
+  const restoreNoOpCachePaths = [
+    path.join(projectPath, 'obj', 'project.assets.json'),
+    path.join(projectPath, 'obj', 'project.nuget.cache'),
+  ];
+
+  if ((await readTrimmedFileIfExists(projectSdkHashMarkerPath)) === installedSdkHash) {
+    return false;
+  }
+
+  if (await fse.pathExists(projectSdkPackagePath)) {
+    await fse.remove(projectSdkPackagePath);
+    ext.outputChannel.appendLog(
+      `Removed stale ${codefulSdkPackageId} ${codefulSdkPackageVersion} from project-local NuGet cache at ${projectSdkPackagePath}.`
+    );
+  }
+
+  await Promise.all(restoreNoOpCachePaths.map((cachePath) => removeIfExists(cachePath)));
+  await fse.ensureDir(projectNugetFolder);
+  await fse.writeFile(projectSdkHashMarkerPath, installedSdkHash);
+  return true;
+};
+
+async function removeIfExists(filePath: string): Promise<void> {
+  if (await fse.pathExists(filePath)) {
+    await fse.remove(filePath);
+  }
+}
+
+async function readTrimmedFileIfExists(filePath: string): Promise<string | undefined> {
+  if (!(await fse.pathExists(filePath))) {
+    return undefined;
+  }
+
+  try {
+    return (await fse.readFile(filePath, 'utf-8')).trim();
+  } catch {
+    return undefined;
+  }
+}
+
+async function codefulNugetConfigUsesExtensionSdkCache(
+  nugetConfigPath: string,
+  projectPath: string,
+  lspDirectoryPath: string
+): Promise<boolean> {
+  const nugetConfig = await fse.readFile(nugetConfigPath, 'utf-8');
+  const globalPackagesFolder = getXmlAddValue(nugetConfig, 'config', 'globalPackagesFolder');
+  const currentSource = getXmlAddValue(nugetConfig, 'packageSources', 'current');
+
+  return (
+    globalPackagesFolder !== undefined &&
+    normalizeNugetPath(projectPath, globalPackagesFolder) === normalizeNugetPath(projectPath, '.nuget\\packages') &&
+    currentSource !== undefined &&
+    normalizeNugetPath(projectPath, currentSource) === normalizeNugetPath(projectPath, lspDirectoryPath)
+  );
+}
+
+function getXmlAddValue(xml: string, sectionName: string, key: string): string | undefined {
+  const sectionMatch = xml
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .match(new RegExp(`<${sectionName}\\b[^>]*>([\\s\\S]*?)<\\/${sectionName}>`, 'i'));
+  const addElement = sectionMatch?.[1].match(new RegExp(`<add\\b(?=[^>]*\\bkey=["']${escapeRegExp(key)}["'])[^>]*>`, 'i'))?.[0];
+  return addElement?.match(/\bvalue=["']([^"']*)["']/i)?.[1];
+}
+
+function normalizeNugetPath(projectPath: string, nugetPath: string): string {
+  const unquotedPath = nugetPath.trim().replace(/^["']|["']$/g, '');
+  const resolvedPath = path.isAbsolute(unquotedPath) ? unquotedPath : path.resolve(projectPath, unquotedPath);
+  return path.normalize(resolvedPath).toLowerCase();
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
  * Checks if a C# project file (.csproj) is configured for a codeful .NET 8 Azure Logic Apps workflow.
  *
  * @param csprojContent - The content of the .csproj file as a string
@@ -53,6 +169,97 @@ export const isCodefulProject = async (folderPath: string): Promise<boolean> => 
  */
 const isCodefulNet8Csproj = (csprojContent: string): boolean => {
   return csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes('Microsoft.Azure.Workflows.Sdk');
+};
+
+/**
+ * Information about the AfterTargets hooks on the codeful project's
+ * `CopyToCodefulFolder` and `ReplaceLanguageNetCore` MSBuild targets.
+ *
+ * Modern codeful project templates run both targets `AfterTargets="Build;Publish"`,
+ * which means a plain Debug `Build` is sufficient to populate `lib/codeful` and
+ * to perform the `worker.config.json` `dotnet-isolated` -> `dotnet` rewrite.
+ * Legacy templates (`AfterTargets="Publish"` only) require an explicit `publish`
+ * task before the local debug host can run.
+ */
+export interface CodefulCsprojBuildHookInfo {
+  /** Raw `AfterTargets` attribute value for `CopyToCodefulFolder`, or `null` when the target is absent. */
+  copyAfterTargets: string | null;
+  /** Raw `AfterTargets` attribute value for `ReplaceLanguageNetCore`, or `null` when the target is absent. */
+  replaceLangAfterTargets: string | null;
+  /**
+   * True iff BOTH targets have `Build` as a semicolon-separated token in their
+   * `AfterTargets`. When true, a Debug `Build` alone is expected to produce
+   * a runnable `lib/codeful` and the explicit `publish` task can be skipped
+   * for local debug.
+   */
+  runsOnBuild: boolean;
+}
+
+const findTargetAfterTargets = (csprojContent: string, targetName: string): string | null => {
+  // Strip XML comments so `<!-- <Target ... /> -->` does not register as a real target.
+  const stripped = csprojContent.replace(/<!--[\s\S]*?-->/g, '');
+  const targetTagRegex = /<Target\b([^>]*?)\/?>/g;
+  let match: RegExpExecArray | null;
+  while ((match = targetTagRegex.exec(stripped)) !== null) {
+    const attrs = match[1];
+    const nameMatch = attrs.match(/\bName=["']([^"']+)["']/);
+    if (nameMatch?.[1] !== targetName) {
+      continue;
+    }
+    const afterTargetsMatch = attrs.match(/\bAfterTargets=["']([^"']+)["']/);
+    return afterTargetsMatch?.[1] ?? '';
+  }
+  return null;
+};
+
+const afterTargetsIncludesBuild = (afterTargets: string | null): boolean => {
+  if (!afterTargets) {
+    return false;
+  }
+  return afterTargets
+    .split(';')
+    .map((token) => token.trim())
+    .includes('Build');
+};
+
+/**
+ * Parses the codeful project's `.csproj` contents to determine whether the
+ * `CopyToCodefulFolder` and `ReplaceLanguageNetCore` MSBuild targets run as
+ * part of `Build` (in addition to `Publish`).
+ *
+ * Used by the debug F5 pipeline to decide whether the explicit Release
+ * `publish` task can be skipped — a plain Debug `Build` populates the same
+ * `lib/codeful` output for modern templates.
+ *
+ * @param csprojContent - Raw contents of the `.csproj` file.
+ * @returns Hook info; `runsOnBuild` is true only when both targets hook `Build`.
+ */
+export const parseCsprojCopyToCodefulInfo = (csprojContent: string): CodefulCsprojBuildHookInfo => {
+  const copyAfterTargets = findTargetAfterTargets(csprojContent, 'CopyToCodefulFolder');
+  const replaceLangAfterTargets = findTargetAfterTargets(csprojContent, 'ReplaceLanguageNetCore');
+  const runsOnBuild = afterTargetsIncludesBuild(copyAfterTargets) && afterTargetsIncludesBuild(replaceLangAfterTargets);
+  return { copyAfterTargets, replaceLangAfterTargets, runsOnBuild };
+};
+
+/**
+ * Reads the codeful project's `.csproj` from `folderPath` and parses its
+ * build-hook info. Returns `null` when no `.csproj` file is present.
+ */
+export const inspectCodefulCsprojBuildHooks = async (folderPath: string): Promise<CodefulCsprojBuildHookInfo | null> => {
+  try {
+    if (!fse.statSync(folderPath).isDirectory()) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+  const files = await fse.readdir(folderPath);
+  const csprojFile = files.find((file) => file.endsWith('.csproj'));
+  if (!csprojFile) {
+    return null;
+  }
+  const content = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
+  return parseCsprojCopyToCodefulInfo(content);
 };
 
 /**

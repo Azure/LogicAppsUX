@@ -214,34 +214,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
       getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)),
       getArtifactsInLocalProject(projectPath),
-      // Handle workflow content based on file type
-      (async () => {
-        if (this.workflowFilePath.endsWith('.cs')) {
-          // For codeful workflows, fetch the workflow definition from the run data
-          try {
-            const runUrl = `${this.baseUrl}/workflows/${this.workflowName}/runs/${this.runId}?api-version=${this.apiVersion}`;
-            const runResponse: string = await sendRequest(this.context, {
-              url: runUrl,
-              method: HTTP_METHODS.GET,
-            });
-            const runData = JSON.parse(runResponse);
-
-            // Extract workflow definition from the run properties
-            if (runData.properties?.workflow?.properties?.definition) {
-              return {
-                definition: runData.properties.workflow.properties.definition,
-                kind: runData.properties.workflow.properties.kind || 'Stateful',
-              };
-            }
-          } catch {
-            // Fallback to minimal structure on error
-          }
-          // Return minimal structure if API call failed or no definition found
-          return { definition: {}, kind: 'Stateful' };
-        }
-        // For regular workflow.json files, read from file
-        return JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-      })(),
+      this._getWorkflowContent(),
     ]);
 
     const localSettings = localSettingsResult.Values;
@@ -263,5 +236,31 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       mapArtifacts: this.mapArtifacts,
       extensionBundleVersion: bundleVersionNumber,
     };
+  }
+
+  private async _getWorkflowContent(): Promise<any> {
+    if (!this.workflowFilePath.endsWith('.cs')) {
+      return JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+    }
+
+    try {
+      const runUrl = `${this.baseUrl}/workflows/${this.workflowName}/runs/${this.runId}?api-version=${this.apiVersion}`;
+      const runResponse: string = await sendRequest(this.context, {
+        url: runUrl,
+        method: HTTP_METHODS.GET,
+      });
+      const runData = JSON.parse(runResponse);
+
+      if (runData.properties?.workflow?.properties?.definition) {
+        return {
+          definition: runData.properties.workflow.properties.definition,
+          kind: runData.properties.workflow.properties.kind || 'Stateful',
+        };
+      }
+    } catch {
+      // Codeful run data can be unavailable while the local runtime is starting.
+    }
+
+    return { definition: {}, kind: 'Stateful' };
   }
 }

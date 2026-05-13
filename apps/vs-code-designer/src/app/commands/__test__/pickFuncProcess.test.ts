@@ -12,7 +12,67 @@ vi.mock('ps-tree', () => ({
   }),
 }));
 
+vi.mock('@microsoft/vscode-azext-azureutils', () => ({
+  sendRequestWithTimeout: vi.fn(),
+}));
+
+vi.mock('../../debug/validatePreDebug', () => ({
+  getMatchingWorkspaceFolder: vi.fn(),
+  preDebugValidate: vi.fn(),
+}));
+
+vi.mock('../../utils/appSettings/connectionKeys', () => ({
+  verifyLocalConnectionKeys: vi.fn(),
+}));
+
+vi.mock('../../utils/azurite/activateAzurite', () => ({
+  activateAzurite: vi.fn(),
+}));
+
+vi.mock('../../utils/dotnet/dotnet', () => ({
+  getProjFiles: vi.fn(),
+}));
+
+vi.mock('../../utils/funcCoreTools/funcHostTask', () => ({
+  getFuncPortFromTaskOrProject: vi.fn(),
+  isFuncHostTask: vi.fn(),
+  runningFuncTaskMap: new Map(),
+}));
+
+vi.mock('../../utils/taskUtils', () => ({
+  executeIfNotActive: vi.fn(),
+}));
+
+vi.mock('../../utils/telemetry', () => ({
+  runWithDurationTelemetry: vi.fn((_context: unknown, _eventName: string, callback: () => Promise<unknown>) => callback()),
+}));
+
+vi.mock('../../utils/verifyIsProject', () => ({
+  tryGetLogicAppProjectRoot: vi.fn(),
+}));
+
+vi.mock('../../utils/vsCodeConfig/settings', () => ({
+  getWorkspaceSetting: vi.fn(),
+}));
+
+vi.mock('../buildCustomCodeFunctionsProject', () => ({
+  tryBuildCustomCodeFunctionsProject: vi.fn(),
+}));
+
+vi.mock('../publishCodefulProject', () => ({
+  publishCodefulProject: vi.fn(),
+}));
+
+import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
+import { preDebugValidate } from '../../debug/validatePreDebug';
+import { getProjFiles } from '../../utils/dotnet/dotnet';
+import { getFuncPortFromTaskOrProject, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
+import { executeIfNotActive } from '../../utils/taskUtils';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import * as pickFuncProcessModule from '../pickFuncProcess';
+import { publishCodefulProject } from '../publishCodefulProject';
 
 let originalPlatform: NodeJS.Platform;
 let originalKill: typeof process.kill;
@@ -29,6 +89,142 @@ function restoreProcessPlatform(): void {
   Object.defineProperty(process, 'platform', { value: originalPlatform, writable: true, configurable: true });
   process.kill = originalKill;
 }
+
+describe('pickFuncProcessInternal', () => {
+  const projectPath = 'D:\\workspace\\CodefulLogicApp';
+  const workspaceFolder = { uri: { fsPath: projectPath }, name: 'CodefulLogicApp', index: 0 } as vscode.WorkspaceFolder;
+  const funcTask = {
+    name: 'func: host start',
+    scope: workspaceFolder,
+    definition: { command: 'func host start --port 7071' },
+  } as vscode.Task;
+  const context: any = {
+    telemetry: { properties: {}, measurements: {} },
+    errorHandling: {},
+  };
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+    setProcessPlatform('linux');
+    context.telemetry = { properties: {}, measurements: {} };
+    context.errorHandling = {};
+    runningFuncTaskMap.clear();
+    (preDebugValidate as any).mockResolvedValue(true);
+    (tryBuildCustomCodeFunctionsProject as any).mockResolvedValue(true);
+    (publishCodefulProject as any).mockResolvedValue(undefined);
+    (getProjFiles as any).mockResolvedValue(['CodefulLogicApp.csproj']);
+    (getWorkspaceSetting as any).mockReturnValue(1);
+    (getFuncPortFromTaskOrProject as any).mockResolvedValue('7071');
+    (sendRequestWithTimeout as any).mockResolvedValue({ parsedBody: { state: 'Running' } });
+    (executeIfNotActive as any).mockImplementation(async () => {
+      runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 1234 });
+    });
+    (vscode.EventEmitter as any).mockImplementation(() => ({ fire: vi.fn() }));
+    (vscode.tasks as any) = {
+      fetchTasks: vi.fn().mockResolvedValue([funcTask]),
+      executeTask: vi.fn().mockResolvedValue(undefined),
+      onDidEndTaskProcess: vi.fn(() => ({ dispose: vi.fn() })),
+    };
+  });
+
+  afterEach(() => {
+    runningFuncTaskMap.clear();
+    vi.restoreAllMocks();
+    restoreProcessPlatform();
+  });
+
+  it('passes the build-populated codeful skip option from the debug path before starting the func task', async () => {
+    (vscode.tasks.fetchTasks as any).mockResolvedValue([]);
+
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('Failed to find "func: host start" task.');
+
+    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalledWith(context, workspaceFolder.uri);
+    expect(publishCodefulProject).toHaveBeenCalledWith(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+  });
+
+  it('starts the func task after publishing and returns the tracked workflow process id', async () => {
+    (getProjFiles as any).mockImplementation(async () => {
+      runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 1234 });
+      return ['CodefulLogicApp.csproj'];
+    });
+
+    const result = await pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+    expect(result).toBe('1234');
+    expect(vscode.tasks.fetchTasks).toHaveBeenCalled();
+    expect(executeIfNotActive).toHaveBeenCalledWith(funcTask);
+    expect(sendRequestWithTimeout).toHaveBeenCalledWith(
+      context,
+      expect.objectContaining({ url: 'http://localhost:7071/admin/host/status' }),
+      500,
+      undefined
+    );
+  });
+
+  it('stops before build and publish when pre-debug validation is cancelled', async () => {
+    (preDebugValidate as any).mockResolvedValue(false);
+
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(context, { type: 'logicapp' }, workspaceFolder, projectPath)
+    ).rejects.toThrow('Operation cancelled');
+
+    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(publishCodefulProject).not.toHaveBeenCalled();
+  });
+
+  it('surfaces an invalid pick-process timeout before starting debug tasks', async () => {
+    (getWorkspaceSetting as any).mockReturnValue('not-a-number');
+
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('The setting "pickProcessTimeout" must be a number');
+
+    expect(publishCodefulProject).toHaveBeenCalledWith(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+  });
+});
+
+describe('pickFuncProcess', () => {
+  const projectPath = 'D:\\workspace\\CodefulLogicApp';
+  const workspaceFolder = { uri: { fsPath: projectPath }, name: 'CodefulLogicApp', index: 0 } as vscode.WorkspaceFolder;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    (tryGetLogicAppProjectRoot as any).mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('throws when the Logic App project root cannot be found', async () => {
+    const { getMatchingWorkspaceFolder } = await import('../../debug/validatePreDebug');
+    (getMatchingWorkspaceFolder as any).mockReturnValue(workspaceFolder);
+
+    await expect(pickFuncProcessModule.pickFuncProcess({ telemetry: { properties: {} } } as any, { type: 'logicapp' })).rejects.toThrow(
+      'Unable to find the project root.'
+    );
+  });
+});
 
 describe('pickWorkflowDebugProcess', () => {
   beforeEach(() => {
@@ -248,6 +444,29 @@ describe('pickWorkflowDebugProcess', () => {
 
     expect(result).toBe('100');
     expect(taskInfo.childProcessId).toEqual(['100', undefined]);
+  });
+});
+
+describe('findChildProcess', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    setProcessPlatform('win32');
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    restoreProcessPlatform();
+  });
+
+  it('returns the innermost workflow child process', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+      { processId: 111, name: 'func.exe', parentProcessId: 100 },
+      { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
+    ]);
+
+    const result = await pickFuncProcessModule.findChildProcess(100);
+
+    expect(result).toBe('222');
   });
 });
 

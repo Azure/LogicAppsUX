@@ -16,7 +16,11 @@ vi.mock('../../utils/workspace', () => ({
 
 vi.mock('../../utils/codeful', () => ({
   isCodefulProject: vi.fn(),
+  inspectCodefulCsprojBuildHooks: vi.fn(),
+  invalidateCodefulSdkCacheIfNeeded: vi.fn(),
 }));
+
+import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded } from '../../utils/codeful';
 
 describe('publishCodefulProject', () => {
   const projectPath = 'D:\\workspace\\CodefulLogicApp';
@@ -41,6 +45,12 @@ describe('publishCodefulProject', () => {
     };
     (getWorkspaceRoot as Mock).mockResolvedValue(projectPath);
     (isCodefulProject as Mock).mockResolvedValue(true);
+    (invalidateCodefulSdkCacheIfNeeded as Mock).mockResolvedValue(false);
+    (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue({
+      copyAfterTargets: 'Build;Publish',
+      replaceLangAfterTargets: 'Build;Publish',
+      runsOnBuild: true,
+    });
   });
 
   it('records telemetry and exits when no project path is available', async () => {
@@ -86,6 +96,7 @@ describe('publishCodefulProject', () => {
     await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
 
     expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
+    expect(invalidateCodefulSdkCacheIfNeeded).toHaveBeenCalledWith(projectPath);
     expect(dispose).toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`Codeful project published successfully at ${projectPath}.`);
     expect(context.telemetry.properties.result).toBe('Succeeded');
@@ -106,6 +117,76 @@ describe('publishCodefulProject', () => {
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
       errorMessage: `Error publishing codeful project at "${projectPath}": 1`,
+    });
+  });
+
+  describe('skipIfBuildPopulatesCodeful option', () => {
+    it('skips the publish task when the csproj hooks CopyToCodeful on Build', async () => {
+      const publishTask = { name: 'publish', scope: { uri: { fsPath: projectPath } } } as vscode.Task;
+      ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
+      (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue({
+        copyAfterTargets: 'Build;Publish',
+        replaceLangAfterTargets: 'Build;Publish',
+        runsOnBuild: true,
+      });
+
+      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri, { skipIfBuildPopulatesCodeful: true });
+
+      expect((vscode as any).tasks.executeTask).not.toHaveBeenCalled();
+      expect((vscode as any).tasks.fetchTasks).not.toHaveBeenCalled();
+      expect(context.telemetry.properties).toMatchObject({
+        publishSkipped: 'true',
+        publishSkippedReason: 'csprojCopyToCodefulRunsOnBuild',
+        csprojCopyAfterTargets: 'Build;Publish',
+        csprojReplaceLangAfterTargets: 'Build;Publish',
+      });
+      // The skip path should not record a lastStep / result the way the run path does,
+      // because publish was intentionally not attempted.
+      expect(context.telemetry.properties.result).toBeUndefined();
+    });
+
+    it('still runs the publish task when csproj uses the legacy Publish-only hook', async () => {
+      const publishTask = { name: 'publish', scope: { uri: { fsPath: projectPath } } } as vscode.Task;
+      ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
+      (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue({
+        copyAfterTargets: 'Publish',
+        replaceLangAfterTargets: 'Build;Publish',
+        runsOnBuild: false,
+      });
+
+      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri, { skipIfBuildPopulatesCodeful: true });
+
+      expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
+      expect(context.telemetry.properties).toMatchObject({
+        publishSkipped: 'false',
+        csprojCopyAfterTargets: 'Publish',
+        csprojReplaceLangAfterTargets: 'Build;Publish',
+        result: 'Succeeded',
+      });
+    });
+
+    it('still runs the publish task when no csproj could be inspected', async () => {
+      const publishTask = { name: 'publish', scope: { uri: { fsPath: projectPath } } } as vscode.Task;
+      ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
+      (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue(null);
+
+      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri, { skipIfBuildPopulatesCodeful: true });
+
+      expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
+      expect(context.telemetry.properties.publishSkipped).toBe('false');
+      expect(context.telemetry.properties.result).toBe('Succeeded');
+    });
+
+    it('does not inspect the csproj when the option is not provided (deploy path)', async () => {
+      const publishTask = { name: 'publish', scope: { uri: { fsPath: projectPath } } } as vscode.Task;
+      ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
+
+      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
+
+      expect(inspectCodefulCsprojBuildHooks).not.toHaveBeenCalled();
+      expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
+      expect(context.telemetry.properties.publishSkipped).toBeUndefined();
+      expect(context.telemetry.properties.result).toBe('Succeeded');
     });
   });
 });

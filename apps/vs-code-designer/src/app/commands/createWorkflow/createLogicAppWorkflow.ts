@@ -1,7 +1,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { type IFunctionWizardContext, type IWebviewProjectContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import { createLogicAppAndWorkflow } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { localize } from '../../../localize';
@@ -11,10 +10,6 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
   addLocalFuncTelemetry(context);
 
   const webviewProjectContext: IWebviewProjectContext = options;
-  const logicAppExists = await fse.pathExists(logicAppFolderPath);
-  if (logicAppExists) {
-    // Check if it's actually a Logic App project
-  }
 
   // If logicAppType is not set in options, check if this is a codeful project
   if (!webviewProjectContext.logicAppType) {

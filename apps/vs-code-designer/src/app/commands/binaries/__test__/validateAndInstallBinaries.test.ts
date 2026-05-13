@@ -113,7 +113,7 @@ describe('validateAndInstallBinaries', () => {
 
     expect(vscode.window.withProgress).toHaveBeenCalledWith(
       expect.objectContaining({
-        location: vscode.ProgressLocation.Notification,
+        location: vscode.ProgressLocation.Window,
         title: 'Validating Runtime Dependency',
         cancellable: false,
       }),

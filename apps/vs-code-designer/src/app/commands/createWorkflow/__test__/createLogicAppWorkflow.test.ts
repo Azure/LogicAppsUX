@@ -1,5 +1,4 @@
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { isCodefulProject } from '../../../utils/codeful';
@@ -10,10 +9,6 @@ import { createLogicAppWorkflow } from '../createLogicAppWorkflow';
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultValue: string, ...args: unknown[]) =>
     defaultValue.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
-}));
-
-vi.mock('fs-extra', () => ({
-  pathExists: vi.fn(),
 }));
 
 vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
@@ -37,7 +32,6 @@ describe('createLogicAppWorkflow', () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
     (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
-    (fse.pathExists as Mock).mockResolvedValue(true);
     (isCodefulProject as Mock).mockResolvedValue(true);
   });
 
@@ -51,7 +45,6 @@ describe('createLogicAppWorkflow', () => {
     await createLogicAppWorkflow(context, options, logicAppFolderPath);
 
     expect(addLocalFuncTelemetry).toHaveBeenCalledWith(context);
-    expect(fse.pathExists).toHaveBeenCalledWith(logicAppFolderPath);
     expect(isCodefulProject).toHaveBeenCalledWith(logicAppFolderPath);
     expect(options).toMatchObject({
       logicAppType: ProjectType.codeful,
