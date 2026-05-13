@@ -348,8 +348,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.15.2
+        version: 1.15.2(debug@4.4.3)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -618,8 +618,8 @@ importers:
         specifier: ^0.5.10
         version: 0.5.12
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.15.2
+        version: 1.15.2(debug@4.4.3)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -1655,8 +1655,8 @@ importers:
         specifier: ^0.0.37
         version: 0.0.37
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.15.2
+        version: 1.15.2(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1707,8 +1707,8 @@ importers:
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.15.2
+        version: 1.15.2(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -5601,7 +5601,7 @@ packages:
 
   '@react-hookz/deep-equal@1.0.4':
     resolution: {integrity: sha512-N56fTrAPUDz/R423pag+n6TXWbvlBZDtTehaGFjK0InmN+V2OFWLE/WmORhmn6Ce7dlwH5+tQN1LJFw3ngTJVg==}
-    deprecated: Package is deprecated and will be deleted soon. Use @ver0/deep-equal instead.
+    deprecated: PACKAGE IS DEPRECATED AND WILL BE DETED SOON, USE @ver0/deep-equal INSTEAD
 
   '@react-hookz/web@22.0.0':
     resolution: {integrity: sha512-jl4JgUXaiSvvDVQD2z/rq2/RaykjjLrAZxHOEQj2H38j4UFWIVhv5oKUH8yrKF4wX6tMX9gdrj62f9yGq/nSaQ==}
@@ -7288,8 +7288,8 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.15.0:
-    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
+  axios@1.15.2:
+    resolution: {integrity: sha512-wLrXxPtcrPTsNlJmKjkPnNPK2Ihe0hn0wGSaTEiHRPxwjvJwT3hKmXF4dpqxmPO9SoNb2FsYXj/xEo0gHN+D5A==}
 
   azure-devops-node-api@12.5.0:
     resolution: {integrity: sha512-R5eFskGvOm3U/GzeAuxRkUsAl0hrAwGgWn6zAd2KrZmrEhWZVqLew4OOupbQlXUuojUzpGtq62SmdhJ06N88og==}
@@ -8181,6 +8181,9 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  csstype@3.2.3:
+    resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
   cytoscape-cose-bilkent@4.1.0:
     resolution: {integrity: sha512-wgQlVIUJF13Quxiv5e1gstZ08rnZj2XaLHGoFMYXz7SkNfCDOOteKBE6SYRfA9WxxI/iBc3ajfDoc6hb/MRAHQ==}
@@ -9305,8 +9308,8 @@ packages:
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
-  follow-redirects@1.15.11:
-    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
+  follow-redirects@1.16.0:
+    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -9696,6 +9699,10 @@ packages:
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
+    engines: {node: '>= 0.4'}
+
+  hasown@2.0.3:
+    resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
     engines: {node: '>= 0.4'}
 
   hast-util-from-parse5@8.0.1:
@@ -22555,7 +22562,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@20.12.7)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -23152,9 +23159,9 @@ snapshots:
       '@babel/runtime': 7.27.6
       is-retry-allowed: 2.2.0
 
-  axios@1.15.0(debug@4.4.3):
+  axios@1.15.2(debug@4.4.3):
     dependencies:
-      follow-redirects: 1.15.11(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.5
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -24203,6 +24210,8 @@ snapshots:
 
   csstype@3.1.3: {}
 
+  csstype@3.2.3: {}
+
   cytoscape-cose-bilkent@4.1.0(cytoscape@3.32.0):
     dependencies:
       cose-base: 1.0.3
@@ -24627,7 +24636,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.15.0(debug@4.4.3)
+      axios: 1.15.2(debug@4.4.3)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
@@ -24645,7 +24654,7 @@ snapshots:
   dom-helpers@5.2.1:
     dependencies:
       '@babel/runtime': 7.29.2
-      csstype: 3.1.3
+      csstype: 3.2.3
 
   dom-serializer@1.4.1:
     dependencies:
@@ -24822,7 +24831,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       has-proto: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       internal-slot: 1.1.0
       is-array-buffer: 3.0.4
       is-callable: 1.2.7
@@ -24873,7 +24882,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       has-proto: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       internal-slot: 1.1.0
       is-array-buffer: 3.0.5
       is-callable: 1.2.7
@@ -24942,15 +24951,15 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.3
 
   es-shim-unscopables@1.0.2:
     dependencies:
-      hasown: 2.0.2
+      hasown: 2.0.3
 
   es-shim-unscopables@1.1.0:
     dependencies:
-      hasown: 2.0.2
+      hasown: 2.0.3
 
   es-to-primitive@1.2.1:
     dependencies:
@@ -25696,7 +25705,7 @@ snapshots:
 
   flatted@3.3.3: {}
 
-  follow-redirects@1.15.11(debug@4.4.3):
+  follow-redirects@1.16.0(debug@4.4.3):
     optionalDependencies:
       debug: 4.4.3(supports-color@8.1.1)
 
@@ -25761,7 +25770,7 @@ snapshots:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       mime-types: 2.1.35
 
   format@0.2.2: {}
@@ -25834,7 +25843,7 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       functions-have-names: 1.2.3
-      hasown: 2.0.2
+      hasown: 2.0.3
       is-callable: 1.2.7
 
   functions-have-names@1.2.3: {}
@@ -25863,7 +25872,7 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       math-intrinsics: 1.1.0
 
   get-own-enumerable-property-symbols@3.0.2: {}
@@ -26149,6 +26158,10 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
+  hasown@2.0.3:
+    dependencies:
+      function-bind: 1.1.2
+
   hast-util-from-parse5@8.0.1:
     dependencies:
       '@types/hast': 3.0.4
@@ -26407,7 +26420,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.11(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -26533,7 +26546,7 @@ snapshots:
   internal-slot@1.1.0:
     dependencies:
       es-errors: 1.3.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       side-channel: 1.1.0
 
   internmap@1.0.1: {}
@@ -26759,7 +26772,7 @@ snapshots:
       call-bound: 1.0.4
       gopd: 1.2.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.3
 
   is-regexp@1.0.0: {}
 
@@ -31902,7 +31915,7 @@ snapshots:
 
   vite-plugin-mkcert@1.17.8(vite@6.4.2(@types/node@20.12.7)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)):
     dependencies:
-      axios: 1.15.0(debug@4.4.3)
+      axios: 1.15.2(debug@4.4.3)
       debug: 4.4.3(supports-color@8.1.1)
       picocolors: 1.1.1
       vite: 6.4.2(@types/node@20.12.7)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
@@ -31911,7 +31924,7 @@ snapshots:
 
   vite-plugin-mkcert@1.17.8(vite@6.4.2(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)):
     dependencies:
-      axios: 1.15.0(debug@4.4.3)
+      axios: 1.15.2(debug@4.4.3)
       debug: 4.4.3(supports-color@8.1.1)
       picocolors: 1.1.1
       vite: 6.4.2(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
