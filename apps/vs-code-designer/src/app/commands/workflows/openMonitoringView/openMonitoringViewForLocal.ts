@@ -21,7 +21,7 @@ import {
 import { sendRequest } from '../../../utils/requestUtils';
 import { createUnitTestFromRun } from '../unitTest/codefulUnitTest/createUnitTestFromRun';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
-import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -177,7 +177,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       try {
         const fileContent = await promises.readFile(this.workflowFilePath, 'utf8');
         const workflowContent: any = JSON.parse(fileContent);
-        const triggerName = getTriggerName(workflowContent.definition);
+        const triggerName = getRunTriggerName(workflowContent.definition);
+        if (!triggerName) {
+          throw new Error(localize('workflowTriggerNotFound', 'Unable to determine a trigger to resubmit this workflow run.'));
+        }
         const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
 
         await sendRequest(this.context, { url, method: HTTP_METHODS.POST });
@@ -194,7 +197,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
-    const bundleVersionNumber = await getBundleVersionNumber();
+    const bundleVersionNumber = await getBundleVersionNumber(projectPath);
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;

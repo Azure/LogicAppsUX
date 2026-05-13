@@ -1,5 +1,5 @@
 import { Button, Textarea, Text, makeStyles, mergeClasses, tokens, Tooltip } from '@fluentui/react-components';
-import { bundleIcon, SendFilled, SendRegular } from '@fluentui/react-icons';
+import { bundleIcon, SendFilled, SendRegular, StopFilled, StopRegular } from '@fluentui/react-icons';
 import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 import type { FocusEvent, KeyboardEventHandler } from 'react';
 
@@ -23,6 +23,9 @@ export interface IChatInputProps {
   maxQueryLength?: number;
   submitButtonProps: ChatInputSubmitButtonProps;
   showCharCount?: boolean;
+  isGenerating?: boolean;
+  stopButtonTitle?: string;
+  onStopClick?: () => void;
   onQueryChange: (event: { target: { value: string } }, newValue?: string) => void;
   onBlur?: (ev: FocusEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement>;
@@ -31,6 +34,7 @@ export interface IChatInputProps {
 }
 
 const SendIcon = bundleIcon(SendFilled, SendRegular);
+const StopIcon = bundleIcon(StopFilled, StopRegular);
 
 const useStyles = makeStyles({
   root: {
@@ -67,6 +71,7 @@ const useStyles = makeStyles({
   },
   submitButton: {
     minWidth: 'auto',
+    marginLeft: 'auto',
   },
 });
 
@@ -81,6 +86,9 @@ export const ChatInput = forwardRef<ChatInputHandle, IChatInputProps>(
       maxQueryLength,
       isMultiline,
       submitButtonProps,
+      isGenerating,
+      stopButtonTitle,
+      onStopClick,
       onQueryChange,
       onBlur,
       onKeyDown,
@@ -131,17 +139,25 @@ export const ChatInput = forwardRef<ChatInputHandle, IChatInputProps>(
           rows={isMultiline ? 3 : 1}
         />
         <div className={styles.footer}>
-          {showCharCount && <Text className={styles.charCounter}>{`${query.length}/${maxQueryLength}`}</Text>}
-          <Tooltip content={submitButtonProps.title ?? ''} relationship="label">
-            <Button
-              appearance="transparent"
-              size="small"
-              className={styles.submitButton}
-              icon={<SendIcon />}
-              disabled={disabled || submitButtonProps.disabled}
-              onClick={submitButtonProps.onClick}
-            />
-          </Tooltip>
+          {showCharCount && maxQueryLength && maxQueryLength - query.length <= 500 && (
+            <Text className={styles.charCounter}>{`${query.length}/${maxQueryLength}`}</Text>
+          )}
+          {isGenerating && onStopClick ? (
+            <Tooltip content={stopButtonTitle ?? ''} relationship="label">
+              <Button appearance="transparent" size="small" className={styles.submitButton} icon={<StopIcon />} onClick={onStopClick} />
+            </Tooltip>
+          ) : (
+            <Tooltip content={submitButtonProps.title ?? ''} relationship="label">
+              <Button
+                appearance="transparent"
+                size="small"
+                className={styles.submitButton}
+                icon={<SendIcon />}
+                disabled={disabled || submitButtonProps.disabled}
+                onClick={submitButtonProps.onClick}
+              />
+            </Tooltip>
+          )}
         </div>
       </div>
     );

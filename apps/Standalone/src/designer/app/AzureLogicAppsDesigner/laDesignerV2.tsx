@@ -74,6 +74,8 @@ import {
   setIsWorkflowDirty,
   setFocusNode,
   changePanelNode,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -712,7 +714,7 @@ const DesignerEditor = () => {
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                   enableWorkflowEditing={true}
                   autoApply={true}
-                  onWorkflowProposed={(newWorkflow) => {
+                  onWorkflowProposed={(newWorkflow, changes) => {
                     setCurrentNotes(newWorkflow.notes ?? {});
                     if (newWorkflow.parameters) {
                       setCurrentParameters(newWorkflow.parameters as unknown as ParametersData);
@@ -722,6 +724,13 @@ const DesignerEditor = () => {
                       id: guid(),
                     });
                     DesignerStore.dispatch(setIsWorkflowDirty(true));
+                    if (changes) {
+                      const nodeIds = changes.flatMap((change) => change.nodeIds);
+                      DesignerStore.dispatch(setCopilotModifiedNodeIds(nodeIds));
+                      setTimeout(() => DesignerStore.dispatch(clearCopilotModifiedNodeIds()), 3000);
+                    } else {
+                      DesignerStore.dispatch(clearCopilotModifiedNodeIds());
+                    }
                   }}
                   getNodeVisuals={(nodeId) => {
                     const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
@@ -1120,7 +1129,7 @@ const getDesignerServices = (
   const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
     baseUrl: armUrl,
     subscriptionId,
-    location,
+    location: 'centralusstage',
     apiVersion: '2026-03-01-preview',
     getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
   });

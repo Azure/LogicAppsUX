@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { createWorkspaceSlice, type CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 const { mockPostMessage } = vi.hoisted(() => {
   return { mockPostMessage: vi.fn() };
@@ -273,7 +273,7 @@ describe('CreateWorkspace', () => {
   });
 
   describe('handleCreate', () => {
-    it('should send createWorkspace command on create for createWorkspace flow', () => {
+    it('should send createWorkspace command on create for createWorkspace flow', async () => {
       renderWithStore({
         flowType: 'createWorkspace',
         currentStep: 1,
@@ -286,18 +286,14 @@ describe('CreateWorkspace', () => {
         workflowName: 'my-wf',
       });
 
-      const buttons = screen.getAllByRole('button');
-      const createButton = buttons.find(
-        (b) =>
-          (b.textContent?.includes('Create') || b.textContent?.includes('Workspace') || b.textContent?.includes('Project')) &&
-          !b.hasAttribute('disabled')
-      );
+      const createButton = screen.getByRole('button', { name: /create/i });
+      expect(createButton).not.toBeDisabled();
 
-      if (createButton) {
-        fireEvent.click(createButton);
+      fireEvent.click(createButton);
+      await waitFor(() => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           expect.objectContaining({
-            command: 'createWorkspace',
+            command: ExtensionCommand.createWorkspace,
             data: expect.objectContaining({
               workspaceName: 'my-ws',
               logicAppName: 'my-app',
@@ -305,10 +301,10 @@ describe('CreateWorkspace', () => {
             }),
           })
         );
-      }
+      });
     });
 
-    it('should send createLogicApp command for createLogicApp flow', () => {
+    it('should send createLogicApp command for createLogicApp flow', async () => {
       const store = createTestStore({
         flowType: 'createLogicApp',
         currentStep: 1,
@@ -323,22 +319,92 @@ describe('CreateWorkspace', () => {
         </Provider>
       );
 
-      const buttons = screen.getAllByRole('button');
-      const createButton = buttons.find(
-        (b) => (b.textContent?.includes('Create') || b.textContent?.includes('Project')) && !b.hasAttribute('disabled')
-      );
+      const createButton = screen.getByRole('button', { name: /create/i });
+      expect(createButton).not.toBeDisabled();
 
-      if (createButton) {
-        fireEvent.click(createButton);
+      fireEvent.click(createButton);
+      await waitFor(() => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           expect.objectContaining({
-            command: 'createLogicApp',
+            command: ExtensionCommand.createLogicApp,
           })
         );
-      }
+      });
     });
 
-    it('should include function fields for customCode logicAppType', () => {
+    it('should send createWorkspaceStructure command and enter loading state for convertToWorkspace flow', async () => {
+      const store = createTestStore({
+        flowType: 'convertToWorkspace',
+        currentStep: 1,
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'my-ws',
+        logicAppType: '',
+        logicAppName: '',
+        workflowType: '',
+        workflowName: '',
+      });
+      render(
+        <Provider store={store}>
+          <CreateWorkspaceStructure />
+        </Provider>
+      );
+
+      const createButton = screen.getByRole('button', { name: /create/i });
+      expect(createButton).not.toBeDisabled();
+
+      fireEvent.click(createButton);
+      await waitFor(() => {
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          expect.objectContaining({
+            command: ExtensionCommand.createWorkspaceStructure,
+            data: expect.objectContaining({
+              workspaceName: 'my-ws',
+            }),
+          })
+        );
+        expect(store.getState().createWorkspace.isLoading).toBe(true);
+        expect(createButton).toBeDisabled();
+      });
+    });
+
+    it('should not post a duplicate create message while loading', async () => {
+      const store = createTestStore({
+        flowType: 'convertToWorkspace',
+        currentStep: 1,
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'my-ws',
+        logicAppType: '',
+        logicAppName: '',
+        workflowType: '',
+        workflowName: '',
+      });
+      render(
+        <Provider store={store}>
+          <CreateWorkspaceStructure />
+        </Provider>
+      );
+
+      const createButton = screen.getByRole('button', { name: /create/i });
+
+      fireEvent.click(createButton);
+      await waitFor(() => {
+        expect(store.getState().createWorkspace.isLoading).toBe(true);
+        expect(createButton).toBeDisabled();
+      });
+
+      fireEvent.click(createButton);
+
+      expect(mockPostMessage).toHaveBeenCalledTimes(1);
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: ExtensionCommand.createWorkspaceStructure,
+        })
+      );
+    });
+
+    it('should include function fields for customCode logicAppType', async () => {
       renderWithStore({
         flowType: 'createWorkspace',
         currentStep: 1,
@@ -355,16 +421,14 @@ describe('CreateWorkspace', () => {
         targetFramework: 'net8',
       });
 
-      const buttons = screen.getAllByRole('button');
-      const createButton = buttons.find(
-        (b) => (b.textContent?.includes('Create') || b.textContent?.includes('Workspace')) && !b.hasAttribute('disabled')
-      );
+      const createButton = screen.getByRole('button', { name: /create/i });
+      expect(createButton).not.toBeDisabled();
 
-      if (createButton) {
-        fireEvent.click(createButton);
+      fireEvent.click(createButton);
+      await waitFor(() => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           expect.objectContaining({
-            command: 'createWorkspace',
+            command: ExtensionCommand.createWorkspace,
             data: expect.objectContaining({
               functionFolderName: 'funcs',
               functionNamespace: 'MyNS',
@@ -372,10 +436,10 @@ describe('CreateWorkspace', () => {
             }),
           })
         );
-      }
+      });
     });
 
-    it('should accept dotted namespace (e.g. MyCompany.Functions) for customCode projects', () => {
+    it('should accept dotted namespace (e.g. MyCompany.Functions) for customCode projects', async () => {
       renderWithStore({
         flowType: 'createWorkspace',
         currentStep: 1,
@@ -392,24 +456,20 @@ describe('CreateWorkspace', () => {
         targetFramework: 'net8',
       });
 
-      const buttons = screen.getAllByRole('button');
-      const createButton = buttons.find(
-        (b) => (b.textContent?.includes('Create') || b.textContent?.includes('Workspace')) && !b.hasAttribute('disabled')
-      );
+      const createButton = screen.getByRole('button', { name: /create/i });
+      expect(createButton).not.toBeDisabled();
 
-      expect(createButton).toBeDefined();
-
-      if (createButton) {
-        fireEvent.click(createButton);
+      fireEvent.click(createButton);
+      await waitFor(() => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           expect.objectContaining({
-            command: 'createWorkspace',
+            command: ExtensionCommand.createWorkspace,
             data: expect.objectContaining({
               functionNamespace: 'MyCompany.Functions',
             }),
           })
         );
-      }
+      });
     });
   });
 

@@ -75,8 +75,21 @@ export async function executeCopilotTool(toolName: string, rawArgs: string): Pro
   }
 
   switch (toolName) {
-    case 'discover_connectors':
-      return discoverConnectors(args['capabilities'] as string[] | undefined);
+    case 'discover_connectors': {
+      const rawCapabilities = args['capabilities'] as string[] | string | undefined;
+      let capabilities: string[] | undefined;
+      // The LLM sometimes returns capabilities as a JSON string instead of an array
+      if (Array.isArray(rawCapabilities)) {
+        capabilities = rawCapabilities;
+      } else if (typeof rawCapabilities === 'string') {
+        try {
+          capabilities = JSON.parse(rawCapabilities);
+        } catch {
+          capabilities = [rawCapabilities];
+        }
+      }
+      return discoverConnectors(capabilities);
+    }
     case 'get_connector_operations':
       return getConnectorOperations(String(args['connectorId'] ?? ''));
     default:
@@ -105,17 +118,29 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
     for (const capability of capabilities) {
       let operations: DiscoveryOpArray = [];
 
-      if (searchService.getActiveSearchOperations) {
-        operations = await searchService.getActiveSearchOperations(capability);
-      } else {
-        const allOps = await searchService.getAllOperations();
-        const term = capability.toLowerCase();
-        operations = allOps.filter((op) => {
-          const summary = op.properties?.summary?.toLowerCase() ?? '';
-          const description = op.properties?.description?.toLowerCase() ?? '';
-          const name = op.name?.toLowerCase() ?? '';
-          return summary.includes(term) || description.includes(term) || name.includes(term);
-        });
+      try {
+        if (searchService.getActiveSearchOperations) {
+          operations = await searchService.getActiveSearchOperations(capability);
+        }
+      } catch {
+        // Active search failed — fall through to local filter below
+      }
+
+      // If active search returned no results or wasn't available, try local filtering
+      // over already-loaded operations (NOT a full fetch of all operations)
+      if (operations.length === 0 && searchService.getBuiltInOperations) {
+        try {
+          const builtInOps = await searchService.getBuiltInOperations();
+          const term = capability.toLowerCase();
+          operations = builtInOps.filter((op) => {
+            const summary = op.properties?.summary?.toLowerCase() ?? '';
+            const description = op.properties?.description?.toLowerCase() ?? '';
+            const name = op.name?.toLowerCase() ?? '';
+            return summary.includes(term) || description.includes(term) || name.includes(term);
+          });
+        } catch {
+          // Built-in search also failed
+        }
       }
 
       if (!operations || operations.length === 0) {
@@ -189,12 +214,6 @@ async function getConnectorOperations(connectorId: string): Promise<string> {
 
     if (searchService.getOperationsByConnector) {
       operations = await searchService.getOperationsByConnector(connectorId);
-    } else {
-      const allOps = await searchService.getAllOperations();
-      operations = allOps.filter((op) => {
-        const api = (op.properties as any)?.api;
-        return api?.id?.toLowerCase() === connectorId.toLowerCase();
-      });
     }
 
     if (!operations || operations.length === 0) {

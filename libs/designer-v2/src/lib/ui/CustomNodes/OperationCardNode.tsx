@@ -40,6 +40,7 @@ import {
   useFlowErrorsForNode,
   useToolRunIndex,
   useActionMetadata,
+  useIsCopilotModifiedNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
@@ -81,6 +82,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
+  const copilotModified = useIsCopilotModifiedNode(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -346,6 +348,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
           subtleBackground={isA2AWorkflow && isTrigger}
+          copilotModified={copilotModified}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected} />}

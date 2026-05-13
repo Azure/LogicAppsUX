@@ -83,6 +83,7 @@ export const initialWorkflowState: WorkflowState = {
   timelineRepetitionIndex: 0,
   timelineRepetitionArray: [],
   flowErrors: {},
+  copilotModifiedNodeIds: {},
 };
 
 export const workflowSlice = createSlice({
@@ -816,6 +817,16 @@ export const workflowSlice = createSlice({
     setFlowErrors: (state, action: PayloadAction<{ flowErrors: Record<string, string[]> }>) => {
       state.flowErrors = action.payload.flowErrors;
     },
+    setCopilotModifiedNodeIds: (state, action: PayloadAction<string[]>) => {
+      const nodeIds: Record<string, boolean> = {};
+      for (const nodeId of action.payload) {
+        nodeIds[nodeId] = true;
+      }
+      state.copilotModifiedNodeIds = nodeIds;
+    },
+    clearCopilotModifiedNodeIds: (state) => {
+      state.copilotModifiedNodeIds = {};
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -832,7 +843,10 @@ export const workflowSlice = createSlice({
         state.changeCount += 1;
       }
     });
-    builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(resetWorkflowState, (state) => ({
+      ...initialWorkflowState,
+      copilotModifiedNodeIds: state.copilotModifiedNodeIds,
+    }));
     builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
       const { nodeId, inputs, outputs } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -961,6 +975,8 @@ export const {
   updateAgenticMetadata,
   setFocusElement,
   clearFocusElement,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

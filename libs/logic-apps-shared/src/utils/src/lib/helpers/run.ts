@@ -70,6 +70,14 @@ export function getTriggerName(definition: LogicAppsV2.WorkflowDefinition): stri
 }
 
 /**
+ * Retrieves the most appropriate trigger name to invoke or resubmit from an overview-style entry point.
+ * Prefers an HTTP request trigger when present, otherwise falls back to the single trigger in the workflow.
+ */
+export function getRunTriggerName(definition: LogicAppsV2.WorkflowDefinition): string | undefined {
+  return getRequestTriggerName(definition) ?? getTriggerName(definition);
+}
+
+/**
  * Checks if the runtime is running on the specified baseUrl.
  * @param {string} baseUrl - The base URL to check.
  * @returns {Promise<boolean>} - A promise that resolves to true if the runtime is up, false otherwise.

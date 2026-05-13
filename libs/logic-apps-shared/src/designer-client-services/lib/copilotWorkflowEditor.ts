@@ -40,6 +40,8 @@ export interface WorkflowEditResponse {
   workflow?: Workflow;
   /** Structured list of individual changes made, only present when type is 'workflow' */
   changes?: WorkflowChange[];
+  /** Connector IDs discovered during tool calling, keyed by reference name */
+  discoveredConnectors?: Record<string, { connectorId: string; connectorName: string }>;
 }
 
 export interface ICopilotWorkflowEditorService {
@@ -47,7 +49,12 @@ export interface ICopilotWorkflowEditorService {
    * Sends a user prompt along with the current workflow to an LLM and returns
    * either a modified workflow or a text response (for questions).
    */
-  getWorkflowEdit(prompt: string, workflow: Workflow, signal?: AbortSignal): Promise<WorkflowEditResponse>;
+  getWorkflowEdit(
+    prompt: string,
+    workflow: Workflow,
+    signal?: AbortSignal,
+    onProgress?: (status: string) => void
+  ): Promise<WorkflowEditResponse>;
 }
 
 let service: ICopilotWorkflowEditorService | undefined;

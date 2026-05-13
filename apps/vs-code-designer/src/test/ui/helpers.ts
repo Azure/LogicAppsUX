@@ -73,6 +73,14 @@ export async function captureScreenshot(driver: WebDriver, fileName: string, scr
 // Notification / Dialog dismissal
 // ===========================================================================
 
+function isWorkspaceConversionDialog(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+  return (
+    lowerMessage.includes('logic app projects must exist inside a workspace') ||
+    lowerMessage.includes('copy your projects to a new workspace')
+  );
+}
+
 /** Dismiss any VS Code notification toasts that may block interactions. */
 export async function dismissNotifications(driver: WebDriver): Promise<void> {
   try {
@@ -149,6 +157,11 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
     // the in-progress download and leaves the func binary missing.
     if (message.includes('Validating Runtime Dependency') || message.includes('Successfully installed')) {
       console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
+      return false;
+    }
+
+    if (isWorkspaceConversionDialog(message)) {
+      console.log('[dismissAllDialogs] Skipping workspace conversion dialog — conversion tests must handle it');
       return false;
     }
 
@@ -233,6 +246,11 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       // CRITICAL: Do NOT dismiss the dependency validation notification
       if (messageText.includes('Validating Runtime Dependency') || messageText.includes('Successfully installed')) {
         console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
+        continue;
+      }
+
+      if (isWorkspaceConversionDialog(messageText)) {
+        console.log('[dismissAllDialogs] Skipping workspace conversion dialog — conversion tests must handle it');
         continue;
       }
 

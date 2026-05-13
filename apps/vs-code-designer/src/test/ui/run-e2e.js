@@ -156,6 +156,51 @@ function installFakeAzuriteExtension(extensionsDir) {
   console.log(`  ✓ Fake Azurite extension installed: ${fakeDirName}`);
 }
 
+function createLegacyProjectFixture(label) {
+  const legacyRoot = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-${label}-`));
+  const legacyDir = path.join(legacyRoot, 'legacy-project');
+  const legacyWfDir = path.join(legacyDir, 'testworkflow');
+  fs.mkdirSync(legacyWfDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(legacyDir, 'host.json'),
+    JSON.stringify(
+      { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(legacyDir, 'local.settings.json'),
+    JSON.stringify(
+      {
+        IsEncrypted: false,
+        Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
+      },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(legacyWfDir, 'workflow.json'),
+    JSON.stringify(
+      {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          actions: {},
+          triggers: {},
+          outputs: {},
+        },
+        kind: 'Stateful',
+      },
+      null,
+      2
+    )
+  );
+  console.log(`  Created legacy project at: ${legacyDir}`);
+  return legacyDir;
+}
+
 /**
  * Run async tasks with a concurrency limit.
  * Returns results in the same order as the input tasks.
@@ -185,6 +230,19 @@ async function main() {
   // Read extension metadata from dist/package.json
   const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
   const extDeps = pkgJson.extensionDependencies || [];
+  const devContainersDependency = 'ms-vscode-remote.remote-containers';
+  if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
+    throw new Error(
+      `${devContainersDependency} must not be listed in extensionDependencies. ` +
+        'It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.'
+    );
+  }
+  const requiredE2ePrereqs = ['ms-dotnettools.csdevkit'];
+  for (const prereq of requiredE2ePrereqs) {
+    if (!extDeps.some((dep) => dep.toLowerCase() === prereq)) {
+      throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
+    }
+  }
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -209,18 +267,53 @@ async function main() {
   // Skip deps already present in test-extensions/. For uncached deps,
   // run VS Code CLI --install-extension in parallel instead of sequentially
   // to cut install time from ~60-90s to ~30-40s (limited by the largest dep).
+  const getExtensionEntries = (extensionId) => {
+    if (!fs.existsSync(extDir)) {
+      return [];
+    }
+    const depLower = extensionId.toLowerCase();
+    return fs.readdirSync(extDir).filter((entry) => {
+      if (entry === 'extensions.json' || entry === '.obsolete') {
+        return false;
+      }
+      return entry.toLowerCase().startsWith(`${depLower}-`) || entry.toLowerCase() === depLower;
+    });
+  };
+
+  const readExtensionId = (entry) => {
+    const pkgPath = path.join(extDir, entry, 'package.json');
+    if (!fs.existsSync(pkgPath)) {
+      return undefined;
+    }
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      return `${pkg.publisher}.${pkg.name}`.toLowerCase();
+    } catch {
+      return undefined;
+    }
+  };
+
+  const findValidInstalledExtension = (extensionId) => {
+    const depLower = extensionId.toLowerCase();
+    return getExtensionEntries(extensionId).find((entry) => readExtensionId(entry) === depLower);
+  };
+
+  const removeInvalidExtensionEntries = (extensionId) => {
+    for (const entry of getExtensionEntries(extensionId)) {
+      if (readExtensionId(entry) !== extensionId.toLowerCase()) {
+        console.log(`  Removing invalid cached dependency: ${entry}`);
+        fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
+      }
+    }
+  };
+
   if (extDeps.length > 0) {
     console.log(`\n=== Step 2: Install ${extDeps.length} extension dependencies ===`);
 
     const depsToInstall = [];
     for (const dep of extDeps) {
-      const depLower = dep.toLowerCase();
-      const alreadyInstalled =
-        fs.existsSync(extDir) &&
-        fs.readdirSync(extDir).some((entry) => {
-          if (entry === 'extensions.json' || entry === '.obsolete') return false;
-          return entry.toLowerCase().startsWith(depLower + '-') || entry.toLowerCase() === depLower;
-        });
+      removeInvalidExtensionEntries(dep);
+      const alreadyInstalled = !!findValidInstalledExtension(dep);
 
       if (alreadyInstalled) {
         console.log(`  ✓ ${dep} already installed, skipping`);
@@ -273,13 +366,8 @@ async function main() {
       // still ends up on disk, so only retry if the directory is truly missing.
       if (failed.length > 0) {
         for (const { dep } of failed) {
-          const depLower = dep.toLowerCase();
-          const onDisk =
-            fs.existsSync(extDir) &&
-            fs.readdirSync(extDir).some((entry) => {
-              if (entry === 'extensions.json' || entry === '.obsolete') return false;
-              return entry.toLowerCase().startsWith(depLower + '-') || entry.toLowerCase() === depLower;
-            });
+          removeInvalidExtensionEntries(dep);
+          const onDisk = !!findValidInstalledExtension(dep);
           if (onDisk) {
             console.log(`  ✓ ${dep} present on disk despite CLI error, OK`);
           } else {
@@ -298,6 +386,11 @@ async function main() {
       // Concurrent CLI processes may race on writing this file, so we
       // reconstruct it from the actual directories on disk.
       rebuildExtensionsJson(extDir);
+    }
+
+    const missingDeps = extDeps.filter((dep) => !findValidInstalledExtension(dep));
+    if (missingDeps.length > 0) {
+      throw new Error(`Missing E2E extension prerequisite(s): ${missingDeps.join(', ')}. Install/retry before running UI E2E tests.`);
     }
   } else {
     console.log('\n=== Step 2: No extension dependencies to install ===');
@@ -449,6 +542,15 @@ async function main() {
     }
   }
 
+  if (fs.existsSync(extDir)) {
+    for (const entry of fs.readdirSync(extDir)) {
+      if (entry !== 'extensions.json' && entry !== '.obsolete' && entry.toLowerCase().startsWith(devContainersDependency)) {
+        console.log(`  Removing stale Dev Containers extension: ${entry}`);
+        fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
+      }
+    }
+  }
+
   // Final extensions.json rebuild right before running tests.
   // Parallel CLI --install-extension calls may race on writing extensions.json,
   // leaving only a subset of entries. Rebuild from actual directories on disk.
@@ -567,11 +669,45 @@ async function main() {
 
   // Resolve the auto-downloaded runtime dependency paths so the extension can
   // find func, dotnet, and node without relying on PATH or re-downloading.
-  const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
-  const funcBinary = path.join(depsRoot, 'FuncCoreTools', 'func');
-  const dotnetBinary = path.join(depsRoot, 'DotNetSDK', 'dotnet');
-  const nodeBinary = path.join(depsRoot, 'NodeJs', 'node');
-  const runtimeDependenciesReady = () => [funcBinary, dotnetBinary, nodeBinary].every((binaryPath) => fs.existsSync(binaryPath));
+  const resolveNodeBinDir = (depsRoot) => {
+    const nodeJsRoot = path.join(depsRoot, 'NodeJs');
+    if (process.platform === 'win32') {
+      return nodeJsRoot;
+    }
+
+    try {
+      const nodeSubfolder = fs
+        .readdirSync(nodeJsRoot, { withFileTypes: true })
+        .find((entry) => entry.isDirectory() && entry.name.includes('node'))?.name;
+      if (nodeSubfolder) {
+        return path.join(nodeJsRoot, nodeSubfolder, 'bin');
+      }
+    } catch {
+      // Dependencies may not be downloaded yet. Fall back to the root-level path
+      // so dependency validation still runs when binaries are missing.
+    }
+
+    return nodeJsRoot;
+  };
+
+  const getRuntimeDependencyPaths = () => {
+    const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+    const nodeJsDir = resolveNodeBinDir(depsRoot);
+    return {
+      depsRoot,
+      funcToolsDir: path.join(depsRoot, 'FuncCoreTools'),
+      dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
+      nodeJsDir,
+      funcBinary: path.join(depsRoot, 'FuncCoreTools', 'func'),
+      dotnetBinary: path.join(depsRoot, 'DotNetSDK', 'dotnet'),
+      nodeBinary: path.join(nodeJsDir, 'node'),
+    };
+  };
+
+  const runtimeDependenciesReady = () => {
+    const { funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
+    return [funcBinary, dotnetBinary, nodeBinary].every((binaryPath) => fs.existsSync(binaryPath));
+  };
   const shouldValidateRuntimeDependencies = () => !runtimeDependenciesReady();
 
   // Create a VS Code settings file. Called before each phase group so we can
@@ -580,7 +716,7 @@ async function main() {
   const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
   fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
 
-  const writeTestSettings = ({ validateDependencies = false, autoStartDesignTime = true } = {}) => {
+  const writeTestSettings = ({ validateDependencies = false, autoStartDesignTime = true, includeRuntimeDependencyPaths = true } = {}) => {
     const settings = {
       'extensions.autoUpdate': false,
       'extensions.autoCheckUpdates': false,
@@ -602,15 +738,9 @@ async function main() {
       // Disable Git auto-repository detection to reduce dialogs
       'git.openRepositoryInParentFolders': 'never',
       'git.enabled': false,
-      // Point to auto-downloaded runtime binaries so the extension can start
-      // the design-time API process (func host start) without relying on PATH.
-      'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
       // Dependency validation: Phase 4.1 needs this ON (first run downloads/validates
       // binaries). All subsequent phases set it OFF since paths are already resolved.
       'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': validateDependencies,
-      'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
-      'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
-      'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
       // Design-time auto-start: ON for tests that need the runtime (designer, run),
       // OFF for tests that only check UI/conversion to save startup time.
       'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,
@@ -622,8 +752,21 @@ async function main() {
       // returns undefined instead of prompting when no cached token exists.
       'azureLogicAppsStandard.silentAuth': true,
     };
+    if (includeRuntimeDependencyPaths) {
+      const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
+      Object.assign(settings, {
+        // Point to auto-downloaded runtime binaries so the extension can start
+        // the design-time API process (func host start) without relying on PATH.
+        'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
+        'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
+        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
+        'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
+      });
+    }
     fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2));
-    console.log(`  Settings: validateDependencies=${validateDependencies}, autoStartDesignTime=${autoStartDesignTime}`);
+    console.log(
+      `  Settings: validateDependencies=${validateDependencies}, autoStartDesignTime=${autoStartDesignTime}, includeRuntimeDependencyPaths=${includeRuntimeDependencyPaths}`
+    );
   };
 
   // Write initial settings — keep dependency validation ON for all phases.
@@ -631,6 +774,7 @@ async function main() {
   // from blocking designer operations (the validation flow handles the
   // timing so the wizard completes before the user opens the designer).
   writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+  const { depsRoot, funcBinary, dotnetBinary, nodeBinary, dotnetSdkDir, nodeJsDir, funcToolsDir } = getRuntimeDependencyPaths();
   console.log(`  Created test settings file: ${settingsFile}`);
   console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
   console.log(`  autoRuntimeDependenciesPath: ${depsRoot}`);
@@ -640,9 +784,6 @@ async function main() {
   // task and the design-time API process) cannot find dotnet on CI runners
   // where only the extension-managed copy exists.
   // Also include the system dotnet if actions/setup-dotnet installed one.
-  const dotnetSdkDir = path.join(depsRoot, 'DotNetSDK');
-  const nodeJsDir = path.join(depsRoot, 'NodeJs');
-  const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
   const pathSep = process.platform === 'win32' ? ';' : ':';
   const extraPaths = [funcToolsDir, dotnetSdkDir, nodeJsDir].filter((d) => fs.existsSync(d));
   if (extraPaths.length > 0) {
@@ -656,6 +797,8 @@ async function main() {
 
   const outTestDir = path.resolve(projectDir, 'out', 'test');
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
+
+  const phase0Files = [testFile('nonLogicAppStartup.test.js')];
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.test.js')];
 
@@ -793,6 +936,7 @@ async function main() {
     // tries to run `func host start` to start the design-time API.
     if (process.platform === 'linux' || process.platform === 'darwin') {
       const { execSync } = require('child_process');
+      const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir } = getRuntimeDependencyPaths();
       for (const bin of [funcBinary, dotnetBinary, nodeBinary]) {
         if (fs.existsSync(bin)) {
           try {
@@ -804,7 +948,6 @@ async function main() {
       }
       // Also chmod the entire FuncCoreTools directory — it contains sub-binaries
       // (e.g., gozip, func) that all need execute permission.
-      const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
       if (fs.existsSync(funcToolsDir)) {
         try {
           execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
@@ -875,6 +1018,18 @@ async function main() {
       }
       return phase2Resources;
     };
+
+    if (e2eMode === 'nonlogicappstartup') {
+      // Startup regression test: intentionally omit runtime dependency paths to
+      // exercise extension activation in a plain, non-Logic-App folder.
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
+
+      await prepareFreshSession('nonlogicappstartup-only');
+      const startupExit = await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files);
+      process.exit(startupExit);
+    }
 
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
@@ -953,53 +1108,12 @@ async function main() {
       }
 
       // Phase 4.8b: Open legacy project folder (no .code-workspace), click Yes
-      const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
-      // Create the legacy project for this test
-      const legacyWfDir = path.join(legacyDir, 'testworkflow');
-      if (!fs.existsSync(legacyWfDir)) {
-        fs.mkdirSync(legacyWfDir, { recursive: true });
-        fs.writeFileSync(
-          path.join(legacyDir, 'host.json'),
-          JSON.stringify(
-            { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
-            null,
-            2
-          )
-        );
-        fs.writeFileSync(
-          path.join(legacyDir, 'local.settings.json'),
-          JSON.stringify(
-            {
-              IsEncrypted: false,
-              Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
-            },
-            null,
-            2
-          )
-        );
-        fs.writeFileSync(
-          path.join(legacyWfDir, 'workflow.json'),
-          JSON.stringify(
-            {
-              definition: {
-                $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-                contentVersion: '1.0.0.0',
-                actions: {},
-                triggers: {},
-                outputs: {},
-              },
-              kind: 'Stateful',
-            },
-            null,
-            2
-          )
-        );
-        console.log(`  Created legacy project at: ${legacyDir}`);
-      }
+      const legacyDir = createLegacyProjectFixture('conversiononly');
       // Phase 4.8b: Enable dependency validation so extension fully activates
       // and shows the conversion dialog for legacy projects.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
       await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
       exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
       await new Promise((r) => setTimeout(r, 3000));
 
@@ -1076,6 +1190,21 @@ async function main() {
       process.exit(phase9Exit);
     }
 
+    if (e2eMode === 'conversioncreateonly') {
+      // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
+      // click Yes, then verify one Create click starts and completes workspace creation.
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+
+      const legacyDir = createLegacyProjectFixture('conversioncreateonly');
+
+      await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+      const phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
+      process.exit(phase8bExit);
+    }
+
     if (e2eMode === 'createonly') {
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
@@ -1084,6 +1213,15 @@ async function main() {
       process.exit(phase1Exit);
     }
 
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
+    await prepareFreshSession('phase0');
+    const phase0Exit = await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files);
+    if (phase0Exit !== 0) {
+      console.log(`\n⚠ Phase 4.0 exited with code ${phase0Exit} — continuing to Phase 4.1`);
+    }
+
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase1');
     const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
     if (phase1Exit !== 0) {
@@ -1172,49 +1310,10 @@ async function main() {
     // to detect the legacy project and show the conversion dialog.
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
     let phase8bExit = 0;
-    const legacyDir = path.join(require('os').tmpdir(), 'la-e2e-test', 'legacy-project');
-    const legacyWfDir = path.join(legacyDir, 'testworkflow');
-    if (!fs.existsSync(legacyWfDir)) {
-      fs.mkdirSync(legacyWfDir, { recursive: true });
-      fs.writeFileSync(
-        path.join(legacyDir, 'host.json'),
-        JSON.stringify(
-          { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
-          null,
-          2
-        )
-      );
-      fs.writeFileSync(
-        path.join(legacyDir, 'local.settings.json'),
-        JSON.stringify(
-          {
-            IsEncrypted: false,
-            Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
-          },
-          null,
-          2
-        )
-      );
-      fs.writeFileSync(
-        path.join(legacyWfDir, 'workflow.json'),
-        JSON.stringify(
-          {
-            definition: {
-              $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-              contentVersion: '1.0.0.0',
-              actions: {},
-              triggers: {},
-              outputs: {},
-            },
-            kind: 'Stateful',
-          },
-          null,
-          2
-        )
-      );
-    }
+    const legacyDir = createLegacyProjectFixture('phase8b');
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase8b');
+    process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
     phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
     if (phase8bExit !== 0) console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
 
@@ -1286,6 +1385,7 @@ async function main() {
     // button is sometimes not interactable under xvfb. It still runs and logs
     // its result, but does not block the pipeline.
     const finalExit = Math.max(
+      phase0Exit,
       phase1Exit,
       phase2Exit,
       phase3Exit,
@@ -1304,7 +1404,7 @@ async function main() {
       console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
     }
     console.log(
-      `\n=== Final results: 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.9=${phase9Exit} → exit ${finalExit} ===`
+      `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.9=${phase9Exit} → exit ${finalExit} ===`
     );
     process.exit(finalExit);
   } catch (err) {
