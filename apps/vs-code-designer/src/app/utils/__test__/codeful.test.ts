@@ -1,7 +1,7 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { invalidateCodefulSdkCacheIfNeeded } from '../codeful';
+import { invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -156,5 +156,50 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
     expect(invalidated).toBe(false);
     expect(mocks.remove).not.toHaveBeenCalled();
     expect(mocks.writeFile).not.toHaveBeenCalled();
+  });
+});
+
+describe('parseCsprojCopyToCodefulInfo', () => {
+  it('detects modern codeful targets that run on Build and Publish', () => {
+    const info = parseCsprojCopyToCodefulInfo(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <Target Name="CopyToCodefulFolder" AfterTargets="Build;Publish" />
+  <Target Name="ReplaceLanguageNetCore" AfterTargets="Build;Publish" />
+</Project>`);
+
+    expect(info).toEqual({
+      copyAfterTargets: 'Build;Publish',
+      replaceLangAfterTargets: 'Build;Publish',
+      runsOnBuild: true,
+    });
+  });
+
+  it('keeps legacy Publish-only targets from being treated as Build hooks', () => {
+    const info = parseCsprojCopyToCodefulInfo(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <Target Name="CopyToCodefulFolder" AfterTargets="Publish" />
+  <Target Name="ReplaceLanguageNetCore" AfterTargets="Publish" />
+</Project>`);
+
+    expect(info).toEqual({
+      copyAfterTargets: 'Publish',
+      replaceLangAfterTargets: 'Publish',
+      runsOnBuild: false,
+    });
+  });
+
+  it('ignores commented-out targets when reading project files', () => {
+    const info = parseCsprojCopyToCodefulInfo(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- <Target Name="CopyToCodefulFolder" AfterTargets="Build;Publish" /> -->
+  <Target Name="CopyToCodefulFolder" AfterTargets="Publish" />
+  <Target Name="ReplaceLanguageNetCore" AfterTargets="Build;Publish" />
+</Project>`);
+
+    expect(info).toEqual({
+      copyAfterTargets: 'Publish',
+      replaceLangAfterTargets: 'Build;Publish',
+      runsOnBuild: false,
+    });
   });
 });

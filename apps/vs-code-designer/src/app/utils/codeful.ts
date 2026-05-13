@@ -144,13 +144,32 @@ async function codefulNugetConfigUsesExtensionSdkCache(
 }
 
 function getXmlAddValue(xml: string, sectionName: string, key: string): string | undefined {
-  // This skips XML comments in local project config before regex parsing; it is not HTML output sanitization.
-  // codeql[js/incomplete-sanitization]
-  const sectionMatch = xml
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .match(new RegExp(`<${sectionName}\\b[^>]*>([\\s\\S]*?)<\\/${sectionName}>`, 'i'));
+  const sectionMatch = stripXmlComments(xml).match(new RegExp(`<${sectionName}\\b[^>]*>([\\s\\S]*?)<\\/${sectionName}>`, 'i'));
   const addElement = sectionMatch?.[1].match(new RegExp(`<add\\b(?=[^>]*\\bkey=["']${escapeRegExp(key)}["'])[^>]*>`, 'i'))?.[0];
   return addElement?.match(/\bvalue=["']([^"']*)["']/i)?.[1];
+}
+
+function stripXmlComments(xml: string): string {
+  // This skips XML comments in local project files before regex parsing; it is not HTML output sanitization.
+  let result = '';
+  let currentIndex = 0;
+
+  while (currentIndex < xml.length) {
+    const commentStart = xml.indexOf('<!--', currentIndex);
+    if (commentStart === -1) {
+      return result + xml.slice(currentIndex);
+    }
+
+    result += xml.slice(currentIndex, commentStart);
+    const commentEnd = xml.indexOf('-->', commentStart + '<!--'.length);
+    if (commentEnd === -1) {
+      return result + xml.slice(commentStart);
+    }
+
+    currentIndex = commentEnd + '-->'.length;
+  }
+
+  return result;
 }
 
 function normalizeNugetPath(projectPath: string, nugetPath: string): string {
@@ -198,9 +217,7 @@ export interface CodefulCsprojBuildHookInfo {
 }
 
 const findTargetAfterTargets = (csprojContent: string, targetName: string): string | null => {
-  // This skips XML comments in local .csproj before regex parsing; it is not HTML output sanitization.
-  // codeql[js/incomplete-sanitization]
-  const stripped = csprojContent.replace(/<!--[\s\S]*?-->/g, '');
+  const stripped = stripXmlComments(csprojContent);
   const targetTagRegex = /<Target\b([^>]*?)\/?>/g;
   let match: RegExpExecArray | null;
   while ((match = targetTagRegex.exec(stripped)) !== null) {
