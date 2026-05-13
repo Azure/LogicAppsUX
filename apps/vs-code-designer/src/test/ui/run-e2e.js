@@ -963,6 +963,17 @@ async function main() {
     } catch {
       /* ignore */
     }
+    // ExTester runs Mocha in this Node process. Some phases intentionally reuse
+    // the same compiled test file with different env gates (for example
+    // createWorkspace.test.js in Phase 4.1 and Phase 4.10A), so clear cached
+    // test modules before adding them to a new Mocha instance.
+    for (const file of files) {
+      try {
+        delete require.cache[require.resolve(file)];
+      } catch {
+        /* ignore */
+      }
+    }
     const phaseTester = new ExTester(undefined, undefined, extDir);
     const code = await phaseTester.runTests(files, phaseRunOptions);
     console.log(`  ${phaseName} exit code: ${code}`);
