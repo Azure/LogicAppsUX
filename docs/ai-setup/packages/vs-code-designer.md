@@ -142,6 +142,7 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 | 4.5 | designerViewExtended.test.ts | Parallel branches + run-after (ADO #10109401) |
 | 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down navigation (ADO #10273324) |
 | 4.7 | dataMapper.test.ts, demo, smoke, standalone | Data Mapper + generic tests |
+| 4.9 | azuriteAutostartFailure.test.ts, azuriteAutostartFailureAssert.test.ts | Azurite auto-start debug regression |
 
 ### Shared Helper Modules
 
@@ -178,6 +179,8 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 
 12. **Always run tests automatically after creating or modifying them**: After writing or editing any test file, immediately: lint (`npx biome check --write`), build (`npx tsup`), and run (`node src/test/ui/run-e2e.js`) — don't wait for the user to ask. Report pass/fail results with any failure details.
 
+13. **Debug regression tests must use the real workspace launch flow**: Create the workspace through the Create Workspace webview, reopen the generated `.code-workspace` in a fresh `run-e2e.js` phase, wait for `workflow-designtime/`, and validate terminal/output/log evidence. Do not replace the suite path with one-off scripts, hand-made workspaces, or the wrong launch configuration.
+
 ### Running Tests
 
 ```bash
@@ -185,10 +188,11 @@ cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts   # Compile
 
 # Run modes:
-$env:E2E_MODE = "full"           # All phases (4.1-4.7)
+$env:E2E_MODE = "full"           # All phases (4.1-4.9)
 $env:E2E_MODE = "createonly"     # Phase 4.1 only
 $env:E2E_MODE = "designeronly"   # Phase 4.2 only
 $env:E2E_MODE = "newtestsonly"   # Phases 4.3-4.6 only
+$env:E2E_MODE = "azuriteonly"    # Phase 4.9 Azurite auto-start debug regression
 node src/test/ui/run-e2e.js
 ```
 

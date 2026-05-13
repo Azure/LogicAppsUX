@@ -54,7 +54,7 @@ import {
   VSBrowser,
   type WebElement,
   Key,
-  InputBox,
+  type InputBox,
 } from 'vscode-extension-tester';
 import { execSync } from 'child_process';
 import {
@@ -331,6 +331,7 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
   // shows a simple text input (files.simpleDialog.enable=true is set by ExTester).
   const isWorkspaceFile = wsFilePath.endsWith('.code-workspace');
   const openPath = isWorkspaceFile ? wsFilePath : wsFilePath;
+  const expectedTitleText = isWorkspaceFile ? path.basename(wsFilePath, '.code-workspace') : path.basename(wsFilePath);
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -378,21 +379,15 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       // Wait for the simple dialog input box to appear
       await sleep(2000);
 
-      // The simple dialog shows an input box. Type the full path.
-      // ExTester sets files.simpleDialog.enable=true so this should be a text input.
-      try {
-        const dialogInput = new InputBox();
-        await dialogInput.setText(openPath);
-        await sleep(500);
-        await dialogInput.confirm();
-      } catch (inputErr: any) {
-        console.log(`[openWorkspaceFileInSession] InputBox approach failed: ${inputErr.message}, trying sendKeys`);
-        // Fallback: type directly and press Enter
-        const body = await driver.findElement(By.css('body'));
-        await body.sendKeys(openPath, Key.ENTER);
-      }
+      // The simple dialog shows a quick-input text box. Use raw Selenium here
+      // so we do not accidentally keep interacting with the command palette input.
+      const dialogInput = await driver.findElement(By.css('.quick-input-widget:not(.hidden) .quick-input-box input'));
+      await dialogInput.sendKeys(Key.chord(Key.CONTROL, 'a'));
+      await dialogInput.sendKeys(openPath);
+      await sleep(500);
+      await dialogInput.sendKeys(Key.ENTER);
 
-      await sleep(5000);
+      await sleep(7000);
 
       // Wait for the workbench to be ready after potential reload
       try {
@@ -405,8 +400,8 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       const titleAfter = await driver.getTitle().catch(() => '');
       console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
 
-      if (titleAfter !== 'Visual Studio Code') {
-        console.log('[openWorkspaceFileInSession] Workspace opened successfully (title changed)');
+      if (titleAfter.toLowerCase().includes(expectedTitleText.toLowerCase())) {
+        console.log('[openWorkspaceFileInSession] Workspace opened successfully (expected title)');
         break;
       }
 
@@ -416,14 +411,14 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
           `
         const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
         if (rows.length === 0) return 'EMPTY';
-        return 'ROWS=' + rows.length;
+        return Array.from(rows).map((row) => row.textContent || '').join('\\n');
       `
         )
         .catch(() => 'ERROR');
       console.log(`[openWorkspaceFileInSession] Explorer: ${explorerState}`);
 
-      if (explorerState !== 'EMPTY') {
-        console.log('[openWorkspaceFileInSession] Folder opened (explorer has rows)');
+      if (explorerState.toLowerCase().includes(expectedTitleText.toLowerCase())) {
+        console.log('[openWorkspaceFileInSession] Workspace opened successfully (expected Explorer contents)');
         break;
       }
 
@@ -438,6 +433,23 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       }
       await sleep(2000);
     }
+  }
+
+  const finalTitle = await driver.getTitle().catch(() => '');
+  const finalExplorerState = await driver
+    .executeScript<string>(
+      `
+      const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
+      return Array.from(rows).map((row) => row.textContent || '').join('\\n');
+    `
+    )
+    .catch(() => '');
+  if (
+    !finalTitle.toLowerCase().includes(expectedTitleText.toLowerCase()) &&
+    !finalExplorerState.toLowerCase().includes(expectedTitleText.toLowerCase())
+  ) {
+    await captureScreenshot(driver, 'workspace-open-failed');
+    throw new Error(`Workspace did not open: ${wsFilePath}. Title="${finalTitle}", Explorer="${finalExplorerState.substring(0, 200)}"`);
   }
 
   await clearBlockingUI(driver);

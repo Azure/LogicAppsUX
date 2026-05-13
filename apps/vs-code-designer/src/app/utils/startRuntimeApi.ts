@@ -27,8 +27,14 @@ import { Platform } from '@microsoft/vscode-extension-logic-apps';
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
     await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
       await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-        await activateAzurite(context, projectPath);
+        try {
+          await activateAzurite(actionContext, projectPath);
+        } catch (error) {
+          actionContext.errorHandling.suppressDisplay = true;
+          throw error instanceof Error ? error : new Error(String(error));
+        }
       });
     });
 
