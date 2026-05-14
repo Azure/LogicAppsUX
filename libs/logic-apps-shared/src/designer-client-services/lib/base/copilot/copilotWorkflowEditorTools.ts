@@ -272,6 +272,15 @@ interface ActionTemplate {
       headers?: Record<string, string>;
     };
   };
+  /**
+   * A ready-to-use connectionReference entry. Add this to the workflow's connectionReferences
+   * using the referenceName as the key (must match actionDefinition.inputs.host.connection.referenceName).
+   */
+  connectionReference: {
+    connectionName: string;
+    source: string;
+    id: string;
+  };
   /** Description of each input field for the body/queries */
   inputDescriptions?: Record<string, string>;
 }
@@ -376,6 +385,11 @@ function buildActionTemplate(op: DiscoveryOpArray[number], swaggerOp: SwaggerOpe
     actionDefinition: {
       type: 'ApiConnection',
       inputs,
+    },
+    connectionReference: {
+      connectionName: referenceName,
+      source: 'Embedded',
+      id: api?.id ?? '',
     },
     inputDescriptions: Object.keys(inputDescriptions).length > 0 ? inputDescriptions : undefined,
   };
