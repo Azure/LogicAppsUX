@@ -47,6 +47,7 @@ export const ReviewCreateStep: React.FC = () => {
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkflowSection = (flowType === 'createWorkspace' || flowType === 'createLogicApp') && !isUsingExistingLogicApp;
+
   const workspaceBasePath =
     workspaceProjectPath.fsPath && workspaceName ? `${workspaceProjectPath.fsPath}${separator}${workspaceName}` : '';
   const workspaceFilePath = workspaceBasePath ? `${workspaceBasePath}${separator}${workspaceName}.code-workspace` : '';
@@ -57,7 +58,6 @@ export const ReviewCreateStep: React.FC = () => {
     const frameworkDisplayMap: Record<string, string> = {
       [TargetFramework.NetFx]: intlText.DOTNET_FRAMEWORK_OPTION,
       [TargetFramework.Net8]: intlText.DOTNET_8,
-      [TargetFramework.Net10]: intlText.DOTNET_10,
     };
 
     return frameworkDisplayMap[framework] ?? framework;

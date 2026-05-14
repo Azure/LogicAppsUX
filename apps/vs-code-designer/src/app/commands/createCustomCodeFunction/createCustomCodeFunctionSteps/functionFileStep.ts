@@ -21,7 +21,6 @@ export class FunctionFileStep extends AzureWizardPromptStep<IProjectWizardContex
   private csTemplateFileName = {
     [TargetFramework.NetFx]: 'FunctionsFileNetFx',
     [TargetFramework.Net8]: 'FunctionsFileNet8',
-    [TargetFramework.Net10]: 'FunctionsFileNet10',
   };
 
   /**
