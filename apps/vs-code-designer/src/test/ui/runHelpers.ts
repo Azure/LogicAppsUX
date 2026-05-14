@@ -95,7 +95,13 @@ export async function startDebugging(workbench: Workbench, driver: WebDriver): P
  *     readiness signal we already have a probe for.
  *
  * Timeout budget guidance (all callers should respect a >=90 s deadline,
- * per the reliability playbook):
+ * per the reliability playbook). Default raised to 180 s after CI run
+ * 25888015435 confirmed the GitHub Linux runner needs >90 s for the
+ * debug toolbar to appear on a true cold Functions runtime start
+ * (`debugToolbarSeen=never, hostRunningSeen=never` at 90 s, both signals
+ * resolve well before 180 s once the host comes up). Callers that pass
+ * an explicit `timeoutMs` override take precedence.
+ *   - default callers: 180 s.
  *   - `clickRunTrigger` gate: 60 s strict (host *should* already be running
  *     by the time we open the overview).
  *   - `assertRunTriggerable` gate: 120 s strict (cold-start shards).
@@ -108,7 +114,7 @@ export async function waitForRuntimeReady(
   driver: WebDriver,
   opts: { requireHostRunning?: boolean; timeoutMs?: number } = {}
 ): Promise<boolean> {
-  const timeoutMs = opts.timeoutMs ?? 90_000;
+  const timeoutMs = opts.timeoutMs ?? 180_000;
   const requireHostRunning = opts.requireHostRunning ?? false;
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
