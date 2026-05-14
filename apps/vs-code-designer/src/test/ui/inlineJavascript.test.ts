@@ -43,10 +43,9 @@ import {
 } from './designerHelpers';
 import {
   startDebugging,
-  waitForRuntimeReady,
   openOverviewPage,
   switchToOverviewWebview,
-  clickRunTrigger,
+  assertRunTriggerable,
   clickRefresh,
   waitForRunStatusInList,
   clickLatestRunRow,
@@ -210,7 +209,6 @@ describe('Inline JavaScript Tests', function () {
       // Debug → Run → Verify
       workbench = new Workbench();
       await startDebugging(workbench, driver);
-      assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);
@@ -225,7 +223,7 @@ describe('Inline JavaScript Tests', function () {
         /* ignore */
       }
       const ovWv = await switchToOverviewWebview(driver);
-      assert.ok(await clickRunTrigger(driver), 'Run trigger clickable');
+      await assertRunTriggerable(driver);
       await sleep(1000);
       await clickRefresh(driver);
       const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');
