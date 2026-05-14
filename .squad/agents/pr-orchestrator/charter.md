@@ -47,8 +47,12 @@
    - hand off CI monitoring to `ci-sentinel`.
 10. Iterate:
    - for each actionable CI or review failure, create a follow-up task, fix, validate, commit, push, and monitor again.
-11. Summarize:
-   - ask `release-scribe` to update PR body/status and produce reviewer-facing summaries.
+11. **PR body template compliance** (REQUIRED at open AND after every substantive update):
+   - ask `release-scribe` to write/refresh the body so it satisfies `.github/pull_request_template.md` (Commit Type, Risk Level, What & Why, Impact of Change, Test Plan, Contributors, Screenshots/Videos);
+   - apply the matching `risk:<low|medium|high>` repo label and remove `needs-pr-update` if present;
+   - wait ~5-7 min for `AI PR Validation` (`pr-ai-validation.yml`) to re-run on the edit/label events and verify the bot comment shows ✅ on every section.
+12. Summarize:
+   - ask `release-scribe` for the final reviewer-facing summary once CI is green.
 
 ## Boundaries
 

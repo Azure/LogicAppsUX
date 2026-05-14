@@ -212,6 +212,37 @@ Summaries should distinguish:
 - external/non-actionable CI failures;
 - unmerged follow-up commits.
 
+### 9.1 PR Body Template Compliance (REQUIRED)
+
+When a PR is opened or its body is substantively updated, `release-scribe` MUST ensure the body conforms to `.github/pull_request_template.md`. The `AI PR Validation` workflow (`pr-ai-validation.yml`) posts a `github-actions` bot comment that fails the PR when the body is non-compliant.
+
+**Compliance checklist** (see `.squad/agents/release-scribe/charter.md` § PR Body Template Compliance for the full version):
+
+1. **Commit Type** — exactly one `[x]` ticked.
+2. **Risk Level** — exactly one `[x]` ticked AND matching `risk:<level>` label applied to the PR.
+3. **What & Why** — narrative present under the `## What & Why` heading.
+4. **Impact of Change** — bullets for `Users:`, `Developers:`, `System:`.
+5. **Test Plan** — tick the checkboxes that apply; cite CI run IDs / per-shard timings when relevant.
+6. **Contributors** — `## Contributors` section with explicit `@user` mentions (`Co-authored-by:` git trailer is NOT a substitute).
+7. **Screenshots/Videos** — required for visual changes only; otherwise state "Not applicable" with artifact location.
+8. **Labels** — remove `needs-pr-update` (`gh pr edit <num> --remove-label needs-pr-update`).
+
+**Apply + verify loop** (combine the edits into a single `gh pr edit` to minimize bot re-runs):
+
+```bash
+# Apply body, label change, and removal in one operation
+gh pr edit <num> --repo Azure/LogicAppsUX \
+  --body-file <body.md> \
+  --add-label "risk:medium" \
+  --remove-label "needs-pr-update"
+
+# Wait 5-7 minutes for AI PR Validation to re-run on the edit/label events, then verify:
+gh pr view <num> --repo Azure/LogicAppsUX --json comments \
+  --jq '[.comments[] | select(.author.login == "github-actions")] | last | .body'
+```
+
+A passing report shows ✅ on every section in the summary table. Iterate on any ❌ or ⚠️ items.
+
 ## Stop Conditions
 
 Stop only when one of these is true:
