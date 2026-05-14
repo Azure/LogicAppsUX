@@ -1,9 +1,31 @@
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 import packageJson from './package.json';
 
 const packagePath = 'apps/vs-code-designer/';
+
+const getBaseRefCandidates = (baseRef: string): string[] => {
+  const candidates: string[] = [];
+  const eventPath = process.env.GITHUB_EVENT_PATH;
+
+  if (eventPath) {
+    try {
+      const event = JSON.parse(readFileSync(eventPath, 'utf8'));
+      const baseSha = event.pull_request?.base?.sha;
+
+      if (baseSha) {
+        candidates.push(baseSha);
+      }
+    } catch {
+      // Fall back to named refs below when the GitHub event payload is unavailable.
+    }
+  }
+
+  candidates.push(`origin/${baseRef}`, `upstream/${baseRef}`, baseRef);
+  return candidates;
+};
 
 const getCoverageInclude = (): string[] => {
   const baseRef = process.env.GITHUB_BASE_REF;
@@ -13,9 +35,8 @@ const getCoverageInclude = (): string[] => {
   }
 
   const repositoryRoot = path.resolve(__dirname, '../..');
-  const baseRefCandidates = [`origin/${baseRef}`, `upstream/${baseRef}`, baseRef];
 
-  for (const candidateBaseRef of baseRefCandidates) {
+  for (const candidateBaseRef of getBaseRefCandidates(baseRef)) {
     try {
       const changedFiles = execFileSync('git', ['diff', '--name-only', `${candidateBaseRef}...HEAD`, '--', `${packagePath}src`], {
         cwd: repositoryRoot,
@@ -39,7 +60,7 @@ const getCoverageInclude = (): string[] => {
     }
   }
 
-  return ['src/**/*'];
+  return ['src/__coverage_placeholder__.ts'];
 };
 
 export default defineConfig({
