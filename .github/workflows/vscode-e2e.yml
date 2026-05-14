@@ -31,6 +31,10 @@ on:
       - 'libs/chatbot/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/vscode-e2e.yml'
+  # Manual trigger so PR authors and chief-engineer agents can force a CI
+  # re-run on the latest PR head (useful when path-filter coalescing
+  # suppresses an expected auto-trigger after rapid pushes).
+  workflow_dispatch:
 
 concurrency:
   group: vscode-e2e-${{ github.head_ref || github.ref }}
