@@ -1469,3 +1469,5 @@ main().catch((err) => {
   console.error('Fatal error in E2E launcher:', err);
   process.exit(1);
 });
+
+// CI trigger nudge
