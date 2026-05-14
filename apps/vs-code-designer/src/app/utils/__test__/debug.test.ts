@@ -15,7 +15,9 @@ describe('debug', () => {
     vi.mocked(getExtensionBundleFolder).mockResolvedValue('C:\\bundles');
     vi.mocked(getBundleVersionNumber).mockResolvedValue('1.2.3');
 
-    await expect(getDebugSymbolDll()).resolves.toContain(`${extensionBundleId}\\1.2.3\\bin\\${debugSymbolDll}`);
+    const result = await getDebugSymbolDll();
+
+    expect(result.replace(/\\/g, '/')).toContain(`${extensionBundleId}/1.2.3/bin/${debugSymbolDll}`);
   });
 
   describe('getDebugConfiguration', () => {

@@ -189,7 +189,8 @@ describe('CodefulWorkflowCreateStep', () => {
 
     (step as any).addNugetConfig('C:\\project');
 
-    expect(writeFileSync).toHaveBeenCalledWith('C:\\project\\nuget.config', expect.stringContaining('nuget.org'));
+    expectPath(vi.mocked(writeFileSync).mock.calls[0][0] as string).toBe('C:/project/nuget.config');
+    expect(vi.mocked(writeFileSync).mock.calls[0][1]).toEqual(expect.stringContaining('nuget.org'));
   });
 
   it('should remove extension bundles from host.json for codeful workflows', async () => {
@@ -206,8 +207,8 @@ describe('CodefulWorkflowCreateStep', () => {
 
     await (step as any).updateHostJson(context, 'host.json');
 
-    expect(writeFormattedJson).toHaveBeenCalledWith(
-      'C:\\project\\host.json',
+    expectPath(vi.mocked(writeFormattedJson).mock.calls[0][0] as string).toBe('C:/project/host.json');
+    expect(vi.mocked(writeFormattedJson).mock.calls[0][1]).toEqual(
       expect.objectContaining({
         extensionBundle: undefined,
       })
@@ -225,13 +226,13 @@ describe('CodefulWorkflowCreateStep', () => {
       'SalesLogicApp'
     );
 
-    expect(fse.writeJson).toHaveBeenCalledWith(
-      'C:\\project\\.vscode\\launch.json',
+    expectPath(vi.mocked(fse.writeJson).mock.calls[0][0] as string).toBe('C:/project/.vscode/launch.json');
+    expect(vi.mocked(fse.writeJson).mock.calls[0][1]).toEqual(
       expect.objectContaining({
         configurations: expect.arrayContaining([expect.objectContaining({ name: 'generated launch' })]),
-      }),
-      { spaces: 2 }
+      })
     );
+    expect(vi.mocked(fse.writeJson).mock.calls[0][2]).toEqual({ spaces: 2 });
   });
 
   it('should update existing launch configs in single-root workspaces', async () => {

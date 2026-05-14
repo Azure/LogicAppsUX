@@ -86,12 +86,9 @@ describe('dotnet utilities', () => {
   });
 
   it('should get non-extension C# project files', async () => {
-    vi.mocked(findFiles).mockResolvedValue([
-      { fsPath: 'C:\\project\\extensions.csproj' },
-      { fsPath: 'C:\\project\\Functions.csproj' },
-    ] as any);
+    vi.mocked(findFiles).mockResolvedValue([{ fsPath: '/project/extensions.csproj' }, { fsPath: '/project/Functions.csproj' }] as any);
 
-    const result = await getProjFiles(context, ProjectLanguage.CSharp, 'C:\\project');
+    const result = await getProjFiles(context, ProjectLanguage.CSharp, '/project');
 
     expect(result).toHaveLength(1);
     expect(result[0].name).toBe('Functions.csproj');
