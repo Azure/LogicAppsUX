@@ -15,7 +15,14 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    fileParallelism: false,
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      include: ['src/**/*'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/__test__/**', 'src/test/e2e/**', 'src/test/ui/**'],
+      reporter: ['html', 'cobertura', 'lcov'],
+    },
     restoreMocks: true,
     // Exclude E2E tests that use Mocha instead of Vitest
     exclude: [
