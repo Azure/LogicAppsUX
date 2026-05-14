@@ -98,6 +98,46 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Applies to: `vscode-test-specialist`, `test`, `customer-repro-tester`, `ci-sentinel`.
 - Status: verified.
 
+### Fill webview wizard inputs by label, not index
+
+- Learning: VS Code wizard webview E2Es should locate inputs by their visible label (e.g., `findInputByLabel('Workspace name')`) rather than by DOM index or positional order.
+- Why it matters: PR #9161 stabilized `workspaceConversionCreate.test.ts` after the index-based fills wrote the workspace path into the name field when the wizard reordered/re-rendered inputs.
+- Source: Azure/LogicAppsUX#9161; `apps/vs-code-designer/src/test/ui/workspaceConversionCreate.test.ts`; session `35f3ecef-6086-4148-9b2c-d57123f7c5e6`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-critic`.
+- Status: verified.
+
+### Wrap every webview DOM read against stale elements
+
+- Learning: In VS Code webview E2Es, every per-element read — `label.getText()`, `label.getAttribute('for')`, parent traversal, and inner `findElement(...)` — must tolerate `StaleElementReferenceError` and `continue` to the next candidate. Filtering only on `isDisplayed()` is not enough.
+- Why it matters: PR #9161 followup commit `Handle stale labels in conversion create E2E` (5283d8a) addressed reviewer feedback that the helper still threw when the webview re-rendered between the initial visibility filter and the later label-processing calls.
+- Source: Azure/LogicAppsUX#9161 Copilot review comment on `findInputByLabel`; commit `5283d8a5`; `apps/vs-code-designer/src/test/ui/workspaceConversionCreate.test.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-reviewer`.
+- Status: verified.
+
+### Gate Next/Create on validation completion, not button visibility
+
+- Learning: For VS Code wizard webviews, click `Next`/`Create` only after path/name validators report success (button enabled, no error decorators) — not just after the button becomes visible.
+- Why it matters: Webview validators are async; clicking on visibility races with validation and advances the wizard with invalid fields, causing later assertions to fail. PR #9161 added waits for path/name validation before advancing.
+- Source: Azure/LogicAppsUX#9161 commit `Harden conversion create E2E flow` (91a41294); `apps/vs-code-designer/src/test/ui/workspaceConversionCreate.test.ts`.
+- Applies to: `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### Target primary actions by exact button text
+
+- Learning: Use exact-text predicates (e.g., `waitForButtonByExactText('Create')`) for `Create`/`Submit`/`Next` actions in VS Code webviews instead of position-based or partial-text selectors.
+- Why it matters: PR #9161 commit `Target conversion create submit action` (d52a5172) fixed flakiness where the test could click an adjacent or earlier button after the wizard layout changed.
+- Source: Azure/LogicAppsUX#9161 commit `d52a5172`; `apps/vs-code-designer/src/test/ui/workspaceConversionCreate.test.ts`.
+- Applies to: `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### Shared DOM helpers prevent suite drift
+
+- Learning: When the same DOM-query helpers (`waitForButtonByExactText`, `toXPathLiteral`, `findInputByLabel`, `clearAndType`, etc.) appear in multiple VS Code E2E suites, extract them into `apps/vs-code-designer/src/test/ui/helpers.ts` (or `designerHelpers.ts`/`runHelpers.ts`) so they evolve together.
+- Why it matters: Duplicated DOM helpers drift over time and reintroduce flakiness when the webview UI changes. PR #9161 reviewer flagged this for the conversion-create helpers vs. `createWorkspace.test.ts`.
+- Source: Azure/LogicAppsUX#9161 Copilot review comment on helper duplication; `apps/vs-code-designer/src/test/ui/helpers.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-reviewer`.
+- Status: needs revalidation — the extraction was deferred in PR #9161 with documented scope rationale; future test-touching PRs should consolidate when scope permits.
+
 ### Azurite failure E2Es must prove root-cause behavior
 
 - Learning: Azurite auto-start failure E2Es should prove the Azurite timeout appears and downstream `AzureWebJobsStorage` / `Debug anyway` prompts do not appear; prompt suppression alone is not a fix.
@@ -111,3 +151,68 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Source: Azurite auto-start debug regression session, `apps/vs-code-designer/src/test/ui/azuriteAutostartFailure*.test.ts`, `apps/vs-code-designer/src/test/ui/run-e2e.js`.
 - Applies to: `vscode-test-specialist`, `test`, `vscode`, `ci-sentinel`.
 - Status: verified.
+
+### CI-dependent waits start at a 90s deadline
+
+- Learning: VS Code E2E helpers gated on the Functions runtime (`func host start`) should use a 90s deadline as their default, not 30s. Cold-start of the ExtensionBundle on Linux CI runners routinely exceeds 30s, especially on shards that skip Phase 4.2 designer warm-up (e.g. `createplusnewtests` jumping from Phase 4.1 directly to Phase 4.3).
+- Why it matters: Commit `9c5f6bd6d` extended `waitForRunStatusInList` 30s→90s; commit `2d959c9a9` extended `clickRunTrigger` 30s→90s after Phase 4.3 reproducibly failed (2/2) on the newtests shard while `func` was still loading bundle DLLs.
+- Source: `apps/vs-code-designer/src/test/ui/runHelpers.ts:82` (`waitForRuntimeReady`), `runHelpers.ts:389` (`clickRunTrigger`), `runHelpers.ts:458` (`waitForRunStatusInList`); commits `9c5f6bd6d`, `2d959c9a9`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### Post-find enabled-stability re-check before clicking runtime-gated buttons
+
+- Learning: After confirming a runtime-gated webview button is enabled, sleep ~500ms, re-find the element, and re-read both `disabled` and `aria-disabled`. Only click if it is still enabled. Fluent UI re-renders during `func` cold-start can flip the button back to disabled and race the click.
+- Why it matters: Commit `2d959c9a9` added this poll to `clickRunTrigger` after Phase 4.3 (`inlineJavascript.test.ts`) reproducibly failed on shards where the runtime was mid-cold-start when the Run-trigger button first rendered.
+- Source: commit `2d959c9a9`; `apps/vs-code-designer/src/test/ui/runHelpers.ts:415-440`.
+- Applies to: `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### Treat aria-disabled as equivalent to disabled on Fluent UI v9 buttons
+
+- Learning: When polling for a button to become clickable in webviews, check both the `disabled` HTML attribute and `aria-disabled="true"`. Fluent UI v9 surfaces disabled state via aria; `disabled`-only checks will click effectively-disabled buttons.
+- Why it matters: Commit `2d959c9a9` switched `clickRunTrigger` to `!!disabledAttr || ariaDisabled === 'true'` after the existing `disabled`-only check raced cold-start re-renders.
+- Source: commit `2d959c9a9`; `apps/vs-code-designer/src/test/ui/runHelpers.ts:403-405,427`.
+- Applies to: `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### Throttle polling logs and capture screenshot on deadline
+
+- Learning: Long-running polls (>30s) should log "still waiting" state at most once per 10s and capture a screenshot when the deadline expires. This keeps CI logs readable and makes flakes diagnosable from artifacts alone.
+- Why it matters: Commit `2d959c9a9` added throttled logging + a `clickRunTrigger-timeout` screenshot to `clickRunTrigger` to support shard-level diagnosis on Phase 4.3.
+- Source: commit `2d959c9a9`; `apps/vs-code-designer/src/test/ui/runHelpers.ts:407-413,453`; pattern also in `runHelpers.ts:95-97` (`debug-waiting-for-runtime`).
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### Debug-toolbar readiness ≠ Functions host readiness
+
+- Learning: `waitForRuntimeReady` can return as soon as the VS Code debug toolbar is visible (~1-2s after attach), while `func` is still loading bundle DLLs and port 7071 is not yet `running`. Downstream operations that touch the runtime (Run trigger, list runs) must either poll the 7071 admin endpoint themselves, pass `requireHostRunning: true`, or use a 90s+ deadline.
+- Why it matters: This race is the root cause behind commit `2d959c9a9`'s shard-level Phase 4.3 regression on `createplusnewtests`, where the shard skips Phase 4.2 designer warm-up. Commit `54fab3c7b` added `waitForRuntimeReady(driver, { requireHostRunning: true })` and `assertRunTriggerable(driver)` to make the gate explicit.
+- Source: `apps/vs-code-designer/src/test/ui/runHelpers.ts:100-114` (toolbar check) vs `runHelpers.ts:136-153` (port 7071 status); commits `2d959c9a9`, `54fab3c7b`.
+- Applies to: `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### Reusable click-with-fallback for webview elements
+
+- Learning: Use `clickElementWithFallback(driver, element, description)` — which scrolls the element into view, attempts a Selenium Actions click, then falls back to `arguments[0].click()` — instead of bare `element.click()` for any webview button or menu item.
+- Why it matters: Commit `9c5f6bd6d` introduced this helper and applied it to `clickAddActionMenuItem` after the bare `.click()` no-opped against React menu items. Commit `e1532feb1` applied the same Actions-first pattern to the workspaceConversionCreate "Create workspace" click.
+- Source: `apps/vs-code-designer/src/test/ui/designerHelpers.ts:1261-1276`; commits `9c5f6bd6d`, `e1532feb1`.
+- Applies to: `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### prepareFreshSession is the contract for inter-phase isolation
+
+- Learning: Every E2E phase boundary in `run-e2e.js` must call `prepareFreshSession(label)`, which (1) kills stale VS Code/chromedriver from `test-resources`, (2) sleeps 5s for IPC socket release, (3) removes stale `.sock` files on Linux/macOS, (4) deletes only `settings/User/` (not the entire `settings/`), and (5) chmods downloaded `func`/runtime binaries.
+- Why it matters: Skipping the process-kill makes `code -r` route the workspace-open to the previous window (visible symptom: "empty VS Code" screenshots). Deleting all of `settings/` hits locked log/cache files; deleting only `User/` sidesteps ExTester's `fs.removeSync` race.
+- Source: `apps/vs-code-designer/src/test/ui/run-e2e.js:769-870`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### Path-filtered PR workflows can be coalesced by GitHub after rapid pushes
+
+- Learning: When a PR receives multiple pushes in quick succession, GitHub's `pull_request` sync triggers can stop firing for path-filtered workflows even when each push includes file changes matching the path filter. Other workflows on the same PR (e.g., `pull_request_target` ones with no path filter) continue to fire. Add a `workflow_dispatch:` trigger so maintainers/agents can manually re-run the workflow from the Actions UI as a fallback.
+- Why it matters: PR #9164 hit this on commits `1ece020cb`, `9803d5615`, `a7821ed2c`, `cc294ffa7d`, `857567947` — none triggered `vscode-e2e.yml` despite each touching `apps/vs-code-designer/**`. `PR AI Validation` (`pull_request_target`, no path filter) fired on every push.
+- Source: commit `857567947` (`.github/workflows/vscode-e2e.yml` adds `workflow_dispatch:`).
+- Applies to: `ci-sentinel`, `chief-engineer`, `vscode-test-specialist`.
+- Status: verified.
+
