@@ -41,6 +41,8 @@ testem.log
 debug.log
 
 # vscode e2e exTester artifacts
+/.tmp-e2e/
+/.tmp-vitest/
 /apps/vs-code-designer/test-resources
 test-resources
 test-extensions

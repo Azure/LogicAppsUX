@@ -99,12 +99,13 @@ export interface DesignerCommandBarProps {
   switchToDesignerView: () => void;
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
+  supportsUnitTest?: boolean;
+  showRunHistory?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isDarkMode,
   isUnitTest,
-  isLocal,
   runId,
   saveWorkflow: _saveWorkflow,
   saveWorkflowFromCode: _saveWorkflowFromCode,
@@ -115,6 +116,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToDesignerView,
   switchToCodeView,
   switchToMonitoringView,
+  supportsUnitTest,
+  showRunHistory = true,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -274,18 +277,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       >
         Code
       </Button>
-      <Button
-        appearance={isMonitoringView ? 'primary' : 'subtle'}
-        className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
-        size="small"
-        onClick={() => {
-          dispatch(collapsePanel());
-          dispatch(resetDesignerView());
-          switchToMonitoringView();
-        }}
-      >
-        Run history
-      </Button>
+      {showRunHistory ? (
+        <Button
+          appearance={isMonitoringView ? 'primary' : 'subtle'}
+          className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
+          size="small"
+          onClick={() => {
+            dispatch(collapsePanel());
+            dispatch(resetDesignerView());
+            switchToMonitoringView();
+          }}
+        >
+          Run history
+        </Button>
+      ) : null}
     </Card>
   );
 
@@ -371,7 +376,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
-          {isLocal && (
+          {supportsUnitTest && (
             <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
               {intlText.CREATE_UNIT_TEST_FROM_RUN}
             </MenuItem>

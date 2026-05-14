@@ -15,6 +15,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { By, Key, ModalDialog, type WebDriver } from 'vscode-extension-tester';
 
+type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
+
 // ===========================================================================
 // General utilities
 // ===========================================================================
@@ -118,6 +120,17 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       return false;
     }
 
+    if (message.includes('AzureWebJobsStorage') || message.includes('local emulator installed and running')) {
+      try {
+        await dialog.pushButton('Debug anyway');
+        console.log('[dismissAllDialogs] Clicked "Debug anyway" on storage verification dialog');
+        await sleep(1000);
+        return true;
+      } catch {
+        // Button not found — fall through to raw selectors.
+      }
+    }
+
     // Dismiss GitHub API rate-limit errors (403) that block the UI.
     // These occur when the extension checks for latest versions in CI.
     if (message.includes('Error reading JSON from URL') || message.includes('status code 403')) {
@@ -200,6 +213,23 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       if (messageText.includes('Validating Runtime Dependency') || messageText.includes('Successfully installed')) {
         console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
         continue;
+      }
+
+      if (messageText.includes('AzureWebJobsStorage') || messageText.includes('local emulator installed and running')) {
+        try {
+          const buttons = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          for (const btn of buttons) {
+            const label = await btn.getText().catch(() => '');
+            if (label.toLowerCase().includes('debug anyway')) {
+              console.log('[dismissAllDialogs] Clicking "Debug anyway" on storage verification dialog');
+              await btn.click();
+              await sleep(1000);
+              return true;
+            }
+          }
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
       }
 
       // Dismiss GitHub API rate-limit errors (403) via raw selector
@@ -500,9 +530,9 @@ export async function openActivityBarItem(driver: WebDriver, title: string): Pro
  * Expand a tree-view item in the sidebar by navigating through the given path.
  * Returns the final tree item element.
  */
-export async function expandTreeViewItem(driver: WebDriver, path: string[]): Promise<import('selenium-webdriver').WebElement | null> {
+export async function expandTreeViewItem(driver: WebDriver, path: string[]): Promise<WebDriverElement | null> {
   let currentElements = await driver.findElements(By.css('.pane-body .monaco-list-row'));
-  let lastFound: import('selenium-webdriver').WebElement | null = null;
+  let lastFound: WebDriverElement | null = null;
 
   for (const segment of path) {
     let found = false;

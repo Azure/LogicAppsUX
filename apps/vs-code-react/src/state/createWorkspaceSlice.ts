@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import type { Platform } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { ITargetDirectory } from 'run-service';
+import type { ITargetDirectory } from '../run-service';
 
 export interface CreateWorkspaceState {
   currentStep: number;
@@ -28,7 +28,7 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
-  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace';
+  flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace' | 'createWorkflow';
   pathValidationResults: Record<string, boolean>;
   packageValidationResults: Record<string, boolean>;
   workspaceExistenceResults: Record<string, boolean>;
@@ -75,7 +75,7 @@ const initialState: CreateWorkspaceState = {
   isDevContainerProject: false,
 };
 
-export const createWorkspaceSlice = createSlice({
+export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
   name: 'createWorkspace',
   initialState,
   reducers: {
@@ -85,9 +85,11 @@ export const createWorkspaceSlice = createSlice({
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform } = action.payload;
+      const { separator, platform, logicAppType, logicAppName } = action.payload;
       state.separator = separator;
       state.platform = platform;
+      state.logicAppType = logicAppType || '';
+      state.logicAppName = logicAppName || '';
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -190,7 +192,22 @@ export const createWorkspaceSlice = createSlice({
     setComplete: (state, action: PayloadAction<boolean>) => {
       state.isComplete = action.payload;
     },
-    resetState: () => initialState,
+    resetState: (state, action: PayloadAction<{ preserveLogicAppData?: boolean } | undefined>) => {
+      const preserveLogicAppData = action.payload?.preserveLogicAppData;
+      const preservedLogicAppType = preserveLogicAppData ? state.logicAppType : '';
+      const preservedLogicAppName = preserveLogicAppData ? state.logicAppName : '';
+      const preservedSeparator = preserveLogicAppData ? state.separator : '/';
+      const preservedPlatform = preserveLogicAppData ? state.platform : null;
+
+      Object.assign(state, initialState);
+
+      if (preserveLogicAppData) {
+        state.logicAppType = preservedLogicAppType;
+        state.logicAppName = preservedLogicAppName;
+        state.separator = preservedSeparator;
+        state.platform = preservedPlatform;
+      }
+    },
     nextStep: (state) => {
       if (state.currentStep < 7) {
         // Maximum of 8 steps (0-7) for custom code, 7 steps (0-6) for others
@@ -235,8 +252,9 @@ export const {
   setError,
   setComplete,
   resetState,
-  nextStep,
-  previousStep,
 } = createWorkspaceSlice.actions;
+
+export const nextStep = createWorkspaceSlice.actions.nextStep as () => { type: string; payload: undefined };
+export const previousStep = createWorkspaceSlice.actions.previousStep as () => { type: string; payload: undefined };
 
 export default createWorkspaceSlice.reducer;

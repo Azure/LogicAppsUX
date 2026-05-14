@@ -12,17 +12,28 @@ export interface InitializePayload {
   accessToken?: string;
   cloudHost?: string;
   workflowProperties: OverviewPropertiesProps;
+  workflowPropertiesList?: OverviewPropertiesProps[];
   reviewContent?: IValidationData;
   hostVersion?: string;
   isLocal?: boolean;
+  isWorkflowRuntimeRunning?: boolean;
+  isCodeful?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
+  supportsUnitTest?: boolean;
   connectionData?: Record<string, any>;
 }
 
 export interface UpdateCallbackInfoPayload {
   baseUrl?: string;
   callbackInfo?: ICallbackUrlResponse;
+  workflowName?: string;
+}
+
+export interface UpdateWorkflowPropertiesPayload {
+  workflowProperties: OverviewPropertiesProps;
+  workflowPropertiesList?: OverviewPropertiesProps[];
+  kind?: string;
 }
 
 export const Status = {
@@ -39,12 +50,16 @@ export interface WorkflowState {
   apiVersion: string;
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
+  workflowPropertiesList?: OverviewPropertiesProps[];
   exportData: ExportData;
   statuses?: string[];
   finalStatus?: Status;
   reviewContent?: IValidationData;
   hostVersion?: string;
   isLocal?: boolean;
+  isWorkflowRuntimeRunning?: boolean;
+  isCodeful?: boolean;
+  supportsUnitTest?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
   connectionData?: Record<string, any>;
@@ -88,12 +103,16 @@ export const workflowSlice = createSlice({
         corsNotice,
         accessToken,
         workflowProperties,
+        workflowPropertiesList,
         reviewContent,
         cloudHost,
         hostVersion,
         isLocal,
+        isWorkflowRuntimeRunning,
+        isCodeful,
         azureDetails,
         kind,
+        supportsUnitTest,
         connectionData,
       } = action.payload;
       const initializedState = state;
@@ -103,6 +122,7 @@ export const workflowSlice = createSlice({
       initializedState.baseUrl = baseUrl ?? '';
       initializedState.corsNotice = corsNotice;
       initializedState.workflowProperties = workflowProperties;
+      initializedState.workflowPropertiesList = workflowPropertiesList;
       initializedState.reviewContent = reviewContent;
       initializedState.exportData = {
         selectedWorkflows: [],
@@ -124,19 +144,36 @@ export const workflowSlice = createSlice({
       };
       initializedState.hostVersion = hostVersion;
       initializedState.isLocal = isLocal;
+      initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
+      initializedState.isCodeful = isCodeful;
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
+      initializedState.supportsUnitTest = supportsUnitTest;
       initializedState.connectionData = connectionData || {};
     },
     updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.baseUrl = action.payload ?? '';
     },
     updateCallbackInfo: (state: WorkflowState, action: PayloadAction<UpdateCallbackInfoPayload>) => {
-      const { callbackInfo } = action.payload;
-      state.workflowProperties = {
-        ...state.workflowProperties,
-        callbackInfo: callbackInfo,
-      };
+      const { callbackInfo, workflowName } = action.payload;
+      if (workflowName && state.workflowPropertiesList) {
+        state.workflowPropertiesList = state.workflowPropertiesList.map((workflowProperties) =>
+          workflowProperties.name === workflowName ? { ...workflowProperties, callbackInfo } : workflowProperties
+        );
+      }
+
+      if (!workflowName || state.workflowProperties.name === workflowName) {
+        state.workflowProperties = {
+          ...state.workflowProperties,
+          callbackInfo: callbackInfo,
+        };
+      }
+    },
+    updateWorkflowProperties: (state: WorkflowState, action: PayloadAction<UpdateWorkflowPropertiesPayload>) => {
+      const { workflowProperties, workflowPropertiesList, kind } = action.payload;
+      state.workflowProperties = workflowProperties;
+      state.workflowPropertiesList = workflowPropertiesList;
+      state.kind = kind ?? workflowProperties.kind ?? state.kind;
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
@@ -200,6 +237,7 @@ export const {
   initializeWorkflow,
   updateBaseUrl,
   updateCallbackInfo,
+  updateWorkflowProperties,
   updateAccessToken,
   updateSelectedWorkFlows,
   updateSelectedSubscripton,

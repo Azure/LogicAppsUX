@@ -94,6 +94,19 @@ describe('ReviewCreateStep', () => {
       expect(screen.getByText('test-workflow')).toBeInTheDocument();
     });
 
+    it('should display autonomous codeful workflow details', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        logicAppType: ProjectType.codeful,
+        workflowName: 'agentic-workflow',
+        workflowType: 'Agentic-Codeful',
+      });
+
+      expect(screen.getByText('Logic app (codeful)')).toBeInTheDocument();
+      expect(screen.getByText('agentic-workflow')).toBeInTheDocument();
+      expect(screen.getByText('Autonomous agents (Preview)')).toBeInTheDocument();
+    });
+
     it('should render workspace file and folder paths', () => {
       renderWithStore({
         flowType: 'createWorkspace',
@@ -133,7 +146,7 @@ describe('ReviewCreateStep', () => {
         workflowName: 'test-workflow',
       });
       // The workflow section heading should not be rendered
-      expect(screen.queryByText('Workflow Configuration')).not.toBeInTheDocument();
+      expect(screen.queryByText('Workflow configuration')).not.toBeInTheDocument();
     });
   });
 
@@ -163,7 +176,7 @@ describe('ReviewCreateStep', () => {
         functionNamespace: 'MyApp.Functions',
         functionName: 'ProcessOrder',
       });
-      expect(screen.getByText('Custom Code Configuration')).toBeInTheDocument();
+      expect(screen.getByText('Custom code configuration')).toBeInTheDocument();
       expect(screen.getByText('MyFunctions')).toBeInTheDocument();
       expect(screen.getByText('MyApp.Functions')).toBeInTheDocument();
       expect(screen.getByText('ProcessOrder')).toBeInTheDocument();
@@ -206,7 +219,7 @@ describe('ReviewCreateStep', () => {
         functionNamespace: 'MyApp.Rules',
         functionName: 'EvaluateRules',
       });
-      expect(screen.getByText('Function Configuration')).toBeInTheDocument();
+      expect(screen.getByText('Function configuration')).toBeInTheDocument();
       expect(screen.getByText('RulesFunctions')).toBeInTheDocument();
       expect(screen.getByText('MyApp.Rules')).toBeInTheDocument();
       expect(screen.getByText('EvaluateRules')).toBeInTheDocument();
@@ -222,7 +235,7 @@ describe('ReviewCreateStep', () => {
         logicAppsWithoutCustomCode: [{ label: 'existing-app' }],
         workflowName: 'should-not-appear',
       });
-      expect(screen.queryByText('Workflow Configuration')).not.toBeInTheDocument();
+      expect(screen.queryByText('Workflow configuration')).not.toBeInTheDocument();
     });
   });
 

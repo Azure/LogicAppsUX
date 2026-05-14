@@ -31,6 +31,11 @@ vi.mock('../../../../extensionVariables', () => ({
       extensionPath: '/extension',
       subscriptions: [],
     },
+    outputChannel: {
+      appendLog: vi.fn(),
+      appendLine: vi.fn(),
+      append: vi.fn(),
+    },
   },
 }));
 
@@ -181,6 +186,16 @@ describe('createWorkspaceWebviewCommandHandler', () => {
     disposeHandler();
 
     expect(removeWebviewPanelFromCache).toHaveBeenCalledWith('workspace', 'Create Workspace');
+  });
+
+  it('resolves with false when disposed before the user invokes create', async () => {
+    const onResolve = vi.fn();
+    await createHandlerHarness(vi.fn().mockResolvedValue(undefined), onResolve);
+    const disposeHandler = vi.mocked(panel.onDidDispose).mock.calls[0][0];
+
+    disposeHandler();
+
+    expect(onResolve).toHaveBeenCalledWith(false);
   });
 
   it('posts folder and package selections back to the webview', async () => {

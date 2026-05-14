@@ -61,7 +61,7 @@ function renameIndexHtml(): Plugin {
   };
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
   const version = getGitVersion();
   return {
     plugins: [
@@ -69,7 +69,7 @@ export default defineConfig(() => {
       injectBuildVersion(version),
       renameIndexHtml(),
       // Only use mkcert (HTTPS) locally, not in CI or E2E
-      ...(process.env.CI || process.env.E2E ? [] : [mkcert()]),
+      ...(process.env.CI || process.env.E2E || mode === 'e2e' ? [] : [mkcert()]),
     ],
     define: {
       __BUILD_VERSION__: JSON.stringify(`${version.tag}+${version.sha}`),

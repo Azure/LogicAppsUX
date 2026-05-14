@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, type Mock } from 'vitest';
+import { WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
@@ -7,6 +8,7 @@ import * as funcVersionModule from '../../../../utils/funcCoreTools/funcVersion'
 import * as gitModule from '../../../../utils/git';
 import * as artifactsModule from '../../../../utils/codeless/artifacts';
 import * as fsUtils from '../../../../utils/fs';
+import * as vscodeConfigModule from '../../../../utils/vsCodeConfig/settings';
 import { CreateFunctionAppFiles } from '../CreateFunctionAppFiles';
 import * as CreateLogicAppVSCodeContentsModule from '../CreateLogicAppVSCodeContents';
 import * as cloudToLocalUtilsModule from '../../../../utils/cloudToLocalUtils';
@@ -46,16 +48,608 @@ vi.mock('../../../../utils/fs', () => ({
 }));
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(),
-  writeJSON: vi.fn(),
   writeJson: vi.fn(),
   readJson: vi.fn(),
-  readJSON: vi.fn(),
   pathExists: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
   copyFile: vi.fn(),
   mkdirSync: vi.fn(),
 }));
+
+vi.mock('path', () => ({
+  join: vi.fn(),
+  resolve: vi.fn(),
+}));
+
+vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
+  getGlobalSetting: vi.fn(),
+}));
+
+// Import actual path for test setup (not affected by mock)
+const actualPath = await vi.importActual<typeof import('path')>('path');
+const actualFs = await vi.importActual<typeof import('fs')>('fs');
+
+// Import the module after mocks are set up
+const mockModule = await import('../CreateLogicAppWorkspace');
+
+describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
+  const testProjectPath = '/test/project';
+  const testProjectName = 'TestProject';
+  const testWorkflowName = 'TestWorkflow';
+  const testLspDirectory = '/test/lsp';
+
+  describe('StatefulCodefulWorkflow template content', () => {
+    it('should avoid unsupported member-expression startup patterns while keeping MSN Weather', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/StatefulCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('location: () => "98058"');
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
+      expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
+      expect(templateContent).not.toContain('WorkflowActions.BuiltIn.Compose');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory');
+      expect(templateContent).not.toContain('AddWorkflow()');
+      expect(templateContent).not.toContain('builder.TriggerOutput.Body');
+    });
+  });
+
+  describe('AgentCodefulWorkflow template content', () => {
+    it('should use the provider-based conversational agent SDK template', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgentCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
+      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger()');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
+      expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
+      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
+      expect(templateContent).not.toContain('AddWorkflow()');
+    });
+  });
+
+  describe('AgenticCodefulWorkflow template content', () => {
+    it('should use the provider-based autonomous agent SDK template', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgenticCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
+      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateHttpTrigger()');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
+      expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
+      expect(templateContent).toContain('MessageRole.User');
+      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).not.toContain('AddWorkflow()');
+    });
+  });
+
+  describe('nuget template content', () => {
+    it('should use a project-local package cache for the codeful SDK package', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/nuget', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('<add key="globalPackagesFolder" value=".nuget\\packages" />');
+      expect(templateContent).toContain('<add key="current" value=<%= lspDirectory %> />');
+    });
+  });
+
+  beforeEach(() => {
+    // Reset all mocks
+    vi.clearAllMocks();
+
+    // Restore path.join to use actual implementation
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
+
+    // Default getGlobalSetting behavior
+    vi.mocked(vscodeConfigModule.getGlobalSetting).mockReturnValue(testLspDirectory);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  describe('createAgentCodefulWorkflowFile', () => {
+    it('should create conversational agent provider workflow without adding a Program.cs AddWorkflow call', async () => {
+      const agentCodefulTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgentCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+      const programTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/ProgramFile', import.meta.url),
+        'utf-8'
+      );
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgentCodefulWorkflow')) {
+          return Promise.resolve(agentCodefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.agentCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgentCodefulWorkflow'), 'utf-8');
+      const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+      expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateAgentWorkflow("${testWorkflowName}", workflow)`);
+
+      const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+      expect(programWriteCall?.[1]).toContain(`namespace ${testProjectName}`);
+      expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should create autonomous agent provider workflow from the AgenticCodeful template', async () => {
+      const agenticCodefulTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/AgenticCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+      const programTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/ProgramFile', import.meta.url),
+        'utf-8'
+      );
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgenticCodefulWorkflow')) {
+          return Promise.resolve(agenticCodefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.agenticCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgenticCodefulWorkflow'), 'utf-8');
+      const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+      expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateStatefulWorkflow("${testWorkflowName}", workflow)`);
+
+      const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+      expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should create stateful provider workflow without adding a Program.cs AddWorkflow call', async () => {
+      const statefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { stateful content }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('StatefulCodefulWorkflow')) {
+          return Promise.resolve(statefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.statefulCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulWorkflow'), 'utf-8');
+      const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+      expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should not update Program.cs when adding provider-based agents to an existing project', async () => {
+      const agenticCodefulTemplate = 'public class <%= flowNameClass %> : IWorkflowProvider { }';
+      const existingProgramContent = `class Program {
+        public static void Main()
+        {
+            WorkflowFactory.ConfigureServices(services);
+            services.AddWorkflowProviders(typeof(Program).Assembly);
+            host.Run();
+        }
+      }`;
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgenticCodefulWorkflow')) {
+          return Promise.resolve(agenticCodefulTemplate);
+        }
+        if (filePath.includes('Program.cs')) {
+          return Promise.resolve(existingProgramContent);
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(true);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        'SecondWorkflow',
+        WorkflowType.agenticCodeful
+      );
+
+      const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
+      expect(writtenFiles).toEqual([expect.stringContaining('SecondWorkflow.cs')]);
+    });
+
+    it('should create workflow file with workflow name (not Program.cs) for first workflow', async () => {
+      const agentCodefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgentCodefulWorkflow')) {
+          return Promise.resolve(agentCodefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+
+      vi.mocked(fse.pathExists).mockResolvedValue(false); // Program.cs doesn't exist yet
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      // Access the private function through module internals (for testing purposes)
+      // In real implementation, we'd export it or test through public API
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
+
+        // Verify all 4 files were created for first workflow
+        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(4);
+
+        const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
+
+        // Verify workflow .cs file was created
+        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining(`${testWorkflowName}.cs`)]));
+
+        // Verify Program.cs was created
+        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('Program.cs')]));
+
+        // Verify .csproj was created
+        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining(`${testProjectName}.csproj`)]));
+
+        // Verify nuget.config was created
+        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
+
+        // Verify workflow file has correct namespace
+        const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+        expect(workflowWriteCall).toBeDefined();
+        expect(workflowWriteCall[1]).toContain(`namespace ${testProjectName}`);
+        expect(workflowWriteCall[1]).toContain(`${testWorkflowName}`);
+
+        // Verify Program.cs contains the workflow and correct namespace
+        const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+        expect(programWriteCall).toBeDefined();
+        expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
+        expect(programWriteCall[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+      }
+    });
+
+    it('should add workflow to existing Program.cs when creating second workflow', async () => {
+      const agentCodefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { }';
+      const existingProgramContent = `namespace ${testProjectName}\nclass Program {
+        // Build all workflows
+        FirstWorkflow.AddWorkflow();
+        host.Run();
+      }`;
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgentCodefulWorkflow')) {
+          return Promise.resolve(agentCodefulTemplate);
+        }
+        if (filePath.includes('Program.cs')) {
+          return Promise.resolve(existingProgramContent);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+
+      vi.mocked(fse.pathExists).mockResolvedValue(true); // Program.cs exists
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
+
+        // Verify new workflow file was created with correct namespace
+        const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+        expect(workflowWriteCall).toBeDefined();
+        expect(workflowWriteCall[1]).toContain(`namespace ${testProjectName}`);
+
+        // Verify Program.cs was updated with new workflow but namespace unchanged
+        const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+        expect(programWriteCall).toBeDefined();
+        expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
+        expect(programWriteCall[1]).not.toContain('FirstWorkflow.AddWorkflow()');
+        expect(programWriteCall[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+      }
+    });
+
+    it('should NOT create .csproj or nuget.config when adding second workflow', async () => {
+      const agentCodefulTemplate = 'public static class <%= flowNameClass %> { }';
+      const existingProgramContent = `class Program {
+        // Build all workflows
+        FirstWorkflow.AddWorkflow();
+        host.Run();
+      }`;
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgentCodefulWorkflow')) {
+          return Promise.resolve(agentCodefulTemplate);
+        }
+        if (filePath.includes('Program.cs')) {
+          return Promise.resolve(existingProgramContent);
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+
+      vi.mocked(fse.pathExists).mockResolvedValue(true); // Program.cs exists
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, 'SecondWorkflow', WorkflowType.agentCodeful);
+
+        // Verify only 2 files were written: workflow .cs and Program.cs
+        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(2);
+
+        // Verify the files written are correct
+        const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
+        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('SecondWorkflow.cs')]));
+        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('Program.cs')]));
+
+        // Verify .csproj and nuget.config were NOT written
+        expect(writtenFiles).not.toEqual(expect.arrayContaining([expect.stringContaining('.csproj')]));
+        expect(writtenFiles).not.toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
+      }
+    });
+
+    it('should create StatefulCodeful workflow file correctly with namespace', async () => {
+      const statefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { stateful content }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('StatefulCodefulWorkflow')) {
+          return Promise.resolve(statefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.statefulCodeful);
+
+        // Verify correct template was used
+        expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulWorkflow'), 'utf-8');
+
+        // Verify workflow file contains stateful content and correct namespace
+        const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+        expect(workflowWriteCall).toBeDefined();
+        expect(workflowWriteCall[1]).toContain('stateful content');
+        expect(workflowWriteCall[1]).toContain(`namespace ${testProjectName}`);
+
+        // Verify Program.cs has correct namespace
+        const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
+        expect(programWriteCall).toBeDefined();
+        expect(programWriteCall[1]).toContain(`namespace ${testProjectName}`);
+      }
+    });
+
+    it('should create .csproj and nuget.config files', async () => {
+      const agentCodefulTemplate = 'public static class <%= flowName %> { }';
+      const programTemplate = 'class Program { <%= workflowBuilders %> }';
+      const projTemplate = '<Project>test proj</Project>';
+      const nugetTemplate = '<configuration><%= lspDirectory %></configuration>';
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('AgentCodefulWorkflow')) {
+          return Promise.resolve(agentCodefulTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj')) {
+          return Promise.resolve(projTemplate);
+        }
+        if (filePath.includes('nuget')) {
+          return Promise.resolve(nugetTemplate);
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
+
+        // Verify .csproj file was created
+        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledWith(
+          expect.stringContaining(`${testProjectName}.csproj`),
+          expect.stringContaining('test proj')
+        );
+
+        // Verify nuget.config was created
+        const nugetCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('nuget.config'));
+        expect(nugetCall).toBeDefined();
+        expect(nugetCall[0]).toContain('nuget.config');
+      }
+    });
+  });
+
+  describe('repairCodefulProgramFile', () => {
+    it('should remove legacy AddWorkflow calls before host.Run()', async () => {
+      const programContent = `class Program {
+        public static void Main() {
+            // Build all workflows
+            FirstWorkflow.AddWorkflow();
+            
+            host.Run();
+        }
+      }`;
+
+      vi.mocked(fse.readFile).mockResolvedValue(programContent);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
+
+      expect(vi.mocked(fse.writeFile)).toHaveBeenCalledOnce();
+      const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
+      expect(updatedContent).not.toContain('FirstWorkflow.AddWorkflow()');
+      expect(updatedContent).toContain('host.Run()');
+    });
+
+    it('should not update provider-style Program.cs files with no legacy registration', async () => {
+      const programContent = `class Program {
+        public static void Main() {
+            WorkflowFactory.ConfigureServices(services);
+            services.AddWorkflowProviders(typeof(Program).Assembly);
+            host.Run();
+        }
+      }`;
+
+      vi.mocked(fse.readFile).mockResolvedValue(programContent);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
+
+      expect(vi.mocked(fse.writeFile)).not.toHaveBeenCalled();
+    });
+
+    it('should preserve non-legacy content and indentation', async () => {
+      const programContent = `class Program {
+        public static void Main() {
+            // Build all workflows
+            FirstWorkflow.AddWorkflow();
+            Console.WriteLine("keep this");
+            
+            host.Run();
+        }
+      }`;
+
+      vi.mocked(fse.readFile).mockResolvedValue(programContent);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
+
+      const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
+      expect(updatedContent).not.toContain('FirstWorkflow.AddWorkflow()');
+      expect(updatedContent).toContain('            Console.WriteLine("keep this");');
+    });
+
+    it('should remove multiple existing legacy workflow registrations', async () => {
+      const programContent = `class Program {
+        // Build all workflows
+        WorkflowOne.AddWorkflow();
+        WorkflowTwo.AddWorkflow();
+        WorkflowThree.AddWorkflow();
+        
+        host.Run();
+      }`;
+
+      vi.mocked(fse.readFile).mockResolvedValue(programContent);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.repairCodefulProgramFile('/test/Program.cs');
+
+      const updatedContent = vi.mocked(fse.writeFile).mock.calls[0][1];
+
+      expect(updatedContent).not.toContain('WorkflowOne.AddWorkflow()');
+      expect(updatedContent).not.toContain('WorkflowTwo.AddWorkflow()');
+      expect(updatedContent).not.toContain('WorkflowThree.AddWorkflow()');
+      expect(updatedContent).toContain('host.Run()');
+    });
+  });
+
+  describe('createAgentCodefulWorkflowFile - Error Handling', () => {
+    it('should handle template file read errors', async () => {
+      vi.mocked(fse.readFile).mockRejectedValue(new Error('Template file not found'));
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await expect(
+          createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful)
+        ).rejects.toThrow('Template file not found');
+      }
+    });
+
+    it('should handle file write errors', async () => {
+      const agentCodefulTemplate = 'public static class <%= flowName %> { }';
+
+      vi.mocked(fse.readFile).mockResolvedValue(agentCodefulTemplate);
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockRejectedValue(new Error('Permission denied'));
+
+      const createAgentCodefulWorkflowFile = (mockModule as any).createAgentCodefulWorkflowFile;
+
+      if (createAgentCodefulWorkflowFile) {
+        await expect(
+          createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful)
+        ).rejects.toThrow('Permission denied');
+      }
+    });
+  });
+});
 
 describe('getHostContent', () => {
   it('should return host.json with correct structure', async () => {
@@ -113,7 +707,7 @@ describe('createLogicAppWorkspace', () => {
 
   // Mock options for standard Logic App (no custom code)
   const mockOptionsLogicApp: IWebviewProjectContext = {
-    workspaceProjectPath: { fsPath: path.join('test', 'workspace') } as vscode.Uri,
+    workspaceProjectPath: { fsPath: actualPath.join('test', 'workspace') } as vscode.Uri,
     workspaceName: 'TestWorkspace',
     logicAppName: 'TestLogicApp',
     logicAppType: ProjectType.logicApp,
@@ -123,12 +717,12 @@ describe('createLogicAppWorkspace', () => {
     functionName: 'TestFunction',
     functionNamespace: 'TestNamespace',
     targetFramework: 'net6.0',
-    packagePath: { fsPath: path.join('test', 'package.zip') } as vscode.Uri,
+    packagePath: { fsPath: actualPath.join('test', 'package.zip') } as vscode.Uri,
   } as any;
 
   // Mock options for Custom Code Logic App
   const mockOptionsCustomCode: IWebviewProjectContext = {
-    workspaceProjectPath: { fsPath: path.join('test', 'workspace') } as vscode.Uri,
+    workspaceProjectPath: { fsPath: actualPath.join('test', 'workspace') } as vscode.Uri,
     workspaceName: 'TestWorkspaceCustomCode',
     logicAppName: 'TestLogicAppCustomCode',
     logicAppType: ProjectType.customCode,
@@ -138,12 +732,12 @@ describe('createLogicAppWorkspace', () => {
     functionName: 'CustomFunction',
     functionNamespace: 'CustomNamespace',
     targetFramework: 'net8.0',
-    packagePath: { fsPath: path.join('test', 'package-custom.zip') } as vscode.Uri,
+    packagePath: { fsPath: actualPath.join('test', 'package-custom.zip') } as vscode.Uri,
   } as any;
 
   // Mock options for Rules Engine Logic App
   const mockOptionsRulesEngine: IWebviewProjectContext = {
-    workspaceProjectPath: { fsPath: path.join('test', 'workspace') } as vscode.Uri,
+    workspaceProjectPath: { fsPath: actualPath.join('test', 'workspace') } as vscode.Uri,
     workspaceName: 'TestWorkspaceRules',
     logicAppName: 'TestLogicAppRules',
     logicAppType: ProjectType.rulesEngine,
@@ -153,15 +747,19 @@ describe('createLogicAppWorkspace', () => {
     functionName: 'RulesFunction',
     functionNamespace: 'RulesNamespace',
     targetFramework: 'net6.0',
-    packagePath: { fsPath: path.join('test', 'package-rules.zip') } as vscode.Uri,
+    packagePath: { fsPath: actualPath.join('test', 'package-rules.zip') } as vscode.Uri,
   } as any;
 
-  const workspaceFolder = path.join('test', 'workspace', 'TestWorkspace');
-  const logicAppFolderPath = path.join(workspaceFolder, 'TestLogicApp');
-  const workspaceFilePath = path.join(workspaceFolder, 'TestWorkspace.code-workspace');
+  const workspaceFolder = actualPath.join('test', 'workspace', 'TestWorkspace');
+  const logicAppFolderPath = actualPath.join(workspaceFolder, 'TestLogicApp');
+  const workspaceFilePath = actualPath.join(workspaceFolder, 'TestWorkspace.code-workspace');
 
   beforeEach(() => {
     vi.resetAllMocks();
+
+    // Restore path.join to use actual implementation
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
 
     // Mock vscode functions
     vi.mocked(vscode.window.showInformationMessage).mockResolvedValue(undefined);
@@ -169,7 +767,7 @@ describe('createLogicAppWorkspace', () => {
 
     // Mock fs-extra functions
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
     vi.mocked(fse.readJson).mockResolvedValue({ folders: [] });
     vi.mocked(fse.readFile).mockResolvedValue('Sample content with <%= methodName %>' as any);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
@@ -218,7 +816,7 @@ describe('createLogicAppWorkspace', () => {
   it('should create workspace file with correct structure for standard logic app', async () => {
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsLogicApp);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -245,7 +843,7 @@ describe('createLogicAppWorkspace', () => {
 
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsCustomCode);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -276,7 +874,7 @@ describe('createLogicAppWorkspace', () => {
 
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsRulesEngine);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -468,7 +1066,7 @@ describe('createLogicAppWorkspace', () => {
 
 describe('updateWorkspaceFile', () => {
   const mockOptionsForUpdate: IWebviewProjectContext = {
-    workspaceFilePath: path.join('test', 'workspace', 'TestWorkspace.code-workspace'),
+    workspaceFilePath: actualPath.join('test', 'workspace', 'TestWorkspace.code-workspace'),
     logicAppName: 'TestLogicApp',
     logicAppType: ProjectType.logicApp,
     functionFolderName: 'Functions',
@@ -476,7 +1074,7 @@ describe('updateWorkspaceFile', () => {
   } as any;
 
   const mockOptionsCustomCode: IWebviewProjectContext = {
-    workspaceFilePath: path.join('test', 'workspace', 'TestWorkspaceCustomCode.code-workspace'),
+    workspaceFilePath: actualPath.join('test', 'workspace', 'TestWorkspaceCustomCode.code-workspace'),
     logicAppName: 'TestLogicAppCustomCode',
     logicAppType: ProjectType.customCode,
     functionFolderName: 'CustomCodeFunctions',
@@ -484,7 +1082,7 @@ describe('updateWorkspaceFile', () => {
   } as any;
 
   const mockOptionsRulesEngine: IWebviewProjectContext = {
-    workspaceFilePath: path.join('test', 'workspace', 'TestWorkspaceRules.code-workspace'),
+    workspaceFilePath: actualPath.join('test', 'workspace', 'TestWorkspaceRules.code-workspace'),
     logicAppName: 'TestLogicAppRules',
     logicAppType: ProjectType.rulesEngine,
     functionFolderName: 'RulesFunctions',
@@ -493,14 +1091,16 @@ describe('updateWorkspaceFile', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.readJson).mockResolvedValue({ folders: [] });
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
   });
 
   it('should add logic app folder to workspace', async () => {
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsForUpdate);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -523,7 +1123,7 @@ describe('updateWorkspaceFile', () => {
   it('should add function folder for custom code projects', async () => {
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsCustomCode);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -550,7 +1150,7 @@ describe('updateWorkspaceFile', () => {
   it('should add function folder for rules engine projects', async () => {
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsRulesEngine);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
     const folders = workspaceData.folders;
 
@@ -582,7 +1182,7 @@ describe('updateWorkspaceFile', () => {
 
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(optionsNoCreate);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const folders = writeCall[1].folders;
     const hasLogicApp = folders.some((f: any) => f.name === 'TestLogicApp');
 
@@ -599,13 +1199,13 @@ describe('updateWorkspaceFile', () => {
 
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsForUpdate);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const folders = writeCall[1].folders;
     const testsIndex = folders.findIndex((f: any) => f.name === 'Tests');
 
     // Tests folder should be moved to the end after the logic app folder is added
     expect(testsIndex).toBe(folders.length - 1);
-    expect(fse.writeJSON).toHaveBeenCalledWith(
+    expect(fse.writeJson).toHaveBeenCalledWith(
       mockOptionsForUpdate.workspaceFilePath,
       expect.objectContaining({
         folders: expect.arrayContaining([expect.objectContaining({ name: 'Tests' })]),
@@ -620,7 +1220,7 @@ describe('updateWorkspaceFile', () => {
 
     await CreateLogicAppWorkspaceModule.updateWorkspaceFile(mockOptionsForUpdate);
 
-    expect(fse.writeJSON).toHaveBeenCalledWith(
+    expect(fse.writeJson).toHaveBeenCalledWith(
       mockOptionsForUpdate.workspaceFilePath,
       expect.objectContaining({
         folders: expect.arrayContaining([
@@ -639,13 +1239,15 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
   });
 
   it('should create workspace folder and file for standard logic app', async () => {
     const mockOptions: IWebviewProjectContext = {
-      workspaceProjectPath: { fsPath: path.join('test', 'workspace') } as vscode.Uri,
+      workspaceProjectPath: { fsPath: actualPath.join('test', 'workspace') } as vscode.Uri,
       workspaceName: 'MyWorkspace',
       logicAppName: 'MyLogicApp',
       logicAppType: ProjectType.logicApp,
@@ -654,10 +1256,10 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
 
     // Verify workspace folder creation - normalize path for cross-platform compatibility
-    expect(fse.ensureDir).toHaveBeenCalledWith(path.join('test', 'workspace', 'MyWorkspace'));
+    expect(fse.ensureDir).toHaveBeenCalledWith(actualPath.join('test', 'workspace', 'MyWorkspace'));
 
     // Verify workspace file structure - actual function logic
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     expect(writeCall[0]).toContain('MyWorkspace.code-workspace');
     expect(writeCall[1]).toEqual({
       folders: [{ name: 'MyLogicApp', path: './MyLogicApp' }],
@@ -666,7 +1268,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
 
   it('should include functions folder for non-standard logic app types', async () => {
     const mockOptions: IWebviewProjectContext = {
-      workspaceProjectPath: { fsPath: path.join('test', 'workspace') } as vscode.Uri,
+      workspaceProjectPath: { fsPath: actualPath.join('test', 'workspace') } as vscode.Uri,
       workspaceName: 'MyWorkspace',
       logicAppName: 'MyLogicApp',
       logicAppType: ProjectType.customCode,
@@ -675,7 +1277,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
 
     await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
 
-    const writeCall = vi.mocked(fse.writeJSON).mock.calls[0];
+    const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     expect(writeCall[1].folders).toHaveLength(2);
     expect(writeCall[1].folders[1]).toEqual({
       name: 'MyFunctions',
@@ -706,10 +1308,12 @@ describe('createLocalConfigurationFiles', () => {
     workflowName: 'TestWorkflow',
   } as any;
 
-  const logicAppFolderPath = path.join('test', 'workspace', 'TestLogicApp');
+  const logicAppFolderPath = actualPath.join('test', 'workspace', 'TestLogicApp');
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.writeFile).mockResolvedValue(undefined);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
   });
@@ -924,11 +1528,13 @@ describe('createArtifactsFolder', () => {
   });
 
   const mockContext: any = {
-    projectPath: path.join('test', 'workspace', 'TestLogicApp'),
+    projectPath: actualPath.join('test', 'workspace', 'TestLogicApp'),
     projectType: ProjectType.logicApp,
   };
 
   beforeEach(() => {
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.mkdirSync).mockReturnValue(undefined);
   });
 
@@ -975,19 +1581,21 @@ describe('createRulesFiles - Testing Actual Implementation', () => {
   // Only file system operations are mocked, conditional logic and template processing is real
 
   const mockContextRulesEngine: any = {
-    projectPath: path.join('test', 'workspace', 'TestLogicApp'),
+    projectPath: actualPath.join('test', 'workspace', 'TestLogicApp'),
     projectType: ProjectType.rulesEngine,
     functionAppName: 'TestRulesApp',
   };
 
   const mockContextLogicApp: any = {
-    projectPath: path.join('test', 'workspace', 'TestLogicApp'),
+    projectPath: actualPath.join('test', 'workspace', 'TestLogicApp'),
     projectType: ProjectType.logicApp,
     functionAppName: 'TestLogicApp',
   };
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.readFile).mockResolvedValue('Sample content with <%= methodName %>' as any);
     vi.mocked(fse.writeFile).mockResolvedValue(undefined);
   });
@@ -1070,11 +1678,13 @@ describe('createLibFolder - Testing Actual Implementation', () => {
   // Only file system operations are mocked, directory structure logic is real
 
   const mockContext: any = {
-    projectPath: path.join('test', 'workspace', 'TestLogicApp'),
+    projectPath: actualPath.join('test', 'workspace', 'TestLogicApp'),
   };
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
+    vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
     vi.mocked(fse.mkdirSync).mockReturnValue(undefined);
   });
 

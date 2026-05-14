@@ -23,6 +23,7 @@ import {
   getLabelForConnection,
   getSubLabelForConnection,
 } from './selectConnection.helpers';
+import { useConnectionRefs } from '../../../../core/state/connection/connectionSelector';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -30,16 +31,46 @@ export interface ConnectionTableProps {
   saveSelectionCallback: (connection?: Connection) => void;
   cancelSelectionCallback?: () => void;
   isXrmConnectionReferenceMode: boolean;
+  shouldRenderDetails?: boolean;
 }
 
+const statusColumnWidth = 36;
+const statusColumnName = 'status';
+const displayNameColumnName = 'displayName';
+const detailsColumnWidth = 48;
+const detailsColumnName = 'details';
+const nameColumnName = 'connectionName';
+const nameColumnWidth = 180;
+const dateColumnName = 'connectionDate';
+const dateColumnWidth = 200;
+
 export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
-  const { connections, currentConnectionId, saveSelectionCallback, cancelSelectionCallback, isXrmConnectionReferenceMode } = props;
+  const {
+    connections,
+    currentConnectionId,
+    saveSelectionCallback,
+    cancelSelectionCallback,
+    isXrmConnectionReferenceMode,
+    shouldRenderDetails = false,
+  } = props;
 
   const intl = useIntl();
   const initiallySelectedConnectionId = useRef(currentConnectionId);
+  const connectionReferences = useConnectionRefs();
+
+  // Check if the currentConnectionId is actually configured in connectionReferences
+  const isCurrentConnectionConfigured = useMemo(() => {
+    if (!currentConnectionId) {
+      return false;
+    }
+    return Object.values(connectionReferences).some((ref: any) => {
+      const refConnectionId = ref?.connection?.id;
+      return refConnectionId && getIdLeaf(refConnectionId) === currentConnectionId;
+    });
+  }, [currentConnectionId, connectionReferences]);
 
   const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
-    return cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
+    return isCurrentConnectionConfigured && cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
   };
 
   // We need to flatten the connection to allow the detail list access to nested props
@@ -68,21 +99,15 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         message: 'Connection was selected.',
       });
 
-      if (areIdLeavesEqual(connection.id, currentConnectionId)) {
-        cancelSelectionCallback?.(); // User clicked the existing connection, keep selection the same and return
+      if (areIdLeavesEqual(connection.id, currentConnectionId) && isCurrentConnectionConfigured) {
+        cancelSelectionCallback?.(); // User clicked the existing connection that is already configured
       } else {
-        saveSelectionCallback(connection); // User clicked a different connection, save selection and return
+        saveSelectionCallback(connection); // User clicked a different connection or unconfigured connection
       }
     },
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
   );
-
-  const statusColumnWidth = 36;
-  const statusColumnName = 'status';
-  const displayNameColumnWidth = 420;
-  const displayNameColumnName = 'displayName';
-  const detailsColumnWidth = 48;
-  const detailsColumnName = 'details';
+  const displayNameColumnWidth = shouldRenderDetails ? 180 : 420;
 
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
     createTableColumn({
@@ -133,16 +158,6 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         );
       },
     }),
-    createTableColumn({
-      columnId: detailsColumnName,
-      renderHeaderCell: () =>
-        intl.formatMessage({
-          defaultMessage: 'Details',
-          id: 'pH6ubt',
-          description: 'Column header for accessing connection-related details',
-        }),
-      renderCell: (item) => <ConnectionTableDetailsButton connection={item} isXrmConnectionReferenceMode={isXrmConnectionReferenceMode} />,
-    }),
   ];
 
   const columnSizingOptions: TableColumnSizingOptions = {
@@ -155,12 +170,81 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       defaultWidth: displayNameColumnWidth,
       idealWidth: displayNameColumnWidth,
     },
+    [nameColumnName]: {
+      defaultWidth: nameColumnWidth,
+      idealWidth: nameColumnWidth,
+    },
+    [dateColumnName]: {
+      defaultWidth: dateColumnWidth,
+      idealWidth: dateColumnWidth,
+    },
     [detailsColumnName]: {
       defaultWidth: detailsColumnWidth,
       idealWidth: detailsColumnWidth,
       minWidth: detailsColumnWidth,
     },
   };
+
+  if (shouldRenderDetails) {
+    columns.push(
+      createTableColumn({
+        columnId: nameColumnName,
+        renderHeaderCell: () =>
+          intl.formatMessage({
+            defaultMessage: 'Name',
+            id: 'T6VIym',
+            description: 'Column header for connection name',
+          }),
+        renderCell: (item) => {
+          return (
+            <div className="msla-connection-row-connection-name">
+              <Text block={true} className="msla-connection-row-display-name-label" size={300}>
+                {item.name}
+              </Text>
+            </div>
+          );
+        },
+      }),
+      createTableColumn({
+        columnId: dateColumnName,
+        renderHeaderCell: () =>
+          intl.formatMessage({
+            defaultMessage: 'Creation time',
+            id: 'dVtG1L',
+            description: 'Column header for connection creation time',
+          }),
+        renderCell: (item) => {
+          // Check if creation time is epoch 0 (January 1, 1970) which indicates missing/invalid date
+          const isEpochZero = !item.createdTime || new Date(item.createdTime).getTime() === 0;
+
+          return (
+            <div className="msla-connection-row-connection-creation-time">
+              {isEpochZero ? null : (
+                <Text block={true} className="msla-connection-row-display-name-label" size={300}>
+                  {intl.formatDate(item.createdTime, { dateStyle: 'long', timeStyle: 'short' })}
+                </Text>
+              )}
+            </div>
+          );
+        },
+      })
+    );
+  } else {
+    columns.push(
+      createTableColumn({
+        columnId: detailsColumnName,
+        renderHeaderCell: () =>
+          intl.formatMessage({
+            defaultMessage: 'Details',
+            id: 'pH6ubt',
+            description: 'Column header for accessing connection-related details',
+          }),
+        renderCell: (item) => (
+          <ConnectionTableDetailsButton connection={item} isXrmConnectionReferenceMode={isXrmConnectionReferenceMode} />
+        ),
+      })
+    );
+  }
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
     (e: any, data: any) => {
