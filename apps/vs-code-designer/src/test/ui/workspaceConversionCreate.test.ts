@@ -953,31 +953,92 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
 
       await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', createBtn).catch(() => undefined);
 
-      // Prefer Selenium Actions API (triggers React handlers properly per
-      // SKILL.md rule #6); fall back to JS click only if Actions fails.
-      let clickSucceeded = false;
+      // Helper: poll briefly for the pending-state transition. Returns true
+      // if the workspace file appeared on disk OR the button entered
+      // "Creating..." / disabled state, false on timeout. Best-effort.
+      const pollForStateTransition = async (windowMs: number): Promise<boolean> => {
+        const end = Date.now() + windowMs;
+        while (Date.now() < end) {
+          if (fs.existsSync(expectedWsFile)) {
+            return true;
+          }
+          try {
+            const transitioned = await driver.executeScript<boolean>(`
+              const btns = Array.from(document.querySelectorAll('button'));
+              return btns.some(b => {
+                const t = (b.textContent || '').trim().toLowerCase();
+                if (t.includes('creating')) { return true; }
+                if (b.hasAttribute('disabled')) {
+                  const label = (b.textContent || '').trim();
+                  if (label === 'Create workspace' || label.startsWith('Creating')) { return true; }
+                }
+                return false;
+              });
+            `);
+            if (transitioned) {
+              return true;
+            }
+          } catch {
+            // ignore transient eval errors
+          }
+          await sleep(200);
+        }
+        return false;
+      };
+
+      // Fix 2A: Re-find the button immediately before clicking to eliminate
+      // any stale-snapshot risk (the snapshot above may have been invalidated
+      // by React re-renders triggered by design-time notification settling).
+      // SKILL.md rule #6 — use the Selenium Actions API for React clicks.
+      let clickedVia = '';
       try {
-        await driver.actions().move({ origin: createBtn }).click().perform();
-        clickSucceeded = true;
-        console.log('[createWs] Clicked Create workspace via Actions API');
+        const freshBtn = await waitForButtonByExactText(driver, 'Create workspace', 5_000);
+        await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', freshBtn).catch(() => undefined);
+        await driver.actions().move({ origin: freshBtn }).click().perform();
+        clickedVia = 'actions';
+        console.log('[createWs] Clicked Create workspace via Selenium Actions API (re-found)');
       } catch (actionsErr) {
         const msg = actionsErr instanceof Error ? actionsErr.message : String(actionsErr);
-        console.log(`[createWs] Actions click on Create failed (${msg}); falling back to JS click`);
+        console.log(`[createWs] Actions click on Create failed (${msg})`);
       }
 
-      if (!clickSucceeded) {
+      // Fix 2B: Belt-and-suspenders — send Key.ENTER to the button to trigger
+      // React's onKeyDown handler if the pointer path didn't activate onClick.
+      // We re-find again because the Actions click may have moved focus.
+      if (await pollForStateTransition(2_000)) {
+        console.log(`[createWs] Pending state detected after ${clickedVia || 'actions'} click within 2s`);
+      } else {
         try {
-          // Re-resolve in case the prior reference went stale.
-          const fallbackBtn = await waitForButtonByExactText(driver, 'Create workspace', 5_000);
-          await driver.executeScript('arguments[0].click();', fallbackBtn);
-          console.log('[createWs] Clicked Create workspace via JS fallback');
-        } catch (jsErr) {
-          if (!isStaleElementError(jsErr)) {
-            throw jsErr;
+          const enterBtn = await waitForButtonByExactText(driver, 'Create workspace', 3_000);
+          await driver.executeScript('arguments[0].focus();', enterBtn).catch(() => undefined);
+          await enterBtn.sendKeys(Key.ENTER);
+          console.log('[createWs] Sent Key.ENTER to Create workspace button');
+        } catch (enterErr) {
+          if (isStaleElementError(enterErr)) {
+            // Stale here likely means the button already transitioned.
+            console.log('[createWs] Create button went stale before Key.ENTER (likely already transitioned)');
+          } else {
+            const msg = enterErr instanceof Error ? enterErr.message : String(enterErr);
+            console.log(`[createWs] Key.ENTER on Create failed (${msg})`);
           }
-          // Stale here likely means the button has already transitioned —
-          // proceed to the pending-state poll below.
-          console.log('[createWs] Create button went stale during JS fallback (likely already transitioned)');
+        }
+
+        // Fix 2C: Last-resort JS click if neither pointer nor keyboard path
+        // produced a state transition. Bypasses pointer hit-testing entirely.
+        if (!(await pollForStateTransition(2_000))) {
+          await captureCreateClickDiagnostics(driver, 'pre-js-fallback');
+          try {
+            const jsBtn = await waitForButtonByExactText(driver, 'Create workspace', 3_000);
+            await driver.executeScript('arguments[0].click();', jsBtn);
+            console.log('[createWs] Clicked Create workspace via JS click fallback');
+          } catch (jsErr) {
+            if (isStaleElementError(jsErr)) {
+              console.log('[createWs] Create button went stale during JS fallback (likely already transitioned)');
+            } else {
+              const msg = jsErr instanceof Error ? jsErr.message : String(jsErr);
+              console.log(`[createWs] JS click fallback failed (${msg})`);
+            }
+          }
         }
       }
 
