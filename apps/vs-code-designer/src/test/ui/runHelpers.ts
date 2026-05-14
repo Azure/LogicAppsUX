@@ -20,6 +20,7 @@
  * These are extracted from designerActions.test.ts.
  */
 
+import * as assert from 'assert';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
 
@@ -77,13 +78,45 @@ export async function startDebugging(workbench: Workbench, driver: WebDriver): P
 }
 
 /**
- * Poll the terminal panel text until the Functions runtime reports it is ready.
+ * Wait for the Functions runtime to be ready before driving the overview.
+ *
+ * Two readiness modes:
+ *   - **Default (`requireHostRunning: false`)** — returns true on the first
+ *     of: debug toolbar visible, terminal tabs open >30 s, or
+ *     `http://localhost:7071/admin/host/status` reporting `running`. This is
+ *     the historical "early-return" behavior; suitable when callers only need
+ *     the debugger attached.
+ *   - **Strict (`requireHostRunning: true`)** — requires BOTH the debug
+ *     toolbar visible AND the port-7071 host status to be `running`. The
+ *     debug toolbar appears ~1-2 s after attach, well before `func host start`
+ *     finishes loading bundle DLLs and registering the workflow trigger, so
+ *     this mode is mandatory before any "Run trigger" interaction. Without
+ *     it the downstream click loop burns its deadline waiting for the same
+ *     readiness signal we already have a probe for.
+ *
+ * Timeout budget guidance (all callers should respect a >=90 s deadline,
+ * per the reliability playbook):
+ *   - `clickRunTrigger` gate: 60 s strict (host *should* already be running
+ *     by the time we open the overview).
+ *   - `assertRunTriggerable` gate: 120 s strict (cold-start shards).
+ *   - `startDebugging` post-condition: 90 s default.
+ *
+ * Progress is logged at most once per 10 s per signal so CI logs reveal
+ * which gate is missing without spamming.
  */
-export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000): Promise<boolean> {
+export async function waitForRuntimeReady(
+  driver: WebDriver,
+  opts: { requireHostRunning?: boolean; timeoutMs?: number } = {}
+): Promise<boolean> {
+  const timeoutMs = opts.timeoutMs ?? 90_000;
+  const requireHostRunning = opts.requireHostRunning ?? false;
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
   let screenshotTaken = false;
   let terminalsDetectedAt = 0;
+  let lastProgressLog = 0;
+  let debugToolbarSeenAt = 0;
+  let hostRunningSeenAt = 0;
 
   while (Date.now() < deadline) {
     try {
@@ -97,8 +130,9 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
       screenshotTaken = true;
     }
 
+    let debugAttached = false;
     try {
-      const debugAttached = await driver.executeScript<boolean>(`
+      debugAttached = !!(await driver.executeScript<boolean>(`
         var toolbar = document.querySelector('.debug-toolbar');
         if (toolbar) {
           var style = window.getComputedStyle(toolbar);
@@ -106,14 +140,17 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
         }
         var actionBar = document.querySelector('[class*="debug-toolbar"], [class*="debugging-actions"]');
         return !!actionBar;
-      `);
-      if (debugAttached) {
-        console.log(`[debug] Debug toolbar visible — debugger attached (${Date.now() - t0}ms)`);
-        await sleep(3000);
-        return true;
-      }
+      `));
     } catch {
       /* ignore */
+    }
+    if (debugAttached && debugToolbarSeenAt === 0) {
+      debugToolbarSeenAt = Date.now();
+      console.log(`[debug] Debug toolbar visible — debugger attached (${debugToolbarSeenAt - t0}ms)`);
+    }
+    if (debugAttached && !requireHostRunning) {
+      await sleep(3000);
+      return true;
     }
 
     try {
@@ -125,7 +162,7 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
         terminalsDetectedAt = Date.now();
         console.log(`[debug] Detected ${terminalCount} terminal(s) (${Date.now() - t0}ms)`);
       }
-      if (terminalsDetectedAt > 0 && Date.now() - terminalsDetectedAt > 30_000) {
+      if (!requireHostRunning && terminalsDetectedAt > 0 && Date.now() - terminalsDetectedAt > 30_000) {
         console.log(`[debug] Terminals open for 30s+ — assuming runtime ready (${Date.now() - t0}ms)`);
         return true;
       }
@@ -133,8 +170,9 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
       /* ignore */
     }
 
+    let hostReady = false;
     try {
-      const hostReady = await driver.executeScript<boolean>(`
+      hostReady = !!(await driver.executeScript<boolean>(`
         try {
           var xhr = new XMLHttpRequest();
           xhr.open('GET', 'http://localhost:7071/admin/host/status', false);
@@ -146,20 +184,50 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
           }
         } catch(e) {}
         return false;
-      `);
-      if (hostReady) {
+      `));
+    } catch {
+      /* ignore */
+    }
+    if (hostReady && hostRunningSeenAt === 0) {
+      hostRunningSeenAt = Date.now();
+      console.log(`[debug] Functions host status='running' (${hostRunningSeenAt - t0}ms)`);
+    }
+    if (hostReady) {
+      if (!requireHostRunning) {
         console.log(`[debug] Runtime ready — host status is 'running' (${Date.now() - t0}ms)`);
         return true;
       }
-    } catch {
-      /* ignore */
+      if (debugAttached) {
+        console.log(`[debug] Runtime ready — debug toolbar + host 'running' (${Date.now() - t0}ms)`);
+        await sleep(1000);
+        return true;
+      }
+    }
+
+    if (Date.now() - lastProgressLog > 10_000) {
+      lastProgressLog = Date.now();
+      const elapsed = Date.now() - t0;
+      const missing: string[] = [];
+      if (!debugAttached) {
+        missing.push('debug-toolbar');
+      }
+      if (requireHostRunning && !hostReady) {
+        missing.push('host-running');
+      }
+      if (missing.length > 0) {
+        console.log(`[debug] Still waiting for runtime (${elapsed}ms elapsed, missing: ${missing.join(', ')})`);
+      }
     }
 
     await sleep(3000);
   }
 
-  await captureScreenshot(driver, 'debug-timeout');
-  console.log(`[debug] Timeout waiting for runtime after ${timeoutMs}ms`);
+  await captureScreenshot(driver, 'waitForRuntimeReady-timeout');
+  const dbgLabel = debugToolbarSeenAt ? `${debugToolbarSeenAt - t0}ms` : 'never';
+  const hostLabel = hostRunningSeenAt ? `${hostRunningSeenAt - t0}ms` : 'never';
+  console.log(
+    `[debug] Timeout waiting for runtime after ${timeoutMs}ms (requireHostRunning=${requireHostRunning}, debugToolbarSeen=${dbgLabel}, hostRunningSeen=${hostLabel})`
+  );
   return false;
 }
 
@@ -388,8 +456,29 @@ export async function switchToOverviewWebview(driver: WebDriver, timeoutMs = 60_
 
 /**
  * Click the "Run trigger" button in the overview command bar.
+ *
+ * @deprecated For new callers, prefer {@link assertRunTriggerable} which
+ * combines the host-readiness gate with the click and surfaces precise
+ * failure messages pointing at the actual root cause. The legacy pair
+ *   assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
+ *   assert.ok(await clickRunTrigger(driver), 'Run trigger clickable');
+ * obscures the root cause when the Functions host hasn't finished starting:
+ * the surfaced failure is "Run trigger clickable" but the real issue is the
+ * runtime not being up.
  */
 export async function clickRunTrigger(driver: WebDriver, timeoutMs = 90_000): Promise<boolean> {
+  // Gate: don't burn the click-loop deadline waiting for a button that can
+  // only become enabled once the Functions host is running. If the runtime
+  // isn't ready within 60 s, fail fast with a screenshot + clear log so the
+  // surfaced failure points at the actual root cause (runtime not ready),
+  // not the downstream symptom ("Run trigger clickable").
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 60_000 });
+  if (!hostReady) {
+    await captureScreenshot(driver, 'clickRunTrigger-runtime-not-ready');
+    console.log('[clickRunTrigger] Functions host not running after 60s; not entering click loop');
+    return false;
+  }
+
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
   let foundLoggedAt = 0;
@@ -437,7 +526,15 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 90_000): Pr
                 return true;
               }
             }
-          } catch {
+          } catch (recheckErr: any) {
+            // StaleElementReferenceError fires when React re-renders the
+            // command bar between findElements and getAttribute. Treat as a
+            // retryable transient and continue the outer poll.
+            if (recheckErr?.name === 'StaleElementReferenceError') {
+              console.log('[overview] StaleElementReferenceError during recheck — retrying');
+              await sleep(250);
+              continue;
+            }
             /* fall through to retry */
           }
           if (!stillEnabled) {
@@ -455,6 +552,34 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 90_000): Pr
   const disabledLabel = disabledLoggedAt ? `${disabledLoggedAt - t0}ms` : 'never';
   console.log(`[overview] "Run trigger" not clickable after ${timeoutMs}ms (foundAt=${foundLabel}, firstDisabled=${disabledLabel})`);
   return false;
+}
+
+/**
+ * Wait for the Functions host to be running, then click the Run trigger.
+ *
+ * Replaces the copy-pasted pair:
+ *   assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
+ *   assert.ok(await clickRunTrigger(driver), 'Run trigger clickable');
+ *
+ * The legacy pattern's failure message points at the downstream symptom
+ * ("Run trigger clickable") even when the root cause is the runtime never
+ * becoming ready. This helper throws an AssertionError with a precise
+ * message indicating which gate failed, so triage points at the real cause.
+ *
+ * Timeout budget:
+ *   - host-running gate: 120 s (cold-start shards on CI can take this long).
+ *   - clickRunTrigger inner loop: its own default 90 s, with another
+ *     60 s host gate inside (cheap if host is already running).
+ */
+export async function assertRunTriggerable(driver: WebDriver): Promise<void> {
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 120_000 });
+  if (!hostReady) {
+    assert.fail('Functions host did not become running within 120s — design-time/runtime startup is too slow on this shard');
+  }
+  const clicked = await clickRunTrigger(driver);
+  if (!clicked) {
+    assert.fail('Run trigger remained disabled after host became running — webview/iframe issue');
+  }
 }
 
 /**
