@@ -16,7 +16,7 @@ Curated patterns for PR comments, reviewer feedback, and final summaries. Add en
 
 - Learning: When declining a reviewer suggestion (e.g., "extract these helpers into the shared module"), reply on the thread with the scope rationale (broadening the PR, requiring additional phase coverage, risking other suites) and confirm the in-scope fix that was applied. Do not silently skip a non-blocking suggestion.
 - Why it matters: PR #9161 closed a reviewer thread about helper extraction by accepting the in-scope flakiness fix and explicitly deferring the cross-suite refactor with rationale. This kept the PR focused while leaving an auditable trail for the suggestion.
-- Source: Azure/LogicAppsUX#9161 helper-extraction review thread; session `35f3ecef-6086-4148-9b2c-d57123f7c5e6`.
+- Source: Azure/LogicAppsUX#9161 helper-extraction review thread.
 - Applies to: `pr-comment-triage`, `release-scribe`, `pr-orchestrator`, `chief-engineer`.
 - Status: verified.
 
@@ -32,6 +32,6 @@ Curated patterns for PR comments, reviewer feedback, and final summaries. Add en
   5. Tick the Test Plan boxes that actually apply; cite CI run IDs and per-shard wall-times when CI evidence exists.
   6. Remove `needs-pr-update` in the same edit operation.
   7. Wait ~5-7 minutes for the bot to re-validate and verify all sections show ✅ before declaring the body work complete.
-- Source: PR #9164 `AI PR Validation` bot comments at `#issuecomment-...`; session `a657ffa6-8cb2-47ec-b0c1-7dcc9558e615`; `.github/workflows/pr-ai-validation.yml`; `.github/pull_request_template.md`.
+- Source: PR #9164 `AI PR Validation` bot comments at `#issuecomment-...`; `.github/workflows/pr-ai-validation.yml`; `.github/pull_request_template.md`.
 - Applies to: `release-scribe`, `pr-orchestrator`, `chief-engineer`, `pr-comment-triage`.
 - Status: verified.

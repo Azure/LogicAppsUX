@@ -1,6 +1,8 @@
 # 🧠 Agent Development Workflow (Git + Worktrees)
 
-This document defines how `.github/` and `.squad/` (agent files) are managed across branches.
+> **Status: optional / one team's choice.** This document describes one approach for keeping `.github/` and `.squad/` (Squad agent files) iterating quickly on a dedicated branch while preventing those files from leaking into feature-branch PRs. It is not a Squad requirement. Forks and other teams can ignore this file and treat `.squad/` as ordinary source tree, manage agent files via git submodules or sparse-checkout, or use a different convention entirely.
+
+This document defines how `.github/` and `.squad/` (agent files) are managed across branches **when adopting this team's worktree-based convention**.
 
 ---
 
@@ -9,10 +11,12 @@ This document defines how `.github/` and `.squad/` (agent files) are managed acr
 ## Source of Truth
 
 ```
-agent-dev branch owns:
+<agent branch> owns:
 .github/
 .squad/
 ```
+
+(This team uses an `agent-dev` branch as the source of truth. Adapt the branch name to your project.)
 
 ## Feature Branch Behavior
 
@@ -169,7 +173,7 @@ git push
 ## ✅ 4. Update agents (ONLY in agent-dev)
 
 ```bash
-cd ../la-agent-dev
+cd ../<your-agent-worktree>
 git unhide-agents
 git ap "improve prompts"
 git push
@@ -180,7 +184,7 @@ git push
 ## ✅ 5. Sync updated agents to feature branch
 
 ```bash
-cd ../la-feature-X
+cd ../<your-feature-worktree>
 git agents
 ```
 

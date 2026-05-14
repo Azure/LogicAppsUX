@@ -2,6 +2,8 @@
 
 Squad is a multi-agent coordination layer for this monorepo. It routes tasks to specialized agents based on file paths and domain ownership, preventing conflicts and keeping each agent focused.
 
+> **Runtime note.** Squad is runtime-agnostic — agents, charters, playbooks, and routing rules work with any agent harness. A few playbooks and prompts (notably `playbooks/chronicle-driven-improvement.md`, `prompts/chronicle-improve.md`, and references to `~/.copilot/`, `/chronicle`, `store_memory`, `session_store_sql`) describe **GitHub Copilot CLI–specific** tooling. Users of other harnesses (Claude Code, Cursor, Cline, etc.) can ignore or adapt those files; the core Squad workflow does not depend on them.
+
 ## How It Works
 
 1. A task arrives (PR, issue, or prompt).

@@ -102,7 +102,7 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 
 - Learning: VS Code wizard webview E2Es should locate inputs by their visible label (e.g., `findInputByLabel('Workspace name')`) rather than by DOM index or positional order.
 - Why it matters: PR #9161 stabilized `workspaceConversionCreate.test.ts` after the index-based fills wrote the workspace path into the name field when the wizard reordered/re-rendered inputs.
-- Source: Azure/LogicAppsUX#9161; `apps/vs-code-designer/src/test/ui/workspaceConversionCreate.test.ts`; session `35f3ecef-6086-4148-9b2c-d57123f7c5e6`.
+- Source: Azure/LogicAppsUX#9161; `apps/vs-code-designer/src/test/ui/workspaceConversionCreate.test.ts`.
 - Applies to: `vscode-test-specialist`, `test`, `senior-swe-critic`.
 - Status: verified.
 

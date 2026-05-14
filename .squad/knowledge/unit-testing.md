@@ -32,7 +32,7 @@ Curated durable learnings for LogicAppsUX unit tests. Add entries through `sessi
 
 - Learning: After resolving merge conflicts in test files, audit whether important branch-specific coverage was accidentally dropped and re-add it in non-conflicting form.
 - Why it matters: The codeful/private-preview session had to restore codeful workflow coverage after conflict resolution risked losing tests from one side of the merge.
-- Source: Session `1fbf168e-34bd-47b1-8f10-1c29abbcc4b8`, Azure/LogicAppsUX#9142.
+- Source: Azure/LogicAppsUX#9142.
 - Applies to: `test`, `vscode-test-specialist`, `senior-swe-reviewer`.
 - Status: verified.
 
