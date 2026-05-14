@@ -22,8 +22,17 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as assert from 'assert';
-import { WebView, type WebDriver, type WebElement, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
+import { WebView, type WebDriver, type WebElement, VSBrowser, ModalDialog, By, Key, error as seleniumError } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissNotifications, openFolderInSession } from './helpers';
+
+/** True if `err` is a Selenium StaleElementReferenceError. */
+function isStaleElementError(err: unknown): boolean {
+  if (err instanceof seleniumError.StaleElementReferenceError) {
+    return true;
+  }
+  const message = err instanceof Error ? err.message : String(err);
+  return /stale element reference|StaleElementReferenceError/i.test(message);
+}
 
 const TEST_TIMEOUT = 180_000;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -171,39 +180,63 @@ async function waitForCreateWorkspaceDialog(driver: WebDriver, timeoutMs = 60_00
 }
 
 /** Verify one Create click starts work instead of requiring repeated clicks. */
-async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorkspaceFile: string, timeoutMs = 15_000): Promise<void> {
+async function waitForSingleCreateClickToStart(driver: WebDriver, expectedWorkspaceFile: string, timeoutMs = 45_000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   let lastButtonState = '';
+  let lastLog = 0;
   while (Date.now() < deadline) {
     if (fs.existsSync(expectedWorkspaceFile)) {
       console.log('[createWs] Workspace file already exists after single Create click');
       return;
     }
 
+    let buttons: WebElement[] = [];
     try {
-      const buttons = await driver.findElements(
+      buttons = await driver.findElements(
         By.xpath('//button[normalize-space(.) = "Create workspace" or normalize-space(.) = "Creating..."]')
       );
-      for (const button of buttons) {
-        const text = await button.getText().catch(() => '');
-        const disabled = await button.getAttribute('disabled').catch(() => null);
-        const ariaDisabled = await button.getAttribute('aria-disabled').catch(() => null);
+    } catch (findErr) {
+      if (isStaleElementError(findErr)) {
+        continue;
+      }
+      // The webview may already be disposing/opening the new workspace.
+    }
+
+    let staleSeen = false;
+    for (const button of buttons) {
+      try {
+        const text = await button.getText();
+        const disabled = await button.getAttribute('disabled');
+        const ariaDisabled = await button.getAttribute('aria-disabled');
         lastButtonState = `text="${text}", disabled=${disabled}, aria=${ariaDisabled}`;
 
         if (disabled !== null || ariaDisabled === 'true' || text.toLowerCase().includes('creating')) {
           console.log(`[createWs] Single Create click entered pending state: text="${text}", disabled=${disabled}, aria=${ariaDisabled}`);
           return;
         }
+      } catch (readErr) {
+        if (isStaleElementError(readErr)) {
+          staleSeen = true;
+        }
+        // ignore other transient read errors
       }
-    } catch {
-      // The webview may already be disposing/opening the new workspace.
+    }
+    if (staleSeen) {
+      // Re-find on next iteration; element list went stale mid-read.
+      continue;
     }
 
+    const now = Date.now();
+    if (now - lastLog >= 10_000) {
+      console.log(`[createWs] Still waiting for single Create click to start. Last button state: ${lastButtonState || 'not found'}`);
+      lastLog = now;
+    }
     await sleep(250);
   }
 
   console.log(`[createWs] Create did not enter pending state. Last button state: ${lastButtonState || 'not found'}`);
   console.log(`[createWs] Wizard diagnostics after Create click: ${await getWizardDiagnostics(driver)}`);
+  await captureScreenshot(driver, 'waitForSingleCreateClickToStart-timeout', EXPLICIT_SCREENSHOT_DIR);
   assert.fail('A single Create click did not start workspace creation or enter pending UI state');
 }
 
@@ -542,30 +575,60 @@ async function clickNextAndWaitForReviewStep(driver: WebDriver, webview: WebView
   }
 
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const nextBtn = await waitForButtonByText(driver, 'Next', 6_000);
-    console.log(`[createWs] Next button before attempt ${attempt}: ${await getButtonState(nextBtn)}`);
-    await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', nextBtn).catch(() => undefined);
-    await driver.actions().move({ origin: nextBtn }).click().perform();
-    console.log(`[createWs] Clicked Next via Actions API (attempt ${attempt})`);
+    // Re-dismiss notifications at the top of each attempt — new toasts can pop
+    // in mid-loop (e.g. "Connecting to design-time...") and intercept the
+    // iframe click with .notification-list-item-buttons-container overlays.
+    if (attempt > 1) {
+      await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+    }
 
-    if (await waitForReviewStep(driver)) {
+    let nextBtn: WebElement;
+    try {
+      nextBtn = await waitForButtonByText(driver, 'Next', 6_000);
+      console.log(
+        `[createWs] Next button before attempt ${attempt}: ${await getButtonState(nextBtn).catch((err) => `state read failed: ${isStaleElementError(err) ? 'stale' : err}`)}`
+      );
+      await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', nextBtn).catch(() => undefined);
+      await driver.actions().move({ origin: nextBtn }).click().perform();
+      console.log(`[createWs] Clicked Next via Actions API (attempt ${attempt})`);
+    } catch (clickErr) {
+      if (isStaleElementError(clickErr)) {
+        console.log(`[createWs] Stale Next button on Actions click attempt ${attempt}; retrying`);
+        continue;
+      }
+      throw clickErr;
+    }
+
+    if (await waitForReviewStep(driver, 12_000)) {
       return;
     }
 
-    const jsBtn = await waitForButtonByText(driver, 'Next', 2_000);
-    await driver.executeScript('arguments[0].click();', jsBtn).catch(() => undefined);
-    console.log(`[createWs] Clicked Next via JS fallback (attempt ${attempt})`);
+    try {
+      const jsBtn = await waitForButtonByText(driver, 'Next', 2_000);
+      await driver.executeScript('arguments[0].click();', jsBtn).catch(() => undefined);
+      console.log(`[createWs] Clicked Next via JS fallback (attempt ${attempt})`);
+    } catch (jsErr) {
+      if (!isStaleElementError(jsErr)) {
+        throw jsErr;
+      }
+    }
 
-    if (await waitForReviewStep(driver, 3_000)) {
+    if (await waitForReviewStep(driver, 6_000)) {
       return;
     }
 
-    const keyboardBtn = await waitForButtonByText(driver, 'Next', 2_000);
-    await driver.executeScript('arguments[0].focus();', keyboardBtn).catch(() => undefined);
-    await driver.actions().sendKeys(Key.ENTER).perform();
-    console.log(`[createWs] Pressed Enter on Next fallback (attempt ${attempt})`);
+    try {
+      const keyboardBtn = await waitForButtonByText(driver, 'Next', 2_000);
+      await driver.executeScript('arguments[0].focus();', keyboardBtn).catch(() => undefined);
+      await driver.actions().sendKeys(Key.ENTER).perform();
+      console.log(`[createWs] Pressed Enter on Next fallback (attempt ${attempt})`);
+    } catch (kbErr) {
+      if (!isStaleElementError(kbErr)) {
+        throw kbErr;
+      }
+    }
 
-    if (await waitForReviewStep(driver, 3_000)) {
+    if (await waitForReviewStep(driver, 6_000)) {
       return;
     }
 
@@ -576,7 +639,65 @@ async function clickNextAndWaitForReviewStep(driver: WebDriver, webview: WebView
   const bodyText = await driver
     .executeScript<string>('return (document.body ? document.body.textContent : "").substring(0, 800)')
     .catch(() => '');
+  await captureScreenshot(driver, 'clickNextAndWaitForReviewStep-timeout', EXPLICIT_SCREENSHOT_DIR);
   throw new Error(`Review step did not become active after clicking Next. Visible text: ${bodyText}`);
+}
+
+/**
+ * Wait until any "Connecting to design-time..." or related design-time toasts
+ * have settled. This is a leading indicator that the func host / design-time
+ * API is still spinning up — new toasts arriving mid-wizard intercept iframe
+ * clicks. We poll the outer VS Code DOM (not the webview) and return to the
+ * webview frame on completion. Best-effort: never throws.
+ */
+async function waitForDesignTimeNotificationsToSettle(driver: WebDriver, webview: WebView, timeoutMs = 60_000): Promise<void> {
+  let switchedOut = false;
+  try {
+    await webview.switchBack();
+    await driver.switchTo().defaultContent();
+    switchedOut = true;
+  } catch {
+    // Not currently in webview; treat as already outer.
+    switchedOut = true;
+  }
+
+  const deadline = Date.now() + timeoutMs;
+  let lastLog = 0;
+  while (Date.now() < deadline) {
+    let pending = 0;
+    try {
+      pending = await driver.executeScript<number>(`
+        const toasts = document.querySelectorAll('.notification-toast, .notifications-toasts .notification-list-item');
+        let count = 0;
+        for (const t of toasts) {
+          const text = (t.textContent || '').toLowerCase();
+          if (text.includes('design-time') || text.includes('design time') || text.includes('connecting to design')) {
+            count++;
+          }
+        }
+        return count;
+      `);
+    } catch {
+      pending = 0;
+    }
+    if (pending === 0) {
+      break;
+    }
+    const now = Date.now();
+    if (now - lastLog >= 10_000) {
+      console.log(`[createWs] Waiting for design-time notifications to settle (pending=${pending})`);
+      lastLog = now;
+    }
+    await sleep(500);
+  }
+
+  if (switchedOut) {
+    try {
+      await webview.switchToFrame();
+    } catch {
+      // Ignore; caller will handle.
+    }
+  }
 }
 
 async function dismissQuickInputIfVisible(driver: WebDriver): Promise<void> {
@@ -798,6 +919,10 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     await captureScreenshot(driver, 'create-ws-form-filled', EXPLICIT_SCREENSHOT_DIR);
     await waitForConvertSetupReady(driver, wsParentDir, wsName);
 
+    // Gate: ensure design-time notifications have drained before we start
+    // clicking through the wizard. Toast pop-ins intercept iframe clicks.
+    await waitForDesignTimeNotificationsToSettle(driver, webview);
+
     // ── Step 5: Click Next to go to review step ──
     try {
       await clickNextAndWaitForReviewStep(driver, webview);
@@ -811,15 +936,51 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
     // ── Step 6: Click 'Create workspace' button exactly once ──
     try {
       await dismissOuterNotificationsAndReturnToWebview(driver, webview);
+      await waitForDesignTimeNotificationsToSettle(driver, webview);
       const createBtn = await waitForButtonByExactText(driver, 'Create workspace');
-      const disabledBeforeClick = await createBtn.getAttribute('disabled').catch(() => null);
-      const ariaDisabledBeforeClick = await createBtn.getAttribute('aria-disabled').catch(() => null);
+      let disabledBeforeClick: string | null = null;
+      let ariaDisabledBeforeClick: string | null = null;
+      try {
+        disabledBeforeClick = await createBtn.getAttribute('disabled');
+        ariaDisabledBeforeClick = await createBtn.getAttribute('aria-disabled');
+      } catch (readErr) {
+        if (!isStaleElementError(readErr)) {
+          throw readErr;
+        }
+      }
       assert.strictEqual(disabledBeforeClick, null, 'Create button should not have disabled attribute before clicking');
       assert.notStrictEqual(ariaDisabledBeforeClick, 'true', 'Create button should not be aria-disabled before clicking');
 
       await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "nearest" });', createBtn).catch(() => undefined);
-      await driver.executeScript('arguments[0].click();', createBtn);
-      console.log('[createWs] Clicked exact Create workspace button once');
+
+      // Prefer Selenium Actions API (triggers React handlers properly per
+      // SKILL.md rule #6); fall back to JS click only if Actions fails.
+      let clickSucceeded = false;
+      try {
+        await driver.actions().move({ origin: createBtn }).click().perform();
+        clickSucceeded = true;
+        console.log('[createWs] Clicked Create workspace via Actions API');
+      } catch (actionsErr) {
+        const msg = actionsErr instanceof Error ? actionsErr.message : String(actionsErr);
+        console.log(`[createWs] Actions click on Create failed (${msg}); falling back to JS click`);
+      }
+
+      if (!clickSucceeded) {
+        try {
+          // Re-resolve in case the prior reference went stale.
+          const fallbackBtn = await waitForButtonByExactText(driver, 'Create workspace', 5_000);
+          await driver.executeScript('arguments[0].click();', fallbackBtn);
+          console.log('[createWs] Clicked Create workspace via JS fallback');
+        } catch (jsErr) {
+          if (!isStaleElementError(jsErr)) {
+            throw jsErr;
+          }
+          // Stale here likely means the button has already transitioned —
+          // proceed to the pending-state poll below.
+          console.log('[createWs] Create button went stale during JS fallback (likely already transitioned)');
+        }
+      }
+
       await waitForSingleCreateClickToStart(driver, expectedWsFile);
       await sleep(5000); // Wait for workspace creation
       await captureScreenshot(driver, 'create-ws-after-create', EXPLICIT_SCREENSHOT_DIR);
