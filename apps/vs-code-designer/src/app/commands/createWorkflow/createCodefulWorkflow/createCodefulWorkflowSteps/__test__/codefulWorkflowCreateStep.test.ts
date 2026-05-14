@@ -122,11 +122,13 @@ describe('CodefulWorkflowCreateStep', () => {
 
     expect(validateDotnetInstalled).toHaveBeenCalledWith(context);
     expect(getCodefulWorkflowTemplate).toHaveBeenCalled();
-    expect(fse.ensureDir).toHaveBeenCalledWith('C:\\project\\ProcessOrder');
-    expect(fse.writeFile).toHaveBeenCalledWith(`C:\\project\\ProcessOrder\\${codefulWorkflowFileName}`, '{"definition":{}}');
+    expectPath(vi.mocked(fse.ensureDir).mock.calls[0][0] as string).toBe('C:/project/ProcessOrder');
+    expectPath(vi.mocked(fse.writeFile).mock.calls[0][0] as string).toBe(`C:/project/ProcessOrder/${codefulWorkflowFileName}`);
+    expect(vi.mocked(fse.writeFile).mock.calls[0][1]).toBe('{"definition":{}}');
     expect(createConnectionsJson).toHaveBeenCalledWith(context.projectPath);
     expect(createEmptyParametersJson).toHaveBeenCalledWith(context.projectPath);
-    expect(writeFileSync).toHaveBeenCalledWith('C:\\project\\nuget.config', expect.stringContaining('LocalPackages'));
+    expectPath(vi.mocked(writeFileSync).mock.calls[0][0] as string).toBe('C:/project/nuget.config');
+    expect(vi.mocked(writeFileSync).mock.calls[0][1]).toEqual(expect.stringContaining('LocalPackages'));
     expect(step.createSystemArtifacts).toHaveBeenCalledWith(context);
     expect(getWorkspaceFolder).toHaveBeenCalledWith(context);
     expect(updateLogicAppLaunchJson).toHaveBeenCalledWith(
@@ -136,7 +138,7 @@ describe('CodefulWorkflowCreateStep', () => {
       FuncVersion.v4,
       context.logicAppName
     );
-    expect(workflowFilePath).toBe(`C:\\project\\ProcessOrder\\${codefulWorkflowFileName}`);
+    expectPath(workflowFilePath).toBe(`C:/project/ProcessOrder/${codefulWorkflowFileName}`);
   });
 
   it('should update app settings for codeful workflows', async () => {
@@ -292,4 +294,8 @@ function createContext(): IFunctionWizardContext {
     targetFramework: 'net8',
     workspaceFolder: undefined,
   } as IFunctionWizardContext;
+}
+
+function expectPath(actualPath: string) {
+  return expect(actualPath.replace(/\\/g, '/'));
 }
