@@ -573,6 +573,65 @@ export async function clickTreeViewAction(driver: WebDriver, itemLabel: string, 
 // ===========================================================================
 
 /**
+ * Pre-flight: wait until the VS Code workbench is ready to accept keyboard input.
+ *
+ * Checks that:
+ *   - The activity bar is rendered and has non-zero width.
+ *   - No blocking modal dialog (workspace trust, sign-in, etc.) is visible.
+ *   - Any startup "Restore unsaved files" / Welcome quick-input is dismissed.
+ *
+ * Tests that launch immediately after a fresh VS Code session (e.g. Phase 4.8b
+ * `openFolderInSession`) otherwise burn an entire retry attempt — typically
+ * ~13 s — waiting on `ElementNotInteractableError` from the command palette.
+ * Returns true if ready, false on timeout (callers should proceed regardless).
+ */
+export async function waitForWorkbenchReady(driver: WebDriver, timeoutMs = 15_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  let lastLog = 0;
+  while (Date.now() < deadline) {
+    try {
+      try {
+        await dismissAllDialogs(driver);
+      } catch {
+        /* ignore */
+      }
+      try {
+        await dismissNotifications(driver);
+      } catch {
+        /* ignore */
+      }
+
+      const ready = await driver.executeScript<boolean>(`
+        const ab = document.querySelector('.activitybar');
+        if (!ab || ab.offsetWidth === 0 || ab.offsetHeight === 0) return false;
+        const dialog = document.querySelector('.monaco-dialog-box, [role="dialog"].dialog-box');
+        if (dialog && dialog.offsetWidth > 0 && dialog.offsetHeight > 0) return false;
+        const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+        if (widget && widget.offsetHeight > 0) {
+          const inputEl = widget.querySelector('.quick-input-box input');
+          const v = inputEl ? (inputEl.value || '') : '';
+          // Startup "Restore unsaved files" / Welcome prompts are not command-mode
+          if (!v.startsWith('>')) return false;
+        }
+        return true;
+      `);
+      if (ready) {
+        return true;
+      }
+    } catch {
+      /* ignore */
+    }
+    if (Date.now() - lastLog > 10_000) {
+      console.log('[waitForWorkbenchReady] still waiting for workbench…');
+      lastLog = Date.now();
+    }
+    await sleep(500);
+  }
+  console.log('[waitForWorkbenchReady] timeout — proceeding anyway');
+  return false;
+}
+
+/**
  * Open a folder in VS Code via the command palette.
  *
  * ExTester's openResources / startup resources use `code -r` CLI IPC which
@@ -584,6 +643,11 @@ export async function clickTreeViewAction(driver: WebDriver, itemLabel: string, 
  */
 export async function openFolderInSession(driver: WebDriver, folderPath: string): Promise<void> {
   console.log(`[openFolderInSession] Opening folder: ${folderPath}`);
+
+  // Pre-flight: wait until the workbench is interactable. Without this the
+  // first retry attempt almost always fails with ElementNotInteractableError
+  // and wastes ~13 s before the second attempt succeeds.
+  await waitForWorkbenchReady(driver, 15_000);
 
   // Aggressively dismiss ALL blocking UI before opening command palette.
   // On CI, dialogs like "C# Dev Kit Sign In" appear and block keyboard input.

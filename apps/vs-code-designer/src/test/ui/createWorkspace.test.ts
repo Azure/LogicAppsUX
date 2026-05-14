@@ -236,38 +236,77 @@ function createTempDir(): string {
  * 5. Click it
  */
 async function selectCreateWorkspaceCommand(workbench: Workbench): Promise<void> {
+  const driver = workbench.getDriver();
+
   // Dismiss any notifications first
   try {
-    await dismissNotifications(workbench.getDriver());
+    await dismissNotifications(driver);
   } catch {
     // Ignore
   }
 
-  // Retry opening and typing in the command palette — sometimes
-  // the InputBox is not yet interactable right after openCommandPrompt()
+  // Retry opening and typing in the command palette — the InputBox is often
+  // not interactable right after openCommandPrompt() on slow CI runners, and
+  // raw ExTester InputBox.setText()/clear() throws ElementNotInteractableError.
+  // We use a longer retry budget with exponential backoff and validate that
+  // the underlying <input> is visible+enabled before sending keys.
+  const backoffsMs = [1_000, 2_000, 3_000, 5_000, 8_000];
   let input: InputBox | QuickOpenBox | undefined;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  let lastError: any;
+
+  for (let attempt = 0; attempt < backoffsMs.length; attempt++) {
     try {
       input = await workbench.openCommandPrompt();
-      await sleep(1000);
+      await sleep(500);
 
-      // CRITICAL: Use '> ' prefix to stay in command mode.
-      // InputBox.setText() calls clear() which removes the '>' that openCommandPrompt() adds.
-      // Without '>', VS Code treats input as a file search, not command search.
-      await input.setText('> logic app workspace');
-      await sleep(2000); // Wait for picks to populate
-      break; // setText succeeded
+      // Ensure the QuickPick <input> element is actually visible and enabled
+      // before driving it. Up to 30s — generous because slow runners take a
+      // while to mount the widget after the keybind fires.
+      const inputEl = await driver.wait(
+        until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
+        30_000,
+        'QuickInput input element not located'
+      );
+      await driver.wait(until.elementIsVisible(inputEl), 30_000, 'QuickInput input not visible');
+      await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
+
+      // CRITICAL: Use '> ' prefix to stay in command mode (file search otherwise).
+      // We bypass ExTester InputBox.setText() which calls clear() and throws
+      // ElementNotInteractableError when the element is transiently busy.
+      // Raw sendKeys with select-all is reliable.
+      await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
+      await inputEl.sendKeys('> logic app workspace');
+      await sleep(2_000); // Wait for picks to populate
+      break; // success
     } catch (e: any) {
-      console.log(`[selectCreateWorkspaceCommand] Attempt ${attempt + 1}/3: setText failed: ${e.message}`);
+      lastError = e;
+      console.log(`[selectCreateWorkspaceCommand] Attempt ${attempt + 1}/${backoffsMs.length}: setText failed: ${e.message}`);
+      try {
+        await captureScreenshot(driver, `selectCreateWorkspaceCommand-timeout-attempt-${attempt + 1}`);
+      } catch {
+        /* ignore screenshot failure */
+      }
       try {
         await input?.cancel();
       } catch {
         // Ignore cancel error
       }
-      await sleep(2000);
-      if (attempt === 2) {
-        throw e;
+      // Re-focus the command palette explicitly between retries so the next
+      // openCommandPrompt() lands on a fresh, interactable widget.
+      try {
+        await workbench.executeCommand('workbench.action.focusQuickOpen');
+      } catch {
+        /* ignore */
       }
+      try {
+        await dismissNotifications(driver);
+      } catch {
+        /* ignore */
+      }
+      if (attempt === backoffsMs.length - 1) {
+        throw lastError;
+      }
+      await sleep(backoffsMs[attempt]);
     }
   }
 
@@ -444,32 +483,67 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
 
   // Manual iframe switching approach — more reliable than ExTester's WebView class
   // because it doesn't depend on the .editor-instance element being in the DOM.
-  // ExTester's WebView extends Editor, which requires .editor-instance to exist
-  // before it can locate the webview iframe. On slow CI runners, the editor layout
-  // may not have rendered yet, causing the constructor to fail.
+  // We enumerate ALL `iframe.webview` elements, filter by visibility + non-zero
+  // rect (per SKILL.md rule #8), and prefer the last (most recently created) —
+  // which is the active Create Workspace tab when other panels are also open.
   //
-  // Instead, we directly wait for the webview iframe elements using Selenium's
-  // explicit wait, which properly polls until the element appears.
+  // After switching into the inner #active-frame we poll for a Create Workspace
+  // form marker so we don't return a frame that is still mid-mount.
   const WEBVIEW_TIMEOUT = 60_000;
+  const MARKER_TIMEOUT = 20_000;
 
   let lastError: Error | null = null;
+  let lastLog = 0;
+
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       await driver.switchTo().defaultContent();
 
-      // Step 1: Wait for the outer webview iframe to appear
-      console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/3: Waiting for webview iframe...`);
-      const outerFrame = await driver.wait(
-        until.elementLocated(By.css("iframe[class='webview ready']")),
-        WEBVIEW_TIMEOUT,
-        'Webview iframe not found within timeout'
-      );
+      console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/3: Waiting for webview iframe…`);
+
+      // Step 1: Poll the default content for any `iframe.webview` and pick the
+      // visible, non-zero-sized one — preferring the most recently mounted.
+      const frameDeadline = Date.now() + WEBVIEW_TIMEOUT;
+      let outerFrame: WebElement | null = null;
+      while (Date.now() < frameDeadline) {
+        const candidates = await driver.findElements(By.css('iframe.webview, iframe.webview.ready'));
+        if (candidates.length > 0) {
+          for (let i = candidates.length - 1; i >= 0; i--) {
+            try {
+              const displayed = await candidates[i].isDisplayed();
+              if (!displayed) {
+                continue;
+              }
+              const rect = await candidates[i].getRect();
+              if (rect.width > 100 && rect.height > 100) {
+                outerFrame = candidates[i];
+                console.log(`[switchToWebviewFrame] Selected iframe ${i + 1}/${candidates.length} (${rect.width}x${rect.height})`);
+                break;
+              }
+            } catch {
+              // StaleElementReferenceError — try the next candidate
+            }
+          }
+        }
+        if (outerFrame) {
+          break;
+        }
+        if (Date.now() - lastLog > 10_000) {
+          console.log(`[switchToWebviewFrame] still waiting for visible webview iframe (found ${candidates.length})`);
+          lastLog = Date.now();
+        }
+        await sleep(500);
+      }
+      if (!outerFrame) {
+        throw new Error('Webview iframe not found within timeout');
+      }
+
       await driver.switchTo().frame(outerFrame);
 
       // Step 2: Wait for the inner #active-frame iframe
       const innerFrame = await driver.wait(until.elementLocated(By.id('active-frame')), 15_000, '#active-frame not found');
       await driver.switchTo().frame(innerFrame);
-      await sleep(1000);
+      await sleep(500);
 
       // Verify we're NOT in the "from package" webview
       const packageLabels = await driver.findElements(By.xpath("//*[contains(text(), 'Package path')]"));
@@ -479,6 +553,35 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
           'Wrong webview opened: "Create Workspace From Package" instead of "Create Workspace". ' +
             'The command palette selected the wrong command.'
         );
+      }
+
+      // Step 3: Poll for at least one Create Workspace form marker so we don't
+      // return a still-mounting frame to the caller.
+      const markerDeadline = Date.now() + MARKER_TIMEOUT;
+      let markerSeen = false;
+      while (Date.now() < markerDeadline) {
+        try {
+          const markers = await driver.executeScript<number>(`
+            const sels = [
+              "input", "button", "[class*='workspace']", "[class*='wizard']", "[data-testid]"
+            ];
+            let count = 0;
+            for (const s of sels) {
+              try { count += document.querySelectorAll(s).length; } catch (e) {}
+            }
+            return count;
+          `);
+          if ((markers ?? 0) > 0) {
+            markerSeen = true;
+            break;
+          }
+        } catch {
+          /* keep polling */
+        }
+        await sleep(500);
+      }
+      if (!markerSeen) {
+        throw new Error('Create Workspace webview rendered no DOM markers within timeout');
       }
 
       // Return a WebView instance for API compatibility (switchBack etc.)
@@ -491,6 +594,11 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
         throw e; // Don't retry wrong webview
       }
       console.log(`[switchToWebviewFrame] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      try {
+        await captureScreenshot(driver, `switchToWebviewFrame-timeout-attempt-${attempt + 1}`);
+      } catch {
+        /* ignore */
+      }
       try {
         await driver.switchTo().defaultContent();
       } catch {
@@ -507,10 +615,15 @@ async function switchToWebviewFrame(driver: WebDriver): Promise<WebView> {
         /* ignore */
       }
 
-      await sleep(5000);
+      await sleep(5_000);
     }
   }
 
+  try {
+    await captureScreenshot(driver, 'switchToWebviewFrame-final-deadline');
+  } catch {
+    /* ignore */
+  }
   throw lastError || new Error('Could not switch to webview frame after 3 attempts');
 }
 
