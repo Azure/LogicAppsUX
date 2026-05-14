@@ -37,8 +37,8 @@ import {
 } from './designerHelpers';
 import {
   startDebugging,
-  openOverviewPage,
-  switchToOverviewWebview,
+  prewarmFunctionsHost,
+  waitForOverviewView,
   assertRunTriggerable,
   clickRefresh,
   waitForRunStatusInList,
@@ -339,6 +339,9 @@ describe('Stateless Variable Tests', function () {
       // Debug → Run → Verify
       workbench = new Workbench();
       await startDebugging(workbench, driver);
+      // Pre-warm the Functions host before driving the overview flow
+      // (see prewarmFunctionsHost docs for rationale).
+      await prewarmFunctionsHost(driver);
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);
@@ -346,13 +349,7 @@ describe('Stateless Variable Tests', function () {
         /* ignore */
       }
       workbench = new Workbench();
-      assert.ok(await openOverviewPage(workbench, driver, wjp), 'Overview should open');
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      const ovWv = await switchToOverviewWebview(driver);
+      const ovWv = await waitForOverviewView(workbench, driver, wjp);
       await assertRunTriggerable(driver);
       await sleep(1000);
       await clickRefresh(driver);

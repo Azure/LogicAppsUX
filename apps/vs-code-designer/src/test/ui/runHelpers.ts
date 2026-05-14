@@ -21,7 +21,7 @@
  */
 
 import * as assert from 'assert';
-import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key } from 'vscode-extension-tester';
+import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
 
 // ===========================================================================
@@ -229,6 +229,45 @@ export async function waitForRuntimeReady(
     `[debug] Timeout waiting for runtime after ${timeoutMs}ms (requireHostRunning=${requireHostRunning}, debugToolbarSeen=${dbgLabel}, hostRunningSeen=${hostLabel})`
   );
   return false;
+}
+
+/**
+ * Pre-warm the Functions host after starting a debug session.
+ *
+ * Phase 4.3 (inlineJavascript) failed in CI with "Functions host did not
+ * become running within 120s" — the heavy `createplusnewtests` shard enters
+ * Phase 4.3 immediately after a ~12 min Phase 4.1 workspace creation, so
+ * the Functions host has had no opportunity to warm up before the first
+ * `assertRunTriggerable` poll. This helper bridges that gap by running the
+ * same `:7071/admin/host/status === 'running'` poll as
+ * {@link waitForRuntimeReady} with a generous 180 s budget, BEFORE the test
+ * begins its overview-navigation steps. By the time `assertRunTriggerable`
+ * polls (120 s budget) the host should already be running and the assertion
+ * returns quickly.
+ *
+ * Intentionally non-throwing: on timeout it logs a warning and captures a
+ * screenshot but does NOT fail the test setup. The downstream
+ * `assertRunTriggerable` call is the canonical assertion site and surfaces
+ * the precise failure ("Functions host did not become running within 120s")
+ * if the host genuinely fails to start. Throwing here would just move the
+ * same failure earlier with a less informative stack.
+ *
+ * Default budget is 180 s (3 min), well above the documented 90 s minimum
+ * CI deadline.
+ */
+export async function prewarmFunctionsHost(driver: WebDriver, opts?: { timeoutMs?: number }): Promise<boolean> {
+  const timeoutMs = opts?.timeoutMs ?? 180_000;
+  const t0 = Date.now();
+  console.log(`[prewarm] Waiting for Functions host to report running on :7071 (budget: ${timeoutMs}ms)...`);
+  const ready = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs });
+  const elapsed = Date.now() - t0;
+  if (ready) {
+    console.log(`[prewarm] Functions host running (${elapsed}ms)`);
+  } else {
+    console.log(`[prewarm] Functions host not running after ${elapsed}ms — assertion site will retry`);
+    await captureScreenshot(driver, 'prewarmFunctionsHost-timeout');
+  }
+  return ready;
 }
 
 // ===========================================================================
@@ -452,6 +491,120 @@ export async function switchToOverviewWebview(driver: WebDriver, timeoutMs = 60_
 
   console.log(`[overview] Warning: overview content not detected after ${timeoutMs}ms`);
   return webview;
+}
+
+/**
+ * High-level helper that drives the open-overview flow end-to-end and
+ * returns a ready-to-use WebView. Combines the previous pair:
+ *
+ *   assert.ok(await openOverviewPage(workbench, driver, wjp), 'Overview should open');
+ *   await driver.switchTo().defaultContent();
+ *   const wv = await switchToOverviewWebview(driver);
+ *
+ * into a single helper that:
+ *   1. Closes all editors and switches to default content (per SKILL.md
+ *      rule #1, otherwise `switchToOverviewWebview` enters the lingering
+ *      designer iframe instead of the overview iframe).
+ *   2. Drives `openOverviewPage` (with retry across iterations) to right-
+ *      click `workflow.json` and pick "Overview".
+ *   3. Switches into the overview webview and verifies the overview
+ *      command bar is present.
+ *   4. Tolerates `StaleElementReferenceError` (SKILL.md rule #6/#8) and
+ *      retries until the deadline.
+ *   5. On timeout, captures `waitForOverviewView-timeout` and throws an
+ *      `assert.fail` with a precise message identifying the missing iframe
+ *      rather than the bare "Overview should open" symptom that obscures
+ *      the real cause.
+ *
+ * Phase 4.4 (statelessVariables) failed in CI with "Overview should open"
+ * — the overview tab never came up. This helper replaces that bare
+ * assertion with a robust polling loop so transient open failures recover.
+ *
+ * Default timeout: 90_000 ms (per the 90 s minimum CI-dependent wait rule).
+ */
+export async function waitForOverviewView(
+  workbench: Workbench,
+  driver: WebDriver,
+  workflowJsonPath: string,
+  opts?: { timeoutMs?: number }
+): Promise<WebView> {
+  const timeoutMs = opts?.timeoutMs ?? 90_000;
+  const t0 = Date.now();
+  const deadline = t0 + timeoutMs;
+
+  // Per SKILL.md rule #1: ensure no other editors (especially a stale
+  // designer panel) are open before triggering the overview.
+  try {
+    await driver.switchTo().defaultContent();
+  } catch {
+    /* ignore */
+  }
+  try {
+    await new EditorView().closeAllEditors();
+  } catch {
+    /* ignore */
+  }
+  await sleep(2000);
+
+  let lastError: any = null;
+  let attempt = 0;
+  while (Date.now() < deadline) {
+    attempt++;
+    try {
+      const opened = await openOverviewPage(workbench, driver, workflowJsonPath);
+      if (!opened) {
+        console.log(`[overview] openOverviewPage returned false on attempt ${attempt} — retrying`);
+        await sleep(2000);
+        continue;
+      }
+      try {
+        await driver.switchTo().defaultContent();
+      } catch {
+        /* ignore */
+      }
+      const remaining = Math.max(15_000, deadline - Date.now());
+      const wv = await switchToOverviewWebview(driver, remaining);
+      const ok = await driver.executeScript<boolean>(`
+        return !!(
+          document.querySelector('[data-testid="msla-overview-command-bar"]') ||
+          document.querySelector('button[aria-label="Run trigger"]') ||
+          document.querySelector('button[aria-label="Refresh"]')
+        );
+      `);
+      if (ok) {
+        console.log(`[overview] Overview view ready (${Date.now() - t0}ms, attempt ${attempt})`);
+        return wv;
+      }
+      console.log(`[overview] Command bar not found in overview frame on attempt ${attempt} — retrying`);
+      try {
+        await wv.switchBack();
+      } catch {
+        /* ignore */
+      }
+    } catch (e: any) {
+      if (e?.name === 'StaleElementReferenceError') {
+        console.log('[overview] StaleElementReferenceError during waitForOverviewView — retrying');
+      } else {
+        lastError = e;
+        console.log(`[overview] waitForOverviewView attempt ${attempt} error: ${e?.message ?? e}`);
+      }
+      try {
+        await driver.switchTo().defaultContent();
+      } catch {
+        /* ignore */
+      }
+    }
+    try {
+      await new EditorView().closeAllEditors();
+    } catch {
+      /* ignore */
+    }
+    await sleep(2000);
+  }
+
+  await captureScreenshot(driver, 'waitForOverviewView-timeout');
+  const suffix = lastError ? ` (last error: ${lastError?.message ?? lastError})` : '';
+  assert.fail(`Overview webview did not open within ${timeoutMs}ms — runtime may be slow or webview iframe missing${suffix}`);
 }
 
 /**
