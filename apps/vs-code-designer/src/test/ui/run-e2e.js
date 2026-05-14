@@ -757,6 +757,10 @@ async function main() {
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
   console.log(`\nE2E mode: ${e2eMode}`);
+  // Note: shard reliability is gated by helpers in runHelpers.ts (waitForRuntimeReady,
+  // clickRunTrigger, assertRunTriggerable) and helpers.ts (selectCreateWorkspaceCommand,
+  // switchToWebviewFrame, openFolderInSession, waitForWorkbenchReady). All CI-dependent
+  // runtime-gated waits use a 90s minimum deadline per the VS Code E2E reliability playbook.
 
   const runOptions = {
     vscodeVersion: VSCODE_VERSION,
