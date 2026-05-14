@@ -37,9 +37,9 @@ import {
 } from './designerHelpers';
 import {
   startDebugging,
-  prewarmFunctionsHost,
   waitForOverviewView,
-  assertRunTriggerable,
+  waitForRuntimeReady,
+  clickRunTrigger,
   clickRefresh,
   waitForRunStatusInList,
   clickLatestRunRow,
@@ -339,9 +339,6 @@ describe('Stateless Variable Tests', function () {
       // Debug → Run → Verify
       workbench = new Workbench();
       await startDebugging(workbench, driver);
-      // Pre-warm the Functions host before driving the overview flow
-      // (see prewarmFunctionsHost docs for rationale).
-      await prewarmFunctionsHost(driver);
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);
@@ -350,7 +347,9 @@ describe('Stateless Variable Tests', function () {
       }
       workbench = new Workbench();
       const ovWv = await waitForOverviewView(workbench, driver, wjp);
-      await assertRunTriggerable(driver);
+      const runtimeReady = await waitForRuntimeReady(driver);
+      assert.ok(runtimeReady, 'Functions runtime should start and become ready');
+      assert.ok(await clickRunTrigger(driver), 'Run trigger clickable');
       await sleep(1000);
       await clickRefresh(driver);
       const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');

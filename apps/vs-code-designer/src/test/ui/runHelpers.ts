@@ -610,6 +610,10 @@ export async function waitForOverviewView(
 /**
  * Click the "Run trigger" button in the overview command bar.
  *
+ * Default timeout is 180 s to absorb cold-start latency on heavy CI shards
+ * (e.g. `createplusnewtests`) where the Functions host can keep the trigger
+ * button `aria-disabled="true"` for >90 s after the host begins starting.
+ *
  * @deprecated For new callers, prefer {@link assertRunTriggerable} which
  * combines the host-readiness gate with the click and surfaces precise
  * failure messages pointing at the actual root cause. The legacy pair
@@ -619,7 +623,7 @@ export async function waitForOverviewView(
  * the surfaced failure is "Run trigger clickable" but the real issue is the
  * runtime not being up.
  */
-export async function clickRunTrigger(driver: WebDriver, timeoutMs = 90_000): Promise<boolean> {
+export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): Promise<boolean> {
   // Gate: don't burn the click-loop deadline waiting for a button that can
   // only become enabled once the Functions host is running. If the runtime
   // isn't ready within 60 s, fail fast with a screenshot + clear log so the
