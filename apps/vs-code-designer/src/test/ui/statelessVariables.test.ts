@@ -314,21 +314,16 @@ describe('Stateless Variable Tests', function () {
       // Save
       assert.ok(await clickSaveButton(driver), 'Save should complete');
 
-      // CRITICAL: switch back from designer webview and close ALL editors
-      // before starting debug, to avoid switchToOverviewWebview entering the designer frame.
+      // CRITICAL: switch back from designer webview BUT keep editors OPEN.
+      // The designer panel tab must stay in the editor area when F5 fires so
+      // VS Code can resolve the multi-root workspace's launch.json folder
+      // automatically. Closing editors here causes a follow-up "Select
+      // workspace folder" QuickPick that the shared startDebugging helper
+      // doesn't see, and the debug session never starts (toolbar never
+      // appears). Matches the working pattern in designerActions.test.ts:2858
+      // — editors are closed AFTER startDebugging, just before openOverview.
       try {
         await result.webview!.switchBack();
-      } catch {
-        /* ignore */
-      }
-      await sleep(1000);
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      try {
-        await new EditorView().closeAllEditors();
       } catch {
         /* ignore */
       }
