@@ -5,6 +5,7 @@ import * as workspaceUtils from '../workspace';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import {
   CustomCodeFunctionsProjectMetadata,
+  customCodeArtifactsExist,
   getCustomCodeFunctionsProjectMetadata,
   getAllCustomCodeFunctionsProjects,
   isCustomCodeFunctionsProject,
@@ -21,6 +22,7 @@ vi.mock('fs-extra', () => ({
   readdir: vi.fn(),
   readFile: vi.fn(),
   pathExists: vi.fn(),
+  pathExistsSync: vi.fn(),
 }));
 
 vi.mock('verifyProjectUtils', () => ({
@@ -128,6 +130,63 @@ describe('customCodeUtils', () => {
 
       const result = await getAllCustomCodeFunctionsProjects(testContext);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('customCodeArtifactsExist', () => {
+    const logicAppPath = path.join('test', 'LogicApp');
+    const customArtifactsPath = path.join(logicAppPath, 'lib', 'custom');
+    const peerProjectPath = path.join('test', 'Functions');
+
+    it('should return false when custom artifacts folder is missing', async () => {
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
+
+      await expect(customCodeArtifactsExist(logicAppPath)).resolves.toBe(false);
+    });
+
+    it('should return false when a custom code artifact function.json is missing', async () => {
+      vi.spyOn(fse, 'pathExists').mockImplementation(async (p: string) => p === customArtifactsPath);
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === path.dirname(logicAppPath)) {
+          return ['LogicApp', 'Functions'];
+        }
+        if (p === peerProjectPath) {
+          return ['Functions.csproj'];
+        }
+        if (p === customArtifactsPath) {
+          return ['Functions'];
+        }
+        return [];
+      });
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readFile').mockResolvedValue(validNet8CsprojContent);
+
+      await expect(customCodeArtifactsExist(logicAppPath)).resolves.toBe(false);
+    });
+
+    it('should return true when every custom code project has generated artifacts', async () => {
+      vi.spyOn(fse, 'pathExists').mockImplementation(
+        async (p: string) => p === customArtifactsPath || p.endsWith(path.join('Functions', 'function.json'))
+      );
+      vi.spyOn(fse, 'pathExistsSync').mockImplementation((p: string) => p.endsWith(path.join('Functions', 'function.json')));
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === path.dirname(logicAppPath)) {
+          return ['LogicApp', 'Functions'];
+        }
+        if (p === peerProjectPath) {
+          return ['Functions.csproj'];
+        }
+        if (p === customArtifactsPath) {
+          return ['Functions'];
+        }
+        return [];
+      });
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readFile').mockResolvedValue(validNet8CsprojContent);
+
+      await expect(customCodeArtifactsExist(logicAppPath)).resolves.toBe(true);
     });
   });
 

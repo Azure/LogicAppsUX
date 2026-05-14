@@ -1,15 +1,31 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   addFileToBuildPath,
   addFolderToBuildPath,
   addLibToPublishPath,
+  addNewFileInCSharpProject,
   addNugetPackagesToBuildFile,
+  addNugetPackagesToBuildFileByName,
   allowLocalSettingsToPublishDirectory,
+  getDotnetBuildFile,
+  getXMLString,
   suppressJavaScriptBuildWarnings,
   updateFunctionsSDKVersion,
+  writeBuildFileToDisk,
 } from '../updateBuildFile';
 import { DotnetVersion, localSettingsFileName } from '../../../../constants';
 import path from 'path';
+import * as fs from 'fs';
+import { getProjFiles } from '../../dotnet/dotnet';
+
+vi.mock('../../dotnet/dotnet', () => ({
+  getProjFiles: vi.fn(),
+}));
+
+vi.mock('fs', () => ({
+  readFileSync: vi.fn(),
+  writeFileSync: vi.fn(),
+}));
 
 describe('utils/codeless/updateBuildFile', () => {
   describe('addNugetPackagesToBuildFile', () => {
@@ -74,6 +90,30 @@ describe('utils/codeless/updateBuildFile', () => {
   });
 
   describe('updateFunctionsSDKVersion', () => {
+    it('Should update the package version to 4.5.0 for .NET 8', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Microsoft.NET.Sdk.Functions',
+                  Version: '4.1.3',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net8);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
+        Include: 'Microsoft.NET.Sdk.Functions',
+        Version: '4.5.0',
+      });
+    });
+
     it('Should update the package version to 4.1.3 for .NET 6', () => {
       const xmlBuildFile = {
         Project: {
@@ -120,6 +160,44 @@ describe('utils/codeless/updateBuildFile', () => {
         Include: 'Microsoft.NET.Sdk.Functions',
         Version: '3.0.13',
       });
+    });
+  });
+
+  describe('addNugetPackagesToBuildFileByName', () => {
+    it('Should add a named package reference when absent', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [],
+        },
+      };
+
+      const updatedXmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Contoso.Package', '1.2.3');
+
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toEqual({
+        Include: 'Contoso.Package',
+        Version: '1.2.3',
+      });
+    });
+
+    it('Should not duplicate an existing named package reference', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Contoso.Package',
+                  Version: '1.2.3',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      const updatedXmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Contoso.Package', '1.2.3');
+
+      expect(updatedXmlBuildFile.Project.ItemGroup).toHaveLength(1);
     });
   });
 
@@ -237,6 +315,62 @@ describe('utils/codeless/updateBuildFile', () => {
 
       allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
       expect(context.telemetry.properties.allowSettingsToPublish).toBe('false');
+    });
+  });
+
+  describe('getXMLString', () => {
+    it('Should parse XML into an object', async () => {
+      await expect(getXMLString('<Project><PropertyGroup /></Project>', { explicitArray: false })).resolves.toEqual({
+        Project: {
+          PropertyGroup: '',
+        },
+      });
+    });
+
+    it('Should resolve undefined for invalid XML', async () => {
+      await expect(getXMLString('<Project>', { explicitArray: false })).resolves.toBeUndefined();
+    });
+  });
+
+  describe('build file disk helpers', () => {
+    const context: any = {
+      telemetry: {
+        properties: {},
+      },
+    };
+
+    it('Should read and parse the single project file', async () => {
+      vi.mocked(getProjFiles).mockResolvedValue([{ name: 'Functions.csproj' }] as any);
+      vi.mocked(fs.readFileSync).mockReturnValue('<Project><ItemGroup /></Project>' as any);
+
+      await expect(getDotnetBuildFile(context, 'C:\\project')).resolves.toBe(JSON.stringify({ Project: { ItemGroup: '' } }));
+    });
+
+    it('Should write the updated build file to disk', async () => {
+      vi.mocked(getProjFiles).mockResolvedValue([{ name: 'Functions.csproj' }] as any);
+
+      await writeBuildFileToDisk(context, { Project: { ItemGroup: [] } }, 'C:\\project');
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(expect.stringContaining('Functions.csproj'), expect.stringContaining('<Project'));
+    });
+
+    it('Should add a new file path to the project build file', async () => {
+      vi.mocked(getProjFiles).mockResolvedValue([{ name: 'Functions.csproj' }] as any);
+      vi.mocked(fs.readFileSync).mockReturnValue('<Project><ItemGroup></ItemGroup><ItemGroup></ItemGroup></Project>' as any);
+
+      await addNewFileInCSharpProject(context, 'custom\\function.json', 'C:\\project');
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.stringContaining('Functions.csproj'),
+        expect.stringContaining('custom\\function.json')
+      );
+    });
+
+    it('Should throw when no project file can be found', async () => {
+      vi.mocked(getProjFiles).mockResolvedValue([]);
+
+      await expect(getDotnetBuildFile(context, 'C:\\project')).rejects.toThrow('Dotnet project file could not be found');
+      await expect(writeBuildFileToDisk(context, { Project: {} }, 'C:\\project')).rejects.toThrow('Dotnet project file could not be found');
     });
   });
 });

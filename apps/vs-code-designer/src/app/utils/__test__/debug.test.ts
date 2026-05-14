@@ -1,9 +1,23 @@
-import { getDebugConfiguration } from '../debug';
+import { getDebugConfiguration, getDebugSymbolDll } from '../debug';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { extensionCommand } from '../../../constants';
+import { debugSymbolDll, extensionBundleId, extensionCommand } from '../../../constants';
 import { FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
+vi.mock('../bundleFeed', () => ({
+  getBundleVersionNumber: vi.fn(),
+  getExtensionBundleFolder: vi.fn(),
+}));
+
+import { getBundleVersionNumber, getExtensionBundleFolder } from '../bundleFeed';
+
 describe('debug', () => {
+  it('should build the debug symbol dll path from the extension bundle folder and version', async () => {
+    vi.mocked(getExtensionBundleFolder).mockResolvedValue('C:\\bundles');
+    vi.mocked(getBundleVersionNumber).mockResolvedValue('1.2.3');
+
+    await expect(getDebugSymbolDll()).resolves.toContain(`${extensionBundleId}\\1.2.3\\bin\\${debugSymbolDll}`);
+  });
+
   describe('getDebugConfiguration', () => {
     beforeEach(() => {
       vi.clearAllMocks();
