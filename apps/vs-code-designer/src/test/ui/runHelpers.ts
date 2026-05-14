@@ -389,20 +389,60 @@ export async function switchToOverviewWebview(driver: WebDriver, timeoutMs = 60_
 /**
  * Click the "Run trigger" button in the overview command bar.
  */
-export async function clickRunTrigger(driver: WebDriver): Promise<boolean> {
-  const deadline = Date.now() + 30_000;
+export async function clickRunTrigger(driver: WebDriver, timeoutMs = 90_000): Promise<boolean> {
+  const t0 = Date.now();
+  const deadline = t0 + timeoutMs;
+  let foundLoggedAt = 0;
+  let disabledLoggedAt = 0;
+  let lastDisabledLog = 0;
+
   while (Date.now() < deadline) {
     try {
       const btns = await driver.findElements(By.css('button[aria-label="Run trigger"]'));
       if (btns.length > 0) {
+        if (foundLoggedAt === 0) {
+          foundLoggedAt = Date.now();
+          console.log(`[overview] "Run trigger" button found (${foundLoggedAt - t0}ms)`);
+        }
         const btn = btns[0];
-        const disabled = await btn.getAttribute('disabled');
-        if (disabled) {
-          console.log('[overview] "Run trigger" button is disabled — runtime may not be ready');
+        // Check both the disabled attribute and aria-disabled — the React-rendered
+        // button may use either depending on Fluent UI version.
+        const disabledAttr = await btn.getAttribute('disabled');
+        const ariaDisabled = await btn.getAttribute('aria-disabled');
+        const isDisabled = !!disabledAttr || ariaDisabled === 'true';
+        if (isDisabled) {
+          if (disabledLoggedAt === 0) {
+            disabledLoggedAt = Date.now();
+          }
+          // Log at most once every 10s to avoid log spam during cold-start.
+          if (Date.now() - lastDisabledLog > 10_000) {
+            lastDisabledLog = Date.now();
+            console.log(`[overview] "Run trigger" disabled — Functions runtime still warming up (${Date.now() - t0}ms elapsed)`);
+          }
         } else {
-          await driver.actions().move({ origin: btn }).click().perform();
-          console.log('[overview] Clicked "Run trigger"');
-          return true;
+          // Post-find enabled-stability poll: require the button to remain
+          // enabled for ~500ms before clicking, so we don't race a re-render
+          // that flips it back to disabled.
+          await sleep(500);
+          let stillEnabled = false;
+          try {
+            const recheck = await driver.findElements(By.css('button[aria-label="Run trigger"]'));
+            if (recheck.length > 0) {
+              const d2 = await recheck[0].getAttribute('disabled');
+              const a2 = await recheck[0].getAttribute('aria-disabled');
+              stillEnabled = !d2 && a2 !== 'true';
+              if (stillEnabled) {
+                await driver.actions().move({ origin: recheck[0] }).click().perform();
+                console.log(`[overview] Clicked "Run trigger" (${Date.now() - t0}ms)`);
+                return true;
+              }
+            }
+          } catch {
+            /* fall through to retry */
+          }
+          if (!stillEnabled) {
+            console.log('[overview] "Run trigger" flipped back to disabled — retrying');
+          }
         }
       }
     } catch {
@@ -410,7 +450,10 @@ export async function clickRunTrigger(driver: WebDriver): Promise<boolean> {
     }
     await sleep(500);
   }
-  console.log('[overview] "Run trigger" button not found or not clickable');
+  await captureScreenshot(driver, 'clickRunTrigger-timeout');
+  const foundLabel = foundLoggedAt ? `${foundLoggedAt - t0}ms` : 'never';
+  const disabledLabel = disabledLoggedAt ? `${disabledLoggedAt - t0}ms` : 'never';
+  console.log(`[overview] "Run trigger" not clickable after ${timeoutMs}ms (foundAt=${foundLabel}, firstDisabled=${disabledLabel})`);
   return false;
 }
 
