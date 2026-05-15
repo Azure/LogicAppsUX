@@ -133,6 +133,20 @@ export async function waitForRuntimeReady(
   let hostRunningSeenAt = 0;
 
   while (Date.now() < deadline) {
+    // Ensure every readiness probe runs against VS Code's main workbench, not a
+    // webview iframe. Callers frequently arrive here while the WebDriver is
+    // still parked inside a designer/overview iframe — in that context the
+    // .debug-toolbar selector can't see the workbench and an in-page XHR to
+    // :7071 is blocked by CORS. CI run 25903230417 (diagnostic dumps from
+    // commit 7bc8b05eb) proved the host was healthy on every "300s timeout"
+    // failure; the detector was simply polling from the wrong DOM context.
+    // Safe to call even when already at default content.
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+
     try {
       await dismissAllDialogs(driver);
     } catch {
@@ -184,21 +198,37 @@ export async function waitForRuntimeReady(
       /* ignore */
     }
 
+    // Probe :7071 via Node http rather than an in-page XHR. The in-page XHR is
+    // blocked by CORS whenever this loop runs inside a webview iframe, which
+    // masked a healthy Functions host in CI run 25903230417. Node http
+    // bypasses the browser/CORS layer entirely. Mirrors the Dump B pattern
+    // added in commit 7bc8b05eb that was already proven to work.
     let hostReady = false;
     try {
-      hostReady = !!(await driver.executeScript<boolean>(`
-        try {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', 'http://localhost:7071/admin/host/status', false);
-          xhr.timeout = 2000;
-          xhr.send();
-          if (xhr.status === 200) {
-            var body = JSON.parse(xhr.responseText);
-            return body && body.state && body.state.toLowerCase() === 'running';
-          }
-        } catch(e) {}
-        return false;
-      `));
+      hostReady = await new Promise<boolean>((resolve) => {
+        const req = http.get('http://localhost:7071/admin/host/status', { timeout: 2000 }, (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', (c: Buffer) => chunks.push(c));
+          res.on('end', () => {
+            try {
+              if (res.statusCode === 200) {
+                const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                resolve(!!(body && body.state && String(body.state).toLowerCase() === 'running'));
+                return;
+              }
+            } catch {
+              /* fallthrough */
+            }
+            resolve(false);
+          });
+          res.on('error', () => resolve(false));
+        });
+        req.on('error', () => resolve(false));
+        req.on('timeout', () => {
+          req.destroy();
+          resolve(false);
+        });
+      });
     } catch {
       /* ignore */
     }
