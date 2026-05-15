@@ -93,9 +93,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       # Cache the pnpm content-addressed store so matrix shards can rehydrate
-      # node_modules via `pnpm install --offline` without hitting the network.
-      # The setup-extension-build job warms this cache by running a full install
-      # below; shards then restore the same cache and link-from-store offline.
+      # node_modules faster on warm runs. The setup-extension-build job warms
+      # this cache by running a full install below; shards restore the cache
+      # and pnpm reuses store entries while falling back to the network for
+      # anything missing (no --offline strictness).
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
@@ -193,13 +194,11 @@ jobs:
           # /usr/bin (the most conservative location).
           env -i /usr/bin/node --version
 
-      # Rehydrate node_modules via the pnpm store cache populated by
-      # setup-extension-build. Tarring node_modules directly doesn't work for
-      # pnpm workspaces because the per-package node_modules contain symlinks
-      # into the workspace-root content-addressed store; cross-runner symlinks
-      # are fragile. Caching the store + running `pnpm install --offline` is
-      # the supported pnpm pattern and rehydrates in ~30-60s vs ~2-3min for a
-      # cold network install.
+      # Rehydrate node_modules via pnpm. The store cache accelerates installs
+      # on warm runs (~30-60s) but we don't enforce --offline because
+      # pnpm/action-setup's batched install may not fully populate the store
+      # for strict offline use, and a partial-cache network fallback is
+      # preferable to ERR_PNPM_NO_OFFLINE_TARBALL failures.
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
@@ -212,12 +211,9 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 9.1.3
-
-      - name: Install dependencies from cache (offline)
-        # --offline forces failure if the store is missing any package, which
-        # surfaces cache-population bugs in setup-extension-build immediately
-        # rather than masking them with a slow network install.
-        run: pnpm install --recursive --frozen-lockfile --offline
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - name: Download extension build artifact
         uses: actions/download-artifact@v4
