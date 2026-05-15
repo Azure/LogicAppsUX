@@ -87,15 +87,23 @@ jobs:
           # so its inline-code dependency generator fails with:
           #   "The 'node' process needed for inline code dependency generation
           #    could not be found on PATH"
-          # Symlink to /usr/local/bin so the runtime finds node regardless of
-          # PATH inheritance.
-          sudo ln -sf "$(which node)" /usr/local/bin/node
-          sudo ln -sf "$(which npm)" /usr/local/bin/npm
-          sudo ln -sf "$(which npx)" /usr/local/bin/npx
-          echo "Symlinked node $(node --version) at /usr/local/bin/node"
-          ls -la /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx
-          # Verify node is reachable without PATH
-          env -i /usr/local/bin/node --version
+          # CI run 25920892436 proved /usr/local/bin alone is not on the
+          # func host's sanitized PATH. Symlink to /usr/bin AND /usr/local/bin
+          # so any minimally-stripped PATH (which always includes /usr/bin)
+          # finds node.
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+          echo "Symlinked node $(node --version) into /usr/local/bin and /usr/bin"
+          ls -la /usr/local/bin/node /usr/bin/node
+          # Verify node is reachable from a completely empty environment via
+          # /usr/bin (the most conservative location).
+          env -i /usr/bin/node --version
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -136,7 +144,15 @@ jobs:
           save-always: true
 
       - name: Run VS Code Extension E2E tests (${{ matrix.shard }})
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
+        run: |
+          # Explicitly export PATH so xvfb-run -> VS Code -> func host -> child
+          # processes inherit the toolcache node location. Belt-and-suspenders
+          # with the /usr/bin symlink: if any layer sanitizes PATH to a curated
+          # list, /usr/bin alone should suffice; if a layer keeps the inherited
+          # PATH, this line guarantees the toolcache is on it.
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          echo "PATH=$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
         env:
           # Shard-specific subset of phases (see apps/vs-code-designer/src/test/ui/run-e2e.js).
           E2E_MODE: ${{ matrix.e2e_mode }}
