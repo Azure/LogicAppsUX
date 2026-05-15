@@ -1323,6 +1323,37 @@ async function findAddActionElement(driver: WebDriver): Promise<WebElement | nul
   return null;
 }
 
+/**
+ * Find the LAST "Add an action" placeholder or drop zone button on the canvas.
+ * Use this when inserting a second action that should be appended at the bottom
+ * (e.g., adding a Response action after another action), since findAddActionElement
+ * returns the FIRST `+` button which inserts between the trigger and the first action.
+ */
+async function findLastAddActionElement(driver: WebDriver): Promise<WebElement | null> {
+  const selectors = [
+    '[data-automation-id^="msla-plus-button-"]',
+    '[id^="msla-edge-button-"]',
+    '[data-testid="card-Add an action"]',
+    '[data-automation-id="card-Add_an_action"]',
+    '[aria-label="Add an action"]',
+  ];
+
+  for (const selector of selectors) {
+    try {
+      const elements = await driver.findElements(By.css(selector));
+      if (elements.length > 0) {
+        const last = elements[elements.length - 1];
+        console.log(`[findLastAddActionElement] Found ${elements.length} via: ${selector}, using last`);
+        return last;
+      }
+    } catch {
+      // Try next selector
+    }
+  }
+
+  return null;
+}
+
 async function clickElementWithFallback(driver: WebDriver, element: WebElement, description: string): Promise<void> {
   try {
     await driver.executeScript('arguments[0].scrollIntoView({ block: "center", inline: "center" });', element);
