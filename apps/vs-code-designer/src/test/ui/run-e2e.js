@@ -1620,6 +1620,26 @@ namespace ${namespaceName}
       return aggregate;
     };
 
+    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects a single
+    // scenarios[] entry by id. Takes precedence over E2E_MODE so a matrix
+    // shard that sets both env vars (e.g. for transitional debugging)
+    // still runs exactly one scenario. E2E_MODE remains supported as a
+    // fallback for legacy grouped-shard invocations.
+    const singleScenarioId = process.env.LA_E2E_SCENARIO;
+    if (singleScenarioId) {
+      const scenarioEntry = scenarios.find((s) => s.id === singleScenarioId);
+      if (!scenarioEntry) {
+        console.error(`Unknown LA_E2E_SCENARIO: ${singleScenarioId}`);
+        console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
+        process.exit(2);
+      }
+      console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const singleExit = await runScenarioPhases([scenarioEntry]);
+      process.exit(singleExit);
+    }
+
     if (e2eMode === 'scenarios') {
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
