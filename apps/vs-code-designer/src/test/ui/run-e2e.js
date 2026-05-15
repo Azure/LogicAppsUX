@@ -820,6 +820,132 @@ async function main() {
   const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
   const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
 
+  // ------------------------------------------------------------------
+  // Per-scenario inventory (Phase A scaffold).
+  //
+  // Declarative table mapping each E2E test file to its workspace spec
+  // and per-session settings. Consumed by runScenarioPhases() via
+  // E2E_MODE=scenarios. Existing E2E_MODE handlers (full, designeronly,
+  // createplusdesigner, etc.) do NOT use this table — they remain
+  // unchanged. Phase B will start migrating individual phases through
+  // this bootstrapper one at a time.
+  //
+  // Field reference:
+  //   id            — scenario label passed to prepareFreshSession()
+  //                   and used in logs; also the manifest-listing key.
+  //   testFile      — absolute path to the compiled test JS, or an
+  //                   array of paths when monolithic === true.
+  //   workspaceSpec — see selectWorkspaceForSpec() below for the
+  //                   supported shapes ('plain-folder', 'self-creates',
+  //                   'self-contained', 'manifest-multi', or an object
+  //                   with { appType, wfType, use? }).
+  //   settings      — passed to writeTestSettings(); 'auto' for
+  //                   validateDependencies resolves to
+  //                   shouldValidateRuntimeDependencies() at runtime.
+  //   monolithic    — true when the scenario runs multiple test files
+  //                   in a single VS Code session (currently 4.1, 4.7).
+  //   allowFailure  — true to log the scenario's failure but exclude it
+  //                   from the aggregate exit code (xvfb-flaky cases).
+  // ------------------------------------------------------------------
+  const scenarios = [
+    // Independent / no-workspace scenarios
+    {
+      id: 'p40-nonlogicapp',
+      testFile: phase0Files[0],
+      workspaceSpec: 'plain-folder',
+      settings: { validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false },
+    },
+    {
+      id: 'p48b-conversioncreate',
+      testFile: phase8bFiles[0],
+      workspaceSpec: 'self-contained',
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+
+    // Phase 4.1 — workspace creation (kept monolithic; the pre-creation
+    // webview block + 12 shape creation tests share a session today).
+    {
+      id: 'p41-createworkspace',
+      testFile: phase1Files,
+      workspaceSpec: 'self-creates',
+      settings: { validateDependencies: true, autoStartDesignTime: true },
+      monolithic: true,
+    },
+
+    // Phase 4.2 — designer lifecycle (Standard + CustomCode share one file)
+    // Phase C will split designerActions.test.js into two scenarios.
+    {
+      id: 'p42-standard',
+      testFile: phase2Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+
+    // Phases 4.3-4.6 — runtime-touching consumer tests
+    {
+      id: 'p43-inlinejavascript',
+      testFile: phase3Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+    {
+      id: 'p44-statelessvariables',
+      testFile: phase4Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+    {
+      id: 'p45-designerviewextended',
+      testFile: phase5Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+    {
+      id: 'p46-keyboardnavigation',
+      testFile: phase6Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+
+    // Phase 4.7 — designer-shell smoke + dataMapper. dataMapper.test.ts
+    // reads the manifest in its own `before` hook, so the bootstrapper
+    // passes the preferred standard workspace as a startup resource.
+    {
+      id: 'p47-suite',
+      testFile: phase7Files,
+      workspaceSpec: 'manifest-multi',
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      monolithic: true,
+    },
+
+    // Phases 4.8a/c/d/e — conversion tests
+    {
+      id: 'p48a-conversionno',
+      testFile: phase8aFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+    {
+      id: 'p48c-multipledesigners',
+      testFile: phase8cFiles[0],
+      workspaceSpec: 'manifest-multi',
+      settings: { validateDependencies: true, autoStartDesignTime: true },
+    },
+    {
+      id: 'p48d-conversionyes',
+      testFile: phase8dFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+      allowFailure: true /* known xvfb-flaky in CI */,
+    },
+    {
+      id: 'p48e-conversionsubfolder',
+      testFile: phase8eFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'appDir' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+  ];
+
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
   console.log(`\nE2E mode: ${e2eMode}`);
   // Note: shard reliability is gated by helpers in runHelpers.ts (waitForRuntimeReady,
@@ -1254,6 +1380,148 @@ namespace ${namespaceName}
       }
       return phase2Resources;
     };
+
+    // ------------------------------------------------------------------
+    // Phase A — per-scenario workspace resolver.
+    //
+    // Pure function that maps a scenario's `workspaceSpec` to the array
+    // of startup resources passed to ExTester's `runTests({ resources })`.
+    // Supported shapes:
+    //   'plain-folder'   — no resources; extension activates without a
+    //                      Logic App context. Currently only Phase 4.0.
+    //   'self-creates'   — no resources; the test creates its own
+    //                      workspace from inside VS Code (Phase 4.1).
+    //   'self-contained' — builds a legacy project fixture via
+    //                      createLegacyProjectFixture() and also sets
+    //                      LA_E2E_LEGACY_PROJECT_DIR so the test can
+    //                      locate it. Returns [legacyDir].
+    //   'manifest-multi' — reads created-workspaces.json and returns
+    //                      the preferred standard+Stateful entry's
+    //                      .code-workspace path (same as
+    //                      getPhase2Resources()). Used by phases whose
+    //                      tests further consume the manifest at runtime
+    //                      (4.7 dataMapper, 4.8c multipleDesigners).
+    //   { appType, wfType, use? } — reads the manifest, picks the
+    //                      matching entry, and returns its wsFilePath
+    //                      (default), wsDir (`use: 'wsDir'`), or appDir
+    //                      (`use: 'appDir'`) as a single-element array.
+    //
+    // Returns { resources, legacyDir? }. `legacyDir` is set only for
+    // 'self-contained' so runScenarioPhases can wire up the env var.
+    const selectWorkspaceForSpec = (spec, scenarioId) => {
+      if (spec === 'plain-folder' || spec === 'self-creates') {
+        return { resources: [] };
+      }
+      if (spec === 'self-contained') {
+        const legacyDir = createLegacyProjectFixture(scenarioId);
+        return { resources: [legacyDir], legacyDir };
+      }
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      let manifest = null;
+      if (fs.existsSync(manifestPath)) {
+        try {
+          manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        } catch (e) {
+          console.warn(`  [${scenarioId}] Failed to parse manifest: ${e.message}`);
+        }
+      } else {
+        console.warn(`  [${scenarioId}] Manifest not found: ${manifestPath}`);
+      }
+      if (spec === 'manifest-multi') {
+        // Mirrors getPhase2Resources() — returns the preferred standard
+        // workspace; the test itself walks the manifest for the rest.
+        if (!manifest) return { resources: [] };
+        const preferred =
+          manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+          manifest.find((e) => e.appType === 'standard') ||
+          manifest[0];
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          return { resources: [preferred.wsFilePath] };
+        }
+        return { resources: [] };
+      }
+      if (spec && typeof spec === 'object') {
+        if (!manifest) return { resources: [] };
+        const { appType, wfType, use } = spec;
+        const entry =
+          manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
+          manifest.find((e) => !appType || e.appType === appType) ||
+          manifest[0];
+        if (!entry) {
+          console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
+          return { resources: [] };
+        }
+        const key = use === 'wsDir' ? 'wsDir' : use === 'appDir' ? 'appDir' : 'wsFilePath';
+        const value = entry[key];
+        if (value && fs.existsSync(value)) {
+          return { resources: [value] };
+        }
+        console.warn(`  [${scenarioId}] Manifest entry missing ${key}: ${value}`);
+        return { resources: [] };
+      }
+      console.warn(`  [${scenarioId}] Unknown workspaceSpec; returning no resources: ${JSON.stringify(spec)}`);
+      return { resources: [] };
+    };
+
+    // ------------------------------------------------------------------
+    // Phase A — per-scenario bootstrapper.
+    //
+    // Modeled on runCodefulDebugPhases() (above). For each scenario:
+    //   1. Resolve writeTestSettings (with 'auto' → live runtime check).
+    //   2. prepareFreshSession() to kill stale VS Code / chromedriver /
+    //      func / vsdbg processes and clear settings/User.
+    //   3. Resolve startup resources via selectWorkspaceForSpec().
+    //   4. Export LA_E2E_LEGACY_PROJECT_DIR for self-contained specs.
+    //   5. Hand off to runPhase() (one ExTester instance per scenario).
+    //   6. Collect exit codes; allowFailure scenarios are logged but
+    //      excluded from the aggregate Math.max.
+    //
+    // Returns the aggregate exit code (0 if every non-allowFailure
+    // scenario passed).
+    const runScenarioPhases = async (scenarioList /* , opts */) => {
+      const exits = [];
+      const allowFailureExits = [];
+      for (const scenario of scenarioList) {
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, allowFailure } = scenario;
+        const resolvedSettings = { ...settings };
+        if (resolvedSettings.validateDependencies === 'auto') {
+          resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
+        }
+        writeTestSettings(resolvedSettings);
+
+        await prepareFreshSession(id);
+        const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
+        if (legacyDir) {
+          process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+        }
+        const fileList = Array.isArray(files) ? files : [files];
+        if (!monolithic && fileList.length !== 1) {
+          console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
+        }
+        const exit = await runPhase(`Scenario ${id}`, fileList, { resources });
+        if (allowFailure) {
+          allowFailureExits.push({ id, exit });
+          if (exit !== 0) {
+            console.log(`  ⚠ Scenario ${id} exited with ${exit}; excluded from aggregate (allowFailure: true)`);
+          }
+        } else {
+          exits.push(exit);
+        }
+        // Brief pause between sessions to let VS Code/chromedriver release
+        // ports and sockets before the next prepareFreshSession() runs.
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+      const aggregate = exits.length === 0 ? 0 : Math.max(...exits);
+      console.log(`\n=== Scenarios results: ${exits.length} blocking, ${allowFailureExits.length} allowFailure → exit ${aggregate} ===`);
+      return aggregate;
+    };
+
+    if (e2eMode === 'scenarios') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      const scenariosExit = await runScenarioPhases(scenarios);
+      process.exit(scenariosExit);
+    }
 
     if (e2eMode === 'codefuldebugonly') {
       await extest.downloadCode(VSCODE_VERSION);
