@@ -863,14 +863,45 @@ async function main() {
         } catch {
           /* no chromedriver running — fine */
         }
+        // Kill orphan Functions runtime / dotnet / vsdbg processes left behind
+        // by failed debug sessions (Phase 4.3 retries can leave these alive,
+        // which then bind :7071 in a zombie state and break Phase 4.4's host
+        // detection — toolbarSeen=702ms but hostRunningSeen=never).
+        try {
+          execSync('pkill -f "func.*host.*start"', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* pkill returns 1 if no processes matched — OK */
+        }
+        try {
+          execSync('pkill -f "[Ff]unc.*Microsoft.Azure.WebJobs.Script"', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* OK */
+        }
+        try {
+          execSync('pkill -f vsdbg-ui', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* OK */
+        }
+        // Don't pkill dotnet broadly — it may kill the runner's other dotnet
+        // processes. Only kill dotnet processes that are children of func (covered
+        // by the "func.*host.*start" pkill above which terminates the process group).
       } else {
         // Windows: use PowerShell
         execSync(
           'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
           { stdio: 'ignore', timeout: 10000 }
         );
+        // Kill orphan Functions runtime / vsdbg processes on Windows
+        try {
+          execSync(
+            'powershell -NoProfile -Command "Get-Process -Name func,vsdbg-ui -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"',
+            { stdio: 'ignore', timeout: 10000 }
+          );
+        } catch {
+          /* OK */
+        }
       }
-      console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver processes`);
+      console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver/func/vsdbg processes`);
       // Wait for processes to fully exit and release IPC sockets.
       // On Linux, VS Code writes an IPC socket to the user-data-dir for
       // the CLI `code -r` command to connect. If the old socket persists,
