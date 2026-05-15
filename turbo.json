@@ -41,6 +41,7 @@
       "outputs": ["coverage/**"]
     },
     "test:extension-unit": {
+      "env": ["GITHUB_BASE_REF", "GITHUB_EVENT_PATH", "VITEST_COVERAGE"],
       "outputs": ["coverage/**"]
     },
     "test:iframe-app": {

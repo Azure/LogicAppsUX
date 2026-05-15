@@ -2,10 +2,9 @@ import { FuncVersion, ProjectType, TargetFramework } from '@microsoft/vscode-ext
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getDebugConfiguration } from '../../../../utils/debug';
 import { getDebugConfigs, updateDebugConfigs } from '../../../../utils/vsCodeConfig/launch';
 import { isMultiRootWorkspace } from '../../../../utils/workspace';
-import { FunctionAppFilesStep } from '../functionAppFilesStep';
+import { CreateFunctionAppFiles } from '../CreateFunctionAppFiles';
 
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(),
@@ -15,12 +14,11 @@ vi.mock('fs-extra', () => ({
   copyFile: vi.fn(),
   pathExists: vi.fn(),
   readJson: vi.fn(),
+  readdir: vi.fn(),
 }));
 
-vi.mock('vscode', () => ({}));
-
-vi.mock('../../../../../localize', () => ({
-  localize: (_key: string, message: string) => message,
+vi.mock('../../../../utils/assets', () => ({
+  getAssetsRoot: () => 'C:\\assets',
 }));
 
 vi.mock('../../../../utils/vsCodeConfig/launch', () => ({
@@ -33,15 +31,17 @@ vi.mock('../../../../utils/workspace', () => ({
   isMultiRootWorkspace: vi.fn(),
 }));
 
-vi.mock('../../../../utils/funcCoreTools/funcVersion', () => ({
-  tryGetLocalFuncVersion: vi.fn().mockResolvedValue(FuncVersion.v4),
+vi.mock('../../../../../localize', () => ({
+  localize: (_key: string, message: string) => message,
 }));
 
-vi.mock('../../../../utils/debug', () => ({
-  getDebugConfiguration: vi.fn().mockReturnValue({ name: 'generated launch' }),
+vi.mock('vscode', () => ({
+  Uri: {
+    file: (fsPath: string) => ({ fsPath }),
+  },
 }));
 
-describe('FunctionAppFilesStep', () => {
+describe('CreateFunctionAppFiles', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(fs.ensureDir).mockResolvedValue(undefined);
@@ -50,8 +50,8 @@ describe('FunctionAppFilesStep', () => {
     vi.mocked(fs.readJson).mockResolvedValue({});
     vi.mocked(fs.writeFile).mockResolvedValue(undefined);
     vi.mocked(fs.writeJson).mockResolvedValue(undefined);
+    vi.mocked(fs.readdir).mockResolvedValue([]);
     vi.mocked(getDebugConfigs).mockReturnValue([]);
-    vi.mocked(getDebugConfiguration).mockReturnValue({ name: 'generated launch' });
     vi.mocked(isMultiRootWorkspace).mockReturnValue(false);
     vi.mocked(fs.readFile).mockImplementation((filePath: any) => {
       const pathText = String(filePath);
@@ -68,16 +68,11 @@ describe('FunctionAppFilesStep', () => {
     });
   });
 
-  it('should always prompt', () => {
-    expect(new FunctionAppFilesStep().shouldPrompt()).toBe(true);
-  });
+  it('should create .NET 8 custom code files from the asset root', async () => {
+    await new CreateFunctionAppFiles().setup(createContext());
 
-  it('should create .NET 8 custom code project files and VS Code configuration', async () => {
-    await new FunctionAppFilesStep().prompt(createContext());
-
-    expect(fs.ensureDir).toHaveBeenCalledWith(expect.stringContaining('ProcessOrder'));
-    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsFileNet8'), 'utf-8');
-    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsProjNet8New'), 'utf-8');
+    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionProjectTemplate\\FunctionsFileNet8'), 'utf-8');
+    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionProjectTemplate\\FunctionsProjNet8New'), 'utf-8');
     expect(fs.writeFile).toHaveBeenCalledWith(
       expect.stringContaining('ProcessOrder.cs'),
       'namespace Contoso.Functions { public class ProcessOrder {} }'
@@ -85,13 +80,6 @@ describe('FunctionAppFilesStep', () => {
     expect(fs.writeFile).toHaveBeenCalledWith(
       expect.stringContaining('ProcessOrder.csproj'),
       '<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\SalesLogicApp</LogicAppFolderToPublish>'
-    );
-    expect(fs.writeJson).toHaveBeenCalledWith(
-      expect.stringContaining('extensions.json'),
-      expect.objectContaining({ recommendations: expect.any(Array) }),
-      {
-        spaces: 2,
-      }
     );
     expect(fs.writeJson).toHaveBeenCalledWith(
       expect.stringContaining('settings.json'),
@@ -106,10 +94,9 @@ describe('FunctionAppFilesStep', () => {
     });
   });
 
-  it('should create .NET Framework project files with LogicAppFolder replacement', async () => {
-    await new FunctionAppFilesStep().prompt(createContext({ targetFramework: TargetFramework.NetFx }));
+  it('should create .NET Framework custom code files', async () => {
+    await new CreateFunctionAppFiles().setup(createContext({ targetFramework: TargetFramework.NetFx }));
 
-    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsFileNetFx'), 'utf-8');
     expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsProjNetFx'), 'utf-8');
     expect(fs.writeFile).toHaveBeenCalledWith(
       expect.stringContaining('ProcessOrder.csproj'),
@@ -117,8 +104,8 @@ describe('FunctionAppFilesStep', () => {
     );
   });
 
-  it('should create rules engine project files and copy the sample rule file', async () => {
-    await new FunctionAppFilesStep().prompt(
+  it('should create rules engine files and copy ContosoPurchase.cs', async () => {
+    await new CreateFunctionAppFiles().setup(
       createContext({
         projectType: ProjectType.rulesEngine,
         targetFramework: TargetFramework.Net8,
@@ -130,43 +117,52 @@ describe('FunctionAppFilesStep', () => {
     expect(fs.copyFile).toHaveBeenCalledWith(expect.stringContaining('ContosoPurchase'), expect.stringContaining('ContosoPurchase.cs'));
   });
 
-  it('should update launch configuration for existing logic app projects', async () => {
-    vi.mocked(getDebugConfigs).mockReturnValue([{ type: 'node', request: 'launch' }]);
+  it('should update existing launch configurations for custom code runtime', async () => {
+    vi.mocked(getDebugConfigs).mockReturnValue([{ type: 'logicapp', request: 'launch' }]);
 
-    await new FunctionAppFilesStep().prompt(createContext({ shouldCreateLogicAppProject: false }));
+    await (new CreateFunctionAppFiles() as any).updateLogicAppLaunchJson(
+      'C:\\workspace\\Functions\\.vscode',
+      TargetFramework.Net8,
+      FuncVersion.v4,
+      'SalesLogicApp'
+    );
 
-    expect(getDebugConfiguration).toHaveBeenCalledWith(FuncVersion.v4, 'SalesLogicApp', TargetFramework.Net8);
-    expect(updateDebugConfigs).toHaveBeenCalledWith(undefined, expect.arrayContaining([{ name: 'generated launch' }]));
+    expect(updateDebugConfigs).toHaveBeenCalledWith(
+      undefined,
+      expect.arrayContaining([expect.objectContaining({ type: 'logicapp', customCodeRuntime: 'coreclr', isCodeless: true })])
+    );
   });
 
-  it('should write launch.json in multi-root workspaces', async () => {
+  it('should create launch.json in multi-root workspaces', async () => {
     vi.mocked(isMultiRootWorkspace).mockReturnValue(true);
-    vi.mocked(fs.pathExists).mockResolvedValue(true);
-    vi.mocked(fs.readJson).mockResolvedValue({ configurations: [] });
+    vi.mocked(fs.pathExists).mockResolvedValue(false);
 
-    await new FunctionAppFilesStep().prompt(createContext({ shouldCreateLogicAppProject: false }));
+    await (new CreateFunctionAppFiles() as any).updateLogicAppLaunchJson(
+      'C:\\workspace\\Functions\\.vscode',
+      TargetFramework.NetFx,
+      FuncVersion.v1,
+      'SalesLogicApp'
+    );
 
     expect(fs.writeJson).toHaveBeenCalledWith(
       expect.stringContaining('launch.json'),
-      expect.objectContaining({ configurations: expect.any(Array) }),
-      {
-        spaces: 2,
-      }
+      expect.objectContaining({
+        configurations: expect.arrayContaining([expect.objectContaining({ customCodeRuntime: 'clr', funcRuntime: 'clr' })]),
+      }),
+      { spaces: 2 }
     );
-    expect(updateDebugConfigs).not.toHaveBeenCalled();
   });
 });
 
 function createContext(overrides: Partial<IProjectWizardContext> = {}): IProjectWizardContext {
   return {
     functionAppName: 'ProcessOrder',
+    functionFolderName: 'Functions',
     functionAppNamespace: 'Contoso.Functions',
     targetFramework: TargetFramework.Net8,
     logicAppName: 'SalesLogicApp',
-    version: FuncVersion.v4,
     workspacePath: 'C:\\workspace',
     projectType: ProjectType.customCode,
-    shouldCreateLogicAppProject: true,
     ...overrides,
   } as IProjectWizardContext;
 }

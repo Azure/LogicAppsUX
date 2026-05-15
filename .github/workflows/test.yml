@@ -44,5 +44,14 @@ jobs:
       - run: pnpm turbo run build --cache-dir=.turbo
       - run: pnpm turbo run test:lib --cache-dir=.turbo
       - run: pnpm turbo run build:extension --cache-dir=.turbo
+      - name: Configure VS Code designer coverage scope
+        if: github.event_name == 'pull_request'
+        run: |
+          git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }}...HEAD -- apps/vs-code-designer/src \
+            | sed 's|^apps/vs-code-designer/||' \
+            > apps/vs-code-designer/.coverage-include
+          cat apps/vs-code-designer/.coverage-include
       - run: pnpm turbo run test:extension-unit --cache-dir=.turbo
+        env:
+          VITEST_COVERAGE: 'false'
       - run: pnpm turbo run test:iframe-app --cache-dir=.turbo
