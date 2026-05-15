@@ -20,8 +20,12 @@
  * These are extracted from designerActions.test.ts.
  */
 
+import { execSync } from 'child_process';
 import * as assert from 'assert';
-import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView } from 'vscode-extension-tester';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as path from 'path';
+import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
 
 // ===========================================================================
@@ -235,9 +239,129 @@ export async function waitForRuntimeReady(
   await captureScreenshot(driver, 'waitForRuntimeReady-timeout');
   const dbgLabel = debugToolbarSeenAt ? `${debugToolbarSeenAt - t0}ms` : 'never';
   const hostLabel = hostRunningSeenAt ? `${hostRunningSeenAt - t0}ms` : 'never';
+  const terminalsLabel = terminalsDetectedAt ? `${terminalsDetectedAt - t0}ms` : 'never';
   console.log(
     `[debug] Timeout waiting for runtime after ${timeoutMs}ms (requireHostRunning=${requireHostRunning}, debugToolbarSeen=${dbgLabel}, hostRunningSeen=${hostLabel})`
   );
+
+  // ===== Diagnostic dumps (timeout path only) =====
+  // All wrapped in try/catch — a diagnostic failure must never mask the real
+  // test failure. Triggered by CI run 25901768786 which proved both the per-
+  // scenario pilot shard and the legacy newtests shard fail identically with
+  // debugToolbarSeen=never, hostRunningSeen=never on Phase 4.3 inlineJavascript.
+  // We need to know what func/dotnet actually did, whether :7071 became
+  // reachable, and what's in the Terminal panel we're polling.
+
+  // Dump A — Terminal panel full text + tab titles
+  try {
+    const bottomBar = new BottomBarPanel();
+    try {
+      await bottomBar.toggle(true);
+    } catch {
+      /* may already be open */
+    }
+    const terminalView = await bottomBar.openTerminalView();
+    try {
+      const titles = await terminalView.getTerminalTitles();
+      console.log(`[waitForRuntimeReady][diag] Terminal tab titles: ${JSON.stringify(titles)}`);
+    } catch {
+      /* ignore */
+    }
+    try {
+      const text = await terminalView.getText();
+      console.log(`[waitForRuntimeReady][diag] Terminal text (last 8KB):\n${text.slice(-8192)}`);
+    } catch (e: any) {
+      console.log(`[waitForRuntimeReady][diag] Terminal getText failed: ${e?.message ?? e}`);
+    }
+  } catch (e: any) {
+    console.log(`[waitForRuntimeReady][diag] Terminal panel access failed: ${e?.message ?? e}`);
+  }
+
+  // Dump B — Port 7071 reachability (final probe via node http, not webview XHR)
+  try {
+    const result = await new Promise<{ status: string; body: string }>((resolve) => {
+      const req = http.get('http://localhost:7071/admin/host/status', { timeout: 2000 }, (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (c: Buffer) => chunks.push(c));
+        res.on('end', () => {
+          const body = Buffer.concat(chunks).toString('utf8').slice(0, 500);
+          resolve({ status: String(res.statusCode ?? 'unknown'), body });
+        });
+        res.on('error', (err) => resolve({ status: 'unreachable', body: err.message }));
+      });
+      req.on('error', (err) => resolve({ status: 'unreachable', body: err.message }));
+      req.on('timeout', () => {
+        req.destroy();
+        resolve({ status: 'unreachable', body: 'timeout after 2000ms' });
+      });
+    });
+    console.log(`[waitForRuntimeReady][diag] :7071 reachability: status=${result.status}, body=${result.body}`);
+  } catch (e: any) {
+    console.log(`[waitForRuntimeReady][diag] :7071 probe failed: ${e?.message ?? e}`);
+  }
+
+  // Dump C — Process inventory (func / dotnet / vsdbg / node)
+  try {
+    let output: string;
+    if (process.platform === 'win32') {
+      output = execSync(
+        'powershell -NoProfile -Command "Get-Process | Where-Object { $_.Name -match \'func|dotnet|vsdbg|node\' } | Select-Object Id,Name,Path,StartTime | Format-Table -AutoSize | Out-String"',
+        { stdio: 'pipe', timeout: 5000 }
+      ).toString();
+    } else {
+      try {
+        output = execSync("ps -eo pid,ppid,etime,comm,args | grep -E '(func|dotnet|vsdbg|node)' | grep -v grep", {
+          stdio: 'pipe',
+          timeout: 5000,
+          shell: '/bin/sh',
+        }).toString();
+      } catch (e: any) {
+        // grep exits 1 when no match — treat as "no matching processes"
+        if (e?.status === 1) {
+          output = '(no matching processes)';
+        } else {
+          throw e;
+        }
+      }
+    }
+    console.log(`[waitForRuntimeReady][diag] Running processes:\n${output}`);
+  } catch (e: any) {
+    console.log(`[waitForRuntimeReady][diag] Process inventory failed: ${e?.message ?? e}`);
+  }
+
+  // Dump D — Structured final gate state (single grep-friendly line)
+  try {
+    console.log(
+      `[waitForRuntimeReady][diag] Final gate state: debugToolbarSeen=${dbgLabel}, terminalsDetectedAt=${terminalsLabel}, hostRunningSeen=${hostLabel}, requireHostRunning=${requireHostRunning}`
+    );
+  } catch {
+    /* ignore - diagnostic only */
+  }
+
+  // Dump E — launch.json from the test workspace (best-effort env probe)
+  try {
+    const candidates = [
+      process.env.LA_E2E_LEGACY_PROJECT_DIR,
+      process.env.LA_E2E_CODEFUL_MODERN_DIR,
+      process.env.LA_E2E_CODEFUL_LEGACY_DIR,
+    ].filter((p): p is string => typeof p === 'string' && p.length > 0);
+    let logged = false;
+    for (const wsDir of candidates) {
+      const launchPath = path.join(wsDir, '.vscode', 'launch.json');
+      if (fs.existsSync(launchPath)) {
+        const content = fs.readFileSync(launchPath, 'utf8').slice(0, 2000);
+        console.log(`[waitForRuntimeReady][diag] launch.json (${launchPath}): ${content}`);
+        logged = true;
+        break;
+      }
+    }
+    if (!logged) {
+      console.log('[waitForRuntimeReady][diag] launch.json: not found (no workspace path in scope)');
+    }
+  } catch (e: any) {
+    console.log(`[waitForRuntimeReady][diag] launch.json read failed: ${e?.message ?? e}`);
+  }
+
   return false;
 }
 
