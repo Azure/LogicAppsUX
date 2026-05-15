@@ -2,6 +2,17 @@
 
 Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through `session-knowledge-curator`.
 
+## Triggers → use this file
+
+- ExTester / `run-e2e.js`, any phase work (4.0–4.8), `E2E_MODE=*` selection
+- `apps/vs-code-designer/src/test/ui/**/*.test.ts`, helpers in `designerHelpers.ts` / `runHelpers.ts` / `helpers.ts`
+- CI matrix shards `independent`, `designer`, `newtests`, `conversion`, `scenarios-pilot`
+- VS Code webview iframe switching, overview/run lifecycle, modal dialog interaction on xvfb
+- Adding a new E2E test, debugging a CI-only failure, writing diagnostic dumps
+- See also: [`runtime-readiness-probes.md`](runtime-readiness-probes.md) for runtime/HTTP probe rules,
+  [`vscode-task-env-propagation.md`](vscode-task-env-propagation.md) for `func: host start` env bugs,
+  [`ci-patterns.md`](ci-patterns.md) for the shard matrix workflow and coverage gate.
+
 ## Core Sources
 
 - `apps/vs-code-designer/src/test/ui/SKILL.md`
@@ -216,3 +227,59 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Applies to: `ci-sentinel`, `chief-engineer`, `vscode-test-specialist`.
 - Status: verified.
 
+
+### Diagnostics-first discipline for CI-only failures (PR #9164 meta-lesson)
+
+- Learning: For VS Code E2E failures that reproduce only in CI with no log signal, the **first** move (not the 15th) is to land a dump-on-failure block. PR #9164 burned a 14-commit reliability arc chasing symptoms because diagnostics were not added until commit `7bc8b05eb`. Once they landed, 7 more commits identified the real root cause (`func: host start` PATH propagation, see `vscode-task-env-propagation.md`) cleanly.
+- Rule: when a runtime-gated wait/click fails in CI, dump on failure:
+  1. The terminal panel text for the relevant task (e.g. `func: host start`).
+  2. A raw Node `http` probe to the suspected service (e.g. `:7071/admin/host/status`, `/management/workflows/{name}` filtered for health).
+  3. `Get-Process` / `ps` for the relevant service binaries (`func`, `dotnet`, `vsdbg`).
+  4. Filesystem state of expected artifacts (`workflow-designtime/`, generated `host.json`, `local.settings.json`).
+  5. Config files: `host.json`, `local.settings.json`, `.vscode/launch.json`, `.vscode/tasks.json`.
+- Reference helpers from PR #9164:
+  - `dumpSuspiciouslyFastHost` — fires when `:7071` answers in <2s without a preceding `[killport]` log, signalling a stale host (commit `1fa956ca6`).
+  - `dumpDialogDiagnostics` — captures modal dialog DOM state on click failure (commit `aa2c61cba`, conversionYes Track 3).
+- Cost analysis: ~80 lines of diagnostic code saved the equivalent of ~14 generations of debugging.
+- Source: PR #9164 commits `7bc8b05eb`, `1fa956ca6`, `aa2c61cba`; `apps/vs-code-designer/src/test/ui/runHelpers.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `vscode`, `chief-engineer`.
+- Status: verified.
+
+### CI parallelization via 5-shard matrix + summary rollup
+
+- Learning: `vscode-e2e.yml` shards the suite across 5 runners (`independent`, `designer`, `newtests`, `conversion`, `scenarios-pilot`) using a matrix on `E2E_MODE`. A separate `vscode-e2e-summary` job depends on all shards and provides the **single** branch-protection-required check name. Adding/removing shards does not require touching branch protection.
+- Path-filter coalescing on rapid pushes can skip the workflow entirely on `push:` events. Always include a `workflow_dispatch:` trigger as a manual fallback so a maintainer can re-run the matrix without an empty commit. PR #9164 added this in commit `857567947`.
+- Source: `.github/workflows/vscode-e2e.yml` (`matrix:` block, `vscode-e2e-summary` rollup job, `workflow_dispatch:` trigger); commits `7c483a10b` (matrix shard), `857567947` (workflow_dispatch).
+- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`, `chief-engineer`.
+- Status: verified.
+
+### `prepareFreshSession` contract: kill orphans between phases
+
+- Learning: Each `run-e2e.js` phase must start from a clean process baseline. `prepareFreshSession` (and its sister `prepareForFreshFuncHost`) must kill orphan `func`, `dotnet`, and `vsdbg` processes plus free port 7071 before the next phase launches VS Code. Orphans from a previous phase will squat on 7071 and serve **stale** workflow registrations, producing false-positive readiness signals.
+- Pattern: do port hygiene (`killPortBound(7071)`) before F5, log the occupant if present, and dump diagnostics when 7071 answers fast with no preceding kill log (`dumpSuspiciouslyFastHost`, commit `1fa956ca6`).
+- See also: [`runtime-readiness-probes.md`](runtime-readiness-probes.md) for the full 4-probe readiness chain that consumes this baseline.
+- Source: `apps/vs-code-designer/src/test/ui/runHelpers.ts`; commit `1fa956ca6`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### "True E2E" — verify the assertion fails when the contract is broken
+
+- Learning: A keyboard-navigation pattern of "the test moves the focus and logs success but never asserts" is a silent failure mode — the test cannot detect regressions. Three rules:
+  1. **Verify the assertion fails** when the contract is broken (delete the production behavior, run the test, expect red). That is the criterion for "true E2E."
+  2. **Stable selectors**: prefer `role` + `aria-label` over CSS classes or English text-matching. Localized labels are out (see modal-dialog rule below).
+  3. **Selenium Actions API for keyboard input**: `driver.actions().sendKeys(...)` triggers React `useHotkeys` callbacks inside webview iframes; direct `.sendKeys()` on an element does not.
+- Source: PR #9164 commit `49e5e0134` `test(vscode-e2e): add Phase 4.6 keyboardNavigation with real assertions`; `apps/vs-code-designer/src/test/ui/keyboardNavigation.test.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-critic`.
+- Status: verified.
+
+### Modal dialog interaction on xvfb — 5 race conditions
+
+- Learning: PR #9164 conversionYes R1–R9 fixes uncovered five generalizable xvfb modal-dialog races. Apply all five for any `{ modal: true }` dialog driven from VS Code:
+  1. **Do not scan the notification center** if the surface is `{ modal: true }` — modal dialogs render in a different DOM widget. Use `ModalDialog`, not `Notification`.
+  2. **Hold a single `ModalDialog` handle across detect+click**, with a stale-element retry. Re-resolving the handle between detect and click reintroduces the race the helper was added to fix.
+  3. **Force-focus the dialog before clicking**; prefer `Tab+Enter` over `.click()` for xvfb-robust dispatch — xvfb input handling drops some `.click()` events on overlapping z-indexed surfaces.
+  4. **Localized button labels are unstable**. Lock CI locale to `en-US` (extension launch env / VS Code args) so `Yes`/`No`/`Cancel` text matches.
+  5. **Pre-flight `safeCancelAnyQuickInput`** before driving the dialog, to clear any lingering quick-input from a prior phase that would otherwise consume the first key event.
+- Source: PR #9164 commit `aa2c61cba` `test(vscode-e2e): harden workspaceConversionYes with R1-R9 reliability + assertions`; `apps/vs-code-designer/src/test/ui/helpers.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-critic`.
+- Status: verified.

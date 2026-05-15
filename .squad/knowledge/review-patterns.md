@@ -35,3 +35,19 @@ Curated patterns for PR comments, reviewer feedback, and final summaries. Add en
 - Source: PR #9164 `AI PR Validation` bot comments at `#issuecomment-...`; `.github/workflows/pr-ai-validation.yml`; `.github/pull_request_template.md`.
 - Applies to: `release-scribe`, `pr-orchestrator`, `chief-engineer`, `pr-comment-triage`.
 - Status: verified.
+
+## Triggers → use this file
+
+- PR comment triage, reviewer feedback, GitHub thread resolution
+- PR body authoring, `.github/pull_request_template.md`, AI PR Validation
+- `risk:<level>` labels, `needs-pr-update`, `Contributors` section
+- Test Plan checkboxes vs actual diff, Commit Type vs title prefix
+
+### PR template: exactly one Commit Type box, title prefix must match (PR #9164 confirmation)
+
+- Learning: AI PR Validation rejects PR bodies that tick more than one `Commit Type` checkbox. The PR title prefix (`fix:`, `feat:`, `perf:`, `test:`, `ci:`, `docs:`, `chore:`) must match the single ticked box — for example a `perf` body requires a `perf:` title prefix.
+- Additionally, the Test Plan checkboxes must reflect the actual diff: if the diff adds a `*.spec.ts(x)` file under a test folder, "Unit tests added/updated" must be ticked. Mismatches between the ticked Test Plan boxes and the diff trigger a `needs-pr-update` label even when the rest of the template is satisfied.
+- This confirms and extends the existing "PR body must conform to .github/pull_request_template.md" entry — verified on PR #9164 revisions.
+- Source: PR #9164 AI PR Validation bot iterations; `.github/pull_request_template.md`; `.github/workflows/pr-ai-validation.yml`.
+- Applies to: `release-scribe`, `pr-orchestrator`, `chief-engineer`, `pr-comment-triage`.
+- Status: verified.
