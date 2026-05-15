@@ -725,7 +725,13 @@ export async function waitForWorkflowsRegistered(
   driver: WebDriver,
   opts: { timeoutMs?: number; intervalMs?: number; workflowName?: string } = {}
 ): Promise<boolean> {
-  const timeoutMs = opts.timeoutMs ?? 180_000;
+  // Default bumped from 180s → 240s after CI run 25917034859. That run proved
+  // the runtime DOES register the workflow on :7071 quickly, but cold-start
+  // `InlineCodeDependencyGeneratorFailure` keeps `health.state="Unhealthy"`
+  // until the runtime self-heals (generates the inline-code node_modules).
+  // 240s is the empirically observed worst case before the runtime recovers
+  // (newtests succeeds on retry 3 once node_modules exists from prior runs).
+  const timeoutMs = opts.timeoutMs ?? 240_000;
   const intervalMs = opts.intervalMs ?? 2_000;
   const workflowName = opts.workflowName;
   const t0 = Date.now();
@@ -734,21 +740,16 @@ export async function waitForWorkflowsRegistered(
   let firstSeenAt = 0;
   let lastBody = '';
   let lastStatus = 0;
+  let lastHealthState = '(never seen)';
+  let lastHealth: unknown = null;
 
-  // When a specific workflow name is provided, probe the per-workflow TRIGGERS
-  // endpoint and require a non-empty array. CI run 25913438556 demonstrated
-  // that the workflow metadata endpoint `/workflows/{name}` returns 200 in
-  // ~13 ms (as soon as the workflow file is parsed) while
-  // `/workflows/{name}/triggers` still returns 404 WorkflowNotFound for the
-  // full downstream `listCallbackUrl` timeout. The triggers endpoint is the
-  // actual precondition for `listCallbackUrl`, so gate registration on it.
-  // CI run 25911660164 demonstrated the list-form probe returning a single
-  // unrelated workflow within 15 ms while the test-created `testwf_*` workflow
-  // never registered — `listCallbackUrl` then 404'd for the full 180 s budget,
-  // which is why the list-form probe is reserved for the no-name fallback.
-  const probeUrl = workflowName
-    ? `http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers?api-version=2019-10-01-edge-preview`
-    : 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows';
+  // Always probe the workflow LIST endpoint. CI run 25917034859 proved this
+  // endpoint always returns 200 and each entry carries a `health` block, so a
+  // single request answers both "is the workflow present?" and "is it healthy?".
+  // The per-workflow `/triggers` endpoint was previously used but it only
+  // proves trigger-binding, not runtime health — which is the actual gate for
+  // `listCallbackUrl` to succeed when inline-code dep-generation fails.
+  const probeUrl = 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows';
 
   while (Date.now() < deadline) {
     try {
@@ -778,17 +779,24 @@ export async function waitForWorkflowsRegistered(
         }
         const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : null;
         if (list && list.length > 0) {
-          const elapsed = Date.now() - t0;
-          if (workflowName) {
-            console.log(`[workflows] Registered — workflow="${workflowName}" triggers bound (${list.length}, ${elapsed}ms)`);
-          } else {
-            console.log(`[workflows] Registered — ${list.length} workflow(s) found (${elapsed}ms)`);
+          if (!firstSeenAt) {
+            firstSeenAt = Date.now() - t0;
           }
-          return true;
-        }
-        // 200 with empty list: registration not complete yet
-        if (!firstSeenAt && parsed) {
-          firstSeenAt = Date.now() - t0;
+          // When a specific workflow name is provided, find that entry and
+          // require its health.state === "Healthy". Without a name, treat any
+          // healthy workflow as success.
+          const entry = workflowName ? list.find((w: any) => w?.name === workflowName) : list[0];
+          if (entry) {
+            const healthState: string | undefined = entry?.health?.state;
+            lastHealthState = healthState ?? '(missing)';
+            lastHealth = entry?.health ?? null;
+            if (healthState === 'Healthy') {
+              const elapsed = Date.now() - t0;
+              const label = workflowName ? `workflow="${workflowName}"` : `workflow="${entry?.name ?? '?'}"`;
+              console.log(`[workflows] Healthy — ${label} health.state=Healthy (${elapsed}ms)`);
+              return true;
+            }
+          }
         }
       }
     } catch {
@@ -799,7 +807,9 @@ export async function waitForWorkflowsRegistered(
     const now = Date.now();
     if (now - lastLog >= 10_000) {
       const label = workflowName ? `workflow="${workflowName}"` : 'any workflow';
-      console.log(`[workflows] Still waiting for ${label} registration (${now - t0}ms elapsed, lastStatus=${lastStatus})`);
+      console.log(
+        `[workflows] Still waiting for ${label} health=Healthy (${now - t0}ms elapsed, lastStatus=${lastStatus}, lastHealthState=${lastHealthState})`
+      );
       lastLog = now;
     }
 
@@ -808,10 +818,16 @@ export async function waitForWorkflowsRegistered(
 
   await captureScreenshot(driver, 'waitForWorkflowsRegistered-timeout');
   const firstSeenLabel = firstSeenAt ? `${firstSeenAt}ms` : 'never';
-  const bodySnippet = lastBody ? lastBody.slice(0, 512) : '(empty)';
   const target = workflowName ? `workflow="${workflowName}" ` : '';
+  let healthSnippet = '(none)';
+  try {
+    healthSnippet = lastHealth ? JSON.stringify(lastHealth).slice(0, 1024) : '(none)';
+  } catch {
+    healthSnippet = '(unserializable)';
+  }
+  const bodySnippet = lastBody ? lastBody.slice(0, 512) : '(empty)';
   console.log(
-    `[workflows] Timeout — ${target}not registered within ${timeoutMs}ms (firstSeenAt=${firstSeenLabel}, lastStatus=${lastStatus}, lastBody=${bodySnippet})`
+    `[workflows] Timeout — ${target}never reached Healthy within ${timeoutMs}ms (firstSeenAt=${firstSeenLabel}, lastStatus=${lastStatus}, lastHealthState=${lastHealthState}, lastHealth=${healthSnippet}, lastBody=${bodySnippet})`
   );
   return false;
 }
@@ -1443,10 +1459,10 @@ export async function clickRunTrigger(driver: WebDriver, opts: { timeoutMs?: num
   // When a workflowName is provided we probe `/workflows/{name}` directly so
   // we don't green-light on stale/template workflows left in the workspace
   // (CI run 25911660164).
-  const workflowsReady = await waitForWorkflowsRegistered(driver, { timeoutMs: 180_000, workflowName });
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { timeoutMs: 240_000, workflowName });
   if (!workflowsReady) {
     const target = workflowName ? `workflow="${workflowName}" ` : '';
-    console.log(`[clickRunTrigger] ${target}not registered within 180s — host is up but trigger routes never registered`);
+    console.log(`[clickRunTrigger] ${target}never reached Healthy within 240s — host is up but workflow health.state never became Healthy`);
     await captureScreenshot(driver, 'clickRunTrigger-no-workflows');
     return false;
   }
