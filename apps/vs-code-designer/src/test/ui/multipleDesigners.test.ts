@@ -174,7 +174,7 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
     await sleep(1000);
     const quickInput = await driver.findElement(By.css('.quick-input-box input'));
-    await quickInput.sendKeys(label + '/workflow.json');
+    await quickInput.sendKeys(`${label}/workflow.json`);
     await sleep(1500);
     await quickInput.sendKeys(Key.ENTER);
     await sleep(2000);
