@@ -446,15 +446,19 @@ export async function waitForWorkflowsRegistered(
   let lastBody = '';
   let lastStatus = 0;
 
-  // When a specific workflow name is provided, probe the singular endpoint so
-  // we don't green-light on stale/template workflows left in the workspace.
+  // When a specific workflow name is provided, probe the per-workflow TRIGGERS
+  // endpoint and require a non-empty array. CI run 25913438556 demonstrated
+  // that the workflow metadata endpoint `/workflows/{name}` returns 200 in
+  // ~13 ms (as soon as the workflow file is parsed) while
+  // `/workflows/{name}/triggers` still returns 404 WorkflowNotFound for the
+  // full downstream `listCallbackUrl` timeout. The triggers endpoint is the
+  // actual precondition for `listCallbackUrl`, so gate registration on it.
   // CI run 25911660164 demonstrated the list-form probe returning a single
   // unrelated workflow within 15 ms while the test-created `testwf_*` workflow
-  // never registered — `listCallbackUrl` then 404'd for the full 180 s budget.
-  // Polling `/workflows/{name}` returns 404 until the SPECIFIC workflow is
-  // bound, eliminating the false-positive window.
+  // never registered — `listCallbackUrl` then 404'd for the full 180 s budget,
+  // which is why the list-form probe is reserved for the no-name fallback.
   const probeUrl = workflowName
-    ? `http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/${workflowName}?api-version=2019-10-01-edge-preview`
+    ? `http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers?api-version=2019-10-01-edge-preview`
     : 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows';
 
   while (Date.now() < deadline) {
@@ -477,11 +481,6 @@ export async function waitForWorkflowsRegistered(
       lastBody = reachable.body;
 
       if (reachable.status === 200) {
-        if (workflowName) {
-          const elapsed = Date.now() - t0;
-          console.log(`[workflows] Registered — workflow="${workflowName}" bound (${elapsed}ms)`);
-          return true;
-        }
         let parsed: any = null;
         try {
           parsed = JSON.parse(reachable.body);
@@ -491,7 +490,11 @@ export async function waitForWorkflowsRegistered(
         const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : null;
         if (list && list.length > 0) {
           const elapsed = Date.now() - t0;
-          console.log(`[workflows] Registered — ${list.length} workflow(s) found (${elapsed}ms)`);
+          if (workflowName) {
+            console.log(`[workflows] Registered — workflow="${workflowName}" triggers bound (${list.length}, ${elapsed}ms)`);
+          } else {
+            console.log(`[workflows] Registered — ${list.length} workflow(s) found (${elapsed}ms)`);
+          }
           return true;
         }
         // 200 with empty list: registration not complete yet
@@ -694,6 +697,20 @@ export async function waitForRunTriggerEnabled(
 
   await captureScreenshot(driver, 'waitForRunTriggerEnabled-timeout');
   const bodySnippet = lastBody ? lastBody.slice(0, 512) : '(empty)';
+  // Diagnostics: log the upstream registration probe URL (probe #2) and the
+  // listCallbackUrl probe URL (probe #3) side-by-side. CI run 25913438556
+  // showed `/workflows/{name}` returning 200 within 13 ms while
+  // `/workflows/{name}/triggers` 404'd for the full 180 s timeout — capturing
+  // both URLs makes any future endpoint inconsistency obvious without guessing.
+  const registrationProbeUrl = workflowName
+    ? `${managementBase}/workflows/${workflowName}/triggers?api-version=${apiVersion}`
+    : '(skipped — no workflowName threaded to waitForRunTriggerEnabled)';
+  const listCallbackProbeUrl =
+    workflowName && triggerName
+      ? `${managementBase}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`
+      : '(never reached — workflow/trigger discovery did not complete)';
+  console.log(`[overview] Diagnostics — registrationProbe=${registrationProbeUrl}`);
+  console.log(`[overview] Diagnostics — listCallbackProbe=${listCallbackProbeUrl}`);
   console.log(
     `[overview] Timeout — listCallbackUrl never returned a value within ${timeoutMs}ms (step=${lastStep}, lastStatus=${lastStatus}, workflow=${workflowName ?? '?'}, trigger=${triggerName ?? '?'}, lastBody=${bodySnippet})`
   );
